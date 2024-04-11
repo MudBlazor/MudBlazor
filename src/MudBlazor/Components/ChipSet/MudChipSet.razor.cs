@@ -8,16 +8,26 @@ using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
-#nullable enable
 
+#nullable enable
 public partial class MudChipSet<T> : MudComponentBase, IDisposable
 {
     public MudChipSet()
     {
-        _selectedValue = RegisterParameter(nameof(SelectedValue), () => SelectedValue, () => SelectedValueChanged, OnSelectedValueChangedAsync);
-        _selectedValues = RegisterParameter(nameof(SelectedValues), () => SelectedValues, () => SelectedValuesChanged, OnSelectedValuesChangedAsync);
-        _comparer = RegisterParameter(nameof(Comparer), () => Comparer, OnComparerChangedAsync);
-        RegisterParameter(nameof(CheckMark), () => CheckMark, OnCheckMarkChanged);
+        _selectedValue = RegisterParameterBuilder<T?>(nameof(SelectedValue))
+            .WithParameter(() => SelectedValue)
+            .WithEventCallback(() => SelectedValueChanged)
+            .WithChangeHandler(OnSelectedValueChangedAsync);
+        _selectedValues = RegisterParameterBuilder<IReadOnlyCollection<T?>?>(nameof(SelectedValues))
+            .WithParameter(() => SelectedValues).WithEventCallback(() => SelectedValuesChanged)
+            .WithChangeHandler(OnSelectedValuesChangedAsync);
+        _comparer = RegisterParameterBuilder<IEqualityComparer<T>?>(nameof(Comparer))
+            .WithParameter(() => Comparer)
+            .WithChangeHandler(OnComparerChangedAsync);
+        RegisterParameterBuilder<bool>(nameof(CheckMark))
+            .WithParameter(() => CheckMark)
+            .WithChangeHandler(OnCheckMarkChanged)
+            .Attach();
     }
 
     private readonly ParameterState<T?> _selectedValue;

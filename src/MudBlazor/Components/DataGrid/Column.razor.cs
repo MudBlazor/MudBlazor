@@ -270,14 +270,24 @@ namespace MudBlazor
 
         protected Column()
         {
-            HiddenState = RegisterParameter(nameof(Hidden), () => Hidden, () => HiddenChanged);
-            GroupingState = RegisterParameter(nameof(Grouping), () => Grouping, () => GroupingChanged, GroupingParameterChangedAsync);
+            HiddenState = RegisterParameterBuilder<bool>(nameof(Hidden))
+                .WithParameter(() => Hidden)
+                .WithEventCallback(() => HiddenChanged);
+            GroupingState = RegisterParameterBuilder<bool>(nameof(Grouping))
+                .WithParameter(() => Grouping)
+                .WithEventCallback(() => GroupingChanged)
+                .WithChangeHandler(OnGroupingParameterChangedAsync);
         }
 
-        private async Task GroupingParameterChangedAsync()
+        private async Task OnGroupingParameterChangedAsync()
         {
             if (GroupingState.Value)
-                await DataGrid?.ChangedGrouping(this);
+            {
+                if (DataGrid is not null)
+                {
+                    await DataGrid.ChangedGrouping(this);
+                }
+            }
         }
 
         protected override void OnInitialized()

@@ -24,15 +24,15 @@ internal class RegisterParameterBuilder<T>
     private Func<EventCallback<T>> _eventCallbackFunc = () => default;
     private IParameterChangedHandler<T>? _parameterChangedHandler;
     private Func<IEqualityComparer<T>?>? _comparerFunc;
-    private readonly IParameterSetRegister _smartParameterSetRegister;
+    private readonly IParameterSetRegister _parameterSetRegister;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RegisterParameterBuilder{T}"/> class.
     /// </summary>
-    /// <param name="smartParameterSetRegister">The <see cref="IParameterSetRegister"/> used to register the parameter during the <see cref="Attach"/>.</param>
-    public RegisterParameterBuilder(IParameterSetRegister smartParameterSetRegister)
+    /// <param name="parameterSetRegister">The <see cref="IParameterSetRegister"/> used to register the parameter during the <see cref="Attach"/>.</param>
+    public RegisterParameterBuilder(IParameterSetRegister parameterSetRegister)
     {
-        _smartParameterSetRegister = smartParameterSetRegister;
+        _parameterSetRegister = parameterSetRegister;
     }
 
     /// <summary>
@@ -52,7 +52,7 @@ internal class RegisterParameterBuilder<T>
     /// </summary>
     /// <param name="getParameterValueFunc">The function to get the parameter value.</param>
     /// <returns>The current instance of the builder.</returns>
-    public RegisterParameterBuilder<T> WithGetParameterValueFunc(Func<T> getParameterValueFunc)
+    public RegisterParameterBuilder<T> WithParameter(Func<T> getParameterValueFunc)
     {
         _getParameterValueFunc = getParameterValueFunc;
 
@@ -64,7 +64,7 @@ internal class RegisterParameterBuilder<T>
     /// </summary>
     /// <param name="eventCallbackFunc">The function to create the event callback.</param>
     /// <returns>The current instance of the builder.</returns>
-    public RegisterParameterBuilder<T> WithEventCallbackFunc(Func<EventCallback<T>> eventCallbackFunc)
+    public RegisterParameterBuilder<T> WithEventCallback(Func<EventCallback<T>> eventCallbackFunc)
     {
         _eventCallbackFunc = eventCallbackFunc;
 
@@ -77,7 +77,7 @@ internal class RegisterParameterBuilder<T>
     /// <param name="parameterChangedHandler">The parameter changed handler.</param>
     /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
     /// <returns>The current instance of the builder.</returns>
-    public RegisterParameterBuilder<T> WithParameterChangedHandler(IParameterChangedHandler<T> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
+    public RegisterParameterBuilder<T> WithChangeHandler(IParameterChangedHandler<T> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
         _parameterChangedHandler = parameterChangedHandler;
         _handlerName = handlerName;
@@ -91,7 +91,7 @@ internal class RegisterParameterBuilder<T>
     /// <param name="parameterChangedHandler">The parameter changed handler.</param>
     /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
     /// <returns>The current instance of the builder.</returns>
-    public RegisterParameterBuilder<T> WithParameterChangedHandler(Func<ParameterChangedEventArgs<T>, Task> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
+    public RegisterParameterBuilder<T> WithChangeHandler(Func<ParameterChangedEventArgs<T>, Task> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
         _parameterChangedHandler = new ParameterChangedLambdaArgsTaskHandler<T>(parameterChangedHandler);
         _handlerName = handlerName;
@@ -105,7 +105,7 @@ internal class RegisterParameterBuilder<T>
     /// <param name="parameterChangedHandler">The parameter changed handler.</param>
     /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
     /// <returns>The current instance of the builder.</returns>
-    public RegisterParameterBuilder<T> WithParameterChangedHandler(Func<Task> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
+    public RegisterParameterBuilder<T> WithChangeHandler(Func<Task> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
         _parameterChangedHandler = new ParameterChangedLambdaTaskHandler<T>(parameterChangedHandler);
         _handlerName = handlerName;
@@ -119,7 +119,7 @@ internal class RegisterParameterBuilder<T>
     /// <param name="parameterChangedHandler">The parameter changed handler.</param>
     /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
     /// <returns>The current instance of the builder.</returns>
-    public RegisterParameterBuilder<T> WithParameterChangedHandler(Action parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
+    public RegisterParameterBuilder<T> WithChangeHandler(Action parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
         _parameterChangedHandler = new ParameterChangedLambdaHandler<T>(parameterChangedHandler);
         _handlerName = handlerName;
@@ -133,7 +133,7 @@ internal class RegisterParameterBuilder<T>
     /// <param name="parameterChangedHandler">The parameter changed handler.</param>
     /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
     /// <returns>The current instance of the builder.</returns>
-    public RegisterParameterBuilder<T> WithParameterChangedHandler(Action<ParameterChangedEventArgs<T>> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
+    public RegisterParameterBuilder<T> WithChangeHandler(Action<ParameterChangedEventArgs<T>> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
         _parameterChangedHandler = new ParameterChangedLambdaArgsHandler<T>(parameterChangedHandler);
         _handlerName = handlerName;
@@ -145,6 +145,7 @@ internal class RegisterParameterBuilder<T>
     /// Sets the comparer for the parameter.
     /// </summary>
     /// <param name="comparer">The comparer for the parameter.</param>
+    /// <remarks>This method is used when you need to register a static <see cref="IEqualityComparer{T}"/> that doesn't change during <see cref="ParameterState{T}"/> lifespan.</remarks>
     /// <returns>The current instance of the builder.</returns>
     public RegisterParameterBuilder<T> WithComparer(IEqualityComparer<T>? comparer)
     {
@@ -183,7 +184,7 @@ internal class RegisterParameterBuilder<T>
             _parameterChangedHandler,
             _comparerFunc);
 
-        _smartParameterSetRegister.Add(parameterState);
+        _parameterSetRegister.Add(parameterState);
 
         return parameterState;
     }

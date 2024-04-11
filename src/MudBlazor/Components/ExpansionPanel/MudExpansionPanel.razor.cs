@@ -110,10 +110,13 @@ namespace MudBlazor
 
         public MudExpansionPanel()
         {
-            _isExpandedState = RegisterParameter(nameof(IsExpanded), () => IsExpanded, () => IsExpandedChanged, IsExpandedParameterChangedAsync);
+            _isExpandedState = RegisterParameterBuilder<bool>(nameof(IsExpanded))
+                .WithParameter(() => IsExpanded)
+                .WithEventCallback(() => IsExpandedChanged)
+                .WithChangeHandler(OnIsExpandedParameterChangedAsync);
         }
 
-        private Task IsExpandedParameterChangedAsync(ParameterChangedEventArgs<bool> args)
+        private Task OnIsExpandedParameterChangedAsync(ParameterChangedEventArgs<bool> args)
         {
             if (Parent is null)
             {

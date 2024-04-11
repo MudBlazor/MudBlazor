@@ -14,10 +14,14 @@ public partial class ParameterStateComparerStaticTestComp : MudComponentBase
     public ParameterStateComparerStaticTestComp()
     {
         var comparer = new DoubleEpsilonEqualityComparer(0.00001f);
-        RegisterParameter(nameof(DoubleParam), () => DoubleParam, ParameterChangedHandler, comparer);
+        RegisterParameterBuilder<double>(nameof(DoubleParam))
+            .WithParameter(() => DoubleParam)
+            .WithChangeHandler(OnParameterChanged)
+            .WithComparer(comparer)
+            .Attach();
     }
 
-    private void ParameterChangedHandler(ParameterChangedEventArgs<double> args)
+    private void OnParameterChanged(ParameterChangedEventArgs<double> args)
     {
         _parameterChanges.Add(args);
     }

@@ -33,9 +33,9 @@ public class RegisterParameterBuilderTests
         // Act
         var result = builder
             .WithParameterName(parameterName)
-            .WithGetParameterValueFunc(() => parameterValue)
-            .WithEventCallbackFunc(() => callBack)
-            .WithParameterChangedHandler(ParameterChangedHandler)
+            .WithParameter(() => parameterValue)
+            .WithEventCallback(() => callBack)
+            .WithChangeHandler(ParameterChangedHandler)
             .WithComparer(() => comparer);
 
         var parameterState = result.Attach();

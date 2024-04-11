@@ -110,7 +110,10 @@ namespace MudBlazor
 
         public MudOverlay()
         {
-            _visibleState = RegisterParameter(nameof(Visible), () => Visible, () => VisibleChanged, VisibleParameterChangedHandlerAsync);
+            _visibleState = RegisterParameterBuilder<bool>(nameof(Visible))
+                .WithParameter(() => Visible)
+                .WithEventCallback(() => VisibleChanged)
+                .WithChangeHandler(OnVisibleParameterChangedAsync);
         }
 
         protected internal async Task OnClickHandlerAsync(MouseEventArgs ev)
@@ -141,7 +144,7 @@ namespace MudBlazor
             }
         }
 
-        private Task VisibleParameterChangedHandlerAsync()
+        private Task OnVisibleParameterChangedAsync()
         {
             return VisibleChanged.InvokeAsync(_visibleState.Value);
         }

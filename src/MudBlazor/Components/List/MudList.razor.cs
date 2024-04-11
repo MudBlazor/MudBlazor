@@ -21,11 +21,10 @@ namespace MudBlazor
 
         public MudList()
         {
-            _selectedValueState = RegisterParameter(
-                nameof(SelectedValue),
-                () => SelectedValue,
-                () => SelectedValueChanged,
-                OnSelectedValueParameterChangedAsync);
+            _selectedValueState = RegisterParameterBuilder<T?>(nameof(SelectedValue))
+                .WithParameter(() => SelectedValue)
+                .WithEventCallback(() => SelectedValueChanged)
+                .WithChangeHandler(OnSelectedValueParameterChangedAsync);
         }
 
         protected string Classname =>

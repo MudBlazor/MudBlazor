@@ -54,7 +54,9 @@ namespace MudBlazor
 
         public MudHidden()
         {
-            _isHiddenState = RegisterParameter(nameof(IsHidden), () => IsHidden, () => IsHiddenChanged);
+            _isHiddenState = RegisterParameterBuilder<bool>(nameof(IsHidden))
+                .WithParameter(() => IsHidden)
+                .WithEventCallback(() => IsHiddenChanged);
         }
 
         protected override async Task OnParametersSetAsync()

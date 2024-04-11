@@ -118,8 +118,14 @@ namespace MudBlazor
 
         public MudAvatarGroup()
         {
-            RegisterParameter(nameof(Spacing), () => Spacing, () => _childrenNeedUpdates = true);
-            RegisterParameter(nameof(Max), () => Max, () => _childrenNeedUpdates = true);
+            RegisterParameterBuilder<int>(nameof(Spacing))
+                .WithParameter(() => Spacing)
+                .WithChangeHandler(() => _childrenNeedUpdates = true)
+                .Attach();
+            RegisterParameterBuilder<int>(nameof(Max))
+                .WithParameter(() => Max)
+                .WithChangeHandler(() => _childrenNeedUpdates = true)
+                .Attach();
         }
 
         internal void AddAvatar(MudAvatar avatar)

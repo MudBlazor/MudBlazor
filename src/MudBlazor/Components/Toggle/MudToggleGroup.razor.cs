@@ -19,18 +19,44 @@ namespace MudBlazor
     {
         public MudToggleGroup()
         {
-            _value = RegisterParameter(nameof(Value), () => Value, () => ValueChanged, OnValueChanged);
-            _values = RegisterParameter(nameof(Values), () => Values, () => ValuesChanged, OnValuesChanged);
-            _color = RegisterParameter(nameof(Color), () => Color, OnParameterChanged);
-            _selectedClass = RegisterParameter(nameof(SelectedClass), () => SelectedClass, OnParameterChanged);
-            _outline = RegisterParameter(nameof(Outline), () => Outline, OnParameterChanged);
-            _delimiters = RegisterParameter(nameof(Delimiters), () => Delimiters, OnParameterChanged);
-            _rtl = RegisterParameter(nameof(RightToLeft), () => RightToLeft, OnParameterChanged);
-            _dense = RegisterParameter(nameof(Dense), () => Dense, OnParameterChanged);
-            _rounded = RegisterParameter(nameof(Rounded), () => Rounded, OnParameterChanged);
-            _checkMark = RegisterParameter(nameof(CheckMark), () => CheckMark, OnParameterChanged);
-            _fixedContent = RegisterParameter(nameof(FixedContent), () => FixedContent, OnParameterChanged);
-            _disabled = RegisterParameter(nameof(Disabled), () => Disabled, OnParameterChanged);
+            _value = RegisterParameterBuilder<T?>(nameof(Value))
+                .WithParameter(() => Value)
+                .WithEventCallback(() => ValueChanged)
+                .WithChangeHandler(OnValueChanged);
+            _values = RegisterParameterBuilder<IEnumerable<T?>?>(nameof(Values))
+                .WithParameter(() => Values)
+                .WithEventCallback(() => ValuesChanged)
+                .WithChangeHandler(OnValuesChanged);
+            _color = RegisterParameterBuilder<Color>(nameof(Color))
+                .WithParameter(() => Color)
+                .WithChangeHandler(OnParameterChanged);
+            _selectedClass = RegisterParameterBuilder<string?>(nameof(SelectedClass))
+                .WithParameter(() => SelectedClass)
+                .WithChangeHandler(OnParameterChanged);
+            _outline = RegisterParameterBuilder<bool>(nameof(Outline))
+                .WithParameter(() => Outline)
+                .WithChangeHandler(OnParameterChanged);
+            _delimiters = RegisterParameterBuilder<bool>(nameof(Delimiters))
+                .WithParameter(() => Delimiters)
+                .WithChangeHandler(OnParameterChanged);
+            _rtl = RegisterParameterBuilder<bool>(nameof(RightToLeft))
+                .WithParameter(() => RightToLeft)
+                .WithChangeHandler(OnParameterChanged);
+            _dense = RegisterParameterBuilder<bool>(nameof(Dense))
+                .WithParameter(() => Dense)
+                .WithChangeHandler(OnParameterChanged);
+            _rounded = RegisterParameterBuilder<bool>(nameof(Rounded))
+                .WithParameter(() => Rounded).
+                WithChangeHandler(OnParameterChanged);
+            _checkMark = RegisterParameterBuilder<bool>(nameof(CheckMark))
+                .WithParameter(() => CheckMark)
+                .WithChangeHandler(OnParameterChanged);
+            _fixedContent = RegisterParameterBuilder<bool>(nameof(FixedContent))
+                .WithParameter(() => FixedContent)
+                .WithChangeHandler(OnParameterChanged);
+            _disabled = RegisterParameterBuilder<bool>(nameof(Disabled))
+                .WithParameter(() => Disabled)
+                .WithChangeHandler(OnParameterChanged);
         }
 
         private readonly ParameterState<T?> _value;
