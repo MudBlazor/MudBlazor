@@ -202,14 +202,14 @@ namespace MudBlazor
         /// <summary>
         /// Closes the menu.
         /// </summary>
-        public async Task CloseMenuAsync()
+        public Task CloseMenuAsync()
         {
             _isOpen = false;
             _isMouseOver = false;
             _popoverStyle = null;
             StateHasChanged();
 
-            await IsOpenChanged.InvokeAsync(_isOpen);
+            return IsOpenChanged.InvokeAsync(_isOpen);
         }
 
         /// <summary>
