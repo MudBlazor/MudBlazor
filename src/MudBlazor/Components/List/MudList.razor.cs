@@ -12,7 +12,7 @@ namespace MudBlazor
     public partial class MudList<T> : MudComponentBase, IDisposable
     {
         private T? _selectedValue;
-        private IParameterState<T?> _selectedValueState;
+        private ParameterState<T?> _selectedValueState;
         private HashSet<MudListItem<T>> _items = new();
         private HashSet<MudList<T>> _childLists = new();
 
@@ -21,11 +21,10 @@ namespace MudBlazor
 
         public MudList()
         {
-            _selectedValueState = RegisterParameter(
-                nameof(SelectedValue),
-                () => SelectedValue,
-                () => SelectedValueChanged,
-                OnSelectedValueParameterChangedAsync);
+            _selectedValueState = RegisterParameterBuilder<T?>(nameof(SelectedValue))
+                .WithParameter(() => SelectedValue)
+                .WithEventCallback(() => SelectedValueChanged)
+                .WithChangeHandler(OnSelectedValueParameterChangedAsync);
         }
 
         protected string Classname =>

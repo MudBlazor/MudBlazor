@@ -19,33 +19,59 @@ namespace MudBlazor
     {
         public MudToggleGroup()
         {
-            _value = RegisterParameter(nameof(Value), () => Value, () => ValueChanged, OnValueChanged);
-            _values = RegisterParameter(nameof(Values), () => Values, () => ValuesChanged, OnValuesChanged);
-            _color = RegisterParameter(nameof(Color), () => Color, OnParameterChanged);
-            _selectedClass = RegisterParameter(nameof(SelectedClass), () => SelectedClass, OnParameterChanged);
-            _outline = RegisterParameter(nameof(Outlined), () => Outlined, OnParameterChanged);
-            _delimiters = RegisterParameter(nameof(Delimiters), () => Delimiters, OnParameterChanged);
-            _rtl = RegisterParameter(nameof(RightToLeft), () => RightToLeft, OnParameterChanged);
-            _dense = RegisterParameter(nameof(Dense), () => Dense, OnParameterChanged);
-            _rounded = RegisterParameter(nameof(Rounded), () => Rounded, OnParameterChanged);
-            _checkMark = RegisterParameter(nameof(CheckMark), () => CheckMark, OnParameterChanged);
-            _fixedContent = RegisterParameter(nameof(FixedContent), () => FixedContent, OnParameterChanged);
-            _disabled = RegisterParameter(nameof(Disabled), () => Disabled, OnParameterChanged);
+            _value = RegisterParameterBuilder<T?>(nameof(Value))
+                .WithParameter(() => Value)
+                .WithEventCallback(() => ValueChanged)
+                .WithChangeHandler(OnValueChanged);
+            _values = RegisterParameterBuilder<IEnumerable<T?>?>(nameof(Values))
+                .WithParameter(() => Values)
+                .WithEventCallback(() => ValuesChanged)
+                .WithChangeHandler(OnValuesChanged);
+            _color = RegisterParameterBuilder<Color>(nameof(Color))
+                .WithParameter(() => Color)
+                .WithChangeHandler(OnParameterChanged);
+            _selectedClass = RegisterParameterBuilder<string?>(nameof(SelectedClass))
+                .WithParameter(() => SelectedClass)
+                .WithChangeHandler(OnParameterChanged);
+            _outline = RegisterParameterBuilder<bool>(nameof(Outlined))
+                .WithParameter(() => Outlined)
+                .WithChangeHandler(OnParameterChanged);
+            _delimiters = RegisterParameterBuilder<bool>(nameof(Delimiters))
+                .WithParameter(() => Delimiters)
+                .WithChangeHandler(OnParameterChanged);
+            _rtl = RegisterParameterBuilder<bool>(nameof(RightToLeft))
+                .WithParameter(() => RightToLeft)
+                .WithChangeHandler(OnParameterChanged);
+            _dense = RegisterParameterBuilder<bool>(nameof(Dense))
+                .WithParameter(() => Dense)
+                .WithChangeHandler(OnParameterChanged);
+            _rounded = RegisterParameterBuilder<bool>(nameof(Rounded))
+                .WithParameter(() => Rounded).
+                WithChangeHandler(OnParameterChanged);
+            _checkMark = RegisterParameterBuilder<bool>(nameof(CheckMark))
+                .WithParameter(() => CheckMark)
+                .WithChangeHandler(OnParameterChanged);
+            _fixedContent = RegisterParameterBuilder<bool>(nameof(FixedContent))
+                .WithParameter(() => FixedContent)
+                .WithChangeHandler(OnParameterChanged);
+            _disabled = RegisterParameterBuilder<bool>(nameof(Disabled))
+                .WithParameter(() => Disabled)
+                .WithChangeHandler(OnParameterChanged);
         }
 
-        private IParameterState<T?> _value;
-        private IParameterState<IEnumerable<T?>?> _values;
-        private IParameterState<Color> _color;
-        private IParameterState<string?> _selectedClass;
-        private IParameterState<bool> _outline;
-        private IParameterState<bool> _delimiters;
-        private IParameterState<bool> _rtl;
-        private IParameterState<bool> _dense;
-        private IParameterState<bool> _rounded;
-        private IParameterState<bool> _checkMark;
-        private IParameterState<bool> _fixedContent;
-        private IParameterState<bool> _disabled;
-        private List<MudToggleItem<T>> _items = new();
+        private readonly ParameterState<T?> _value;
+        private readonly ParameterState<IEnumerable<T?>?> _values;
+        private readonly ParameterState<Color> _color;
+        private readonly ParameterState<string?> _selectedClass;
+        private readonly ParameterState<bool> _outline;
+        private readonly ParameterState<bool> _delimiters;
+        private readonly ParameterState<bool> _rtl;
+        private readonly ParameterState<bool> _dense;
+        private readonly ParameterState<bool> _rounded;
+        private readonly ParameterState<bool> _checkMark;
+        private readonly ParameterState<bool> _fixedContent;
+        private readonly ParameterState<bool> _disabled;
+        private readonly List<MudToggleItem<T>> _items = new();
 
         protected string Classname => new CssBuilder("mud-toggle-group")
             .AddClass("mud-toggle-group-horizontal", !Vertical)

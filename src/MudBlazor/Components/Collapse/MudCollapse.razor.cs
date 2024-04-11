@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection.Metadata;
 using System.Threading.Tasks;
@@ -19,7 +18,7 @@ namespace MudBlazor
         }
 
         internal double _height;
-        private IParameterState<bool> _expandedState;
+        private readonly ParameterState<bool> _expandedState;
         private bool _isRendered;
         private bool _updateHeight;
         private ElementReference _wrapper;
@@ -68,10 +67,13 @@ namespace MudBlazor
 
         public MudCollapse()
         {
-            _expandedState = RegisterParameter(nameof(Expanded), () => Expanded, () => ExpandedChanged, ExpandedParameterChangedHandlerAsync);
+            _expandedState = RegisterParameterBuilder<bool>(nameof(Expanded))
+                .WithParameter(() => Expanded)
+                .WithEventCallback(() => ExpandedChanged)
+                .WithChangeHandler(OnExpandedParameterChangedAsync);
         }
 
-        private async Task ExpandedParameterChangedHandlerAsync()
+        private async Task OnExpandedParameterChangedAsync()
         {
             if (_isRendered)
             {
