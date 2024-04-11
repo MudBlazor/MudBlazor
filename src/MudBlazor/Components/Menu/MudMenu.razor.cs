@@ -289,7 +289,7 @@ namespace MudBlazor
 
             if (ActivationEvent == MouseEvent.MouseOver)
             {
-               await OpenMenuAsync(args);
+                await OpenMenuAsync(args);
             }
         }
 
