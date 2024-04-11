@@ -15,8 +15,9 @@ namespace MudBlazor.State.Builder;
 /// Builder class for constructing instances of <see cref="ParameterState{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type of the component's property value.</typeparam>
-internal class RegisterParameterBuilder<T>
+internal class RegisterParameterBuilder<T> : ISmartAttachable
 {
+    private bool _isAttached;
     private string? _handlerName;
     private string? _parameterName;
     private string? _comparerParameterName;
@@ -185,9 +186,14 @@ internal class RegisterParameterBuilder<T>
             _comparerFunc);
 
         _parameterSetRegister.Add(parameterState);
+        _isAttached = true;
 
         return parameterState;
     }
+
+    bool ISmartAttachable.IsAttached => _isAttached;
+
+    void ISmartAttachable.Attach() => _ = Attach();
 
     /// <summary>
     /// Implicitly converts a <see cref="RegisterParameterBuilder{T}"/> object to a <see cref="ParameterState{T}"/> object by building it.

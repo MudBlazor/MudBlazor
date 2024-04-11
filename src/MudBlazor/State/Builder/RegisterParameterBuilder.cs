@@ -18,6 +18,9 @@ internal class RegisterParameterBuilder
     /// <returns>A new instance of <see cref="RegisterParameterBuilder{T}"/>.</returns>
     public static RegisterParameterBuilder<T> Create<T>(IParameterSetRegister smartParameterSetRegister)
     {
-        return new RegisterParameterBuilder<T>(smartParameterSetRegister);
+        var builder = new RegisterParameterBuilder<T>(smartParameterSetRegister);
+        smartParameterSetRegister.Add(builder);
+
+        return builder;
     }
 }

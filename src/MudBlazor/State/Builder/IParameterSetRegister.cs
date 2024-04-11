@@ -16,4 +16,6 @@ internal interface IParameterSetRegister
     /// <typeparam name="T">The type of the parameter state.</typeparam>
     /// <param name="parameterState">The parameter state to add.</param>
     void Add<T>(ParameterStateInternal<T> parameterState);
+
+    void Add(ISmartAttachable smartAttachable);
 }

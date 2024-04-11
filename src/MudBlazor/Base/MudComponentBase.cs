@@ -77,6 +77,8 @@ namespace MudBlazor
         /// <inheritdoc />
         public override Task SetParametersAsync(ParameterView parameters)
         {
+            // First thing to call in blazor lifecycle
+            AttachAllUnAttached();
             return Parameters.SetParametersAsync(base.SetParametersAsync, parameters);
         }
 

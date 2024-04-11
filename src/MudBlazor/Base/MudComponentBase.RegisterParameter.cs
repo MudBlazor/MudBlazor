@@ -1,4 +1,5 @@
-﻿using MudBlazor.State;
+﻿using System.Collections.Concurrent;
+using MudBlazor.State;
 using MudBlazor.State.Builder;
 
 namespace MudBlazor;
@@ -6,8 +7,34 @@ namespace MudBlazor;
 #nullable enable
 public abstract partial class MudComponentBase : IParameterSetRegister
 {
+    private bool _attachedAll;
+    private readonly ConcurrentQueue<ISmartAttachable> _smartAttachables = new();
+
     /// <inheritdoc />
     void IParameterSetRegister.Add<T>(ParameterStateInternal<T> parameterState) => Parameters.Add(parameterState);
+
+    void IParameterSetRegister.Add(ISmartAttachable smartAttachable)
+    {
+        _smartAttachables.Enqueue(smartAttachable);
+    }
+
+    private void AttachAllUnAttached()
+    {
+        if (_attachedAll)
+        {
+            return;
+        }
+
+        while (_smartAttachables.TryDequeue(out var smartAttachable))
+        {
+            if (!smartAttachable.IsAttached)
+            {
+                smartAttachable.Attach();
+            }
+        }
+
+        _attachedAll = true;
+    }
 
     /// <summary>
     /// Register a component Parameter, its EventCallback and a change handler via a builder so that the base can manage it as a ParameterState object.
