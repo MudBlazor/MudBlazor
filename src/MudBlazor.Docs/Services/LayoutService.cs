@@ -76,7 +76,7 @@ public class LayoutService
 
     private void OnMajorUpdateOccurred() => MajorUpdateOccurred?.Invoke(this, EventArgs.Empty);
 
-    public async Task CycleDarkLightMode()
+    public async Task CycleDarkLightModeAsync()
     {
         switch (CurrentDarkLightMode)
         {
