@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using MudBlazor.Services.DateOperations;
 
 namespace MudBlazor.Services
 {
@@ -280,6 +281,14 @@ namespace MudBlazor.Services
             return services;
         }
 
+        public static IServiceCollection AddMudBlazorDateOperations(this IServiceCollection services)
+        {
+            services.AddScoped(typeof(DateWrapper<>));
+            services.AddScoped(typeof(IDateConverter<>));
+
+            return services;
+        }
+
         /// <summary>
         /// Adds common services required by MudBlazor components
         /// </summary>
@@ -301,7 +310,8 @@ namespace MudBlazor.Services
                 .AddMudBlazorScrollSpy()
                 .AddMudPopoverService()
                 .AddMudEventManager()
-                .AddMudLocalization();
+                .AddMudLocalization()
+                .AddMudBlazorDateOperations();
         }
 
         /// <summary>
