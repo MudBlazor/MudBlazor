@@ -12,11 +12,14 @@ namespace MudBlazor
     {
         private Typo _textTypo;
         private bool _selected;
-        private IParameterState<bool> _expandedState;
+
+        private ParameterState<bool> _expandedState;
 
         public MudListItem()
         {
-            _expandedState = RegisterParameter(nameof(Expanded), () => Expanded, () => ExpandedChanged);
+            _expandedState = RegisterParameterBuilder<bool>(nameof(Expanded))
+                .WithParameter(() => Expanded)
+                .WithEventCallback(() => ExpandedChanged);
         }
 
         protected string Classname =>
