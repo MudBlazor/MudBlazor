@@ -40,7 +40,7 @@ internal class RegisterParameterBuilder<T>
     /// </summary>
     /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
     /// <returns>The current instance of the builder.</returns>
-    public RegisterParameterBuilder<T> WithParameterName(string parameterName)
+    public RegisterParameterBuilder<T> WithName(string parameterName)
     {
         _parameterName = parameterName;
 

@@ -27,7 +27,7 @@ public abstract partial class MudComponentBase : IParameterSetRegister
     {
         var parameterState = State.Builder.RegisterParameterBuilder
             .Create<T>(this)
-            .WithParameterName(parameterName);
+            .WithName(parameterName);
 
         return parameterState;
     }

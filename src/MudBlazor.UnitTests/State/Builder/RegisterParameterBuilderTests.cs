@@ -32,7 +32,7 @@ public class RegisterParameterBuilderTests
 
         // Act
         var result = builder
-            .WithParameterName(parameterName)
+            .WithName(parameterName)
             .WithParameter(() => parameterValue)
             .WithEventCallback(() => callBack)
             .WithChangeHandler(ParameterChangedHandler)
