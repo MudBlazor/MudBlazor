@@ -16,7 +16,9 @@
                         @foreach (var author in _message.Authors)
                         {
                             <div class="d-flex justify-start align-center mx-1">
-                                <MudAvatar Image="@author.AvatarUlr"/>
+                                <MudAvatar>
+                                    <MudImage Src="@author.AvatarUrl"/>
+                                </MudAvatar>
                                 <MudText Typo="Typo.subtitle2" Class="mx-2">@author.DisplayName</MudText>
                             </div>
                         }
