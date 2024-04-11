@@ -83,7 +83,10 @@ namespace MudBlazor
 
             if (AutoClose)
             {
-                MudMenu?.CloseMenu();
+                if (MudMenu is not null)
+                {
+                    await MudMenu.CloseMenuAsync();
+                }
             }
 
             if (Href != null)

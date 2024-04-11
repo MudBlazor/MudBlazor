@@ -202,13 +202,14 @@ namespace MudBlazor
         /// <summary>
         /// Closes the menu.
         /// </summary>
-        public void CloseMenu()
+        public async Task CloseMenuAsync()
         {
             _isOpen = false;
             _isMouseOver = false;
             _popoverStyle = null;
             StateHasChanged();
-            IsOpenChanged.InvokeAsync(_isOpen);
+
+            await IsOpenChanged.InvokeAsync(_isOpen);
         }
 
         /// <summary>
@@ -217,11 +218,11 @@ namespace MudBlazor
         /// <param name="args">The arguments of the calling mouse event. If
         /// <see cref="PositionAtCursor"/> is true, the menu will be positioned using the
         /// coordinates in this parameter.</param>
-        public void OpenMenu(EventArgs args)
+        public Task OpenMenuAsync(EventArgs args)
         {
             if (Disabled)
             {
-                return;
+                return Task.CompletedTask;
             }
 
             if (PositionAtCursor)
@@ -234,7 +235,8 @@ namespace MudBlazor
 
             _isOpen = true;
             StateHasChanged();
-            IsOpenChanged.InvokeAsync(_isOpen);
+
+            return IsOpenChanged.InvokeAsync(_isOpen);
         }
 
         /// <summary>
@@ -250,7 +252,7 @@ namespace MudBlazor
         /// Toggle the visibility of the menu.
         /// </summary>
         /// <param name="args">Either <see cref="MouseEventArgs"/> or <see cref="TouchEventArgs"/></param>
-        public void ToggleMenu(EventArgs args)
+        public async Task ToggleMenuAsync(EventArgs args)
         {
             if (Disabled)
             {
@@ -273,21 +275,21 @@ namespace MudBlazor
 
             if (_isOpen)
             {
-                CloseMenu();
+                await CloseMenuAsync();
             }
             else
             {
-                OpenMenu(args);
+                await OpenMenuAsync(args);
             }
         }
 
-        private void MouseEnter(MouseEventArgs args)
+        private async Task MouseEnterAsync(MouseEventArgs args)
         {
             _isMouseOver = true;
 
             if (ActivationEvent == MouseEvent.MouseOver)
             {
-                OpenMenu(args);
+               await OpenMenuAsync(args);
             }
         }
 
@@ -295,11 +297,11 @@ namespace MudBlazor
         {
             _isMouseOver = false;
 
-            await Task.Delay(100).ConfigureAwait(false);
+            await Task.Delay(100);
 
-            if (ActivationEvent == MouseEvent.MouseOver && _isMouseOver == false)
+            if (ActivationEvent == MouseEvent.MouseOver && !_isMouseOver)
             {
-                CloseMenu();
+                await CloseMenuAsync();
             }
         }
 
@@ -308,7 +310,7 @@ namespace MudBlazor
         /// </summary>
         void IActivatable.Activate(object activator, MouseEventArgs args)
         {
-            ToggleMenu(args);
+            _ = ToggleMenuAsync(args);
         }
     }
 }
