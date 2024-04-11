@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -16,9 +15,19 @@ namespace MudBlazor
     {
         private string? _text;
         private bool _disabled;
-        private bool _isChecked, _isSelected, _isServerLoaded;
+        private bool _isChecked;
+        private bool _isSelected;
+        private bool _isServerLoaded;
+        private readonly ParameterState<bool> _expandedState;
         private Converter<T> _converter = new DefaultConverter<T>();
         private readonly List<MudTreeViewItem<T>> _childItems = new();
+
+        public MudTreeViewItem()
+        {
+            _expandedState = RegisterParameterBuilder<bool>(nameof(Expanded))
+                .WithParameter(() => Expanded)
+                .WithEventCallback(() => ExpandedChanged);
+        }
 
         protected string Classname =>
             new CssBuilder("mud-treeview-item")
@@ -295,19 +304,6 @@ namespace MudBlazor
             set { _ = SelectItem(value, this); }
         }
 
-        protected internal bool ArrowExpanded
-        {
-            get => Expanded;
-            set
-            {
-                if (value == Expanded)
-                    return;
-
-                Expanded = value;
-                ExpandedChanged.InvokeAsync(value);
-            }
-        }
-
         protected override void OnInitialized()
         {
             if (Parent != null)
@@ -354,9 +350,8 @@ namespace MudBlazor
         {
             if (HasChild && (MudTreeRoot?.ExpandOnClick ?? false))
             {
-                Expanded = !Expanded;
+                await _expandedState.SetValueAsync(!_expandedState.Value);
                 await TryInvokeServerLoadFunc();
-                await ExpandedChanged.InvokeAsync(Expanded);
             }
 
             if (Disabled)
@@ -376,9 +371,8 @@ namespace MudBlazor
         {
             if (HasChild && (MudTreeRoot?.ExpandOnDoubleClick ?? false))
             {
-                Expanded = !Expanded;
+                await _expandedState.SetValueAsync(!_expandedState.Value);
                 await TryInvokeServerLoadFunc();
-                await ExpandedChanged.InvokeAsync(Expanded);
             }
 
             if (Disabled)
@@ -396,11 +390,10 @@ namespace MudBlazor
 
         protected internal async Task OnItemExpanded(bool expanded)
         {
-            if (Expanded != expanded)
+            if (_expandedState != expanded)
             {
-                Expanded = expanded;
+                await _expandedState.SetValueAsync(expanded);
                 await TryInvokeServerLoadFunc();
-                await ExpandedChanged.InvokeAsync(expanded);
             }
         }
 
@@ -477,7 +470,7 @@ namespace MudBlazor
 
         internal async Task TryInvokeServerLoadFunc()
         {
-            if (Expanded && (Items == null || Items.Count == 0) && CanExpand && MudTreeRoot?.ServerData != null)
+            if (_expandedState && (Items == null || Items.Count == 0) && CanExpand && MudTreeRoot?.ServerData != null)
             {
                 Loading = true;
                 StateHasChanged();

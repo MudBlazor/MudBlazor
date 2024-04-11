@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -12,7 +11,6 @@ namespace MudBlazor
     public partial class MudTreeView<T> : MudComponentBase
     {
         private T? _previousSelectedValue;
-        //private IEqualityComparer<T?>? _previousValueComparer;
         private object _selectedUpdateLock = new();
         private HashSet<MudTreeViewItem<T>>? _selectedValues;
         private List<MudTreeViewItem<T>> _childItems = new();
