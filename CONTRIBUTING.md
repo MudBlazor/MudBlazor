@@ -206,8 +206,8 @@ Yes, if you pass them as a method group like in the example below, shared parame
 
 ```c#
     // Param1 and Param2 share the same change handler
-    _param1State = RegisterParameterBuilder<int>(nameof(Param1)).WithParameter() => Param1).WithChangeHandler(OnParametersChanged);
-    _param2State = RegisterParameterBuilder<int>(nameof(Param2)).WithParameter() => Param2).WithChangeHandler(OnParametersChanged);
+    _param1State = RegisterParameterBuilder<int>(nameof(Param1)).WithParameter(() => Param1).WithChangeHandler(OnParametersChanged);
+    _param2State = RegisterParameterBuilder<int>(nameof(Param2)).WithParameter(() => Param2).WithChangeHandler(OnParametersChanged);
 ```
 
 **NB**: if you pass lambda functions as change handlers they will be called once each for every changed parameter even if they contain the same code!
