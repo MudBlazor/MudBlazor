@@ -22,6 +22,7 @@ internal class RegisterParameterBuilder<T> : ISmartAttachable
     private string? _parameterName;
     private string? _comparerParameterName;
     private Func<T>? _getParameterValueFunc;
+    private ParameterStateInternal<T>? _parameterState;
     private Func<EventCallback<T>> _eventCallbackFunc = () => default;
     private IParameterChangedHandler<T>? _parameterChangedHandler;
     private Func<IEqualityComparer<T>?>? _comparerFunc;
@@ -171,11 +172,16 @@ internal class RegisterParameterBuilder<T> : ISmartAttachable
     }
 
     /// <summary>
-    /// Builds and registers the parameter state to <see cref="ParameterSet"/>.
+    /// Builds the parameter state.
     /// </summary>
     /// <returns>The created parameter state.</returns>
     public ParameterStateInternal<T> Attach()
     {
+        if (_parameterState is not null)
+        {
+            return _parameterState;
+        }
+
         ArgumentNullException.ThrowIfNull(_parameterName);
 
         var parameterState = ParameterStateInternal<T>.Attach(
@@ -185,8 +191,7 @@ internal class RegisterParameterBuilder<T> : ISmartAttachable
             _parameterChangedHandler,
             _comparerFunc);
 
-        _parameterSetRegister.Add(parameterState);
-        _isAttached = true;
+        _parameterState = parameterState;
 
         return parameterState;
     }

@@ -40,6 +40,15 @@ public abstract partial class MudComponentBase : IParameterSetRegister
     }
 
     /// <summary>
+    /// Creates a scope for registering parameters.
+    /// </summary>
+    /// <returns>A <see cref="ParameterRegistrationBuilderScope"/> instance for registering parameters.</returns>
+    internal ParameterRegistrationBuilderScope RegisterParameters()
+    {
+        return new ParameterRegistrationBuilderScope();
+    }
+
+    /// <summary>
     /// Register a component Parameter, its EventCallback and a change handler via a builder so that the base can manage it as a ParameterState object.
     /// It is the new rule in MudBlazor, that parameters must be auto properties.
     /// By registering the parameter with a change handler you can still execute code when the parameter value changes.
