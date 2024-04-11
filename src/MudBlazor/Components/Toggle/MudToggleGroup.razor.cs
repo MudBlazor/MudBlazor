@@ -23,7 +23,7 @@ namespace MudBlazor
             _values = RegisterParameter(nameof(Values), () => Values, () => ValuesChanged, OnValuesChanged);
             _color = RegisterParameter(nameof(Color), () => Color, OnParameterChanged);
             _selectedClass = RegisterParameter(nameof(SelectedClass), () => SelectedClass, OnParameterChanged);
-            _outline = RegisterParameter(nameof(Outline), () => Outline, OnParameterChanged);
+            _outline = RegisterParameter(nameof(Outlined), () => Outlined, OnParameterChanged);
             _delimiters = RegisterParameter(nameof(Delimiters), () => Delimiters, OnParameterChanged);
             _rtl = RegisterParameter(nameof(RightToLeft), () => RightToLeft, OnParameterChanged);
             _dense = RegisterParameter(nameof(Dense), () => Dense, OnParameterChanged);
@@ -47,18 +47,18 @@ namespace MudBlazor
         private IParameterState<bool> _disabled;
         private List<MudToggleItem<T>> _items = new();
 
-        protected string Classes => new CssBuilder("mud-toggle-group")
+        protected string Classname => new CssBuilder("mud-toggle-group")
             .AddClass("mud-toggle-group-horizontal", !Vertical)
             .AddClass("mud-toggle-group-vertical", Vertical)
             .AddClass("rounded", !Rounded)
             .AddClass("rounded-xl", Rounded)
             .AddClass("mud-toggle-group-rtl", RightToLeft)
-            .AddClass($"border mud-border-{Color.ToDescriptionString()} border-solid", Outline)
+            .AddClass($"border mud-border-{Color.ToDescriptionString()} border-solid", Outlined)
             .AddClass("mud-disabled", Disabled)
             .AddClass(Class)
             .Build();
 
-        protected string Styles => new StyleBuilder()
+        protected string Stylename => new StyleBuilder()
             .AddStyle("grid-template-columns", $"repeat({_items.Count}, minmax(0, 1fr))", !Vertical)
             .AddStyle("grid-template-rows", $"repeat({_items.Count}, minmax(0, 1fr))", Vertical)
             .AddStyle(Style)
@@ -142,7 +142,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public bool Outline { get; set; } = true;
+        public bool Outlined { get; set; } = true;
 
         /// <summary>
         /// If true, show a line delimiter between items. Default is true.
@@ -166,7 +166,7 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// The selection behavior of the group. SingleSelection (the default) is a radio-button like exclusive collection. 
+        /// The selection behavior of the group. SingleSelection (the default) is a radio-button like exclusive collection.
         /// MultiSelection behaves like a group of check boxes. ToggleSelection is an exclusive single selection where
         /// you can also select nothing by toggling off the current choice.
         /// </summary>
@@ -183,7 +183,7 @@ namespace MudBlazor
 
         /// <summary>
         /// If true, the items show a check mark next to the text or render fragment. Customize the check mark by setting
-        /// SelectedIcon and UnselectedIcon 
+        /// SelectedIcon and UnselectedIcon.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
@@ -191,7 +191,7 @@ namespace MudBlazor
 
         /// <summary>
         /// If true, the check mark is counter balanced with padding on the right side which makes the content stay always
-        /// centered no matter if the check mark is shown or not. 
+        /// centered no matter if the check mark is shown or not.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
@@ -207,25 +207,32 @@ namespace MudBlazor
             {
                 return;
             }
+
             _items.Add(item);
         }
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
+
             var isValueBound = ValueChanged.HasDelegate;
             var isSelectedValuesBound = ValuesChanged.HasDelegate;
+
             switch (SelectionMode)
             {
                 default:
                 case SelectionMode.SingleSelection:
                 case SelectionMode.ToggleSelection:
                     if (!isValueBound && isSelectedValuesBound)
+                    {
                         Logger.LogWarning($"For SelectionMode {SelectionMode} you should bind {nameof(Value)} instead of {nameof(Values)}");
+                    }
                     break;
                 case SelectionMode.MultiSelection:
                     if (isValueBound && !isSelectedValuesBound)
+                    {
                         Logger.LogWarning($"For SelectionMode {SelectionMode} you should bind {nameof(Values)} instead of {nameof(Value)}");
+                    }
                     break;
             }
         }
@@ -233,23 +240,29 @@ namespace MudBlazor
         protected override void OnAfterRender(bool firstRender)
         {
             base.OnAfterRender(firstRender);
+
             if (firstRender)
             {
                 var multiSelection = SelectionMode == SelectionMode.MultiSelection;
                 var value = _value.Value;
                 var values = _values.Value;
+
                 // Handle single and toggle selection mode
                 if (value is not null && !multiSelection)
                 {
-                    var selectedItem = _items.FirstOrDefault(x => value.Equals(x.Value));
+                    var selectedItem = _items.Find(x => value.Equals(x.Value));
                     selectedItem?.SetSelected(true);
                 }
+
                 // Handle multi-selection mode
                 if (values is not null && multiSelection)
                 {
                     foreach (var item in _items.Where(x => values.Contains(x.Value)).ToList())
+                    {
                         item.SetSelected(true);
+                    }
                 }
+
                 StateHasChanged();
             }
         }
@@ -257,13 +270,17 @@ namespace MudBlazor
         private void OnValueChanged()
         {
             if (SelectionMode == SelectionMode.MultiSelection)
+            {
                 return;
+            }
+
             // Handle single and toggle selection mode 
             DeselectAllItems();
+
             var value = _value.Value;
             if (value is not null)
             {
-                var selectedItem = _items.FirstOrDefault(x => value.Equals(x.Value));
+                var selectedItem = _items.Find(x => value.Equals(x.Value));
                 selectedItem?.SetSelected(true);
             }
         }
@@ -271,13 +288,19 @@ namespace MudBlazor
         private void OnValuesChanged()
         {
             if (SelectionMode != SelectionMode.MultiSelection)
+            {
                 return;
+            }
+
             // Handle multi-selection mode
             DeselectAllItems();
+
             if (Values is not null)
             {
                 foreach (var item in _items.Where(x => Values.Contains(x.Value)).ToList())
+                {
                     item.SetSelected(true);
+                }
             }
         }
 
@@ -287,6 +310,7 @@ namespace MudBlazor
             {
                 mudComponent.StateHasChanged();
             }
+
             StateHasChanged();
         }
 
@@ -297,10 +321,16 @@ namespace MudBlazor
             {
                 var selectedValues = new HashSet<T?>(_values.Value ?? Array.Empty<T?>());
                 item.SetSelected(!item.IsSelected);
+
                 if (item.IsSelected)
+                {
                     selectedValues.Add(itemValue);
+                }
                 else
+                {
                     selectedValues.Remove(itemValue);
+                }
+
                 await _values.SetValueAsync(selectedValues);
             }
             else if (SelectionMode == SelectionMode.ToggleSelection)
