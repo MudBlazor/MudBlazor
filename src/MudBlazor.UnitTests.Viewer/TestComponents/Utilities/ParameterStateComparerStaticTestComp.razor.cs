@@ -17,8 +17,7 @@ public partial class ParameterStateComparerStaticTestComp : MudComponentBase
         RegisterParameterBuilder<double>(nameof(DoubleParam))
             .WithParameter(() => DoubleParam)
             .WithChangeHandler(OnParameterChanged)
-            .WithComparer(comparer)
-            .Attach();
+            .WithComparer(comparer);
     }
 
     private void OnParameterChanged(ParameterChangedEventArgs<double> args)

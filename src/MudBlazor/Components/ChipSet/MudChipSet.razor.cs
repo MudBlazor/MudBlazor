@@ -92,7 +92,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
-    public Color SelectedColor { get; set; } = MudBlazor.Color.Inherit;
+    public Color SelectedColor { get; set; } = Color.Inherit;
 
     /// <summary>
     /// The default icon color for all chips.
@@ -100,7 +100,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
-    public Color IconColor { get; set; } = MudBlazor.Color.Inherit;
+    public Color IconColor { get; set; } = Color.Inherit;
 
     /// <summary>
     /// The default chip size.
@@ -358,5 +358,4 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     {
         _disposed = true;
     }
-
 }

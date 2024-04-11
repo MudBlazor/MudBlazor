@@ -17,5 +17,14 @@ internal interface IParameterSetRegister
     /// <param name="parameterState">The parameter state to add.</param>
     void Add<T>(ParameterStateInternal<T> parameterState);
 
+    /// <summary>
+    /// Adds a smart attachable to the register.
+    /// </summary>
+    /// <param name="smartAttachable">The smart attachable to add.</param>
+    /// <remarks>
+    /// This method is used to keep track of all preattachments. 
+    /// In the future, all attachables can be attached using <see cref="ISmartAttachable.Attach"/> 
+    /// if they were not already attached.
+    /// </remarks>
     void Add(ISmartAttachable smartAttachable);
 }

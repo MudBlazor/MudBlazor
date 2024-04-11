@@ -191,8 +191,10 @@ internal class RegisterParameterBuilder<T> : ISmartAttachable
         return parameterState;
     }
 
+    /// <inheritdoc />
     bool ISmartAttachable.IsAttached => _isAttached;
 
+    /// <inheritdoc />
     void ISmartAttachable.Attach() => _ = Attach();
 
     /// <summary>

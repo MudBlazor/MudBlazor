@@ -20,8 +20,7 @@ public partial class ParameterStateComparerSwapTestComp : MudComponentBase
 
     public ParameterStateComparerSwapTestComp()
     {
-        // Checking implicit operator as well, if we don't use a field, then we need to call Build otherwise the parameter won't be registered fully
-        ParameterState<double> _ = RegisterParameterBuilder<double>(nameof(DoubleParam))
+        RegisterParameterBuilder<double>(nameof(DoubleParam))
             .WithParameter(() => DoubleParam)
             .WithChangeHandler(ParameterChangedHandler)
             .WithComparer(() => DoubleEqualityComparer);

@@ -13,10 +13,8 @@ public abstract partial class MudComponentBase : IParameterSetRegister
     /// <inheritdoc />
     void IParameterSetRegister.Add<T>(ParameterStateInternal<T> parameterState) => Parameters.Add(parameterState);
 
-    void IParameterSetRegister.Add(ISmartAttachable smartAttachable)
-    {
-        _smartAttachables.Enqueue(smartAttachable);
-    }
+    /// <inheritdoc />
+    void IParameterSetRegister.Add(ISmartAttachable smartAttachable) => _smartAttachables.Enqueue(smartAttachable);
 
     private void AttachAllUnAttached()
     {
@@ -25,15 +23,20 @@ public abstract partial class MudComponentBase : IParameterSetRegister
             return;
         }
 
-        while (_smartAttachables.TryDequeue(out var smartAttachable))
+        try
         {
-            if (!smartAttachable.IsAttached)
+            while (_smartAttachables.TryDequeue(out var smartAttachable))
             {
-                smartAttachable.Attach();
+                if (!smartAttachable.IsAttached)
+                {
+                    smartAttachable.Attach();
+                }
             }
         }
-
-        _attachedAll = true;
+        finally
+        {
+            _attachedAll = true;
+        }
     }
 
     /// <summary>

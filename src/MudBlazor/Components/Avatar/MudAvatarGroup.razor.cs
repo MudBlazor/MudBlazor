@@ -120,10 +120,12 @@ namespace MudBlazor
         {
             RegisterParameterBuilder<int>(nameof(Spacing))
                 .WithParameter(() => Spacing)
-                .WithChangeHandler(() => _childrenNeedUpdates = true);
+                .WithChangeHandler(() => _childrenNeedUpdates = true)
+                .Attach();
             RegisterParameterBuilder<int>(nameof(Max))
                 .WithParameter(() => Max)
-                .WithChangeHandler(() => _childrenNeedUpdates = true);
+                .WithChangeHandler(() => _childrenNeedUpdates = true)
+                .Attach();
         }
 
         internal void AddAvatar(MudAvatar avatar)

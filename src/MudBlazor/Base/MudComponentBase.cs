@@ -78,6 +78,7 @@ namespace MudBlazor
         public override Task SetParametersAsync(ParameterView parameters)
         {
             // First thing to call in blazor lifecycle
+            // We need to attach everything that wasn't attached by the implicit RegisterParameterBuilder -> ParameterState or the RegisterParameterBuilder.Attach
             AttachAllUnAttached();
             return Parameters.SetParametersAsync(base.SetParametersAsync, parameters);
         }
