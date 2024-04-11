@@ -15,9 +15,9 @@ namespace MudBlazor
     {
         private string? _text;
         private bool _disabled;
-        private bool _isChecked;
         private bool _isSelected;
         private bool _isServerLoaded;
+        private readonly ParameterState<bool> _selectedState;
         private readonly ParameterState<bool> _expandedState;
         private Converter<T> _converter = new DefaultConverter<T>();
         private readonly List<MudTreeViewItem<T>> _childItems = new();
@@ -27,6 +27,9 @@ namespace MudBlazor
             _expandedState = RegisterParameterBuilder<bool>(nameof(Expanded))
                 .WithParameter(() => Expanded)
                 .WithEventCallback(() => ExpandedChanged);
+            _selectedState = RegisterParameterBuilder<bool>(nameof(Selected)).WithParameter(() => Selected)
+                .WithEventCallback(() => SelectedChanged)
+                .WithChangeHandler(OnSelectedParameterChangedAsync);
         }
 
         protected string Classname =>
@@ -196,21 +199,7 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
-        public bool Selected
-        {
-            get => _isChecked;
-            set
-            {
-                if (_isChecked == value)
-                {
-                    return;
-                }
-
-                _isChecked = value;
-                MudTreeRoot?.SetSelectedItemsCompare();
-                SelectedChanged.InvokeAsync(_isChecked);
-            }
-        }
+        public bool Selected { get; set; }
 
         /// <summary>
         /// Icon placed before the text if set.
@@ -298,10 +287,10 @@ namespace MudBlazor
              (MudTreeRoot != null && Items != null && Items.Count != 0) ||
              (MudTreeRoot?.ServerData != null && CanExpand && !_isServerLoaded && (Items == null || Items.Count == 0));
 
-        protected bool IsChecked
+
+        private Task SetSelectedAsync(bool value)
         {
-            get => Selected;
-            set { _ = SelectItem(value, this); }
+            return SelectItem(value, this);
         }
 
         protected override void OnInitialized()
@@ -314,6 +303,7 @@ namespace MudBlazor
             {
                 MudTreeRoot?.AddChild(this);
             }
+            base.OnInitialized();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -344,6 +334,16 @@ namespace MudBlazor
                     await MudTreeRoot.Select(this, previousActivatedValue);
                 }
             }
+        }
+
+        private Task OnSelectedParameterChangedAsync(ParameterChangedEventArgs<bool> arg)
+        {
+            if (MudTreeRoot is null)
+            {
+                return Task.CompletedTask;
+            }
+
+            return MudTreeRoot.SetSelectedItemsCompare();
         }
 
         protected async Task OnItemClicked(MouseEventArgs ev)
@@ -432,15 +432,19 @@ namespace MudBlazor
 
         internal async Task SelectItem(bool value, MudTreeViewItem<T>? source = null)
         {
-            if (value == _isChecked)
+            if (value == _selectedState)
+            {
                 return;
+            }
 
-            _isChecked = value;
-            _childItems.ForEach(async c => await c.SelectItem(value, source));
+            await _selectedState.SetValueAsync(value);
+            foreach (var child in _childItems)
+            {
+                await child.SelectItem(value, source);
+            }
 
             StateHasChanged();
 
-            await SelectedChanged.InvokeAsync(_isChecked);
 
             if (source == this)
             {
@@ -456,7 +460,7 @@ namespace MudBlazor
 
         internal IEnumerable<MudTreeViewItem<T>> GetSelectedItems()
         {
-            if (_isChecked)
+            if (_selectedState.Value)
                 yield return this;
 
             foreach (var treeItem in _childItems)
@@ -470,7 +474,7 @@ namespace MudBlazor
 
         internal async Task TryInvokeServerLoadFunc()
         {
-            if (_expandedState && (Items == null || Items.Count == 0) && CanExpand && MudTreeRoot?.ServerData != null)
+            if (_expandedState.Value && (Items == null || Items.Count == 0) && CanExpand && MudTreeRoot?.ServerData != null)
             {
                 Loading = true;
                 StateHasChanged();
