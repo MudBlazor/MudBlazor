@@ -114,7 +114,7 @@ namespace MudBlazor
 
         //Set the default value for HtmlTag, Href and Target 
         private void SetDefaultValues()
-        {            
+        {
             if (GetDisabledState())
             {
                 HtmlTag = "button";
@@ -132,7 +132,7 @@ namespace MudBlazor
 
         protected ElementReference _elementReference;
 
-        internal bool StopOnClickPropagation => HtmlTag == "button" && ClickPropagation==false;
+        internal bool StopOnClickPropagation => HtmlTag == "button" && ClickPropagation == false;
 
         public ValueTask FocusAsync() => _elementReference.FocusAsync();
 
