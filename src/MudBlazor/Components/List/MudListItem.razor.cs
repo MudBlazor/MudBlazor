@@ -57,10 +57,20 @@ namespace MudBlazor
 
         /// <summary>
         /// Link to a URL when clicked.
+        /// if not empty the list item is rendered as a html anchor with href
+        /// See also <see cref="Target"/>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.ClickAction)]
         public string? Href { get; set; }
+
+        /// <summary>
+        /// The target attribute specifies where to open the link, if Href is specified.
+        /// Possible values: _blank | _self | _parent | _top | <i>framename</i>
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.ClickAction)]
+        public string? Target { get; set; }
 
         /// <summary>
         /// If true, force browser to redirect outside component router-space.
@@ -185,6 +195,7 @@ namespace MudBlazor
 
         /// <summary>
         /// List click event.
+        /// Also called when <see cref="Href"/> is set
         /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
@@ -202,15 +213,6 @@ namespace MudBlazor
                 {
                     await _expandedState.SetValueAsync(!_expandedState.Value);
                 }
-                else if (Href != null)
-                {
-                    if (MudList is not null)
-                    {
-                        await MudList.SetSelectedValueAsync(GetValue());
-                    }
-                    await OnClick.InvokeAsync(eventArgs);
-                    UriHelper.NavigateTo(Href, ForceLoad);
-                }
                 else
                 {
                     if (MudList is not null)
@@ -218,6 +220,12 @@ namespace MudBlazor
                         await MudList.SetSelectedValueAsync(GetValue());
                     }
                     await OnClick.InvokeAsync(eventArgs);
+                    // only in case of a non default target and a force load a manual navigation is required  in all other cases this
+                    // is handled by href
+                    if (ForceLoad && string.IsNullOrEmpty(Href) == false && string.IsNullOrEmpty(Target))
+                    {
+                        UriHelper.NavigateTo(Href, forceLoad: true);
+                    }
                 }
             }
             else
@@ -270,7 +278,9 @@ namespace MudBlazor
         }
 
         private bool GetDisabled() => Disabled || (MudList?.GetDisabled() ?? false);
-
+        internal string HtmlTag => string.IsNullOrEmpty(Href) ? "div" : "a";
+        internal bool GetPreventDefault() => GetDisabled();
+        internal bool GetStopPropagation() => true;
         public void Dispose()
         {
             try

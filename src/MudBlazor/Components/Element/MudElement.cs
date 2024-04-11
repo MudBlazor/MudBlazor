@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -38,7 +39,11 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
-        public bool ClickPropagation { get; set; } = false;
+        public bool StopOnClickPropagation { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public bool PreventOnClickDefault { get; set; }
 
         /// <summary>
         /// Calling StateHasChanged to refresh the component's state
@@ -66,15 +71,13 @@ namespace MudBlazor
             //Style
             builder.AddAttribute(3, "style", Style);
 
-            // StopPropagation
-            // the order matters. This has to be before content is added
-            if (HtmlTag == "button" && ClickPropagation == false)
-                builder.AddEventStopPropagationAttribute(5, "onclick", true);
+            builder.AddEventStopPropagationAttribute(5, "onclick", StopOnClickPropagation);
+            builder.AddEventPreventDefaultAttribute(6, "onclick", PreventOnClickDefault);
 
             //Reference capture
             if (Ref != null)
             {
-                builder.AddElementReferenceCapture(6, async capturedRef =>
+                builder.AddElementReferenceCapture(7, async capturedRef =>
                 {
                     Ref = capturedRef;
                     await RefChanged.InvokeAsync(Ref.Value);
