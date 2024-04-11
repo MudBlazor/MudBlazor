@@ -171,10 +171,9 @@ In the constructor, we register the parameter so that the base class can manage 
 public MudCollapse()
 {
     _expandedState = RegisterParameterBuilder<bool>(nameof(Expanded)) // the property name is needed for automatic value change detection in SetParametersAsync
-        .WithParameter() => Expanded) // a get func enabling the ParameterState to read the parameter value w/o resorting to Reflection
+        .WithParameter(() => Expanded) // a get func enabling the ParameterState to read the parameter value w/o resorting to Reflection
         .WithEventCallback(() => ExpandedChanged) // a get func enabling the ParameterState to get the EventCallback of the parameter (if the param is two-way bindable)
-        .WithChangeHandler(OnExpandedChangedAsync) // the change handler 
-    );
+        .WithChangeHandler(OnExpandedChangedAsync); // the change handler 
 }
 ```
 
