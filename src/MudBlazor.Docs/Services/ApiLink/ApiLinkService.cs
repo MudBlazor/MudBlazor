@@ -54,7 +54,7 @@ namespace MudBlazor.Docs.Services
             // Return the most accurate and highest quality results.
             return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>(
                 ratios
-                .Where(x => x.Value > 75)
+                .Where(x => x.Value > 65)
                 .OrderByDescending(x => x.Value)
                 .Select(x => x.Key)
                 .ToList()
