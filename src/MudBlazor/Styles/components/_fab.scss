@@ -106,11 +106,11 @@
 
   &.mud-fab-size-large {
     width: auto;
-    height: 48px;
+    height: 56px;
     padding: 0 16px;
-    min-width: 48px;
+    min-width: 56px;
     min-height: auto;
-    border-radius: 24px;
+    border-radius: 28px;
 
     .mud-fab-label {
       gap: 8px;
@@ -119,10 +119,10 @@
 
   &.mud-fab-size-small {
     width: auto;
-    height: 34px;
+    height: 40px;
     padding: 0 12px;
-    min-width: 34px;
-    border-radius: 17px;
+    min-width: 40px;
+    border-radius: 20px;
 
     .mud-fab-label {
       gap: 4px;
@@ -131,10 +131,10 @@
 
   &.mud-fab-size-medium {
     width: auto;
-    height: 40px;
+    height: 48px;
     padding: 0 16px;
-    min-width: 40px;
-    border-radius: 20px;
+    min-width: 48px;
+    border-radius: 24px;
 
     .mud-fab-label {
       gap: 8px;
