@@ -20,9 +20,9 @@ public partial class AppbarButtons
 
     public string DarkLightModeButtonText => LayoutService.CurrentDarkLightMode switch
     {
-        DarkLightMode.Dark => "Switch to System mode",
-        DarkLightMode.Light => "Switch to Dark mode",
-        _ => "Switch to Light mode"
+        DarkLightMode.Dark => "System mode",
+        DarkLightMode.Light => "Dark mode",
+        _ => "Light mode"
     };
 
     public string DarkLightModeButtonIcon => LayoutService.CurrentDarkLightMode switch

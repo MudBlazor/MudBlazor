@@ -42,14 +42,14 @@
     </div>
     <div class="@ContentClassNames">
         <MudToolBar Gutters="false" Class="mud-text-secondary">
-            <MudTooltip Duration="1000" Text="Toggle Drawer">
+            <MudTooltip Delay="1000" Text="Toggle Drawer">
                 <MudIconButton OnClick="@(() => ToggleMiniDrawer())" Icon="@GetIcon()" Color="Color.Inherit" />
             </MudTooltip>
-            <MudTooltip Duration="1000" Text="Search">
+            <MudTooltip Delay="1000" Text="Search">
                 <MudIconButton Icon="@Icons.Material.Outlined.Search" Color="Color.Inherit" />
             </MudTooltip>
             <MudSpacer />
-            <MudTooltip Duration="1000" Text="Notifications">
+            <MudTooltip Delay="1000" Text="Notifications">
                 <MudIconButton Class="mud-text-secondary" Icon="@Icons.Material.Outlined.Notifications"/>
             </MudTooltip>
             <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" PopoverClass="mudblazor-landingpage-scaled-menu mud-elevation-1">
