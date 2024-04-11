@@ -12,7 +12,7 @@
                 <SpecialHeaderContent>
                     <MudText Typo="Typo.h2" Class="docs-title">@_message.Title&nbsp;</MudText>
                     <MudText Typo="Typo.subtitle1" Class="docs-title-description">@_message.Except</MudText>
-                    <MudToolBar DisableGutters="true">
+                    <MudToolBar Gutters="false">
                         @foreach (var author in _message.Authors)
                         {
                             <div class="d-flex justify-start align-center mx-1">

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
@@ -9,45 +7,46 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudMenu : MudComponentBase, IActivatable
     {
-        protected string Classname =>
-        new CssBuilder("mud-menu")
-        .AddClass(Class)
-       .Build();
-
-        protected string ActivatorClassname =>
-        new CssBuilder("mud-menu-activator")
-        .AddClass("mud-disabled", Disabled)
-       .Build();
-
         private bool _isOpen;
         private bool _isMouseOver = false;
 
+        protected string Classname =>
+            new CssBuilder("mud-menu")
+                .AddClass(Class)
+                .Build();
+
+        protected string ActivatorClassname =>
+            new CssBuilder("mud-menu-activator")
+                .AddClass("mud-disabled", Disabled)
+                .Build();
+
         [Parameter]
         [Category(CategoryTypes.Menu.Behavior)]
-        public string Label { get; set; }
+        public string? Label { get; set; }
 
         /// <summary>
         /// User class names for the list, separated by space
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.PopupAppearance)]
-        public string ListClass { get; set; }
+        public string? ListClass { get; set; }
 
         /// <summary>
         /// User class names for the popover, separated by space
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.PopupAppearance)]
-        public string PopoverClass { get; set; }
+        public string? PopoverClass { get; set; }
 
         /// <summary>
         /// Icon to use if set will turn the button into a MudIconButton.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.Behavior)]
-        public string Icon { get; set; }
+        public string? Icon { get; set; }
 
         /// <summary>
         /// The color of the icon. It supports the theme colors.
@@ -61,14 +60,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.Behavior)]
-        public string StartIcon { get; set; }
+        public string? StartIcon { get; set; }
 
         /// <summary>
         /// Icon placed after the text if set.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.Behavior)]
-        public string EndIcon { get; set; }
+        public string? EndIcon { get; set; }
 
         /// <summary>
         /// The color of the button. It supports the theme colors.
@@ -91,7 +90,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Menu.Appearance)]
         public Variant Variant { get; set; } = Variant.Text;
 
-
         /// <summary>
         /// If true, compact vertical padding will be applied to all menu items.
         /// </summary>
@@ -107,7 +105,7 @@ namespace MudBlazor
         public bool FullWidth { get; set; }
 
         /// <summary>
-        /// Sets the maxheight the menu can have when open.
+        /// Sets the max height the menu can have when open.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.PopupAppearance)]
@@ -127,7 +125,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.Behavior)]
-        public RenderFragment ActivatorContent { get; set; }
+        public RenderFragment? ActivatorContent { get; set; }
 
         /// <summary>
         /// Specify the activation event when ActivatorContent is set
@@ -137,7 +135,7 @@ namespace MudBlazor
         public MouseEvent ActivationEvent { get; set; } = MouseEvent.LeftClick;
 
         /// <summary>
-        /// Set the anchor origin point to determen where the popover will open from.
+        /// Set the anchor origin point to determine where the popover will open from.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.PopupAppearance)]
@@ -183,7 +181,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.PopupBehavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// Fired when the menu IsOpen property changes.
@@ -192,7 +190,7 @@ namespace MudBlazor
         [Category(CategoryTypes.Menu.PopupBehavior)]
         public EventCallback<bool> IsOpenChanged { get; set; }
 
-        public string PopoverStyle { get; set; }
+        public string? PopoverStyle { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether the menu is currently open or not.
@@ -256,15 +254,22 @@ namespace MudBlazor
         public void ToggleMenu(EventArgs args)
         {
             if (Disabled)
+            {
                 return;
+            }
 
             // oncontextmenu turns a touch event into MouseEventArgs but with a button of -1.
             if (args is MouseEventArgs mouseEventArgs && mouseEventArgs.Button != -1)
             {
                 if (ActivationEvent == MouseEvent.LeftClick && mouseEventArgs.Button != 0 && !_isOpen)
+                {
                     return;
+                }
+
                 if (ActivationEvent == MouseEvent.RightClick && mouseEventArgs.Button != 2 && !_isOpen)
+                {
                     return;
+                }
             }
 
             if (_isOpen)
