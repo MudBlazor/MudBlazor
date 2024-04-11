@@ -42,8 +42,31 @@ internal class ComparerParameterLambdaExclusion : IExclusion
 
     private static bool RemoveLambda(string expression, out string result)
     {
-        result = expression.Replace("() =>", "").Trim();
+        // Trim any leading whitespace
+        var newExpression = RemoveWhitespaces(expression);
+
+        result = newExpression.Replace("()=>", string.Empty);
 
         return result != expression;
+    }
+
+    private static string RemoveWhitespaces(string input)
+    {
+        var j = 0;
+        var inputLength = input.Length;
+        var newArray = new char[inputLength];
+
+        for (var i = 0; i < inputLength; ++i)
+        {
+            var tmp = input[i];
+
+            if (!char.IsWhiteSpace(tmp))
+            {
+                newArray[j] = tmp;
+                ++j;
+            }
+        }
+
+        return new string(newArray, 0, j);
     }
 }

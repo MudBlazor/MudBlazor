@@ -41,6 +41,11 @@ public class ParameterMetadataRulesTests
     }
 
     [TestCase("() => TestComparer", "TestComparer", true)]
+    [TestCase("()=>TestComparer", "TestComparer", true)]
+    [TestCase("()       =>TestComparer", "TestComparer", true)]
+    [TestCase("()=>       TestComparer", "TestComparer", true)]
+    [TestCase("()       =>       TestComparer", "TestComparer", true)]
+    [TestCase(" TestComparer ", "TestComparer", true)]
     [TestCase("TestComparer", "TestComparer", false)]
     public void Morph_Comparer_ShouldChangeMetadata(string input, string expectedComparerName, bool expectedResult)
     {
