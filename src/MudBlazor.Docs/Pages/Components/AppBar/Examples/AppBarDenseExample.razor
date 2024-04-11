@@ -1,7 +1,14 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudAppBar Color="Color.Primary" Fixed="false" Dense="true">
+<MudAppBar Color="Color.Primary" Fixed="false" Dense="@dense">
     <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />
     <MudSpacer />
     <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" />
 </MudAppBar>
+
+<MudSwitch @bind-Value="@dense" Label="Dense"></MudSwitch>
+
+@code
+{
+    bool dense = true;
+}
