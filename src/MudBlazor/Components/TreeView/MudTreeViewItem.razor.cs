@@ -432,7 +432,7 @@ namespace MudBlazor
 
         internal async Task SelectItem(bool value, MudTreeViewItem<T>? source = null)
         {
-            if (value == _selectedState)
+            if (value == _selectedState.Value)
             {
                 return;
             }
