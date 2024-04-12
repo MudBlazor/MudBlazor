@@ -236,8 +236,8 @@
                                             @{ var tmpRowIndex = rowIndex; }
                                             <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" 
                                                 @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))"
-                                                @onmouseenter="@((args) => OnRowMouseEnterAsync(args, item, tmpRowIndex))"
-                                                @onmouseleave="@((args) => OnRowMouseLeaveAsync(args, item, tmpRowIndex))"
+                                                @onmouseenter="@(RowMouseEnter.HasDelegate ? (args) => OnRowMouseEnterAsync(args, item, tmpRowIndex) : default)"
+                                                @onmouseleave="@(RowMouseLeave.HasDelegate ? (args) => OnRowMouseLeaveAsync(args, item, tmpRowIndex) : default)"
                                                 @oncontextmenu="@((args) => OnContextMenuClickedAsync(args, item, tmpRowIndex))"
                                                 @oncontextmenu:preventDefault="@(RowContextMenuClick.HasDelegate ? true : false)">
                                                 <CascadingValue Value="@Validator" IsFixed="true">
@@ -276,8 +276,8 @@
                                     @{ var tmpRowIndex = rowIndex; }
                                     <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" 
                                         @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))"
-                                        @onmouseenter="@((args) => OnRowMouseEnterAsync(args, item, tmpRowIndex))"
-                                        @onmouseleave="@((args) => OnRowMouseLeaveAsync(args, item, tmpRowIndex))"
+                                        @onmouseenter="@(RowMouseEnter.HasDelegate ? (args) => OnRowMouseEnterAsync(args, item, tmpRowIndex) : default)"
+                                        @onmouseleave="@(RowMouseLeave.HasDelegate ? (args) => OnRowMouseLeaveAsync(args, item, tmpRowIndex) : default)"
                                         @oncontextmenu="@((args) => OnContextMenuClickedAsync(args, item, tmpRowIndex))"
                                         @oncontextmenu:preventDefault="@(RowContextMenuClick.HasDelegate ? true : false)">
                                         <CascadingValue Value="@Validator" IsFixed="true">
