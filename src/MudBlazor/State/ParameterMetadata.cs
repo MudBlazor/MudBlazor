@@ -13,6 +13,8 @@ internal class ParameterMetadata
     /// </summary>
     public string ParameterName { get; }
 
+    public string? ComparerParameterName { get; }
+
     /// <summary>
     /// Gets the unique name of the handler.
     /// </summary>
@@ -32,6 +34,18 @@ internal class ParameterMetadata
     {
         ParameterName = parameterName;
         HandlerName = handlerName;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParameterMetadata"/> class with the specified handler name.
+    /// </summary>
+    /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
+    /// <param name="handlerName">The handler's name.</param>
+    /// <param name="comparerParameterName"></param>
+    public ParameterMetadata(string parameterName, string? handlerName, string? comparerParameterName)
+        : this(parameterName, handlerName)
+    {
+        ComparerParameterName = comparerParameterName;
     }
 
     /// <summary>

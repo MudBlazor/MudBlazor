@@ -9,7 +9,7 @@ namespace MudBlazor
 #nullable enable
     public partial class MudExpansionPanel : MudComponentBase, IDisposable
     {
-        internal IParameterState<bool> _isExpandedState;
+        internal readonly ParameterState<bool> _isExpandedState;
 
         [CascadingParameter]
         private MudExpansionPanels? Parent { get; set; }
@@ -110,10 +110,13 @@ namespace MudBlazor
 
         public MudExpansionPanel()
         {
-            _isExpandedState = RegisterParameter(nameof(IsExpanded), () => IsExpanded, () => IsExpandedChanged, IsExpandedParameterChangedAsync);
+            _isExpandedState = RegisterParameterBuilder<bool>(nameof(IsExpanded))
+                .WithParameter(() => IsExpanded)
+                .WithEventCallback(() => IsExpandedChanged)
+                .WithChangeHandler(OnIsExpandedParameterChangedAsync);
         }
 
-        private Task IsExpandedParameterChangedAsync(ParameterChangedEventArgs<bool> args)
+        private Task OnIsExpandedParameterChangedAsync(ParameterChangedEventArgs<bool> args)
         {
             if (Parent is null)
             {
