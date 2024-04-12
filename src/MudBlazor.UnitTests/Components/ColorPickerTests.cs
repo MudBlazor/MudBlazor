@@ -1200,5 +1200,47 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Text.Should().Be("#180f6fff");
             comp.Instance.Value.Should().Be(new MudColor("#180f6fff"));
         }
+
+        /// <summary>
+        /// A color picker with a label should auto-generate an id for the input element and use that id on the label's for attribute.
+        /// </summary>
+        [Test]
+        public void ColorPickerWithLabelShouldBeAccessible()
+        {
+            var comp = Context.RenderComponent<MudColorPicker>(parameters
+                => parameters.Add(p => p.Label, "Test Label"));
+
+            var input = comp.Find("input");
+            var label = comp.Find("label");
+
+            input.Id.Should().NotBeNullOrEmpty();
+            var forAttribute = label.Attributes.GetNamedItem("for");
+            forAttribute.Should().NotBeNull();
+            forAttribute!.Value.Should().Be(input.Id);
+        }
+
+        /// <summary>
+        /// A color picker with a label and an id in the UserAttributes should use the id on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void ColorPickerWithLabelAndIdInUserAttributesShouldBeAccessible()
+        {
+            var expectedId = "test-id";
+            var comp = Context.RenderComponent<MudColorPicker>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        { "Id", expectedId }
+                    }));
+
+            var input = comp.Find("input");
+            var label = comp.Find("label");
+
+            input.Id.Should().Be(expectedId);
+            var forAttribute = label.Attributes.GetNamedItem("for");
+            forAttribute.Should().NotBeNull();
+            forAttribute!.Value.Should().Be(expectedId);
+        }
     }
 }

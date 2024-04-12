@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -18,6 +20,10 @@ namespace MudBlazor
         private bool _validated;
         protected bool _isFocused;
         protected bool _forceTextUpdate;
+
+        private string? _userAttributeId => UserAttributes.FirstOrDefault(userAttribute => userAttribute.Key.Equals("id", StringComparison.InvariantCultureIgnoreCase)).Value?.ToString();
+        private readonly string _componentId = $"mudinput-{Guid.NewGuid()}";
+        protected string CalculatedFieldId => _userAttributeId ?? InputId ?? _componentId;
 
         protected MudBaseInput()
             : base(new DefaultConverter<T>())
@@ -300,6 +306,10 @@ namespace MudBlazor
             get => ((Converter<T>)Converter).Format;
             set => SetFormat(value);
         }
+
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? InputId { get; set; }
 
         protected bool GetDisabledState() => Disabled || ParentDisabled;
 
