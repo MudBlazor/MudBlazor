@@ -20,11 +20,6 @@ namespace MudBlazor
         [Category(CategoryTypes.SwipeArea.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
-        [Obsolete("Use OnSwipeEnd instead.")]
-        [Parameter]
-        [Category(CategoryTypes.SwipeArea.Behavior)]
-        public Action<SwipeDirection>? OnSwipe { get; set; }
-
         [Parameter]
         [Category(CategoryTypes.SwipeArea.Behavior)]
         public EventCallback<SwipeEventArgs> OnSwipeEnd { get; set; }
@@ -118,12 +113,6 @@ namespace MudBlazor
             }
 
             await OnSwipeEnd.InvokeAsync(new SwipeEventArgs(arg, swipeDirection, _swipeDelta, this));
-#pragma warning disable CS0618
-            if (OnSwipe != null)
-            {
-                await InvokeAsync(() => OnSwipe(swipeDirection));
-            }
-#pragma warning restore CS0618
             _xDown = _yDown = null;
         }
 

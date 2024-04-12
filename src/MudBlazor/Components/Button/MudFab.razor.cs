@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -13,8 +12,8 @@ namespace MudBlazor
                 .AddClass($"mud-fab-extended", !string.IsNullOrEmpty(Label))
                 .AddClass($"mud-fab-{Color.ToDescriptionString()}")
                 .AddClass($"mud-fab-size-{Size.ToDescriptionString()}")
-                .AddClass($"mud-ripple", !DisableRipple && !GetDisabledState())
-                .AddClass($"mud-fab-disable-elevation", DisableElevation)
+                .AddClass($"mud-ripple", Ripple && !GetDisabledState())
+                .AddClass($"mud-fab-disable-elevation", !DropShadow)
                 .AddClass(Class)
                 .Build();
 
@@ -66,13 +65,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public string? Label { get; set; }
-
-        /// <summary>
-        /// Title of the icon used for accessibility.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
-        public string? Title { get; set; }
 
         /// <inheritdoc/>
         /// <remarks>

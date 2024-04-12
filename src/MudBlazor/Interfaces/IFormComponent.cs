@@ -1,6 +1,8 @@
-﻿using System;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace MudBlazor.Interfaces
@@ -15,11 +17,7 @@ namespace MudBlazor.Interfaces
         public bool IsForNull { get; }
         public List<string> ValidationErrors { get; set; }
         public Task Validate();
-        [Obsolete($"Use {nameof(ResetAsync)} instead. This will b removed in v7")]
-        [ExcludeFromCodeCoverage]
-        public void Reset();
         public Task ResetAsync();
         public void ResetValidation();
-        public void StateHasChanged();
     }
 }

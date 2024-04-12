@@ -12,7 +12,7 @@
         <MudChip T="string" Color="Color.Dark" Text="@file" />
     }
 </MudPaper>
-<MudToolBar DisableGutters="true" Class="gap-4">
+<MudToolBar Gutters="false" Class="gap-4">
     <MudButton OnClick="Upload" Disabled="@(!_fileNames.Any())" Color="Color.Primary" Variant="Variant.Filled">Upload</MudButton>
     <MudButton OnClick="ClearAsync" Disabled="@(!_fileNames.Any())" Color="Color.Error" Variant="Variant.Filled">Clear</MudButton>
 </MudToolBar>

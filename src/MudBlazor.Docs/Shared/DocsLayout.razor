@@ -8,7 +8,7 @@
     </MudAppBar>
     <MudDrawer Open="@_drawerOpen" OpenChanged="OnDrawerOpenChanged" ClipMode="DrawerClipMode.Docked" Elevation="0" Breakpoint="Breakpoint.Md">
         <div class="d-block d-md-none">
-            <MudToolBar Dense="true" DisableGutters="true" Class="docs-gray-bg">
+            <MudToolBar Dense="true" Gutters="false" Class="docs-gray-bg">
                 @if (_topMenuOpen == false)
                 {
                     <MudIconButton Icon="@Icons.Material.Rounded.ArrowBack" Color="Color.Inherit" OnClick="@((e) => OpenTopMenu())"/>
@@ -25,8 +25,8 @@
             {
                 <MudNavMenu Color="Color.Primary" Margin="Margin.Dense" Rounded="true" Class="pa-2">
                     <MudNavLink Href="/docs/overview">Docs</MudNavLink>
-                    <MudNavLink Href="/getting-started/installation">Getting Started</MudNavLink>
-                    <MudNavLink Href="/mud/introduction" Match="NavLinkMatch.All">Discover More</MudNavLink>
+                    <MudNavLink Href="/getting-started/installation">Get Started</MudNavLink>
+                    <MudNavLink Href="/mud/introduction" Match="NavLinkMatch.All">Learn More</MudNavLink>
                     <MudNavGroup Title="Products" ExpandIcon="@Icons.Material.Filled.ExpandMore">
                         <MudNavLink Href="https://mudblazor.com/">MudBlazor</MudNavLink>
                         <MudNavLink Href="https://try.mudblazor.com/">TryMudBlazor</MudNavLink>

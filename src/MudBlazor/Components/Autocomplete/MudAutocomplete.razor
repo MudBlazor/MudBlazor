@@ -10,8 +10,9 @@
                 <MudInput @ref="_elementReference" @key="_elementKey" InputType="InputType.Text"
                           Class="mud-select-input" Margin="@Margin"
                           Variant="@Variant"
+                          Label="@Label"
                           TextUpdateSuppression="@TextUpdateSuppression"
-                          Value="@Text" DisableUnderLine="@DisableUnderLine"
+                          Value="@Text" Underline="@Underline"
                           Disabled="@GetDisabledState()" ReadOnly="@GetReadOnlyState()" Error="@Error"
                           OnAdornmentClick="@OnAdornmentClick" AdornmentIcon="@CurrentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
                           Clearable="@(!GetReadOnlyState() && Clearable)" OnClearButtonClick="@OnClearButtonClick"
@@ -45,7 +46,7 @@
                     }
                     else if (_items != null && _items.Length != 0)
                     {
-                        <MudList Class="@ListClass" Clickable="true" Dense="@Dense">
+                        <MudList T="T" Class="@ListClass" Dense="@Dense">
                             @if (BeforeItemsTemplate != null)
                             {
                                 <div class="mud-autocomplete-before-items pa-1">
@@ -58,7 +59,7 @@
                                 bool isSelected = index == _selectedListItemIndex;
                                 bool isDisabled = !_enabledItemIndices.Contains(index);
                                 var captureIndex = index;
-                                <MudListItem @key="@item" id="@GetListItemId(captureIndex)" Disabled="@(isDisabled)" OnClick="@(async () => await ListItemOnClick(item))" OnClickHandlerPreventDefault="true" Class="@GetListItemClassname(isSelected)">
+                                <MudListItem T="T" Value="@item" @key="@item" id="@GetListItemId(captureIndex)" Disabled="@(isDisabled)" OnClick="@(async () => await ListItemOnClick(item))" OnClickHandlerPreventDefault="true" Class="@GetListItemClassname(isSelected)">
                                     @if (ItemTemplate == null)
                                     {
                                         @GetItemString(item)

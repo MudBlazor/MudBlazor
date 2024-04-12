@@ -14,11 +14,11 @@ namespace MudBlazor
                 .AddClass($"mud-button-{Variant.ToDescriptionString()}", AsButton)
                 .AddClass($"mud-button-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}", AsButton)
                 .AddClass($"mud-button-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}", AsButton)
-                .AddClass($"mud-ripple", !DisableRipple)
-                .AddClass($"mud-ripple-icon", !DisableRipple && !AsButton)
+                .AddClass($"mud-ripple", Ripple)
+                .AddClass($"mud-ripple-icon", Ripple && !AsButton)
                 .AddClass($"mud-icon-button-size-{Size.ToDescriptionString()}", when: () => Size != Size.Medium)
                 .AddClass($"mud-icon-button-edge-{Edge.ToDescriptionString()}", when: () => Edge != Edge.False)
-                .AddClass($"mud-button-disable-elevation", DisableElevation)
+                .AddClass($"mud-button-disable-elevation", !DropShadow)
                 .AddClass(Class)
                 .Build();
 
@@ -30,13 +30,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public string? Icon { get; set; }
-
-        /// <summary>
-        /// Title of the icon used for accessibility.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
-        public string? Title { get; set; }
 
         /// <summary>
         /// The color of the component. It supports the theme colors.

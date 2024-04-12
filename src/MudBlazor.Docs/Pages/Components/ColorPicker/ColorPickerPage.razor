@@ -112,15 +112,14 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Disable Drag effect">
+            <SectionHeader Title="Drag Interaction">
                 <Description>
-                    <MudAlert Severity="Severity.Warning">
-                        In Spectrum mode, the color selector (circle) will follow the mouse. This is implemented by listening to the mouse move DOM event with an in-built throttle mechanism to prevent flooding events. However, there are occasions like long latency in Blazor Server-Side where this implementation hasn't the expected visual assistance. If DisableDragEffect is set to true, no events will be fired. Per default, the effect is enabled.
-                    </MudAlert>
+                    The <CodeInline>ThrottleInterval</CodeInline> property controls how long to wait until the color is updated while dragging the pointer in the spectrum view.
+                    If the <CodeInline>DisableDragEffect</CodeInline> property is set to true, the color selector (circle) will no longer follow the pointer.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="ColorPickerDragEffectDisabledExample">
-                <ColorPickerDragEffectDisabledExample />
+            <SectionContent DarkenBackground="true" Code="ColorPickerDragExample">
+                <ColorPickerDragExample />
             </SectionContent>
         </DocsPageSection>
 
