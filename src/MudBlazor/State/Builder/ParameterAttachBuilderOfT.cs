@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
@@ -22,7 +26,7 @@ internal class ParameterAttachBuilder<T>
     private Func<T>? _getParameterValueFunc;
     private Func<EventCallback<T>> _eventCallbackFunc = () => default;
     private IParameterChangedHandler<T>? _parameterChangedHandler;
-    private IEqualityComparer<T>? _comparer;
+    private Func<IEqualityComparer<T>?>? _comparerFunc;
 
     /// <summary>
     /// Sets the metadata for the parameter.
@@ -127,7 +131,20 @@ internal class ParameterAttachBuilder<T>
     /// <returns>The current instance of the builder.</returns>
     public ParameterAttachBuilder<T> WithComparer(IEqualityComparer<T>? comparer)
     {
-        _comparer = comparer;
+        _comparerFunc = () => comparer;
+
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the function to provide the comparer for the parameter.
+    /// </summary>
+    /// <param name="comparerFunc">The function to provide the comparer for the parameter.</param>
+    /// <remarks>This method should be used exclusively when the parameter has an associated <see cref="IEqualityComparer{T}" /> that is also declared as a Blazor <see cref="ParameterAttribute"/>.</remarks>
+    /// <returns>The current instance of the builder.</returns>
+    public ParameterAttachBuilder<T> WithComparer(Func<IEqualityComparer<T>>? comparerFunc)
+    {
+        _comparerFunc = comparerFunc;
 
         return this;
     }
@@ -137,14 +154,14 @@ internal class ParameterAttachBuilder<T>
     /// </summary>
     /// <returns>A new instance of <see cref="ParameterState{T}"/>.</returns>
     /// <exception cref="ArgumentNullException">Thrown when required parameters are not provided.</exception>
-    public ParameterState<T> Attach()
+    public ParameterStateInternal<T> Attach()
     {
-        return ParameterState<T>.Attach(
+        return ParameterStateInternal<T>.Attach(
             _metadata ?? throw new ArgumentNullException(nameof(_metadata)),
             _getParameterValueFunc ?? throw new ArgumentNullException(nameof(_getParameterValueFunc)),
             _eventCallbackFunc,
             _parameterChangedHandler,
-            _comparer
+            _comparerFunc
         );
     }
 }

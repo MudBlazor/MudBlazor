@@ -26,10 +26,10 @@
                 </MudInput>
 				<MudPopover Open=@(_isOpen) MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
 					<CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
-						<MudList Class="@ListClass" Clickable="true" Dense="@Dense" @bind-SelectedValue="_activeItemId">
+						<MudList T="string" Class="@ListClass" Dense="@Dense" @bind-SelectedValue="_activeItemId">
                             @if (MultiSelection && SelectAll)
 							{
-								<MudListItem Icon="@SelectAllCheckBoxIcon" Text="@SelectAllText" OnClick="SelectAllClickAsync" OnClickHandlerPreventDefault="true" Dense="@Dense" Class="mb-2" />
+								<MudListItem Value="@("__SelectAll__")" Icon="@SelectAllCheckBoxIcon" Text="@SelectAllText" OnClick="SelectAllClickAsync" OnClickHandlerPreventDefault="true" Dense="@Dense" Class="mb-2" />
                                 <MudDivider />
 							}
 							@ChildContent

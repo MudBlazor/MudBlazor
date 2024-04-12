@@ -40,7 +40,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddSingleton<IPopoverService, MockPopoverServiceV2>();
             ctx.Services.AddTransient<IKeyInterceptorFactory, MockKeyInterceptorServiceFactory>();
             ctx.Services.AddTransient<IJsEventFactory, MockJsEventFactory>();
-            ctx.Services.AddSingleton<IRenderQueueService, RenderQueueService>();
+            ctx.Services.AddScoped<IRenderQueueService, RenderQueueService>();
             ctx.Services.AddTransient<InternalMudLocalizer>();
             ctx.Services.AddTransient<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
             ctx.Services.AddScoped(sp => new HttpClient());
