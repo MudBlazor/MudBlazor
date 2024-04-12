@@ -66,18 +66,6 @@ namespace MudBlazor
         public double Delay { get; set; } = 0;
 
         /// <summary>
-        /// Changes the default transition delay in seconds.
-        /// </summary>
-        [Obsolete("Use Delay instead.", true)]
-        [ExcludeFromCodeCoverage]
-        [Parameter]
-        public double Delayed
-        {
-            get { return Delay / 1000; }
-            set { Delay = value * 1000; }
-        }
-
-        /// <summary>
         /// Tooltip placement.
         /// </summary>
         [Parameter]

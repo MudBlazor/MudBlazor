@@ -3,9 +3,6 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using MudBlazor.Components.Snackbar;
-using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
@@ -61,13 +58,6 @@ namespace MudBlazor
         public SnackbarOptions(Severity severity, CommonSnackbarOptions options) : base(options)
         {
             Severity = severity;
-
-            SnackbarTypeClass = $"mud-alert-{SnackbarVariant.ToDescriptionString()}-{severity.ToDescriptionString()}";
-
-            if (SnackbarVariant != Variant.Filled)
-            {
-                SnackbarTypeClass += BackgroundBlurred ? " mud-snackbar-blurred" : " mud-snackbar-surface";
-            }
 
             if (string.IsNullOrEmpty(Icon))
             {

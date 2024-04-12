@@ -7,7 +7,7 @@
 		@foreach (var item in _sections)
 		{
 			<MudPaper Elevation="0" Width="224px" MinHeight="400px" Class="pa-4 ma-4 d-flex flex-column mud-background-gray rounded-lg">
-				<MudToolBar DisableGutters="true">
+				<MudToolBar Gutters="false">
 					<MudText Typo="Typo.subtitle1"><b>@item.Name</b></MudText>
 					<MudSpacer />
 					<MudMenu Icon="@Icons.Material.Rounded.MoreHoriz" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" ListClass="pa-2 d-flex flex-column" PopoverClass="mud-elevation-25">
@@ -19,7 +19,7 @@
 				@if (item.NewTaskOpen)
 				{
 					<MudPaper Elevation="25" Class="pa-2 rounded-lg">
-						<MudTextField @bind-Value="item.NewTaskName" Placeholder="New Task" DisableUnderLine="true" Margin="Margin.Dense" Class="mx-2 mt-n2"></MudTextField>
+						<MudTextField @bind-Value="item.NewTaskName" Placeholder="New Task" Underline="false" Margin="Margin.Dense" Class="mx-2 mt-n2"></MudTextField>
 						<MudButton OnClick="@(() => AddTask(item))" Size="Size.Small" Color="Color.Primary" FullWidth="true">Add Task</MudButton>
 					</MudPaper>
 				}
@@ -35,7 +35,7 @@
 				<MudPaper Elevation="0" Width="224px" Class="pa-4 d-flex flex-column mud-background-gray rounded-lg">
 					<EditForm Model="@newSectionModel" OnValidSubmit="OnValidSectionSubmit">
 						<DataAnnotationsValidator />
-						<MudTextField @bind-Value="newSectionModel.Name" For="@(() => newSectionModel.Name)" Placeholder="New Section" DisableUnderLine="true"></MudTextField>
+						<MudTextField @bind-Value="newSectionModel.Name" For="@(() => newSectionModel.Name)" Placeholder="New Section" Underline="false"></MudTextField>
 						<MudButton ButtonType="ButtonType.Submit" Size="Size.Small" Color="Color.Primary" FullWidth="true">Add Section</MudButton>
 					</EditForm>
 				</MudPaper>

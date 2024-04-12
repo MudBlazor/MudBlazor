@@ -11,7 +11,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudAutocomplete<T> : MudBaseInput<T>, IDisposable
+    public partial class MudAutocomplete<T> : MudBaseInput<T>
     {
         /// <summary>
         /// We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
@@ -26,7 +26,7 @@ namespace MudBlazor
         private bool _isProcessingValue;
         private int _selectedListItemIndex = 0;
         private int _elementKey = 0;
-        private int _itemsReturned; //the number of items returned by the search function
+        private int _returnedItemsCount;
         private bool _isOpen;
         private MudInput<string> _elementReference;
         private CancellationTokenSource _cancellationTokenSrc;
@@ -98,28 +98,6 @@ namespace MudBlazor
         public Origin TransformOrigin { get; set; } = Origin.TopCenter;
 
         /// <summary>
-        /// Set the anchor origin point to determen where the popover will open from.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
-        [Parameter]
-        public Direction Direction { get; set; } = Direction.Bottom;
-
-        /// <summary>
-        /// If true, the Autocomplete menu will open either before or after the input (left/right).
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
-        [Parameter] public bool OffsetX { get; set; }
-
-        /// <summary>
-        /// If true, the Autocomplete menu will open either before or after the input (top/bottom).
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
-        [Parameter] public bool OffsetY { get; set; }
-
-        /// <summary>
         /// If true, compact vertical padding will be applied to all Autocomplete items.
         /// </summary>
         [Parameter]
@@ -188,14 +166,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public Func<string, CancellationToken, Task<IEnumerable<T>>> SearchFuncWithCancel { get; set; }
-
-        /// <summary>
-        /// The SearchFunc returns a list of items matching the typed text
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public Func<string, Task<IEnumerable<T>>> SearchFunc { get; set; }
+        public Func<string, CancellationToken, Task<IEnumerable<T>>> SearchFunc { get; set; }
 
         /// <summary>
         /// Maximum items to display, defaults to 10.
@@ -355,6 +326,16 @@ namespace MudBlazor
         public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         /// <summary>
+        /// <para>An event triggered when the number of items returned by the search query has changed.</para>
+        /// <para>
+        /// If the number is <c>0</c>, <see cref="NoItemsTemplate"/> will be shown.<br />
+        /// If the number is beyond <see cref="MaxItems"/>, <see cref="MoreItemsTemplate"/> will be shown.
+        /// </para>
+        /// </summary>
+        [Parameter]
+        public EventCallback<int> ReturnedItemsCountChanged { get; set; }
+
+        /// <summary>
         /// Returns the open state of the drop-down.
         /// </summary>
         public bool IsOpen
@@ -494,6 +475,12 @@ namespace MudBlazor
             }
         }
 
+        private Task SetReturnedItemsCountAsync(int value)
+        {
+            _returnedItemsCount = value;
+            return ReturnedItemsCountChanged.InvokeAsync(value);
+        }
+
         /// <remarks>
         /// This async method needs to return a task and be awaited in order for
         /// unit tests that trigger this method to work correctly.
@@ -521,9 +508,7 @@ namespace MudBlazor
                 searchingWhileSelected = !Strict && Value != null && (Value.ToString() == Text || (ToStringFunc != null && ToStringFunc(Value) == Text)); //search while selected if enabled and the Text is equivalent to the Value
                 var searchText = searchingWhileSelected ? string.Empty : Text;
 
-                var searchTask = SearchFuncWithCancel != null ?
-                    SearchFuncWithCancel(searchText, _cancellationTokenSrc.Token) :
-                    SearchFunc(searchText);
+                var searchTask = SearchFunc(searchText, _cancellationTokenSrc.Token);
 
                 _currentSearchTask = searchTask;
 
@@ -542,7 +527,7 @@ namespace MudBlazor
                 Logger.LogWarning("The search function failed to return results: " + e.Message);
             }
 
-            _itemsReturned = searchedItems.Length;
+            await SetReturnedItemsCountAsync(searchedItems.Length);
             if (MaxItems.HasValue)
             {
                 searchedItems = searchedItems.Take(MaxItems.Value).ToArray();
@@ -599,10 +584,6 @@ namespace MudBlazor
                 _isClearing = false;
             }
         }
-
-        [Obsolete($"Use {nameof(ResetValueAsync)} instead. This will be removed in v7")]
-        [ExcludeFromCodeCoverage]
-        protected override async void ResetValue() => await Clear();
 
         protected override Task ResetValueAsync() => Clear();
 
@@ -663,7 +644,7 @@ namespace MudBlazor
                     }
                     break;
                 case "ArrowUp":
-                    if (args.AltKey == true)
+                    if (args.AltKey)
                     {
                         await ChangeMenu(open: false);
                     }
@@ -690,7 +671,7 @@ namespace MudBlazor
                         await ToggleMenu();
                     break;
                 case "Backspace":
-                    if (args.CtrlKey == true && args.ShiftKey == true)
+                    if (args.CtrlKey && args.ShiftKey)
                     {
                         await ResetAsync();
                     }
@@ -704,19 +685,9 @@ namespace MudBlazor
             if (increment == 0 || _items == null || _items.Length == 0 || !_enabledItemIndices.Any())
                 return ValueTask.CompletedTask;
             // if we are at the end, or the beginning we just do an rollover
-            _selectedListItemIndex = Math.Clamp(value: (10 * _items.Length + _selectedListItemIndex + increment) % _items.Length, min: 0, max: _items.Length - 1);
+            _selectedListItemIndex = Math.Clamp(value: ((10 * _items.Length) + _selectedListItemIndex + increment) % _items.Length, min: 0, max: _items.Length - 1);
             return ScrollToListItem(_selectedListItemIndex);
         }
-
-        /// <summary>
-        /// Scroll to a specific item index in the Autocomplete list of items.
-        /// </summary>
-        /// <param name="index">the index to scroll to</param>
-        /// <param name="increment">not used</param>
-        /// <returns>ValueTask</returns>
-        [Obsolete("Use ScrollToListItem without increment parameter instead")]
-        public Task ScrollToListItem(int index, int increment)
-            => ScrollToListItem(index).AsTask();
 
         /// <summary>
         /// Scroll to a specific item index in the Autocomplete list of items.

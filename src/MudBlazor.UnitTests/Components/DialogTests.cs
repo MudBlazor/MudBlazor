@@ -1,10 +1,5 @@
-﻿
-#pragma warning disable CS1998 // async without await
-
-using System;
+﻿using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -31,11 +26,11 @@ namespace MudBlazor.UnitTests.Components
             IDialogReference dialogReference = null;
             await comp.InvokeAsync(async () =>
             {
-                dialogReference = service?.Show<DialogRender>();
+                dialogReference = await service?.ShowAsync<DialogRender>();
                 var result1 = await dialogReference.Result;
                 //The second Dialog is added here, but the first dialog is still in the _dialogs collection of the dialogprovider, as only the result task was set to completion.
                 //So DialogProvider will render again with 2 dialogs, but 1 is completed. This one needs to be excluded from rendering to prevent double initialize with no params.
-                dialogReference = service?.Show<DialogRender>();
+                dialogReference = await service?.ShowAsync<DialogRender>();
                 var result2 = await dialogReference.Result;
             });
             DialogRender.OnInitializedCount.Should().Be(2);
@@ -88,31 +83,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Cancelled property is obsolete, but it should still be equivalent to Canceled property
-        /// We'll just confirm the equivalence in both states
-        /// </summary>
-        [Test]
-        [Obsolete]
-        public async Task ObsoleteEquivalenceTest()
-        {
-            var value = "Test";
-            var result = new DialogResult(value, value.GetType(), false);
-            result.Canceled.Should().BeFalse();
-            result.Cancelled.Should().Be(result.Canceled);
-
-            result = new DialogResult(value, value.GetType(), true);
-            result.Canceled.Should().BeTrue();
-            result.Cancelled.Should().Be(result.Canceled);
-        }
-
-        /// <summary>
-        /// Opening and closing an inline dialog. Click on open will open the inlined dialog.
-        ///
+        /// <para>Opening and closing an inline dialog. Click on open will open the inlined dialog.</para>
+        /// <para>
         /// Note: this test uses two different components, one containing the dialog provider and
         /// one containing the open button and the inline dialog
+        /// </para>
         /// </summary>
         [Test]
-        public async Task InlineDialogTest()
+        public void InlineDialogTest()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -137,7 +115,7 @@ namespace MudBlazor.UnitTests.Components
         /// Nested dialogs should not appear unless manually shown
         /// </summary>
         [Test]
-        public async Task NestedInlineDialogTest()
+        public void NestedInlineDialogTest()
         {
             var provider = Context.RenderComponent<MudDialogProvider>();
             provider.Markup.Trim().Should().BeEmpty();
@@ -170,7 +148,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task InlineDialog_Should_UpdateIsVisibleOnClose()
         {
-            await ImproveChanceOfSuccess(async () =>
+            await ImproveChanceOfSuccess(() =>
             {
                 var comp = Context.RenderComponent<MudDialogProvider>();
                 comp.Markup.Trim().Should().BeEmpty();
@@ -192,6 +170,8 @@ namespace MudBlazor.UnitTests.Components
                 comp.WaitForAssertion(() => comp.Find("div.mud-overlay").Should().NotBeNull());
                 comp.Find("div.mud-overlay").Click();
                 comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
+
+                return Task.CompletedTask;
             });
         }
 
@@ -226,7 +206,7 @@ namespace MudBlazor.UnitTests.Components
         /// Dialog inline should not be closed after any event inside
         /// </summary>
         [Test]
-        public async Task InlineDialogShouldNotCloseAfterStateHasChanged()
+        public void InlineDialogShouldNotCloseAfterStateHasChanged()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -280,9 +260,11 @@ namespace MudBlazor.UnitTests.Components
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
 
-            var parameters = new DialogParameters();
-            parameters.Add("TestValue", "test");
-            parameters.Add("Color_Test", Color.Error); // !! comment me !!
+            var parameters = new DialogParameters<DialogWithParameters>
+            {
+                { x => x.TestValue, "test" },
+                { x => x.ColorTest, Color.Error } // !! comment me !!
+            };
 
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithParameters>(string.Empty, parameters));
             dialogReference.Should().NotBe(null);
@@ -297,7 +279,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[0].Click();
 
             ((DialogWithParameters)dialogReference.Dialog).TestValue.Should().Be("new_test");
-            ((DialogWithParameters)dialogReference.Dialog).ParamtersSetCounter.Should().Be(1);
+            ((DialogWithParameters)dialogReference.Dialog).ParametersSetCounter.Should().Be(1);
             textField.Text.Should().Be("new_test");
         }
 
@@ -324,7 +306,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task PassingEventCallbackToDialogViaParameters()
+        public void PassingEventCallbackToDialogViaParameters()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -434,13 +416,13 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dialog2.MudDialog.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             comp.Markup.Trim().Should().NotBeEmpty();
         }
-        
+
         [Test]
         public async Task DialogHandlesOnBackdropClickEvent()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
-            
+
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
@@ -448,10 +430,10 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithOnBackdropClickEvent>());
             dialogReference.Should().NotBe(null);
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Be("Title:");
-            
+
             //Click on backdrop
             comp.Find("div.mud-overlay").Click();
-            
+
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Be("Title: Backdrop clicked");
         }
 
@@ -461,7 +443,7 @@ namespace MudBlazor.UnitTests.Components
         /// https://github.com/MudBlazor/MudBlazor/issues/4871
         /// </summary>
         [Test]
-        public async Task InlineDialogBug4871Test()
+        public void InlineDialogBug4871Test()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -490,7 +472,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
-            
+
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
@@ -645,12 +627,14 @@ namespace MudBlazor.UnitTests.Components
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
 
-            var parameters = new DialogParameters();
-            parameters.Add("TestValue", "test");
-            parameters.Add("Color_Test", Color.Error); // !! comment me !!
+            var parameters = new DialogParameters<DialogWithParameters>
+            {
+                { x => x.TestValue, "test" },
+                { x => x.ColorTest, Color.Error } // !! comment me !!
+            };
 
             var dialogReferenceLazy = new Lazy<Task<IDialogReference>>(() => service?.ShowAsync<DialogWithParameters>(string.Empty, parameters));
-            await comp.InvokeAsync(()=> dialogReferenceLazy.Value);
+            await comp.InvokeAsync(() => dialogReferenceLazy.Value);
             var dialogReference = await dialogReferenceLazy.Value;
             dialogReference.Should().NotBe(null);
 
@@ -664,7 +648,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[0].Click();
 
             ((DialogWithParameters)dialogReference.Dialog).TestValue.Should().Be("new_test");
-            ((DialogWithParameters)dialogReference.Dialog).ParamtersSetCounter.Should().Be(1);
+            ((DialogWithParameters)dialogReference.Dialog).ParametersSetCounter.Should().Be(1);
             textField.Text.Should().Be("new_test");
         }
 
@@ -869,7 +853,7 @@ namespace MudBlazor.UnitTests.Components
             var parameters = new DialogParameters<DialogWithParameters>
             {
                 { x => x.TestValue, "test" },
-                { x => x.Color_Test, Color.Error }
+                { x => x.ColorTest, Color.Error }
             };
 
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithParameters>(string.Empty, parameters));
@@ -877,6 +861,72 @@ namespace MudBlazor.UnitTests.Components
 
             var textField = comp.FindComponent<MudInput<string>>().Instance;
             textField.Text.Should().Be("test");
+        }
+
+        [TestCase("", false, "mud-dialog-content")]
+        [TestCase("", true, "mud-dialog-content mud-dialog-no-side-padding")]
+        [TestCase("my-class", false, "mud-dialog-content my-class")]
+        [TestCase("my-class", true, "mud-dialog-content mud-dialog-no-side-padding my-class")]
+        public async Task DialogWithContentClassValueShouldRenderExpectedClassname(string contentClass, bool disablePadding, string expectedClassname)
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBeNull();
+            IDialogReference dialogReference = null;
+
+            var parameters = new DialogParameters<DialogWithContentClass>
+            {
+                { x => x.ContentClass, contentClass },
+                { x => x.DisableSidePadding, disablePadding }
+            };
+
+            await comp.InvokeAsync(async () => dialogReference = await service!.ShowAsync<DialogWithContentClass>(string.Empty, parameters));
+            dialogReference.Should().NotBeNull();
+
+            comp.Find("div.mud-dialog-content").GetAttribute("class").Should().Be(expectedClassname);
+        }
+
+        [TestCase("", "mud-dialog-actions")]
+        [TestCase("my-class", "mud-dialog-actions my-class")]
+        public async Task DialogWithActionsClassValueShouldRenderExpectedClassname(string actionsClass, string expectedClassname)
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBeNull();
+            IDialogReference dialogReference = null;
+
+            var parameters = new DialogParameters<DialogWithActionsClass>
+            {
+                { x => x.ActionsClass, actionsClass }
+            };
+
+            await comp.InvokeAsync(async () => dialogReference = await service!.ShowAsync<DialogWithActionsClass>(string.Empty, parameters));
+            dialogReference.Should().NotBeNull();
+
+            comp.Find("div.mud-dialog-actions").GetAttribute("class").Should().Be(expectedClassname);
+        }
+
+        [TestCase("", "mud-dialog-title")]
+        [TestCase("my-title-class my-second-class", "mud-dialog-title my-title-class my-second-class")]
+        public async Task DialogWithTitleClassValueShouldRenderExpectedClassname(string titleClass, string expectedClassname)
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBeNull();
+            IDialogReference dialogReference = null;
+
+            var parameters = new DialogParameters<DialogWithTitleClass>
+            {
+                { x => x.TitleClass, titleClass }
+            };
+
+            await comp.InvokeAsync(async () => dialogReference = await service!.ShowAsync<DialogWithTitleClass>(string.Empty, parameters));
+            dialogReference.Should().NotBeNull();
+
+            comp.Find("div.mud-dialog-title").GetAttribute("class").Should().Be(expectedClassname);
         }
     }
 

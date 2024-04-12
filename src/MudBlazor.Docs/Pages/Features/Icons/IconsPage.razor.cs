@@ -5,58 +5,76 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Reflection;
-using MudBlazor.Docs.Models;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Services;
+using MudBlazor.Docs.Models;
 using MudBlazor.Interop;
+using MudBlazor.Services;
 
 namespace MudBlazor.Docs.Pages.Features.Icons
 {
+#nullable enable
     public partial class IconsPage
     {
-        [Inject] IResizeObserver ResizeObserver { get; set; }
-        [Inject] protected IJsApiService JsApiService { get; set; }
+        private int _cardsPerRow;
+        private bool _iconDrawerOpen;
+        private ElementReference _killZone;
+        private List<MudIcons> _displayedIcons = new();
+        private const double IconCardWidth = 136.88; // single icon card width including margins
+        private const float IconCardHeight = 144; // single icon card height including margins
 
-        bool iconDrawerOpen;
-        List<MudIcons> DisplayedIcons;
-        private IconOrigin SelectedIconOrigin { get; set; } = IconOrigin.Material;
-        private string SearchText { get; set; } = string.Empty;
-        private double _iconCardWidth = 136.88; // single icon card width includin margins
-        private float _iconCardHeight = 144; // single icon card height includin margins
-        private int CardsPerRow = 0;
+        [Inject]
+        protected IResizeObserver ResizeObserver { get; set; } = null!;
 
+        [Inject]
+        protected IJsApiService JsApiService { get; set; } = null!;
 
-        private ElementReference killZone;
+        private List<MudIcons> CustomAll { get; } = new();
 
-        private List<MudIcons> CustomAll { get; set; } = new List<MudIcons>();
-        private List<MudIcons> CustomBrands { get; set; } = new List<MudIcons>();
-        private List<MudIcons> CustomFileFormats { get; set; } = new List<MudIcons>();
-        private List<MudIcons> CustomUncategorized { get; set; } = new List<MudIcons>();
+        private List<MudIcons> CustomBrands { get; } = new();
 
-        private List<MudIcons> MaterialFilled { get; set; }
-        private List<MudIcons> MaterialOutlined { get; set; }
-        private List<MudIcons> MaterialRounded { get; set; }
-        private List<MudIcons> MaterialSharp { get; set; }
-        private List<MudIcons> MaterialTwoTone { get; set; }
+        private List<MudIcons> CustomFileFormats { get; } = new();
 
-        private MudIcons SelectedIcon { get; set; } = new MudIcons("", "", "");
-        private string IconCodeOutput { get; set; }
+        private List<MudIcons> CustomUncategorized { get; } = new();
+
+        private List<MudIcons> MaterialFilled { get; set; } = new();
+
+        private List<MudIcons> MaterialOutlined { get; set; } = new();
+
+        private List<MudIcons> MaterialRounded { get; set; } = new();
+
+        private List<MudIcons> MaterialSharp { get; set; } = new();
+
+        private List<MudIcons> MaterialTwoTone { get; set; } = new();
+
+        private MudIcons SelectedIcon { get; set; } = MudIcons.Empty;
+
         private Size PreviewIconSize { get; set; } = Size.Medium;
-        private Color PreviewIconColor { get; set; } = Color.Dark;
-        private List<MudVirtualizedIcons> SelectedIcons => string.IsNullOrWhiteSpace(SearchText)
-            ? GetVirtualizedIcons(DisplayedIcons)
-            : GetVirtualizedIcons(DisplayedIcons.Where(m => m.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList());
 
-        private List<MudVirtualizedIcons> GetVirtualizedIcons(List<MudIcons> iconlist)
+        private Color PreviewIconColor { get; set; } = Color.Dark;
+
+        private IconOrigin SelectedIconOrigin { get; set; } = IconOrigin.Material;
+
+        private string IconCodeOutput { get; set; } = string.Empty;
+
+        private string SearchText { get; set; } = string.Empty;
+
+        private List<MudVirtualizedIcons> SelectedIcons => string.IsNullOrWhiteSpace(SearchText)
+            ? GetVirtualizedIcons(_displayedIcons)
+            : GetVirtualizedIcons(_displayedIcons.Where(mudIcon => mudIcon.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList());
+
+        private List<MudVirtualizedIcons> GetVirtualizedIcons(List<MudIcons> iconList)
         {
-            if (CardsPerRow <= 0)
+            if (_cardsPerRow <= 0)
+            {
                 return new List<MudVirtualizedIcons>();
-            return iconlist.Chunk(CardsPerRow).Select(row => new MudVirtualizedIcons(row)).ToList();
+            }
+
+            return iconList.Chunk(_cardsPerRow).Select(row => new MudVirtualizedIcons(row)).ToList();
         }
 
-        private readonly IconStorage IconTypes = new()
+        private readonly IconStorage _iconTypes = new()
         {
             { IconType.Filled, typeof(MudBlazor.Icons.Material.Filled) },
             { IconType.Outlined, typeof(MudBlazor.Icons.Material.Outlined) },
@@ -70,29 +88,29 @@ namespace MudBlazor.Docs.Pages.Features.Icons
 
         protected override async Task OnInitializedAsync()
         {
-            MaterialFilled = await LoadMaterialIcons(IconType.Filled);
-            DisplayedIcons = MaterialFilled;
-
+            _displayedIcons = MaterialFilled = await LoadMaterialIcons(IconType.Filled);
             MaterialOutlined = await LoadMaterialIcons(IconType.Outlined);
             MaterialRounded = await LoadMaterialIcons(IconType.Rounded);
             MaterialSharp = await LoadMaterialIcons(IconType.Sharp);
             MaterialTwoTone = await LoadMaterialIcons(IconType.TwoTone);
 
             await LoadCustomIcons();
+            await base.OnInitializedAsync();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
-
-                await ResizeObserver.Observe(killZone);
+                await ResizeObserver.Observe(_killZone);
 
                 ResizeObserver.OnResized += OnResized;
 
                 SetCardsPerRow();
                 StateHasChanged();
             }
+
+            await base.OnAfterRenderAsync(firstRender);
         }
 
         private async void OnResized(IDictionary<ElementReference, BoundingClientRect> changes)
@@ -101,107 +119,56 @@ namespace MudBlazor.Docs.Pages.Features.Icons
             await InvokeAsync(StateHasChanged);
         }
 
-        private void SetCardsPerRow()
-        {
-            CardsPerRow = Convert.ToInt32(ResizeObserver.GetWidth(killZone) / _iconCardWidth);
-        }
+        private void SetCardsPerRow() => _cardsPerRow = Convert.ToInt32(ResizeObserver.GetWidth(_killZone) / IconCardWidth);
 
-        public async Task<List<MudIcons>> LoadMaterialIcons(string type)
+        private async Task<List<MudIcons>> LoadMaterialIcons(string type)
         {
-            var result = new List<MudIcons>();
-            var icons = IconTypes[type];
-            var iconsInstance = Activator.CreateInstance(icons);
-
-            foreach (var prop in icons.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty))
-            {
-                result.Add(new MudIcons(prop.Name, prop.GetValue(iconsInstance).ToString(), type));
-            }
-            foreach (var prop in icons.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
-            {
-                result.Add(new MudIcons(prop.Name, prop.GetRawConstantValue().ToString(), type));
-            }
+            var iconType = _iconTypes[type];
+            var result = GetMudIconsByTypeCategory(iconType, type);
 
             await Task.WhenAll();
 
             return result;
         }
 
-        public async Task LoadCustomIcons()
+        private async Task LoadCustomIcons()
         {
-            var brands = new MudBlazor.Icons.Custom.Brands();
-
-            foreach (var prop in typeof(MudBlazor.Icons.Custom.Brands).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty))
-            {
-                CustomBrands.Add(new MudIcons(prop.Name, prop.GetValue(brands).ToString(), IconType.Brands));
-            }
-            foreach (var prop in typeof(MudBlazor.Icons.Custom.Brands).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
-            {
-                CustomBrands.Add(new MudIcons(prop.Name, prop.GetRawConstantValue().ToString(), IconType.Brands));
-            }
-
+            CustomBrands.AddRange(GetMudIconsByTypeCategory(typeof(MudBlazor.Icons.Custom.Brands), IconType.Brands));
             CustomAll.AddRange(CustomBrands);
 
-            var fileFormats = new MudBlazor.Icons.Custom.FileFormats();
-
-            foreach (var prop in typeof(MudBlazor.Icons.Custom.FileFormats).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty))
-            {
-                CustomFileFormats.Add(new MudIcons(prop.Name, prop.GetValue(fileFormats).ToString(), IconType.FileFormats));
-            }
-            foreach (var prop in typeof(MudBlazor.Icons.Custom.FileFormats).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
-            {
-                CustomFileFormats.Add(new MudIcons(prop.Name, prop.GetRawConstantValue().ToString(), IconType.FileFormats));
-            }
-
+            CustomFileFormats.AddRange(GetMudIconsByTypeCategory(typeof(MudBlazor.Icons.Custom.FileFormats), IconType.FileFormats));
             CustomAll.AddRange(CustomFileFormats);
 
-            var uncategorized = new MudBlazor.Icons.Custom.Uncategorized();
-
-            foreach (var prop in typeof(MudBlazor.Icons.Custom.Uncategorized).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty))
-            {
-                CustomUncategorized.Add(new MudIcons(prop.Name, prop.GetValue(uncategorized).ToString(), IconType.Uncategorized));
-            }
-            foreach (var prop in typeof(MudBlazor.Icons.Custom.Uncategorized).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
-            {
-                CustomUncategorized.Add(new MudIcons(prop.Name, prop.GetRawConstantValue().ToString(), IconType.Uncategorized));
-            }
-
-
+            CustomUncategorized.AddRange(GetMudIconsByTypeCategory(typeof(MudBlazor.Icons.Custom.Uncategorized), IconType.Uncategorized));
             CustomAll.AddRange(CustomUncategorized);
 
             await Task.WhenAll();
         }
 
-        public void ChangeIconCategory(string type)
+        private List<MudIcons> GetMudIconsByTypeCategory(Type iconType, string category)
         {
-            switch (type)
+            return iconType
+                .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+                .Select(prop => new MudIcons(prop.Name, GetIconCodeOrDefault(prop), category))
+                .ToList();
+        }
+
+        private string GetIconCodeOrDefault(FieldInfo fieldInfo) => fieldInfo.GetRawConstantValue()?.ToString() ?? string.Empty;
+
+        private void ChangeIconCategory(string type)
+        {
+            _displayedIcons = type switch
             {
-                case IconType.Filled:
-                    DisplayedIcons = MaterialFilled;
-                    break;
-                case IconType.Outlined:
-                    DisplayedIcons = MaterialOutlined;
-                    break;
-                case IconType.Rounded:
-                    DisplayedIcons = MaterialRounded;
-                    break;
-                case IconType.Sharp:
-                    DisplayedIcons = MaterialSharp;
-                    break;
-                case IconType.TwoTone:
-                    DisplayedIcons = MaterialTwoTone;
-                    break;
-                case IconType.All:
-                    DisplayedIcons = CustomAll;
-                    break;
-                case IconType.Brands:
-                    DisplayedIcons = CustomBrands;
-                    break;
-                case IconType.FileFormats:
-                    DisplayedIcons = CustomFileFormats;
-                    break;
-                case IconType.Uncategorized:
-                    DisplayedIcons = CustomUncategorized;
-                    break;
+                IconType.Filled => MaterialFilled,
+                IconType.Outlined => MaterialOutlined,
+                IconType.Rounded => MaterialRounded,
+                IconType.Sharp => MaterialSharp,
+                IconType.TwoTone => MaterialTwoTone,
+                IconType.All => CustomAll,
+                IconType.Brands => CustomBrands,
+                IconType.FileFormats => CustomFileFormats,
+                IconType.Uncategorized => CustomUncategorized,
+                _ => _displayedIcons
             };
         }
 
@@ -216,45 +183,39 @@ namespace MudBlazor.Docs.Pages.Features.Icons
                     ChangeIconCategory(IconType.All);
                     break;
             }
+
             SelectedIconOrigin = origin;
         }
 
-        void SetIconDrawer(MudIcons icon)
+        private void SetIconDrawer(MudIcons icon)
         {
-            iconDrawerOpen = true;
+            _iconDrawerOpen = true;
             SelectedIcon = new MudIcons(icon.Name, icon.Code, icon.Category);
             IconCodeOutput = $"@Icons{(SelectedIconOrigin == IconOrigin.Material ? ".Material" : ".Custom")}.{icon.Category}.{icon.Name}";
         }
-        void CloseIconDrawer()
-        {
-            iconDrawerOpen = false;
-        }
 
-        private async Task CopyTextToClipboard()
-        {
-            await JsApiService.CopyToClipboardAsync(IconCodeOutput);
-        }
+        private void CloseIconDrawer() => _iconDrawerOpen = false;
+
+        private async Task CopyTextToClipboard() => await JsApiService.CopyToClipboardAsync(IconCodeOutput);
+
+        private string GetKillZoneStyle() => "height:65vh;width:100%;position:sticky;top:0px;";
 
         private struct IconType
         {
-            public const string Filled = "Filled", Outlined = "Outlined", Rounded = "Rounded", Sharp = "Sharp", TwoTone = "TwoTone", All = "All", Brands = "Brands", FileFormats = "FileFormats", Uncategorized = "Uncategorized";
+            public const string Filled = "Filled";
+            public const string Outlined = "Outlined";
+            public const string Rounded = "Rounded";
+            public const string Sharp = "Sharp";
+            public const string TwoTone = "TwoTone";
+            public const string All = "All";
+            public const string Brands = "Brands";
+            public const string FileFormats = "FileFormats";
+            public const string Uncategorized = "Uncategorized";
         }
         private enum IconOrigin
         {
             Custom,
             Material
-        }
-
-        private string GetKillZoneStyle(bool debugg)
-        {
-            if (debugg)
-            {
-                return $"height:65vh;width:100%;position:sticky;top:0px;border-color:#ff0000;border-style:dashed;border-width:4px;border-radius:8px;";
-            }
-            else
-            {
-                return $"height:65vh;width:100%;position:sticky;top:0px;";
-            }
         }
     }
 }

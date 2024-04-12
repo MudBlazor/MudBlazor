@@ -60,10 +60,6 @@ namespace MudBlazor
                 .Build();
 
         [Inject]
-        [Obsolete]
-        public IBreakpointService Breakpointistener { get; set; } = null!;
-
-        [Inject]
         protected IBrowserViewportService BrowserViewportService { get; set; } = null!;
 
         [CascadingParameter]
@@ -308,7 +304,7 @@ namespace MudBlazor
 
         private Task CloseDrawerAsync() => Open ? OpenChanged.InvokeAsync(false) : Task.CompletedTask;
 
-        public async Task OnNavigation()
+        async Task INavigationEventReceiver.OnNavigation()
         {
             if (Variant == DrawerVariant.Temporary ||
                 (Variant == DrawerVariant.Responsive && await BrowserViewportService.GetCurrentBreakpointAsync() < Breakpoint))
@@ -369,9 +365,7 @@ namespace MudBlazor
             };
         }
 
-
-        [Obsolete($"Use {nameof(OnMouseEnterAsync)} instead. This will be removed in v7.")]
-        public async void OnMouseEnter()
+        private async Task OnMouseEnterAsync()
         {
             if (Variant == DrawerVariant.Mini && !Open && OpenMiniOnHover)
             {
@@ -380,26 +374,7 @@ namespace MudBlazor
             }
         }
 
-        public async Task OnMouseEnterAsync()
-        {
-            if (Variant == DrawerVariant.Mini && !Open && OpenMiniOnHover)
-            {
-                _closeOnMouseLeave = true;
-                await OpenChanged.InvokeAsync(true);
-            }
-        }
-
-        [Obsolete($"Use {nameof(OnMouseLeaveAsync)} instead. This will be removed in v7.")]
-        public async void OnMouseLeave()
-        {
-            if (Variant == DrawerVariant.Mini && Open && _closeOnMouseLeave)
-            {
-                _closeOnMouseLeave = false;
-                await OpenChanged.InvokeAsync(false);
-            }
-        }
-
-        public async Task OnMouseLeaveAsync()
+        private async Task OnMouseLeaveAsync()
         {
             if (Variant == DrawerVariant.Mini && Open && _closeOnMouseLeave)
             {

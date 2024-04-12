@@ -1,5 +1,4 @@
-﻿using System;
-using MudBlazor.Utilities;
+﻿using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -7,8 +6,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents a palette of colors used in the application.
     /// </summary>
-    [Obsolete("This property will be abstract in a future update. Use PaletteLight, PaletteDark or your own implementation.", false)]
-    public class Palette
+    public abstract class Palette
     {
         private MudColor? _primaryDarken;
         private MudColor? _primaryLighten;
@@ -110,7 +108,7 @@ namespace MudBlazor
         /// <summary>
         /// Gets or sets the dark color.
         /// </summary>
-        public virtual MudColor Dark { get; set; } = Colors.Grey.Darken3;
+        public virtual MudColor Dark { get; set; } = Colors.Gray.Darken3;
 
         /// <summary>
         /// Gets or sets the contrast text color for the dark color.
@@ -120,7 +118,7 @@ namespace MudBlazor
         /// <summary>
         /// Gets or sets the primary text color.
         /// </summary>
-        public virtual MudColor TextPrimary { get; set; } = Colors.Grey.Darken3;
+        public virtual MudColor TextPrimary { get; set; } = Colors.Gray.Darken3;
 
         /// <summary>
         /// Gets or sets the secondary text color.
@@ -154,9 +152,9 @@ namespace MudBlazor
         public virtual MudColor Background { get; set; } = Colors.Shades.White;
 
         /// <summary>
-        /// Gets or sets the grey background color.
+        /// Gets or sets the gray background color.
         /// </summary>
-        public virtual MudColor BackgroundGrey { get; set; } = Colors.Grey.Lighten4;
+        public virtual MudColor BackgroundGray { get; set; } = Colors.Gray.Lighten4;
 
         /// <summary>
         /// Gets or sets the surface color.
@@ -171,12 +169,12 @@ namespace MudBlazor
         /// <summary>
         /// Gets or sets the drawer text color.
         /// </summary>
-        public virtual MudColor DrawerText { get; set; } = Colors.Grey.Darken3;
+        public virtual MudColor DrawerText { get; set; } = Colors.Gray.Darken3;
 
         /// <summary>
         /// Gets or sets the drawer icon color.
         /// </summary>
-        public virtual MudColor DrawerIcon { get; set; } = Colors.Grey.Darken2;
+        public virtual MudColor DrawerIcon { get; set; } = Colors.Gray.Darken2;
 
         /// <summary>
         /// Gets or sets the appbar background color.
@@ -196,12 +194,12 @@ namespace MudBlazor
         /// <summary>
         /// Gets or sets the color for input lines.
         /// </summary>
-        public virtual MudColor LinesInputs { get; set; } = Colors.Grey.Lighten1;
+        public virtual MudColor LinesInputs { get; set; } = Colors.Gray.Lighten1;
 
         /// <summary>
         /// Gets or sets the color for table lines.
         /// </summary>
-        public virtual MudColor TableLines { get; set; } = new MudColor(Colors.Grey.Lighten2).SetAlpha(1.0).ToString(MudColorOutputFormats.RGBA);
+        public virtual MudColor TableLines { get; set; } = new MudColor(Colors.Gray.Lighten2).SetAlpha(1.0).ToString(MudColorOutputFormats.RGBA);
 
         /// <summary>
         /// Gets or sets the color for striped rows in a table.
@@ -216,22 +214,12 @@ namespace MudBlazor
         /// <summary>
         /// Gets or sets the color for dividers.
         /// </summary>
-        public virtual MudColor Divider { get; set; } = Colors.Grey.Lighten2;
+        public virtual MudColor Divider { get; set; } = Colors.Gray.Lighten2;
 
         /// <summary>
         /// Gets or sets the light color for dividers.
         /// </summary>
         public virtual MudColor DividerLight { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.8).ToString(MudColorOutputFormats.RGBA);
-        
-        /// <summary>
-        /// Gets or sets the default color for chips.
-        /// </summary>
-        public virtual MudColor ChipDefault { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.08).ToString(MudColorOutputFormats.RGBA);
-        
-        /// <summary>
-        /// Gets or sets the default hover color for chips.
-        /// </summary>
-        public virtual MudColor ChipDefaultHover { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.12).ToString(MudColorOutputFormats.RGBA);
 
         /// <summary>
         /// Gets or sets the darkened value of the primary color.
@@ -383,29 +371,39 @@ namespace MudBlazor
         public double HoverOpacity { get; set; } = 0.06;
 
         /// <summary>
+        /// Gets or sets the opacity for the ripple effect.
+        /// </summary>
+        public double RippleOpacity { get; set; } = 0.1;
+
+        /// <summary>
+        /// Gets or sets the opacity for the ripple effect on specific elements like filled buttons.
+        /// </summary>
+        public double RippleOpacitySecondary { get; set; } = 0.2;
+
+        /// <summary>
         /// Gets or sets the default gray color.
         /// </summary>
-        public string GrayDefault { get; set; } = Colors.Grey.Default;
+        public string GrayDefault { get; set; } = Colors.Gray.Default;
 
         /// <summary>
         /// Gets or sets the lightened gray color.
         /// </summary>
-        public string GrayLight { get; set; } = Colors.Grey.Lighten1;
+        public string GrayLight { get; set; } = Colors.Gray.Lighten1;
 
         /// <summary>
         /// Gets or sets the further lightened gray color.
         /// </summary>
-        public string GrayLighter { get; set; } = Colors.Grey.Lighten2;
+        public string GrayLighter { get; set; } = Colors.Gray.Lighten2;
 
         /// <summary>
         /// Gets or sets the darkened gray color.
         /// </summary>
-        public string GrayDark { get; set; } = Colors.Grey.Darken1;
+        public string GrayDark { get; set; } = Colors.Gray.Darken1;
 
         /// <summary>
         /// Gets or sets the further darkened gray color.
         /// </summary>
-        public string GrayDarker { get; set; } = Colors.Grey.Darken2;
+        public string GrayDarker { get; set; } = Colors.Gray.Darken2;
 
         /// <summary>
         /// Gets or sets the dark overlay color.

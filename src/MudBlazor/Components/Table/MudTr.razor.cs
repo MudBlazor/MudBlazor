@@ -56,12 +56,6 @@ namespace MudBlazor
             }
         }
 
-        [Obsolete($"Use {nameof(OnRowClickedAsync)} instead.")]
-        public async void OnRowClicked(MouseEventArgs args)
-        {
-            await OnRowClickedAsync(args);
-        }
-
         public async Task OnRowClickedAsync(MouseEventArgs args)
         {
             var table = Context?.Table;
@@ -102,7 +96,7 @@ namespace MudBlazor
                 return default;
             }
         }
-        
+
         private EventCallback<MouseEventArgs> RowMouseLeaveEventCallback
         {
             get
@@ -115,7 +109,7 @@ namespace MudBlazor
                 return default;
             }
         }
-        
+
         private void StartEditingItem() => StartEditingItem(buttonClicked: true);
 
         private void StartEditingItem(bool buttonClicked)

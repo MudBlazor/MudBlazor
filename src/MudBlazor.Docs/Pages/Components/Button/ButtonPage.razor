@@ -3,7 +3,7 @@
 <DocsPage>
     <DocsPageHeader Title="Button"
                     SubTitle="A Material Design Button for actions, links and commands">
-        <Description>The <CodeInline>Mudbutton</CodeInline> component is a button with material design theme and comes with multiple functions.</Description>
+        <Description>The <CodeInline>MudButton</CodeInline> component is a button with material design theme and comes with multiple functions.</Description>
     </DocsPageHeader>
     <DocsPageContent>
         
@@ -11,16 +11,16 @@
             <SectionHeader Title="Filled Buttons">
                 <Description>Filled Buttons have elevation (box shadow) and is raised on click by default.</Description>
             </SectionHeader>
-            <SectionContent Code="ButtonFilledExample">
+            <SectionContent Code="@nameof(ButtonFilledExample)">
                 <ButtonFilledExample/>
             </SectionContent>
             <SectionSubGroups>
                 <DocsPageSection>
-                    <SectionHeader Title="Elevation">
-                        <Description>Elevation can be removed with the <CodeInline>DisableElevation</CodeInline> bool.<CodeInline>Color</CodeInline> property only applies to the text.</Description>
+                    <SectionHeader Title="Drop Shadow">
+                        <Description>The drop shadow, sometimes also called elevation, can be controlled with the <CodeInline>DropShadow</CodeInline> bool.<CodeInline>Color</CodeInline> property only applies to the text.</Description>
                     </SectionHeader>
-                    <SectionContent Code="ButtonElevationExample">
-                        <ButtonElevationExample/>
+                    <SectionContent Code="@nameof(ButtonDropShadowExample)">
+                        <ButtonDropShadowExample/>
                     </SectionContent>
                 </DocsPageSection>
             </SectionSubGroups>
@@ -28,9 +28,9 @@
 
         <DocsPageSection>
             <SectionHeader Title="Text Buttons">
-                <Description>Text Buttons have no elevation, background or border and only hover effect is used. The <CodeInline>Color</CodeInline> property only applies to the text.</Description>
+                <Description>Text Buttons have no drop shadow, background or border and only hover effect is used. The <CodeInline>Color</CodeInline> property only applies to the text.</Description>
             </SectionHeader>
-            <SectionContent Code="ButtonTextExample">
+            <SectionContent Code="@nameof(ButtonTextExample)">
                 <ButtonTextExample/>
             </SectionContent>
         </DocsPageSection>
@@ -39,7 +39,7 @@
             <SectionHeader Title="Outlined Buttons">
                 <Description>Outlined Buttons are similar to Text Buttons except for the border that inherits its color from the set <CodeInline>Color</CodeInline> property.</Description>
             </SectionHeader>
-            <SectionContent Code="ButtonOutlinedExample">
+            <SectionContent Code="@nameof(ButtonOutlinedExample)">
                 <ButtonOutlinedExample/>
             </SectionContent>
         </DocsPageSection>
@@ -48,7 +48,7 @@
             <SectionHeader Title="FullWidth">
                 <Description>FullWidth buttons extend to 100% of available width.</Description>
             </SectionHeader>
-            <SectionContent Code="ButtonFullWidthExample">
+            <SectionContent Code="@nameof(ButtonFullWidthExample)">
                 <ButtonFullWidthExample/>
             </SectionContent>
         </DocsPageSection>
@@ -57,7 +57,7 @@
             <SectionHeader Title="Icons and labels">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="ButtonIconLabelExample">
+            <SectionContent Code="@nameof(ButtonIconLabelExample)">
                 <ButtonIconLabelExample/>
             </SectionContent>
         </DocsPageSection>
@@ -69,7 +69,7 @@
                     <br />Use <CodeInline>IconSize</CodeInline> to set a different icon size.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="ButtonSizeExample" ShowCode="false">
+            <SectionContent Code="@nameof(ButtonSizeExample)" ShowCode="false">
                 <ButtonSizeExample/>
             </SectionContent>
         </DocsPageSection>
@@ -78,7 +78,7 @@
             <SectionHeader Title="Customized Buttons">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="ButtonCustomizedExample" ShowCode="false">
+            <SectionContent Code="@nameof(ButtonCustomizedExample)" ShowCode="false">
                 <ButtonCustomizedExample/>
             </SectionContent>
         </DocsPageSection>
@@ -89,7 +89,7 @@
                     If you set the <CodeInline>Disabled</CodeInline> parameter to <CodeInline>true</CodeInline>, the component will render a button with no <CodeInline>href</CodeInline> attribute.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="ButtonLinkExample" ShowCode="false">
+            <SectionContent Code="@nameof(ButtonLinkExample)" ShowCode="false">
                 <ButtonLinkExample/>
             </SectionContent>
         </DocsPageSection>
@@ -99,7 +99,7 @@
                 <Description>If you set a non-null string to <CodeInline>Rel</CodeInline> parameter, the component will add <CodeInline>rel</CodeInline> to the rendered button with the value you specified. This overrides the automatic addition of <CodeInline>rel="noopener"</CodeInline> when setting <CodeInline>Target</CodeInline> to <CodeInline>_blank</CodeInline>. If you want to preserve <CodeInline>noopener</CodeInline>, add it manually along with your custom <CodeInline>Rel</CodeInline> value, for example <CodeInline>rel="nofollow noopener"</CodeInline>.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="ButtonNofollowExample" ShowCode="false">
+            <SectionContent Code="@nameof(ButtonNofollowExample)" ShowCode="false">
                 <ButtonNofollowExample/>
             </SectionContent>
         </DocsPageSection>
@@ -107,7 +107,7 @@
         <DocsPageSection>
             <SectionHeader Title="Loading Button">
             </SectionHeader>
-            <SectionContent Code="ButtonLoadingExample" ShowCode="false">
+            <SectionContent Code="@nameof(ButtonLoadingExample)" ShowCode="false">
                 <ButtonLoadingExample/>
             </SectionContent>
         </DocsPageSection>

@@ -10,8 +10,9 @@
                 <MudInput @ref="_elementReference" @key="_elementKey" InputType="InputType.Text"
                           Class="mud-select-input" Margin="@Margin"
                           Variant="@Variant"
+                          Label="@Label"
                           TextUpdateSuppression="@TextUpdateSuppression"
-                          Value="@Text" DisableUnderLine="@DisableUnderLine"
+                          Value="@Text" Underline="@Underline"
                           Disabled="@GetDisabledState()" ReadOnly="@GetReadOnlyState()" Error="@Error"
                           OnAdornmentClick="@OnAdornmentClick" AdornmentIcon="@CurrentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
                           Clearable="@(!GetReadOnlyState() && Clearable)" OnClearButtonClick="@OnClearButtonClick"
@@ -21,6 +22,7 @@
                           OnKeyUp="@this.OnInputKeyUp" autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"
                           Placeholder="@Placeholder" Immediate="true"
                           InputMode="@InputMode" Pattern="@Pattern"
+                          ShrinkLabel="@ShrinkLabel"
                           T="string" />
 
                 @if (ShowProgressIndicator && IsLoading)
@@ -44,10 +46,10 @@
                     }
                     else if (_items != null && _items.Length != 0)
                     {
-                        <MudList Class="@ListClass" Clickable="true" Dense="@Dense">
+                        <MudList T="T" Class="@ListClass" Dense="@Dense">
                             @if (BeforeItemsTemplate != null)
                             {
-                                <div class="pa-1">
+                                <div class="mud-autocomplete-before-items pa-1">
                                     @BeforeItemsTemplate
                                 </div>
                             }
@@ -57,7 +59,7 @@
                                 bool isSelected = index == _selectedListItemIndex;
                                 bool isDisabled = !_enabledItemIndices.Contains(index);
                                 var captureIndex = index;
-                                <MudListItem @key="@item" id="@GetListItemId(captureIndex)" Disabled="@(isDisabled)" OnClick="@(async () => await ListItemOnClick(item))" OnClickHandlerPreventDefault="true" Class="@GetListItemClassname(isSelected)">
+                                <MudListItem T="T" Value="@item" @key="@item" id="@GetListItemId(captureIndex)" Disabled="@(isDisabled)" OnClick="@(async () => await ListItemOnClick(item))" OnClickHandlerPreventDefault="true" Class="@GetListItemClassname(isSelected)">
                                     @if (ItemTemplate == null)
                                     {
                                         @GetItemString(item)
@@ -79,15 +81,15 @@
                                     }
                                 </MudListItem>
                             }
-                            @if (MoreItemsTemplate != null && _itemsReturned > MaxItems)
+                            @if (MoreItemsTemplate != null && _returnedItemsCount > MaxItems)
                             {
-                                <div class="pa-1">
+                                <div class="mud-autocomplete-more-items pa-1">
                                     @MoreItemsTemplate
                                 </div>
                             }
                             @if (AfterItemsTemplate != null)
                             {
-                                <div class="pa-1">
+                                <div class="mud-autocomplete-after-items pa-1">
                                     @AfterItemsTemplate
                                 </div>
                             }
@@ -95,7 +97,7 @@
                     }
                     else if (NoItemsTemplate != null)
                     {
-                        <div class="pa-1">
+                        <div class="mud-autocomplete-no-items pa-1">
                             @NoItemsTemplate
                         </div>
                     }

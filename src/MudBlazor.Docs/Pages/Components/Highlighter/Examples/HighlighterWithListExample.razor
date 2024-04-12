@@ -1,9 +1,9 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Elevation="0">
-    <MudList>
+    <MudList T="string">
         <MudListSubheader>
-            <MudTextField @bind-Value="@searchTerm" AdornmentIcon="@Icons.Material.Filled.Brush"
+            <MudTextField @bind-Value="searchTerm" AdornmentIcon="@Icons.Material.Filled.Brush"
                           Adornment="Adornment.End" Immediate="true" Variant="Variant.Outlined" />
         </MudListSubheader>
 

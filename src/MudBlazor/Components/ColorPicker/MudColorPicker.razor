@@ -28,8 +28,8 @@
                         <div class="mud-picker-color-overlay" style="@($"background-color: {_baseColor.ToString(MudColorOutputFormats.RGB)}")">
                             <div class="mud-picker-color-overlay mud-picker-color-overlay-white">
                                 <div class="mud-picker-color-overlay mud-picker-color-overlay-black">
-                                    <div class="mud-picker-color-overlay" id="@_id" @onclick="OnColorOverlayClick">
-                                        <svg class="mud-picker-color-selector" height="26" width="26" style="transform: @GetSelectorLocation()" @onclick="OnSelectorClicked" @onclick:stopPropagation="true">
+                                    <div class="mud-picker-color-overlay" id="@_id" @onpointerdown="OnColorOverlayClick" @onpointerup="OnColorOverlayClick" @onpointermove="OnPointerMoveAsync">
+                                        <svg class="mud-picker-color-selector" height="26" width="26" style="transform: @GetSelectorLocation()">
                                             <defs>
                                                 <filter id="mud-picker-color-selector-shadow" x="-50%" y="-50%" width="200%" height="200%">
                                                     <feGaussianBlur in="SourceAlpha" stdDeviation="1" />

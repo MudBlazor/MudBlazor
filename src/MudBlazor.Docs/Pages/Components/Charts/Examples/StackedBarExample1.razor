@@ -6,13 +6,13 @@
 <MudText Typo="Typo.h6">Selected portion of the chart: @Index</MudText>
 
 <div>
-    <MudRadioGroup @bind-SelectedOption="@LegendPosition">
-        <MudRadio Option="@(Position.Bottom)" Color="Color.Primary">Bottom</MudRadio>
-        <MudRadio Option="@(Position.Top)" Color="Color.Primary">Top</MudRadio>
-        <MudRadio Option="@(Position.Left)" Color="Color.Primary">Left</MudRadio>
-        <MudRadio Option="@(Position.Right)" Color="Color.Primary">Right</MudRadio>
-        <MudRadio Option="@(Position.Start)" Color="Color.Primary">Start</MudRadio>
-        <MudRadio Option="@(Position.End)" Color="Color.Primary">End</MudRadio>
+    <MudRadioGroup T="Position" @bind-Value="LegendPosition">
+        <MudRadio Value="@(Position.Bottom)" Color="Color.Primary">Bottom</MudRadio>
+        <MudRadio Value="@(Position.Top)" Color="Color.Primary">Top</MudRadio>
+        <MudRadio Value="@(Position.Left)" Color="Color.Primary">Left</MudRadio>
+        <MudRadio Value="@(Position.Right)" Color="Color.Primary">Right</MudRadio>
+        <MudRadio Value="@(Position.Start)" Color="Color.Primary">Start</MudRadio>
+        <MudRadio Value="@(Position.End)" Color="Color.Primary">End</MudRadio>
     </MudRadioGroup>
 </div>
 
