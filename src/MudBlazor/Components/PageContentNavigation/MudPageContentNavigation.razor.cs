@@ -7,12 +7,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudPageContentNavigation : IAsyncDisposable
+    public partial class MudPageContentNavigation : IAsyncDisposable, IMudStateHasChanged
     {
         private List<MudPageContentSection> _sections = new();
         private IScrollSpy? _scrollSpy;
@@ -154,11 +155,7 @@ namespace MudBlazor
             }
         }
 
-
-        /// <summary>
-        /// Re-render the component
-        /// </summary>
-        public void Update() => StateHasChanged();
+        void IMudStateHasChanged.StateHasChanged() => StateHasChanged();
 
         protected override void OnInitialized()
         {

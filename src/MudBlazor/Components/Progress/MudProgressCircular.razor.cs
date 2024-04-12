@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -10,7 +9,7 @@ namespace MudBlazor
     public partial class MudProgressCircular : MudComponentBase
     {
         private int _svgValue;
-        private IParameterState<double> _valueState;
+        private readonly ParameterState<double> _valueState;
         private const int _magicNumber = 126; // weird, but required for the SVG to work
 
         protected string DivClassname =>
@@ -67,7 +66,10 @@ namespace MudBlazor
 
         public MudProgressCircular()
         {
-            _valueState = RegisterParameter(nameof(Value), () => Value, OnValueParameterChanged, DoubleEpsilonEqualityComparer.Default);
+            _valueState = RegisterParameterBuilder<double>(nameof(Value))
+                .WithParameter(() => Value)
+                .WithChangeHandler(OnValueParameterChanged)
+                .WithComparer(DoubleEpsilonEqualityComparer.Default);
         }
 
         private void OnValueParameterChanged(ParameterChangedEventArgs<double> args)
