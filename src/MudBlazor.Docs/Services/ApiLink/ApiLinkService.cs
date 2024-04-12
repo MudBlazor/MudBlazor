@@ -10,7 +10,7 @@ namespace MudBlazor.Docs.Services
 #nullable enable
     public class ApiLinkService : IApiLinkService
     {
-        private readonly List<ApiLinkServiceEntry> _entries = [];
+        private readonly Dictionary<string, ApiLinkServiceEntry> _entries = [];
 
         public ApiLinkService(IMenuService menuService)
         {
@@ -28,46 +28,68 @@ namespace MudBlazor.Docs.Services
                 return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>([]);
             }
 
-            // Case doesn't matter.
+            // Case is ignored.
             text = text.ToLowerInvariant();
 
+            // Calculate the ratios of all keywords to the search input.
             var ratios = new Dictionary<ApiLinkServiceEntry, int>();
-            foreach (var entry in _entries)
+            foreach (var (keyword, entry) in _entries)
             {
-                // Strings to include in the search.
-                var keywords = new[] {
-                    entry.Title,
-                    entry.SubTitle,
-                    entry.ComponentName,
-                    entry.Link
-                };
+                var ratio = GetSearchMatchRatio(text, keyword);
 
-                var bestMatchRatio = 0;
-
-                // Find the best result for any keyword and the search string.
-                foreach (var keyword in keywords.Where(k => !string.IsNullOrWhiteSpace(k)).Select(k => k!.ToLowerInvariant()))
+                // Assign the highest ratio so far to the entry.
+                if (ratios.TryGetValue(entry, out var highestRatio))
                 {
-                    var ratio = Fuzz.Ratio(keyword, text);
-                    var partialOutOfOrderRatio = Fuzz.PartialTokenSortRatio(keyword, text);
-
-                    bestMatchRatio = Math.Max(bestMatchRatio, Math.Max(ratio, partialOutOfOrderRatio));
+                    if (ratio > highestRatio)
+                    {
+                        ratios[entry] = ratio;
+                    }
                 }
-
-                ratios.Add(entry, bestMatchRatio);
+                else
+                {
+                    ratios.Add(entry, ratio);
+                }
             }
 
+            // Return the most accurate and highest quality results.
             return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>(
                 ratios
-                .Where(x => x.Value > 50)
+                .Where(x => x.Value > 65)
                 .OrderByDescending(x => x.Value)
                 .Select(x => x.Key)
                 .ToList()
             );
         }
 
+        private int GetSearchMatchRatio(string search, string keyword)
+        {
+            var ratio = Fuzz.Ratio(keyword, search);
+            var partialOutOfOrderRatio = Fuzz.PartialTokenSortRatio(keyword, search);
+            var finalRatio = Math.Max(ratio, partialOutOfOrderRatio);
+
+            return finalRatio;
+        }
+
+        private void AddEntry(ApiLinkServiceEntry entry)
+        {
+            void AddKeyword(string? k)
+            {
+                if (!string.IsNullOrWhiteSpace(k))
+                {
+                    _entries[k.ToLowerInvariant()] = entry;
+                }
+            }
+
+            AddKeyword(entry.Title);
+            AddKeyword(entry.SubTitle);
+            AddKeyword(entry.ComponentName);
+            AddKeyword(entry.Link);
+        }
+
         public void RegisterPage(string title, string? subtitle, Type? componentType, string? link = null)
         {
             link ??= ApiLink.GetComponentLinkFor(componentType!);
+
             var entry = new ApiLinkServiceEntry
             {
                 Title = title,
@@ -76,7 +98,7 @@ namespace MudBlazor.Docs.Services
                 Link = link
             };
 
-            _entries.Add(entry);
+            AddEntry(entry);
         }
 
         private void RegisterAliases()
