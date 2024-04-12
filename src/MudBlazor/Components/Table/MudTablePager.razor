@@ -16,7 +16,7 @@
                 <div class="mud-table-pagination-information">@RowsPerPageString</div>
             </div>
             <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed>
-                <MudSelect T="int" ValueChanged="SetRowsPerPage" Value="@(Table?.RowsPerPage ?? 0)" Class="mud-table-pagination-select" DisableUnderLine="true" Dense="true">
+                <MudSelect T="int" ValueChanged="SetRowsPerPage" Value="@(Table?.RowsPerPage ?? 0)" Class="mud-table-pagination-select" Underline="false" Dense="true">
                     @foreach (int pageSize in PageSizeOptions)
                     {
                         if (pageSize == int.MaxValue)
