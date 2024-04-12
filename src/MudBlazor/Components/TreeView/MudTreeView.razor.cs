@@ -113,6 +113,13 @@ namespace MudBlazor
         [Category(CategoryTypes.TreeView.Behavior)]
         public bool Disabled { get; set; }
 
+        /// <summary>
+        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Appearance)]
+        public bool Ripple { get; set; } = true;
+
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
         public HashSet<T> Items { get; set; } = new();
