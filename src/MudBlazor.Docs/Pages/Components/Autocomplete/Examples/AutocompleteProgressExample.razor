@@ -8,7 +8,7 @@
     <MudItem xs="12" sm="6" md="4">
         <MudAutocomplete T="string" Label="US States" @bind-Value="value3" SearchFunc="@Search1" Variant="Variant.Outlined" ProgressIndicatorColor="SelectedColor">
             <ProgressIndicatorInPopoverTemplate>
-                <MudList Clickable="false">
+                <MudList T="string" ReadOnly>
                     <MudListItem>
                         Loading...
                     </MudListItem>

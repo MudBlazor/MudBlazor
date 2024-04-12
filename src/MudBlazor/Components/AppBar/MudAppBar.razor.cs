@@ -43,11 +43,11 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// If true, the left and right padding is removed from the appbar.
+        /// If true, left and right padding is added to the appbar. Default is true
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AppBar.Appearance)]
-        public bool DisableGutters { get; set; }
+        public bool Gutters { get; set; } = true;
 
         /// <summary>
         /// The color of the component. It supports the theme colors.

@@ -56,7 +56,9 @@ namespace MudBlazor
         /// <summary>
         /// If the UserAttributes contain an ID make it accessible for WCAG labelling of input fields
         /// </summary>
-        public string FieldId => UserAttributes?.ContainsKey("id") == true ? UserAttributes["id"]?.ToString() ?? $"mudinput-{Guid.NewGuid()}" : $"mudinput-{Guid.NewGuid()}";
+        public string FieldId => (UserAttributes != null && UserAttributes.TryGetValue("id", out var id) && id != null)
+                    ? (id.ToString() ?? $"mudinput-{Guid.NewGuid()}")
+                    : $"mudinput-{Guid.NewGuid()}";
 
         /// <inheritdoc />
         protected override void OnAfterRender(bool firstRender)
@@ -75,6 +77,9 @@ namespace MudBlazor
         /// <inheritdoc />
         public override Task SetParametersAsync(ParameterView parameters)
         {
+            // First thing to call in blazor lifecycle
+            // We need to attach everything that wasn't attached by the implicit RegisterParameterBuilder -> ParameterState or the RegisterParameterBuilder.Attach
+            AttachAllUnAttached();
             return Parameters.SetParametersAsync(base.SetParametersAsync, parameters);
         }
 
