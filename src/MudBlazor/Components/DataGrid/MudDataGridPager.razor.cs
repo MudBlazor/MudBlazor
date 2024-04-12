@@ -17,10 +17,10 @@ namespace MudBlazor
         public MudDataGrid<T> DataGrid { get; set; }
 
         /// <summary>
-        /// Set true to hide the part of the pager which allows to change the page size.
+        /// Determines whether to show a drop-down for changing the page size.
         /// </summary>
         [Parameter]
-        public bool PageSizeDropDown { get; set; } = true;
+        public bool PageSizeSelector { get; set; } = true;
 
         /// <summary>
         /// Set true to disable user interaction with the backward/forward buttons
@@ -49,17 +49,17 @@ namespace MudBlazor
         [Parameter]
         public string RowsPerPageString { get; set; } = "Rows per page:";
 
-        [Parameter] public string RowsPerPageString { get; set; } = "Rows per page:";
-
         /// <summary>
         /// Set false to hide the pagination. Default is true.
         /// </summary>
-        [Parameter] public bool ShowNavigation { get; set; } = true;
+        [Parameter]
+        public bool ShowNavigation { get; set; } = true;
 
         /// <summary>
         /// Set false to hide the number of pages. Default is true.
         /// </summary>
-        [Parameter] public bool ShowPageNumber { get; set; } = true;
+        [Parameter]
+        public bool ShowPageNumber { get; set; } = true;
 
         private string Info
         {
