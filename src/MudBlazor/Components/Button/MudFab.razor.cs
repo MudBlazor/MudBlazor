@@ -14,7 +14,7 @@ namespace MudBlazor
                 .AddClass($"mud-fab-{Color.ToDescriptionString()}")
                 .AddClass($"mud-fab-size-{Size.ToDescriptionString()}")
                 .AddClass($"mud-ripple", Ripple && !GetDisabledState())
-                .AddClass($"mud-fab-disable-elevation", DisableElevation)
+                .AddClass($"mud-fab-disable-elevation", !DropShadow)
                 .AddClass(Class)
                 .Build();
 
