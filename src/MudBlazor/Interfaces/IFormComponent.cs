@@ -19,6 +19,5 @@ namespace MudBlazor.Interfaces
         public Task Validate();
         public Task ResetAsync();
         public void ResetValidation();
-        public void StateHasChanged();
     }
 }
