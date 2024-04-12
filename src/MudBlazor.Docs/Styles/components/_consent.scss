@@ -1,0 +1,32 @@
+.consent-prompt-container {
+  display: flex;
+  z-index: var(--mud-zindex-popover);
+  bottom: 0;
+  left: 0;
+  justify-content: center;
+  width: 100%;
+  position: fixed;
+  margin-bottom: 1rem;
+}
+
+.consent-prompt {
+  display: flex;
+  flex-direction: column;
+  max-width: 48rem;
+  padding: 1.5rem;
+  gap: 1rem;
+}
+
+.consent-text-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.consent-buttons-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 0.25rem;
+}
