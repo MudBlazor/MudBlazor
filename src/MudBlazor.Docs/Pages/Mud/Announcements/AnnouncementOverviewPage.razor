@@ -40,7 +40,9 @@
                                     <MudAvatarGroup Max="6" Spacing="3" MaxColor="Color.Primary">
                                         @foreach (var author in message.Authors)
                                         {
-                                            <MudAvatar Image="@author.AvatarUlr"/>
+                                            <MudAvatar>
+                                                <MudImage Src="@author.AvatarUrl" />
+                                            </MudAvatar>
                                         }
                                     </MudAvatarGroup>
                                     <div class="mx-4 d-flex flex-column">

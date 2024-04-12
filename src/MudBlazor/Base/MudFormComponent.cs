@@ -720,7 +720,5 @@ namespace MudBlazor
             DetachValidationStateChangedListener();
             Dispose(disposing: true);
         }
-
-        void IFormComponent.StateHasChanged() => StateHasChanged();
     }
 }

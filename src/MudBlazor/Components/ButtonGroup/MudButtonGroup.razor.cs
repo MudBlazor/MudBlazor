@@ -14,7 +14,7 @@ namespace MudBlazor
                 .AddClass($"mud-button-group-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}")
                 .AddClass("mud-button-group-vertical", VerticalAlign)
                 .AddClass("mud-button-group-horizontal", !VerticalAlign)
-                .AddClass("mud-button-group-disable-elevation", DisableElevation)
+                .AddClass("mud-button-group-disable-elevation", !DropShadow)
                 .AddClass("mud-button-group-rtl", RightToLeft)
                 .AddClass(Class)
                 .Build();
@@ -44,11 +44,11 @@ namespace MudBlazor
         public bool VerticalAlign { get; set; } = false;
 
         /// <summary>
-        /// If true, no drop-shadow will be used.
+        /// Determines whether the component has a drop-shadow. Default is true
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ButtonGroup.Appearance)]
-        public bool DisableElevation { get; set; } = false;
+        public bool DropShadow { get; set; } = true;
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
