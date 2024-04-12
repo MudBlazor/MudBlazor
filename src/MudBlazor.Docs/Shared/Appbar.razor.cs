@@ -27,7 +27,7 @@ public partial class Appbar
         {
             Title = "Installation",
             Link = "getting-started/installation",
-            SubTitle = "Getting started with MudBlazor fast and easy."
+            SubTitle = "Get started with MudBlazor fast and easy."
         },
 
         new ApiLinkServiceEntry
