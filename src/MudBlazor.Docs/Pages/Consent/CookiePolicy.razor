@@ -62,6 +62,46 @@
             </DocsPageSection>
             
             <DocsPageSection>
+                <SectionHeader Title="Use of cookies on MudBlazor’s Website">
+                    <Description>
+                        The table below explains the cookies we use and why.
+                        <br />
+                        <MudSimpleTable Style="overflow-x: auto;">
+                            <thead>
+                            <tr>
+                                <th><strong>Cookie</strong></th>
+                                <th><strong>Purpose</strong></th>
+                                <th><strong>Expiry time</strong></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>ARRAffinity / ARRAffinitySameSite &nbsp;</td>
+                                <td>
+                                    This cookie is set by websites run on the Windows Azure cloud platform. It is used for load balancing to make sure the visitor page requests are routed to the same server in any browsing session.
+                                    <em><MudLink Href="https://cookiepedia.co.uk/cookies/ARRAffinity" Target="_blank">Read Cookiepedia’s overview of this cookie here</MudLink></em>
+                                </td>
+                                <td>When your session ends</td>
+                            </tr>
+                            <tr>
+                                <td>Google Analytics _ga</td>
+                                <td rowspan="3">
+                                    These Google Analytics cookies are used to collect information about how visitors use our website. We use the information to compile reports and to help us improve the website. The cookies collect information in a way
+                                    that does not directly identify anyone, including the number of visitors to the website, where visitors have come to the website from and the pages they visited.
+                                    <MudLink Href="https://support.google.com/analytics/answer/6004245" Target="_blank">Read Google’s overview of privacy and safeguarding data</MudLink>
+                                </td>
+                                <td>2 years</td>
+                            </tr>
+                            <tr>
+                                <td>Google Analytics _ga_PRYNCB61NV</td>
+                                <td>1 minute</td>
+                            </tr>
+                            </tbody>
+                        </MudSimpleTable>
+                    </Description>
+                </SectionHeader>
+            </DocsPageSection>
+            <DocsPageSection>
                 <SectionHeader Title="What are your choices regarding cookies?">
                     <Description>
                         If you'd like to delete cookies or instruct your web browser to delete or refuse cookies, please visit the help pages of your web browser.
@@ -154,9 +194,8 @@
     [Inject]
     protected CookieConsentService CookieConsentService { get; set; } = null!;
 
-    private async Task OpenSettingsAsync()
+    private Task OpenSettingsAsync()
     {
-        await CookieConsentService.ShowPreferencesModalAsync();
-        StateHasChanged();
+        return CookieConsentService.ShowConsentModalAsync(false);
     }
 }
