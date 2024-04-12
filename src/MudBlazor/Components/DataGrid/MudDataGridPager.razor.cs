@@ -49,6 +49,18 @@ namespace MudBlazor
         [Parameter]
         public string RowsPerPageString { get; set; } = "Rows per page:";
 
+        [Parameter] public string RowsPerPageString { get; set; } = "Rows per page:";
+
+        /// <summary>
+        /// Set false to hide the pagination. Default is true.
+        /// </summary>
+        [Parameter] public bool ShowNavigation { get; set; } = true;
+
+        /// <summary>
+        /// Set false to hide the number of pages. Default is true.
+        /// </summary>
+        [Parameter] public bool ShowPageNumber { get; set; } = true;
+
         private string Info
         {
             get

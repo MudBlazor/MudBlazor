@@ -8,7 +8,7 @@
     </MudAppBar>
     <MudDrawer Open="@_drawerOpen" OpenChanged="OnDrawerOpenChanged" ClipMode="DrawerClipMode.Docked" Elevation="0" Breakpoint="Breakpoint.Md">
         <div class="d-block d-md-none">
-            <MudToolBar Dense="true" DisableGutters="true" Class="docs-gray-bg">
+            <MudToolBar Dense="true" Gutters="false" Class="docs-gray-bg">
                 @if (_topMenuOpen == false)
                 {
                     <MudIconButton Icon="@Icons.Material.Rounded.ArrowBack" Color="Color.Inherit" OnClick="@((e) => OpenTopMenu())"/>
