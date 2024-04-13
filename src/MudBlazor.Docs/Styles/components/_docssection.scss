@@ -123,24 +123,7 @@
       position: absolute;
       bottom: 8px;
       right: 8px;
-      color: rgba(5, 0, 51, 0.0);
-      transition: color 250ms cubic-bezier(.4, 0, .2, 1) 0ms;
-    }
-
-    @media(hover: hover) and (pointer: fine) {
-      &:hover {
-        .copy-code-button {
-          color: var(--mud-palette-text-secondary) !important;
-          background-color: transparent;
-        }
-      }
-    }
-
-    &:active {
-      .copy-code-button {
-        color: var(--mud-palette-text-secondary) !important;
-        background-color: transparent;
-      }
+      background-color: transparent;
     }
 
     .docs-section-source-container {
