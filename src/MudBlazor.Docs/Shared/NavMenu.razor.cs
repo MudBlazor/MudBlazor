@@ -1,7 +1,5 @@
-﻿using System.Linq;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Extensions;
-using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
 
 namespace MudBlazor.Docs.Shared
