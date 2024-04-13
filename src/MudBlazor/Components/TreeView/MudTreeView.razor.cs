@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.State;
+using MudBlazor.State.Builder;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -10,10 +13,37 @@ namespace MudBlazor
 #nullable enable
     public partial class MudTreeView<T> : MudComponentBase
     {
+        public MudTreeView()
+        {
+            MudTreeRoot = this;
+            _selectedValueState = RegisterParameterBuilder<T?>(nameof(SelectedValue))
+                .WithParameter(() => SelectedValue)
+                .WithEventCallback(() => SelectedValueChanged)
+                .WithChangeHandler(OnSelectedValueChanged)
+                .WithComparer(() => Comparer);
+            _comparerState = RegisterParameterBuilder<IEqualityComparer<T?>>(nameof(Comparer))
+                .WithParameter(() => Comparer)
+                .WithChangeHandler(OnComparerChanged);
+        }
+
+        private Task OnComparerChanged(ParameterChangedEventArgs<IEqualityComparer<T?>> args)
+        {
+            return UpdateSelectedValueCompare(args.Value).AsTask();
+        }
+
+        private Task OnSelectedValueChanged(ParameterChangedEventArgs<T?> args)
+        {
+            // See https://github.com/MudBlazor/MudBlazor/issues/8360#issuecomment-1996168491
+            _previousSelectedValue = args.LastValue;
+            return SetSelectedValue(args.Value);
+        }
+
         private T? _previousSelectedValue;
         private object _selectedUpdateLock = new();
         private HashSet<MudTreeViewItem<T>>? _selectedValues;
         private List<MudTreeViewItem<T>> _childItems = new();
+        private readonly ParameterState<T?> _selectedValueState;
+        private readonly ParameterState<IEqualityComparer<T?>> _comparerState;
 
         protected string Classname =>
             new CssBuilder("mud-treeview")
@@ -31,6 +61,10 @@ namespace MudBlazor
                 .AddStyle($"max-height", MaxHeight, !string.IsNullOrWhiteSpace(MaxHeight))
                 .AddStyle(Style)
                 .Build();
+
+
+        [CascadingParameter]
+        private MudTreeView<T> MudTreeRoot { get; set; }
 
         /// <summary>
         /// The color of the selected treeviewitem.
@@ -152,17 +186,9 @@ namespace MudBlazor
         [Category(CategoryTypes.TreeView.Selecting)]
         public IEqualityComparer<T?> Comparer { get; set; } = EqualityComparer<T?>.Default;
 
-        [CascadingParameter]
-        private MudTreeView<T> MudTreeRoot { get; set; }
-
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
         public Func<T?, Task<HashSet<T>>>? ServerData { get; set; }
-
-        public MudTreeView()
-        {
-            MudTreeRoot = this;
-        }
 
         internal bool IsSelectable { get; private set; }
 
@@ -224,26 +250,6 @@ namespace MudBlazor
         }
 
         internal void AddChild(MudTreeViewItem<T> item) => _childItems.Add(item);
-
-        public override async Task SetParametersAsync(ParameterView parameters)
-        {
-            // See https://github.com/MudBlazor/MudBlazor/issues/8360#issuecomment-1996168491
-            _previousSelectedValue = SelectedValue;
-            var selectedChanged = parameters.HasParameterChanged(nameof(SelectedValue), SelectedValue, out var selected);
-            var comparerChanged = parameters.HasParameterChanged(nameof(Comparer), Comparer, out var comparer);
-
-            await base.SetParametersAsync(parameters);
-
-            if (selectedChanged)
-            {
-                await SetSelectedValue(selected);
-            }
-
-            if (comparerChanged)
-            {
-                await UpdateSelectedValueCompare(comparer!);
-            }
-        }
 
         ///  <summary>
         ///  Sets the selected value of the tree view.
