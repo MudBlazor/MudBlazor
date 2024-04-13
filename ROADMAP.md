@@ -18,7 +18,7 @@ For those unable to upgrade their projects to v7, we will maintain v6.x for some
 
 Understand that our team members contribute to this project during their personal free time, so please don't expect the team to fix bugs for you. It's not feasible for us to offer free support to everyone, but we do our best to review and merge your PRs.
 
-That being said, we feel responsible for MudBlazor and intend to keep it going for the foreseeable future at a sustainable cost of free time by merging important bug fixes and new features  if they enhance the project. 
+That being said, we feel responsible for MudBlazor and intend to keep it going for the foreseeable future at a sustainable cost of free time by merging important bug fixes and new features if they enhance the project.
 
 ## Get Involved!
 
