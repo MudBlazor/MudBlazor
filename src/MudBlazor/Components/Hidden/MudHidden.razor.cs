@@ -54,7 +54,8 @@ namespace MudBlazor
 
         public MudHidden()
         {
-            _isHiddenState = RegisterParameterBuilder<bool>(nameof(IsHidden))
+            using var registerScope = CreateRegisterScope();
+            _isHiddenState = registerScope.CreateParameterBuilder<bool>(nameof(IsHidden))
                 .WithParameter(() => IsHidden)
                 .WithEventCallback(() => IsHiddenChanged);
         }

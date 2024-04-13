@@ -6,13 +6,14 @@ using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
+using MudBlazor.State.Builder;
 
 namespace MudBlazor
 {
 #nullable enable
     public abstract partial class MudComponentBase : ComponentBase, IMudStateHasChanged
     {
-        internal readonly ParameterSet Parameters = new();
+        internal readonly ParameterSet Parameters;
 
         [Inject]
         private ILoggerFactory LoggerFactory { get; set; } = null!;
@@ -60,6 +61,12 @@ namespace MudBlazor
                     ? (id.ToString() ?? $"mudinput-{Guid.NewGuid()}")
                     : $"mudinput-{Guid.NewGuid()}";
 
+        protected MudComponentBase()
+        {
+            Parameters = new ParameterSet(this);
+            _lazyScope = new Lazy<ParameterRegistrationBuilderScope>(() => new ParameterRegistrationBuilderScope(this));
+        }
+
         /// <inheritdoc />
         protected override void OnAfterRender(bool firstRender)
         {
@@ -77,9 +84,6 @@ namespace MudBlazor
         /// <inheritdoc />
         public override Task SetParametersAsync(ParameterView parameters)
         {
-            // First thing to call in blazor lifecycle
-            // We need to attach everything that wasn't attached by the implicit RegisterParameterBuilder -> ParameterState or the RegisterParameterBuilder.Attach
-            AttachAllUnAttached();
             return Parameters.SetParametersAsync(base.SetParametersAsync, parameters);
         }
 

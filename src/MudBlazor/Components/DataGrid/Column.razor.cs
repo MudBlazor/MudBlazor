@@ -270,10 +270,11 @@ namespace MudBlazor
 
         protected Column()
         {
-            HiddenState = RegisterParameterBuilder<bool>(nameof(Hidden))
+            using var registerScope = CreateRegisterScope();
+            HiddenState = registerScope.CreateParameterBuilder<bool>(nameof(Hidden))
                 .WithParameter(() => Hidden)
                 .WithEventCallback(() => HiddenChanged);
-            GroupingState = RegisterParameterBuilder<bool>(nameof(Grouping))
+            GroupingState = registerScope.CreateParameterBuilder<bool>(nameof(Grouping))
                 .WithParameter(() => Grouping)
                 .WithEventCallback(() => GroupingChanged)
                 .WithChangeHandler(OnGroupingParameterChangedAsync);

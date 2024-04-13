@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MudBlazor.State.Builder;
 
@@ -13,17 +14,26 @@ namespace MudBlazor.State.Builder;
 /// </summary>
 internal class ParameterRegistrationBuilderScope : IDisposable
 {
-    private readonly IParameterSetRegister _parameterSetRegister;
-    private readonly List<ISmartParameterAttachable> _smartParameterAttachables;
+    private bool _isLocked;
+    private readonly IParameterStatesFactoryWriter _parameterStatesFactoryWriter;
+    private readonly List<IParameterBuilderAttach> _builders;
+
+    /// <summary>
+    /// Gets a value indicating whether the parameter registration builder scope is locked.
+    /// </summary>
+    /// <remarks>
+    /// The scope becomes locked when it has ended (Disposed), indicating that no more parameter states will be registered.
+    /// </remarks>
+    public bool IsLocked => _isLocked;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ParameterRegistrationBuilderScope"/> class with the specified parameter set register.
     /// </summary>
-    /// <param name="parameterSetRegister">The <see cref="IParameterSetRegister"/> used to register the parameter during the <see cref="Attach"/>.</param>
-    public ParameterRegistrationBuilderScope(IParameterSetRegister parameterSetRegister)
+    /// <param name="parameterStatesFactoryWriter">The <see cref="IParameterStatesFactoryWriter"/> used to register the parameters during the end of the scope.</param>
+    public ParameterRegistrationBuilderScope(IParameterStatesFactoryWriter parameterStatesFactoryWriter)
     {
-        _parameterSetRegister = parameterSetRegister;
-        _smartParameterAttachables = new List<ISmartParameterAttachable>();
+        _builders = new List<IParameterBuilderAttach>();
+        _parameterStatesFactoryWriter = parameterStatesFactoryWriter;
     }
 
     /// <summary>
@@ -31,6 +41,9 @@ internal class ParameterRegistrationBuilderScope : IDisposable
     /// </summary>
     /// <typeparam name="T">The type of the parameter.</typeparam>
     /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
+    /// <remarks>
+    /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered. 
+    /// </remarks>
     /// <returns>A parameter builder for registering a parameter of the specified type.</returns>
     public RegisterParameterBuilder<T> CreateParameterBuilder<T>(string parameterName)
     {
@@ -41,11 +54,14 @@ internal class ParameterRegistrationBuilderScope : IDisposable
     /// Creates a parameter builder for registering a parameter.
     /// </summary>
     /// <typeparam name="T">The type of the parameter.</typeparam>
+    /// <remarks>
+    /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered. 
+    /// </remarks>
     /// <returns>A parameter builder for registering a parameter of the specified type.</returns>
     public RegisterParameterBuilder<T> CreateParameterBuilder<T>()
     {
         var builder = new RegisterParameterBuilder<T>();
-        _smartParameterAttachables.Add(builder);
+        _builders.Add(builder);
 
         return builder;
     }
@@ -53,9 +69,11 @@ internal class ParameterRegistrationBuilderScope : IDisposable
     /// <inheritdoc/>
     void IDisposable.Dispose()
     {
-        foreach (var builder in _smartParameterAttachables)
+        if (!_isLocked)
         {
-            builder.Attach();
+            _isLocked = true;
+            _parameterStatesFactoryWriter.WriteParameters(_builders.Select(parameter => parameter.Attach()));
+            _parameterStatesFactoryWriter.Close();
         }
     }
 }

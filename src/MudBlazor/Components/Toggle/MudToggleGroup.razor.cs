@@ -19,42 +19,43 @@ namespace MudBlazor
     {
         public MudToggleGroup()
         {
-            _value = RegisterParameterBuilder<T?>(nameof(Value))
+            using var registerScope = CreateRegisterScope();
+            _value = registerScope.CreateParameterBuilder<T?>(nameof(Value))
                 .WithParameter(() => Value)
                 .WithEventCallback(() => ValueChanged)
                 .WithChangeHandler(OnValueChanged);
-            _values = RegisterParameterBuilder<IEnumerable<T?>?>(nameof(Values))
+            _values = registerScope.CreateParameterBuilder<IEnumerable<T?>?>(nameof(Values))
                 .WithParameter(() => Values)
                 .WithEventCallback(() => ValuesChanged)
                 .WithChangeHandler(OnValuesChanged);
-            _color = RegisterParameterBuilder<Color>(nameof(Color))
+            _color = registerScope.CreateParameterBuilder<Color>(nameof(Color))
                 .WithParameter(() => Color)
                 .WithChangeHandler(OnParameterChanged);
-            _selectedClass = RegisterParameterBuilder<string?>(nameof(SelectedClass))
+            _selectedClass = registerScope.CreateParameterBuilder<string?>(nameof(SelectedClass))
                 .WithParameter(() => SelectedClass)
                 .WithChangeHandler(OnParameterChanged);
-            _outline = RegisterParameterBuilder<bool>(nameof(Outlined))
+            _outline = registerScope.CreateParameterBuilder<bool>(nameof(Outlined))
                 .WithParameter(() => Outlined)
                 .WithChangeHandler(OnParameterChanged);
-            _delimiters = RegisterParameterBuilder<bool>(nameof(Delimiters))
+            _delimiters = registerScope.CreateParameterBuilder<bool>(nameof(Delimiters))
                 .WithParameter(() => Delimiters)
                 .WithChangeHandler(OnParameterChanged);
-            _rtl = RegisterParameterBuilder<bool>(nameof(RightToLeft))
+            _rtl = registerScope.CreateParameterBuilder<bool>(nameof(RightToLeft))
                 .WithParameter(() => RightToLeft)
                 .WithChangeHandler(OnParameterChanged);
-            _dense = RegisterParameterBuilder<bool>(nameof(Dense))
+            _dense = registerScope.CreateParameterBuilder<bool>(nameof(Dense))
                 .WithParameter(() => Dense)
                 .WithChangeHandler(OnParameterChanged);
-            _rounded = RegisterParameterBuilder<bool>(nameof(Rounded))
+            _rounded = registerScope.CreateParameterBuilder<bool>(nameof(Rounded))
                 .WithParameter(() => Rounded).
                 WithChangeHandler(OnParameterChanged);
-            _checkMark = RegisterParameterBuilder<bool>(nameof(CheckMark))
+            _checkMark = registerScope.CreateParameterBuilder<bool>(nameof(CheckMark))
                 .WithParameter(() => CheckMark)
                 .WithChangeHandler(OnParameterChanged);
-            _fixedContent = RegisterParameterBuilder<bool>(nameof(FixedContent))
+            _fixedContent = registerScope.CreateParameterBuilder<bool>(nameof(FixedContent))
                 .WithParameter(() => FixedContent)
                 .WithChangeHandler(OnParameterChanged);
-            _disabled = RegisterParameterBuilder<bool>(nameof(Disabled))
+            _disabled = registerScope.CreateParameterBuilder<bool>(nameof(Disabled))
                 .WithParameter(() => Disabled)
                 .WithChangeHandler(OnParameterChanged);
         }

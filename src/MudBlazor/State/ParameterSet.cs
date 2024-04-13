@@ -23,36 +23,56 @@ namespace MudBlazor.State;
 /// <remarks>
 /// For details and usage please read CONTRIBUTING.md
 /// </remarks>
-internal class ParameterSet : IReadOnlyCollection<IParameterComponentLifeCycle>
+internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
 {
+    private readonly IParameterStatesFactoryReader _parameterStatesFactory;
+
 #if NET8_0_OR_GREATER
-    private FrozenDictionary<string, IParameterComponentLifeCycle> _parameters = FrozenDictionary<string, IParameterComponentLifeCycle>.Empty;
+    private readonly Lazy<FrozenDictionary<string, IParameterComponentLifeCycle>> _parameters;
 #else
-    private Dictionary<string, IParameterComponentLifeCycle> _parameters = new();
+    private readonly Lazy<Dictionary<string, IParameterComponentLifeCycle>> _parameters;
 #endif
 
-    /// <inheritdoc/>
-    public int Count => _parameters.Count;
-
-    ///// <summary>
-    ///// Adds a parameter to the parameter set.
-    ///// </summary>
-    ///// <param name="parameter">The parameter to add.</param>
-    ///// <exception cref="InvalidOperationException">Thrown when the parameter is already registered.</exception>
-    //public void Add(IParameterComponentLifeCycle parameter)
-    //{
-    //    if (!_parameters.TryAdd(parameter.Metadata.ParameterName, parameter))
-    //    {
-    //        throw new InvalidOperationException($"{parameter.Metadata.ParameterName} is already registered.");
-    //    }
-    //}
-    public void AddAndLock(IReadOnlyCollection<IParameterComponentLifeCycle> parameters)
+    public ParameterSet(params IParameterComponentLifeCycle[] parameters)
+        : this(new ParameterSetReadonlyEnumerable(parameters))
     {
+    }
+
+    public ParameterSet(IEnumerable<IParameterComponentLifeCycle> parameters)
+        : this(new ParameterSetReadonlyEnumerable(parameters))
+    {
+    }
+
+    public ParameterSet(IParameterStatesFactoryReader parameterStatesFactory)
+    {
+        _parameterStatesFactory = parameterStatesFactory;
 #if NET8_0_OR_GREATER
-        _parameters = parameters.ToFrozenDictionary(parameter => parameter.Metadata.ParameterName, parameter => parameter);
+        _parameters = new Lazy<FrozenDictionary<string, IParameterComponentLifeCycle>>(ParametersFactory);
 #else
-        _parameters = parameters.ToDictionary(parameter => parameter.Metadata.ParameterName, parameter => parameter);
+        _parameters = new Lazy<Dictionary<string, IParameterComponentLifeCycle>>(ParametersFactory);
 #endif
+    }
+
+
+#if NET8_0_OR_GREATER
+    private FrozenDictionary<string, IParameterComponentLifeCycle> ParametersFactory()
+    {
+        var parameters = _parameterStatesFactory.ReadParameters();
+
+        return parameters.ToFrozenDictionary(parameter => parameter.Metadata.ParameterName, parameter => parameter);
+    }
+#else
+    private Dictionary<string, IParameterComponentLifeCycle> ParametersFactory()
+    {
+        var parameters = _parameterStatesFactory.ReadParameters();
+
+        return parameters.ToDictionary(parameter => parameter.Metadata.ParameterName, parameter => parameter);
+    }
+#endif
+
+    public void ForceParametersAttachment()
+    {
+        _ = _parameters.Value;
     }
 
     /// <summary>
@@ -60,7 +80,7 @@ internal class ParameterSet : IReadOnlyCollection<IParameterComponentLifeCycle>
     /// </summary>
     public void OnInitialized()
     {
-        foreach (var parameter in _parameters.Values)
+        foreach (var parameter in _parameters.Value.Values)
         {
             parameter.OnInitialized();
         }
@@ -71,7 +91,7 @@ internal class ParameterSet : IReadOnlyCollection<IParameterComponentLifeCycle>
     /// </summary>
     public void OnParametersSet()
     {
-        foreach (var parameter in _parameters.Values)
+        foreach (var parameter in _parameters.Value.Values)
         {
             parameter.OnParametersSet();
         }
@@ -85,11 +105,11 @@ internal class ParameterSet : IReadOnlyCollection<IParameterComponentLifeCycle>
     public async Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
     {
 #if NET8_0_OR_GREATER
-        var parametersHandlerShouldFire = _parameters.Values
+        var parametersHandlerShouldFire = _parameters.Value.Values
             .Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters))
             .ToFrozenSet(ParameterHandlerUniquenessComparer.Default);
 #else
-        var parametersHandlerShouldFire = _parameters.Values
+        var parametersHandlerShouldFire = _parameters.Value.Values
             .Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters))
             .ToHashSet(ParameterHandlerUniquenessComparer.Default);
 #endif
@@ -108,12 +128,25 @@ internal class ParameterSet : IReadOnlyCollection<IParameterComponentLifeCycle>
     /// <returns>A value indicating whether the search was successful.</returns>
     public bool TryGetValue(string parameterName, [MaybeNullWhen(false)] out IParameterComponentLifeCycle parameterComponentLifeCycle)
     {
-        return _parameters.TryGetValue(parameterName, out parameterComponentLifeCycle);
+        return _parameters.Value.TryGetValue(parameterName, out parameterComponentLifeCycle);
     }
 
+
     /// <inheritdoc/>
-    public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => _parameters.Values.GetEnumerator();
+    public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => ((IDictionary<string, IParameterComponentLifeCycle>)_parameters.Value).Values.GetEnumerator();
 
     /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    private class ParameterSetReadonlyEnumerable : IParameterStatesFactoryReader
+    {
+        private readonly IEnumerable<IParameterComponentLifeCycle> _parameters1;
+
+        public ParameterSetReadonlyEnumerable(IEnumerable<IParameterComponentLifeCycle> parameters)
+        {
+            _parameters1 = parameters;
+        }
+
+        public IEnumerable<IParameterComponentLifeCycle> ReadParameters() => _parameters1;
+    }
 }

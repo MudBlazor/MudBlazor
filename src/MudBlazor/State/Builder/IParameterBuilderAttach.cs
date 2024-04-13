@@ -6,9 +6,9 @@ namespace MudBlazor.State.Builder;
 
 #nullable enable
 /// <summary>
-/// Represents an interface for <see cref="ParameterState{T}"/> that can be smartly attached.
+/// Represents an interface for non-generic builder to attach <see cref="ParameterState{T}"/>.
 /// </summary>
-internal interface ISmartParameterAttachable
+internal interface IParameterBuilderAttach
 {
     /// <summary>
     /// Gets a value indicating whether the <see cref="ParameterState{T}"/> is attached.
@@ -18,5 +18,5 @@ internal interface ISmartParameterAttachable
     /// <summary>
     /// Attaches the <see cref="ParameterState{T}"/>.
     /// </summary>
-    void Attach();
+    IParameterComponentLifeCycle Attach();
 }
