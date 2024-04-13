@@ -21,6 +21,43 @@ namespace MudBlazor.UnitTests.State;
 public class ParameterSetTests
 {
     [Test]
+    public void IsInitialized_False()
+    {
+        // Arrange & Act
+        var parameterSet = new ParameterSet(Enumerable.Empty<IParameterComponentLifeCycle>());
+
+        // Assert
+        parameterSet.IsInitialized.Should().BeFalse();
+    }
+
+    [Test]
+    public void IsInitialized_TrueOnRead()
+    {
+        // Arrange
+        var parameterSet = new ParameterSet(Enumerable.Empty<IParameterComponentLifeCycle>());
+
+        // Act
+        _ = parameterSet.Count();
+
+        // Assert
+        parameterSet.IsInitialized.Should().BeTrue();
+    }
+
+    [Test]
+    public void ForceParametersAttachment_IsInitializedTrue()
+    {
+        // Arrange
+        var parameterSet = new ParameterSet(Enumerable.Empty<IParameterComponentLifeCycle>());
+
+        // Act
+        parameterSet.ForceParametersAttachment();
+
+        // Assert
+        parameterSet.IsInitialized.Should().BeTrue();
+    }
+
+
+    [Test]
     public void Add_AddsParameterSuccessfully()
     {
         // Arrange
