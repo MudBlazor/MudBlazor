@@ -16,14 +16,14 @@ namespace MudBlazor
         public MudTreeView()
         {
             MudTreeRoot = this;
+            _comparerState = RegisterParameterBuilder<IEqualityComparer<T?>>(nameof(Comparer))
+                .WithParameter(() => Comparer)
+                .WithChangeHandler(OnComparerChanged);
             _selectedValueState = RegisterParameterBuilder<T?>(nameof(SelectedValue))
                 .WithParameter(() => SelectedValue)
                 .WithEventCallback(() => SelectedValueChanged)
                 .WithChangeHandler(OnSelectedValueChanged)
-                .WithComparer(() => Comparer);
-            _comparerState = RegisterParameterBuilder<IEqualityComparer<T?>>(nameof(Comparer))
-                .WithParameter(() => Comparer)
-                .WithChangeHandler(OnComparerChanged);
+                .WithComparer(() => _comparerState.Value ?? EqualityComparer<T?>.Default);
         }
 
         private Task OnComparerChanged(ParameterChangedEventArgs<IEqualityComparer<T?>> args)
