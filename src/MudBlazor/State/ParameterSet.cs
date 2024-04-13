@@ -171,7 +171,7 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     /// </summary>
     private class ParameterSetReadonlyEnumerable : IParameterStatesFactoryReader
     {
-        private readonly IEnumerable<IParameterComponentLifeCycle> _parameters1;
+        private readonly IEnumerable<IParameterComponentLifeCycle> _parameters;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ParameterSetReadonlyEnumerable"/> class with the specified parameters.
@@ -179,11 +179,11 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
         /// <param name="parameters">The parameters to be read.</param>
         public ParameterSetReadonlyEnumerable(IEnumerable<IParameterComponentLifeCycle> parameters)
         {
-            _parameters1 = parameters;
+            _parameters = parameters;
         }
 
         /// <inheritdoc />
-        public IEnumerable<IParameterComponentLifeCycle> ReadParameters() => _parameters1;
+        public IEnumerable<IParameterComponentLifeCycle> ReadParameters() => _parameters;
 
         /// <inheritdoc />
         public void Complete() { /*Noop*/ }
