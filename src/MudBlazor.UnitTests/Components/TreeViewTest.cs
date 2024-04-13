@@ -17,7 +17,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TreeView_ClickWhileDisabled_DoesNotChangeSelection()
         {
-            var comp = Context.RenderComponent<DisabledTreeViewTest>(new ComponentParameter[] { Parameter(nameof(MudTreeView<string>.Disabled), true) });
+            var comp = Context.RenderComponent<DisabledTreeViewTest>([Parameter(nameof(MudTreeView<string>.Disabled), true)]);
             comp.Find("div.mud-treeview-item-content").Click();
             comp.Instance.SelectedValue.Should().BeNull();
 
@@ -28,7 +28,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TreeView_ClickWhileActive_DoesChangeSelection()
         {
-            var comp = Context.RenderComponent<DisabledTreeViewTest>(new ComponentParameter[] { Parameter(nameof(MudTreeView<string>.Disabled), false) });
+            var comp = Context.RenderComponent<DisabledTreeViewTest>([Parameter(nameof(MudTreeView<string>.Disabled), false)]);
             comp.Find("div.mud-treeview-item-content").Click();
             comp.Instance.SelectedValue.Should().NotBeNull();
 
