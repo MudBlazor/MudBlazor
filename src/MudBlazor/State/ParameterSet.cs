@@ -176,10 +176,7 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
         /// Initializes a new instance of the <see cref="ParameterSetReadonlyEnumerable"/> class with the specified parameters.
         /// </summary>
         /// <param name="parameters">The parameters to be read.</param>
-        public ParameterSetReadonlyEnumerable(IEnumerable<IParameterComponentLifeCycle> parameters)
-        {
-            _parameters = parameters;
-        }
+        public ParameterSetReadonlyEnumerable(IEnumerable<IParameterComponentLifeCycle> parameters) => _parameters = parameters;
 
         /// <inheritdoc />
         public IEnumerable<IParameterComponentLifeCycle> ReadParameters() => _parameters;
