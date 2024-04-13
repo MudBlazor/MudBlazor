@@ -19,7 +19,8 @@ public class DateWrapperDateTimeTests
     public void EndOfMonth_ShouldReturnExpectedDate(DateTime date, CultureInfo culture, DateTime expected)
     {
         // Arrange
-        var dateWrapper = new DateWrapper<DateTime>(new DateTimeConverter(), culture);
+        var dateWrapper = new DateWrapper<DateTime>(new DateTimeConverter());
+        dateWrapper.SetCulture(culture);
 
         // Act
         var result = dateWrapper.EndOfMonth(date);

@@ -1,7 +1,6 @@
-﻿@using MudBlazor.Internal
-
-@namespace MudBlazor
-@inherits MudPicker<DateTime?>
+﻿@namespace MudBlazor
+@inherits MudPicker<T?>
+@typeparam T where T : struct
 
 @Render
 
@@ -17,7 +16,7 @@
             <div id="@_mudPickerCalendarContentElementId" class="mud-picker-calendar-content @($"mud-picker-calendar-content-{MaxMonthColumns ?? DisplayMonths}")">
                 @{
                     int dayId = 0;
-                    @if (_picker_month.HasValue && _picker_month.Value.Year == 1 && _picker_month.Value.Month == 1)
+                    @if (DateWrapper.IsMinYearMonth(_picker_month))
                     {
                         dayId = -1;
                     }
@@ -41,7 +40,7 @@
                         }
                         else if (tempMonth == 0 && CurrentView == OpenTo.Month)
                         {
-                            var calendarYear = GetCalendarYear(PickerMonth ?? DateTime.Today);
+                            var calendarYear = GetCalendarYear(PickerMonth ?? DateWrapper.Today);
                             var prevLabel = $"Go to previous year {calendarYear - 1}";
                             var nextLabel = $"Go to next year {calendarYear + 1}";
 
@@ -109,7 +108,7 @@
                                     @for (int week = 0; week < 6; week++)
                                     {
                                         int tempWeek = week;
-                                        var firstMonthFirstYear = _picker_month.HasValue && _picker_month.Value.Year == 1 && _picker_month.Value.Month == 1;
+                                        var firstMonthFirstYear = DateWrapper.IsMinYearMonth(_picker_month);
 
                                         @if (ShowWeekNumbers)
                                         {
@@ -123,14 +122,14 @@
 
                                             @if (tempId != 0 || !firstMonthFirstYear)
                                             {
-                                                var selectedDay = !firstMonthFirstYear ? day : day.AddDays(-1);
+                                                var selectedDay = !firstMonthFirstYear ? day : DateWrapper.AddDays(day, -1);
                                                 <button @key="@(!firstMonthFirstYear ? selectedDay : tempId)" type="button" style="--day-id: @(!firstMonthFirstYear ? tempId: tempId + 1);"
-                                                        class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon mud-picker-calendar-day @(!firstMonthFirstYear || day.Day == _picker_month.Value.Day? GetDayClasses(tempMonth, day) : GetDayClasses(tempMonth, selectedDay))"
+                                                        class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon mud-picker-calendar-day @(GetDayClass(day, selectedDay, tempMonth))"
                                                         @onclick="(async () => { var d = selectedDay; await OnDayClickedAsync(d); })"
                                                         @onclick:stopPropagation="true"
-                                                        aria-label='@selectedDay.ToString("dddd, dd MMMM yyyy")'
+                                                        aria-label='@(DateWrapper.ToString(selectedDay, "dddd, dd MMMM yyyy"))'
                                                         onmouseover="@(async () => await HandleMouseoverOnPickerCalendarDayButton(!firstMonthFirstYear ? tempId : tempId + 1))"
-                                                        disabled="@((selectedDay < MinDate) || (selectedDay > MaxDate) || IsDateDisabledFunc(selectedDay))">
+                                                        disabled="@(IsDateDisabled(selectedDay))">
                                                     <p class="mud-typography mud-typography-body2 mud-inherit-text">@GetCalendarDayOfMonth(selectedDay)</p>
                                                 </button>
                                             }

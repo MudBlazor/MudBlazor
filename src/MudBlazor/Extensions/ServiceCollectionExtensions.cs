@@ -4,6 +4,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MudBlazor.Services.DateOperations;
@@ -283,8 +284,10 @@ namespace MudBlazor.Services
 
         public static IServiceCollection AddMudBlazorDateOperations(this IServiceCollection services)
         {
-            services.AddScoped(typeof(DateWrapper<>));
-            services.AddScoped(typeof(IDateConverter<>));
+            services.AddTransient(typeof(IDateWrapper<>), typeof(DateWrapper<>));
+            services.AddSingleton<IDateConverter<DateOnly>, DateOnlyConverter>();
+            services.AddSingleton<IDateConverter<DateTime>, DateTimeConverter>();
+            services.AddSingleton<IDateConverter<DateTimeOffset>, DateTimeOffsetConverter>();
 
             return services;
         }
@@ -380,7 +383,8 @@ namespace MudBlazor.Services
                 })
                 .AddMudBlazorScrollSpy()
                 .AddMudEventManager()
-                .AddMudLocalization();
+                .AddMudLocalization()
+                .AddMudBlazorDateOperations();
         }
     }
 }

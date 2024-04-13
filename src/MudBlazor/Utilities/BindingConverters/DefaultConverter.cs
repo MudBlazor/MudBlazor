@@ -142,6 +142,18 @@ namespace MudBlazor
                         return (T)parsedValue;
                     UpdateGetError("Not a value of " + typeof(T).Name);
                 }
+                // dateonly
+                else if (typeof(T) == typeof(DateOnly) || typeof(T) == typeof(DateOnly?))
+                {
+                    try
+                    {
+                        return (T)(object)DateOnly.ParseExact(value, Format ?? Culture.DateTimeFormat.ShortDatePattern, Culture);
+                    }
+                    catch (FormatException)
+                    {
+                        UpdateGetError("Not a valid date only");
+                    }
+                }
                 // datetime
                 else if (typeof(T) == typeof(DateTime) || typeof(T) == typeof(DateTime?))
                 {
@@ -152,6 +164,18 @@ namespace MudBlazor
                     catch (FormatException)
                     {
                         UpdateGetError("Not a valid date time");
+                    }
+                }
+                // datetimeoffset
+                else if (typeof(T) == typeof(DateTimeOffset) || typeof(T) == typeof(DateTimeOffset?))
+                {
+                    try
+                    {
+                        return (T)(object)DateTimeOffset.ParseExact(value, Format ?? Culture.DateTimeFormat.ShortDatePattern, Culture);
+                    }
+                    catch (FormatException)
+                    {
+                        UpdateGetError("Not a valid date time offset");
                     }
                 }
                 // timespan

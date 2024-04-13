@@ -19,7 +19,8 @@ public class DateWrapperDateOnlyTests
     public void EndOfMonth_ShouldReturnExpectedDate(DateOnly date, CultureInfo culture, DateOnly expected)
     {
         // Arrange
-        var dateWrapper = new DateWrapper<DateOnly>(new DateOnlyConverter(), culture);
+        var dateWrapper = new DateWrapper<DateOnly>(new DateOnlyConverter());
+        dateWrapper.SetCulture(culture);
 
         // Act
         var result = dateWrapper.EndOfMonth(date);
@@ -34,7 +35,8 @@ public class DateWrapperDateOnlyTests
     public void StartOfMonth_ShouldReturnExpectedDate(DateOnly date, CultureInfo culture, DateOnly expected)
     {
         // Arrange
-        var dateWrapper = new DateWrapper<DateOnly>(new DateOnlyConverter(), culture);
+        var dateWrapper = new DateWrapper<DateOnly>(new DateOnlyConverter());
+        dateWrapper.SetCulture(culture);
 
         // Act
         var result = dateWrapper.StartOfMonth(date);
