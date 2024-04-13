@@ -8,7 +8,7 @@ We fully support both .NET 7 and .NET 8, and our top priority is to continue sup
 
 ## Upcoming Breaking Changes
 
-We have put off breaking changes for a very long time and are now in the process of merging several and removing all obsolete parameters as we move to v7. Don't panic, we'll announce a release date for when we feel confident that we can hold it. 
+We have put off breaking changes for a very long time and are now in the process of merging several and removing all obsolete parameters as we move to v7. Don't panic, we'll announce a release date for when we feel confident that we can hold it.
 
 Please view the [v7.0.0 Migration Guide](https://github.com/MudBlazor/MudBlazor/issues/8447) to understand what changes you will have to make.
 
@@ -20,6 +20,6 @@ Understand that our team members contribute to this project during their persona
 
 That being said, we feel responsible for MudBlazor and intend to keep it going for the foreseeable future at a sustainable cost of free time by merging important bug fixes and new features if they enhance the project.
 
-## Get Involved!
+## Get Involved
 
 Contributions from the community are what makes MudBlazor successful. If you are proficient in technologies such as C#, Blazor, JavaScript, or CSS, and you wish to give something back, please contact the team on Discord! You can join our Contribution Team channel and discuss with other team members what you want to do to help and start making a difference on this very roadmap.
