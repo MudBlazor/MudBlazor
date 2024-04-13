@@ -101,10 +101,7 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     /// This method is designed for performance optimization. By calling this method, the dictionary initialization is done immediately instead of waiting for the Blazor lifecycle to access the values. 
     /// This helps avoid potential slowdowns in rendering speed that could occur if the dictionary were initialized during the Blazor lifecycle.
     /// </remarks>
-    public void ForceParametersAttachment()
-    {
-        _ = _parameters.Value;
-    }
+    public void ForceParametersAttachment() => _ = _parameters.Value;
 
     /// <summary>
     /// Executes <see cref="IParameterComponentLifeCycle.OnInitialized"/> for all registered parameters.
