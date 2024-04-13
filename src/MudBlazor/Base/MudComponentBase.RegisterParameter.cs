@@ -20,7 +20,7 @@ public abstract partial class MudComponentBase : IParameterStatesFactoryReader, 
     {
         if (_scope.IsLocked)
         {
-            throw new InvalidOperationException($"You are not allowed to create more than one {nameof(CreateRegisterScope)}!");
+            throw new InvalidOperationException($"You are not allowed to create more than one {nameof(CreateRegisterScope)} after the scope has ended!");
         }
 
         return _scope;

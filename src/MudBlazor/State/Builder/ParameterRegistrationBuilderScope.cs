@@ -14,9 +14,8 @@ namespace MudBlazor.State.Builder;
 /// </summary>
 internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilderScope
 {
-    private bool _isLocked;
-    private readonly IParameterStatesFactoryWriter _parameterStatesFactoryWriter;
     private readonly List<IParameterBuilderAttach> _builders;
+    private readonly IParameterStatesFactoryWriter _parameterStatesFactoryWriter;
 
     /// <summary>
     /// Gets a value indicating whether the parameter registration builder scope is locked.
@@ -24,7 +23,7 @@ internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilder
     /// <remarks>
     /// The scope becomes locked when it has ended (Disposed), indicating that no more parameter states will be registered.
     /// </remarks>
-    public bool IsLocked => _isLocked;
+    public bool IsLocked { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ParameterRegistrationBuilderScope"/> class with the specified parameter set register.
@@ -37,10 +36,7 @@ internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilder
     }
 
     /// <inheritdoc/>
-    public RegisterParameterBuilder<T> CreateParameterBuilder<T>(string parameterName)
-    {
-        return CreateParameterBuilder<T>().WithName(parameterName);
-    }
+    public RegisterParameterBuilder<T> CreateParameterBuilder<T>(string parameterName) => CreateParameterBuilder<T>().WithName(parameterName);
 
     /// <inheritdoc/>
     public RegisterParameterBuilder<T> CreateParameterBuilder<T>()
@@ -63,9 +59,9 @@ internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilder
     /// <inheritdoc/>
     void IDisposable.Dispose()
     {
-        if (!_isLocked)
+        if (!IsLocked)
         {
-            _isLocked = true;
+            IsLocked = true;
             try
             {
                 _parameterStatesFactoryWriter.WriteParameters(_builders.Select(parameter => parameter.Attach()));
