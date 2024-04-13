@@ -1281,7 +1281,8 @@ namespace MudBlazor.UnitTests.Components
                         {
                             "Id", expectedId
                         }
-                    })                    .Add(p => p.Mask, new PatternMask("0000")));
+                    })
+                    .Add(p => p.Mask, new PatternMask("0000")));
 
             var input = comp.Find("input");
             var label = comp.Find("label");
@@ -1356,7 +1357,8 @@ namespace MudBlazor.UnitTests.Components
                         {
                             "Id", expectedId
                         }
-                    })                    .Add(p => p.Mask, new PatternMask("0000"))
+                    })
+                    .Add(p => p.Mask, new PatternMask("0000"))
                     .Add(p => p.Lines, 5));
 
             var input = comp.Find("textarea");
