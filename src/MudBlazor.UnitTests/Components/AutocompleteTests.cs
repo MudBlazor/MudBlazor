@@ -1344,7 +1344,7 @@ namespace MudBlazor.UnitTests.Components
         /// An autocomplete component with a label should auto-generate an id for the input element and use that id on the label's for attribute.
         /// </summary>
         [Test]
-        public void AutocompleteWithLabelShouldBeAccessible()
+        public void AutocompleteWithLabel_Should_GenerateIdForInputAndAccompanyingLabel()
         {
             var comp = Context.RenderComponent<MudAutocomplete<string>>(parameters
                 => parameters.Add(p => p.Label, "Test Label"));
@@ -1359,16 +1359,18 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// An autocomplete component with a label and an InputId should use the InputId on the input element and the label's for attribute.
+        /// An autocomplete component with a label and a UserAttributesId should use the UserAttributesId on the input element and the label's for attribute.
         /// </summary>
         [Test]
-        public void AutocompleteWithLabelAndInputIdShouldBeAccessible()
+        public void AutocompleteWithLabelAndUserAttributesId_Should_UseUserAttributesIdForInputAndAccompanyingLabel()
         {
-            var expectedId = "test-id";
+            var expectedId = "userattribute-id";
             var comp = Context.RenderComponent<MudAutocomplete<string>>(parameters
                 => parameters
-                    .Add(p => p.Label, "Test Label")
-                    .Add(p => p.InputId, expectedId));
+                    .Add(p => p.Label, "Test Label").Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        { "Id", expectedId }
+                    }));
 
             var input = comp.Find("input");
             var label = comp.Find("label");
@@ -1380,21 +1382,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// An autocomplete component with a label and an id in the UserAttributes should use the id on the input element and the label's for attribute.
+        /// An autocomplete component with a label, a UserAttributesId, and an InputId should use the InputId on the input element and the label's for attribute.
         /// </summary>
         [Test]
-        public void AutocompleteWithLabelAndIdInUserAttributesShouldBeAccessible()
+        public void AutocompleteWithLabelAndUserAttributesIdAndInputId_Should_UseInputIdForInputAndAccompanyingLabel()
         {
-            var expectedId = "test-id";
+            var expectedId = "input-id";
             var comp = Context.RenderComponent<MudAutocomplete<string>>(parameters
                 => parameters
                     .Add(p => p.Label, "Test Label")
-                    // ensures userAttributes > inputId
-                    .Add(p => p.InputId, "input-id")
                     .Add(p => p.UserAttributes, new Dictionary<string, object>
                     {
-                        { "Id", expectedId }
-                    }));
+                        { "Id", "userattribute-id" }
+                    })
+                    .Add(p => p.InputId, expectedId));
 
             var input = comp.Find("input");
             var label = comp.Find("label");

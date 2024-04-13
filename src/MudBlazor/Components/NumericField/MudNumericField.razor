@@ -16,7 +16,7 @@
                      Margin="@Margin"
                      Required="@Required"
                      CounterText="@GetCounterText()"
-                     ForId="@CalculatedFieldId">
+                     ForId="@InputIdState.Value">
         <InputContent>
             <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
                 <MudInput T="string"
@@ -57,7 +57,7 @@
                           OnMouseWheel="@OnMouseWheel"
                           Clearable="@Clearable"
                           ShrinkLabel="@ShrinkLabel"
-                          InputId="@CalculatedFieldId"/>
+                          InputId="@InputIdState.Value"/>
             </CascadingValue>
         </InputContent>
     </MudInputControl>

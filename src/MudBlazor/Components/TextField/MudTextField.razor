@@ -16,7 +16,7 @@
                      Disabled="@GetDisabledState()"
                      Margin="@Margin"
                      Required="@Required"
-                     ForId="@CalculatedFieldId">
+                     ForId="@InputIdState.Value">
         <InputContent>
             <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
                 @if (_mask == null)
@@ -62,7 +62,7 @@
                               OnClearButtonClick="@OnClearButtonClick"
                               Pattern="@Pattern"
                               ShrinkLabel="@ShrinkLabel"
-                              InputId="@CalculatedFieldId"/>
+                              InputId="@InputIdState.Value"/>
                 }
                 else
                 {
@@ -94,7 +94,7 @@
                              Margin="@Margin" OnBlur="@OnBlurredAsync"
                              Clearable="@Clearable"
                              OnClearButtonClick="@OnClearButtonClick"
-                             InputId="@CalculatedFieldId"/>
+                             InputId="@InputIdState.Value"/>
                 }
             </CascadingValue>
         </InputContent>

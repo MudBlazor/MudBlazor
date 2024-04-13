@@ -1108,10 +1108,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A text field with a label should auto-generate an id for the input element and use that id on the label's for attribute.
+        /// A text field with a label should auto-generate an id and use that id on the input element and the label's for attribute.
         /// </summary>
         [Test]
-        public void TextFieldWithLabelShouldBeAccessible()
+        public void TextFieldWithLabel_Should_GenerateIdForInputAndAccompanyingLabel()
         {
             var comp = Context.RenderComponent<MudTextField<string>>(parameters
                 => parameters.Add(p => p.Label, "Test Label"));
@@ -1126,38 +1126,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A text field with a label and an InputId should use the InputId on the input element and the label's for attribute.
+        /// A text field with a label and UserAttributesId should use the UserAttributesId on the input element and the label's for attribute.
         /// </summary>
         [Test]
-        public void TextFieldWithLabelAndInputIdShouldBeAccessible()
+        public void TextFieldWithLabelAndUserAttributesId_Should_UseUserAttributesIdForInputAndAccompanyingLabel()
         {
-            var expectedId = "test-id";
+            var expectedId = "userattributes-id";
             var comp = Context.RenderComponent<MudTextField<string>>(parameters
                 => parameters
                     .Add(p => p.Label, "Test Label")
-                    .Add(p => p.InputId, expectedId));
-
-            var input = comp.Find("input");
-            var label = comp.Find("label");
-
-            input.Id.Should().Be(expectedId);
-            var forAttribute = label.Attributes.GetNamedItem("for");
-            forAttribute.Should().NotBeNull();
-            forAttribute!.Value.Should().Be(expectedId);
-        }
-
-        /// <summary>
-        /// A text field with a label and an id in the UserAttributes should use the id on the input element and the label's for attribute.
-        /// </summary>
-        [Test]
-        public void TextFieldWithLabelAndIdInUserAttributesShouldBeAccessible()
-        {
-            var expectedId = "test-id";
-            var comp = Context.RenderComponent<MudTextField<string>>(parameters
-                => parameters
-                    .Add(p => p.Label, "Test Label")
-                    // ensures userAttributes > inputId
-                    .Add(p => p.InputId, "input-id")
                     .Add(p => p.UserAttributes, new Dictionary<string, object>
                     {
                         { "Id", expectedId }
@@ -1173,10 +1150,35 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A text field with multiple lines and a label should auto-generate an id for the input element and use that id on the label's for attribute.
+        /// A text field with a label, a UserAttributesId, and an InputId should use the InputId on the input element and the label's for attribute.
         /// </summary>
         [Test]
-        public void TextFieldWithMultipleLinesAndLabelShouldBeAccessible()
+        public void TextFieldWithLabelAndUserAttributesIdAndInputId_Should_UseInputIdForInputAndAccompanyingLabel()
+        {
+            var expectedId = "input-id";
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        { "Id", "userattributes-id" }
+                    })
+                    .Add(p => p.InputId, "input-id"));
+
+            var input = comp.Find("input");
+            var label = comp.Find("label");
+
+            input.Id.Should().Be(expectedId);
+            var forAttribute = label.Attributes.GetNamedItem("for");
+            forAttribute.Should().NotBeNull();
+            forAttribute!.Value.Should().Be(expectedId);
+        }
+
+        /// <summary>
+        /// A text field with a mask and a label should auto-generate an id and use that id on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void TextFieldWithMultipleLinesAndLabel_Should_GenerateIdForInputAndAccompanyingLabel()
         {
             var comp = Context.RenderComponent<MudTextField<string>>(parameters
                 => parameters
@@ -1193,39 +1195,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A text field with multiple lines and a label and an InputId should use the InputId on the input element and the label's for attribute.
+        /// A text field with multiple lines, a label, and UserAttributesId should use the UserAttributesId on the input element and the label's for attribute.
         /// </summary>
         [Test]
-        public void TextFieldWithMultipleLinesAndLabelAndInputIdShouldBeAccessible()
+        public void TextFieldWithMultipleLinesAndLabelAndUserAttributesId_Should_UseUserAttributesIdForInputAndAccompanyingLabel()
         {
-            var expectedId = "test-id";
+            var expectedId = "userattributes-id";
             var comp = Context.RenderComponent<MudTextField<string>>(parameters
                 => parameters
                     .Add(p => p.Label, "Test Label")
-                    .Add(p => p.InputId, expectedId)
-                    .Add(p => p.Lines, 5));
-
-            var input = comp.Find("textarea");
-            var label = comp.Find("label");
-
-            input.Id.Should().Be(expectedId);
-            var forAttribute = label.Attributes.GetNamedItem("for");
-            forAttribute.Should().NotBeNull();
-            forAttribute!.Value.Should().Be(expectedId);
-        }
-
-        /// <summary>
-        /// A text field with multiple lines and a label and an id in the UserAttributes should use the id on the input element and the label's for attribute.
-        /// </summary>
-        [Test]
-        public void TextFieldWithMultipleLinesAndLabelAndIdInUserAttributesShouldBeAccessible()
-        {
-            var expectedId = "test-id";
-            var comp = Context.RenderComponent<MudTextField<string>>(parameters
-                => parameters
-                    .Add(p => p.Label, "Test Label")
-                    // ensures userAttributes > inputId
-                    .Add(p => p.InputId, "input-id")
                     .Add(p => p.UserAttributes, new Dictionary<string, object>
                     {
                         { "Id", expectedId }
@@ -1242,10 +1220,36 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A text field with a mask and a label should auto-generate an id for the input element and use that id on the label's for attribute.
+        /// A text field with multiple lines, a label, a UserAttributesId, and an InputId should use the InputId on the input element and the label's for attribute.
         /// </summary>
         [Test]
-        public void TextFieldWithMaskAndLabelShouldBeAccessible()
+        public void TextFieldWithMultipleLinesAndLabelAndUserAttributesIdAndInputId_Should_UseInputIdForInputAndAccompanyingLabel()
+        {
+            var expectedId = "input-id";
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        { "Id", "userattributes-id" }
+                    })
+                    .Add(p => p.InputId, "input-id")
+                    .Add(p => p.Lines, 5));
+
+            var input = comp.Find("textarea");
+            var label = comp.Find("label");
+
+            input.Id.Should().Be(expectedId);
+            var forAttribute = label.Attributes.GetNamedItem("for");
+            forAttribute.Should().NotBeNull();
+            forAttribute!.Value.Should().Be(expectedId);
+        }
+
+        /// <summary>
+        /// A text field with a mask and a label should auto-generate an id and use that id on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void TextFieldWithMaskAndLabel_Should_GenerateIdForInputAndAccompanyingLabel()
         {
             var comp = Context.RenderComponent<MudTextField<string>>(parameters
                 => parameters
@@ -1262,15 +1266,48 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A text field with a mask and a label and an InputId should use the InputId on the input element and the label's for attribute.
+        /// A text field with a mask, a label, and UserAttributesId should use the UserAttributesId on the input element and the label's for attribute.
         /// </summary>
         [Test]
-        public void TextFieldWithMaskAndLabelAndInputIdShouldBeAccessible()
+        public void TextFieldWithMaskAndLabelAndUserAttributesId_Should_UseUserAttributesIdForInputAndAccompanyingLabel()
         {
-            var expectedId = "test-id";
+            var expectedId = "userattributes-id";
             var comp = Context.RenderComponent<MudTextField<string>>(parameters
                 => parameters
                     .Add(p => p.Label, "Test Label")
+
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        {
+                            "Id", expectedId
+                        }
+                    })                    .Add(p => p.Mask, new PatternMask("0000")));
+
+            var input = comp.Find("input");
+            var label = comp.Find("label");
+
+            input.Id.Should().Be(expectedId);
+            var forAttribute = label.Attributes.GetNamedItem("for");
+            forAttribute.Should().NotBeNull();
+            forAttribute!.Value.Should().Be(expectedId);
+        }
+
+        /// <summary>
+        /// A text field with a mask, a label, a UserAttributesId, and an InputId should use the InputId on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void TextFieldWithMaskAndLabelAndUserAttributesIdAndInputId_Should_UseInputIdForInputAndAccompanyingLabel()
+        {
+            var expectedId = "input-id";
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        {
+                            "Id", "userattributes-id"
+                        }
+                    })
                     .Add(p => p.InputId, expectedId)
                     .Add(p => p.Mask, new PatternMask("0000")));
 
@@ -1284,39 +1321,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A text field with a mask and a label and an id in the UserAttributes should use the id on the input element and the label's for attribute.
+        /// A text field with a mask, multiple lines, and a label should auto-generate an id and use that id on the input element and the label's for attribute.
         /// </summary>
         [Test]
-        public void TextFieldWithMaskAndLabelAndIdInUserAttributesShouldBeAccessible()
-        {
-            var expectedId = "test-id";
-            var comp = Context.RenderComponent<MudTextField<string>>(parameters
-                => parameters
-                    .Add(p => p.Label, "Test Label")
-                    // ensures userAttributes > inputId
-                    .Add(p => p.InputId, "input-id")
-                    .Add(p => p.UserAttributes, new Dictionary<string, object>
-                    {
-                        {
-                            "Id", expectedId
-                        }
-                    })
-                    .Add(p => p.Mask, new PatternMask("0000")));
-
-            var input = comp.Find("input");
-            var label = comp.Find("label");
-
-            input.Id.Should().Be(expectedId);
-            var forAttribute = label.Attributes.GetNamedItem("for");
-            forAttribute.Should().NotBeNull();
-            forAttribute!.Value.Should().Be(expectedId);
-        }
-
-        /// <summary>
-        /// A text field with a mask, multiple lines, and a label should auto-generate an id for the input element and use that id on the label's for attribute.
-        /// </summary>
-        [Test]
-        public void TextFieldWithMaskAndMultipleLinesAndLabelShouldBeAccessible()
+        public void TextFieldWithMaskAndMultipleLinesAndLabel_Should_GenerateIdForInputAndAccompanyingLabel()
         {
             var comp = Context.RenderComponent<MudTextField<string>>(parameters
                 => parameters
@@ -1334,17 +1342,21 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A text field with a mask, multiple lines, and a label and an InputId should use the InputId on the input element and the label's for attribute.
+        /// A text field with a mask, multiple lines, a label, and UserAttributesId should use the UserAttributesId on the input element and the label's for attribute.
         /// </summary>
         [Test]
-        public void TextFieldWithMaskAndMultipleLinesAndLabelAndInputIdShouldBeAccessible()
+        public void TextFieldWithMaskAndMultipleLinesAndLabelAndUserAttributesId_Should_UseUserAttributesIdForInputAndAccompanyingLabel()
         {
-            var expectedId = "test-id";
+            var expectedId = "userattributes-id";
             var comp = Context.RenderComponent<MudTextField<string>>(parameters
                 => parameters
                     .Add(p => p.Label, "Test Label")
-                    .Add(p => p.InputId, expectedId)
-                    .Add(p => p.Mask, new PatternMask("0000"))
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        {
+                            "Id", expectedId
+                        }
+                    })                    .Add(p => p.Mask, new PatternMask("0000"))
                     .Add(p => p.Lines, 5));
 
             var input = comp.Find("textarea");
@@ -1357,23 +1369,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A text field with a mask, multiple lines, and a label and an id in the UserAttributes should use the id on the input element and the label's for attribute.
+        /// A text field with a mask, multiple lines, a label, a UserAttributesId, and an InputId should use the InputId on the input element and the label's for attribute.
         /// </summary>
         [Test]
-        public void TextFieldWithMaskAndMultipleLinesAndLabelAndIdInUserAttributesShouldBeAccessible()
+        public void TextFieldWithMaskAndMultipleLinesAndLabelAndUserAttributesIdAndInputId_Should_UseInputIdForInputAndAccompanyingLabel()
         {
-            var expectedId = "test-id";
+            var expectedId = "input-id";
             var comp = Context.RenderComponent<MudTextField<string>>(parameters
                 => parameters
                     .Add(p => p.Label, "Test Label")
-                    // ensures userAttributes > inputId
-                    .Add(p => p.InputId, "input-id")
                     .Add(p => p.UserAttributes, new Dictionary<string, object>
                     {
                         {
-                            "Id", expectedId
+                            "Id", "userattributes-id"
                         }
                     })
+                    .Add(p => p.InputId, expectedId)
                     .Add(p => p.Mask, new PatternMask("0000"))
                     .Add(p => p.Lines, 5));
 

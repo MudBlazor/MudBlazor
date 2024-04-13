@@ -1006,10 +1006,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A time picker with a label should auto-generate an id for the input element and use that id on the label's for attribute.
+        /// A time picker with a label should auto-generate an id and use that id on the input element and the label's for attribute.
         /// </summary>
         [Test]
-        public void TimePickerWithLabelShouldBeAccessible()
+        public void DatePickerWithLabel_Should_GenerateIdForInputAndAccompanyingLabel()
         {
             var comp = Context.RenderComponent<MudTimePicker>(parameters
                 => parameters.Add(p => p.Label, "Test Label"));
@@ -1024,10 +1024,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A time picker with a label and an id in the UserAttributes should use the id on the input element and the label's for attribute.
+        /// A time picker with a label and UserAttributesId should use the UserAttributesId on the input element and the label's for attribute.
         /// </summary>
         [Test]
-        public void TimePickerWithLabelAndIdInUserAttributesShouldBeAccessible()
+        public void DatePickerWithLabelAndUserAttributesId_Should_UseUserAttributesIdForInputAndAccompanyingLabel()
         {
             var expectedId = "test-id";
             var comp = Context.RenderComponent<MudTimePicker>(parameters

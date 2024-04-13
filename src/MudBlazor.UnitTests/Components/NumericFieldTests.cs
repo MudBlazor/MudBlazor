@@ -913,10 +913,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A numeric field with a label should auto-generate an id for the input element and use that id on the label's for attribute.
+        /// A numeric field with a label should auto-generate an id and use that id on the input element and the label's for attribute.
         /// </summary>
         [Test]
-        public void NumericFieldWithLabelShouldBeAccessible()
+        public void NumericFieldWithLabel_Should_GenerateIdForInputAndAccompanyingLabel()
         {
             var comp = Context.RenderComponent<MudNumericField<int>>(parameters
                 => parameters.Add(p => p.Label, "Test Label"));
@@ -931,16 +931,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A numeric field with a label and an InputId should use the InputId on the input element and the label's for attribute.
+        /// A numeric field with a label and UserAttributesId should use the UserAttributesId on the input element and the label's for attribute.
         /// </summary>
         [Test]
-        public void NumericFieldWithLabelAndInputIdShouldBeAccessible()
+        public void NumericFieldWithLabelAndUserAttributesId_Should_UseUserAttributesIdForInputAndAccompanyingLabel()
         {
-            var expectedId = "test-id";
+            var expectedId = "userattributes-id";
             var comp = Context.RenderComponent<MudNumericField<int>>(parameters
                 => parameters
                     .Add(p => p.Label, "Test Label")
-                    .Add(p => p.InputId, expectedId));
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        { "Id", expectedId }
+                    }));
 
             var input = comp.Find("input");
             var label = comp.Find("label");
@@ -952,21 +955,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A numeric field with a label and an id in the UserAttributes should use the id on the input element and the label's for attribute.
+        /// A numeric field with a label, a UserAttributesId, and an InputId should use the InputId on the input element and the label's for attribute.
         /// </summary>
         [Test]
-        public void NumericFieldWithLabelAndIdInUserAttributesShouldBeAccessible()
+        public void NumericFieldWithLabelAndUserAttributesIdAndInputId_Should_UseInputIdForInputAndAccompanyingLabel()
         {
-            var expectedId = "test-id";
+            var expectedId = "input-id";
             var comp = Context.RenderComponent<MudNumericField<int>>(parameters
                 => parameters
                     .Add(p => p.Label, "Test Label")
-                    // ensures userAttributes > inputId
-                    .Add(p => p.InputId, "input-id")
                     .Add(p => p.UserAttributes, new Dictionary<string, object>
                     {
-                        { "Id", expectedId }
-                    }));
+                        { "Id", "userattributes-id" }
+                    })
+                    .Add(p => p.InputId, expectedId));
 
             var input = comp.Find("input");
             var label = comp.Find("label");

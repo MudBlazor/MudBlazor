@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -21,13 +22,16 @@ namespace MudBlazor
         protected bool _isFocused;
         protected bool _forceTextUpdate;
 
-        private string? _userAttributeId;
+        private string? _userAttributesId = $"mudinput-{Guid.NewGuid()}";
         private readonly string _componentId = $"mudinput-{Guid.NewGuid()}";
-        protected string CalculatedFieldId => _userAttributeId ?? InputId ?? _componentId;
+        internal readonly ParameterState<string?> InputIdState;
 
         protected MudBaseInput()
             : base(new DefaultConverter<T>())
         {
+            InputIdState = RegisterParameterBuilder<string?>(nameof(InputId))
+                .WithParameter(() => InputId)
+                .WithChangeHandler(UpdateInputIdStateAsync);
         }
 
         /// <summary>
@@ -486,7 +490,12 @@ namespace MudBlazor
                 Label = For.GetLabelString();
             }
 
-            _userAttributeId = UserAttributes.FirstOrDefault(userAttribute => userAttribute.Key.Equals("id", StringComparison.InvariantCultureIgnoreCase)).Value?.ToString();
+            _userAttributesId = UserAttributes.FirstOrDefault(userAttribute => userAttribute.Key.Equals("id", StringComparison.InvariantCultureIgnoreCase)).Value?.ToString();
+
+            if (InputId is null)
+            {
+                await UpdateInputIdStateAsync();
+            }
         }
 
         public virtual void ForceRender(bool forceTextUpdate)
@@ -561,5 +570,22 @@ namespace MudBlazor
         /// Derived classes need to override this if they can be something other than text
         /// </summary>
         internal virtual InputType GetInputType() => InputType.Text;
+
+        private async Task UpdateInputIdStateAsync()
+        {
+            if (InputId is not null)
+            {
+                await InputIdState.SetValueAsync(InputId);
+                return;
+            }
+
+            if (_userAttributesId is not null)
+            {
+                await InputIdState.SetValueAsync(_userAttributesId);
+                return;
+            }
+
+            await InputIdState.SetValueAsync(_componentId);
+        }
     }
 }
