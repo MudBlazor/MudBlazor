@@ -78,15 +78,19 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     private FrozenDictionary<string, IParameterComponentLifeCycle> ParametersFactory()
     {
         var parameters = _parameterStatesFactory.ReadParameters();
+        var dictionary = parameters.ToFrozenDictionary(parameter => parameter.Metadata.ParameterName, parameter => parameter);
+        _parameterStatesFactory.Complete();
 
-        return parameters.ToFrozenDictionary(parameter => parameter.Metadata.ParameterName, parameter => parameter);
+        return dictionary;
     }
 #else
     private Dictionary<string, IParameterComponentLifeCycle> ParametersFactory()
     {
         var parameters = _parameterStatesFactory.ReadParameters();
+        var dictionary = parameters.ToDictionary(parameter => parameter.Metadata.ParameterName, parameter => parameter);
+        _parameterStatesFactory.Complete();
 
-        return parameters.ToDictionary(parameter => parameter.Metadata.ParameterName, parameter => parameter);
+        return dictionary;
     }
 #endif
 
@@ -165,15 +169,26 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+    /// <summary>
+    /// Represents an enumerable reader for parameter states.
+    /// </summary>
     private class ParameterSetReadonlyEnumerable : IParameterStatesFactoryReader
     {
         private readonly IEnumerable<IParameterComponentLifeCycle> _parameters1;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ParameterSetReadonlyEnumerable"/> class with the specified parameters.
+        /// </summary>
+        /// <param name="parameters">The parameters to be read.</param>
         public ParameterSetReadonlyEnumerable(IEnumerable<IParameterComponentLifeCycle> parameters)
         {
             _parameters1 = parameters;
         }
 
+        /// <inheritdoc />
         public IEnumerable<IParameterComponentLifeCycle> ReadParameters() => _parameters1;
+
+        /// <inheritdoc />
+        public void Complete() { /*Noop*/ }
     }
 }

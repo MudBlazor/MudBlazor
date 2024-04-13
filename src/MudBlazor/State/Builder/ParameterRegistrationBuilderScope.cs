@@ -12,7 +12,7 @@ namespace MudBlazor.State.Builder;
 /// <summary>
 /// Represents a scope for registering parameters.
 /// </summary>
-internal class ParameterRegistrationBuilderScope : IDisposable
+internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilderScope
 {
     private bool _isLocked;
     private readonly IParameterStatesFactoryWriter _parameterStatesFactoryWriter;
@@ -36,28 +36,13 @@ internal class ParameterRegistrationBuilderScope : IDisposable
         _parameterStatesFactoryWriter = parameterStatesFactoryWriter;
     }
 
-    /// <summary>
-    /// Creates a parameter builder for registering a parameter.
-    /// </summary>
-    /// <typeparam name="T">The type of the parameter.</typeparam>
-    /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
-    /// <remarks>
-    /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered. 
-    /// </remarks>
-    /// <returns>A parameter builder for registering a parameter of the specified type.</returns>
+    /// <inheritdoc/>
     public RegisterParameterBuilder<T> CreateParameterBuilder<T>(string parameterName)
     {
         return CreateParameterBuilder<T>().WithName(parameterName);
     }
 
-    /// <summary>
-    /// Creates a parameter builder for registering a parameter.
-    /// </summary>
-    /// <typeparam name="T">The type of the parameter.</typeparam>
-    /// <remarks>
-    /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered. 
-    /// </remarks>
-    /// <returns>A parameter builder for registering a parameter of the specified type.</returns>
+    /// <inheritdoc/>
     public RegisterParameterBuilder<T> CreateParameterBuilder<T>()
     {
         var builder = new RegisterParameterBuilder<T>();
@@ -66,14 +51,25 @@ internal class ParameterRegistrationBuilderScope : IDisposable
         return builder;
     }
 
+    /// <summary>
+    /// Clears the list of parameter builders.
+    /// </summary>
+    public void CleanUp() => _builders.Clear();
+
     /// <inheritdoc/>
     void IDisposable.Dispose()
     {
         if (!_isLocked)
         {
             _isLocked = true;
-            _parameterStatesFactoryWriter.WriteParameters(_builders.Select(parameter => parameter.Attach()));
-            _parameterStatesFactoryWriter.Close();
+            try
+            {
+                _parameterStatesFactoryWriter.WriteParameters(_builders.Select(parameter => parameter.Attach()));
+            }
+            finally
+            {
+                _parameterStatesFactoryWriter.Close();
+            }
         }
     }
 }

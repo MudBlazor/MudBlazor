@@ -17,4 +17,9 @@ internal interface IParameterStatesFactoryReader
     /// </summary>
     /// <returns>The collection of parameter states read from the reader.</returns>
     IEnumerable<IParameterComponentLifeCycle> ReadParameters();
+
+    /// <summary>
+    /// Completes the reading process.
+    /// </summary>
+    void Complete();
 }

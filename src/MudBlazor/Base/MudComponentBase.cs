@@ -64,7 +64,7 @@ namespace MudBlazor
         protected MudComponentBase()
         {
             Parameters = new ParameterSet(this);
-            _lazyScope = new Lazy<ParameterRegistrationBuilderScope>(() => new ParameterRegistrationBuilderScope(this));
+            _scope = new ParameterRegistrationBuilderScope(this);
         }
 
         /// <inheritdoc />
