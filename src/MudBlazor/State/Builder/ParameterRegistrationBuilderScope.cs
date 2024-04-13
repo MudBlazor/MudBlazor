@@ -54,7 +54,11 @@ internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilder
     /// <summary>
     /// Clears the list of parameter builders.
     /// </summary>
-    public void CleanUp() => _builders.Clear();
+    public void CleanUp()
+    {
+        _builders.Clear();
+        _builders.TrimExcess();
+    }
 
     /// <inheritdoc/>
     void IDisposable.Dispose()
