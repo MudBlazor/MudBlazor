@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -40,7 +41,7 @@ namespace MudBlazor
 
         protected string ContentClassname =>
             new CssBuilder("mud-treeview-item-content")
-                .AddClass("cursor-pointer", MudTreeRoot?.IsSelectable == true || MudTreeRoot?.ExpandOnClick == true && HasChild)
+                .AddClass("cursor-pointer", !ReadOnly || MudTreeRoot?.ExpandOnClick == true && HasChild)
                 .AddClass($"mud-treeview-item-selected", _isSelected)
                 .Build();
 
@@ -346,24 +347,24 @@ namespace MudBlazor
             return MudTreeRoot.SetSelectedItemsCompare();
         }
 
+        private bool ReadOnly => MudTreeRoot is null || MudTreeRoot.ReadOnly;
+
         protected async Task OnItemClicked(MouseEventArgs ev)
         {
             if (HasChild && (MudTreeRoot?.ExpandOnClick ?? false))
             {
-                await _expandedState.SetValueAsync(!_expandedState.Value);
+                await _expandedState.SetValueAsync(!_expandedState);
                 await TryInvokeServerLoadFunc();
             }
-
             if (Disabled)
             {
                 return;
             }
-
-            if (MudTreeRoot?.IsSelectable ?? false)
+            if (!ReadOnly)
             {
+                Debug.Assert(MudTreeRoot != null);
                 await MudTreeRoot.Select(this, !_isSelected);
             }
-
             await OnClick.InvokeAsync(ev);
         }
 
@@ -371,20 +372,18 @@ namespace MudBlazor
         {
             if (HasChild && (MudTreeRoot?.ExpandOnDoubleClick ?? false))
             {
-                await _expandedState.SetValueAsync(!_expandedState.Value);
+                await _expandedState.SetValueAsync(!_expandedState);
                 await TryInvokeServerLoadFunc();
             }
-
             if (Disabled)
             {
                 return;
             }
-
-            if (MudTreeRoot?.IsSelectable ?? false)
+            if (!ReadOnly)
             {
+                Debug.Assert(MudTreeRoot != null);
                 await MudTreeRoot.Select(this, !_isSelected);
             }
-
             await OnDoubleClick.InvokeAsync(ev);
         }
 

@@ -186,16 +186,24 @@ namespace MudBlazor
         [Category(CategoryTypes.TreeView.Selecting)]
         public IEqualityComparer<T?> Comparer { get; set; } = EqualityComparer<T?>.Default;
 
+        /// <summary>
+        /// Supply a func that asynchronously loads tree view items on demand
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
         public Func<T?, Task<HashSet<T>>>? ServerData { get; set; }
 
-        internal bool IsSelectable { get; private set; }
+        /// <summary>
+        /// If true, the selection of the tree view can not be changed by clicking its items.
+        /// The currently selected value(s) are still displayed however
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Selecting)]
+        public bool ReadOnly { get; set; }
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            IsSelectable = SelectedValueChanged.HasDelegate;
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -231,7 +239,7 @@ namespace MudBlazor
             ? new(_selectedValues.Select(i => i.Value))
             : new();
 
-        public async Task Select(MudTreeViewItem<T> item, bool isSelected = true)
+        internal async Task Select(MudTreeViewItem<T> item, bool isSelected = true)
         {
             if (MultiSelection)
             {
@@ -239,13 +247,11 @@ namespace MudBlazor
                 await SelectedValuesChanged.InvokeAsync(SelectedValues);
                 return;
             }
-
             if (isSelected)
             {
                 await SetSelectedValue(item.Value);
                 return;
             }
-
             await SetSelectedValue(default);
         }
 
@@ -260,18 +266,16 @@ namespace MudBlazor
         ///  <param name="value">The value to be set as the selected value.</param>
         internal async Task SetSelectedValue(T? value)
         {
-            if (Comparer.Equals(value, _previousSelectedValue)) return;
-
+            if (Comparer.Equals(value, _previousSelectedValue)) 
+                return;
+            _previousSelectedValue=value;
             await UnSelectAllChildren();
-
-            if (value == null ||
-                FindItemByValue(value) is not { } item)
+            if (value == null || FindItemByValue(value) is not { } item)
             {
-                await SelectedValueChanged.InvokeAsync(default);
+                await _selectedValueState.SetValueAsync(default);
                 return;
             }
-
-            await SelectedValueChanged.InvokeAsync(item.Value);
+            await _selectedValueState.SetValueAsync(item.Value);
             await item.Select(true);
         }
 

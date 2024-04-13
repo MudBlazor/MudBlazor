@@ -1,29 +1,39 @@
 ﻿@using System.Collections
 @namespace MudBlazor.UnitTests.TestComponents
 
-<MudTreeView T="string" MultiSelection="false" @bind-SelectedValue="SelectedValue"
-             Comparer="Compare">
-    <MudTreeViewItem Value='"Ax"' @bind-Activated="Item1Activated" @bind-Selected="ParentItemSelected">
+<MudTreeView T="string" MultiSelection="false" @bind-SelectedValue="SelectedValue" Comparer="Comparer">
+    <MudTreeViewItem Value='"Ax"' @bind-Activated="_item1Activated" @bind-Selected="_parentItemSelected">
         <MudTreeViewItem Value='"Bx"' />
     </MudTreeViewItem>
-    <MudTreeViewItem Value='"Cx"' @bind-Activated="Item2Activated">
+    <MudTreeViewItem Value='"Cx"' @bind-Activated="_item2Activated">
         <MudTreeViewItem Value='"Dx"' />
     </MudTreeViewItem>
 </MudTreeView>
 
+<p class="selected-value">
+    @SelectedValue
+</p>
+<p class="parent-selected">
+    @_parentItemSelected
+</p>
+<p class="item1-activated">
+    @_item1Activated
+</p>
+<p class="item2-activated">
+    @_item2Activated
+</p>
 @code{
     [Parameter]
     public string SelectedValue { get; set; }
-    public bool SubItemSelected { get; set; }
 
-    public bool ParentItemSelected { get; set; }
+    private bool _parentItemSelected;
 
-    public bool Item1Activated { get; set; }
+    private bool _item1Activated;
 
-    public bool Item2Activated { get; set; }
+    private bool _item2Activated;
 
     [Parameter]
-    public IEqualityComparer<string> Compare { get; set; } = new DelegateEqualityComparer<string>(
+    public IEqualityComparer<string> Comparer { get; set; } = new DelegateEqualityComparer<string>(
             (x, y) => 
             {
                 if (x == null && y == null) return true;

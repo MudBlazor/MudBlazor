@@ -19,25 +19,28 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DisabledTreeViewTest>([Parameter(nameof(MudTreeView<string>.Disabled), true)]);
             comp.Find("div.mud-treeview-item-content").Click();
-            comp.Instance.SelectedValue.Should().BeNull();
+            var GetSelectedValue = () => comp.Find("p.selected-value").TrimmedText();
+            GetSelectedValue().Should().BeNullOrWhiteSpace();
 
             comp.Find("div.mud-treeview-item-content").DoubleClick();
-            comp.Instance.SelectedValue.Should().BeNull();
+            GetSelectedValue().Should().BeNullOrWhiteSpace();
         }
 
         [Test]
         public void TreeView_ClickWhileActive_DoesChangeSelection()
         {
-            var comp = Context.RenderComponent<DisabledTreeViewTest>([Parameter(nameof(MudTreeView<string>.Disabled), false)]);
+            var comp = Context.RenderComponent<DisabledTreeViewTest>(self => self.Add(x => x.Disabled, false));
             comp.Find("div.mud-treeview-item-content").Click();
-            comp.Instance.SelectedValue.Should().NotBeNull();
+            var GetSelectedValue = () => comp.Find("p.selected-value").TrimmedText();
+            GetSelectedValue().Should().NotBeNullOrWhiteSpace();
+            GetSelectedValue().Should().Be("content");
 
             // To reset
             comp.Find("div.mud-treeview-item-content").Click();
-            comp.Instance.SelectedValue.Should().BeNull();
+            GetSelectedValue().Should().BeNullOrWhiteSpace();
 
             comp.Find("div.mud-treeview-item-content").DoubleClick();
-            comp.Instance.SelectedValue.Should().NotBeNull();
+            GetSelectedValue().Should().NotBeNull();
         }
 
         [Test]
@@ -305,17 +308,20 @@ namespace MudBlazor.UnitTests.Components
         {
             // test tree with items ("Ax", "Bx", "Cx", "Dx")
             var comp = Context.RenderComponent<TreeViewCompareTest>();
+            string GetSelectedValue() => comp.Find("p.selected-value").TrimmedText();
 
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "Ax"));
+            GetSelectedValue().Should().Be("Ax");
 
-            comp.Instance.SelectedValue.Should().Be("Ax");
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "Bx"));
+            GetSelectedValue().Should().Be("Bx");
 
+            // setting A will not select anything because it isn't a valid value with the default comparer
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "A"));
-
-            comp.Instance.SelectedValue.Should().Be(default);
+            GetSelectedValue().Should().BeNullOrWhiteSpace();
 
             // set the comparer to a value that will only check the first character of the string
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Compare,
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Comparer,
                 new DelegateEqualityComparer<string>(
                     (x, y) =>
                     {
@@ -333,10 +339,8 @@ namespace MudBlazor.UnitTests.Components
                     }
                 )
             ));
-
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "A"));
-
-            comp.Instance.SelectedValue.Should().Be("Ax");
+            GetSelectedValue().Should().StartWith("A");
         }
 
         /// <summary>
