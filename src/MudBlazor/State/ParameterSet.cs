@@ -25,22 +25,34 @@ namespace MudBlazor.State;
 /// </remarks>
 internal class ParameterSet : IReadOnlyCollection<IParameterComponentLifeCycle>
 {
-    private readonly Dictionary<string, IParameterComponentLifeCycle> _parameters = new();
+#if NET8_0_OR_GREATER
+    private FrozenDictionary<string, IParameterComponentLifeCycle> _parameters = FrozenDictionary<string, IParameterComponentLifeCycle>.Empty;
+#else
+    private Dictionary<string, IParameterComponentLifeCycle> _parameters = new();
+#endif
 
     /// <inheritdoc/>
     public int Count => _parameters.Count;
 
-    /// <summary>
-    /// Adds a parameter to the parameter set.
-    /// </summary>
-    /// <param name="parameter">The parameter to add.</param>
-    /// <exception cref="InvalidOperationException">Thrown when the parameter is already registered.</exception>
-    public void Add(IParameterComponentLifeCycle parameter)
+    ///// <summary>
+    ///// Adds a parameter to the parameter set.
+    ///// </summary>
+    ///// <param name="parameter">The parameter to add.</param>
+    ///// <exception cref="InvalidOperationException">Thrown when the parameter is already registered.</exception>
+    //public void Add(IParameterComponentLifeCycle parameter)
+    //{
+    //    if (!_parameters.TryAdd(parameter.Metadata.ParameterName, parameter))
+    //    {
+    //        throw new InvalidOperationException($"{parameter.Metadata.ParameterName} is already registered.");
+    //    }
+    //}
+    public void AddAndLock(IReadOnlyCollection<IParameterComponentLifeCycle> parameters)
     {
-        if (!_parameters.TryAdd(parameter.Metadata.ParameterName, parameter))
-        {
-            throw new InvalidOperationException($"{parameter.Metadata.ParameterName} is already registered.");
-        }
+#if NET8_0_OR_GREATER
+        _parameters = parameters.ToFrozenDictionary(parameter => parameter.Metadata.ParameterName, parameter => parameter);
+#else
+        _parameters = parameters.ToDictionary(parameter => parameter.Metadata.ParameterName, parameter => parameter);
+#endif
     }
 
     /// <summary>

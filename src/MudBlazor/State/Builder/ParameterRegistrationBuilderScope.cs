@@ -13,20 +13,24 @@ namespace MudBlazor.State.Builder;
 /// </summary>
 internal class ParameterRegistrationBuilderScope : IDisposable
 {
-    private readonly List<ISmartAttachable> _builders;
+    private readonly IParameterSetRegister _parameterSetRegister;
+    private readonly List<ISmartParameterAttachable> _smartParameterAttachables;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ParameterRegistrationBuilderScope"/> class with the specified parameter set register.
     /// </summary>
-    public ParameterRegistrationBuilderScope()
+    /// <param name="parameterSetRegister">The <see cref="IParameterSetRegister"/> used to register the parameter during the <see cref="Attach"/>.</param>
+    public ParameterRegistrationBuilderScope(IParameterSetRegister parameterSetRegister)
     {
-        _builders = new List<ISmartAttachable>();
+        _parameterSetRegister = parameterSetRegister;
+        _smartParameterAttachables = new List<ISmartParameterAttachable>();
     }
 
     /// <summary>
     /// Creates a parameter builder for registering a parameter.
     /// </summary>
     /// <typeparam name="T">The type of the parameter.</typeparam>
+    /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
     /// <returns>A parameter builder for registering a parameter of the specified type.</returns>
     public RegisterParameterBuilder<T> CreateParameterBuilder<T>(string parameterName)
     {
@@ -41,7 +45,7 @@ internal class ParameterRegistrationBuilderScope : IDisposable
     public RegisterParameterBuilder<T> CreateParameterBuilder<T>()
     {
         var builder = new RegisterParameterBuilder<T>();
-        _builders.Add(builder);
+        _smartParameterAttachables.Add(builder);
 
         return builder;
     }
@@ -49,7 +53,7 @@ internal class ParameterRegistrationBuilderScope : IDisposable
     /// <inheritdoc/>
     void IDisposable.Dispose()
     {
-        foreach (var builder in _builders)
+        foreach (var builder in _smartParameterAttachables)
         {
             builder.Attach();
         }

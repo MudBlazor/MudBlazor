@@ -8,13 +8,13 @@ namespace MudBlazor;
 public abstract partial class MudComponentBase : IParameterSetRegister
 {
     private bool _attachedAll;
-    private readonly ConcurrentQueue<ISmartAttachable> _smartAttachables = new();
+    private readonly ConcurrentQueue<ISmartParameterAttachable> _smartAttachables = new();
 
     /// <inheritdoc />
     void IParameterSetRegister.Add<T>(ParameterStateInternal<T> parameterState) => Parameters.Add(parameterState);
 
     /// <inheritdoc />
-    void IParameterSetRegister.Add(ISmartAttachable smartAttachable) => _smartAttachables.Enqueue(smartAttachable);
+    void IParameterSetRegister.Add(ISmartParameterAttachable smartAttachable) => _smartAttachables.Enqueue(smartAttachable);
 
     private void AttachAllUnAttached()
     {

@@ -15,26 +15,23 @@ namespace MudBlazor.State.Builder;
 /// Builder class for constructing instances of <see cref="ParameterState{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type of the component's property value.</typeparam>
-internal class RegisterParameterBuilder<T> : ISmartAttachable
+internal class RegisterParameterBuilder<T> : ISmartParameterAttachable
 {
-    private bool _isAttached;
     private string? _handlerName;
     private string? _parameterName;
     private string? _comparerParameterName;
     private Func<T>? _getParameterValueFunc;
-    private ParameterStateInternal<T>? _parameterState;
     private Func<EventCallback<T>> _eventCallbackFunc = () => default;
     private IParameterChangedHandler<T>? _parameterChangedHandler;
     private Func<IEqualityComparer<T>?>? _comparerFunc;
-    private readonly IParameterSetRegister _parameterSetRegister;
+    private readonly Lazy<ParameterStateInternal<T>> _parameterStateLazy;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RegisterParameterBuilder{T}"/> class.
     /// </summary>
-    /// <param name="parameterSetRegister">The <see cref="IParameterSetRegister"/> used to register the parameter during the <see cref="Attach"/>.</param>
-    public RegisterParameterBuilder(IParameterSetRegister parameterSetRegister)
+    public RegisterParameterBuilder()
     {
-        _parameterSetRegister = parameterSetRegister;
+        _parameterStateLazy = new Lazy<ParameterStateInternal<T>>(CreateParameterState);
     }
 
     /// <summary>
@@ -177,11 +174,11 @@ internal class RegisterParameterBuilder<T> : ISmartAttachable
     /// <returns>The created parameter state.</returns>
     public ParameterStateInternal<T> Attach()
     {
-        if (_parameterState is not null)
-        {
-            return _parameterState;
-        }
+        return _parameterStateLazy.Value;
+    }
 
+    private ParameterStateInternal<T> CreateParameterState()
+    {
         ArgumentNullException.ThrowIfNull(_parameterName);
 
         var parameterState = ParameterStateInternal<T>.Attach(
@@ -191,16 +188,14 @@ internal class RegisterParameterBuilder<T> : ISmartAttachable
             _parameterChangedHandler,
             _comparerFunc);
 
-        _parameterState = parameterState;
-
         return parameterState;
     }
 
     /// <inheritdoc />
-    bool ISmartAttachable.IsAttached => _isAttached;
+    bool ISmartParameterAttachable.IsAttached => _parameterStateLazy.IsValueCreated;
 
     /// <inheritdoc />
-    void ISmartAttachable.Attach() => _ = Attach();
+    void ISmartParameterAttachable.Attach() => _ = Attach();
 
     /// <summary>
     /// Implicitly converts a <see cref="RegisterParameterBuilder{T}"/> object to a <see cref="ParameterState{T}"/> object by building it.

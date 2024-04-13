@@ -6,17 +6,17 @@ namespace MudBlazor.State.Builder;
 
 #nullable enable
 /// <summary>
-/// Represents an interface for objects that can be smartly attached.
+/// Represents an interface for <see cref="ParameterState{T}"/> that can be smartly attached.
 /// </summary>
-internal interface ISmartAttachable
+internal interface ISmartParameterAttachable
 {
     /// <summary>
-    /// Gets a value indicating whether the object is attached.
+    /// Gets a value indicating whether the <see cref="ParameterState{T}"/> is attached.
     /// </summary>
     bool IsAttached { get; }
 
     /// <summary>
-    /// Attaches the object.
+    /// Attaches the <see cref="ParameterState{T}"/>.
     /// </summary>
     void Attach();
 }
