@@ -10,11 +10,15 @@ We fully support both .NET 7 and .NET 8, and our top priority is to continue sup
 
 We have put off breaking changes for a very long time and are now in the process of merging breaking changes and removing all obsolete parameters as we move to v7. Don't panic, we'll announce a release date for when we feel confident that we can hold it. 
 
+Please view the [v7.0.0 Migration Guide](https://github.com/MudBlazor/MudBlazor/issues/8447) to understand what changes you will have to make.
+
 For those unable to upgrade their projects to v7, we will maintain v6.x for some time, largely relying on community contributions for bug fixes and backports.
 
 ## Looking Ahed
 
-We do our best to review and merge your bug fix PRs. Please don't expect the team to fix bugs for you. Everyone participating in this project is doing it on their own precious free time and it is simply impossible for us to provide free support for everyone. That being said, we feel responsible for MudBlazor and will keep it going for a long time to come at a sustainable cost of free time by merging important bug fixes and the one or other new feature if  significant. 
+We do our best to review and merge your bug fix PRs. Please don't expect the team to fix bugs for you. Everyone participating in this project is doing it on their own precious free time and it is simply impossible for us to provide free support for everyone.
+
+That being said, we feel responsible for MudBlazor and will keep it going for a long time to come at a sustainable cost of free time by merging important bug fixes and the one or other new feature if  significant. 
 
 ## Get Involved!
 
