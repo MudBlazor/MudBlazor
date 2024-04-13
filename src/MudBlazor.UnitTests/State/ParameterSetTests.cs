@@ -248,7 +248,7 @@ public class ParameterSetTests
             .WithGetParameterValueFunc(() => Parameter2)
             .WithParameterChangedHandler(OnParameter2ChangeAsync)
             .Attach();
-        var parameterSet = new ParameterSet( parameter1State, parameter2State);
+        var parameterSet = new ParameterSet(parameter1State, parameter2State);
         Task OnParameter1ChangeAsync()
         {
             handler1FireCount++;
