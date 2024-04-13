@@ -1,6 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -9,11 +9,26 @@ namespace MudBlazor
     public partial class MudNavGroup : MudComponentBase
     {
         private bool _expanded;
+        private NavigationContext _navigationContext = new(true);
+        private ParameterState<NavigationContext?> _parentNavigationContextState;
+
+        public MudNavGroup()
+        {
+            _parentNavigationContextState = RegisterParameterBuilder<NavigationContext?>(nameof(ParentNavigationContext))
+                .WithParameter(() => ParentNavigationContext)
+                .WithChangeHandler(UpdateNavigationContext);
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            UpdateNavigationContext();
+        }
 
         protected string Classname =>
             new CssBuilder("mud-nav-group")
                 .AddClass(Class)
-                .AddClass($"mud-nav-group-disabled", Disabled)
+                .AddClass("mud-nav-group-disabled", Disabled)
                 .Build();
 
         protected string ButtonClassname =>
@@ -24,14 +39,19 @@ namespace MudBlazor
 
         protected string IconClassname =>
             new CssBuilder("mud-nav-link-icon")
-                .AddClass($"mud-nav-link-icon-default", IconColor == Color.Default)
+                .AddClass("mud-nav-link-icon-default", IconColor == Color.Default)
                 .Build();
 
         protected string ExpandIconClassname =>
             new CssBuilder("mud-nav-link-expand-icon")
-                .AddClass($"mud-transform", Expanded && !Disabled)
-                .AddClass($"mud-transform-disabled", Expanded && Disabled)
+                .AddClass("mud-transform", Expanded && !Disabled)
+                .AddClass("mud-transform-disabled", Expanded && Disabled)
                 .Build();
+
+        protected int ButtonTabIndex => _parentNavigationContextState.Value is null or { Expanded: true } ? 0 : -1;
+
+        [CascadingParameter]
+        private NavigationContext? ParentNavigationContext { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
@@ -66,7 +86,7 @@ namespace MudBlazor
         public bool Ripple { get; set; } = true;
 
         /// <summary>
-        /// If true, expands the nav group, otherwise collapse it. 
+        /// If true, expands the nav group, otherwise collapse it.
         /// Two-way bindable
         /// </summary>
         [Parameter]
@@ -103,7 +123,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
-        public string ExpandIcon { get; set; } = @Icons.Material.Filled.ArrowDropDown;
+        public string ExpandIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
@@ -112,11 +132,18 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
 
-        protected Task ExpandedToggleAsync()
+        private Task ExpandedToggleAsync()
         {
             _expanded = !Expanded;
+            UpdateNavigationContext();
 
             return ExpandedChanged.InvokeAsync(_expanded);
         }
+
+        private void UpdateNavigationContext()
+            => _navigationContext = _navigationContext with
+            {
+                Expanded = _expanded && _parentNavigationContextState.Value is null or { Expanded: true }
+            };
     }
 }

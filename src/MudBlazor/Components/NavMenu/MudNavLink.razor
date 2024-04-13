@@ -5,11 +5,12 @@
 <div @attributes="UserAttributes" class="@Classname" disabled="@Disabled" style="@Style">
     @{
         if (!OnClick.HasDelegate)
-        { 
-            <NavLink @onclick="EventUtil.AsNonRenderingEventHandler(HandleNavigation)" 
-                    class="@LinkClassname" 
+        {
+            <NavLink @onclick="EventUtil.AsNonRenderingEventHandler(HandleNavigation)"
+                    class="@LinkClassname"
                     @attributes="@Attributes"
-                    Match="@Match" 
+                    tabindex="@TabIndex"
+                    Match="@Match"
                     ActiveClass="@ActiveClass">
                 @if (!string.IsNullOrEmpty(Icon))
                 {
@@ -23,13 +24,13 @@
         else
         {
             <div @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)"
-                class="@LinkClassname"
-                ActiveClass="@ActiveClass">
+                 class="@LinkClassname"
+                 tabindex="@TabIndex">
                 @if (!string.IsNullOrEmpty(Icon))
                 {
                     <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname" />
                 }
-                <div Class="mud-nav-link-text">
+                <div class="mud-nav-link-text">
                     @ChildContent
                 </div>
             </div>

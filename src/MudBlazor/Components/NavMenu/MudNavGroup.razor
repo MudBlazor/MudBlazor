@@ -2,7 +2,11 @@
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes" class="@Classname" disabled="@Disabled" style="@Style">
-    <button @onclick="ExpandedToggleAsync" tabindex="0" class="@ButtonClassname">
+    <button @onclick="ExpandedToggleAsync"
+            tabindex="@ButtonTabIndex"
+            class="@ButtonClassname"
+            aria-controls="@_navigationContext.MenuId"
+            aria-expanded="@_navigationContext.Expanded">
         @if (!string.IsNullOrEmpty(Icon))
         {
             <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname" />
@@ -12,12 +16,17 @@
         </div>
         @if (!HideExpandIcon)
         {
-            <MudIcon Icon="@ExpandIcon" class="@ExpandIconClassname" />
+            <MudIcon Icon="@ExpandIcon" Class="@ExpandIconClassname" />
         }
     </button>
-    <MudCollapse Expanded="@Expanded" MaxHeight="@MaxHeight" Class="mud-navgroup-collapse">
-        <MudNavMenu>
-            @ChildContent
-        </MudNavMenu>
+    <MudCollapse aria-hidden="@(_navigationContext.Expanded is false)"
+                 Expanded="@Expanded"
+                 MaxHeight="@MaxHeight"
+                 Class="mud-navgroup-collapse">
+        <CascadingValue Value="@_navigationContext">
+            <MudNavMenu>
+                @ChildContent
+            </MudNavMenu>
+        </CascadingValue>
     </MudCollapse>
 </div>
