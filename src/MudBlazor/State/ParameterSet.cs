@@ -159,7 +159,6 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
         return _parameters.Value.TryGetValue(parameterName, out parameterComponentLifeCycle);
     }
 
-
     /// <inheritdoc/>
     public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => ((IDictionary<string, IParameterComponentLifeCycle>)_parameters.Value).Values.GetEnumerator();
 
