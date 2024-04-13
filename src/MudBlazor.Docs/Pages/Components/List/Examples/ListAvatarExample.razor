@@ -2,14 +2,33 @@
 
 <MudPaper Width="300px">
     <MudList T="string">
-        <MudListItem Avatar="@Icons.Material.Filled.Image">
-            Photos
+        <MudListItem>
+            <AvatarContent>
+                <MudAvatar>
+                    <MudImage Src="images/mony.jpg"/>
+                </MudAvatar>
+            </AvatarContent>
+            <ChildContent>
+                Photos
+            </ChildContent>
         </MudListItem>
-        <MudListItem Avatar="@Icons.Material.Filled.Work">
-            Work
+        <MudListItem>
+            <AvatarContent>
+                <MudAvatar>
+                    <MudIcon Icon="@Icons.Material.Filled.Work" Color="Color.Primary" />
+                </MudAvatar>
+            </AvatarContent>
+            <ChildContent>
+                Work
+            </ChildContent>            
         </MudListItem>
-        <MudListItem Avatar="@Icons.Material.Filled.Umbrella">
-            Vacation
+        <MudListItem>
+            <AvatarContent>
+                <MudAvatar Color="Color.Tertiary">V</MudAvatar>
+            </AvatarContent>
+            <ChildContent>
+                Vacation
+            </ChildContent>              
         </MudListItem>
     </MudList>
 </MudPaper>
