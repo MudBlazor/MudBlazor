@@ -33,16 +33,36 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     private readonly Lazy<Dictionary<string, IParameterComponentLifeCycle>> _parameters;
 #endif
 
+    /// <summary>
+    /// Gets a value indicating whether the parameter set has been initialized.
+    /// </summary>
+    /// <remarks>
+    /// The parameter set is considered initialized once the inner dictionary of parameters has been created.
+    /// </remarks>
+    public bool IsInitialized => _parameters.IsValueCreated;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParameterSet"/> class with the specified parameters.
+    /// </summary>
+    /// <param name="parameters">An optional array of parameters to initialize the set.</param>
     public ParameterSet(params IParameterComponentLifeCycle[] parameters)
         : this(new ParameterSetReadonlyEnumerable(parameters))
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParameterSet"/> class with the specified parameters.
+    /// </summary>
+    /// <param name="parameters">An enumerable collection of parameters to initialize the set.</param>
     public ParameterSet(IEnumerable<IParameterComponentLifeCycle> parameters)
         : this(new ParameterSetReadonlyEnumerable(parameters))
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParameterSet"/> class with the specified parameter states factory.
+    /// </summary>
+    /// <param name="parameterStatesFactory">The factory used to read an enumerable collection of parameters to initialize the set.</param>
     public ParameterSet(IParameterStatesFactoryReader parameterStatesFactory)
     {
         _parameterStatesFactory = parameterStatesFactory;
@@ -70,6 +90,13 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     }
 #endif
 
+    /// <summary>
+    /// Forces the attachment of the collection of <seealso cref="IParameterComponentLifeCycle"/> immediately and initializes the inner dictionary.
+    /// </summary>
+    /// <remarks>
+    /// This method is designed for performance optimization. By calling this method, the dictionary initialization is done immediately instead of waiting for the Blazor lifecycle to access the values. 
+    /// This helps avoid potential slowdowns in rendering speed that could occur if the dictionary were initialized during the Blazor lifecycle.
+    /// </remarks>
     public void ForceParametersAttachment()
     {
         _ = _parameters.Value;
