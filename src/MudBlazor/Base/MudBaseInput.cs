@@ -21,7 +21,7 @@ namespace MudBlazor
         protected bool _isFocused;
         protected bool _forceTextUpdate;
 
-        private string? _userAttributeId => UserAttributes.FirstOrDefault(userAttribute => userAttribute.Key.Equals("id", StringComparison.InvariantCultureIgnoreCase)).Value?.ToString();
+        private string? _userAttributeId;
         private readonly string _componentId = $"mudinput-{Guid.NewGuid()}";
         protected string CalculatedFieldId => _userAttributeId ?? InputId ?? _componentId;
 
@@ -485,6 +485,8 @@ namespace MudBlazor
             {
                 Label = For.GetLabelString();
             }
+
+            _userAttributeId = UserAttributes.FirstOrDefault(userAttribute => userAttribute.Key.Equals("id", StringComparison.InvariantCultureIgnoreCase)).Value?.ToString();
         }
 
         public virtual void ForceRender(bool forceTextUpdate)
