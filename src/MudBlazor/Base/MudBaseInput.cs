@@ -575,7 +575,6 @@ namespace MudBlazor
         {
             if (InputId is not null)
             {
-                await InputIdState.SetValueAsync(InputId);
                 return;
             }
 
