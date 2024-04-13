@@ -16,13 +16,13 @@ namespace MudBlazor
         protected string Classname => new CssBuilder("mud-toggle-item")
             .AddClass($"mud-theme-{Parent?.Color.ToDescriptionString()}", _selected && string.IsNullOrEmpty(Parent?.SelectedClass))
             .AddClass(Parent?.SelectedClass, _selected && !string.IsNullOrEmpty(Parent?.SelectedClass))
+            .AddClass($"mud-toggle-item-size-{Size.ToDescriptionString()}")
             .AddClass($"mud-toggle-item-{Parent?.Color.ToDescriptionString()}")
+            .AddClass("mud-toggle-item-vertical", Parent?.Vertical == true)
+            .AddClass("mud-toggle-item-delimiter", Parent?.Delimiters == true)
             .AddClass("mud-ripple", Parent?.Ripple == true)
             .AddClass($"mud-border-{Parent?.Color.ToDescriptionString()} border-solid")
             .AddClass("mud-toggle-delimiter-alternative", Parent?.SelectionMode == SelectionMode.MultiSelection && IsSelected && Parent?.Color != Color.Default)
-            .AddClass(ItemPadding)
-            .AddClass("mud-toggle-item-vertical", Parent?.Vertical == true)
-            .AddClass("mud-toggle-item-delimiter", Parent?.Delimiters == true)
             .AddClass("mud-disabled", GetDisabledState())
             .AddClass(Class)
             .Build();
@@ -36,53 +36,7 @@ namespace MudBlazor
             .AddClass("me-2")
             .Build();
 
-        protected string ItemPadding
-        {
-            get
-            {
-                if (Parent?.Vertical == true)
-                {
-                    if (Parent?.Rounded == true)
-                    {
-                        if (Parent?.IsFirstItem(this) == true)
-                        {
-                            return Parent?.Dense == true ? "px-1 pt-2 pb-1" : "px-2 pt-3 pb-2";
-                        }
-                        else if (Parent?.IsLastItem(this) == true)
-                        {
-                            return Parent?.Dense == true ? "px-1 pt-1 pb-2" : "px-2 pt-2 pb-3";
-                        }
-                        else
-                        {
-                            return Parent?.Dense == true ? "px-1 py-1" : "px-2 py-2";
-                        }
-                    }
-
-                    // not rounded 
-                    return Parent?.Dense == true ? "px-1 py-1" : "px-2 py-2";
-                }
-
-                // horizontal
-                if (Parent?.Rounded == true)
-                {
-                    if (Parent?.IsFirstItem(this) == true)
-                    {
-                        return Parent?.Dense == true ? "ps-2 pe-1 py-1" : "ps-3 pe-2 py-2";
-                    }
-                    else if (Parent?.IsLastItem(this) == true)
-                    {
-                        return Parent?.Dense == true ? "ps-1 pe-2 py-1" : "ps-2 pe-3 py-2";
-                    }
-                    else
-                    {
-                        return Parent?.Dense == true ? "px-1 py-1" : "px-2 py-2";
-                    }
-                }
-
-                // not rounded 
-                return Parent?.Dense == true ? "px-1 py-1" : "px-2 py-2";
-            }
-        }
+        private Size Size => Parent?.Size ?? Size.Medium;
 
         private bool CounterBalanceCheckMark => Parent?.CheckMark == true && Parent?.FixedContent == true;
 

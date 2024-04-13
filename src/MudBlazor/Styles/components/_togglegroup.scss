@@ -73,6 +73,9 @@
 }
 
 .mud-toggle-item {
+  min-width: 64px;
+  padding: 6px 16px;
+  font-size: 0.875rem;
   cursor: pointer;
   user-select: none;
   border-radius: var(--mud-default-borderradius);
@@ -99,4 +102,14 @@
     color: var(--mud-palette-action-disabled) !important;
     border-color: inherit !important;
   }
+}
+
+.mud-toggle-item-size-small {
+  padding: 4px 10px;
+  font-size: 0.8125rem;
+}
+
+.mud-toggle-item-size-large {
+  padding: 8px 22px;
+  font-size: 0.9375rem;
 }

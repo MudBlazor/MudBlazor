@@ -42,8 +42,8 @@ namespace MudBlazor
             _rtl = RegisterParameterBuilder<bool>(nameof(RightToLeft))
                 .WithParameter(() => RightToLeft)
                 .WithChangeHandler(OnParameterChanged);
-            _dense = RegisterParameterBuilder<bool>(nameof(Dense))
-                .WithParameter(() => Dense)
+            _size = RegisterParameterBuilder<Size>(nameof(Size))
+                .WithParameter(() => Size)
                 .WithChangeHandler(OnParameterChanged);
             _rounded = RegisterParameterBuilder<bool>(nameof(Rounded))
                 .WithParameter(() => Rounded).
@@ -66,7 +66,7 @@ namespace MudBlazor
         private readonly ParameterState<bool> _outline;
         private readonly ParameterState<bool> _delimiters;
         private readonly ParameterState<bool> _rtl;
-        private readonly ParameterState<bool> _dense;
+        private readonly ParameterState<Size> _size;
         private readonly ParameterState<bool> _rounded;
         private readonly ParameterState<bool> _checkMark;
         private readonly ParameterState<bool> _fixedContent;
@@ -185,11 +185,11 @@ namespace MudBlazor
         public bool Ripple { get; set; } = true;
 
         /// <summary>
-        /// If true, the component's padding is reduced so it takes up less space.
+        /// The size of all the items in the toggle group.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public bool Dense { get; set; }
+        public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
         /// The selection behavior of the group. SingleSelection (the default) is a radio-button like exclusive collection.
