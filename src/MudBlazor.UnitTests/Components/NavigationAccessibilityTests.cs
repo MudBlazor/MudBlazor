@@ -110,4 +110,124 @@ public class NavigationAccessibilityTests : BunitTest
 
         elementsWithTabIndex.Should().HaveCountGreaterThan(0).And.AllSatisfy(node => node.GetAttribute("tabindex").Should().Be("-1"));
     }
+
+    /// <summary>
+    /// MudCollapse components within collapsed NavGroups should be aria-hidden.
+    /// </summary>
+    [Test]
+    public void MudCollapseWithinCollapsedNavGroup_Should_BeAriaHidden()
+    {
+        var comp = Context.RenderComponent<NavigationAccessibilityTest>(parameters =>
+            parameters.Add(p => p.TopLevelExpanded, false));
+        var mudCollapses = comp.FindAll(".mud-collapse-container");
+
+        mudCollapses.Should().HaveCountGreaterThan(0).And.AllSatisfy(node => node.GetAttribute("aria-hidden").Should().Be("true"));
+    }
+
+    /// <summary>
+    /// MudCollapse components within expanded NavGroups should not be aria-hidden.
+    /// </summary>
+    [Test]
+    public void MudCollapseWithinExpandedNavGroup_Should_NotBeAriaHidden()
+    {
+        var comp = Context.RenderComponent<NavigationAccessibilityTest>();
+        var mudCollapses = comp.FindAll("#second-level-navgroup .mud-collapse-container");
+
+        mudCollapses.Should().HaveCountGreaterThan(0).And.AllSatisfy(node => node.GetAttribute("aria-hidden").Should().Be("false"));
+    }
+
+    /// <summary>
+    /// NavGroup buttons should have aria-expanded set to true when expanded and false when collapsed.
+    /// </summary>
+    [Test]
+    public void NavGroupButtons_Should_HaveCorrectAriaExpandedValue()
+    {
+        var comp = Context.RenderComponent<NavigationAccessibilityTest>();
+        var navGroups = comp.FindComponents<MudNavGroup>();
+
+        navGroups
+            .Should()
+            .AllSatisfy(navGroup =>
+                navGroup
+                    .Find("button")
+                    .GetAttribute("aria-expanded")
+                    .Should()
+                    .Be(navGroup.Instance.Expanded.ToString().ToLowerInvariant()));
+    }
+
+    /// <summary>
+    /// NavGroup buttons should have aria-controls set to the id of a NavMenu.
+    /// </summary>
+    [Test]
+    public void NavGroupButtons_Should_HaveValidAriaControlsValue_And_NavMenus_Should_HaveAnId()
+    {
+        var comp = Context.RenderComponent<NavigationAccessibilityTest>();
+        var navGroups = comp.FindComponents<MudNavGroup>();
+        var navMenus = comp.FindComponents<MudNavMenu>();
+        var ariaControlsIds = navGroups
+            .Select(navGroup =>
+                navGroup
+                    .Find("button")
+                    .GetAttribute("aria-controls"));
+        var navMenuIds = navMenus
+            .Select(
+                navMenu => navMenu
+                    .Find(".mud-navmenu")
+                    .GetAttribute("id"));
+
+        ariaControlsIds.Should().BeEquivalentTo(navMenuIds);
+    }
+
+    /// <summary>
+    /// NavGroup buttons should have an aria-label.
+    /// </summary>
+    [Test]
+    public void NavGroupButtons_Should_HaveAriaLabel()
+    {
+        var comp = Context.RenderComponent<NavigationAccessibilityTest>();
+        var navGroups = comp.FindComponents<MudNavGroup>();
+
+        navGroups
+            .Should()
+            .AllSatisfy(navGroup =>
+                navGroup
+                    .Find("button")
+                    .GetAttribute("aria-label")
+                    .Should()
+                    .NotBeNullOrEmpty());
+    }
+
+    /// <summary>
+    /// NavGroups should have an aria-label when a title is provided.
+    /// </summary>
+    [Test]
+    public void NavGroups_Should_HaveAriaLabel_WhenTitleIsProvided()
+    {
+        var expectedTitle = "expected title";
+        var comp = Context.RenderComponent<NavigationAccessibilityTest>(parameters =>
+            parameters.Add(p => p.SecondLevelTitle, expectedTitle));
+        var secondLevel = comp.Find("#second-level-navgroup");
+
+        secondLevel
+            .GetAttribute("aria-label")
+            .Should()
+            .Be(expectedTitle);
+    }
+
+    /// <summary>
+    /// NavGroup buttons' aria-label should contain the title of the NavGroup when a title is provided.
+    /// </summary>
+    [Test]
+    public void NavGroupButtonsAriaLabel_Should_ContainTitle_WhenTitleIsProvided()
+    {
+        var expectedTitle = "expected title";
+        var comp = Context.RenderComponent<NavigationAccessibilityTest>(parameters =>
+            parameters.Add(p => p.SecondLevelTitle, expectedTitle));
+        var secondLevelNavGroupButton = comp.Find("#second-level-navgroup > button");
+
+        secondLevelNavGroupButton
+            .GetAttribute("aria-label")
+            .Should()
+            .Contain(expectedTitle);
+    }
 }

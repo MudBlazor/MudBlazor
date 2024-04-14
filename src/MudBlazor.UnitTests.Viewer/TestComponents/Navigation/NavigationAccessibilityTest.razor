@@ -27,7 +27,7 @@
         Keyboard
     </MudNavLink>
     <MudNavGroup id="second-level-navgroup"
-                 Title="Second level"
+                 Title="@SecondLevelTitle"
                  Expanded="@SecondLevelExpanded">
         <MudNavLink Href="/reader"
                     Icon="@Icons.Material.Filled.Computer">
@@ -60,4 +60,6 @@
     public bool TopLevelExpanded { get; set; } = true;
     [Parameter]
     public bool SecondLevelExpanded { get; set; } = true;
+    [Parameter]
+    public string SecondLevelTitle { get; set; } = "Second level";
 }
