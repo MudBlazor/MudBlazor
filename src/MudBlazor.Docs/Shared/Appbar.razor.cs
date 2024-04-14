@@ -20,7 +20,7 @@ public partial class Appbar
     private int _searchDialogReturnedItemsCount;
     private string _badgeTextSoon = "coming soon";
     private MudAutocomplete<ApiLinkServiceEntry> _searchAutocomplete = null!;
-    private DialogOptions _dialogOptions = new() { Position = DialogPosition.TopCenter, NoHeader = true };
+    private DialogOptions _dialogOptions = new() { Position = DialogPosition.TopCenter, NoHeader = true, MaxWidth = MaxWidth.False };
     private readonly List<ApiLinkServiceEntry> _apiLinkServiceEntries =
     [
         new ApiLinkServiceEntry
