@@ -1141,7 +1141,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => select.Validate());
             select.ValidationErrors.First().Should().Be("Required");
 
-            //1b. Check on T type - MultiSelect of T(e.g. class object) 
+            //1b. Check on T type - MultiSelect of T(e.g. class object)
             var selectWithT = comp.FindComponent<MudSelect<MultiSelectTestRequiredValue.TestClass>>().Instance;
             selectWithT.Required.Should().BeTrue();
             await comp.InvokeAsync(() => selectWithT.Validate());
@@ -1149,14 +1149,14 @@ namespace MudBlazor.UnitTests.Components
 
             //2a. Now check when SelectedItems is greater than one - Validation Should Pass
             var inputs = comp.FindAll("div.mud-input-control");
-            inputs[0].Click();//The 2nd one is the 
+            inputs[0].Click();//The 2nd one is the
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
             await comp.InvokeAsync(() => select.Validate());
             select.ValidationErrors.Count.Should().Be(0);
 
             //2b.
-            inputs[1].Click();//selectWithT 
+            inputs[1].Click();//selectWithT
             //wait for render and it will find 5 items from the component
             comp.WaitForState(() => comp.FindAll("div.mud-list-item").Count == 5);
             items = comp.FindAll("div.mud-list-item").ToArray();
@@ -1181,6 +1181,52 @@ namespace MudBlazor.UnitTests.Components
             });
             select.SelectedValues.Count().Should().Be(1);
             select.Text.Should().Be("test");
+        }
+
+        /// <summary>
+        /// Optional Select should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalSelect_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudSelect<string>>();
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required Select should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredSelect_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudSelect<string>>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required Select attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredSelectAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudSelect<string>>();
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
         }
     }
 }

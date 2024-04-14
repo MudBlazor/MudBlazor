@@ -5,8 +5,17 @@
 
 <MudInputControl Class="@Classname" Style="@Style" Error="HasErrors" ErrorText="@GetErrorText()" Required="@Required">
     <InputContent>
-        <InputFile OnChange="OnChangeAsync" id="@_id" class="@InputClass" style="@InputStyle" hidden="@(Hidden ? "" : null)" multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)"
-            accept="@Accept" disabled="@(GetDisabledState())" @attributes="UserAttributes" />
+        <InputFile OnChange="OnChangeAsync"
+                   id="@_id"
+                   class="@InputClass"
+                   style="@InputStyle"
+                   hidden="@(Hidden ? "" : null)"
+                   multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)"
+                   accept="@Accept"
+                   disabled="@(GetDisabledState())"
+                   @attributes="UserAttributes"
+                   required="@Required"
+                   aria-required="@Required.ToString().ToLowerInvariant()"/>
         @if (ButtonTemplate != null)
         {
             <CascadingValue Name="ParentDisabled" Value="GetDisabledState()">

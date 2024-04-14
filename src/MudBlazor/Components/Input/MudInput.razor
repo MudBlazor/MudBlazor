@@ -6,13 +6,13 @@
 <div class="@Classname" style="@Style">
     @if (Adornment == Adornment.Start)
     {
-        <MudInputAdornment Class="@AdornmentClassname" 
-                Icon="@AdornmentIcon" 
-                Color="@AdornmentColor" 
-                Size="@IconSize" 
-                Text="@AdornmentText" 
-                Edge="@Edge.Start" 
-                AdornmentClick="@OnAdornmentClick" 
+        <MudInputAdornment Class="@AdornmentClassname"
+                Icon="@AdornmentIcon"
+                Color="@AdornmentColor"
+                Size="@IconSize"
+                Text="@AdornmentText"
+                Edge="@Edge.Start"
+                AdornmentClick="@OnAdornmentClick"
                 AriaLabel="@AdornmentAriaLabel"
         />
     }
@@ -20,29 +20,30 @@
     @if (AutoGrow || Lines > 1)
     {
         <textarea class="@InputClassname"
-                @ref="ElementReference" 
-                rows="@Lines" 
+                @ref="ElementReference"
+                rows="@Lines"
                 @attributes="UserAttributes"
-                type="@InputTypeString"                  
-                placeholder="@Placeholder" 
-                disabled=@GetDisabledState() 
-                readonly="@GetReadOnlyState()" 
+                type="@InputTypeString"
+                placeholder="@Placeholder"
+                disabled=@GetDisabledState()
+                readonly="@GetReadOnlyState()"
                 inputmode="@InputMode.ToString()"
-                @oninput="OnInput" 
-                @onchange="OnChange" 
-                @onblur="@OnBlurredAsync" 
-                @onkeydown="@InvokeKeyDownAsync" 
-                @onkeyup="@InvokeKeyUpAsync" 
-                @onpaste="@OnPaste" 
-                value="@_internalText" 
+                @oninput="OnInput"
+                @onchange="OnChange"
+                @onblur="@OnBlurredAsync"
+                @onkeydown="@InvokeKeyDownAsync"
+                @onkeyup="@InvokeKeyUpAsync"
+                @onpaste="@OnPaste"
+                value="@_internalText"
                 maxlength="@MaxLength"
-                @onkeydown:preventDefault="@KeyDownPreventDefault" 
+                @onkeydown:preventDefault="@KeyDownPreventDefault"
                 @onkeyup:preventDefault="@KeyUpPreventDefault"
-                @onmousewheel="@OnMouseWheel" 
+                @onmousewheel="@OnMouseWheel"
                 @onwheel="@OnMouseWheel"
+                required="@Required"
                 aria-invalid="@Error.ToString().ToLower()"
                 aria-describedby="@ErrorId"
-        > 
+                aria-required="@Required.ToString().ToLowerInvariant()">
             @Text
         </textarea>
         @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
@@ -51,61 +52,62 @@
     else
     {
         <input class="@InputClassname"
-                @ref="ElementReference" 
-                @attributes="UserAttributes" 
-                type="@InputTypeString"                  
-                value="@_internalText" 
-                @oninput="OnInput" 
-                @onchange="OnChange"
-                placeholder="@Placeholder" 
-                disabled=@GetDisabledState()
-                readonly="@GetReadOnlyState()"
-                @onblur="@OnBlurredAsync" 
-                inputmode="@InputMode.ToString()" 
-                pattern="@Pattern"
-                @onkeydown="@InvokeKeyDownAsync"
-                @onkeyup="@InvokeKeyUpAsync" 
-                maxlength="@MaxLength"
-                @onkeydown:preventDefault="KeyDownPreventDefault" 
-                @onkeyup:preventDefault="@KeyUpPreventDefault"
-                @onmousewheel="@OnMouseWheel" 
-                @onwheel="@OnMouseWheel"
-                aria-invalid="@Error.ToString().ToLower()"
-                aria-describedby="@ErrorId"
-         />
+               @ref="ElementReference"
+               @attributes="UserAttributes"
+               type="@InputTypeString"
+               value="@_internalText"
+               @oninput="OnInput"
+               @onchange="OnChange"
+               placeholder="@Placeholder"
+               disabled=@GetDisabledState()
+               readonly="@GetReadOnlyState()"
+               @onblur="@OnBlurredAsync"
+               inputmode="@InputMode.ToString()"
+               pattern="@Pattern"
+               @onkeydown="@InvokeKeyDownAsync"
+               @onkeyup="@InvokeKeyUpAsync"
+               maxlength="@MaxLength"
+               @onkeydown:preventDefault="KeyDownPreventDefault"
+               @onkeyup:preventDefault="@KeyUpPreventDefault"
+               @onmousewheel="@OnMouseWheel"
+               @onwheel="@OnMouseWheel"
+               required="@Required"
+               aria-invalid="@Error.ToString().ToLower()"
+               aria-describedby="@ErrorId"
+               aria-required="@Required.ToString().ToLowerInvariant()" />
          @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
-      
+
          @if (GetDisabledState()) {
              @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.
                            In Disabled state the tabindex attribute must NOT be set at all or else it will get focus on click
              *@
             <div class="@InputClassname"
-                style="@("display:"+(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"                  
-                @onblur="@OnBlurredAsync" @ref="@_elementReference1" 
+                style="@("display:"+(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"
+                @onblur="@OnBlurredAsync" @ref="@_elementReference1"
             >
                 @ChildContent
             </div>
-        } 
+        }
         else
         {
              @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.*@
             <div class="@InputClassname"
-                 style="@("display:"+(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"  
-                 tabindex="@(InputType == InputType.Hidden && ChildContent != null ? 0 : -1)" 
-                 @onblur="@OnBlurredAsync" @ref="@_elementReference1" 
+                 style="@("display:"+(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"
+                 tabindex="@(InputType == InputType.Hidden && ChildContent != null ? 0 : -1)"
+                 @onblur="@OnBlurredAsync" @ref="@_elementReference1"
             >
                 @ChildContent
-            </div>            
+            </div>
         }
     }
 
     @if (GetClearable() && !GetDisabledState())
     {
         <MudIconButton Class="@ClearButtonClassname"
-                    Color="@Color.Default" 
-                    Icon="@ClearIcon" 
-                    Size="@Size.Small" 
-                    OnClick="@ClearButtonClickHandlerAsync" 
+                    Color="@Color.Default"
+                    Icon="@ClearIcon"
+                    Size="@Size.Small"
+                    OnClick="@ClearButtonClickHandlerAsync"
                     aria-label="Clear"
                     tabindex="-1"
                 />
@@ -113,13 +115,13 @@
 
     @if (Adornment == Adornment.End)
     {
-        <MudInputAdornment Class="@AdornmentClassname" 
-                Icon="@AdornmentIcon" 
-                Color="@AdornmentColor" 
-                Size="@IconSize" 
-                Text="@AdornmentText" 
-                Edge="@Edge.End" 
-                AdornmentClick="@OnAdornmentClick" 
+        <MudInputAdornment Class="@AdornmentClassname"
+                Icon="@AdornmentIcon"
+                Color="@AdornmentColor"
+                Size="@IconSize"
+                Text="@AdornmentText"
+                Edge="@Edge.End"
+                AdornmentClick="@OnAdornmentClick"
                 AriaLabel="@AdornmentAriaLabel"
         />
     }

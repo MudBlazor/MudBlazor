@@ -714,7 +714,7 @@ namespace MudBlazor.UnitTests.Components
                 autocompletecomp.SetParametersAndRender(parameters => parameters.Add(p => p.DebounceInterval, 0));
                 autocompletecomp.SetParametersAndRender(parameters => parameters.Add(p => p.CoerceText, true));
                 // this needs to be false because in the unit test the autocomplete's input does not lose focus state on click of another button.
-                // TextUpdateSuppression is used to avoid binding to change the input text while typing.  
+                // TextUpdateSuppression is used to avoid binding to change the input text while typing.
                 autocompletecomp.SetParametersAndRender(parameters => parameters.Add(p => p.TextUpdateSuppression, false));
                 // check initial state
                 comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Florida"));
@@ -1338,6 +1338,52 @@ namespace MudBlazor.UnitTests.Components
             ;
             comp.Find("input").Input("wtf");
             comp.WaitForAssertion(() => count.Should().Be(0));
+        }
+
+        /// <summary>
+        /// Optional Autocomplete should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalAutocomplete_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudAutocomplete<string>>();
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required Autocomplete should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredAutocomplete_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudAutocomplete<string>>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required Autocomplete attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredAutocompleteAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudAutocomplete<string>>();
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
         }
     }
 }

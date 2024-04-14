@@ -331,5 +331,51 @@ namespace MudBlazor.UnitTests.Components
                 return InputFileContent.CreateFromText("snakex64 is Canadian", $"{Guid.NewGuid()}.txt");
             }
         }
+
+        /// <summary>
+        /// Optional FileUpload should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalFileUpload_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>();
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required FileUpload should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredFileUpload_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required FileUpload attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredFileUploadAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>();
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
+        }
     }
 }
