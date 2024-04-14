@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudDatePicker @ref="_picker" Label="With action buttons" @bind-Date="_date" AutoClose="@_autoClose">
+<MudDatePicker @ref="_picker" T="DateTime" Label="With action buttons" @bind-Date="_date" AutoClose="@_autoClose">
     <PickerActions>
         <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.ClearAsync())">Clear</MudButton>
         <MudButton OnClick="@(() => _picker.CloseAsync(false))">Cancel</MudButton>
@@ -10,7 +10,7 @@
 <MudSwitch @bind-Value="_autoClose" Color="Color.Secondary">AutoClose</MudSwitch>
 
 @code {
-    private MudDatePicker _picker;
+    private MudDatePicker<DateTime> _picker;
     private DateTime? _date = DateTime.Today;
     private bool _autoClose;
 }

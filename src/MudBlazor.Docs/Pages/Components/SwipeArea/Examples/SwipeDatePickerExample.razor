@@ -2,7 +2,7 @@
 @namespace MudBlazor.Docs.Examples
 
 <MudSwipeArea OnSwipeEnd="@OnSwipeEnd">
-    <MudDatePicker PickerVariant="PickerVariant.Static" Date="@(DateTime.Today.AddDays(1))" @bind-PickerMonth="@_pickerMonth" />
+    <MudDatePicker T="DateTime" PickerVariant="PickerVariant.Static" Date="@(DateTime.Today.AddDays(1))" @bind-PickerMonth="@_pickerMonth" />
 </MudSwipeArea>
 
 @code {

@@ -4,8 +4,8 @@
 <MudCard>
     <MudForm>
         <MudCardContent>
-            <MudDatePicker For="@(() => model.Date)" />
-            <MudDatePicker For="@(() => model.Date)" Label="Parameter Label" />
+            <MudDatePicker T="DateTime" For="@(() => model.Date)" />
+            <MudDatePicker T="DateTime" For="@(() => model.Date)" Label="Parameter Label" />
             <MudSwitch For="@(() => model.Boolean)" />
             <MudSwitch For="@(() => model.Boolean)" Label="Parameter Label" />
             <MudTextField For="@(() => model.String)" />

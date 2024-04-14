@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudDatePicker @ref="_picker" @bind-Date="_date" PickerVariant="PickerVariant.Static" MaxDate="_maxDate">
+<MudDatePicker @ref="_picker" T="DateTime" @bind-Date="_date" PickerVariant="PickerVariant.Static" MaxDate="_maxDate">
     <PickerActions>
         <MudButton Class="mr-auto align-self-start" OnClick="TodayAsync">Today</MudButton>
     </PickerActions>
@@ -13,7 +13,7 @@
 </div>
 
 @code {
-    private MudDatePicker _picker;
+    private MudDatePicker<DateTime> _picker;
     private DateTime? _date = DateTime.Today.AddDays(210);
     private DateTime _maxDate = new DateTime(2050, 12, 31);
 

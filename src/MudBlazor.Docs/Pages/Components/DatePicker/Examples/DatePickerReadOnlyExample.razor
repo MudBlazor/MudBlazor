@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudDatePicker Label="Read only" @bind-Date="_date" ReadOnly="true"/>
+<MudDatePicker T="DateTime" Label="Read only" @bind-Date="_date" ReadOnly="true" />
 
 @code {
     private DateTime? _date = DateTime.Today;

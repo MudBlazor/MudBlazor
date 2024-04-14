@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using MudBlazor.Extensions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MudBlazor.Services;
 #nullable enable
@@ -29,6 +30,8 @@ internal interface IDateWrapper<T> where T : struct
     bool SameMonth(T date1, T date2);
     bool SameDay(T? date1, T? date2);
     bool AreEqual(T? date1, T? date2);
+    bool GreaterThan(T date1, T date2);
+    bool LesserThan(T date1, T date2);
 
     /// <summary>
     /// Just curious why AddYears differs from AddMonths
@@ -55,6 +58,13 @@ internal interface IDateWrapper<T> where T : struct
     int GetCalendarMonth(T month);
     int GetCalendarDayOfMonth(T date);
     T AddDays(T date, int days);
+    T GetFromFixedValues(T selectedDate, int? fixYear, int? fixMonth, int? fixDay);
+    int GetCalendarYear(T? date, T yearDate);
+    bool DateEquals(T? date, T day);
+    T SetYear(T? current, int year);
+    T SetDateKind(T date, T value);
+    T GetDate(T date);
+    T SetYearMonth(T month, T? selectedDate);
 }
 
 internal class DateWrapper<T> : IDateWrapper<T> where T : struct
@@ -200,6 +210,16 @@ internal class DateWrapper<T> : IDateWrapper<T> where T : struct
         return _converter.ConvertTo(date1!.Value) == _converter.ConvertTo(date2!.Value);
     }
 
+    public bool GreaterThan(T date1, T date2)
+    {
+        return _converter.ConvertTo(date1) > _converter.ConvertTo(date2);
+    }
+
+    public bool LesserThan(T date1, T date2)
+    {
+        return _converter.ConvertTo(date1) < _converter.ConvertTo(date2);
+    }
+
     protected DayOfWeek GetFirstDayOfWeek(DayOfWeek? dayOfWeek = null)
     {
         return dayOfWeek ?? Culture.DateTimeFormat.FirstDayOfWeek;
@@ -281,4 +301,111 @@ internal class DateWrapper<T> : IDateWrapper<T> where T : struct
         return _converter.ConvertFrom(_converter.ConvertTo(date).AddDays(days));
     }
 
+    public T GetFromFixedValues(T selectedDate, int? fixYear, int? fixMonth, int? fixDay)
+    {
+        if (!fixYear.HasValue && !fixMonth.HasValue && !fixDay.HasValue)
+        {
+            return selectedDate;
+        }
+
+        var selectedDateTimeOffset = _converter.ConvertTo(selectedDate);
+
+        var fixedSelectedDateTimeOffset = new DateTimeOffset(
+            fixYear ?? selectedDateTimeOffset.Year,
+            fixMonth ?? selectedDateTimeOffset.Month,
+            fixDay ?? selectedDateTimeOffset.Day,
+            selectedDateTimeOffset.Hour,
+            selectedDateTimeOffset.Minute,
+            selectedDateTimeOffset.Second,
+            selectedDateTimeOffset.Millisecond, selectedDateTimeOffset.Offset);
+
+        return _converter.ConvertFrom(fixedSelectedDateTimeOffset);
+    }
+
+    public int GetCalendarYear(T? date, T yearDate)
+    {
+        var dateInternal = date ?? Today;
+        var dateTimeOffset = _converter.ConvertTo(dateInternal);
+        var yearDateTimeOffset = _converter.ConvertTo(yearDate);
+
+        var diff = Culture.Calendar.GetYear(dateTimeOffset.Date) - Culture.Calendar.GetYear(yearDateTimeOffset.Date);
+        var calenderYear = Culture.Calendar.GetYear(dateTimeOffset.Date);
+
+        return calenderYear - diff;
+    }
+
+    public bool DateEquals(T? date, T day)
+    {
+        return _converter.ConvertTo(date)?.Date == _converter.ConvertTo(day);
+    }
+
+    public T SetYear(T? current, int year)
+    {
+        DateTimeOffset newDateTimeOffset;
+        if (current.HasValue)
+        {
+            var currentDateTimeOffset = _converter.ConvertTo(current.Value);
+            newDateTimeOffset = new DateTimeOffset(year, currentDateTimeOffset.Month, currentDateTimeOffset.Day, currentDateTimeOffset.Hour, currentDateTimeOffset.Minute, currentDateTimeOffset.Second, currentDateTimeOffset.Millisecond, currentDateTimeOffset.Offset);
+        }
+        else
+        {
+            newDateTimeOffset = new DateTimeOffset(year, 1, 1, 0, 0, 0, 0, Culture.Calendar, TimeSpan.Zero);
+        }
+
+        var newDate = _converter.ConvertFrom(newDateTimeOffset);
+        if (current.HasValue)
+        {
+            newDate = SetDateKind(newDate, current.Value);
+        }
+
+        return newDate;
+    }
+
+    /// <summary>
+    /// </summary>
+    /// <param name="date">The date which kind will be set</param>
+    /// <param name="value">The date containing the date kind to set</param>
+    /// <returns></returns>
+    public T SetDateKind(T date, T value)
+    {
+        // only set the kind when the date is a DateTime
+        if (date is DateTime { Kind: DateTimeKind.Unspecified } dateTime && value is DateTime dateKind)
+        {
+            return (T)(object)DateTime.SpecifyKind(dateTime, dateKind.Kind);
+        }
+
+        return date;
+    }
+
+    public T GetDate(T date)
+    {
+        return _converter.ConvertFrom(_converter.ConvertTo(date).Date);
+    }
+
+    public T SetYearMonth(T month, T? selectedDate)
+    {
+        var selectedDateTimeOffset = _converter.ConvertTo(selectedDate);
+        var monthDateTimeOffset = _converter.ConvertTo(month);
+
+        selectedDateTimeOffset = selectedDateTimeOffset.HasValue ?
+            //everything has to be set because a value could already be defined -> fix values can be ignored as they are set in submit anyway
+            new DateTime(
+                monthDateTimeOffset.Year,
+                monthDateTimeOffset.Month,
+                selectedDateTimeOffset.Value.Day,
+                selectedDateTimeOffset.Value.Hour,
+                selectedDateTimeOffset.Value.Minute,
+                selectedDateTimeOffset.Value.Second,
+                selectedDateTimeOffset.Value.Millisecond) //We can assume day here, as it was not set yet. If a fix value is set, it will be overriden in Submit
+            : new DateTime(monthDateTimeOffset.Year, monthDateTimeOffset.Month, 1);
+
+        var newDate = _converter.ConvertFrom(selectedDateTimeOffset.Value);
+
+        if (selectedDate.HasValue)
+        {
+            newDate = SetDateKind(newDate, selectedDate.Value);
+        }
+
+        return newDate;
+    }
 }

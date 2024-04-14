@@ -7,21 +7,22 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public class MudDatePicker : MudBaseDatePicker<DateTime>
+    public class MudDatePicker<T> : MudBaseDatePicker<T>
+        where T : struct
     {
-        private DateTime? _selectedDate;
+        private T? _selectedDate;
 
         /// <summary>
         /// Fired when the DateFormat changes.
         /// </summary>
-        [Parameter] public EventCallback<DateTime?> DateChanged { get; set; }
+        [Parameter] public EventCallback<T?> DateChanged { get; set; }
 
         /// <summary>
         /// The currently selected date (two-way bindable). If null, then nothing was selected.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
-        public DateTime? Date
+        public T? Date
         {
             get => _value;
             set => SetDateAsync(value, true).AndForget();
@@ -30,11 +31,11 @@ namespace MudBlazor
         private DateTime _lastSetTime = DateTime.MinValue;
         private const int DebounceTimeoutMs = 100;
 
-        protected async Task SetDateAsync(DateTime? date, bool updateValue)
+        protected async Task SetDateAsync(T? date, bool updateValue)
         {
-            if (_value != null && date != null && date.Value.Kind == DateTimeKind.Unspecified)
+            if (_value != null && date != null)
             {
-                date = DateTime.SpecifyKind(date.Value, _value.Value.Kind);
+                date = DateWrapper.SetDateKind(date.Value, _value.Value);
             }
 
             var now = DateTime.UtcNow;
@@ -43,7 +44,7 @@ namespace MudBlazor
              * When the date is set in the UI, this method gets called with the same value multiple time. This guard
              * debounces the value to the same value in a short time frame is ignored
              */
-            if (_value == date && (now - _lastSetTime).TotalMilliseconds < DebounceTimeoutMs)
+            if (DateWrapper.AreEqual(_value, date) && (now - _lastSetTime).TotalMilliseconds < DebounceTimeoutMs)
             {
                 return;
             }
@@ -53,11 +54,11 @@ namespace MudBlazor
             // When the _value is null and an invalid date is entered into the UI, the data value passed to this method
             // will be null. We need to check if the text has been set my the user and if so handle tha validation
             // without this the UI doesn't display a validation error correctly
-            if (_value != date || (date is null && Text != null))
+            if (!DateWrapper.AreEqual(_value, date) || (date is null && Text != null))
             {
                 Touched = true;
 
-                if (date is not null && IsDateDisabledFunc(date.Value.Date))
+                if (date is not null && IsDateDisabledFunc(DateWrapper.GetDate(date.Value)))
                 {
                     await SetTextAsync(null, false);
                     return;
@@ -88,20 +89,20 @@ namespace MudBlazor
             return SetDateAsync(Converter.Get(value), false);
         }
 
-        protected override string GetDayClasses(int month, DateTime day)
+        protected override string GetDayClasses(int month, T day)
         {
             var b = new CssBuilder("mud-day");
             b.AddClass(AdditionalDateClassesFunc?.Invoke(day) ?? string.Empty);
-            if (day < GetMonthStart(month) || day > GetMonthEnd(month))
+            if (DateWrapper.LesserThan(day, GetMonthStart(month)) || DateWrapper.GreaterThan(day, GetMonthEnd(month)))
                 return b.AddClass("mud-hidden").Build();
-            if ((Date?.Date == day && _selectedDate == null) || _selectedDate?.Date == day)
+            if ((DateWrapper.DateEquals(Date, day) && _selectedDate == null) || DateWrapper.DateEquals(_selectedDate, day))
                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
-            if (day == DateTime.Today)
+            if (DateWrapper.AreEqual(day, DateWrapper.Today))
                 return b.AddClass("mud-current mud-button-outlined").AddClass($"mud-button-outlined-{Color.ToDescriptionString()} mud-{Color.ToDescriptionString()}-text").Build();
             return b.Build();
         }
 
-        protected override async Task OnDayClickedAsync(DateTime dateTime)
+        protected override async Task OnDayClickedAsync(T dateTime)
         {
             _selectedDate = dateTime;
             if (PickerActions == null || AutoClose || PickerVariant == PickerVariant.Static)
@@ -120,17 +121,13 @@ namespace MudBlazor
         /// user clicked on a month
         /// </summary>
         /// <param name="month"></param>
-        protected override async Task OnMonthSelectedAsync(DateTime month)
+        protected override async Task OnMonthSelectedAsync(T month)
         {
             PickerMonth = month;
             var nextView = GetNextView();
             if (nextView == null)
             {
-                _selectedDate = _selectedDate.HasValue ?
-                    //everything has to be set because a value could already defined -> fix values can be ignored as they are set in submit anyway
-                    new DateTime(month.Year, month.Month, _selectedDate.Value.Day, _selectedDate.Value.Hour, _selectedDate.Value.Minute, _selectedDate.Value.Second, _selectedDate.Value.Millisecond, _selectedDate.Value.Kind)
-                    //We can assume day here, as it was not set yet. If a fix value is set, it will be overriden in Submit
-                    : new DateTime(month.Year, month.Month, 1);
+                _selectedDate = DateWrapper.SetYearMonth(month, _selectedDate);
                 await SubmitAndCloseAsync();
             }
             else
@@ -146,15 +143,12 @@ namespace MudBlazor
         protected override async Task OnYearClickedAsync(int year)
         {
             var current = GetMonthStart(0);
-            PickerMonth = new DateTime(year, Culture.Calendar.GetMonth(current), 1, Culture.Calendar);
+            
+            PickerMonth = DateWrapper.SetYear(current, year);
             var nextView = GetNextView();
             if (nextView == null)
             {
-                _selectedDate = _selectedDate.HasValue ?
-                    //everything has to be set because a value could already defined -> fix values can be ignored as they are set in submit anyway
-                    new DateTime(_selectedDate.Value.Year, _selectedDate.Value.Month, _selectedDate.Value.Day, _selectedDate.Value.Hour, _selectedDate.Value.Minute, _selectedDate.Value.Second, _selectedDate.Value.Millisecond, _selectedDate.Value.Kind)
-                    //We can assume month and day here, as they were not set yet
-                    : new DateTime(year, 1, 1, Culture.Calendar);
+                _selectedDate = DateWrapper.SetYear(_selectedDate, year);
                 await SubmitAndCloseAsync();
             }
             else
@@ -177,14 +171,7 @@ namespace MudBlazor
             if (_selectedDate == null)
                 return;
 
-            if (FixYear.HasValue || FixMonth.HasValue || FixDay.HasValue)
-                _selectedDate = new DateTime(FixYear ?? _selectedDate.Value.Year,
-                    FixMonth ?? _selectedDate.Value.Month,
-                    FixDay ?? _selectedDate.Value.Day,
-                    _selectedDate.Value.Hour,
-                    _selectedDate.Value.Minute,
-                    _selectedDate.Value.Second,
-                    _selectedDate.Value.Millisecond);
+            _selectedDate = DateWrapper.GetFromFixedValues(_selectedDate.Value, FixYear, FixMonth, FixDay);
 
             await SetDateAsync(_selectedDate, true);
             _selectedDate = null;
@@ -206,18 +193,15 @@ namespace MudBlazor
             return FormatTitleDate(_selectedDate ?? Date);
         }
 
-        protected override DateTime GetCalendarStartOfMonth()
+        protected override T GetCalendarStartOfMonth()
         {
-            var date = StartMonth ?? Date ?? DateTime.Today;
-            return date.StartOfMonth(Culture);
+            var date = StartMonth ?? Date;
+            return DateWrapper.StartOfMonth(date);
         }
 
-        protected override int GetCalendarYear(DateTime yearDate)
+        protected override int GetCalendarYear(T yearDate)
         {
-            var date = Date ?? DateTime.Today;
-            var diff = Culture.Calendar.GetYear(date) - Culture.Calendar.GetYear(yearDate);
-            var calenderYear = Culture.Calendar.GetYear(date);
-            return calenderYear - diff;
+            return DateWrapper.GetCalendarYear(Date, yearDate);
         }
 
         //To be completed on next PR
@@ -317,7 +301,7 @@ namespace MudBlazor
         {
             if (Date.HasValue)
             {
-                PickerMonth = new DateTime(Date.Value.Year, Date.Value.Month, 1);
+                PickerMonth = DateWrapper.StartOfMonth(Date.Value);
                 ScrollToYear();
             }
         }
@@ -325,9 +309,9 @@ namespace MudBlazor
         /// <summary>
         /// Scrolls to the defined date.
         /// </summary>
-        public async Task GoToDate(DateTime date, bool submitDate = true)
+        public async Task GoToDate(T date, bool submitDate = true)
         {
-            PickerMonth = new DateTime(date.Year, date.Month, 1);
+            PickerMonth = DateWrapper.StartOfMonth(date);
             if (submitDate)
             {
                 await SetDateAsync(date, true);

@@ -1,5 +1,5 @@
-﻿<MudDatePicker @bind-Date="BirthDate" Validation="ValidateValueAsync"/>
-<MudDatePicker @bind-Date="BirthDate" Validation="ValidateValue"/>
+﻿<MudDatePicker T="DateTime" @bind-Date="BirthDate" Validation="ValidateValueAsync"/>
+<MudDatePicker T="DateTime" @bind-Date="BirthDate" Validation="ValidateValue"/>
 
 @code {
     DateTime? BirthDate { get; set; } = DateTime.Now;

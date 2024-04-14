@@ -1,5 +1,5 @@
 ﻿<MudForm @ref="form" ValidationDelay="0">
-    <MudDatePicker Label="Date" Required @bind-Date="@date" Editable></MudDatePicker>
+    <MudDatePicker T="DateTime" Label="Date" Required @bind-Date="@date" Editable></MudDatePicker>
     <MudTextField Label="Name" T="string" Required Immediate @bind-Value="@name" />
     <MudNumericField Label="Age" T="int?" Required Immediate @bind-Value="@age"></MudNumericField>
 </MudForm>

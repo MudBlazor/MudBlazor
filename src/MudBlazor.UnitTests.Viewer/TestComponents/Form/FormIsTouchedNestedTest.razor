@@ -2,11 +2,11 @@
 
 <MudForm ValidationDelay="0">
     <MudTextField T="string" Required="true" RequiredError="Enter a rock star"></MudTextField>
-    <MudDatePicker @bind-Date="Date"></MudDatePicker>
+    <MudDatePicker T="DateTime" @bind-Date="Date"></MudDatePicker>
 
     <MudForm ValidationDelay="0">
         <MudTextField T="string" Required="true" RequiredError="Enter a rock star"></MudTextField>
-        <MudDatePicker @bind-Date="Date"></MudDatePicker>
+        <MudDatePicker T="DateTime" @bind-Date="Date"></MudDatePicker>
     </MudForm>
 </MudForm>
 

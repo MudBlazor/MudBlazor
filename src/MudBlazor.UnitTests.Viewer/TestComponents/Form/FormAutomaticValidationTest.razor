@@ -4,8 +4,8 @@
 <MudForm Model="@Model" Validation="@(ValidationRules.ValidateValue)">
     <MudTextField @bind-Value="Model.String1" For="(() => Model.String1)" />
     <MudTextField @bind-Value="Model.String2" />
-    <MudDatePicker @bind-Date="Model.DateTime1" For="(() => Model.DateTime1)" />
-    <MudDatePicker @bind-Date="Model.DateTime2" />
+    <MudDatePicker T="DateTime" @bind-Date="Model.DateTime1" For="(() => Model.DateTime1)" />
+    <MudDatePicker T="DateTime" @bind-Date="Model.DateTime2" />
 </MudForm>
 
 @code {

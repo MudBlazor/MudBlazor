@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 <MudPopoverProvider></MudPopoverProvider>
 
-<MudDatePicker @bind-Date="Date" />
+<MudDatePicker T="DateTime" @bind-Date="Date" />
 
 @code {
     public DateTime? Date { get; set; } = DateTime.MinValue;

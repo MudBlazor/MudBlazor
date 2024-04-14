@@ -6,6 +6,7 @@
 @if (IsDateDisabledFunc != null)
 {
     <MudDatePicker @ref="_picker"
+                   T="DateTime"
                    Date="@Date"
                    DateChanged="HandleDateChanged"
                    ReadOnly="Readonly"
@@ -22,6 +23,7 @@
 else
 {
     <MudDatePicker @ref="_picker"
+                   T="DateTime"
                    Date="@Date"
                    DateChanged="HandleDateChanged"
                    ReadOnly="Readonly"
@@ -36,7 +38,7 @@ else
 }
 
 @code {
-    private MudDatePicker _picker;
+    private MudDatePicker<DateTime> _picker;
 
     public DateTime? Date { get; set; }
 

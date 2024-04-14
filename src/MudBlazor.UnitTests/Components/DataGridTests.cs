@@ -2791,7 +2791,7 @@ namespace MudBlazor.UnitTests.Components
             Assert.DoesNotThrow(() => comp.FindComponent<MudNumericField<double?>>());
             Assert.DoesNotThrow(() => comp.FindComponent<MudSelect<Enum>>());
             Assert.DoesNotThrow(() => comp.FindComponent<MudSelect<bool?>>());
-            Assert.DoesNotThrow(() => comp.FindComponent<MudDatePicker>());
+            Assert.DoesNotThrow(() => comp.FindComponent<MudDatePicker<DateTime>>());
         }
 
         [Test]

@@ -1,10 +1,8 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 @using MudBlazor.Utilities
-@using System.Text.RegularExpressions
-@using System.ComponentModel.DataAnnotations
 
 <MudForm @ref="form" FieldChanged="((v) => FormFieldChangedEventArgs = v)">
-    <MudDatePicker Editable />
+    <MudDatePicker T="DateTime" Editable />
     <MudTimePicker Editable />
     <MudColorPicker Editable />
 </MudForm>

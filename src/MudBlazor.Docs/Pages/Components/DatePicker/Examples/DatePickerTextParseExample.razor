@@ -1,7 +1,7 @@
 ﻿@using System.Globalization
 @namespace MudBlazor.Docs.Examples
 
-<MudDatePicker Label="Flexible Date" Editable="true" Date="_date" ImmediateText="true" Placeholder="day.month.year" DateFormat="@_dateFormat" TextChanged="DatePickerTextChanged" HelperText="@_bound" Clearable="true" />
+<MudDatePicker T="DateTime" Label="Flexible Date" Editable="true" Date="_date" ImmediateText="true" Placeholder="day.month.year" DateFormat="@_dateFormat" TextChanged="DatePickerTextChanged" HelperText="@_bound" Clearable="true" />
 
 @code {
     private DateTime? _date = null;

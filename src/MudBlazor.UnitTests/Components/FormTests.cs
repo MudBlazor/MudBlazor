@@ -123,7 +123,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<FormIsTouchedTest>();
             var form = comp.FindComponent<MudForm>().Instance;
             var textFieldcomp = comp.FindComponent<MudTextField<string>>();
-            var dateComp = comp.FindComponent<MudDatePicker>();
+            var dateComp = comp.FindComponent<MudDatePicker<DateTime>>();
             // check initial state: form should not be touched
             form.IsTouched.Should().Be(false);
             // input a date, istouched should be true
@@ -188,7 +188,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<FormIsTouchedNestedTest>();
             var formsComp = comp.FindComponents<MudForm>();
             var textCompFields = comp.FindComponents<MudTextField<string>>();
-            var dateCompFields = comp.FindComponents<MudDatePicker>();
+            var dateCompFields = comp.FindComponents<MudDatePicker<DateTime>>();
             var form = formsComp[0].Instance;
             var nestedForm = formsComp[1].Instance;
             var nestedFormDateField = dateCompFields[1].Instance;
@@ -225,7 +225,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FormIsTouchedTest>();
             var form = comp.FindComponent<MudForm>().Instance;
-            var dateComp = comp.FindComponent<MudDatePicker>();
+            var dateComp = comp.FindComponent<MudDatePicker<DateTime>>();
             // check initial state: form should not be touched
             form.IsTouched.Should().Be(false);
             // input a date, isTouched should be true
@@ -689,8 +689,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FormWithDatePickerTest>();
             var form = comp.FindComponent<MudForm>().Instance;
-            var dateComp = comp.FindComponent<MudDatePicker>();
-            var datepicker = comp.FindComponent<MudDatePicker>().Instance;
+            var dateComp = comp.FindComponent<MudDatePicker<DateTime>>();
+            var datepicker = comp.FindComponent<MudDatePicker<DateTime>>().Instance;
             // check initial state: form should not be valid because datepicker is required
             form.IsValid.Should().Be(false);
             datepicker.Error.Should().BeFalse();
@@ -718,8 +718,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FormWithDatePickerTest>();
             var form = comp.FindComponent<MudForm>().Instance;
-            var dateComp = comp.FindComponent<MudDatePicker>();
-            var datepicker = comp.FindComponent<MudDatePicker>().Instance;
+            var dateComp = comp.FindComponent<MudDatePicker<DateTime>>();
+            var datepicker = comp.FindComponent<MudDatePicker<DateTime>>().Instance;
             dateComp.SetParam(x => x.Validation, new Func<DateTime?, string>(date => date != null && date.Value.Year >= 2000 ? null : "Year must be >= 2000"));
             dateComp.Find("input").Change(new DateTime(2001, 01, 31).ToShortDateString());
             form.IsValid.Should().Be(true);
@@ -1489,7 +1489,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FormResetTest>();
             var form = comp.FindComponent<MudForm>().Instance;
-            var datePickerComp = comp.FindComponent<MudDatePicker>();
+            var datePickerComp = comp.FindComponent<MudDatePicker<DateTime>>();
             var datePicker = datePickerComp.Instance;
             // create test value and it's localized string representation
             var testDate = new DateTime(2020, 05, 24);
@@ -1522,7 +1522,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FormResetTest>();
             var form = comp.FindComponent<MudForm>().Instance;
-            var datePickerComp = comp.FindComponent<MudDatePicker>();
+            var datePickerComp = comp.FindComponent<MudDatePicker<DateTime>>();
             var textFieldComp = comp.FindComponents<MudTextField<string>>()[1]; //the picker includes a MudTextField, so the MudTextField we want is the second in the DOM
             var numericFieldComp = comp.FindComponent<MudNumericField<int?>>();
             // create test value and it's localized string representation
@@ -1641,7 +1641,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<FormFieldChangedPickerTest>();
             var formsComp = comp.FindComponents<MudForm>();
 
-            var datePicker = comp.FindComponent<MudDatePicker>();
+            var datePicker = comp.FindComponent<MudDatePicker<DateTime>>();
             var timePicker = comp.FindComponent<MudTimePicker>();
             var colorPicker = comp.FindComponent<MudColorPicker>();
 
@@ -1671,7 +1671,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FormAutomaticValidationTest>();
             var textComps = comp.FindComponents<MudTextField<string>>();
-            var dateComps = comp.FindComponents<MudDatePicker>();
+            var dateComps = comp.FindComponents<MudDatePicker<DateTime>>();
 
             textComps[0].Instance.For.Should().NotBeNull(); //For is set
             textComps[1].Instance.For.Should().BeNull(); //For is not set
@@ -1700,7 +1700,7 @@ namespace MudBlazor.UnitTests.Components
             var switch_ = comp.FindComponent<MudSwitch<bool>>();
             var select = comp.FindComponent<MudSelect<string>>(); //at present, we can't test if select is readonly based on attribute or classname. A future PR should enable this.
             var colorPicker = comp.FindComponent<MudColorPicker>();
-            var datePicker = comp.FindComponent<MudDatePicker>();
+            var datePicker = comp.FindComponent<MudDatePicker<DateTime>>();
             var dateRangePicker = comp.FindComponent<MudDateRangePicker>();
             var timePicker = comp.FindComponent<MudTimePicker>();
             var autocomplete = comp.FindComponent<MudAutocomplete<string>>();
@@ -1769,7 +1769,7 @@ namespace MudBlazor.UnitTests.Components
             var switch_ = comp.FindComponent<MudSwitch<bool>>();
             var select = comp.FindComponent<MudSelect<string>>();
             var colorPicker = comp.FindComponent<MudColorPicker>();
-            var datePicker = comp.FindComponent<MudDatePicker>();
+            var datePicker = comp.FindComponent<MudDatePicker<DateTime>>();
             var dateRangePicker = comp.FindComponent<MudDateRangePicker>();
             var timePicker = comp.FindComponent<MudTimePicker>();
             var autocomplete = comp.FindComponent<MudAutocomplete<string>>();

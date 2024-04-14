@@ -5,9 +5,9 @@
 <MudTextField T="string" HelperText="With Label" />
 
 <MudText Typo="Typo.h6" Class="mt-6 mb-2">MudDatePicker</MudText>
-<MudDatePicker />
-<MudDatePicker Label="With Label" />
-<MudDatePicker HelperText="With Helper" />
+<MudDatePicker T="DateTime" />
+<MudDatePicker T="DateTime" Label="With Label" />
+<MudDatePicker T="DateTime" HelperText="With Helper" />
 
 <MudText Typo="Typo.h6" Class="mt-6 mb-2">MudTimePicker</MudText>
 <MudTimePicker />
@@ -52,7 +52,7 @@
 <MudText Typo="Typo.h6" Class="mt-6 mb-2">Using a MudStack to align items that have no label</MudText>
 <MudStack Row AlignItems="AlignItems.Center">
     <MudTextField T="string" />
-    <MudDatePicker />
+    <MudDatePicker T="DateTime" />
     <MudNumericField T="int" />
     <MudSelect T="string"></MudSelect>
     <MudColorPicker />

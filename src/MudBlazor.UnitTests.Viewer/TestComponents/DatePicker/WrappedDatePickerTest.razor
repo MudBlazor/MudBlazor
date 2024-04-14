@@ -5,6 +5,7 @@
 <MudGrid>
     <MudItem>
         <MudDatePicker @ref="@Picker"
+                       T="DateTime"
                        Style="max-width: 300px"
                        Placeholder="dd-MM-yyyy"
                        Editable="true"
@@ -24,5 +25,5 @@
     public static string __description__ = "Selected date should show in input on first selection";
 
     public DateTime? SelectedDate { get; set; }
-    public MudDatePicker Picker { get; set; }
+    public MudDatePicker<DateTime> Picker { get; set; }
 }
