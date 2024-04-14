@@ -9,14 +9,20 @@ namespace MudBlazor
     public partial class MudNavGroup : MudComponentBase
     {
         private bool _expanded;
-        private NavigationContext _navigationContext = new(true);
+        private NavigationContext _navigationContext = new(false, true);
+        private ParameterState<bool> _disabledState;
         private ParameterState<NavigationContext?> _parentNavigationContextState;
 
         public MudNavGroup()
         {
+            _disabledState = RegisterParameterBuilder<bool>(nameof(Disabled))
+                .WithParameter(() => Disabled)
+                .WithChangeHandler(UpdateNavigationContext);
+
             _parentNavigationContextState = RegisterParameterBuilder<NavigationContext?>(nameof(ParentNavigationContext))
                 .WithParameter(() => ParentNavigationContext)
                 .WithChangeHandler(UpdateNavigationContext);
+
         }
 
         protected override void OnInitialized()
@@ -44,11 +50,11 @@ namespace MudBlazor
 
         protected string ExpandIconClassname =>
             new CssBuilder("mud-nav-link-expand-icon")
-                .AddClass("mud-transform", Expanded && !Disabled)
+                .AddClass("mud-transform", Expanded && Disabled is false)
                 .AddClass("mud-transform-disabled", Expanded && Disabled)
                 .Build();
 
-        protected int ButtonTabIndex => Disabled || _parentNavigationContextState.Value is { Expanded: false } ? -1 : 0;
+        protected int ButtonTabIndex => Disabled || _parentNavigationContextState.Value is { Disabled: true } or { Expanded: false } ? -1 : 0;
 
         [CascadingParameter]
         private NavigationContext? ParentNavigationContext { get; set; }
@@ -143,7 +149,9 @@ namespace MudBlazor
         private void UpdateNavigationContext()
             => _navigationContext = _navigationContext with
             {
-                Expanded = _expanded && _parentNavigationContextState.Value is null or { Expanded: true }
+                Disabled = Disabled || _parentNavigationContextState.Value is { Disabled: true },
+                Expanded = _expanded
+                           && _parentNavigationContextState.Value is null or { Expanded: true }
             };
     }
 }

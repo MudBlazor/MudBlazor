@@ -6,7 +6,7 @@
 
 <nav @attributes="UserAttributes"
      class="@Classname"
-     disabled="@Disabled"
+     disabled="@_navigationContext.Disabled"
      style="@Style"
      aria-label="@Title">
     <button @onclick="ExpandedToggleAsync"
@@ -28,7 +28,7 @@
         }
     </button>
     <MudCollapse aria-hidden="@((_navigationContext.Expanded is false).ToString().ToLowerInvariant())"
-                 Expanded="@Expanded"
+                 Expanded="@_navigationContext.Expanded"
                  MaxHeight="@MaxHeight"
                  Class="mud-navgroup-collapse">
         <CascadingValue Value="@_navigationContext">

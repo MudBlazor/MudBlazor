@@ -6,7 +6,7 @@ using System;
 namespace MudBlazor;
 
 #nullable enable
-public record NavigationContext(bool Expanded)
+public record NavigationContext(bool Disabled, bool Expanded)
 {
     public string MenuId { get; } = $"mudnavmenu-{Guid.NewGuid()}";
 }
