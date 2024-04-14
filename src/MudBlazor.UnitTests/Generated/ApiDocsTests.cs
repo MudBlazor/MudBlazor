@@ -1,4 +1,6 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
+
 using System.Threading.Tasks;
 using Bunit;
 using Microsoft.AspNetCore.Components;
@@ -44,6 +46,10 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddTransient<InternalMudLocalizer>();
             ctx.Services.AddTransient<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
             ctx.Services.AddScoped(sp => new HttpClient());
+            ctx.Services.AddTransient(typeof(IDateWrapper<>), typeof(DateWrapper<>));
+            ctx.Services.AddSingleton<IDateConverter<DateOnly>, DateOnlyConverter>();
+            ctx.Services.AddSingleton<IDateConverter<DateTime>, DateTimeConverter>();
+            ctx.Services.AddSingleton<IDateConverter<DateTimeOffset>, DateTimeOffsetConverter>();
         }
 
         // This shows how to test a docs page with incremental rendering.

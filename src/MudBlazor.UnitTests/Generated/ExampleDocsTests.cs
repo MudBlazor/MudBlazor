@@ -44,6 +44,10 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddOptions();
             ctx.Services.AddScoped(sp =>
                 new HttpClient(new MockDocsMessageHandler()) { BaseAddress = new Uri("https://localhost/") });
+            ctx.Services.AddTransient(typeof(IDateWrapper<>), typeof(DateWrapper<>));
+            ctx.Services.AddSingleton<IDateConverter<DateOnly>, DateOnlyConverter>();
+            ctx.Services.AddSingleton<IDateConverter<DateTime>, DateTimeConverter>();
+            ctx.Services.AddSingleton<IDateConverter<DateTimeOffset>, DateTimeOffsetConverter>();
         }
 
         [TearDown]

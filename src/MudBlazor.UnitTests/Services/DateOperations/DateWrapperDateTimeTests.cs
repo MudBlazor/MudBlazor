@@ -5,7 +5,7 @@
 using System;
 using System.Globalization;
 using FluentAssertions;
-using MudBlazor.Services.DateOperations;
+using MudBlazor.Services;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Services.DateOperations;

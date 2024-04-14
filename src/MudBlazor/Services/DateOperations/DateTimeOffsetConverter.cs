@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MudBlazor.Services.DateOperations;
+namespace MudBlazor.Services;
 
 internal class DateTimeOffsetConverter : IDateConverter<DateTimeOffset>
 {

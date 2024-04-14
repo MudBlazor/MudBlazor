@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using MudBlazor.Extensions;
 
-namespace MudBlazor.Services.DateOperations;
+namespace MudBlazor.Services;
 #nullable enable
 
 internal interface IDateWrapper<T> where T : struct

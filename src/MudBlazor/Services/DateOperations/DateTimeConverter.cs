@@ -1,12 +1,14 @@
 ﻿using System;
 
-namespace MudBlazor.Services.DateOperations;
+namespace MudBlazor.Services;
 
 internal class DateTimeConverter : IDateConverter<DateTime>
 {
     public DateTimeOffset ConvertTo(DateTime date)
     {
-        return new DateTimeOffset(date);
+        return date.Kind is DateTimeKind.Unspecified or DateTimeKind.Utc
+            ? new DateTimeOffset(date, TimeSpan.Zero)
+            : new DateTimeOffset(date);
     }
 
     public DateTimeOffset? ConvertTo(DateTime? date)
