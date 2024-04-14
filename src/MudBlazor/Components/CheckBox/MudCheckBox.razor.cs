@@ -141,8 +141,6 @@ namespace MudBlazor
 
         protected override Task OnChange(ChangeEventArgs args)
         {
-            Touched = true;
-
             // Apply only when TriState parameter is set to true and T is bool?
             if (TriState && typeof(T) == typeof(bool?))
             {
@@ -150,15 +148,15 @@ namespace MudBlazor
                 var boolValue = (bool?)(object?)_value;
                 if (!boolValue.HasValue)
                 {
-                    return SetBoolValueAsync(true);
+                    return SetBoolValueAsync(true, true);
                 }
 
                 return boolValue.Value
-                    ? SetBoolValueAsync(false)
-                    : SetBoolValueAsync(default);
+                    ? SetBoolValueAsync(false, true)
+                    : SetBoolValueAsync(default, true);
             }
 
-            return SetBoolValueAsync((bool?)args.Value);
+            return SetBoolValueAsync((bool?)args.Value, true);
         }
 
         protected void HandleKeyDown(KeyboardEventArgs obj)
@@ -171,15 +169,15 @@ namespace MudBlazor
             switch (obj.Key)
             {
                 case "Delete":
-                    SetBoolValueAsync(false);
+                    SetBoolValueAsync(false, true);
                     break;
                 case "Enter" or "NumpadEnter":
-                    SetBoolValueAsync(true);
+                    SetBoolValueAsync(true, true);
                     break;
                 case "Backspace":
                     if (TriState)
                     {
-                        SetBoolValueAsync(null);
+                        SetBoolValueAsync(null, true);
                     }
 
                     break;
@@ -187,16 +185,16 @@ namespace MudBlazor
                     switch (BoolValue)
                     {
                         case null:
-                            SetBoolValueAsync(true);
+                            SetBoolValueAsync(true, true);
                             break;
                         case true:
-                            SetBoolValueAsync(false);
+                            SetBoolValueAsync(false, true);
                             break;
                         case false when TriState:
-                            SetBoolValueAsync(null);
+                            SetBoolValueAsync(null, true);
                             break;
                         case false:
-                            SetBoolValueAsync(true);
+                            SetBoolValueAsync(true, true);
                             break;
                     }
 

@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
@@ -69,12 +70,15 @@ namespace MudBlazor
 
         protected virtual Task OnChange(ChangeEventArgs args)
         {
-            Touched = true;
-            return SetBoolValueAsync((bool?)args.Value);
+            return SetBoolValueAsync((bool?)args.Value, true);
         }
 
-        protected Task SetBoolValueAsync(bool? value)
+        protected Task SetBoolValueAsync(bool? value, bool? markAsTouched = null)
         {
+            if (markAsTouched is true)
+            {
+                Touched = true;
+            }
             return SetCheckedAsync(Converter.Get(value));
         }
 
