@@ -48,7 +48,7 @@ namespace MudBlazor
                 .AddClass("mud-transform-disabled", Expanded && Disabled)
                 .Build();
 
-        protected int ButtonTabIndex => _parentNavigationContextState.Value is null or { Expanded: true } ? 0 : -1;
+        protected int ButtonTabIndex => Disabled || _parentNavigationContextState.Value is { Expanded: false } ? -1 : 0;
 
         [CascadingParameter]
         private NavigationContext? ParentNavigationContext { get; set; }

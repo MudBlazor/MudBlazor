@@ -252,4 +252,7 @@
   <data name="MudDataGrid.Sort" xml:space="preserve">
     <value>Sort</value>
   </data>
+  <data name="MudNavGroup_ToggleExpand" xml:space="preserve">
+    <value>Toggle {0}</value>
+  </data>
 </root>

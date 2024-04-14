@@ -1,12 +1,20 @@
 ﻿@namespace MudBlazor
+@using MudBlazor.Resources
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" class="@Classname" disabled="@Disabled" style="@Style">
+@inject InternalMudLocalizer Localizer
+
+<nav @attributes="UserAttributes"
+     class="@Classname"
+     disabled="@Disabled"
+     style="@Style"
+     aria-label="@Title">
     <button @onclick="ExpandedToggleAsync"
             tabindex="@ButtonTabIndex"
             class="@ButtonClassname"
             aria-controls="@_navigationContext.MenuId"
-            aria-expanded="@_navigationContext.Expanded">
+            aria-expanded="@_navigationContext.Expanded.ToString().ToLowerInvariant()"
+            aria-label="@Localizer[nameof(LanguageResource.MudNavGroup_ToggleExpand), Title ?? _navigationContext.MenuId]">
         @if (!string.IsNullOrEmpty(Icon))
         {
             <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname" />
@@ -19,7 +27,7 @@
             <MudIcon Icon="@ExpandIcon" Class="@ExpandIconClassname" />
         }
     </button>
-    <MudCollapse aria-hidden="@(_navigationContext.Expanded is false)"
+    <MudCollapse aria-hidden="@((_navigationContext.Expanded is false).ToString().ToLowerInvariant())"
                  Expanded="@Expanded"
                  MaxHeight="@MaxHeight"
                  Class="mud-navgroup-collapse">
@@ -29,4 +37,4 @@
             </MudNavMenu>
         </CascadingValue>
     </MudCollapse>
-</div>
+</nav>
