@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
@@ -133,9 +134,9 @@ namespace MudBlazor
                                 return;
                             }
 
-                            if (holder.ElementReference is not null)
+                            if (holder.ElementReference is IMudStateHasChanged stateHasChanged)
                             {
-                                await InvokeAsync(holder.ElementReference.StateHasChanged);
+                                await InvokeAsync(stateHasChanged.StateHasChanged);
                             }
                         }
 
