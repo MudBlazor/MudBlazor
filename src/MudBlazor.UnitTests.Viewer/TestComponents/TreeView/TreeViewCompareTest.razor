@@ -1,7 +1,7 @@
 ﻿@using System.Collections
 @namespace MudBlazor.UnitTests.TestComponents
 
-<MudTreeView T="string" MultiSelection="false" @bind-SelectedValue="SelectedValue" Comparer="Comparer">
+<MudTreeView T="string" SelectionMode="SelectionMode.ToggleSelection" @bind-SelectedValue="SelectedValue" Comparer="Comparer">
     <MudTreeViewItem Value='"Ax"' @bind-Activated="_item1Activated" @bind-Selected="_parentItemSelected">
         <MudTreeViewItem Value='"Bx"' />
     </MudTreeViewItem>

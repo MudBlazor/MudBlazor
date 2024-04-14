@@ -63,7 +63,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="Selection">
-                <Description>Use <CodeInline>@@bind-SelectedValue</CodeInline> on the TreeView to select a single item.</Description>
+                <Description>You can use <CodeInline>@@bind-SelectedValue</CodeInline> on the TreeView to get updates about the selected item.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewSingleSelectionExample)" ShowCode="false">
                 <TreeViewSingleSelectionExample />
@@ -76,15 +76,6 @@
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewSelectedColorExample)" ShowCode="false">
                 <TreeViewSelectedColorExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Multiselect">
-                <Description>If you set <CodeInline>MultiSelection</CodeInline> to true, you can select multiple values and they are returned as <CodeInline>HashSet&lt;T></CodeInline> via SelectedValues.</Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(TreeViewMultiSelectionExample)" ShowCode="false">
-                <TreeViewMultiSelectionExample />
             </SectionContent>
         </DocsPageSection>
 

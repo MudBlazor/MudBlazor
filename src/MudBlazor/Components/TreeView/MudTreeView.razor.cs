@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.State.Builder;
 using MudBlazor.Utilities;
@@ -18,32 +21,33 @@ namespace MudBlazor
             MudTreeRoot = this;
             _comparerState = RegisterParameterBuilder<IEqualityComparer<T?>>(nameof(Comparer))
                 .WithParameter(() => Comparer)
-                .WithChangeHandler(OnComparerChanged);
+                .WithChangeHandler(OnComparerChangedAsync);
             _selectedValueState = RegisterParameterBuilder<T?>(nameof(SelectedValue))
                 .WithParameter(() => SelectedValue)
                 .WithEventCallback(() => SelectedValueChanged)
-                .WithChangeHandler(OnSelectedValueChanged)
-                .WithComparer(() => _comparerState.Value ?? EqualityComparer<T?>.Default);
+                .WithChangeHandler(OnSelectedValueChangedAsync)
+                .WithComparer(() => Comparer);
+            _selectedValuesState = RegisterParameterBuilder<IReadOnlyCollection<T?>?>(nameof(SelectedValues))
+                .WithParameter(() => SelectedValues)
+                .WithEventCallback(() => SelectedValuesChanged)
+                .WithChangeHandler(OnSelectedValuesChangedAsync);
+            RegisterParameterBuilder<SelectionMode>(nameof(SelectionMode))
+                .WithParameter(() => SelectionMode)
+                .WithChangeHandler(OnParameterChanged)
+                .Attach();
+            _selectedValues = new();
         }
 
-        private Task OnComparerChanged(ParameterChangedEventArgs<IEqualityComparer<T?>> args)
-        {
-            return UpdateSelectedValueCompare(args.Value).AsTask();
-        }
-
-        private Task OnSelectedValueChanged(ParameterChangedEventArgs<T?> args)
-        {
-            // See https://github.com/MudBlazor/MudBlazor/issues/8360#issuecomment-1996168491
-            _previousSelectedValue = args.LastValue;
-            return SetSelectedValue(args.Value);
-        }
-
-        private T? _previousSelectedValue;
-        private object _selectedUpdateLock = new();
-        private HashSet<MudTreeViewItem<T>>? _selectedValues;
-        private List<MudTreeViewItem<T>> _childItems = new();
         private readonly ParameterState<T?> _selectedValueState;
         private readonly ParameterState<IEqualityComparer<T?>> _comparerState;
+        private readonly ParameterState<IReadOnlyCollection<T?>?> _selectedValuesState;
+
+        private object _selectedUpdateLock = new();
+        private HashSet<T> _selectedValues;
+        private HashSet<MudTreeViewItem<T>> _childItems = new();
+        private bool _isFirstRender = true;
+        internal bool MultiSelection => SelectionMode == SelectionMode.MultiSelection;
+        private bool ToggleSelection => SelectionMode == SelectionMode.ToggleSelection;
 
         protected string Classname =>
             new CssBuilder("mud-treeview")
@@ -81,11 +85,13 @@ namespace MudBlazor
         public Color CheckBoxColor { get; set; }
 
         /// <summary>
-        /// if true, multiple values can be selected via checkboxes which are automatically shown in the tree view.
+        /// The selection mode determines whether only a single item (SingleSelection) or multiple items
+        /// can be selected (MultiSelection) and whether the selected item can be toggled off by clicking a
+        /// second time (ToggleSelection).
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
-        public bool MultiSelection { get; set; }
+        public SelectionMode SelectionMode { get; set; } = SelectionMode.SingleSelection;
 
         /// <summary>
         /// If true, clicking anywhere on the item will expand it, if it has children.
@@ -159,11 +165,15 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<T?> SelectedValueChanged { get; set; }
 
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public IReadOnlyCollection<T?>? SelectedValues { get; set; }
+
         /// <summary>
-        /// Called whenever the selectedvalues changed.
+        /// Called whenever the selection changes.
         /// </summary>
         [Parameter]
-        public EventCallback<HashSet<T?>> SelectedValuesChanged { get; set; }
+        public EventCallback<IReadOnlyCollection<T?>?> SelectedValuesChanged { get; set; }
 
         /// <summary>
         /// Child content of component.
@@ -210,122 +220,123 @@ namespace MudBlazor
         {
             if (firstRender && MudTreeRoot == this)
             {
-                await SetSelectedItemsCompare();
+                _isFirstRender = false;
+                UpdateItems();
             }
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        internal Task SetSelectedItemsCompare()
+        private Task OnSelectedValuesChangedAsync(ParameterChangedEventArgs<IReadOnlyCollection<T?>?> args)
         {
-            lock (_selectedUpdateLock)
-            {
-                _selectedValues ??= new(new MudTreeViewItemComparer<T>(Comparer));
-
-                //collect selected items
-                _selectedValues.Clear();
-                foreach (var item in _childItems)
-                {
-                    foreach (var selectedItem in item.GetSelectedItems())
-                    {
-                        _selectedValues.Add(selectedItem);
-                    }
-                }
-            }
-
-            return SelectedValuesChanged.InvokeAsync(SelectedValues);
+            if (_isFirstRender)
+                return Task.CompletedTask;
+            return SetSelectedValuesAsync(args.Value);
         }
 
-        private HashSet<T?> SelectedValues => _selectedValues is not null
-            ? new(_selectedValues.Select(i => i.Value))
-            : new();
-
-        internal async Task Select(MudTreeViewItem<T> item, bool isSelected = true)
+        private Task OnSelectedValueChangedAsync(ParameterChangedEventArgs<T?> args)
         {
+            Console.WriteLine($"SelectedValue {args.LastValue} => {args.Value}");
+            if (_isFirstRender)
+                return Task.CompletedTask;
+            return SetSelectedValueAsync(args.Value);
+        }
+
+        private Task OnComparerChangedAsync(ParameterChangedEventArgs<IEqualityComparer<T?>> args)
+        {
+            if (_isFirstRender)
+                return Task.CompletedTask;
+            UpdateItems();
+            return Task.CompletedTask;
+        }
+        private void OnParameterChanged()
+        {
+            if (_isFirstRender)
+                return;
+            UpdateItems();
+        }
+
+        internal async Task OnItemClickAsync(MudTreeViewItem<T> clickedItem)
+        {
+            if (ReadOnly)
+                return;
             if (MultiSelection)
             {
-                await item.Select(isSelected);
-                await SelectedValuesChanged.InvokeAsync(SelectedValues);
+                var items = clickedItem.GetChildItemsRecursive();
+                items.Add(clickedItem!);
+                var allSelected = items.All(x => x.GetState<bool>(nameof(MudTreeViewItem<T>.Selected)));
+                // toggle selection of the clickedItem and its children
+                foreach (var item in items.Where(x => x.Value is not null))
+                {
+                    if (allSelected)
+                        _selectedValues.Remove(item.Value!);
+                    else
+                        _selectedValues.Add(item.Value!);
+                }
+                await _selectedValuesState.SetValueAsync(_selectedValues);
+                UpdateItems();
                 return;
             }
-            if (isSelected)
+            var selected = clickedItem.GetState<bool>(nameof(MudTreeViewItem<T>.Selected));
+            if (ToggleSelection)
+                await SetSelectedValueAsync(selected ? default : clickedItem.Value); // <-- toggle selected value
+            else if (!selected)
             {
-                await SetSelectedValue(item.Value);
-                return;
+                // SingleSelection
+                await SetSelectedValueAsync(clickedItem.Value);
             }
-            await SetSelectedValue(default);
         }
 
-        internal void AddChild(MudTreeViewItem<T> item) => _childItems.Add(item);
+        internal void AddChild(MudTreeViewItem<T> item)
+        {
+            Console.WriteLine($"add child {item.Value}");
+            _childItems.Add(item);
+            if (MultiSelection)
+                item.UpdateMultiSelectionState(_selectedValues);
+            else
+                item.UpdateSingleSelectionState(_selectedValueState);
+        }
+
+        internal void RemoveChild(MudTreeViewItem<T> item) => _childItems.Remove(item);
 
         ///  <summary>
-        ///  Sets the selected value of the tree view.
+        ///  Sets the selected value of the tree view in SingleSelection mode.
         ///  If the value is found, the corresponding item is selected; 
-        ///  otherwise, selected value is set null.
+        ///  otherwise, selected value is set default.
         ///  If the selected item is valid it sets the corresponding tree item to selected.
         ///  </summary>
         ///  <param name="value">The value to be set as the selected value.</param>
-        internal async Task SetSelectedValue(T? value)
+        internal async Task SetSelectedValueAsync(T? value)
         {
-            if (Comparer.Equals(value, _previousSelectedValue)) 
+            if (MultiSelection)
                 return;
-            _previousSelectedValue=value;
-            await UnSelectAllChildren();
-            if (value == null || FindItemByValue(value) is not { } item)
-            {
-                await _selectedValueState.SetValueAsync(default);
-                return;
-            }
-            await _selectedValueState.SetValueAsync(item.Value);
-            await item.Select(true);
+            var isValid = value != null && FindItemByValue(value) is not null;
+            // note: if there is no item that corresponds to the value, the value is reset to default!
+            await _selectedValueState.SetValueAsync(isValid ? value : default);
+            UpdateItems();
         }
 
-        private async ValueTask UpdateSelectedValueCompare(IEqualityComparer<T?> comparer)
+        /// <summary>
+        /// Let the items update their selection state visualization and state according to
+        /// the selection in the tree view
+        /// </summary>
+        private void UpdateItems()
         {
-            List<MudTreeViewItem<T>> unselectedItem;
-
-            lock (_selectedUpdateLock)
+            foreach (var item in _childItems)
             {
-                if (_selectedValues is null)
-                {
-                    _selectedValues = new(new MudTreeViewItemComparer<T>(comparer));
-                    return;
-                }
-
-                var newSelected = new HashSet<MudTreeViewItem<T>>(new MudTreeViewItemComparer<T>(comparer));
-
-                foreach (var item in _selectedValues)
-                {
-                    newSelected.Add(item);
-                }
-
-                unselectedItem = _selectedValues.Except(newSelected).ToList();
-
-                _selectedValues = newSelected;
-            }
-
-
-            foreach (var unselectedItems in unselectedItem)
-            {
-                await unselectedItems.SelectedChanged.InvokeAsync(false);
+                if (MultiSelection)
+                    item.UpdateMultiSelectionState(_selectedValues);
+                else
+                    item.UpdateSingleSelectionState(_selectedValueState.Value);
             }
         }
 
-        internal async Task UnSelectAllChildren(List<MudTreeViewItem<T>>? children = null)
+        private async Task SetSelectedValuesAsync(IReadOnlyCollection<T?>? newValues)
         {
-            children ??= _childItems;
-
-            foreach (var item in children)
-            {
-                await UnSelectAllChildren(item.ChildItems);
-
-                if (item.Activated)
-                {
-                    await item.Select(false);
-                }
-            }
+            // TODO
+            await Task.Delay(0);
         }
 
-        internal MudTreeViewItem<T>? FindItemByValue(T value, List<MudTreeViewItem<T>>? children = null)
+        internal MudTreeViewItem<T>? FindItemByValue(T value, IEnumerable<MudTreeViewItem<T>>? children = null)
         {
             children ??= _childItems;
 

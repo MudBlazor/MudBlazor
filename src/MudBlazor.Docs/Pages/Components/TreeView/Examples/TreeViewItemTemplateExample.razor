@@ -17,7 +17,7 @@
 @code {
     private TreeItemData ActivatedValue { get; set; }
 
-    private HashSet<TreeItemData> SelectedValues { get; set; }
+    private IReadOnlyCollection<TreeItemData> SelectedValues { get; set; }
 
     private HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
 

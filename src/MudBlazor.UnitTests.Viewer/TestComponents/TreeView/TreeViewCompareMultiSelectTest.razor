@@ -1,7 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudTreeView T="string" MultiSelection="false" @bind-SelectedValue="SelectedValue"
-             Comparer="Compare">
+<MudTreeView T="string" @bind-SelectedValue="SelectedValue" Comparer="Compare">
     <MudTreeViewItem Value='"AA"' @bind-Activated="Item1Selected" 
                      @bind-Selected="Item1Selected" @ref="Item1"/>
     <MudTreeViewItem Value='"AC"' @bind-Activated="Item2Selected" 

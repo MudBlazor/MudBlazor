@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -12,23 +14,23 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudTreeViewItem<T> : MudComponentBase
+    public partial class MudTreeViewItem<T> : MudComponentBase, IDisposable
     {
         private string? _text;
         private bool _disabled;
-        private bool _isSelected;
         private bool _isServerLoaded;
         private readonly ParameterState<bool> _selectedState;
         private readonly ParameterState<bool> _expandedState;
         private Converter<T> _converter = new DefaultConverter<T>();
-        private readonly List<MudTreeViewItem<T>> _childItems = new();
+        private readonly HashSet<MudTreeViewItem<T>> _childItems = new();
 
         public MudTreeViewItem()
         {
             _expandedState = RegisterParameterBuilder<bool>(nameof(Expanded))
                 .WithParameter(() => Expanded)
                 .WithEventCallback(() => ExpandedChanged);
-            _selectedState = RegisterParameterBuilder<bool>(nameof(Selected)).WithParameter(() => Selected)
+            _selectedState = RegisterParameterBuilder<bool>(nameof(Selected))
+                .WithParameter(() => Selected)
                 .WithEventCallback(() => SelectedChanged)
                 .WithChangeHandler(OnSelectedParameterChangedAsync);
         }
@@ -42,7 +44,7 @@ namespace MudBlazor
         protected string ContentClassname =>
             new CssBuilder("mud-treeview-item-content")
                 .AddClass("cursor-pointer", !ReadOnly || MudTreeRoot?.ExpandOnClick == true && HasChild)
-                .AddClass($"mud-treeview-item-selected", _isSelected)
+                .AddClass($"mud-treeview-item-selected", !MultiSelection && _selectedState.Value)
                 .Build();
 
         public string TextClassname =>
@@ -50,6 +52,7 @@ namespace MudBlazor
                 .AddClass(TextClass)
                 .Build();
 
+        private bool MultiSelection => MudTreeRoot?.MultiSelection == true;
 
         [CascadingParameter]
         private MudTreeView<T>? MudTreeRoot { get; set; }
@@ -185,19 +188,10 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
 
-        [Parameter]
-        [Category(CategoryTypes.TreeView.Selecting)]
-        public bool Activated
-        {
-            get => _isSelected;
-            set
-            {
-                if (_isSelected.Equals(value)) return;
-
-                _isSelected = value;
-            }
-        }
-
+        /// <summary>
+        /// Set this to true to mark the item initially selected in single selection mode or checked in multi selection mode.
+        /// You can two-way bind this to get selection updates from this item
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public bool Selected { get; set; }
@@ -259,12 +253,6 @@ namespace MudBlazor
         public Color LoadingIconColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// Called whenever the activated value changed.
-        /// </summary>
-        [Parameter]
-        public EventCallback<bool> ActivatedChanged { get; set; }
-
-        /// <summary>
         /// Called whenever the selected value changed.
         /// </summary>
         [Parameter]
@@ -288,10 +276,22 @@ namespace MudBlazor
              (MudTreeRoot != null && Items != null && Items.Count != 0) ||
              (MudTreeRoot?.ServerData != null && CanExpand && !_isServerLoaded && (Items == null || Items.Count == 0));
 
-
-        private Task SetSelectedAsync(bool value)
+        private bool? GetCheckBoxState()
         {
-            return SelectItem(value, this);
+            var allChildrenChecked = GetChildItemsRecursive().All(x => x.GetState<bool>(nameof(Selected)));
+            var noChildrenChecked = GetChildItemsRecursive().All(x => !x.GetState<bool>(nameof(Selected)));
+            if (allChildrenChecked && _selectedState)
+                return true;
+            if (noChildrenChecked && !_selectedState)
+                return false;
+            return null;
+        }
+
+        private Task OnCheckboxChangedAsync(bool? arg)
+        {
+            if (MudTreeRoot == null)
+                return Task.CompletedTask;
+            return MudTreeRoot.OnItemClickAsync(this);
         }
 
         protected override void OnInitialized()
@@ -309,32 +309,15 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender && _isSelected)
-            {
-                if (MudTreeRoot is not null)
-                {
-                    await MudTreeRoot.Select(this);
-                }
-            }
+            //if (firstRender && _isActive)
+            //{
+            //    if (MudTreeRoot is not null)
+            //    {
+            //        await MudTreeRoot.Select(this);
+            //    }
+            //}
 
             await base.OnAfterRenderAsync(firstRender);
-        }
-
-        public override async Task SetParametersAsync(ParameterView parameters)
-        {
-            // See https://github.com/MudBlazor/MudBlazor/issues/8360#issuecomment-1996168491
-            var previousActivatedValue = Activated;
-            var activatedChanged = parameters.HasParameterChanged(nameof(Activated), Activated, out var activated);//parameters.TryGetValue(nameof(Activated), out bool activated) && activated != Activated;
-
-            await base.SetParametersAsync(parameters);
-
-            if (activatedChanged)
-            {
-                if (MudTreeRoot is not null)
-                {
-                    await MudTreeRoot.Select(this, previousActivatedValue);
-                }
-            }
         }
 
         private Task OnSelectedParameterChangedAsync(ParameterChangedEventArgs<bool> arg)
@@ -343,8 +326,8 @@ namespace MudBlazor
             {
                 return Task.CompletedTask;
             }
-
-            return MudTreeRoot.SetSelectedItemsCompare();
+            // TODO
+            return Task.CompletedTask;
         }
 
         private bool ReadOnly => MudTreeRoot is null || MudTreeRoot.ReadOnly;
@@ -363,7 +346,7 @@ namespace MudBlazor
             if (!ReadOnly)
             {
                 Debug.Assert(MudTreeRoot != null);
-                await MudTreeRoot.Select(this, !_isSelected);
+                await MudTreeRoot.OnItemClickAsync(this);
             }
             await OnClick.InvokeAsync(ev);
         }
@@ -382,7 +365,7 @@ namespace MudBlazor
             if (!ReadOnly)
             {
                 Debug.Assert(MudTreeRoot != null);
-                await MudTreeRoot.Select(this, !_isSelected);
+                await MudTreeRoot.OnItemClickAsync(this);
             }
             await OnDoubleClick.InvokeAsync(ev);
         }
@@ -417,44 +400,10 @@ namespace MudBlazor
             }
         }
 
-        internal Task Select(bool value)
-        {
-            if (_isSelected == value)
-                return Task.CompletedTask;
-
-            Activated = value;
-
-            StateHasChanged();
-
-            return ActivatedChanged.InvokeAsync(_isSelected);
-        }
-
-        internal async Task SelectItem(bool value, MudTreeViewItem<T>? source = null)
-        {
-            if (value == _selectedState.Value)
-            {
-                return;
-            }
-
-            await _selectedState.SetValueAsync(value);
-            foreach (var child in _childItems)
-            {
-                await child.SelectItem(value, source);
-            }
-
-            StateHasChanged();
-
-
-            if (source == this)
-            {
-                if (MudTreeRoot != null)
-                {
-                    await MudTreeRoot.SetSelectedItemsCompare();
-                }
-            }
-        }
-
         private void AddChild(MudTreeViewItem<T> item) => _childItems.Add(item);
+
+        private void RemoveChild(MudTreeViewItem<T> item) => _childItems.Remove(item);
+
         internal List<MudTreeViewItem<T>> ChildItems => _childItems.ToList();
 
         internal IEnumerable<MudTreeViewItem<T>> GetSelectedItems()
@@ -486,5 +435,49 @@ namespace MudBlazor
                 StateHasChanged();
             }
         }
+
+        // TODO: unify UpdateSingleSelectionState and UpdateMultiSelectionState into UpdateSelectionState
+        public void UpdateSingleSelectionState(T? value)
+        {
+            if (MudTreeRoot == null)
+                return;
+            var comparer = MudTreeRoot.Comparer;
+            var selected = comparer.Equals(Value, value);
+            _selectedState.SetValueAsync(selected);
+            // since the tree view doesn't know our children we need to take care of updating them
+            foreach (var child in _childItems)
+                child.UpdateSingleSelectionState(value);
+            StateHasChanged();
+        }
+
+        public void UpdateMultiSelectionState(HashSet<T> selectedValues)
+        {
+            if (MudTreeRoot == null)
+                return;
+            var selected = Value is not null && selectedValues.Contains(Value);
+            _selectedState.SetValueAsync(selected);
+            // since the tree view doesn't know our children we need to take care of updating them
+            foreach (var child in _childItems)
+                child.UpdateMultiSelectionState(selectedValues);
+            StateHasChanged();
+        }
+
+        public void Dispose()
+        {
+            MudTreeRoot?.RemoveChild(this);
+            Parent?.RemoveChild(this);
+        }
+
+        internal List<MudTreeViewItem<T?>> GetChildItemsRecursive(List<MudTreeViewItem<T?>>? list = null)
+        {
+            list ??= new List<MudTreeViewItem<T?>>();
+            foreach (var child in _childItems)
+            {
+                list.Add(child!);
+                child.GetChildItemsRecursive(list);
+            }
+            return list;
+        }
+
     }
 }

@@ -44,6 +44,16 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [TestCase("item1")]
+        [TestCase("item1.1")]
+        [TestCase("item1.2")]
+        public void TreeViewWithSingleSelection_Should_RespectInitialSelectedValue(string value)
+        {
+            var comp = Context.RenderComponent<SimpleTreeViewTest>(self => self.Add(x => x.SelectedValue, value));
+            comp.Find("div.mud-treeview-item-selected").QuerySelector(".mud-treeview-item-label").TrimmedText().Should().Be(value);
+        }
+
+        [Test]
         public void Collapsed_ClickOnArrowButton_CheckClose()
         {
             var comp = Context.RenderComponent<TreeViewTest1>();
@@ -221,13 +231,13 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TreeViewTest4>();
             var treeView = comp.FindComponent<MudTreeView<string>>();
 
-            await comp.InvokeAsync(() => comp.Instance.SelectFirst());
+            await comp.InvokeAsync(() => comp.Instance.ClickFirst());
             comp.WaitForAssertion(() => comp.Instance.selectedValue.Should().Be("content"));
 
-            await comp.InvokeAsync(() => comp.Instance.SelectSecond());
+            await comp.InvokeAsync(() => comp.Instance.ClickSecond());
             comp.WaitForAssertion(() => comp.Instance.selectedValue.Should().Be("src"));
 
-            await comp.InvokeAsync(() => comp.Instance.DeselectSecond());
+            await comp.InvokeAsync(() => comp.Instance.ClickSecond());
             comp.WaitForAssertion(() => comp.Instance.selectedValue.Should().Be(null));
         }
 

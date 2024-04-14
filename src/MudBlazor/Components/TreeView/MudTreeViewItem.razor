@@ -12,9 +12,10 @@
         {
             <MudTreeViewItemToggleButton Loading="Loading" Expanded="_expandedState.Value" ExpandedChanged="OnItemExpanded" Visible="@HasChild" ExpandedIcon="@ExpandedIcon" ExpandedIconColor="@ExpandedIconColor" LoadingIcon="@LoadingIcon" LoadingIconColor="LoadingIconColor"></MudTreeViewItemToggleButton>
 
-            @if (MudTreeRoot != null && MudTreeRoot.MultiSelection)
+            @if (MultiSelection)
             {
-                <MudCheckBox Class="mud-treeview-item-checkbox" CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" @bind-Value:get="_selectedState.Value" @bind-Value:set="SetSelectedAsync" Disabled="@Disabled"></MudCheckBox>
+                <MudCheckBox T="bool?" TriState Class="mud-treeview-item-checkbox" CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" @bind-Value:get="GetCheckBoxState()" @bind-Value:set="@OnCheckboxChangedAsync" Disabled="@Disabled"></MudCheckBox>
+                @* ValueChanged = "" *@
             }
 
             @if (!string.IsNullOrEmpty(Icon))

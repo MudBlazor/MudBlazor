@@ -2,7 +2,7 @@
 
 <MudGrid>
     <MudItem xs="12" md="8" Class="my-auto">
-        <MudTreeView T="string" CheckBoxColor="Color" MultiSelection="true">
+        <MudTreeView T="string" CheckBoxColor="Color" SelectionMode="SelectionMode.MultiSelection">
             <MudTreeViewItem Value="@("content")">
                 <MudTreeViewItem Value="@("logo.png")" />
             </MudTreeViewItem>
@@ -31,8 +31,9 @@
         </MudSelect>
     </MudItem>
 </MudGrid>
+
 @code{
-    public Color Color { get; set; } = Color.Error;
+    public Color Color { get; set; } = Color.Info;
     HashSet<string> SelectedValues { get; set; }
 }
 
