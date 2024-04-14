@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public abstract class MudBaseInput<T> : MudFormComponent<T, string>
     {
         private bool _isDirty;
@@ -18,8 +16,13 @@ namespace MudBlazor
         /// value change. When the value changes _validated is set back to false.
         /// </summary>
         private bool _validated;
+        protected bool _isFocused;
+        protected bool _forceTextUpdate;
 
-        protected MudBaseInput() : base(new DefaultConverter<T>()) { }
+        protected MudBaseInput()
+            : base(new DefaultConverter<T>())
+        {
+        }
 
         /// <summary>
         /// If true, the input element will be disabled.
@@ -27,8 +30,9 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Disabled { get; set; }
-        [CascadingParameter(Name = "ParentDisabled")] private bool ParentDisabled { get; set; }
-        protected bool GetDisabledState() => Disabled || ParentDisabled;
+
+        [CascadingParameter(Name = "ParentDisabled")]
+        private bool ParentDisabled { get; set; }
 
         /// <summary>
         /// If true, the input will be read-only.
@@ -36,8 +40,9 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool ReadOnly { get; set; }
-        [CascadingParameter(Name = "ParentReadOnly")] private bool ParentReadOnly { get; set; }
-        protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
+
+        [CascadingParameter(Name = "ParentReadOnly")]
+        private bool ParentReadOnly { get; set; }
 
         /// <summary>
         /// If true, the input will take up the full width of its container.
@@ -55,18 +60,18 @@ namespace MudBlazor
         public bool Immediate { get; set; }
 
         /// <summary>
-        /// If true, the input will not have an underline.
+        /// Determines whether the input has an underline. Default is true
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public bool DisableUnderLine { get; set; }
+        public bool Underline { get; set; } = true;
 
         /// <summary>
         /// The HelperText will be displayed below the text field.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string HelperText { get; set; }
+        public string? HelperText { get; set; }
 
         /// <summary>
         /// If true, the helper text will only be visible on focus.
@@ -80,14 +85,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string AdornmentIcon { get; set; }
+        public string? AdornmentIcon { get; set; }
 
         /// <summary>
         /// Text that will be used if Adornment is set to Start or End, the Text overrides Icon.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string AdornmentText { get; set; }
+        public string? AdornmentText { get; set; }
 
         /// <summary>
         /// The Adornment if used. By default, it is set to None.
@@ -101,7 +106,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool OnlyValidateIfDirty { get; set; } = false;
+        public bool OnlyValidateIfDirty { get; set; }
 
         /// <summary>
         /// The color of the adornment if used. It supports the theme colors.
@@ -148,7 +153,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string Placeholder { get; set; }
+        public string? Placeholder { get; set; }
 
         /// <summary>
         /// If set, will display the counter, value 0 will display current count but no stop count.
@@ -169,7 +174,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string Label { get; set; }
+        public string? Label { get; set; }
 
         /// <summary>
         /// If true the input will focus automatically.
@@ -190,7 +195,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
-        public string Text { get; set; }
+        public string? Text { get; set; }
 
         /// <summary>
         /// When TextUpdateSuppression is true (which is default) the text can not be updated by bindings while the component is focused in BSS (not WASM).
@@ -215,63 +220,26 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
-        public virtual string Pattern { get; set; }
+        public virtual string? Pattern { get; set; }
 
         /// <summary>
         /// ShrinkLabel prevents the label from moving down into the field when the field is empty.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public bool ShrinkLabel { get; set; } = false;
-
-        /// <summary>
-        /// Derived classes need to override this if they can be something other than text
-        /// </summary>
-        internal virtual InputType GetInputType() { return InputType.Text; }
-
-        protected virtual async Task SetTextAsync(string text, bool updateValue = true)
-        {
-            if (Text != text)
-            {
-                Text = text;
-                _validated = false;
-                if (!string.IsNullOrWhiteSpace(Text))
-                    Touched = true;
-                if (updateValue)
-                    await UpdateValuePropertyAsync(false);
-                await TextChanged.InvokeAsync(Text);
-            }
-        }
-
-        /// <summary>
-        /// Text change hook for descendants. Called when Text needs to be refreshed from current Value property.
-        /// </summary>
-        protected virtual Task UpdateTextPropertyAsync(bool updateValue)
-        {
-            return SetTextAsync(Converter.Set(Value), updateValue);
-        }
-
-        /// <summary>
-        /// Focuses the element
-        /// </summary>
-        /// <returns>The ValueTask</returns>
-        public virtual ValueTask FocusAsync() { return new ValueTask(); }
-
-        public virtual ValueTask BlurAsync() { return new ValueTask(); }
-
-        public virtual ValueTask SelectAsync() { return new ValueTask(); }
-
-        public virtual ValueTask SelectRangeAsync(int pos1, int pos2) { return new ValueTask(); }
+        public bool ShrinkLabel { get; set; }
 
         /// <summary>
         /// Fired when the text value changes.
         /// </summary>
-        [Parameter] public EventCallback<string> TextChanged { get; set; }
+        [Parameter]
+        public EventCallback<string> TextChanged { get; set; }
 
         /// <summary>
         /// Fired when the element loses focus.
         /// </summary>
-        [Parameter] public EventCallback<FocusEventArgs> OnBlur { get; set; }
+        [Parameter]
+        public EventCallback<FocusEventArgs> OnBlur { get; set; }
 
         /// <summary>
         /// Fired when the element changes internally its text value.
@@ -279,34 +247,11 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<ChangeEventArgs> OnInternalInputChanged { get; set; }
 
-        protected bool _isFocused;
-
-        protected internal virtual async Task OnBlurredAsync(FocusEventArgs obj)
-        {
-            if (ReadOnly)
-                return;
-            _isFocused = false;
-
-            if (!OnlyValidateIfDirty || _isDirty)
-            {
-                Touched = true;
-                if (_validated)
-                    await OnBlur.InvokeAsync(obj);
-                else
-                    await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
-            }
-        }
-
         /// <summary>
         /// Fired on the KeyDown event.
         /// </summary>
-        [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
-
-        protected virtual Task InvokeKeyDownAsync(KeyboardEventArgs obj)
-        {
-            _isFocused = true;
-            return OnKeyDown.InvokeAsync(obj);
-        }
+        [Parameter]
+        public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
         /// <summary>
         /// Prevent the default action for the KeyDown event.
@@ -318,13 +263,8 @@ namespace MudBlazor
         /// <summary>
         /// Fired on the KeyUp event.
         /// </summary>
-        [Parameter] public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
-
-        protected virtual Task InvokeKeyUpAsync(KeyboardEventArgs obj)
-        {
-            _isFocused = true;
-            return OnKeyUp.InvokeAsync(obj);
-        }
+        [Parameter]
+        public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
 
         /// <summary>
         /// Prevent the default action for the KeyUp event.
@@ -344,13 +284,105 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
-        public T Value
+        public T? Value
         {
             get => _value;
             set => _value = value;
         }
 
-        protected virtual async Task SetValueAsync(T value, bool updateText = true, bool force = false)
+        /// <summary>
+        /// Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? Format
+        {
+            get => ((Converter<T>)Converter).Format;
+            set => SetFormat(value);
+        }
+
+        protected bool GetDisabledState() => Disabled || ParentDisabled;
+
+        protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
+
+        protected virtual async Task SetTextAsync(string? text, bool updateValue = true)
+        {
+            if (Text != text)
+            {
+                Text = text;
+                _validated = false;
+                if (!string.IsNullOrWhiteSpace(Text))
+                {
+                    Touched = true;
+                }
+
+                if (updateValue)
+                {
+                    await UpdateValuePropertyAsync(false);
+                }
+
+                await TextChanged.InvokeAsync(Text);
+            }
+        }
+
+        /// <summary>
+        /// Text change hook for descendants. Called when Text needs to be refreshed from current Value property.
+        /// </summary>
+        protected virtual Task UpdateTextPropertyAsync(bool updateValue)
+        {
+            return SetTextAsync(Converter.Set(Value), updateValue);
+        }
+
+        /// <summary>
+        /// Focuses the element
+        /// </summary>
+        /// <returns>The ValueTask</returns>
+        public virtual ValueTask FocusAsync() => ValueTask.CompletedTask;
+
+        public virtual ValueTask BlurAsync() => ValueTask.CompletedTask;
+
+        public virtual ValueTask SelectAsync() => ValueTask.CompletedTask;
+
+        public virtual ValueTask SelectRangeAsync(int pos1, int pos2) => ValueTask.CompletedTask;
+
+        protected internal virtual async Task OnBlurredAsync(FocusEventArgs obj)
+        {
+            if (ReadOnly)
+            {
+                return;
+            }
+
+            _isFocused = false;
+
+            if (!OnlyValidateIfDirty || _isDirty)
+            {
+                Touched = true;
+                if (_validated)
+                {
+                    await OnBlur.InvokeAsync(obj);
+                }
+                else
+                {
+                    await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
+                }
+            }
+        }
+
+        protected virtual Task InvokeKeyDownAsync(KeyboardEventArgs obj)
+        {
+            _isFocused = true;
+
+            return OnKeyDown.InvokeAsync(obj);
+        }
+
+        protected virtual Task InvokeKeyUpAsync(KeyboardEventArgs obj)
+        {
+            _isFocused = true;
+
+            return OnKeyUp.InvokeAsync(obj);
+        }
+
+        protected virtual async Task SetValueAsync(T? value, bool updateText = true, bool force = false)
         {
             if (!EqualityComparer<T>.Default.Equals(Value, value) || force)
             {
@@ -359,7 +391,10 @@ namespace MudBlazor
                 Value = value;
                 await ValueChanged.InvokeAsync(Value);
                 if (updateText)
+                {
                     await UpdateTextPropertyAsync(false);
+                }
+
                 FieldChanged(Value);
                 await BeginValidateAsync();
             }
@@ -369,9 +404,9 @@ namespace MudBlazor
         /// Sync the value, values and text, calls validation manually. Useful to call after user changes value or text programmatically.
         /// </summary>
         /// <returns></returns>
-        public virtual async Task ForceUpdate()
+        public virtual Task ForceUpdate()
         {
-            await SetValueAsync(Value, force: true);
+            return SetValueAsync(Value, force: true);
         }
 
         /// <summary>
@@ -386,7 +421,9 @@ namespace MudBlazor
         {
             var changed = base.SetConverter(value);
             if (changed)
+            {
                 UpdateTextPropertyAsync(false).AndForget();      // refresh only Text property from current Value
+            }
 
             return changed;
         }
@@ -395,30 +432,22 @@ namespace MudBlazor
         {
             var changed = base.SetCulture(value);
             if (changed)
+            {
                 UpdateTextPropertyAsync(false).AndForget();      // refresh only Text property from current Value
+            }
 
             return changed;
         }
 
-        /// <summary>
-        /// Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public string Format
+        protected virtual bool SetFormat(string? value)
         {
-            get => ((Converter<T>)Converter).Format;
-            set => SetFormat(value);
-        }
-
-        protected virtual bool SetFormat(string value)
-        {
-            var changed = (Format != value);
+            var changed = Format != value;
             if (changed)
             {
                 ((Converter<T>)Converter).Format = value;
                 UpdateTextPropertyAsync(false).AndForget();      // refresh only Text property from current Value
             }
+
             return changed;
         }
 
@@ -438,10 +467,14 @@ namespace MudBlazor
             // Because the way the Value setter is built, it won't cause an update if the incoming Value is
             // equal to the initial value. This is why we force an update to the Text property here.
             if (typeof(T) != typeof(string))
+            {
                 await UpdateTextPropertyAsync(false);
+            }
 
             if (Label == null && For != null)
+            {
                 Label = For.GetLabelString();
+            }
         }
 
         public virtual void ForceRender(bool forceTextUpdate)
@@ -450,8 +483,6 @@ namespace MudBlazor
             UpdateTextPropertyAsync(false).AndForget();
             StateHasChanged();
         }
-
-        protected bool _forceTextUpdate;
 
         public override async Task SetParametersAsync(ParameterView parameters)
         {
@@ -462,7 +493,9 @@ namespace MudBlazor
 
             // Refresh Value from Text
             if (hasText && !hasValue)
+            {
                 await UpdateValuePropertyAsync(false);
+            }
 
             // Refresh Text from Value
             if (hasValue && !hasText)
@@ -473,7 +506,9 @@ namespace MudBlazor
                     // Text update suppression, only in BSS (not in WASM).
                     // This is a fix for #1012
                     if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
+                    {
                         updateText = false;
+                    }
                 }
                 if (updateText)
                 {
@@ -490,12 +525,16 @@ namespace MudBlazor
             {
                 await FocusAsync();
             }
+
+            await base.OnAfterRenderAsync(firstRender);
         }
 
         protected override void OnParametersSet()
         {
             if (SubscribeToParentForm)
+            {
                 base.OnParametersSet();
+            }
         }
 
         protected override async Task ResetValueAsync()
@@ -505,5 +544,10 @@ namespace MudBlazor
             _validated = false;
             await base.ResetValueAsync();
         }
+
+        /// <summary>
+        /// Derived classes need to override this if they can be something other than text
+        /// </summary>
+        internal virtual InputType GetInputType() => InputType.Text;
     }
 }

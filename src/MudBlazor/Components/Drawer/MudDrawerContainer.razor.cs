@@ -34,8 +34,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Drawer.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
-        internal void FireDrawersChanged() => StateHasChanged();
-
         internal void Add(MudDrawer drawer)
         {
             if (Fixed && !drawer.Fixed)

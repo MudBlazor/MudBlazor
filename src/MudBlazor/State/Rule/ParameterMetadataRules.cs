@@ -11,7 +11,8 @@ internal class ParameterMetadataRules
 {
     private static readonly IExclusion[] Exclusions =
     {
-        new LambdaExclusion()
+        new HandlerLambdaExclusion(),
+        new ComparerParameterLambdaExclusion()
     };
 
     /// <summary>
@@ -22,15 +23,16 @@ internal class ParameterMetadataRules
     public static ParameterMetadata Morph(ParameterMetadata originalMetadata)
     {
         ArgumentNullException.ThrowIfNull(originalMetadata);
+        var currentMetaData = originalMetadata;
 
         foreach (var exclusion in Exclusions)
         {
             if (exclusion.IsExclusion(originalMetadata, out var newMetadata))
             {
-                return newMetadata;
+                currentMetaData = newMetadata;
             }
         }
 
-        return originalMetadata;
+        return currentMetaData;
     }
 }

@@ -14,7 +14,7 @@ namespace MudBlazor
                 .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
                 .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
                 .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
-                .AddClass("mud-input-underline", when: () => DisableUnderLine == false && Variant != Variant.Outlined)
+                .AddClass("mud-input-underline", when: () => Underline && Variant != Variant.Outlined)
                 .AddClass("mud-shrink", when: () => !string.IsNullOrWhiteSpace(ChildContent?.ToString()) || Adornment == Adornment.Start)
                 .AddClass("mud-disabled", Disabled)
                 .AddClass("mud-input-error", Error && !string.IsNullOrEmpty(ErrorText))
@@ -153,10 +153,10 @@ namespace MudBlazor
         public bool InnerPadding { get; set; } = true;
 
         /// <summary>
-        /// If true, the field will not have an underline.
+        /// Determines if the field has an underline. Default is true
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Field.Appearance)]
-        public bool DisableUnderLine { get; set; }
+        public bool Underline { get; set; } = true;
     }
 }

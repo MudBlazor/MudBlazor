@@ -17,7 +17,7 @@ namespace MudBlazor
 {
     public partial class MudColorPicker : MudPicker<MudColor>
     {
-        private readonly IParameterState<int> _throttleIntervalState;
+        private readonly ParameterState<int> _throttleIntervalState;
 
         public MudColorPicker() : base(new DefaultConverter<MudColor>())
         {
@@ -26,7 +26,9 @@ namespace MudBlazor
             Value = "#594ae2"; // MudBlazor Blue
             Text = GetColorTextValue();
             AdornmentAriaLabel = "Open Color Picker";
-            _throttleIntervalState = RegisterParameter(nameof(ThrottleInterval), () => ThrottleInterval, OnThrottleIntervalParameterChanged);
+            _throttleIntervalState = RegisterParameterBuilder<int>(nameof(ThrottleInterval))
+                .WithParameter(() => ThrottleInterval)
+                .WithChangeHandler(OnThrottleIntervalParameterChanged);
         }
 
         #region Fields
