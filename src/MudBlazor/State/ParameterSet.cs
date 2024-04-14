@@ -25,7 +25,7 @@ namespace MudBlazor.State;
 /// </remarks>
 internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
 {
-    private readonly IParameterStatesFactoryReader _parameterStatesFactory;
+    private readonly IParameterStatesReader _parameterStatesReader;
 
 #if NET8_0_OR_GREATER
     private readonly Lazy<FrozenDictionary<string, IParameterComponentLifeCycle>> _parameters;
@@ -62,10 +62,10 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     /// <summary>
     /// Initializes a new instance of the <see cref="ParameterSet"/> class with the specified parameter states factory.
     /// </summary>
-    /// <param name="parameterStatesFactory">The factory used to read an enumerable collection of parameters to initialize the set.</param>
-    public ParameterSet(IParameterStatesFactoryReader parameterStatesFactory)
+    /// <param name="parameterStatesReader">The factory used to read an enumerable collection of parameters to initialize the set.</param>
+    public ParameterSet(IParameterStatesReader parameterStatesReader)
     {
-        _parameterStatesFactory = parameterStatesFactory;
+        _parameterStatesReader = parameterStatesReader;
 #if NET8_0_OR_GREATER
         _parameters = new Lazy<FrozenDictionary<string, IParameterComponentLifeCycle>>(ParametersFactory);
 #else
@@ -77,18 +77,18 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
 #if NET8_0_OR_GREATER
     private FrozenDictionary<string, IParameterComponentLifeCycle> ParametersFactory()
     {
-        var parameters = _parameterStatesFactory.ReadParameters();
+        var parameters = _parameterStatesReader.ReadParameters();
         var dictionary = parameters.ToFrozenDictionary(parameter => parameter.Metadata.ParameterName, parameter => parameter);
-        _parameterStatesFactory.Complete();
+        _parameterStatesReader.Complete();
 
         return dictionary;
     }
 #else
     private Dictionary<string, IParameterComponentLifeCycle> ParametersFactory()
     {
-        var parameters = _parameterStatesFactory.ReadParameters();
+        var parameters = _parameterStatesReader.ReadParameters();
         var dictionary = parameters.ToDictionary(parameter => parameter.Metadata.ParameterName, parameter => parameter);
-        _parameterStatesFactory.Complete();
+        _parameterStatesReader.Complete();
 
         return dictionary;
     }
@@ -168,7 +168,7 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     /// <summary>
     /// Represents an enumerable reader for parameter states.
     /// </summary>
-    private class ParameterSetReadonlyEnumerable : IParameterStatesFactoryReader
+    private class ParameterSetReadonlyEnumerable : IParameterStatesReader
     {
         private readonly IEnumerable<IParameterComponentLifeCycle> _parameters;
 

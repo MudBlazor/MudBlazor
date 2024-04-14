@@ -8,9 +8,9 @@ namespace MudBlazor.State;
 
 #nullable enable
 /// <summary>
-/// Represents a factory reader for parameter states.
+/// Represents a reader for parameter states.
 /// </summary>
-internal interface IParameterStatesFactoryReader
+internal interface IParameterStatesReader
 {
     /// <summary>
     /// Reads and returns a collection of parameter states.

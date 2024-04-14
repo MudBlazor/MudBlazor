@@ -3,10 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using FluentAssertions;
-using Moq;
-using MudBlazor.State;
 using MudBlazor.State.Builder;
 using NUnit.Framework;
 
@@ -20,8 +17,7 @@ public class ParameterRegistrationBuilderScopeTests
     public void IsLocked_ReturnsFalse_WhenScopeIsNotEnded()
     {
         // Arrange
-        var factoryWriterMock = new Mock<IParameterStatesFactoryWriter>();
-        using var scope = new ParameterRegistrationBuilderScope(factoryWriterMock.Object);
+        using var scope = new ParameterRegistrationBuilderScope();
 
         // Act
         var isLocked = scope.IsLocked;
@@ -34,8 +30,7 @@ public class ParameterRegistrationBuilderScopeTests
     public void IsLocked_ReturnsTrue_WhenScopeIsEnded()
     {
         // Arrange
-        var factoryWriterMock = new Mock<IParameterStatesFactoryWriter>();
-        var scope = new ParameterRegistrationBuilderScope(factoryWriterMock.Object);
+        var scope = new ParameterRegistrationBuilderScope();
 
         // Act
         using (scope)
@@ -51,8 +46,10 @@ public class ParameterRegistrationBuilderScopeTests
     public void Dispose_LocksScopeAndWritesParameters_WhenScopeNotEnded()
     {
         // Arrange
-        var factoryWriterMock = new Mock<IParameterStatesFactoryWriter>();
-        using var scope = new ParameterRegistrationBuilderScope(factoryWriterMock.Object);
+        var scopeEndedCount = 0;
+        void OnScopeEndedAction() => scopeEndedCount++;
+        using var scope = new ParameterRegistrationBuilderScope(OnScopeEndedAction);
+
         scope.CreateParameterBuilder<int>();
         scope.CreateParameterBuilder<string>();
 
@@ -60,8 +57,7 @@ public class ParameterRegistrationBuilderScopeTests
         ((IDisposable)scope).Dispose();
 
         // Assert
-        factoryWriterMock.Verify(factory => factory.WriteParameters(It.IsAny<IEnumerable<IParameterComponentLifeCycle>>()), Times.Once);
-        factoryWriterMock.Verify(factory => factory.Close(), Times.Once);
+        scopeEndedCount.Should().Be(1);
         scope.IsLocked.Should().BeTrue();
     }
 
@@ -69,8 +65,9 @@ public class ParameterRegistrationBuilderScopeTests
     public void Dispose_DoesNotWriteParameters_AfterScopeEnded()
     {
         // Arrange
-        var factoryWriterMock = new Mock<IParameterStatesFactoryWriter>();
-        var scope = new ParameterRegistrationBuilderScope(factoryWriterMock.Object);
+        var scopeEndedCount = 0;
+        void OnScopeEndedAction() => scopeEndedCount++;
+        var scope = new ParameterRegistrationBuilderScope(OnScopeEndedAction);
         using (scope)
         {
             scope.CreateParameterBuilder<int>();
@@ -83,8 +80,7 @@ public class ParameterRegistrationBuilderScopeTests
         ((IDisposable)scope).Dispose();
 
         // Assert
-        factoryWriterMock.Verify(factory => factory.WriteParameters(It.IsAny<IEnumerable<IParameterComponentLifeCycle>>()), Times.Once);
-        factoryWriterMock.Verify(factory => factory.Close(), Times.Once);
+        scopeEndedCount.Should().Be(1);
         scope.IsLocked.Should().BeTrue();
     }
 }

@@ -12,10 +12,10 @@ namespace MudBlazor.State.Builder;
 /// <summary>
 /// Represents a scope for registering parameters.
 /// </summary>
-internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilderScope
+internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilderScope, IParameterStatesReader
 {
+    private readonly Action? _onScopeEndedAction;
     private readonly List<IParameterBuilderAttach> _builders;
-    private readonly IParameterStatesFactoryWriter _parameterStatesFactoryWriter;
 
     /// <summary>
     /// Gets a value indicating whether the parameter registration builder scope is locked.
@@ -28,11 +28,11 @@ internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilder
     /// <summary>
     /// Initializes a new instance of the <see cref="ParameterRegistrationBuilderScope"/> class with the specified parameter set register.
     /// </summary>
-    /// <param name="parameterStatesFactoryWriter">The <see cref="IParameterStatesFactoryWriter"/> used to register the parameters during the end of the scope.</param>
-    public ParameterRegistrationBuilderScope(IParameterStatesFactoryWriter parameterStatesFactoryWriter)
+    /// <param name="onScopeEndedAction">The action to be executed when the scope ends.</param>
+    public ParameterRegistrationBuilderScope(Action? onScopeEndedAction = null)
     {
+        _onScopeEndedAction = onScopeEndedAction;
         _builders = new List<IParameterBuilderAttach>();
-        _parameterStatesFactoryWriter = parameterStatesFactoryWriter;
     }
 
     /// <inheritdoc/>
@@ -50,7 +50,7 @@ internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilder
     /// <summary>
     /// Clears the list of parameter builders.
     /// </summary>
-    public void CleanUp()
+    private void CleanUp()
     {
         _builders.Clear();
         _builders.TrimExcess();
@@ -62,14 +62,13 @@ internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilder
         if (!IsLocked)
         {
             IsLocked = true;
-            try
-            {
-                _parameterStatesFactoryWriter.WriteParameters(_builders.Select(parameter => parameter.Attach()));
-            }
-            finally
-            {
-                _parameterStatesFactoryWriter.Close();
-            }
+            _onScopeEndedAction?.Invoke();
         }
     }
+
+    /// <inheritdoc />
+    IEnumerable<IParameterComponentLifeCycle> IParameterStatesReader.ReadParameters() => _builders.Select(parameter => parameter.Attach());
+
+    /// <inheritdoc />
+    void IParameterStatesReader.Complete() => CleanUp();
 }

@@ -3,8 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
@@ -13,16 +11,15 @@ using MudBlazor.State.Builder;
 namespace MudBlazor;
 
 #nullable enable
-public class ComponentBaseWithState : ComponentBase, IParameterStatesFactoryReader, IParameterStatesFactoryWriter
+public class ComponentBaseWithState : ComponentBase
 {
     internal readonly ParameterSet Parameters;
     private readonly ParameterRegistrationBuilderScope _scope;
-    private Func<IEnumerable<IParameterComponentLifeCycle>>? _componentLifeCycleFactory;
 
     public ComponentBaseWithState()
     {
-        Parameters = new ParameterSet(this);
-        _scope = new ParameterRegistrationBuilderScope(this);
+        _scope = new ParameterRegistrationBuilderScope(OnScopeEndedAction);
+        Parameters = new ParameterSet(_scope);
     }
 
     /// <inheritdoc />
@@ -59,20 +56,5 @@ public class ComponentBaseWithState : ComponentBase, IParameterStatesFactoryRead
         return _scope;
     }
 
-    /// <inheritdoc />
-    IEnumerable<IParameterComponentLifeCycle> IParameterStatesFactoryReader.ReadParameters()
-    {
-        return _componentLifeCycleFactory is null
-            ? Enumerable.Empty<IParameterComponentLifeCycle>()
-            : _componentLifeCycleFactory();
-    }
-
-    /// <inheritdoc />
-    void IParameterStatesFactoryReader.Complete() => _scope.CleanUp();
-
-    /// <inheritdoc />
-    void IParameterStatesFactoryWriter.WriteParameters(IEnumerable<IParameterComponentLifeCycle> parameters) => _componentLifeCycleFactory = () => parameters;
-
-    /// <inheritdoc />
-    void IParameterStatesFactoryWriter.Close() => Parameters.ForceParametersAttachment();
+    private void OnScopeEndedAction() => Parameters.ForceParametersAttachment();
 }
