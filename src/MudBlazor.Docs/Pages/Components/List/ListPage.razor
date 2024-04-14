@@ -70,11 +70,23 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Avatar List">
-                <Description></Description>
+            <SectionHeader Title="Avatar">
+                <Description>
+                    <p>
+                        List items can either display an icon via the <CodeInline>Icon</CodeInline> parameter or an avatar via the <CodeInline Tag>AvatarContent</CodeInline> render fragment.
+                        The content inside <CodeInline Tag>AvatarContent</CodeInline> doesn't necessarily have to be an <MudLink Href="/components/avatar">Avatar</MudLink> it can be 
+                        anything you want to render in place of an avatar or icon. 
+                    </p>
+                    <p>
+                        <MudAlert Severity="Severity.Info" Class="mt-3">
+                            Note: when you define <CodeInline Tag>AvatarContent</CodeInline> the <CodeInline>Icon</CodeInline> parameter is ignored. Also, you'll need to use the
+                            <CodeInline Tag>ChildContent</CodeInline> render fragment for the other content such as the item text.
+                        </MudAlert>
+                    </p>
+                </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="@nameof(ListFolderExample)">
-                <ListFolderExample />
+            <SectionContent DarkenBackground="true" Code="@nameof(ListAvatarExample)">
+                <ListAvatarExample />
             </SectionContent>
         </DocsPageSection>
 
