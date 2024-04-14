@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Logging;
+using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -16,6 +17,9 @@ namespace MudBlazor
 #nullable enable
     public partial class MudFileUpload<T> : MudFormComponent<T, string>
     {
+        [Inject]
+        private IJSRuntime? JsRuntime { get; set; }
+
         public MudFileUpload() : base(new DefaultConverter<T>()) { }
 
         private readonly string _id = $"mud_fileupload_{Guid.NewGuid()}";
@@ -144,6 +148,9 @@ namespace MudBlazor
             _value = default;
             return NotifyValueChangedAsync();
         }
+
+        public async Task OpenFilePickerAsync()
+            => await (JsRuntime?.InvokeVoidAsync("mudWindow.click", _id) ?? ValueTask.CompletedTask);
 
         private async Task OnChangeAsync(InputFileChangeEventArgs args)
         {

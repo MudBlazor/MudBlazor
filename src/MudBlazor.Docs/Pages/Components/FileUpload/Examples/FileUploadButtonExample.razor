@@ -2,11 +2,11 @@
 
 <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
     <ButtonTemplate>
-        <MudButton HtmlTag="label"
-                   Variant="Variant.Filled"
+        <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
                    StartIcon="@Icons.Material.Filled.CloudUpload"
-                   for="@context.Id">
+                   for="@context.Id"
+                   OnClick="@context.Actions.OpenFilePickerAsync">
             Upload Files
         </MudButton>
     </ButtonTemplate>
@@ -14,29 +14,29 @@
 
 <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
     <ButtonTemplate>
-        <MudFab HtmlTag="label"
-                Color="Color.Secondary"
+        <MudFab Color="Color.Secondary"
                 StartIcon="@Icons.Material.Filled.Image"
                 Label="Load picture"
-                for="@context.Id" />
+                for="@context.Id"
+                OnClick="@context.Actions.OpenFilePickerAsync" />
     </ButtonTemplate>
 </MudFileUpload>
 
 <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
     <ButtonTemplate>
-        <MudFab HtmlTag="label"
-                Color="Color.Success"
+        <MudFab Color="Color.Success"
                 StartIcon="@Icons.Material.Filled.AttachFile"
-                for="@context.Id" />
+                for="@context.Id"
+                OnClick="@context.Actions.OpenFilePickerAsync" />
     </ButtonTemplate>
 </MudFileUpload>
 
 <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
     <ButtonTemplate>
-        <MudIconButton HtmlTag="label"
-                       Color="Color.Info"
+        <MudIconButton Color="Color.Info"
                        Icon="@Icons.Material.Filled.PhotoCamera"
-                       for="@context.Id">
+                       for="@context.Id"
+                       OnClick="@context.Actions.OpenFilePickerAsync">
         </MudIconButton>
     </ButtonTemplate>
 </MudFileUpload>
@@ -46,7 +46,8 @@
         <MudButton HtmlTag="label"
                    Variant="Variant.Filled"
                    Color="Color.Primary"
-                   for="@context.Id">
+                   for="@context.Id"
+                   OnClick="@context.Actions.OpenFilePickerAsync">
             Disabled Button
         </MudButton>
     </ButtonTemplate>

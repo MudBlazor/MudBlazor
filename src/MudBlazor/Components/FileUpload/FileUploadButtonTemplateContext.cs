@@ -18,7 +18,8 @@ public class FileUploadButtonTemplateContext<T>
         Id = id;
         Actions = new FileUploadButtonTemplateActions
         {
-            ClearAsync = fileUpload.ClearAsync
+            ClearAsync = fileUpload.ClearAsync,
+            OpenFilePickerAsync = fileUpload.OpenFilePickerAsync
         };
     }
 
@@ -27,5 +28,6 @@ public class FileUploadButtonTemplateContext<T>
     public class FileUploadButtonTemplateActions
     {
         public required Func<Task> ClearAsync { get; init; }
+        public required Func<Task> OpenFilePickerAsync { get; init; }
     }
 }
