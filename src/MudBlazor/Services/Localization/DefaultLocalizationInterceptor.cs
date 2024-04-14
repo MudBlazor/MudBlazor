@@ -28,7 +28,7 @@ public class DefaultLocalizationInterceptor : AbstractLocalizationInterceptor
     }
 
     /// <inheritdoc />
-    public override LocalizedString Handle(string key)
+    public override LocalizedString Handle(string key, params object[] arguments)
     {
         if (!IgnoreDefaultEnglish)
         {
@@ -36,7 +36,7 @@ public class DefaultLocalizationInterceptor : AbstractLocalizationInterceptor
             var currentCulture = Thread.CurrentThread.CurrentUICulture.Parent.TwoLetterISOLanguageName;
             if (MudLocalizer is null || currentCulture.Equals("en", StringComparison.InvariantCultureIgnoreCase))
             {
-                return Localizer[key];
+                return Localizer[key, arguments];
             }
         }
 

@@ -47,7 +47,7 @@ public abstract class AbstractLocalizationInterceptor : ILocalizationInterceptor
     }
 
     /// <inheritdoc />
-    public abstract LocalizedString Handle(string key);
+    public abstract LocalizedString Handle(string key, params object[] arguments);
 
     private static IStringLocalizer DefaultLanguageResourceReader(ILoggerFactory loggerFactory)
     {
