@@ -9,30 +9,31 @@ public partial class SharedStateHandlerTestComp : MudComponentBase
     public SharedStateHandlerTestComp()
     {
         // abc shared handler group
-        _a = RegisterParameterBuilder<int>(nameof(A))
+        using var registerScope = CreateRegisterScope();
+        _a = registerScope.RegisterParameter<int>(nameof(A))
             .WithParameter(() => A)
             .WithChangeHandler(OnAbcChanged);
-        _b = RegisterParameterBuilder<int>(nameof(B))
+        _b = registerScope.RegisterParameter<int>(nameof(B))
             .WithParameter(() => B)
             .WithChangeHandler(OnAbcChanged);
-        _c = RegisterParameterBuilder<int>(nameof(C))
+        _c = registerScope.RegisterParameter<int>(nameof(C))
             .WithParameter(() => C)
             .WithChangeHandler(OnAbcChanged);
         // o and p are not sharing their handler because lambdas are excluded, even if they contain the same code
-        _o = RegisterParameterBuilder<int>(nameof(O))
+        _o = registerScope.RegisterParameter<int>(nameof(O))
             .WithParameter(() => O)
             .WithChangeHandler(() => OpHandlerCallCount++);
-        _p = RegisterParameterBuilder<int>(nameof(P))
+        _p = registerScope.RegisterParameter<int>(nameof(P))
             .WithParameter(() => P)
             .WithChangeHandler(() => OpHandlerCallCount++);
         // xyz shared handler group
-        _x = RegisterParameterBuilder<int>(nameof(X))
+        _x = registerScope.RegisterParameter<int>(nameof(X))
             .WithParameter(() => X)
             .WithChangeHandler(OnXyzChanged);
-        _y = RegisterParameterBuilder<int>(nameof(Y))
+        _y = registerScope.RegisterParameter<int>(nameof(Y))
             .WithParameter(() => Y)
             .WithChangeHandler(OnXyzChanged);
-        _z = RegisterParameterBuilder<int>(nameof(Z))
+        _z = registerScope.RegisterParameter<int>(nameof(Z))
             .WithParameter(() => Z)
             .WithChangeHandler(OnXyzChanged);
     }
