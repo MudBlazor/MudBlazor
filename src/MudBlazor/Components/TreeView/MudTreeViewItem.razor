@@ -11,7 +11,7 @@
         }
         else
         {
-            <MudTreeViewItemToggleButton Loading="Loading" Expanded="_expandedState.Value" ExpandedChanged="OnItemExpanded" Visible="@HasChild" ExpandedIcon="@ExpandedIcon" ExpandedIconColor="@ExpandedIconColor" LoadingIcon="@LoadingIcon" LoadingIconColor="LoadingIconColor"></MudTreeViewItemToggleButton>
+            <MudTreeViewItemToggleButton Loading="Loading" Expanded="_expandedState.Value" ExpandedChanged="OnItemExpanded" Visible="@HasChild" ExpandedIcon="@ExpandButtonIcon" ExpandedIconColor="@ExpandButtonIconColor" LoadingIcon="@LoadingIcon" LoadingIconColor="LoadingIconColor"></MudTreeViewItemToggleButton>
 
             @if (MultiSelection)
             {
@@ -19,10 +19,10 @@
                         @bind-Value:get="GetCheckBoxStateTriState()" @bind-Value:set="@(x=>OnCheckboxChangedAsync())" Disabled="@Disabled"></MudCheckBox>
             }
 
-            @if (!string.IsNullOrEmpty(Icon))
+            @if (HasIcon)
             {
                 <div class="mud-treeview-item-icon">
-                    <MudIcon Icon="@Icon" Color="@IconColor" />
+                    <MudIcon Icon="@GetIcon()" Color="@IconColor" />
                 </div>
             }
 

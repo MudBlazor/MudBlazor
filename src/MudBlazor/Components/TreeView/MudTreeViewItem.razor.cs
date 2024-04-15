@@ -213,6 +213,13 @@ namespace MudBlazor
         public string? Icon { get; set; }
 
         /// <summary>
+        /// Alternative icon to show instead of Icon if expanded.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Behavior)]
+        public string? IconExpanded { get; set; }
+
+        /// <summary>
         /// The color of the icon. It supports the theme colors.
         /// </summary>
         [Parameter]
@@ -238,14 +245,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Expanding)]
-        public string ExpandedIcon { get; set; } = Icons.Material.Filled.ChevronRight;
+        public string ExpandButtonIcon { get; set; } = Icons.Material.Filled.ChevronRight;
 
         /// <summary>
         /// The color of the expand/collapse button. It supports the theme colors.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Expanding)]
-        public Color ExpandedIconColor { get; set; } = Color.Default;
+        public Color ExpandButtonIconColor { get; set; } = Color.Default;
 
         /// <summary>
         /// The loading icon.
@@ -422,6 +429,10 @@ namespace MudBlazor
         private void RemoveChild(MudTreeViewItem<T> item) => _childItems.Remove(item);
 
         internal List<MudTreeViewItem<T>> ChildItems => _childItems.ToList();
+
+        private bool HasIcon => _expandedState && !string.IsNullOrWhiteSpace(IconExpanded) || !_expandedState && !string.IsNullOrWhiteSpace(Icon);
+
+        private string? GetIcon() => _expandedState && !string.IsNullOrWhiteSpace(IconExpanded) ? IconExpanded : Icon;
 
         internal IEnumerable<MudTreeViewItem<T>> GetSelectedItems()
         {

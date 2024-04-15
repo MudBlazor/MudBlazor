@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudPaper Width="300px" MaxHeight="300px" Class="overflow-y-scroll" Elevation="0">
+<MudPaper Width="300px" Elevation="0">
     <MudTreeView T="string" ReadOnly="@ReadOnly" Hover="@Hover" Dense="@Dense" Disabled="@Disabled"
                  ExpandOnClick="ExpandOnClick" ExpandOnDoubleClick="ExpandOnDoubleClick">
         <MudTreeViewItem Value="@("Applications")" Expanded>
@@ -11,9 +11,6 @@
                 <MudTreeViewItem Value="@("API")" />
                 <MudTreeViewItem Value="@("Components")" />
                 <MudTreeViewItem Value="@("Features")" />
-                <MudTreeViewItem Value="@("Customization")" />
-                <MudTreeViewItem Value="@("CSS Utilities")" />
-                <MudTreeViewItem Value="@("Learn More")" />
             </MudTreeViewItem>
         </MudTreeViewItem>
     </MudTreeView>
