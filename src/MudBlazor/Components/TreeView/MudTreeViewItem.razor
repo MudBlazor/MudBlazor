@@ -15,7 +15,6 @@
             @if (MultiSelection)
             {
                 <MudCheckBox T="bool?" TriState Class="mud-treeview-item-checkbox" CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" @bind-Value:get="GetCheckBoxState()" @bind-Value:set="@OnCheckboxChangedAsync" Disabled="@Disabled"></MudCheckBox>
-                @* ValueChanged = "" *@
             }
 
             @if (!string.IsNullOrEmpty(Icon))

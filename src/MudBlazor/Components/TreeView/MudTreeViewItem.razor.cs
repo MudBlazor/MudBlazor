@@ -436,21 +436,21 @@ namespace MudBlazor
             }
         }
 
-        // TODO: unify UpdateSingleSelectionState and UpdateMultiSelectionState into UpdateSelectionState
-        public void UpdateSingleSelectionState(T? value)
-        {
-            if (MudTreeRoot == null)
-                return;
-            var comparer = MudTreeRoot.Comparer;
-            var selected = comparer.Equals(Value, value);
-            _selectedState.SetValueAsync(selected);
-            // since the tree view doesn't know our children we need to take care of updating them
-            foreach (var child in _childItems)
-                child.UpdateSingleSelectionState(value);
-            StateHasChanged();
-        }
+        //// TODO: unify UpdateSingleSelectionState and UpdateMultiSelectionState into UpdateSelectionState
+        //public void UpdateSingleSelectionState(T? value)
+        //{
+        //    if (MudTreeRoot == null)
+        //        return;
+        //    var comparer = MudTreeRoot.Comparer;
+        //    var selected = comparer.Equals(Value, value);
+        //    _selectedState.SetValueAsync(selected);
+        //    // since the tree view doesn't know our children we need to take care of updating them
+        //    foreach (var child in _childItems)
+        //        child.UpdateSingleSelectionState(value);
+        //    StateHasChanged();
+        //}
 
-        public void UpdateMultiSelectionState(HashSet<T> selectedValues)
+        internal void UpdateSelectionState(HashSet<T> selectedValues)
         {
             if (MudTreeRoot == null)
                 return;
@@ -458,7 +458,7 @@ namespace MudBlazor
             _selectedState.SetValueAsync(selected);
             // since the tree view doesn't know our children we need to take care of updating them
             foreach (var child in _childItems)
-                child.UpdateMultiSelectionState(selectedValues);
+                child.UpdateSelectionState(selectedValues);
             StateHasChanged();
         }
 
