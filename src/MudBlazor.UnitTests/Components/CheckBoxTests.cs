@@ -28,9 +28,9 @@ namespace MudBlazor.UnitTests.Components
                 .Find(".mud-checkbox span").ClassList.Should().NotContain("mud-checkbox-false");
             Context.RenderComponent<MudCheckBox<bool>>(self => self.Add(x => x.Value, true))
                 .Find(".mud-checkbox span").ClassList.Should().NotContain("mud-checkbox-null");
-            var comp =Context.RenderComponent<MudCheckBox<bool?>>(self => self
+            var comp = Context.RenderComponent<MudCheckBox<bool?>>(self => self
                 .Add(x => x.Value, null)
-                .Add(x=>x.TriState, true));
+                .Add(x => x.TriState, true));
             comp.Find(".mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
             comp.Find("input").Change(true);
             comp.Find(".mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
