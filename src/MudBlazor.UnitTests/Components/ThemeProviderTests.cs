@@ -256,7 +256,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudThemeProvider>(parameters => parameters
                 .Add(p => p.IsDarkMode, true));
             comp.Should().NotBeNull();
-            comp.Instance.GetState(x=> x.IsDarkMode).Should().BeTrue();
+            comp.Instance.GetState(x => x.IsDarkMode).Should().BeTrue();
         }
 
         [Test]
