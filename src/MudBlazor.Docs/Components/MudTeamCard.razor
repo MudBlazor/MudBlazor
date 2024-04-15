@@ -1,5 +1,4 @@
-﻿
-<MudPaper Elevation="4" Class="pa-4">
+﻿<MudPaper Elevation="4" Class="pa-4">
     <div class="d-flex flex-row">
         <MudAvatar Size="Size.Large" Class="mud-elevation-4">
             <MudImage Src="@Memeber.Avatar" />
@@ -16,13 +15,13 @@
                 </MudTooltip>
             }
             <MudTooltip Text="GitHub" Placement="Placement.Top" Class="d-flex">
-                <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Href="@("https://github.com/"+Memeber.Github)" Color="Color.Dark" Target="_blank" />
+                <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Href="@("https://github.com/"+Memeber.Github)" Color="Color.Inherit" Target="_blank" />
             </MudTooltip>
         </div>
     </div>
     <div class="d-flex flex-column mt-5">
         <div class="d-flex flex-row align-center">
-            <MudIcon Icon="@Icons.Material.Filled.Place" Color="Color.Default" Class="ms-4" />
+            <MudIcon Icon="@Icons.Material.Filled.Place" Color="Color.Inherit" Class="ms-4" />
             <MudText Typo="Typo.body2" Class="ps-9">@Memeber.From</MudText>
         </div>
     </div>

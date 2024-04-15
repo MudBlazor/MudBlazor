@@ -11,7 +11,7 @@
                     You can play with MudBlazor online directly in your browser with TryMudBlazor, no installation required.
                 </Description>
             </SectionHeader>
-            <MudButton DisableElevation="true" EndIcon="@Icons.Material.Rounded.OpenInNew" Variant="Variant.Filled" Color="Color.Primary" Class="docs-no-text-transform" Href="https://try.mudblazor.com/" Target="_blank">Play on TryMudBlazor</MudButton>
+            <MudButton DropShadow="false" EndIcon="@Icons.Material.Rounded.OpenInNew" Variant="Variant.Filled" Color="Color.Primary" Class="docs-no-text-transform" Href="https://try.mudblazor.com/" Target="_blank">Play on TryMudBlazor</MudButton>
         </DocsPageSection>
         
         <DocsPageSection>
@@ -119,13 +119,13 @@
                 <Description>Now you know how to install MudBlazor, but a common pitfall is to jump straight into different components. We recommend that you read our Layout page to learn about basic project structure and different ways to use our main layout components.</Description>
             </SectionHeader>
             <div class="d-flex flex-row flex-wrap mud-width-full">
-                <MudList Clickable="true" Class="flex-grow-1 flex-shrink-0 mud-paper-outlined rounded py-0 mr-2">
+                <MudList T="string" Class="flex-grow-1 flex-shrink-0 mud-paper-outlined rounded py-0 mr-2">
                     <MudListItem Icon="@Icons.Material.Filled.AutoAwesomeMosaic" IconColor="Color.Primary" Class="pl-6" Href="/getting-started/layouts">
                         <MudText Typo="Typo.body1">Layouts</MudText>
                         <MudText Typo="Typo.body2">Understand the structure</MudText>
                     </MudListItem>
                 </MudList>
-                <MudList Clickable="true" Class="flex-grow-1 flex-shrink-0 mud-paper-outlined rounded py-0 ml-2">
+                <MudList T="string" Class="flex-grow-1 flex-shrink-0 mud-paper-outlined rounded py-0 ml-2">
                     <MudListItem Icon="@Icons.Material.Filled.FilterFrames" IconColor="Color.Secondary" Class="pl-6" Href="/getting-started/wireframes">
                         <MudText Typo="Typo.body1">Wireframes</MudText>
                         <MudText Typo="Typo.body2">Copy, paste layouts</MudText>

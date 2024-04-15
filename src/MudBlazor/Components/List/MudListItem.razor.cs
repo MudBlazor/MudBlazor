@@ -8,21 +8,29 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudListItem : MudComponentBase, IDisposable
+    public partial class MudListItem<T> : MudComponentBase, IDisposable
     {
         private Typo _textTypo;
         private bool _selected;
-        private IParameterState<bool> _expandedState;
-        private bool _onClickHandlerPreventDefault = false;
+
+        private ParameterState<bool> _expandedState;
+
+        public MudListItem()
+        {
+            _expandedState = RegisterParameterBuilder<bool>(nameof(Expanded))
+                .WithParameter(() => Expanded)
+                .WithEventCallback(() => ExpandedChanged);
+        }
 
         protected string Classname =>
             new CssBuilder("mud-list-item")
                 .AddClass("mud-list-item-dense", (Dense ?? MudList?.Dense) ?? false)
                 .AddClass("mud-list-item-gutters", Gutters || MudList?.Gutters == true)
-                .AddClass("mud-list-item-clickable", MudList?.Clickable)
-                .AddClass("mud-ripple", MudList?.Clickable == true && !Ripple && !Disabled)
-                .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text mud-{MudList?.Color.ToDescriptionString()}-hover", _selected && !Disabled)
-                .AddClass("mud-list-item-disabled", Disabled)
+                .AddClass("mud-list-item-clickable", MudList?.GetReadOnly() != true)
+                .AddClass("mud-ripple", MudList?.GetReadOnly() != true && !Ripple && !GetDisabled())
+                .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text", _selected && !GetDisabled())
+                .AddClass($"mud-{MudList?.Color.ToDescriptionString()}-hover", _selected && !GetDisabled())
+                .AddClass("mud-list-item-disabled", GetDisabled())
                 .AddClass(Class)
                 .Build();
 
@@ -30,7 +38,7 @@ namespace MudBlazor
         protected NavigationManager UriHelper { get; set; } = null!;
 
         [CascadingParameter]
-        protected MudList? MudList { get; set; }
+        protected MudList<T>? MudList { get; set; }
 
         /// <summary>
         /// The text to display
@@ -41,14 +49,14 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.List.Selecting)]
-        public object? Value { get; set; }
+        public T? Value { get; set; }
 
         /// <summary>
-        /// Avatar to use if set.
+        /// Add an Avatar or custom icon content here. When this is set, Icon will be ignored
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.List.Behavior)]
-        public string? Avatar { get; set; }
+        [Category(CategoryTypes.Chip.Appearance)]
+        public RenderFragment? AvatarContent { get; set; }
 
         /// <summary>
         /// Link to a URL when clicked.
@@ -65,24 +73,12 @@ namespace MudBlazor
         public bool ForceLoad { get; set; }
 
         /// <summary>
-        /// Avatar CSS Class to apply if Avatar is set.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.List.Appearance)]
-        public string? AvatarClass { get; set; }
-
-        private bool _disabled;
-        /// <summary>
         /// If true, will disable the list item if it has onclick.
         /// The value can be overridden by the parent list.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public bool Disabled
-        {
-            get => _disabled || (MudList?.Disabled ?? false);
-            set => _disabled = value;
-        }
+        public bool Disabled { get; set; }
 
         /// <summary>
         /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
@@ -134,7 +130,7 @@ namespace MudBlazor
         public string ExpandMoreIcon { get; set; } = Icons.Material.Filled.ExpandMore;
 
         /// <summary>
-        /// If true, the List Subheader will be indented.
+        /// If true, the List Sub-header will be indented.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
@@ -156,7 +152,7 @@ namespace MudBlazor
 
         /// <summary>
         /// Expand or collapse nested list. Two-way bindable. Note: if you directly set this to
-        /// true or false (instead of using two-way binding) it will force the nested list's expansion state.
+        /// true or false (instead of using two-way binding) it will initialize the nested list's expansion state.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Expanding)]
@@ -164,13 +160,6 @@ namespace MudBlazor
 
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
-
-        /// <summary>
-        /// If true, expands the nested list on first display
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.List.Expanding)]
-        public bool InitiallyExpanded { get; set; }
 
         /// <summary>
         /// Display content of this list item. If set, this overrides Text
@@ -181,11 +170,7 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public bool OnClickHandlerPreventDefault
-        {
-            get => _onClickHandlerPreventDefault;
-            set => _onClickHandlerPreventDefault = value;
-        }
+        public bool OnClickHandlerPreventDefault { get; set; }
 
         /// <summary>
         /// Add child list items here to create a nested list.
@@ -200,19 +185,14 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
-        public MudListItem()
-        {
-            _expandedState = RegisterParameter(nameof(Expanded), () => Expanded, () => ExpandedChanged);
-        }
-
         protected async Task OnClickHandlerAsync(MouseEventArgs eventArgs)
         {
-            if (Disabled)
+            if (GetDisabled() || MudList?.GetReadOnly() == true)
             {
                 return;
             }
 
-            if (!_onClickHandlerPreventDefault)
+            if (!OnClickHandlerPreventDefault)
             {
                 if (NestedList != null)
                 {
@@ -222,7 +202,7 @@ namespace MudBlazor
                 {
                     if (MudList is not null)
                     {
-                        await MudList.SetSelectedValueAsync(Value);
+                        await MudList.SetSelectedValueAsync(GetValue());
                     }
                     await OnClick.InvokeAsync(eventArgs);
                     UriHelper.NavigateTo(Href, ForceLoad);
@@ -231,7 +211,7 @@ namespace MudBlazor
                 {
                     if (MudList is not null)
                     {
-                        await MudList.SetSelectedValueAsync(Value);
+                        await MudList.SetSelectedValueAsync(GetValue());
                     }
                     await OnClick.InvokeAsync(eventArgs);
                 }
@@ -245,7 +225,6 @@ namespace MudBlazor
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            await _expandedState.SetValueAsync(InitiallyExpanded);
             if (MudList is not null)
             {
                 await MudList.RegisterAsync(this);
@@ -270,12 +249,7 @@ namespace MudBlazor
 
         internal void SetSelected(bool selected)
         {
-            if (Disabled)
-            {
-                return;
-            }
-
-            if (_selected == selected)
+            if (GetDisabled() || _selected == selected)
             {
                 return;
             }
@@ -283,6 +257,15 @@ namespace MudBlazor
             _selected = selected;
             StateHasChanged();
         }
+
+        internal T? GetValue()
+        {
+            if (typeof(T) == typeof(string) && Value is null && Text is not null)
+                return (T)(object)Text;
+            return Value;
+        }
+
+        private bool GetDisabled() => Disabled || (MudList?.GetDisabled() ?? false);
 
         public void Dispose()
         {

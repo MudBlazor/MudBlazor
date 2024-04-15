@@ -400,4 +400,24 @@ public class ParameterStateTests
         // Assert
         result.Should().BeFalse();
     }
+
+    [Test]
+    public void ImplicitOperator()
+    {
+        // Arrange
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata("TestParameter1"))
+            .WithGetParameterValueFunc(() => 5)
+            .Attach();
+
+        // Act
+        parameterState.OnInitialized();
+        var value1 = parameterState.Value;
+        int value2 = parameterState;
+
+        // Assert
+        value1.Should().Be(5);
+        value2.Should().Be(5);
+    }
 }

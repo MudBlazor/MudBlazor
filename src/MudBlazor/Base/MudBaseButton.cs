@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
@@ -16,7 +14,7 @@ namespace MudBlazor
         /// buttons which will automatically activate the intended functionality. 
         /// </summary>
         [CascadingParameter]
-        protected IActivatable? Activateable { get; set; }
+        protected IActivatable? Activatable { get; set; }
 
         [CascadingParameter(Name = "ParentDisabled")]
         private bool ParentDisabled { get; set; }
@@ -65,6 +63,13 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
+        /// Title of the button, used for accessibility.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public string? Title { get; set; }
+
+        /// <summary>
         /// If true, the click event bubbles up to the containing/parent component.
         /// </summary>
         [Parameter]
@@ -72,11 +77,11 @@ namespace MudBlazor
         public bool ClickPropagation { get; set; }
 
         /// <summary>
-        /// If true, no drop-shadow will be used.
+        /// Determines whether the component has a drop-shadow. Default is true
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public bool DisableElevation { get; set; }
+        public bool DropShadow { get; set; } = true;
 
         /// <summary>
         /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
@@ -98,7 +103,7 @@ namespace MudBlazor
             if (GetDisabledState())
                 return;
             await OnClick.InvokeAsync(ev);
-            Activateable?.Activate(this, ev);
+            Activatable?.Activate(this, ev);
         }
 
         protected override void OnInitialized()

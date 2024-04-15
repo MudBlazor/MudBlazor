@@ -1,35 +1,42 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudMenuItem : MudComponentBase
     {
-        [CascadingParameter] public MudMenu MudMenu { get; set; }
+        [Inject]
+        protected NavigationManager UriHelper { get; set; } = null!;
 
-        [Parameter][Category(CategoryTypes.Menu.Behavior)] public RenderFragment ChildContent { get; set; }
-        [Parameter][Category(CategoryTypes.Menu.Behavior)] public bool Disabled { get; set; }
+        [Inject]
+        protected IJsApiService JsApiService { get; set; } = null!;
 
-        [Inject] public NavigationManager UriHelper { get; set; }
-        [Inject] public IJsApiService JsApiService { get; set; }
+        [CascadingParameter]
+        public MudMenu? MudMenu { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Menu.Behavior)]
+        public RenderFragment? ChildContent { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Menu.Behavior)]
+        public bool Disabled { get; set; }
 
         /// <summary>
         /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.ClickAction)]
-        public string Href { get; set; }
+        public string? Href { get; set; }
 
         /// <summary>
         /// Icon to be used for this menu entry
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public string Icon { get; set; }
+        public string? Icon { get; set; }
 
         /// <summary>
         /// The color of the icon. It supports the theme colors.
@@ -52,23 +59,34 @@ namespace MudBlazor
         [Category(CategoryTypes.Menu.ClickAction)]
         public bool AutoClose { get; set; } = true;
 
-        [Parameter][Category(CategoryTypes.Menu.ClickAction)] public string Target { get; set; }
-        [Parameter][Category(CategoryTypes.Menu.ClickAction)] public bool ForceLoad { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Menu.ClickAction)]
+        public string? Target { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Menu.ClickAction)]
+        public bool ForceLoad { get; set; }
 
         /// <summary>
         /// Raised when the menu item is activated by either the mouse or touch.
         /// Won't be raised if Href is also set.
         /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnClick { get; set; }
 
-        protected async Task OnClickHandler(MouseEventArgs ev)
+        protected async Task OnClickHandlerAsync(MouseEventArgs ev)
         {
             if (Disabled)
+            {
                 return;
+            }
 
             if (AutoClose)
             {
-                MudMenu.CloseMenu();
+                if (MudMenu is not null)
+                {
+                    await MudMenu.CloseMenuAsync();
+                }
             }
 
             if (Href != null)

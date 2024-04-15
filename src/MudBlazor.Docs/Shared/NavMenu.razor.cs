@@ -1,7 +1,5 @@
-﻿using System.Linq;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Extensions;
-using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
 
 namespace MudBlazor.Docs.Shared
@@ -28,21 +26,6 @@ namespace MudBlazor.Docs.Shared
             _section = NavMan.GetSection();
             _componentLink = NavMan.GetComponentLink();
             StateHasChanged();
-        }
-
-        bool IsSubGroupExpanded(MudComponent item)
-        {
-            #region comment about is subgroup expanded
-            //if the route contains any of the links of the subgroup, then the subgroup
-            //should be expanded
-            //Example:
-            //subgroup: form inputs & controls
-            //the subgroup "form inputs & controls" should be open if the current page has in the route
-            //a component included in the subgroup elements, that in this case are autocomplete, form, field,
-            //radio, select...
-            //this route `/components/autocomplete` should open the subgroup "form inputs..."
-            #endregion
-            return item.GroupComponents.Any(i => i.Link == _componentLink);
         }
     }
 }

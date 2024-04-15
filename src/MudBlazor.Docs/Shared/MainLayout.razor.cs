@@ -15,7 +15,7 @@ namespace MudBlazor.Docs.Shared
 
         protected override void OnInitialized()
         {
-            LayoutService.MajorUpdateOccured += LayoutServiceOnMajorUpdateOccured;
+            LayoutService.MajorUpdateOccurred += LayoutServiceOnMajorUpdateOccured;
             base.OnInitialized();
         }
 
@@ -44,7 +44,7 @@ namespace MudBlazor.Docs.Shared
 
         public void Dispose()
         {
-            LayoutService.MajorUpdateOccured -= LayoutServiceOnMajorUpdateOccured;
+            LayoutService.MajorUpdateOccurred -= LayoutServiceOnMajorUpdateOccured;
         }
 
         private void LayoutServiceOnMajorUpdateOccured(object sender, EventArgs e) => StateHasChanged();
