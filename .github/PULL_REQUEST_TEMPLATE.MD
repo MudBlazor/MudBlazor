@@ -24,6 +24,7 @@ Testing sections can be removed for documentation changes
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
 - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
+- [ ] Documentation (fix or improvement to the website or code docs)
 
 <!-- If you made any visual changes, provide screenshots of before/after. If it has moving parts, please provide high quality gif, webm, or mp4 -->
 

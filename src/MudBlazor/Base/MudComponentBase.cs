@@ -1,19 +1,19 @@
-﻿using System;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using MudBlazor.Interfaces;
-using MudBlazor.State;
 
 namespace MudBlazor
 {
 #nullable enable
-    public abstract partial class MudComponentBase : ComponentBase, IMudStateHasChanged
+    public abstract class MudComponentBase : ComponentBaseWithState, IMudStateHasChanged
     {
-        internal readonly ParameterSet Parameters = new();
-
         [Inject]
         private ILoggerFactory LoggerFactory { get; set; } = null!;
         private ILogger? _logger;
@@ -65,29 +65,6 @@ namespace MudBlazor
         {
             IsJSRuntimeAvailable = true;
             base.OnAfterRender(firstRender);
-        }
-
-        /// <inheritdoc />
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-            Parameters.OnInitialized();
-        }
-
-        /// <inheritdoc />
-        public override Task SetParametersAsync(ParameterView parameters)
-        {
-            // First thing to call in blazor lifecycle
-            // We need to attach everything that wasn't attached by the implicit RegisterParameterBuilder -> ParameterState or the RegisterParameterBuilder.Attach
-            AttachAllUnAttached();
-            return Parameters.SetParametersAsync(base.SetParametersAsync, parameters);
-        }
-
-        /// <inheritdoc />
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
-            Parameters.OnParametersSet();
         }
 
         /// <inheritdoc />

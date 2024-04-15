@@ -110,17 +110,18 @@ namespace MudBlazor
 
         public MudProgressLinear()
         {
-            _valueState = RegisterParameterBuilder<double>(nameof(Value))
+            using var registerScope = CreateRegisterScope();
+            _valueState = registerScope.RegisterParameter<double>(nameof(Value))
                 .WithParameter(() => Value)
                 .WithChangeHandler(OnParameterChangedShared)
                 .WithComparer(DoubleEpsilonEqualityComparer.Default);
-            _minState = RegisterParameterBuilder<double>(nameof(Min))
+            _minState = registerScope.RegisterParameter<double>(nameof(Min))
                 .WithParameter(() => Min)
                 .WithChangeHandler(OnParameterChangedShared);
-            _maxState = RegisterParameterBuilder<double>(nameof(Max))
+            _maxState = registerScope.RegisterParameter<double>(nameof(Max))
                 .WithParameter(() => Max)
                 .WithChangeHandler(OnParameterChangedShared);
-            _bufferValueState = RegisterParameterBuilder<double>(nameof(BufferValue))
+            _bufferValueState = registerScope.RegisterParameter<double>(nameof(BufferValue))
                 .WithParameter(() => BufferValue)
                 .WithChangeHandler(OnParameterChangedShared);
         }

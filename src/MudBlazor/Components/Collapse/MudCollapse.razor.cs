@@ -67,9 +67,9 @@ namespace MudBlazor
 
         public MudCollapse()
         {
-            _expandedState = RegisterParameterBuilder<bool>(nameof(Expanded))
-                .WithParameter(() => Expanded)
-                .WithEventCallback(() => ExpandedChanged)
+            using var register = CreateRegisterScope();
+            _expandedState = register.RegisterParameter<bool>(nameof(Expanded))
+                .WithParameter(() => Expanded).WithEventCallback(() => ExpandedChanged)
                 .WithChangeHandler(OnExpandedParameterChangedAsync);
         }
 
