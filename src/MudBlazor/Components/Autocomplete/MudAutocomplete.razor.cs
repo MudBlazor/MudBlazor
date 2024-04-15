@@ -890,25 +890,25 @@ namespace MudBlazor
         /// <summary>
         /// Sets focus to this Autocomplete.
         /// </summary>
-        public override async ValueTask FocusAsync()
+        public override ValueTask FocusAsync()
         {
-            await _elementReference.FocusAsync();
+            return _elementReference.FocusAsync();
         }
 
         /// <summary>
         /// Releases focus from this Autocomplete.
         /// </summary>
-        public override async ValueTask BlurAsync()
+        public override ValueTask BlurAsync()
         {
-            await _elementReference.BlurAsync();
+            return _elementReference.BlurAsync();
         }
 
         /// <summary>
         /// Selects all of the current text within the Autocomplete text box.
         /// </summary>
-        public override async ValueTask SelectAsync()
+        public override ValueTask SelectAsync()
         {
-            await _elementReference.SelectAsync();
+            return _elementReference.SelectAsync();
         }
 
         /// <summary>
