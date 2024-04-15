@@ -19,7 +19,7 @@ internal interface IParameterRegistrationBuilderScope : IDisposable
     /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered. 
     /// </remarks>
     /// <returns>A parameter builder for registering a parameter of the specified type.</returns>
-    RegisterParameterBuilder<T> CreateParameterBuilder<T>();
+    RegisterParameterBuilder<T> RegisterParameter<T>();
 
     /// <summary>
     /// Creates a parameter builder for registering a parameter.
@@ -30,5 +30,5 @@ internal interface IParameterRegistrationBuilderScope : IDisposable
     /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered. 
     /// </remarks>
     /// <returns>A parameter builder for registering a parameter of the specified type.</returns>
-    RegisterParameterBuilder<T> CreateParameterBuilder<T>(string parameterName);
+    RegisterParameterBuilder<T> RegisterParameter<T>(string parameterName);
 }

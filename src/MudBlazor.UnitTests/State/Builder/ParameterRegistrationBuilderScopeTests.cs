@@ -50,8 +50,8 @@ public class ParameterRegistrationBuilderScopeTests
         void OnScopeEndedAction() => scopeEndedCount++;
         using var scope = new ParameterRegistrationBuilderScope(OnScopeEndedAction);
 
-        scope.CreateParameterBuilder<int>();
-        scope.CreateParameterBuilder<string>();
+        scope.RegisterParameter<int>();
+        scope.RegisterParameter<string>();
 
         // Act
         ((IDisposable)scope).Dispose();
@@ -70,12 +70,12 @@ public class ParameterRegistrationBuilderScopeTests
         var scope = new ParameterRegistrationBuilderScope(OnScopeEndedAction);
         using (scope)
         {
-            scope.CreateParameterBuilder<int>();
-            scope.CreateParameterBuilder<string>();
+            scope.RegisterParameter<int>();
+            scope.RegisterParameter<string>();
         }
 
-        scope.CreateParameterBuilder<double>();
-        scope.CreateParameterBuilder<float>();
+        scope.RegisterParameter<double>();
+        scope.RegisterParameter<float>();
         // Act
         ((IDisposable)scope).Dispose();
 

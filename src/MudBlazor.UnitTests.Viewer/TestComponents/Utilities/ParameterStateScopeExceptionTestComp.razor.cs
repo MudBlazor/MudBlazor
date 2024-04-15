@@ -14,15 +14,15 @@ public partial class ParameterStateScopeExceptionTestComp : MudComponentBase
     {
         using (var registerScope1 = CreateRegisterScope())
         {
-            _a = registerScope1.CreateParameterBuilder<int>(nameof(A))
+            _a = registerScope1.RegisterParameter<int>(nameof(A))
                 .WithParameter(() => A);
-            _b = registerScope1.CreateParameterBuilder<int>(nameof(B))
+            _b = registerScope1.RegisterParameter<int>(nameof(B))
                 .WithParameter(() => B);
         }
 
         using (var registerScope2 = CreateRegisterScope())
         {
-            _c = registerScope2.CreateParameterBuilder<int>(nameof(C))
+            _c = registerScope2.RegisterParameter<int>(nameof(C))
                 .WithParameter(() => C);
         }
     }

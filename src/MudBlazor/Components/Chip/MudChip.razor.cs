@@ -13,7 +13,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public MudChip()
     {
         using var registerScope = CreateRegisterScope();
-        IsSelectedState = registerScope.CreateParameterBuilder<bool>(nameof(IsSelected))
+        IsSelectedState = registerScope.RegisterParameter<bool>(nameof(IsSelected))
             .WithParameter(() => IsSelected)
             .WithEventCallback(() => IsSelectedChanged)
             .WithChangeHandler(OnIsSelectedChangedAsync);

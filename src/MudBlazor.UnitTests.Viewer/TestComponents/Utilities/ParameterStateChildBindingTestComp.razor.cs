@@ -33,7 +33,7 @@ public partial class ParameterStateChildBindingTestComp : MudComponentBase
     public ParameterStateChildBindingTestComp()
     {
         using var registerScope = CreateRegisterScope();
-        _isExpandedState = registerScope.CreateParameterBuilder<bool>(nameof(IsExpanded))
+        _isExpandedState = registerScope.RegisterParameter<bool>(nameof(IsExpanded))
             .WithParameter(() => IsExpanded)
             .WithEventCallback(() => IsExpandedChanged)
             .WithChangeHandler(OnParameterChanged);

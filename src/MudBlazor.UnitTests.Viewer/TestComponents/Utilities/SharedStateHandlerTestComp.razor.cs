@@ -10,30 +10,30 @@ public partial class SharedStateHandlerTestComp : MudComponentBase
     {
         // abc shared handler group
         using var registerScope = CreateRegisterScope();
-        _a = registerScope.CreateParameterBuilder<int>(nameof(A))
+        _a = registerScope.RegisterParameter<int>(nameof(A))
             .WithParameter(() => A)
             .WithChangeHandler(OnAbcChanged);
-        _b = registerScope.CreateParameterBuilder<int>(nameof(B))
+        _b = registerScope.RegisterParameter<int>(nameof(B))
             .WithParameter(() => B)
             .WithChangeHandler(OnAbcChanged);
-        _c = registerScope.CreateParameterBuilder<int>(nameof(C))
+        _c = registerScope.RegisterParameter<int>(nameof(C))
             .WithParameter(() => C)
             .WithChangeHandler(OnAbcChanged);
         // o and p are not sharing their handler because lambdas are excluded, even if they contain the same code
-        _o = registerScope.CreateParameterBuilder<int>(nameof(O))
+        _o = registerScope.RegisterParameter<int>(nameof(O))
             .WithParameter(() => O)
             .WithChangeHandler(() => OpHandlerCallCount++);
-        _p = registerScope.CreateParameterBuilder<int>(nameof(P))
+        _p = registerScope.RegisterParameter<int>(nameof(P))
             .WithParameter(() => P)
             .WithChangeHandler(() => OpHandlerCallCount++);
         // xyz shared handler group
-        _x = registerScope.CreateParameterBuilder<int>(nameof(X))
+        _x = registerScope.RegisterParameter<int>(nameof(X))
             .WithParameter(() => X)
             .WithChangeHandler(OnXyzChanged);
-        _y = registerScope.CreateParameterBuilder<int>(nameof(Y))
+        _y = registerScope.RegisterParameter<int>(nameof(Y))
             .WithParameter(() => Y)
             .WithChangeHandler(OnXyzChanged);
-        _z = registerScope.CreateParameterBuilder<int>(nameof(Z))
+        _z = registerScope.RegisterParameter<int>(nameof(Z))
             .WithParameter(() => Z)
             .WithChangeHandler(OnXyzChanged);
     }

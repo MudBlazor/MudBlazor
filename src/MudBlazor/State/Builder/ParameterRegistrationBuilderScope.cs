@@ -36,10 +36,10 @@ internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilder
     }
 
     /// <inheritdoc/>
-    public RegisterParameterBuilder<T> CreateParameterBuilder<T>(string parameterName) => CreateParameterBuilder<T>().WithName(parameterName);
+    public RegisterParameterBuilder<T> RegisterParameter<T>(string parameterName) => RegisterParameter<T>().WithName(parameterName);
 
     /// <inheritdoc/>
-    public RegisterParameterBuilder<T> CreateParameterBuilder<T>()
+    public RegisterParameterBuilder<T> RegisterParameter<T>()
     {
         var builder = new RegisterParameterBuilder<T>();
         _builders.Add(builder);

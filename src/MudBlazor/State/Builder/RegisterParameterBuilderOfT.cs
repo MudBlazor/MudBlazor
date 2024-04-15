@@ -172,7 +172,7 @@ internal class RegisterParameterBuilder<T> : IParameterBuilderAttach
     /// Builds the parameter state.
     /// </summary>
     /// <returns>The created parameter state.</returns>
-    public ParameterStateInternal<T> Attach() => _parameterStateLazy.Value;
+    internal ParameterStateInternal<T> Attach() => _parameterStateLazy.Value;
 
     private ParameterStateInternal<T> CreateParameterState()
     {

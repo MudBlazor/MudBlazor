@@ -18,7 +18,7 @@ namespace MudBlazor
         public MudListItem()
         {
             using var registerScope = CreateRegisterScope();
-            _expandedState = registerScope.CreateParameterBuilder<bool>(nameof(Expanded))
+            _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
                 .WithParameter(() => Expanded)
                 .WithEventCallback(() => ExpandedChanged);
         }

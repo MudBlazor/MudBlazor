@@ -119,11 +119,11 @@ namespace MudBlazor
         public MudAvatarGroup()
         {
             using var registerScope = CreateRegisterScope();
-            registerScope.CreateParameterBuilder<int>(nameof(Spacing))
+            registerScope.RegisterParameter<int>(nameof(Spacing))
                 .WithParameter(() => Spacing)
                 .WithChangeHandler(() => _childrenNeedUpdates = true)
                 .Attach();
-            registerScope.CreateParameterBuilder<int>(nameof(Max))
+            registerScope.RegisterParameter<int>(nameof(Max))
                 .WithParameter(() => Max)
                 .WithChangeHandler(() => _childrenNeedUpdates = true)
                 .Attach();

@@ -27,7 +27,7 @@ namespace MudBlazor
             Text = GetColorTextValue();
             AdornmentAriaLabel = "Open Color Picker";
             using var registerScope = CreateRegisterScope();
-            _throttleIntervalState = registerScope.CreateParameterBuilder<int>(nameof(ThrottleInterval))
+            _throttleIntervalState = registerScope.RegisterParameter<int>(nameof(ThrottleInterval))
                 .WithParameter(() => ThrottleInterval)
                 .WithChangeHandler(OnThrottleIntervalParameterChanged);
         }
