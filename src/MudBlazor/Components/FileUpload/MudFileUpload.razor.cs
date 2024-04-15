@@ -18,7 +18,7 @@ namespace MudBlazor
     public partial class MudFileUpload<T> : MudFormComponent<T, string>
     {
         [Inject]
-        private IJSRuntime? JsRuntime { get; set; }
+        private IJSRuntime JsRuntime { get; set; } = null!;
 
         public MudFileUpload() : base(new DefaultConverter<T>()) { }
 
@@ -150,7 +150,7 @@ namespace MudBlazor
         }
 
         public async Task OpenFilePickerAsync()
-            => await (JsRuntime?.InvokeVoidAsync("mudWindow.click", _id) ?? ValueTask.CompletedTask);
+            => await JsRuntime.InvokeVoidAsync("mudWindow.click", _id);
 
         private async Task OnChangeAsync(InputFileChangeEventArgs args)
         {
