@@ -336,7 +336,6 @@ namespace MudBlazor
             }
             if (Value is null)
                 return Task.CompletedTask;
-            Console.WriteLine($"Item[{Value}].Selected => {arg.Value}");
             if (arg.Value)
                 return MudTreeRoot.SelectAsync(Value);
             return MudTreeRoot.UnselectAsync(Value);

@@ -243,7 +243,6 @@ namespace MudBlazor
         /// </summary>
         private Task OnSelectedValueChangedAsync(ParameterChangedEventArgs<T?> args)
         {
-            Console.WriteLine($"SelectedValue {args.LastValue} => {args.Value}");
             // on first render the children are not yet initialized, so ignore this update
             if (_isFirstRender)
                 return Task.CompletedTask;
@@ -312,7 +311,6 @@ namespace MudBlazor
 
         internal async Task AddChildAsync(MudTreeViewItem<T> item)
         {
-            Console.WriteLine($"add child {item.Value}");
             _childItems.Add(item);
             // this is to ensure that setting Selected="true" on the item will update the single/multiselection.
             // Note: Setting Selected="false" has no effect however because it would cancel the initialization of the SelectedValue or SelectedValues !
