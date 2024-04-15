@@ -19,14 +19,14 @@ Testing sections can be removed for documentation changes
 <!-- Have you created new tests or updated existing ones? -->
 <!-- e.g. unit | visually | none -->
 
-## Types of changes
-<!-- What types of changes does your code introduce? Put an `x` in all the boxes that apply: -->
+## Type of Changes
+<!-- What type of changes does your code introduce? Put an `x` in only one box that applies best: -->
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
 - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
 - [ ] Documentation (fix or improvement to the website or code docs)
 
-<!-- If you made any visual changes, provide screenshots of before/after. If it has moving parts, please provide high quality gif, webm, or mp4 -->
+<!-- If you made any visual changes, provide screenshots of before/after. If it has moving parts, please provide a high quality video. -->
 
 ## Checklist
 <!-- Go over all the following points, and put an `x` in all the boxes that apply. -->
