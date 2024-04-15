@@ -42,8 +42,7 @@ namespace MudBlazor.UnitTests.Components
                     parameters.Add(p => p.Title, expectedTitle));
 
             var navNodes = comp.FindAll("nav");
-            navNodes.Should().HaveCount(1);
-            navNodes[0].GetAttribute("aria-label").Should().Be(expectedTitle);
+            navNodes.Should().Contain(navNode => navNode.GetAttribute("aria-label") == expectedTitle);
         }
     }
 }

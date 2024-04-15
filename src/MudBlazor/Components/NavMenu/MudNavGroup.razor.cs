@@ -15,14 +15,15 @@ namespace MudBlazor
 
         public MudNavGroup()
         {
-            _disabledState = RegisterParameterBuilder<bool>(nameof(Disabled))
+            using var registerScope = CreateRegisterScope();
+
+            _disabledState = registerScope.RegisterParameter<bool>(nameof(Disabled))
                 .WithParameter(() => Disabled)
                 .WithChangeHandler(UpdateNavigationContext);
 
-            _parentNavigationContextState = RegisterParameterBuilder<NavigationContext?>(nameof(ParentNavigationContext))
+            _parentNavigationContextState = registerScope.RegisterParameter<NavigationContext?>(nameof(ParentNavigationContext))
                 .WithParameter(() => ParentNavigationContext)
                 .WithChangeHandler(UpdateNavigationContext);
-
         }
 
         protected override void OnInitialized()
