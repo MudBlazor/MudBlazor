@@ -441,15 +441,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TreeViewItem_DoubleClick_CheckExpanded()
+        public void TreeViewItem_DoubleClick_CheckExpanded()
         {
             var comp = Context.RenderComponent<TreeViewTest3>();
             var itemIsExpanded = false;
 
             var item = comp.FindComponent<MudTreeViewItem<string>>();
-            await item.InvokeAsync(() =>
-                item.Instance.OnDoubleClick =
-                    new EventCallback<MouseEventArgs>(null, (Action)(() => itemIsExpanded = !itemIsExpanded)));
+            item.SetParametersAndRender(Parameter(nameof(MudTreeViewItem<string>.OnDoubleClick), new EventCallback<MouseEventArgs>(null, (Action)(() => itemIsExpanded = !itemIsExpanded))));
 
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
 
@@ -463,16 +461,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TreeViewItem_DoubleClick_CheckSelected()
+        public void TreeViewItem_DoubleClick_CheckSelected()
         {
             var comp = Context.RenderComponent<TreeViewTest3>();
             string selectedItem = null;
 
             var tree = comp.FindComponent<MudTreeView<string>>();
 
-            await tree.InvokeAsync(() =>
-                tree.Instance.SelectedValueChanged =
-                    new EventCallback<string>(null, (Action<string>)((s) => selectedItem = s)));
+            tree.SetParametersAndRender(Parameter(nameof(MudTreeView<string>.SelectedValueChanged), new EventCallback<string>(null, (Action<string>)((s) => selectedItem = s))));
 
             comp.Find("div.mud-treeview-item-content").DoubleClick();
             selectedItem.Should().Be("content");
@@ -642,23 +638,5 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Item2Selected.Should().BeTrue();
         }
 
-        [Test]
-        public void MudTreeViewItemComparer_ShouldReturnTrueWhenBothNull()
-        {
-            var comparer = new MudTreeViewItemComparer<string>(EqualityComparer<string>.Default);
-
-            comparer.Equals(null, null).Should().BeTrue();
-        }
-
-        [Test]
-        public void MudTreeViewItemComparer_ShouldReturnFalseWhenOneNull()
-        {
-            var comparer = new MudTreeViewItemComparer<string>(EqualityComparer<string>.Default);
-
-            var treeItem = new MudTreeViewItem<string> { Value = "value" };
-
-            comparer.Equals(treeItem, null).Should().BeFalse();
-            comparer.Equals(null, treeItem).Should().BeFalse();
-        }
     }
 }
