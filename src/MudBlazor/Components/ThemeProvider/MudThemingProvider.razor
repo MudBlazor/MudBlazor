@@ -1,8 +1,9 @@
 ﻿@namespace MudBlazor
+@inherits ComponentBaseWithState
 
 @if(!DefaultScrollbar)
 {
-    @((MarkupString)BuildMudBlazorScrollbar())
+    @((MarkupString)MudThemingProvider.BuildMudBlazorScrollbar())
 }
 
 @*Needed for charts, maybe put in bool, IncludeCharts="true"??*@

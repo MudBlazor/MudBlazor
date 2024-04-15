@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
+using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.Utilities;
 using NUnit.Framework;
@@ -252,11 +253,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DarkMode_Test()
         {
-            var comp = Context.RenderComponent<MudThemeProvider>();
+            var comp = Context.RenderComponent<MudThemeProvider>(parameters => parameters
+                .Add(p => p.IsDarkMode, true));
             comp.Should().NotBeNull();
-#pragma warning disable BL0005
-            comp.Instance.IsDarkMode = true;
-            comp.Instance._isDarkMode.Should().BeTrue();
+            comp.Instance.GetState(x=> x.IsDarkMode).Should().BeTrue();
         }
 
         [Test]
