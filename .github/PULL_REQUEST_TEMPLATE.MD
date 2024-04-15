@@ -9,12 +9,12 @@ Testing sections can be removed for documentation changes
 <!-- Keep the title short and descriptive, as it will be used as a commit message -->
 
 ## Description
-<!-- Describe your changes in detail any why -->
+<!-- Describe your changes in detail and why. -->
 <!-- Note any issues that are resolved by this PR -->
-<!-- e.g. resolves #1337 or fixes #9310 -->
+<!-- e.g. resolves #1337 or fixes #9310. -->
 
 ## How Has This Been Tested?
-<!-- All PRs should implement unit tests if possible -->
+<!-- All PRs should implement unit tests if possible. -->
 <!-- Please describe how you tested your changes. -->
 <!-- Have you created new tests or updated existing ones? -->
 <!-- e.g. unit | visually | none -->
@@ -26,7 +26,7 @@ Testing sections can be removed for documentation changes
 - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
 - [ ] Documentation (fix or improvement to the website or code docs)
 
-<!-- If you made any visual changes, provide screenshots of before/after. If it has moving parts, please provide a high quality video. -->
+<!-- If you made any visual changes, provide screenshots of before/after. If it has moving parts, please attach a high quality video. -->
 
 ## Checklist
 <!-- Go over all the following points, and put an `x` in all the boxes that apply. -->
