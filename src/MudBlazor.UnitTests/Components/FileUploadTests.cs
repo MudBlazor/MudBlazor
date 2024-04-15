@@ -116,7 +116,7 @@ namespace MudBlazor.UnitTests.Components
 
             var label = comp.Find("label");
             label.ToMarkup().Should().Contain("Upload");
-            label.GetAttribute("for").Should().StartWith("mud_fileupload_"); //ensure button markup renders
+            label.GetAttribute("for").Should().StartWith("mud_fileupload_"); // ensure button markup renders
 
             var after = comp.Find(".mud-input-control-input-container div");
             after.MarkupMatches("<div>Select Template</div>");
@@ -130,9 +130,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FileUploadButtonTemplateContextTest>();
 
-            var label = comp.Find("label");
-            label.ToMarkup().Should().Contain("Upload");
-            label.GetAttribute("for").Should().StartWith("mud_fileupload_"); //ensure button markup renders
+            var openFilePickerButton = comp.Find("button#open-file-picker-button");
+            openFilePickerButton.ToMarkup().Should().Contain("Open file picker");
 
             var clearButton = comp.Find("button#clear-button");
             clearButton.ToMarkup().Should().Contain("Clear");
@@ -145,7 +144,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task FileUpload_ButtonTemplateContext_ClearAsync_Action_Clears_Files()
         {
             var fileName = "cat.jpg";
-            var defaultFile = new DummyBrowserFile(fileName, DateTimeOffset.Now, 0, "image/jpeg", Array.Empty<byte>());
+            var defaultFile = new DummyBrowserFile(fileName, DateTimeOffset.Now, 0, "image/jpeg", []);
             var comp = Context.RenderComponent<FileUploadButtonTemplateContextTest>(
                 ComponentParameterFactory.Parameter(nameof(FileUploadButtonTemplateContextTest.File), defaultFile));
             var fileUploadComp = comp.FindComponent<MudFileUpload<IBrowserFile>>();
@@ -153,11 +152,30 @@ namespace MudBlazor.UnitTests.Components
             var clearButton = fileUploadComp.Find("button#clear-button");
 
             fileUploadInstance.Files.Should().NotBeNull();
-            fileUploadInstance.Files.Name.Should().Be(fileName);
+            fileUploadInstance.Files!.Name.Should().Be(fileName);
 
             await comp.InvokeAsync(() => clearButton.Click());
 
             fileUploadInstance.Files.Should().BeNull();
+        }
+
+        /// <summary>
+        /// Verifies the button template context's OpenFilePickerAsync opens the file picker when the file picker button is clicked
+        /// <remarks>
+        /// Native HTML buttons trigger the onclick event when the space or enter keys are pressed.
+        /// If users use something that does not render a native button, they will need to add the appropriate keyboard event handlers.
+        /// </remarks>
+        /// </summary>
+        [Test]
+        public async Task FileUploadButtonTemplateContextOpenFilePickerButton_Should_OpenFilePicker_When_Clicked()
+        {
+            var comp = Context.RenderComponent<FileUploadButtonTemplateContextTest>();
+            var fileUploadComp = comp.FindComponent<MudFileUpload<IBrowserFile>>();
+            var openFilePickerButton = fileUploadComp.Find("button#open-file-picker-button");
+
+            await comp.InvokeAsync(() => openFilePickerButton.Click());
+
+            Context.JSInterop.Invocations.Should().ContainSingle(invocation => invocation.Identifier == "mudWindow.click");
         }
 
         /// <summary>
