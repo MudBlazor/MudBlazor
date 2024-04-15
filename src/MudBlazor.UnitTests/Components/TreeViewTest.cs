@@ -368,25 +368,25 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("input.mud-checkbox-input").Count.Should().Be(10);
             comp.Find("input.mud-checkbox-input").Change(true);
             comp.Instance.SubItemSelected.Should().BeTrue();
-            comp.Instance.ParentItemSelected.Should().BeTrue();
+            comp.Instance.Item1Selected.Should().BeTrue();
             comp.FindAll("input.mud-checkbox-input")[2].Change(false);
             comp.Instance.SubItemSelected.Should().BeFalse();
-            comp.Instance.ParentItemSelected.Should().BeTrue();
+            comp.Instance.Item1Selected.Should().BeTrue();
         }
 
         [Test]
         public void Normal_Activate_CheckActivated_ActivateAnother_CheckBoth()
         {
-            var comp = Context.RenderComponent<TreeViewTest1>();
-            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(0);
+            var comp = Context.RenderComponent<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+            comp.FindAll(".mud-checkbox-true").Count.Should().Be(0);
             comp.Find("div.mud-treeview-item-content").Click();
-            comp.Instance.Item1Activated.Should().BeTrue();
-            comp.Instance.Item2Activated.Should().BeFalse();
-            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(1);
+            comp.Instance.Item1Selected.Should().BeTrue();
+            comp.Instance.Item2Selected.Should().BeFalse();
+            comp.FindAll(".mud-checkbox-true").Count.Should().Be(4); // item1 + entire sub-tree checked
             comp.FindAll("div.mud-treeview-item-content")[4].Click();
-            comp.Instance.Item1Activated.Should().BeTrue();
-            comp.Instance.Item2Activated.Should().BeTrue();
-            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(2);
+            comp.Instance.Item1Selected.Should().BeTrue();
+            comp.Instance.Item2Selected.Should().BeTrue();
+            comp.FindAll(".mud-checkbox-true").Count.Should().Be(10);  // + item2 + entire sub-tree checked
         }
 
         [Test]
@@ -395,27 +395,27 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TreeViewTest7>();
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(0);
             comp.Find("div.mud-treeview-item-content").Click();
-            comp.Instance.Item1Activated.Should().BeTrue();
-            comp.Instance.Item2Activated.Should().BeFalse();
+            comp.Instance.Item1Selected.Should().BeTrue();
+            comp.Instance.Item2Selected.Should().BeFalse();
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(1);
             comp.FindAll("div.mud-treeview-item-content")[4].Click();
-            comp.Instance.Item1Activated.Should().BeFalse();
-            comp.Instance.Item2Activated.Should().BeTrue();
+            comp.Instance.Item1Selected.Should().BeFalse();
+            comp.Instance.Item2Selected.Should().BeTrue();
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(1);
         }
 
         [Test]
         public void Normal_Activate_CheckActivated_Deactivate_Check()
         {
-            var comp = Context.RenderComponent<TreeViewTest1>();
+            var comp = Context.RenderComponent<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.ToggleSelection));
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(0);
             comp.Find("div.mud-treeview-item-content").Click();
-            comp.Instance.Item1Activated.Should().BeTrue();
-            comp.Instance.Item2Activated.Should().BeFalse();
+            comp.Instance.Item1Selected.Should().BeTrue();
+            comp.Instance.Item2Selected.Should().BeFalse();
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(1);
             comp.Find("div.mud-treeview-item-content").Click();
-            comp.Instance.Item1Activated.Should().BeFalse();
-            comp.Instance.Item2Activated.Should().BeFalse();
+            comp.Instance.Item1Selected.Should().BeFalse();
+            comp.Instance.Item2Selected.Should().BeFalse();
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(0);
         }
 
@@ -439,30 +439,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-treeview-item-content")[2].Click();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(8);
         }
-#pragma warning disable BL0005
-        //        [Test]
-        //        public async Task TreeView_OtherTest()
-        //        {
-        //            var comp = Context.RenderComponent<TreeViewTest2>();
-        //            var item = comp.FindComponent<MudTreeViewItem<string>>();
-        //            await comp.InvokeAsync(() => item.Instance.Disabled = true);
-        //            comp.WaitForAssertion(() => item.Instance.Selected.Should().BeFalse());
-        //            await comp.InvokeAsync(() => item.Instance.Selected = true);
-        //            comp.WaitForAssertion(() => item.Instance.Selected.Should().BeTrue());
-        //            await comp.InvokeAsync(() => item.Instance.SelectItem(true));
-        //            comp.WaitForAssertion(() => item.Instance.Selected.Should().BeTrue());
-        //            comp.WaitForAssertion(() => item.Instance.ArrowExpanded.Should().BeFalse());
-        //            await comp.InvokeAsync(() => item.Instance.ArrowExpanded = true);
-        //            comp.WaitForAssertion(() => item.Instance.ArrowExpanded.Should().BeTrue());
-        //            await comp.InvokeAsync(() => item.Instance.ArrowExpanded = true);
-        //            comp.WaitForAssertion(() => item.Instance.ArrowExpanded.Should().BeTrue());
-
-        //            comp.WaitForAssertion(() => item.Instance.Expanded.Should().BeTrue());
-        //            await comp.InvokeAsync(() => item.Instance.OnItemExpanded(true));
-        //            comp.WaitForAssertion(() => item.Instance.Expanded.Should().BeTrue());
-
-        //            await comp.InvokeAsync(() => item.Instance.Select(false));
-        //        }
 
         [Test]
         public async Task TreeViewItem_DoubleClick_CheckExpanded()
@@ -591,7 +567,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TreeView_SelectedValue_ShouldUseCompareParameter()
+        public void TreeView_SelectedValue_ShouldUseComparer()
         {
             // test tree with items ("Ax", "Bx", "Cx", "Dx")
             var comp = Context.RenderComponent<TreeViewCompareTest>();
@@ -635,18 +611,15 @@ namespace MudBlazor.UnitTests.Components
         /// selected values are updated correctly. 
         /// </summary>
         [Test]
-        public async Task TreeView_SelectedValues_ShouldUseCompareParameter()
+        public void TreeView_SelectedValues_ShouldUseComparer()
         {
-            // tree containing two children with values AA and AB
-            var comp = Context.RenderComponent<TreeViewCompareMultiSelectTest>();
-
-            await comp.InvokeAsync(() => comp.Instance.Item1.SelectedChanged.InvokeAsync(true));
-            await comp.InvokeAsync(() => comp.Instance.Item2.SelectedChanged.InvokeAsync(true));
+            // tree containing two children with values AA and AC
+            var comp = Context.RenderComponent<TreeViewComparerMultiSelectTest>(self => self.Add(x => x.SelectedValues, ["AA"]));
 
             comp.Instance.Item1Selected.Should().BeTrue();
-            comp.Instance.Item2Selected.Should().BeTrue();
+            comp.Instance.Item2Selected.Should().BeFalse();
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Compare,
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Comparer,
                 new DelegateEqualityComparer<string>(
                     (x, y) =>
                     {
@@ -666,7 +639,7 @@ namespace MudBlazor.UnitTests.Components
             ));
 
             comp.Instance.Item1Selected.Should().BeTrue();
-            comp.Instance.Item2Selected.Should().BeFalse();
+            comp.Instance.Item2Selected.Should().BeTrue();
         }
 
         [Test]

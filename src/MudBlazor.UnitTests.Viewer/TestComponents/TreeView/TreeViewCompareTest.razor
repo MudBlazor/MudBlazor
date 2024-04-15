@@ -2,10 +2,10 @@
 @namespace MudBlazor.UnitTests.TestComponents
 
 <MudTreeView T="string" SelectionMode="SelectionMode.ToggleSelection" @bind-SelectedValue="SelectedValue" Comparer="Comparer">
-    <MudTreeViewItem Value='"Ax"' @bind-Activated="_item1Activated" @bind-Selected="_parentItemSelected">
+    <MudTreeViewItem Value='"Ax"' @bind-Selected="_item1Selected">
         <MudTreeViewItem Value='"Bx"' />
     </MudTreeViewItem>
-    <MudTreeViewItem Value='"Cx"' @bind-Activated="_item2Activated">
+    <MudTreeViewItem Value='"Cx"' @bind-Selected="_item2Selected">
         <MudTreeViewItem Value='"Dx"' />
     </MudTreeViewItem>
 </MudTreeView>
@@ -13,24 +13,19 @@
 <p class="selected-value">
     @SelectedValue
 </p>
-<p class="parent-selected">
-    @_parentItemSelected
-</p>
 <p class="item1-activated">
-    @_item1Activated
+    @_item1Selected
 </p>
 <p class="item2-activated">
-    @_item2Activated
+    @_item2Selected
 </p>
 @code{
     [Parameter]
     public string SelectedValue { get; set; }
 
-    private bool _parentItemSelected;
+    private bool _item1Selected;
 
-    private bool _item1Activated;
-
-    private bool _item2Activated;
+    private bool _item2Selected;
 
     [Parameter]
     public IEqualityComparer<string> Comparer { get; set; } = new DelegateEqualityComparer<string>(

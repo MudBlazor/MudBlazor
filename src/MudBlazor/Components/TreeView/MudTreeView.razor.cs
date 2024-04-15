@@ -258,7 +258,7 @@ namespace MudBlazor
             if (_isFirstRender)
             {
                 // on first render the children are not yet initialized, so just initialize the selection
-                _selection = args.Value is not null ? new HashSet<T>(args.Value!) : new HashSet<T>();
+                _selection = args.Value is not null ? new HashSet<T>(args.Value!, Comparer) : new HashSet<T>(Comparer);
                 return Task.CompletedTask;
             }
             return SetSelectedValuesAsync(args.Value ?? Array.Empty<T>());
@@ -369,7 +369,7 @@ namespace MudBlazor
         private async Task SetSelectedValuesAsync(IReadOnlyCollection<T> newValues)
         {
             var allChildValues = GetChildValuesRecursive();
-            var newSelection = new HashSet<T>(newValues.Where(x => allChildValues.Contains(x)));
+            var newSelection = new HashSet<T>(newValues.Where(x => allChildValues.Contains(x)), Comparer);
             if (_selection.IsEqualTo(newSelection))
                 return;
             _selection = newSelection;
@@ -394,10 +394,10 @@ namespace MudBlazor
         {
             HashSet<T> selection;
             if (MultiSelection)
-                selection = new HashSet<T>(_selection);
+                selection = new HashSet<T>(_selection, Comparer);
             else
             {
-                selection = new HashSet<T>();
+                selection = new HashSet<T>(Comparer);
                 if (_selectedValueState.Value != null)
                     selection.Add(_selectedValueState.Value);
             }
@@ -407,7 +407,7 @@ namespace MudBlazor
         // TODO: speed this up with caching
         private HashSet<T> GetChildValuesRecursive(IEnumerable<MudTreeViewItem<T>>? children = null, HashSet<T>? values = null)
         {
-            values ??= new HashSet<T>();
+            values ??= new HashSet<T>(Comparer);
             children ??= _childItems;
 
             foreach (var item in children)
