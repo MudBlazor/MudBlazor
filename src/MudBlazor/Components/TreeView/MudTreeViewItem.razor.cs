@@ -44,9 +44,9 @@ namespace MudBlazor
 
         protected string ContentClassname =>
             new CssBuilder("mud-treeview-item-content")
-                .AddClass("cursor-pointer", !Disabled && (!ReadOnly || MudTreeRoot?.ExpandOnClick == true && HasChild))
-                .AddClass("mud-ripple", MudTreeRoot?.Ripple == true && !Disabled && (!ReadOnly || MudTreeRoot?.ExpandOnClick == true && HasChild))
-                .AddClass($"mud-treeview-item-selected",!Disabled && !MultiSelection && _selectedState.Value)
+                .AddClass("cursor-pointer", !Disabled && (!ReadOnly || ExpandOnClick && HasChild))
+                .AddClass("mud-ripple", MudTreeRoot?.Ripple == true && !Disabled && !ExpandOnDoubleClick && (!ReadOnly || ExpandOnClick && HasChild))
+                .AddClass($"mud-treeview-item-selected", !Disabled && !MultiSelection && _selectedState)
                 .Build();
 
         public string TextClassname =>
@@ -344,13 +344,14 @@ namespace MudBlazor
         }
 
         private bool ReadOnly => MudTreeRoot is null || MudTreeRoot.ReadOnly;
+        private bool ExpandOnClick => MudTreeRoot is null || MudTreeRoot.ExpandOnClick;
+        private bool ExpandOnDoubleClick => MudTreeRoot is null || MudTreeRoot.ExpandOnDoubleClick;
+        private bool Ripple => MudTreeRoot is null || MudTreeRoot.Ripple;
 
         protected async Task OnItemClicked(MouseEventArgs ev)
         {
-            var expandOnClick = MudTreeRoot?.ExpandOnClick ?? false;
-            var expandOnDoubleClick = MudTreeRoot?.ExpandOnDoubleClick ?? false;
             // note: when both click and doubleClick are enabled, doubleClick wins
-            if (HasChild && expandOnClick && !expandOnDoubleClick)
+            if (HasChild && ExpandOnClick && !ExpandOnDoubleClick)
             {
                 await _expandedState.SetValueAsync(!_expandedState);
                 await TryInvokeServerLoadFunc();
@@ -369,8 +370,7 @@ namespace MudBlazor
 
         protected async Task OnItemDoubleClicked(MouseEventArgs ev)
         {
-            var expandOnDoubleClick = MudTreeRoot?.ExpandOnDoubleClick ?? false;
-            if (HasChild && expandOnDoubleClick)
+            if (HasChild && ExpandOnDoubleClick)
             {
                 await _expandedState.SetValueAsync(!_expandedState);
                 await TryInvokeServerLoadFunc();

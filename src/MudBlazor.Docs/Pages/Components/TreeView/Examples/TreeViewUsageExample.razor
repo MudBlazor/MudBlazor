@@ -1,15 +1,19 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudPaper Width="300px" Height="300px">
+<MudPaper Width="300px" MaxHeight="300px" Class="overflow-y-scroll" Elevation="0">
     <MudTreeView T="string" ReadOnly="@ReadOnly" Hover="@Hover" Dense="@Dense" Disabled="@Disabled"
                  ExpandOnClick="ExpandOnClick" ExpandOnDoubleClick="ExpandOnDoubleClick">
-        <MudTreeViewItem Value="@("Applications")">
+        <MudTreeViewItem Value="@("Applications")" Expanded>
             <MudTreeViewItem Value="@("Terminal")" />
         </MudTreeViewItem>
-        <MudTreeViewItem Value="@("Documents")">
-            <MudTreeViewItem Value="@("MudBlazor")">
-                <MudTreeViewItem Value="@("Api")" />
+        <MudTreeViewItem Value="@("Documents")" Expanded>
+            <MudTreeViewItem Value="@("MudBlazor")" Expanded>
+                <MudTreeViewItem Value="@("API")" />
                 <MudTreeViewItem Value="@("Components")" />
+                <MudTreeViewItem Value="@("Features")" />
+                <MudTreeViewItem Value="@("Customization")" />
+                <MudTreeViewItem Value="@("CSS Utilities")" />
+                <MudTreeViewItem Value="@("Learn More")" />
             </MudTreeViewItem>
         </MudTreeViewItem>
     </MudTreeView>
@@ -18,6 +22,7 @@
 <MudStack Row Wrap="Wrap.Wrap" Justify="Justify.Center">
     <MudSwitch @bind-Value="ReadOnly" Color="Color.Primary">ReadOnly</MudSwitch>
     <MudSwitch @bind-Value="Hover" Color="Color.Primary">Hover</MudSwitch>
+    <MudSwitch @bind-Value="Ripple" Color="Color.Primary">Ripple</MudSwitch>
     <MudSwitch @bind-Value="Dense" Color="Color.Primary">Dense</MudSwitch>
     <MudSwitch @bind-Value="Disabled" Color="Color.Primary">Disabled</MudSwitch>
     <MudSwitch @bind-Value="ExpandOnClick" Color="Color.Primary">ExpandOnClick</MudSwitch>
@@ -27,8 +32,9 @@
 @code {
     public bool ReadOnly = true;
     public bool Hover = true;
+    public bool Ripple;
     public bool Dense;
     public bool Disabled;
-    public bool ExpandOnClick;
+    public bool ExpandOnClick = true;
     public bool ExpandOnDoubleClick;
 }
