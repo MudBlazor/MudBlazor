@@ -54,6 +54,97 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void TreeViewWith_SingleSelection_TwoWayBindingTest()
+        {
+            var comp = Context.RenderComponent<TreeViewSelectionBindingTest>(self => self.Add(x => x.SelectedValue, "item1.2"));
+            // check initial selection
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-2 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+
+            // select another value on tree1 and check selection has changed on both trees
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").Click();
+            comp.Find("p.selected-value").TrimmedText().Should().Be("item1");
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+
+            // select another value on tree2 and check selection has changed on both trees
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
+            comp.Find("p.selected-value").TrimmedText().Should().Be("item1.1");
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+
+            // in single selection clicking the same item twice won't de-select it!
+            // select same value on tree1 and check selection has NOT changed
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").Click();
+            comp.Find("p.selected-value").TrimmedText().Should().Be("item1.1");
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+        }
+
+        [Test]
+        public void TreeViewWith_ToggleSelection_TwoWayBindingTest()
+        {
+            var comp = Context.RenderComponent<TreeViewSelectionBindingTest>(self => self
+                .Add(x => x.SelectedValue, "item1.2")
+                .Add(x => x.SelectionMode, SelectionMode.ToggleSelection));
+            // check initial selection
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-2 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+
+            // select another value on tree1 and check selection has changed on both trees
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").Click();
+            comp.Find("p.selected-value").TrimmedText().Should().Be("item1");
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+
+            // select another value on tree2 and check selection has changed on both trees
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
+            comp.Find("p.selected-value").TrimmedText().Should().Be("item1.1");
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+
+            // in toggle selection clicking the same item twice will de-select it!
+            // select same value on tree1 and check selection has been removed
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").Click();
+            comp.Find("p.selected-value").TrimmedText().Should().BeNullOrWhiteSpace();
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+        }
+
+
+        [Test]
         public void Collapsed_ClickOnArrowButton_CheckClose()
         {
             var comp = Context.RenderComponent<TreeViewTest1>();
