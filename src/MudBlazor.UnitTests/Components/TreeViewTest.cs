@@ -152,7 +152,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.SelectedValues, ["item1", "item1.2"])
                 .Add(x => x.SelectionMode, SelectionMode.MultiSelection));
             // check initial selection
-            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null"); 
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
             comp.Find(".tree2 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
             // note: the tristate checkbox is null because not all its children are selected ...
             // ... this doesn't mean that the item's Selected value isn't true. Checking:
@@ -185,6 +185,149 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
             comp.Find(".tree2 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
             comp.Find("p.selected-values").TrimmedText().Should().Be("");
+        }
+
+        [Test]
+        public void TreeViewItemSelected_ShouldBeInitializedCorrectly_SingleSelection()
+        {
+            var comp = Context.RenderComponent<TreeViewItemSelectedBindingTest>(self => self.Add(x => x.SelectedValue, "item1.2"));
+            comp.Find("p.selected-value").TrimmedText().Should().Be("item1.2");
+            comp.Find("p.item1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.item1-1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.item1-2-selected").TrimmedText().Should().Be("True");
+        }
+
+        [Test]
+        public void InitialValueOfTreeViewItemSelected_Should_InfluenceSelectedValue_SingleSelection()
+        {
+            var comp = Context.RenderComponent<TreeViewItemSelectedBindingTest>(self => self
+                .Add(x => x.SelectedValue, "item1.2")
+                .Add(x => x.Item1Selected, true));
+            comp.Find("p.selected-value").TrimmedText().Should().Be("item1");
+            comp.Find("p.item1-selected").TrimmedText().Should().Be("True");
+            comp.Find("p.item1-1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.item1-2-selected").TrimmedText().Should().Be("False");
+        }
+
+        [Test]
+        public void TreeViewItemSelected_ShouldBeInitializedCorrectly_MultiSelection()
+        {
+            var comp = Context.RenderComponent<TreeViewItemSelectedBindingTest>(self => self
+                .Add(x => x.SelectedValues, ["item1", "item1.2"])
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.2");
+            comp.Find("p.item1-selected").TrimmedText().Should().Be("True");
+            comp.Find("p.item1-1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.item1-2-selected").TrimmedText().Should().Be("True");
+        }
+
+        [Test]
+        public void InitialValueOfTreeViewItemSelected_Should_InfluenceSelectedValue_MultiSelection()
+        {
+            var comp = Context.RenderComponent<TreeViewItemSelectedBindingTest>(self => self
+                .Add(x => x.SelectedValues, ["item1", "item1.2"])
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
+                .Add(x => x.Item11Selected, true));
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.1, item1.2");
+            comp.Find("p.item1-selected").TrimmedText().Should().Be("True");
+            comp.Find("p.item1-1-selected").TrimmedText().Should().Be("True");
+            comp.Find("p.item1-2-selected").TrimmedText().Should().Be("True");
+        }
+
+        /// <summary>
+        /// Note: in this test the trees are synchronized solely via their item's Selected parameter 
+        /// </summary>
+        [Test]
+        public void TreeViewItem_Selected_TwoWayBindingTest_SingleSelection()
+        {
+            var comp = Context.RenderComponent<TreeViewItemSelectedBindingTest>(self => self.Add(x => x.SelectedValue, "item1.2"));
+            // check initial selection
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-2 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find("p.item1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.item1-1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.item1-2-selected").TrimmedText().Should().Be("True");
+
+            // select another value on tree1 and check selection has changed on both trees
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").Click();
+            comp.Find("p.selected-value").TrimmedText().Should().Be("item1");
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find("p.item1-selected").TrimmedText().Should().Be("True");
+            comp.Find("p.item1-1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.item1-2-selected").TrimmedText().Should().Be("False");
+
+            // select another value on tree2 and check selection has changed on both trees
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
+            comp.Find("p.selected-value").TrimmedText().Should().Be("item1.1");
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find("p.item1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.item1-1-selected").TrimmedText().Should().Be("True");
+            comp.Find("p.item1-2-selected").TrimmedText().Should().Be("False");
+        }
+
+        [Test]
+        public void TreeViewItem_Selected_TwoWayBindingTest_MultiSelection()
+        {
+            var comp = Context.RenderComponent<TreeViewItemSelectedBindingTest>(self => self
+                .Add(x => x.SelectedValues, ["item1", "item1.2"])
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+            // check initial selection
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
+            comp.Find(".tree2 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
+            // note: the tristate checkbox is null because not all its children are selected ...
+            // ... this doesn't mean that the item's Selected value isn't true. Checking:
+            foreach (var item in comp.FindComponents<MudTreeViewItem<string>>().Where(x => x.Instance.Value == "item1"))
+            {
+                item.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Selected)).Should().Be(true);
+            }
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree2 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree2 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.2");
+            comp.Find("p.item1-selected").TrimmedText().Should().Be("True");
+            comp.Find("p.item1-1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.item1-2-selected").TrimmedText().Should().Be("True");
+
+            // select another value on tree1 and check selection has changed on both trees
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree2 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree2 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree2 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.1, item1.2");
+            comp.Find("p.item1-selected").TrimmedText().Should().Be("True");
+            comp.Find("p.item1-1-selected").TrimmedText().Should().Be("True");
+            comp.Find("p.item1-2-selected").TrimmedText().Should().Be("True");
+
+            // remove a value on tree2 and check selection has changed on both trees
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").Click();
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree2 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree2 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree2 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("");
+            comp.Find("p.item1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.item1-1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.item1-2-selected").TrimmedText().Should().Be("False");
         }
 
         [Test]

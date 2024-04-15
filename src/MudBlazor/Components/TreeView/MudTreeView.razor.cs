@@ -310,14 +310,42 @@ namespace MudBlazor
             }
         }
 
-        internal void AddChild(MudTreeViewItem<T> item)
+        internal async Task AddChildAsync(MudTreeViewItem<T> item)
         {
             Console.WriteLine($"add child {item.Value}");
             _childItems.Add(item);
+            // this is to ensure that setting Selected="true" on the item will update the single/multiselection.
+            // Note: Setting Selected="false" has no effect however because it would cancel the initialization of the SelectedValue or SelectedValues !
+            if (item.Value is not null && item.GetState<bool>(nameof(MudTreeViewItem<T>.Selected)))
+                await SelectAsync(item.Value);
             item.UpdateSelectionState(GetSelection());
         }
 
-        internal void RemoveChild(MudTreeViewItem<T> item) => _childItems.Remove(item);
+        internal void RemoveChild(MudTreeViewItem<T> item)
+        {
+            _childItems.Remove(item);
+        }
+
+        internal async Task SelectAsync(T value)
+        {
+            if (MultiSelection)
+            {
+                _selection.Add(value);
+                if (!_isFirstRender)
+                    await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
+                return;
+            }
+            // single and toggle selection
+            await _selectedValueState.SetValueAsync(value);
+        }
+
+        internal async Task UnselectAsync(T value)
+        {
+            if (_isFirstRender || !MultiSelection)
+                return;
+            _selection.Remove(value);
+            await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
+        }
 
         ///  <summary>
         ///  Sets the selected value of the tree view in Single- and ToggleSelection mode.
@@ -336,9 +364,7 @@ namespace MudBlazor
 
         ///  <summary>
         ///  Sets the selected values of the tree view in MultiSelection mode.
-        ///  If the value is found, the corresponding item is selected; 
-        ///  otherwise, selected value is set default.
-        ///  If the selected item is valid it sets the corresponding tree item to selected.
+        /// Discard any values which are not represented by child values.
         ///  </summary>
         private async Task SetSelectedValuesAsync(IReadOnlyCollection<T> newValues)
         {
@@ -368,7 +394,7 @@ namespace MudBlazor
         {
             HashSet<T> selection;
             if (MultiSelection)
-                selection = new HashSet<T>( _selection);
+                selection = new HashSet<T>(_selection);
             else
             {
                 selection = new HashSet<T>();

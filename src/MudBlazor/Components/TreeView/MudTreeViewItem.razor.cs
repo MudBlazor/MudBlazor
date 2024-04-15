@@ -301,7 +301,7 @@ namespace MudBlazor
             await MudTreeRoot.OnItemClickAsync(this);
         }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
             if (Parent != null)
             {
@@ -309,7 +309,8 @@ namespace MudBlazor
             }
             else
             {
-                MudTreeRoot?.AddChild(this);
+                if (MudTreeRoot is not null)
+                    await MudTreeRoot.AddChildAsync(this);
             }
             base.OnInitialized();
         }
@@ -333,8 +334,12 @@ namespace MudBlazor
             {
                 return Task.CompletedTask;
             }
-            // TODO
-            return Task.CompletedTask;
+            if (Value is null)
+                return Task.CompletedTask;
+            Console.WriteLine($"Item[{Value}].Selected => {arg.Value}");
+            if (arg.Value)
+                return MudTreeRoot.SelectAsync(Value);
+            return MudTreeRoot.UnselectAsync(Value);
         }
 
         private bool ReadOnly => MudTreeRoot is null || MudTreeRoot.ReadOnly;
