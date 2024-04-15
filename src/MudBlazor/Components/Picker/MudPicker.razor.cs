@@ -40,6 +40,13 @@ namespace MudBlazor
                 .AddClass("mud-dialog", PickerVariant == PickerVariant.Dialog)
                 .Build();
 
+        protected string PickerPaperStylename =>
+            new StyleBuilder()
+                .AddStyle("transition-duration", $"{Math.Round(MudGlobal.TransitionDuration.TotalMilliseconds)}ms")
+                .AddStyle("transition-delay", $"{Math.Round(MudGlobal.TransitionDelay.TotalMilliseconds)}ms")
+                .AddStyle(Style)
+                .Build();
+
         protected string PickerInlineClassname =>
             new CssBuilder("mud-picker-inline-paper")
                 .Build();
