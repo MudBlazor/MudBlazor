@@ -29,7 +29,8 @@ namespace MudBlazor
         protected MudBaseInput()
             : base(new DefaultConverter<T>())
         {
-            InputIdState = RegisterParameterBuilder<string?>(nameof(InputId))
+            using var registerScope = CreateRegisterScope();
+            InputIdState = registerScope.RegisterParameter<string?>(nameof(InputId))
                 .WithParameter(() => InputId)
                 .WithChangeHandler(UpdateInputIdStateAsync);
         }
