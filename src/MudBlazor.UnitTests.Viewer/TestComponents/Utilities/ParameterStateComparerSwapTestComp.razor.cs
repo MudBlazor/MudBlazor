@@ -20,7 +20,8 @@ public partial class ParameterStateComparerSwapTestComp : MudComponentBase
 
     public ParameterStateComparerSwapTestComp()
     {
-        RegisterParameterBuilder<double>(nameof(DoubleParam))
+        using var registerScope = CreateRegisterScope();
+        registerScope.RegisterParameter<double>(nameof(DoubleParam))
             .WithParameter(() => DoubleParam)
             .WithChangeHandler(ParameterChangedHandler)
             .WithComparer(() => DoubleEqualityComparer);

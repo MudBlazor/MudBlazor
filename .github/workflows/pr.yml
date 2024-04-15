@@ -27,6 +27,11 @@ jobs:
               labels.push("breaking change");
               console.log("PR type: breaking change.");
             }
+
+            if(RegExp(isChecked.source + "Documentation \\(fix or improvement to the website or code docs\\)").test(body)) {
+              labels.push("docs");
+              console.log("PR type: documentation.");
+            }
             
             if(!pr.draft) {
               labels.push("PR: needs review");

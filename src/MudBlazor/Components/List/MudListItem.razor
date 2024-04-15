@@ -3,11 +3,9 @@
 @typeparam T
 
 <div tabindex="0" @attributes="UserAttributes" class="@Classname" @onclick="OnClickHandlerAsync" @onclick:stopPropagation="true" style="@Style">
-    @if (!string.IsNullOrWhiteSpace(Avatar)) {
+    @if (AvatarContent is not null) {
         <div class="mud-list-item-avatar">
-            <MudAvatar Class="@AvatarClass">
-                <MudIcon Icon="@Avatar" Color="@IconColor" Size="@IconSize" />
-            </MudAvatar>
+            @AvatarContent
         </div>
     }
     else if (!string.IsNullOrWhiteSpace(Icon)) {

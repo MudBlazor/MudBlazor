@@ -110,7 +110,8 @@ namespace MudBlazor
 
         public MudExpansionPanel()
         {
-            _isExpandedState = RegisterParameterBuilder<bool>(nameof(IsExpanded))
+            using var registerScope = CreateRegisterScope();
+            _isExpandedState = registerScope.RegisterParameter<bool>(nameof(IsExpanded))
                 .WithParameter(() => IsExpanded)
                 .WithEventCallback(() => IsExpandedChanged)
                 .WithChangeHandler(OnIsExpandedParameterChangedAsync);

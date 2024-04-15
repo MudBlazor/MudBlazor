@@ -7,6 +7,12 @@ namespace MudBlazor
 #nullable enable
     public partial class MudMenuItem : MudComponentBase
     {
+        [Inject]
+        protected NavigationManager UriHelper { get; set; } = null!;
+
+        [Inject]
+        protected IJsApiService JsApiService { get; set; } = null!;
+
         [CascadingParameter]
         public MudMenu? MudMenu { get; set; }
 
@@ -17,12 +23,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Menu.Behavior)]
         public bool Disabled { get; set; }
-
-        [Inject]
-        public NavigationManager UriHelper { get; set; } = null!;
-
-        [Inject]
-        public IJsApiService JsApiService { get; set; } = null!;
 
         /// <summary>
         /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where
@@ -74,7 +74,7 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
-        protected async Task OnClickHandler(MouseEventArgs ev)
+        protected async Task OnClickHandlerAsync(MouseEventArgs ev)
         {
             if (Disabled)
             {
@@ -83,7 +83,10 @@ namespace MudBlazor
 
             if (AutoClose)
             {
-                MudMenu?.CloseMenu();
+                if (MudMenu is not null)
+                {
+                    await MudMenu.CloseMenuAsync();
+                }
             }
 
             if (Href != null)

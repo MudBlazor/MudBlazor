@@ -96,6 +96,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="MudBlazor.Docs" />
     <InternalsVisibleTo Include="MudBlazor.UnitTests" />
     <InternalsVisibleTo Include="MudBlazor.UnitTests.Viewer" />
     <!--We need to make internal types to be visible for mocking-->
