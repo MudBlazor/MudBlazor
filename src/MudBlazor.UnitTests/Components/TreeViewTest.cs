@@ -41,6 +41,30 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void TreeView_WhenDisabled_DoesNotHaveRipple()
+        {
+            var comp = Context.RenderComponent<TreeViewRippleTest>();
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Disabled, true));
+            comp.FindAll("div.mud-ripple").Count.Should().Be(0);
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Disabled, false));
+            comp.FindAll("div.mud-ripple").Count.Should().BeGreaterThan(0);
+        }
+
+        [Test]
+        public void TreeView_WhenRippleDisabled_DoesNotHaveRipple()
+        {
+            var comp = Context.RenderComponent<TreeViewRippleTest>();
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Ripple, false));
+            comp.FindAll("div.mud-ripple").Count.Should().Be(0);
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Ripple, true));
+            comp.FindAll("div.mud-ripple").Count.Should().BeGreaterThan(0);
+        }
+
+        [Test]
         public void Collapsed_ClickOnArrowButton_CheckClose()
         {
             var comp = Context.RenderComponent<TreeViewTest1>();
