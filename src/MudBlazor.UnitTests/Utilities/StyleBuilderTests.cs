@@ -169,5 +169,20 @@ namespace UtilityTests
             // Assert
             styleToRender.Should().Be("background-color: green;");
         }
+
+        [Test]
+        public void ShouldAddConditionalStyle()
+        {
+            // Arrange
+            string styleToAdd = "background-color: green";
+
+            // Act
+            string styleToRender = StyleBuilder.Empty()
+                                   .AddStyle(styleToAdd, true)
+                                   .Build();
+
+            // Assert
+            styleToRender.Should().Be("background-color: green;");
+        }
     }
 }
