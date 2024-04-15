@@ -62,14 +62,23 @@
         </MudList>
     </MudMenu>
     <MudSpacer />
-    <MudAutocomplete @ref="_searchAutocomplete" T="ApiLinkServiceEntry" Class="docs-search-bar ml-4"
-                     AutoFocus="true" Placeholder="Search" Variant="Variant.Outlined" MaxHeight="480"
-                     SearchFunc="async (text, token) => await Search(text, token)" DebounceInterval="0"
-                     ValueChanged="OnSearchResult" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search">
-        <ItemTemplate Context="result">
-            <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
-        </ItemTemplate>
-    </MudAutocomplete>
+    @if (DisplaySearchBar)
+    {
+        <MudAutocomplete @ref="_searchAutocomplete" T="ApiLinkServiceEntry" Class="docs-search-bar ml-4"
+                         AutoFocus="true" Placeholder="Search" Variant="Variant.Outlined" MaxHeight="480"
+                         SearchFunc="async (text, token) => await Search(text, token)" DebounceInterval="0"
+                         ValueChanged="OnSearchResult" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search">
+            <ItemTemplate Context="result">
+                <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
+            </ItemTemplate>
+        </MudAutocomplete>
+    }
+    else
+    {
+        <MudTooltip Delay="1000" Text="Search">
+            <MudIconButton Icon="@Icons.Material.Rounded.Search" Color="Color.Inherit" Edge="Edge.End" OnClick="@(() => OpenSearchDialog())" />
+        </MudTooltip>
+    }
     <MudDivider FlexItem="true" Vertical="true" DividerType="DividerType.Middle" Class="my-4" />
     <AppbarButtons />
 </div>
