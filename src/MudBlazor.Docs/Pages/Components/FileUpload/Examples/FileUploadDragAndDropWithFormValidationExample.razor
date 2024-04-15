@@ -39,10 +39,9 @@
                     </MudPaper>
                     <MudToolBar Gutters="false"
                                 Class="relative d-flex justify-end gap-4 z-30">
-                        <MudButton HtmlTag="label"
-                                   Color="Color.Primary"
-                                   for="@context.Id"
-                                   Variant="Variant.Filled">
+                        <MudButton Color="Color.Primary"
+                                   Variant="Variant.Filled"
+                                   OnClick="@context.Actions.OpenFilePickerAsync">
                             Open file picker
                         </MudButton>
                         <MudButton OnClick="@Upload"

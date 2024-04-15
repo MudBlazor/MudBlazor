@@ -2,11 +2,10 @@
 
 <MudFileUpload T="IReadOnlyList<IBrowserFile>" AppendMultipleFiles>
     <ButtonTemplate>
-        <MudButton HtmlTag="label"
-                   Variant="Variant.Filled"
+        <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
                    StartIcon="@Icons.Material.Filled.CloudUpload"
-                   for="@context.Id">
+                   OnClick="@context.Actions.OpenFilePickerAsync">
             AppendMultipleFiles = true
         </MudButton>
     </ButtonTemplate>
@@ -27,11 +26,10 @@
 
 <MudFileUpload T="IReadOnlyList<IBrowserFile>" AppendMultipleFiles="false">
     <ButtonTemplate>
-        <MudButton HtmlTag="label"
-                   Variant="Variant.Filled"
+        <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
                    StartIcon="@Icons.Material.Filled.CloudUpload"
-                   for="@context.Id">
+                   OnClick="@context.Actions.OpenFilePickerAsync">
             AppendMultipleFiles = false
         </MudButton>
     </ButtonTemplate>

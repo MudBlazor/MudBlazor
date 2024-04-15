@@ -12,17 +12,16 @@
                           Label="Name" />
             <MudFileUpload T="IBrowserFile" For="@(() => model.File)" @bind-Files="model.File" OnFilesChanged="UploadFiles" SuppressOnChangeWhenInvalid="SuppressOnChangeWhenInvalid">
                 <ButtonTemplate>
-                    <MudButton HtmlTag="label"
-                               Variant="Variant.Filled"
+                    <MudButton Variant="Variant.Filled"
                                Color="Color.Primary"
                                StartIcon="@Icons.Material.Filled.CloudUpload"
-                               for="@context.Id">
+                               OnClick="@context.Actions.OpenFilePickerAsync">
                         Upload Files
                     </MudButton>
-                    <MudButton OnClick="@context.Actions.ClearAsync"
-                               Variant="Variant.Filled"
+                    <MudButton Variant="Variant.Filled"
                                Color="Color.Primary"
-                               StartIcon="@Icons.Material.Filled.Clear">
+                               StartIcon="@Icons.Material.Filled.Clear"
+                               OnClick="@context.Actions.ClearAsync">
                         Clear Files
                     </MudButton>
                 </ButtonTemplate>

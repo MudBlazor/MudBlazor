@@ -5,14 +5,14 @@
         <Description>
 
             <MudText Typo="@Typo.body1" Class="mt-4">
-                To create a file upload button, two elements are needed: a <CodeInline>label</CodeInline> or <CodeInline>button</CodeInline> and an <CodeInline>input</CodeInline>.
+                To create a file upload button, two elements are needed: a <CodeInline>button</CodeInline> and an <CodeInline>input</CodeInline>.
             </MudText>
             <br />
             <MudText Typo="@Typo.body1">
-                When we set the <CodeInline>for</CodeInline> attribute to the same value as the <CodeInline>id</CodeInline> of the input, we enable the input to be triggered by clicking on the label or button. We then hide the input.
+                The <CodeInline>MudFileUpload</CodeInline> component provides <CodeInline>ClearAsync</CodeInline> and <CodeInline>OpenFilePickerAsync</CodeInline>
+                actions in the <CodeInline>ButtonTemplate</CodeInline> context that can be used as <CodeInline>OnClick</CodeInline> events for buttons.
             </MudText>
             <br />
-
             <MudText Typo="@Typo.body1">
                 After uploading the files, you will receive an <CodeInline>IReadOnlyList&#60IBrowserFile&#62</CodeInline> or <CodeInline>IBrowserFile</CodeInline> and you will need to manually handle the upload in <CodeInline>HandleFilesChanged</CodeInline>.
                 Instead of using <CodeInline>multiple</CodeInline> to allow multiple files, you set T to <CodeInline>IReadOnlyList&#60IBrowserFile&#62</CodeInline>. Using <CodeInline>IBrowserFile</CodeInline> restricts the component to a single file.
@@ -26,8 +26,8 @@
         <DocsPageSection>
             <SectionHeader Title="Use any type of MudButton">
                 <Description>
-                    Use a <CodeInline>MudButton</CodeInline>, a <CodeInline>MudIconButton</CodeInline> or a <CodeInline>MudFab</CodeInline> with the HtmlTag property set to "label" within the <CodeInline>ButtonTemplate</CodeInline> render fragment.
-                    Be sure to set the button's ID using the <CodeInline>&#64;context</CodeInline> parameter. <br />
+                    Use a <CodeInline>MudButton</CodeInline>, a <CodeInline>MudIconButton</CodeInline> or a <CodeInline>MudFab</CodeInline> with the <CodeInline>ButtonTemplate</CodeInline> render fragment.
+                    Set the button's <CodeInline>OnClick</CodeInline> property to <CodeInline>&#64;context.Actions.OpenFilePickerAsync</CodeInline>.<br />
                     A <CodeInline>MudFileUpload</CodeInline> can be <CodeInline>Disabled</CodeInline> and it will Disable its child button automatically.
                 </Description>
             </SectionHeader>

@@ -2,11 +2,10 @@
 
 <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
     <ButtonTemplate>
-        <MudButton HtmlTag="label"
-                   Variant="Variant.Filled"
+        <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
                    StartIcon="@Icons.Material.Filled.CloudUpload"
-                   for="@context.Id">
+                   OnClick="@context.Actions.OpenFilePickerAsync">
             Upload using FileValueChanged
         </MudButton>
     </ButtonTemplate>
@@ -14,11 +13,10 @@
 
 <MudFileUpload T="IBrowserFile" OnFilesChanged="UploadFiles">
     <ButtonTemplate>
-        <MudButton HtmlTag="label"
-                   Variant="Variant.Filled"
+        <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
                    StartIcon="@Icons.Material.Filled.CloudUpload"
-                   for="@context.Id">
+                   OnClick="@context.Actions.OpenFilePickerAsync">
             Upload using OnFilesChanged
         </MudButton>
     </ButtonTemplate>
