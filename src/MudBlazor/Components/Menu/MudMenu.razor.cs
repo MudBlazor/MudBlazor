@@ -28,6 +28,10 @@ namespace MudBlazor
         [Category(CategoryTypes.Menu.Behavior)]
         public string? Label { get; set; }
 
+        [Parameter]
+        [Category(CategoryTypes.Menu.Behavior)]
+        public string? AriaLabel { get; set; }
+
         /// <summary>
         /// User class names for the list, separated by space
         /// </summary>
