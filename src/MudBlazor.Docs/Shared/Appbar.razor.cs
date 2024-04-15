@@ -20,14 +20,14 @@ public partial class Appbar
     private int _searchDialogReturnedItemsCount;
     private string _badgeTextSoon = "coming soon";
     private MudAutocomplete<ApiLinkServiceEntry> _searchAutocomplete = null!;
-    private DialogOptions _dialogOptions = new() { Position = DialogPosition.TopCenter, NoHeader = true };
+    private DialogOptions _dialogOptions = new() { Position = DialogPosition.TopCenter, NoHeader = true, MaxWidth = MaxWidth.False };
     private readonly List<ApiLinkServiceEntry> _apiLinkServiceEntries =
     [
         new ApiLinkServiceEntry
         {
             Title = "Installation",
             Link = "getting-started/installation",
-            SubTitle = "Getting started with MudBlazor fast and easy."
+            SubTitle = "Get started with MudBlazor fast and easy."
         },
 
         new ApiLinkServiceEntry
@@ -133,8 +133,7 @@ public partial class Appbar
     {
         if (string.IsNullOrWhiteSpace(text))
         {
-            // the user just clicked the autocomplete open, show the most popular pages as search result according to our analytics data
-            // ordered by popularity
+            // The user just opened the popover so show the most popular pages according to our analytics data as search results.
             return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>(_apiLinkServiceEntries);
         }
 

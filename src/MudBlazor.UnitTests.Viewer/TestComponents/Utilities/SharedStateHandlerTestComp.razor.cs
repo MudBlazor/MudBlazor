@@ -9,26 +9,42 @@ public partial class SharedStateHandlerTestComp : MudComponentBase
     public SharedStateHandlerTestComp()
     {
         // abc shared handler group
-        _a = RegisterParameter(nameof(A), () => A, OnAbcChanged);
-        _b = RegisterParameter(nameof(B), () => B, OnAbcChanged);
-        _c = RegisterParameter(nameof(C), () => C, OnAbcChanged);
+        _a = RegisterParameterBuilder<int>(nameof(A))
+            .WithParameter(() => A)
+            .WithChangeHandler(OnAbcChanged);
+        _b = RegisterParameterBuilder<int>(nameof(B))
+            .WithParameter(() => B)
+            .WithChangeHandler(OnAbcChanged);
+        _c = RegisterParameterBuilder<int>(nameof(C))
+            .WithParameter(() => C)
+            .WithChangeHandler(OnAbcChanged);
         // o and p are not sharing their handler because lambdas are excluded, even if they contain the same code
-        _o = RegisterParameter(nameof(O), () => O, () => OpHandlerCallCount++);
-        _p = RegisterParameter(nameof(P), () => P, () => OpHandlerCallCount++);
+        _o = RegisterParameterBuilder<int>(nameof(O))
+            .WithParameter(() => O)
+            .WithChangeHandler(() => OpHandlerCallCount++);
+        _p = RegisterParameterBuilder<int>(nameof(P))
+            .WithParameter(() => P)
+            .WithChangeHandler(() => OpHandlerCallCount++);
         // xyz shared handler group
-        _x = RegisterParameter(nameof(X), () => X, OnXyzChanged);
-        _y = RegisterParameter(nameof(Y), () => Y, OnXyzChanged);
-        _z = RegisterParameter(nameof(Z), () => Z, OnXyzChanged);
+        _x = RegisterParameterBuilder<int>(nameof(X))
+            .WithParameter(() => X)
+            .WithChangeHandler(OnXyzChanged);
+        _y = RegisterParameterBuilder<int>(nameof(Y))
+            .WithParameter(() => Y)
+            .WithChangeHandler(OnXyzChanged);
+        _z = RegisterParameterBuilder<int>(nameof(Z))
+            .WithParameter(() => Z)
+            .WithChangeHandler(OnXyzChanged);
     }
 
-    private IParameterState<int> _a;
-    private IParameterState<int> _b;
-    private IParameterState<int> _c;
-    private IParameterState<int> _o;
-    private IParameterState<int> _p;
-    private IParameterState<int> _x;
-    private IParameterState<int> _y;
-    private IParameterState<int> _z;
+    private readonly ParameterState<int> _a;
+    private readonly ParameterState<int> _b;
+    private readonly ParameterState<int> _c;
+    private readonly ParameterState<int> _o;
+    private readonly ParameterState<int> _p;
+    private readonly ParameterState<int> _x;
+    private readonly ParameterState<int> _y;
+    private readonly ParameterState<int> _z;
 
     private void OnAbcChanged()
     {

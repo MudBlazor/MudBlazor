@@ -1,42 +1,36 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
+@typeparam T
 
 <div tabindex="0" @attributes="UserAttributes" class="@Classname" @onclick="OnClickHandlerAsync" @onclick:stopPropagation="true" style="@Style">
-    @if (!string.IsNullOrWhiteSpace(Avatar))
-    {
+    @if (AvatarContent is not null) {
         <div class="mud-list-item-avatar">
-            <MudAvatar Class="@AvatarClass">
-                <MudIcon Icon="@Avatar" Color="@IconColor" Size="@IconSize" />
-            </MudAvatar>
+            @AvatarContent
         </div>
     }
-    else if (!string.IsNullOrWhiteSpace(Icon))
-    {
+    else if (!string.IsNullOrWhiteSpace(Icon)) {
         <div class="mud-list-item-icon">
             <MudIcon Icon="@Icon" Color="@IconColor" Size="@IconSize" />
         </div>
     }
     <div class="mud-list-item-text @(Inset? "mud-list-item-text-inset" : "")">
         <MudText Typo="@_textTypo">
-            @if (ChildContent != null)
-            {
+            @if (ChildContent != null) {
                 @ChildContent
             }
-            else
-            {
+            else {
                 @Text
             }
         </MudText>
     </div>
-    @if (NestedList != null)
-    {
+    @if (NestedList != null) {
         <MudIcon Icon="@($"{(_expandedState.Value ? ExpandLessIcon : ExpandMoreIcon)}")" Size="@IconSize" Color="@AdornmentColor" />
     }
 </div>
-@if (NestedList != null)
-{
+@if (NestedList != null) {
     <MudCollapse Expanded="@_expandedState.Value">
-        <MudList Clickable="MudList?.Clickable ?? false" Color="MudList?.Color ?? Color.Primary" DisablePadding="true" Class="mud-nested-list" Disabled="@Disabled" Dense="(Dense ??  MudList?.Dense) ?? false">
+        <MudList T="T" ReadOnly="@(MudList?.ReadOnly ?? false)" Color="@(MudList?.Color ?? Color.Primary)" Padding="false" Class="mud-nested-list"
+                 Disabled="@GetDisabled()" Dense="@((Dense ??  MudList?.Dense) ?? false)">
             @NestedList
         </MudList>
     </MudCollapse>

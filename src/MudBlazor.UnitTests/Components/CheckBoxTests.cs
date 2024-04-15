@@ -14,6 +14,32 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class CheckBoxTests : BunitTest
     {
+
+        [Test]
+        public void CheckBox_Test_BooleanStateSelectors()
+        {
+            // the state of the checkbox should manifest itself in the classes
+            // mud-checkbox-true, mud-checkbox-false, mud-checkbox-null applied to the span
+            Context.RenderComponent<MudCheckBox<bool>>(self => self.Add(x => x.Value, false))
+                .Find(".mud-checkbox .mud-checkbox-false").Should().NotBe(null);
+            Context.RenderComponent<MudCheckBox<bool>>(self => self.Add(x => x.Value, true))
+                .Find(".mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            Context.RenderComponent<MudCheckBox<bool>>(self => self.Add(x => x.Value, true))
+                .Find(".mud-checkbox span").ClassList.Should().NotContain("mud-checkbox-false");
+            Context.RenderComponent<MudCheckBox<bool>>(self => self.Add(x => x.Value, true))
+                .Find(".mud-checkbox span").ClassList.Should().NotContain("mud-checkbox-null");
+            var comp = Context.RenderComponent<MudCheckBox<bool?>>(self => self
+                .Add(x => x.Value, null)
+                .Add(x => x.TriState, true));
+            comp.Find(".mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
+            comp.Find("input").Change(true);
+            comp.Find(".mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find("input").Change(false);
+            comp.Find(".mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find("input").Change("");
+            comp.Find(".mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
+        }
+
         /// <summary>
         /// single checkbox, initialized false, check -  uncheck
         /// </summary>

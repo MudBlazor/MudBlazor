@@ -482,7 +482,7 @@ public class ParameterSetTests
     }
 
     [Test]
-    public async Task SetParametersAsync_CustomComparer_HandlerShouldFire()
+    public async Task SetParametersAsync_StaticCustomComparer_HandlerShouldFire()
     {
         // Arrange
         var comparer = new DoubleEpsilonEqualityComparer(0.00001f);
@@ -515,7 +515,7 @@ public class ParameterSetTests
     }
 
     [Test]
-    public async Task SetParametersAsync_CustomComparer_HandlerShouldNotFire()
+    public async Task SetParametersAsync_StaticCustomComparer_HandlerShouldNotFire()
     {
         // Arrange
         var comparer = new DoubleEpsilonEqualityComparer(0.00001f);
@@ -542,6 +542,75 @@ public class ParameterSetTests
 
         // Assert
         parameterChangedHandlerMock.Changes.Should().BeEmpty("Within the epsilon tolerance.");
+    }
+
+    [Test]
+    public async Task SetParametersAsync_FuncCustomComparer_Swap()
+    {
+        // Arrange
+        var comparer = new DoubleEpsilonEqualityComparer(0.0001f);
+        var parameterChangedHandlerMock = new ParameterChangedHandlerMock<double>();
+        const double Parameter = 10000f;
+        const double ParameterNewValue = 10001f;
+        const string ParameterName = nameof(Parameter);
+        var parametersDictionary = new Dictionary<string, object?>
+        {
+            { ParameterName, ParameterNewValue }
+        };
+        var parameterView = ParameterView.FromDictionary(parametersDictionary);
+        // ReSharper disable once AccessToModifiedClosure
+        var parameterState = ParameterAttachBuilder
+            .Create<double>()
+            .WithMetadata(new ParameterMetadata(nameof(Parameter)))
+            .WithGetParameterValueFunc(() => Parameter)
+            .WithParameterChangedHandler(parameterChangedHandlerMock)
+            .WithComparer(() => comparer)
+            .Attach();
+        var parameterSet = new ParameterSet { parameterState };
+
+        // Act && Assert
+        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+        parameterChangedHandlerMock.Changes.Should().BeEmpty("Within the epsilon tolerance.");
+
+        comparer = new DoubleEpsilonEqualityComparer(0.00001f);
+        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+        parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
+        {
+            new ParameterChangedEventArgs<double>(ParameterName, Parameter, ParameterNewValue)
+        }, because: "We swapped comparer.");
+    }
+
+    [Test(Description = "Tests a very special case described in ParameterStateInternal.HasParameterChanged when comparer is a blazor parameter and changes together with the associated value.")]
+    public async Task SetParametersAsync_FuncCustomComparerAsParameter_Swap()
+    {
+        // Arrange
+        var comparer = new DoubleEpsilonEqualityComparer(0.0001f);
+        var parameterChangedHandlerMock = new ParameterChangedHandlerMock<double>();
+        const double Parameter = 10000f;
+        const double ParameterNewValue = 10001f;
+        const string ParameterName = nameof(Parameter);
+        var parametersDictionary = new Dictionary<string, object?>
+        {
+            { ParameterName, ParameterNewValue },
+            { nameof(comparer), new DoubleEpsilonEqualityComparer(0.00001f) }
+        };
+        var parameterView = ParameterView.FromDictionary(parametersDictionary);
+        // ReSharper disable once AccessToModifiedClosure
+        var parameterState = ParameterAttachBuilder
+            .Create<double>()
+            .WithMetadata(new ParameterMetadata(nameof(Parameter), null, nameof(comparer)))
+            .WithGetParameterValueFunc(() => Parameter)
+            .WithParameterChangedHandler(parameterChangedHandlerMock)
+            .WithComparer(() => comparer)
+            .Attach();
+        var parameterSet = new ParameterSet { parameterState };
+
+        // Act && Assert
+        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+        parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
+        {
+            new ParameterChangedEventArgs<double>(ParameterName, Parameter, ParameterNewValue)
+        });
     }
 
     [Test]
