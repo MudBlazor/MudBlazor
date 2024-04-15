@@ -1,19 +1,16 @@
-﻿
-using System;
+﻿using System;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
-using Bunit;
 using FluentAssertions;
 using MudBlazor.Extensions;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.Utilities;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-
+#nullable enable
     [TestFixture]
     public class ThemeProviderTests : BunitTest
     {
@@ -262,9 +259,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CustomThemeDarkModeTest()
         {
-            var myCustomTheme = new MudTheme()
+            var myCustomTheme = new MudTheme
             {
-                PaletteDark = new PaletteDark()
+                PaletteDark = new PaletteDark
                 {
                     Primary = Colors.Blue.Lighten1,
                     Secondary = "#F50057"
@@ -296,37 +293,35 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CustomThemeDefaultTest()
         {
-            var DefaultTheme = new MudTheme();
+            var defaultTheme = new MudTheme();
 
             //Dark theme
-            DefaultTheme.PaletteDark.Should().BeOfType<PaletteDark>();
-            DefaultTheme.PaletteDark.Primary.Should().Be(new MudColor("#776be7"));
-            DefaultTheme.PaletteDark.Error.Should().Be(new MudColor("#f64e62"));
-            DefaultTheme.PaletteDark.White.Should().Be(new MudColor(Colors.Shades.White));
+            defaultTheme.PaletteDark.Should().BeOfType<PaletteDark>();
+            defaultTheme.PaletteDark.Primary.Should().Be(new MudColor("#776be7"));
+            defaultTheme.PaletteDark.Error.Should().Be(new MudColor("#f64e62"));
+            defaultTheme.PaletteDark.White.Should().Be(new MudColor(Colors.Shades.White));
 
             //Light theme
             // Note we're testing against the base type
-            DefaultTheme.PaletteLight.Should().BeAssignableTo<Palette>();
-            DefaultTheme.PaletteLight.Primary.Should().Be(new MudColor("#594AE2"));
-            DefaultTheme.PaletteLight.Error.Should().Be(new MudColor(Colors.Red.Default));
-            DefaultTheme.PaletteLight.White.Should().Be(new MudColor(Colors.Shades.White));
-        }
-
-        private bool _systemMockValue;
-        private Task SystemChangedResult(bool newValue)
-        {
-            _systemMockValue = newValue;
-            return Task.CompletedTask;
+            defaultTheme.PaletteLight.Should().BeAssignableTo<Palette>();
+            defaultTheme.PaletteLight.Primary.Should().Be(new MudColor("#594AE2"));
+            defaultTheme.PaletteLight.Error.Should().Be(new MudColor(Colors.Red.Default));
+            defaultTheme.PaletteLight.White.Should().Be(new MudColor(Colors.Shades.White));
         }
 
         [Test]
         public async Task WatchSystemTest()
         {
-            _systemMockValue.Should().BeFalse();
+            var systemMockValue = false;
+            Task SystemChangedResult(bool newValue)
+            {
+                systemMockValue = newValue;
+                return Task.CompletedTask;
+            }
             var comp = Context.RenderComponent<MudThemeProvider>();
             await comp.Instance.WatchSystemPreference(SystemChangedResult);
             await comp.Instance.SystemPreferenceChanged(true);
-            _systemMockValue.Should().BeTrue();
+            systemMockValue.Should().BeTrue();
         }
 
         [Test]
@@ -337,10 +332,12 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(":host")]
         public void PseudoCssScope_Test(string scope)
         {
-            var mudTheme = new MudTheme();
-            mudTheme.PseudoCss = new PseudoCss()
+            var mudTheme = new MudTheme
             {
-                Scope = scope
+                PseudoCss = new PseudoCss
+                {
+                    Scope = scope
+                }
             };
             var comp = Context.RenderComponent<MudThemeProvider>(parameters => parameters.Add(p => p.Theme, mudTheme));
             comp.Should().NotBeNull();
@@ -361,24 +358,23 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void PseudoCssRootColor_Test()
         {
-            var scope = ":root";
-            var isDarkMode = true;
+            const string Scope = ":root";
             var mudTheme = new MudTheme
             {
-                PaletteDark = new PaletteDark()
+                PaletteDark = new PaletteDark
                 {
                     Primary = Colors.Green.Darken1,
+                },
+                PseudoCss = new PseudoCss
+                {
+                    Scope = Scope
                 }
-            };
-            mudTheme.PseudoCss = new PseudoCss()
-            {
-                Scope = scope
             };
             var comp = Context.RenderComponent<MudThemeProvider>(
                 parameters =>
                     parameters.Add(p => p.Theme, mudTheme)
-                        .Add(p => p.IsDarkMode, isDarkMode)
-                    );
+                        .Add(p => p.IsDarkMode, true)
+            );
             comp.Should().NotBeNull();
 
             var styleNodes = comp.Nodes.OfType<IHtmlStyleElement>().ToArray();
@@ -387,7 +383,7 @@ namespace MudBlazor.UnitTests.Components
 
             var styleLines = rootStyleNode.InnerHtml.Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
-            styleLines.Should().Contain($"{scope}{{");
+            styleLines.Should().Contain($"{Scope}{{");
 
             var expectedPrimaryColor = Colors.Green.Darken1;
             var expectedPrimaryColorAsRgba = new MudColor(expectedPrimaryColor).ToString(MudColorOutputFormats.RGBA);
