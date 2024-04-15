@@ -19,26 +19,25 @@ namespace MudBlazor
         public MudTreeView()
         {
             MudTreeRoot = this;
-            _comparerState = RegisterParameterBuilder<IEqualityComparer<T?>>(nameof(Comparer))
+            using var registerScope = CreateRegisterScope();
+            _comparerState = registerScope.RegisterParameter<IEqualityComparer<T?>>(nameof(Comparer))
                 .WithParameter(() => Comparer)
                 .WithChangeHandler(OnComparerChangedAsync);
-            _selectedValueState = RegisterParameterBuilder<T?>(nameof(SelectedValue))
+            _selectedValueState = registerScope.RegisterParameter<T?>(nameof(SelectedValue))
                 .WithParameter(() => SelectedValue)
                 .WithEventCallback(() => SelectedValueChanged)
                 .WithChangeHandler(OnSelectedValueChangedAsync)
                 .WithComparer(() => Comparer);
-            _selectedValuesState = RegisterParameterBuilder<IReadOnlyCollection<T>?>(nameof(SelectedValues))
+            _selectedValuesState = registerScope.RegisterParameter<IReadOnlyCollection<T>?>(nameof(SelectedValues))
                 .WithParameter(() => SelectedValues)
                 .WithEventCallback(() => SelectedValuesChanged)
                 .WithChangeHandler(OnSelectedValuesChangedAsync);
-            RegisterParameterBuilder<SelectionMode>(nameof(SelectionMode))
+            registerScope.RegisterParameter<SelectionMode>(nameof(SelectionMode))
                 .WithParameter(() => SelectionMode)
-                .WithChangeHandler(OnParameterChanged)
-                .Attach();
-            RegisterParameterBuilder<bool>(nameof(TriState))
+                .WithChangeHandler(OnParameterChanged);
+            registerScope.RegisterParameter<bool>(nameof(TriState))
                 .WithParameter(() => TriState)
-                .WithChangeHandler(OnParameterChanged)
-                .Attach();
+                .WithChangeHandler(OnParameterChanged);
             _selection = new();
         }
 

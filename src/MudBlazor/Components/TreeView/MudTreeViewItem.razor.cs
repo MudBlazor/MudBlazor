@@ -26,10 +26,11 @@ namespace MudBlazor
 
         public MudTreeViewItem()
         {
-            _expandedState = RegisterParameterBuilder<bool>(nameof(Expanded))
+            using var registerScope = CreateRegisterScope();
+            _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
                 .WithParameter(() => Expanded)
                 .WithEventCallback(() => ExpandedChanged);
-            _selectedState = RegisterParameterBuilder<bool>(nameof(Selected))
+            _selectedState = registerScope.RegisterParameter<bool>(nameof(Selected))
                 .WithParameter(() => Selected)
                 .WithEventCallback(() => SelectedChanged)
                 .WithChangeHandler(OnSelectedParameterChangedAsync);
@@ -43,8 +44,8 @@ namespace MudBlazor
 
         protected string ContentClassname =>
             new CssBuilder("mud-treeview-item-content")
-                .AddClass("cursor-pointer", !Disabled && (!ReadOnly || MudTreeRoot?.ExpandOnClick == true && HasChild)
-                .AddClass("mud-ripple", MudTreeRoot?.Ripple == true && !Disabled && (MudTreeRoot?.IsSelectable == true || MudTreeRoot?.ExpandOnClick == true && HasChild)))
+                .AddClass("cursor-pointer", !Disabled && (!ReadOnly || MudTreeRoot?.ExpandOnClick == true && HasChild))
+                .AddClass("mud-ripple", MudTreeRoot?.Ripple == true && !Disabled && (!ReadOnly || MudTreeRoot?.ExpandOnClick == true && HasChild))
                 .AddClass($"mud-treeview-item-selected",!Disabled && !MultiSelection && _selectedState.Value)
                 .Build();
 
@@ -346,7 +347,10 @@ namespace MudBlazor
 
         protected async Task OnItemClicked(MouseEventArgs ev)
         {
-            if (HasChild && (MudTreeRoot?.ExpandOnClick ?? false))
+            var expandOnClick = MudTreeRoot?.ExpandOnClick ?? false;
+            var expandOnDoubleClick = MudTreeRoot?.ExpandOnDoubleClick ?? false;
+            // note: when both click and doubleClick are enabled, doubleClick wins
+            if (HasChild && expandOnClick && !expandOnDoubleClick)
             {
                 await _expandedState.SetValueAsync(!_expandedState);
                 await TryInvokeServerLoadFunc();
@@ -365,7 +369,8 @@ namespace MudBlazor
 
         protected async Task OnItemDoubleClicked(MouseEventArgs ev)
         {
-            if (HasChild && (MudTreeRoot?.ExpandOnDoubleClick ?? false))
+            var expandOnDoubleClick = MudTreeRoot?.ExpandOnDoubleClick ?? false;
+            if (HasChild && expandOnDoubleClick)
             {
                 await _expandedState.SetValueAsync(!_expandedState);
                 await TryInvokeServerLoadFunc();
