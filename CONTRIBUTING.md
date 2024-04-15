@@ -171,7 +171,7 @@ In the constructor, we register the parameter so that the base class can manage 
 public MudCollapse()
 {
     using var registerScope = CreateRegisterScope();
-    _expandedState = registerScope.CreateParameterBuilder<bool>(nameof(Expanded)) // the property name is needed for automatic value change detection in SetParametersAsync
+    _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded)) // the property name is needed for automatic value change detection in SetParametersAsync
         .WithParameter(() => Expanded) // a get func enabling the ParameterState to read the parameter value w/o resorting to Reflection
         .WithEventCallback(() => ExpandedChanged) // a get func enabling the ParameterState to get the EventCallback of the parameter (if the param is two-way bindable)
         .WithChangeHandler(OnExpandedChangedAsync); // the change handler 
@@ -197,7 +197,7 @@ private async Task OnExpandedChangedAsync()
 }
 ```
 
-There are a couple of builders for the `CreateParameterBuilder` method for different use-cases. For instance, you don't always need an `EventCallback` for every parameter. 
+There are a couple of builders for the `RegisterParameter` method for different use-cases. For instance, you don't always need an `EventCallback` for every parameter. 
 Some parameters need async logic in their change handler other don't, etc.
 
 ### Can I share change handlers between parameters?
@@ -207,8 +207,8 @@ Yes, if you pass them as a method group like in the example below, shared parame
 ```c#
     // Param1 and Param2 share the same change handler
     using var registerScope = CreateRegisterScope();
-    _param1State = registerScope.CreateParameterBuilder<int>(nameof(Param1)).WithParameter(() => Param1).WithChangeHandler(OnParametersChanged);
-    _param2State = registerScope.CreateParameterBuilder<int>(nameof(Param2)).WithParameter(() => Param2).WithChangeHandler(OnParametersChanged);
+    _param1State = registerScope.RegisterParameter<int>(nameof(Param1)).WithParameter(() => Param1).WithChangeHandler(OnParametersChanged);
+    _param2State = registerScope.RegisterParameter<int>(nameof(Param2)).WithParameter(() => Param2).WithChangeHandler(OnParametersChanged);
 ```
 
 **NB**: if you pass lambda functions as change handlers they will be called once each for every changed parameter even if they contain the same code!
@@ -251,7 +251,7 @@ public EventCallback<bool> ExpandedChanged { get; set; }
 public MudTreeViewItemToggleButton()
 {
     using var registerScope = CreateRegisterScope();
-    _expandedState = registerScope.CreateParameterBuilder<bool>(nameof(Expanded))
+    _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
         .WithParameter(() => Expanded)
         .WithEventCallback(() => ExpandedChanged);
 }
