@@ -16,39 +16,17 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Hoverable">
-                <Description>If <CodeInline>Hover</CodeInline> is set to true, all treeview items will have a hover effect on mouse-over.</Description>
+            <SectionHeader Title="Usage">
+                <Description>
+                    If <CodeInline>Hover</CodeInline> is set to true, all tree view items will have a hover effect on mouse-over.
+                    If <CodeInline>Dense</CodeInline> is set to true, compact vertical padding will be applied to all tree view items.
+                    With <CodeInline>ExpandOnClick</CodeInline> bool the whole item row can be clicked to expand/collapse the subtrees.
+                    With <CodeInline>ExpandOnDoubleClick</CodeInline>, similar to ExpandOnClick, double-clicking on the whole item row will expand/collapse the subtrees.
+                    Additionally, a <CodeInline>OnDoubleClick</CodeInline> callback can be assigned to set a custom double click behaviour.
+                </Description>
             </SectionHeader>
-            <SectionContent Code="@nameof(TreeViewHoverExample)" ShowCode="false">
-                <TreeViewHoverExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Dense">
-                <Description>If <CodeInline>Dense</CodeInline> is set to true, compact vertical padding will be applied to all treeview items.</Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(TreeViewDenseExample)" ShowCode="false">
-                <TreeViewDenseExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Expand">
-                <Description>With <CodeInline>ExpandOnClick</CodeInline> bool the whole item row can be clicked to expand/collapse the sub trees.</Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(TreeViewExpandOnClickExample)" ShowCode="false">
-                <TreeViewExpandOnClickExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Expand on double click">
-                <Description>With <CodeInline>ExpandOnDoubleClick</CodeInline>, similar to ExpandOnClick, double clicking on the whole item row will expand/collapse the sub trees.
-                Additionally, <CodeInline>OnDoubleClick</CodeInline> callback can be assigned to set a custom double click behaviour. </Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(TreeViewExpandOnDoubleClickExample)" ShowCode="false">
-                <TreeViewExpandOnDoubleClickExample />
+            <SectionContent Code="@nameof(TreeViewUsageExample)" ShowCode="false">
+                <TreeViewUsageExample />
             </SectionContent>
         </DocsPageSection>
 

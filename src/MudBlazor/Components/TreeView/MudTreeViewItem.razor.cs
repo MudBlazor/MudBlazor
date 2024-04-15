@@ -43,8 +43,8 @@ namespace MudBlazor
 
         protected string ContentClassname =>
             new CssBuilder("mud-treeview-item-content")
-                .AddClass("cursor-pointer", !ReadOnly || MudTreeRoot?.ExpandOnClick == true && HasChild)
-                .AddClass($"mud-treeview-item-selected", !MultiSelection && _selectedState.Value)
+                .AddClass("cursor-pointer", !Disabled && (!ReadOnly || MudTreeRoot?.ExpandOnClick == true && HasChild))
+                .AddClass($"mud-treeview-item-selected",!Disabled && !MultiSelection && _selectedState.Value)
                 .Build();
 
         public string TextClassname =>

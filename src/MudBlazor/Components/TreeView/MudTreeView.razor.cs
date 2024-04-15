@@ -56,7 +56,7 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-treeview")
                 .AddClass("mud-treeview-dense", Dense)
-                .AddClass("mud-treeview-hover", Hover)
+                .AddClass("mud-treeview-hover", !Disabled && Hover && (!ReadOnly || ExpandOnClick))
                 .AddClass($"mud-treeview-selected-{Color.ToDescriptionString()}")
                 .AddClass($"mud-treeview-checked-{CheckBoxColor.ToDescriptionString()}")
                 .AddClass(Class)
