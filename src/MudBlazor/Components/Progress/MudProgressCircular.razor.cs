@@ -66,7 +66,8 @@ namespace MudBlazor
 
         public MudProgressCircular()
         {
-            _valueState = RegisterParameterBuilder<double>(nameof(Value))
+            using var registerScope = CreateRegisterScope();
+            _valueState = registerScope.RegisterParameter<double>(nameof(Value))
                 .WithParameter(() => Value)
                 .WithChangeHandler(OnValueParameterChanged)
                 .WithComparer(DoubleEpsilonEqualityComparer.Default);

@@ -14,17 +14,18 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
 {
     public MudChipSet()
     {
-        _selectedValue = RegisterParameterBuilder<T?>(nameof(SelectedValue))
+        using var registerScope = CreateRegisterScope();
+        _selectedValue = registerScope.RegisterParameter<T?>(nameof(SelectedValue))
             .WithParameter(() => SelectedValue)
             .WithEventCallback(() => SelectedValueChanged)
             .WithChangeHandler(OnSelectedValueChangedAsync);
-        _selectedValues = RegisterParameterBuilder<IReadOnlyCollection<T?>?>(nameof(SelectedValues))
+        _selectedValues = registerScope.RegisterParameter<IReadOnlyCollection<T?>?>(nameof(SelectedValues))
             .WithParameter(() => SelectedValues).WithEventCallback(() => SelectedValuesChanged)
             .WithChangeHandler(OnSelectedValuesChangedAsync);
-        _comparer = RegisterParameterBuilder<IEqualityComparer<T>?>(nameof(Comparer))
+        _comparer = registerScope.RegisterParameter<IEqualityComparer<T>?>(nameof(Comparer))
             .WithParameter(() => Comparer)
             .WithChangeHandler(OnComparerChangedAsync);
-        RegisterParameterBuilder<bool>(nameof(CheckMark))
+        registerScope.RegisterParameter<bool>(nameof(CheckMark))
             .WithParameter(() => CheckMark)
             .WithChangeHandler(OnCheckMarkChanged)
             .Attach();
