@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Width="300px" Elevation="0">
-    <MudTreeView @bind-SelectedValue="SelectedValue" @bind-SelectedValues="SelectedValues" @bind-SelectionMode="SelectionMode" Hover="true">
+    <MudTreeView @bind-SelectedValue="SelectedValue" @bind-SelectedValues="SelectedValues" @bind-SelectionMode="SelectionMode" Hover="true" TriState="@TriState">
         <MudTreeViewItem @bind-Expanded="@FolderOneExpanded" Value="@(".vscode")" Icon="@(FolderOneExpanded ? Icons.Custom.Uncategorized.FolderOpen : Icons.Custom.Uncategorized.Folder)">
             <MudTreeViewItem Value="@("launch.json")" Icon="@Icons.Custom.FileFormats.FileCode" />
             <MudTreeViewItem Value="@("tasks.json")" Icon="@Icons.Custom.FileFormats.FileCode" />
@@ -13,7 +13,7 @@
 </MudPaper>
 
 <MudPaper Width="300px" Elevation="0">
-    <MudTreeView @bind-SelectedValue="SelectedValue" @bind-SelectedValues="SelectedValues" @bind-SelectionMode="SelectionMode" Hover="true">
+    <MudTreeView @bind-SelectedValue="SelectedValue" @bind-SelectedValues="SelectedValues" @bind-SelectionMode="SelectionMode" Hover="true" TriState="@TriState">
         <MudTreeViewItem @bind-Expanded="@FolderOneExpanded" Value="@(".vscode")" Icon="@(FolderOneExpanded ? Icons.Custom.Uncategorized.FolderOpen : Icons.Custom.Uncategorized.Folder)">
             <MudTreeViewItem Value="@("launch.json")" Icon="@Icons.Custom.FileFormats.FileCode" />
             <MudTreeViewItem Value="@("tasks.json")" Icon="@Icons.Custom.FileFormats.FileCode" />
@@ -33,6 +33,7 @@
         </MudSelect>
     </div>
     <MudText Typo="@Typo.subtitle1">Selected item: @SelectedValue</MudText>
+    <MudSwitch @bind-Value="TriState" Color="Color.Primary">TriState</MudSwitch>
 </MudStack>
 
 @code {
@@ -41,4 +42,5 @@
     public bool FolderOneExpanded = true;
     public bool FolderTwoExpanded;
     public SelectionMode SelectionMode = SelectionMode.SingleSelection;
+    public bool TriState = true;
 }

@@ -61,18 +61,25 @@ namespace MudBlazor
         private MudTreeViewItem<T>? Parent { get; set; }
 
         /// <summary>
-        /// Custom checked icon, leave null for default.
+        /// Custom checked icon.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
 
         /// <summary>
-        /// Custom unchecked icon, leave null for default.
+        /// Custom unchecked icon.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
+
+        /// <summary>
+        /// Custom tristate indeterminate icon.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
 
         /// <summary>
         /// Value of the treeviewitem. Acts as the displayed text if no text is set.
@@ -276,7 +283,7 @@ namespace MudBlazor
              (MudTreeRoot != null && Items != null && Items.Count != 0) ||
              (MudTreeRoot?.ServerData != null && CanExpand && !_isServerLoaded && (Items == null || Items.Count == 0));
 
-        private bool? GetCheckBoxState()
+        private bool? GetCheckBoxStateTriState()
         {
             var allChildrenChecked = GetChildItemsRecursive().All(x => x.GetState<bool>(nameof(Selected)));
             var noChildrenChecked = GetChildItemsRecursive().All(x => !x.GetState<bool>(nameof(Selected)));
@@ -287,11 +294,11 @@ namespace MudBlazor
             return null;
         }
 
-        private Task OnCheckboxChangedAsync(bool? arg)
+        private async Task OnCheckboxChangedAsync()
         {
             if (MudTreeRoot == null)
-                return Task.CompletedTask;
-            return MudTreeRoot.OnItemClickAsync(this);
+                return;
+            await MudTreeRoot.OnItemClickAsync(this);
         }
 
         protected override void OnInitialized()
@@ -436,20 +443,6 @@ namespace MudBlazor
             }
         }
 
-        //// TODO: unify UpdateSingleSelectionState and UpdateMultiSelectionState into UpdateSelectionState
-        //public void UpdateSingleSelectionState(T? value)
-        //{
-        //    if (MudTreeRoot == null)
-        //        return;
-        //    var comparer = MudTreeRoot.Comparer;
-        //    var selected = comparer.Equals(Value, value);
-        //    _selectedState.SetValueAsync(selected);
-        //    // since the tree view doesn't know our children we need to take care of updating them
-        //    foreach (var child in _childItems)
-        //        child.UpdateSingleSelectionState(value);
-        //    StateHasChanged();
-        //}
-
         internal void UpdateSelectionState(HashSet<T> selectedValues)
         {
             if (MudTreeRoot == null)
@@ -479,5 +472,13 @@ namespace MudBlazor
             return list;
         }
 
+        private string GetIndeterminateIcon()
+        {
+            if (MudTreeRoot?.TriState == true)
+                return IndeterminateIcon;
+            // in non-tristate mode we need to fake the checked status. the actual status of the checkbox is irrelevant,
+            // only _selectedState.Value matters!
+            return _selectedState ? CheckedIcon : UncheckedIcon;
+        }
     }
 }

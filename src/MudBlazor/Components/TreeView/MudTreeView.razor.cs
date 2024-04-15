@@ -35,6 +35,10 @@ namespace MudBlazor
                 .WithParameter(() => SelectionMode)
                 .WithChangeHandler(OnParameterChanged)
                 .Attach();
+            RegisterParameterBuilder<bool>(nameof(TriState))
+                .WithParameter(() => TriState)
+                .WithChangeHandler(OnParameterChanged)
+                .Attach();
             _selection = new();
         }
 
@@ -92,6 +96,14 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public SelectionMode SelectionMode { get; set; } = SelectionMode.SingleSelection;
+
+        /// <summary>
+        /// If true, the checkboxes will use the undetermined state in MultiSelection if any children in the sub-tree
+        /// have a different selection value than the parent item.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public bool TriState { get; set; } = true;
 
         /// <summary>
         /// If true, clicking anywhere on the item will expand it, if it has children.
@@ -284,7 +296,7 @@ namespace MudBlazor
                     else
                         _selection.Add(item.Value!);
                 }
-                await _selectedValuesState.SetValueAsync(_selection);
+                await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
                 UpdateItems();
                 return;
             }

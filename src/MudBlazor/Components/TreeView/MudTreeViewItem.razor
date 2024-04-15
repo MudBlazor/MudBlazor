@@ -1,5 +1,6 @@
 @namespace MudBlazor
 @inherits MudComponentBase
+@using Microsoft.VisualBasic
 @typeparam T
 
 <li @attributes="UserAttributes" class="@Classname" style="@Style">
@@ -14,7 +15,8 @@
 
             @if (MultiSelection)
             {
-                <MudCheckBox T="bool?" TriState Class="mud-treeview-item-checkbox" CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" @bind-Value:get="GetCheckBoxState()" @bind-Value:set="@OnCheckboxChangedAsync" Disabled="@Disabled"></MudCheckBox>
+                <MudCheckBox T="bool?" TriState Class="mud-treeview-item-checkbox" CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" IndeterminateIcon="@GetIndeterminateIcon()" 
+                        @bind-Value:get="GetCheckBoxStateTriState()" @bind-Value:set="@(x=>OnCheckboxChangedAsync())" Disabled="@Disabled"></MudCheckBox>
             }
 
             @if (!string.IsNullOrEmpty(Icon))

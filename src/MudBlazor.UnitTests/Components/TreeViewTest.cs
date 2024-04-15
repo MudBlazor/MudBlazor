@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
@@ -143,6 +145,47 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
         }
 
+        [Test]
+        public void TreeViewWith_MultiSelection_TwoWayBindingTest()
+        {
+            var comp = Context.RenderComponent<TreeViewSelectionBindingTest>(self => self
+                .Add(x => x.SelectedValues, ["item1", "item1.2"])
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+            // check initial selection
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null"); 
+            comp.Find(".tree2 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
+            // note: the tristate checkbox is null because not all its children are selected ...
+            // ... this doesn't mean that the item's Selected value isn't true. Checking:
+            foreach (var item in comp.FindComponents<MudTreeViewItem<string>>().Where(x => x.Instance.Value == "item1"))
+            {
+                item.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Selected)).Should().Be(true);
+            }
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree2 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree2 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.2");
+
+            // select another value on tree1 and check selection has changed on both trees
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree2 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree2 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree2 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.1, item1.2");
+
+            // remove a value on tree2 and check selection has changed on both trees
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").Click();
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree2 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree2 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree2 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("");
+        }
 
         [Test]
         public void Collapsed_ClickOnArrowButton_CheckClose()
