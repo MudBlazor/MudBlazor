@@ -14,6 +14,7 @@ namespace MudBlazor;
 partial class MudThemingProvider : ComponentBaseWithState, IDisposable
 {
     // private const string Breakpoint = "mud-breakpoint";
+    private bool _disposed;
     private const string Palette = "mud-palette";
     private const string Ripple = "mud-ripple";
     private const string Elevation = "mud-elevation";
@@ -456,12 +457,16 @@ partial class MudThemingProvider : ComponentBaseWithState, IDisposable
 
     public void Dispose()
     {
-        _darkLightModeChanged = null;
-        if (_lazyDotNetRef.IsValueCreated)
+        if (!_disposed)
         {
-            _lazyDotNetRef.Value.Dispose();
-            // When .NET7 is dropped we can use async Dispose, but for now MAUI has bug https://github.com/MudBlazor/MudBlazor/pull/5367#issuecomment-1258649968.
-            _ = JsRuntime.InvokeVoidAsyncIgnoreErrors("stopWatchingDarkThemeMedia");
+            _disposed = true;
+            _darkLightModeChanged = null;
+            if (_lazyDotNetRef.IsValueCreated)
+            {
+                _lazyDotNetRef.Value.Dispose();
+                // When .NET7 is dropped we can use async Dispose, but for now MAUI has bug https://github.com/MudBlazor/MudBlazor/pull/5367#issuecomment-1258649968.
+                _ = JsRuntime.InvokeVoidAsyncIgnoreErrors("stopWatchingDarkThemeMedia");
+            }
         }
     }
 

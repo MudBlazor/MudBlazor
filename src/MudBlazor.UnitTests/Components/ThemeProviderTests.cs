@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
+using Bunit;
 using FluentAssertions;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
@@ -393,6 +394,31 @@ namespace MudBlazor.UnitTests.Components
             var expectedPrimaryDarkenColorAsRgb = expectedPrimaryDarkenColor.ToString(MudColorOutputFormats.RGB);
             var expectedPrimaryDarkenLine = $"--mud-palette-primary-darken: {expectedPrimaryDarkenColorAsRgb};";
             styleLines.Should().Contain(expectedPrimaryDarkenLine);
+        }
+
+        [Test]
+        public void Dispose_ShouldInvokeJs()
+        {
+            // Arrange
+            Context.JSInterop.SetupVoid("stopWatchingDarkThemeMedia");
+            Context.RenderComponent<MudThemingProvider>();
+
+            //Act
+            Context.DisposeComponents();
+
+            // Assert
+            Context.JSInterop.VerifyInvoke("stopWatchingDarkThemeMedia");
+        }
+
+        [Test]
+        public void RenderComponent_ShouldInvokeJs()
+        {
+            // Act & Arrange
+            Context.JSInterop.SetupVoid("watchDarkThemeMedia");
+            Context.RenderComponent<MudThemingProvider>();
+
+            // Assert
+            Context.JSInterop.VerifyInvoke("watchDarkThemeMedia");
         }
     }
 }
