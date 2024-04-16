@@ -137,7 +137,7 @@ namespace MudBlazor
 
         protected ElementReference _elementReference;
 
-        internal bool StopOnClickPropagation => HtmlTag == "button" && ClickPropagation == false;
+        internal bool ApplyClickPropagation => !(HtmlTag == "button" && ClickPropagation == false);
 
         public ValueTask FocusAsync() => _elementReference.FocusAsync();
 

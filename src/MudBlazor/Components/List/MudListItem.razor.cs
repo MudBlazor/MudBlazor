@@ -276,8 +276,8 @@ namespace MudBlazor
 
         private bool GetDisabled() => Disabled || (MudList?.GetDisabled() ?? false);
         internal string HtmlTag => string.IsNullOrEmpty(Href) ? "div" : "a";
-        internal bool GetPreventDefault() => GetDisabled();
-        internal bool GetStopPropagation() => true;
+        internal bool ApplyPreventDefault => GetDisabled();
+        internal bool ApplyClickPropagation => false;
         public void Dispose()
         {
             try

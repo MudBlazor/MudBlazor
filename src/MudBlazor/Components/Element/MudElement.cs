@@ -39,7 +39,7 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
-        public bool ClickPropagation { get; set; }
+        public bool ClickPropagation { get; set; } = true;
 
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
