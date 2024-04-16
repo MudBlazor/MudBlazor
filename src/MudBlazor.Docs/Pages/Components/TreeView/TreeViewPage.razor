@@ -2,16 +2,17 @@
 
 <DocsPage>
     <DocsPageHeader Title="Tree View">
-        <Description>Easily customizable tree view.</Description>
+        <Description>An extensively customizable tree view component with selection and lazy-loading support.</Description>
     </DocsPageHeader>
     <DocsPageContent>
 
         <DocsPageSection>
             <SectionHeader Title="Basic">
-                <Description>The TreeView allows exploring of hierarchic data. In its simplest form it only displays text via the <CodeInline>Text</CodeInline> property of its items. 
-                    But you can also attach a value of type <CodeInline>T</CodeInline> to each item via the <CodeInline>Value</CodeInline> property. 
+                <Description>
+                    The TreeView allows exploring of hierarchic data. In its simplest form it only displays text via the <CodeInline>Text</CodeInline> property of its items.
+                    But you can also attach a value of type <CodeInline>T</CodeInline> to each item via the <CodeInline>Value</CodeInline> property.
                     In this example <CodeInline>ReadOnly</CodeInline> is set to true to prevent value selection. Some items in this example have a text, some have a value and one has both. If you use
-                    only <CodeInline>Text</CodeInline> and <CodeInline>T="string"</CodeInline> then that text will also serve as value. If you set only <CodeInline>Value</CodeInline> 
+                    only <CodeInline>Text</CodeInline> and <CodeInline>T="string"</CodeInline> then that text will also serve as value. If you set only <CodeInline>Value</CodeInline>
                     then the text will be derived from the value. You can of course set both to have different <CodeInline>Text</CodeInline> and <CodeInline>Value</CodeInline>. This will become important
                     for value selection (see <MudLink Href="/components/treeview#single-selection">Selection</MudLink>).
                 </Description>
@@ -24,10 +25,10 @@
         <DocsPageSection>
             <SectionHeader Title="Usage">
                 <Description>
-                    <CodeInline>Hover</CodeInline> applies a hover effect on mouse-over. <CodeInline>Ripple</CodeInline> applies a ripple effect on click, except if 
+                    <CodeInline>Hover</CodeInline> applies a hover effect on mouse-over. <CodeInline>Ripple</CodeInline> applies a ripple effect on click, except if
                     <CodeInline>ExpandOnDoubleClick</CodeInline> is set. <CodeInline>Dense</CodeInline> will result in a more compact vertical padding of the item items to save space.
                     <CodeInline>Disabled</CodeInline> will prevent all interaction with any items.
-                    With <CodeInline>ExpandOnClick</CodeInline> a subtree can be expanded and collapsed by clicking on it. With <CodeInline>ExpandOnDoubleClick</CodeInline>, 
+                    With <CodeInline>ExpandOnClick</CodeInline> a subtree can be expanded and collapsed by clicking on it. With <CodeInline>ExpandOnDoubleClick</CodeInline>,
                     only a double-click will expand or collapse the subtrees. Additionally, a <CodeInline>OnDoubleClick</CodeInline> callback can be assigned to set a custom double click behaviour.
                     <MudAlert Severity="Severity.Info" Class="my-3">
                         Note that <CodeInline>ExpandOnDoubleClick</CodeInline> overrules <CodeInline>ExpandOnClick</CodeInline> if both are set.
@@ -42,7 +43,7 @@
         <DocsPageSection>
             <SectionHeader Title="Icons">
                 <Description>
-                    The icons and their color can be changed individually per item via <CodeInline>Icon</CodeInline> and <CodeInline>IconColor</CodeInline>. This example uses a custom 
+                    The icons and their color can be changed individually per item via <CodeInline>Icon</CodeInline> and <CodeInline>IconColor</CodeInline>. This example uses a custom
                     <CodeInline>ExpandButtonIcon</CodeInline> and shows how to apply an alternative icon for expanded subtrees via the <CodeInline>IconExpanded</CodeInline> property.
                 </Description>
             </SectionHeader>
@@ -54,7 +55,7 @@
         <DocsPageSection>
             <SectionHeader Title="Single Selection">
                 <Description>
-                    If you set <CodeInline>SelectionMode</CodeInline> to <CodeInline>SelectionMode.SingleSelection</CodeInline> you can select a single value from the entire tree. 
+                    If you set <CodeInline>SelectionMode</CodeInline> to <CodeInline>SelectionMode.SingleSelection</CodeInline> you can select a single value from the entire tree.
                     <CodeInline>SelectionMode.ToggleSelection</CodeInline> is similar, except that it allows to deselect a previously selected value by clicking on it again.
                     You can use <CodeInline>@@bind-SelectedValue</CodeInline> on the <CodeInline Tag>MudTreeView</CodeInline> to get updates about the selected value or to influence
                     the selected value like you can do in this example with the chip set.
@@ -81,8 +82,8 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="ItemTemplate">
-                <Description>This example shows how to use ItemTemplate to automatically build the tree items according to a hierarchical data structure.</Description>
+            <SectionHeader Title="Item Template">
+                <Description>This example shows how to use <CodeInline>ItemTemplate</CodeInline> to automatically build the tree items according to a hierarchical data structure.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewItemTemplateExample)" ShowCode="false">
                 <TreeViewItemTemplateExample />
@@ -91,9 +92,10 @@
 
         <DocsPageSection>
             <SectionHeader Title="Server Side Data">
-                <Description>Data can be loaded on demand with the use of <CodeInline>ServerData</CodeInline> prop, the loading icon and its color can be changed with <CodeInline>LoadingIcon</CodeInline> and <CodeInline>LoadingIconColor</CodeInline> prop.
-                    It can also be disabled for certain items with the <CodeInline>CanExpand</CodeInline> property.
-                    </Description>
+                <Description>
+                    Data can be loaded on demand with the use of the <CodeInline>ServerData</CodeInline> parameter, the loading icon and its color can be changed with <CodeInline>LoadingIcon</CodeInline> and <CodeInline>LoadingIconColor</CodeInline> prop.
+                    Lazy-loading can also be disabled for certain items with the <CodeInline>CanExpand</CodeInline> property, if you know that there are is no subtree.
+                </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewServerExample)" ShowCode="false">
                 <TreeViewServerExample />
@@ -104,7 +106,8 @@
             <SectionHeader Title="Custom Tree">
                 <Description>
                     When the <CodeInline>Content</CodeInline> property is used, it will completely replace the default rendering of the MudTreeViewItem to use your own.
-                    Use the <CodeInline>Height</CodeInline> or <CodeInline>MaxHeight</CodeInline> parameters to scroll the treeview.
+                    You must constrain the container's <CodeInline>height</CodeInline> or <CodeInline>max-height</CodeInline> and set the container's <CodeInline>overflow-y</CodeInline>
+                    accordingly to scroll the <CodeInline Tag>MudTreeView</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewCustomExample)" ShowCode="false">
@@ -113,13 +116,13 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Custom body content">
+            <SectionHeader Title="Custom Body Content">
                 <Description>
-                    Use the <CodeInline>Body Content</CodeInline> instead of the <CodeInline>Content</CodeInline> render fragment,
-                    when you want your custom tree items, but still use the build-in icons and expansion buttons.
+                    Use the <CodeInline Tag>BodyContent</CodeInline> instead of the <CodeInline Tag>Content</CodeInline> render fragment,
+                    when you want to customize the tree item, but still use the build-in icons and expansion buttons.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" Code="TreeViewBodyContentExample">
+            <SectionContent Outlined="true" Code="@nameof(TreeViewBodyContentExample)" ShowCode="false">
                 <TreeViewBodyContentExample />
             </SectionContent>
         </DocsPageSection>
@@ -127,11 +130,11 @@
         <DocsPageSection>
             <SectionHeader Title="Custom Checkbox Behavior">
                 <Description>
-                    You can use the <CodeInline>Content</CodeInline> property to support custom checkbox behavior such as automatically checking a parent item when all 
+                    You can use the <CodeInline>Content</CodeInline> property to support custom checkbox behavior such as automatically checking a parent item when all
                     children are selected.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" Code="TreeViewCustomCheckboxExample">
+            <SectionContent Outlined="true" Code="@nameof(TreeViewCustomCheckboxExample)" ShowCode="false">
                 <TreeViewCustomCheckboxExample />
             </SectionContent>
         </DocsPageSection>

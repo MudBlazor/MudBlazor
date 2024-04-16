@@ -9,9 +9,9 @@
     </MudTreeView>
 </MudPaper>
 
-<div style="width: 100%">
-    <MudText Typo="@Typo.subtitle1">Sum of selected items: @GetSelectedSum()</MudText>
-</div>
+<MudStack Row Justify="Justify.Center" style="width: 100%">
+    <MudText Typo="@Typo.subtitle1">Sum of selected items: <MudChip T="string">@GetSelectedSum()</MudChip></MudText>
+</MudStack>
 
 @code {
     private IReadOnlyCollection<TreeItemData> SelectedValues { get; set; }

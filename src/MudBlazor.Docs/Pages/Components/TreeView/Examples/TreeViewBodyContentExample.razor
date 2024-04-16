@@ -1,21 +1,22 @@
 @namespace MudBlazor.Docs.Examples
 
-<MudTreeView Items="@TreeItems" Hover="true" Width="100%">
-    <ItemTemplate Context="item">
-        <MudTreeViewItem Items="@item.TreeItems" Icon="@item.Icon">
-            <BodyContent>
-                <div style="display: grid; grid-template-columns: 1fr auto; align-items: center; width: 100%">
-                    <MudText Style="justify-self: start;">@item.Text</MudText>
-                    <div style="justify-self: end;">
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Color="Color.Inherit" />
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" Color="Color.Inherit" />
+<MudPaper Width="400px" Elevation="2">
+    <MudTreeView Items="@TreeItems" Hover="true">
+        <ItemTemplate Context="item">
+            <MudTreeViewItem Items="@item.TreeItems" Icon="@item.Icon">
+                <BodyContent>
+                    <div style="display: grid; grid-template-columns: 1fr auto; align-items: center; width: 100%">
+                        <MudText Style="justify-self: start;">@item.Text</MudText>
+                        <div style="justify-self: end;">
+                            <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Color="Color.Inherit" />
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" Color="Color.Inherit" />
+                        </div>
                     </div>
-                </div>
-            </BodyContent>
-        </MudTreeViewItem>
-    </ItemTemplate>
-</MudTreeView>
-
+                </BodyContent>
+            </MudTreeViewItem>
+        </ItemTemplate>
+    </MudTreeView>
+</MudPaper>
 
 @code {
 
@@ -60,7 +61,6 @@
                 new TreeItemData("MudBlazor.Docs.Compiler", Icons.Material.Filled.Folder),
                 new TreeItemData("MudBlazor.Docs.Server", Icons.Material.Filled.Folder),
                 new TreeItemData("MudBlazor.UnitTests", Icons.Material.Filled.Folder),
-                new TreeItemData("MudBlazor.UnitTests.Viewer", Icons.Material.Filled.Folder),
                 new TreeItemData(".editorconfig", Icons.Custom.FileFormats.FileCode),
                 new TreeItemData("MudBlazor.sln", Icons.Custom.Brands.MicrosoftVisualStudio)
             }
