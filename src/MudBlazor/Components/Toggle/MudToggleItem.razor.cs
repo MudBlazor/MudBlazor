@@ -11,11 +11,9 @@ namespace MudBlazor
 #nullable enable
     public partial class MudToggleItem<T> : MudComponentBase
     {
-        private bool _selected;
-
         protected string Classname => new CssBuilder("mud-toggle-item")
-            .AddClass($"mud-theme-{Parent?.Color.ToDescriptionString()}", _selected && string.IsNullOrEmpty(Parent?.SelectedClass))
-            .AddClass(Parent?.SelectedClass, _selected && !string.IsNullOrEmpty(Parent?.SelectedClass))
+            .AddClass($"mud-theme-{Parent?.Color.ToDescriptionString()}", IsSelected && string.IsNullOrEmpty(Parent?.SelectedClass))
+            .AddClass(Parent?.SelectedClass, IsSelected && !string.IsNullOrEmpty(Parent?.SelectedClass))
             .AddClass($"mud-toggle-item-size-{Size.ToDescriptionString()}")
             .AddClass($"mud-toggle-item-{Parent?.Color.ToDescriptionString()}")
             .AddClass("mud-toggle-item-vertical", Parent?.Vertical == true)
@@ -31,9 +29,9 @@ namespace MudBlazor
             .AddClass(Parent?.TextClass)
             .Build();
 
-        protected string CheckMarkClassname => new CssBuilder()
+        protected string CheckMarkClassname => new CssBuilder("mud-toggle-item-icon")
+            .AddClass($"mud-toggle-item-icon-size-{Size.ToDescriptionString()}")
             .AddClass(Parent?.CheckMarkClass)
-            .AddClass("me-2")
             .Build();
 
         private Size Size => Parent?.Size ?? Size.Medium;
@@ -96,11 +94,11 @@ namespace MudBlazor
 
         public void SetSelected(bool selected)
         {
-            _selected = selected;
+            IsSelected = selected;
             StateHasChanged();
         }
 
-        protected internal bool IsSelected => _selected;
+        protected internal bool IsSelected { get; private set; }
 
         protected async Task HandleOnClickAsync()
         {
