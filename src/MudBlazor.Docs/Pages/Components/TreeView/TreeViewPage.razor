@@ -9,9 +9,11 @@
         <DocsPageSection>
             <SectionHeader Title="Basic">
                 <Description>The TreeView allows exploring of hierarchic data. In its simplest form it only displays text via the <CodeInline>Text</CodeInline> property of its items. 
-                    But you can also attach a value of type <CodeInline>T</CodeInline> to each item via the <CodeInline>Value</CodeInline> property. This will become important 
-                    for value selection (see <MudLink Href="#Selection">Selection</MudLink>).
-                    In this example <CodeInline>ReadOnly</CodeInline> is set to true to prevent value selection.
+                    But you can also attach a value of type <CodeInline>T</CodeInline> to each item via the <CodeInline>Value</CodeInline> property. 
+                    In this example <CodeInline>ReadOnly</CodeInline> is set to true to prevent value selection. Some items in this example have a text, some have a value and one has both. If you use
+                    only <CodeInline>Text</CodeInline> and <CodeInline>T="string"</CodeInline> then that text will also serve as value. If you set only <CodeInline>Value</CodeInline> 
+                    then the text will be derived from the value. You can of course set both to have different <CodeInline>Text</CodeInline> and <CodeInline>Value</CodeInline>. This will become important
+                    for value selection (see <MudLink Href="/components/treeview#single-selection">Selection</MudLink>).
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewBasicExample)">
@@ -50,34 +52,31 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Single Value Selection">
+            <SectionHeader Title="Single Selection">
                 <Description>
-                    If you set <CodeInline>SelectionMode</CodeInline> to <CodeInline>SelectionMode.SingleSelection</CodeInline> or you can select a single value from the entire tree. 
+                    If you set <CodeInline>SelectionMode</CodeInline> to <CodeInline>SelectionMode.SingleSelection</CodeInline> you can select a single value from the entire tree. 
                     <CodeInline>SelectionMode.ToggleSelection</CodeInline> is similar, except that it allows to deselect a previously selected value by clicking on it again.
                     You can use <CodeInline>@@bind-SelectedValue</CodeInline> on the <CodeInline Tag>MudTreeView</CodeInline> to get updates about the selected value or to influence
                     the selected value like you can do in this example with the chip set.
+                    The color of the selected item can be changed with <CodeInline>Color</CodeInline> property.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="@nameof(TreeViewSelectionExample)" ShowCode="false">
-                <TreeViewSelectionExample />
+            <SectionContent Code="@nameof(TreeViewSingleSelectionExample)" ShowCode="false">
+                <TreeViewSingleSelectionExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Selected Color">
-                <Description>The color of the selected item can be changed with <CodeInline>Color</CodeInline> property.</Description>
+            <SectionHeader Title="Multi Selection">
+                <Description>
+                    If you set <CodeInline>SelectionMode</CodeInline> to <CodeInline>SelectionMode.MultiSelection</CodeInline> you can select multiple values from the entire tree.
+                    Use <CodeInline>@@bind-SelectedValues</CodeInline> (note the 's' at the end) on the <CodeInline Tag>MudTreeView</CodeInline> to get updates about the selected values or to influence
+                    the selection like you can do in this example with the chip set.
+                    The color of the checkboxes can be changed with the <CodeInline>CheckBoxColor</CodeInline> property.
+                </Description>
             </SectionHeader>
-            <SectionContent Code="@nameof(TreeViewSelectedColorExample)" ShowCode="false">
-                <TreeViewSelectedColorExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Multiselect Color">
-                <Description>The color of the checkboxes when <CodeInline>MultiSelection</CodeInline> is set to true can be changed with <CodeInline>CheckBoxColor</CodeInline> property.</Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(TreeViewMultiSelecttionColorExample)" ShowCode="false">
-                <TreeViewMultiSelecttionColorExample />
+            <SectionContent Code="@nameof(TreeViewMultiSelectionExample)" ShowCode="false">
+                <TreeViewMultiSelectionExample />
             </SectionContent>
         </DocsPageSection>
 

@@ -3,14 +3,14 @@
 <MudPaper Width="300px" Elevation="0">
     <MudTreeView T="string" ReadOnly="@ReadOnly" Hover="@Hover" Dense="@Dense" Disabled="@Disabled"
                  ExpandOnClick="ExpandOnClick" ExpandOnDoubleClick="ExpandOnDoubleClick">
-        <MudTreeViewItem Value="@("Applications")" Expanded>
-            <MudTreeViewItem Value="@("Terminal")" />
+        <MudTreeViewItem Text="Applications" Expanded>
+            <MudTreeViewItem Text="Terminal" />
         </MudTreeViewItem>
-        <MudTreeViewItem Value="@("Documents")" Expanded>
-            <MudTreeViewItem Value="@("MudBlazor")" Expanded>
-                <MudTreeViewItem Value="@("API")" />
-                <MudTreeViewItem Value="@("Components")" />
-                <MudTreeViewItem Value="@("Features")" />
+        <MudTreeViewItem Text="Documents" Expanded>
+            <MudTreeViewItem Text="MudBlazor" Expanded>
+                <MudTreeViewItem Text="API" />
+                <MudTreeViewItem Text="Components" />
+                <MudTreeViewItem Text="Features" />
             </MudTreeViewItem>
         </MudTreeViewItem>
     </MudTreeView>
