@@ -21,6 +21,7 @@ namespace MudBlazor
             .AddClass("mud-ripple", Parent?.Ripple == true)
             .AddClass($"mud-border-{Parent?.Color.ToDescriptionString()} border-solid")
             .AddClass("mud-toggle-delimiter-alternative", Parent?.SelectionMode == SelectionMode.MultiSelection && IsSelected && Parent?.Color != Color.Default)
+            .AddClass("mud-toggle-item-fixed-icon", Parent?.CheckMark == true && Parent?.FixedContent == true)
             .AddClass("mud-disabled", GetDisabledState())
             .AddClass(Class)
             .Build();
@@ -30,13 +31,10 @@ namespace MudBlazor
             .Build();
 
         protected string CheckMarkClassname => new CssBuilder("mud-toggle-item-icon")
-            .AddClass($"mud-toggle-item-icon-size-{Size.ToDescriptionString()}")
             .AddClass(Parent?.CheckMarkClass)
             .Build();
 
         private Size Size => Parent?.Size ?? Size.Medium;
-
-        private bool CounterBalanceCheckMark => Parent?.CheckMark == true && Parent?.FixedContent == true;
 
         [CascadingParameter]
         public MudToggleGroup<T>? Parent { get; set; }
