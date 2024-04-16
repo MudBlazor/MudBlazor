@@ -7,7 +7,7 @@
             <MudTreeViewItem @bind-Expanded="@context.IsExpanded" Items="@context.TreeItems">
                 <Content>
                     <MudTreeViewItemToggleButton @bind-Expanded="@context.IsExpanded" Visible="@context.HasChild" />
-                    <MudCheckBox T="bool?" Value="@(context.HasPartialChildSelection() ? null : context.IsChecked)" ValueChanged="@((e) => CheckedChanged(context))"></MudCheckBox>
+                    <MudCheckBox T="bool?" Value="@(context.GetChecked())" ValueChanged="@((e) => CheckedChanged(context))"></MudCheckBox>
                     <MudText>@context.Text</MudText>
                 </Content>
             </MudTreeViewItem>
@@ -52,6 +52,15 @@
 
         public IEnumerator<TreeItemData> GetEnumerator() => TreeItems.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public bool? GetChecked()
+        {
+            if (TreeItems.Count == 0)
+                return IsChecked;
+            if (HasPartialChildSelection())
+                return null;
+            return IsChecked = TreeItems.All(x => x.IsChecked);
+        }
     }
 
     protected void CheckedChanged(TreeItemData item)
@@ -65,7 +74,7 @@
         }
         // if there's a parent and all children are checked/unchecked, parent should match
         if (item.Parent != null) {
-            item.Parent.IsChecked = !item.Parent.TreeItems.Any(i => !i.IsChecked);
+            item.Parent.IsChecked = item.Parent.TreeItems.All(i => i.IsChecked);
         }
     }
 
