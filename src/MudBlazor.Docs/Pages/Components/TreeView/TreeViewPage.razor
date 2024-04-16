@@ -16,24 +16,26 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Basic Customization">
-                <Description>
-                    If <CodeInline>Hover</CodeInline> is set to true, all items will have a hover effect on mouse-over.
-                    <CodeInline>Dense</CodeInline> will apply compact vertical padding.
-                    <CodeInline>Disabled</CodeInline> will prevent all interaction with any items.
-                </Description>
+            <SectionHeader Title="Hoverable">
+                <Description>If <CodeInline>Hover</CodeInline> is set to true, all treeview items will have a hover effect on mouse-over.</Description>
             </SectionHeader>
-            <SectionContent Code="@nameof(TreeViewBasicCustomizationExample)" ShowCode="false">
-                <TreeViewBasicCustomizationExample />
+            <SectionContent Code="@nameof(TreeViewHoverExample)" ShowCode="false">
+                <TreeViewHoverExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Dense">
+                <Description>If <CodeInline>Dense</CodeInline> is set to true, compact vertical padding will be applied to all treeview items.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TreeViewDenseExample)" ShowCode="false">
+                <TreeViewDenseExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Expand">
-                <Description>
-                    With <CodeInline>ExpandOnClick</CodeInline> bool the whole item row can be clicked to expand/collapse the sub trees.
-                    You can control the ripple effect with the <CodeInline>Ripple</CodeInline> property.
-                </Description>
+                <Description>With <CodeInline>ExpandOnClick</CodeInline> bool the whole item row can be clicked to expand/collapse the sub trees.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewExpandOnClickExample)" ShowCode="false">
                 <TreeViewExpandOnClickExample />
@@ -140,9 +142,9 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Custom Check Box Behavior">
+            <SectionHeader Title="Custom Checkbox Behavior">
                 <Description>
-                    You can use the <CodeInline>Content</CodeInline> property to support custom check box behavior such as automatically checking a parent item when all 
+                    You can use the <CodeInline>Content</CodeInline> property to support custom checkbox behavior such as automatically checking a parent item when all 
                     children are selected.
                 </Description>
             </SectionHeader>
