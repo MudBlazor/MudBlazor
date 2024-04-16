@@ -38,6 +38,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("{");
                 cb.IndentLevel++;
                 cb.AddLine("// These tests just check all the API pages to see if they throw any exceptions");
+                cb.AddLine("[System.CodeDom.Compiler.GeneratedCodeAttribute(\"MudBlazor.Docs.Compiler\", \"0.0.0.0\")]");
                 cb.AddLine("public partial class ApiDocsTests");
                 cb.AddLine("{");
                 cb.IndentLevel++;
