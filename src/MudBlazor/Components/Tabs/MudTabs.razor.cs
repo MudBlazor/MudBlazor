@@ -215,13 +215,6 @@ namespace MudBlazor
         public string ActiveTabClass { get; set; }
 
         /// <summary>
-        /// Custom style to be applied to the active tab
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Tabs.Appearance)]
-        public string ActiveTabStyle { get; set; }
-
-        /// <summary>
         /// Custom class/classes for Selected Content Panel
         /// </summary>
         [Parameter]
@@ -586,7 +579,6 @@ namespace MudBlazor
         {
             var tabStyle = new StyleBuilder()
             .AddStyle("min-width", MinimumTabWidth)
-            .AddStyle(ActiveTabStyle, () => panel == ActivePanel)
             .AddStyle(panel.Style)
             .Build();
 
