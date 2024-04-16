@@ -421,7 +421,7 @@ namespace MudBlazor
 
         internal List<MudTreeViewItem<T>> ChildItems => _childItems.ToList();
 
-        private bool HasIcon => _expandedState && !string.IsNullOrWhiteSpace(IconExpanded) || !_expandedState && !string.IsNullOrWhiteSpace(Icon);
+        private bool HasIcon => _expandedState && (!string.IsNullOrWhiteSpace(IconExpanded) || !string.IsNullOrWhiteSpace(Icon)) || !_expandedState && !string.IsNullOrWhiteSpace(Icon);
 
         private string? GetIcon() => _expandedState && !string.IsNullOrWhiteSpace(IconExpanded) ? IconExpanded : Icon;
 
