@@ -242,7 +242,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudToggleGroup<string>>(builder =>
             {
-                builder.Add(x => x.Dense, false);
                 builder.Add(x => x.Rounded, false);
                 builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a"));
                 builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "b"));

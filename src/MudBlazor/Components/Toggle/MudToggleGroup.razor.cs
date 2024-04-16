@@ -46,9 +46,6 @@ namespace MudBlazor
             _size = registerScope.RegisterParameter<Size>(nameof(Size))
                 .WithParameter(() => Size)
                 .WithChangeHandler(OnParameterChanged);
-            _dense = registerScope.RegisterParameter<bool>(nameof(Dense))
-                .WithParameter(() => Dense)                
-                .WithChangeHandler(OnParameterChanged);
             _rounded = registerScope.RegisterParameter<bool>(nameof(Rounded))
                 .WithParameter(() => Rounded).
                 WithChangeHandler(OnParameterChanged);
