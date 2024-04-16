@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -38,7 +38,8 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-treeview-item")
-                .AddClass("mud-treeview-select-none", MudTreeRoot?.ExpandOnDoubleClick == true)
+                .AddClass("mud-treeview-select-none", ExpandOnDoubleClick)
+                .AddClass("mud-treeview-item-disabled", Disabled)
                 .AddClass(Class)
                 .Build();
 
