@@ -32,7 +32,7 @@ namespace MudBlazor
                 .WithParameter(() => SelectedValues)
                 .WithEventCallback(() => SelectedValuesChanged)
                 .WithChangeHandler(OnSelectedValuesChangedAsync)
-                /*.WithComparer(() => new CollectionComparer<T?>(Comparer)*/;
+                .WithComparer(() => new CollectionComparer<T>(Comparer));
             registerScope.RegisterParameter<SelectionMode>(nameof(SelectionMode))
                 .WithParameter(() => SelectionMode)
                 .WithChangeHandler(OnParameterChanged);

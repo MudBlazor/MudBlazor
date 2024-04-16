@@ -24,6 +24,8 @@ namespace MudBlazor.UnitTests.Utilities
             new HashSet<int> { }.IsEqualTo(new HashSet<int> { }).Should().BeTrue();
             new HashSet<int> { 1, 17, 77 }.IsEqualTo(new HashSet<int> { 77, 1, 17 }).Should().BeTrue();
             new HashSet<int> { 1, 17, 77 }.IsEqualTo(new HashSet<int> { 77, 0, 17 }).Should().BeFalse();
+            new HashSet<int> { 1, 17, 77 }.IsEqualTo(new HashSet<int> { 1, 17, 77, 69 }).Should().BeFalse();
+            new HashSet<int> { 1, 17, 77, 69 }.IsEqualTo(new HashSet<int> { 1, 17, 77 }).Should().BeFalse();
         }
 
     }
