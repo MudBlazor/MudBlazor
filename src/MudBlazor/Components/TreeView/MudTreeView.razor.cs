@@ -38,6 +38,12 @@ namespace MudBlazor
             registerScope.RegisterParameter<bool>(nameof(TriState))
                 .WithParameter(() => TriState)
                 .WithChangeHandler(OnParameterChanged);
+            registerScope.RegisterParameter<bool>(nameof(Disabled))
+                .WithParameter(() => Disabled)
+                .WithChangeHandler(OnParameterChanged);
+            registerScope.RegisterParameter<bool>(nameof(ReadOnly))
+                .WithParameter(() => ReadOnly)
+                .WithChangeHandler(OnParameterChanged);
             _selection = new();
         }
 

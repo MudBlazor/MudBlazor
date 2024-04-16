@@ -45,7 +45,7 @@ namespace MudBlazor
         protected string ContentClassname =>
             new CssBuilder("mud-treeview-item-content")
                 .AddClass("cursor-pointer", !Disabled && (!ReadOnly || ExpandOnClick && HasChild))
-                .AddClass("mud-ripple", MudTreeRoot?.Ripple == true && !Disabled && !ExpandOnDoubleClick && (!ReadOnly || ExpandOnClick && HasChild))
+                .AddClass("mud-ripple", Ripple && !Disabled && !ExpandOnDoubleClick && (!ReadOnly || ExpandOnClick && HasChild))
                 .AddClass($"mud-treeview-item-selected", !Disabled && !MultiSelection && _selectedState)
                 .Build();
 
@@ -147,7 +147,7 @@ namespace MudBlazor
         [Category(CategoryTypes.TreeView.Behavior)]
         public bool Disabled
         {
-            get => _disabled || (MudTreeRoot?.Disabled ?? false);
+            get => _disabled || MudTreeRoot?.Disabled == true;
             set => _disabled = value;
         }
 
