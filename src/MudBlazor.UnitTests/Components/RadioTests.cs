@@ -1,10 +1,8 @@
-﻿
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
-using FluentValidation;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
@@ -314,6 +312,52 @@ namespace MudBlazor.UnitTests.Components
 
             comp.FindAll(".mud-switch-button > input")[0].Change(true);
             radioGroup.FindAll(".mud-radio.mud-readonly").Count.Should().Be(4);
+        }
+
+        /// <summary>
+        /// Optional RadioGroup should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalRadioGroup_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<RadioGroupRequiredTest>();
+
+            var input = comp.Find("div[role=\"radiogroup\"]");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required RadioGroup should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredRadioGroup_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<RadioGroupRequiredTest>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            var input = comp.Find("div[role=\"radiogroup\"]");
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required RadioGroup attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredRadioGroupAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<RadioGroupRequiredTest>();
+
+            var input = comp.Find("div[role=\"radiogroup\"]");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
         }
     }
 }

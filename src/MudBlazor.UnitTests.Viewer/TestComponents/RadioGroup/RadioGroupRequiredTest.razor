@@ -1,0 +1,18 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudRadioGroup T="bool"
+               Required="@Required">
+    <MudRadio Value="@true">
+        True
+    </MudRadio>
+    <MudRadio Value="@false">
+        False
+    </MudRadio>
+</MudRadioGroup>
+
+@code {
+    public static string __description__ = "Required RadioGroup should have required & aria-required attributes.";
+
+    [Parameter]
+    public bool Required { get; set; }
+}
