@@ -1,11 +1,11 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode"/>
+<MudThemingProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" />
 
 @code {
     private bool _isDarkMode;
-    private MudThemeProvider _mudThemeProvider;
-    
+    private MudThemingProvider _mudThemeProvider;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
