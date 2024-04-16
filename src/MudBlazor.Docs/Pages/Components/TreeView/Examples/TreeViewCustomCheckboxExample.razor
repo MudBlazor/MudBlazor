@@ -16,7 +16,7 @@
 
 @code {
 
-  private HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
+  private List<TreeItemData> TreeItems { get; set; } = new();
 
   public class TreeItemData
   {
@@ -30,7 +30,7 @@
 
     public bool HasChild => TreeItems != null && TreeItems.Count > 0;
 
-    public HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
+    public List<TreeItemData> TreeItems { get; set; } = new();
 
     public TreeItemData(string text)
     {

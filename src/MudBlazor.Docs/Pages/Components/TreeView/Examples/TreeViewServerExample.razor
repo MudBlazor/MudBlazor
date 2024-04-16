@@ -50,7 +50,7 @@
         TreeItems.Add(new TreeItemData("History", Icons.Material.Filled.Label, null, false));
     }
 
-    public async Task<HashSet<TreeItemData>> LoadServerData(TreeItemData parentNode)
+    public async Task<IReadOnlyCollection<TreeItemData>> LoadServerData(TreeItemData parentNode)
     {
         await Task.Delay(500);
         return parentNode.TreeItems;

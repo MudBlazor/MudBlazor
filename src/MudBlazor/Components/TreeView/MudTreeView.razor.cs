@@ -31,7 +31,8 @@ namespace MudBlazor
             _selectedValuesState = registerScope.RegisterParameter<IReadOnlyCollection<T>?>(nameof(SelectedValues))
                 .WithParameter(() => SelectedValues)
                 .WithEventCallback(() => SelectedValuesChanged)
-                .WithChangeHandler(OnSelectedValuesChangedAsync);
+                .WithChangeHandler(OnSelectedValuesChangedAsync)
+                /*.WithComparer(() => new CollectionComparer<T?>(Comparer)*/;
             registerScope.RegisterParameter<SelectionMode>(nameof(SelectionMode))
                 .WithParameter(() => SelectionMode)
                 .WithChangeHandler(OnParameterChanged);
@@ -177,7 +178,7 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public HashSet<T> Items { get; set; } = new();
+        public IReadOnlyCollection<T> Items { get; set; } = Array.Empty<T>();
 
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
@@ -225,7 +226,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public Func<T?, Task<HashSet<T>>>? ServerData { get; set; }
+        public Func<T?, Task<IReadOnlyCollection<T>>>? ServerData { get; set; }
 
         /// <summary>
         /// If true, the selection of the tree view can not be changed by clicking its items.

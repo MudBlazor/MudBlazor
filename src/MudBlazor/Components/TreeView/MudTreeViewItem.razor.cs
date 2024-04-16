@@ -181,7 +181,7 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public HashSet<T>? Items { get; set; }
+        public IReadOnlyCollection<T>? Items { get; set; }
 
         /// <summary>
         /// Expand or collapse treeview item when it has children. Two-way bindable. Note: if you directly set this to
@@ -410,7 +410,7 @@ namespace MudBlazor
         {
             if (Items != null)
             {
-                Items.Clear();
+                Items = Array.Empty<T>();
             }
             await TryInvokeServerLoadFunc();
 
