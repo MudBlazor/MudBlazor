@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -12,6 +13,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents an alert used to display an important message which is statically embedded in the page content.
     /// </summary>
+    [DebuggerDisplay("Severity={Severity}, Variant={Variant}, Text={Text}")]
     public partial class MudAlert : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-alert")

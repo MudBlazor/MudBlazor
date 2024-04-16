@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
@@ -11,6 +12,11 @@ using MudBlazor.State.Builder;
 namespace MudBlazor;
 
 #nullable enable
+
+/// <summary>
+/// Represents a base class for designing components which maintain state.
+/// </summary>
+[DebuggerDisplay("Parameters={Parameters}")]
 public class ComponentBaseWithState : ComponentBase
 {
     internal readonly ParameterSet Parameters;

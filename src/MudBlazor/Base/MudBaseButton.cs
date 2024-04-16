@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
@@ -7,12 +8,18 @@ using static System.String;
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// Represents a base class for designing button components.
+    /// </summary>
+    [DebuggerDisplay("Title={Title}, Disabled={Disabled}, ButtonType={ButtonType}, Href={Href}, Target={Target}, Rel={Rel}, DropShadow={DropShadow}, Ripple={Ripple}")]
     public abstract class MudBaseButton : MudComponentBase
     {
         /// <summary>
-        /// Potential activation target for this button. This enables RenderFragments with user-defined
-        /// buttons which will automatically activate the intended functionality. 
+        /// Gets or sets any custom activation behavior.
         /// </summary>
+        /// <remarks>
+        /// Default to <c>null</c>.  This property is used to implement a custom behavior beyond a basic button click.  The activation will occur during the <see cref="OnClick"/> event.
+        /// </remarks>
         [CascadingParameter]
         protected IActivatable? Activatable { get; set; }
 
@@ -20,9 +27,11 @@ namespace MudBlazor
         private bool ParentDisabled { get; set; }
 
         /// <summary>
-        /// The HTML element that will be rendered in the root by the component
-        /// By default, is a button
+        /// Gets the HTML tag rendered for this component.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>button</c>. 
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]
         public string HtmlTag { get; set; } = "button";

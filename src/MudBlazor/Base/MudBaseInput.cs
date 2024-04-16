@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -8,13 +9,20 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// Represents a base class for designing form input components.
+    /// </summary>
+    /// <typeparam name="T">The type of item being input.</typeparam>
+    [DebuggerDisplay("Value={Value}, Disabled={Disabled}, ReadOnly={ReadOnly}, Immediate={Immediate}, Color={Color}, Size={Size}, Label={Label}")]
     public abstract class MudBaseInput<T> : MudFormComponent<T, string>
     {
         private bool _isDirty;
         /// <summary>
-        /// this flag is set to true by validation in order to prevent multiple invocations of validation after a single
-        /// value change. When the value changes _validated is set back to false.
+        /// Gets a value indicating whether validation has been performed during a validation cycle.
         /// </summary>
+        /// <remarks>
+        /// This field is set to <c>true</c> to prevent validation from occurring more than once during a validation cycle.  Each change in the <see cref="Value"/> will reset this field to <c>false</c>.
+        /// </remarks>
         private bool _validated;
         protected bool _isFocused;
         protected bool _forceTextUpdate;
@@ -25,8 +33,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// If true, the input element will be disabled.
+        /// Gets or sets a value indicating whether the component can receive input.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Disabled { get; set; }
@@ -35,8 +46,11 @@ namespace MudBlazor
         private bool ParentDisabled { get; set; }
 
         /// <summary>
-        /// If true, the input will be read-only.
+        /// Gets or sets a value indicating whether the input can be changed by the user.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, the user can copy text in the control, but cannot change the <see cref="Value" />.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool ReadOnly { get; set; }
@@ -45,37 +59,51 @@ namespace MudBlazor
         private bool ParentReadOnly { get; set; }
 
         /// <summary>
-        /// If true, the input will take up the full width of its container.
+        /// Gets or sets a value indicating whether this input fills the full width of its container.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public bool FullWidth { get; set; }
 
         /// <summary>
-        /// If true, the input will update the Value immediately on typing.
-        /// If false, the Value is updated only on Enter.
+        /// Gets or sets a value indicating whether the <see cref="Value"/> is changed as soon as input is received.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, the <see cref="Value"/> property will be updated any time user input occurs.  Otherwise, <see cref="Value"/> is updated when the user presses <c>Enter</c> or the input loses focus.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Immediate { get; set; }
 
         /// <summary>
-        /// Determines whether the input has an underline. Default is true
+        /// Gets or sets a value indicating whether the input has an underline.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public bool Underline { get; set; } = true;
 
         /// <summary>
-        /// The HelperText will be displayed below the text field.
+        /// Gets or sets the text displayed below the text field.
         /// </summary>
+        /// <remarks>
+        /// This property is typically used to help the user understand what kind of input is allowed.  The <see cref="HelperTextOnFocus"/> property controls when this text is visible.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string? HelperText { get; set; }
 
         /// <summary>
-        /// If true, the helper text will only be visible on focus.
+        /// Gets or sets a value indicating whether the <see cref="HelperText"/> is only shown when this input has focus.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool HelperTextOnFocus { get; set; }
