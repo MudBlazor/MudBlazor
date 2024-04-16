@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
@@ -23,12 +21,14 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-treeview-item")
                 .AddClass("mud-treeview-select-none", MudTreeRoot?.ExpandOnDoubleClick == true)
+                .AddClass("mud-treeview-item-disabled", Disabled)
                 .AddClass(Class)
                 .Build();
 
         protected string ContentClassname =>
             new CssBuilder("mud-treeview-item-content")
                 .AddClass("cursor-pointer", MudTreeRoot?.IsSelectable == true || MudTreeRoot?.ExpandOnClick == true && HasChild)
+                .AddClass("mud-ripple", MudTreeRoot?.Ripple == true && !Disabled && (MudTreeRoot?.IsSelectable == true || MudTreeRoot?.ExpandOnClick == true && HasChild))
                 .AddClass($"mud-treeview-item-selected", _isSelected)
                 .Build();
 
