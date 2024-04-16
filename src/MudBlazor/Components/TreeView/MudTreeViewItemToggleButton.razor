@@ -13,7 +13,7 @@
     protected string Classname =>
         new CssBuilder()
             .AddClass("mud-treeview-item-arrow-expand", !Loading)
-            .AddClass("mud-transform", IsExpanded && !Loading)
+            .AddClass("mud-transform", Expanded && !Loading)
             .AddClass("mud-treeview-item-arrow-load", Loading)
             .Build();
 
@@ -29,7 +29,7 @@
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.TreeView.Behavior)]
-    public bool IsExpanded { get; set; }
+    public bool Expanded { get; set; }
 
     /// <summary>
     /// If true, displays the loading icon.
@@ -42,7 +42,7 @@
     /// Called whenever expanded changed.
     /// </summary>
     [Parameter]
-    public EventCallback<bool> IsExpandedChanged { get; set; }
+    public EventCallback<bool> ExpandedChanged { get; set; }
 
     /// <summary>
     /// The loading icon.
@@ -74,7 +74,7 @@
 
     private Task ToggleAsync()
     {
-        IsExpanded = !IsExpanded;
-        return IsExpandedChanged.InvokeAsync(IsExpanded);
+        Expanded = !Expanded;
+        return ExpandedChanged.InvokeAsync(Expanded);
     }
 }

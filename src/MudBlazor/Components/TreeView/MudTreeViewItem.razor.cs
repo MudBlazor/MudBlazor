@@ -164,13 +164,13 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Expanding)]
-        public bool IsExpanded { get; set; }
+        public bool Expanded { get; set; }
 
         /// <summary>
         /// Called whenever expanded changed.
         /// </summary>
         [Parameter]
-        public EventCallback<bool> IsExpandedChanged { get; set; }
+        public EventCallback<bool> ExpandedChanged { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
@@ -297,14 +297,14 @@ namespace MudBlazor
 
         protected internal bool ArrowExpanded
         {
-            get => IsExpanded;
+            get => Expanded;
             set
             {
-                if (value == IsExpanded)
+                if (value == Expanded)
                     return;
 
-                IsExpanded = value;
-                IsExpandedChanged.InvokeAsync(value);
+                Expanded = value;
+                ExpandedChanged.InvokeAsync(value);
             }
         }
 
@@ -354,9 +354,9 @@ namespace MudBlazor
         {
             if (HasChild && (MudTreeRoot?.ExpandOnClick ?? false))
             {
-                IsExpanded = !IsExpanded;
+                Expanded = !Expanded;
                 await TryInvokeServerLoadFunc();
-                await IsExpandedChanged.InvokeAsync(IsExpanded);
+                await ExpandedChanged.InvokeAsync(Expanded);
             }
 
             if (Disabled)
@@ -376,9 +376,9 @@ namespace MudBlazor
         {
             if (HasChild && (MudTreeRoot?.ExpandOnDoubleClick ?? false))
             {
-                IsExpanded = !IsExpanded;
+                Expanded = !Expanded;
                 await TryInvokeServerLoadFunc();
-                await IsExpandedChanged.InvokeAsync(IsExpanded);
+                await ExpandedChanged.InvokeAsync(Expanded);
             }
 
             if (Disabled)
@@ -394,13 +394,13 @@ namespace MudBlazor
             await OnDoubleClick.InvokeAsync(ev);
         }
 
-        protected internal async Task OnItemExpanded(bool isExpanded)
+        protected internal async Task OnItemExpanded(bool expanded)
         {
-            if (IsExpanded != isExpanded)
+            if (Expanded != expanded)
             {
-                IsExpanded = isExpanded;
+                Expanded = expanded;
                 await TryInvokeServerLoadFunc();
-                await IsExpandedChanged.InvokeAsync(isExpanded);
+                await ExpandedChanged.InvokeAsync(expanded);
             }
         }
 
@@ -477,7 +477,7 @@ namespace MudBlazor
 
         internal async Task TryInvokeServerLoadFunc()
         {
-            if (IsExpanded && (Items == null || Items.Count == 0) && CanExpand && MudTreeRoot?.ServerData != null)
+            if (Expanded && (Items == null || Items.Count == 0) && CanExpand && MudTreeRoot?.ServerData != null)
             {
                 Loading = true;
                 StateHasChanged();

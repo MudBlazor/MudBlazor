@@ -1514,7 +1514,7 @@ namespace MudBlazor
         {
             foreach (var group in _allGroups)
             {
-                group.IsExpanded = true;
+                group.Expanded = true;
                 _groupExpansionsDict[group.Grouping.Key] = true;
             }
         }
@@ -1523,7 +1523,7 @@ namespace MudBlazor
         {
             foreach (var group in _allGroups)
             {
-                group.IsExpanded = false;
+                group.Expanded = false;
                 _groupExpansionsDict[group.Grouping.Key] = false;
             }
         }

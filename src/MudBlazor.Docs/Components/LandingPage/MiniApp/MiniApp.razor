@@ -30,7 +30,7 @@
 
             <MudListItem Value="9" Icon="@Icons.Material.Rounded.Person" Text="Users" />
             <MudListItem Value="10" Icon="@Icons.Material.Rounded.Group" Text="Groups" />
-            <MudListItem Value="11" Icon="@Icons.Material.Rounded.ShoppingCart" Text="E-Commerce" IsExpanded="false">
+            <MudListItem Value="11" Icon="@Icons.Material.Rounded.ShoppingCart" Text="E-Commerce" Expanded="false">
                 <NestedList>
                     <MudListItem Value="12" Text="Analytics"/>
                     <MudListItem Value="13" Text="Products"/>
@@ -247,7 +247,7 @@
                                         Nope :)
                                     </ChildContent>
                                 </MudExpansionPanel>
-                                <MudExpansionPanel @bind-IsExpanded="@expansionPanel1">
+                                <MudExpansionPanel @bind-Expanded="@expansionPanel1">
                                     <TitleContent>
                                         <div class="d-flex gap-4">
                                             <MudIcon Icon="@Icons.Material.Filled.Folder"/>

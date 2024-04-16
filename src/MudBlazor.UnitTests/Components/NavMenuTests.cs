@@ -1,6 +1,4 @@
-﻿
-using System;
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
@@ -72,7 +70,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// This component has a field _isExpanded two-way bound to IsExpanded property
+        /// This component has a field _expanded two-way bound to Expanded property
         /// Initially is set to false and after clicking the navgroup should change to true
         /// </summary>
         [Test]
@@ -80,14 +78,14 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<NavMenuTwoWay>();
             comp.Markup.Should().NotContain("expanded");
-            var isExpanded = comp.Instance._isExpanded;
-            isExpanded.Should().BeFalse();
+            var expanded = comp.Instance._expanded;
+            expanded.Should().BeFalse();
 
             var navgroup = comp.Find(".mud-nav-group>button");
             navgroup.Click();
 
-            isExpanded = comp.Instance._isExpanded;
-            isExpanded.Should().BeTrue();
+            expanded = comp.Instance._expanded;
+            expanded.Should().BeTrue();
             comp.Markup.Should().Contain("expanded");
         }
     }

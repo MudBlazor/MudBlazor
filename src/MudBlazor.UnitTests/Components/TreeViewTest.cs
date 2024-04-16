@@ -192,9 +192,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => item.Instance.ArrowExpanded = true);
             comp.WaitForAssertion(() => item.Instance.ArrowExpanded.Should().BeTrue());
 
-            comp.WaitForAssertion(() => item.Instance.IsExpanded.Should().BeTrue());
+            comp.WaitForAssertion(() => item.Instance.Expanded.Should().BeTrue());
             await comp.InvokeAsync(() => item.Instance.OnItemExpanded(true));
-            comp.WaitForAssertion(() => item.Instance.IsExpanded.Should().BeTrue());
+            comp.WaitForAssertion(() => item.Instance.Expanded.Should().BeTrue());
 
             await comp.InvokeAsync(() => item.Instance.Select(false));
         }
@@ -203,22 +203,22 @@ namespace MudBlazor.UnitTests.Components
         public async Task TreeViewItem_DoubleClick_CheckExpanded()
         {
             var comp = Context.RenderComponent<TreeViewTest3>();
-            var itemIsExpanded = false;
+            var itemExpanded = false;
 
             var item = comp.FindComponent<MudTreeViewItem<string>>();
             await item.InvokeAsync(() =>
                 item.Instance.OnDoubleClick =
-                    new EventCallback<MouseEventArgs>(null, (Action)(() => itemIsExpanded = !itemIsExpanded)));
+                    new EventCallback<MouseEventArgs>(null, (Action)(() => itemExpanded = !itemExpanded)));
 
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
 
             comp.Find("div.mud-treeview-item-content").DoubleClick();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
-            itemIsExpanded.Should().BeTrue();
+            itemExpanded.Should().BeTrue();
 
             comp.Find("div.mud-treeview-item-content").DoubleClick();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(0);
-            itemIsExpanded.Should().BeFalse();
+            itemExpanded.Should().BeFalse();
         }
 
         [Test]

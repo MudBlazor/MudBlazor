@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -8,15 +8,7 @@ namespace MudBlazor
 #nullable enable
     public partial class MudNavGroup : MudComponentBase
     {
-        public MudNavGroup()
-        {
-            using var register = CreateRegisterScope();
-            _isExpandedState = register.RegisterParameter<bool>(nameof(IsExpanded))
-                .WithParameter(() => IsExpanded)
-                .WithEventCallback(() => IsExpandedChanged);
-        }
-
-        private readonly ParameterState<bool> _isExpandedState;
+        private bool _expanded;
 
         protected string Classname =>
             new CssBuilder("mud-nav-group")
@@ -27,7 +19,7 @@ namespace MudBlazor
         protected string ButtonClassname =>
             new CssBuilder("mud-nav-link")
                 .AddClass($"mud-ripple", Ripple)
-                .AddClass("mud-expanded", IsExpanded)
+                .AddClass("mud-expanded", Expanded)
                 .Build();
 
         protected string IconClassname =>
@@ -37,8 +29,8 @@ namespace MudBlazor
 
         protected string ExpandIconClassname =>
             new CssBuilder("mud-nav-link-expand-icon")
-                .AddClass($"mud-transform", IsExpanded && !Disabled)
-                .AddClass($"mud-transform-disabled", IsExpanded && Disabled)
+                .AddClass($"mud-transform", Expanded && !Disabled)
+                .AddClass($"mud-transform-disabled", Expanded && Disabled)
                 .Build();
 
         [Parameter]
@@ -79,7 +71,18 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
-        public bool IsExpanded { get; set; }
+        public bool Expanded
+        {
+            get => _expanded;
+            set
+            {
+                if (_expanded == value)
+                    return;
+
+                _expanded = value;
+                ExpandedChanged.InvokeAsync(_expanded);
+            }
+        }
 
         /// <summary>
         /// If true, hides expand-icon at the end of the NavGroup.
@@ -107,12 +110,13 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         [Parameter]
-        public EventCallback<bool> IsExpandedChanged { get; set; }
+        public EventCallback<bool> ExpandedChanged { get; set; }
 
-        private async Task OnIsExpandedToggleAsync()
+        protected Task ExpandedToggleAsync()
         {
-            IsExpanded = !IsExpanded;
-            await _isExpandedState.SetValueAsync(IsExpanded);
+            _expanded = !Expanded;
+
+            return ExpandedChanged.InvokeAsync(_expanded);
         }
     }
 }

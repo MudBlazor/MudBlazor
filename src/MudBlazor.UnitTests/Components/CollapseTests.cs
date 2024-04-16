@@ -37,13 +37,13 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Collapse_TwoWayBinding_Test1()
         {
-            // This is to check the behaviour that IsExpandedChanged fires when IsExpanded is changed outside.
+            // This is to check the behaviour that ExpandedChanged fires when Expanded is changed outside.
             // Perhaps this behaviour is not correct as mentioned here https://github.com/MudBlazor/MudBlazor/pull/8041#discussion_r1504480792
             // Native and MS components don't do that, but to keep the old behaviour for now otherwise this would be a breaking change.
             var currentValue = false;
             var comp = Context
                 .RenderComponent<MudCollapse>(parameters => parameters
-                    .Bind(component => component.IsExpanded, currentValue, newValue => currentValue = newValue));
+                    .Bind(component => component.Expanded, currentValue, newValue => currentValue = newValue));
 
             SetExpanded(true);
             currentValue.Should().BeTrue();
@@ -52,9 +52,9 @@ namespace MudBlazor.UnitTests.Components
 
             return;
 
-            void SetExpanded(bool isExpanded)
+            void SetExpanded(bool expanded)
             {
-                var expandedParameter = Parameter(nameof(MudCollapse.IsExpanded), isExpanded);
+                var expandedParameter = Parameter(nameof(MudCollapse.Expanded), expanded);
                 comp.SetParametersAndRender(expandedParameter);
             }
         }

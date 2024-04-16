@@ -2,18 +2,18 @@
 
 <MudPaper Class="pa-4">
     <MudStack Spacing="2">
-        <MudButton OnClick="OnExpandCollapseClick">@(_isExpanded ? "Collapse" : "Expand")</MudButton>
+        <MudButton OnClick="OnExpandCollapseClick">@(_expanded ? "Collapse" : "Expand")</MudButton>
         <MudDivider />
-        <MudCollapse IsExpanded="_isExpanded">
+        <MudCollapse Expanded="_expanded">
                 This content is collapsible.
         </MudCollapse>
     </MudStack>
 </MudPaper>
 
 @code {
-    bool _isExpanded = true;
+    bool _expanded = true;
 
     private void OnExpandCollapseClick() {
-        _isExpanded = !_isExpanded;
+        _expanded = !_expanded;
     }
 }

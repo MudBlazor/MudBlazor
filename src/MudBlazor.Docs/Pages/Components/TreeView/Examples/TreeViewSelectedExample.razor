@@ -2,11 +2,11 @@
 
 <MudPaper Width="300px" Elevation="0">
     <MudTreeView @bind-SelectedValue="SelectedValue" Hover="true">
-        <MudTreeViewItem @bind-IsExpanded="@folderOneExpanded" Value="@(".vscode")" Icon="@(folderOneExpanded ? Icons.Custom.Uncategorized.FolderOpen : Icons.Custom.Uncategorized.Folder)">
+        <MudTreeViewItem @bind-Expanded="@folderOneExpanded" Value="@(".vscode")" Icon="@(folderOneExpanded ? Icons.Custom.Uncategorized.FolderOpen : Icons.Custom.Uncategorized.Folder)">
             <MudTreeViewItem Value="@("launch.json")" Icon="@Icons.Custom.FileFormats.FileCode" />
             <MudTreeViewItem Value="@("tasks.json")" Icon="@Icons.Custom.FileFormats.FileCode" />
         </MudTreeViewItem>
-        <MudTreeViewItem @bind-IsExpanded="@folderTwoExpanded" Value="@("content")" Icon="@(folderTwoExpanded ? Icons.Custom.Uncategorized.FolderOpen : Icons.Custom.Uncategorized.Folder)">
+        <MudTreeViewItem @bind-Expanded="@folderTwoExpanded" Value="@("content")" Icon="@(folderTwoExpanded ? Icons.Custom.Uncategorized.FolderOpen : Icons.Custom.Uncategorized.Folder)">
             <MudTreeViewItem Value="@("logo.png")" Icon="@Icons.Custom.FileFormats.FileImage" />
         </MudTreeViewItem>
     </MudTreeView>

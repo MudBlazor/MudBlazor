@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-//using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -18,7 +17,7 @@ namespace MudBlazor
         }
 
         internal double _height;
-        private readonly ParameterState<bool> _isExpandedState;
+        private readonly ParameterState<bool> _expandedState;
         private bool _isRendered;
         private bool _updateHeight;
         private ElementReference _wrapper;
@@ -45,7 +44,7 @@ namespace MudBlazor
         /// If true, expands the panel, otherwise collapse it. Setting this prop enables control over the panel.
         /// </summary>
         [Parameter]
-        public bool IsExpanded { get; set; }
+        public bool Expanded { get; set; }
 
         /// <summary>
         /// Explicitly sets the height for the Collapse element to override the css default.
@@ -63,14 +62,14 @@ namespace MudBlazor
         public EventCallback OnAnimationEnd { get; set; }
 
         [Parameter]
-        public EventCallback<bool> IsExpandedChanged { get; set; }
+        public EventCallback<bool> ExpandedChanged { get; set; }
 
         public MudCollapse()
         {
             using var register = CreateRegisterScope();
-            _isExpandedState = register.RegisterParameter<bool>(nameof(IsExpanded))
-                .WithParameter(() => IsExpanded)
-                .WithEventCallback(() => IsExpandedChanged)
+            _expandedState = register.RegisterParameter<bool>(nameof(Expanded))
+                .WithParameter(() => Expanded)
+                .WithEventCallback(() => ExpandedChanged)
                 .WithChangeHandler(OnExpandedParameterChangedAsync);
         }
 
@@ -78,16 +77,16 @@ namespace MudBlazor
         {
             if (_isRendered)
             {
-                _state = _isExpandedState.Value ? CollapseState.Entering : CollapseState.Exiting;
+                _state = _expandedState.Value ? CollapseState.Entering : CollapseState.Exiting;
                 await UpdateHeightAsync();
                 _updateHeight = true;
             }
-            else if (_isExpandedState.Value)
+            else if (_expandedState.Value)
             {
                 _state = CollapseState.Entered;
             }
 
-            await IsExpandedChanged.InvokeAsync(_isExpandedState.Value);
+            await ExpandedChanged.InvokeAsync(_expandedState.Value);
         }
 
         /// <summary>
@@ -154,7 +153,7 @@ namespace MudBlazor
                 _state = CollapseState.Exited;
                 StateHasChanged();
             }
-            return OnAnimationEnd.InvokeAsync(_isExpandedState.Value);
+            return OnAnimationEnd.InvokeAsync(_expandedState.Value);
         }
     }
 }
