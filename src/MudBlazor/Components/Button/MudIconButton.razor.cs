@@ -32,13 +32,6 @@ namespace MudBlazor
         public string? Icon { get; set; }
 
         /// <summary>
-        /// Title of the icon used for accessibility.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
-        public string? Title { get; set; }
-
-        /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
         [Parameter]

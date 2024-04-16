@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudAppBar Color="Color.Primary" Fixed="false" Dense="@dense" Elevation="@elevation">
+    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />
+    <MudSpacer />
+    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" />
+</MudAppBar>
+
+<MudGrid>
+    <MudItem md="6" sm="12">
+        <MudSlider @bind-Value="@elevation" Min="0" Max="24" ValueLabel="true">Elevation</MudSlider>
+    </MudItem>
+    <MudItem md="6" sm="12">
+        <MudSwitch @bind-Value="@dense" Label="Dense" Class="mt-6"></MudSwitch>
+    </MudItem>
+</MudGrid>
+
+@code
+{
+    int elevation = 4;
+    bool dense = false;
+}
