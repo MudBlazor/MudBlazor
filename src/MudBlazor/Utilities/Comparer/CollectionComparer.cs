@@ -31,15 +31,24 @@ public class CollectionComparer<T> : IEqualityComparer<IReadOnlyCollection<T>?>
     /// <inheritdoc/>
     public bool Equals(IReadOnlyCollection<T>? x, IReadOnlyCollection<T>? y)
     {
-        if (x is null && y is null)
+        if (ReferenceEquals(x, y))
+        {
             return true;
-        if (x is null && y is not null || x is not null && y is null)
+        }
+
+        if (x is null || y is null)
+        {
             return false;
-        if (x!.Count == 0 && y!.Count == 0)
+        }
+
+        if (x.Count == 0 && y.Count == 0)
+        {
             return true;
+        }
+
         var a = new HashSet<T>(x, _comparer);
-        var b = new HashSet<T>(y!, _comparer);
-        return a.IsEqualTo(b);
+
+        return a.SetEquals(y);
     }
 
     public int GetHashCode(IReadOnlyCollection<T>? obj)
