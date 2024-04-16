@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -16,8 +16,6 @@ namespace MudBlazor
 #nullable enable
     public partial class MudTreeViewItem<T> : MudComponentBase, IDisposable
     {
-        private string? _text;
-        private bool _disabled;
         private bool _isServerLoaded;
         private readonly ParameterState<bool> _selectedState;
         private readonly ParameterState<bool> _expandedState;
@@ -39,15 +37,15 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-treeview-item")
                 .AddClass("mud-treeview-select-none", ExpandOnDoubleClick)
-                .AddClass("mud-treeview-item-disabled", Disabled)
+                .AddClass("mud-treeview-item-disabled", GetDisabled())
                 .AddClass(Class)
                 .Build();
 
         protected string ContentClassname =>
             new CssBuilder("mud-treeview-item-content")
-                .AddClass("cursor-pointer", !Disabled && (!ReadOnly || ExpandOnClick && HasChild))
-                .AddClass("mud-ripple", Ripple && !Disabled && !ExpandOnDoubleClick && (!ReadOnly || ExpandOnClick && HasChild))
-                .AddClass($"mud-treeview-item-selected", !Disabled && !MultiSelection && _selectedState)
+                .AddClass("cursor-pointer", !GetDisabled() && (!ReadOnly || ExpandOnClick && HasChild))
+                .AddClass("mud-ripple", Ripple && !GetDisabled() && !ExpandOnDoubleClick && (!ReadOnly || ExpandOnClick && HasChild))
+                .AddClass($"mud-treeview-item-selected", !GetDisabled() && !MultiSelection && _selectedState)
                 .Build();
 
         public string TextClassname =>
@@ -100,11 +98,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
-        public string? Text
-        {
-            get => string.IsNullOrEmpty(_text) ? _converter.Set(Value) : _text;
-            set => _text = value;
-        }
+        public string? Text { get; set; }
 
         /// <summary>
         /// Tyopography for the text.
@@ -146,11 +140,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
-        public bool Disabled
-        {
-            get => _disabled || MudTreeRoot?.Disabled == true;
-            set => _disabled = value;
-        }
+        public bool Disabled { get; set; }
 
         /// <summary>
         /// If false, TreeViewItem will not be able to expand.
@@ -293,6 +283,17 @@ namespace MudBlazor
              (MudTreeRoot != null && Items != null && Items.Count != 0) ||
              (MudTreeRoot?.ServerData != null && CanExpand && !_isServerLoaded && (Items == null || Items.Count == 0));
 
+        internal T? GetValue()
+        {
+            if (typeof(T) == typeof(string) && Value is null && Text is not null)
+                return (T)(object)Text;
+            return Value;
+        }
+
+        private string? GetText() => string.IsNullOrEmpty(Text) ? _converter.Set(Value) : Text;
+
+        private bool GetDisabled() => Disabled || MudTreeRoot?.Disabled == true;
+
         private bool? GetCheckBoxStateTriState()
         {
             var allChildrenChecked = GetChildItemsRecursive().All(x => x.GetState<bool>(nameof(Selected)));
@@ -325,30 +326,19 @@ namespace MudBlazor
             base.OnInitialized();
         }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            //if (firstRender && _isActive)
-            //{
-            //    if (MudTreeRoot is not null)
-            //    {
-            //        await MudTreeRoot.Select(this);
-            //    }
-            //}
-
-            await base.OnAfterRenderAsync(firstRender);
-        }
-
         private Task OnSelectedParameterChangedAsync(ParameterChangedEventArgs<bool> arg)
         {
             if (MudTreeRoot is null)
             {
                 return Task.CompletedTask;
             }
-            if (Value is null)
+            var value = GetValue();
+            if (value is null)
                 return Task.CompletedTask;
-            if (arg.Value)
-                return MudTreeRoot.SelectAsync(Value);
-            return MudTreeRoot.UnselectAsync(Value);
+            var selected = arg.Value;
+            if (selected)
+                return MudTreeRoot.SelectAsync(value);
+            return MudTreeRoot.UnselectAsync(value);
         }
 
         private bool ReadOnly => MudTreeRoot is null || MudTreeRoot.ReadOnly;
@@ -364,7 +354,7 @@ namespace MudBlazor
                 await _expandedState.SetValueAsync(!_expandedState);
                 await TryInvokeServerLoadFunc();
             }
-            if (Disabled)
+            if (GetDisabled())
             {
                 return;
             }
@@ -383,7 +373,7 @@ namespace MudBlazor
                 await _expandedState.SetValueAsync(!_expandedState);
                 await TryInvokeServerLoadFunc();
             }
-            if (Disabled)
+            if (GetDisabled())
             {
                 return;
             }
@@ -437,7 +427,7 @@ namespace MudBlazor
 
         internal IEnumerable<MudTreeViewItem<T>> GetSelectedItems()
         {
-            if (_selectedState.Value)
+            if (_selectedState)
                 yield return this;
 
             foreach (var treeItem in _childItems)
@@ -451,7 +441,7 @@ namespace MudBlazor
 
         internal async Task TryInvokeServerLoadFunc()
         {
-            if (_expandedState.Value && (Items == null || Items.Count == 0) && CanExpand && MudTreeRoot?.ServerData != null)
+            if (_expandedState && (Items == null || Items.Count == 0) && CanExpand && MudTreeRoot?.ServerData != null)
             {
                 Loading = true;
                 StateHasChanged();

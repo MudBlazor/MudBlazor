@@ -178,7 +178,7 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public IReadOnlyCollection<T> Items { get; set; } = Array.Empty<T>();
+        public IReadOnlyCollection<T>? Items { get; set; } = Array.Empty<T>();
 
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
@@ -301,12 +301,12 @@ namespace MudBlazor
                 items.Add(clickedItem!);
                 var allSelected = items.All(x => x.GetState<bool>(nameof(MudTreeViewItem<T>.Selected)));
                 // toggle selection of the clickedItem and its children
-                foreach (var item in items.Where(x => x.Value is not null))
+                foreach (var item in items.Where(x => x.GetValue() is not null))
                 {
                     if (allSelected)
-                        _selection.Remove(item.Value!);
+                        _selection.Remove(item.GetValue()!);
                     else
-                        _selection.Add(item.Value!);
+                        _selection.Add(item.GetValue()!);
                 }
                 await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
                 UpdateItems();
@@ -314,11 +314,11 @@ namespace MudBlazor
             }
             var selected = clickedItem.GetState<bool>(nameof(MudTreeViewItem<T>.Selected));
             if (ToggleSelection)
-                await SetSelectedValueAsync(selected ? default : clickedItem.Value); // <-- toggle selected value
+                await SetSelectedValueAsync(selected ? default : clickedItem.GetValue()); // <-- toggle selected value
             else if (!selected)
             {
                 // SingleSelection
-                await SetSelectedValueAsync(clickedItem.Value);
+                await SetSelectedValueAsync(clickedItem.GetValue());
             }
         }
 
@@ -327,8 +327,9 @@ namespace MudBlazor
             _childItems.Add(item);
             // this is to ensure that setting Selected="true" on the item will update the single/multiselection.
             // Note: Setting Selected="false" has no effect however because it would cancel the initialization of the SelectedValue or SelectedValues !
-            if (item.Value is not null && item.GetState<bool>(nameof(MudTreeViewItem<T>.Selected)))
-                await SelectAsync(item.Value);
+            var value = item.GetValue();
+            if (value is not null && item.GetState<bool>(nameof(MudTreeViewItem<T>.Selected)))
+                await SelectAsync(value);
             item.UpdateSelectionState(GetSelection());
         }
 
@@ -423,8 +424,9 @@ namespace MudBlazor
 
             foreach (var item in children)
             {
-                if (item.Value is not null)
-                    values.Add(item.Value);
+                var value = item.GetValue();
+                if (value is not null)
+                    values.Add(value);
                 if (item.ChildItems.Count > 0)
                     GetChildValuesRecursive(item.ChildItems, values);
             }
