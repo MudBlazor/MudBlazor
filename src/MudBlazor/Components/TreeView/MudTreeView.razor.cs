@@ -80,7 +80,7 @@ namespace MudBlazor
         private MudTreeView<T> MudTreeRoot { get; set; }
 
         /// <summary>
-        /// The color of the selected treeviewitem.
+        /// The color of the selected TreeViewItem.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
@@ -132,14 +132,14 @@ namespace MudBlazor
         public bool Hover { get; set; }
 
         /// <summary>
-        /// If true, compact vertical padding will be applied to all treeview items.
+        /// If true, compact vertical padding will be applied to all TreeView items.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public bool Dense { get; set; }
 
         /// <summary>
-        /// Setting a height will allow to scroll the treeview. If not set, it will try to grow in height.
+        /// Setting a height will allow to scroll the TreeView. If not set, it will try to grow in height.
         /// You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px.
         /// </summary>
         [Parameter]
@@ -147,7 +147,7 @@ namespace MudBlazor
         public string? Height { get; set; }
 
         /// <summary>
-        /// Setting a maximum height will allow to scroll the treeview. If not set, it will try to grow in height.
+        /// Setting a maximum height will allow to scroll the TreeView. If not set, it will try to grow in height.
         /// You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px.
         /// </summary>
         [Parameter]
@@ -155,14 +155,14 @@ namespace MudBlazor
         public string? MaxHeight { get; set; }
 
         /// <summary>
-        /// Setting a width the treeview. You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px.
+        /// Setting a width the TreeView. You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public string? Width { get; set; }
 
         /// <summary>
-        /// If true, treeview will be disabled and all its childitems.
+        /// If true, TreeView will be disabled and all its children.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
@@ -234,11 +234,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.List.Selecting)]
         public bool ReadOnly { get; set; }
-
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {

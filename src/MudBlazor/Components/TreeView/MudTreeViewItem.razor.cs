@@ -76,14 +76,14 @@ namespace MudBlazor
         public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
 
         /// <summary>
-        /// Custom tristate indeterminate icon.
+        /// Custom tri-state indeterminate icon.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
 
         /// <summary>
-        /// Value of the treeviewitem. Acts as the displayed text if no text is set.
+        /// Value of the TreeViewItem. Acts as the displayed text if no text is set.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
@@ -101,7 +101,7 @@ namespace MudBlazor
         public string? Text { get; set; }
 
         /// <summary>
-        /// Tyopography for the text.
+        /// Typography for the text.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
@@ -122,7 +122,7 @@ namespace MudBlazor
         public string? EndText { get; set; }
 
         /// <summary>
-        /// Tyopography for the endtext.
+        /// Typography for the endtext.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
@@ -136,7 +136,7 @@ namespace MudBlazor
         public string? EndTextClass { get; set; }
 
         /// <summary>
-        /// If true, treeviewitem will be disabled.
+        /// If true, TreeViewItem will be disabled.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
@@ -157,7 +157,7 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Content of the item, if used completly replaced the default rendering.
+        /// Content of the item, if used completely replaced the default rendering.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
@@ -175,7 +175,7 @@ namespace MudBlazor
         public IReadOnlyCollection<T>? Items { get; set; }
 
         /// <summary>
-        /// Expand or collapse treeview item when it has children. Two-way bindable. Note: if you directly set this to
+        /// Expand or collapse TreeView item when it has children. Two-way bindable. Note: if you directly set this to
         /// true or false (instead of using two-way binding) it will force the item's expansion state.
         /// </summary>
         [Parameter]
