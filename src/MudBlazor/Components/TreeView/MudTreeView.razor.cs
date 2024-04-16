@@ -344,11 +344,18 @@ namespace MudBlazor
             {
                 _selection.Add(value);
                 if (!_isFirstRender)
+                {
                     await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
+                    UpdateItems();
+                }
                 return;
             }
             // single and toggle selection
             await _selectedValueState.SetValueAsync(value);
+            if (!_isFirstRender)
+            {
+                UpdateItems();
+            }
         }
 
         internal async Task UnselectAsync(T value)
@@ -382,7 +389,7 @@ namespace MudBlazor
         {
             var allChildValues = GetChildValuesRecursive();
             var newSelection = new HashSet<T>(newValues.Where(x => allChildValues.Contains(x)), Comparer);
-            if (_selection.IsEqualTo(newSelection))
+            if (_selection.IsEqualTo(newSelection)) 
                 return;
             _selection = newSelection;
             await _selectedValuesState.SetValueAsync(newSelection);
