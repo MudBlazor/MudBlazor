@@ -8,21 +8,32 @@ using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
-#nullable enable
 
+#nullable enable
 public partial class MudChipSet<T> : MudComponentBase, IDisposable
 {
     public MudChipSet()
     {
-        _selectedValue = RegisterParameter(nameof(SelectedValue), () => SelectedValue, () => SelectedValueChanged, OnSelectedValueChangedAsync);
-        _selectedValues = RegisterParameter(nameof(SelectedValues), () => SelectedValues, () => SelectedValuesChanged, OnSelectedValuesChangedAsync);
-        _comparer = RegisterParameter(nameof(Comparer), () => Comparer, OnComparerChangedAsync);
-        RegisterParameter(nameof(CheckMark), () => CheckMark, OnCheckMarkChanged);
+        using var registerScope = CreateRegisterScope();
+        _selectedValue = registerScope.RegisterParameter<T?>(nameof(SelectedValue))
+            .WithParameter(() => SelectedValue)
+            .WithEventCallback(() => SelectedValueChanged)
+            .WithChangeHandler(OnSelectedValueChangedAsync);
+        _selectedValues = registerScope.RegisterParameter<IReadOnlyCollection<T?>?>(nameof(SelectedValues))
+            .WithParameter(() => SelectedValues).WithEventCallback(() => SelectedValuesChanged)
+            .WithChangeHandler(OnSelectedValuesChangedAsync);
+        _comparer = registerScope.RegisterParameter<IEqualityComparer<T>?>(nameof(Comparer))
+            .WithParameter(() => Comparer)
+            .WithChangeHandler(OnComparerChangedAsync);
+        registerScope.RegisterParameter<bool>(nameof(CheckMark))
+            .WithParameter(() => CheckMark)
+            .WithChangeHandler(OnCheckMarkChanged)
+            .Attach();
     }
 
-    private IParameterState<T?> _selectedValue;
-    private IParameterState<IReadOnlyCollection<T?>?> _selectedValues;
-    private IParameterState<IEqualityComparer<T>?> _comparer;
+    private readonly ParameterState<T?> _selectedValue;
+    private readonly ParameterState<IReadOnlyCollection<T?>?> _selectedValues;
+    private readonly ParameterState<IEqualityComparer<T>?> _comparer;
 
     private HashSet<T> _selection = new();
     private HashSet<MudChip<T>> _chips = new();
@@ -82,7 +93,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
-    public Color SelectedColor { get; set; } = MudBlazor.Color.Inherit;
+    public Color SelectedColor { get; set; } = Color.Inherit;
 
     /// <summary>
     /// The default icon color for all chips.
@@ -90,7 +101,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
-    public Color IconColor { get; set; } = MudBlazor.Color.Inherit;
+    public Color IconColor { get; set; } = Color.Inherit;
 
     /// <summary>
     /// The default chip size.
@@ -348,5 +359,4 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     {
         _disposed = true;
     }
-
 }

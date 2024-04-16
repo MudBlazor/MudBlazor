@@ -36,6 +36,9 @@ namespace MudBlazor
                 .AddClass($"mud-ripple mud-ripple-checkbox", Ripple && !GetReadOnlyState() && !GetDisabledState())
                 .AddClass($"mud-disabled", GetDisabledState())
                 .AddClass($"mud-readonly", GetReadOnlyState())
+                .AddClass($"mud-checkbox-true", BoolValue == true)
+                .AddClass($"mud-checkbox-false", BoolValue == false)
+                .AddClass($"mud-checkbox-null", BoolValue is null)
                 .Build();
 
         /// <summary>

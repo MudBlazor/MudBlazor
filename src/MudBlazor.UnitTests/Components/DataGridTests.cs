@@ -482,14 +482,16 @@ namespace MudBlazor.UnitTests.Components
                 dataGrid.FindAll("input.mud-checkbox-input")[i].Change(true);
                 dataGrid.Instance.SelectedItems.Count.Should().Be(i);
             }
-
-
         }
 
+        [Test]
         public async Task DataGridPaginationTest()
         {
             var comp = Context.RenderComponent<DataGridPaginationTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationTest.Item>>();
+            // check that the page size dropdown is shown
+            comp.FindComponents<MudSelect<string>>().Count.Should().Be(1);
+
             dataGrid.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20");
 
             // test that we are on the first page of results
@@ -517,6 +519,21 @@ namespace MudBlazor.UnitTests.Components
             // navigate back to the first page programmatically
             await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
             dataGrid.Instance.CurrentPage.Should().Be(0);
+        }
+
+
+        [Test]
+        public async Task DataGridPaginationPageSizeDropDownTest()
+        {
+            var comp = Context.RenderComponent<DataGridPaginationTest>(self => self.Add(x => x.PageSizeDropDown, false));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationTest.Item>>();
+            dataGrid.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20");
+
+            // test that we are on the first page of results
+            dataGrid.Find(".mud-table-body td").TextContent.Trim().Should().Be("0");
+
+            // page size drop-down is not shown
+            comp.FindComponents<MudSelect<string>>().Should().BeEmpty();
         }
 
         [Test]
@@ -3757,5 +3774,6 @@ namespace MudBlazor.UnitTests.Components
             rows = dataGrid.FindAll("tr");
             rows.Count.Should().Be(6, because: "1 header row + 4 data rows + 1 footer row");
         }
+
     }
 }

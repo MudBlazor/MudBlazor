@@ -60,11 +60,11 @@ namespace MudBlazor
         public bool Immediate { get; set; }
 
         /// <summary>
-        /// If true, the input will not have an underline.
+        /// Determines whether the input has an underline. Default is true
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public bool DisableUnderLine { get; set; }
+        public bool Underline { get; set; } = true;
 
         /// <summary>
         /// The HelperText will be displayed below the text field.

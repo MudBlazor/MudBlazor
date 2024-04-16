@@ -12,11 +12,15 @@ namespace MudBlazor
     {
         private Typo _textTypo;
         private bool _selected;
-        private IParameterState<bool> _expandedState;
+
+        private ParameterState<bool> _expandedState;
 
         public MudListItem()
         {
-            _expandedState = RegisterParameter(nameof(Expanded), () => Expanded, () => ExpandedChanged);
+            using var registerScope = CreateRegisterScope();
+            _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
+                .WithParameter(() => Expanded)
+                .WithEventCallback(() => ExpandedChanged);
         }
 
         protected string Classname =>
@@ -49,11 +53,11 @@ namespace MudBlazor
         public T? Value { get; set; }
 
         /// <summary>
-        /// Avatar to use if set.
+        /// Add an Avatar or custom icon content here. When this is set, Icon will be ignored
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.List.Behavior)]
-        public string? Avatar { get; set; }
+        [Category(CategoryTypes.Chip.Appearance)]
+        public RenderFragment? AvatarContent { get; set; }
 
         /// <summary>
         /// Link to a URL when clicked.
@@ -78,13 +82,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.List.ClickAction)]
         public bool ForceLoad { get; set; }
-
-        /// <summary>
-        /// Avatar CSS Class to apply if Avatar is set.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.List.Appearance)]
-        public string? AvatarClass { get; set; }
 
         /// <summary>
         /// If true, will disable the list item if it has onclick.

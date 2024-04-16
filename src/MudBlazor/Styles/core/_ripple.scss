@@ -26,6 +26,13 @@
     opacity: var(--mud-ripple-opacity);
     transition: 0s;
   }
+
+  // disable ripple if a child element has an active ripple
+  &:has(.mud-ripple:active) {
+    &:after {
+      opacity: 0;
+    }
+  }
 }
 
 .mud-ripple-icon, .mud-ripple-checkbox, .mud-ripple-switch, .mud-ripple-radio {

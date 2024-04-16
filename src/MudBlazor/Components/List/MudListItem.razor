@@ -1,6 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 @typeparam T
+
 <MudElement HtmlTag="@HtmlTag"
             Class="@Classname"
             Style="@Style"
@@ -11,12 +12,10 @@
             href="@Href"
             tabindex="0"
             target="@Target">
-    @if (!string.IsNullOrWhiteSpace(Avatar))
+    @if (AvatarContent is not null)
     {
         <div class="mud-list-item-avatar">
-            <MudAvatar Class="@AvatarClass">
-                <MudIcon Icon="@Avatar" Color="@IconColor" Size="@IconSize" />
-            </MudAvatar>
+            @AvatarContent
         </div>
     }
     else if (!string.IsNullOrWhiteSpace(Icon))

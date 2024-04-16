@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
@@ -50,9 +51,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("a.mud-list-item")[1].Click();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
 
-            await comp.InvokeAsync(() => menu.Instance.ToggleMenu(new TouchEventArgs()));
+            await comp.InvokeAsync(() => menu.Instance.ToggleMenuAsync(new TouchEventArgs()));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
-            await comp.InvokeAsync(() => menu.Instance.ToggleMenu(new TouchEventArgs()));
+            await comp.InvokeAsync(() => menu.Instance.ToggleMenuAsync(new TouchEventArgs()));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
         }
 
@@ -103,10 +104,10 @@ namespace MudBlazor.UnitTests.Components
             menu.IsOpen.Should().BeFalse();
 
             var args = new MouseEventArgs { OffsetX = 1.0, OffsetY = 1.0 };
-            await comp.InvokeAsync(() => menu.OpenMenu(args));
+            await comp.InvokeAsync(() => menu.OpenMenuAsync(args));
             menu.IsOpen.Should().BeTrue();
 
-            await comp.InvokeAsync(() => menu.CloseMenu());
+            await comp.InvokeAsync(() => menu.CloseMenuAsync());
             menu.IsOpen.Should().BeFalse();
         }
 
@@ -117,11 +118,12 @@ namespace MudBlazor.UnitTests.Components
             var pop = comp.FindComponent<MudPopover>();
             comp.FindAll("button.mud-button-root")[0].Click();
 
-            var list = comp.FindAll("div.mud-list")[0];
+            IElement List() => comp.FindAll("div.mud-list")[0];
 
-            await list.TriggerEventAsync("onmouseenter", new MouseEventArgs());
-            await list.TriggerEventAsync("onmouseleave", new MouseEventArgs());
+            await List().TriggerEventAsync("onmouseenter", new MouseEventArgs());
+            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeTrue());
 
+            await List().TriggerEventAsync("onmouseleave", new MouseEventArgs());
             comp.WaitForAssertion(() => pop.Instance.Open.Should().BeFalse());
         }
 
@@ -129,21 +131,23 @@ namespace MudBlazor.UnitTests.Components
         public async Task MenuMouseLeave_MenuMouseEnter_CheckOpen()
         {
             var comp = Context.RenderComponent<MenuTestMouseOver>();
-            var pop = comp.FindComponent<MudPopover>();
+            IRenderedComponent<MudPopover> Popover() => comp.FindComponent<MudPopover>();
+
+            IElement Menu() => comp.Find(".mud-menu");
+
+            comp.WaitForAssertion(() => Popover().Instance.Open.Should().BeFalse());
 
             // Mouse over to menu to open popover
-            var menu = comp.Find(".mud-menu");
-            await menu.TriggerEventAsync("onmouseenter", new MouseEventArgs());
+            await Menu().TriggerEventAsync("onmouseenter", new MouseEventArgs());
+            comp.WaitForAssertion(() => Popover().Instance.Open.Should().BeTrue());
 
             // Popover open, captures mouse
-            await menu.TriggerEventAsync("onmouseleave", new MouseEventArgs());
-            await comp.FindAll("div.mud-list")[0].TriggerEventAsync("onmouseenter", new MouseEventArgs());
+            await Menu().TriggerEventAsync("onmouseleave", new MouseEventArgs());
+            comp.WaitForAssertion(() => Popover().Instance.Open.Should().BeFalse());
 
             // Mouse moves to menu, still need to open
-            await comp.FindAll("div.mud-list")[0].TriggerEventAsync("onmouseleave", new MouseEventArgs());
-            await menu.TriggerEventAsync("onmouseenter", new MouseEventArgs());
-
-            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeTrue());
+            await Menu().TriggerEventAsync("onmouseenter", new MouseEventArgs());
+            comp.WaitForAssertion(() => Popover().Instance.Open.Should().BeTrue());
         }
 
         [Test]
@@ -175,19 +179,19 @@ namespace MudBlazor.UnitTests.Components
 
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
 
-            await comp.InvokeAsync(() => menu.Instance.ToggleMenu(new MouseEventArgs()));
+            await comp.InvokeAsync(() => menu.Instance.ToggleMenuAsync(new MouseEventArgs()));
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
-            await comp.InvokeAsync(() => menu.Instance.ToggleMenu(new MouseEventArgs()));
+            await comp.InvokeAsync(() => menu.Instance.ToggleMenuAsync(new MouseEventArgs()));
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
 
-            await comp.InvokeAsync(() => menu.Instance.ToggleMenu(new TouchEventArgs()));
+            await comp.InvokeAsync(() => menu.Instance.ToggleMenuAsync(new TouchEventArgs()));
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
-            await comp.InvokeAsync(() => menu.Instance.ToggleMenu(new TouchEventArgs()));
+            await comp.InvokeAsync(() => menu.Instance.ToggleMenuAsync(new TouchEventArgs()));
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
         }
 
         [Test]
-        public void ToggleMenuDoesNotWorkIfDisabled()
+        public async Task ToggleMenuDoesNotWorkIfDisabled()
         {
             var comp = Context.RenderComponent<MenuTest1>(x =>
                 x.Add(p => p.DisableMenu, true)
@@ -197,10 +201,10 @@ namespace MudBlazor.UnitTests.Components
 
             var menu = comp.FindComponent<MudMenu>();
 
-            menu.Instance.ToggleMenu(new MouseEventArgs());
+            await menu.Instance.ToggleMenuAsync(new MouseEventArgs());
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
 
-            menu.Instance.ToggleMenu(new TouchEventArgs());
+            await menu.Instance.ToggleMenuAsync(new TouchEventArgs());
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
         }
 
@@ -326,7 +330,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task IsOpenChanged_InvokedWhenOpened_CheckTrueInvocationCountIsOne()
         {
             var comp = Context.RenderComponent<MenuIsOpenChangedTest>();
-            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Menu.OpenMenu(EventArgs.Empty));
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Menu.OpenMenuAsync(EventArgs.Empty));
             comp.Instance.TrueInvocationCount.Should().Be(1);
             comp.Instance.FalseInvocationCount.Should().Be(0);
         }
@@ -335,8 +339,8 @@ namespace MudBlazor.UnitTests.Components
         public async Task IsOpenChanged_InvokedWhenClosed_CheckTrueInvocationCountIsOneClickFalseInvocationCountIsOne()
         {
             var comp = Context.RenderComponent<MenuIsOpenChangedTest>();
-            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Menu.OpenMenu(EventArgs.Empty));
-            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Menu.CloseMenu());
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Menu.OpenMenuAsync(EventArgs.Empty));
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Menu.CloseMenuAsync());
             comp.Instance.TrueInvocationCount.Should().Be(1);
             comp.Instance.FalseInvocationCount.Should().Be(1);
         }

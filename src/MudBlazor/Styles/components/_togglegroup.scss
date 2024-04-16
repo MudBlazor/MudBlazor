@@ -2,6 +2,7 @@
 
 .mud-toggle-group {
   display: grid;
+  overflow: hidden;
 
   &.mud-disabled {
     cursor: default;
@@ -90,10 +91,6 @@
         background-color: var(--mud-palette-#{$color}-hover);
       }
     }
-  }
-
-  &.mud-toggle-item-selected-border {
-    border-radius: unset;
   }
 
   &.mud-disabled {

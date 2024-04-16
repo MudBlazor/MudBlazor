@@ -39,16 +39,11 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
-        public bool StopOnClickPropagation { get; set; }
+        public bool ClickPropagation { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
-        public bool PreventOnClickDefault { get; set; }
-
-        /// <summary>
-        /// Calling StateHasChanged to refresh the component's state
-        /// </summary>
-        public void Refresh() => StateHasChanged();
+        public bool PreventDefault { get; set; }
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
@@ -71,8 +66,8 @@ namespace MudBlazor
             //Style
             builder.AddAttribute(3, "style", Style);
 
-            builder.AddEventStopPropagationAttribute(5, "onclick", StopOnClickPropagation);
-            builder.AddEventPreventDefaultAttribute(6, "onclick", PreventOnClickDefault);
+            builder.AddEventStopPropagationAttribute(5, "onclick", !ClickPropagation);
+            builder.AddEventPreventDefaultAttribute(6, "onclick", PreventDefault);
 
             //Reference capture
             if (Ref != null)

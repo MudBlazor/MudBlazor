@@ -10,7 +10,7 @@ namespace MudBlazor
 #nullable enable
     public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     {
-        private IParameterState<bool> _visibleState;
+        private readonly ParameterState<bool> _visibleState;
 
         protected string Classname =>
             new CssBuilder("mud-overlay")
@@ -110,7 +110,11 @@ namespace MudBlazor
 
         public MudOverlay()
         {
-            _visibleState = RegisterParameter(nameof(Visible), () => Visible, () => VisibleChanged, VisibleParameterChangedHandlerAsync);
+            using var registerScope = CreateRegisterScope();
+            _visibleState = registerScope.RegisterParameter<bool>(nameof(Visible))
+                .WithParameter(() => Visible)
+                .WithEventCallback(() => VisibleChanged)
+                .WithChangeHandler(OnVisibleParameterChangedAsync);
         }
 
         protected internal async Task OnClickHandlerAsync(MouseEventArgs ev)
@@ -141,7 +145,7 @@ namespace MudBlazor
             }
         }
 
-        private Task VisibleParameterChangedHandlerAsync()
+        private Task OnVisibleParameterChangedAsync()
         {
             return VisibleChanged.InvokeAsync(_visibleState.Value);
         }

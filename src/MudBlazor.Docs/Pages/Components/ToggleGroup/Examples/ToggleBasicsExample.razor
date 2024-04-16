@@ -3,14 +3,13 @@
 <MudStack>
     <MudStack Row Class="flex-wrap">
         <MudStack Spacing="16" AlignItems="@AlignItems.Start">
-            <MudToggleGroup T="string" Style="width: 300px;" Outline="@_outline" Delimiters="@_delimiters" Dense="@_dense" Rounded="@_rounded" CheckMark="@_checkMark" FixedContent="@_fixedContent" Disabled="@_disabled">
+            <MudToggleGroup T="string" Style="width: 300px;" Outlined="@_outlined" Delimiters="@_delimiters" Dense="@_dense" Rounded="@_rounded" CheckMark="@_checkMark" FixedContent="@_fixedContent" Disabled="@_disabled">
                 <MudToggleItem Value="@("One")"/>
                 <MudToggleItem Value="@("Two")"/>
                 <MudToggleItem Value="@("Three")"/>
-                <MudToggleItem Value="@("Four")"/>
             </MudToggleGroup>
 
-            <MudToggleGroup T="string" Outline="@_outline" Delimiters="@_delimiters" Dense="@_dense" Rounded="@_rounded" CheckMark="@_checkMark" FixedContent="@_fixedContent" Disabled="@_disabled">
+            <MudToggleGroup T="string" Outlined="@_outlined" Delimiters="@_delimiters" Dense="@_dense" Rounded="@_rounded" CheckMark="@_checkMark" FixedContent="@_fixedContent" Disabled="@_disabled">
                 <MudToggleItem Value="@("left")">
                     <MudIcon Icon="@Icons.Material.Filled.FormatAlignLeft"/>
                 </MudToggleItem>
@@ -26,7 +25,7 @@
             </MudToggleGroup>
         </MudStack>
         <MudSpacer/>
-        <MudToggleGroup T="string" Vertical  Outline="@_outline" Delimiters="@_delimiters" Dense="@_dense" Rounded="@_rounded" CheckMark="@_checkMark" FixedContent="@_fixedContent" Disabled="@_disabled">
+        <MudToggleGroup T="string" Vertical  Outlined="@_outlined" Delimiters="@_delimiters" Dense="@_dense" Rounded="@_rounded" CheckMark="@_checkMark" FixedContent="@_fixedContent" Disabled="@_disabled">
                 <MudToggleItem Value="@("left")">
                     <MudIcon Icon="@Icons.Material.Filled.FormatAlignLeft"/>
                 </MudToggleItem>
@@ -47,7 +46,7 @@
         <MudCheckBox @bind-Value="_rounded" Label="Rounded"/>
         <MudCheckBox @bind-Value="_checkMark" Label="CheckMark"/>
         <MudCheckBox @bind-Value="_fixedContent" Label="FixedContent"/>
-        <MudCheckBox @bind-Value="_outline" Label="Outline"/>
+        <MudCheckBox @bind-Value="_outlined" Label="Outlined"/>
         <MudCheckBox @bind-Value="_delimiters" Label="Delimiters" />
         <MudCheckBox @bind-Value="_disabled" Label="Disabled" />
     </MudStack>
@@ -57,7 +56,7 @@
     bool _dense = false;
     bool _rounded = false;
     bool _checkMark = false;
-    bool _outline = true;
+    bool _outlined = true;
     bool _delimiters = true;
     bool _fixedContent = false;
     bool _disabled = false;

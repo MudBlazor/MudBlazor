@@ -15,7 +15,7 @@ public partial class ParameterStateChildBindingTestComp : MudComponentBase
 {
     private readonly List<(bool lastValue, bool value)> _parameterChangedEvents = new();
 
-    private readonly IParameterState<bool> _isExpandedState;
+    private readonly ParameterState<bool> _isExpandedState;
 
     [Parameter]
     public string? Id { get; set; }
@@ -32,10 +32,14 @@ public partial class ParameterStateChildBindingTestComp : MudComponentBase
 
     public ParameterStateChildBindingTestComp()
     {
-        _isExpandedState = RegisterParameter(nameof(IsExpanded), () => IsExpanded, () => IsExpandedChanged, ParameterChangedHandler);
+        using var registerScope = CreateRegisterScope();
+        _isExpandedState = registerScope.RegisterParameter<bool>(nameof(IsExpanded))
+            .WithParameter(() => IsExpanded)
+            .WithEventCallback(() => IsExpandedChanged)
+            .WithChangeHandler(OnParameterChanged);
     }
 
-    private void ParameterChangedHandler(ParameterChangedEventArgs<bool> args)
+    private void OnParameterChanged(ParameterChangedEventArgs<bool> args)
     {
         _parameterChangedEvents.Add(new ValueTuple<bool, bool>(args.LastValue, args.Value));
     }
