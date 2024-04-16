@@ -52,7 +52,6 @@ namespace MudBlazor
         private readonly ParameterState<IEqualityComparer<T?>> _comparerState;
         private readonly ParameterState<IReadOnlyCollection<T>?> _selectedValuesState;
 
-        private object _selectedUpdateLock = new();
         private HashSet<T> _selection;
         private HashSet<MudTreeViewItem<T>> _childItems = new();
         private bool _isFirstRender = true;
