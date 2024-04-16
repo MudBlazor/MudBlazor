@@ -13,14 +13,14 @@ namespace MudBlazor
         private Typo _textTypo;
         private bool _selected;
 
-        private ParameterState<bool> _expandedState;
+        private ParameterState<bool> _isExpandedState;
 
         public MudListItem()
         {
             using var registerScope = CreateRegisterScope();
-            _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
-                .WithParameter(() => Expanded)
-                .WithEventCallback(() => ExpandedChanged);
+            _isExpandedState = registerScope.RegisterParameter<bool>(nameof(IsExpanded))
+                .WithParameter(() => IsExpanded)
+                .WithEventCallback(() => IsExpandedChanged);
         }
 
         protected string Classname =>
@@ -157,10 +157,10 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Expanding)]
-        public bool Expanded { get; set; }
+        public bool IsExpanded { get; set; }
 
         [Parameter]
-        public EventCallback<bool> ExpandedChanged { get; set; }
+        public EventCallback<bool> IsExpandedChanged { get; set; }
 
         /// <summary>
         /// Display content of this list item. If set, this overrides Text
@@ -197,7 +197,7 @@ namespace MudBlazor
             {
                 if (NestedList != null)
                 {
-                    await _expandedState.SetValueAsync(!_expandedState.Value);
+                    await _isExpandedState.SetValueAsync(!_isExpandedState.Value);
                 }
                 else if (Href != null)
                 {

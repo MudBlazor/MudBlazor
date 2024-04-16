@@ -192,9 +192,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => item.Instance.ArrowExpanded = true);
             comp.WaitForAssertion(() => item.Instance.ArrowExpanded.Should().BeTrue());
 
-            comp.WaitForAssertion(() => item.Instance.Expanded.Should().BeTrue());
+            comp.WaitForAssertion(() => item.Instance.IsExpanded.Should().BeTrue());
             await comp.InvokeAsync(() => item.Instance.OnItemExpanded(true));
-            comp.WaitForAssertion(() => item.Instance.Expanded.Should().BeTrue());
+            comp.WaitForAssertion(() => item.Instance.IsExpanded.Should().BeTrue());
 
             await comp.InvokeAsync(() => item.Instance.Select(false));
         }

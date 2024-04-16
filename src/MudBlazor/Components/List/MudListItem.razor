@@ -24,11 +24,11 @@
         </MudText>
     </div>
     @if (NestedList != null) {
-        <MudIcon Icon="@($"{(_expandedState.Value ? ExpandLessIcon : ExpandMoreIcon)}")" Size="@IconSize" Color="@AdornmentColor" />
+        <MudIcon Icon="@($"{(_isExpandedState.Value ? ExpandLessIcon : ExpandMoreIcon)}")" Size="@IconSize" Color="@AdornmentColor" />
     }
 </div>
 @if (NestedList != null) {
-    <MudCollapse Expanded="@_expandedState.Value">
+    <MudCollapse IsExpanded="@_isExpandedState.Value">
         <MudList T="T" ReadOnly="@(MudList?.ReadOnly ?? false)" Color="@(MudList?.Color ?? Color.Primary)" Padding="false" Class="mud-nested-list"
                  Disabled="@GetDisabled()" Dense="@((Dense ??  MudList?.Dense) ?? false)">
             @NestedList

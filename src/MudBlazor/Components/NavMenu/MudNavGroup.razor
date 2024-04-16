@@ -2,7 +2,7 @@
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes" class="@Classname" disabled="@Disabled" style="@Style">
-    <button @onclick="ExpandedToggleAsync" tabindex="0" class="@ButtonClassname">
+    <button @onclick="OnIsExpandedToggleAsync" tabindex="0" class="@ButtonClassname">
         @if (!string.IsNullOrEmpty(Icon))
         {
             <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname" />
@@ -15,7 +15,7 @@
             <MudIcon Icon="@ExpandIcon" class="@ExpandIconClassname" />
         }
     </button>
-    <MudCollapse Expanded="@Expanded" MaxHeight="@MaxHeight" Class="mud-navgroup-collapse">
+    <MudCollapse IsExpanded="@IsExpanded" MaxHeight="@MaxHeight" Class="mud-navgroup-collapse">
         <MudNavMenu>
             @ChildContent
         </MudNavMenu>

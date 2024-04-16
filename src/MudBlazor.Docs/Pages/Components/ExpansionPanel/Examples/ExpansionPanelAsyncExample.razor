@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudExpansionPanels>
-    <MudExpansionPanel Text="Panel with async loaded contents" MaxHeight="1000" IsExpandedChanged="ExpandedChanged">
+    <MudExpansionPanel Text="Panel with async loaded contents" MaxHeight="1000" IsExpandedChanged="OnIsExpandedChanged">
         @_panelContent
     </MudExpansionPanel>
 </MudExpansionPanels>
@@ -9,7 +9,7 @@
 @code {
     private RenderFragment _panelContent;
 
-    private async Task ExpandedChanged(bool newVal)
+    private async Task OnIsExpandedChanged(bool newVal)
     {
         if (newVal)
         {

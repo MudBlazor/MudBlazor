@@ -2,7 +2,7 @@
 @using System.Text.RegularExpressions
 @using MudBlazor.Docs.Extensions
 
-<MudNavGroup Title="Getting Started" Expanded="@(_section == "getting-started")">
+<MudNavGroup Title="Getting Started" IsExpanded="@(_section == "getting-started")">
     <MudNavLink Href="/getting-started/installation">Installation</MudNavLink>
     <MudNavLink Href="/getting-started/layouts">Layouts</MudNavLink>
     <MudNavLink Href="/getting-started/usage">Usage</MudNavLink>
@@ -11,12 +11,12 @@
 
 <MudNavLink Href="docs/overview" Class="docs-single-link">Explore</MudNavLink>
 
-<MudNavGroup Title="Components" Expanded="@(_section == "components")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
+<MudNavGroup Title="Components" IsExpanded="@(_section == "components")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
     @foreach (var item in MenuService.Components)
     {
         if (item.IsNavGroup)
         {
-            <MudNavGroup Title="@item.Name" Expanded="true" ExpandIcon="@Icons.Material.Filled.ExpandMore">
+            <MudNavGroup Title="@item.Name" IsExpanded="true" ExpandIcon="@Icons.Material.Filled.ExpandMore">
                 @foreach (var subItem in item.GroupComponents)
                 {
                     var href = $"components/{subItem.Link}";
@@ -32,28 +32,28 @@
     }
 </MudNavGroup>
 
-<MudNavGroup Title="Component API" Expanded="@(_section == "api")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
+<MudNavGroup Title="Component API" IsExpanded="@(_section == "api")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
     @foreach (var item in MenuService.Api.OrderBy(x => x.Name))
     {
         <MudNavLink Href="@ApiLink.GetApiLinkFor(item.Type)">@item.Name</MudNavLink>
     }
 </MudNavGroup>
 
-<MudNavGroup Title="Features" Expanded="@(_section == "features")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
+<MudNavGroup Title="Features" IsExpanded="@(_section == "features")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
     @foreach (var link in MenuService.Features)
     {
         <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
     }
 </MudNavGroup>
 
-<MudNavGroup Title="Customization" Expanded="@(_section == "customization")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
+<MudNavGroup Title="Customization" IsExpanded="@(_section == "customization")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
     @foreach (var link in MenuService.Customization)
     {
         <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
     }
 </MudNavGroup>
 
-<MudNavGroup Title="CSS Utilities" Expanded="@(_section == "utilities")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
+<MudNavGroup Title="CSS Utilities" IsExpanded="@(_section == "utilities")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
     @foreach (var title in MenuService.Utilities.GroupBy(x => x.Group).Select(x => x.Key))
     {
         <div class="docs-css-utility-header">
@@ -67,7 +67,7 @@
     }
 </MudNavGroup>
 
-<MudNavGroup Title="Learn More" Expanded="@(_section == "mud")">
+<MudNavGroup Title="Learn More" IsExpanded="@(_section == "mud")">
     <MudNavLink Href="/mud/introduction">What is MudBlazor?</MudNavLink>
     <MudNavLink Href="/mud/announcements">Announcements</MudNavLink>
     <MudNavLink Href="/mud/community/getting-help">Getting Help</MudNavLink>

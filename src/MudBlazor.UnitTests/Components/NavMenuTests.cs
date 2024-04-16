@@ -72,7 +72,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// This component has a field _isExpanded two-way bound to Expanded property
+        /// This component has a field _isExpanded two-way bound to IsExpanded property
         /// Initially is set to false and after clicking the navgroup should change to true
         /// </summary>
         [Test]
