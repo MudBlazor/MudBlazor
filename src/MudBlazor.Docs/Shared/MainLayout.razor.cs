@@ -11,7 +11,7 @@ namespace MudBlazor.Docs.Shared
     {
         [Inject] private LayoutService LayoutService { get; set; }
 
-        private MudThemingProvider _mudThemeProvider;
+        private MudThemeProvider _mudThemeProvider;
 
         protected override void OnInitialized()
         {

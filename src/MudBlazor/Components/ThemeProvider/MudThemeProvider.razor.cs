@@ -11,7 +11,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 #nullable enable
-partial class MudThemingProvider : ComponentBaseWithState, IDisposable
+partial class MudThemeProvider : ComponentBaseWithState, IDisposable
 {
     // private const string Breakpoint = "mud-breakpoint";
     private bool _disposed;
@@ -24,7 +24,7 @@ partial class MudThemingProvider : ComponentBaseWithState, IDisposable
 
     private MudTheme? _theme;
     private readonly ParameterState<bool> _isDarkModeState;
-    private readonly Lazy<DotNetObjectReference<MudThemingProvider>> _lazyDotNetRef;
+    private readonly Lazy<DotNetObjectReference<MudThemeProvider>> _lazyDotNetRef;
 
     private event Func<bool, Task>? _darkLightModeChanged;
 
@@ -56,13 +56,13 @@ partial class MudThemingProvider : ComponentBaseWithState, IDisposable
     public EventCallback<bool> IsDarkModeChanged { get; set; }
 
     [DynamicDependency(nameof(SystemPreferenceChanged))]
-    public MudThemingProvider()
+    public MudThemeProvider()
     {
         using var registerScope = CreateRegisterScope();
         _isDarkModeState = registerScope.RegisterParameter<bool>(nameof(IsDarkMode))
             .WithParameter(() => IsDarkMode)
             .WithEventCallback(() => IsDarkModeChanged);
-        _lazyDotNetRef = new Lazy<DotNetObjectReference<MudThemingProvider>>(CreateDotNetObjectReference);
+        _lazyDotNetRef = new Lazy<DotNetObjectReference<MudThemeProvider>>(CreateDotNetObjectReference);
     }
 
     /// <summary>
@@ -470,7 +470,7 @@ partial class MudThemingProvider : ComponentBaseWithState, IDisposable
         }
     }
 
-    private DotNetObjectReference<MudThemingProvider> CreateDotNetObjectReference()
+    private DotNetObjectReference<MudThemeProvider> CreateDotNetObjectReference()
     {
         return DotNetObjectReference.Create(this);
     }
