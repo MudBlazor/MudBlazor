@@ -8,7 +8,11 @@
 
         <DocsPageSection>
             <SectionHeader Title="Basic">
-                <Description>Basic TreeView, icon button with hover and click to expand sub items.</Description>
+                <Description>The TreeView allows exploring of hierarchic data. In its simplest form it only displays text via the <CodeInline>Text</CodeInline> property of its items. 
+                    But you can also attach a value of type <CodeInline>T</CodeInline> to each item via the <CodeInline>Value</CodeInline> property. This will become important 
+                    for value selection (see <MudLink Href="#Selection">Selection</MudLink>).
+                    In this example <CodeInline>ReadOnly</CodeInline> is set to true to prevent value selection.
+                </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewBasicExample)">
                 <TreeViewBasicExample />
@@ -18,15 +22,14 @@
         <DocsPageSection>
             <SectionHeader Title="Usage">
                 <Description>
-                    If <CodeInline>Hover</CodeInline> is set to true, all tree view items will have a hover effect on mouse-over.
-                    If <CodeInline>Ripple</CodeInline> is set to true, clicking on items will display a ripple effect, except if ExpandOnDoubleClick is set.
-                    If <CodeInline>ReadOnly</CodeInline> is set to true, items can not be selected (see Selection example for more info), ripple and hover effects are disabled except for ExpandOnClick.
-                    If <CodeInline>Dense</CodeInline> is set to true, compact vertical padding will be applied to all tree view items.
+                    <CodeInline>Hover</CodeInline> applies a hover effect on mouse-over. <CodeInline>Ripple</CodeInline> applies a ripple effect on click, except if 
+                    <CodeInline>ExpandOnDoubleClick</CodeInline> is set. <CodeInline>Dense</CodeInline> will result in a more compact vertical padding of the item items to save space.
                     <CodeInline>Disabled</CodeInline> will prevent all interaction with any items.
-                    With <CodeInline>ExpandOnClick</CodeInline> bool the whole item row can be clicked to expand/collapse the subtrees.
-                    With <CodeInline>ExpandOnDoubleClick</CodeInline>, similar to ExpandOnClick, double-clicking on the whole item row will expand/collapse the subtrees.                     
-                    Additionally, a <CodeInline>OnDoubleClick</CodeInline> callback can be assigned to set a custom double click behaviour.
-                    Note, that <CodeInline>ExpandOnDoubleClick</CodeInline> overrules <CodeInline>ExpandOnClick</CodeInline> if both are set.
+                    With <CodeInline>ExpandOnClick</CodeInline> a subtree can be expanded and collapsed by clicking on it. With <CodeInline>ExpandOnDoubleClick</CodeInline>, 
+                    only a double-click will expand or collapse the subtrees. Additionally, a <CodeInline>OnDoubleClick</CodeInline> callback can be assigned to set a custom double click behaviour.
+                    <MudAlert Severity="Severity.Info" Class="my-3">
+                        Note that <CodeInline>ExpandOnDoubleClick</CodeInline> overrules <CodeInline>ExpandOnClick</CodeInline> if both are set.
+                    </MudAlert>
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewUsageExample)" ShowCode="false">
@@ -36,7 +39,10 @@
 
         <DocsPageSection>
             <SectionHeader Title="Icons">
-                <Description>The icons and the color of the icon can be changed individually per item.</Description>
+                <Description>
+                    The icons and their color can be changed individually per item via <CodeInline>Icon</CodeInline> and <CodeInline>IconColor</CodeInline>. This example uses a custom 
+                    <CodeInline>ExpandButtonIcon</CodeInline> and shows how to apply an alternative icon for expanded subtrees via the <CodeInline>IconExpanded</CodeInline> property.
+                </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewIconExample)" ShowCode="false">
                 <TreeViewIconExample />
@@ -44,8 +50,13 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Selection">
-                <Description>You can use <CodeInline>@@bind-SelectedValue</CodeInline> on the TreeView to get updates about the selected item.</Description>
+            <SectionHeader Title="Single Value Selection">
+                <Description>
+                    If you set <CodeInline>SelectionMode</CodeInline> to <CodeInline>SelectionMode.SingleSelection</CodeInline> or you can select a single value from the entire tree. 
+                    <CodeInline>SelectionMode.ToggleSelection</CodeInline> is similar, except that it allows to deselect a previously selected value by clicking on it again.
+                    You can use <CodeInline>@@bind-SelectedValue</CodeInline> on the <CodeInline Tag>MudTreeView</CodeInline> to get updates about the selected value or to influence
+                    the selected value like you can do in this example with the chip set.
+                </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewSelectionExample)" ShowCode="false">
                 <TreeViewSelectionExample />
