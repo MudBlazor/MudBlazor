@@ -389,7 +389,7 @@ namespace MudBlazor
         {
             var allChildValues = GetChildValuesRecursive();
             var newSelection = new HashSet<T>(newValues.Where(x => allChildValues.Contains(x)), Comparer);
-            if (_selection.IsEqualTo(newSelection))
+            if (_selection.SetEquals(newSelection))
                 return;
             _selection = newSelection;
             await _selectedValuesState.SetValueAsync(newSelection);
