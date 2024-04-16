@@ -76,6 +76,7 @@ namespace MudBlazor
         protected string Classname => new CssBuilder("mud-toggle-group")
             .AddClass("mud-toggle-group-horizontal", !Vertical)
             .AddClass("mud-toggle-group-vertical", Vertical)
+            .AddClass($"mud-toggle-group-size-{Size.ToDescriptionString()}")
             .AddClass("rounded", !Rounded)
             .AddClass("rounded-xl", Rounded)
             .AddClass("mud-toggle-group-rtl", RightToLeft)

@@ -14,7 +14,6 @@ namespace MudBlazor
         protected string Classname => new CssBuilder("mud-toggle-item")
             .AddClass($"mud-theme-{Parent?.Color.ToDescriptionString()}", IsSelected && string.IsNullOrEmpty(Parent?.SelectedClass))
             .AddClass(Parent?.SelectedClass, IsSelected && !string.IsNullOrEmpty(Parent?.SelectedClass))
-            .AddClass($"mud-toggle-item-size-{Size.ToDescriptionString()}")
             .AddClass($"mud-toggle-item-{Parent?.Color.ToDescriptionString()}")
             .AddClass("mud-toggle-item-vertical", Parent?.Vertical == true)
             .AddClass("mud-toggle-item-delimiter", Parent?.Delimiters == true)
@@ -33,8 +32,6 @@ namespace MudBlazor
         protected string CheckMarkClassname => new CssBuilder("mud-toggle-item-icon")
             .AddClass(Parent?.CheckMarkClass)
             .Build();
-
-        private Size Size => Parent?.Size ?? Size.Medium;
 
         [CascadingParameter]
         public MudToggleGroup<T>? Parent { get; set; }
