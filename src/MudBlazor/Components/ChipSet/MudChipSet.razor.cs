@@ -18,7 +18,8 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
         _selectedValue = registerScope.RegisterParameter<T?>(nameof(SelectedValue))
             .WithParameter(() => SelectedValue)
             .WithEventCallback(() => SelectedValueChanged)
-            .WithChangeHandler(OnSelectedValueChangedAsync);
+            .WithChangeHandler(OnSelectedValueChangedAsync)
+            .WithComparer(() => Comparer);
         _selectedValues = registerScope.RegisterParameter<IReadOnlyCollection<T?>?>(nameof(SelectedValues))
             .WithParameter(() => SelectedValues).WithEventCallback(() => SelectedValuesChanged)
             .WithChangeHandler(OnSelectedValuesChangedAsync);
@@ -27,8 +28,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
             .WithChangeHandler(OnComparerChangedAsync);
         registerScope.RegisterParameter<bool>(nameof(CheckMark))
             .WithParameter(() => CheckMark)
-            .WithChangeHandler(OnCheckMarkChanged)
-            .Attach();
+            .WithChangeHandler(OnCheckMarkChanged);
     }
 
     private readonly ParameterState<T?> _selectedValue;
@@ -37,6 +37,8 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
 
     private HashSet<T> _selection = new();
     private HashSet<MudChip<T>> _chips = new();
+    private bool MultiSelection => SelectionMode == SelectionMode.MultiSelection;
+    private bool Mandatory => SelectionMode == SelectionMode.ToggleSelection;
 
     protected string Classname =>
         new CssBuilder("mud-chipset")
@@ -55,15 +57,8 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.ChipSet.Behavior)]
-    public bool MultiSelection { get; set; } = false;
-
-    /// <summary>
-    /// Will not allow to deselect the selected chip in single selection mode.
-    /// </summary>
-    [Parameter]
-    [Category(CategoryTypes.ChipSet.Behavior)]
-    public bool Mandatory { get; set; } = false;
-
+    public SelectionMode SelectionMode { get; set; } = SelectionMode.SingleSelection;
+    
     /// <summary>
     /// Will make all chips closable.
     /// </summary>
@@ -170,7 +165,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.ChipSet.Behavior)]
-    public IEqualityComparer<T>? Comparer { get; set; }
+    public IEqualityComparer<T?>? Comparer { get; set; }
 
     /// <summary>
     /// The currently selected value.
