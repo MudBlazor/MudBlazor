@@ -445,7 +445,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormWithCheckboxTest()
         {
-            var comp = Context.RenderComponent<FormWithCheckboxTest>();
+            var comp = Context.RenderComponent<FormWithCheckBoxAndTextFieldsTest>();
             var textFields = comp.FindAll("input");
             textFields.Count.Should().Be(4); // three textfields, one checkbox
             // let's fill in some values
@@ -475,7 +475,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormWithCheckboxTest2()
         {
-            var comp = Context.RenderComponent<FormWithCheckboxTest>();
+            var comp = Context.RenderComponent<FormWithCheckBoxAndTextFieldsTest>();
             var form = comp.FindComponent<MudForm>().Instance;
             form.IsValid.Should().BeTrue(because: "none of the fields are required");
         }
@@ -1934,6 +1934,70 @@ namespace MudBlazor.UnitTests.Components
             await validator.InvokeAsync(() => validator.Instance.ClearErrors());
 
             tf.Instance.ValidationErrors.Should().HaveCount(0);
+        }
+
+        /// <summary>
+        /// CheckBox should be validated like every other form component when ticked using mouse
+        /// </summary>
+        [Test]
+        public async Task FormWithCheckBoxTest_When_CheckBoxTickedUsingMouse()
+        {
+            var comp = Context.RenderComponent<FormWithCheckBoxTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var checkBox = comp.FindComponent<MudCheckBox<bool>>().Instance;
+
+            // check initial state: form should not be valid because checkBox is required
+            form.IsValid.Should().Be(false);
+            checkBox.Error.Should().BeFalse();
+            checkBox.ErrorText.Should().BeNullOrEmpty();
+
+            // tick checkBox with an emulated mouse click
+            comp.Find("input").Change(true);
+            form.IsTouched.Should().Be(true);
+            form.IsValid.Should().Be(true);
+            form.Errors.Length.Should().Be(0);
+            checkBox.Error.Should().BeFalse();
+            checkBox.ErrorText.Should().BeNullOrEmpty();
+
+            // untick checkBox with an emulated mouse click
+            comp.Find("input").Change(false);
+            form.IsValid.Should().Be(false);
+            form.Errors.Length.Should().Be(1);
+            form.Errors[0].Should().Be("Required");
+            checkBox.Error.Should().BeTrue();
+            checkBox.ErrorText.Should().Be("Required");
+        }
+
+        /// <summary>
+        /// CheckBox should be validated like every other form component when ticked using keyboard
+        /// </summary>
+        [Test]
+        public async Task FormWithCheckBoxTest_When_CheckBoxTickedUsingKeyboard()
+        {
+            var comp = Context.RenderComponent<FormWithCheckBoxTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var checkBox = comp.FindComponent<MudCheckBox<bool>>().Instance;
+
+            // check initial state: form should not be valid because checkBox is required
+            form.IsValid.Should().Be(false);
+            checkBox.Error.Should().BeFalse();
+            checkBox.ErrorText.Should().BeNullOrEmpty();
+
+            // tick checkBox with a key press
+            comp.Find("input").KeyDown(Key.Space);
+            form.IsTouched.Should().Be(true);
+            form.IsValid.Should().Be(true);
+            form.Errors.Length.Should().Be(0);
+            checkBox.Error.Should().BeFalse();
+            checkBox.ErrorText.Should().BeNullOrEmpty();
+
+            // untick checkBox with a key press
+            comp.Find("input").KeyDown(Key.Space);
+            form.IsValid.Should().Be(false);
+            form.Errors.Length.Should().Be(1);
+            form.Errors[0].Should().Be("Required");
+            checkBox.Error.Should().BeTrue();
+            checkBox.ErrorText.Should().Be("Required");
         }
     }
 }

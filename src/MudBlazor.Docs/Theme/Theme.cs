@@ -151,8 +151,8 @@ namespace MudBlazor.Docs
             Dark = "#110E2D",
             DarkLighten = "#1A1643",
             GrayDefault = "#4B5563",
-            GrayLight = "#e8e8e8",
-            GrayLighter = "#f9f9f9",
+            GrayLight = "#9CA3AF",
+            GrayLighter = "#adbdccff",
         };
         private static readonly PaletteDark LandingPageDarkPalette = new()
         {
@@ -163,8 +163,6 @@ namespace MudBlazor.Docs
             Background = "#151521",
             Dark = "#111019",
             DarkLighten = "#1A1643",
-            GrayLight = "#2a2833",
-            GrayLighter = "#1e1e2d",
             TextPrimary = "#ffffff",
             TextSecondary = "#92929f",
             TextDisabled = "#ffffff33",
