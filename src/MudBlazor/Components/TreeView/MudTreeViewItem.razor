@@ -4,7 +4,7 @@
 @typeparam T
 
 <li @attributes="UserAttributes" class="@Classname" style="@Style">
-    <div class="@ContentClassname" @onclick="OnItemClicked" @onclick:stopPropagation="true" @ondblclick="OnItemDoubleClicked" @ondblclick:stopPropagation="true">
+    <div class="@ContentClassname" @onclick="OnItemClickedAsync" @onclick:stopPropagation="true" @ondblclick="OnItemDoubleClickedAsync" @ondblclick:stopPropagation="true">
         @if (Content != null)
         {
             @Content

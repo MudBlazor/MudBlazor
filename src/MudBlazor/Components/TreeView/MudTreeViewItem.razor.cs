@@ -346,7 +346,7 @@ namespace MudBlazor
         private bool ExpandOnDoubleClick => MudTreeRoot is null || MudTreeRoot.ExpandOnDoubleClick;
         private bool Ripple => MudTreeRoot is null || MudTreeRoot.Ripple;
 
-        protected async Task OnItemClicked(MouseEventArgs ev)
+        private async Task OnItemClickedAsync(MouseEventArgs ev)
         {
             // note: when both click and doubleClick are enabled, doubleClick wins
             if (HasChild && ExpandOnClick && !ExpandOnDoubleClick)
@@ -366,7 +366,7 @@ namespace MudBlazor
             await OnClick.InvokeAsync(ev);
         }
 
-        protected async Task OnItemDoubleClicked(MouseEventArgs ev)
+        private async Task OnItemDoubleClickedAsync(MouseEventArgs ev)
         {
             if (HasChild && ExpandOnDoubleClick)
             {
@@ -385,7 +385,7 @@ namespace MudBlazor
             await OnDoubleClick.InvokeAsync(ev);
         }
 
-        protected internal async Task OnItemExpanded(bool expanded)
+        private async Task OnItemExpanded(bool expanded)
         {
             if (_expandedState != expanded)
             {
@@ -399,7 +399,7 @@ namespace MudBlazor
         /// </summary>
         public async Task ReloadAsync()
         {
-            if (Items != null)
+            if (Items is not null)
             {
                 Items = Array.Empty<T>();
             }
@@ -409,7 +409,7 @@ namespace MudBlazor
             {
                 Parent.StateHasChanged();
             }
-            else if (MudTreeRoot != null)
+            else if (MudTreeRoot is not null)
             {
                 ((IMudStateHasChanged)MudTreeRoot).StateHasChanged();
             }
