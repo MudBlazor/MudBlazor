@@ -34,7 +34,7 @@ namespace MudBlazor
         public string? Class { get; set; }
 
         /// <summary>
-        /// Gets or sets any CSS styles to apply. 
+        /// Gets or sets any CSS styles applied to this component. 
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="Class"/> property to apply CSS classes.
@@ -64,7 +64,7 @@ namespace MudBlazor
         public Dictionary<string, object?> UserAttributes { get; set; } = new Dictionary<string, object?>();
 
         /// <summary>
-        /// Gets or sets a value indicating whether <see cref="JSRuntime" /> is available.
+        /// Gets or sets whether <see cref="JSRuntime" /> is available.
         /// </summary>
         protected bool IsJSRuntimeAvailable { get; set; }
 

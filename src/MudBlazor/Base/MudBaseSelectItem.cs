@@ -14,7 +14,7 @@ namespace MudBlazor
         private NavigationManager UriHelper { get; set; } = null!;
 
         /// <summary>
-        /// Gets or sets a value indicating whether the user can interact with this item.
+        /// Gets or sets whether the user can interact with this item.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.Behavior)]
@@ -35,7 +35,7 @@ namespace MudBlazor
         public string? Href { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether a full page load occurs during navigation.
+        /// Gets or sets whether a full page load occurs during navigation.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>. When <c>true</c>, client-side routing is bypassed and the browser is forced to load the new page from the server.

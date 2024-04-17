@@ -26,7 +26,7 @@ namespace MudBlazor
         private bool ParentDisabled { get; set; }
 
         /// <summary>
-        /// Gets the HTML tag rendered for this component.
+        /// Gets or sets the HTML tag rendered for this component.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>button</c>. 
@@ -76,7 +76,7 @@ namespace MudBlazor
         public string? Rel { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the user can interact with this button.
+        /// Gets or sets whether the user can interact with this button.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -96,7 +96,7 @@ namespace MudBlazor
         public string? Title { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether a click event is bubbled up to the parent component.
+        /// Gets or sets whether a click event is bubbled up to the parent component.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -106,7 +106,7 @@ namespace MudBlazor
         public bool ClickPropagation { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether a shadow is displayed.
+        /// Gets or sets whether a shadow is displayed.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -116,7 +116,7 @@ namespace MudBlazor
         public bool DropShadow { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets a value indicating whether a ripple effect is shown when the user clicks the button.
+        /// Gets or sets whether a ripple effect is shown when the user clicks the button.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.

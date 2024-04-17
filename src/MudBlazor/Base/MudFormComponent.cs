@@ -44,7 +44,7 @@ namespace MudBlazor
         internal bool SubscribeToParentForm { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets a value indicating whether an input is required.
+        /// Gets or sets whether an input is required.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, an error with the text in <see cref="RequiredError"/> will be shown during validation if no input was given.
@@ -71,7 +71,7 @@ namespace MudBlazor
         public string? ErrorText { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether an error is displayed.
+        /// Gets or sets whether an error is displayed.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the text in <see cref="ErrorText"/> is displayed.
@@ -81,7 +81,7 @@ namespace MudBlazor
         public bool Error { get; set; }
 
         /// <summary>
-        /// Gets or sets the ID of an element which describes this element during an error.
+        /// Gets or sets the ID of the error description element, for use by <c>aria-describedby</c> when <see cref="Error"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  When set and the <see cref="Error"/> property is <c>true</c>, an <c>aria-describedby</c> attribute is rendered to improve accessibility for users.
@@ -156,7 +156,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets a value indicating whether a problem has occurred during conversion.
+        /// Gets whether a problem has occurred during conversion.
         /// </summary>
         /// <remarks>
         /// When <c>true</c>, the <see cref="Converter"/> was unable to convert values, usually due to invalid input.
@@ -173,7 +173,7 @@ namespace MudBlazor
         public string? ConversionErrorMessage => _converter.GetErrorMessage;
 
         /// <summary>
-        /// Gets a value indicating whether an error, conversion error, or validation error is active.
+        /// Gets whether an error, conversion error, or validation error is active.
         /// </summary>
         /// <remarks>
         /// When <c>true</c>, the <see cref="Error"/> property is <c>true</c>, or <see cref="ConversionError"/> is <c>true</c>, or one or more <see cref="ValidationErrors"/> exists.
@@ -203,7 +203,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets a value indicating whether the user has interacted with this input, or focus has been released.
+        /// Gets whether the user has interacted with this input, or focus has been released.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the user has performed input, or focus has moved away from this input.  This property is typically used to show the <see cref="RequiredError"/> text only after the user has interacted with this input.
@@ -671,7 +671,7 @@ namespace MudBlazor
         public Expression<Func<T>>? For { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the <see cref="For"/> property is <c>null</c>.
+        /// Gets or sets whether the <see cref="For"/> property is <c>null</c>.
         /// </summary>
         [MemberNotNullWhen(false, nameof(For))]
         public bool IsForNull => For is null;
