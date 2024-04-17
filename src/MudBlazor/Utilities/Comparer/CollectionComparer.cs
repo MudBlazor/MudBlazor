@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
-using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
@@ -16,10 +12,10 @@ namespace MudBlazor;
 /// </summary>
 public class CollectionComparer<T> : IEqualityComparer<IReadOnlyCollection<T>?>
 {
-
     private readonly IEqualityComparer<T> _comparer;
 
-    public CollectionComparer() : this(EqualityComparer<T>.Default)
+    public CollectionComparer()
+        : this(EqualityComparer<T>.Default)
     {
     }
 
@@ -55,6 +51,7 @@ public class CollectionComparer<T> : IEqualityComparer<IReadOnlyCollection<T>?>
     {
         if (obj is null)
             return 0;
+
         return CombineHashCodes(obj.Distinct(_comparer).Select(x => _comparer.GetHashCode(x!)).OrderBy(x => x));
     }
 
@@ -62,10 +59,10 @@ public class CollectionComparer<T> : IEqualityComparer<IReadOnlyCollection<T>?>
     // System.Web.Util.StringUtil.GetStringHashCode(System.String): http://referencesource.microsoft.com/#System.Web/Util/StringUtil.cs,c97063570b4e791a
     public static int CombineHashCodes(IEnumerable<int> hashCodes)
     {
-        int hash1 = (5381 << 16) + 5381;
-        int hash2 = hash1;
+        var hash1 = (5381 << 16) + 5381;
+        var hash2 = hash1;
 
-        int i = 0;
+        var i = 0;
         foreach (var hashCode in hashCodes)
         {
             if (i % 2 == 0)
