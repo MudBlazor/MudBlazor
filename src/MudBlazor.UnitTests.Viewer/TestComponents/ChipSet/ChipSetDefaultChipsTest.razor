@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudChipSet @bind-SelectedValues="_selected" SelectionMode="SelectionMode.MultiSelection" CheckMark="_checkMark">
+<MudChipSet @bind-SelectedValues="_selected" SelectionMode="@SelectionMode" CheckMark="_checkMark">
     <MudChip Value="@("Milk")" Default="true" />
     <MudChip Value="@("Eggs")" />
     <MudChip Value="@("Soap")" Default="false" />

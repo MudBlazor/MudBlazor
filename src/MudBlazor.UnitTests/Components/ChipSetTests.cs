@@ -432,32 +432,32 @@ namespace MudBlazor.UnitTests.Components
             // initial state
             comp.FindAll("div.mud-chip")[0].ClassList.Should().NotContain("mud-chip-selected");
             comp.FindAll("div.mud-chip")[2].ClassList.Should().NotContain("mud-chip-selected");
-            comp.FindAll("label.mud-checkbox")[0].ClassList.Should().Contain("mud-checkbox-false");
-            comp.FindAll("label.mud-checkbox")[2].ClassList.Should().Contain("mud-checkbox-false");
+            comp.FindAll(".mud-checkbox span")[0].ClassList.Should().Contain("mud-checkbox-false");
+            comp.FindAll(".mud-checkbox span")[2].ClassList.Should().Contain("mud-checkbox-false");
 
             // click Vodka chip
             comp.FindAll("div.mud-chip")[0].Click();
             comp.Find("div.selection").TrimmedText().Should().Be("Vodka");
             comp.FindAll("div.mud-chip")[0].ClassList.Should().Contain("mud-chip-selected");
             comp.FindAll("div.mud-chip")[2].ClassList.Should().NotContain("mud-chip-selected");
-            comp.FindAll("label.mud-checkbox")[0].ClassList.Should().Contain("mud-checkbox-true");
-            comp.FindAll("label.mud-checkbox")[2].ClassList.Should().Contain("mud-checkbox-false");
+            comp.FindAll(".mud-checkbox span")[0].ClassList.Should().Contain("mud-checkbox-true");
+            comp.FindAll(".mud-checkbox span")[2].ClassList.Should().Contain("mud-checkbox-false");
 
             // click Olive checkbox
             comp.FindAll("input.mud-checkbox-input")[2].Change(true);
             comp.Find("div.selection").TrimmedText().Should().Be("Olive, Vodka");
             comp.FindAll("div.mud-chip")[0].ClassList.Should().Contain("mud-chip-selected");
             comp.FindAll("div.mud-chip")[2].ClassList.Should().Contain("mud-chip-selected");
-            comp.FindAll("label.mud-checkbox")[0].ClassList.Should().Contain("mud-checkbox-true");
-            comp.FindAll("label.mud-checkbox")[2].ClassList.Should().Contain("mud-checkbox-true");
+            comp.FindAll(".mud-checkbox span")[0].ClassList.Should().Contain("mud-checkbox-true");
+            comp.FindAll(".mud-checkbox span")[2].ClassList.Should().Contain("mud-checkbox-true");
 
             // click Vodka checkbox
             comp.FindAll("input.mud-checkbox-input")[0].Change(false);
             comp.Find("div.selection").TrimmedText().Should().Be("Olive");
             comp.FindAll("div.mud-chip")[0].ClassList.Should().NotContain("mud-chip-selected");
             comp.FindAll("div.mud-chip")[2].ClassList.Should().Contain("mud-chip-selected");
-            comp.FindAll("label.mud-checkbox")[0].ClassList.Should().Contain("mud-checkbox-false");
-            comp.FindAll("label.mud-checkbox")[2].ClassList.Should().Contain("mud-checkbox-true");
+            comp.FindAll(".mud-checkbox span")[0].ClassList.Should().Contain("mud-checkbox-false");
+            comp.FindAll(".mud-checkbox span")[2].ClassList.Should().Contain("mud-checkbox-true");
         }
     }
 

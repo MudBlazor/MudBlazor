@@ -19,7 +19,8 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
             .WithParameter(() => SelectedValue)
             .WithEventCallback(() => SelectedValueChanged)
             .WithChangeHandler(OnSelectedValueChangedAsync)
-            .WithComparer(() => Comparer);
+            //.WithComparer(() => Comparer)
+            ;
         _selectedValues = registerScope.RegisterParameter<IReadOnlyCollection<T?>?>(nameof(SelectedValues))
             .WithParameter(() => SelectedValues).WithEventCallback(() => SelectedValuesChanged)
             .WithChangeHandler(OnSelectedValuesChangedAsync)
@@ -40,7 +41,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     private HashSet<T> _selection = new();
     private HashSet<MudChip<T>> _chips = new();
     private bool MultiSelection => SelectionMode == SelectionMode.MultiSelection;
-    private bool Mandatory => SelectionMode == SelectionMode.ToggleSelection;
+    private bool Mandatory => SelectionMode == SelectionMode.SingleSelection;
 
     protected string Classname =>
         new CssBuilder("mud-chipset")
