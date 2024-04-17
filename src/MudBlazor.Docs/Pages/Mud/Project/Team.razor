@@ -87,7 +87,7 @@
         <MudGrid>
             @foreach (var contributor in _contributors)
             {
-                <MudItem xs="12" md="@GetColumnWith(contributor, _contributors)">
+                <MudItem xs="12" md="6">
                     <MudTeamCard Member="contributor" />
                 </MudItem>
             }
@@ -141,21 +141,6 @@
     {
         _githubContributors = await _gitHubApiClient.GetContributorsAsync();
         StateHasChanged();
-    }
-
-    private int GetColumnWith(TeamMember member, TeamMember[] list)
-    {
-        var lastMember = list.LastOrDefault();
-        var count = list.Length;
-
-        if (lastMember == member && count % 2 != 0)
-        {
-            return 12;
-        }
-        else
-        {
-            return 6;
-        }
     }
 
     private readonly TeamMember[] _coreTeam = new TeamMember[]
