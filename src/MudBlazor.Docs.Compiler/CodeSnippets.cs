@@ -25,6 +25,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("namespace MudBlazor.Docs.Models");
                 cb.AddLine("{");
                 cb.IndentLevel++;
+                cb.AddLine("[System.CodeDom.Compiler.GeneratedCodeAttribute(\"MudBlazor.Docs.Compiler\", \"0.0.0.0\")]");
                 cb.AddLine("public static partial class Snippets");
                 cb.AddLine("{");
                 cb.IndentLevel++;
