@@ -19,14 +19,13 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
             .WithParameter(() => SelectedValue)
             .WithEventCallback(() => SelectedValueChanged)
             .WithChangeHandler(OnSelectedValueChangedAsync)
-            //.WithComparer(() => Comparer)
-            ;
+            .WithComparer(() => Comparer);
         _selectedValues = registerScope.RegisterParameter<IReadOnlyCollection<T?>?>(nameof(SelectedValues))
             .WithParameter(() => SelectedValues).WithEventCallback(() => SelectedValuesChanged)
             .WithChangeHandler(OnSelectedValuesChangedAsync)
             //.WithComparer(() => new CollectionComparer<T>(Comparer))
             ;
-        _comparer = registerScope.RegisterParameter<IEqualityComparer<T>?>(nameof(Comparer))
+        registerScope.RegisterParameter<IEqualityComparer<T>>(nameof(Comparer))
             .WithParameter(() => Comparer)
             .WithChangeHandler(OnComparerChangedAsync);
         registerScope.RegisterParameter<bool>(nameof(CheckMark))
@@ -36,7 +35,6 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
 
     private readonly ParameterState<T?> _selectedValue;
     private readonly ParameterState<IReadOnlyCollection<T?>?> _selectedValues;
-    private readonly ParameterState<IEqualityComparer<T>?> _comparer;
 
     private HashSet<T> _selection = new();
     private HashSet<MudChip<T>> _chips = new();
@@ -212,7 +210,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
         return UpdateSelectionAsync(args.Value);
     }
 
-    private Task OnComparerChangedAsync(ParameterChangedEventArgs<IEqualityComparer<T>?> args)
+    private Task OnComparerChangedAsync(ParameterChangedEventArgs<IEqualityComparer<T>> args)
     {
         return UpdateSelectionAsync(_selectedValues.Value);
     }
@@ -225,16 +223,15 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
 
     private async Task UpdateSelectionAsync(IReadOnlyCollection<T?>? newValues, bool updateChips = true)
     {
-        var comparer = _comparer.Value;
         var selectedValues = newValues ?? Array.Empty<T>();
         HashSet<T> newSelection;
         if (MultiSelection)
         {
-            newSelection = comparer is null ? new HashSet<T>(selectedValues.OfType<T>()) : new HashSet<T>(selectedValues.OfType<T>(), comparer);
+            newSelection = new HashSet<T>(selectedValues.OfType<T>(), Comparer);
         }
         else
         {
-            newSelection = new HashSet<T>(_comparer.Value);
+            newSelection = new HashSet<T>(Comparer);
             var first = selectedValues.FirstOrDefault();
             if (first is not null)
                 newSelection.Add(first);
@@ -275,7 +272,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
         var value = chip.GetValue();
         if (value is not null && (chip.Default == true && !_selection.Contains(value) || (chip.Default == false && _selection.Contains(value))))
         {
-            var newSelection = MultiSelection ? new HashSet<T>(_selection, _comparer.Value) : new HashSet<T>(_comparer.Value);
+            var newSelection = MultiSelection ? new HashSet<T>(_selection, Comparer) : new HashSet<T>(Comparer);
             if (chip.Default == true)
             {
                 newSelection.Add(value);
@@ -299,7 +296,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
         var value = chip.GetValue();
         //if (chip.IsSelectedState.Value && value is not null)
         //{
-        await UpdateSelectionAsync(_selection.Where(x => !AreValuesEqual(x, value)).ToArray());
+        await UpdateSelectionAsync(_selection.Where(x => !Comparer.Equals(x, value)).ToList());
         //}
         // return Task.CompletedTask;
         StateHasChanged();
@@ -317,7 +314,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
                 await UpdateSelectionAsync(Array.Empty<T>());
                 return;
             }
-            newSelection = new HashSet<T>(_comparer.Value);
+            newSelection = new HashSet<T>(Comparer);
             if (value is not null && (Mandatory || isSelected))
                 newSelection.Add(value);
         }
@@ -326,7 +323,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
         {
             if (value is null)
                 return;
-            newSelection = new HashSet<T>(_selection, _comparer.Value);
+            newSelection = new HashSet<T>(_selection, Comparer);
             if (isSelected)
             {
                 newSelection.Add(value);
@@ -343,12 +340,6 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     {
         await RemoveAsync(chip);
         await OnClose.InvokeAsync(chip);
-    }
-
-    private bool AreValuesEqual(T? a, T? b)
-    {
-        var comparer = _comparer.Value;
-        return comparer?.Equals(a, b) ?? object.Equals(a, b);
     }
 
     private bool _disposed;
