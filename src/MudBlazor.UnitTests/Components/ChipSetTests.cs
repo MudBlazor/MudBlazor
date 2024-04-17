@@ -1,7 +1,4 @@
-﻿#pragma warning disable CS1998 // async without await
-#pragma warning disable BL0005 // Set parameter outside component
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,7 +18,7 @@ namespace MudBlazor.UnitTests.Components
         /// Clicking a chip selects it, clicking again de-selects it. Clicking one chip de-selects the other
         /// </summary>
         [Test]
-        public async Task ChipSet_SingleSelection()
+        public void ChipSet_SingleSelection()
         {
             var comp = Context.RenderComponent<ChipSetSingleSelectionTest>();
             // initially nothing is selected
@@ -47,7 +44,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ChipSet_SingleSelection_WithInitialValue()
+        public void ChipSet_SingleSelection_WithInitialValue()
         {
             var comp = Context.RenderComponent<ChipSetSingleSelectionTest>(p => p.Add(x => x.InitialValue, "Milk"));
             // initial value is selected
@@ -59,10 +56,10 @@ namespace MudBlazor.UnitTests.Components
         /// Clicking a chip selects it, clicking again does not de-select it when Mandatory="true"
         /// </summary>
         [Test]
-        public async Task ChipSet_SingleSelection_Mandatory()
+        public void ChipSet_SingleSelection_Mandatory()
         {
             var comp = Context.RenderComponent<ChipSetSingleSelectionTest>(parameters => parameters
-                .Add(p => p.Mandatory, true)
+                .Add(p => p.SelectionMode, SelectionMode.SingleSelection)
             );
             // initially nothing is selected
             comp.FindAll("div.mud-chip").Count.Should().Be(7);
@@ -87,7 +84,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ChipSet_MultiSelection()
+        public void ChipSet_MultiSelection()
         {
             var comp = Context.RenderComponent<ChipSetMultiSelectionTest>();
             // select elements needed for the test
@@ -121,7 +118,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ChipSet_MultiSelection_WithInitialValues()
+        public void ChipSet_MultiSelection_WithInitialValues()
         {
             var comp = Context.RenderComponent<ChipSetMultiSelectionTest>(parameters => parameters.Add(x => x.InitialValues, ["Corn flakes", "Milk", "Red wine"]));
             // initial values should be selected
@@ -137,7 +134,7 @@ namespace MudBlazor.UnitTests.Components
         /// If multiple chips are marked as default, with a single selection only the last will be initially selected
         /// </summary>
         [Test]
-        public async Task ChipSet_SingleSelection_WithMultipleDefaultChips()
+        public void ChipSet_SingleSelection_WithMultipleDefaultChips()
         {
             var comp = Context.RenderComponent<ChipSetDefaultChipsTest>();
             // select elements needed for the test
@@ -146,9 +143,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ChipSet_MultiSelection_DefaultChipsShouldBeInitiallySelected()
+        public void ChipSet_MultiSelection_DefaultChipsShouldBeInitiallySelected()
         {
-            var comp = Context.RenderComponent<ChipSetDefaultChipsTest>(p => p.Add(x => x.MultiSelection, true));
+            var comp = Context.RenderComponent<ChipSetDefaultChipsTest>(p => p.Add(x => x.SelectionMode, SelectionMode.MultiSelection));
             comp.FindAll("div.mud-chip").Count.Should().Be(7);
             comp.FindAll("p")[0].TrimmedText().Should().Be("Corn flakes, Milk");
             // de-select cornflakes
@@ -160,10 +157,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ChipSet_MultiSelection_DefaultChipsShouldOverrideInitiallySelected()
+        public void ChipSet_MultiSelection_DefaultChipsShouldOverrideInitiallySelected()
         {
             var comp = Context.RenderComponent<ChipSetDefaultChipsTest>(p => p
-                .Add(x => x.MultiSelection, true)
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
                 .Add(x => x.InitialValues, ["Eggs", "Soap"])
             );
             comp.FindAll("div.mud-chip").Count.Should().Be(7);
@@ -177,7 +174,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ChipSet_MultiSelection_LateDefaultChipsShouldBeInitiallySelected()
+        public void ChipSet_MultiSelection_LateDefaultChipsShouldBeInitiallySelected()
         {
             var comp = Context.RenderComponent<ChipSetLateDefaultTest>();
             Console.WriteLine(comp.Markup);
@@ -196,7 +193,7 @@ namespace MudBlazor.UnitTests.Components
         /// added to chips and chip click event should return without executing any code
         /// </summary>
         [Test]
-        public async Task ChipSet_ReadOnly()
+        public void ChipSet_ReadOnly()
         {
             var comp = Context.RenderComponent<ChipSetReadOnlyTest>();
             // print the generated html
@@ -219,7 +216,7 @@ namespace MudBlazor.UnitTests.Components
         /// Whenever one ChipSet changes the other must update to the same selection state.
         /// </summary>
         [Test]
-        public async Task ChipSet_SelectedValues_TwoWayBinding()
+        public void ChipSet_SelectedValues_TwoWayBinding()
         {
             var comp = Context.RenderComponent<ChipSetSelectionTwoWayBindingTest>();
             // initial values check
@@ -257,7 +254,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ChipSetComparerTest()
+        public void ChipSetComparerTest()
         {
             var comp = Context.RenderComponent<ChipSetComparerTest>();
             // initial values check
@@ -281,7 +278,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ChipSet_MultiSelection_AfterChipArraySetNull_ShouldBeAbleToSelectSameChip()
+        public void ChipSet_MultiSelection_AfterChipArraySetNull_ShouldBeAbleToSelectSameChip()
         {
             var comp = Context.RenderComponent<ChipSetClearSelectionTest>();
             var chipSet = comp.FindComponent<MudChipSet<string>>();
@@ -306,7 +303,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ChipSet_MultiSelection_AfterChipArraySetEmpty_ShouldBeAbleToSelectSameChip()
+        public void ChipSet_MultiSelection_AfterChipArraySetEmpty_ShouldBeAbleToSelectSameChip()
         {
             var comp = Context.RenderComponent<ChipSetClearSelectionTest>();
             var chipSet = comp.FindComponent<MudChipSet<string>>();
@@ -331,7 +328,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Chip_GetValue_ShouldReturnTextIfValueIsNullAndT_IsString()
+        public void Chip_GetValue_ShouldReturnTextIfValueIsNullAndT_IsString()
         {
             // Backwards compatibility with non-generic chips where setting the Text without a Value treated the Text as Value
             Context.RenderComponent<MudChip<string>>(p => p
@@ -381,7 +378,7 @@ namespace MudBlazor.UnitTests.Components
             ).Instance;
             await comp.InvokeAsync(() => chip.UpdateSelectionStateAsync(true));
             chip.ShowCheckMark.Should().Be(false); // because not in a chipset
-            new MudChip<int>() { Variant = (Variant)69 }.GetVariant().Should().Be(Variant.Outlined); // falls back to outlined
+            Context.RenderComponent<MudChip<int>>(self => self.Add(x=>x.Variant, (Variant)69)).Instance.GetVariant().Should().Be(Variant.Outlined); // falls back to outlined
         }
 
         [Test]
@@ -389,7 +386,7 @@ namespace MudBlazor.UnitTests.Components
         {
             IReadOnlyCollection<string> selectedValues = ["x", "y", "z"];
             var comp = Context.RenderComponent<MudChipSet<string>>(self => self
-                .Add(x => x.MultiSelection, true)
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
                 .Bind(x => x.SelectedValues, selectedValues, x => selectedValues = x)
                 .AddChildContent<MudChip<string>>(chip => chip.Add(x => x.Value, "x"))
                 .AddChildContent<MudChip<string>>(chip => chip.Add(x => x.Value, "y"))
@@ -408,14 +405,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ChipSet_With_NonValueTypes_DoesntCrash()
+        public void ChipSet_With_NonValueTypes_DoesntCrash()
         {
             var a = new object();
             var b = new object();
             var c = new object();
             IReadOnlyCollection<object> selectedValues = [a];
             var comp = Context.RenderComponent<MudChipSet<object>>(self => self
-                .Add(x => x.MultiSelection, true)
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
                 .Bind(x => x.SelectedValues, selectedValues, x => selectedValues = x)
                 .AddChildContent<MudChip<object>>(chip => chip.Add(x => x.Value, a))
                 .AddChildContent<MudChip<object>>(chip => chip.Add(x => x.Value, b))
@@ -428,41 +425,39 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Chip_TwoWayBinding_ShouldUpdateSelection()
+        public void Chip_TwoWayBinding_ShouldUpdateSelection()
         {
-            var checkedIcon = "M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z";
-            var uncheckedIcon = "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z";
             var comp = Context.RenderComponent<ChipSetChipBindingTest>();
             comp.Find("div.selection").TrimmedText().Should().Be("Add ingredients to your coctail.");
             // initial state
             comp.FindAll("div.mud-chip")[0].ClassList.Should().NotContain("mud-chip-selected");
             comp.FindAll("div.mud-chip")[2].ClassList.Should().NotContain("mud-chip-selected");
-            comp.FindAll("label.mud-checkbox")[0].InnerHtml.Should().Contain(uncheckedIcon);
-            comp.FindAll("label.mud-checkbox")[2].InnerHtml.Should().Contain(uncheckedIcon);
+            comp.FindAll("label.mud-checkbox")[0].ClassList.Should().Contain("mud-checkbox-false");
+            comp.FindAll("label.mud-checkbox")[2].ClassList.Should().Contain("mud-checkbox-false");
 
             // click Vodka chip
             comp.FindAll("div.mud-chip")[0].Click();
             comp.Find("div.selection").TrimmedText().Should().Be("Vodka");
             comp.FindAll("div.mud-chip")[0].ClassList.Should().Contain("mud-chip-selected");
             comp.FindAll("div.mud-chip")[2].ClassList.Should().NotContain("mud-chip-selected");
-            comp.FindAll("label.mud-checkbox")[0].InnerHtml.Should().Contain(checkedIcon);
-            comp.FindAll("label.mud-checkbox")[2].InnerHtml.Should().Contain(uncheckedIcon);
+            comp.FindAll("label.mud-checkbox")[0].ClassList.Should().Contain("mud-checkbox-true");
+            comp.FindAll("label.mud-checkbox")[2].ClassList.Should().Contain("mud-checkbox-false");
 
             // click Olive checkbox
             comp.FindAll("input.mud-checkbox-input")[2].Change(true);
             comp.Find("div.selection").TrimmedText().Should().Be("Olive, Vodka");
             comp.FindAll("div.mud-chip")[0].ClassList.Should().Contain("mud-chip-selected");
             comp.FindAll("div.mud-chip")[2].ClassList.Should().Contain("mud-chip-selected");
-            comp.FindAll("label.mud-checkbox")[0].InnerHtml.Should().Contain(checkedIcon);
-            comp.FindAll("label.mud-checkbox")[2].InnerHtml.Should().Contain(checkedIcon);
+            comp.FindAll("label.mud-checkbox")[0].ClassList.Should().Contain("mud-checkbox-true");
+            comp.FindAll("label.mud-checkbox")[2].ClassList.Should().Contain("mud-checkbox-true");
 
             // click Vodka checkbox
             comp.FindAll("input.mud-checkbox-input")[0].Change(false);
             comp.Find("div.selection").TrimmedText().Should().Be("Olive");
             comp.FindAll("div.mud-chip")[0].ClassList.Should().NotContain("mud-chip-selected");
             comp.FindAll("div.mud-chip")[2].ClassList.Should().Contain("mud-chip-selected");
-            comp.FindAll("label.mud-checkbox")[0].InnerHtml.Should().Contain(uncheckedIcon);
-            comp.FindAll("label.mud-checkbox")[2].InnerHtml.Should().Contain(checkedIcon);
+            comp.FindAll("label.mud-checkbox")[0].ClassList.Should().Contain("mud-checkbox-false");
+            comp.FindAll("label.mud-checkbox")[2].ClassList.Should().Contain("mud-checkbox-true");
         }
     }
 

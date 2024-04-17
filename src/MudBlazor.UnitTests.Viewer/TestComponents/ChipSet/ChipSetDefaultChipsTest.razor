@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudChipSet @bind-SelectedValues="_selected" MultiSelection="@MultiSelection" CheckMark="_checkMark">
-    <MudChip Value="@("Milk")" Default="true"/>
+<MudChipSet @bind-SelectedValues="_selected" SelectionMode="SelectionMode.MultiSelection" CheckMark="_checkMark">
+    <MudChip Value="@("Milk")" Default="true" />
     <MudChip Value="@("Eggs")" />
     <MudChip Value="@("Soap")" Default="false" />
     <MudChip Value="@("Corn flakes")" Default="true" />
@@ -10,12 +10,10 @@
     <MudChip Value="@("Red wine")" />
 </MudChipSet>
 
-@if (_selected is { Count: > 0 })
-{
-    <MudText>@string.Join(", ", _selected.OrderBy(x=>x))</MudText>
+@if (_selected is { Count: > 0 }) {
+    <MudText>@string.Join(", ", _selected.OrderBy(x => x))</MudText>
 }
-else
-{
+else {
     <MudText>Nothing selected</MudText>
 }
 
@@ -23,8 +21,8 @@ else
 
 @code
 {
-    [Parameter] 
-    public bool MultiSelection { get; set; }
+    [Parameter]
+    public SelectionMode SelectionMode { get; set; } = SelectionMode.ToggleSelection;
 
     [Parameter]
     public string[] InitialValues { get; set; }

@@ -33,8 +33,7 @@
                         </MudText>
                         @foreach (var file in _model.Files?.Select(file => file.Name) ?? Enumerable.Empty<string>())
                         {
-                            <MudChip T="string" Color="Color.Dark"
-                                     Text="@file" />
+                            <MudChip T="string" Color="Color.Dark" Text="@file" />
                         }
                     </MudPaper>
                     <MudToolBar Gutters="false"
