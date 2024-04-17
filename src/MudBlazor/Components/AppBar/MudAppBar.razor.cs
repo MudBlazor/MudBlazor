@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -10,7 +9,6 @@ namespace MudBlazor
     /// <remarks>
     /// This component is often used to keep important information persistent while browsing different pages to ease navigation and access to actions for users.
     /// </remarks>
-    [DebuggerDisplay("Color={Color}, Elevation={Elevation}, Boyyom={Bottom}, Dense={Dense}, Gutters={Gutters}, Fixed={Fixed}, WrapContent={WrapContent}")]
     public partial class MudAppBar : MudComponentBase
     {
 #nullable enable
