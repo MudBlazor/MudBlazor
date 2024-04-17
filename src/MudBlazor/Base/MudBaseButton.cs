@@ -38,7 +38,7 @@ namespace MudBlazor
         /// Gets or sets the type of button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>Button</c>. Other values are <c>Submit</c>to submit a form, and <c>Reset</c> to clear a form.
+        /// Defaults to <c>Button</c>. Other values are <c>Submit</c> to submit a form, and <c>Reset</c> to clear a form.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]
