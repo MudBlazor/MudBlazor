@@ -10,7 +10,6 @@ namespace MudBlazor
     /// Represents a base class for designing components which contain items.
     /// </summary>
     /// <typeparam name="TChildComponent">The type of <see cref="MudComponentBase"/> managed by this component.</typeparam>
-    [DebuggerDisplay("SelectedIndex={SelectedIndex}")]
     public abstract class MudBaseItemsControl<TChildComponent> : MudComponentBase
             where TChildComponent : MudComponentBase
     {

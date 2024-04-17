@@ -13,7 +13,6 @@ namespace MudBlazor
     /// Represents a base class for designing form input components.
     /// </summary>
     /// <typeparam name="T">The type of item being input.</typeparam>
-    [DebuggerDisplay("Value={Value}, Disabled={Disabled}, ReadOnly={ReadOnly}, Immediate={Immediate}, Color={Color}, Size={Size}, Label={Label}, HelperText={HelperText}")]
     public abstract class MudBaseInput<T> : MudFormComponent<T, string>
     {
         private bool _isDirty;

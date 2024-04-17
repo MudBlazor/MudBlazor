@@ -16,7 +16,6 @@ namespace MudBlazor;
 /// <summary>
 /// Represents a base class for designing components which maintain state.
 /// </summary>
-[DebuggerDisplay("Parameters={Parameters}")]
 public class ComponentBaseWithState : ComponentBase
 {
     internal readonly ParameterSet Parameters;

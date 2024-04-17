@@ -16,7 +16,6 @@ namespace MudBlazor
     /// <summary>
     /// Represents a base class for designing MudBlazor components.
     /// </summary>
-    [DebuggerDisplay("FieldId={FieldId}, IsJSRuntimeAvailable={IsJSRuntimeAvailable}, Class={Class}, Style={Style}")]
     public abstract class MudComponentBase : ComponentBaseWithState, IMudStateHasChanged
     {
         [Inject]

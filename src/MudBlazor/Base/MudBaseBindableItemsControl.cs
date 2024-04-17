@@ -11,7 +11,6 @@ namespace MudBlazor
     /// </summary>
     /// <typeparam name="TChildComponent">The <see cref="MudComponentBase"/> managed within this component..</typeparam>
     /// <typeparam name="TData">The type of item managed by this component.</typeparam>
-    [DebuggerDisplay("SelectedIndex={SelectedIndex}, SelectedItem={SelectedItem}, Items={Items}, ItemsSource={ItemsSource}")]
     public abstract class MudBaseBindableItemsControl<TChildComponent, TData> : MudBaseItemsControl<TChildComponent>
         where TChildComponent : MudComponentBase
     {

@@ -7,7 +7,6 @@ namespace MudBlazor
     /// <summary>
     /// Represents a base class for designing column components.
     /// </summary>
-    [DebuggerDisplay("Mode={Mode}, Visible={Visible}, HeaderText={HeaderText}")]
     public abstract class MudBaseColumn : ComponentBase
     {
         /// <summary>
@@ -19,14 +18,17 @@ namespace MudBlazor
             /// A column header is being rendered.
             /// </summary>
             Header,
+
             /// <summary>
             /// An item is being rendered.
             /// </summary>
             Item,
+
             /// <summary>
             /// An item is being rendered in edit mode.
             /// </summary>
             Edit,
+
             /// <summary>
             /// A column footer is being rendered.
             /// </summary>

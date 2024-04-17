@@ -11,7 +11,6 @@ namespace MudBlazor
     /// <summary>
     /// Represents a base class for designing button components.
     /// </summary>
-    [DebuggerDisplay("Title={Title}, Disabled={Disabled}, ButtonType={ButtonType}, Href={Href}, Target={Target}, Rel={Rel}, DropShadow={DropShadow}, Ripple={Ripple}")]
     public abstract class MudBaseButton : MudComponentBase
     {
         /// <summary>
@@ -50,7 +49,7 @@ namespace MudBlazor
         /// Gets or sets the URL to navigate to when the button is clicked.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>. When clicked, the browser will navigate to this URL.  Use the <see cref="Target"/> property to target a specific tag.
+        /// Defaults to <c>null</c>. When clicked, the browser will navigate to this URL.  Use the <see cref="Target"/> property to target a specific tab.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]
@@ -176,9 +175,6 @@ namespace MudBlazor
         /// <summary>
         /// Obtains focus for this button.
         /// </summary>
-        /// <returns>
-        /// A <see cref="ValueTask"/> object.
-        /// </returns>
         public ValueTask FocusAsync() => _elementReference.FocusAsync();
 
         protected string? GetRel()

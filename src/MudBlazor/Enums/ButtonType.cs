@@ -12,11 +12,13 @@ namespace MudBlazor
         /// </summary>
         [Description("button")]
         Button,
+
         /// <summary>
         /// The button will submit a form.
         /// </summary>
         [Description("submit")]
         Submit,
+
         /// <summary>
         /// The button resets a form.
         /// </summary>
