@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
@@ -16,6 +17,14 @@ namespace MudBlazor.UnitTests.State;
 [TestFixture]
 public class ParameterStateUsageTests : BunitTest
 {
+    [Test]
+    public void ThrowsExceptionWhenScopeCreatedTwice()
+    {
+        var createComp = () => Context.RenderComponent<ParameterStateScopeExceptionTestComp>();
+
+        createComp.Should().Throw<TargetInvocationException>().WithInnerException<InvalidOperationException>();
+    }
+
     [Test]
     public void SharedHandlerIntegrationTest()
     {

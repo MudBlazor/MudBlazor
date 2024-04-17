@@ -110,7 +110,8 @@ namespace MudBlazor
 
         public MudOverlay()
         {
-            _visibleState = RegisterParameterBuilder<bool>(nameof(Visible))
+            using var registerScope = CreateRegisterScope();
+            _visibleState = registerScope.RegisterParameter<bool>(nameof(Visible))
                 .WithParameter(() => Visible)
                 .WithEventCallback(() => VisibleChanged)
                 .WithChangeHandler(OnVisibleParameterChangedAsync);

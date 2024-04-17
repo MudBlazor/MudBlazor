@@ -21,7 +21,8 @@ namespace MudBlazor
 
         public MudList()
         {
-            _selectedValueState = RegisterParameterBuilder<T?>(nameof(SelectedValue))
+            using var registerScope = CreateRegisterScope();
+            _selectedValueState = registerScope.RegisterParameter<T?>(nameof(SelectedValue))
                 .WithParameter(() => SelectedValue)
                 .WithEventCallback(() => SelectedValueChanged)
                 .WithChangeHandler(OnSelectedValueParameterChangedAsync);

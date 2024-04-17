@@ -14,7 +14,8 @@ public partial class ParameterStateComparerStaticTestComp : MudComponentBase
     public ParameterStateComparerStaticTestComp()
     {
         var comparer = new DoubleEpsilonEqualityComparer(0.00001f);
-        RegisterParameterBuilder<double>(nameof(DoubleParam))
+        using var registerScope = CreateRegisterScope();
+        registerScope.RegisterParameter<double>(nameof(DoubleParam))
             .WithParameter(() => DoubleParam)
             .WithChangeHandler(OnParameterChanged)
             .WithComparer(comparer);
