@@ -51,6 +51,12 @@
       padding: 4px;
     }
   }
+
+  &.mud-treeview-item-disabled {
+    color: var(--mud-palette-action-disabled) !important;
+    cursor: default !important;
+    pointer-events: none !important;
+  }
 }
 
 .mud-treeview-item-content {
