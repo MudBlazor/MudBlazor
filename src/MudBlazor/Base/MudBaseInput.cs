@@ -181,7 +181,7 @@ namespace MudBlazor
         /// <summary>
         /// Occurs when the adornment text or icon has been clicked.
         /// </summary>
-        [Parameter] 
+        [Parameter]
         public EventCallback<MouseEventArgs> OnAdornmentClick { get; set; }
 
         /// <summary>
