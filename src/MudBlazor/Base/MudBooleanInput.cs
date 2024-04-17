@@ -3,20 +3,26 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// Represents a form input component which stores a boolean value.
+    /// </summary>
+    /// <typeparam name="T">The type of item managed by this component.</typeparam>
     public class MudBooleanInput<T> : MudFormComponent<T?, bool?>
     {
         public MudBooleanInput() : base(new BoolConverter<T?>()) { }
 
         /// <summary>
-        /// If true, the input element will be disabled.
+        /// Gets or sets whether the user can interact with this input.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Disabled { get; set; }
@@ -27,8 +33,11 @@ namespace MudBlazor
         protected bool GetDisabledState() => Disabled || ParentDisabled;
 
         /// <summary>
-        /// If true, the input will be read-only.
+        /// Gets or sets whether the use can change the input.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, the user can copy the input but cannot change it.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool ReadOnly { get; set; }
@@ -39,7 +48,7 @@ namespace MudBlazor
         protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
         /// <summary>
-        /// The state of the component
+        /// Gets or sets the currently selected value.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
@@ -54,14 +63,17 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// If true will prevent the click from bubbling up the event tree.
+        /// Gets or sets whether the parent component also handles the click event.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  When <c>true</c>, the click will not bubble up to parent components.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool StopClickPropagation { get; set; } = true;
 
         /// <summary>
-        /// Fired when Value changes.
+        /// Occurs when the <see cref="Value"/> has changed.
         /// </summary>
         [Parameter]
         public EventCallback<T?> ValueChanged { get; set; }
