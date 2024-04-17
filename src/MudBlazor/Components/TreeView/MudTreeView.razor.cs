@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.State;
-using MudBlazor.State.Builder;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -20,9 +19,6 @@ namespace MudBlazor
         {
             MudTreeRoot = this;
             using var registerScope = CreateRegisterScope();
-            _comparerState = registerScope.RegisterParameter<IEqualityComparer<T?>>(nameof(Comparer))
-                .WithParameter(() => Comparer)
-                .WithChangeHandler(OnComparerChangedAsync);
             _selectedValueState = registerScope.RegisterParameter<T?>(nameof(SelectedValue))
                 .WithParameter(() => SelectedValue)
                 .WithEventCallback(() => SelectedValueChanged)
@@ -33,6 +29,9 @@ namespace MudBlazor
                 .WithEventCallback(() => SelectedValuesChanged)
                 .WithChangeHandler(OnSelectedValuesChangedAsync)
                 .WithComparer(() => new CollectionComparer<T>(Comparer));
+            registerScope.RegisterParameter<IEqualityComparer<T?>>(nameof(Comparer))
+                .WithParameter(() => Comparer)
+                .WithChangeHandler(OnComparerChangedAsync);
             registerScope.RegisterParameter<SelectionMode>(nameof(SelectionMode))
                 .WithParameter(() => SelectionMode)
                 .WithChangeHandler(OnParameterChanged);
@@ -49,7 +48,6 @@ namespace MudBlazor
         }
 
         private readonly ParameterState<T?> _selectedValueState;
-        private readonly ParameterState<IEqualityComparer<T?>> _comparerState;
         private readonly ParameterState<IReadOnlyCollection<T>?> _selectedValuesState;
 
         private HashSet<T> _selection;
