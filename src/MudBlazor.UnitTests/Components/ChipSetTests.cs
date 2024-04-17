@@ -378,7 +378,7 @@ namespace MudBlazor.UnitTests.Components
             ).Instance;
             await comp.InvokeAsync(() => chip.UpdateSelectionStateAsync(true));
             chip.ShowCheckMark.Should().Be(false); // because not in a chipset
-            Context.RenderComponent<MudChip<int>>(self => self.Add(x=>x.Variant, (Variant)69)).Instance.GetVariant().Should().Be(Variant.Outlined); // falls back to outlined
+            Context.RenderComponent<MudChip<int>>(self => self.Add(x => x.Variant, (Variant)69)).Instance.GetVariant().Should().Be(Variant.Outlined); // falls back to outlined
         }
 
         [Test]

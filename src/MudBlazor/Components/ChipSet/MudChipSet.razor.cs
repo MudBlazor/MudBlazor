@@ -59,7 +59,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     [Parameter]
     [Category(CategoryTypes.ChipSet.Behavior)]
     public SelectionMode SelectionMode { get; set; } = SelectionMode.SingleSelection;
-    
+
     /// <summary>
     /// Will make all chips closable.
     /// </summary>
