@@ -25,8 +25,8 @@
     public static string __description__ = "Inline Edit Table: Custom edit button content";
     string[] items = new string[] { "A", "B", "C" };
     [Parameter]
-    public TableApplyButtonPosition ApplyButtonPosition { get; set; } = TableApplyButtonPosition.End;
+    public TableButtonPosition ApplyButtonPosition { get; set; } = TableButtonPosition.End;
     [Parameter]
-    public TableEditButtonPosition EditButtonPosition { get; set; } = TableEditButtonPosition.End;
+    public TableButtonPosition EditButtonPosition { get; set; } = TableButtonPosition.End;
     public MudTable<string> Table { get; private set; }
 }

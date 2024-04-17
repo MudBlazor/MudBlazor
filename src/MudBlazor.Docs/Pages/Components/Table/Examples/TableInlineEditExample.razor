@@ -15,7 +15,7 @@
         <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <ColGroup>
-        @if (applyButtonPosition.DisplayApplyButtonAtStart() || (editButtonPosition.DisplayEditButtonAtStart() && editTrigger == TableEditTrigger.EditButton))
+        @if (applyButtonPosition.DisplayTableButtonAtStart() || (editButtonPosition.DisplayTableButtonAtStart() && editTrigger == TableEditTrigger.EditButton))
         {
             <col style="width:50px;" />
         }
@@ -24,7 +24,7 @@
         <col style="width:50%;" />
         <col />
         <col />
-        @if (applyButtonPosition.DisplayApplyButtonAtEnd() || (editButtonPosition.DisplayEditButtonAtEnd() && editTrigger == TableEditTrigger.EditButton))
+        @if (applyButtonPosition.DisplayTableButtonAtEnd() || (editButtonPosition.DisplayTableButtonAtEnd() && editTrigger == TableEditTrigger.EditButton))
         {
             <col style="width:50px;" />
         }
@@ -81,18 +81,18 @@
     @if (editTrigger == TableEditTrigger.EditButton)
     {
         <MudItem xs="12" md="4">
-            <MudSelect Label="Edit Button Position" T="TableEditButtonPosition" @bind-Value="editButtonPosition">
-                <MudSelectItem Value="TableEditButtonPosition.Start">Start</MudSelectItem>
-                <MudSelectItem Value="TableEditButtonPosition.End">End</MudSelectItem>
-                <MudSelectItem Value="TableEditButtonPosition.StartAndEnd">Start and End</MudSelectItem>
+            <MudSelect Label="Edit Button Position" T="TableButtonPosition" @bind-Value="editButtonPosition">
+                <MudSelectItem Value="TableButtonPosition.Start">Start</MudSelectItem>
+                <MudSelectItem Value="TableButtonPosition.End">End</MudSelectItem>
+                <MudSelectItem Value="TableButtonPosition.StartAndEnd">Start and End</MudSelectItem>
             </MudSelect>
         </MudItem>
     }
     <MudItem xs="12" md="4">
-        <MudSelect Label="Apply Button Position" T="TableApplyButtonPosition" @bind-Value="applyButtonPosition">
-            <MudSelectItem Value="TableApplyButtonPosition.Start">Start</MudSelectItem>
-            <MudSelectItem Value="TableApplyButtonPosition.End">End</MudSelectItem>
-            <MudSelectItem Value="TableApplyButtonPosition.StartAndEnd">Start and End</MudSelectItem>
+        <MudSelect Label="Apply Button Position" T="TableButtonPosition" @bind-Value="applyButtonPosition">
+            <MudSelectItem Value="TableButtonPosition.Start">Start</MudSelectItem>
+            <MudSelectItem Value="TableButtonPosition.End">End</MudSelectItem>
+            <MudSelectItem Value="TableButtonPosition.StartAndEnd">Start and End</MudSelectItem>
         </MudSelect>
     </MudItem>
 </MudGrid>
@@ -126,8 +126,8 @@
     private Element selectedItem1 = null;
     private Element elementBeforeEdit;
     private HashSet<Element> selectedItems1 = new HashSet<Element>();
-    private TableApplyButtonPosition applyButtonPosition = TableApplyButtonPosition.End;
-    private TableEditButtonPosition editButtonPosition = TableEditButtonPosition.End;
+    private TableButtonPosition applyButtonPosition = TableButtonPosition.End;
+    private TableButtonPosition editButtonPosition = TableButtonPosition.End;
     private TableEditTrigger editTrigger = TableEditTrigger.RowClick;
     private IEnumerable<Element> Elements = new List<Element>();
 

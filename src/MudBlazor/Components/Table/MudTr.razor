@@ -1,24 +1,24 @@
-﻿@namespace MudBlazor
+@namespace MudBlazor
 @implements IDisposable
 @inherits MudComponentBase
 
-<tr class="@Classname" @onclick="@OnRowClickedAsync" @onmouseenter="@RowMouseEnterEventCallback" @onmouseleave="@RowMouseLeaveEventCallback" style="@Style" @attributes="@UserAttributes">
-    @if (IsEditable && ((Context?.Table.EditButtonPosition.DisplayEditButtonAtStart() == true && Context?.Table.EditTrigger == TableEditTrigger.EditButton) || Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtStart() == true))
+<tr class="@Classname" @onclick="OnRowClickedAsync" @onmouseenter="RowMouseEnterEventCallback" @onmouseleave="RowMouseLeaveEventCallback" style="@Style" @attributes="@UserAttributes">
+    @if (IsEditable && ((Context?.Table.EditButtonPosition.DisplayTableButtonAtStart() == true && Context?.Table.EditTrigger == TableEditTrigger.EditButton) || Context?.Table.ApplyButtonPosition.DisplayTableButtonAtStart() == true))
     {
         @* Add datalabel as a placeholder to avoid jumps on small viewports *@
         <MudTd DataLabel="&nbsp;" Class="py-3">
-            @if (Context?.Table.EditTrigger == TableEditTrigger.EditButton && !object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.EditButtonPosition.DisplayEditButtonAtStart() == true)
+            @if (Context?.Table.EditTrigger == TableEditTrigger.EditButton && !object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.EditButtonPosition.DisplayTableButtonAtStart() == true)
             {
                 @if (Context?.Table.EditButtonContent != null)
                 {
-                    @Context?.Table.EditButtonContent(new MudBlazorFix.EditButtonContext(StartEditingItem, Context.EditButtonDisabled(Item), Item))
+                    @Context?.Table.EditButtonContent(new EditButtonContext(StartEditingItem, Context.EditButtonDisabled(Item), Item))
                 }
                 else
                 {
                     <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="StartEditingItem" Disabled="Context.EditButtonDisabled(Item)" />
                 }
             }
-            else if (object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtStart() == true)
+            else if (object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.ApplyButtonPosition.DisplayTableButtonAtStart() == true)
             {
                 <div style="display: flex;">
                     <MudTooltip Text="@Context.Table.CommitEditTooltip">
@@ -46,22 +46,22 @@
         </MudElement>
     }
     @ChildContent
-    @if (IsEditable && ((Context?.Table.EditButtonPosition.DisplayEditButtonAtEnd() == true && Context?.Table.EditTrigger == TableEditTrigger.EditButton) || Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtEnd() == true))
+    @if (IsEditable && ((Context?.Table.EditButtonPosition.DisplayTableButtonAtEnd() == true && Context?.Table.EditTrigger == TableEditTrigger.EditButton) || Context?.Table.ApplyButtonPosition.DisplayTableButtonAtEnd() == true))
     {
         @* Add datalabel as a placeholder to avoid jumps on small viewports *@
         <MudTd DataLabel="&nbsp;" Class="py-3">
-            @if (Context?.Table.EditTrigger == TableEditTrigger.EditButton && !object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.EditButtonPosition.DisplayEditButtonAtEnd() == true)
+            @if (Context?.Table.EditTrigger == TableEditTrigger.EditButton && !object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.EditButtonPosition.DisplayTableButtonAtEnd() == true)
             {
                 @if (Context?.Table.EditButtonContent != null)
                 {
-                    @Context?.Table.EditButtonContent(new MudBlazorFix.EditButtonContext(StartEditingItem, Context.EditButtonDisabled(Item), Item))
+                    @Context?.Table.EditButtonContent(new EditButtonContext(StartEditingItem, Context.EditButtonDisabled(Item), Item))
                 }
                 else
                 {
                     <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="StartEditingItem" Disabled="Context.EditButtonDisabled(Item)" />
                 }
             }
-            else if (object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtEnd() == true)
+            else if (object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.ApplyButtonPosition.DisplayTableButtonAtEnd() == true)
             {
                 <div style="display: flex;">
                     <MudTooltip Text="@Context.Table.CommitEditTooltip">
