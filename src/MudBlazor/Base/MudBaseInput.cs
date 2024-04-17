@@ -13,7 +13,7 @@ namespace MudBlazor
     /// Represents a base class for designing form input components.
     /// </summary>
     /// <typeparam name="T">The type of item being input.</typeparam>
-    [DebuggerDisplay("Value={Value}, Disabled={Disabled}, ReadOnly={ReadOnly}, Immediate={Immediate}, Color={Color}, Size={Size}, Label={Label}")]
+    [DebuggerDisplay("Value={Value}, Disabled={Disabled}, ReadOnly={ReadOnly}, Immediate={Immediate}, Color={Color}, Size={Size}, Label={Label}, HelperText={HelperText}")]
     public abstract class MudBaseInput<T> : MudFormComponent<T, string>
     {
         private bool _isDirty;
@@ -109,104 +109,147 @@ namespace MudBlazor
         public bool HelperTextOnFocus { get; set; }
 
         /// <summary>
-        /// Icon that will be used if Adornment is set to Start or End.
+        /// Gets or sets the icon displayed for the adornment.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  This icon will be displayed when <see cref="Adornment"/> is <c>Start</c> or <c>End</c>, and no value for <see cref="AdornmentText"/> is set.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string? AdornmentIcon { get; set; }
 
         /// <summary>
-        /// Text that will be used if Adornment is set to Start or End, the Text overrides Icon.
+        /// Gets or sets the text displayed for the adornment.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  This text will be displayed when <see cref="Adornment"/> is <c>Start</c> or <c>End</c>.  The <see cref="AdornmentIcon"/> property will be ignored if this property is set.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string? AdornmentText { get; set; }
 
         /// <summary>
-        /// The Adornment if used. By default, it is set to None.
+        /// Gets or sets the location of the adornment icon or text.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Adornment.None"/>.  Then set to <c>Start</c> or <c>End</c>, the <see cref="AdornmentText"/> will be displayed, or <see cref="AdornmentIcon"/> if no adornment text is specified.  
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public Adornment Adornment { get; set; } = Adornment.None;
 
         /// <summary>
-        /// The validation is only triggered if the user has changed the input value at least once. By default, it is false
+        /// Gets a value indicating whether validation only occurs when the user changes the <see cref="Value"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. When <c>true</c>, validation only occurs if the user has changed the input value at least once.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool OnlyValidateIfDirty { get; set; }
 
         /// <summary>
-        /// The color of the adornment if used. It supports the theme colors.
+        /// Gets or sets the color of <see cref="AdornmentText"/> or <see cref="AdornmentIcon"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Color AdornmentColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// The aria-label of the adornment.
+        /// Gets or sets the ARIA label of the adornment.
         /// </summary>
+        /// <remarks>
+        /// Defaults to an empty string.  This property controls the value set for the <c>aria-label</c> attribute.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public string AdornmentAriaLabel { get; set; } = string.Empty;
 
         /// <summary>
-        /// The Icon Size.
+        /// Gets or sets the size of the icon.
         /// </summary>
+        /// <remarks>
+        /// Default to <see cref="Size.Medium"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
-        /// Button click event if set and Adornment used.
+        /// Occurs when the adornment text or icon has been clicked.
         /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnAdornmentClick { get; set; }
+        [Parameter] 
+        public EventCallback<MouseEventArgs> OnAdornmentClick { get; set; }
 
         /// <summary>
-        /// Variant to use.
+        /// Gets or sets the appearance variation to use.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Variant.Text"/>.  Other options are <c>Outlined</c> and <c>Filled</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        ///  Will adjust vertical spacing.
+        /// Gets or sets the amount of vertical spacing for this input.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Margin.None"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Margin Margin { get; set; } = Margin.None;
 
         /// <summary>
-        /// The short hint displayed in the input before the user enters a value.
+        /// Gets or sets the text displayed in the input if no <see cref="Value"/> is specified.
         /// </summary>
+        /// <remarks>
+        /// This property is typically used to give the user a hint as to what kind of input is expected.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string? Placeholder { get; set; }
 
         /// <summary>
-        /// If set, will display the counter, value 0 will display current count but no stop count.
+        /// Gets or sets an optional character count and stop count.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When <c>0</c>, the current character count is displayed.  When <c>1</c> or greater, the character count and this count are displayed.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public int? Counter { get; set; }
 
         /// <summary>
-        /// Maximum number of characters that the input will accept
+        /// Gets or sets the maximum number of characters allowed.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>524288</c>.  This value is typically set to a maximum length such as the size of a database column the value will be persisted to.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public int MaxLength { get; set; } = 524288;
 
         /// <summary>
-        /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
+        /// Gets or sets the label for this input.
         /// </summary>
+        /// <remarks>
+        /// If no <see cref="Value"/> is specified, the label will be displayed in the input.  Otherwise, it will be scaled down to the top of the input.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string? Label { get; set; }
 
         /// <summary>
-        /// If true the input will focus automatically.
+        /// Gets or sets a value indicating whether this input automatically receives focus.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, the input will receive focus automatically.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool AutoFocus { get; set; }
@@ -219,97 +262,114 @@ namespace MudBlazor
         public int Lines { get; set; } = 1;
 
         /// <summary>
-        ///  The text to be displayed.
+        /// Gets or sets the text displayed in the input.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
         public string? Text { get; set; }
 
         /// <summary>
-        /// When TextUpdateSuppression is true (which is default) the text can not be updated by bindings while the component is focused in BSS (not WASM).
-        /// This solves issue #1012: Textfield swallowing chars when typing rapidly
-        /// If you need to update the input's text while it is focused you can set this parameter to false.
-        /// Note: on WASM text update suppression is not active, so this parameter has no effect.
+        /// Gets or sets a value indicating whether the text cannot be updated via a bound value.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  Applies only to Blazor Server (BSS) applications.  When <c>false</c>, the input's text can be updated programmatically while the input has focus.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool TextUpdateSuppression { get; set; } = true;
+        public bool TextUpdateSuppression { get; set; } = true; // Solves issue #1012: Textfield swallowing chars when typing rapidly
 
         /// <summary>
-        ///  Hints at the type of data that might be entered by the user while editing the input
+        /// Gets or sets the type of input expected.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="InputMode.text"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public virtual InputMode InputMode { get; set; } = InputMode.text;
 
         /// <summary>
-        /// The pattern attribute, when specified, is a regular expression which the input's value must match in order for the value to pass constraint validation. It must be a valid JavaScript regular expression
-        /// Not Supported in multline input
+        /// Gets or sets the regular expression used to validate the <see cref="Value"/> property.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  This property is used to validate the input against a regular expression.  Not supported if <see cref="Lines"/> is <c>2</c> or greater.  Must be a valid JavaScript regular expression.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public virtual string? Pattern { get; set; }
 
         /// <summary>
-        /// ShrinkLabel prevents the label from moving down into the field when the field is empty.
+        /// Gets or sets a value indicating whether the label is allowed to appear inside the input if no <see cref="Value"/> is specified.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, the label will not move into the input when the input is empty.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public bool ShrinkLabel { get; set; }
 
         /// <summary>
-        /// Fired when the text value changes.
+        /// Occurs when the <see cref="Text"/> property has changed.
         /// </summary>
         [Parameter]
         public EventCallback<string> TextChanged { get; set; }
 
         /// <summary>
-        /// Fired when the element loses focus.
+        /// Occurs when the input loses focus.
         /// </summary>
         [Parameter]
         public EventCallback<FocusEventArgs> OnBlur { get; set; }
 
         /// <summary>
-        /// Fired when the element changes internally its text value.
+        /// Occurs when the internal text value has changed.
         /// </summary>
         [Parameter]
         public EventCallback<ChangeEventArgs> OnInternalInputChanged { get; set; }
 
         /// <summary>
-        /// Fired on the KeyDown event.
+        /// Occurs when a key has been pressed down.
         /// </summary>
         [Parameter]
         public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
         /// <summary>
-        /// Prevent the default action for the KeyDown event.
+        /// Gets or sets a value indicating whether the default key-down action occurs.
         /// </summary>
+        /// <remarks>
+        /// When <c>true</c>, the browser will not perform its default behavior when a key-down occurs.  This is typically used when a key-down needs to override a browser's default behavior.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool KeyDownPreventDefault { get; set; }
 
         /// <summary>
-        /// Fired on the KeyUp event.
+        /// Occurs when a pressed key has been released.
         /// </summary>
         [Parameter]
         public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
 
         /// <summary>
-        /// Prevent the default action for the KeyUp event.
+        /// Gets or sets a value indicating whether the default key-up action occurs.
         /// </summary>
+        /// <remarks>
+        /// When <c>true</c>, the browser will not perform its default behavior when a key-up occurs.  This is typically used when a key-up needs to override the browser's default behavior.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool KeyUpPreventDefault { get; set; }
 
         /// <summary>
-        /// Fired when the Value property changes.
+        /// Occurs when the <see cref="Value"/> property has changed.
         /// </summary>
         [Parameter]
         public EventCallback<T> ValueChanged { get; set; }
 
         /// <summary>
-        /// The value of this input element.
+        /// Gets or sets the value for this input.
         /// </summary>
+        /// <remarks>
+        /// This property represents the strongly typed value for the input.  It is typically the result of parsing raw input via the <see cref="Text"/> property.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
         public T? Value
@@ -319,8 +379,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans
+        /// Gets or sets the format applied to values.
         /// </summary>
+        /// <remarks>
+        /// This property is passed into the <c>ToString()</c> method of the <see cref="Value"/> property, such as formatting <c>int</c>, <c>float</c>, <c>DateTime</c> and <c>TimeSpan</c> values.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string? Format
@@ -354,23 +417,40 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Text change hook for descendants. Called when Text needs to be refreshed from current Value property.
+        /// Occurs when the value has changed internally.
         /// </summary>
+        /// <remarks>
+        /// This method is called when the <see cref="Text"/> property needs to be refreshed from current <see cref="Value" />.
+        /// </remarks>
         protected virtual Task UpdateTextPropertyAsync(bool updateValue)
         {
             return SetTextAsync(Converter.Set(Value), updateValue);
         }
 
         /// <summary>
-        /// Focuses the element
+        /// When overridden, obtains focus for this input.
         /// </summary>
-        /// <returns>The ValueTask</returns>
+        /// <returns>A <see cref="ValueTask" /> object.</returns>
         public virtual ValueTask FocusAsync() => ValueTask.CompletedTask;
 
+        /// <summary>
+        /// When overridden, releases focus from this input.
+        /// </summary>
+        /// <returns>A <see cref="ValueTask" /> object.</returns>
         public virtual ValueTask BlurAsync() => ValueTask.CompletedTask;
 
+        /// <summary>
+        /// When overridden, selects this input.
+        /// </summary>
+        /// <returns>A <see cref="ValueTask" /> object.</returns>
         public virtual ValueTask SelectAsync() => ValueTask.CompletedTask;
 
+        /// <summary>
+        /// When overridden, selects a portion of the input.
+        /// </summary>
+        /// <param name="pos1">The index of the first character to select.</param>
+        /// <param name="pos2">The index of the last character to select.</param>
+        /// <returns>A <see cref="ValueTask" /> object.</returns>
         public virtual ValueTask SelectRangeAsync(int pos1, int pos2) => ValueTask.CompletedTask;
 
         protected internal virtual async Task OnBlurredAsync(FocusEventArgs obj)
@@ -429,17 +509,25 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Sync the value, values and text, calls validation manually. Useful to call after user changes value or text programmatically.
+        /// Sets the value, values, and text, and calls validation.
         /// </summary>
-        /// <returns></returns>
+        /// <remarks>
+        /// This method is typically called when the user has changed the <see cref="Value"/> or <see cref="Text"/> programmatically.
+        /// </remarks>
+        /// <returns>
+        /// A <see cref="Task"/> object.
+        /// </returns>
         public virtual Task ForceUpdate()
         {
             return SetValueAsync(Value, force: true);
         }
 
         /// <summary>
-        /// Value change hook for descendants. Called when Value needs to be refreshed from current Text property.
+        /// Occurs when the value has changed internally.
         /// </summary>
+        /// <remarks>
+        /// This method is called when the <see cref="Value"/> property needs to be refreshed from current <see cref="Text" />.
+        /// </remarks>
         protected virtual Task UpdateValuePropertyAsync(bool updateText)
         {
             return SetValueAsync(Converter.Get(Text), updateText);
@@ -505,6 +593,10 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Causes this input to be rerendered.
+        /// </summary>
+        /// <param name="forceTextUpdate">When <c>true</c>, the <see cref="Text"/> property will be updated before rendering.</param>
         public virtual void ForceRender(bool forceTextUpdate)
         {
             _forceTextUpdate = true;
@@ -512,6 +604,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        /// <inheritdoc />
         public override async Task SetParametersAsync(ParameterView parameters)
         {
             await base.SetParametersAsync(parameters);
@@ -546,6 +639,7 @@ namespace MudBlazor
             }
         }
 
+        /// <inheritdoc />
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             //Only focus automatically after the first render cycle!
@@ -557,6 +651,7 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        /// <inheritdoc />
         protected override void OnParametersSet()
         {
             if (SubscribeToParentForm)
@@ -565,6 +660,7 @@ namespace MudBlazor
             }
         }
 
+        /// <inheritdoc />
         protected override async Task ResetValueAsync()
         {
             await SetTextAsync(null, updateValue: true);
@@ -574,8 +670,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Derived classes need to override this if they can be something other than text
+        /// Gets the type of input received by this component.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="InputType.Text"/>.
+        /// </remarks>
         internal virtual InputType GetInputType() => InputType.Text;
     }
 }
