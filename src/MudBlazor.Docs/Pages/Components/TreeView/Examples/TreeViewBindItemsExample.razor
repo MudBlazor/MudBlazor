@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Width="300px" Elevation="0">
-    <MudTreeView T="string" Hover TriState SelectionMode="@SelectionMode.ToggleSelection" Color="Color.Tertiary">
+    <MudTreeView T="string" Hover SelectionMode="@SelectionMode.ToggleSelection" Color="Color.Tertiary">
         <MudTreeViewItem Text="config" @bind-Expanded="ConfigExpanded" Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen">
             <MudTreeViewItem Text="launch.json" @bind-Selected="LaunchSelected"  Icon="@Icons.Custom.FileFormats.FileCode" />
             <MudTreeViewItem Text="tasks.json" @bind-Selected="TasksSelected" Icon="@Icons.Custom.FileFormats.FileCode" />

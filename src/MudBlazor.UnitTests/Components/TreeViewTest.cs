@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.TreeView;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -660,5 +661,127 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Item2Selected.Should().BeTrue();
         }
 
+        /// <summary>
+        /// Tests binding Selected and Expanded parameters, especially selection with items that have only Text and no Value
+        ///
+        /// NOTE: we can only check the component parameters directly here because they are two-way bound!
+        /// </summary>
+        [Test]
+        public void TreeViewItem_TwoWayBindingTest()
+        {
+            var comp = Context.RenderComponent<TreeViewItemBindingTest>();
+            // check initial selection
+            comp.Find(".item-config .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-launch .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".item-tasks .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-images .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-logo .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            // expanded
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "config").Expanded.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "images").Expanded.Should().Be(false);
+            // selected
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "launch.json").Selected.Should().Be(true);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "tasks.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "logo.png").Selected.Should().Be(false);
+            // switches
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").Value.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").Value.Should().Be(false);
+            // checkboxes
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-launch").Value.Should().Be(true);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-tasks").Value.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").Value.Should().Be(false);
+
+            // select logo.png via tree item
+            comp.Find(".item-logo .mud-treeview-item-content").Click();
+            // selection visualization
+            comp.Find(".item-config .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-launch .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-tasks .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-images .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-logo .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            // expanded
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "config").Expanded.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "images").Expanded.Should().Be(false);
+            // selected
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "launch.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "tasks.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "logo.png").Selected.Should().Be(true);
+            // switches
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").Value.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").Value.Should().Be(false);
+            // checkboxes
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-launch").Value.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-tasks").Value.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").Value.Should().Be(true);
+
+            // expand config via tree item
+            comp.Find(".item-config .mud-treeview-item-arrow button").Click();
+            // selection visualization
+            comp.Find(".item-config .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-launch .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-tasks .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-images .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-logo .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            // expanded
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "config").Expanded.Should().Be(true);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "images").Expanded.Should().Be(false);
+            // selected
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "launch.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "tasks.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "logo.png").Selected.Should().Be(true);
+            // switches
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").Value.Should().Be(true);
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").Value.Should().Be(false);
+            // checkboxes
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-launch").Value.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-tasks").Value.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").Value.Should().Be(true);
+
+            // collapse config via switch
+            comp.Find(".switch-config input").Change(false);
+            // selection visualization
+            comp.Find(".item-config .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-launch .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-tasks .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-images .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-logo .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            // expanded
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "config").Expanded.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "images").Expanded.Should().Be(false);
+            // selected
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "launch.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "tasks.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "logo.png").Selected.Should().Be(true);
+            // switches
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").Value.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").Value.Should().Be(false);
+            // checkboxes
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-launch").Value.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-tasks").Value.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").Value.Should().Be(true);
+
+            // select launch.json via checkbox
+            comp.Find(".checkbox-launch input").Change(true);
+            // selection visualization
+            comp.Find(".item-config .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-launch .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".item-tasks .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-images .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-logo .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            // expanded
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "config").Expanded.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "images").Expanded.Should().Be(false);
+            // selected
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "launch.json").Selected.Should().Be(true);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "tasks.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "logo.png").Selected.Should().Be(false);
+            // switches
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").Value.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").Value.Should().Be(false);
+            // checkboxes
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-launch").Value.Should().Be(true);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-tasks").Value.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").Value.Should().Be(false);
+        }
     }
 }
