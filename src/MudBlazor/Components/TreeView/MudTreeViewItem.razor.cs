@@ -446,7 +446,7 @@ namespace MudBlazor
                 Loading = true;
                 StateHasChanged();
 
-                Items = await MudTreeRoot.ServerData(Value);
+                Items = await MudTreeRoot.ServerData(GetValue());
 
                 Loading = false;
                 _isServerLoaded = true;
@@ -459,7 +459,8 @@ namespace MudBlazor
         {
             if (MudTreeRoot == null)
                 return;
-            var selected = Value is not null && selectedValues.Contains(Value);
+            var value = GetValue();
+            var selected = value is not null && selectedValues.Contains(value);
             _selectedState.SetValueAsync(selected);
             // since the tree view doesn't know our children we need to take care of updating them
             foreach (var child in _childItems)
