@@ -28,7 +28,7 @@ namespace MudBlazor.UnitTests.Components
             // select cornflakes
             comp.FindAll("div.mud-chip")[3].Click();
             comp.Find("div.selected-value").TrimmedText().Should().Be("Corn flakes");
-            comp.Find("div.selected-values").TrimmedText().Should().Be("Corn flakes");
+            comp.Find("div.selected-values").TrimmedText().Should().Be("Nothing selected");
             // de-select cornflakes by clicking again
             comp.FindAll("div.mud-chip")[3].Click();
             comp.Find("div.selected-value").TrimmedText().Should().Be("");
@@ -36,11 +36,11 @@ namespace MudBlazor.UnitTests.Components
             // select cornflakes
             comp.FindAll("div.mud-chip")[3].Click();
             comp.Find("div.selected-value").TrimmedText().Should().Be("Corn flakes");
-            comp.Find("div.selected-values").TrimmedText().Should().Be("Corn flakes");
+            comp.Find("div.selected-values").TrimmedText().Should().Be("Nothing selected");
             // select milk
             comp.FindAll("div.mud-chip")[0].Click();
             comp.Find("div.selected-value").TrimmedText().Should().Be("Milk");
-            comp.Find("div.selected-values").TrimmedText().Should().Be("Milk");
+            comp.Find("div.selected-values").TrimmedText().Should().Be("Nothing selected");
         }
 
         [Test]
@@ -49,7 +49,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ChipSetSingleSelectionTest>(p => p.Add(x => x.InitialValue, "Milk"));
             // initial value is selected
             comp.Find("div.selected-value").TrimmedText().Should().Be("Milk");
-            comp.Find("div.selected-values").TrimmedText().Should().Be("Milk");
+            comp.Find("div.selected-values").TrimmedText().Should().Be("Nothing selected");
         }
 
         /// <summary>
@@ -68,19 +68,19 @@ namespace MudBlazor.UnitTests.Components
             // select cornflakes
             comp.FindAll("div.mud-chip")[3].Click();
             comp.Find("div.selected-value").TrimmedText().Should().Be("Corn flakes");
-            comp.Find("div.selected-values").TrimmedText().Should().Be("Corn flakes");
+            comp.Find("div.selected-values").TrimmedText().Should().Be("Nothing selected");
             // de-select cornflakes by clicking again
             comp.FindAll("div.mud-chip")[3].Click();
             comp.Find("div.selected-value").TrimmedText().Should().Be("Corn flakes");
-            comp.Find("div.selected-values").TrimmedText().Should().Be("Corn flakes");
+            comp.Find("div.selected-values").TrimmedText().Should().Be("Nothing selected");
             // select cornflakes
             comp.FindAll("div.mud-chip")[3].Click();
             comp.Find("div.selected-value").TrimmedText().Should().Be("Corn flakes");
-            comp.Find("div.selected-values").TrimmedText().Should().Be("Corn flakes");
+            comp.Find("div.selected-values").TrimmedText().Should().Be("Nothing selected");
             // select milk
             comp.FindAll("div.mud-chip")[0].Click();
             comp.Find("div.selected-value").TrimmedText().Should().Be("Milk");
-            comp.Find("div.selected-values").TrimmedText().Should().Be("Milk");
+            comp.Find("div.selected-values").TrimmedText().Should().Be("Nothing selected");
         }
 
         [Test]
@@ -93,7 +93,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.selected-values").TrimmedText().Should().Be("Nothing selected");
             // select cornflakes
             comp.FindAll("div.mud-chip")[3].Click();
-            comp.Find("div.selected-value").TrimmedText().Should().Be("Corn flakes");
+            comp.Find("div.selected-value").TrimmedText().Should().Be("");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Corn flakes");
             // de-select cornflakes by clicking again
             comp.FindAll("div.mud-chip")[3].Click();
@@ -101,19 +101,19 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.selected-values").TrimmedText().Should().Be("Nothing selected");
             // select cornflakes
             comp.FindAll("div.mud-chip")[3].Click();
-            comp.Find("div.selected-value").TrimmedText().Should().Be("Corn flakes");
+            comp.Find("div.selected-value").TrimmedText().Should().Be("");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Corn flakes");
             // select milk
             comp.FindAll("div.mud-chip")[0].Click();
-            comp.Find("div.selected-value").TrimmedText().Should().Be("Corn flakes");
+            comp.Find("div.selected-value").TrimmedText().Should().Be("");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Corn flakes, Milk");
             // select red wine
             comp.FindAll("div.mud-chip")[6].Click();
-            comp.Find("div.selected-value").TrimmedText().Should().Be("Corn flakes");
+            comp.Find("div.selected-value").TrimmedText().Should().Be("");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Corn flakes, Milk, Red wine");
             // de-select milk
             comp.FindAll("div.mud-chip")[0].Click();
-            comp.Find("div.selected-value").TrimmedText().Should().Be("Corn flakes");
+            comp.Find("div.selected-value").TrimmedText().Should().Be("");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Corn flakes, Red wine");
         }
 
@@ -122,11 +122,11 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<ChipSetMultiSelectionTest>(parameters => parameters.Add(x => x.InitialValues, ["Corn flakes", "Milk", "Red wine"]));
             // initial values should be selected
-            comp.Find("div.selected-value").TrimmedText().Should().Be("Corn flakes");
+            comp.Find("div.selected-value").TrimmedText().Should().Be("");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Corn flakes, Milk, Red wine");
             // de-select milk
             comp.FindAll("div.mud-chip")[0].Click();
-            comp.Find("div.selected-value").TrimmedText().Should().Be("Corn flakes");
+            comp.Find("div.selected-value").TrimmedText().Should().Be("");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Corn flakes, Red wine");
         }
 
@@ -139,7 +139,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ChipSetDefaultChipsTest>();
             // select elements needed for the test
             comp.FindAll("div.mud-chip").Count.Should().Be(7);
-            comp.FindAll("p")[0].TrimmedText().Should().Be("Corn flakes");
+            comp.Find(".selected-value").TrimmedText().Should().Be("Corn flakes");
         }
 
         [Test]
@@ -147,13 +147,13 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<ChipSetDefaultChipsTest>(p => p.Add(x => x.SelectionMode, SelectionMode.MultiSelection));
             comp.FindAll("div.mud-chip").Count.Should().Be(7);
-            comp.FindAll("p")[0].TrimmedText().Should().Be("Corn flakes, Milk");
+            comp.Find(".selected-values").TrimmedText().Should().Be("Corn flakes, Milk");
             // de-select cornflakes
             comp.FindAll("div.mud-chip")[3].Click();
-            comp.FindAll("p")[0].TrimmedText().Should().Be("Milk");
+            comp.Find(".selected-values").TrimmedText().Should().Be("Milk");
             // select eggs
             comp.FindAll("div.mud-chip")[1].Click();
-            comp.FindAll("p")[0].TrimmedText().Should().Be("Eggs, Milk");
+            comp.Find(".selected-values").TrimmedText().Should().Be("Eggs, Milk");
         }
 
         [Test]
@@ -164,13 +164,13 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.InitialValues, ["Eggs", "Soap"])
             );
             comp.FindAll("div.mud-chip").Count.Should().Be(7);
-            comp.FindAll("p")[0].TrimmedText().Should().Be("Corn flakes, Eggs, Milk");
+            comp.Find(".selected-values").TrimmedText().Should().Be("Corn flakes, Eggs, Milk");
             // de-select cornflakes
             comp.FindAll("div.mud-chip")[3].Click();
-            comp.FindAll("p")[0].TrimmedText().Should().Be("Eggs, Milk");
+            comp.Find(".selected-values").TrimmedText().Should().Be("Eggs, Milk");
             // select soap
             comp.FindAll("div.mud-chip")[2].Click();
-            comp.FindAll("p")[0].TrimmedText().Should().Be("Eggs, Milk, Soap");
+            comp.Find(".selected-values").TrimmedText().Should().Be("Eggs, Milk, Soap");
         }
 
         [Test]
