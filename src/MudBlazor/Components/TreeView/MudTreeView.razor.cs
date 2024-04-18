@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -28,7 +25,7 @@ namespace MudBlazor
                 .WithParameter(() => SelectedValues)
                 .WithEventCallback(() => SelectedValuesChanged)
                 .WithChangeHandler(OnSelectedValuesChangedAsync)
-                .WithComparer(() => new CollectionComparer<T>(Comparer));
+                .WithComparer(() => Comparer, comparer => new CollectionComparer<T>(comparer));
             registerScope.RegisterParameter<IEqualityComparer<T?>>(nameof(Comparer))
                 .WithParameter(() => Comparer)
                 .WithChangeHandler(OnComparerChangedAsync);

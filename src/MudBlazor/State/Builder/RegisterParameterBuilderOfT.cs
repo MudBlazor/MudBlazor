@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.State.Comparer;
 
 namespace MudBlazor.State.Builder;
 
@@ -23,7 +24,7 @@ internal class RegisterParameterBuilder<T> : IParameterBuilderAttach
     private Func<T>? _getParameterValueFunc;
     private Func<EventCallback<T>> _eventCallbackFunc = () => default;
     private IParameterChangedHandler<T>? _parameterChangedHandler;
-    private Func<IEqualityComparer<T>?>? _comparerFunc;
+    private IParameterEqualityComparerSwappable<T>? _comparer;
     private readonly Lazy<ParameterStateInternal<T>> _parameterStateLazy;
 
     /// <summary>
@@ -148,7 +149,7 @@ internal class RegisterParameterBuilder<T> : IParameterBuilderAttach
     /// <returns>The current instance of the builder.</returns>
     public RegisterParameterBuilder<T> WithComparer(IEqualityComparer<T>? comparer)
     {
-        _comparerFunc = () => comparer;
+        _comparer = new ParameterEqualityComparerSwappable<T>(comparer);
 
         return this;
     }
@@ -162,7 +163,23 @@ internal class RegisterParameterBuilder<T> : IParameterBuilderAttach
     /// <returns>The current instance of the builder.</returns>
     public RegisterParameterBuilder<T> WithComparer(Func<IEqualityComparer<T>>? comparerFunc, [CallerArgumentExpression(nameof(comparerFunc))] string? comparerParameterName = null)
     {
-        _comparerFunc = comparerFunc;
+        _comparer = new ParameterEqualityComparerSwappable<T>(comparerFunc);
+        _comparerParameterName = comparerParameterName;
+
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the function to provide the comparer for the parameter, converting it to a comparer of type <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="TFrom">The type of the original comparer.</typeparam>
+    /// <param name="comparerFromFunc">The function to provide the original comparer.</param>
+    /// <param name="comparerToFunc">The function to convert the original comparer to a comparer of type <typeparamref name="T"/>.</param>
+    /// <param name="comparerParameterName">The parameter's comparer name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
+    /// <returns>The current instance of the builder.</returns>
+    public RegisterParameterBuilder<T> WithComparer<TFrom>(Func<IEqualityComparer<TFrom>> comparerFromFunc, Func<IEqualityComparer<TFrom>, IEqualityComparer<T>> comparerToFunc, [CallerArgumentExpression(nameof(comparerFromFunc))] string? comparerParameterName = null)
+    {
+        _comparer = new ParameterEqualityComparerTransformSwappable<TFrom, T>(comparerFromFunc, comparerToFunc);
         _comparerParameterName = comparerParameterName;
 
         return this;
@@ -183,7 +200,7 @@ internal class RegisterParameterBuilder<T> : IParameterBuilderAttach
             _getParameterValueFunc ?? throw new ArgumentNullException(nameof(_getParameterValueFunc)),
             _eventCallbackFunc,
             _parameterChangedHandler,
-            _comparerFunc);
+            _comparer);
 
         return parameterState;
     }
