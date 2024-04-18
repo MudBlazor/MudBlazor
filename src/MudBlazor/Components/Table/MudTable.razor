@@ -84,12 +84,22 @@
                 <tbody class="mud-table-body">
                     @if(GroupBy != null)
                     {
+                        var rowIndex = 0;
+                        var stripedGroup = "";
                         @foreach (var group in GroupItemsPage)
                         {
+                            if (StripedGroups)
+                            {
+                                stripedGroup = (rowIndex + 1) % 2 == 0 ? "even" : "odd";
+                            }
+                            rowIndex++;
+                            
                             <MudTableGroupRow GroupDefinition="GroupBy" Items="group" IsCheckable="MultiSelection" 
                                               HeaderClass="@GroupHeaderClass" HeaderStyle="@GroupHeaderStyle" 
                                               FooterClass="@GroupFooterClass" FooterStyle="@GroupFooterStyle"
-                                              HeaderTemplate="@GroupHeaderTemplate" FooterTemplate="@GroupFooterTemplate" T="T"  />
+                                              HeaderTemplate="@GroupHeaderTemplate" FooterTemplate="@GroupFooterTemplate" T="T"
+                                              StripedGroup="@stripedGroup"
+                                              />
                         }
                     }
                     else

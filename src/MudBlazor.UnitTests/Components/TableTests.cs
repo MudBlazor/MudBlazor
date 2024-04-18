@@ -2383,5 +2383,29 @@ namespace MudBlazor.UnitTests.Components
             selectAllCheckbox.Change(true);
             comp.Find("#counter").TextContent.Should().Be("1");
         }
+
+        /// <summary>
+        /// StripedGroups should add new classes without interfering with others.
+        /// </summary>
+        [Test]
+        public async Task TestStripedGroupsClasses()
+        {
+            var comp = Context.RenderComponent<TableGroupRowCustomClassnameTest>();
+
+            // StripedGroups class should be applied correctly when StripedGroups is set to true.
+            var rows = comp.FindAll("tbody tr");
+
+            // Group header
+            rows[0].ClassName.Should().Be("mud-table-row test-header-class mud-table-row-group-striped-odd");
+            // Items
+            rows[1].ClassName.Should().Be("mud-table-row mud-table-row-group-striped-odd");
+            rows[2].ClassName.Should().Be("mud-table-row mud-table-row-group-striped-odd");
+            rows[3].ClassName.Should().Be("mud-table-row mud-table-row-group-striped-odd");
+            // Footer
+            rows[4].ClassName.Should().Be("mud-table-row test-footer-class mud-table-row-group-striped-odd");
+
+            // New group: Switches to even class
+            rows[5].ClassName.Should().Be("mud-table-row test-header-class mud-table-row-group-striped-even");
+        }
     }
 }

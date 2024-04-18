@@ -483,6 +483,14 @@
   }
 }
 
+.mud-table-row-group-striped-even {
+  background-color: var(--mud-palette-table-striped);
+}
+
+.mud-table-row-group-striped-odd {
+  background-color: var(--mud-palette-surface);
+}
+
 .mud-table-row-expander {
   margin: -12px -2px -12px -12px;
 }

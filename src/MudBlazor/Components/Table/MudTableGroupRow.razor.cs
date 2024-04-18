@@ -12,10 +12,12 @@ namespace MudBlazor
     {
         protected string HeaderClassname => new CssBuilder("mud-table-row")
                                 .AddClass(HeaderClass)
+                                .AddClass($"mud-table-row-group-striped-{StripedGroup}", !string.IsNullOrEmpty(StripedGroup))
                                 .AddClass($"mud-table-row-group-indented-{GroupDefinition?.Level - 1}", (GroupDefinition?.Indentation ?? false) && GroupDefinition?.Level > 1).Build();
 
         protected string FooterClassname => new CssBuilder("mud-table-row")
                                 .AddClass(FooterClass)
+                                .AddClass($"mud-table-row-group-striped-{StripedGroup}", !string.IsNullOrEmpty(StripedGroup))
                                 .AddClass($"mud-table-row-group-indented-{GroupDefinition?.Level - 1}", (GroupDefinition?.Indentation ?? false) && GroupDefinition?.Level > 1).Build();
 
         protected string ActionsStylename => new StyleBuilder()
@@ -65,6 +67,7 @@ namespace MudBlazor
 
         [Parameter] public string HeaderStyle { get; set; }
         [Parameter] public string FooterStyle { get; set; }
+        [Parameter] public string StripedGroup { get; set; }
 
         /// <summary>
         /// Custom expand icon.

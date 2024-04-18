@@ -404,14 +404,20 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Grouping)]
         public RenderFragment<TableGroupData<object, T>> GroupFooterTemplate { get; set; }
 
-        private IEnumerable<T> _preEditSort;
-        private bool _currentRenderFilteredItemsCached;
-        private bool HasPreEditSort => _preEditSort != null;
+        /// <summary>
+        /// If true, the table will be striped per group. Use instead of Striped.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Grouping)]
+        public bool StripedGroups { get; set; }
 
         /// <summary>
         /// For unit testing the filtering cache mechanism.
         /// </summary>
         internal uint FilteringRunCount { get; private set; } = 0;
+        private IEnumerable<T> _preEditSort;
+        private bool _currentRenderFilteredItemsCached;
+        private bool HasPreEditSort => _preEditSort != null;
 
         public IEnumerable<T> FilteredItems
         {

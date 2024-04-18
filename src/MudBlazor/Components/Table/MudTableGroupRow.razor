@@ -53,12 +53,18 @@ else
             <MudTableGroupRow GroupDefinition="GroupDefinition.InnerGroup" Items="@group" IsCheckable="@IsCheckable"
                               HeaderClass="@HeaderClass" HeaderStyle="@HeaderStyle"
                               FooterClass="@FooterClass" FooterStyle="@FooterStyle"
-                              HeaderTemplate="@HeaderTemplate" FooterTemplate="@FooterTemplate" T="T" @attributes="@UserAttributes" />
+                              HeaderTemplate="@HeaderTemplate" FooterTemplate="@FooterTemplate" T="T" @attributes="@UserAttributes"
+                              StripedGroup="@StripedGroup" />
         }
     }
     else
     {
-        @Table?.RenderRows(Items, (GroupDefinition?.Indentation ?? false) ? $"mud-table-row-group-indented-{GroupDefinition?.Level - 1}" : null, GroupDefinition?.IsThisOrParentExpandable ?? false)
+        var customClass = GroupDefinition?.Indentation ?? false ? $"mud-table-row-group-indented-{GroupDefinition?.Level - 1}" : "";
+        if (!string.IsNullOrEmpty(StripedGroup))
+        {
+            customClass += $" mud-table-row-group-striped-{StripedGroup}";
+        }
+        @Table?.RenderRows(Items, customClass, GroupDefinition?.IsThisOrParentExpandable ?? false)
     }
 
     @*FOOTER:*@
