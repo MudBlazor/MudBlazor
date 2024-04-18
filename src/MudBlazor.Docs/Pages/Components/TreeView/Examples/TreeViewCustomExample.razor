@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudPaper Width="350px" MaxHeight="500px" Class="overflow-y-auto" Elevation="0">
+<MudPaper Width="350px" MaxHeight="500px" Class="overflow-y-auto" Elevation="2">
     <MudTreeView Items="@TreeItems">
         <ItemTemplate>
             <MudTreeViewItem @bind-Expanded="@context.IsExpanded" Items="@context.TreeItems">
@@ -16,7 +16,7 @@
 
 @code {
 
-    private HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
+    private HashSet<TreeItemData> TreeItems { get; set; } = new();
 
     public class TreeItemData
     {
@@ -28,7 +28,7 @@
 
         public bool HasChild => TreeItems != null && TreeItems.Count > 0;
 
-        public HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
+        public HashSet<TreeItemData> TreeItems { get; set; } = new();
 
         public TreeItemData(string text, string icon)
         {
@@ -45,12 +45,12 @@
         TreeItems.Add(new TreeItemData("content", Icons.Custom.FileFormats.FileDocument));
         TreeItems.Add(new TreeItemData("src", Icons.Custom.FileFormats.FileCode)
         {
-            TreeItems = new HashSet<TreeItemData>()
+            TreeItems = new()
             {
                 new TreeItemData("MudBlazor", Icons.Custom.Brands.MudBlazor),
                 new TreeItemData("MudBlazor.Docs", Icons.Custom.FileFormats.FileDocument)
                 {
-                    TreeItems = new HashSet<TreeItemData>()
+                    TreeItems = new()
                     {
                         new TreeItemData("_Imports.razor", Icons.Material.Filled.AlternateEmail),
                         new TreeItemData( "compilerconfig.json", Icons.Custom.FileFormats.FileImage),

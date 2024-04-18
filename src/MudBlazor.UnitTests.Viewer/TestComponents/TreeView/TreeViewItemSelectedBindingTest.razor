@@ -1,0 +1,41 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTreeView Class="tree1" T="string" SelectionMode="@SelectionMode" @bind-SelectedValue="SelectedValue" @bind-SelectedValues="SelectedValues">
+    <MudTreeViewItem Class="item-1" Value='"item1"' @bind-Selected="Item1Selected">
+        <MudTreeViewItem Class="item-1-1" Value='"item1.1"' @bind-Selected="Item11Selected" />
+        <MudTreeViewItem Class="item-1-2" Value='"item1.2"' @bind-Selected="Item12Selected" />
+    </MudTreeViewItem>
+</MudTreeView>
+
+@* Note: the second treeview doesn't bind the selection, it is synchronized via the Selected properties of its items only *@
+<MudTreeView Class="tree2" T="string" SelectionMode="@SelectionMode">
+    <MudTreeViewItem Class="item-1" Value='"item1"' @bind-Selected="Item1Selected">
+        <MudTreeViewItem Class="item-1-1" Value='"item1.1"' @bind-Selected="Item11Selected" />
+        <MudTreeViewItem Class="item-1-2" Value='"item1.2"' @bind-Selected="Item12Selected" />
+    </MudTreeViewItem>
+</MudTreeView>
+
+<p class="selected-value">
+    @SelectedValue
+</p>
+<p class="selected-values">
+    @(string.Join(", ", (SelectedValues ?? Array.Empty<string>()).OrderBy(x => x)))
+</p>
+<p class="item1-selected">
+    @Item1Selected
+</p>
+<p class="item1-1-selected">
+    @Item11Selected
+</p>
+<p class="item1-2-selected">
+    @Item12Selected
+</p>
+
+@code {
+    [Parameter] public SelectionMode SelectionMode { get; set; }
+    [Parameter] public string SelectedValue { get; set; }
+    [Parameter] public IReadOnlyCollection<string> SelectedValues { get; set; }
+    [Parameter] public bool Item1Selected { get; set; }
+    [Parameter] public bool Item11Selected { get; set; }
+    [Parameter] public bool Item12Selected { get; set; }
+}
