@@ -12,7 +12,7 @@ namespace MudBlazor.State.Comparer;
 
 #nullable enable
 /// <summary>
-/// Represents a swappable parameter comparer that can transform from one type to another.
+/// Represents a hot swappable parameter comparer that can transform from one type to another.
 /// </summary>
 /// <typeparam name="TFrom">The type of the comparer to transform from.</typeparam>
 /// <typeparam name="T">The type of objects to compare.</typeparam>
@@ -24,6 +24,7 @@ internal class ParameterEqualityComparerTransformSwappable<TFrom, T> : IParamete
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private readonly Func<IEqualityComparer<TFrom>> _comparerFromFunc;
 
+    /// <inheritdoc />
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public Func<IEqualityComparer<T>> UnderlyingComparer => () => _comparerToFunc(_comparerFromFunc());
 

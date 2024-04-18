@@ -4,9 +4,9 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Components;
-using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.State.Comparer;
 
@@ -18,6 +18,7 @@ namespace MudBlazor.State.Comparer;
 [DebuggerDisplay("IEqualityComparer = {OriginalComparer}")]
 internal class ParameterEqualityComparerSwappable<T> : IParameterEqualityComparerSwappable<T>
 {
+    /// <inheritdoc />
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public Func<IEqualityComparer<T>> UnderlyingComparer { get; }
 
