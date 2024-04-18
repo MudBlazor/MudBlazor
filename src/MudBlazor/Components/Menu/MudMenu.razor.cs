@@ -28,6 +28,9 @@ namespace MudBlazor
         [Category(CategoryTypes.Menu.Behavior)]
         public string? Label { get; set; }
 
+        /// <summary>
+        /// Sets the aria-label of the menu button when <see cref="ActivatorContent"/> is not set.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.Behavior)]
         public string? AriaLabel { get; set; }
