@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,6 +10,10 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Represents a component with simple and flexible type-ahead functionality.
+    /// </summary>
+    /// <typeparam name="T">The type of item to search.</typeparam>
     public partial class MudAutocomplete<T> : MudBaseInput<T>
     {
         /// <summary>
@@ -63,71 +66,101 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// User class names for the popover, separated by space
+        /// Gets or sets the CSS classes applied to the popover.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public string PopoverClass { get; set; }
 
         /// <summary>
-        /// User class names for the internal list, separated by space
+        /// Gets or sets the CSS classes applied to the internal list.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public string ListClass { get; set; }
 
         /// <summary>
-        /// User class names for the internal list item, separated by space.
+        /// Gets or sets the CSS classes applied to internal list items.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public string ListItemClass { get; set; }
 
         /// <summary>
-        /// Set the anchor origin point to determen where the popover will open from.
+        /// Gets or sets where the popover will open from.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Origin.BottomCenter" />.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public Origin AnchorOrigin { get; set; } = Origin.BottomCenter;
 
         /// <summary>
-        /// Sets the transform origin point for the popover.
+        /// Gets or sets the transform origin point for the popover.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Origin.TopCenter"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public Origin TransformOrigin { get; set; } = Origin.TopCenter;
 
         /// <summary>
-        /// If true, compact vertical padding will be applied to all Autocomplete items.
+        /// Gets or sets whether compact padding will be used.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public bool Dense { get; set; }
 
         /// <summary>
-        /// The Open Autocomplete Icon
+        /// Gets or sets the "open" Autocomplete icon.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ArrowDropDown"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         /// <summary>
-        /// The Close Autocomplete Icon
+        /// Gets or sets the "close" Autocomplete icon.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ArrowDropDown"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         /// <summary>
-        /// The maximum height of the Autocomplete when it is open.
+        /// Gets or sets the maximum height, in pixels, of the Autocomplete when it is open.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>300</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public int MaxHeight { get; set; } = 300;
 
         /// <summary>
-        /// Defines how values are displayed in the drop-down list
+        /// Gets or sets the function used to get the display text for each item.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the <c>ToString()</c> method of items.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public Func<T, string> ToStringFunc
@@ -146,198 +179,265 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Whether to show the progress indicator.
+        /// Gets or sets whether to show the progress indicator during searches. 
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  The progress indicator uses the color specified in the <see cref="ProgressIndicatorColor"/> property.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool ShowProgressIndicator { get; set; } = false;
 
         /// <summary>
-        /// The color of the progress indicator.
+        /// Gets or sets the color of the progress indicator.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.  This property is used when <see cref="ShowProgressIndicator"/> is <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Color ProgressIndicatorColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// Func that returns a list of items matching the typed text. Provides a cancellation token that
-        /// is marked as cancelled when the user changes the search text or selects a value from the list.
-        /// This can be used to cancel expensive asynchronous work occuring within the SearchFunc itself.
+        /// Gets or sets a function used to search for items.
         /// </summary>
+        /// <remarks>
+        /// This function searches for items containing the specified <c>string</c> value, and returns items which match up to the <see cref="MaxItems"/> property.  You can use the provided <see cref="CancellationToken"/> which is marked as canceled when the user changes the search text or selects a value from the list.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public Func<string, CancellationToken, Task<IEnumerable<T>>> SearchFunc { get; set; }
 
         /// <summary>
-        /// Maximum items to display, defaults to 10.
-        /// A null value will display all items.
+        /// Gets or sets the maximum number of items to display.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>10</c>.  A value of <c>null</c> will display all items.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public int? MaxItems { get; set; } = 10;
 
         /// <summary>
-        /// Minimum characters to initiate a search
+        /// Gets or sets the minimum number of characters typed to initiate a search.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>0</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public int MinCharacters { get; set; } = 0;
 
         /// <summary>
-        /// Reset value if user deletes the text
+        /// Gets or sets whether to reset the selected value if the user deletes the text.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool ResetValueOnEmptyText { get; set; } = false;
 
         /// <summary>
-        /// If true, clicking the text field will select (highlight) its contents.
+        /// Gets or sets whether the text will be selected (highlighted) when the Autocomplete is clicked.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool SelectOnClick { get; set; } = true;
 
         /// <summary>
-        /// If false, clicking on the Autocomplete after selecting an option will query the Search method again with an empty string. This makes it easier to view and select other options without resetting the Value.
-        /// T must either be a record or override GetHashCode and Equals.
+        /// Gets or sets whether other items can be selected without resetting the Value.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  When <c>true</c>, selecting an option will trigger a <see cref="SearchFunc"/> with the current Text.  Otherwise, an empty string is passed which can make it easier to view and select other options without resetting the Value. When <c>false</c>, <c>T</c> must either be a <c>record</c> or override the <c>GetHashCode</c> and <c>Equals</c> methods.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Strict { get; set; } = true;
 
         /// <summary>
-        /// Debounce interval in milliseconds.
+        /// Gets or sets the debounce interval, in milliseconds.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>100</c>.  A higher value can help reduce the number of calls to <see cref="SearchFunc"/>, which can improve responsiveness.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public int DebounceInterval { get; set; } = 100;
 
         /// <summary>
-        /// Optional presentation template for unselected items
+        /// Gets or sets the custom template used to display unselected items.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Use the <see cref="ItemSelectedTemplate"/> property to control the display of selected items.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment<T> ItemTemplate { get; set; }
 
         /// <summary>
-        /// Optional presentation template for the selected item
+        /// Gets or sets the custom template used to display selected items.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Use the <see cref="ItemTemplate"/> property to control the display of unselected items.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment<T> ItemSelectedTemplate { get; set; }
 
         /// <summary>
-        /// Optional presentation template for disabled item
+        /// Gets or sets the custom template used to display disabled items.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment<T> ItemDisabledTemplate { get; set; }
 
         /// <summary>
-        /// Optional presentation template for when more items were returned from the Search function than the MaxItems limit
+        /// Gets or sets the custom template used when the number of items returned by <see cref="SearchFunc"/> is more than the value of the <see cref="MaxItems"/> property.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment MoreItemsTemplate { get; set; }
 
         /// <summary>
-        /// Optional presentation template for when no items were returned from the Search function
+        /// Gets or sets the custom template used when no items are returned by <see cref="SearchFunc"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment NoItemsTemplate { get; set; }
 
-
         /// <summary>
-        /// Optional presentation template that is shown at the top of the list. If no items are present, the fragment is hidden.
+        /// Gets or sets the custom template shown above the list of items, if <see cref="SearchFunc"/> returns items to display.  Otherwise, the fragment is hidden.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Use the <see cref="AfterItemsTemplate"/> property to control content displayed below items.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment BeforeItemsTemplate { get; set; }
 
         /// <summary>
-        /// Optional presentation template that is shown at the bottom of the list. If no items are present, the fragment is hidden.
+        /// Gets or sets the custom template shown below the list of items, if <see cref="SearchFunc"/> returns items to display.  Otherwise, the fragment is hidden.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Use the <see cref="BeforeItemsTemplate"/> property to control content displayed above items.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment AfterItemsTemplate { get; set; }
 
         /// <summary>
-        /// Optional template for progress indicator
+        /// Gets or sets the custom template used for the progress indicator when <see cref="ShowProgressIndicator"/> is <c>true</c>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Use the <see cref="ProgressIndicatorInPopoverTemplate"/> property to control content displayed for the progress indicator inside the popover.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment ProgressIndicatorTemplate { get; set; }
 
         /// <summary>
-        /// Optional template for showing progress indicator inside the popover
+        /// Gets or sets the custom template used for the progress indicator inside the popover when <see cref="ShowProgressIndicator"/> is <c>true</c>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Use the <see cref="ProgressIndicatorTemplate"/> property to control content displayed for the progress indicator.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment ProgressIndicatorInPopoverTemplate { get; set; }
 
         /// <summary>
-        /// On drop-down close override Text with selected Value. This makes it clear to the user
-        /// which list value is currently selected and disallows incomplete values in Text.
+        /// Gets or sets whether the <c>Text</c> property is overridden when an item is selected.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  When <c>true</c>, selecting a value will update the Text property.  When <c>false</c>, incomplete values for Text are allowed.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool CoerceText { get; set; } = true;
 
         /// <summary>
-        /// If user input is not found by the search func and CoerceValue is set to true the user input
-        /// will be applied to the Value which allows to validate it and display an error message.
+        /// Gets or sets whether the <c>Value</c> property is set even if no match is found by <see cref="SearchFunc"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, the user input will be applied to the Value property which allows it to be validated and show an error message. 
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool CoerceValue { get; set; }
 
         /// <summary>
-        /// Function to be invoked when checking whether an item should be disabled or not
+        /// Gets or sets the function used to determine if an item should be disabled.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public Func<T, bool> ItemDisabledFunc { get; set; }
 
         /// <summary>
-        /// An event triggered when the state of IsOpen has changed
+        /// Occurs when the <see cref="IsOpen"/> property has changed.
         /// </summary>
         [Parameter]
         public EventCallback<bool> IsOpenChanged { get; set; }
 
         /// <summary>
-        /// If true, the currently selected item from the drop-down (if it is open) is selected.
+        /// Gets or sets whether pressing the <c>Tab</c> key updates the Value to the currently selected item.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public bool SelectValueOnTab { get; set; } = false;
 
         /// <summary>
-        /// Show clear button.
+        /// Gets or sets whether a Clear icon button is displayed.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <c>ClearIcon</c> property to control the Clear button icon.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Clearable { get; set; } = false;
 
         /// <summary>
-        /// Button click event for clear button. Called after text and value has been cleared.
+        /// Occurs when the Clear button has been clicked.
         /// </summary>
+        /// <remarks>
+        /// The Text and Value properties will be blank when this callback occurs.
+        /// </remarks>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         /// <summary>
-        /// <para>An event triggered when the number of items returned by the search query has changed.</para>
-        /// <para>
-        /// If the number is <c>0</c>, <see cref="NoItemsTemplate"/> will be shown.<br />
-        /// If the number is beyond <see cref="MaxItems"/>, <see cref="MoreItemsTemplate"/> will be shown.
-        /// </para>
+        /// Occurs when the number of items returned by <see cref="SearchFunc"/> has changed.
         /// </summary>
+        /// <remarks>
+        /// The number of items returned determines when custom templates are shown.  If the number is <c>0</c>, <see cref="NoItemsTemplate"/> will be shown. If the number is beyond <see cref="MaxItems"/>, <see cref="MoreItemsTemplate"/> will be shown.
+        /// </remarks>
         [Parameter]
         public EventCallback<int> ReturnedItemsCountChanged { get; set; }
 
         /// <summary>
-        /// Returns the open state of the drop-down.
+        /// Gets or sets whether the search result drop-down is currently displayed.
         /// </summary>
+        /// <remarks>
+        /// When this property changes, the <see cref="IsOpenChanged"/> event will occur.
+        /// </remarks>
         public bool IsOpen
         {
             get => _isOpen;
@@ -363,6 +463,11 @@ namespace MudBlazor
             IconSize = Size.Medium;
         }
 
+        /// <summary>
+        /// Changes the currently selected item to the specified value.
+        /// </summary>
+        /// <param name="value">The value to set.</param>
+        /// <returns>A <see cref="Task"/> object.</returns>
         public async Task SelectOption(T value)
         {
             _isProcessingValue = true;
@@ -389,8 +494,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Toggle the menu (if not disabled or not readonly, and is opened).
+        /// Opens or closes the drop-down of items.
         /// </summary>
+        /// <remarks>
+        /// If the Autocomplete is currently disabled or read-only, it will not be opened.
+        /// </remarks>
         public async Task ToggleMenu()
         {
             if ((GetDisabledState() || GetReadOnlyState()) && !IsOpen)
@@ -564,7 +672,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Clears the autocomplete's text
+        /// Resets the Text and Value, and closes the drop-down if it is open.
         /// </summary>
         public async Task Clear()
         {
@@ -691,9 +799,9 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Scroll to a specific item index in the Autocomplete list of items.
+        /// Scrolls the list of items to the item at the specified index.
         /// </summary>
-        /// <param name="index">the index to scroll to</param>
+        /// <param name="index">The index of the item to scroll to.</param>
         public ValueTask ScrollToListItem(int index)
         {
             var id = GetListItemId(index);
@@ -781,7 +889,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Focus the input in the Autocomplete component.
+        /// Sets focus to this Autocomplete.
         /// </summary>
         public override ValueTask FocusAsync()
         {
@@ -789,7 +897,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Blur from the input in the Autocomplete component.
+        /// Releases focus from this Autocomplete.
         /// </summary>
         public override ValueTask BlurAsync()
         {
@@ -797,7 +905,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Select all text within the Autocomplete input.
+        /// Selects all of the current text within the Autocomplete text box.
         /// </summary>
         public override ValueTask SelectAsync()
         {
@@ -805,8 +913,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Select all text within the Autocomplete input and aligns its start and end points to the text content of the current input.
+        /// Selects a portion of the text within the Autocomplete text box.
         /// </summary>
+        /// <param name="pos1">The index of the first character to select.</param>
+        /// <param name="pos2">The index of the last character to select.</param>
+        /// <returns>A <see cref="ValueTask"/> object.</returns>
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
             return _elementReference.SelectRangeAsync(pos1, pos2);
