@@ -180,7 +180,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task ChipSet_MultiSelection_LateDefaultChipsShouldBeInitiallySelected()
         {
             var comp = Context.RenderComponent<ChipSetLateDefaultTest>();
-            Console.WriteLine(comp.Markup);
             // check that only one item is present
             comp.FindAll("div.mud-chip").Count.Should().Be(1);
             comp.FindAll("p")[0].TrimmedText().Should().Be("Primary");

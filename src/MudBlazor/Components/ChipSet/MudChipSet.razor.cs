@@ -241,7 +241,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
             if (first is not null)
                 newSelection.Add(first);
         }
-        if (_selection.IsEqualTo(newSelection))
+        if (_selection.SetEquals(newSelection))
             return;
         _selection = newSelection;
         if (updateChips)

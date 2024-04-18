@@ -1,8 +1,8 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudTreeView MultiSelection="true" Items="TreeItems" Style="width: 500px;">
+<MudTreeView SelectionMode="SelectionMode.MultiSelection" Items="TreeItems" Style="width: 500px;">
     <ItemTemplate>
-        <MudTreeViewItem @bind-Activated="@context.IsSelected" @bind-Expanded="@context.IsExpanded" Icon="@context.Icon"
+        <MudTreeViewItem @bind-Selected="@context.IsSelected" @bind-Expanded="@context.IsExpanded" Icon="@context.Icon"
                          Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" Items="@context.TreeItems" />
     </ItemTemplate>
 </MudTreeView>

@@ -442,7 +442,7 @@ namespace MudBlazor
         {
             get => _isOpen;
             // Note: the setter is protected because it was needed by a user who derived his own autocomplete from this class.
-            // Note: setting IsOpen will not open or close it. Use ToggleMenu() for that. 
+            // Note: setting IsOpen will not open or close it. Use ToggleMenu() for that.
             protected set
             {
                 if (_isOpen == value)
@@ -526,6 +526,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            base.OnInitialized();
             var text = GetItemString(Value);
             if (!string.IsNullOrWhiteSpace(text))
                 Text = text;
