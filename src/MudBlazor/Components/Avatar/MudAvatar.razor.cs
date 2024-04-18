@@ -10,7 +10,7 @@ namespace MudBlazor
     /// </summary>
     partial class MudAvatar : MudComponentBase, IDisposable
     {
-        [CascadingParameter] 
+        [CascadingParameter]
         protected MudAvatarGroup? AvatarGroup { get; set; }
 
         protected string Classname => new CssBuilder("mud-avatar")
@@ -60,10 +60,10 @@ namespace MudBlazor
         public bool Rounded { get; set; }
 
         /// <summary>
-        /// Gets or sets the color of the component. It supports the theme colors.
+        /// Gets or sets the color of the avatar.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.
+        /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Avatar.Appearance)]
