@@ -1405,5 +1405,51 @@ namespace MudBlazor.UnitTests.Components
             forAttribute.Should().NotBeNull();
             forAttribute!.Value.Should().Be(expectedId);
         }
+
+        /// <summary>
+        /// Optional Autocomplete should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalAutocomplete_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudAutocomplete<string>>();
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required Autocomplete should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredAutocomplete_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudAutocomplete<string>>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required Autocomplete attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredAutocompleteAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudAutocomplete<string>>();
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
+        }
     }
 }

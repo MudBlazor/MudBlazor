@@ -1242,5 +1242,194 @@ namespace MudBlazor.UnitTests.Components
             forAttribute.Should().NotBeNull();
             forAttribute!.Value.Should().Be(expectedId);
         }
+
+        /// <summary>
+        /// Optional RGB ColorPicker should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalRGBColorPicker_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<SimpleColorPickerTest>(parameters => parameters
+                .Add(p => p.ColorPickerMode, ColorPickerMode.RGB));
+
+            var inputs = comp.FindAll("input:not(.mud-slider-input)");
+            inputs.Should().AllSatisfy(input =>
+            {
+                input.HasAttribute("required").Should().BeFalse();
+                input.GetAttribute("aria-required").Should().Be("false");
+            });
+        }
+
+        /// <summary>
+        /// Required RGB ColorPicker should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredRGBColorPicker_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<SimpleColorPickerTest>(parameters => parameters
+                .Add(p => p.Required, true)
+                .Add(p => p.ColorPickerMode, ColorPickerMode.RGB));
+
+            var inputs = comp.FindAll("input:not(.mud-slider-input)");
+            inputs.Should().AllSatisfy(input =>
+            {
+                input.HasAttribute("required").Should().BeTrue();
+                input.GetAttribute("aria-required").Should().Be("true");
+            });
+        }
+
+        /// <summary>
+        /// Required and aria-required RGB ColorPicker attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredRGBColorPickerAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<SimpleColorPickerTest>(parameters => parameters
+                .Add(p => p.ColorPickerMode, ColorPickerMode.RGB));
+
+            var inputs = comp.FindAll("input:not(.mud-slider-input)");
+            inputs.Should().AllSatisfy(input =>
+            {
+                input.HasAttribute("required").Should().BeFalse();
+                input.GetAttribute("aria-required").Should().Be("false");
+            });
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            // must be re-fetched after re-render
+            inputs = comp.FindAll("input:not(.mud-slider-input)");
+            inputs.Should().AllSatisfy(input =>
+            {
+                input.HasAttribute("required").Should().BeTrue();
+                input.GetAttribute("aria-required").Should().Be("true");
+            });
+        }
+
+        /// <summary>
+        /// Optional HSL ColorPicker should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalHSLColorPicker_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<SimpleColorPickerTest>(parameters => parameters
+                .Add(p => p.ColorPickerMode, ColorPickerMode.HSL));
+
+            var inputs = comp.FindAll("input:not(.mud-slider-input)");
+            inputs.Should().AllSatisfy(input =>
+            {
+                input.HasAttribute("required").Should().BeFalse();
+                input.GetAttribute("aria-required").Should().Be("false");
+            });
+        }
+
+        /// <summary>
+        /// Required HSL ColorPicker should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredHSLColorPicker_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<SimpleColorPickerTest>(parameters => parameters
+                .Add(p => p.Required, true)
+                .Add(p => p.ColorPickerMode, ColorPickerMode.HSL));
+
+            var inputs = comp.FindAll("input:not(.mud-slider-input)");
+            inputs.Should().AllSatisfy(input =>
+            {
+                input.HasAttribute("required").Should().BeTrue();
+                input.GetAttribute("aria-required").Should().Be("true");
+            });
+        }
+
+        /// <summary>
+        /// Required and aria-required HSL ColorPicker attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredHSLColorPickerAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<SimpleColorPickerTest>(parameters => parameters
+                .Add(p => p.ColorPickerMode, ColorPickerMode.HSL));
+
+            var inputs = comp.FindAll("input:not(.mud-slider-input)");
+            inputs.Should().AllSatisfy(input =>
+            {
+                input.HasAttribute("required").Should().BeFalse();
+                input.GetAttribute("aria-required").Should().Be("false");
+            });
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            // must be re-fetched after re-render
+            inputs = comp.FindAll("input:not(.mud-slider-input)");
+            inputs.Should().AllSatisfy(input =>
+            {
+                input.HasAttribute("required").Should().BeTrue();
+                input.GetAttribute("aria-required").Should().Be("true");
+            });
+        }
+
+        /// <summary>
+        /// Optional HEX ColorPicker should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalHEXColorPicker_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<SimpleColorPickerTest>(parameters => parameters
+                .Add(p => p.ColorPickerMode, ColorPickerMode.HEX));
+
+            var inputs = comp.FindAll("input:not(.mud-slider-input)");
+            inputs.Should().AllSatisfy(input =>
+            {
+                input.HasAttribute("required").Should().BeFalse();
+                input.GetAttribute("aria-required").Should().Be("false");
+            });
+        }
+
+        /// <summary>
+        /// Required HEX ColorPicker should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredHEXColorPicker_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<SimpleColorPickerTest>(parameters => parameters
+                .Add(p => p.Required, true)
+                .Add(p => p.ColorPickerMode, ColorPickerMode.HEX));
+
+            var inputs = comp.FindAll("input:not(.mud-slider-input)");
+            inputs.Should().AllSatisfy(input =>
+            {
+                input.HasAttribute("required").Should().BeTrue();
+                input.GetAttribute("aria-required").Should().Be("true");
+            });
+        }
+
+        /// <summary>
+        /// Required and aria-required HEX ColorPicker attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredHEXColorPickerAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<SimpleColorPickerTest>(parameters => parameters
+                .Add(p => p.ColorPickerMode, ColorPickerMode.HEX));
+
+            var inputs = comp.FindAll("input:not(.mud-slider-input)");
+            inputs.Should().AllSatisfy(input =>
+            {
+                input.HasAttribute("required").Should().BeFalse();
+                input.GetAttribute("aria-required").Should().Be("false");
+            });
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            // must be re-fetched after re-render
+            inputs = comp.FindAll("input:not(.mud-slider-input)");
+            inputs.Should().AllSatisfy(input =>
+            {
+                input.HasAttribute("required").Should().BeTrue();
+                input.GetAttribute("aria-required").Should().Be("true");
+            });
+        }
     }
 }

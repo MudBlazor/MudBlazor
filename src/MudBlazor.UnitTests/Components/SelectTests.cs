@@ -1249,5 +1249,51 @@ namespace MudBlazor.UnitTests.Components
             forAttribute.Should().NotBeNull();
             forAttribute!.Value.Should().Be(expectedId);
         }
+
+        /// <summary>
+        /// Optional Select should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalSelect_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudSelect<string>>();
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required Select should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredSelect_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudSelect<string>>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required Select attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredSelectAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudSelect<string>>();
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
+        }
     }
 }

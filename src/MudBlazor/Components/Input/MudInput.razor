@@ -41,9 +41,10 @@
                 @onkeyup:preventDefault="@KeyUpPreventDefault"
                 @onmousewheel="@OnMouseWheel"
                 @onwheel="@OnMouseWheel"
+                required="@Required"
                 aria-invalid="@Error.ToString().ToLower()"
                 aria-describedby="@ErrorId"
-        >
+                aria-required="@Required.ToString().ToLowerInvariant()">
             @Text
         </textarea>
         @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
@@ -72,10 +73,12 @@
                 @onkeyup:preventDefault="@KeyUpPreventDefault"
                 @onmousewheel="@OnMouseWheel"
                 @onwheel="@OnMouseWheel"
+                required="@Required"
                 aria-invalid="@Error.ToString().ToLower()"
                 aria-describedby="@ErrorId"
-         />
-         @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
+                aria-required="@Required.ToString().ToLowerInvariant()" />
+
+        @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
 
          @if (GetDisabledState()) {
              @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.

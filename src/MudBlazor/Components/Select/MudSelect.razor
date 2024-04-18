@@ -19,7 +19,8 @@
                           Clearable="@Clearable" OnClearButtonClick="(async (e) => await SelectClearButtonClickHandlerAsync(e))"
                           @attributes="UserAttributes" OnBlur="@OnBlurAsync"
                           ShrinkLabel="@ShrinkLabel"
-                          InputId="@InputIdState.Value">
+                          InputId="@InputIdState.Value"
+                          Required="@Required">
                     @if (CanRenderValue)
                     {
                         @GetSelectedValuePresenter()

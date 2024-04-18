@@ -978,5 +978,51 @@ namespace MudBlazor.UnitTests.Components
             forAttribute.Should().NotBeNull();
             forAttribute!.Value.Should().Be(expectedId);
         }
+
+        /// <summary>
+        /// Optional NumericField should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalNumericField_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudNumericField<int>>();
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required NumericField should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredNumericField_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudNumericField<int>>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required NumericField attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredNumericFieldAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudNumericField<int>>();
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
+        }
     }
 }

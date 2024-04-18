@@ -1,10 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Examples;
-using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Switch;
 using MudBlazor.UnitTests.Utilities;
 using NUnit.Framework;
@@ -128,9 +126,52 @@ namespace MudBlazor.UnitTests.Components
             inputs[7].Change(false);
             switches[7].Children[1].ClassList.Should().Contain("mud-switch-label-large");
             switches[7].Children[0].ClassList.Should().Contain("mud-switch-span-large");
+        }
 
+        /// <summary>
+        /// Optional Switch should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalSwitch_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudSwitch<bool>>();
 
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+        }
 
+        /// <summary>
+        /// Required Switch should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredSwitch_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudSwitch<bool>>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required Switch attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredSwitchAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudSwitch<bool>>();
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
         }
     }
 }
