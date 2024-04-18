@@ -11,6 +11,10 @@ using MudBlazor.State.Builder;
 namespace MudBlazor;
 
 #nullable enable
+
+/// <summary>
+/// Represents a base class for designing components which maintain state.
+/// </summary>
 public class ComponentBaseWithState : ComponentBase
 {
     internal readonly ParameterSet Parameters;

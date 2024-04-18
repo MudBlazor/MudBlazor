@@ -36,8 +36,13 @@ namespace MudBlazor
             };
         }
 
+        protected int TabIndex => Disabled || NavigationContext is { Disabled: true } or { Expanded: false } ? -1 : 0;
+
         [CascadingParameter]
         private INavigationEventReceiver? NavigationEventReceiver { get; set; }
+
+        [CascadingParameter]
+        private NavigationContext? NavigationContext { get; set; }
 
         /// <summary>
         /// Icon to use if set.

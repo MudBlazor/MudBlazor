@@ -23,6 +23,7 @@
                 @ref="ElementReference"
                 rows="@Lines"
                 @attributes="UserAttributes"
+                id="@InputIdState.Value"
                 type="@InputTypeString"
                 placeholder="@Placeholder"
                 disabled=@GetDisabledState()
@@ -52,30 +53,32 @@
     else
     {
         <input class="@InputClassname"
-               @ref="ElementReference"
-               @attributes="UserAttributes"
-               type="@InputTypeString"
-               value="@_internalText"
-               @oninput="OnInput"
-               @onchange="OnChange"
-               placeholder="@Placeholder"
-               disabled=@GetDisabledState()
-               readonly="@GetReadOnlyState()"
-               @onblur="@OnBlurredAsync"
-               inputmode="@InputMode.ToString()"
-               pattern="@Pattern"
-               @onkeydown="@InvokeKeyDownAsync"
-               @onkeyup="@InvokeKeyUpAsync"
-               maxlength="@MaxLength"
-               @onkeydown:preventDefault="KeyDownPreventDefault"
-               @onkeyup:preventDefault="@KeyUpPreventDefault"
-               @onmousewheel="@OnMouseWheel"
-               @onwheel="@OnMouseWheel"
-               required="@Required"
-               aria-invalid="@Error.ToString().ToLower()"
-               aria-describedby="@ErrorId"
-               aria-required="@Required.ToString().ToLowerInvariant()" />
-         @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
+                @ref="ElementReference"
+                @attributes="UserAttributes"
+                id="@InputIdState.Value"
+                type="@InputTypeString"
+                value="@_internalText"
+                @oninput="OnInput"
+                @onchange="OnChange"
+                placeholder="@Placeholder"
+                disabled=@GetDisabledState()
+                readonly="@GetReadOnlyState()"
+                @onblur="@OnBlurredAsync"
+                inputmode="@InputMode.ToString()"
+                pattern="@Pattern"
+                @onkeydown="@InvokeKeyDownAsync"
+                @onkeyup="@InvokeKeyUpAsync"
+                maxlength="@MaxLength"
+                @onkeydown:preventDefault="KeyDownPreventDefault"
+                @onkeyup:preventDefault="@KeyUpPreventDefault"
+                @onmousewheel="@OnMouseWheel"
+                @onwheel="@OnMouseWheel"
+                required="@Required"
+                aria-invalid="@Error.ToString().ToLower()"
+                aria-describedby="@ErrorId"
+                aria-required="@Required.ToString().ToLowerInvariant()" />
+
+        @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
 
          @if (GetDisabledState()) {
              @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.

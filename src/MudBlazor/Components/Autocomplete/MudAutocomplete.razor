@@ -5,7 +5,7 @@
 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
     <div class="@AutocompleteClassname">
         <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" HelperTextOnFocus="@HelperTextOnFocus" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
-                         Error="@Error" ErrorText="@ErrorText" Disabled="@GetDisabledState()" @onclick="@ToggleMenu" Required="@Required" ForId="@FieldId">
+                         Error="@Error" ErrorText="@ErrorText" Disabled="@GetDisabledState()" @onclick="@ToggleMenu" Required="@Required" ForId="@InputIdState.Value">
             <InputContent>
                 <MudInput @ref="_elementReference" @key="_elementKey" InputType="InputType.Text"
                           Class="mud-select-input" Margin="@Margin"
@@ -18,13 +18,13 @@
                           Clearable="@(!GetReadOnlyState() && Clearable)" OnClearButtonClick="@OnClearButtonClick"
                           @attributes="UserAttributes"
                           TextChanged="OnTextChanged" OnBlur="OnInputBlurred"
-                          OnKeyDown="@this.OnInputKeyDown"
-                          OnKeyUp="@this.OnInputKeyUp" autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"
+                          OnKeyDown="@OnInputKeyDown"
+                          OnKeyUp="@OnInputKeyUp" autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"
                           Placeholder="@Placeholder" Immediate="true"
                           InputMode="@InputMode" Pattern="@Pattern"
                           ShrinkLabel="@ShrinkLabel"
                           Required="@Required"
-                          T="string" />
+                          InputId="@InputIdState.Value"></MudInput>
 
                 @if (ShowProgressIndicator && IsLoading)
                 {

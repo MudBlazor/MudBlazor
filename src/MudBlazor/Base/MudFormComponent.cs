@@ -18,6 +18,11 @@ using static System.String;
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// Represents a base class for designing form input components.
+    /// </summary>
+    /// <typeparam name="T">The complex type managed by this input.</typeparam>
+    /// <typeparam name="U">The value type managed by this input.</typeparam>
     public abstract class MudFormComponent<T, U> : MudComponentBase, IFormComponent, IDisposable
     {
         private Converter<T, U> _converter;
@@ -39,43 +44,58 @@ namespace MudBlazor
         internal bool SubscribeToParentForm { get; set; } = true;
 
         /// <summary>
-        /// If true, this form input is required to be filled out.
+        /// Gets or sets whether an input is required.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, an error with the text in <see cref="RequiredError"/> will be shown during validation if no input was given.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public bool Required { get; set; }
 
         /// <summary>
-        /// The error text that will be displayed if the input is not filled out but required.
+        /// Gets or sets the text displayed during validation if no input was given.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>"Required"</c>.  This text is only shown when <see cref="Required"/> is <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public string RequiredError { get; set; } = "Required";
 
         /// <summary>
-        /// The ErrorText that will be displayed if Error true.
+        /// Gets or sets the text displayed if the <see cref="Error"/> property is <c>true</c>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public string? ErrorText { get; set; }
 
         /// <summary>
-        /// If true, the label will be displayed in an error state.
+        /// Gets or sets whether an error is displayed.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, the text in <see cref="ErrorText"/> is displayed.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public bool Error { get; set; }
 
         /// <summary>
-        /// The ErrorId that will be used by aria-describedby if Error true
+        /// Gets or sets the ID of the error description element, for use by <c>aria-describedby</c> when <see cref="Error"/> is <c>true</c>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When set and the <see cref="Error"/> property is <c>true</c>, an <c>aria-describedby</c> attribute is rendered to improve accessibility for users.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public string? ErrorId { get; set; }
 
         /// <summary>
-        /// The generic converter of the component.
+        /// Gets or sets the type converter for this input.
         /// </summary>
+        /// <remarks>
+        /// This property provides a way to customize conversions between <typeparamref name="T"/> objects and <typeparamref name="U"/> values.  If no converter is specified, a default will be chosen based on the kind of input.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public Converter<T, U> Converter
@@ -97,8 +117,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The culture of the component.
+        /// Gets or sets the culture used to format and interpret values such as dates and currency.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="CultureInfo.InvariantCulture"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public CultureInfo Culture
@@ -133,26 +156,36 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// True if the conversion from string to T failed
+        /// Gets whether a problem has occurred during conversion.
         /// </summary>
+        /// <remarks>
+        /// When <c>true</c>, the <see cref="Converter"/> was unable to convert values, usually due to invalid input.
+        /// </remarks>
         [MemberNotNullWhen(true, nameof(ConversionErrorMessage))]
         public bool ConversionError => _converter.GetError;
 
         /// <summary>
-        /// The error message of the conversion error from string to T. Null otherwise
+        /// Gets an error describing why type conversion failed.
         /// </summary>
+        /// <remarks>
+        /// When set, returns the reason that the <see cref="Converter"/> was unable to convert values, usually due to invalid input.
+        /// </remarks>
         public string? ConversionErrorMessage => _converter.GetErrorMessage;
 
         /// <summary>
-        /// True if the input has any of the following errors: An error set from outside, a conversion error or
-        /// one or more validation errors
+        /// Gets whether an error, conversion error, or validation error is active.
         /// </summary>
+        /// <remarks>
+        /// When <c>true</c>, the <see cref="Error"/> property is <c>true</c>, or <see cref="ConversionError"/> is <c>true</c>, or one or more <see cref="ValidationErrors"/> exists.
+        /// </remarks>
         public bool HasErrors => Error || ConversionError || ValidationErrors.Count > 0;
 
         /// <summary>
-        /// Return the validation error text or the conversion error message.
+        /// Gets the current error or conversion error.
         /// </summary>
-        /// <returns>Error text/message</returns>
+        /// <returns>
+        /// This property returns the value in <see cref="ErrorText"/> or <see cref="ConversionErrorMessage"/>.
+        /// </returns>
         public string? GetErrorText()
         {
             // ErrorText is either set from outside or the first validation error
@@ -170,33 +203,44 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// <para>
-        /// This manages the state of having been "touched" by the user. A form control always starts out untouched
-        /// but becomes touched when the user performed input or the blur event was raised.
-        /// </para>
-        /// <para>
-        /// The touched state is only relevant for inputs that have no value (i.e. empty text fields). Being untouched will
-        /// suppress RequiredError
-        /// </para>
+        /// Gets whether the user has interacted with this input, or focus has been released.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, the user has performed input, or focus has moved away from this input.  This property is typically used to show the <see cref="RequiredError"/> text only after the user has interacted with this input.
+        /// </remarks>
         public bool Touched { get; protected set; }
 
         #region MudForm Validation
 
+        /// <summary>
+        /// Gets or sets a list of problems with the current input value.
+        /// </summary>
+        /// <remarks>
+        /// When using a <see cref="MudForm"/>, this property is updated when validation has been performed.  Use the <see cref="Validation"/> property to control what validations are performed.
+        /// </remarks>
         public List<string> ValidationErrors { get; set; } = new();
 
         /// <summary>
-        /// A validation func or a validation attribute. Supported types are:
-        /// <para>Func&lt;T, bool&gt; ... will output the standard error message "Invalid" if false</para>
-        /// <para>Func&lt;T, string&gt; ... outputs the result as error message, no error if null </para>
-        /// <para>Func&lt;T, IEnumerable&lt; string &gt;&gt; ... outputs all the returned error messages, no error if empty</para>
-        /// <para>Func&lt;object, string, IEnumerable&lt; string &gt;&gt; input Form.Model, Full Path of Member ... outputs all the returned error messages, no error if empty</para>
-        /// <para>Func&lt;T, Task&lt; bool &gt;&gt; ... will output the standard error message "Invalid" if false</para>
-        /// <para>Func&lt;T, Task&lt; string &gt;&gt; ... outputs the result as error message, no error if null</para>
-        /// <para>Func&lt;T, Task&lt;IEnumerable&lt; string &gt;&gt;&gt; ... outputs all the returned error messages, no error if empty</para>
-        /// <para>Func&lt;object, string, Task&lt;IEnumerable&lt; string &gt;&gt;&gt; input Form.Model, Full Path of Member ... outputs all the returned error messages, no error if empty</para>
-        /// <para>System.ComponentModel.DataAnnotations.ValidationAttribute instances</para>
+        /// Gets or sets the function used to detect problems with the input.
         /// </summary>
+        /// <remarks>
+        /// When using a <see cref="MudForm"/>, this property can be any of several kinds of functions:
+        /// <para>
+        /// 1. A <c>Func&lt;T,bool&gt;</c> or <c>Func&lt;T,Task&lt;bool&gt;&gt;</c> function.  Returns <c>true</c> if valid.  When <c>false</c>, a standard <c>"Invalid"</c> message is shown.
+        /// </para>
+        /// <para>
+        /// 2. A <c>Func&lt;T,string&gt;</c> or <c>Func&lt;T,Task&lt;string&gt;&gt;</c> function.  Returns <c>null</c> if valid, or a string explaining the error.
+        /// </para>
+        /// <para>
+        /// 3. A <c>Func&lt;T,IEnumerable&lt;string&gt;&gt;</c> or <c>Func&lt;T,Task&lt;IEnumerable&lt;string&gt;&gt;&gt;</c> function.  Returns an empty list if valid, or a list of validation errors.
+        /// </para>
+        /// <para>
+        /// 3. A <c>Func&lt;object,string,IEnumerable&lt;string&gt;&gt;</c> or <c>Func&lt;object,string,Task&lt;IEnumerable&lt;string&gt;&gt;&gt;</c> function.  Given the form model and path to the member, returns an empty list if valid, or a list of validation errors.
+        /// </para>
+        /// <para>
+        /// 4. A <see cref="ValidationAttribute"/> object.
+        /// </para>
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public object? Validation { get; set; }
@@ -243,8 +287,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Cause this component to validate its value.
+        /// Causes validation to be performed for this input.
         /// </summary>
+        /// <remarks>
+        /// When using a <see cref="MudForm"/>, the input is validated via the function set in the <see cref="Validation"/> property.
+        /// </remarks>
         public Task Validate()
         {
             // when a validation is forced, we must set Touched to true, because for untouched fields with
@@ -555,8 +602,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Reset the value and the validation.
+        /// Clears the input and any validation errors.
         /// </summary>
+        /// <remarks>
+        /// When called, the <c>Value</c>, <see cref="Error"/>, <see cref="ErrorText"/>, and <see cref="ValidationErrors"/> properties are all reset.
+        /// </remarks>
         public async Task ResetAsync()
         {
             await ResetValueAsync();
@@ -573,8 +623,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Reset the validation.
+        /// Clears any validation errors.
         /// </summary>
+        /// <remarks>
+        /// When called, the <see cref="Error"/>, <see cref="ErrorText"/>, and <see cref="ValidationErrors"/> properties are all reset.
+        /// </remarks>
         public void ResetValidation()
         {
             Error = false;
@@ -588,8 +641,11 @@ namespace MudBlazor
         #region --> Blazor EditForm validation support
 
         /// <summary>
-        /// This is the form validation context for Blazor's <EditForm></EditForm> component
+        /// Gets or sets the context used to perform validation.
         /// </summary>
+        /// <remarks>
+        /// When using an <see cref="EditForm"/>, gets a context used to perform validation.
+        /// </remarks>
         [CascadingParameter]
         private EditContext? EditContext { get; set; } = default!;
 
@@ -605,12 +661,18 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Specify an expression which returns the model's field for which validation messages should be displayed.
+        /// Gets or sets the model field containing validation attributes.
         /// </summary>
+        /// <remarks>
+        /// When using an <see cref="EditForm"/>, this property is used to find data annotation validation attributes such as <see cref="MaxLengthAttribute"/> used to perform validation.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public Expression<Func<T>>? For { get; set; }
 
+        /// <summary>
+        /// Gets or sets whether the <see cref="For"/> property is <c>null</c>.
+        /// </summary>
         [MemberNotNullWhen(false, nameof(For))]
         public bool IsForNull => For is null;
 
