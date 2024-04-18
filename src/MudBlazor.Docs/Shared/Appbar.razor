@@ -72,14 +72,14 @@
                 <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
             </ItemTemplate>
         </MudAutocomplete>
+        <MudDivider FlexItem="true" Vertical="true" DividerType="DividerType.Middle" Class="my-4" />
     }
     else
     {
         <MudTooltip Delay="1000" Text="Search">
-            <MudIconButton Icon="@Icons.Material.Rounded.Search" Color="Color.Inherit" Edge="Edge.End" OnClick="@(() => OpenSearchDialog())" />
+            <MudIconButton Icon="@Icons.Material.Rounded.Search" Color="Color.Inherit" OnClick="@(() => OpenSearchDialog())" />
         </MudTooltip>
     }
-    <MudDivider FlexItem="true" Vertical="true" DividerType="DividerType.Middle" Class="my-4" />
     <AppbarButtons />
 </div>
 

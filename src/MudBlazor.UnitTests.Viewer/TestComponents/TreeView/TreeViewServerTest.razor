@@ -7,7 +7,7 @@
 </MudTreeView>
 
 @code{
-    private HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
+    private List<TreeItemData> TreeItems { get; set; } = new();
 
     public class TreeItemData
     {
@@ -19,7 +19,7 @@
 
         public bool CanExpand { get; set; }
 
-        public HashSet<TreeItemData> TreeItems { get; set; }
+        public List<TreeItemData> TreeItems { get; set; }
 
         public TreeItemData(string title, string icon, int? number = null, bool canExpand = true)
         {
@@ -36,7 +36,7 @@
         TreeItems.Add(new TreeItemData("Trash", Icons.Material.Filled.Delete));
         TreeItems.Add(new TreeItemData("Categories", Icons.Material.Filled.Label)
         {
-            TreeItems = new HashSet<TreeItemData>()
+            TreeItems = new()
             {
                 new TreeItemData("Social", Icons.Material.Filled.Group, 90),
                 new TreeItemData("Updates", Icons.Material.Filled.Info, 2294),
@@ -47,8 +47,8 @@
         TreeItems.Add(new TreeItemData("History", Icons.Material.Filled.Label, null, false));
     }
 
-    public Task<HashSet<TreeItemData>> LoadServerData(TreeItemData parentNode)
+    public Task<IReadOnlyCollection<TreeItemData>> LoadServerData(TreeItemData parentNode)
     {
-        return Task.FromResult(parentNode.TreeItems);
+        return Task.FromResult((IReadOnlyCollection<TreeItemData>)parentNode.TreeItems);
     }
 }

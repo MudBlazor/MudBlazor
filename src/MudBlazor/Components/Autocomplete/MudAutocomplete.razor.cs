@@ -146,14 +146,14 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Whether to show the progress indicator. 
+        /// Whether to show the progress indicator.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool ShowProgressIndicator { get; set; } = false;
 
         /// <summary>
-        /// The color of the progress indicator. 
+        /// The color of the progress indicator.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
@@ -161,7 +161,7 @@ namespace MudBlazor
 
         /// <summary>
         /// Func that returns a list of items matching the typed text. Provides a cancellation token that
-        /// is marked as cancelled when the user changes the search text or selects a value from the list. 
+        /// is marked as cancelled when the user changes the search text or selects a value from the list.
         /// This can be used to cancel expensive asynchronous work occuring within the SearchFunc itself.
         /// </summary>
         [Parameter]
@@ -342,7 +342,7 @@ namespace MudBlazor
         {
             get => _isOpen;
             // Note: the setter is protected because it was needed by a user who derived his own autocomplete from this class.
-            // Note: setting IsOpen will not open or close it. Use ToggleMenu() for that. 
+            // Note: setting IsOpen will not open or close it. Use ToggleMenu() for that.
             protected set
             {
                 if (_isOpen == value)
@@ -418,6 +418,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            base.OnInitialized();
             var text = GetItemString(Value);
             if (!string.IsNullOrWhiteSpace(text))
                 Text = text;
