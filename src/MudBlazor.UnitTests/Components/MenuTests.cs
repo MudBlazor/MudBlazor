@@ -338,9 +338,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase("Open menu", null, "Open menu")]
-        [TestCase(null, "Open menu", "Open menu")]
-        [TestCase("Open menu", "Close menu", "Close menu")]
+        [TestCase("x", null, null)]
+        [TestCase(null, "Close menu", "Close menu")]
+        [TestCase("x", "Close menu", "Close menu")]
         [TestCase(null, null, null, Description = "Ensures aria-label is not present instead of empty string")]
         public void MenuWithLabelAndAriaLabel_Should_HaveExpectedAriaLabel(string label, string ariaLabel, string expectedAriaLabel)
         {
@@ -353,7 +353,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase("Open menu", "Open menu")]
+        [TestCase("Close menu", "Close menu")]
         [TestCase(null, null, Description = "Ensures aria-label is not present instead of empty string")]
         public void IconMenuWithAriaLabel_Should_HaveExpectedAriaLabel(string ariaLabel, string expectedAriaLabel)
         {
