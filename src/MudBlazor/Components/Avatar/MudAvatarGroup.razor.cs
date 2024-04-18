@@ -182,7 +182,7 @@ namespace MudBlazor
             return _avatars.IndexOf(avatar) < Max;
         }
 
-        /// <summary>
+        /// <inheritdoc />
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
