@@ -662,7 +662,7 @@ public class ParameterSetTests
             .WithMetadata(new ParameterMetadata(nameof(parameter), null, nameof(comparer)))
             .WithGetParameterValueFunc(() => parameter)
             .WithParameterChangedHandler(parameterChangedHandlerMock)
-            .WithComparer(() => comparer, x=> new DoubleArrayEpsilonEqualityComparer(x))
+            .WithComparer(() => comparer, x => new DoubleArrayEpsilonEqualityComparer(x))
             .Attach();
         var parameterSet = new ParameterSet(parameterState);
 
