@@ -44,8 +44,8 @@ namespace MudBlazor
             { 5, ((x) => 255, x => 0, x => 255 - x, "rg") },
         };
 
-        private const double _maxY = 250;
-        private const double _maxX = 312;
+        private double _maxY = 250;
+        private double _maxX = 312;
         private const double _selectorSize = 26.0;
 
         private double _selectorX;
@@ -258,6 +258,36 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public int ThrottleInterval { get; set; } = 300;
+
+        /// <summary>
+        /// A two-way bindable property representing the height of the color field. If unset, height will default to 250px.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerAppearance)]
+        public double ColorFieldHeight
+        {
+            get => _maxY;
+            set
+            {
+                _maxY = value;
+                UpdateColorSelectorBasedOnRgb();
+            }
+        }
+
+        /// <summary>
+        /// A two-way bindable property representing the width of the color field. If unset, height will default to 312px
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerAppearance)]
+        public double ColorFieldWidth
+        {
+            get => _maxX;
+            set
+            {
+                _maxX = value;
+                UpdateColorSelectorBasedOnRgb();
+            }
+        }
 
         #endregion
 
