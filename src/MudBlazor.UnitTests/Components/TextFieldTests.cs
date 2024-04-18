@@ -1493,5 +1493,106 @@ namespace MudBlazor.UnitTests.Components
             input.HasAttribute("required").Should().BeTrue();
             input.GetAttribute("aria-required").Should().Be("true");
         }
+
+        /// <summary>
+        /// Optional TextField with Mask should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalTextFieldWithMask_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Mask, new PatternMask("0000")));
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required TextField with Mask should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredTextFieldWithMask_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Required, true)
+                .Add(p => p.Mask, new PatternMask("0000")));
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required TextField with Mask  should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredTextFieldWithMask_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Mask, new PatternMask("0000")));
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Optional TextField with Mask and multiple lines should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalTextFieldWithMaskAndMultipleLines_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Lines, 5)
+                .Add(p => p.Mask, new PatternMask("0000")));
+
+            var input = comp.Find("textarea");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required TextField with Mask and multiple lines should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredTextFieldWithMaskAndMultipleLines_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Lines, 5)
+                .Add(p => p.Required, true)
+                .Add(p => p.Mask, new PatternMask("0000")));
+
+            var input = comp.Find("textarea");
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required TextField with Mask and multiple lines should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredTextFieldWithMaskAndMultipleLines_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Lines, 5)
+                .Add(p => p.Mask, new PatternMask("0000")));
+
+            var input = comp.Find("textarea");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
+        }
     }
 }
