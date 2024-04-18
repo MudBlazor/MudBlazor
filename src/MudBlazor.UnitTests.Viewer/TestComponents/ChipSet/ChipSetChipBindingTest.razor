@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudChipSet @bind-SelectedValues="_selected" MultiSelection>
+<MudChipSet @bind-SelectedValues="_selected" SelectionMode="SelectionMode.MultiSelection">
     @for (int i = 0; i < _included.Length; i++) 
     {
         var index = i;

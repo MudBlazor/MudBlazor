@@ -335,7 +335,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Note: Keeping positions of input blocks works only with Placeholder, and only in certain scenarios. 
+        /// Note: Keeping positions of input blocks works only with Placeholder, and only in certain scenarios.
         /// </summary>
         /// <returns></returns>
         [Test]
@@ -804,6 +804,101 @@ namespace MudBlazor.UnitTests.Components
 
             regexMaskComponent.Markup.Contains(regexMaskComponent.Instance.ClearIcon).Should().BeTrue();
             regexMaskField.Mask.Text.Should().Be(comp.Instance.RegexMaskValue);
+        }
+
+        /// <summary>
+        /// Optional Mask should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalMask_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudMask>();
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required Mask should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredMask_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudMask>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required Mask attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredMaskAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudMask>();
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Optional Mask with multiple lines should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalMaskWithMultipleLines_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudMask>(parameters => parameters
+                .Add(p => p.Lines, 5));
+
+            var input = comp.Find("textarea");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required Mask with multiple lines  should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredMaskWithMultipleLines_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudMask>(parameters => parameters
+                .Add(p => p.Required, true)
+                .Add(p => p.Lines, 5));
+
+            var input = comp.Find("textarea");
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required Mask with multiple lines  attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredMaskWithMultipleLinesAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudMask>(parameters => parameters
+                .Add(p => p.Lines, 5));
+
+            var input = comp.Find("textarea");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
         }
     }
 }

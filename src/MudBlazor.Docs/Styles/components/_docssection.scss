@@ -123,23 +123,22 @@
       position: absolute;
       bottom: 8px;
       right: 8px;
-      color: rgba(5, 0, 51, 0.0);
-      transition: color 250ms cubic-bezier(.4, 0, .2, 1) 0ms;
+      background-color: transparent;
     }
-
+    /*Show only on hover if on desktop*/
+    /*TODO: Show if code is focused*/
     @media(hover: hover) and (pointer: fine) {
+      .copy-code-button {
+        color: rgba(5, 0, 51, 0.0);
+        transition: color 250ms cubic-bezier(.4, 0, .2, 1) 0ms;
+        background-color: unset;
+      }
+
       &:hover {
         .copy-code-button {
           color: var(--mud-palette-text-secondary) !important;
           background-color: transparent;
         }
-      }
-    }
-
-    &:active {
-      .copy-code-button {
-        color: var(--mud-palette-text-secondary) !important;
-        background-color: transparent;
       }
     }
 

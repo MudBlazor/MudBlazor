@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.State.Comparer;
 using MudBlazor.State.Rule;
 
 namespace MudBlazor.State;
@@ -28,7 +29,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     private ParameterChangedEventArgs<T>? _parameterChangedEventArgs;
 
     private readonly Func<T> _getParameterValueFunc;
-    private readonly Func<IEqualityComparer<T>> _comparerFunc;
+    private readonly IParameterEqualityComparerSwappable<T> _comparer;
     private readonly Func<EventCallback<T>> _eventCallbackFunc;
     private readonly IParameterChangedHandler<T>? _parameterChangedHandler;
 
@@ -57,15 +58,15 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     /// <summary>
     /// Gets the function to provide the comparer for the parameter.
     /// </summary>
-    public Func<IEqualityComparer<T>> ComparerFunc => _comparerFunc;
+    public IParameterEqualityComparerSwappable<T> Comparer => _comparer;
 
-    private ParameterStateInternal(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, Func<IEqualityComparer<T>?>? comparerFunc = null)
+    private ParameterStateInternal(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, IParameterEqualityComparerSwappable<T>? comparer = null)
     {
         Metadata = metadata;
         _getParameterValueFunc = getParameterValueFunc;
         _eventCallbackFunc = eventCallbackFunc;
         _parameterChangedHandler = parameterChangedHandler;
-        _comparerFunc = () => comparerFunc?.Invoke() ?? EqualityComparer<T>.Default;
+        _comparer = comparer ?? new ParameterEqualityComparerSwappable<T>(() => EqualityComparer<T>.Default);
         _lastValue = default;
         _value = default;
     }
@@ -73,7 +74,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     /// <inheritdoc/>
     public override Task SetValueAsync(T value)
     {
-        if (!_comparerFunc().Equals(Value, value))
+        if (!_comparer.Equals(Value, value))
         {
             _value = value;
             var eventCallback = _eventCallbackFunc();
@@ -99,7 +100,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     public void OnParametersSet()
     {
         var currentParameterValue = _getParameterValueFunc();
-        if (!_comparerFunc().Equals(_lastValue, currentParameterValue))
+        if (!_comparer.Equals(_lastValue, currentParameterValue))
         {
             _value = currentParameterValue;
             _lastValue = currentParameterValue;
@@ -130,14 +131,14 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
 
         var changed = false;
         _parameterChangedEventArgs = null;
-        var comparer = _comparerFunc();
+        IEqualityComparer<T> comparer = _comparer;
 
         // This handles a very special case when the Parameter and the associated Comparer change in razor syntax at same time.
         // Then we need to extract it manually if it exists, otherwise the HasParameterChanged will use a stale comparer.
         // The problem happens because blazor will call the parameters.SetParameterProperties(this) only after this method, this means the new comparer is not set yet and comparerFunc returns an old one.
         if (!string.IsNullOrEmpty(Metadata.ComparerParameterName))
         {
-            if (parameters.TryGetValue<IEqualityComparer<T>>(Metadata.ComparerParameterName, out var newComparer))
+            if (_comparer.TryGetFromParameterView(parameters, Metadata.ComparerParameterName, out var newComparer))
             {
                 comparer = newComparer;
             }
@@ -164,16 +165,16 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     ///  <param name="getParameterValueFunc">A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
     ///  <param name="eventCallbackFunc">A function that allows <see cref="ParameterState{T}"/> to get the <see cref="EventCallback{T}"/> of the parameter.</param>
     ///  <param name="parameterChangedHandler">A change handler containing code that needs to be executed when the parameter value changes/</param>
-    ///  <param name="comparerFunc">An optional function comparer used to determine equality of parameter values.</param>
+    ///  <param name="comparer">An optional comparer used to determine equality of parameter values.</param>
     ///  <remarks>
     ///  For details and usage please read CONTRIBUTING.md
     ///  </remarks>
     ///  <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
-    public static ParameterStateInternal<T> Attach(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, Func<IEqualityComparer<T>?>? comparerFunc = null)
+    public static ParameterStateInternal<T> Attach(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, IParameterEqualityComparerSwappable<T>? comparer = null)
     {
         metadata = ParameterMetadataRules.Morph(metadata);
 
-        return new ParameterStateInternal<T>(metadata, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler, comparerFunc);
+        return new ParameterStateInternal<T>(metadata, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler, comparer);
     }
 
     /// <inheritdoc />

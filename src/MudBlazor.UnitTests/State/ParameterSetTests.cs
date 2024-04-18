@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +10,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.State.Builder;
+using MudBlazor.UnitTests.Comparer;
 using MudBlazor.UnitTests.State.Mocks;
 using NUnit.Framework;
 
@@ -21,11 +21,48 @@ namespace MudBlazor.UnitTests.State;
 public class ParameterSetTests
 {
     [Test]
+    public void IsInitialized_False()
+    {
+        // Arrange & Act
+        var parameterSet = new ParameterSet(Enumerable.Empty<IParameterComponentLifeCycle>());
+
+        // Assert
+        parameterSet.IsInitialized.Should().BeFalse();
+    }
+
+    [Test]
+    public void IsInitialized_TrueOnRead()
+    {
+        // Arrange
+        var parameterSet = new ParameterSet(Enumerable.Empty<IParameterComponentLifeCycle>());
+
+        // Act
+        _ = parameterSet.Count();
+
+        // Assert
+        parameterSet.IsInitialized.Should().BeTrue();
+    }
+
+    [Test]
+    public void ForceParametersAttachment_IsInitializedTrue()
+    {
+        // Arrange
+        var parameterSet = new ParameterSet(Enumerable.Empty<IParameterComponentLifeCycle>());
+
+        // Act
+        parameterSet.ForceParametersAttachment();
+
+        // Assert
+        parameterSet.IsInitialized.Should().BeTrue();
+    }
+
+
+    [Test]
     public void Add_AddsParameterSuccessfully()
     {
         // Arrange
         const int Parameter = 1;
-        var parameterSet = new ParameterSet();
+
         var parameterState = ParameterAttachBuilder
             .Create<int>()
             .WithMetadata(new ParameterMetadata(nameof(Parameter)))
@@ -33,15 +70,15 @@ public class ParameterSetTests
             .Attach();
 
         // Act
-        parameterSet.Add(parameterState);
+        var parameterSet = new ParameterSet(parameterState);
 
         // Assert
-        parameterSet.Count.Should().Be(1);
+        parameterSet.Count().Should().Be(1);
         parameterSet.Contains(parameterState).Should().BeTrue();
     }
 
     [Test]
-    public void Add_ThrowsExceptionIfParameterAlreadyRegistered()
+    public void Add_IgnoreSameRegistration()
     {
         // Arrange
         const int Parameter = 1;
@@ -50,14 +87,12 @@ public class ParameterSetTests
             .WithMetadata(new ParameterMetadata(nameof(Parameter)))
             .WithGetParameterValueFunc(() => Parameter)
             .Attach();
-        var parameterSet = new ParameterSet { parameterState };
 
-        // Act 
-        var addSameParameter = () => parameterSet.Add(parameterState);
+        // Act
+        var parameterSet = new ParameterSet(parameterState);
 
         // Assert
-        addSameParameter.Should().Throw<InvalidOperationException>();
-        parameterSet.Count.Should().Be(1);
+        parameterSet.Count().Should().Be(1);
     }
 
     [Test]
@@ -91,7 +126,7 @@ public class ParameterSetTests
             .WithGetParameterValueFunc(() => Parameter2)
             .WithParameterChangedHandler(OnParameter2Change)
             .Attach();
-        var parameterSet = new ParameterSet { parameter1State, parameter2State };
+        var parameterSet = new ParameterSet(parameter1State, parameter2State);
         void OnParameter1Change()
         {
             handler1FireCount++;
@@ -106,7 +141,6 @@ public class ParameterSetTests
         await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
 
         // Assert
-        parameterSet.Count.Should().Be(2);
         handler1FireCount.Should().Be(1);
         handler2FireCount.Should().Be(1);
         parameter2ChangedEventArgs.Should().NotBeNull();
@@ -144,7 +178,7 @@ public class ParameterSetTests
             .WithGetParameterValueFunc(() => Parameter2)
             .WithParameterChangedHandler(OnParameter2Change)
             .Attach();
-        var parameterSet = new ParameterSet { parameter1State, parameter2State };
+        var parameterSet = new ParameterSet(parameter1State, parameter2State);
         void OnParameter1Change()
         {
             handler1FireCount++;
@@ -159,7 +193,6 @@ public class ParameterSetTests
         await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
 
         // Assert
-        parameterSet.Count.Should().Be(2);
         handler1FireCount.Should().Be(0);
         handler2FireCount.Should().Be(0);
         parameter2ChangedEventArgs.Should().BeNull();
@@ -196,7 +229,7 @@ public class ParameterSetTests
             .WithGetParameterValueFunc(() => Parameter2)
             .WithParameterChangedHandler(OnParameter2ChangeAsync)
             .Attach();
-        var parameterSet = new ParameterSet { parameter1State, parameter2State };
+        var parameterSet = new ParameterSet(parameter1State, parameter2State);
         Task OnParameter1ChangeAsync()
         {
             handler1FireCount++;
@@ -215,7 +248,6 @@ public class ParameterSetTests
         await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
 
         // Assert
-        parameterSet.Count.Should().Be(2);
         handler1FireCount.Should().Be(1);
         handler2FireCount.Should().Be(1);
         parameter2ChangedEventArgs.Should().NotBeNull();
@@ -253,7 +285,7 @@ public class ParameterSetTests
             .WithGetParameterValueFunc(() => Parameter2)
             .WithParameterChangedHandler(OnParameter2ChangeAsync)
             .Attach();
-        var parameterSet = new ParameterSet { parameter1State, parameter2State };
+        var parameterSet = new ParameterSet(parameter1State, parameter2State);
         Task OnParameter1ChangeAsync()
         {
             handler1FireCount++;
@@ -272,7 +304,6 @@ public class ParameterSetTests
         await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
 
         // Assert
-        parameterSet.Count.Should().Be(2);
         handler1FireCount.Should().Be(0);
         handler2FireCount.Should().Be(0);
         parameter2ChangedEventArgs.Should().BeNull();
@@ -314,7 +345,7 @@ public class ParameterSetTests
             .WithGetParameterValueFunc(() => Parameter3)
             .WithParameterChangedHandler(OnParameterChange)
             .Attach();
-        var parameterSet = new ParameterSet { parameterState1, parameterState2, parameterState3 };
+        var parameterSet = new ParameterSet(parameterState1, parameterState2, parameterState3);
         void OnParameterChange()
         {
             handlerFireCount++;
@@ -324,7 +355,6 @@ public class ParameterSetTests
         await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
 
         // Assert
-        parameterSet.Count.Should().Be(3);
         handlerFireCount.Should().Be(1);
     }
 
@@ -365,13 +395,12 @@ public class ParameterSetTests
             .WithGetParameterValueFunc(() => Parameter3)
             .WithParameterChangedHandler(() => handlerFireCount++)
             .Attach();
-        var parameterSet = new ParameterSet { parameterState1, parameterState2, parameterState3 };
+        var parameterSet = new ParameterSet(parameterState1, parameterState2, parameterState3);
 
         // Act
         await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
 
         // Assert
-        parameterSet.Count.Should().Be(3);
         handlerFireCount.Should().Be(3);
     }
 
@@ -411,7 +440,7 @@ public class ParameterSetTests
             .WithGetParameterValueFunc(() => Parameter3)
             .WithParameterChangedHandler(OnParameterChange)
             .Attach();
-        var parameterSet = new ParameterSet { parameterState1, parameterState2, parameterState3 };
+        var parameterSet = new ParameterSet(parameterState1, parameterState2, parameterState3);
         void OnParameterChange()
         {
             handlerFireCount++;
@@ -460,7 +489,7 @@ public class ParameterSetTests
             .WithGetParameterValueFunc(() => Parameter3)
             .WithParameterChangedHandler(OnParameterChange3)
             .Attach();
-        var parameterSet = new ParameterSet { parameterState1, parameterState2, parameterState3 };
+        var parameterSet = new ParameterSet(parameterState1, parameterState2, parameterState3);
         void OnParameterChange1()
         {
             handlerFireCount++;
@@ -502,7 +531,7 @@ public class ParameterSetTests
             .WithParameterChangedHandler(parameterChangedHandlerMock)
             .WithComparer(comparer)
             .Attach();
-        var parameterSet = new ParameterSet { parameterState };
+        var parameterSet = new ParameterSet(parameterState);
 
         // Act
         await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
@@ -535,7 +564,7 @@ public class ParameterSetTests
             .WithParameterChangedHandler(parameterChangedHandlerMock)
             .WithComparer(comparer)
             .Attach();
-        var parameterSet = new ParameterSet { parameterState };
+        var parameterSet = new ParameterSet(parameterState);
 
         // Act
         await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
@@ -566,7 +595,7 @@ public class ParameterSetTests
             .WithParameterChangedHandler(parameterChangedHandlerMock)
             .WithComparer(() => comparer)
             .Attach();
-        var parameterSet = new ParameterSet { parameterState };
+        var parameterSet = new ParameterSet(parameterState);
 
         // Act && Assert
         await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
@@ -603,13 +632,45 @@ public class ParameterSetTests
             .WithParameterChangedHandler(parameterChangedHandlerMock)
             .WithComparer(() => comparer)
             .Attach();
-        var parameterSet = new ParameterSet { parameterState };
+        var parameterSet = new ParameterSet(parameterState);
 
         // Act && Assert
         await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
         parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
         {
             new ParameterChangedEventArgs<double>(ParameterName, Parameter, ParameterNewValue)
+        });
+    }
+
+    [Test(Description = "Tests a very special case described in ParameterStateInternal.HasParameterChanged when comparer is a blazor parameter and changes together with the associated value.")]
+    public async Task SetParametersAsync_FuncCustomComparerTransformAsParameter_Swap()
+    {
+        var comparer = new DoubleEpsilonEqualityComparer(0.0001f);
+        var parameterChangedHandlerMock = new ParameterChangedHandlerMock<double[]>();
+        var parameter = new[] { 10000d };
+        var parameterNewValue = new[] { 10001d };
+        const string ParameterName = nameof(parameter);
+        var parametersDictionary = new Dictionary<string, object?>
+        {
+            { ParameterName, parameterNewValue },
+            { nameof(comparer), new DoubleEpsilonEqualityComparer(0.00001f) }
+        };
+        var parameterView = ParameterView.FromDictionary(parametersDictionary);
+        // ReSharper disable once AccessToModifiedClosure
+        var parameterState = ParameterAttachBuilder
+            .Create<double[]>()
+            .WithMetadata(new ParameterMetadata(nameof(parameter), null, nameof(comparer)))
+            .WithGetParameterValueFunc(() => parameter)
+            .WithParameterChangedHandler(parameterChangedHandlerMock)
+            .WithComparer(() => comparer, x => new DoubleArrayEpsilonEqualityComparer(x))
+            .Attach();
+        var parameterSet = new ParameterSet(parameterState);
+
+        // Act && Assert
+        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+        parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
+        {
+            new ParameterChangedEventArgs<double[]>(ParameterName, parameter, parameterNewValue)
         });
     }
 
@@ -620,7 +681,6 @@ public class ParameterSetTests
         const int Parameter1 = 1;
         const int Parameter2 = 2;
         const int Parameter3 = 3;
-        var parameters = new ParameterSet();
         var parameterState1 = ParameterAttachBuilder
             .Create<int>()
             .WithMetadata(new ParameterMetadata(nameof(Parameter1)))
@@ -637,11 +697,7 @@ public class ParameterSetTests
             .WithGetParameterValueFunc(() => Parameter3)
             .Attach();
         var expectedParameters = new List<IParameterComponentLifeCycle> { parameterState1, parameterState2, parameterState3 };
-
-        foreach (var expectedParameter in expectedParameters)
-        {
-            parameters.Add(expectedParameter);
-        }
+        var parameters = new ParameterSet(expectedParameters);
 
         // Act
         var actualParameters = new List<IParameterComponentLifeCycle>();
@@ -655,7 +711,7 @@ public class ParameterSetTests
         }
 
         // Assert
-        parameters.Count.Should().Be(3);
+        parameters.Count().Should().Be(3);
         actualParameters.Should().BeEquivalentTo(expectedParameters);
     }
 
@@ -666,7 +722,6 @@ public class ParameterSetTests
         const int Parameter1 = 1;
         const int Parameter2 = 2;
         const int Parameter3 = 3;
-        var parameters = new ParameterSet();
         var parameterState1 = ParameterAttachBuilder
             .Create<int>()
             .WithMetadata(new ParameterMetadata(nameof(Parameter1)))
@@ -683,17 +738,13 @@ public class ParameterSetTests
             .WithGetParameterValueFunc(() => Parameter3)
             .Attach();
         var expectedParameters = new List<IParameterComponentLifeCycle> { parameterState1, parameterState2, parameterState3 };
-
-        foreach (var expectedParameter in expectedParameters)
-        {
-            parameters.Add(expectedParameter);
-        }
+        var parameters = new ParameterSet(expectedParameters);
 
         // Act
         var actualParameters = expectedParameters.ToList();
 
         // Assert
-        parameters.Count.Should().Be(3);
+        parameters.Count().Should().Be(3);
         actualParameters.Should().BeEquivalentTo(expectedParameters);
     }
 }

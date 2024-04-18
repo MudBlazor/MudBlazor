@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.State.Comparer;
 
 namespace MudBlazor.State.Builder;
 
@@ -15,25 +16,23 @@ namespace MudBlazor.State.Builder;
 /// Builder class for constructing instances of <see cref="ParameterState{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type of the component's property value.</typeparam>
-internal class RegisterParameterBuilder<T> : ISmartAttachable
+internal class RegisterParameterBuilder<T> : IParameterBuilderAttach
 {
-    private bool _isAttached;
     private string? _handlerName;
     private string? _parameterName;
     private string? _comparerParameterName;
     private Func<T>? _getParameterValueFunc;
     private Func<EventCallback<T>> _eventCallbackFunc = () => default;
     private IParameterChangedHandler<T>? _parameterChangedHandler;
-    private Func<IEqualityComparer<T>?>? _comparerFunc;
-    private readonly IParameterSetRegister _parameterSetRegister;
+    private IParameterEqualityComparerSwappable<T>? _comparer;
+    private readonly Lazy<ParameterStateInternal<T>> _parameterStateLazy;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RegisterParameterBuilder{T}"/> class.
     /// </summary>
-    /// <param name="parameterSetRegister">The <see cref="IParameterSetRegister"/> used to register the parameter during the <see cref="Attach"/>.</param>
-    public RegisterParameterBuilder(IParameterSetRegister parameterSetRegister)
+    public RegisterParameterBuilder()
     {
-        _parameterSetRegister = parameterSetRegister;
+        _parameterStateLazy = new Lazy<ParameterStateInternal<T>>(CreateParameterState);
     }
 
     /// <summary>
@@ -150,7 +149,7 @@ internal class RegisterParameterBuilder<T> : ISmartAttachable
     /// <returns>The current instance of the builder.</returns>
     public RegisterParameterBuilder<T> WithComparer(IEqualityComparer<T>? comparer)
     {
-        _comparerFunc = () => comparer;
+        _comparer = new ParameterEqualityComparerSwappable<T>(comparer);
 
         return this;
     }
@@ -164,17 +163,35 @@ internal class RegisterParameterBuilder<T> : ISmartAttachable
     /// <returns>The current instance of the builder.</returns>
     public RegisterParameterBuilder<T> WithComparer(Func<IEqualityComparer<T>>? comparerFunc, [CallerArgumentExpression(nameof(comparerFunc))] string? comparerParameterName = null)
     {
-        _comparerFunc = comparerFunc;
+        _comparer = new ParameterEqualityComparerSwappable<T>(comparerFunc);
         _comparerParameterName = comparerParameterName;
 
         return this;
     }
 
     /// <summary>
-    /// Builds and registers the parameter state to <see cref="ParameterSet"/>.
+    /// Sets the function to provide the comparer for the parameter, converting it to a comparer of type <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="TFrom">The type of the original comparer.</typeparam>
+    /// <param name="comparerFromFunc">The function to provide the original comparer.</param>
+    /// <param name="comparerToFunc">The function to convert the original comparer to a comparer of type <typeparamref name="T"/>.</param>
+    /// <param name="comparerParameterName">The parameter's comparer name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
+    /// <returns>The current instance of the builder.</returns>
+    public RegisterParameterBuilder<T> WithComparer<TFrom>(Func<IEqualityComparer<TFrom>> comparerFromFunc, Func<IEqualityComparer<TFrom>, IEqualityComparer<T>> comparerToFunc, [CallerArgumentExpression(nameof(comparerFromFunc))] string? comparerParameterName = null)
+    {
+        _comparer = new ParameterEqualityComparerTransformSwappable<TFrom, T>(comparerFromFunc, comparerToFunc);
+        _comparerParameterName = comparerParameterName;
+
+        return this;
+    }
+
+    /// <summary>
+    /// Builds the parameter state.
     /// </summary>
     /// <returns>The created parameter state.</returns>
-    public ParameterStateInternal<T> Attach()
+    internal ParameterStateInternal<T> Attach() => _parameterStateLazy.Value;
+
+    private ParameterStateInternal<T> CreateParameterState()
     {
         ArgumentNullException.ThrowIfNull(_parameterName);
 
@@ -183,19 +200,16 @@ internal class RegisterParameterBuilder<T> : ISmartAttachable
             _getParameterValueFunc ?? throw new ArgumentNullException(nameof(_getParameterValueFunc)),
             _eventCallbackFunc,
             _parameterChangedHandler,
-            _comparerFunc);
-
-        _parameterSetRegister.Add(parameterState);
-        _isAttached = true;
+            _comparer);
 
         return parameterState;
     }
 
     /// <inheritdoc />
-    bool ISmartAttachable.IsAttached => _isAttached;
+    bool IParameterBuilderAttach.IsAttached => _parameterStateLazy.IsValueCreated;
 
     /// <inheritdoc />
-    void ISmartAttachable.Attach() => _ = Attach();
+    IParameterComponentLifeCycle IParameterBuilderAttach.Attach() => Attach();
 
     /// <summary>
     /// Implicitly converts a <see cref="RegisterParameterBuilder{T}"/> object to a <see cref="ParameterState{T}"/> object by building it.

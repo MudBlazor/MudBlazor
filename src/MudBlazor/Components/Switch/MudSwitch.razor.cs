@@ -129,19 +129,19 @@ namespace MudBlazor
             switch (obj.Key)
             {
                 case "ArrowLeft" or "Delete":
-                    SetBoolValueAsync(false);
+                    SetBoolValueAsync(false, true);
                     break;
                 case "ArrowRight" or "Enter" or "NumpadEnter":
-                    SetBoolValueAsync(true);
+                    SetBoolValueAsync(true, true);
                     break;
                 case " ":
                     switch (BoolValue)
                     {
                         case true:
-                            SetBoolValueAsync(false);
+                            SetBoolValueAsync(false, true);
                             break;
                         default:
-                            SetBoolValueAsync(true);
+                            SetBoolValueAsync(true, true);
                             break;
                     }
 
