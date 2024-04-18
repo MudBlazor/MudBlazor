@@ -116,7 +116,7 @@ namespace MudBlazor
         public Origin TransformOrigin { get; set; } = Origin.TopCenter;
 
         /// <summary>
-        /// Gets or sets a value indicating whether compact padding will be used.
+        /// Gets or sets whether compact padding will be used.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -179,7 +179,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to show the progress indicator during searches. 
+        /// Gets or sets whether to show the progress indicator during searches. 
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  The progress indicator uses the color specified in the <see cref="ProgressIndicatorColor"/> property.
@@ -229,7 +229,7 @@ namespace MudBlazor
         public int MinCharacters { get; set; } = 0;
 
         /// <summary>
-        /// Gets or sets a value indicating whether to reset the selected value if the user deletes the text.
+        /// Gets or sets whether to reset the selected value if the user deletes the text.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -239,7 +239,7 @@ namespace MudBlazor
         public bool ResetValueOnEmptyText { get; set; } = false;
 
         /// <summary>
-        /// Gets or sets a value indicating whether the text will be selected (highlighted) when the Autocomplete is clicked.
+        /// Gets or sets whether the text will be selected (highlighted) when the Autocomplete is clicked.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -249,7 +249,7 @@ namespace MudBlazor
         public bool SelectOnClick { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets a value indicating whether other items can be selected without resetting the Value.
+        /// Gets or sets whether other items can be selected without resetting the Value.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  When <c>true</c>, selecting an option will trigger a <see cref="SearchFunc"/> with the current Text.  Otherwise, an empty string is passed which can make it easier to view and select other options without resetting the Value. When <c>false</c>, <c>T</c> must either be a <c>record</c> or override the <c>GetHashCode</c> and <c>Equals</c> methods.
@@ -359,7 +359,7 @@ namespace MudBlazor
         public RenderFragment ProgressIndicatorInPopoverTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the Text property is overridden when an item is selected.
+        /// Gets or sets whether the <c>Text</c> property is overridden when an item is selected.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  When <c>true</c>, selecting a value will update the Text property.  When <c>false</c>, incomplete values for Text are allowed.
@@ -369,7 +369,7 @@ namespace MudBlazor
         public bool CoerceText { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets a value indicating whether the Value property is set even if no match is found by <see cref="SearchFunc"/>.
+        /// Gets or sets whether the <c>Value</c> property is set even if no match is found by <see cref="SearchFunc"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the user input will be applied to the Value property which allows it to be validated and show an error message. 
@@ -395,7 +395,7 @@ namespace MudBlazor
         public EventCallback<bool> IsOpenChanged { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether pressing the <c>Tab</c> key updates the Value to the currently selected item.
+        /// Gets or sets whether pressing the <c>Tab</c> key updates the Value to the currently selected item.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  
@@ -405,7 +405,7 @@ namespace MudBlazor
         public bool SelectValueOnTab { get; set; } = false;
 
         /// <summary>
-        /// Gets or sets a value indicating whether a Clear icon button is displayed.
+        /// Gets or sets whether a Clear icon button is displayed.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <c>ClearIcon</c> property to control the Clear button icon.
@@ -433,7 +433,7 @@ namespace MudBlazor
         public EventCallback<int> ReturnedItemsCountChanged { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the search result drop-down is currently displayed.
+        /// Gets or sets whether the search result drop-down is currently displayed.
         /// </summary>
         /// <remarks>
         /// When this property changes, the <see cref="IsOpenChanged"/> event will occur.
