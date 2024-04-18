@@ -1,0 +1,13 @@
+@namespace MudBlazor.Docs.Examples
+
+<MudStack>
+  <MudColorPicker ColorFieldHeight="@height" ColorFieldWidth="@width" PickerVariant="PickerVariant.Static" />
+
+  <MudSlider Min="0" Max="300" @bind-Value="height">Height: @height.ToString()</MudSlider>
+  <MudSlider Min="0" Max="500" @bind-Value="width">Width: @width.ToString()</MudSlider>
+</MudStack>
+
+@code {
+  double height { get; set; } = 125;
+  double width { get; set; } = 156;
+}
