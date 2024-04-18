@@ -69,10 +69,6 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         [Parameter]
-        [Category(CategoryTypes.Slider.Behavior)]
-        public Converter<T> Converter { get; set; } = new DefaultConverter<T>() { Culture = CultureInfo.InvariantCulture };
-
-        [Parameter]
         public EventCallback<T> ValueChanged { get; set; }
 
         [Parameter]

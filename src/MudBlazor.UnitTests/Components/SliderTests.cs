@@ -32,7 +32,6 @@ namespace MudBlazor.UnitTests.Components
             slider.Immediate.Should().BeTrue();
             slider.TickMarkLabels.Should().BeNull();
 
-            slider.Converter.Should().NotBeNull();
             slider.Color.Should().Be(Color.Primary);
 
             slider.Variant.Should().Be(Variant.Text);
