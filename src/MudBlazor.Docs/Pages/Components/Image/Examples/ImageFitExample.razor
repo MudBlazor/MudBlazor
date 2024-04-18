@@ -4,12 +4,12 @@
     <MudImage ObjectFit="@ImageFit" Height="200" Width="400" Src="images/castle.jpg" Alt="Örebro Slott"  Elevation="25" Class="rounded-lg"/>
 </div>
 
-<MudChipSet T="string" Filter="true" Mandatory="true" Class="mt-12">
-    <MudChip T="string" Text="None" OnClick="@(() => SetImageFit(ObjectFit.None))" SelectedColor="Color.Primary" />
-    <MudChip T="string" Text="Cover" OnClick="@(() => SetImageFit(ObjectFit.Cover))" SelectedColor="Color.Primary" Default="true"/>
-    <MudChip T="string" Text="Contain" OnClick="@(() => SetImageFit(ObjectFit.Contain))" SelectedColor="Color.Primary" />
-    <MudChip T="string" Text="Fill" OnClick="@(() => SetImageFit(ObjectFit.Fill))" SelectedColor="Color.Primary" />
-    <MudChip T="string" Text="ScaleDown" OnClick="@(() => SetImageFit(ObjectFit.ScaleDown))" SelectedColor="Color.Primary" />
+<MudChipSet T="string" CheckMark Class="mt-12">
+    <MudChip Text="None" OnClick="@(() => SetImageFit(ObjectFit.None))" SelectedColor="Color.Primary" />
+    <MudChip Text="Cover" OnClick="@(() => SetImageFit(ObjectFit.Cover))" SelectedColor="Color.Primary" Default="true"/>
+    <MudChip Text="Contain" OnClick="@(() => SetImageFit(ObjectFit.Contain))" SelectedColor="Color.Primary" />
+    <MudChip Text="Fill" OnClick="@(() => SetImageFit(ObjectFit.Fill))" SelectedColor="Color.Primary" />
+    <MudChip Text="ScaleDown" OnClick="@(() => SetImageFit(ObjectFit.ScaleDown))" SelectedColor="Color.Primary" />
 </MudChipSet>
 
 @code {
