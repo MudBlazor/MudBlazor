@@ -22,7 +22,7 @@
         <MudPickerContent Class="mud-picker-color-content">
             @if(!DisableColorField)
             {
-                <div class="mud-picker-color-picker">
+                <div class="mud-picker-color-picker" style="@($"width: {_maxX}px;height: {_maxY}px;margin-left: auto;margin-right: auto;")">
 					@if (_activeColorPickerView == ColorPickerView.Spectrum)
 					{
                         <div class="mud-picker-color-overlay" style="@($"background-color: {_baseColor.ToString(MudColorOutputFormats.RGB)}")">
