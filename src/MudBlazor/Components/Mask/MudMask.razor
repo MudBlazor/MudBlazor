@@ -18,6 +18,7 @@
         <textarea class="@InputClassname"
            @ref="_elementReference"
            @attributes="UserAttributes"
+           id="@InputIdState.Value"
            type="@InputType.ToDescriptionString()"
            value="@Text"
            placeholder="@Placeholder"
@@ -36,6 +37,7 @@
         <input class="@InputClassname"
            @ref="_elementReference"
            @attributes="UserAttributes"
+           id="@InputIdState.Value"
            type="@InputType.ToDescriptionString()"
            value="@Text"
            placeholder="@Placeholder"
@@ -47,8 +49,8 @@
            @oncopy="OnCopy"
            inputmode="@InputMode.ToString()"
            />
-    }    
-    
+    }
+
     @if (GetDisabledState())
     {
          @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.

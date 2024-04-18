@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -25,9 +28,17 @@ namespace MudBlazor
         protected bool _isFocused;
         protected bool _forceTextUpdate;
 
+        private string? _userAttributesId = $"mudinput-{Guid.NewGuid()}";
+        private readonly string _componentId = $"mudinput-{Guid.NewGuid()}";
+        internal readonly ParameterState<string?> InputIdState;
+
         protected MudBaseInput()
             : base(new DefaultConverter<T>())
         {
+            using var registerScope = CreateRegisterScope();
+            InputIdState = registerScope.RegisterParameter<string?>(nameof(InputId))
+                .WithParameter(() => InputId)
+                .WithChangeHandler(UpdateInputIdStateAsync);
         }
 
         /// <summary>
@@ -390,6 +401,10 @@ namespace MudBlazor
             set => SetFormat(value);
         }
 
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? InputId { get; set; }
+
         protected bool GetDisabledState() => Disabled || ParentDisabled;
 
         protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
@@ -589,6 +604,13 @@ namespace MudBlazor
             {
                 Label = For.GetLabelString();
             }
+
+            _userAttributesId = UserAttributes.FirstOrDefault(userAttribute => userAttribute.Key.Equals("id", StringComparison.InvariantCultureIgnoreCase)).Value?.ToString();
+
+            if (InputId is null)
+            {
+                await UpdateInputIdStateAsync();
+            }
         }
 
         /// <summary>
@@ -674,5 +696,21 @@ namespace MudBlazor
         /// Defaults to <see cref="InputType.Text"/>.
         /// </remarks>
         internal virtual InputType GetInputType() => InputType.Text;
+
+        private async Task UpdateInputIdStateAsync()
+        {
+            if (InputId is not null)
+            {
+                return;
+            }
+
+            if (_userAttributesId is not null)
+            {
+                await InputIdState.SetValueAsync(_userAttributesId);
+                return;
+            }
+
+            await InputIdState.SetValueAsync(_componentId);
+        }
     }
 }
