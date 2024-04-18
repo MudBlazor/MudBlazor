@@ -23,8 +23,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
         _selectedValues = registerScope.RegisterParameter<IReadOnlyCollection<T?>?>(nameof(SelectedValues))
             .WithParameter(() => SelectedValues).WithEventCallback(() => SelectedValuesChanged)
             .WithChangeHandler(OnSelectedValuesChangedAsync)
-            //.WithComparer(() => new CollectionComparer<T>(Comparer))
-            ;
+            .WithComparer(() => new CollectionComparer<T?>(Comparer));
         registerScope.RegisterParameter<IEqualityComparer<T>>(nameof(Comparer))
             .WithParameter(() => Comparer)
             .WithChangeHandler(OnComparerChangedAsync);
