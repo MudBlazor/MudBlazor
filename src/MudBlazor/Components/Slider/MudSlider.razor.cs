@@ -172,9 +172,9 @@ namespace MudBlazor
         {
             if (TickMarks)
             {
-                var min = Convert.ToDouble(Min);
-                var max = Convert.ToDouble(Max);
-                var step = Convert.ToDouble(Step);
+                var min = Convert.ToDecimal(Min);
+                var max = Convert.ToDecimal(Max);
+                var step = Convert.ToDecimal(Step);
 
                 _tickMarkCount = 1 + (int)((max - min) / step);
             }

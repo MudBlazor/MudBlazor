@@ -10,7 +10,7 @@
             <MudText Typo="Typo.body2">@Contributor</MudText>
         </CardHeaderContent>
         <CardHeaderActions>
-            <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Href="@GithubLink" Color="Color.Inherit" Target="_blank"/>
+            <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Href="@GitHubLink" Color="Color.Inherit" Target="_blank"/>
         </CardHeaderActions>
     </MudCardHeader>
     @if (ChildContent != null)
@@ -23,12 +23,12 @@
 
 @code {
     [Parameter] public string AvatarLink { get; set; }
-    [Parameter] public string GithubLink { get; set; }
+    [Parameter] public string GitHubLink { get; set; }
     [Parameter] public string Firstname { get; set; }
     [Parameter] public string Lastname { get; set; }
 
     [Parameter]
     public string Contributor { get; set; } = "Contributor";
-    [Parameter] public RenderFragment ChildContent { get; set; }
 
+    [Parameter] public RenderFragment ChildContent { get; set; }
 }

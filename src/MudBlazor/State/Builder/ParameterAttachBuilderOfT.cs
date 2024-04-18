@@ -5,8 +5,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.State.Comparer;
 
 namespace MudBlazor.State.Builder;
 
@@ -26,7 +28,7 @@ internal class ParameterAttachBuilder<T>
     private Func<T>? _getParameterValueFunc;
     private Func<EventCallback<T>> _eventCallbackFunc = () => default;
     private IParameterChangedHandler<T>? _parameterChangedHandler;
-    private Func<IEqualityComparer<T>?>? _comparerFunc;
+    private IParameterEqualityComparerSwappable<T>? _comparer;
 
     /// <summary>
     /// Sets the metadata for the parameter.
@@ -131,7 +133,7 @@ internal class ParameterAttachBuilder<T>
     /// <returns>The current instance of the builder.</returns>
     public ParameterAttachBuilder<T> WithComparer(IEqualityComparer<T>? comparer)
     {
-        _comparerFunc = () => comparer;
+        _comparer = new ParameterEqualityComparerSwappable<T>(comparer);
 
         return this;
     }
@@ -144,7 +146,14 @@ internal class ParameterAttachBuilder<T>
     /// <returns>The current instance of the builder.</returns>
     public ParameterAttachBuilder<T> WithComparer(Func<IEqualityComparer<T>>? comparerFunc)
     {
-        _comparerFunc = comparerFunc;
+        _comparer = new ParameterEqualityComparerSwappable<T>(comparerFunc);
+
+        return this;
+    }
+
+    public ParameterAttachBuilder<T> WithComparer<TFrom>(Func<IEqualityComparer<TFrom>> comparerFromFunc, Func<IEqualityComparer<TFrom>, IEqualityComparer<T>> comparerToFunc, [CallerArgumentExpression(nameof(comparerFromFunc))] string? comparerParameterName = null)
+    {
+        _comparer = new ParameterEqualityComparerTransformSwappable<TFrom, T>(comparerFromFunc, comparerToFunc);
 
         return this;
     }
@@ -161,7 +170,7 @@ internal class ParameterAttachBuilder<T>
             _getParameterValueFunc ?? throw new ArgumentNullException(nameof(_getParameterValueFunc)),
             _eventCallbackFunc,
             _parameterChangedHandler,
-            _comparerFunc
+            _comparer
         );
     }
 }

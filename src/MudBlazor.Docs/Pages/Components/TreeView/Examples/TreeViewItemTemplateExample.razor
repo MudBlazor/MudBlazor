@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Width="300px" Elevation="0">
-    <MudTreeView Items="TreeItems" MultiSelection="true" @bind-ActivatedValue="ActivatedValue" @bind-SelectedValues="SelectedValues">
+    <MudTreeView Items="TreeItems" SelectionMode="SelectionMode.MultiSelection" @bind-SelectedValues="SelectedValues">
         <ItemTemplate>
             <MudTreeViewItem @bind-Expanded="@context.IsExpanded" Items="@context.TreeItems" Value="@context"
                              Icon="@context.Icon" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" />
@@ -9,15 +9,12 @@
     </MudTreeView>
 </MudPaper>
 
-<div style="width: 100%">
-    <MudText Typo="@Typo.subtitle1">Activated item: @(ActivatedValue?.Title)</MudText>
-    <MudText Typo="@Typo.subtitle1">Sum of selected items: @GetSelectedSum()</MudText>
-</div>
+<MudStack Row Justify="Justify.Center" style="width: 100%">
+    <MudText Typo="@Typo.subtitle1">Sum of selected items: <MudChip T="string">@GetSelectedSum()</MudChip></MudText>
+</MudStack>
 
 @code {
-    private TreeItemData ActivatedValue { get; set; }
-
-    private HashSet<TreeItemData> SelectedValues { get; set; }
+    private IReadOnlyCollection<TreeItemData> SelectedValues { get; set; }
 
     private HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
 

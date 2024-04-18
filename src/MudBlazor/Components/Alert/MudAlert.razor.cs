@@ -46,7 +46,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether Right-to-Left (RTL) mode is enabled.
+        /// Gets or sets whether Right-to-Left (RTL) mode is enabled.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>. When <c>true</c>, text will be displayed right-to-left.
@@ -81,7 +81,7 @@ namespace MudBlazor
         public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
 
         /// <summary>
-        /// Gets or sets a value indicating whether a close icon is displayed.
+        /// Gets or sets whether a close icon is displayed.
         /// </summary>
         /// <remarks>
         /// To customize which icon is displayed for the close icon, set the <see cref="CloseIcon"/> property.
@@ -101,7 +101,7 @@ namespace MudBlazor
         public int Elevation { set; get; } = 0;
 
         /// <summary>
-        /// Gets or sets a value indicating whether rounded corners are disabled.
+        /// Gets or sets whether rounded corners are disabled.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -111,7 +111,7 @@ namespace MudBlazor
         public bool Square { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether compact padding will be used.
+        /// Gets or sets whether compact padding will be used.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -121,7 +121,7 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether no icon is displayed.
+        /// Gets or sets whether no icon is displayed.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  To customize the icon, use the <see cref="Icon"/> property.

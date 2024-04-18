@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +10,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.State.Builder;
+using MudBlazor.UnitTests.Comparer;
 using MudBlazor.UnitTests.State.Mocks;
 using NUnit.Framework;
 
@@ -639,6 +639,38 @@ public class ParameterSetTests
         parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
         {
             new ParameterChangedEventArgs<double>(ParameterName, Parameter, ParameterNewValue)
+        });
+    }
+
+    [Test(Description = "Tests a very special case described in ParameterStateInternal.HasParameterChanged when comparer is a blazor parameter and changes together with the associated value.")]
+    public async Task SetParametersAsync_FuncCustomComparerTransformAsParameter_Swap()
+    {
+        var comparer = new DoubleEpsilonEqualityComparer(0.0001f);
+        var parameterChangedHandlerMock = new ParameterChangedHandlerMock<double[]>();
+        var parameter = new[] { 10000d };
+        var parameterNewValue = new[] { 10001d };
+        const string ParameterName = nameof(parameter);
+        var parametersDictionary = new Dictionary<string, object?>
+        {
+            { ParameterName, parameterNewValue },
+            { nameof(comparer), new DoubleEpsilonEqualityComparer(0.00001f) }
+        };
+        var parameterView = ParameterView.FromDictionary(parametersDictionary);
+        // ReSharper disable once AccessToModifiedClosure
+        var parameterState = ParameterAttachBuilder
+            .Create<double[]>()
+            .WithMetadata(new ParameterMetadata(nameof(parameter), null, nameof(comparer)))
+            .WithGetParameterValueFunc(() => parameter)
+            .WithParameterChangedHandler(parameterChangedHandlerMock)
+            .WithComparer(() => comparer, x => new DoubleArrayEpsilonEqualityComparer(x))
+            .Attach();
+        var parameterSet = new ParameterSet(parameterState);
+
+        // Act && Assert
+        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+        parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
+        {
+            new ParameterChangedEventArgs<double[]>(ParameterName, parameter, parameterNewValue)
         });
     }
 
