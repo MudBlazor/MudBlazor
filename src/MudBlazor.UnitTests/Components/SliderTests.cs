@@ -406,6 +406,3 @@ namespace MudBlazor.UnitTests.Components
         }
     }
 }
-
-
-
