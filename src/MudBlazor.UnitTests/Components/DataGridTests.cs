@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
@@ -15,7 +16,6 @@ using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
-using System.Data.Common;
 
 namespace MudBlazor.UnitTests.Components
 {
