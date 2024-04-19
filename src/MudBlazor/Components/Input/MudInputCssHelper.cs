@@ -9,7 +9,7 @@ namespace MudBlazor
             new CssBuilder("mud-input")
                 .AddClass($"mud-input-{baseInput.Variant.ToDescriptionString()}")
                 .AddClass($"mud-input-{baseInput.Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(baseInput.Label))
-                .AddClass($"mud-typography-{baseInput.Typo.Value.ToDescriptionString()}", baseInput.Typo.HasValue)
+                .AddClass($"mud-typography-{baseInput.Typo.ToDescriptionString()}")
                 .AddClass($"mud-input-adorned-{baseInput.Adornment.ToDescriptionString()}", baseInput.Adornment != Adornment.None)
                 .AddClass($"mud-input-margin-{baseInput.Margin.ToDescriptionString()}", when: () => baseInput.Margin != Margin.None)
                 .AddClass("mud-input-underline", when: () => baseInput.Underline && baseInput.Variant != Variant.Outlined)
