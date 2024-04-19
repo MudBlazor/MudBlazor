@@ -8,12 +8,14 @@
 </div>
 
 @code {
+#nullable enable
+
     protected string Classname =>
-        new CssBuilder("mud-grid-break")
+    new CssBuilder("mud-grid-break")
         .AddClass(Class)
         .Build();
 
     [CascadingParameter]
-    private MudGrid Parent { get; set; }
+    private MudGrid? Parent { get; set; }
 }
 
