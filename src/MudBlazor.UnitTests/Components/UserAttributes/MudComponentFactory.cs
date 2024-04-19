@@ -6,6 +6,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Reflection;
 using Bunit;
 using TestContext = Bunit.TestContext;
@@ -65,7 +66,19 @@ namespace MudBlazor.UnitTests.UserAttributes
         {
             // Use string as generic type parameter for generic components
             if (componentType.IsGenericType)
-                componentType = componentType.MakeGenericType(componentType.GetGenericArguments().Select(_ => typeof(string)).ToArray());
+            {
+                var genericArgs = componentType.GetGenericArguments();
+                var constraints = genericArgs.SelectMany(arg => arg.GetGenericParameterConstraints()).Distinct().ToArray();
+                var hasINumberConstraint = constraints.Any(constraint => constraint.GetInterfaces().Any(type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(INumberBase<>)));
+                if (hasINumberConstraint)
+                {
+                    componentType = componentType.MakeGenericType(componentType.GetGenericArguments().Select(_ => typeof(int)).ToArray());
+                }
+                else
+                {
+                    componentType = componentType.MakeGenericType(componentType.GetGenericArguments().Select(_ => typeof(string)).ToArray());
+                }
+            }
 
             var defaultFactoryMethod = typeof(MudComponentFactory)
                 .GetMethod(nameof(DefaultFactory), BindingFlags.Instance | BindingFlags.NonPublic)
