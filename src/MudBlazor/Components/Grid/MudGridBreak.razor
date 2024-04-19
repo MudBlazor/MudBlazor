@@ -1,0 +1,19 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities
+@using MudBlazor.Extensions
+@inherits MudComponentBase
+
+<div @attributes="UserAttributes" class="@Classname" style="@Style">
+    @* The empty div is used as the break with help from class styles *@
+</div>
+
+@code {
+    protected string Classname =>
+        new CssBuilder("mud-grid-break")
+        .AddClass(Class)
+        .Build();
+
+    [CascadingParameter]
+    private MudGrid Parent { get; set; }
+}
+
