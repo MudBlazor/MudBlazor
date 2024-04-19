@@ -6,7 +6,7 @@
     <div id="_@Id.ToString("N")" role="dialog" class="@Classname" style="@Style">
         @if (!NoHeader)
         {
-            <div class="mud-dialog-title">
+            <div class="@TitleClassname">
                 @if (TitleContent == null)
                 {
                     <MudText Typo="Typo.h6">@Title</MudText>

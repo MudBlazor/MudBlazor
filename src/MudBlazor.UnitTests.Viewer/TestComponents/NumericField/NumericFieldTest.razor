@@ -1,58 +1,58 @@
 ﻿<MudNumericField id="numericFieldLabelTest"
                  @bind-Value="_value"
-				 Label="int 0, 10, 2"
-				 Variant="Variant.Text"
-				 Min="0"
-				 Max="10"
+		 Label="int 0, 10, 2"
+		 Variant="Variant.Text"
+		 Min="0"
+		 Max="10"
                  Step="2" />
 <br/>
 <MudNumericField @bind-Value="_value2"
-				 Label="int 3, 10, 2"
-				 Variant="Variant.Text"
-				 Margin="Margin.Dense"
-				 Min="3"
-				 Max="10"
-				 Step="1" />
+		 Label="int 3, 10, 1"
+		 Variant="Variant.Text"
+		 Margin="Margin.Dense"
+		 Min="3"
+		 Max="10"
+		 Step="1" />
 
 <br />
 <MudNumericField @bind-Value="_valueDbl"
-				 Label="double -5, 9.9, 1.3"
-				 Variant="Variant.Filled"
-				 Step="1.3"
-				 Max="9.9"
-				 Min="-5.0"
-				Format="F3"
-				 Immediate="true"/>
+		 Label="double -5, 9.9, 1.3"
+		 Variant="Variant.Filled"
+                 Min="-5.0"
+                 Max="9.9"
+                 Step="1.3"
+		 Format="F3"
+		 Immediate="true"/>
 
 <br />
 <MudNumericField @bind-Value="_valueDec"
-				 Label="decimal .2, 6.6, .3333"
-				 Variant="Variant.Outlined"
-				 Step=".3333M"
-				 Max="6.6M"
-				 Min=".2M"
-				 Immediate="true"/>
+		 Label="decimal .2, 6.6, .3333"
+		 Variant="Variant.Outlined"
+                 Min=".2M"
+		 Max="6.6M"
+                 Step=".3333M"
+                 Immediate="true" />
 
 <br />
 <MudNumericField @bind-Value="_valueDbl"
-				 Label="double -5, 9.9, 1"
-				 Variant="Variant.Filled"
-				 Margin="Margin.Dense"
-				 Max="9.9"
-				 Min="-5.0"
-				 Immediate="true"/>
+		 Label="double -5, 9.9, 1"
+		 Variant="Variant.Filled"
+		 Margin="Margin.Dense"
+                 Min="-5.0"
+                 Max="9.9"
+		 Immediate="true"/>
 <br/><br/>
 <MudNumericField @bind-Value="_nullable"
-				 Label="int? max 10"
-				 Variant="Variant.Outlined"
-				 Margin="Margin.Dense"
-				 Max="10" />
+		 Label="int? max 10"
+		 Variant="Variant.Outlined"
+		 Margin="Margin.Dense"
+		 Max="10" />
 
 <br/>
 <MudNumericField T="double?"
-				 Label="double?"
-				 Variant="Variant.Outlined"
-				 Margin="Margin.Dense" />
+		 Label="double?"
+		 Variant="Variant.Outlined"
+		 Margin="Margin.Dense" />
 <br/>
 <MudNumericField T="decimal?"
                  Label="decimal?"
@@ -65,11 +65,12 @@
                  Margin="Margin.Dense" />
  <br/>
  <MudNumericField T="int?"
-                  Label="int? clearable with min/max"
+                  Label="int? 1 10 1 clearable with min/max"
                   Variant="Variant.Outlined"
                   Margin="Margin.Dense"
                   Clearable="true"
-                  Min="1" Max="10" />
+                  Min="1" 
+                  Max="10" />
 
 @code {
 	public static string __description__ = "The textfield should be changed by up/down arrows";

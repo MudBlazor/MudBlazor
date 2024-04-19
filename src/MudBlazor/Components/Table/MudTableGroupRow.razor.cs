@@ -34,7 +34,8 @@ namespace MudBlazor
         /// <summary>
         /// Inner Items List for the Group
         /// </summary>
-        [Parameter] public IGrouping<object, T> Items
+        [Parameter]
+        public IGrouping<object, T> Items
         {
             get => _items;
             set

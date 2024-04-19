@@ -69,7 +69,7 @@ namespace MudBlazor.UnitTests.TestComponents
                 var list = new List<Item>();
                 //delay to simulate web service call
                 await Task.Delay(50).ConfigureAwait(false);
-                for (int i = 0; i < 20; i++)
+                for (var i = 0; i < 20; i++)
                 {
                     list.Add(new Item { Text = i.ToString() });
                 }

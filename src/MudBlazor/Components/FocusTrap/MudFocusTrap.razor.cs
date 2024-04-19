@@ -15,7 +15,8 @@ namespace MudBlazor
         private bool _shouldRender = true;
 
         protected string Classname =>
-            new CssBuilder("outline-none")
+            new CssBuilder("mud-focus-trap")
+                .AddClass("outline-none")
                 .AddClass(Class)
                 .Build();
 
@@ -170,7 +171,7 @@ namespace MudBlazor
         {
             if (!_disabled)
             {
-                RestoreFocusAsync().AndForget(ignoreExceptions:true);
+                RestoreFocusAsync().AndForget(ignoreExceptions: true);
             }
         }
     }

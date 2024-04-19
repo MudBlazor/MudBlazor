@@ -117,7 +117,7 @@ namespace MudBlazor
                 await InvokeAsync(StateHasChanged);
             }
 
-            if (topOffset < TopOffset && Visible == true)
+            if (topOffset < TopOffset && Visible)
             {
                 Visible = false;
                 await InvokeAsync(StateHasChanged);
@@ -138,7 +138,7 @@ namespace MudBlazor
         /// </summary>
         public void Dispose()
         {
-            if(_scrollListener == null) { return; }
+            if (_scrollListener == null) { return; }
 
             _scrollListener.OnScroll -= ScrollListener_OnScroll;
             _scrollListener.Dispose();

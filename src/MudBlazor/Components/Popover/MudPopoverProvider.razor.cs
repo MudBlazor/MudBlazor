@@ -5,8 +5,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
@@ -118,7 +120,7 @@ namespace MudBlazor
         Guid IPopoverObserver.Id { get; } = Guid.NewGuid();
 
         /// <inheritdoc />
-        async Task IPopoverObserver.PopoverCollectionUpdatedNotificationAsync(PopoverHolderContainer container)
+        async Task IPopoverObserver.PopoverCollectionUpdatedNotificationAsync(PopoverHolderContainer container, CancellationToken cancellationToken)
         {
             switch (container.Operation)
             {
@@ -127,9 +129,14 @@ namespace MudBlazor
                     {
                         foreach (var holder in container.Holders)
                         {
-                            if (holder.ElementReference is not null)
+                            if (cancellationToken.IsCancellationRequested)
                             {
-                                await InvokeAsync(holder.ElementReference.StateHasChanged);
+                                return;
+                            }
+
+                            if (holder.ElementReference is IMudStateHasChanged stateHasChanged)
+                            {
+                                await InvokeAsync(stateHasChanged.StateHasChanged);
                             }
                         }
 

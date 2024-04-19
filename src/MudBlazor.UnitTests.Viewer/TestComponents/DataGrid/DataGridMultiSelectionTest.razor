@@ -2,21 +2,7 @@
 
 <MudDataGrid Items="@_items" MultiSelection @bind-SelectedItems="_selectedItems" Filterable Bordered>
     <Columns>
-        @*<TemplateColumn Title="Select Template Column" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderStyle="width:0%"
-                        Filterable="false">
-            <HeaderTemplate>
-
-                    <MudCheckBox T="bool" Size="Size.Small" Checked="@context.IsAllSelected" CheckedChanged="@context.Actions.SetSelectAll" />
-                
-            </HeaderTemplate>
-            <CellTemplate>
-                <MudCheckBox T="bool" Size="Size.Small" Checked="@context.IsSelected" CheckedChanged="@context.Actions.SetSelectedItem" />
-            </CellTemplate>
-            <FooterTemplate>
-                    <MudCheckBox T="bool" Size="Size.Small" Checked="@context.IsAllSelected" CheckedChanged="@context.Actions.SetSelectAll" />
-            </FooterTemplate>
-        </TemplateColumn>*@
-        <SelectColumn />
+        <SelectColumn ShowInFooter="@ShowInFooter" />
         <PropertyColumn Property="x => x.Name" />
     </Columns>
 </MudDataGrid>
@@ -26,7 +12,10 @@
 </div>
 
 @code {
-    private List<Item> _items = new List<Item>();
+    [Parameter]
+    public bool ShowInFooter { get; set; } = true;
+
+    private readonly List<Item> _items = new List<Item>();
 
     private HashSet<Item> _selectedItems = new();
 

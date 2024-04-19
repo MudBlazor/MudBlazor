@@ -1,10 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Examples;
-using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.Utilities;
 using NUnit.Framework;
@@ -14,6 +12,32 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class CheckBoxTests : BunitTest
     {
+
+        [Test]
+        public void CheckBox_Test_BooleanStateSelectors()
+        {
+            // the state of the checkbox should manifest itself in the classes
+            // mud-checkbox-true, mud-checkbox-false, mud-checkbox-null applied to the span
+            Context.RenderComponent<MudCheckBox<bool>>(self => self.Add(x => x.Value, false))
+                .Find(".mud-checkbox .mud-checkbox-false").Should().NotBe(null);
+            Context.RenderComponent<MudCheckBox<bool>>(self => self.Add(x => x.Value, true))
+                .Find(".mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            Context.RenderComponent<MudCheckBox<bool>>(self => self.Add(x => x.Value, true))
+                .Find(".mud-checkbox span").ClassList.Should().NotContain("mud-checkbox-false");
+            Context.RenderComponent<MudCheckBox<bool>>(self => self.Add(x => x.Value, true))
+                .Find(".mud-checkbox span").ClassList.Should().NotContain("mud-checkbox-null");
+            var comp = Context.RenderComponent<MudCheckBox<bool?>>(self => self
+                .Add(x => x.Value, null)
+                .Add(x => x.TriState, true));
+            comp.Find(".mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
+            comp.Find("input").Change(true);
+            comp.Find(".mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find("input").Change(false);
+            comp.Find(".mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find("input").Change("");
+            comp.Find(".mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
+        }
+
         /// <summary>
         /// single checkbox, initialized false, check -  uncheck
         /// </summary>
@@ -338,6 +362,52 @@ namespace MudBlazor.UnitTests.Components
 
             var comp2 = Context.RenderComponent<MudCheckBox<bool>>(x => x.Add(f => f.For, () => value.Boolean).Add(l => l.Label, "Label Parameter"));
             comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
+        }
+
+        /// <summary>
+        /// Optional CheckBox should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalCheckBox_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudCheckBox<bool>>();
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required CheckBox should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredCheckBox_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudCheckBox<bool>>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required CheckBox attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredCheckBoxAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudCheckBox<bool>>();
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
         }
     }
 }

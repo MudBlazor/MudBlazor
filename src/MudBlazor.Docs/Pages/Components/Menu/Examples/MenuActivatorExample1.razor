@@ -14,7 +14,7 @@
 
 <MudMenu FullWidth="true">
     <ActivatorContent>
-        <MudChip Icon="@Icons.Material.Filled.Person" Color="Color.Primary">Account</MudChip>
+        <MudChip T="string" Icon="@Icons.Material.Filled.Person" Color="Color.Primary">Account</MudChip>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem>Profile</MudMenuItem>
@@ -26,7 +26,7 @@
 
 <MudMenu FullWidth="true" Disabled="true">
     <ActivatorContent>
-        <MudChip Icon="@Icons.Material.Filled.Person" Disabled="true" Color="Color.Primary">Disabled</MudChip>
+        <MudChip T="string" Icon="@Icons.Material.Filled.Person" Disabled="true" Color="Color.Primary">Disabled</MudChip>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem>Profile</MudMenuItem>
@@ -38,7 +38,9 @@
 
 <MudMenu>
     <ActivatorContent>
-        <MudAvatar Image="images/toiletvisit.jpg" />
+        <MudAvatar>
+            <MudImage Src="images/toiletvisit.jpg" />
+        </MudAvatar>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem>Profile</MudMenuItem>

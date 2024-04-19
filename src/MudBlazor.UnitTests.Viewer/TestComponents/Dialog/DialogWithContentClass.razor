@@ -1,0 +1,17 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDialog ContentClass="@ContentClass" DisableSidePadding="@DisableSidePadding">
+    <DialogContent>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public string ContentClass { get; set; } = string.Empty;
+    
+    [Parameter]
+    public bool DisableSidePadding { get; set; }
+}

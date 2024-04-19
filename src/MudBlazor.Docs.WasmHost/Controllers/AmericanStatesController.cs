@@ -35,7 +35,7 @@ namespace Server.Controllers
             List<string> result = new();
             foreach (var item in states)
             {
-                if (string.IsNullOrEmpty(input) == true || item.Contains(input, StringComparison.InvariantCultureIgnoreCase))
+                if (string.IsNullOrEmpty(input) || item.Contains(input, StringComparison.InvariantCultureIgnoreCase))
                 {
                     result.Add(item);
                 }

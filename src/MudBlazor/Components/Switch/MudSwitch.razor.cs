@@ -34,7 +34,7 @@ namespace MudBlazor
 
         protected string SwitchClassname =>
             new CssBuilder("mud-button-root mud-icon-button mud-switch-base")
-                .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple && !GetReadOnlyState() && !GetDisabledState())
+                .AddClass($"mud-ripple mud-ripple-switch", Ripple && !GetReadOnlyState() && !GetDisabledState())
                 .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", BoolValue == true)
                 .AddClass($"mud-{UnCheckedColor.ToDescriptionString()}-text hover:mud-{UnCheckedColor.ToDescriptionString()}-hover", BoolValue == false)
                 .AddClass($"mud-switch-disabled", GetDisabledState())
@@ -102,11 +102,11 @@ namespace MudBlazor
         public Color ThumbIconColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// If true, disables ripple effect.
+        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public bool DisableRipple { get; set; }
+        public bool Ripple { get; set; } = true;
 
         /// <summary>
         /// The Size of the switch.
@@ -129,19 +129,19 @@ namespace MudBlazor
             switch (obj.Key)
             {
                 case "ArrowLeft" or "Delete":
-                    SetBoolValueAsync(false);
+                    SetBoolValueAsync(false, true);
                     break;
                 case "ArrowRight" or "Enter" or "NumpadEnter":
-                    SetBoolValueAsync(true);
+                    SetBoolValueAsync(true, true);
                     break;
                 case " ":
                     switch (BoolValue)
                     {
                         case true:
-                            SetBoolValueAsync(false);
+                            SetBoolValueAsync(false, true);
                             break;
                         default:
-                            SetBoolValueAsync(true);
+                            SetBoolValueAsync(true, true);
                             break;
                     }
 
@@ -187,7 +187,7 @@ namespace MudBlazor
 
             if (disposing)
             {
-                if(_keyInterceptor != null)
+                if (_keyInterceptor != null)
                 {
                     _keyInterceptor.KeyDown -= HandleKeyDown;
                     if (IsJSRuntimeAvailable)

@@ -4,7 +4,7 @@
 <MudDropContainer T="DropItem" Items="_items" ItemsSelector="@((item,dropzone) => item.Identifier == dropzone)" ItemDropped="ItemUpdated">
     <ChildContent>
         <MudPaper MinHeight="500px" Class="d-flex flex-1">
-            <MudList Clickable="true" Dense="true" @bind-SelectedValue="_selectedFolder">
+            <MudList T="string" Dense="true" @bind-SelectedValue="_selectedFolder">
                 <MudListSubheader>MailBox</MudListSubheader>
                 <MudDropZone T="DropItem" Identifier="Inbox" OnlyZone="true">
                     <MudListItem Text="Inbox" Value="@("Inbox")" Icon="@Icons.Material.Filled.Inbox"/>
@@ -15,7 +15,7 @@
                 <MudDropZone T="DropItem" Identifier="Drafts" OnlyZone="true">
                     <MudListItem Text="Drafts" Value="@("Drafts")" Icon="@Icons.Material.Filled.Drafts"/>
                 </MudDropZone>
-                <MudListItem Icon="@Icons.Material.Filled.Label" Text="Categories" InitiallyExpanded="true">
+                <MudListItem Icon="@Icons.Material.Filled.Label" Text="Categories" Expanded="true">
                     <NestedList>
                         <MudDropZone T="DropItem" Identifier="Social" OnlyZone="true">
                             <MudListItem Dense="true" Text="Social" Value="@("Social")" Icon="@Icons.Material.Filled.Group" Class="pl-8"/>
@@ -27,9 +27,9 @@
                 </MudListItem>
             </MudList>
             <MudDivider Vertical="true" FlexItem="true" />
-            <MudList Dense="true" Clickable="true" Class="d-flex flex-column flex-grow-1 py-0">
-                <MudToolBar DisableGutters="true" Dense="true">
-                    <MudCheckBox @bind-Checked="@ToolbarCheckBox"/>
+            <MudList T="string" Dense="true" Class="d-flex flex-column flex-grow-1 py-0">
+                <MudToolBar Gutters="false" Dense="true">
+                    <MudCheckBox @bind-Value="ToolbarCheckBox"/>
                     <MudIconButton Icon="@Icons.Material.Filled.Refresh"/>
                     <MudIconButton Icon="@Icons.Material.Filled.MoreVert"/>
                     <MudSpacer/>
@@ -42,14 +42,14 @@
         </MudPaper>
     </ChildContent>
     <ItemRenderer>
-        <MudListItem Text="@context.Name"/>
+        <MudListItem T="string" Text="@context.Name" />
         <MudDivider/>
     </ItemRenderer>
 </MudDropContainer>
 
 @code {
     public bool ToolbarCheckBox { get; set; } = false;
-    object _selectedFolder = "Inbox";
+    string _selectedFolder = "Inbox";
     
     private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
     {

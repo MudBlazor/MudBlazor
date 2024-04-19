@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace MudBlazor.Docs.Extensions
 {
-    public static class StringExtensions
+    public static partial class StringExtensions
     {
         public static string ToKebabCase(this string source)
         {
@@ -54,7 +54,7 @@ namespace MudBlazor.Docs.Extensions
                 return null;
             if (source.Length == 0)
                 return string.Empty;
-            var tokens = Regex.Split(source, @"[-_ ]");
+            var tokens = TokenRegularExpression().Split(source);
             return string.Join("", tokens.Select(x => x.Capitalize()));
         }
 
@@ -86,5 +86,8 @@ namespace MudBlazor.Docs.Extensions
                 return urlEncodedBase64compressedCode;
             }
         }
+
+        [GeneratedRegex(@"[-_ ]")]
+        private static partial Regex TokenRegularExpression();
     }
 }

@@ -289,7 +289,6 @@ public class BrowserViewportServiceTests
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()), Times.Exactly(2));
     }
 
-
     [Test]
     public async Task SubscribeAsync_RaiseOnResized_FireImmediately()
     {
@@ -548,7 +547,7 @@ public class BrowserViewportServiceTests
         await service.DisposeAsync();
 
         // Assert
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListeners", It.Is<object[]>(args => args.Length == 1 && ((Guid[])args[0]).Length == 1)), Times.Once);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.dispose", It.IsAny<object[]>()), Times.Once);
     }
 
     [Test]
@@ -569,7 +568,7 @@ public class BrowserViewportServiceTests
         await service.DisposeAsync();
 
         // Assert
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListeners", It.Is<object[]>(args => args.Length == 1 && ((Guid[])args[0]).Length == 3)), Times.Once);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.dispose", It.IsAny<object[]>()), Times.Once);
     }
 
     [Test]

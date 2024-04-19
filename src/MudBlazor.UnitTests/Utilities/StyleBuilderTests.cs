@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using FluentAssertions;
 using MudBlazor.Utilities;
 using NUnit.Framework;
@@ -151,6 +153,51 @@ namespace UtilityTests
                 //assert
                 styleToRender.Should().Be("background-color:black;");
             }
+        }
+
+        [Test]
+        public void ShouldAddStyleWithFunc()
+        {
+            // Arrange
+            string styleToAdd = "background-color: green";
+
+            // Act
+            string styleToRender = StyleBuilder.Empty()
+                                               .AddStyle(styleToAdd, () => true)
+                                               .Build();
+
+            // Assert
+            styleToRender.Should().Be("background-color: green;");
+        }
+
+        [Test]
+        public void ShouldAddConditionalStyle()
+        {
+            // Arrange
+            string styleToAdd = "background-color: green";
+
+            // Act
+            string styleToRender = StyleBuilder.Empty()
+                                   .AddStyle(styleToAdd, true)
+                                   .Build();
+
+            // Assert
+            styleToRender.Should().Be("background-color: green;");
+        }
+
+        [Test]
+        public void ShouldAddConditionalStyleWithNullFunc()
+        {
+            // Arrange
+            string styleToAdd = "background-color: green";
+
+            // Act
+            string styleToRender = StyleBuilder.Empty()
+                                   .AddStyle(styleToAdd, when: null)
+                                   .Build();
+
+            // Assert
+            styleToRender.Should().Be(string.Empty);
         }
     }
 }

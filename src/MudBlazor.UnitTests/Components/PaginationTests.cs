@@ -35,11 +35,10 @@ namespace MudBlazor.UnitTests.Components
             //navigate to the specified page
             await comp.InvokeAsync(() => { pagination.NavigateTo(initiallySelectedPage - 1); });
 
-            var button = FindControlButton(comp, controlButton);
-
             //Click numberOfClicks times on the control button
             for (var i = 0; i < numberOfClicks; i++)
             {
+                var button = FindControlButton(comp, controlButton);
                 button.Click();
             }
 
@@ -93,7 +92,7 @@ namespace MudBlazor.UnitTests.Components
                 button.Attributes.GetNamedItem("aria-current")?.Value.Should().Be("page");
             }
         }
-        
+
         /// <summary>
         /// Tests the event callbacks of control button click events
         /// </summary>
@@ -284,7 +283,7 @@ namespace MudBlazor.UnitTests.Components
 
             //Expected values
             var items = comp.FindAll(".mud-pagination-item");
-            items.Count.Should().Be(middleCount + 2 * boundaryCount + 2);
+            items.Count.Should().Be(middleCount + (2 * boundaryCount) + 2);
             for (var j = 0; j < items.Count; j++)
             {
                 items[j].TextContent.Should().Be(expectedValues[j]);

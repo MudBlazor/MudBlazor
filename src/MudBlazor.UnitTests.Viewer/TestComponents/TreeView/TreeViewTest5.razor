@@ -16,8 +16,8 @@
     </ItemTemplate>
 </MudTreeView>
 
-@code{
-    public HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
+@code {
+    public IReadOnlyCollection<TreeItemData> TreeItems { get; set; } = Array.Empty<TreeItemData>();
     public bool SimulateUpdateRoot = false;
     public bool SimulateUpdate3 = false;
 
@@ -36,45 +36,33 @@
         TreeItems = await LoadServerData(null);
     }
 
-    public Task<HashSet<TreeItemData>> LoadServerData(TreeItemData parentNode)
+    public Task<IReadOnlyCollection<TreeItemData>> LoadServerData(TreeItemData parentNode)
     {
-        if (parentNode == null)
-        {
-            if (SimulateUpdateRoot == false)
-                return Task.FromResult(new HashSet<TreeItemData>()
-                {
+        if (parentNode == null) {
+            if (SimulateUpdateRoot == false) {
+                return Task.FromResult((IReadOnlyCollection<TreeItemData>)[
                     new TreeItemData("This is item one"),
                     new TreeItemData("This is item two"),
                     new TreeItemData("This is item three"),
-                    new TreeItemData("This is item six")
-                });
-            else
-                return Task.FromResult(new HashSet<TreeItemData>()
-                {
-                    new TreeItemData("This is item one"),
-                    new TreeItemData("This is item 2"),
-                    new TreeItemData("This is item three"),
-                    new TreeItemData("This is item six")
-                });
+                    new TreeItemData("This is item six")]);
+            }
+            return Task.FromResult((IReadOnlyCollection<TreeItemData>)[
+                new TreeItemData("This is item one"),
+                new TreeItemData("This is item 2"),
+                new TreeItemData("This is item three"),
+                new TreeItemData("This is item six")]);
         }
-        else if (parentNode.Title == "This is item three")
-        {
+        if (parentNode.Title == "This is item three") {
             if (SimulateUpdate3 == false)
-                return Task.FromResult(new HashSet<TreeItemData>()
-                {
+            {
+                return Task.FromResult((IReadOnlyCollection<TreeItemData>)[
                     new TreeItemData("This is item four"),
-                    new TreeItemData("This is item five"),
-                });
-            else
-                return Task.FromResult(new HashSet<TreeItemData>()
-                {
-                    new TreeItemData("This is item 4"),
-                    new TreeItemData("This is item 5"),
-                });
+                    new TreeItemData("This is item five")]);
+            }
+            return Task.FromResult((IReadOnlyCollection<TreeItemData>)[
+                new TreeItemData("This is item 4"),
+                new TreeItemData("This is item 5")]);
         }
-        else
-        {
-            return Task.FromResult(new HashSet<TreeItemData>());
-        }
+        return Task.FromResult((IReadOnlyCollection<TreeItemData>)[]);
     }
 }

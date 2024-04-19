@@ -35,7 +35,7 @@
     <g class="mud-charts-line-series">
         @foreach (var chartLine in _chartLines)
         {
-            <path class="mud-chart-line" @onclick="() => SelectedIndex = chartLine.Index"  fill="none" stroke="@(MudChartParent.ChartOptions.ChartPalette.GetValue(chartLine.Index % ChartOptions.ChartPalette.Count()))" stroke-width="@(MudChartParent.ChartOptions.LineStrokeWidth)" d="@chartLine.Data"></path>
+            <path class="mud-chart-line" @onclick="() => SelectedIndex = chartLine.Index" fill="none" stroke="@(MudChartParent.ChartOptions.ChartPalette.GetValue(chartLine.Index % MudChartParent.ChartOptions.ChartPalette.Count()))" stroke-width="@(MudChartParent.ChartOptions.LineStrokeWidth)" d="@chartLine.Data"></path>
         }
     </g>
 

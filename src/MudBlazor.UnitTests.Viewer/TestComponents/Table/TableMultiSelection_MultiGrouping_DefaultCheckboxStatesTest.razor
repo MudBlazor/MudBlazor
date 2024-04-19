@@ -1,17 +1,17 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudSwitch @bind-Checked="_groupsDefinition.Indentation" Color="Color.Primary">Indentation</MudSwitch>
-<MudSwitch @bind-Checked="_groupsDefinition.Expandable" Color="Color.Primary">Expandable (Root Level)</MudSwitch>
-<MudSwitch @bind-Checked="_groupsDefinition.InnerGroup.Expandable" Color="Color.Primary">Expandable (Second Level)</MudSwitch>
-<MudSwitch @bind-Checked="_virtualize" Color="Color.Primary">Virtualize</MudSwitch>
+<MudSwitch @bind-Value="_groupsDefinition.Indentation" Color="Color.Primary">Indentation</MudSwitch>
+<MudSwitch @bind-Value="_groupsDefinition.Expandable" Color="Color.Primary">Expandable (Root Level)</MudSwitch>
+<MudSwitch @bind-Value="_groupsDefinition.InnerGroup.Expandable" Color="Color.Primary">Expandable (Second Level)</MudSwitch>
+<MudSwitch @bind-Value="_virtualize" Color="Color.Primary">Virtualize</MudSwitch>
 
 <MudText>Total items: @_cars?.Count() - Selected items: @selectedItems?.Count</MudText>
 
 <MudTable @ref="MudTable" Items="@_cars" Height="500px" FixedHeader="true" Hover Dense MultiSelection Virtualize="@_virtualize"
           @bind-SelectedItems="selectedItems"
           GroupBy="@_groupsDefinition"
-          GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
-          GroupFooterStyle="background-color:var(--mud-palette-background-grey)">
+          GroupHeaderStyle="background-color:var(--mud-palette-background-gray)"
+          GroupFooterStyle="background-color:var(--mud-palette-background-gray)">
     <HeaderContent>
         <MudTh>Model:</MudTh>
     </HeaderContent>

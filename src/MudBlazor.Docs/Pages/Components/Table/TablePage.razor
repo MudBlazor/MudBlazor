@@ -59,8 +59,12 @@
         <DocsPageSection>
             <SectionHeader Title="TablePager Customization">
                 <Description>
-                    By setting <CodeInline>HideRowsPerPage</CodeInline> property or the <CodeInline>HidePageNumber</CodeInline> property or the <CodeInline>HidePagination</CodeInline> property to <CodeInline>true</CodeInline>, the corresponding information is hidden in the <CodeInline>MudTablePager</CodeInline>.
-                    The pager's position can be defined with the <CodeInline>HorizontalAlignment</CodeInline> property.
+                    The <CodeInline>TablePager</CodeInline> has many properties to customize it.
+                    The property <CodeInline>HorizontalAlignment</CodeInline> can be used to define the position.
+                    The properties <CodeInline>RowsPerPageString</CodeInline>, <CodeInline>InfoFormat</CodeInline> and <CodeInline>AllItemsText</CodeInline> can be used to customize the displayed text.
+                    The properties <CodeInline>HideRowsPerPage</CodeInline>, <CodeInline>HidePageNumber</CodeInline> and <CodeInline>HidePagination</CodeInline> can be used to hide the corresponding information.
+                    <br /><br />
+                    See <MudLink Href="@ApiLink.GetApiLinkFor(typeof(MudTablePager))">TablePager API</MudLink> for more informations.
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
                         <CodeInline>@("RowsPerPage")</CodeInline> parameter of MudTable is independent of <CodeInline>@("PageSizeOptions")</CodeInline> parameter of PagerContent. Therefore, the RowsPerPage value does not have
                         to be one of the values ​​in the PageSizeOptions list. If the table pager is shown you should make sure the value of RowsPerPage is also available in the PageSizeOptions list, otherwise the users can not go back to this RowsPerPage value once they have chosen another one.
@@ -70,8 +74,8 @@
                     </MudAlert>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="@nameof(TabPagerExample)" ShowCode="false" Block="true" FullWidth="true">
-                <TabPagerExample />
+            <SectionContent DarkenBackground="true" Code="@nameof(TablePagerExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TablePagerExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -152,6 +156,21 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(TableServerSidePaginateExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TableServerSidePaginateExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Server Side Data With Cancellation">
+                <Description>
+                    Use the <CodeInline>CancellationToken</CodeInline> to detect when a request for data has been superceded by a new request.  By forwarding the token to methods which support it,
+                    such as common <CodeInline>HttpClient</CodeInline> or <CodeInline>DbContent</CodeInline> methods, the table can perform well even with frequent updates.
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                        Note: When using <CodeInline>ServerData</CodeInline>, you don't need <CodeInline>Items</CodeInline> or <CodeInline>Filter</CodeInline>.
+                    </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(TableServerSideCancellationTokenExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TableServerSideCancellationTokenExample />
             </SectionContent>
         </DocsPageSection>
 

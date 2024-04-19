@@ -266,7 +266,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DrawerResponsiveTest>(Parameter(nameof(DrawerResponsiveTest.PreserveOpenState), true));
             var mudDrawerComponent = comp.FindComponent<MudDrawer>();
             var subscription = _browserViewportService.GetInternalSubscription(mudDrawerComponent.Instance)!;
-            await comp.InvokeAsync(async () => await _browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 720, Width = 1280}, Breakpoint.Lg, subscription.JavaScriptListenerId));
+            await comp.InvokeAsync(async () => await _browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 720, Width = 1280 }, Breakpoint.Lg, subscription.JavaScriptListenerId));
 
             //open drawer
             comp.Find("button").Click();

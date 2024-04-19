@@ -1,0 +1,35 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<div style="max-width: 400px;">
+    <MudCard>
+        <MudCardContent>
+            <MudForm>
+
+                <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="@CatName" Label="Cat Name"
+                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Info" />
+
+                <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="@OwnerName" Label="Owner Name"
+                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Info" />
+
+
+                <MudTextField T="int" Variant="Variant.Outlined" @bind-Value="@CatWeight" Label="Weight"
+                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Info" />
+
+                <MudCheckBox @bind-Value="@Evil_CheckBox" Label="Evil"></MudCheckBox>
+
+            </MudForm>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary"  Class="ml-auto">Buy Cat</MudButton>
+        </MudCardActions>
+    </MudCard>
+</div>
+@code
+{
+    public static string __description__ = "Based on error report. Clicking the checkbox should not influence the other form fields.";
+
+    public string CatName { get; set; }
+    public string OwnerName { get; set; }
+    public int CatWeight { get; set; }
+    public bool Evil_CheckBox { get; set; } = true;
+}

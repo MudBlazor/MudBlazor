@@ -96,7 +96,7 @@ namespace MudBlazor.UnitTests.Components
                 "--mud-palette-action-disabled-background: rgba(0,0,0,0.11764705882352941);",
                 "--mud-palette-surface: rgba(255,255,255,1);",
                 "--mud-palette-background: rgba(255,255,255,1);",
-                "--mud-palette-background-grey: rgba(245,245,245,1);",
+                "--mud-palette-background-gray: rgba(245,245,245,1);",
                 "--mud-palette-drawer-background: rgba(255,255,255,1);",
                 "--mud-palette-drawer-text: rgba(66,66,66,1);",
                 "--mud-palette-drawer-icon: rgba(97,97,97,1);",
@@ -109,15 +109,16 @@ namespace MudBlazor.UnitTests.Components
                 "--mud-palette-table-hover: rgba(0,0,0,0.0392156862745098);",
                 "--mud-palette-divider: rgba(224,224,224,1);",
                 "--mud-palette-divider-light: rgba(0,0,0,0.8);",
-                "--mud-palette-chip-default: rgba(0,0,0,0.0784313725490196);",
-                "--mud-palette-chip-default-hover: rgba(0,0,0,0.11764705882352941);",
-                "--mud-palette-grey-default: #9E9E9E;",
-                "--mud-palette-grey-light: #BDBDBD;",
-                "--mud-palette-grey-lighter: #E0E0E0;",
-                "--mud-palette-grey-dark: #757575;",
-                "--mud-palette-grey-darker: #616161;",
+                "--mud-palette-gray-default: #9E9E9E;",
+                "--mud-palette-gray-light: #BDBDBD;",
+                "--mud-palette-gray-lighter: #E0E0E0;",
+                "--mud-palette-gray-dark: #757575;",
+                "--mud-palette-gray-darker: #616161;",
                 "--mud-palette-overlay-dark: rgba(33,33,33,0.4980392156862745);",
                 "--mud-palette-overlay-light: rgba(255,255,255,0.4980392156862745);",
+                "--mud-ripple-color: var(--mud-palette-text-primary);",
+                "--mud-ripple-opacity: 0.1;",
+                "--mud-ripple-opacity-secondary: 0.2;",
                 "--mud-elevation-0: none;",
                 "--mud-elevation-1: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);",
                 "--mud-elevation-2: 0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12);",
@@ -276,21 +277,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CustomThemeDarkModeBackwardsCompatibleTest()
+        public void CustomThemeDarkModePrimaryDerivateColorTest()
         {
             // ensure it is backwards compatible by setting Palette() instead of PaletteDark()
             var myCustomTheme = new MudTheme()
             {
-                PaletteDark = new PaletteLight()
+                PaletteDark = new PaletteDark()
                 {
-                    Primary = Colors.Blue.Lighten1,
-                    Secondary = "#F50057"
+                    Primary = Colors.Green.Darken1,
                 }
             };
-            myCustomTheme.PaletteDark.Primary.Should().Be(new MudColor(Colors.Blue.Lighten1));// Set by user
-            myCustomTheme.PaletteDark.Error.Should().Be(new MudColor(Colors.Red.Default));// Default from light not overwritten by dark theme 
-            myCustomTheme.PaletteDark.White.Should().Be(new MudColor(Colors.Shades.White));// Equal in dark and light.
-            myCustomTheme.PaletteDark.Secondary.Should().Be(new MudColor("#F50057"));// Setting not in PaletteDark()
+            var expectedDarkerColor = new MudColor(Colors.Green.Darken1).ColorRgbDarken();
+            myCustomTheme.PaletteDark.Primary.Should().Be(new MudColor(Colors.Green.Darken1));// Set by user
+            myCustomTheme.PaletteDark.PrimaryDarken.Should().Be(expectedDarkerColor.ToString(MudColorOutputFormats.RGB));// Set by user
+
         }
 
         [Test]
@@ -305,13 +305,11 @@ namespace MudBlazor.UnitTests.Components
             DefaultTheme.PaletteDark.White.Should().Be(new MudColor(Colors.Shades.White));
 
             //Light theme
-#pragma warning disable CS0618
             // Note we're testing against the base type
-            DefaultTheme.Palette.Should().BeAssignableTo<Palette>();
-#pragma warning restore CS0618
-            DefaultTheme.Palette.Primary.Should().Be(new MudColor("#594AE2"));
-            DefaultTheme.Palette.Error.Should().Be(new MudColor(Colors.Red.Default));
-            DefaultTheme.Palette.White.Should().Be(new MudColor(Colors.Shades.White));
+            DefaultTheme.PaletteLight.Should().BeAssignableTo<Palette>();
+            DefaultTheme.PaletteLight.Primary.Should().Be(new MudColor("#594AE2"));
+            DefaultTheme.PaletteLight.Error.Should().Be(new MudColor(Colors.Red.Default));
+            DefaultTheme.PaletteLight.White.Should().Be(new MudColor(Colors.Shades.White));
         }
 
         private bool _systemMockValue;
@@ -358,6 +356,47 @@ namespace MudBlazor.UnitTests.Components
             if (!scope.StartsWith(':'))
                 scope = $":{scope}";
             styleLines.Should().Contain($"{scope}{{");
+        }
+
+        [Test]
+        public void PseudoCssRootColor_Test()
+        {
+            var scope = ":root";
+            var isDarkMode = true;
+            var mudTheme = new MudTheme
+            {
+                PaletteDark = new PaletteDark()
+                {
+                    Primary = Colors.Green.Darken1,
+                }
+            };
+            mudTheme.PseudoCss = new PseudoCss()
+            {
+                Scope = scope
+            };
+            var comp = Context.RenderComponent<MudThemeProvider>(
+                parameters =>
+                    parameters.Add(p => p.Theme, mudTheme)
+                        .Add(p => p.IsDarkMode, isDarkMode)
+                    );
+            comp.Should().NotBeNull();
+
+            var styleNodes = comp.Nodes.OfType<IHtmlStyleElement>().ToArray();
+
+            var rootStyleNode = styleNodes[2];
+
+            var styleLines = rootStyleNode.InnerHtml.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+
+            styleLines.Should().Contain($"{scope}{{");
+
+            var expectedPrimaryColor = Colors.Green.Darken1;
+            var expectedPrimaryColorAsRgba = new MudColor(expectedPrimaryColor).ToString(MudColorOutputFormats.RGBA);
+            var expectedPrimaryLine = $"--mud-palette-primary: {expectedPrimaryColorAsRgba};";
+            styleLines.Should().Contain(expectedPrimaryLine);
+            var expectedPrimaryDarkenColor = new MudColor(expectedPrimaryColor).ColorRgbDarken();
+            var expectedPrimaryDarkenColorAsRgb = expectedPrimaryDarkenColor.ToString(MudColorOutputFormats.RGB);
+            var expectedPrimaryDarkenLine = $"--mud-palette-primary-darken: {expectedPrimaryDarkenColorAsRgb};";
+            styleLines.Should().Contain(expectedPrimaryDarkenLine);
         }
     }
 }

@@ -15,6 +15,7 @@ partial class MudThemingProvider : ComponentBase, IDisposable
 {
     // private const string Breakpoint = "mud-breakpoint";
     private const string Palette = "mud-palette";
+    private const string Ripple = "mud-ripple";
     private const string Elevation = "mud-elevation";
     private const string Typography = "mud-typography";
     private const string LayoutProperties = "mud";
@@ -138,7 +139,7 @@ partial class MudThemingProvider : ComponentBase, IDisposable
             return;
         }
 
-        var palette = _isDarkMode == false ? Theme.Palette : Theme.PaletteDark;
+        Palette palette = _isDarkMode ? Theme.PaletteDark : Theme.PaletteLight;
 
         //Palette
         theme.AppendLine($"--{Palette}-black: {palette.Black};");
@@ -215,14 +216,14 @@ partial class MudThemingProvider : ComponentBase, IDisposable
 
         theme.AppendLine($"--{Palette}-action-default: {palette.ActionDefault};");
         theme.AppendLine(
-            $"--{Palette}-action-default-hover: {new MudColor(Colors.Shades.Black).SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
+            $"--{Palette}-action-default-hover: {palette.ActionDefault.SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
         theme.AppendLine($"--{Palette}-action-disabled: {palette.ActionDisabled};");
         theme.AppendLine(
             $"--{Palette}-action-disabled-background: {palette.ActionDisabledBackground};");
 
         theme.AppendLine($"--{Palette}-surface: {palette.Surface};");
         theme.AppendLine($"--{Palette}-background: {palette.Background};");
-        theme.AppendLine($"--{Palette}-background-grey: {palette.BackgroundGrey};");
+        theme.AppendLine($"--{Palette}-background-gray: {palette.BackgroundGray};");
         theme.AppendLine($"--{Palette}-drawer-background: {palette.DrawerBackground};");
         theme.AppendLine($"--{Palette}-drawer-text: {palette.DrawerText};");
         theme.AppendLine($"--{Palette}-drawer-icon: {palette.DrawerIcon};");
@@ -238,18 +239,20 @@ partial class MudThemingProvider : ComponentBase, IDisposable
 
         theme.AppendLine($"--{Palette}-divider: {palette.Divider};");
         theme.AppendLine($"--{Palette}-divider-light: {palette.DividerLight};");
-        
-        theme.AppendLine($"--{Palette}-chip-default: {palette.ChipDefault};");
-        theme.AppendLine($"--{Palette}-chip-default-hover: {palette.ChipDefaultHover};");
 
-        theme.AppendLine($"--{Palette}-grey-default: {palette.GrayDefault};");
-        theme.AppendLine($"--{Palette}-grey-light: {palette.GrayLight};");
-        theme.AppendLine($"--{Palette}-grey-lighter: {palette.GrayLighter};");
-        theme.AppendLine($"--{Palette}-grey-dark: {palette.GrayDark};");
-        theme.AppendLine($"--{Palette}-grey-darker: {palette.GrayDarker};");
+        theme.AppendLine($"--{Palette}-gray-default: {palette.GrayDefault};");
+        theme.AppendLine($"--{Palette}-gray-light: {palette.GrayLight};");
+        theme.AppendLine($"--{Palette}-gray-lighter: {palette.GrayLighter};");
+        theme.AppendLine($"--{Palette}-gray-dark: {palette.GrayDark};");
+        theme.AppendLine($"--{Palette}-gray-darker: {palette.GrayDarker};");
 
         theme.AppendLine($"--{Palette}-overlay-dark: {palette.OverlayDark};");
         theme.AppendLine($"--{Palette}-overlay-light: {palette.OverlayLight};");
+
+        //Ripple
+        theme.AppendLine($"--{Ripple}-color: var(--{Palette}-text-primary);");
+        theme.AppendLine($"--{Ripple}-opacity: {Theme.PaletteLight.RippleOpacity.ToString(CultureInfo.InvariantCulture)};");
+        theme.AppendLine($"--{Ripple}-opacity-secondary: {Theme.PaletteLight.RippleOpacitySecondary.ToString(CultureInfo.InvariantCulture)};");
 
         //Elevations
         theme.AppendLine($"--{Elevation}-0: {Theme.Shadows.Elevation.GetValue(0)};");

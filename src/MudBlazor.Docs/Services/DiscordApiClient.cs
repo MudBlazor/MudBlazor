@@ -25,8 +25,10 @@ namespace MudBlazor.Docs.Services
             {
                 BaseAddress = new Uri("https://discord.com/")
             };
-            _jsonSerializerOptions = new JsonSerializerOptions();
-            _jsonSerializerOptions.TypeInfoResolver = JsonTypeInfoResolver.Combine(DiscordApiJsonSerializerContext.Default);
+            _jsonSerializerOptions = new JsonSerializerOptions
+            {
+                TypeInfoResolver = JsonTypeInfoResolver.Combine(DiscordApiJsonSerializerContext.Default)
+            };
         }
 
         public async Task<DiscordInvite?> GetDiscordInviteAsync()

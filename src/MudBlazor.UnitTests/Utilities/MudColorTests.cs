@@ -3,6 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Globalization;
+using System.IO;
+using System.Text;
 using FluentAssertions;
 using MudBlazor.Utilities;
 using NUnit.Framework;
@@ -12,6 +14,77 @@ namespace MudBlazor.UnitTests.Utilities
     [TestFixture]
     public class MudColorTests
     {
+        [Test]
+        public void MudColor_STJ_Serialization()
+        {
+            var originalMudColor = new MudColor("#f6f9fb");
+
+            var jsonString = System.Text.Json.JsonSerializer.Serialize(originalMudColor);
+            var deserializeMudColor = System.Text.Json.JsonSerializer.Deserialize<MudColor>(jsonString);
+
+            jsonString.Should().Be("{\"R\":246,\"G\":249,\"B\":251,\"A\":255}");
+            deserializeMudColor.Should().Be(originalMudColor);
+        }
+
+        [Test]
+        public void MudColor_Newtonsoft_Serialization()
+        {
+            var originalMudColor = new MudColor("#f6f9fb");
+
+            var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(originalMudColor);
+            var deserializeMudColor = Newtonsoft.Json.JsonConvert.DeserializeObject<MudColor>(jsonString);
+
+            jsonString.Should().Be("{\"R\":246,\"G\":249,\"B\":251,\"A\":255}");
+            deserializeMudColor.Should().Be(originalMudColor);
+        }
+
+        [Test]
+        public void MudColor_Default_Ctor()
+        {
+            var defaultMudColor = new MudColor();
+            var blackMudColor = new MudColor("#000000ff");
+
+            defaultMudColor.R.Should().Be(0);
+            defaultMudColor.G.Should().Be(0);
+            defaultMudColor.B.Should().Be(0);
+            defaultMudColor.A.Should().Be(255);
+            defaultMudColor.H.Should().Be(0);
+            defaultMudColor.L.Should().Be(0);
+            defaultMudColor.S.Should().Be(0);
+            defaultMudColor.APercentage.Should().Be(1);
+            blackMudColor.Should().Be(defaultMudColor);
+        }
+
+        [Test]
+        public void MudColor_XMLDataContract_Serialization()
+        {
+            var dataContractSerializer = new System.Runtime.Serialization.DataContractSerializer(typeof(MudColor));
+
+            MudColor DeserializeXml(string toDeserialize)
+            {
+                using var textReader = new StringReader(toDeserialize);
+                using var reader = System.Xml.XmlReader.Create(textReader);
+
+                return (MudColor)dataContractSerializer.ReadObject(reader);
+            }
+
+            string SerializeXml(MudColor mudColorObject)
+            {
+                using var memoryStream = new MemoryStream();
+                dataContractSerializer.WriteObject(memoryStream, mudColorObject);
+
+                return Encoding.UTF8.GetString(memoryStream.ToArray());
+            }
+
+            var originalMudColor = new MudColor("#f6f9fb");
+
+            var xmlString = SerializeXml(originalMudColor);
+            var deserializeMudColor = DeserializeXml(xmlString);
+
+            xmlString.Should().Be("<MudColor xmlns=\"http://schemas.datacontract.org/2004/07/MudBlazor.Utilities\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:x=\"http://www.w3.org/2001/XMLSchema\"><R i:type=\"x:unsignedByte\" xmlns=\"\">246</R><G i:type=\"x:unsignedByte\" xmlns=\"\">249</G><B i:type=\"x:unsignedByte\" xmlns=\"\">251</B><A i:type=\"x:unsignedByte\" xmlns=\"\">255</A></MudColor>");
+            deserializeMudColor.Should().Be(originalMudColor);
+        }
+
         [Test]
         [TestCase("12315aca", 18, 49, 90, 202)]
         [TestCase("12315a", 18, 49, 90, 255)]
@@ -99,6 +172,41 @@ namespace MudBlazor.UnitTests.Utilities
                 implicitCasted.G.Should().Be(g);
                 implicitCasted.B.Should().Be(b);
                 implicitCasted.A.Should().Be(alpha);
+            }
+        }
+
+        [Test]
+        [TestCase("rgba(12,204,210,0.5)", 12, 204, 210, 127)]
+        [TestCase("rgba(67,160,71,1)", 67, 160, 71, 1)]
+        [TestCase("#43a047", 67, 160, 71, 1)]
+        [TestCase("rgba(255,255,255,1)", 255, 255, 255, 255)]
+        public void FromString_RGBA_And_Darken(string input, byte r, byte g, byte b, byte alpha)
+        {
+            var cultures = new[] { new CultureInfo("en", false), new CultureInfo("se", false) };
+
+            foreach (var item in cultures)
+            {
+                CultureInfo.CurrentCulture = item;
+
+                MudColor color = new(input);
+
+                //lets darken it
+                var darkenColor = color.ColorRgbDarken();
+
+                //use as reference
+                var colorFromRGB = new MudColor(color.R, color.G, color.B, color.A);
+                var darkenColorFromRGB = colorFromRGB.ColorRgbDarken();
+
+                darkenColor.R.Should().Be(darkenColorFromRGB.R);
+                darkenColor.G.Should().Be(darkenColorFromRGB.G);
+                darkenColor.B.Should().Be(darkenColorFromRGB.B);
+
+                //MudColor implicitCasted = input;
+
+                //implicitCasted.R.Should().Be(r);
+                //implicitCasted.G.Should().Be(g);
+                //implicitCasted.B.Should().Be(b);
+                //implicitCasted.A.Should().Be(alpha);
             }
         }
 
@@ -507,16 +615,20 @@ namespace MudBlazor.UnitTests.Utilities
         {
             MudColor color1 = new(10, 20, 50, 255);
             MudColor color2 = new(10, 20, 50, 255);
+            MudColor color3 = null;
+            MudColor color4 = null;
 
             (color1 == color1).Should().BeTrue();
             (color2 == color2).Should().BeTrue();
             (color1 == color2).Should().BeTrue();
             (color2 == color1).Should().BeTrue();
+            (color3 == color4).Should().BeTrue();
 
             color1.Equals(color1).Should().BeTrue();
             color2.Equals(color2).Should().BeTrue();
             color1.Equals(color2).Should().BeTrue();
             color2.Equals(color1).Should().BeTrue();
+            Equals(color3, color4).Should().BeTrue();
         }
 
         [Test]
@@ -524,12 +636,18 @@ namespace MudBlazor.UnitTests.Utilities
         {
             MudColor color1 = new(10, 20, 50, 255);
             MudColor color2 = new(10, 20, 50, 10);
+            MudColor color3 = null;
 
             (color1 != color2).Should().BeTrue();
             (color2 != color1).Should().BeTrue();
+            (color2 != color3).Should().BeTrue();
+            (color3 != color2).Should().BeTrue();
 
             color1.Equals(color2).Should().BeFalse();
             color2.Equals(color1).Should().BeFalse();
+            color2.Equals(color3).Should().BeFalse();
+            Equals(color3, color2).Should().BeFalse();
+            Equals(color2, color3).Should().BeFalse();
         }
 
 #pragma warning restore CS1718 // Comparison made to same variable
@@ -615,9 +733,7 @@ namespace MudBlazor.UnitTests.Utilities
             CultureInfo.CurrentCulture = culture;
             CultureInfo.CurrentUICulture = culture;
 
-#pragma warning disable CS0618 // Type or member is obsolete
             Palette palette = new PaletteLight();
-#pragma warning restore CS0618 // Type or member is obsolete
 
             palette.Should().NotBeNull();
         }

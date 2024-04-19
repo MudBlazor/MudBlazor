@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web.Virtualization;
 
 namespace MudBlazor
 {
@@ -23,10 +24,22 @@ namespace MudBlazor
         public RenderFragment<T>? ChildContent { get; set; }
 
         /// <summary>
+        /// Gets or sets the template for the items that have not yet been loaded in memory.
+        /// </summary>
+        [Parameter]
+        public RenderFragment? Placeholder { get; set; }
+
+        /// <summary>
         /// Gets or sets the fixed item source.
         /// </summary>
         [Parameter]
         public ICollection<T>? Items { get; set; }
+
+        /// <summary>
+        /// Gets or sets the function providing items to the list.
+        /// </summary>
+        [Parameter]
+        public ItemsProviderDelegate<T>? ItemsProvider { get; set; }
 
         /// <summary>
         /// Gets or sets a value that determines how many additional items will be rendered
@@ -42,5 +55,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public float ItemSize { get; set; } = 50f;
+
+        /// <summary>
+        /// Gets or sets tag name of the HTML element that will be used as virtualization spacer. Default is div.
+        /// </summary>
+        [Parameter]
+        public string SpacerElement { get; set; } = "div";
     }
 }

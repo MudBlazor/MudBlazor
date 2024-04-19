@@ -11,12 +11,12 @@ namespace MudBlazor
     /// </summary>
     public partial class MudSelectItem<T> : MudBaseSelectItem, IDisposable
     {
-        private String GetCssClasses() =>  new CssBuilder()
+        private string GetCssClasses() => new CssBuilder()
             .AddClass(Class)
             .Build();
 
         private IMudSelect _parent;
-        internal string ItemId { get; } = "_"+Guid.NewGuid().ToString().Substring(0,8);
+        internal string ItemId { get; } = "_" + Guid.NewGuid().ToString().Substring(0, 8);
 
         /// <summary>
         /// The parent select component
@@ -33,7 +33,7 @@ namespace MudBlazor
                 _parent.CheckGenericTypeMatch(this);
                 if (MudSelect == null)
                     return;
-                bool isSelected = MudSelect.Add(this);
+                var isSelected = MudSelect.Add(this);
                 if (_parent.MultiSelection)
                 {
                     MudSelect.SelectionChangedFromOutside += OnUpdateSelectionStateFromOutside;
@@ -46,7 +46,7 @@ namespace MudBlazor
             }
         }
 
-        private IMudShadowSelect  _shadowParent;
+        private IMudShadowSelect _shadowParent;
         private bool _isSelected;
 
         [CascadingParameter]

@@ -32,7 +32,6 @@ namespace MudBlazor.UnitTests.Components
             slider.Immediate.Should().BeTrue();
             slider.TickMarkLabels.Should().BeNull();
 
-            slider.Converter.Should().NotBeNull();
             slider.Color.Should().Be(Color.Primary);
 
             slider.Variant.Should().Be(Variant.Text);
@@ -276,7 +275,7 @@ namespace MudBlazor.UnitTests.Components
             tickMarks.ClassList.Should().Contain("mud-slider-tickmarks");
             tickMarks.Children.Should().HaveCount(5);
 
-            Int32 itemCounter = 0;
+            var itemCounter = 0;
             foreach (var item in tickMarks.Children)
             {
                 item.ClassList.Should().Contain(new[] { "d-flex", "flex-column", "relative" });
@@ -406,6 +405,3 @@ namespace MudBlazor.UnitTests.Components
         }
     }
 }
-
-
-

@@ -9,13 +9,13 @@
             <div class="mud-chart-legend-item" @onclick=@(()=>{ if (MudChartParent!=null) { MudChartParent.SelectedIndex=item.Index; }}) @onclick:stopPropagation=@(MudChartParent!=null) >
                 @if(MudChartParent?.CanHideSeries == false)
                 {
-                    <span class="mud-chart-legend-marker" style="@($"background-color:{MudChartParent.ChartOptions.ChartPalette.GetValue(item.Index % ChartOptions.ChartPalette.Count())}")"></span>
+                    <span class="mud-chart-legend-marker" style="@($"background-color:{MudChartParent.ChartOptions.ChartPalette.GetValue(item.Index % MudChartParent.ChartOptions.ChartPalette.Count())}")"></span>
                     <MudText Typo="Typo.body2" Inline="true">@item.Labels</MudText>
                 }
                 else
                 {   
                     <div class="mud-chart-legend-checkbox" style="@GetCheckBoxStyle(item.Index)">    
-                        <MudCheckBox Checked="@item.IsVisible" CheckedChanged="@((bool value) => item.HandleCheckboxChangeAsync())"></MudCheckBox>               
+                        <MudCheckBox Value="@item.IsVisible" ValueChanged="@((bool value) => item.HandleCheckboxChangeAsync())"></MudCheckBox>               
                         <MudText Typo="Typo.body2" Class="ml-1" Inline="true">@item.Labels</MudText>
                     </div> 
                 }                 

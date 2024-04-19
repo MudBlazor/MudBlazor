@@ -10,7 +10,7 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class NavMenuTests : BunitTest
     {
-        
+
         [Test]
         /// <summary>
         /// Change all styling parameters so that all default values have the correct classes.
@@ -24,14 +24,14 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Dense.Should().Be(false);
             comp.Instance.Margin.Should().Be(Margin.None);
             comp.Instance.Rounded.Should().Be(false);
-            
+
             comp.FindAll("mud-navmenu-bordered").Count.Should().Be(0);
             comp.FindAll("mud-navmenu-success").Count.Should().Be(0);
             comp.FindAll("mud-navmenu-dense").Count.Should().Be(0);
             comp.FindAll("mud-navmenu-margin-dense").Count.Should().Be(0);
             comp.FindAll("mud-navmenu-rounded").Count.Should().Be(0);
         }
-        
+
         [Test]
         /// <summary>
         /// Change all styling parameters from its default values and check that the correct classes are added.
@@ -54,7 +54,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().Contain("mud-navmenu-rounded");
         }
 
-        
+
         [Test]
         /// <summary>
         /// This component is initially Expanded with the property Expand set to imutable true <c>Expand=true</c>
@@ -63,12 +63,14 @@ namespace MudBlazor.UnitTests.Components
         public void One_Way_Bindable()
         {
             var comp = Context.RenderComponent<NavMenuOneWay>();
-            comp.Markup.Should().Contain("expanded");
+            comp.Markup.Should().Contain("mud-expanded");
+            comp.Markup.Should().Contain("aria-hidden=\"false\"");
 
             var navgroup = comp.Find(".mud-nav-group>button");
             navgroup.Click();
 
-            comp.Markup.Should().NotContain("expanded");
+            comp.Markup.Should().NotContain("mud-expanded");
+            comp.Markup.Should().Contain("aria-hidden=\"true\"");
         }
 
         /// <summary>
@@ -79,7 +81,8 @@ namespace MudBlazor.UnitTests.Components
         public void Two_Way_Bindable()
         {
             var comp = Context.RenderComponent<NavMenuTwoWay>();
-            comp.Markup.Should().NotContain("expanded");
+            comp.Markup.Should().NotContain("mud-expanded");
+            comp.Markup.Should().Contain("aria-hidden=\"true\"");
             var isExpanded = comp.Instance._isExpanded;
             isExpanded.Should().BeFalse();
 
@@ -88,7 +91,8 @@ namespace MudBlazor.UnitTests.Components
 
             isExpanded = comp.Instance._isExpanded;
             isExpanded.Should().BeTrue();
-            comp.Markup.Should().Contain("expanded");
+            comp.Markup.Should().Contain("mud-expanded");
+            comp.Markup.Should().Contain("aria-hidden=\"false\"");
         }
     }
 }

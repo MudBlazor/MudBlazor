@@ -44,7 +44,7 @@ namespace MudBlazor.UnitTests.Components
             var section1 = new MudPageContentSection("my section", "my-id");
             var section2 = new MudPageContentSection("my section 2", "my-id-2");
 
-            if (withUpdate == true)
+            if (withUpdate)
             {
                 await comp.InvokeAsync(() => comp.Instance.AddSection(section1, true));
                 await comp.InvokeAsync(() => comp.Instance.AddSection(section2, true));
@@ -56,7 +56,7 @@ namespace MudBlazor.UnitTests.Components
                 await comp.InvokeAsync(() => ((IMudStateHasChanged)comp.Instance).StateHasChanged());
             }
 
-            comp.RenderCount.Should().Be(withUpdate == true ? 3 : 2);
+            comp.RenderCount.Should().Be(withUpdate ? 3 : 2);
 
             comp.Instance.ActiveSection.Should().BeNull();
             comp.Instance.Sections.Should().BeEquivalentTo(new[] { section1, section2 });

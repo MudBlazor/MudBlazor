@@ -80,10 +80,11 @@ namespace MudBlazor
     }
 
     /// <summary>
-    /// Converter from T to string
-    ///
+    /// <para>Converter from T to string</para>
+    /// <para>
     /// Set converts to string
     /// Get converts from string
+    /// </para>
     /// </summary>
     public class Converter<T> : Converter<T, string>
     {

@@ -29,7 +29,7 @@
             </MudFileUpload>
         </MudCardContent>
         <MudCardActions>
-            <MudSwitch Color="Color.Primary" @bind-Checked="SuppressOnChangeWhenInvalid">Suppress OnChange When Invalid</MudSwitch>
+            <MudSwitch Color="Color.Primary" @bind-Value="SuppressOnChangeWhenInvalid">Suppress OnChange When Invalid</MudSwitch>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="@(async () => await Submit())">Submit</MudButton>
         </MudCardActions>
     </MudForm>
@@ -57,7 +57,7 @@
 
         if (form.IsValid)
         {
-            Snackbar.Add("Submited!");
+            Snackbar.Add("Submitted!");
         }
     }
 
