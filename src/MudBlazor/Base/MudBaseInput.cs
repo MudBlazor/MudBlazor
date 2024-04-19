@@ -214,6 +214,16 @@ namespace MudBlazor
         public Margin Margin { get; set; } = Margin.None;
 
         /// <summary>
+        /// Typography for the input text.
+        /// </summary>
+        /// <remarks>
+        /// Uses the default typography if <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Typo? Typo { get; set; }
+
+        /// <summary>
         /// Gets or sets the text displayed in the input if no <see cref="Value"/> is specified.
         /// </summary>
         /// <remarks>
