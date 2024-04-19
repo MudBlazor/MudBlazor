@@ -222,6 +222,7 @@ namespace MudBlazor.UnitTests.Components
                 "--mud-typography-input-weight: 400;",
                 "--mud-typography-input-lineheight: 1.1876em;",
                 "--mud-typography-input-letterspacing: .00938em;",
+                "--mud-typography-input-text-transform: none;",
                 "--mud-typography-button-family: 'Roboto','Helvetica','Arial','sans-serif';",
                 "--mud-typography-button-size: .875rem;",
                 "--mud-typography-button-weight: 500;",
