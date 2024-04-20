@@ -120,7 +120,7 @@ namespace MudBlazor
         public bool ExpandOnDoubleClick { get; set; }
 
         /// <summary>
-        /// Gets or sets whether items will automatically expand when selected.
+        /// Gets or sets whether the tree automatically expands to reveal the selected item.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
@@ -238,7 +238,7 @@ namespace MudBlazor
         public bool ReadOnly { get; set; }
 
         /// <summary>
-        /// Expands all items and their children recursively
+        /// Expands all items and their children recursively.
         /// </summary>
         public async Task ExpandAllAsync()
         {
@@ -247,7 +247,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Collapse all items and their children recursively
+        /// Collapses all items and their children recursively.
         /// </summary>
         public async Task CollapseAllAsync()
         {
