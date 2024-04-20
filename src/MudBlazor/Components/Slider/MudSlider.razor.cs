@@ -35,7 +35,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Slider.Validation)]
-        public T Min { get; set; } = T.CreateTruncating(0);
+        public T Min { get; set; } = T.Zero;
 
         /// <summary>
         /// The maximum allowed value of the slider. Should not be equal to min.
@@ -51,7 +51,7 @@ namespace MudBlazor
         /// 
         [Parameter]
         [Category(CategoryTypes.Slider.Validation)]
-        public T Step { get; set; } = T.CreateTruncating(1);
+        public T Step { get; set; } = T.One;
 
         /// <summary>
         /// If true, the slider will be disabled.
@@ -132,6 +132,20 @@ namespace MudBlazor
         [Category(CategoryTypes.Button.Appearance)]
         public bool ValueLabel { get; set; }
 
+        /// <summary>
+        /// Sets the culture information used for ValueLabel. Default is <see cref="CultureInfo.InvariantCulture"/>.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public CultureInfo ValueLabelCultureInfo { get; set; } = CultureInfo.InvariantCulture;
+
+        /// <summary>
+        /// Sets the formatting information used for ValueLabel. Default is no formatting.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public string? ValueLabelStringFormat { get; set; }
+
         protected override void OnParametersSet()
         {
             if (TickMarks)
@@ -161,7 +175,7 @@ namespace MudBlazor
 
         private Task SetValueTextAsync(string? text)
         {
-            if (T.TryParse(text, NumberStyles.Any, null, out var result))
+            if (T.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out var result))
             {
                 return _valueState.SetValueAsync(result);
             }

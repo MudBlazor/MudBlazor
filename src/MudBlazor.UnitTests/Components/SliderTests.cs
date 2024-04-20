@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
 using Bunit;
@@ -9,7 +9,6 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -38,6 +37,8 @@ namespace MudBlazor.UnitTests.Components
             slider.Variant.Should().Be(Variant.Text);
 
             slider.Size.Should().Be(Size.Small);
+            slider.ValueLabelCultureInfo.Should().Be(CultureInfo.InvariantCulture);
+            slider.ValueLabelStringFormat.Should().BeNull();
         }
 
         [Test]
@@ -402,6 +403,27 @@ namespace MudBlazor.UnitTests.Components
             }
 
             filling.GetAttribute("style").Should().Be($"width:80%;");
+        }
+
+        [TestCase(0.0, "$0.00")]
+        [TestCase(20.5, "$20.50")]
+        [TestCase(75.5, "$75.50")]
+        [TestCase(100.0, "$100.00")]
+        public void CustomCultureAndFormatting(decimal value, string expectedValueLabel)
+        {
+            var customCulture = (CultureInfo)CultureInfo.GetCultureInfo("en").Clone();
+            customCulture.NumberFormat.CurrencySymbol = "$";
+            var comp = Context.RenderComponent<MudSlider<decimal>>(x =>
+            {
+                x.Add(p => p.Value, value);
+                x.Add(p => p.Step, 0.5m);
+                x.Add(p => p.ValueLabel, true);
+                x.Add(p => p.ValueLabelCultureInfo, customCulture);
+                x.Add(p => p.ValueLabelStringFormat, "C");
+            });
+
+            var valueLabel = comp.Find(".mud-slider-value-label");
+            valueLabel.TextContent.Should().Be(expectedValueLabel);
         }
     }
 }

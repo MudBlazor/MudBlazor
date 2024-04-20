@@ -40,7 +40,7 @@
         @if (ValueLabel)
         {
             <div class="mud-slider-value-label" style="@($"left:{Width}%;")">
-                @_valueState.Value?.ToString(null, CultureInfo.InvariantCulture)
+                @_valueState.Value?.ToString(ValueLabelStringFormat, ValueLabelCultureInfo)
             </div>
         }
 	</div>
