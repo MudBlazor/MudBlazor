@@ -32,7 +32,7 @@ namespace MudBlazor.Docs.Services
             text = text.ToLowerInvariant();
 
             // Calculate the ratios of all keywords to the search input.
-            var ratios = new Dictionary<ApiLinkServiceEntry, int>();
+            var ratios = new Dictionary<ApiLinkServiceEntry, double>();
             foreach (var (keyword, entry) in _entries)
             {
                 var ratio = GetSearchMatchRatio(text, keyword);
@@ -61,11 +61,11 @@ namespace MudBlazor.Docs.Services
             );
         }
 
-        private int GetSearchMatchRatio(string search, string keyword)
+        private double GetSearchMatchRatio(string search, string keyword)
         {
             var ratio = Fuzz.Ratio(keyword, search);
             var partialOutOfOrderRatio = Fuzz.PartialTokenSortRatio(keyword, search);
-            var averageRatio = (ratio + partialOutOfOrderRatio) / 2;
+            var averageRatio = (ratio + partialOutOfOrderRatio) / 2.0;
 
             return averageRatio;
         }
