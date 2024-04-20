@@ -492,7 +492,7 @@ namespace MudBlazor
         /// Update the Selected state of all items and sub-items.
         /// </summary>
         /// <param name="selectedValues"></param>
-        /// <returns>True if any item or sub-item is Selected.</returns>
+        /// <returns>True if the item or any sub-item changed from non-selected to selected.</returns>
         internal async Task<bool> UpdateSelectionStateAsync(HashSet<T> selectedValues)
         {
             if (MudTreeRoot == null)
@@ -511,18 +511,8 @@ namespace MudBlazor
             if (AutoExpand && childSelectedBecameTrue && !_expandedState)
                 await _expandedState.SetValueAsync(true);
             StateHasChanged();
-            //if (_selectedState && AutoExpand && Parent is not null)
-            //    await Parent.BubbleExpandAsync();
             return selectedBecameTrue || childSelectedBecameTrue;
         }
-
-        //private async Task BubbleExpandAsync()
-        //{
-        //    await _expandedState.SetValueAsync(true);
-        //    StateHasChanged();
-        //    if (Parent is not null)
-        //        await Parent.BubbleExpandAsync();
-        //}
 
         public void Dispose()
         {
@@ -545,7 +535,7 @@ namespace MudBlazor
         {
             if (MudTreeRoot?.TriState == true)
                 return IndeterminateIcon;
-            // in non-tristate mode we need to fake the checked status. the actual status of the checkbox is irrelevant,
+            // in non-tri-state mode we need to fake the checked status. the actual status of the checkbox is irrelevant,
             // only _selectedState.Value matters!
             return _selectedState ? CheckedIcon : UncheckedIcon;
         }
