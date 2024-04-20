@@ -65,11 +65,9 @@ public class NavigationAccessibilityTests : BunitTest
     public void ActiveNavLinkInActiveNavGroup_Should_BeFocusable()
     {
         var comp = Context.RenderComponent<NavigationAccessibilityTest>();
-        var navLinksInsideActiveNavGroups = comp
-            .FindAll("#second-level-navgroup a.mud-nav-link:not(.mud-nav-link-disabled)");
 
-        navLinksInsideActiveNavGroups.Should().HaveCount(1);
-        navLinksInsideActiveNavGroups
+        comp.FindAll("#second-level-navgroup a.mud-nav-link:not(.mud-nav-link-disabled)").Should().HaveCount(1);
+        comp.FindAll("#second-level-navgroup a.mud-nav-link:not(.mud-nav-link-disabled)")
             .Should()
             .AllSatisfy(navLink =>
                 navLink
@@ -85,11 +83,9 @@ public class NavigationAccessibilityTests : BunitTest
     public void DisabledNavLinksInActiveNavGroup_Should_NotBeFocusable()
     {
         var comp = Context.RenderComponent<NavigationAccessibilityTest>();
-        var navLinksInsideActiveNavGroups = comp
-            .FindAll("#second-level-navgroup a.mud-nav-link.mud-nav-link-disabled");
 
-        navLinksInsideActiveNavGroups.Should().HaveCount(2);
-        navLinksInsideActiveNavGroups
+        comp.FindAll("#second-level-navgroup a.mud-nav-link.mud-nav-link-disabled").Should().HaveCount(2);
+        comp.FindAll("#second-level-navgroup a.mud-nav-link.mud-nav-link-disabled")
             .Should()
             .AllSatisfy(navLink =>
                 navLink
@@ -106,9 +102,8 @@ public class NavigationAccessibilityTests : BunitTest
     {
         var comp = Context.RenderComponent<NavigationAccessibilityTest>(parameters =>
             parameters.Add(p => p.TopLevelDisabled, true));
-        var elementsWithTabIndex = comp.FindAll("[tabindex]");
 
-        elementsWithTabIndex.Should().HaveCountGreaterThan(0).And.AllSatisfy(node => node.GetAttribute("tabindex").Should().Be("-1"));
+        comp.FindAll("[tabindex]").Should().HaveCountGreaterThan(0).And.AllSatisfy(node => node.GetAttribute("tabindex").Should().Be("-1"));
     }
 
     /// <summary>
@@ -119,9 +114,8 @@ public class NavigationAccessibilityTests : BunitTest
     {
         var comp = Context.RenderComponent<NavigationAccessibilityTest>(parameters =>
             parameters.Add(p => p.TopLevelExpanded, false));
-        var mudCollapses = comp.FindAll(".mud-collapse-container");
 
-        mudCollapses.Should().HaveCountGreaterThan(0).And.AllSatisfy(node => node.GetAttribute("aria-hidden").Should().Be("true"));
+        comp.FindAll(".mud-collapse-container").Should().HaveCountGreaterThan(0).And.AllSatisfy(node => node.GetAttribute("aria-hidden").Should().Be("true"));
     }
 
     /// <summary>
@@ -131,9 +125,8 @@ public class NavigationAccessibilityTests : BunitTest
     public void MudCollapseWithinExpandedNavGroup_Should_NotBeAriaHidden()
     {
         var comp = Context.RenderComponent<NavigationAccessibilityTest>();
-        var mudCollapses = comp.FindAll("#second-level-navgroup .mud-collapse-container");
 
-        mudCollapses.Should().HaveCountGreaterThan(0).And.AllSatisfy(node => node.GetAttribute("aria-hidden").Should().Be("false"));
+        comp.FindAll("#second-level-navgroup .mud-collapse-container").Should().HaveCountGreaterThan(0).And.AllSatisfy(node => node.GetAttribute("aria-hidden").Should().Be("false"));
     }
 
     /// <summary>
@@ -206,9 +199,8 @@ public class NavigationAccessibilityTests : BunitTest
         var expectedTitle = "expected title";
         var comp = Context.RenderComponent<NavigationAccessibilityTest>(parameters =>
             parameters.Add(p => p.SecondLevelTitle, expectedTitle));
-        var secondLevel = comp.Find("#second-level-navgroup");
 
-        secondLevel
+        comp.Find("#second-level-navgroup")
             .GetAttribute("aria-label")
             .Should()
             .Be(expectedTitle);
@@ -223,9 +215,8 @@ public class NavigationAccessibilityTests : BunitTest
         var expectedTitle = "expected title";
         var comp = Context.RenderComponent<NavigationAccessibilityTest>(parameters =>
             parameters.Add(p => p.SecondLevelTitle, expectedTitle));
-        var secondLevelNavGroupButton = comp.Find("#second-level-navgroup > button");
 
-        secondLevelNavGroupButton
+        comp.Find("#second-level-navgroup > button")
             .GetAttribute("aria-label")
             .Should()
             .Contain(expectedTitle);

@@ -758,8 +758,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudDateRangePicker>();
 
-            var inputs = comp.FindAll("input");
-            inputs.Should().AllSatisfy(input =>
+            comp.FindAll("input").Should().AllSatisfy(input =>
             {
                 input.HasAttribute("required").Should().BeFalse();
                 input.GetAttribute("aria-required").Should().Be("false");
@@ -775,8 +774,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudDateRangePicker>(parameters => parameters
                 .Add(p => p.Required, true));
 
-            var inputs = comp.FindAll("input");
-            inputs.Should().AllSatisfy(input =>
+            comp.FindAll("input").Should().AllSatisfy(input =>
             {
                 input.HasAttribute("required").Should().BeTrue();
                 input.GetAttribute("aria-required").Should().Be("true");
@@ -791,8 +789,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudDateRangePicker>();
 
-            var inputs = comp.FindAll("input");
-            inputs.Should().AllSatisfy(input =>
+            comp.FindAll("input").Should().AllSatisfy(input =>
             {
                 input.HasAttribute("required").Should().BeFalse();
                 input.GetAttribute("aria-required").Should().Be("false");
@@ -801,9 +798,7 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.Required, true));
 
-            // must be re-fetched after re-render
-            inputs = comp.FindAll("input");
-            inputs.Should().AllSatisfy(input =>
+            comp.FindAll("input").Should().AllSatisfy(input =>
             {
                 input.HasAttribute("required").Should().BeTrue();
                 input.GetAttribute("aria-required").Should().Be("true");

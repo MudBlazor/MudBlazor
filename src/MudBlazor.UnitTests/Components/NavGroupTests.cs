@@ -25,8 +25,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("mud-nav-group-disabled");
             comp.Markup.Should().NotContain("mud-expanded");
 
-            var input = comp.Find("input"); // Change IsDisabled to True
-            input.Change(true);
+            comp.Find("input").Change(true);
 
             comp.Markup.Should().Contain("mud-nav-group-disabled");
         }
@@ -41,8 +40,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudNavGroup>(parameters =>
                     parameters.Add(p => p.Title, expectedTitle));
 
-            var navNodes = comp.FindAll("nav");
-            navNodes.Should().Contain(navNode => navNode.GetAttribute("aria-label") == expectedTitle);
+            comp.FindAll("nav").Should().Contain(navNode => navNode.GetAttribute("aria-label") == expectedTitle);
         }
     }
 }
