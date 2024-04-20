@@ -72,6 +72,7 @@ Add the following to `_Imports.razor`
 Add the following to the `MainLayout.razor` or `App.razor`
 ```razor
 <MudThemeProvider/>
+<MudPopoverProvider/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 ```
