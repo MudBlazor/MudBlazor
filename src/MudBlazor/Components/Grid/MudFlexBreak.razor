@@ -9,13 +9,12 @@
 
 @code {
 #nullable enable
-
+    /// <summary>
+    /// Space separated class names
+    /// </summary>
     protected string Classname =>
-    new CssBuilder("mud-grid-break")
+    new CssBuilder("mud-flex-break")
         .AddClass(Class)
         .Build();
-
-    [CascadingParameter]
-    private MudGrid? Parent { get; set; }
 }
 
