@@ -1,5 +1,4 @@
-﻿#pragma warning disable CS1998 // async without await
-#pragma warning disable BL0005 // Set parameter outside component
+﻿#pragma warning disable BL0005 // Set parameter outside component
 
 using System;
 using System.Collections.Generic;
@@ -94,7 +93,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SetPickerValue_CheckDate_SetPickerDate_CheckValue()
+        public void SetPickerValue_CheckDate_SetPickerDate_CheckValue()
         {
             var comp = Context.RenderComponent<MudDatePicker>();
             // select elements needed for the test
@@ -108,7 +107,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DatePicker_Should_ApplyDateFormat()
+        public void DatePicker_Should_ApplyDateFormat()
         {
             var comp = Context.RenderComponent<MudDatePicker>();
             // select elements needed for the test
@@ -124,7 +123,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DatePicker_Should_ApplyDateFormatAfterDate()
+        public void DatePicker_Should_ApplyDateFormatAfterDate()
         {
             var comp = Context.RenderComponent<MudDatePicker>();
             // select elements needed for the test
@@ -139,7 +138,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DatePicker_Should_ApplyCultureDateFormat()
+        public void DatePicker_Should_ApplyCultureDateFormat()
         {
             var comp = Context.RenderComponent<MudDatePicker>();
             // select elements needed for the test
@@ -165,7 +164,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DatePicker_Should_DateFormatTakesPrecedenceOverCulture()
+        public void DatePicker_Should_DateFormatTakesPrecedenceOverCulture()
         {
             var comp = Context.RenderComponent<MudDatePicker>();
             // select elements needed for the test
@@ -180,7 +179,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DatePicker_Should_Clear()
+        public void DatePicker_Should_Clear()
         {
             var comp = Context.RenderComponent<MudDatePicker>();
             // select elements needed for the test
@@ -223,7 +222,7 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        public async Task DataPicker_ShouldDeBounceSetDate_WhenDateSetToTheSameValueQuickly()
+        public void DataPicker_ShouldDeBounceSetDate_WhenDateSetToTheSameValueQuickly()
         {
             var comp = Context.RenderComponent<MudDatePicker>();
 
@@ -244,7 +243,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataPicker_ShouldDisplayError_WhenTextSetToInvalidValue()
+        public void DataPicker_ShouldDisplayError_WhenTextSetToInvalidValue()
         {
             var comp = Context.RenderComponent<MudDatePicker>();
 
@@ -1246,7 +1245,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task OldDateWithDefinedKind_SetValue_KindUnchanged()
+        public void OldDateWithDefinedKind_SetValue_KindUnchanged()
         {
             var comp = Context.RenderComponent<MudDatePicker>();
             var picker = comp.Instance;
