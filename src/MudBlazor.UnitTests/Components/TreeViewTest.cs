@@ -15,7 +15,7 @@ using static Bunit.ComponentParameterFactory;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class TreeViewTest : BunitTest
+    public class TreeViewTests : BunitTest
     {
         [Test]
         public void TreeView_ClickWhileDisabled_DoesNotChangeSelection()

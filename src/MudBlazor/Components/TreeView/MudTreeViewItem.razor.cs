@@ -277,6 +277,34 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnDoubleClick { get; set; }
 
+        /// <summary>
+        /// Expand this item and all its children recursively
+        /// </summary>
+        public async Task ExpandAllAsync()
+        {
+            if (!_expandedState)
+            {
+                await _expandedState.SetValueAsync(true);
+                StateHasChanged();
+            }
+            foreach (var item in _childItems)
+                await item.ExpandAllAsync();
+        }
+
+        /// <summary>
+        /// Collapse this item and all its children recursively
+        /// </summary>
+        public async Task CollapseAllAsync()
+        {
+            if (_expandedState)
+            {
+                await _expandedState.SetValueAsync(false);
+                StateHasChanged();
+            }
+            foreach (var item in _childItems)
+                await item.CollapseAllAsync();
+        }
+
         public bool Loading { get; set; }
 
         private bool HasChild => ChildContent != null ||
@@ -341,10 +369,11 @@ namespace MudBlazor
             return MudTreeRoot.UnselectAsync(value);
         }
 
-        private bool ReadOnly => MudTreeRoot is null || MudTreeRoot.ReadOnly;
-        private bool ExpandOnClick => MudTreeRoot is null || MudTreeRoot.ExpandOnClick;
-        private bool ExpandOnDoubleClick => MudTreeRoot is null || MudTreeRoot.ExpandOnDoubleClick;
-        private bool Ripple => MudTreeRoot is null || MudTreeRoot.Ripple;
+        private bool ReadOnly => MudTreeRoot?.ReadOnly == true;
+        private bool ExpandOnClick => MudTreeRoot?.ExpandOnClick == true;
+        private bool ExpandOnDoubleClick => MudTreeRoot?.ExpandOnDoubleClick == true;
+        private bool Ripple => MudTreeRoot?.Ripple == true;
+        private bool AutoExpand => MudTreeRoot?.AutoExpand == true;
 
         private async Task OnItemClickedAsync(MouseEventArgs ev)
         {
@@ -455,18 +484,41 @@ namespace MudBlazor
             }
         }
 
-        internal void UpdateSelectionState(HashSet<T> selectedValues)
+        /// <summary>
+        /// Update the Selected state of all items and sub-items.
+        /// </summary>
+        /// <param name="selectedValues"></param>
+        /// <returns>True if any item or sub-item is Selected.</returns>
+        internal async Task<bool> UpdateSelectionStateAsync(HashSet<T> selectedValues)
         {
             if (MudTreeRoot == null)
-                return;
+                return false;
             var value = GetValue();
             var selected = value is not null && selectedValues.Contains(value);
-            _selectedState.SetValueAsync(selected);
+            var selectedBecameTrue = selected && !_selectedState;
+            await _selectedState.SetValueAsync(selected);
             // since the tree view doesn't know our children we need to take care of updating them
+            bool childSelectedBecameTrue = false;
             foreach (var child in _childItems)
-                child.UpdateSelectionState(selectedValues);
+            {
+                var becameTrue = await child.UpdateSelectionStateAsync(selectedValues);
+                childSelectedBecameTrue = childSelectedBecameTrue || becameTrue;
+            }
+            if (AutoExpand && childSelectedBecameTrue && !_expandedState)
+                await _expandedState.SetValueAsync(true);
             StateHasChanged();
+            //if (_selectedState && AutoExpand && Parent is not null)
+            //    await Parent.BubbleExpandAsync();
+            return selectedBecameTrue || childSelectedBecameTrue;
         }
+
+        //private async Task BubbleExpandAsync()
+        //{
+        //    await _expandedState.SetValueAsync(true);
+        //    StateHasChanged();
+        //    if (Parent is not null)
+        //        await Parent.BubbleExpandAsync();
+        //}
 
         public void Dispose()
         {
