@@ -376,10 +376,10 @@ namespace MudBlazor.UnitTests.Components
 #pragma warning disable CS0219 // Variable is assigned but its value is never used
             bool readOnly, disabled;
 #pragma warning restore CS0219 // Variable is assigned but its value is never used
-            create(readOnly=false, disabled=false).Find("span.mud-button-root").ClassList.Should().Contain("hover:mud-default-hover");
-            create(readOnly=true, disabled=false).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
-            create(readOnly=false, disabled=true).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
-            create(readOnly=true, disabled=true).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
+            create(readOnly = false, disabled = false).Find("span.mud-button-root").ClassList.Should().Contain("hover:mud-default-hover");
+            create(readOnly = true, disabled = false).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
+            create(readOnly = false, disabled = true).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
+            create(readOnly = true, disabled = true).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
         }
     }
 }
