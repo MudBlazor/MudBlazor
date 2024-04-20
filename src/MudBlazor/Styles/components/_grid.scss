@@ -1,15 +1,15 @@
 @import '../abstracts/variables';
 
+.mud-flex-break {
+  flex-basis: 100%;
+  width: 0;
+}
+
 .mud-grid {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
   box-sizing: border-box;
-}
-
-.mud-flex-break {
-  flex-basis: 100%;
-  width: 0;
 }
 
 .mud-grid-item {
