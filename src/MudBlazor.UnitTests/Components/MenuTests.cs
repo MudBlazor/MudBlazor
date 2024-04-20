@@ -336,5 +336,33 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.TrueInvocationCount.Should().Be(1);
             comp.Instance.FalseInvocationCount.Should().Be(1);
         }
+
+        [Test]
+        [TestCase("x", null, null)]
+        [TestCase(null, "Close menu", "Close menu")]
+        [TestCase("x", "Close menu", "Close menu")]
+        [TestCase(null, null, null, Description = "Ensures aria-label is not present instead of empty string")]
+        public void MenuWithLabelAndAriaLabel_Should_HaveExpectedAriaLabel(string label, string ariaLabel, string expectedAriaLabel)
+        {
+            var comp = Context.RenderComponent<MenuAccessibilityTest>(parameters => parameters
+                .Add(p => p.Label, label)
+                .Add(p => p.AriaLabel, ariaLabel));
+            var button = comp.Find("button");
+
+            button.GetAttribute("aria-label").Should().Be(expectedAriaLabel);
+        }
+
+        [Test]
+        [TestCase("Close menu", "Close menu")]
+        [TestCase(null, null, Description = "Ensures aria-label is not present instead of empty string")]
+        public void IconMenuWithAriaLabel_Should_HaveExpectedAriaLabel(string ariaLabel, string expectedAriaLabel)
+        {
+            var comp = Context.RenderComponent<MenuAccessibilityTest>(parameters => parameters
+                .Add(p => p.Icon, Icons.Material.Filled.Accessibility)
+                .Add(p => p.AriaLabel, ariaLabel));
+            var button = comp.Find("button");
+
+            button.GetAttribute("aria-label").Should().Be(expectedAriaLabel);
+        }
     }
 }

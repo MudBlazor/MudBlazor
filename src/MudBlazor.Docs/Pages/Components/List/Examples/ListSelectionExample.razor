@@ -5,7 +5,7 @@
         <MudList T="string" @bind-SelectedValue="_selectedValue" Color="@_selectedColor">
             <MudListSubheader>
                 Your drink:
-                <MudChip T="string" Color="@_selectedColor">
+                <MudChip Color="@_selectedColor">
                     @(_selectedValue ?? "You are dry")
                 </MudChip>
             </MudListSubheader>

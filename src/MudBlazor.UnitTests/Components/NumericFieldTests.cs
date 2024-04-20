@@ -860,7 +860,7 @@ namespace MudBlazor.UnitTests.Components
                 await Task.Delay(delay);
                 elapsedTime += delay;
             }
-            // after the final debounce, the value should be updated without swallowing any user input 
+            // after the final debounce, the value should be updated without swallowing any user input
             await Task.Delay(comp.Instance.DebounceInterval);
             comp.Instance.Value.Should().Be(converter.Get(currentText));
             numericField.Text.Should().Be(currentText);
@@ -887,7 +887,7 @@ namespace MudBlazor.UnitTests.Components
             var numericField = comp.FindComponent<MudNumericField<double>>().Instance;
             var input = comp.Find("input");
             var delayedCultureChange = comp.Find("button#culture-change");
-            // ensure text is updated on initialize 
+            // ensure text is updated on initialize
             numericField.Text.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture));
             // trigger first value change
             await Task.Delay(comp.Instance.DebounceInterval);
@@ -910,6 +910,119 @@ namespace MudBlazor.UnitTests.Components
             // e.g. 1.00222222 (one comma something in en-US) turns into 100.222.222 (hundred million something in de-DE)
             await Task.Delay(comp.Instance.DebounceInterval * 2);
             numericField.Text.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture));
+        }
+
+        /// <summary>
+        /// A numeric field with a label should auto-generate an id and use that id on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void NumericFieldWithLabel_Should_GenerateIdForInputAndAccompanyingLabel()
+        {
+            var comp = Context.RenderComponent<MudNumericField<int>>(parameters
+                => parameters.Add(p => p.Label, "Test Label"));
+
+            var input = comp.Find("input");
+            var label = comp.Find("label");
+
+            input.Id.Should().NotBeNullOrEmpty();
+            var forAttribute = label.Attributes.GetNamedItem("for");
+            forAttribute.Should().NotBeNull();
+            forAttribute!.Value.Should().Be(input.Id);
+        }
+
+        /// <summary>
+        /// A numeric field with a label and UserAttributesId should use the UserAttributesId on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void NumericFieldWithLabelAndUserAttributesId_Should_UseUserAttributesIdForInputAndAccompanyingLabel()
+        {
+            var expectedId = "userattributes-id";
+            var comp = Context.RenderComponent<MudNumericField<int>>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        { "Id", expectedId }
+                    }));
+
+            var input = comp.Find("input");
+            var label = comp.Find("label");
+
+            input.Id.Should().Be(expectedId);
+            var forAttribute = label.Attributes.GetNamedItem("for");
+            forAttribute.Should().NotBeNull();
+            forAttribute!.Value.Should().Be(expectedId);
+        }
+
+        /// <summary>
+        /// A numeric field with a label, a UserAttributesId, and an InputId should use the InputId on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void NumericFieldWithLabelAndUserAttributesIdAndInputId_Should_UseInputIdForInputAndAccompanyingLabel()
+        {
+            var expectedId = "input-id";
+            var comp = Context.RenderComponent<MudNumericField<int>>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        { "Id", "userattributes-id" }
+                    })
+                    .Add(p => p.InputId, expectedId));
+
+            var input = comp.Find("input");
+            var label = comp.Find("label");
+
+            input.Id.Should().Be(expectedId);
+            var forAttribute = label.Attributes.GetNamedItem("for");
+            forAttribute.Should().NotBeNull();
+            forAttribute!.Value.Should().Be(expectedId);
+        }
+
+        /// <summary>
+        /// Optional NumericField should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalNumericField_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudNumericField<int>>();
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required NumericField should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredNumericField_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudNumericField<int>>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required NumericField attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredNumericFieldAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudNumericField<int>>();
+
+            var input = comp.Find("input");
+            input.HasAttribute("required").Should().BeFalse();
+            input.GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            input.HasAttribute("required").Should().BeTrue();
+            input.GetAttribute("aria-required").Should().Be("true");
         }
     }
 }

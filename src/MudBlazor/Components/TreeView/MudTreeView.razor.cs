@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -11,16 +12,51 @@ namespace MudBlazor
 #nullable enable
     public partial class MudTreeView<T> : MudComponentBase
     {
-        private T? _previousSelectedValue;
-        //private IEqualityComparer<T?>? _previousValueComparer;
-        private object _selectedUpdateLock = new();
-        private HashSet<MudTreeViewItem<T>>? _selectedValues;
-        private List<MudTreeViewItem<T>> _childItems = new();
+        public MudTreeView()
+        {
+            MudTreeRoot = this;
+            using var registerScope = CreateRegisterScope();
+            _selectedValueState = registerScope.RegisterParameter<T?>(nameof(SelectedValue))
+                .WithParameter(() => SelectedValue)
+                .WithEventCallback(() => SelectedValueChanged)
+                .WithChangeHandler(OnSelectedValueChangedAsync)
+                .WithComparer(() => Comparer);
+            _selectedValuesState = registerScope.RegisterParameter<IReadOnlyCollection<T>?>(nameof(SelectedValues))
+                .WithParameter(() => SelectedValues)
+                .WithEventCallback(() => SelectedValuesChanged)
+                .WithChangeHandler(OnSelectedValuesChangedAsync)
+                .WithComparer(() => Comparer, comparer => new CollectionComparer<T>(comparer));
+            registerScope.RegisterParameter<IEqualityComparer<T?>>(nameof(Comparer))
+                .WithParameter(() => Comparer)
+                .WithChangeHandler(OnComparerChangedAsync);
+            registerScope.RegisterParameter<SelectionMode>(nameof(SelectionMode))
+                .WithParameter(() => SelectionMode)
+                .WithChangeHandler(OnParameterChanged);
+            registerScope.RegisterParameter<bool>(nameof(TriState))
+                .WithParameter(() => TriState)
+                .WithChangeHandler(OnParameterChanged);
+            registerScope.RegisterParameter<bool>(nameof(Disabled))
+                .WithParameter(() => Disabled)
+                .WithChangeHandler(OnParameterChanged);
+            registerScope.RegisterParameter<bool>(nameof(ReadOnly))
+                .WithParameter(() => ReadOnly)
+                .WithChangeHandler(OnParameterChanged);
+            _selection = new();
+        }
+
+        private readonly ParameterState<T?> _selectedValueState;
+        private readonly ParameterState<IReadOnlyCollection<T>?> _selectedValuesState;
+
+        private HashSet<T> _selection;
+        private HashSet<MudTreeViewItem<T>> _childItems = new();
+        private bool _isFirstRender = true;
+        internal bool MultiSelection => SelectionMode == SelectionMode.MultiSelection;
+        private bool ToggleSelection => SelectionMode == SelectionMode.ToggleSelection;
 
         protected string Classname =>
             new CssBuilder("mud-treeview")
                 .AddClass("mud-treeview-dense", Dense)
-                .AddClass("mud-treeview-hover", Hover)
+                .AddClass("mud-treeview-hover", !Disabled && Hover && (!ReadOnly || ExpandOnClick))
                 .AddClass($"mud-treeview-selected-{Color.ToDescriptionString()}")
                 .AddClass($"mud-treeview-checked-{CheckBoxColor.ToDescriptionString()}")
                 .AddClass(Class)
@@ -34,8 +70,12 @@ namespace MudBlazor
                 .AddStyle(Style)
                 .Build();
 
+
+        [CascadingParameter]
+        private MudTreeView<T> MudTreeRoot { get; set; }
+
         /// <summary>
-        /// The color of the selected treeviewitem.
+        /// The color of the selected TreeViewItem.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
@@ -49,11 +89,21 @@ namespace MudBlazor
         public Color CheckBoxColor { get; set; }
 
         /// <summary>
-        /// if true, multiple values can be selected via checkboxes which are automatically shown in the tree view.
+        /// The selection mode determines whether only a single item (SingleSelection) or multiple items
+        /// can be selected (MultiSelection) and whether the selected item can be toggled off by clicking a
+        /// second time (ToggleSelection).
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
-        public bool MultiSelection { get; set; }
+        public SelectionMode SelectionMode { get; set; } = SelectionMode.SingleSelection;
+
+        /// <summary>
+        /// If true, the checkboxes will use the undetermined state in MultiSelection if any children in the sub-tree
+        /// have a different selection value than the parent item.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public bool TriState { get; set; } = true;
 
         /// <summary>
         /// If true, clicking anywhere on the item will expand it, if it has children.
@@ -77,14 +127,14 @@ namespace MudBlazor
         public bool Hover { get; set; }
 
         /// <summary>
-        /// If true, compact vertical padding will be applied to all treeview items.
+        /// If true, compact vertical padding will be applied to all TreeView items.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public bool Dense { get; set; }
 
         /// <summary>
-        /// Setting a height will allow to scroll the treeview. If not set, it will try to grow in height.
+        /// Setting a height will allow to scroll the TreeView. If not set, it will try to grow in height.
         /// You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px.
         /// </summary>
         [Parameter]
@@ -92,7 +142,7 @@ namespace MudBlazor
         public string? Height { get; set; }
 
         /// <summary>
-        /// Setting a maximum height will allow to scroll the treeview. If not set, it will try to grow in height.
+        /// Setting a maximum height will allow to scroll the TreeView. If not set, it will try to grow in height.
         /// You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px.
         /// </summary>
         [Parameter]
@@ -100,14 +150,14 @@ namespace MudBlazor
         public string? MaxHeight { get; set; }
 
         /// <summary>
-        /// Setting a width the treeview. You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px.
+        /// Setting a width the TreeView. You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public string? Width { get; set; }
 
         /// <summary>
-        /// If true, treeview will be disabled and all its childitems.
+        /// If true, TreeView will be disabled and all its children.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
@@ -122,7 +172,7 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public HashSet<T> Items { get; set; } = new();
+        public IReadOnlyCollection<T>? Items { get; set; } = Array.Empty<T>();
 
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
@@ -134,11 +184,15 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<T?> SelectedValueChanged { get; set; }
 
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public IReadOnlyCollection<T>? SelectedValues { get; set; }
+
         /// <summary>
-        /// Called whenever the selectedvalues changed.
+        /// Called whenever the selection changes.
         /// </summary>
         [Parameter]
-        public EventCallback<HashSet<T?>> SelectedValuesChanged { get; set; }
+        public EventCallback<IReadOnlyCollection<T>?> SelectedValuesChanged { get; set; }
 
         /// <summary>
         /// Child content of component.
@@ -161,188 +215,220 @@ namespace MudBlazor
         [Category(CategoryTypes.TreeView.Selecting)]
         public IEqualityComparer<T?> Comparer { get; set; } = EqualityComparer<T?>.Default;
 
-        [CascadingParameter]
-        private MudTreeView<T> MudTreeRoot { get; set; }
-
+        /// <summary>
+        /// Supply a func that asynchronously loads tree view items on demand
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public Func<T?, Task<HashSet<T>>>? ServerData { get; set; }
+        public Func<T?, Task<IReadOnlyCollection<T>>>? ServerData { get; set; }
 
-        public MudTreeView()
-        {
-            MudTreeRoot = this;
-        }
-
-        internal bool IsSelectable { get; private set; }
-
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-            IsSelectable = SelectedValueChanged.HasDelegate;
-        }
+        /// <summary>
+        /// If true, the selection of the tree view can not be changed by clicking its items.
+        /// The currently selected value(s) are still displayed however
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Selecting)]
+        public bool ReadOnly { get; set; }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender && MudTreeRoot == this)
             {
-                await SetSelectedItemsCompare();
+                _isFirstRender = false;
+                UpdateItems();
             }
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        internal Task SetSelectedItemsCompare()
+        /// <summary>
+        /// SingleSelection or ToggleSelection: SelectedValue was updated via binding
+        /// </summary>
+        private Task OnSelectedValueChangedAsync(ParameterChangedEventArgs<T?> args)
         {
-            lock (_selectedUpdateLock)
-            {
-                _selectedValues ??= new(new MudTreeViewItemComparer<T>(Comparer));
-
-                //collect selected items
-                _selectedValues.Clear();
-                foreach (var item in _childItems)
-                {
-                    foreach (var selectedItem in item.GetSelectedItems())
-                    {
-                        _selectedValues.Add(selectedItem);
-                    }
-                }
-            }
-
-            return SelectedValuesChanged.InvokeAsync(SelectedValues);
+            // on first render the children are not yet initialized, so ignore this update
+            if (_isFirstRender)
+                return Task.CompletedTask;
+            return SetSelectedValueAsync(args.Value);
         }
 
-        private HashSet<T?> SelectedValues => _selectedValues is not null
-            ? new(_selectedValues.Select(i => i.Value))
-            : new();
+        /// <summary>
+        /// MultiSelection: SelectedValues was updated via binding
+        /// </summary>
+        private Task OnSelectedValuesChangedAsync(ParameterChangedEventArgs<IReadOnlyCollection<T>?> args)
+        {
+            if (_isFirstRender)
+            {
+                // on first render the children are not yet initialized, so just initialize the selection
+                _selection = args.Value is not null ? new HashSet<T>(args.Value!, Comparer) : new HashSet<T>(Comparer);
+                return Task.CompletedTask;
+            }
+            return SetSelectedValuesAsync(args.Value ?? Array.Empty<T>());
+        }
 
-        public async Task Select(MudTreeViewItem<T> item, bool isSelected = true)
+        private Task OnComparerChangedAsync(ParameterChangedEventArgs<IEqualityComparer<T?>> args)
+        {
+            if (_isFirstRender)
+                return Task.CompletedTask;
+            UpdateItems();
+            return Task.CompletedTask;
+        }
+
+        private void OnParameterChanged()
+        {
+            if (_isFirstRender)
+                return;
+            UpdateItems();
+        }
+
+        internal async Task OnItemClickAsync(MudTreeViewItem<T> clickedItem)
+        {
+            if (ReadOnly)
+                return;
+            if (MultiSelection)
+            {
+                var items = clickedItem.GetChildItemsRecursive();
+                items.Add(clickedItem!);
+                var allSelected = items.All(x => x.GetState<bool>(nameof(MudTreeViewItem<T>.Selected)));
+                // toggle selection of the clickedItem and its children
+                foreach (var item in items.Where(x => x.GetValue() is not null))
+                {
+                    if (allSelected)
+                        _selection.Remove(item.GetValue()!);
+                    else
+                        _selection.Add(item.GetValue()!);
+                }
+                await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
+                UpdateItems();
+                return;
+            }
+            var selected = clickedItem.GetState<bool>(nameof(MudTreeViewItem<T>.Selected));
+            if (ToggleSelection)
+                await SetSelectedValueAsync(selected ? default : clickedItem.GetValue()); // <-- toggle selected value
+            else if (!selected)
+            {
+                // SingleSelection
+                await SetSelectedValueAsync(clickedItem.GetValue());
+            }
+        }
+
+        internal async Task AddChildAsync(MudTreeViewItem<T> item)
+        {
+            _childItems.Add(item);
+            // this is to ensure that setting Selected="true" on the item will update the single/multiselection.
+            // Note: Setting Selected="false" has no effect however because it would cancel the initialization of the SelectedValue or SelectedValues !
+            var value = item.GetValue();
+            if (value is not null && item.GetState<bool>(nameof(MudTreeViewItem<T>.Selected)))
+                await SelectAsync(value);
+            item.UpdateSelectionState(GetSelection());
+        }
+
+        internal void RemoveChild(MudTreeViewItem<T> item)
+        {
+            _childItems.Remove(item);
+        }
+
+        internal async Task SelectAsync(T value)
         {
             if (MultiSelection)
             {
-                await item.Select(isSelected);
-                await SelectedValuesChanged.InvokeAsync(SelectedValues);
+                _selection.Add(value);
+                if (!_isFirstRender)
+                {
+                    await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
+                    UpdateItems();
+                }
                 return;
             }
-
-            if (isSelected)
+            // single and toggle selection
+            await _selectedValueState.SetValueAsync(value);
+            if (!_isFirstRender)
             {
-                await SetSelectedValue(item.Value);
-                return;
+                UpdateItems();
             }
-
-            await SetSelectedValue(default);
         }
 
-        internal void AddChild(MudTreeViewItem<T> item) => _childItems.Add(item);
-
-        public override async Task SetParametersAsync(ParameterView parameters)
+        internal async Task UnselectAsync(T value)
         {
-            // See https://github.com/MudBlazor/MudBlazor/issues/8360#issuecomment-1996168491
-            _previousSelectedValue = SelectedValue;
-            var selectedChanged = parameters.HasParameterChanged(nameof(SelectedValue), SelectedValue, out var selected);
-            var comparerChanged = parameters.HasParameterChanged(nameof(Comparer), Comparer, out var comparer);
-
-            await base.SetParametersAsync(parameters);
-
-            if (selectedChanged)
-            {
-                await SetSelectedValue(selected);
-            }
-
-            if (comparerChanged)
-            {
-                await UpdateSelectedValueCompare(comparer!);
-            }
+            if (_isFirstRender || !MultiSelection)
+                return;
+            _selection.Remove(value);
+            await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
         }
 
         ///  <summary>
-        ///  Sets the selected value of the tree view.
+        ///  Sets the selected value of the tree view in Single- and ToggleSelection mode.
         ///  If the value is found, the corresponding item is selected; 
-        ///  otherwise, selected value is set null.
+        ///  otherwise, selected value is set default.
         ///  If the selected item is valid it sets the corresponding tree item to selected.
         ///  </summary>
         ///  <param name="value">The value to be set as the selected value.</param>
-        internal async Task SetSelectedValue(T? value)
+        internal async Task SetSelectedValueAsync(T? value)
         {
-            if (Comparer.Equals(value, _previousSelectedValue)) return;
+            var isValid = value != null && GetChildValuesRecursive().Contains(value);
+            // note: if there is no item that corresponds to the value, the value is reset to default!
+            await _selectedValueState.SetValueAsync(isValid ? value : default);
+            UpdateItems();
+        }
 
-            await UnSelectAllChildren();
-
-            if (value == null ||
-                FindItemByValue(value) is not { } item)
-            {
-                await SelectedValueChanged.InvokeAsync(default);
+        ///  <summary>
+        ///  Sets the selected values of the tree view in MultiSelection mode.
+        /// Discard any values which are not represented by child values.
+        ///  </summary>
+        private async Task SetSelectedValuesAsync(IReadOnlyCollection<T> newValues)
+        {
+            var allChildValues = GetChildValuesRecursive();
+            var newSelection = new HashSet<T>(newValues.Where(x => allChildValues.Contains(x)), Comparer);
+            if (_selection.SetEquals(newSelection))
                 return;
-            }
-
-            await SelectedValueChanged.InvokeAsync(item.Value);
-            await item.Select(true);
+            _selection = newSelection;
+            await _selectedValuesState.SetValueAsync(newSelection);
+            UpdateItems();
         }
 
-        private async ValueTask UpdateSelectedValueCompare(IEqualityComparer<T?> comparer)
+        /// <summary>
+        /// Let the items update their selection state visualization and state according to
+        /// the selection in the tree view
+        /// </summary>
+        private void UpdateItems()
         {
-            List<MudTreeViewItem<T>> unselectedItem;
-
-            lock (_selectedUpdateLock)
+            var selection = GetSelection();
+            foreach (var item in _childItems)
             {
-                if (_selectedValues is null)
-                {
-                    _selectedValues = new(new MudTreeViewItemComparer<T>(comparer));
-                    return;
-                }
-
-                var newSelected = new HashSet<MudTreeViewItem<T>>(new MudTreeViewItemComparer<T>(comparer));
-
-                foreach (var item in _selectedValues)
-                {
-                    newSelected.Add(item);
-                }
-
-                unselectedItem = _selectedValues.Except(newSelected).ToList();
-
-                _selectedValues = newSelected;
-            }
-
-
-            foreach (var unselectedItems in unselectedItem)
-            {
-                await unselectedItems.SelectedChanged.InvokeAsync(false);
+                item.UpdateSelectionState(selection);
             }
         }
 
-        internal async Task UnSelectAllChildren(List<MudTreeViewItem<T>>? children = null)
+        private HashSet<T> GetSelection()
         {
+            HashSet<T> selection;
+            if (MultiSelection)
+                selection = new HashSet<T>(_selection, Comparer);
+            else
+            {
+                selection = new HashSet<T>(Comparer);
+                if (_selectedValueState.Value != null)
+                    selection.Add(_selectedValueState.Value);
+            }
+            return selection;
+        }
+
+        // TODO: speed this up with caching
+        private HashSet<T> GetChildValuesRecursive(IEnumerable<MudTreeViewItem<T>>? children = null, HashSet<T>? values = null)
+        {
+            values ??= new HashSet<T>(Comparer);
             children ??= _childItems;
 
             foreach (var item in children)
             {
-                await UnSelectAllChildren(item.ChildItems);
-
-                if (item.Activated)
-                {
-                    await item.Select(false);
-                }
-            }
-        }
-
-        internal MudTreeViewItem<T>? FindItemByValue(T value, List<MudTreeViewItem<T>>? children = null)
-        {
-            children ??= _childItems;
-
-            foreach (var item in children)
-            {
-                if (Comparer.Equals(item.Value, value))
-                {
-                    return item;
-                }
-
-                var foundChild = FindItemByValue(value, item.ChildItems);
-                if (foundChild != null)
-                {
-                    return foundChild;
-                }
+                var value = item.GetValue();
+                if (value is not null)
+                    values.Add(value);
+                if (item.ChildItems.Count > 0)
+                    GetChildValuesRecursive(item.ChildItems, values);
             }
 
-            return null;
+            return values;
         }
+
     }
 }

@@ -16,7 +16,7 @@
 </MudStack>
 
 <MudStack>
-    <MudChipSet @bind-SelectedValue="@justify" Mandatory="true">
+    <MudChipSet @bind-SelectedValue="@justify" CheckMark>
         <MudChip Value="Justify.FlexStart" Text="Justify Start" SelectedColor="Color.Primary" Variant="Variant.Text" />
         <MudChip Value="Justify.Center" Text="Justify Center" SelectedColor="Color.Primary" Variant="Variant.Text" Default="true" />
         <MudChip Value="Justify.FlexEnd" Text="Justify End" SelectedColor="Color.Primary" Variant="Variant.Text" />
@@ -25,7 +25,7 @@
         <MudChip Value="Justify.SpaceEvenly" Text="Justify Space Evenly" SelectedColor="Color.Primary" Variant="Variant.Text" />
     </MudChipSet>
 
-    <MudChipSet @bind-SelectedValue="@align" Mandatory="true">
+    <MudChipSet @bind-SelectedValue="@align" CheckMark>
         <MudChip Value="AlignItems.Start" Text="Align Start" SelectedColor="Color.Secondary" Variant="Variant.Text" />
         <MudChip Value="AlignItems.Center" Text="Align Center" SelectedColor="Color.Secondary" Variant="Variant.Text" Default="true" />
         <MudChip Value="AlignItems.End" Text="Align End" SelectedColor="Color.Secondary" Variant="Variant.Text" />
@@ -33,7 +33,7 @@
         <MudChip Value="AlignItems.Baseline" Text="Align Baseline" SelectedColor="Color.Secondary" Variant="Variant.Text" />
     </MudChipSet>
 
-    <MudChipSet @bind-SelectedValue="@stretch" Mandatory="true">
+    <MudChipSet @bind-SelectedValue="@stretch" CheckMark>
         <MudChip Value="StretchItems.None" Text="Do Not Stretch" SelectedColor="Color.Tertiary" Variant="Variant.Text" Default="true" />
         <MudChip Value="StretchItems.Start" Text="Stretch First" SelectedColor="Color.Tertiary" Variant="Variant.Text" />
         <MudChip Value="StretchItems.End" Text="Stretch Last" SelectedColor="Color.Tertiary" Variant="Variant.Text" />

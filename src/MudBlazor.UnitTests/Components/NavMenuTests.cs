@@ -61,12 +61,14 @@ namespace MudBlazor.UnitTests.Components
         public void One_Way_Bindable()
         {
             var comp = Context.RenderComponent<NavMenuOneWay>();
-            comp.Markup.Should().Contain("expanded");
+            comp.Markup.Should().Contain("mud-expanded");
+            comp.Markup.Should().Contain("aria-hidden=\"false\"");
 
             var navgroup = comp.Find(".mud-nav-group>button");
             navgroup.Click();
 
-            comp.Markup.Should().NotContain("expanded");
+            comp.Markup.Should().NotContain("mud-expanded");
+            comp.Markup.Should().Contain("aria-hidden=\"true\"");
         }
 
         /// <summary>
@@ -77,7 +79,8 @@ namespace MudBlazor.UnitTests.Components
         public void Two_Way_Bindable()
         {
             var comp = Context.RenderComponent<NavMenuTwoWay>();
-            comp.Markup.Should().NotContain("expanded");
+            comp.Markup.Should().NotContain("mud-expanded");
+            comp.Markup.Should().Contain("aria-hidden=\"true\"");
             var expanded = comp.Instance._expanded;
             expanded.Should().BeFalse();
 
@@ -86,7 +89,8 @@ namespace MudBlazor.UnitTests.Components
 
             expanded = comp.Instance._expanded;
             expanded.Should().BeTrue();
-            comp.Markup.Should().Contain("expanded");
+            comp.Markup.Should().Contain("mud-expanded");
+            comp.Markup.Should().Contain("aria-hidden=\"false\"");
         }
     }
 }

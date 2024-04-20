@@ -1,22 +1,32 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudTreeView MultiSelection="true" @bind-SelectedValues="SelectedValues">
-    <MudTreeViewItem Value="@("content")">
-        <MudTreeViewItem Value="@("logo.png")" />
-    </MudTreeViewItem>
-    <MudTreeViewItem Value="@("src")">
-        <MudTreeViewItem Value="@("mudblazor.docs")" />
-        <MudTreeViewItem Value="@("mudblazor.docs.server")">
-            <MudTreeViewItem Value="@("wwwroot")">
-                <MudTreeViewItem Value="@("robots.txt")" />
-                <MudTreeViewItem Value="@("favicon.ico")" />
-            </MudTreeViewItem>
+<MudPaper Width="300px" Elevation="0">
+    <MudTreeView Hover ReadOnly="@ReadOnly" TriState="@TriState" @bind-SelectedValues="SelectedValues" SelectionMode="@SelectionMode.MultiSelection"
+                 CheckBoxColor="Color.Info">
+        <MudTreeViewItem Value="@("config")" Expanded Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen">
+            <MudTreeViewItem Value='"launch.json"' Icon="@Icons.Custom.FileFormats.FileCode" />
+            <MudTreeViewItem Value='"tasks.json"' Icon="@Icons.Custom.FileFormats.FileCode" />
         </MudTreeViewItem>
-    </MudTreeViewItem>
-</MudTreeView>
+        <MudTreeViewItem Value="@("images")" Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen">
+            <MudTreeViewItem Value="@("logo.png")" Icon="@Icons.Custom.FileFormats.FileImage" />
+        </MudTreeViewItem>
+    </MudTreeView>
+</MudPaper>
 
-<MudText Style="width: 100%" Typo="Typo.subtitle1"  Class="mb-n2">Number of selected items: @(SelectedValues?.Count ?? 0)</MudText>
+<MudStack Row Justify="Justify.Center" Style="width: 100%" Wrap="Wrap.Wrap">
+    <MudChipSet T="string" @bind-SelectedValues="SelectedValues" MultiSelection Color="Color.Info" Variant="Variant.Text">
+        <MudChip Text="config"/>
+        <MudChip Text="launch.json"/>
+        <MudChip Text="tasks.json"/>
+        <MudChip Text="images"/>
+        <MudChip Text="logo.png"/>
+    </MudChipSet>
+    <MudSwitch @bind-Value="TriState" Color="Color.Info">TriState</MudSwitch>
+    <MudSwitch @bind-Value="ReadOnly" Color="Color.Info">ReadOnly</MudSwitch>    
+</MudStack>
 
 @code {
-    HashSet<string> SelectedValues { get; set; }
+    public IReadOnlyCollection<string> SelectedValues = ["tasks.json", "launch.json"];
+    public bool ReadOnly = false;
+    public bool TriState = true;
 }
