@@ -25,12 +25,12 @@ namespace MudBlazor
 
         protected string ButtonClassname =>
             new CssBuilder("mud-button-root mud-icon-button")
-                .AddClass($"mud-ripple mud-ripple-radio", Ripple && !Disabled && !(MudRadioGroup?.GetDisabledState() ?? false) && !(MudRadioGroup?.GetReadOnlyState() ?? false))
-                .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor == null || (UncheckedColor != null && Checked))
-                .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && Checked == false)
+                .AddClass($"mud-ripple mud-ripple-radio", Ripple && !IsDisabled && !ReadOnly)
+                .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !ReadOnly && !IsDisabled && (UncheckedColor == null || (UncheckedColor != null && Checked)))
+                .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !ReadOnly && !IsDisabled && UncheckedColor != null && Checked == false)
                 .AddClass($"mud-radio-dense", Dense)
                 .AddClass($"mud-disabled", IsDisabled)
-                .AddClass($"mud-readonly", MudRadioGroup?.GetReadOnlyState())
+                .AddClass($"mud-readonly", ReadOnly)
                 .AddClass($"mud-checked", Checked)
                 .AddClass("mud-error-text", MudRadioGroup?.HasErrors)
                 .Build();
@@ -138,15 +138,12 @@ namespace MudBlazor
         [Category(CategoryTypes.Radio.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
-        private bool IsDisabled => Disabled || (MudRadioGroup?.GetDisabledState() ?? false);
+        private bool IsDisabled => Disabled || MudRadioGroup?.GetDisabledState() == true;
+        private bool ReadOnly => MudRadioGroup?.GetReadOnlyState() == true;
 
         internal bool Checked { get; private set; }
 
         internal MudRadioGroup<T>? MudRadioGroup => (MudRadioGroup<T>?)IMudRadioGroup;
-
-        protected bool GetReadOnlyState() => MudRadioGroup?.ReadOnly == true;
-
-        protected bool GetDisabledState() => MudRadioGroup?.Disabled == true || Disabled;
 
         private Placement ConvertPlacement(Placement placement)
         {
