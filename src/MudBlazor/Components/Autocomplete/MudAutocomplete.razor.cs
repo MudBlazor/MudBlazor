@@ -493,6 +493,15 @@ namespace MudBlazor
             }
         }
 
+        public async Task OnFocus()
+        {
+            if (GetDisabledState() || GetReadOnlyState() || IsOpen)
+                return;
+
+            // Open the menu.
+            await ChangeMenu(true);
+        }
+
         /// <summary>
         /// Opens or closes the drop-down of items.
         /// </summary>
