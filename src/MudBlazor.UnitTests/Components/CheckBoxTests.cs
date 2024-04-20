@@ -319,7 +319,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Dark, Color.Primary)]
         public void CheckBoxColorTest(Color color, Color uncheckedcolor)
         {
-            var comp = Context.RenderComponent<MudCheckBox<bool>>(x => x.Add(c => c.Color, color).Add(b => b.UnCheckedColor, uncheckedcolor));
+            var comp = Context.RenderComponent<MudCheckBox<bool>>(x => x.Add(c => c.Color, color).Add(b => b.UncheckedColor, uncheckedcolor));
 
             var box = comp.Instance;
             var input = comp.Find("input");

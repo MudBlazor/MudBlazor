@@ -26,8 +26,8 @@ namespace MudBlazor
         protected string ButtonClassname =>
             new CssBuilder("mud-button-root mud-icon-button")
                 .AddClass($"mud-ripple mud-ripple-radio", Ripple && !Disabled && !(MudRadioGroup?.GetDisabledState() ?? false) && !(MudRadioGroup?.GetReadOnlyState() ?? false))
-                .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", UnCheckedColor == null || (UnCheckedColor != null && Checked))
-                .AddClass($"mud-{UnCheckedColor?.ToDescriptionString()}-text hover:mud-{UnCheckedColor?.ToDescriptionString()}-hover", UnCheckedColor != null && Checked == false)
+                .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor == null || (UncheckedColor != null && Checked))
+                .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && Checked == false)
                 .AddClass($"mud-radio-dense", Dense)
                 .AddClass($"mud-disabled", IsDisabled)
                 .AddClass($"mud-readonly", MudRadioGroup?.GetReadOnlyState())
@@ -87,7 +87,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
-        public Color? UnCheckedColor { get; set; } = null;
+        public Color? UncheckedColor { get; set; } = null;
 
         /// <summary>
         /// The position of the child content.
@@ -143,6 +143,10 @@ namespace MudBlazor
         internal bool Checked { get; private set; }
 
         internal MudRadioGroup<T>? MudRadioGroup => (MudRadioGroup<T>?)IMudRadioGroup;
+
+        protected bool GetReadOnlyState() => MudRadioGroup?.ReadOnly == true;
+
+        protected bool GetDisabledState() => MudRadioGroup?.Disabled == true || Disabled;
 
         private Placement ConvertPlacement(Placement placement)
         {
