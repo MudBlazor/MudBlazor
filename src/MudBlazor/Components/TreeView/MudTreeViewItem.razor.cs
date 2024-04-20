@@ -370,9 +370,13 @@ namespace MudBlazor
         }
 
         private bool ReadOnly => MudTreeRoot?.ReadOnly == true;
+
         private bool ExpandOnClick => MudTreeRoot?.ExpandOnClick == true;
+
         private bool ExpandOnDoubleClick => MudTreeRoot?.ExpandOnDoubleClick == true;
+
         private bool Ripple => MudTreeRoot?.Ripple == true;
+
         private bool AutoExpand => MudTreeRoot?.AutoExpand == true;
 
         private async Task OnItemClickedAsync(MouseEventArgs ev)
