@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
@@ -38,6 +39,7 @@ namespace MudBlazor.UnitTests.Components
             slider.Size.Should().Be(Size.Small);
             slider.ValueLabelCultureInfo.Should().Be(CultureInfo.InvariantCulture);
             slider.ValueLabelStringFormat.Should().BeNull();
+            slider.ValueLabelContent.Should().BeNull();
         }
 
         [Test]
@@ -404,6 +406,7 @@ namespace MudBlazor.UnitTests.Components
             filling.GetAttribute("style").Should().Be($"width:80%;");
         }
 
+        [Test]
         [TestCase(0.0, "$0.00")]
         [TestCase(20.5, "$20.50")]
         [TestCase(75.5, "$75.50")]
@@ -423,6 +426,15 @@ namespace MudBlazor.UnitTests.Components
 
             var valueLabel = comp.Find(".mud-slider-value-label");
             valueLabel.TextContent.Should().Be(expectedValueLabel);
+        }
+
+        [Test]
+        public void CustomValueLabelContent()
+        {
+            var comp = Context.RenderComponent<SliderWithCustomValueLabelContentTest>();
+            IElement AlertText() => MudAlert().Find("div.mud-alert-message");
+            IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
+            AlertText().InnerHtml.Should().Be("20");
         }
     }
 }

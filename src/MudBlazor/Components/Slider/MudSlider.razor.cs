@@ -146,6 +146,16 @@ namespace MudBlazor
         [Category(CategoryTypes.Button.Appearance)]
         public string? ValueLabelStringFormat { get; set; }
 
+        /// <summary>
+        /// Sets custom RenderFragment for ValueLabel.
+        /// </summary>
+        /// <remarks>
+        /// Keep in mind that for this RenderFragment to show the <see cref="ValueLabel"/> needs to be <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public RenderFragment<T>? ValueLabelContent { get; set; }
+
         protected override void OnParametersSet()
         {
             if (TickMarks)
