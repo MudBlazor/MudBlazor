@@ -780,7 +780,7 @@ namespace MudBlazor.UnitTests.Components
         public void IsDateDisabledFunc_SettingDateToADisabledDateYieldsNull()
         {
             var wasEventCallbackCalled = false;
-            Func<DateTime, bool> isDisabledFunc = date => true;
+            Func<DateTime, bool> isDisabledFunc = _ => true;
             var comp = Context.RenderComponent<MudDatePicker>(
                 Parameter(nameof(MudDatePicker.IsDateDisabledFunc), isDisabledFunc),
                 EventCallback("DateChanged", (DateTime? _) => wasEventCallbackCalled = true)
@@ -834,7 +834,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AdditionalDateClassesFunc_ClassIsAdded()
         {
-            Func<DateTime, string> additionalDateClassesFunc = date => "__addedtestclass__";
+            Func<DateTime, string> additionalDateClassesFunc = _ => "__addedtestclass__";
 
             var comp = OpenPicker(Parameter(nameof(MudDatePicker.AdditionalDateClassesFunc), additionalDateClassesFunc));
 
@@ -889,7 +889,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => datePicker.Instance.CloseAsync(false));
 
             // Change the value of autoclose
-            datePicker.Instance.AutoClose = true;
+            datePicker.SetParam(parameter => parameter.AutoClose, true);
 
             // Open the datepicker
             await comp.InvokeAsync(() => datePicker.Instance.OpenAsync());
@@ -1036,9 +1036,11 @@ namespace MudBlazor.UnitTests.Components
 
             var cultureInfo = new CultureInfo("en-US");
 
-            var datePicker = comp.FindComponent<MudDatePicker>().Instance;
-            datePicker.Editable = true;
-            datePicker.Culture = cultureInfo;
+            var datePickerComponent = comp.FindComponent<MudDatePicker>();
+            datePickerComponent.SetParam(parameter => parameter.Editable, true);
+            datePickerComponent.SetParam(parameter => parameter.Culture, cultureInfo);
+
+            var datePicker = datePickerComponent.Instance;
 
             await comp.InvokeAsync(() => comp.Find("input").Change("10/10/2020"));
             comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2020, 10, 10)));
@@ -1052,7 +1054,8 @@ namespace MudBlazor.UnitTests.Components
         public async Task DatePickerTest_KeyboardNavigation()
         {
             var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
-            var datePicker = comp.FindComponent<MudDatePicker>().Instance;
+            var datePickerComponent = comp.FindComponent<MudDatePicker>();
+            var datePicker = datePickerComponent.Instance;
 
             await comp.InvokeAsync(() => datePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
@@ -1078,7 +1081,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => datePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Tab", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
 
-            datePicker.Disabled = true;
+            datePickerComponent.SetParam(parameter => parameter.Disabled, true);
 
             await comp.InvokeAsync(() => datePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
@@ -1092,7 +1095,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => datePicker.ToggleStateAsync());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
 
-            datePicker.Disabled = false;
+            datePickerComponent.SetParam(parameter => parameter.Disabled, false);
 
             await comp.InvokeAsync(() => datePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
@@ -1125,11 +1128,11 @@ namespace MudBlazor.UnitTests.Components
         public async Task DatePickerTest_CheckIfMonthsAreDisabled()
         {
             var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
-            var datePicker = comp.FindComponent<MudDatePicker>().Instance;
+            var datePickerComponent = comp.FindComponent<MudDatePicker>();
+            var datePicker = datePickerComponent.Instance;
 
-            datePicker.MinDate = DateTime.Now.AddDays(-1);
-            datePicker.MaxDate = DateTime.Now.AddDays(1);
-
+            datePickerComponent.SetParam(parameter => parameter.MinDate, DateTime.Now.AddDays(-1));
+            datePickerComponent.SetParam(parameter => parameter.MaxDate, DateTime.Now.AddDays(1));
 
             // Open the datepicker
             await comp.InvokeAsync(datePicker.OpenAsync);
@@ -1169,9 +1172,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DatePicker_ImmediateText_Should_Callback_TextChanged()
         {
-            string changed_text = null;
+            string changedText = null;
 
-            var comp = Context.RenderComponent<MudDatePicker>(EventCallback<string>("TextChanged", x => changed_text = x));
+            var comp = Context.RenderComponent<MudDatePicker>(EventCallback<string>("TextChanged", x => changedText = x));
 
             comp.SetParam(x => x.Editable, true);
             comp.SetParam(x => x.ImmediateText, true);
@@ -1182,7 +1185,7 @@ namespace MudBlazor.UnitTests.Components
             // Simulate user input
             comp.Find("input").Input("22");
 
-            changed_text.Should().Be("22");
+            changedText.Should().Be("22");
 
             // Set ImmediateText to false
             comp.SetParam(x => x.ImmediateText, false);
@@ -1191,7 +1194,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Input("33");
 
             // changed_text should not be updated since ImmediateText was false
-            changed_text.Should().Be("22");
+            changedText.Should().Be("22");
 
             // Set ImmediateText to true
             comp.SetParam(x => x.ImmediateText, true);
@@ -1200,7 +1203,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Input("44");
 
             //changed_text should be updated
-            changed_text.Should().Be("44");
+            changedText.Should().Be("44");
 
             // Set Editable to false.
             // ImmediateText should only work if Editable is also true.
@@ -1210,7 +1213,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Input("55");
 
             //changed_text should not be updated
-            changed_text.Should().Be("44");
+            changedText.Should().Be("44");
         }
 
         [Test]
@@ -1237,8 +1240,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-input-adornment button").Click();
             comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
 
-            comp.FindAll("button.mud-picker-calendar-day")
-                .Where(x => x.TrimmedText().Equals("15")).First().Click();
+            comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("15")).Click();
 
             ((IHtmlInputElement)comp.FindAll("input")[0]).Value.Should().Be(comp.Instance.Picker.Text);
         }
@@ -1249,8 +1251,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DatePickerWithLabel_Should_GenerateIdForInputAndAccompanyingLabel()
         {
-            var comp = Context.RenderComponent<MudDatePicker>(parameters
-                => parameters.Add(p => p.Label, "Test Label"));
+            var comp = Context.RenderComponent<MudDatePicker>(parameters => 
+                parameters.Add(p => p.Label, "Test Label"));
 
             var input = comp.Find("input");
             var label = comp.Find("label");
