@@ -2,7 +2,7 @@
 
 <MudPaper Width="250px" Class="py-3 mb-4" Elevation="0">
     <MudNavMenu>
-        <MudNavGroup Title="Settings" @bind-Expanded=_isExpanded>
+        <MudNavGroup Title="Settings" @bind-Expanded=_expanded>
             <MudNavLink Href="/users">Users</MudNavLink>
             <MudNavLink Href="/security">Security</MudNavLink>
         </MudNavGroup>
@@ -11,7 +11,7 @@
 
 <MudText>
     The MudNavGroup is
-    @if (_isExpanded)
+    @if (_expanded)
     {
         <b class="mud-theme-tertiary rounded pa-2 ml-2">expanded</b>
     }
@@ -22,5 +22,5 @@
 </MudText>
 
 @code{
-    bool _isExpanded = true;
+    bool _expanded = true;
 }
