@@ -65,9 +65,9 @@ namespace MudBlazor.Docs.Services
         {
             var ratio = Fuzz.Ratio(keyword, search);
             var partialOutOfOrderRatio = Fuzz.PartialTokenSortRatio(keyword, search);
-            var finalRatio = Math.Max(ratio, partialOutOfOrderRatio);
+            var averageRatio = (ratio + partialOutOfOrderRatio) / 2;
 
-            return finalRatio;
+            return averageRatio;
         }
 
         private void AddEntry(ApiLinkServiceEntry entry)
