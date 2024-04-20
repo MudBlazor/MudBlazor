@@ -398,7 +398,7 @@ namespace MudBlazor
         /// Gets or sets whether pressing the <c>Tab</c> key updates the Value to the currently selected item.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  
+        /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
@@ -788,13 +788,10 @@ namespace MudBlazor
                     await ChangeMenuAsync(open: false);
                     break;
                 case "Tab":
-                    await Task.Delay(1);
-                    if (!IsOpen)
-                        return;
-                    if (SelectValueOnTab)
+                    if (IsOpen && SelectValueOnTab)
+                    {
                         await OnEnterKey();
-                    else
-                        await ToggleMenuAsync();
+                    }
                     break;
                 case "Backspace":
                     if (args.CtrlKey && args.ShiftKey)
