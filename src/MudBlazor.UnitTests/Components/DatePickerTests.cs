@@ -635,9 +635,8 @@ namespace MudBlazor.UnitTests.Components
                 .FindAll("button.mud-picker-month")
                 .Select(button => ((IHtmlButtonElement)button).IsDisabled)
                 .Should()
-                .BeEquivalentTo(
-                    // Only months with 31 days not disabled
-                    new[]
+                // Only months with 31 days not disabled
+                .BeEquivalentTo(new[]
                     {
                         false,
                         true,
@@ -1256,7 +1255,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DatePickerWithLabel_Should_GenerateIdForInputAndAccompanyingLabel()
         {
-            var comp = Context.RenderComponent<MudDatePicker>(parameters => 
+            var comp = Context.RenderComponent<MudDatePicker>(parameters =>
                 parameters.Add(p => p.Label, "Test Label"));
 
             var input = comp.Find("input");
