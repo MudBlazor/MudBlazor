@@ -1,7 +1,7 @@
 ﻿@page "/mud/announcements/{Id}"
 
 <DocsPage DisplayFooter="true">
-    <MudContainer Class="announcment-container" MaxWidth="MaxWidth.Medium">
+    <MudContainer Class="announcement-container" MaxWidth="MaxWidth.Medium">
         @if (_message == null)
         {
             <MudProgressCircular Color="Color.Default" Indeterminate="true" />
@@ -16,8 +16,8 @@
                         @foreach (var author in _message.Authors)
                         {
                             <div class="d-flex justify-start align-center mx-1">
-                                <MudAvatar>
-                                    <MudImage Src="@author.AvatarUrl" />
+                                <MudAvatar Style="background: transparent">
+                                    <MudImage Src="@author.AvatarUrl" Alt="Avatar" />
                                 </MudAvatar>
                                 <MudText Typo="Typo.subtitle2" Class="mx-2">@author.DisplayName</MudText>
                             </div>
