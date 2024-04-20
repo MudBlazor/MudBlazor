@@ -139,7 +139,7 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         private bool IsDisabled => Disabled || MudRadioGroup?.GetDisabledState() == true;
-        
+
         private bool ReadOnly => MudRadioGroup?.GetReadOnlyState() == true;
 
         internal bool Checked { get; private set; }
