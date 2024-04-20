@@ -141,7 +141,7 @@ namespace MudBlazor.UnitTests.Components
             // IsOpen must be true to properly simulate a user clicking outside of the component, which is what the next ToggleMenu call below does.
             autocompletecomp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
             // now trigger the coercion by closing the menu
-            await comp.InvokeAsync(() => autocomplete.ToggleMenu());
+            await comp.InvokeAsync(() => autocomplete.ToggleMenuAsync());
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
         }
@@ -166,7 +166,7 @@ namespace MudBlazor.UnitTests.Components
             autocompletecomp.SetParam(p => p.Text, "Austria"); // not part of the U.S.
 
             // now trigger the coercion by toggling the the menu (it won't even open for invalid values, but it will coerce)
-            await comp.InvokeAsync(() => autocomplete.ToggleMenu());
+            await comp.InvokeAsync(() => autocomplete.ToggleMenuAsync());
             comp.WaitForAssertion(() => autocomplete.Value.Should().Be("Austria"));
             autocomplete.Text.Should().Be("Austria");
         }
@@ -206,10 +206,10 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
             // set a value the search won't find
-            await comp.InvokeAsync(() => autocomplete.ToggleMenu());
+            await comp.InvokeAsync(() => autocomplete.ToggleMenuAsync());
             autocompletecomp.SetParam(a => a.Text, "Austria");
             // now trigger the coercion by closing the menu
-            await comp.InvokeAsync(() => autocomplete.ToggleMenu());
+            await comp.InvokeAsync(() => autocomplete.ToggleMenuAsync());
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Austria");
         }
@@ -531,7 +531,7 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Text.Should().Be("Alabama");
 
             // ToggleMenu to open menu and Clear to close it and check the text and value
-            await comp.InvokeAsync(() => autocomplete.ToggleMenu());
+            await comp.InvokeAsync(() => autocomplete.ToggleMenuAsync());
             await comp.InvokeAsync(() => autocomplete.Clear().Wait());
             comp.Markup.Should().NotContain("mud-popover-open");
             autocomplete.Value.Should().Be(null);
@@ -610,7 +610,7 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Text.Should().Be("Alabama");
 
             // Reset it
-            await comp.InvokeAsync(() => autocomplete.ToggleMenu());
+            await comp.InvokeAsync(() => autocomplete.ToggleMenuAsync());
             await comp.InvokeAsync(() => autocomplete.ResetAsync());
             comp.Markup.Should().NotContain("mud-popover-open");
             autocomplete.Value.Should().Be(null);
@@ -811,7 +811,7 @@ namespace MudBlazor.UnitTests.Components
                 await comp.InvokeAsync(async () => await autocomplete.SelectAsync());
                 await comp.InvokeAsync(async () => await autocomplete.SelectRangeAsync(0, 1));
                 autocompletecomp.Find("input").Input("");
-                await comp.InvokeAsync(() => autocomplete.ToggleMenu());
+                await comp.InvokeAsync(() => autocomplete.ToggleMenuAsync());
                 comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
                 await comp.InvokeAsync(() => autocomplete.OnEnterKey());
