@@ -1313,6 +1313,18 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Autocomplete_Should_OpenMenuOnFocus()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+
+            comp.Find("input.mud-input-root").Focus();
+
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+        }
+
+        [Test]
         public async Task Autocomplete_ReturnedItemsCount_Should_Be_Accurate()
         {
             Task<IEnumerable<string>> search(string value, CancellationToken token)
