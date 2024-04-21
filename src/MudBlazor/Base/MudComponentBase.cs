@@ -87,6 +87,18 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
+            DetectIllegalRazorParametersV7();
+        }
+
+        /// <summary>
+        /// Razor silently ignores parameters which don't exist. Since v7.0.0 renamed so many parameters we want
+        /// to help our users find old parameters they missed by throwing a runtime exception.
+        ///
+        /// TODO: Remove this later. At the moment, we don't know yet when will be the best time to remove it.
+        /// Sometime when the v7 version has stabilized.
+        /// </summary>
+        private void DetectIllegalRazorParametersV7()
+        {
             foreach (var parameter in UserAttributes.Keys)
             {
                 if (this is MudBadge)
@@ -307,7 +319,7 @@ namespace MudBlazor
 
         private void NotifyIllegalParameter(string parameter)
         {
-            throw new ArgumentException($"Illegal parameter '{parameter}'. This was removed in v7.0.0, see Migration Guide for more Info https://github.com/MudBlazor/MudBlazor/issues/8447");
+            throw new ArgumentException($"Illegal parameter '{parameter}'. This was removed in v7.0.0, see Migration Guide for more info https://github.com/MudBlazor/MudBlazor/issues/8447");
         }
     }
 }
