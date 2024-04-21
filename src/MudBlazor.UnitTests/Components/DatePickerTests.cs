@@ -1284,13 +1284,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudDatePicker>(parameters
                 => parameters.Add(p => p.Label, "Test Label"));
 
-            var input = comp.Find("input");
-            var label = comp.Find("label");
-
-            input.Id.Should().NotBeNullOrEmpty();
-            var forAttribute = label.Attributes.GetNamedItem("for");
-            forAttribute.Should().NotBeNull();
-            forAttribute!.Value.Should().Be(input.Id);
+            comp.Find("input").Id.Should().NotBeNullOrEmpty();
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(comp.Find("input").Id);
         }
 
         /// <summary>
@@ -1308,13 +1304,9 @@ namespace MudBlazor.UnitTests.Components
                         { "Id", expectedId }
                     }));
 
-            var input = comp.Find("input");
-            var label = comp.Find("label");
-
-            input.Id.Should().Be(expectedId);
-            var forAttribute = label.Attributes.GetNamedItem("for");
-            forAttribute.Should().NotBeNull();
-            forAttribute!.Value.Should().Be(expectedId);
+            comp.Find("input").Id.Should().Be(expectedId);
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
         }
 
         /// <summary>
@@ -1325,9 +1317,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudDatePicker>();
 
-            var input = comp.Find("input");
-            input.HasAttribute("required").Should().BeFalse();
-            input.GetAttribute("aria-required").Should().Be("false");
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
         }
 
         /// <summary>
@@ -1339,9 +1330,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudDatePicker>(parameters => parameters
                 .Add(p => p.Required, true));
 
-            var input = comp.Find("input");
-            input.HasAttribute("required").Should().BeTrue();
-            input.GetAttribute("aria-required").Should().Be("true");
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
         }
 
         /// <summary>
@@ -1352,15 +1342,14 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudDatePicker>();
 
-            var input = comp.Find("input");
-            input.HasAttribute("required").Should().BeFalse();
-            input.GetAttribute("aria-required").Should().Be("false");
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
 
             comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.Required, true));
 
-            input.HasAttribute("required").Should().BeTrue();
-            input.GetAttribute("aria-required").Should().Be("true");
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
         }
     }
 }

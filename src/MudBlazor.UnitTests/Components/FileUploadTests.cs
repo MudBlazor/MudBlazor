@@ -340,9 +340,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>();
 
-            var input = comp.Find("input");
-            input.HasAttribute("required").Should().BeFalse();
-            input.GetAttribute("aria-required").Should().Be("false");
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
         }
 
         /// <summary>
@@ -354,9 +353,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
                 .Add(p => p.Required, true));
 
-            var input = comp.Find("input");
-            input.HasAttribute("required").Should().BeTrue();
-            input.GetAttribute("aria-required").Should().Be("true");
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
         }
 
         /// <summary>
@@ -367,15 +365,14 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>();
 
-            var input = comp.Find("input");
-            input.HasAttribute("required").Should().BeFalse();
-            input.GetAttribute("aria-required").Should().Be("false");
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
 
             comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.Required, true));
 
-            input.HasAttribute("required").Should().BeTrue();
-            input.GetAttribute("aria-required").Should().Be("true");
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
         }
     }
 }
