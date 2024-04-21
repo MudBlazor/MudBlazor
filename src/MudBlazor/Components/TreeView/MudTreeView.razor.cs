@@ -238,6 +238,38 @@ namespace MudBlazor
         public bool ReadOnly { get; set; }
 
         /// <summary>
+        /// Custom checked icon.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
+
+        /// <summary>
+        /// Custom unchecked icon.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
+
+        /// <summary>
+        /// Custom tri-state indeterminate icon.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender && MudTreeRoot == this)
+            {
+                _isFirstRender = false;
+                await UpdateItemsAsync();
+            }
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
+        
+        /// <summary>
         /// Expands all items and their children recursively.
         /// </summary>
         public async Task ExpandAllAsync()
@@ -253,16 +285,6 @@ namespace MudBlazor
         {
             foreach (var item in _childItems)
                 await item.CollapseAllAsync();
-        }
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender && MudTreeRoot == this)
-            {
-                _isFirstRender = false;
-                await UpdateItemsAsync();
-            }
-            await base.OnAfterRenderAsync(firstRender);
         }
 
         /// <summary>
