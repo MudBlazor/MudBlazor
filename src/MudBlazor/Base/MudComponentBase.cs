@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
@@ -87,7 +88,10 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            DetectIllegalRazorParametersV7();
+            if (MudGlobal.EnableIllegalRazorParameterDetection)
+            {
+                DetectIllegalRazorParametersV7();
+            }
         }
 
         /// <summary>
@@ -97,7 +101,8 @@ namespace MudBlazor
         /// TODO: Remove this later. At the moment, we don't know yet when will be the best time to remove it.
         /// Sometime when the v7 version has stabilized.
         /// </summary>
-        private void DetectIllegalRazorParametersV7()
+        [ExcludeFromCodeCoverage]
+        protected void DetectIllegalRazorParametersV7()
         {
             foreach (var parameter in UserAttributes.Keys)
             {
@@ -317,6 +322,7 @@ namespace MudBlazor
             }
         }
 
+        [ExcludeFromCodeCoverage]
         private void NotifyIllegalParameter(string parameter)
         {
             throw new ArgumentException($"Illegal parameter '{parameter}'. This was removed in v7.0.0, see Migration Guide for more info https://github.com/MudBlazor/MudBlazor/issues/8447");
