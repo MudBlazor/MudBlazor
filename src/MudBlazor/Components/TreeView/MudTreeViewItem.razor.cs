@@ -288,7 +288,9 @@ namespace MudBlazor
         public async Task ExpandAllAsync()
         {
             if (!CanExpand || _childItems.Count == 0)
+            {
                 return;
+            }
             if (!_expandedState)
             {
                 await _expandedState.SetValueAsync(true);
@@ -324,7 +326,9 @@ namespace MudBlazor
         internal T? GetValue()
         {
             if (typeof(T) == typeof(string) && Value is null && Text is not null)
+            {
                 return (T)(object)Text;
+            }
             return Value;
         }
 
@@ -337,16 +341,22 @@ namespace MudBlazor
             var allChildrenChecked = GetChildItemsRecursive().All(x => x.GetState<bool>(nameof(Selected)));
             var noChildrenChecked = GetChildItemsRecursive().All(x => !x.GetState<bool>(nameof(Selected)));
             if (allChildrenChecked && _selectedState)
+            {
                 return true;
+            }
             if (noChildrenChecked && !_selectedState)
+            {
                 return false;
+            }
             return null;
         }
 
         private async Task OnCheckboxChangedAsync()
         {
             if (MudTreeRoot == null)
+            {
                 return;
+            }
             await MudTreeRoot.OnItemClickAsync(this);
         }
 
@@ -359,7 +369,9 @@ namespace MudBlazor
             else
             {
                 if (MudTreeRoot is not null)
+                {
                     await MudTreeRoot.AddChildAsync(this);
+                }
             }
             base.OnInitialized();
         }
@@ -372,10 +384,14 @@ namespace MudBlazor
             }
             var value = GetValue();
             if (value is null)
+            {
                 return Task.CompletedTask;
+            }
             var selected = arg.Value;
             if (selected)
+            {
                 return MudTreeRoot.SelectAsync(value);
+            }
             return MudTreeRoot.UnselectAsync(value);
         }
 
@@ -471,7 +487,9 @@ namespace MudBlazor
         internal IEnumerable<MudTreeViewItem<T>> GetSelectedItems()
         {
             if (_selectedState)
+            {
                 yield return this;
+            }
 
             foreach (var treeItem in _childItems)
             {
@@ -506,7 +524,9 @@ namespace MudBlazor
         internal async Task<bool> UpdateSelectionStateAsync(HashSet<T> selectedValues)
         {
             if (MudTreeRoot == null)
+            {
                 return false;
+            }
             var value = GetValue();
             var selected = value is not null && selectedValues.Contains(value);
             var selectedBecameTrue = selected && !_selectedState;
@@ -519,7 +539,9 @@ namespace MudBlazor
                 childSelectedBecameTrue = childSelectedBecameTrue || becameTrue;
             }
             if (GetAutoExpand() && CanExpand && childSelectedBecameTrue && !_expandedState)
+            {
                 await _expandedState.SetValueAsync(true);
+            }
             StateHasChanged();
             return selectedBecameTrue || childSelectedBecameTrue;
         }
@@ -544,7 +566,9 @@ namespace MudBlazor
         private string GetIndeterminateIcon()
         {
             if (MudTreeRoot?.TriState == true)
+            {
                 return IndeterminateIcon;
+            }
             // in non-tri-state mode we need to fake the checked status. the actual status of the checkbox is irrelevant,
             // only _selectedState.Value matters!
             return _selectedState ? CheckedIcon : UncheckedIcon;

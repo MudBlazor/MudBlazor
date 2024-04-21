@@ -272,7 +272,9 @@ namespace MudBlazor
         {
             // on first render the children are not yet initialized, so ignore this update
             if (_isFirstRender)
+            {
                 return Task.CompletedTask;
+            }
             return SetSelectedValueAsync(args.Value);
         }
 
@@ -293,21 +295,27 @@ namespace MudBlazor
         private Task OnComparerChangedAsync(ParameterChangedEventArgs<IEqualityComparer<T?>> args)
         {
             if (_isFirstRender)
+            {
                 return Task.CompletedTask;
+            }
             return UpdateItemsAsync();
         }
 
         private Task OnParameterChangedAsync()
         {
             if (_isFirstRender)
+            {
                 return Task.CompletedTask;
+            }
             return UpdateItemsAsync();
         }
 
         internal async Task OnItemClickAsync(MudTreeViewItem<T> clickedItem)
         {
             if (ReadOnly)
+            {
                 return;
+            }
             if (MultiSelection)
             {
                 var items = clickedItem.GetChildItemsRecursive();
@@ -317,9 +325,13 @@ namespace MudBlazor
                 foreach (var item in items.Where(x => x.GetValue() is not null))
                 {
                     if (allSelected)
+                    {
                         _selection.Remove(item.GetValue()!);
+                    }
                     else
+                    {
                         _selection.Add(item.GetValue()!);
+                    }
                 }
                 await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
                 await UpdateItemsAsync();
@@ -327,7 +339,9 @@ namespace MudBlazor
             }
             var selected = clickedItem.GetState<bool>(nameof(MudTreeViewItem<T>.Selected));
             if (ToggleSelection)
+            {
                 await SetSelectedValueAsync(selected ? default : clickedItem.GetValue()); // <-- toggle selected value
+            }
             else if (!selected)
             {
                 // SingleSelection
@@ -342,7 +356,9 @@ namespace MudBlazor
             // Note: Setting Selected="false" has no effect however because it would cancel the initialization of the SelectedValue or SelectedValues !
             var value = item.GetValue();
             if (value is not null && item.GetState<bool>(nameof(MudTreeViewItem<T>.Selected)))
+            {
                 await SelectAsync(value);
+            }
             await item.UpdateSelectionStateAsync(GetSelection());
         }
 
@@ -374,7 +390,9 @@ namespace MudBlazor
         internal async Task UnselectAsync(T value)
         {
             if (_isFirstRender || !MultiSelection)
+            {
                 return;
+            }
             _selection.Remove(value);
             await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
         }
@@ -403,7 +421,9 @@ namespace MudBlazor
             var allChildValues = GetChildValuesRecursive();
             var newSelection = new HashSet<T>(newValues.Where(x => allChildValues.Contains(x)), Comparer);
             if (_selection.SetEquals(newSelection))
+            {
                 return;
+            }
             _selection = newSelection;
             await _selectedValuesState.SetValueAsync(newSelection);
             await UpdateItemsAsync();
@@ -426,12 +446,16 @@ namespace MudBlazor
         {
             HashSet<T> selection;
             if (MultiSelection)
+            {
                 selection = new HashSet<T>(_selection, Comparer);
+            }
             else
             {
                 selection = new HashSet<T>(Comparer);
                 if (_selectedValueState.Value != null)
+                {
                     selection.Add(_selectedValueState.Value);
+                }
             }
             return selection;
         }
@@ -446,9 +470,13 @@ namespace MudBlazor
             {
                 var value = item.GetValue();
                 if (value is not null)
+                {
                     values.Add(value);
+                }
                 if (item.ChildItems.Count > 0)
+                {
                     GetChildValuesRecursive(item.ChildItems, values);
+                }
             }
 
             return values;
