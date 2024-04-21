@@ -83,5 +83,231 @@ namespace MudBlazor
 
         /// <inheritdoc />
         void IMudStateHasChanged.StateHasChanged() => StateHasChanged();
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            foreach (var parameter in UserAttributes.Keys)
+            {
+                if (this is MudBadge)
+                {
+                    switch (parameter)
+                    {
+                        case "Bottom":
+                        case "Left":
+                        case "Start":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (this is MudProgressCircular || this is MudProgressLinear)
+                {
+                    switch (parameter)
+                    {
+                        case "Minimum":
+                        case "Maximum":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (GetType() == typeof(MudRadio<>))
+                {
+                    switch (parameter)
+                    {
+                        case "Option":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (this is MudFab)
+                {
+                    switch (parameter)
+                    {
+                        case "Icon":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (GetType() == typeof(MudCheckBox<>) || GetType() == typeof(MudSwitch<>))
+                {
+                    switch (parameter)
+                    {
+                        case "Checked":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (this is MudPopover || GetType() == typeof(MudAutocomplete<>) || GetType() == typeof(MudSelect<>))
+                {
+                    switch (parameter)
+                    {
+                        case "Direction":
+                        case "OffsetX":
+                        case "OffsetY":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (GetType() == typeof(MudToggleGroup<>))
+                {
+                    switch (parameter)
+                    {
+                        case "Outline":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (this is MudAvatar)
+                {
+                    switch (parameter)
+                    {
+                        case "Image":
+                        case "Alt":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (GetType() == typeof(MudSlider<>))
+                {
+                    switch (parameter)
+                    {
+                        case "Text":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (GetType() == typeof(MudRadioGroup<>))
+                {
+                    switch (parameter)
+                    {
+                        case "SelectedOption":
+                        case "SelectedOptionChanged":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (this is MudSwipeArea)
+                {
+                    switch (parameter)
+                    {
+                        case "OnSwipe":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (GetType() == typeof(MudChip<>))
+                {
+                    switch (parameter)
+                    {
+                        case "Avatar":
+                        case "AvatarClass":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (GetType() == typeof(MudChipSet<>))
+                {
+                    switch (parameter)
+                    {
+                        case "Filter":
+                        case "MultiSelection":
+                        case "Mandatory":
+                        case "SelectedChip":
+                        case "SelectedChipChanged":
+                        case "SelectedChips":
+                        case "SelectedChipsChanged":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (GetType() == typeof(MudList<>))
+                {
+                    switch (parameter)
+                    {
+                        case "SelectedItem":
+                        case "SelectedItemChanged":
+                        case "Clickable":
+                        case "Avatar":
+                        case "AvatarClass":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (GetType() == typeof(MudTreeView<>) || GetType() == typeof(MudTreeViewItem<>))
+                {
+                    switch (parameter)
+                    {
+                        case "CanActivate":
+                        case "CanHover":
+                        case "CanSelect":
+                        case "ActivatedValue":
+                        case "ActivatedValueChanged":
+                        case "Multiselection":
+                        case "Activated":
+                        case "ExpandedIcon":
+                        case "SelectedItem":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (this is MudMenu || this is MudMenuItem)
+                {
+                    switch (parameter)
+                    {
+                        case "Link":
+                        case "Target":
+                        case "HtmlTag":
+                        case "ButtonType":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (parameter)
+                    {
+                        case "Command":
+                        case "CommandParameter":
+                        case "IsEnabled":
+                        case "ClassAction":
+                        case "InputIcon":
+                        case "InputVariant":
+                        case "AllowKeyboardInput":
+                        case "ClassActions":
+                        case "DisableRipple":
+                        case "DisableGutters":
+                        case "DisablePadding":
+                        case "DisableElevation":
+                        case "DisableUnderLine":
+                        case "DisableRowsPerPage":
+                        case "Link":
+                        case "Delayed":
+                        case "AlertTextPosition":
+                        case "ShowDelimiters":
+                        case "DelimitersColor":
+                        case "DrawerWidth":
+                        case "DrawerHeightTop":
+                        case "DrawerHeightBottom":
+                        case "AppbarMinHeight":
+                        case "ClassBackground":
+                        case "Cancelled":
+                        case "ClassContent":
+                        case "IsExpanded":
+                        case "IsExpandedChanged":
+                        case "IsInitiallyExpanded":
+                        case "InitiallyExpanded":
+                        case "RightAlignSmall":
+                        case "IsExpandable":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+            }
+        }
+
+        private void NotifyIllegalParameter(string parameter)
+        {
+            throw new ArgumentException($"Illegal parameter '{parameter}'. This was removed in v7.0.0, see Migration Guide for more Info https://github.com/MudBlazor/MudBlazor/issues/8447");
+        }
     }
 }
