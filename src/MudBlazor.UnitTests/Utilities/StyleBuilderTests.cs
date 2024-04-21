@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using MudBlazor.Utilities;
 using NUnit.Framework;
 
 namespace UtilityTests
 {
+#nullable enable
     [TestFixture]
     public class StyleBuilderTests
     {
@@ -57,6 +59,66 @@ namespace UtilityTests
 
             // Assert
             styleBuilder.Build().Should().Be("font-weight:bold;");
+        }
+
+        [Test]
+        public void AddStyle_With_Value_And_Null_Condition()
+        {
+            // Arrange
+            const string Prop = "color";
+            const string Value = "red";
+
+            // Act
+            var styleBuilder = new StyleBuilder()
+                .AddStyle(Prop, Value, null);
+
+            // Assert
+            styleBuilder.Build().Should().BeEmpty();
+        }
+
+        [Test]
+        public void AddStyle_With_Value_And_Condition_Func_Adds_Style_Conditionally()
+        {
+            // Arrange
+            const string Prop = "font-size";
+            const string Value = "12px";
+            bool Condition() => true;
+
+            // Act
+            var styleBuilder = new StyleBuilder()
+                .AddStyle(Prop, Value, Condition);
+
+            // Assert
+            styleBuilder.Build().Should().Be("font-size:12px;");
+        }
+
+        [Test]
+        public void AddStyle_With_Func_Value_And_Null_Condition()
+        {
+            // Arrange
+            const string Prop = "color";
+            string? Value() => "red";
+
+            // Act
+            var styleBuilder = new StyleBuilder()
+                .AddStyle(Prop, Value, null);
+
+            // Assert
+            styleBuilder.Build().Should().BeEmpty();
+        }
+
+        [Test]
+        public void AddStyle_With_Condition_Func_Null_Condition()
+        {
+            // Arrange
+            var nestedBuilder = new StyleBuilder().AddStyle("font-weight", "bold");
+
+            // Act
+            var styleBuilder = new StyleBuilder()
+                .AddStyle(nestedBuilder, null);
+
+            // Assert
+            styleBuilder.Build().Should().BeEmpty();
         }
 
         [Test]
