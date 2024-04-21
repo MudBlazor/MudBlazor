@@ -467,20 +467,20 @@ namespace MudBlazor.UnitTests.Components
         public void TreeViewItem_DoubleClick_CheckExpanded()
         {
             var comp = Context.RenderComponent<TreeViewTest3>();
-            var itemIsExpanded = false;
+            var itemExpanded = false;
 
             var item = comp.FindComponent<MudTreeViewItem<string>>();
-            item.SetParametersAndRender(Parameter(nameof(MudTreeViewItem<string>.OnDoubleClick), new EventCallback<MouseEventArgs>(null, (Action)(() => itemIsExpanded = !itemIsExpanded))));
+            item.SetParametersAndRender(Parameter(nameof(MudTreeViewItem<string>.OnDoubleClick), new EventCallback<MouseEventArgs>(null, (Action)(() => itemExpanded = !itemExpanded))));
 
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
 
             comp.Find("div.mud-treeview-item-content").DoubleClick();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
-            itemIsExpanded.Should().BeTrue();
+            itemExpanded.Should().BeTrue();
 
             comp.Find("div.mud-treeview-item-content").DoubleClick();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(0);
-            itemIsExpanded.Should().BeFalse();
+            itemExpanded.Should().BeFalse();
         }
 
         [Test]

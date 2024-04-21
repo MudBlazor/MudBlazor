@@ -70,8 +70,8 @@ namespace MudBlazor
         /// <summary>
         /// If the UserAttributes contain an ID make it accessible for WCAG labelling of input fields
         /// </summary>
-        public string FieldId => (UserAttributes != null && UserAttributes.TryGetValue("id", out var id) && id != null)
-                    ? (id.ToString() ?? $"mudinput-{Guid.NewGuid()}")
+        public string FieldId => UserAttributes.TryGetValue("id", out var id) && id != null
+                    ? id.ToString() ?? $"mudinput-{Guid.NewGuid()}"
                     : $"mudinput-{Guid.NewGuid()}";
 
         /// <inheritdoc />

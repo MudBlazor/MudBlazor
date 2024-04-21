@@ -9,14 +9,14 @@ namespace MudBlazor
 #nullable enable
     public partial class MudExpansionPanel : MudComponentBase, IDisposable
     {
-        internal readonly ParameterState<bool> _isExpandedState;
+        internal readonly ParameterState<bool> _expandedState;
 
         [CascadingParameter]
         private MudExpansionPanels? Parent { get; set; }
 
         protected string Classname =>
             new CssBuilder("mud-expand-panel")
-                .AddClass("mud-panel-expanded", _isExpandedState.Value)
+                .AddClass("mud-panel-expanded", _expandedState.Value)
                 .AddClass("mud-panel-next-expanded", NextPanelExpanded)
                 .AddClass("mud-disabled", Disabled)
                 .AddClass($"mud-elevation-{Parent?.Elevation.ToString()}")
@@ -80,17 +80,17 @@ namespace MudBlazor
         public bool Gutters { get; set; } = true;
 
         /// <summary>
-        /// Raised when IsExpanded changes.
+        /// Raised when <see cref="Expanded"/> changes.
         /// </summary>
         [Parameter]
-        public EventCallback<bool> IsExpandedChanged { get; set; }
+        public EventCallback<bool> ExpandedChanged { get; set; }
 
         /// <summary>
         /// Expansion state of the panel (two-way bindable)
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
-        public bool IsExpanded { get; set; }
+        public bool Expanded { get; set; }
 
         /// <summary>
         /// If true, the component will be disabled.
@@ -111,13 +111,13 @@ namespace MudBlazor
         public MudExpansionPanel()
         {
             using var registerScope = CreateRegisterScope();
-            _isExpandedState = registerScope.RegisterParameter<bool>(nameof(IsExpanded))
-                .WithParameter(() => IsExpanded)
-                .WithEventCallback(() => IsExpandedChanged)
-                .WithChangeHandler(OnIsExpandedParameterChangedAsync);
+            _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
+                .WithParameter(() => Expanded)
+                .WithEventCallback(() => ExpandedChanged)
+                .WithChangeHandler(OnExpandedParameterChangedAsync);
         }
 
-        private Task OnIsExpandedParameterChangedAsync(ParameterChangedEventArgs<bool> args)
+        private Task OnExpandedParameterChangedAsync(ParameterChangedEventArgs<bool> args)
         {
             if (Parent is null)
             {
@@ -134,7 +134,7 @@ namespace MudBlazor
                 return;
             }
 
-            await _isExpandedState.SetValueAsync(!_isExpandedState.Value);
+            await _expandedState.SetValueAsync(!_expandedState.Value);
             if (Parent is not null)
             {
                 await Parent.NotifyPanelsChanged(this);
@@ -143,7 +143,7 @@ namespace MudBlazor
 
         public async Task ExpandAsync()
         {
-            await _isExpandedState.SetValueAsync(true);
+            await _expandedState.SetValueAsync(true);
             if (Parent is not null)
             {
                 await Parent.NotifyPanelsChanged(this);
@@ -152,7 +152,7 @@ namespace MudBlazor
 
         public async Task CollapseAsync()
         {
-            await _isExpandedState.SetValueAsync(false);
+            await _expandedState.SetValueAsync(false);
             if (Parent is not null)
             {
                 await Parent.NotifyPanelsChanged(this);

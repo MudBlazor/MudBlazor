@@ -47,7 +47,7 @@
                         }
                         else
                         {
-                            <MudTHeadRow IsCheckable="MultiSelection" IsExpandable="@(GroupBy?.Expandable ?? false)">
+                            <MudTHeadRow IsCheckable="MultiSelection" Expandable="@(GroupBy?.Expandable ?? false)">
                                 @if (HeaderContent != null)
                                 {
                                     @HeaderContent
@@ -170,7 +170,7 @@
                         }
                         else
                         {
-                            <MudTFootRow IsCheckable="MultiSelection" IsExpandable="@(GroupBy?.Expandable ?? false)">
+                            <MudTFootRow IsCheckable="MultiSelection" Expandable="@(GroupBy?.Expandable ?? false)">
                                 @if (@FooterContent != null)
                                 {
                                     @FooterContent
@@ -199,7 +199,7 @@
 @code
 {
     // moved to code to avoid repeatedly code on markup block
-    internal RenderFragment RenderRows(IEnumerable<T> source, string customClass = null, bool isExpandable = false)
+    internal RenderFragment RenderRows(IEnumerable<T> source, string customClass = null, bool expandable = false)
     {
         var rowIndex = 0;
 
@@ -215,7 +215,7 @@
                 var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).AddClass(customClass, !string.IsNullOrEmpty(customClass)).Build();
                 var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build();
              } 
-             <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="IsEditable" IsExpandable="isExpandable"
+             <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="IsEditable" Expandable="expandable"
                         IsChecked="Context.Selection.Contains(item)" IsCheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
 
                     @if ((!ReadOnly) && IsEditable && object.Equals(_editingItem, item))

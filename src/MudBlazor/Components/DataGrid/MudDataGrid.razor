@@ -213,7 +213,7 @@
 
                                         <td class="mud-table-cell @groupClass" colspan="1000" style="background-color:var(--mud-palette-background-gray);@groupStyle">
                                             <MudIconButton Class="mud-table-row-expander"
-                                           Icon="@(g.IsExpanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)"
+                                           Icon="@(g.Expanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)"
                                            OnClick="@(() => ToggleGroupExpansion(g))" />
 
                                             @if (GroupedColumn.GroupTemplate == null)
@@ -228,7 +228,7 @@
                                     </tr>
                                     var rowIndex = 0;
 
-                                    @if (g.IsExpanded)
+                                    @if (g.Expanded)
                                     {
                                         <MudVirtualize IsEnabled="@Virtualize" Items="@g.Grouping.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
                                             @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
