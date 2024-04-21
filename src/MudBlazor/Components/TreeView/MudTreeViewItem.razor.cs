@@ -143,8 +143,13 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// If false, TreeViewItem will not be able to expand.
+        /// If false, TreeViewItem will not be able to expand. 
         /// </summary>
+        /// <remarks>
+        /// This is especially useful for lazy-loaded items via ServerData. If you know that an item has no children
+        /// you can pre-emptively prevent expansion which would only lead to a server request that would
+        /// not return children anyway.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
         public bool CanExpand { get; set; } = true;
@@ -282,6 +287,8 @@ namespace MudBlazor
         /// </summary>
         public async Task ExpandAllAsync()
         {
+            if (!CanExpand || _childItems.Count == 0)
+                return;
             if (!_expandedState)
             {
                 await _expandedState.SetValueAsync(true);
@@ -508,7 +515,7 @@ namespace MudBlazor
                 var becameTrue = await child.UpdateSelectionStateAsync(selectedValues);
                 childSelectedBecameTrue = childSelectedBecameTrue || becameTrue;
             }
-            if (AutoExpand && childSelectedBecameTrue && !_expandedState)
+            if (AutoExpand && CanExpand && childSelectedBecameTrue && !_expandedState)
                 await _expandedState.SetValueAsync(true);
             StateHasChanged();
             return selectedBecameTrue || childSelectedBecameTrue;
