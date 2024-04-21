@@ -283,6 +283,7 @@ namespace MudBlazor
                 {
                     switch (parameter)
                     {
+                        case "UnCheckedColor":
                         case "Command":
                         case "CommandParameter":
                         case "IsEnabled":

@@ -55,10 +55,9 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Dark, Color.Primary)]
         public void SwitchColorTest(Color color, Color uncheckedcolor)
         {
-            var comp = Context.RenderComponent<MudSwitch<bool>>(x => x.Add(c => c.Color, color).Add(b => b.UnCheckedColor, uncheckedcolor));
+            var comp = Context.RenderComponent<MudSwitch<bool>>(x => x.Add(c => c.Color, color).Add(b => b.UncheckedColor, uncheckedcolor));
 
             var box = comp.Instance;
-            var input = comp.Find("input");
 
             var checkboxClasses = comp.Find(".mud-button-root.mud-icon-button.mud-switch-base");
             // check initial state
@@ -66,7 +65,7 @@ namespace MudBlazor.UnitTests.Components
             checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{uncheckedcolor.ToDescriptionString()}-text", $"hover:mud-{uncheckedcolor.ToDescriptionString()}-hover" });
 
             // click and check if it has new color
-            input.Change(true);
+            comp.Find("input").Change(true);
             box.Value.Should().Be(true);
             checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToDescriptionString()}-text", $"hover:mud-{color.ToDescriptionString()}-hover" });
         }
@@ -75,18 +74,16 @@ namespace MudBlazor.UnitTests.Components
         public void SwitchDisabledTest()
         {
             var comp = Context.RenderComponent<SwitchWithLabelExample>();
-            var switches = comp.FindAll("label.mud-switch");
-            switches[3].ClassList.Should().Contain("mud-disabled"); // 4rd switch
+            comp.FindAll("label.mud-switch")[3].ClassList.Should().Contain("mud-disabled"); // 4rd switch
         }
 
         [Test]
         public void SwitchLabelPositionTest()
         {
             var comp = Context.RenderComponent<SwitchWithLabelExample>();
-            var switches = comp.FindAll("label.mud-switch");
 
-            switches[0].ClassList.Should().NotContain("flex-row-reverse"); // 1st switch: (default) LabelPosition.End
-            switches[2].ClassList.Should().Contain("flex-row-reverse"); // 3rd switch: LabelPosition.Start
+            comp.FindAll("label.mud-switch")[0].ClassList.Should().NotContain("flex-row-reverse"); // 1st switch: (default) LabelPosition.End
+            comp.FindAll("label.mud-switch")[2].ClassList.Should().Contain("flex-row-reverse"); // 3rd switch: LabelPosition.Start
         }
 
         [Test]
@@ -105,27 +102,26 @@ namespace MudBlazor.UnitTests.Components
         public void SwitchLabelTextSizeTest()
         {
             var comp = Context.RenderComponent<MudSwitchTest>();
-            var switches = comp.FindAll("label.mud-switch", true);
-            var inputs = comp.FindAll("input");
-            switches[3].Children[1].ClassList.Should().Contain("mud-switch-label-medium"); //4th switch doesn't have size set, it should be at default values
-            switches[3].Children[0].ClassList.Should().Contain("mud-switch-span-medium");
 
-            switches[4].Children[1].ClassList.Should().Contain("mud-switch-label-small"); //5th switch is a small switch with corresponding label text size
-            switches[4].Children[0].ClassList.Should().Contain("mud-switch-span-small");
+            comp.FindAll("label.mud-switch", true)[3].Children[1].ClassList.Should().Contain("mud-switch-label-medium"); //4th switch doesn't have size set, it should be at default values
+            comp.FindAll("label.mud-switch", true)[3].Children[0].ClassList.Should().Contain("mud-switch-span-medium");
 
-            switches[5].Children[1].ClassList.Should().Contain("mud-switch-label-medium"); //6th switch is a medium switch with corresponding label text size
-            switches[5].Children[0].ClassList.Should().Contain("mud-switch-span-medium");
+            comp.FindAll("label.mud-switch", true)[4].Children[1].ClassList.Should().Contain("mud-switch-label-small"); //5th switch is a small switch with corresponding label text size
+            comp.FindAll("label.mud-switch", true)[4].Children[0].ClassList.Should().Contain("mud-switch-span-small");
 
-            switches[6].Children[1].ClassList.Should().Contain("mud-switch-label-large"); //7th switch is a large switch with corresponding label text size
-            switches[6].Children[0].ClassList.Should().Contain("mud-switch-span-large");
+            comp.FindAll("label.mud-switch", true)[5].Children[1].ClassList.Should().Contain("mud-switch-label-medium"); //6th switch is a medium switch with corresponding label text size
+            comp.FindAll("label.mud-switch", true)[5].Children[0].ClassList.Should().Contain("mud-switch-span-medium");
 
-            switches[7].Children[1].ClassList.Should().Contain("mud-switch-label-small"); //8th switch is a small switch that changes to large when unchecked
-            switches[7].Children[0].ClassList.Should().Contain("mud-switch-span-small");
+            comp.FindAll("label.mud-switch", true)[6].Children[1].ClassList.Should().Contain("mud-switch-label-large"); //7th switch is a large switch with corresponding label text size
+            comp.FindAll("label.mud-switch", true)[6].Children[0].ClassList.Should().Contain("mud-switch-span-large");
+
+            comp.FindAll("label.mud-switch", true)[7].Children[1].ClassList.Should().Contain("mud-switch-label-small"); //8th switch is a small switch that changes to large when unchecked
+            comp.FindAll("label.mud-switch", true)[7].Children[0].ClassList.Should().Contain("mud-switch-span-small");
 
             // 8th switch Size is tied to the Label_Switch2 bool, if it's false, it should become large
-            inputs[7].Change(false);
-            switches[7].Children[1].ClassList.Should().Contain("mud-switch-label-large");
-            switches[7].Children[0].ClassList.Should().Contain("mud-switch-span-large");
+            comp.FindAll("input")[7].Change(false);
+            comp.FindAll("label.mud-switch", true)[7].Children[1].ClassList.Should().Contain("mud-switch-label-large");
+            comp.FindAll("label.mud-switch", true)[7].Children[0].ClassList.Should().Contain("mud-switch-span-large");
         }
 
         /// <summary>
@@ -136,9 +132,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudSwitch<bool>>();
 
-            var input = comp.Find("input");
-            input.HasAttribute("required").Should().BeFalse();
-            input.GetAttribute("aria-required").Should().Be("false");
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
         }
 
         /// <summary>
@@ -150,9 +145,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudSwitch<bool>>(parameters => parameters
                 .Add(p => p.Required, true));
 
-            var input = comp.Find("input");
-            input.HasAttribute("required").Should().BeTrue();
-            input.GetAttribute("aria-required").Should().Be("true");
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
         }
 
         /// <summary>
@@ -163,15 +157,26 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudSwitch<bool>>();
 
-            var input = comp.Find("input");
-            input.HasAttribute("required").Should().BeFalse();
-            input.GetAttribute("aria-required").Should().Be("false");
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
 
             comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.Required, true));
 
-            input.HasAttribute("required").Should().BeTrue();
-            input.GetAttribute("aria-required").Should().Be("true");
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+        }
+
+
+        [Test]
+        public void ReadOnlyDisabled_ShouldNot_Hover()
+        {
+            Context.RenderComponent<MudSwitch<bool>>(self => self.Add(x => x.ReadOnly, false)).Find("span.mud-button-root").ClassList.Should().Contain("hover:mud-default-hover");
+            Context.RenderComponent<MudSwitch<bool>>(self => self.Add(x => x.ReadOnly, true)).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
+            Context.RenderComponent<MudSwitch<bool>>(self => self.Add(x => x.ReadOnly, true).Add(x => x.Disabled, false)).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
+            Context.RenderComponent<MudSwitch<bool>>(self => self.Add(x => x.Disabled, false)).Find("span.mud-button-root").ClassList.Should().Contain("hover:mud-default-hover");
+            Context.RenderComponent<MudSwitch<bool>>(self => self.Add(x => x.Disabled, true).Add(x => x.ReadOnly, false)).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
+            Context.RenderComponent<MudSwitch<bool>>(self => self.Add(x => x.Disabled, true).Add(x => x.ReadOnly, true)).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
         }
     }
 }
