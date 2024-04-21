@@ -20,6 +20,7 @@ public partial class SectionHeader
 
     protected string Classname =>
         new CssBuilder("docs-section-header")
+            .AddClass("docs-section-anchor", !string.IsNullOrWhiteSpace(Title))
             .AddClass(Class)
             .Build();
 
