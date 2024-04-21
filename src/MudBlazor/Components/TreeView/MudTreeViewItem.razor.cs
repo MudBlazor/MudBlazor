@@ -62,36 +62,11 @@ namespace MudBlazor
         private MudTreeViewItem<T>? Parent { get; set; }
 
         /// <summary>
-        /// Custom checked icon.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.TreeView.Selecting)]
-        public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
-
-        /// <summary>
-        /// Custom unchecked icon.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.TreeView.Selecting)]
-        public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
-
-        /// <summary>
-        /// Custom tri-state indeterminate icon.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.TreeView.Selecting)]
-        public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
-
-        /// <summary>
         /// Value of the TreeViewItem. Acts as the displayed text if no text is set.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
         public T? Value { get; set; }
-
-        [Parameter]
-        [Category(CategoryTypes.TreeView.Behavior)]
-        public CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
 
         /// <summary>
         /// The text to display
@@ -277,7 +252,13 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnDoubleClick { get; set; }
 
-        public bool Loading { get; set; }
+        private string CheckedIcon => MudTreeRoot?.CheckedIcon ?? Icons.Material.Filled.CheckBox;
+
+        private string UncheckedIcon => MudTreeRoot?.CheckedIcon ?? Icons.Material.Filled.CheckBoxOutlineBlank;
+
+        private string IndeterminateIcon => MudTreeRoot?.CheckedIcon ?? Icons.Material.Filled.IndeterminateCheckBox;
+
+        private bool _loading;
 
         private bool HasChild => ChildContent != null ||
              (MudTreeRoot != null && Items != null && Items.Count != 0) ||
@@ -441,14 +422,17 @@ namespace MudBlazor
 
         internal async Task TryInvokeServerLoadFunc()
         {
-            if (_expandedState && (Items == null || Items.Count == 0) && CanExpand && MudTreeRoot?.ServerData != null)
+            if (!_expandedState || (Items != null && Items.Count != 0) || !CanExpand || MudTreeRoot?.ServerData == null)
+                return;
+            _loading = true;
+            StateHasChanged();
+            try
             {
-                Loading = true;
-                StateHasChanged();
-
                 Items = await MudTreeRoot.ServerData(GetValue());
-
-                Loading = false;
+            }
+            finally
+            {
+                _loading = false;
                 _isServerLoaded = true;
 
                 StateHasChanged();
