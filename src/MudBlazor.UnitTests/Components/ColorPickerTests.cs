@@ -1210,13 +1210,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudColorPicker>(parameters
                 => parameters.Add(p => p.Label, "Test Label"));
 
-            var input = comp.Find("input");
-            var label = comp.Find("label");
-
-            input.Id.Should().NotBeNullOrEmpty();
-            var forAttribute = label.Attributes.GetNamedItem("for");
-            forAttribute.Should().NotBeNull();
-            forAttribute!.Value.Should().Be(input.Id);
+            comp.Find("input").Id.Should().NotBeNullOrEmpty();
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(comp.Find("input").Id);
         }
 
         /// <summary>
@@ -1234,13 +1230,9 @@ namespace MudBlazor.UnitTests.Components
                         { "Id", expectedId }
                     }));
 
-            var input = comp.Find("input");
-            var label = comp.Find("label");
-
-            input.Id.Should().Be(expectedId);
-            var forAttribute = label.Attributes.GetNamedItem("for");
-            forAttribute.Should().NotBeNull();
-            forAttribute!.Value.Should().Be(expectedId);
+            comp.Find("input").Id.Should().Be(expectedId);
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
         }
 
         /// <summary>
@@ -1252,8 +1244,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SimpleColorPickerTest>(parameters => parameters
                 .Add(p => p.ColorPickerMode, ColorPickerMode.RGB));
 
-            var inputs = comp.FindAll("input:not(.mud-slider-input)");
-            inputs.Should().AllSatisfy(input =>
+            comp.FindAll("input:not(.mud-slider-input)").Should().AllSatisfy(input =>
             {
                 input.HasAttribute("required").Should().BeFalse();
                 input.GetAttribute("aria-required").Should().Be("false");
@@ -1270,8 +1261,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Required, true)
                 .Add(p => p.ColorPickerMode, ColorPickerMode.RGB));
 
-            var inputs = comp.FindAll("input:not(.mud-slider-input)");
-            inputs.Should().AllSatisfy(input =>
+            comp.FindAll("input:not(.mud-slider-input)").Should().AllSatisfy(input =>
             {
                 input.HasAttribute("required").Should().BeTrue();
                 input.GetAttribute("aria-required").Should().Be("true");
@@ -1287,8 +1277,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SimpleColorPickerTest>(parameters => parameters
                 .Add(p => p.ColorPickerMode, ColorPickerMode.RGB));
 
-            var inputs = comp.FindAll("input:not(.mud-slider-input)");
-            inputs.Should().AllSatisfy(input =>
+            comp.FindAll("input:not(.mud-slider-input)").Should().AllSatisfy(input =>
             {
                 input.HasAttribute("required").Should().BeFalse();
                 input.GetAttribute("aria-required").Should().Be("false");
@@ -1297,9 +1286,7 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.Required, true));
 
-            // must be re-fetched after re-render
-            inputs = comp.FindAll("input:not(.mud-slider-input)");
-            inputs.Should().AllSatisfy(input =>
+            comp.FindAll("input:not(.mud-slider-input)").Should().AllSatisfy(input =>
             {
                 input.HasAttribute("required").Should().BeTrue();
                 input.GetAttribute("aria-required").Should().Be("true");
@@ -1315,8 +1302,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SimpleColorPickerTest>(parameters => parameters
                 .Add(p => p.ColorPickerMode, ColorPickerMode.HSL));
 
-            var inputs = comp.FindAll("input:not(.mud-slider-input)");
-            inputs.Should().AllSatisfy(input =>
+            comp.FindAll("input:not(.mud-slider-input)").Should().AllSatisfy(input =>
             {
                 input.HasAttribute("required").Should().BeFalse();
                 input.GetAttribute("aria-required").Should().Be("false");
@@ -1333,8 +1319,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Required, true)
                 .Add(p => p.ColorPickerMode, ColorPickerMode.HSL));
 
-            var inputs = comp.FindAll("input:not(.mud-slider-input)");
-            inputs.Should().AllSatisfy(input =>
+            comp.FindAll("input:not(.mud-slider-input)").Should().AllSatisfy(input =>
             {
                 input.HasAttribute("required").Should().BeTrue();
                 input.GetAttribute("aria-required").Should().Be("true");
@@ -1350,8 +1335,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SimpleColorPickerTest>(parameters => parameters
                 .Add(p => p.ColorPickerMode, ColorPickerMode.HSL));
 
-            var inputs = comp.FindAll("input:not(.mud-slider-input)");
-            inputs.Should().AllSatisfy(input =>
+            comp.FindAll("input:not(.mud-slider-input)").Should().AllSatisfy(input =>
             {
                 input.HasAttribute("required").Should().BeFalse();
                 input.GetAttribute("aria-required").Should().Be("false");
@@ -1360,9 +1344,7 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.Required, true));
 
-            // must be re-fetched after re-render
-            inputs = comp.FindAll("input:not(.mud-slider-input)");
-            inputs.Should().AllSatisfy(input =>
+            comp.FindAll("input:not(.mud-slider-input)").Should().AllSatisfy(input =>
             {
                 input.HasAttribute("required").Should().BeTrue();
                 input.GetAttribute("aria-required").Should().Be("true");
@@ -1378,8 +1360,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SimpleColorPickerTest>(parameters => parameters
                 .Add(p => p.ColorPickerMode, ColorPickerMode.HEX));
 
-            var inputs = comp.FindAll("input:not(.mud-slider-input)");
-            inputs.Should().AllSatisfy(input =>
+            comp.FindAll("input:not(.mud-slider-input)").Should().AllSatisfy(input =>
             {
                 input.HasAttribute("required").Should().BeFalse();
                 input.GetAttribute("aria-required").Should().Be("false");
@@ -1396,8 +1377,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Required, true)
                 .Add(p => p.ColorPickerMode, ColorPickerMode.HEX));
 
-            var inputs = comp.FindAll("input:not(.mud-slider-input)");
-            inputs.Should().AllSatisfy(input =>
+            comp.FindAll("input:not(.mud-slider-input)").Should().AllSatisfy(input =>
             {
                 input.HasAttribute("required").Should().BeTrue();
                 input.GetAttribute("aria-required").Should().Be("true");
@@ -1413,8 +1393,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SimpleColorPickerTest>(parameters => parameters
                 .Add(p => p.ColorPickerMode, ColorPickerMode.HEX));
 
-            var inputs = comp.FindAll("input:not(.mud-slider-input)");
-            inputs.Should().AllSatisfy(input =>
+            comp.FindAll("input:not(.mud-slider-input)").Should().AllSatisfy(input =>
             {
                 input.HasAttribute("required").Should().BeFalse();
                 input.GetAttribute("aria-required").Should().Be("false");
@@ -1424,8 +1403,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Required, true));
 
             // must be re-fetched after re-render
-            inputs = comp.FindAll("input:not(.mud-slider-input)");
-            inputs.Should().AllSatisfy(input =>
+            comp.FindAll("input:not(.mud-slider-input)").Should().AllSatisfy(input =>
             {
                 input.HasAttribute("required").Should().BeTrue();
                 input.GetAttribute("aria-required").Should().Be("true");

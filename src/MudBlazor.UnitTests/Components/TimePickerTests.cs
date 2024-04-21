@@ -1014,13 +1014,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudTimePicker>(parameters
                 => parameters.Add(p => p.Label, "Test Label"));
 
-            var input = comp.Find("input");
-            var label = comp.Find("label");
-
-            input.Id.Should().NotBeNullOrEmpty();
-            var forAttribute = label.Attributes.GetNamedItem("for");
-            forAttribute.Should().NotBeNull();
-            forAttribute!.Value.Should().Be(input.Id);
+            comp.Find("input").Id.Should().NotBeNullOrEmpty();
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(comp.Find("input").Id);
         }
 
         /// <summary>
@@ -1038,13 +1034,9 @@ namespace MudBlazor.UnitTests.Components
                         { "Id", expectedId }
                     }));
 
-            var input = comp.Find("input");
-            var label = comp.Find("label");
-
-            input.Id.Should().Be(expectedId);
-            var forAttribute = label.Attributes.GetNamedItem("for");
-            forAttribute.Should().NotBeNull();
-            forAttribute!.Value.Should().Be(expectedId);
+            comp.Find("input").Id.Should().Be(expectedId);
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
         }
     }
 }
