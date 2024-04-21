@@ -15,6 +15,20 @@ namespace UtilityTests
     public class CssBuilderTests
     {
         [Test]
+        public void Default_Returns_Instance_With_Prop_And_Value()
+        {
+            // Arrange
+            var prop = "color";
+            var value = "red";
+
+            // Act
+            var styleBuilder = StyleBuilder.Default(prop, value).Build();
+
+            // Assert
+            styleBuilder.Should().Be("color:red;");
+        }
+
+        [Test]
         public void Default_Returns_Instance_With_Value()
         {
             // Arrange
@@ -136,16 +150,54 @@ namespace UtilityTests
         public void AddClass_With_CssBuilder_And_Condition_Func_Adds_Class_Correctly()
         {
             // Arrange
-            const bool conditionResult = true;
+            const bool ConditionResult = true;
             var nestedBuilder = new CssBuilder().AddClass("nested-class");
 
             // Act
             var cssBuilder = new CssBuilder()
-                .AddClass(nestedBuilder, () => conditionResult)
-                .AddClass(nestedBuilder, () => !conditionResult);
+                .AddClass(nestedBuilder, () => ConditionResult)
+                .AddClass(nestedBuilder, () => !ConditionResult);
 
             // Assert
             cssBuilder.Build().Should().Be("nested-class");
+        }
+
+        [Test]
+        public void AddClass_With_Value_Function_When_Null()
+        {
+            // Arrange
+            string? ValueFunction() => "class1";
+
+            // Act
+            var cssBuilder = new CssBuilder()
+                .AddClass(ValueFunction, null);
+
+            // Assert
+            cssBuilder.Build().Should().BeEmpty();
+        }
+
+        [Test]
+        public void AddClass_With_CssBuilder_When_Null()
+        {
+            // Arrange
+            var nestedBuilder = new CssBuilder().AddClass("nested-class");
+
+            // Act
+            var cssBuilder = new CssBuilder()
+                .AddClass(nestedBuilder, null);
+
+            // Assert
+            cssBuilder.Build().Should().BeEmpty();
+        }
+
+        [Test]
+        public void AddClassFromAttributes_With_Null_Dictionary()
+        {
+            // Act
+            var cssBuilder = new CssBuilder().AddClassFromAttributes(null);
+
+            // Assert
+            cssBuilder.Build().Should().BeEmpty();
         }
 
         [Test]

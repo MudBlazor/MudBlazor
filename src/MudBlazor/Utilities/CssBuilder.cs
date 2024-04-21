@@ -100,7 +100,7 @@ namespace MudBlazor.Utilities
         /// <param name="value">The function that returns a CSS class to conditionally add.</param>
         /// <param name="when">The condition in which the CSS class is added.</param>
         /// <returns>The <see cref="CssBuilder"/> instance.</returns>
-        public CssBuilder AddClass(Func<string?> value, Func<bool>? when = null) => AddClass(value, when != null && when());
+        public CssBuilder AddClass(Func<string?> value, Func<bool>? when = null) => AddClass(value, when is not null && when());
 
         /// <summary>
         /// Adds a conditional nested CssBuilder to the builder with a space separator.
