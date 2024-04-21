@@ -300,7 +300,7 @@ namespace MudBlazor
             return null;
         }
 
-                /// <summary>
+        /// <summary>
         /// Expand this item and all its children recursively
         /// </summary>
         public async Task ExpandAllAsync()

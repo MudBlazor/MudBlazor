@@ -268,7 +268,7 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        
+
         /// <summary>
         /// Expands all items and their children recursively.
         /// </summary>
