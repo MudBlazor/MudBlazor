@@ -2,7 +2,7 @@
 @using MudBlazor.Interfaces
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" Class="@Classname" Style="@Style" 
+<div @attributes="UserAttributes" Class="@Classname" Style="@Style"
         @onmouseenter="@MouseEnterAsync"
         @onmouseleave="@MouseLeaveAsync"
         @oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? ToggleMenuAsync : null)"
@@ -18,26 +18,28 @@
     else if (string.IsNullOrEmpty(Icon))
     {
         <MudButton StartIcon="@StartIcon"
-                EndIcon="@EndIcon"
-                IconColor="@IconColor"
-                Color="@Color"
-                Size="@Size"
-                Variant="@Variant"
-                Disabled="@Disabled"
-                Ripple="@Ripple"
-                DropShadow="@DropShadow"
-                OnClick="@ToggleMenuAsync">
+                   EndIcon="@EndIcon"
+                   IconColor="@IconColor"
+                   Color="@Color"
+                   Size="@Size"
+                   Variant="@Variant"
+                   Disabled="@Disabled"
+                   Ripple="@Ripple"
+                   DropShadow="@DropShadow"
+                   OnClick="@ToggleMenuAsync"
+                   aria-label="@AriaLabel">
             @Label
         </MudButton>
     }
     else
     {
-        <MudIconButton Variant="@Variant" Icon="@Icon" Color="@Color" Size="@Size" Disabled="@Disabled" Ripple="@Ripple" DropShadow="@DropShadow" @onclick="@ToggleMenuAsync" />
+        <MudIconButton Variant="@Variant" Icon="@Icon" Color="@Color" Size="@Size" Disabled="@Disabled" Ripple="@Ripple" DropShadow="@DropShadow" @onclick="@ToggleMenuAsync"
+                       aria-label="@AriaLabel" />
     }
     @* The portal has to include  the cascading values inside, because it's not able to teletransport the cascade *@
     <MudPopover Open="@_isOpen" Class="@PopoverClass" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" RelativeWidth="@FullWidth" Style="@_popoverStyle" @ontouchend:preventDefault>
         <CascadingValue Value="@this">
-            <MudList T="object" Class="@ListClass" Clickable="true" Dense="@Dense"  
+            <MudList T="object" Class="@ListClass" Clickable="true" Dense="@Dense"
                 @onmouseenter="@MouseEnterAsync"
                 @onmouseleave="@MouseLeaveAsync">
                 @ChildContent

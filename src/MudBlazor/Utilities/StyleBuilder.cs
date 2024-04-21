@@ -43,6 +43,22 @@ namespace MudBlazor.Utilities
         public StyleBuilder AddStyle(string style) => !string.IsNullOrWhiteSpace(style) ? AddRaw($"{style};") : this;
 
         /// <summary>
+        /// Adds a conditional style to the builder with space separator and closing semicolon.
+        /// </summary>
+        /// <param name="style">The style to add</param>
+        /// <param name="when">The condition</param>
+        /// <returns>The stylebuilder</returns>
+        public StyleBuilder AddStyle(string style, bool when = true) => when ? AddStyle(style) : this;
+
+        /// <summary>
+        /// Adds a conditional style to the builder with space separator and closing semicolon.
+        /// </summary>
+        /// <param name="style">The style to add</param>
+        /// <param name="when">The condition as function</param>
+        /// <returns>The stylebuilder</returns>
+        public StyleBuilder AddStyle(string style, Func<bool> when) => AddStyle(style, when is not null && when());
+
+        /// <summary>
         /// Adds a raw string to the builder that will be concatenated with the next style or value added to the builder.
         /// </summary>
         /// <param name="style"></param>

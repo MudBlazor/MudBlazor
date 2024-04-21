@@ -29,7 +29,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool IgnoreEditable { get; set; }
 
-        [Parameter] public bool IsExpandable { get; set; }
+        [Parameter] public bool Expandable { get; set; }
 
         /// <summary>
         /// On click event

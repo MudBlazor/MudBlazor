@@ -49,7 +49,7 @@ public class RegisterParameterBuilderTests
         parameterState.Value.Should().Be(parameterValue);
         parameterState.HasHandler.Should().BeTrue();
         callBackCalled.Should().BeTrue();
-        parameterState.ComparerFunc().Should().BeOfType<DoubleEpsilonEqualityComparer>();
+        parameterState.Comparer.UnderlyingComparer().Should().BeOfType<DoubleEpsilonEqualityComparer>();
     }
 
     [Test]
@@ -79,7 +79,7 @@ public class RegisterParameterBuilderTests
         parameterState.Metadata.ComparerParameterName.Should().BeNull();
         parameterState.Value.Should().Be(parameterValue);
         parameterState.HasHandler.Should().BeTrue();
-        parameterState.ComparerFunc().Should().BeAssignableTo<EqualityComparer<double>>();
+        parameterState.Comparer.UnderlyingComparer().Should().BeAssignableTo<EqualityComparer<double>>();
     }
 
     [Test]
@@ -107,7 +107,7 @@ public class RegisterParameterBuilderTests
         parameterState.Metadata.ComparerParameterName.Should().BeNull();
         parameterState.Value.Should().Be(parameterValue);
         parameterState.HasHandler.Should().BeTrue();
-        parameterState.ComparerFunc().Should().BeAssignableTo<EqualityComparer<double>>();
+        parameterState.Comparer.UnderlyingComparer().Should().BeAssignableTo<EqualityComparer<double>>();
     }
 
     [Test]
@@ -136,7 +136,7 @@ public class RegisterParameterBuilderTests
         parameterState.Metadata.ComparerParameterName.Should().BeNull();
         parameterState.Value.Should().Be(parameterValue);
         parameterState.HasHandler.Should().BeTrue();
-        parameterState.ComparerFunc().Should().BeOfType<DoubleEpsilonEqualityComparer>();
+        parameterState.Comparer.UnderlyingComparer().Should().BeOfType<DoubleEpsilonEqualityComparer>();
     }
 
     [Test]

@@ -2,8 +2,6 @@
 @typeparam T
 @inherits MudDebouncedInput<T>
 
-@using System.Globalization;
-
 <CascadingValue Name="SubscribeToParentForm" Value="@SubscribeToParentForm" IsFixed="true">
     <MudInputControl id="@_elementId"
                      Label="@Label"
@@ -18,7 +16,7 @@
                      Margin="@Margin"
                      Required="@Required"
                      CounterText="@GetCounterText()"
-                     ForId="@FieldId">
+                     ForId="@InputIdState.Value">
         <InputContent>
             <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
                 <MudInput T="string"
@@ -58,7 +56,9 @@
                           OnDecrement="@Decrement"
                           OnMouseWheel="@OnMouseWheel"
                           Clearable="@Clearable"
-                          ShrinkLabel="@ShrinkLabel" />
+                          ShrinkLabel="@ShrinkLabel"
+                          InputId="@InputIdState.Value"
+                          Required="@Required" />
             </CascadingValue>
         </InputContent>
     </MudInputControl>

@@ -6,17 +6,22 @@
 
 </MudPopoverProvider>
 
-<MudColorPicker @ref="_picker" @bind-Value="ColorValue" TextChanged="@((x) => { TextValue = x; ValueChangeCallbackCounter++;  })" Palette="Palette" 
-                DisableToolbar="DisableToolbar" 
-                DisableColorField="DisableColorField" 
-                DisablePreview="DisablePreview" 
+<MudColorPicker @ref="_picker"
+                @bind-Value="ColorValue"
+                TextChanged="@((x) => { TextValue = x; ValueChangeCallbackCounter++;  })"
+                Palette="Palette"
+                DisableToolbar="DisableToolbar"
+                DisableColorField="DisableColorField"
+                DisablePreview="DisablePreview"
                 DisableSliders="DisableSliders"
                 DisableInputs="DisableInput"
                 DisableModeSwitch="DisableModeSwitch"
                 DisableAlpha="DisableAlpha"
                 DisableDragEffect="DisableDragEffect"
                 ColorPickerView="ViewMode"
-                ColorPickerMode="ColorPickerMode" PickerVariant="Variant" />
+                ColorPickerMode="ColorPickerMode"
+                PickerVariant="Variant"
+                Required="@Required" />
 
 @code {
     private MudColorPicker _picker;
@@ -39,6 +44,7 @@
     [Parameter] public bool DisableDragEffect { get; set; } = false;
     [Parameter] public ColorPickerView ViewMode { get; set; } = ColorPickerView.Spectrum;
     [Parameter] public PickerVariant Variant { get; set; } = PickerVariant.Static;
+    [Parameter] public bool Required { get; set; }
 
     public async Task OpenPicker()
     {

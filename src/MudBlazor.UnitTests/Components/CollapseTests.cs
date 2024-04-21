@@ -52,9 +52,9 @@ namespace MudBlazor.UnitTests.Components
 
             return;
 
-            void SetExpanded(bool isExpanded)
+            void SetExpanded(bool expanded)
             {
-                var expandedParameter = Parameter(nameof(MudCollapse.Expanded), isExpanded);
+                var expandedParameter = Parameter(nameof(MudCollapse.Expanded), expanded);
                 comp.SetParametersAndRender(expandedParameter);
             }
         }

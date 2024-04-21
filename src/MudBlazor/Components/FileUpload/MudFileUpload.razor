@@ -15,7 +15,9 @@
                    multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)"
                    accept="@Accept"
                    disabled="@(GetDisabledState())"
-                   @attributes="UserAttributes" />
+                   @attributes="UserAttributes"
+                   required="@Required"
+                   aria-required="@Required.ToString().ToLowerInvariant()"/>
         @if (ActivatorContent != null)
         {
             <CascadingValue Value="@((IActivatable)this)"

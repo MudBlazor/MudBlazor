@@ -88,15 +88,15 @@ public class InMemoryNotificationService : INotificationService
     public void Preload()
     {
         _messages.Add(new NotificationMessage(
-            typeof(Announcement_v7_Started_Development).Name,
-            "v7 is Coming!",
+            typeof(Announcement_v7_In_Development).Name,
+            "v7 Is Coming!",
             "Learn about the upcoming major version",
             "Announcement",
-            new DateTime(2024, 03, 28),
+            new DateTime(2024, 04, 20),
             "https://github.com/MudBlazor/MudBlazor/blob/f979c2c84e3ddd5f01a20ebc1102838d32a4b01b/content/Nuget.png",
             [
                 new NotificationAuthor("The MudBlazor Team",
                     "https://mudblazor.com/_content/MudBlazor.Docs/images/logo.png")
-            ], typeof(Announcement_v7_Started_Development)));
+            ], typeof(Announcement_v7_In_Development)));
     }
 }
