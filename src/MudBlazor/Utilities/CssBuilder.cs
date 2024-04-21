@@ -22,7 +22,7 @@ namespace MudBlazor.Utilities
         /// Call <see cref="Build"/> to return the completed CSS Classes as a string. 
         /// </remarks>
         /// <param name="value">The initial CSS class value.</param>
-        /// <returns>The <see cref="CssBuilder"/>> instance.</returns>
+        /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public static CssBuilder Default(string value) => new(value);
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace MudBlazor.Utilities
         /// <remarks>
         /// Call <see cref="Build"/> to return the completed CSS Classes as a string. 
         /// </remarks>
-        /// <returns>The <see cref="CssBuilder"/>> instance.</returns>
+        /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public static CssBuilder Empty() => new();
 
         /// <summary>
@@ -41,13 +41,14 @@ namespace MudBlazor.Utilities
         /// Call <see cref="Build"/> to return the completed CSS Classes as a string. 
         /// </remarks>
         /// <param name="value">The initial CSS class value.</param>
+        /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public CssBuilder(string? value) => _stringBuffer = value;
 
         /// <summary>
         /// Adds a raw string to the builder that will be concatenated with the next class or value added to the builder.
         /// </summary>
         /// <param name="value">The string value to add.</param>
-        /// <returns>The <see cref="CssBuilder"/>> instance.</returns>
+        /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public CssBuilder AddValue(string? value)
         {
             _stringBuffer += value;
@@ -58,7 +59,7 @@ namespace MudBlazor.Utilities
         /// Adds a CSS class to the builder with a space separator.
         /// </summary>
         /// <param name="value">The CSS class to add.</param>
-        /// <returns>The <see cref="CssBuilder"/>> instance.</returns>
+        /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public CssBuilder AddClass(string? value) => AddValue(" " + value);
 
         /// <summary>
@@ -66,7 +67,7 @@ namespace MudBlazor.Utilities
         /// </summary>
         /// <param name="value">The CSS class to conditionally add.</param>
         /// <param name="when">The nullable condition in which the CSS class is added.</param>
-        /// <returns>The <see cref="CssBuilder"/>> instance.</returns>
+        /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public CssBuilder AddClass(string? value, bool when) => when ? AddClass(value) : this;
 
         /// <summary>
@@ -74,7 +75,7 @@ namespace MudBlazor.Utilities
         /// </summary>
         /// <param name="value">CSS Class to conditionally add.</param>
         /// <param name="when">Nullable condition in which the CSS Class is added.</param>
-        /// <returns>The <see cref="CssBuilder"/>> instance.</returns>
+        /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public CssBuilder AddClass(string? value, bool? when) => when == true ? AddClass(value) : this;
 
         /// <summary>
@@ -82,7 +83,7 @@ namespace MudBlazor.Utilities
         /// </summary>
         /// <param name="value">The CSS class to conditionally add.</param>
         /// <param name="when">The condition in which the CSS class is added.</param>
-        /// <returns>The <see cref="CssBuilder"/>> instance.</returns>
+        /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public CssBuilder AddClass(string? value, Func<bool>? when) => AddClass(value, when is not null && when());
 
         /// <summary>
@@ -90,7 +91,7 @@ namespace MudBlazor.Utilities
         /// </summary>
         /// <param name="value">The function that returns a CSS class to conditionally add.</param>
         /// <param name="when">The condition in which the CSS class is added.</param>
-        /// <returns>The <see cref="CssBuilder"/>> instance.</returns>
+        /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public CssBuilder AddClass(Func<string?> value, bool when = true) => when ? AddClass(value()) : this;
 
         /// <summary>
@@ -98,7 +99,7 @@ namespace MudBlazor.Utilities
         /// </summary>
         /// <param name="value">The function that returns a CSS class to conditionally add.</param>
         /// <param name="when">The condition in which the CSS class is added.</param>
-        /// <returns>The <see cref="CssBuilder"/>> instance.</returns>
+        /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public CssBuilder AddClass(Func<string?> value, Func<bool>? when = null) => AddClass(value, when != null && when());
 
         /// <summary>
@@ -106,7 +107,7 @@ namespace MudBlazor.Utilities
         /// </summary>
         /// <param name="builder">The CssBuilder to conditionally add.</param>
         /// <param name="when">The condition in which the CssBuilder is added.</param>
-        /// <returns>The <see cref="CssBuilder"/>> instance.</returns>
+        /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public CssBuilder AddClass(CssBuilder builder, bool when = true) => when ? AddClass(builder.Build()) : this;
 
         /// <summary>
@@ -114,7 +115,7 @@ namespace MudBlazor.Utilities
         /// </summary>
         /// <param name="builder">The CssBuilder to conditionally add.</param>
         /// <param name="when">The condition in which the CSS class is added.</param>
-        /// <returns>The <see cref="CssBuilder"/>> instance.</returns>
+        /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public CssBuilder AddClass(CssBuilder builder, Func<bool>? when = null) => AddClass(builder, when is not null && when());
 
         /// <summary>
@@ -122,7 +123,7 @@ namespace MudBlazor.Utilities
         /// This is a null-safe operation.
         /// </summary>
         /// <param name="additionalAttributes">Additional attribute splat parameters.</param>
-        /// <returns>The <see cref="CssBuilder"/>> instance.</returns>
+        /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public CssBuilder AddClassFromAttributes(IReadOnlyDictionary<string, object>? additionalAttributes)
         {
             return additionalAttributes is null
