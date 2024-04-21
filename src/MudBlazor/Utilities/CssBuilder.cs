@@ -19,7 +19,7 @@ namespace MudBlazor.Utilities
         /// Creates a new instance of CssBuilder with the specified initial value.
         /// </summary>
         /// <remarks>
-        /// Call <see cref="Build"/> to return the completed CSS Classes as a string. 
+        /// Call <see cref="Build"/> to return the completed CSS classes as a string. 
         /// </remarks>
         /// <param name="value">The initial CSS class value.</param>
         /// <returns>The <see cref="CssBuilder"/> instance.</returns>
@@ -29,7 +29,7 @@ namespace MudBlazor.Utilities
         /// Creates an empty instance of CssBuilder.
         /// </summary>
         /// <remarks>
-        /// Call <see cref="Build"/> to return the completed CSS Classes as a string. 
+        /// Call <see cref="Build"/> to return the completed CSS classes as a string. 
         /// </remarks>
         /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public static CssBuilder Empty() => new();
@@ -38,7 +38,7 @@ namespace MudBlazor.Utilities
         /// Initializes a new instance of the CssBuilder class with the specified initial value.
         /// </summary>
         /// <remarks>
-        /// Call <see cref="Build"/> to return the completed CSS Classes as a string. 
+        /// Call <see cref="Build"/> to return the completed CSS classes as a string. 
         /// </remarks>
         /// <param name="value">The initial CSS class value.</param>
         /// <returns>The <see cref="CssBuilder"/> instance.</returns>
@@ -71,10 +71,10 @@ namespace MudBlazor.Utilities
         public CssBuilder AddClass(string? value, bool when) => when ? AddClass(value) : this;
 
         /// <summary>
-        /// Adds a conditional CSS Class to the builder with space separator.
+        /// Adds a conditional CSS class to the builder with space separator.
         /// </summary>
-        /// <param name="value">CSS Class to conditionally add.</param>
-        /// <param name="when">Nullable condition in which the CSS Class is added.</param>
+        /// <param name="value">CSS class to conditionally add.</param>
+        /// <param name="when">Nullable condition in which the CSS class is added.</param>
         /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public CssBuilder AddClass(string? value, bool? when) => when == true ? AddClass(value) : this;
 
