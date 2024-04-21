@@ -3,14 +3,13 @@
 <DocsPage>
     <DocsPageHeader Title="File Upload">
         <Description>
-
             <MudText Typo="@Typo.body1" Class="mt-4">
-                To create a file upload button, two elements are needed: a <CodeInline>button</CodeInline> and an <CodeInline>input</CodeInline>.
+                To create a file upload button, two elements are needed: an activator (using the <CodeInline>ActivatorContent</CodeInline> parameter) and an <CodeInline>input</CodeInline>.
             </MudText>
             <br />
             <MudText Typo="@Typo.body1">
-                The <CodeInline>MudFileUpload</CodeInline> component provides <CodeInline>ClearAsync</CodeInline> and <CodeInline>OpenFilePickerAsync</CodeInline>
-                actions in the <CodeInline>ButtonTemplate</CodeInline> context that can be used as <CodeInline>OnClick</CodeInline> events for buttons.
+                The <CodeInline>MudFileUpload</CodeInline> component provides public <CodeInline>ClearAsync</CodeInline> and <CodeInline>OpenFilePickerAsync</CodeInline>
+                methods that can be used as <CodeInline>OnClick</CodeInline> events for buttons.
             </MudText>
             <br />
             <MudText Typo="@Typo.body1">
@@ -26,9 +25,8 @@
         <DocsPageSection>
             <SectionHeader Title="Use any type of MudButton">
                 <Description>
-                    Use a <CodeInline>MudButton</CodeInline>, a <CodeInline>MudIconButton</CodeInline> or a <CodeInline>MudFab</CodeInline> with the <CodeInline>ButtonTemplate</CodeInline> render fragment.
-                    Set the button's <CodeInline>OnClick</CodeInline> property to <CodeInline>&#64;context.Actions.OpenFilePickerAsync</CodeInline>.<br />
-                    A <CodeInline>MudFileUpload</CodeInline> can be <CodeInline>Disabled</CodeInline> and it will Disable its child button automatically.
+                    Use a <CodeInline>MudButton</CodeInline>, a <CodeInline>MudIconButton</CodeInline> or a <CodeInline>MudFab</CodeInline> with the <CodeInline>ActivatorContent</CodeInline> render fragment.
+                    A <CodeInline>MudFileUpload</CodeInline> can be <CodeInline>Disabled</CodeInline> and it will disable its child button automatically.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" ShowCode="false" Code="FileUploadButtonExample">
@@ -53,7 +51,7 @@
                 <Description>
                     Use the <CodeInline>For</CodeInline> property to validate your files within a form, and bind your files to your model class using <CodeInline>&#64;bind-Files</CodeInline>.
                     You can then handle the file upload logic within your <CodeInline>MudForm</CodeInline> submit method.
-                    The <CodeInline>ButtonTemplate</CodeInline> property provides the <CodeInline>&#64;context.Actions.ClearAsync</CodeInline> action that you can bind to a button to clear files and update the form state.
+                    The component provides a public <CodeInline>ClearAsync</CodeInline> method that you can use as <CodeInline>OnClick</CodeInline> handler for a button to clear files and update the form state.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" ShowCode="false" Code="FileUploadValidationExample">

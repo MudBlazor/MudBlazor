@@ -11,7 +11,7 @@ namespace MudBlazor
     {
         /// <summary>
         /// Potential activation target for this button. This enables RenderFragments with user-defined
-        /// buttons which will automatically activate the intended functionality. 
+        /// buttons which will automatically activate the intended functionality.
         /// </summary>
         [CascadingParameter]
         protected IActivatable? Activatable { get; set; }
@@ -117,7 +117,7 @@ namespace MudBlazor
             SetDefaultValues();
         }
 
-        //Set the default value for HtmlTag, Href and Target 
+        //Set the default value for HtmlTag, Href and Target
         private void SetDefaultValues()
         {
             if (GetDisabledState())

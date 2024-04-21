@@ -1,51 +1,46 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
-    <ButtonTemplate>
+    <ActivatorContent>
         <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
-                   StartIcon="@Icons.Material.Filled.CloudUpload"
-                   OnClick="@context.Actions.OpenFilePickerAsync">
+                   StartIcon="@Icons.Material.Filled.CloudUpload">
             Upload Files
         </MudButton>
-    </ButtonTemplate>
+    </ActivatorContent>
 </MudFileUpload>
 
 <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
-    <ButtonTemplate>
+    <ActivatorContent>
         <MudFab Color="Color.Secondary"
                 StartIcon="@Icons.Material.Filled.Image"
-                Label="Load picture"
-                OnClick="@context.Actions.OpenFilePickerAsync" />
-    </ButtonTemplate>
+                Label="Load picture" />
+    </ActivatorContent>
 </MudFileUpload>
 
 <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
-    <ButtonTemplate>
+    <ActivatorContent>
         <MudFab Color="Color.Success"
-                StartIcon="@Icons.Material.Filled.AttachFile"
-                OnClick="@context.Actions.OpenFilePickerAsync" />
-    </ButtonTemplate>
+                StartIcon="@Icons.Material.Filled.AttachFile" />
+    </ActivatorContent>
 </MudFileUpload>
 
 <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
-    <ButtonTemplate>
+    <ActivatorContent>
         <MudIconButton Color="Color.Info"
-                       Icon="@Icons.Material.Filled.PhotoCamera"
-                       OnClick="@context.Actions.OpenFilePickerAsync">
+                       Icon="@Icons.Material.Filled.PhotoCamera">
         </MudIconButton>
-    </ButtonTemplate>
+    </ActivatorContent>
 </MudFileUpload>
 
 <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Disabled>
-    <ButtonTemplate>
+    <ActivatorContent>
         <MudButton HtmlTag="label"
                    Variant="Variant.Filled"
-                   Color="Color.Primary"
-                   OnClick="@context.Actions.OpenFilePickerAsync">
+                   Color="Color.Primary">
             Disabled Button
         </MudButton>
-    </ButtonTemplate>
+    </ActivatorContent>
 </MudFileUpload>
 
 @if (_files != null)
