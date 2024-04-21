@@ -10,7 +10,7 @@ namespace MudBlazor.Utilities
 #nullable enable
     public struct StyleBuilder
     {
-        private string _stringBuffer;
+        private string? _stringBuffer;
 
         /// <summary>
         /// Creates a StyleBuilder used to define conditional in-line style used in a component. Call Build() to return the completed style as a string.
@@ -41,7 +41,7 @@ namespace MudBlazor.Utilities
         /// Adds a conditional in-line style to the builder with space separator and closing semicolon.
         /// </summary>
         /// <param name="style"></param>
-        public StyleBuilder AddStyle(string style) => !string.IsNullOrWhiteSpace(style) ? AddRaw($"{style};") : this;
+        public StyleBuilder AddStyle(string? style) => !string.IsNullOrWhiteSpace(style) ? AddRaw($"{style};") : this;
 
         /// <summary>
         /// Adds a conditional style to the builder with space separator and closing semicolon.
@@ -49,7 +49,7 @@ namespace MudBlazor.Utilities
         /// <param name="style">The style to add</param>
         /// <param name="when">The condition</param>
         /// <returns>The <see cref="StyleBuilder"/></returns>
-        public StyleBuilder AddStyle(string style, bool when) => when ? AddStyle(style) : this;
+        public StyleBuilder AddStyle(string? style, bool when) => when ? AddStyle(style) : this;
 
         /// <summary>
         /// Adds a conditional style to the builder with space separator and closing semicolon.
@@ -57,14 +57,14 @@ namespace MudBlazor.Utilities
         /// <param name="style">The style to add</param>
         /// <param name="when">The condition as function</param>
         /// <returns>The <see cref="StyleBuilder"/></returns>
-        public StyleBuilder AddStyle(string style, Func<bool>? when) => AddStyle(style, when is not null && when());
+        public StyleBuilder AddStyle(string? style, Func<bool>? when) => AddStyle(style, when is not null && when());
 
         /// <summary>
         /// Adds a raw string to the builder that will be concatenated with the next style or value added to the builder.
         /// </summary>
         /// <param name="style"></param>
         /// <returns>StyleBuilder</returns>
-        private StyleBuilder AddRaw(string style)
+        private StyleBuilder AddRaw(string? style)
         {
             _stringBuffer += style;
             return this;
@@ -76,7 +76,7 @@ namespace MudBlazor.Utilities
         /// <param name="prop"></param>
         /// <param name="value">Style to add</param>
         /// <returns>StyleBuilder</returns>
-        public StyleBuilder AddStyle(string prop, string value) => AddRaw($"{prop}:{value};");
+        public StyleBuilder AddStyle(string prop, string? value) => AddRaw($"{prop}:{value};");
 
         /// <summary>
         /// Adds a conditional in-line style to the builder with space separator and closing semicolon.
@@ -85,7 +85,7 @@ namespace MudBlazor.Utilities
         /// <param name="value">Style to conditionally add.</param>
         /// <param name="when">Condition in which the style is added.</param>
         /// <returns>StyleBuilder</returns>
-        public StyleBuilder AddStyle(string prop, string value, bool when) => when ? AddStyle(prop, value) : this;
+        public StyleBuilder AddStyle(string prop, string? value, bool when) => when ? AddStyle(prop, value) : this;
 
 
         /// <summary>
@@ -160,21 +160,11 @@ namespace MudBlazor.Utilities
         /// <returns>StyleBuilder</returns>
         public StyleBuilder AddStyleFromAttributes(IReadOnlyDictionary<string, object>? additionalAttributes)
         {
-            if (additionalAttributes is null)
-            {
-                return this;
-            }
-
-            if (additionalAttributes.TryGetValue("style", out var result))
-            {
-                var resultString = result.ToString();
-                if (resultString is not null)
-                {
-                    return AddRaw(resultString);
-                }
-            }
-
-            return this;
+            return additionalAttributes is null
+                ? this
+                : additionalAttributes.TryGetValue("style", out var result)
+                    ? AddRaw(result.ToString())
+                    : this;
         }
 
 
@@ -185,7 +175,7 @@ namespace MudBlazor.Utilities
         public string Build()
         {
             // String buffer finalization code
-            return _stringBuffer != null ? _stringBuffer.Trim() : string.Empty;
+            return _stringBuffer is not null ? _stringBuffer.Trim() : string.Empty;
         }
 
         // ToString should only and always call Build to finalize the rendered string.
