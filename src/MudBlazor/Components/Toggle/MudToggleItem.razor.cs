@@ -14,6 +14,7 @@ namespace MudBlazor
         protected string Classname => new CssBuilder("mud-toggle-item")
             .AddClass($"mud-theme-{Parent?.Color.ToDescriptionString()}", IsSelected && string.IsNullOrEmpty(Parent?.SelectedClass))
             .AddClass(Parent?.SelectedClass, IsSelected && !string.IsNullOrEmpty(Parent?.SelectedClass))
+            .AddClass("mud-toggle-item-selected", IsSelected)
             .AddClass($"mud-toggle-item-{Parent?.Color.ToDescriptionString()}")
             .AddClass("mud-toggle-item-vertical", Parent?.Vertical == true)
             .AddClass("mud-toggle-item-delimiter", Parent?.Delimiters == true)
