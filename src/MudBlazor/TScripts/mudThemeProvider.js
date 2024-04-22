@@ -1,12 +1,18 @@
 ﻿const darkThemeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
-window.darkModeChange = (dotNetHelper) => {
+window.darkModeChange = () => {
     return darkThemeMediaQuery.matches;
 };
 
+function darkModeChangeListener(e) {
+    dotNetHelperTheme.invokeMethodAsync('SystemPreferenceChanged', e.matches);
+}
+
 function watchDarkThemeMedia(dotNetHelper) {
     dotNetHelperTheme = dotNetHelper;
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
-        dotNetHelperTheme.invokeMethodAsync('SystemPreferenceChanged', window.matchMedia("(prefers-color-scheme: dark)").matches);
-    });
+    darkThemeMediaQuery.addEventListener('change', darkModeChangeListener);
+}
+
+function stopWatchingDarkThemeMedia() {
+    darkThemeMediaQuery.removeEventListener('change', darkModeChangeListener);
 }
