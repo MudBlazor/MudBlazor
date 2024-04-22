@@ -92,49 +92,61 @@ namespace MudBlazor
         public bool Overlap { get; set; }
 
         /// <summary>
-        /// Applies a border around the badge.
+        /// Gets or sets whether a border is displayed around the badge.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Badge.Appearance)]
         public bool Bordered { get; set; }
 
         /// <summary>
-        /// Sets the Icon to use in the badge.
+        /// Gets or sets the icon to display in the badge.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Badge.Behavior)]
         public string? Icon { get; set; }
 
         /// <summary>
-        /// Max value to show when content is integer type.
+        /// Gets or sets the maximum number allowed in the <see cref="Content"/> property.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>99</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Badge.Behavior)]
         public int Max { get; set; } = 99;
 
         /// <summary>
-        /// Content you want inside the badge. Supported types are string and integer.
+        /// Gets or sets the <c>string</c> or <c>int</c> value to display inside the badge.
         /// </summary>
+        /// <remarks>
+        /// Supported types are <c>string</c> and <c>int</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Badge.Behavior)]
         public object? Content { get; set; }
 
         /// <summary>
-        /// Badge class names, separated by space.
+        /// Gets or sets any CSS classes applied to the badge.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Badge.Appearance)]
         public string? BadgeClass { get; set; }
 
         /// <summary>
-        /// Child content of component, the content that the badge will apply to.
+        /// Gets or sets any child content for the component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Badge.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Button click event if set.
+        /// Occurs when the badge has been clicked.
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 

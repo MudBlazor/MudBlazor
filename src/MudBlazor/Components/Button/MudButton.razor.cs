@@ -5,6 +5,9 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// Represents 
+    /// </summary>
     public partial class MudButton : MudBaseButton, IHandleEvent
     {
         protected string Classname =>
