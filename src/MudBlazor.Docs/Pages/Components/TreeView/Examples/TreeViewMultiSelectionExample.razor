@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Width="300px" Elevation="0">
-    <MudTreeView Hover ReadOnly="@ReadOnly" TriState="@TriState" @bind-SelectedValues="SelectedValues" SelectionMode="@SelectionMode.MultiSelection"
+    <MudTreeView Hover ReadOnly="@ReadOnly" TriState="@TriState" @bind-SelectedValues="SelectedValues" SelectionMode="SelectionMode.MultiSelection"
                  CheckBoxColor="Color.Info">
         <MudTreeViewItem Value="@("config")" Expanded Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen">
             <MudTreeViewItem Value='"launch.json"' Icon="@Icons.Custom.FileFormats.FileCode" />
@@ -14,7 +14,7 @@
 </MudPaper>
 
 <MudStack Row Justify="Justify.Center" Style="width: 100%" Wrap="Wrap.Wrap">
-    <MudChipSet T="string" @bind-SelectedValues="SelectedValues" MultiSelection Color="Color.Info" Variant="Variant.Text">
+    <MudChipSet T="string" @bind-SelectedValues="SelectedValues" SelectionMode="SelectionMode.MultiSelection" Color="Color.Info" Variant="Variant.Text">
         <MudChip Text="config"/>
         <MudChip Text="launch.json"/>
         <MudChip Text="tasks.json"/>

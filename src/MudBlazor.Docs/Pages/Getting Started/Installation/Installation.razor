@@ -51,7 +51,11 @@
                     Navigate to a folder where you want your project and run the following command to create a new project. You can run <CodeInline>dotnet new mudblazor --help</CodeInline> to see all available options.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="@nameof(InstallationTemplateUsageExample)" />
+            <SectionContent Codes="@(new[] {
+                new CodeFile("Auto", nameof(InstallationTemplateUsageExampleAuto)),
+                new CodeFile("WebAssembly", nameof(InstallationTemplateUsageExampleWasm)),
+                new CodeFile("Server", nameof(InstallationTemplateUsageExampleServer))
+            })" />
         </DocsPageSection>
         
         <DocsPageSection>

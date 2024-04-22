@@ -1,4 +1,4 @@
-﻿@property --rotate {
+@property --rotate {
   syntax: "<angle>";
   initial-value: 132deg;
   inherits: false;
@@ -457,13 +457,8 @@
     }
 
     @media (max-width:600px) {
-      h1 {
-        font-size: 2.5rem;
-      }
-
-      h6 {
-        font-size: .875rem;
-      }
+      --mud-typography-h1-size: 2.5rem;
+      --mud-typography-subtitle1-size: .875rem;
     }
 
     .graphic-wrapper {

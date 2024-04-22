@@ -69,7 +69,7 @@ namespace MudBlazor
 
         internal async Task AddPanelAsync(MudExpansionPanel panel)
         {
-            if (!MultiExpansion && _panels.Any(p => p._isExpandedState.Value))
+            if (!MultiExpansion && _panels.Any(p => p._expandedState.Value))
             {
                 await panel.CollapseAsync();
             }
@@ -89,7 +89,7 @@ namespace MudBlazor
 
         internal async Task NotifyPanelsChanged(MudExpansionPanel panel)
         {
-            if (!MultiExpansion && panel._isExpandedState.Value)
+            if (!MultiExpansion && panel._expandedState.Value)
             {
                 await CollapseAllExceptAsync(panel);
                 return;
@@ -105,7 +105,7 @@ namespace MudBlazor
             {
                 if (last is not null)
                 {
-                    last.NextPanelExpanded = panel._isExpandedState.Value;
+                    last.NextPanelExpanded = panel._expandedState.Value;
                 }
 
                 last = panel;

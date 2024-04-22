@@ -9,10 +9,10 @@
 		<MudTh />
 	}
 
-	@if (IsExpandable || ((Context?.Table.MultiSelection ?? false) && !IgnoreCheckbox))
+	@if (Expandable || ((Context?.Table.MultiSelection ?? false) && !IgnoreCheckbox))
 	{
 		<MudTh>
-			@if (IsExpandable)
+			@if (Expandable)
 			{
 				<div class="ml-4 mr-5"></div>
 			}
@@ -28,5 +28,3 @@
 		<MudTh />
 	}
 </tr>
-
-
