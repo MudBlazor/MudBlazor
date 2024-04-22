@@ -3070,7 +3070,7 @@ namespace MudBlazor.UnitTests.Components
             // amount with invariant culture (decimals separated by point)
             var amountHeader = dataGrid.FindAll("th .mud-menu button")[2];
             amountHeader.Click();
-            
+
             var filterAmount = comp.FindAll(".mud-list-item")[1];
             filterAmount.Click();
 
