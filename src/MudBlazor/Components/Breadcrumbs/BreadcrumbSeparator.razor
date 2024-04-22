@@ -10,3 +10,9 @@
         @Parent?.SeparatorTemplate
     }
 </li>
+
+@code {
+#nullable enable
+    [CascadingParameter]
+    public MudBreadcrumbs? Parent { get; set; }
+}
