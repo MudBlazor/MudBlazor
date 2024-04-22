@@ -11,7 +11,7 @@
         }
         else
         {
-            <MudTreeViewItemToggleButton Loading="_loading" Expanded="_expandedState.Value" ExpandedChanged="OnItemExpanded" Visible="@HasChild" ExpandedIcon="@ExpandButtonIcon" ExpandedIconColor="@ExpandButtonIconColor" LoadingIcon="@LoadingIcon" LoadingIconColor="LoadingIconColor"></MudTreeViewItemToggleButton>
+            <MudTreeViewItemToggleButton Loading="_loading" Expanded="_expandedState.Value" ExpandedChanged="OnItemExpanded" Visible="@HasChildren()" ExpandedIcon="@ExpandButtonIcon" ExpandedIconColor="@ExpandButtonIconColor" LoadingIcon="@LoadingIcon" LoadingIconColor="LoadingIconColor"></MudTreeViewItemToggleButton>
 
             @if (MultiSelection)
             {
@@ -52,7 +52,7 @@
             }
         }
     </div>
-    @if (HasChild)
+    @if (HasChildren())
     {
         <MudCollapse Expanded="@_expandedState.Value">
             <CascadingValue Value="@MudTreeRoot" IsFixed="true">
