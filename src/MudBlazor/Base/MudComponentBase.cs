@@ -237,7 +237,7 @@ namespace MudBlazor
                             break;
                     }
                 }
-                else if (GetType() == typeof(MudList<>))
+                else if (GetType() == typeof(MudList<>) || GetType().Name.StartsWith(nameof(MudListItem<string>)))
                 {
                     switch (parameter)
                     {
@@ -246,6 +246,7 @@ namespace MudBlazor
                         case "Clickable":
                         case "Avatar":
                         case "AvatarClass":
+                        case "AdornmentColor":
                             NotifyIllegalParameter(parameter);
                             break;
                     }

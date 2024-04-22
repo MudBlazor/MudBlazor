@@ -172,14 +172,6 @@ namespace MudBlazor
         [Category(CategoryTypes.TreeView.Selecting)]
         public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
 
-        // TODO
-        ///// <summary>
-        ///// Custom tri-state indeterminate icon.
-        ///// </summary>
-        //[Parameter]
-        //[Category(CategoryTypes.TreeView.Selecting)]
-        //public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
-
         protected override void OnInitialized()
         {
             base.OnInitialized();
@@ -196,9 +188,13 @@ namespace MudBlazor
             if (firstRender && TopLevelList == this)
             {
                 if (SelectionMode == SelectionMode.MultiSelection)
+                {
                     UpdateSelectedItems(_selection);
+                }
                 else
+                {
                     UpdateSelectedItem(_selectedValueState);
+                }
             }
         }
 
@@ -283,7 +279,9 @@ namespace MudBlazor
         internal async Task SelectValueAsync(T? value)
         {
             if (SelectionMode != SelectionMode.MultiSelection || value is null)
+            {
                 return;
+            }
             _selection.Add(value);
             UpdateSelectedItems(_selection);
             await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: ToList is essential here!
@@ -292,7 +290,9 @@ namespace MudBlazor
         internal async Task DeselectValueAsync(T? value)
         {
             if (SelectionMode != SelectionMode.MultiSelection || value is null)
+            {
                 return;
+            }
             _selection.Remove(value);
             UpdateSelectedItems(_selection);
             await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: ToList is essential here!
@@ -301,9 +301,13 @@ namespace MudBlazor
         internal void UpdateSelection()
         {
             if (SelectionMode == SelectionMode.MultiSelection)
+            {
                 UpdateSelectedItems(new HashSet<T>(TopLevelList.SelectedValues ?? Array.Empty<T>(), Comparer));
+            }
             else
+            {
                 UpdateSelectedItem(TopLevelList.SelectedValue);
+            }
             foreach (var childList in _childLists.ToArray())
                 childList.UpdateSelection();
         }

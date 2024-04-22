@@ -113,11 +113,11 @@ namespace MudBlazor
         public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
-        /// The color of the adornment if used. It supports the theme colors.
+        /// The color of the ExpandLessIcon and ExpandMoreIcon. It supports the theme colors.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Expanding)]
-        public Color AdornmentColor { get; set; } = Color.Default;
+        public Color ExpandIconColor { get; set; } = Color.Default;
 
         /// <summary>
         /// Custom expand less icon.
@@ -204,9 +204,13 @@ namespace MudBlazor
         private bool GetClickable()
         {
             if (Disabled)
+            {
                 return false;
+            }
             if (NestedList != null)
+            {
                 return true;
+            }
             return !GetReadOnly();
         }
 
@@ -245,14 +249,20 @@ namespace MudBlazor
                 else
                 {
                     if (SelectionMode == SelectionMode.SingleSelection)
+                    {
                         await TopLevelList.SetSelectedValueAsync(value);
+                    }
                     else // ToggleSelection
+                    {
                         await TopLevelList.SetSelectedValueAsync(_selected ? default : value);
+                    }
                 }
             }
             await OnClick.InvokeAsync(eventArgs);
             if (Href != null)
+            {
                 UriHelper.NavigateTo(Href, ForceLoad);
+            }
         }
 
         internal void SetSelected(bool selected)
@@ -268,7 +278,9 @@ namespace MudBlazor
         internal T? GetValue()
         {
             if (typeof(T) == typeof(string) && Value is null && Text is not null)
+            {
                 return (T)(object)Text;
+            }
             return Value;
         }
 
@@ -278,45 +290,37 @@ namespace MudBlazor
 
         private bool GetDense() => Dense ?? TopLevelList?.Dense ?? false;
 
-        private bool? GetCheckBoxState()
-        {
-            return _selected;
-            // TODO later, support tristate logic
-            //var allChildrenChecked = GetChildItemsRecursive().All(x => x.GetState<bool>(nameof(Selected)));
-            //var noChildrenChecked = GetChildItemsRecursive().All(x => !x.GetState<bool>(nameof(Selected)));
-            //if (allChildrenChecked && _selectedState)
-            //    return true;
-            //if (noChildrenChecked && !_selectedState)
-            //    return false;
-            //return null;
-        }
+        private bool? GetCheckBoxState() => _selected;
 
         private async Task OnCheckboxChangedAsync()
         {
             if (TopLevelList is null || ReadOnly || GetDisabled())
+            {
                 return;
+            }
             if (_selected)
+            {
                 await TopLevelList.DeselectValueAsync(GetValue());
+            }
             else
+            {
                 await TopLevelList.SelectValueAsync(GetValue());
+            }
         }
 
         private string GetIndeterminateIcon()
         {
-            // TODO
-            //if (TriState)
-            //    return IndeterminateIcon;
+            // Note: this will only become important should we ever want to add checkboxes for nesting list items similar to treeview
             // in non-tristate mode we need to fake the checked status. the actual status of the checkbox is irrelevant,
             // only _selected matters!
-            return _selected ? CheckedIcon : UncheckedIcon;
+            return _selected ? GetCheckedIcon() : GetUncheckedIcon();
         }
 
-        private Color CheckBoxColor => TopLevelList?.CheckBoxColor ?? default;
-        private string CheckedIcon => TopLevelList?.CheckedIcon ?? Icons.Material.Filled.CheckBox;
-        private string UncheckedIcon => TopLevelList?.UncheckedIcon ?? Icons.Material.Filled.CheckBoxOutlineBlank;
+        private Color GetCheckBoxColor() => TopLevelList?.CheckBoxColor ?? default;
 
-        // TODO
-        //private string IndeterminateIcon => MudList?.IndeterminateIcon ?? Icons.Material.Filled.IndeterminateCheckBox;
+        private string GetCheckedIcon() => TopLevelList?.CheckedIcon ?? Icons.Material.Filled.CheckBox;
+
+        private string GetUncheckedIcon() => TopLevelList?.UncheckedIcon ?? Icons.Material.Filled.CheckBoxOutlineBlank;
 
         public void Dispose()
         {

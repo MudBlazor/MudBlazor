@@ -15,7 +15,7 @@
     }
     @if (MultiSelection && NestedList is null) {
         <MudCheckBox T="bool?" TriState ReadOnly="@ReadOnly" Class="mud-list-item-checkbox my-n2 ms-n2" Disabled="@GetDisabled()"
-                     CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" IndeterminateIcon="@GetIndeterminateIcon()" Color="CheckBoxColor" UncheckedColor="CheckBoxColor"
+                     CheckedIcon="@GetCheckedIcon()" UncheckedIcon="@GetUncheckedIcon()" IndeterminateIcon="@GetIndeterminateIcon()" Color="@GetCheckBoxColor()" UncheckedColor="@GetCheckBoxColor()"
                     @bind-Value:get="GetCheckBoxState()" @bind-Value:set="@(x=>OnCheckboxChangedAsync())"/>
     }
     <div class="mud-list-item-text @(Inset? "mud-list-item-text-inset" : "")">
@@ -29,7 +29,7 @@
         </MudText>
     </div>
     @if (NestedList != null) {
-        <MudIcon Icon="@($"{(_expandedState.Value ? ExpandLessIcon : ExpandMoreIcon)}")" Size="@IconSize" Color="@AdornmentColor" />
+        <MudIcon Icon="@($"{(_expandedState.Value ? ExpandLessIcon : ExpandMoreIcon)}")" Size="@IconSize" Color="@ExpandIconColor" />
     }
 </div>
 @if (NestedList != null) {
