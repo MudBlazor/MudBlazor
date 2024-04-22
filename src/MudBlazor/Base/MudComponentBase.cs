@@ -5,6 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
@@ -127,7 +129,7 @@ namespace MudBlazor
                             break;
                     }
                 }
-                else if (GetType() == typeof(MudRadio<>))
+                else if (MatchTypes( typeof(MudRadio<>)))
                 {
                     switch (parameter)
                     {
@@ -145,7 +147,7 @@ namespace MudBlazor
                             break;
                     }
                 }
-                else if (GetType() == typeof(MudCheckBox<>) || GetType() == typeof(MudSwitch<>))
+                else if (MatchTypes(typeof(MudCheckBox<>),typeof(MudSwitch<>)))
                 {
                     switch (parameter)
                     {
@@ -154,7 +156,7 @@ namespace MudBlazor
                             break;
                     }
                 }
-                else if (this is MudPopover || GetType() == typeof(MudAutocomplete<>) || GetType() == typeof(MudSelect<>))
+                else if (MatchTypes(typeof(MudPopover), typeof(MudAutocomplete<>), typeof(MudSelect<>)))
                 {
                     switch (parameter)
                     {
@@ -165,7 +167,7 @@ namespace MudBlazor
                             break;
                     }
                 }
-                else if (GetType() == typeof(MudToggleGroup<>))
+                else if (MatchTypes(typeof(MudToggleGroup<>)))
                 {
                     switch (parameter)
                     {
@@ -184,7 +186,7 @@ namespace MudBlazor
                             break;
                     }
                 }
-                else if (GetType() == typeof(MudSlider<>))
+                else if (MatchTypes(typeof(MudSlider<>)))
                 {
                     switch (parameter)
                     {
@@ -193,7 +195,7 @@ namespace MudBlazor
                             break;
                     }
                 }
-                else if (GetType() == typeof(MudRadioGroup<>))
+                else if (MatchTypes(typeof(MudRadioGroup<>)))
                 {
                     switch (parameter)
                     {
@@ -212,7 +214,7 @@ namespace MudBlazor
                             break;
                     }
                 }
-                else if (GetType() == typeof(MudChip<>))
+                else if (MatchTypes(typeof(MudChip<>)))
                 {
                     switch (parameter)
                     {
@@ -222,7 +224,7 @@ namespace MudBlazor
                             break;
                     }
                 }
-                else if (GetType() == typeof(MudChipSet<>))
+                else if (MatchTypes(typeof(MudChipSet<>)))
                 {
                     switch (parameter)
                     {
@@ -237,7 +239,7 @@ namespace MudBlazor
                             break;
                     }
                 }
-                else if (GetType() == typeof(MudList<>))
+                else if (MatchTypes(typeof(MudList<>), typeof(MudListItem<>)))
                 {
                     switch (parameter)
                     {
@@ -250,7 +252,7 @@ namespace MudBlazor
                             break;
                     }
                 }
-                else if (GetType() == typeof(MudTreeView<>) || GetType() == typeof(MudTreeViewItem<>))
+                else if (MatchTypes(typeof(MudTreeView<>), typeof(MudTreeViewItem<>)))
                 {
                     switch (parameter)
                     {
@@ -321,6 +323,12 @@ namespace MudBlazor
                     }
                 }
             }
+        }
+
+        internal bool MatchTypes(params Type[] types)
+        {
+            var self = GetType().IsGenericType ? GetType().GetGenericTypeDefinition() : GetType();
+            return types.Any(type => self == type);
         }
 
         [ExcludeFromCodeCoverage]
