@@ -162,6 +162,9 @@ namespace MudBlazor
         protected override Task DateFormatChangedAsync(string newFormat)
         {
             Touched = true;
+            _rangeText = new Range<string>(
+                Converter.Set(_dateRange?.Start),
+                Converter.Set(_dateRange?.End));
             return SetTextAsync(_dateRange?.ToString(Converter), false);
         }
 
