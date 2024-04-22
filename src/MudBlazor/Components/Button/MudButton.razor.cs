@@ -84,7 +84,7 @@ namespace MudBlazor
         /// Gets or sets the color of the button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.  Theme colos are supported.
+        /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
