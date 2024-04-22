@@ -8,7 +8,7 @@ namespace MudBlazor
 #nullable enable
     public partial class MudHidden : MudComponentBase, IBrowserViewportObserver, IAsyncDisposable
     {
-        private IParameterState<bool> _isHiddenState;
+        private readonly ParameterState<bool> _isHiddenState;
         private bool _serviceIsReady = false;
         private Breakpoint _currentBreakpoint = Breakpoint.None;
 
@@ -54,7 +54,10 @@ namespace MudBlazor
 
         public MudHidden()
         {
-            _isHiddenState = RegisterParameter(nameof(IsHidden), () => IsHidden, () => IsHiddenChanged);
+            using var registerScope = CreateRegisterScope();
+            _isHiddenState = registerScope.RegisterParameter<bool>(nameof(IsHidden))
+                .WithParameter(() => IsHidden)
+                .WithEventCallback(() => IsHiddenChanged);
         }
 
         protected override async Task OnParametersSetAsync()

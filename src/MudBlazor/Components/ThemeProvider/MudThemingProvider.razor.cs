@@ -240,9 +240,6 @@ partial class MudThemingProvider : ComponentBase, IDisposable
         theme.AppendLine($"--{Palette}-divider: {palette.Divider};");
         theme.AppendLine($"--{Palette}-divider-light: {palette.DividerLight};");
 
-        theme.AppendLine($"--{Palette}-chip-default: {palette.ChipDefault};");
-        theme.AppendLine($"--{Palette}-chip-default-hover: {palette.ChipDefaultHover};");
-
         theme.AppendLine($"--{Palette}-gray-default: {palette.GrayDefault};");
         theme.AppendLine($"--{Palette}-gray-light: {palette.GrayLight};");
         theme.AppendLine($"--{Palette}-gray-lighter: {palette.GrayLighter};");

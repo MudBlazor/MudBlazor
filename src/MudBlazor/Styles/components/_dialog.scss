@@ -97,6 +97,18 @@
     }
   }
 
+  & > .mud-focus-trap {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    & > .mud-focus-trap-child-container {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+  }
+
   & .mud-dialog-content {
     position: relative;
     flex: 1 1 auto;

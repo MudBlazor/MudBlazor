@@ -7,12 +7,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudPageContentNavigation : IAsyncDisposable
+    public partial class MudPageContentNavigation : IAsyncDisposable, IMudStateHasChanged
     {
         private List<MudPageContentSection> _sections = new();
         private IScrollSpy? _scrollSpy;
@@ -37,7 +38,13 @@ namespace MudBlazor
         public string Headline { get; set; } = "Contents";
 
         /// <summary>
-        /// The css selector used to identify the HTML elements that should be observed for viewport changes
+        /// The CSS selector used to identify the scroll container
+        /// </summary>
+        [Parameter]
+        public string ScrollContainerSelector { get; set; } = "html";
+
+        /// <summary>
+        /// The class name (without .) to identify the HTML elements that should be observed for viewport changes
         /// </summary>
         [Parameter]
         public string SectionClassSelector { get; set; } = string.Empty;
@@ -62,8 +69,6 @@ namespace MudBlazor
 
         private Task OnNavLinkClick(string id)
         {
-            SelectActiveSection(id);
-
             return _scrollSpy is not null
                 ? _scrollSpy.ScrollToSection(id)
                 : Task.CompletedTask;
@@ -154,11 +159,7 @@ namespace MudBlazor
             }
         }
 
-
-        /// <summary>
-        /// Re-render the component
-        /// </summary>
-        public void Update() => StateHasChanged();
+        void IMudStateHasChanged.StateHasChanged() => StateHasChanged();
 
         protected override void OnInitialized()
         {
@@ -175,7 +176,7 @@ namespace MudBlazor
 
                     if (!string.IsNullOrEmpty(SectionClassSelector))
                     {
-                        await _scrollSpy.StartSpying(SectionClassSelector);
+                        await _scrollSpy.StartSpying(ScrollContainerSelector, SectionClassSelector);
                     }
 
                     SelectActiveSection(_scrollSpy.CenteredSection);

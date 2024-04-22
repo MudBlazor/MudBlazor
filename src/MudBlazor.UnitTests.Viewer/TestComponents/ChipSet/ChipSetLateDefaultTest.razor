@@ -1,11 +1,11 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudChipSet T="string" @bind-SelectedValues="_selectedValues" MultiSelection CheckMark>
+<MudChipSet T="string" @bind-SelectedValues="_selectedValues" SelectionMode="SelectionMode.MultiSelection" CheckMark>
     @if (_extraItem)
     {
-        <MudChip T="string" Value="@("Extra Chip")" Default="true" />
+        <MudChip Value="@("Extra Chip")" Default="true" />
     }
-    <MudChip T="string" Value="@("Primary")" Default="true"/>
+    <MudChip Value="@("Primary")" Default="true"/>
 </MudChipSet>
 Add chips <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="Enable">Enable</MudIconButton>
 

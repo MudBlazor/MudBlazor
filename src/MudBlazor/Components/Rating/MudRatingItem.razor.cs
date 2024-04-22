@@ -14,7 +14,7 @@ namespace MudBlazor
         protected string ClassName =>
             new CssBuilder("")
                 .AddClass($"mud-rating-item")
-                .AddClass($"mud-ripple mud-ripple-icon", !DisableRipple)
+                .AddClass($"mud-ripple mud-ripple-icon", Ripple)
                 .AddClass($"yellow-text.text-darken-3", Color == Color.Default)
                 .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default)
                 .AddClass($"mud-rating-item-active", IsActive)
@@ -45,10 +45,10 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// If true, disables ripple effect.
+        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
         /// </summary>
         [Parameter]
-        public bool DisableRipple { get; set; }
+        public bool Ripple { get; set; } = true;
 
         /// <summary>
         /// If true, the controls will be disabled.

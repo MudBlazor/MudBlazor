@@ -242,6 +242,20 @@ namespace MudBlazor
         public string HeaderClass { get; set; }
 
         /// <summary>
+        /// Add a style to table container
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Appearance)]
+        public string ContainerStyle { get; set; }
+
+        /// <summary>
+        /// Add a class to table container
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Appearance)]
+        public string ContainerClass { get; set; }
+
+        /// <summary>
         /// Add MudTd cells here to define the table footer. If<see cref="CustomFooter"/> is set, add one or more MudTFootRow instead.
         /// </summary>
         [Parameter]
@@ -511,9 +525,14 @@ namespace MudBlazor
             return OnCancelEditClick.InvokeAsync(ev);
         }
 
-        protected string TableStyle
+        protected string TableContainerStyle
             => new StyleBuilder()
+                .AddStyle(ContainerStyle)
                 .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
+                .Build();
+
+        protected string TableContainerClass
+            => new CssBuilder(ContainerClass)
                 .Build();
 
         internal abstract bool HasServerData { get; }

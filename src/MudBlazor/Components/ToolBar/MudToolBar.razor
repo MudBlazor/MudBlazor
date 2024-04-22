@@ -12,7 +12,7 @@
     protected string Classname =>
         new CssBuilder("mud-toolbar")
             .AddClass("mud-toolbar-dense", Dense)
-            .AddClass("mud-toolbar-gutters", !DisableGutters)
+            .AddClass("mud-toolbar-gutters", Gutters)
             .AddClass("mud-toolbar-wrap-content", WrapContent)
             .AddClass(Class)
             .Build();
@@ -25,11 +25,11 @@
     public bool Dense { get; set; }
 
     /// <summary>
-    /// If true, disables gutter padding.
+    /// If true, left and right padding is added. Default is true
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.ToolBar.Appearance)]
-    public bool DisableGutters { get; set; }
+    public bool Gutters { get; set; } = true;
 
     /// <summary>
     /// Child content of component.

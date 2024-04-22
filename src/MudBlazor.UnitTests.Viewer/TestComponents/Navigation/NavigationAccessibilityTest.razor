@@ -1,0 +1,65 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudNavGroup id="custom-top-level-id"
+             Disabled="@TopLevelDisabled"
+             Title="Top level"
+             Expanded="@TopLevelExpanded">
+    <MudNavLink Href="/keyboard"
+                Icon="@Icons.Material.Outlined.Keyboard">
+        Accessibility
+    </MudNavLink>
+    <MudNavGroup Title="Disabled navgroup"
+                 Disabled="@true">
+        <MudNavLink id="disabled-navlink-within-disabled-navgroup"
+                    Href="/disabled"
+                    Icon="@Icons.Material.Filled.DisabledVisible"
+                    Disabled="@true">
+            Disabled
+        </MudNavLink>
+        <MudNavLink id="enabled-navlink-within-disabled-navgroup"
+                    Href="/enabled"
+                    Icon="@Icons.Material.Filled.Check">
+            Enabled
+        </MudNavLink>
+    </MudNavGroup>
+    <MudNavLink Href="/accessibility"
+                Icon="@Icons.Material.Outlined.Accessibility">
+        Keyboard
+    </MudNavLink>
+    <MudNavGroup id="second-level-navgroup"
+                 Title="@SecondLevelTitle"
+                 Expanded="@SecondLevelExpanded">
+        <MudNavLink Href="/reader"
+                    Icon="@Icons.Material.Filled.Computer">
+            Computer
+        </MudNavLink>
+        <MudNavLink id="disabled-navlink"
+                    Href="/disabled"
+                    Icon="@Icons.Material.Filled.DisabledVisible"
+                    Disabled="@true">
+            Disabled
+        </MudNavLink>
+        <MudNavLink Href="/mudblazor"
+                    Icon="@Icons.Custom.Brands.MudBlazor"
+                    Disabled="true">
+            MudBlazor
+        </MudNavLink>
+    </MudNavGroup>
+</MudNavGroup>
+
+<style>
+    *:focus {
+        outline: 1px solid red !important;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public bool TopLevelDisabled { get; set; }
+    [Parameter]
+    public bool TopLevelExpanded { get; set; } = true;
+    [Parameter]
+    public bool SecondLevelExpanded { get; set; } = true;
+    [Parameter]
+    public string SecondLevelTitle { get; set; } = "Second level";
+}

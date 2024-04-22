@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -229,14 +228,14 @@ namespace MudBlazor
         /// <summary>
         /// Provides Selection changes by horizontal swipe gesture
         /// </summary>
-        private void OnSwipe(SwipeDirection direction)
+        private void OnSwipeEnd(SwipeEventArgs e)
         {
             if (!EnableSwipeGesture)
             {
                 return;
             }
 
-            switch (direction)
+            switch (e.SwipeDirection)
             {
                 case SwipeDirection.LeftToRight:
                     if (RightToLeft) Next();

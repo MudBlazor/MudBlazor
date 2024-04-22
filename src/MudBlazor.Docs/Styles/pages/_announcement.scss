@@ -1,4 +1,4 @@
-﻿.announcement-card {
+.announcement-card {
   transition: background-color 150ms cubic-bezier(.4,0,.2,1) 0ms;
 
   @media(hover: hover) and (pointer: fine) {
@@ -18,7 +18,7 @@
   }
 }
 
-.announcment-container {
+.announcement-container {
   font-family: "Public Sans", "Roboto", "Arial", "sans-serif";
   font-weight: 600;
 }

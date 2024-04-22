@@ -8,7 +8,7 @@
     <MudSelectItem Value="@("4")" Disabled="true"/>
 </MudSelect>
 
-<MudSwitch @bind-Checked="@_focused" />
+<MudSwitch @bind-Value="@_focused" />
 
 @code {
 	public static string __description__ = "Click should open the Menu and selecting a value should update the bindable value.";

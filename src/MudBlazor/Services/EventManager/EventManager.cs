@@ -71,6 +71,12 @@ namespace MudBlazor
 
         private Dictionary<Guid, (Type eventType, Func<object, Task> callback)> _callbackResolver = new();
 
+        internal static readonly JsonSerializerOptions s_defaultJsonSerializerOptions = new()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            PropertyNameCaseInsensitive = true,
+        };
+
         [DynamicDependency(nameof(OnEventOccur))]
         public EventListener(IJSRuntime runtime)
         {
@@ -81,19 +87,10 @@ namespace MudBlazor
         [JSInvokable]
         public async Task OnEventOccur(Guid key, string @eventData)
         {
-            if (_callbackResolver.ContainsKey(key) == false) { return; }
-
-            var (eventType, callback) = _callbackResolver[key];
-
-            var @event = JsonSerializer.Deserialize(eventData, eventType, new WebEventJsonContext(new JsonSerializerOptions
+            if (_callbackResolver.TryGetValue(key, out var element) && element.callback != null)
             {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                PropertyNameCaseInsensitive = true,
-            }));
-
-            if (callback != null)
-            {
-                await callback.Invoke(@event);
+                var @event = JsonSerializer.Deserialize(eventData, element.eventType, new WebEventJsonContext(s_defaultJsonSerializerOptions));
+                await element.callback.Invoke(@event);
             }
         }
 

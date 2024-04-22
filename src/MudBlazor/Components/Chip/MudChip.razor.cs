@@ -6,13 +6,17 @@ using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
-#nullable enable
 
+#nullable enable
 public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 {
     public MudChip()
     {
-        IsSelectedState = RegisterParameter(nameof(IsSelected), () => IsSelected, () => IsSelectedChanged, OnIsSelectedChangedAsync);
+        using var registerScope = CreateRegisterScope();
+        IsSelectedState = registerScope.RegisterParameter<bool>(nameof(IsSelected))
+            .WithParameter(() => IsSelected)
+            .WithEventCallback(() => IsSelectedChanged)
+            .WithChangeHandler(OnIsSelectedChangedAsync);
     }
 
     private Task OnIsSelectedChangedAsync(ParameterChangedEventArgs<bool> args)
@@ -28,7 +32,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         StateHasChanged();
     }
 
-    internal IParameterState<bool> IsSelectedState;
+    internal readonly ParameterState<bool> IsSelectedState;
 
     [Inject]
     public NavigationManager? UriHelper { get; set; }

@@ -1,6 +1,11 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" class="@Classname" style="@Style">
-    @ChildContent
-</div>
+<nav @attributes="UserAttributes"
+     id="@NavigationContext?.MenuId"
+     class="@Classname"
+     style="@Style">
+    <CascadingValue Value="@NavigationContext">
+        @ChildContent
+    </CascadingValue>
+</nav>

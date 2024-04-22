@@ -1,4 +1,8 @@
-﻿namespace MudBlazor.State.Builder;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+namespace MudBlazor.State.Builder;
 
 #nullable enable
 /// <summary>
@@ -15,8 +19,5 @@ internal class ParameterAttachBuilder
     /// </summary>
     /// <typeparam name="T">The type of the component's property value.</typeparam>
     /// <returns>A new instance of <see cref="ParameterAttachBuilder{T}"/>.</returns>
-    public static ParameterAttachBuilder<T> Create<T>()
-    {
-        return new ParameterAttachBuilder<T>();
-    }
+    public static ParameterAttachBuilder<T> Create<T>() => new();
 }

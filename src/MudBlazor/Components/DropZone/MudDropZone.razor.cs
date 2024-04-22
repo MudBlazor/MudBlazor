@@ -135,12 +135,14 @@ namespace MudBlazor
 
         private int GetItemIndex(T item)
         {
-            if (!_indices.ContainsKey(item))
+            if (_indices.TryGetValue(item, out var index))
             {
-                _indices.Add(item, _indices.Count);
+                return index;
             }
 
-            return _indices[item];
+            var newIndex = _indices.Count;
+            _indices.Add(item, newIndex);
+            return newIndex;
         }
 
         private T[] GetItems()
