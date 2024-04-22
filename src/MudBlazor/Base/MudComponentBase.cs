@@ -4,6 +4,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
@@ -83,5 +86,255 @@ namespace MudBlazor
 
         /// <inheritdoc />
         void IMudStateHasChanged.StateHasChanged() => StateHasChanged();
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            if (MudGlobal.EnableIllegalRazorParameterDetection)
+            {
+                DetectIllegalRazorParametersV7();
+            }
+        }
+
+        /// <summary>
+        /// Razor silently ignores parameters which don't exist. Since v7.0.0 renamed so many parameters we want
+        /// to help our users find old parameters they missed by throwing a runtime exception.
+        ///
+        /// TODO: Remove this later. At the moment, we don't know yet when will be the best time to remove it.
+        /// Sometime when the v7 version has stabilized.
+        /// </summary>
+        [ExcludeFromCodeCoverage]
+        protected void DetectIllegalRazorParametersV7()
+        {
+            foreach (var parameter in UserAttributes.Keys)
+            {
+                if (this is MudBadge)
+                {
+                    switch (parameter)
+                    {
+                        case "Bottom":
+                        case "Left":
+                        case "Start":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (this is MudProgressCircular || this is MudProgressLinear)
+                {
+                    switch (parameter)
+                    {
+                        case "Minimum":
+                        case "Maximum":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (MatchTypes(typeof(MudRadio<>)))
+                {
+                    switch (parameter)
+                    {
+                        case "Option":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (this is MudFab)
+                {
+                    switch (parameter)
+                    {
+                        case "Icon":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (MatchTypes(typeof(MudCheckBox<>), typeof(MudSwitch<>)))
+                {
+                    switch (parameter)
+                    {
+                        case "Checked":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (MatchTypes(typeof(MudPopover), typeof(MudAutocomplete<>), typeof(MudSelect<>)))
+                {
+                    switch (parameter)
+                    {
+                        case "Direction":
+                        case "OffsetX":
+                        case "OffsetY":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (MatchTypes(typeof(MudToggleGroup<>)))
+                {
+                    switch (parameter)
+                    {
+                        case "Outline":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (this is MudAvatar)
+                {
+                    switch (parameter)
+                    {
+                        case "Image":
+                        case "Alt":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (MatchTypes(typeof(MudSlider<>)))
+                {
+                    switch (parameter)
+                    {
+                        case "Text":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (MatchTypes(typeof(MudRadioGroup<>)))
+                {
+                    switch (parameter)
+                    {
+                        case "SelectedOption":
+                        case "SelectedOptionChanged":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (this is MudSwipeArea)
+                {
+                    switch (parameter)
+                    {
+                        case "OnSwipe":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (MatchTypes(typeof(MudChip<>)))
+                {
+                    switch (parameter)
+                    {
+                        case "Avatar":
+                        case "AvatarClass":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (MatchTypes(typeof(MudChipSet<>)))
+                {
+                    switch (parameter)
+                    {
+                        case "Filter":
+                        case "MultiSelection":
+                        case "Mandatory":
+                        case "SelectedChip":
+                        case "SelectedChipChanged":
+                        case "SelectedChips":
+                        case "SelectedChipsChanged":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (MatchTypes(typeof(MudList<>), typeof(MudListItem<>)))
+                {
+                    switch (parameter)
+                    {
+                        case "SelectedItem":
+                        case "SelectedItemChanged":
+                        case "Clickable":
+                        case "Avatar":
+                        case "AvatarClass":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (MatchTypes(typeof(MudTreeView<>), typeof(MudTreeViewItem<>)))
+                {
+                    switch (parameter)
+                    {
+                        case "CanActivate":
+                        case "CanHover":
+                        case "CanSelect":
+                        case "ActivatedValue":
+                        case "ActivatedValueChanged":
+                        case "Multiselection":
+                        case "Activated":
+                        case "ExpandedIcon":
+                        case "SelectedItem":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (this is MudMenu || this is MudMenuItem)
+                {
+                    switch (parameter)
+                    {
+                        case "Link":
+                        case "Target":
+                        case "HtmlTag":
+                        case "ButtonType":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (parameter)
+                    {
+                        case "UnCheckedColor":
+                        case "Command":
+                        case "CommandParameter":
+                        case "IsEnabled":
+                        case "ClassAction":
+                        case "InputIcon":
+                        case "InputVariant":
+                        case "AllowKeyboardInput":
+                        case "ClassActions":
+                        case "DisableRipple":
+                        case "DisableGutters":
+                        case "DisablePadding":
+                        case "DisableElevation":
+                        case "DisableUnderLine":
+                        case "DisableRowsPerPage":
+                        case "Link":
+                        case "Delayed":
+                        case "AlertTextPosition":
+                        case "ShowDelimiters":
+                        case "DelimitersColor":
+                        case "DrawerWidth":
+                        case "DrawerHeightTop":
+                        case "DrawerHeightBottom":
+                        case "AppbarMinHeight":
+                        case "ClassBackground":
+                        case "Cancelled":
+                        case "ClassContent":
+                        case "IsExpanded":
+                        case "IsExpandedChanged":
+                        case "IsInitiallyExpanded":
+                        case "InitiallyExpanded":
+                        case "RightAlignSmall":
+                        case "IsExpandable":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+            }
+        }
+
+        internal bool MatchTypes(params Type[] types)
+        {
+            var self = GetType().IsGenericType ? GetType().GetGenericTypeDefinition() : GetType();
+            return types.Any(type => self == type);
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void NotifyIllegalParameter(string parameter)
+        {
+            throw new ArgumentException($"Illegal parameter '{parameter}' in component of type '{GetType().Name}'. This was removed in v7.0.0, see Migration Guide for more info https://github.com/MudBlazor/MudBlazor/issues/8447");
+        }
     }
 }
