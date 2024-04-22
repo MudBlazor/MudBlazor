@@ -146,6 +146,10 @@ namespace MudBlazor
 
         internal MudRadioGroup<T>? MudRadioGroup => (MudRadioGroup<T>?)IMudRadioGroup;
 
+        protected bool GetReadOnlyState() => MudRadioGroup?.ReadOnly == true;
+
+        protected bool GetDisabledState() => MudRadioGroup?.Disabled == true || Disabled;
+
         private Placement ConvertPlacement(Placement placement)
         {
             return placement switch

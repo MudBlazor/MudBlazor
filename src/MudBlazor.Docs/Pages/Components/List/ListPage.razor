@@ -39,21 +39,44 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Selection">
+            <SectionHeader Title="Single-Selection">
                 <Description>
                     <p>
-                        If you use <CodeInline>@@bind-SelectedValue</CodeInline>, <CodeInline Tag>MudList</CodeInline> will manage an exclusive single-selection
-                        across all its nested lists for you. The value of a list item is defined via its <CodeInline>Value</CodeInline> parameter. For <CodeInline>T="string"</CodeInline> the <CodeInline>Text</CodeInline> 
-                        parameter is used as value if <CodeInline>Value</CodeInline> is not set for convenience, so you don't have to repeat yourself if the <CodeInline>Text</CodeInline> equals the 
-                        <CodeInline>Value</CodeInline>.
+                        A <CodeInline Tag>MudList</CodeInline> which has its <CodeInline>SelectionMode</CodeInline> set to either <CodeInline>SelectionMode.SingleSelection</CodeInline> or 
+                        <CodeInline>SelectionMode.ToggleSelection</CodeInline> can be used to select a single value across all its nested lists.
+                        Use <CodeInline>@@bind-SelectedValue</CodeInline> to manipulate the selected value or receive updates when the user selects a value.
+                    </p>
+                    <MudAlert Severity="Severity.Info" Class="my-3">
+                        Note: If you use the toggle selection and unselect the selected item the <CodeInline>SelectedValue</CodeInline> will become <CodeInline>default(T)</CodeInline>. If that
+                        collides with a valid choice (i.e. 0 for type <CodeInline>int</CodeInline>) you should use a nullable type (i.e. <CodeInline>T="int?"</CodeInline>).
+                    </MudAlert>
+                    <p>
+                        The value of a <CodeInline Tag>MudListItem</CodeInline> is defined either via its <CodeInline>Text</CodeInline> or its <CodeInline>Value</CodeInline> parameter. 
+                        For <CodeInline>T="string"</CodeInline> setting only <CodeInline>Text</CodeInline> will suffice if the text you want to display is the same as the selectable value. If 
+                        you set <CodeInline>Value</CodeInline> you can set a different display text with <CodeInline>Text</CodeInline>. The example below demonstrates this.
                     </p>
                     <p>
-                        You can customize the selected item's color via the <CodeInline>Color</CodeInline> parameter. In this example, the selection from the colors list is applied to the drinks list.
+                        You can customize the selected item color via the <CodeInline>Color</CodeInline> parameter. If <CodeInline>ReadOnly</CodeInline> is set, the list will display the selected value but 
+                        you can't change it.
                     </p>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(ListSelectionExample)">
-                <ListSelectionExample />
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(ListSingleSelectionExample)">
+                <ListSingleSelectionExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Multiselection">
+                <Description>
+                    <p>
+                        <CodeInline Tag>MudList</CodeInline> can also be used to select multiple values if the <CodeInline>SelectionMode</CodeInline> is set to <CodeInline>SelectionMode.MultiSelection</CodeInline>. 
+                        To manipulate the selected values or to receive updates when the user changes the selection use <CodeInline>@@bind-SelectedValues</CodeInline> (note the 's' at the end).
+                    </p>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(ListMultiSelectionExample)">
+                <ListMultiSelectionExample />
             </SectionContent>
         </DocsPageSection>
 

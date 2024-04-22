@@ -14,7 +14,7 @@
 </MudPaper>
 
 <MudStack Row Justify="Justify.Center" Style="width: 100%" Wrap="Wrap.Wrap">
-    <MudChipSet T="string" @bind-SelectedValues="SelectedValues" MultiSelection Color="Color.Info" Variant="Variant.Text">
+    <MudChipSet T="string" @bind-SelectedValues="SelectedValues" SelectionMode="SelectionMode.MultiSelection" Color="Color.Info" Variant="Variant.Text">
         <MudChip Text="config"/>
         <MudChip Text="launch.json"/>
         <MudChip Text="tasks.json"/>
