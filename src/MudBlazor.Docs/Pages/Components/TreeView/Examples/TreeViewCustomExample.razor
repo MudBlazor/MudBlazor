@@ -3,9 +3,9 @@
 <MudPaper Width="350px" MaxHeight="500px" Class="overflow-y-auto" Elevation="2">
     <MudTreeView Items="@TreeItems">
         <ItemTemplate>
-            <MudTreeViewItem @bind-Expanded="@context.IsExpanded" Items="@context.TreeItems">
+            <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.TreeItems">
                 <Content>
-                    <MudTreeViewItemToggleButton @bind-Expanded="@context.IsExpanded" Visible="@context.HasChild" />
+                    <MudTreeViewItemToggleButton @bind-Expanded="@context.Expanded" Visible="@context.HasChild" />
                     <MudIcon Icon="@context.Icon" Class="ml-0 mr-2" Color="@Color.Default" />
                     <MudText>@context.Text</MudText>
                 </Content>
@@ -24,7 +24,7 @@
 
         public string Icon { get; set; }
 
-        public bool IsExpanded { get; set; } = true;
+        public bool Expanded { get; set; } = true;
 
         public bool HasChild => TreeItems != null && TreeItems.Count > 0;
 

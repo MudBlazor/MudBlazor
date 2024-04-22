@@ -841,10 +841,9 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DebouncedNumericFieldRerenderTest>();
             var numericField = comp.FindComponent<MudNumericField<int>>().Instance;
-            var input = comp.Find("input");
             var delayedRerenderButton = comp.Find("button#re-render");
             var converter = new DefaultConverter<int>();
-            input.Input(new ChangeEventArgs { Value = "1" });
+            comp.Find("input").Input(new ChangeEventArgs { Value = "1" });
             // trigger first value change
             await Task.Delay(comp.Instance.DebounceInterval);
             // trigger delayed re-render
@@ -856,7 +855,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "2";
-                input.Input(new ChangeEventArgs { Value = currentText });
+                comp.Find("input").Input(new ChangeEventArgs { Value = currentText });
                 await Task.Delay(delay);
                 elapsedTime += delay;
             }
@@ -885,7 +884,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DebouncedNumericFieldCultureChangeRerenderTest>();
             var numericField = comp.FindComponent<MudNumericField<double>>().Instance;
-            var input = comp.Find("input");
             var delayedCultureChange = comp.Find("button#culture-change");
             // ensure text is updated on initialize
             numericField.Text.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture));
@@ -900,7 +898,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "2";
-                input.Input(new ChangeEventArgs { Value = currentText });
+                comp.Find("input").Input(new ChangeEventArgs { Value = currentText });
                 await Task.Delay(delay);
                 elapsedTime += delay;
             }
@@ -921,13 +919,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudNumericField<int>>(parameters
                 => parameters.Add(p => p.Label, "Test Label"));
 
-            var input = comp.Find("input");
-            var label = comp.Find("label");
-
-            input.Id.Should().NotBeNullOrEmpty();
-            var forAttribute = label.Attributes.GetNamedItem("for");
-            forAttribute.Should().NotBeNull();
-            forAttribute!.Value.Should().Be(input.Id);
+            comp.Find("input").Id.Should().NotBeNullOrEmpty();
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(comp.Find("input").Id);
         }
 
         /// <summary>
@@ -945,13 +939,9 @@ namespace MudBlazor.UnitTests.Components
                         { "Id", expectedId }
                     }));
 
-            var input = comp.Find("input");
-            var label = comp.Find("label");
-
-            input.Id.Should().Be(expectedId);
-            var forAttribute = label.Attributes.GetNamedItem("for");
-            forAttribute.Should().NotBeNull();
-            forAttribute!.Value.Should().Be(expectedId);
+            comp.Find("input").Id.Should().Be(expectedId);
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
         }
 
         /// <summary>
@@ -970,13 +960,9 @@ namespace MudBlazor.UnitTests.Components
                     })
                     .Add(p => p.InputId, expectedId));
 
-            var input = comp.Find("input");
-            var label = comp.Find("label");
-
-            input.Id.Should().Be(expectedId);
-            var forAttribute = label.Attributes.GetNamedItem("for");
-            forAttribute.Should().NotBeNull();
-            forAttribute!.Value.Should().Be(expectedId);
+            comp.Find("input").Id.Should().Be(expectedId);
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
         }
 
         /// <summary>
@@ -987,9 +973,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudNumericField<int>>();
 
-            var input = comp.Find("input");
-            input.HasAttribute("required").Should().BeFalse();
-            input.GetAttribute("aria-required").Should().Be("false");
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
         }
 
         /// <summary>
@@ -1001,9 +986,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudNumericField<int>>(parameters => parameters
                 .Add(p => p.Required, true));
 
-            var input = comp.Find("input");
-            input.HasAttribute("required").Should().BeTrue();
-            input.GetAttribute("aria-required").Should().Be("true");
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
         }
 
         /// <summary>
@@ -1014,15 +998,14 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudNumericField<int>>();
 
-            var input = comp.Find("input");
-            input.HasAttribute("required").Should().BeFalse();
-            input.GetAttribute("aria-required").Should().Be("false");
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
 
             comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.Required, true));
 
-            input.HasAttribute("required").Should().BeTrue();
-            input.GetAttribute("aria-required").Should().Be("true");
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
         }
     }
 }

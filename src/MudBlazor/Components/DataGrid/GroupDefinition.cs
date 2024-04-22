@@ -10,12 +10,12 @@ namespace MudBlazor
     public class GroupDefinition<T>
     {
         public IGrouping<object, T> Grouping { get; set; }
-        public bool IsExpanded { get; set; }
+        public bool Expanded { get; set; }
 
-        public GroupDefinition(IGrouping<object, T> grouping, bool isExpanded)
+        public GroupDefinition(IGrouping<object, T> grouping, bool expanded)
         {
             Grouping = grouping;
-            IsExpanded = isExpanded;
+            Expanded = expanded;
         }
     }
 }
