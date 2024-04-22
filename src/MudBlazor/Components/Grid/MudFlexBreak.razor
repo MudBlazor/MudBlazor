@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities
+@using MudBlazor.Extensions
+@inherits MudComponentBase
+
+<div @attributes="UserAttributes" class="@Classname" style="@Style">
+    @* The empty div is used as the break with help from class styles *@
+</div>
+
+@code {
+#nullable enable
+    /// <summary>
+    /// Space separated class names
+    /// </summary>
+    protected string Classname =>
+    new CssBuilder("mud-flex-break")
+        .AddClass(Class)
+        .Build();
+}
+

@@ -398,7 +398,7 @@ namespace MudBlazor
         /// Gets or sets whether pressing the <c>Tab</c> key updates the Value to the currently selected item.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  
+        /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
@@ -493,25 +493,42 @@ namespace MudBlazor
             }
         }
 
-        /// <summary>
-        /// Opens or closes the drop-down of items.
-        /// </summary>
-        /// <remarks>
-        /// If the Autocomplete is currently disabled or read-only, it will not be opened.
-        /// </remarks>
-        public async Task ToggleMenu()
+        private Task OnFocusAsync()
         {
-            if ((GetDisabledState() || GetReadOnlyState()) && !IsOpen)
-                return;
-            await ChangeMenu(!IsOpen);
+            if (GetDisabledState() || GetReadOnlyState() || IsOpen)
+            {
+                return Task.CompletedTask;
+            }
+
+            // Open the menu.
+            return ChangeMenuAsync(true);
         }
 
-        private async Task ChangeMenu(bool open)
+        /// <summary>
+        /// Opens or closes the drop-down of items depending on whether it was closed or open.
+        /// </summary>
+        /// <remarks>
+        /// Will have no effect if the autocomplete is disabled or read-only.
+        /// </remarks>
+        public Task ToggleMenuAsync()
+        {
+            if ((GetDisabledState() || GetReadOnlyState()) && !IsOpen)
+            {
+                return Task.CompletedTask;
+            }
+
+            return ChangeMenuAsync(!IsOpen);
+        }
+
+        private async Task ChangeMenuAsync(bool open)
         {
             if (open)
             {
                 if (SelectOnClick)
+                {
                     await _elementReference.SelectAsync();
+                }
+
                 await OnSearchAsync();
             }
             else
@@ -734,7 +751,7 @@ namespace MudBlazor
                 case "NumpadEnter":
                     if (!IsOpen)
                     {
-                        await ToggleMenu();
+                        await ToggleMenuAsync();
                     }
                     else
                     {
@@ -744,7 +761,7 @@ namespace MudBlazor
                 case "ArrowDown":
                     if (!IsOpen)
                     {
-                        await ToggleMenu();
+                        await ToggleMenuAsync();
                     }
                     else
                     {
@@ -755,11 +772,11 @@ namespace MudBlazor
                 case "ArrowUp":
                     if (args.AltKey)
                     {
-                        await ChangeMenu(open: false);
+                        await ChangeMenuAsync(open: false);
                     }
                     else if (!IsOpen)
                     {
-                        await ToggleMenu();
+                        await ToggleMenuAsync();
                     }
                     else
                     {
@@ -768,16 +785,13 @@ namespace MudBlazor
                     }
                     break;
                 case "Escape":
-                    await ChangeMenu(open: false);
+                    await ChangeMenuAsync(open: false);
                     break;
                 case "Tab":
-                    await Task.Delay(1);
-                    if (!IsOpen)
-                        return;
-                    if (SelectValueOnTab)
+                    if (IsOpen && SelectValueOnTab)
+                    {
                         await OnEnterKey();
-                    else
-                        await ToggleMenu();
+                    }
                     break;
                 case "Backspace":
                     if (args.CtrlKey && args.ShiftKey)
