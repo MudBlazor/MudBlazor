@@ -228,6 +228,7 @@ namespace MudBlazor
                     {
                         case "Filter":
                         case "MultiSelection":
+                        case "Multiselection":
                         case "Mandatory":
                         case "SelectedChip":
                         case "SelectedChipChanged":
@@ -237,7 +238,7 @@ namespace MudBlazor
                             break;
                     }
                 }
-                else if (GetType() == typeof(MudList<>) || GetType().Name.StartsWith(nameof(MudListItem<string>)))
+                else if (GetType() == typeof(MudList<>) || GetType() == typeof(MudListItem<>))
                 {
                     switch (parameter)
                     {
@@ -247,6 +248,7 @@ namespace MudBlazor
                         case "Avatar":
                         case "AvatarClass":
                         case "AdornmentColor":
+                        case "OnClickHandlerPreventDefault":
                             NotifyIllegalParameter(parameter);
                             break;
                     }
@@ -261,6 +263,7 @@ namespace MudBlazor
                         case "ActivatedValue":
                         case "ActivatedValueChanged":
                         case "Multiselection":
+                        case "MultiSelection":
                         case "Activated":
                         case "ExpandedIcon":
                         case "SelectedItem":

@@ -211,11 +211,6 @@ internal class RegisterParameterBuilder<T> : IParameterBuilderAttach
     /// <inheritdoc />
     IParameterComponentLifeCycle IParameterBuilderAttach.Attach() => Attach();
 
-    internal ParameterState<IReadOnlyCollection<T>?>? WithChangeHandler(object onSelectedValuesChangedAsync)
-    {
-        throw new NotImplementedException();
-    }
-
     /// <summary>
     /// Implicitly converts a <see cref="RegisterParameterBuilder{T}"/> object to a <see cref="ParameterState{T}"/> object by building it.
     /// </summary>
