@@ -284,9 +284,9 @@ namespace MudBlazor
             return Value;
         }
 
-        private bool GetDisabled() => Disabled || (TopLevelList?.GetDisabled() ?? false);
+        private bool GetDisabled() => Disabled || MudList?.GetDisabled() == true || TopLevelList?.GetDisabled() == true;
 
-        private bool GetReadOnly() => TopLevelList?.GetReadOnly() == true;
+        private bool GetReadOnly() => MudList?.ReadOnly == true || TopLevelList?.GetReadOnly() == true;
 
         private bool GetDense() => Dense ?? MudList?.Dense == true;
 
