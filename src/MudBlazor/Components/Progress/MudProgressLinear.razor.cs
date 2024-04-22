@@ -20,19 +20,24 @@ namespace MudBlazor
                 .AddClass($"mud-progress-indeterminate", Indeterminate)
                 .AddClass($"mud-progress-linear-buffer", Buffer && !Indeterminate)
                 .AddClass($"mud-progress-linear-{Size.ToDescriptionString()}")
-                .AddClass($"mud-progress-linear-color-{Color.ToDescriptionString()}")
                 .AddClass("horizontal", !Vertical)
                 .AddClass("vertical", Vertical)
                 .AddClass("mud-flip-x-rtl")
                 .AddClass(Class)
                 .Build();
 
+        protected string Stylename =>
+            new StyleBuilder()
+                .AddStyle("--mud-palette-custom-color", Color.Value)
+                .AddStyle(Style)
+                .Build();
+
         /// <summary>
-        /// The color of the component. It supports the theme colors.
+        /// The color of the component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Appearance)]
-        public Color Color { get; set; } = Color.Default;
+        public MudColor Color { get; set; } = MudBlazor.Color.Default;
 
         /// <summary>
         /// The size of the component.

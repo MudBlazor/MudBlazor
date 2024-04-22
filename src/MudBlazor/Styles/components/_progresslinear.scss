@@ -1,4 +1,4 @@
-﻿
+
 .mud-progress-linear {
   position: relative;
 
@@ -143,46 +143,40 @@
     }
   }
 
-  @each $color in $mud-palette-colors {
-    &.mud-progress-linear-color-#{$color} {
+  &:not(.mud-progress-linear-buffer) {
+    &::before {
+      background-color: var(--mud-palette-custom-color);
+    }
 
-      &:not(.mud-progress-linear-buffer) {
-        &::before {
-          background-color: var(--mud-palette-#{$color});
-        }
+    .mud-progress-linear-bar {
+      background-color: var(--mud-palette-custom-color);
+    }
+  }
 
-        .mud-progress-linear-bar {
-          background-color: var(--mud-palette-#{$color});
-        }
-      }
+  &.mud-progress-linear-buffer {
+    .mud-progress-linear-bar:first-child {
+      background-size: 10px 10px;
+      background-image: radial-gradient(var(--mud-palette-custom-color) 0%, var(--mud-palette-custom-color) 16%, transparent 42%);
+      background-position: 0 -23px;
+    }
 
+    .mud-progress-linear-bar:nth-child(2) {
+      background-color: var(--mud-palette-custom-color);
+    }
 
-      &.mud-progress-linear-buffer {
-        .mud-progress-linear-bar:first-child {
-          background-size: 10px 10px;
-          background-image: radial-gradient(var(--mud-palette-#{$color}) 0%, var(--mud-palette-#{$color}) 16%, transparent 42%);
-          background-position: 0 -23px;
-        }
+    .mud-progress-linear-bar:last-child {
+      transition: transform .4s linear;
 
-        .mud-progress-linear-bar:nth-child(2) {
-          background-color: var(--mud-palette-#{$color});
-        }
-
-        .mud-progress-linear-bar:last-child {
-          transition: transform .4s linear;
-
-          &::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 100%;
-            display: block;
-            opacity: 0.4;
-            background-color: var(--mud-palette-#{$color});
-          }
-        }
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        display: block;
+        opacity: 0.4;
+        background-color: var(--mud-palette-custom-color);
       }
     }
   }

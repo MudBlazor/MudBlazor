@@ -44,7 +44,6 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         new CssBuilder("mud-chip")
             .AddClass($"mud-chip-{GetVariant().ToDescriptionString()}")
             .AddClass($"mud-chip-size-{GetSize().ToDescriptionString()}")
-            .AddClass($"mud-chip-color-{GetColor().ToDescriptionString()}")
             .AddClass("mud-clickable", IsClickable)
             .AddClass("mud-ripple", IsClickable && GetRipple())
             .AddClass("mud-chip-label", GetLabel())
