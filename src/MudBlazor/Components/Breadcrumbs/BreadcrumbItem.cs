@@ -1,10 +1,13 @@
-﻿namespace MudBlazor
+﻿using System.Diagnostics;
+
+namespace MudBlazor
 {
 #nullable enable
 
     /// <summary>
     /// Represents a portion of a list of breadcrumbs.
     /// </summary>
+    [DebuggerDisplay("Text={Text}, Href={Href}, Disabled={Disabled}")]
     public class BreadcrumbItem
     {
         /// <summary>
