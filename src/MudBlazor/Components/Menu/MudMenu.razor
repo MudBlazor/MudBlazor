@@ -2,12 +2,13 @@
 @using MudBlazor.Interfaces
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" Class="@Classname" Style="@Style"
-     @onmouseenter="@MouseEnterAsync"
-     @onmouseleave="@MouseLeaveAsync"
-     @oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? ToggleMenuAsync : null)"
-     @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick)">
-    @if (ActivatorContent != null) {
+<div @attributes="UserAttributes" class="@Classname" style="@Style"
+        @onmouseenter="@MouseEnterAsync"
+        @onmouseleave="@MouseLeaveAsync"
+        @oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? ToggleMenuAsync : null)"
+        @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick)">
+    @if (ActivatorContent != null)
+    {
         <CascadingValue Value="@((IActivatable) this)" IsFixed="true">
             <div @onclick="ToggleMenuAsync" disabled="@Disabled" class="@ActivatorClassname">
                 @ActivatorContent
@@ -37,8 +38,8 @@
     <MudPopover Open="@_isOpen" Class="@PopoverClass" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" RelativeWidth="@FullWidth" Style="@_popoverStyle" @ontouchend:preventDefault>
         <CascadingValue Value="@this">
             <MudList T="object" Class="@ListClass" Dense="@Dense"
-                     @onmouseenter="@MouseEnterAsync"
-                     @onmouseleave="@MouseLeaveAsync">
+                @onmouseenter="@MouseEnterAsync"
+                @onmouseleave="@MouseLeaveAsync">
                 @ChildContent
             </MudList>
         </CascadingValue>
