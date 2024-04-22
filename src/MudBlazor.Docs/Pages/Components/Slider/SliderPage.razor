@@ -45,7 +45,7 @@
             <SectionSubGroups>
                 <DocsPageSection>
                     <SectionHeader Title="Display Ticks">
-                        <Description>Tick marks can be displayed with <CodeInline>TickMarks</CodeInline> property set to true, its common that its combined with the <CodeInline>Step</CodeInline> property as well.</Description>
+                        <Description>Tick marks can be displayed with <CodeInline>TickMarks</CodeInline> property set to true, it's common that it's combined with the <CodeInline>Step</CodeInline> property as well.</Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(SliderTickMarkExample)">
                         <SliderTickMarkExample />
@@ -65,7 +65,13 @@
 
         <DocsPageSection>
             <SectionHeader Title="Value Label">
-                <Description>Use the slider below to see the value label, this can be used by setting <CodeInline>ValueLabel</CodeInline> property to true.</Description>
+                <Description>
+                    Use the slider below to see the value label, this can be used by setting <CodeInline>@nameof(MudSlider<T>.ValueLabel)</CodeInline> property to true.
+                    <br />
+                    Use <CodeInline>@nameof(MudSlider<T>.ValueLabelStringFormat)</CodeInline> and <CodeInline>@nameof(MudSlider<T>.ValueLabelCultureInfo)</CodeInline> to change the formatting.
+                    <br />
+                    For more customization use <CodeInline>@nameof(MudSlider<T>.ValueLabelContent)</CodeInline> RenderFragment.
+                </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(SliderValueLabelExample)">
                 <SliderValueLabelExample />
@@ -85,7 +91,7 @@
             <SectionHeader Title="Vertical">
                 <Description>MudSlider can be displayed vertically with the <CodeInline>Vertical</CodeInline> property set to true.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" Code="SliderVerticalExample">
+            <SectionContent Outlined="true" Code="@nameof(SliderVerticalExample)">
                 <SliderVerticalExample />
             </SectionContent>
         </DocsPageSection>

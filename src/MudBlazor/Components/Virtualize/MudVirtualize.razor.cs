@@ -15,7 +15,7 @@ namespace MudBlazor
         /// Set false to turn off virtualization
         /// </summary>
         [Parameter]
-        public bool IsEnabled { get; set; }
+        public bool Enabled { get; set; }
 
         /// <summary>
         /// Gets or sets the item template for the list.

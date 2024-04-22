@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -69,7 +68,8 @@ namespace MudBlazor
         {
             using var register = CreateRegisterScope();
             _expandedState = register.RegisterParameter<bool>(nameof(Expanded))
-                .WithParameter(() => Expanded).WithEventCallback(() => ExpandedChanged)
+                .WithParameter(() => Expanded)
+                .WithEventCallback(() => ExpandedChanged)
                 .WithChangeHandler(OnExpandedParameterChangedAsync);
         }
 

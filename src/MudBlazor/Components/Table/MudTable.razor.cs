@@ -686,7 +686,7 @@ namespace MudBlazor
             if (_groupBy is not null)
             {
                 _groupBy.IsInitiallyExpanded = expand;
-                Context?.GroupRows.Where(gr => gr.GroupDefinition == _groupBy).ToList().ForEach(gr => gr.IsExpanded = _groupBy.IsInitiallyExpanded);
+                Context?.GroupRows.Where(gr => gr.GroupDefinition == _groupBy).ToList().ForEach(gr => gr.Expanded = _groupBy.IsInitiallyExpanded);
             }
         }
 

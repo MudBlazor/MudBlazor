@@ -3,7 +3,7 @@
 @typeparam T
 @using Microsoft.AspNetCore.Components.Web.Virtualization 
 
-@if (IsEnabled)
+@if (Enabled)
 {
     <Virtualize Items="@Items" ItemsProvider="@ItemsProvider" Context="item" OverscanCount="@OverscanCount" ItemSize="@ItemSize" SpacerElement="@SpacerElement">
         <ChildContent>

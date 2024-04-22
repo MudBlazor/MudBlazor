@@ -95,6 +95,19 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Auto-Expand">
+                <Description>
+                    With <CodeInline>AutoExpand</CodeInline> set to true collapsed sub-trees that become selected will be expanded automatically. To test it, select chips and see how the corresponding
+                    tree items will be expanded.
+                    To expand or collapse all levels of the tree use the public members <CodeInline>ExpandAll()</CodeInline> and <CodeInline>CollapseAll()</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TreeViewAutoExpandExample)" ShowCode="false">
+                <TreeViewAutoExpandExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Item Template">
                 <Description>This example shows how to use <CodeInline>ItemTemplate</CodeInline> to automatically build the tree items according to a hierarchical data structure.</Description>
             </SectionHeader>
