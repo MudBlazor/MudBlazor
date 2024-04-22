@@ -129,7 +129,7 @@ namespace MudBlazor
                             break;
                     }
                 }
-                else if (MatchTypes( typeof(MudRadio<>)))
+                else if (MatchTypes(typeof(MudRadio<>)))
                 {
                     switch (parameter)
                     {
@@ -147,7 +147,7 @@ namespace MudBlazor
                             break;
                     }
                 }
-                else if (MatchTypes(typeof(MudCheckBox<>),typeof(MudSwitch<>)))
+                else if (MatchTypes(typeof(MudCheckBox<>), typeof(MudSwitch<>)))
                 {
                     switch (parameter)
                     {
