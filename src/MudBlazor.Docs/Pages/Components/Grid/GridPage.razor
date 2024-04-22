@@ -2,7 +2,7 @@
 
 <DocsPage>
     <DocsPageHeader Title="Grid" SubTitle="The grid component helps keep layouts consistent across various screen resolutions and sizes.">
-        <Description>            
+        <Description>
             MudBlazor comes with a 12-point grid system and contains 6 breakpoints that are used for specific screen sizes.<br /><br />
             Read more about <MudLink Href="/features/breakpoints">MudBlazor's breakpoints here.</MudLink>
         </Description>
@@ -19,7 +19,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Basic grid">
+            <SectionHeader Title="Basic Grid">
                 <Description>The column widths apply at all breakpoints, xs and up.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Class="demo-grid-basic" Code="@nameof(GridBasicExample)" ShowCode="false">
@@ -28,11 +28,20 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Grid with breakpoints">
+            <SectionHeader Title="Grid With Breakpoints">
                 <Description>You can apply multiple column widths, causing the layout to change at the specific break point.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Class="demo-grid-basic" Code="@nameof(GridWithBreakpointsExample)" ShowCode="false">
                 <GridWithBreakpointsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Line Break">
+                <Description>You can force items onto the next line by adding a <CodeInline>MudFlexBreak</CodeInline>.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Class="demo-grid-basic" Code="@nameof(GridLineBreakExample)" ShowCode="false">
+                <GridLineBreakExample />
             </SectionContent>
         </DocsPageSection>
 

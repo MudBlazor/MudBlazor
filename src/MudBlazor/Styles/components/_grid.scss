@@ -1,4 +1,9 @@
-﻿@import '../abstracts/variables';
+@import '../abstracts/variables';
+
+.mud-flex-break {
+  flex-basis: 100%;
+  width: 0;
+}
 
 .mud-grid {
   width: 100%;
@@ -11,7 +16,6 @@
   margin: 0;
   box-sizing: border-box;
 }
-
 
 .mud-grid-spacing-xs-1 {
   width: calc(100% + 8px);
