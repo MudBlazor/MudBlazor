@@ -334,7 +334,7 @@ namespace MudBlazor
         [ExcludeFromCodeCoverage]
         private void NotifyIllegalParameter(string parameter)
         {
-            throw new ArgumentException($"Illegal parameter '{parameter}'. This was removed in v7.0.0, see Migration Guide for more info https://github.com/MudBlazor/MudBlazor/issues/8447");
+            throw new ArgumentException($"Illegal parameter '{parameter}' in component of type '{GetType().Name}'. This was removed in v7.0.0, see Migration Guide for more info https://github.com/MudBlazor/MudBlazor/issues/8447");
         }
     }
 }
