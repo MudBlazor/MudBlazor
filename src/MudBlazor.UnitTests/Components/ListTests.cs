@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -39,6 +40,42 @@ namespace MudBlazor.UnitTests.Components
             list.SelectedValue.Should().Be("Cafe Latte");
             comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
             comp.FindComponents<MudListItem<string>>()[8].Markup.Should().Contain("mud-selected-item");
+            // click Cafe Latte again which should NOT deselect it because we are in single-selection mode
+            comp.FindAll("div.mud-list-item")[8].Click();
+            list.SelectedValue.Should().Be("Cafe Latte");
+            comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
+            comp.FindComponents<MudListItem<string>>()[8].Markup.Should().Contain("mud-selected-item");
+        }
+
+        [Test]
+        public void ListToggleSelectionTest()
+        {
+            var comp = Context.RenderComponent<ListSelectionTest>(self => self.Add(x => x.SelectionMode, SelectionMode.ToggleSelection));
+            var list = comp.FindComponent<MudList<string>>().Instance;
+            list.SelectedValue.Should().Be(null);
+            // we have seven choices, none is active
+            comp.FindAll("div.mud-list-item").Count.Should().Be(9); // 7 choices, 2 groups
+            comp.FindAll("div.mud-selected-item").Count.Should().Be(0);
+            // click water
+            comp.FindAll("div.mud-list-item")[0].Click();
+            list.SelectedValue.Should().Be("Sparkling Water");
+            comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
+            comp.FindComponents<MudListItem<string>>()[0].Markup.Should().Contain("mud-selected-item");
+            // click Pu'er, a heavily fermented Chinese tea that tastes like an old leather glove
+            comp.FindAll("div.mud-list-item")[4].Click();
+            list.SelectedValue.Should().Be("Pu'er");
+            comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
+            comp.FindComponents<MudListItem<string>>()[4].Markup.Should().Contain("mud-selected-item");
+            // click Cafe Latte
+            comp.FindAll("div.mud-list-item")[8].Click();
+            list.SelectedValue.Should().Be("Cafe Latte");
+            comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
+            comp.FindComponents<MudListItem<string>>()[8].Markup.Should().Contain("mud-selected-item");
+            // click Cafe Latte again which should deselect it because we are in toggle-selection mode
+            comp.FindAll("div.mud-list-item")[8].Click();
+            list.SelectedValue.Should().Be(null);
+            comp.FindAll("div.mud-selected-item").Count.Should().Be(0);
+            comp.FindComponents<MudListItem<string>>()[8].Markup.Should().NotContain("mud-selected-item");
         }
 
         [Test]
@@ -50,6 +87,64 @@ namespace MudBlazor.UnitTests.Components
             var GetCheckBox = (string text) => comp.FindComponents<MudListItem<string>>().FirstOrDefault(x => x.Instance.Text == text)?.FindComponent<MudCheckBox<bool?>>().Instance;
             GetCheckBox("Milk").Value.Should().Be(true);
             GetCheckBox("Cafe Latte").Value.Should().Be(true);
+        }
+
+        [Test]
+        public void ListMultiSelectionBindingTest()
+        {
+            var comp = Context.RenderComponent<ListMultiSelectionBindingTest>();
+            var list1 = comp.FindComponents<MudList<string>>().FirstOrDefault(x => x.Instance.Class == "list-1");
+            var list2 = comp.FindComponents<MudList<string>>().FirstOrDefault(x => x.Instance.Class == "list-2");
+            list1.FindComponents<MudListItem<string>>().Count.Should().Be(8);
+            var GetCheckBox = (IRenderedComponent<MudList<string>> list, string text) => list.FindComponents<MudListItem<string>>()
+                        .FirstOrDefault(x => x.Instance.Text == text)?.FindComponent<MudCheckBox<bool?>>().Instance;
+            var Select = (IRenderedComponent<MudList<string>> list, string text) => list.FindComponents<MudListItem<string>>()
+                        .FirstOrDefault(x => x.Instance.Text == text)?.Find("div.mud-list-item").Click();
+            // click water on list1
+            Select(list1, "Sparkling Water");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("Carbonated H²O");
+            GetCheckBox(list1, "Milk").Value.Should().Be(false);
+            GetCheckBox(list1, "Sparkling Water").Value.Should().Be(true);
+            GetCheckBox(list1, "English Tea").Value.Should().Be(false);
+            GetCheckBox(list1, "Chinese Tea").Value.Should().Be(false);
+            GetCheckBox(list1, "Irish Coffee").Value.Should().Be(false);
+            GetCheckBox(list1, "Double Espresso").Value.Should().Be(false);
+            GetCheckBox(list2, "Milk").Value.Should().Be(false);
+            GetCheckBox(list2, "Sparkling Water").Value.Should().Be(true);
+            GetCheckBox(list2, "English Tea").Value.Should().Be(false);
+            GetCheckBox(list2, "Chinese Tea").Value.Should().Be(false);
+            GetCheckBox(list2, "Irish Coffee").Value.Should().Be(false);
+            GetCheckBox(list2, "Double Espresso").Value.Should().Be(false);
+            // click Irish on list2
+            Select(list2, "Irish Coffee");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("Carbonated H²O, Irish Coffee");
+            GetCheckBox(list1, "Milk").Value.Should().Be(false);
+            GetCheckBox(list1, "Sparkling Water").Value.Should().Be(true);
+            GetCheckBox(list1, "English Tea").Value.Should().Be(false);
+            GetCheckBox(list1, "Chinese Tea").Value.Should().Be(false);
+            GetCheckBox(list1, "Irish Coffee").Value.Should().Be(true);
+            GetCheckBox(list1, "Double Espresso").Value.Should().Be(false);
+            GetCheckBox(list2, "Milk").Value.Should().Be(false);
+            GetCheckBox(list2, "Sparkling Water").Value.Should().Be(true);
+            GetCheckBox(list2, "English Tea").Value.Should().Be(false);
+            GetCheckBox(list2, "Chinese Tea").Value.Should().Be(false);
+            GetCheckBox(list2, "Irish Coffee").Value.Should().Be(true);
+            GetCheckBox(list2, "Double Espresso").Value.Should().Be(false);
+            // click off water on list2
+            Select(list2, "Sparkling Water");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("Irish Coffee");
+            GetCheckBox(list1, "Milk").Value.Should().Be(false);
+            GetCheckBox(list1, "Sparkling Water").Value.Should().Be(false);
+            GetCheckBox(list1, "English Tea").Value.Should().Be(false);
+            GetCheckBox(list1, "Chinese Tea").Value.Should().Be(false);
+            GetCheckBox(list1, "Irish Coffee").Value.Should().Be(true);
+            GetCheckBox(list1, "Double Espresso").Value.Should().Be(false);
+            GetCheckBox(list2, "Milk").Value.Should().Be(false);
+            GetCheckBox(list2, "Sparkling Water").Value.Should().Be(false);
+            GetCheckBox(list2, "English Tea").Value.Should().Be(false);
+            GetCheckBox(list2, "Chinese Tea").Value.Should().Be(false);
+            GetCheckBox(list2, "Irish Coffee").Value.Should().Be(true);
+            GetCheckBox(list2, "Double Espresso").Value.Should().Be(false);
         }
 
         /// <summary>

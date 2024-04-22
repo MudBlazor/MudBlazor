@@ -288,7 +288,7 @@ namespace MudBlazor
 
         private bool GetReadOnly() => TopLevelList?.GetReadOnly() == true;
 
-        private bool GetDense() => Dense ?? TopLevelList?.Dense ?? false;
+        private bool GetDense() => Dense ?? MudList?.Dense == true;
 
         private bool? GetCheckBoxState() => _selected;
 
