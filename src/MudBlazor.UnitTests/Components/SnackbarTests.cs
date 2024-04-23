@@ -64,11 +64,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SimpleTestWithHtmlInMessageString()
+        public async Task SimpleTestWithHtmlInMessageMarkupString()
+        {
+            await _provider.InvokeAsync(() => _service.Add(new MarkupString("Hello <span>World</span>")));
+            var messageText = _provider.Find("div.mud-snackbar-content-message").InnerHtml.Trim();
+            messageText.Should().Be("Hello <span>World</span>");
+        }
+
+        [Test]
+        public async Task HtmlInMessageStringShouldBeEncoded()
         {
             await _provider.InvokeAsync(() => _service.Add("Hello <span>World</span>"));
-            var messageText = HttpUtility.HtmlDecode(_provider.Find("div.mud-snackbar-content-message").InnerHtml.Trim());
-            messageText.Should().Be("Hello <span>World</span>");
+            var messageText = _provider.Find("div.mud-snackbar-content-message").InnerHtml.Trim();
+            messageText.Should().Be("Hello &lt;span&gt;World&lt;/span&gt;");
         }
 
         [Test]
