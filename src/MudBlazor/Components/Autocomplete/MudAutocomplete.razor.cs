@@ -559,7 +559,7 @@ namespace MudBlazor
                 _timer = new Timer(OnTimerComplete, null, DebounceInterval, Timeout.Infinite);
         }
 
-        private void OnTimerComplete(object stateInfo) => InvokeAsync(OpenMenuAsync);
+        private void OnTimerComplete(object stateInfo) => InvokeAsync(() => OpenMenuAsync());
 
         private void CancelToken()
         {
@@ -617,11 +617,6 @@ namespace MudBlazor
         /// </remarks>
         public async Task OpenMenuAsync()
         {
-            if (SelectOnActivation)
-            {
-                await SelectAsync();
-            }
-
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
             {
                 IsOpen = false;
@@ -874,21 +869,26 @@ namespace MudBlazor
             }
         }
 
-        private Task OnInputFocused(FocusEventArgs args)
+        private async Task OnInputFocused(FocusEventArgs args)
         {
             if (_doNotOpenMenuOnNextFocus || IsOpen || GetDisabledState() || GetReadOnlyState())
             {
                 _doNotOpenMenuOnNextFocus = false;
-                return Task.CompletedTask;
+                return;
+            }
+
+            if (SelectOnActivation)
+            {
+                await SelectAsync();
             }
 
             // Open the menu.
-            return OpenMenuAsync();
+            await OpenMenuAsync();
         }
 
         private async Task AdornmentClickHandler()
         {
-            await OpenMenuAsync();
+            await FocusAsync();
 
             await OnAdornmentClick.InvokeAsync();
         }
