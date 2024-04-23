@@ -22,7 +22,7 @@ namespace MudBlazor
         protected string AdornmentClassname => MudInputCssHelper.GetAdornmentClassname(this);
 
         protected string ClearButtonClassname =>
-                    new CssBuilder()
+                    new CssBuilder("mud-input-clear-button")
                     .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
                     .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons)
                     .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)

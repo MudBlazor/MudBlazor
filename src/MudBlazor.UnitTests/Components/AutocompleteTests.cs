@@ -237,15 +237,15 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task AutocompleteReadOnlyShouldNotHaveClearButton()
         {
-            var comp = Context.RenderComponent<MudAutocomplete<string>>();
-            comp.SetParametersAndRender(p => p
+            var comp = Context.RenderComponent<MudAutocomplete<string>>(p => p
             .Add(x => x.Text, "some value")
             .Add(x => x.Clearable, true)
             .Add(x => x.ReadOnly, false));
-            comp.FindAll("button").Count.Should().Be(1);
+
+            comp.FindAll(".mud-input-clear-button").Count.Should().Be(1);
 
             comp.SetParametersAndRender(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
-            comp.FindAll("button").Count.Should().Be(0);
+            comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
         }
 
         /// <summary>
@@ -346,22 +346,23 @@ namespace MudBlazor.UnitTests.Components
         public async Task AutoCompleteClearableTest()
         {
             var comp = Context.RenderComponent<AutocompleteTestClearable>();
+
             // No button when initialized empty
-            comp.WaitForAssertion(() => comp.FindAll("button").Should().BeEmpty());
+            comp.WaitForAssertion(() => comp.FindAll(".mud-input-clear-button").Should().BeEmpty());
 
             // Button shows after entering text
             comp.Find("input").Input("text");
-            comp.WaitForAssertion(() => comp.Find("button").Should().NotBeNull());
+            comp.WaitForAssertion(() => comp.Find(".mud-input-clear-button").Should().NotBeNull());
             // Text cleared and button removed after clicking clear button
             comp.Find(".mud-input-adornment-icon-button").Click();
-            comp.WaitForAssertion(() => comp.FindAll("button").Should().BeEmpty());
+            comp.WaitForAssertion(() => comp.FindAll(".mud-input-clear-button").Should().BeEmpty());
 
             // Button shows again after entering text
             comp.Find("input").Input("text");
-            comp.WaitForAssertion(() => comp.Find("button").Should().NotBeNull());
+            comp.WaitForAssertion(() => comp.Find(".mud-input-clear-button").Should().NotBeNull());
             // Button removed after clearing text
             comp.Find("input").Input(string.Empty);
-            comp.WaitForAssertion(() => comp.FindAll("button").Should().BeEmpty());
+            comp.WaitForAssertion(() => comp.FindAll(".mud-input-clear-button").Should().BeEmpty());
         }
 
         [Test]
@@ -716,7 +717,7 @@ namespace MudBlazor.UnitTests.Components
                 autocomplete.Text.Should().Be("Florida");
 
                 //Get the button to toggle the value
-                comp.Find("button").Click();
+                comp.Find(".toggle-value-button").Click();
                 comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Georgia"));
                 autocomplete.Value.Should().Be("Georgia");
                 autocomplete.Text.Should().Be("Georgia");
@@ -763,14 +764,14 @@ namespace MudBlazor.UnitTests.Components
                 autocomplete.Text.Should().Be("Alabama");
 
                 //Again Change the bound object
-                comp.Find("button").Click();
+                comp.Find(".toggle-value-button").Click();
 
                 comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Florida"));
                 autocomplete.Value.Should().Be("Florida");
                 autocomplete.Text.Should().Be("Florida");
 
                 //Change the bound object back and check again.
-                comp.Find("button").Click();
+                comp.Find(".toggle-value-button").Click();
                 comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
                 autocomplete.Value.Should().Be("Alabama");
                 autocomplete.Text.Should().Be("Alabama");
@@ -1086,6 +1087,7 @@ namespace MudBlazor.UnitTests.Components
             var autocomplete = autocompletecomp.Instance;
 
             //search for and select California
+            autocompletecomp.Find("input").Focus();
             autocompletecomp.Find("input").Input("Calif");
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
             await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Enter" }));
@@ -1093,7 +1095,6 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.StateName.Should().Be(californiaString);
 
             //California should appear as index 5 and be selected
-            autocompletecomp.Find("input").Focus();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
             var items = comp.FindComponents<MudListItem<AutocompleteStrictFalseTest.State>>().ToArray();
             items.Length.Should().Be(10);

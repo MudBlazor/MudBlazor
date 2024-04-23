@@ -27,7 +27,7 @@ namespace MudBlazor
         private bool _isCleared;
         private bool _isClearing;
         private bool _isProcessingValue;
-        private int _selectedListItemIndex = 0;
+        private int _selectedListItemIndex;
         private int _elementKey = 0;
         private int _returnedItemsCount;
         private bool _isOpen;
