@@ -10,7 +10,7 @@
 
     void Show()
     {
-        Snackbar.Add((MarkupString)"Ooops. Something really bad happened!", Severity.Normal, config =>
+        Snackbar.Add("Ooops. Something really bad happened!", Severity.Normal, config =>
         {
             config.Action = "Help";
             config.ActionColor = Color.Primary;
@@ -24,6 +24,6 @@
 
     public void Help()
     {
-        Snackbar.Add((MarkupString)"Please check the reactor temperature and try again");
+        Snackbar.Add("Please check the reactor temperature and try again");
     }
 }

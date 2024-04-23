@@ -14,7 +14,7 @@
 
     void Show()
     {
-        _snackbar = Snackbar.Add((MarkupString)"Now click hide snackbar", Severity.Normal, config =>
+        _snackbar = Snackbar.Add("Now click hide snackbar", Severity.Normal, config =>
         {
             config.VisibleStateDuration = int.MaxValue;
         });

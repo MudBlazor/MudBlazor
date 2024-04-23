@@ -13,12 +13,12 @@
 @code{
     public void AddSnackbar()
     {
-        Snackbar.Add((MarkupString)"Remains open after navigation.", Severity.Normal);
+        Snackbar.Add("Remains open after navigation.", Severity.Normal);
     }
 
     public void AddCloseAfterNavSnackbar()
     {
-        Snackbar.Add((MarkupString)"Will close after navigation.", Severity.Normal, (options) =>
+        Snackbar.Add("Will close after navigation.", Severity.Normal, (options) =>
         {
             options.CloseAfterNavigation = true;
         });

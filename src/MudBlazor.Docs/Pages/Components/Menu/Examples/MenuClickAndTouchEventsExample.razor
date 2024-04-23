@@ -8,6 +8,6 @@
 </MudMenu>
 
 @code {
-    private void OnClick(MouseEventArgs args) => Snackbar.Add((MarkupString)"OnClick Invoked");
-    private void OnTouch(TouchEventArgs args) => Snackbar.Add((MarkupString)"OnTouch Invoked");
+    private void OnClick(MouseEventArgs args) => Snackbar.Add("OnClick Invoked");
+    private void OnTouch(TouchEventArgs args) => Snackbar.Add("OnTouch Invoked");
 }

@@ -46,7 +46,7 @@
     {
         //If SuppressOnChangeWhenInvalid is false, perform your validations here
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-        Snackbar.Add((MarkupString)$"This file has the extension {model.File.Name.Split(".").Last()}", Severity.Info);
+        Snackbar.Add($"This file has the extension {model.File.Name.Split(".").Last()}", Severity.Info);
 
         //TODO upload the files to the server
     }
@@ -57,7 +57,7 @@
 
         if (form.IsValid)
         {
-            Snackbar.Add((MarkupString)"Submited!");
+            Snackbar.Add("Submited!");
         }
     }
 

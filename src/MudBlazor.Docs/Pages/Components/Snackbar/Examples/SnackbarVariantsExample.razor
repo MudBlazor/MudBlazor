@@ -11,10 +11,10 @@
     {
         Snackbar.Configuration.SnackbarVariant = variant;
         Snackbar.Configuration.MaxDisplayedSnackbars = 10;
-        Snackbar.Add((MarkupString)$"Normal {message}", Severity.Normal);
-        Snackbar.Add((MarkupString)$"Info {message}", Severity.Info);
-        Snackbar.Add((MarkupString)$"Success {message}", Severity.Success);
-        Snackbar.Add((MarkupString)$"Warning {message}", Severity.Warning);
-        Snackbar.Add((MarkupString)$"Error {message}", Severity.Error);
+        Snackbar.Add($"Normal {message}", Severity.Normal);
+        Snackbar.Add($"Info {message}", Severity.Info);
+        Snackbar.Add($"Success {message}", Severity.Success);
+        Snackbar.Add($"Warning {message}", Severity.Warning);
+        Snackbar.Add($"Error {message}", Severity.Error);
     }
 }

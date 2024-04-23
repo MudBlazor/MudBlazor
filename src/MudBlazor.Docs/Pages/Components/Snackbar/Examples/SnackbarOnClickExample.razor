@@ -10,7 +10,7 @@
 
     void Show()
     {
-        Snackbar.Add((MarkupString)"I got a message for you", Severity.Normal, config =>
+        Snackbar.Add("I got a message for you", Severity.Normal, config =>
         {
             config.Onclick = snackbar =>
             {
@@ -22,6 +22,6 @@
 
     public void SayHello()
     {
-        Snackbar.Add((MarkupString)"Hello World!");
+        Snackbar.Add("Hello World!");
     }
 }

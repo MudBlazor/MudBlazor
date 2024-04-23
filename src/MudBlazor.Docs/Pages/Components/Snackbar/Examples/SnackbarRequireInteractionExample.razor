@@ -24,7 +24,7 @@
 
     void ShutDown()
     {
-        MarkupString message = new("Scram Initiated!");
+        string message = "Scram Initiated!";
         Snackbar.Add(message, Severity.Success, config =>
         {
             config.RequireInteraction = true;
@@ -40,7 +40,7 @@
     public void UpdateTemperature()
     {
         FuelRodTemperature += 100;
-        Snackbar.Add((MarkupString)"Temperature is still going up!", Severity.Warning);
+        Snackbar.Add("Temperature is still going up!", Severity.Warning);
         StateHasChanged();
     }
 }

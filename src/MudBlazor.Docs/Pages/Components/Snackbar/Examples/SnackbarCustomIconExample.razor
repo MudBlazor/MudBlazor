@@ -3,7 +3,7 @@
 @inject ISnackbar Snackbar
 
 <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="@(() =>
-    Snackbar.Add((MarkupString)"Snackbar with a custom icon, color and size.", Severity.Info, config =>
+    Snackbar.Add("Snackbar with a custom icon, color and size.", Severity.Info, config =>
         {
             config.Icon = Icons.Custom.Brands.GitHub;
             config.IconColor = Color.Warning;

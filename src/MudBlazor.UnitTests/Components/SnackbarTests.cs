@@ -41,7 +41,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SimpleTest()
         {
-            await _provider.InvokeAsync(() => _service.Add((MarkupString)"Boom, big reveal. Im a pickle!"));
+            await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!"));
             _provider.Find("#mud-snackbar-container").InnerHtml.Trim().Should().NotBeEmpty();
             _provider.Find("div.mud-snackbar-content-message").TrimmedText().Should().Be("Boom, big reveal. Im a pickle!");
         }
@@ -63,7 +63,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SimpleTestWithHtmlInMessageString()
         {
-            await _provider.InvokeAsync(() => _service.Add((MarkupString)"Hello <span>World</span>"));
+            await _provider.InvokeAsync(() => _service.Add("Hello <span>World</span>"));
             var messageText = HttpUtility.HtmlDecode(_provider.Find("div.mud-snackbar-content-message").InnerHtml.Trim());
             messageText.Should().Be("Hello <span>World</span>");
         }
@@ -113,7 +113,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TestStringMessageShouldAutofillKey()
         {
-            var bar = _service.Add((MarkupString)"Oh no!");
+            var bar = _service.Add("Oh no!");
             bar.Message.Should().Be("Oh no!");
             bar.SnackbarMessage.Key.Should().Be("Oh no!");
         }
@@ -121,7 +121,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TestStringMessageWithDifferentKey()
         {
-            var bar = _service.Add((MarkupString)"Oh no!", key:"zzz");
+            var bar = _service.Add("Oh no!", key:"zzz");
             bar.Message.Should().Be("Oh no!");
             bar.SnackbarMessage.Key.Should().Be("zzz");
         }
@@ -131,7 +131,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var key = "This is the key";
 
-            _service.Add((MarkupString)"A string message", key: key);
+            _service.Add("A string message", key: key);
             _service.Add(new RenderFragment(builder =>
             {
                 builder.OpenElement(0, "span");
@@ -154,8 +154,8 @@ namespace MudBlazor.UnitTests.Components
             };
             _service.Configuration.PreventDuplicates = false;
 
-            _service.Add((MarkupString)"Message 1", configure: config, key: key);
-            _service.Add((MarkupString)"Message 2", configure: config, key: key);
+            _service.Add("Message 1", configure: config, key: key);
+            _service.Add("Message 2", configure: config, key: key);
 
             _service.ShownSnackbars.Count().Should().Be(1);
         }
@@ -170,8 +170,8 @@ namespace MudBlazor.UnitTests.Components
             };
             _service.Configuration.PreventDuplicates = true;
 
-            _service.Add((MarkupString)"Message 1", configure: config, key: key);
-            _service.Add((MarkupString)"Message 2", configure: config, key: key);
+            _service.Add("Message 1", configure: config, key: key);
+            _service.Add("Message 2", configure: config, key: key);
 
             _service.ShownSnackbars.Count().Should().Be(2);
         }
@@ -186,8 +186,8 @@ namespace MudBlazor.UnitTests.Components
             };
             _service.Configuration.PreventDuplicates = true;
 
-            _service.Add((MarkupString)"Message 1", configure: config, key: key);
-            _service.Add((MarkupString)"Message 2", configure: config, key: key);
+            _service.Add("Message 1", configure: config, key: key);
+            _service.Add("Message 2", configure: config, key: key);
 
             _service.ShownSnackbars.Count().Should().Be(1);
         }
@@ -202,8 +202,8 @@ namespace MudBlazor.UnitTests.Components
             };
             _service.Configuration.PreventDuplicates = false;
 
-            _service.Add((MarkupString)"Message 1", configure: config, key: key);
-            _service.Add((MarkupString)"Message 2", configure: config, key: key);
+            _service.Add("Message 1", configure: config, key: key);
+            _service.Add("Message 2", configure: config, key: key);
 
             _service.ShownSnackbars.Count().Should().Be(2);
         }
@@ -211,14 +211,14 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task IconTest()
         {
-            await _provider.InvokeAsync(() => _service.Add((MarkupString)"Boom, big reveal. Im a pickle!"));
+            await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!"));
             _provider.Find("#mud-snackbar-container .mud-snackbar .mud-snackbar-icon").InnerHtml.Trim().Should().NotBeEmpty();
         }
 
         [Test]
         public async Task HideIconTest()
         {
-            await _provider.InvokeAsync(() => _service.Add((MarkupString)"Boom, big reveal. Im a pickle!", Severity.Success, config => { config.HideIcon = true; }));
+            await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!", Severity.Success, config => { config.HideIcon = true; }));
             var hasIcon = _provider.Find("#mud-snackbar-container .mud-snackbar").FirstElementChild.ClassName.Contains("mud-snackbar-icon");
             hasIcon.Should().BeFalse();
         }
@@ -226,7 +226,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task CustomIconTest()
         {
-            await _provider.InvokeAsync(() => _service.Add((MarkupString)"Boom, big reveal. Im a pickle!", Severity.Success, config => { config.IconColor = Color.Tertiary; config.IconSize = Size.Large; }));
+            await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!", Severity.Success, config => { config.IconColor = Color.Tertiary; config.IconSize = Size.Large; }));
 
             var svgClassNames = _provider.Find("#mud-snackbar-container .mud-snackbar").FirstElementChild.FirstElementChild.ClassName;
             svgClassNames.Should().Contain("mud-icon-size-large");
@@ -236,7 +236,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task CustomIconDefaultValuesTest()
         {
-            await _provider.InvokeAsync(() => _service.Add((MarkupString)"Boom, big reveal. Im a pickle!", Severity.Success));
+            await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!", Severity.Success));
 
             var svgClassNames = _provider.Find("#mud-snackbar-container .mud-snackbar").FirstElementChild.FirstElementChild.ClassName;
             svgClassNames.Should().Contain("mud-icon-size-medium");
@@ -252,7 +252,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // shoot out a snackbar
             Snackbar snackbar = null;
-            await _provider.InvokeAsync(() => snackbar = _service.Add((MarkupString)"Boom, big reveal. Im a pickle!"));
+            await _provider.InvokeAsync(() => snackbar = _service.Add("Boom, big reveal. Im a pickle!"));
 
             snackbar?.Dispose();
 
@@ -263,7 +263,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TestSnackBarRemoveByKey()
         {
-            MarkupString testText = new("Boom, big reveal. Im a pickle!");
+            const string TestText = "Boom, big reveal. Im a pickle!";
             const string Key = "c8916cd2-dcbb-41b5-9125-cceafa4354ba";
 
             var config = (SnackbarOptions options) =>
@@ -272,10 +272,10 @@ namespace MudBlazor.UnitTests.Components
                 options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Allow;
             };
 
-            await _provider.InvokeAsync(() => _service.Add(testText, Severity.Normal, config, Key));
-            await _provider.InvokeAsync(() => _service.Add(testText, Severity.Normal, config, Key));
+            await _provider.InvokeAsync(() => _service.Add(TestText, Severity.Normal, config, Key));
+            await _provider.InvokeAsync(() => _service.Add(TestText, Severity.Normal, config, Key));
             //Without key to make sure it doesn't gets removed.
-            await _provider.InvokeAsync(() => _service.Add(testText, Severity.Normal, config));
+            await _provider.InvokeAsync(() => _service.Add(TestText, Severity.Normal, config));
 
             _service.ShownSnackbars.Count().Should().Be(3);
 

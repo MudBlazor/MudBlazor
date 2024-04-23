@@ -36,7 +36,7 @@
     private void DeleteServer()
     {
         //In a real world scenario this bool would probably be a service to delete the item from api/database
-        Snackbar.Add((MarkupString)"Server Deleted", Severity.Success);
+        Snackbar.Add("Server Deleted", Severity.Success);
         MudDialog.Close(DialogResult.Ok(server.Id));
     }
 }

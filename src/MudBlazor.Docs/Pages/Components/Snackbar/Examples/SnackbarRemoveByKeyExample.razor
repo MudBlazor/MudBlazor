@@ -20,8 +20,8 @@
             options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Allow;
         };
 
-        Snackbar.Add((MarkupString)$"Now click hide snackbar. Key: {Key}", Severity.Normal, config, Key);
-        Snackbar.Add((MarkupString)$"Now click hide snackbar. Key: {Key}", Severity.Normal, config, Key);
+        Snackbar.Add($"Now click hide snackbar. Key: {Key}", Severity.Normal, config, Key);
+        Snackbar.Add($"Now click hide snackbar. Key: {Key}", Severity.Normal, config, Key);
     }
 
     void Hide()
