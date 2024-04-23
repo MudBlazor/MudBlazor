@@ -316,7 +316,7 @@ namespace MudBlazor
                 {
                     var value = (TimeSpan?)(object)arg;
                     return value.Value.ToString(Format ?? DefaultTimeSpanFormat, Culture);
-                } 
+                }
                 else if (GlobalGetFunc != null)
                 {
                     return GlobalGetFunc(arg);

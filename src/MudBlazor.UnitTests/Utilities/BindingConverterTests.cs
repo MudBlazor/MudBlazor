@@ -15,7 +15,7 @@ namespace MudBlazor.UnitTests.Utilities
     [TestFixture]
     public class BindingConverterTests
     {
-        
+
         [Test]
         public void GlobalConverterTests()
         {
