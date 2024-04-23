@@ -122,6 +122,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void TestEmptyStringIsIgnored()
+        {
+            var bar = _service.Add("");
+            bar.Should().BeNull();
+            _service.ShownSnackbars.Count().Should().Be(0);
+        }
+
+        [Test]
+        public void TestEmptyMarkupStringIsIgnored()
+        {
+            var bar = _service.Add(new MarkupString(""));
+            bar.Should().BeNull();
+            _service.ShownSnackbars.Count().Should().Be(0);
+        }
+
+        [Test]
         public void TestStringMessageShouldAutofillKey()
         {
             var bar = _service.Add("Oh no!");
@@ -143,6 +159,9 @@ namespace MudBlazor.UnitTests.Components
             var key = "This is the key";
 
             _service.Add("A string message", key: key);
+            _service.Add(key); // Test leaving key default
+            _service.Add(new MarkupString("A <b>markupstring</b> message"), key: key);
+            _service.Add(new MarkupString(key)); // Test leaving key default
             _service.Add(new RenderFragment(builder =>
             {
                 builder.OpenElement(0, "span");
