@@ -70,13 +70,11 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             var select = comp.FindComponent<MudAutocomplete<string>>();
 
-            var inputControl = comp.Find("div.mud-input-control");
-
             // check initial state
             comp.Markup.Should().NotContain("mud-popover-open");
 
-            // click and check if it has toggled the menu
-            inputControl.Click();
+            // focus and check if it has toggled the menu
+            select.Find("input").Focus();
             comp.WaitForAssertion(() => comp.Markup.Should().NotContain("mud-popover-open"));
 
             // type 3 characters and check if it has toggled the menu
@@ -232,7 +230,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task Autocomplete_ReadOnly_Should_Not_Open()
         {
             var comp = Context.RenderComponent<AutocompleteTest5>();
-            comp.FindAll("div.mud-input-adornment")[0].Click();
+            comp.FindAll(".mud-input-adornment-icon-button")[0].Click();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
         }
 
@@ -258,8 +256,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<AutocompleteTest6>();
 
-            var inputControl = comp.Find("div.mud-input-control");
-            inputControl.Click();
+            comp.Find("input").Focus();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
             var mudText = comp.FindAll("p.mud-typography");
@@ -276,8 +273,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<AutocompleteTest7>();
 
-            var inputControl = comp.Find("div.mud-input-control");
-            inputControl.Click();
+            comp.Find("input").Focus();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
             var mudText = comp.FindAll("p.mud-typography");
@@ -289,7 +285,6 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// After press Enter key down, the selected value should be shown in the input value
         /// </summary>
-
         [Test]
         public async Task Autocomplete_after_Enter_Should_show_Selected_Value()
         {
@@ -358,7 +353,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Input("text");
             comp.WaitForAssertion(() => comp.Find("button").Should().NotBeNull());
             // Text cleared and button removed after clicking clear button
-            comp.Find("button").Click();
+            comp.Find(".mud-input-adornment-icon-button").Click();
             comp.WaitForAssertion(() => comp.FindAll("button").Should().BeEmpty());
 
             // Button shows again after entering text
@@ -576,8 +571,8 @@ namespace MudBlazor.UnitTests.Components
             // get the instance
             var autocompleteInstance = autocompleteComponent.Instance;
 
-            // click to open the popup
-            autocompleteComponent.Find(TagNames.Input).Click();
+            // focus to open the popup
+            autocompleteComponent.Find(TagNames.Input).Focus();
 
             // ensure popup is open
             component.WaitForAssertion(() => autocompleteInstance.IsOpen.Should().BeTrue("Input has been focused and should open the popup"));
@@ -653,8 +648,8 @@ namespace MudBlazor.UnitTests.Components
             // get the instance
             var autocompleteInstance = autocompleteComponent.Instance;
 
-            // click to open the popup
-            autocompleteComponent.Find(TagNames.Input).Click();
+            // focus to open the popup
+            autocompleteComponent.Find(TagNames.Input).Focus();
 
             // ensure popup is open
             component.WaitForAssertion(() => autocompleteInstance.IsOpen.Should().BeTrue("Input has been focused and should open the popup"));
@@ -702,7 +697,6 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// When changing the bound value, ensure the new value is displayed
         /// </summary>
-        /// <returns></returns>
         [Test]
         public async Task Autocomplete_ChangeBoundValue()
         {
@@ -830,9 +824,7 @@ namespace MudBlazor.UnitTests.Components
 
             popover.Instance.Open.Should().BeFalse("Should start as closed");
 
-            await autocomplete
-                .Find($".{AutocompleteSyncTest.AutocompleteClass}")
-                .ClickAsync(new MouseEventArgs());
+            autocomplete.Find($".{AutocompleteSyncTest.AutocompleteClass} input").Focus();
 
             popoverProvider.WaitForAssertion(() =>
             {
@@ -1101,7 +1093,7 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.StateName.Should().Be(californiaString);
 
             //California should appear as index 5 and be selected
-            autocompletecomp.Find("input").Click();
+            autocompletecomp.Find("input").Focus();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
             var items = comp.FindComponents<MudListItem<AutocompleteStrictFalseTest.State>>().ToArray();
             items.Length.Should().Be(10);
@@ -1109,7 +1101,7 @@ namespace MudBlazor.UnitTests.Components
             items.ToList().IndexOf(item).Should().Be(5);
             comp.WaitForAssertion(() => items.Single(s => s.Markup.Contains(californiaString)).Find(listItemQuerySelector).ClassList.Should().Contain(selectedItemClassName));
 
-            autocompletecomp.Find("input").Click(); //close autocomplete
+            comp.Find(".mud-overlay").Click(); //close autocomplete
 
             //search for and select Virginia
             autocompletecomp.Find("input").Input("Virginia");
@@ -1119,7 +1111,7 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.StateName.Should().Be(virginiaString);
 
             //West Virginia is not in the first 10 states, so it should not appear in the list
-            autocompletecomp.Find("input").Click();
+            autocompletecomp.Find("input").Focus();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
             var items2 = comp.FindComponents<MudListItem<AutocompleteStrictFalseTest.State>>().ToArray();
             items2.Length.Should().Be(10);
@@ -1192,7 +1184,7 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.Should().Be(selectedItemString);
 
             // Opening the list of autocomplete
-            autocompletecomp.Find("input").Click();
+            autocompletecomp.Find("input").Focus();
             comp.WaitForAssertion(() => comp.Find(popoverSelector).ClassList.Should().Contain("mud-popover-open"));
             var listItems = comp.FindComponents<MudListItem<string>>().ToArray();
 
@@ -1217,8 +1209,8 @@ namespace MudBlazor.UnitTests.Components
             // get the instance
             var autocompleteInstance = autocompleteComponent.Instance;
 
-            // click to open the popup
-            autocompleteComponent.Find(TagNames.Input).Click();
+            // focus to open the popup
+            autocompleteComponent.Find(TagNames.Input).Focus();
 
             // ensure popup is open
             component.WaitForAssertion(() => autocompleteInstance.IsOpen.Should().BeTrue("Input has been focused and should open the popup"));
@@ -1239,8 +1231,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<AutocompleteListBeforeAndAfterRendersWithItemsTest>();
 
-            var inputControl = comp.Find("div.mud-input-control");
-            inputControl.Click();
+            comp.Find("div.mud-input-control input").Focus();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
             var mudText = comp.FindAll("p.mud-typography");
@@ -1257,8 +1248,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<AutocompleteListBeforeAndAfterRendersWithItemsTest>();
 
-            var inputControl = comp.Find("div.mud-input-control");
-            inputControl.Click();
+            comp.Find("div.mud-input-control input").Focus();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
             var mudText = comp.FindAll("p.mud-typography");
@@ -1275,9 +1265,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<AutocompleteListStartRendersTest>();
 
-
-            var inputControl = comp.Find("div.mud-input-control");
-            inputControl.Click();
+            comp.Find("div.mud-input-control input").Focus();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
             comp.Find("div.mud-popover").InnerHtml.Should().BeEmpty();
@@ -1291,8 +1279,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<AutocompleteListEndRendersTest>();
 
-            var inputControl = comp.Find("div.mud-input-control");
-            inputControl.Click();
+            comp.Find("div.mud-input-control input").Focus();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
             comp.Find("div.mud-popover").InnerHtml.Should().BeEmpty();
@@ -1306,8 +1293,7 @@ namespace MudBlazor.UnitTests.Components
             var listItemClassTest = "list-item-class-test";
 
             autocompletecomp.SetParam(a => a.ListItemClass, listItemClassTest);
-            var inputControl = comp.Find("div.mud-input-control");
-            inputControl.Click();
+            comp.Find("div.mud-input-control input").Focus();
 
             comp.WaitForAssertion(() => comp.Find("div.mud-list-item").ClassList.Should().Contain(listItemClassTest));
         }

@@ -180,7 +180,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets or sets whether to show the progress indicator during searches. 
+        /// Gets or sets whether to show the progress indicator during searches.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  The progress indicator uses the color specified in the <see cref="ProgressIndicatorColor"/> property.
@@ -373,7 +373,7 @@ namespace MudBlazor
         /// Gets or sets whether the <c>Value</c> property is set even if no match is found by <see cref="SearchFunc"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, the user input will be applied to the Value property which allows it to be validated and show an error message. 
+        /// Defaults to <c>false</c>.  When <c>true</c>, the user input will be applied to the Value property which allows it to be validated and show an error message.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
@@ -884,9 +884,16 @@ namespace MudBlazor
             return OpenMenuAsync();
         }
 
-        private async Task OnInputBlurred(FocusEventArgs args)
+        private async Task AdornmentClickHandler()
         {
-            await OnBlur.InvokeAsync(args);
+            await OpenMenuAsync();
+
+            await OnAdornmentClick.InvokeAsync();
+        }
+
+        private Task OnInputBlurred(FocusEventArgs args)
+        {
+            return OnBlur.InvokeAsync(args);
             // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value,
             // resulting in a premature validation. thus, don't call base
             //base.OnBlurred(args);
