@@ -554,12 +554,12 @@ namespace MudBlazor
             if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
                 await SetValueAsync(default(T), updateText);
             if (DebounceInterval <= 0)
-                await SearchAndOpenMenuAsync();
+                await OpenMenuAsync();
             else
                 _timer = new Timer(OnTimerComplete, null, DebounceInterval, Timeout.Infinite);
         }
 
-        private void OnTimerComplete(object stateInfo) => InvokeAsync(SearchAndOpenMenuAsync);
+        private void OnTimerComplete(object stateInfo) => InvokeAsync(OpenMenuAsync);
 
         private void CancelToken()
         {
@@ -621,11 +621,6 @@ namespace MudBlazor
                 await SelectAsync();
             }
 
-            if (IsLoading)
-            {
-                return;
-            }
-
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
             {
                 IsOpen = false;
@@ -637,6 +632,11 @@ namespace MudBlazor
             {
                 // Open before searching if a progress indicator is defined. We won't open again after this, even if the user clicks away.
                 IsOpen = true;
+            }
+
+            if (IsLoading)
+            {
+                return;
             }
 
             var searchedItems = Array.Empty<T>();
@@ -762,26 +762,6 @@ namespace MudBlazor
                     else
                         IsOpen = false;
                     break;
-            }
-
-            await base.InvokeKeyDownAsync(args);
-        }
-
-        internal virtual async Task OnInputKeyUp(KeyboardEventArgs args)
-        {
-            switch (args.Key)
-            {
-                case "Enter":
-                case "NumpadEnter":
-                    if (IsOpen)
-                    {
-                        await OnEnterKey();
-                    }
-                    else
-                    {
-                        await ToggleMenuAsync();
-                    }
-                    break;
                 case "ArrowDown":
                     if (IsOpen)
                     {
@@ -806,6 +786,26 @@ namespace MudBlazor
                     {
                         var decrement = _selectedListItemIndex - _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) - 1);
                         await SelectNextItem(-(decrement < 0 ? 1 : decrement));
+                    }
+                    break;
+            }
+
+            await base.InvokeKeyDownAsync(args);
+        }
+
+        internal virtual async Task OnInputKeyUp(KeyboardEventArgs args)
+        {
+            switch (args.Key)
+            {
+                case "Enter":
+                case "NumpadEnter":
+                    if (IsOpen)
+                    {
+                        await OnEnterKey();
+                    }
+                    else
+                    {
+                        await ToggleMenuAsync();
                     }
                     break;
                 case "Escape":
