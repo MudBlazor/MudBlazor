@@ -509,53 +509,6 @@ namespace MudBlazor
             }
         }
 
-        /// <summary>
-        /// Opens or closes the drop-down of items depending on whether it was closed or open.
-        /// </summary>
-        /// <remarks>
-        /// Will have no effect if the autocomplete is disabled or read-only.
-        /// </remarks>
-        public Task ToggleMenuAsync()
-        {
-            if ((GetDisabledState() || GetReadOnlyState()) && !IsOpen)
-            {
-                return Task.CompletedTask;
-            }
-
-            return IsOpen ? CloseMenuAsync() : OpenMenuAsync();
-        }
-
-        /// <summary>
-        /// Opens the drop-down of items.
-        /// </summary>
-        /// <remarks>
-        /// Will have no effect if the autocomplete is disabled or read-only.
-        /// </remarks>
-        public async Task OpenMenuAsync()
-        {
-            if (SelectOnClick)
-            {
-                await _elementReference.SelectAsync();
-            }
-
-            if (!IsLoading)
-            {
-                await SearchAndOpenMenuAsync();
-            }
-        }
-
-        /// <summary>
-        /// Closes the drop-down of items.
-        /// </summary>
-        public async Task CloseMenuAsync()
-        {
-            _timer?.Dispose();
-            await RestoreScrollPositionAsync();
-            await CoerceTextToValue();
-            IsOpen = false;
-            StateHasChanged();
-        }
-
         protected override void OnInitialized()
         {
             base.OnInitialized();
@@ -628,10 +581,51 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Uses <see cref="SearchFunc"/> to populate the item lists.
+        /// Opens or closes the drop-down of items depending on whether it was closed or open.
         /// </summary>
-        private async Task SearchAndOpenMenuAsync()
+        /// <remarks>
+        /// Will have no effect if the autocomplete is disabled or read-only.
+        /// </remarks>
+        public Task ToggleMenuAsync()
         {
+            if ((GetDisabledState() || GetReadOnlyState()) && !IsOpen)
+            {
+                return Task.CompletedTask;
+            }
+
+            return IsOpen ? CloseMenuAsync() : OpenMenuAsync();
+        }
+
+        /// <summary>
+        /// Closes the drop-down of items.
+        /// </summary>
+        public async Task CloseMenuAsync()
+        {
+            _timer?.Dispose();
+            await RestoreScrollPositionAsync();
+            await CoerceTextToValue();
+            IsOpen = false;
+            StateHasChanged();
+        }
+
+        /// <summary>
+        /// Opens the drop-down of items.
+        /// </summary>
+        /// <remarks>
+        /// Will have no effect if the autocomplete is disabled or read-only.
+        /// </remarks>
+        public async Task OpenMenuAsync()
+        {
+            if (SelectOnClick)
+            {
+                await SelectAsync();
+            }
+
+            if (IsLoading)
+            {
+                return;
+            }
+
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
             {
                 IsOpen = false;
