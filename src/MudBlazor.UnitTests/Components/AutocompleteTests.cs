@@ -1084,7 +1084,6 @@ namespace MudBlazor.UnitTests.Components
             var autocomplete = autocompletecomp.Instance;
 
             //search for and select California
-            await comp.InvokeAsync(() => autocompletecomp.Find("input").Focus());
             autocompletecomp.Find("input").Input("Calif");
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
             await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
@@ -1175,7 +1174,6 @@ namespace MudBlazor.UnitTests.Components
             var autocomplete = autocompletecomp.Instance;
 
             // Select the peach list item
-            autocompletecomp.Find("input").Focus();
             autocompletecomp.Find("input").Input(selectedItemString);
             comp.WaitForAssertion(() => comp.Find(popoverSelector).ClassList.Should().Contain("mud-popover-open"));
             await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));

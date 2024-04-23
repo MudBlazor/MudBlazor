@@ -18,6 +18,7 @@
                           Clearable="@(!GetReadOnlyState() && Clearable)" OnClearButtonClick="@OnClearButtonClick"
                           @attributes="UserAttributes"
                           TextChanged="OnTextChanged"
+                          @onclick="@OnInputClicked"
                           @onfocus="@OnInputFocused" OnBlur="OnInputBlurred"
                           OnKeyDown="@OnInputKeyDownAsync"
                           OnKeyUp="@OnInputKeyUpAsync" autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"

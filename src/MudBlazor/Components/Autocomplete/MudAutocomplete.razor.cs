@@ -553,13 +553,14 @@ namespace MudBlazor
 
             if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
                 await SetValueAsync(default(T), updateText);
+
             if (DebounceInterval <= 0)
                 await OpenMenuAsync();
             else
-                _timer = new Timer(OnTimerComplete, null, DebounceInterval, Timeout.Infinite);
+                _timer = new Timer(OnDebounceComplete, null, DebounceInterval, Timeout.Infinite);
         }
 
-        private void OnTimerComplete(object stateInfo) => InvokeAsync(() => OpenMenuAsync());
+        private void OnDebounceComplete(object stateInfo) => InvokeAsync(OpenMenuAsync);
 
         private void CancelToken()
         {
@@ -801,6 +802,7 @@ namespace MudBlazor
                     break;
                 case "Escape":
                     await CloseMenuAsync();
+                    await BlurAsync();
                     break;
                 case "Backspace":
                     if (args.CtrlKey && args.ShiftKey)
@@ -869,8 +871,15 @@ namespace MudBlazor
             }
         }
 
-        private async Task OnInputFocused(FocusEventArgs args)
+        private Task OnInputClicked()
         {
+            return _isFocused ? OnInputFocused() : Task.CompletedTask;
+        }
+
+        private async Task OnInputFocused()
+        {
+            _isFocused = true;
+
             if (_doNotOpenMenuOnNextFocus || IsOpen || GetDisabledState() || GetReadOnlyState())
             {
                 _doNotOpenMenuOnNextFocus = false;
@@ -895,6 +904,8 @@ namespace MudBlazor
 
         private Task OnInputBlurred(FocusEventArgs args)
         {
+            _isFocused = false;
+
             return OnBlur.InvokeAsync(args);
 
             // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value,
