@@ -31,6 +31,7 @@ namespace MudBlazor
         private int _elementKey = 0;
         private int _returnedItemsCount;
         private bool _isOpen;
+        private bool _doNotOpenMenuOnNextFocus;
         private MudInput<string> _elementReference;
         private CancellationTokenSource _cancellationTokenSrc;
         private Task _currentSearchTask;
@@ -489,10 +490,17 @@ namespace MudBlazor
 
                 await BeginValidateAsync();
 
-                if (!_isCleared)
-                    _elementReference?.SetText(optionText);
+                if (_elementReference is not null)
+                {
+                    if (!_isCleared)
+                    {
+                        await _elementReference.SetText(optionText);
+                    }
 
-                _elementReference?.FocusAsync().AndForget();
+                    _doNotOpenMenuOnNextFocus = true;
+                    await FocusAsync();
+                }
+
                 StateHasChanged();
             }
             finally
@@ -532,7 +540,7 @@ namespace MudBlazor
 
             if (!IsLoading)
             {
-                await SearchAndOpenMenu();
+                await SearchAndOpenMenuAsync();
             }
         }
 
@@ -569,7 +577,9 @@ namespace MudBlazor
                 base.OnAfterRender(firstRender);
                 return;
             }
+
             _isCleared = false;
+
             base.OnAfterRender(firstRender);
         }
 
@@ -591,12 +601,12 @@ namespace MudBlazor
             if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
                 await SetValueAsync(default(T), updateText);
             if (DebounceInterval <= 0)
-                await SearchAndOpenMenu();
+                await SearchAndOpenMenuAsync();
             else
                 _timer = new Timer(OnTimerComplete, null, DebounceInterval, Timeout.Infinite);
         }
 
-        private void OnTimerComplete(object stateInfo) => InvokeAsync(SearchAndOpenMenu);
+        private void OnTimerComplete(object stateInfo) => InvokeAsync(SearchAndOpenMenuAsync);
 
         private void CancelToken()
         {
@@ -620,7 +630,7 @@ namespace MudBlazor
         /// <summary>
         /// Uses <see cref="SearchFunc"/> to populate the item lists.
         /// </summary>
-        private async Task SearchAndOpenMenu()
+        private async Task SearchAndOpenMenuAsync()
         {
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
             {
@@ -749,9 +759,8 @@ namespace MudBlazor
         {
             switch (args.Key)
             {
+                // We need to catch Tab here because a tab will move focus to the next element and thus we'd never get the tab key in OnInputKeyUp.
                 case "Tab":
-                    // NOTE: We need to catch Tab in Keydown because a tab will move focus to the next element and thus
-                    // in OnInputKeyUp we'd never get the tab key
                     if (!IsOpen)
                         return;
                     if (SelectValueOnTab)
@@ -760,6 +769,7 @@ namespace MudBlazor
                         IsOpen = false;
                     break;
             }
+
             await base.InvokeKeyDownAsync(args);
         }
 
@@ -814,6 +824,7 @@ namespace MudBlazor
                     }
                     break;
             }
+
             await base.InvokeKeyUpAsync(args);
         }
 
@@ -873,10 +884,11 @@ namespace MudBlazor
             }
         }
 
-        private Task OnInputFocused()
+        private Task OnInputFocused(FocusEventArgs args)
         {
-            if (GetDisabledState() || GetReadOnlyState() || IsOpen)
+            if (_doNotOpenMenuOnNextFocus || IsOpen || GetDisabledState() || GetReadOnlyState())
             {
+                _doNotOpenMenuOnNextFocus = false;
                 return Task.CompletedTask;
             }
 
@@ -894,6 +906,7 @@ namespace MudBlazor
         private Task OnInputBlurred(FocusEventArgs args)
         {
             return OnBlur.InvokeAsync(args);
+
             // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value,
             // resulting in a premature validation. thus, don't call base
             //base.OnBlurred(args);
@@ -901,7 +914,7 @@ namespace MudBlazor
 
         private Task CoerceTextToValue()
         {
-            if (CoerceText == false)
+            if (!CoerceText)
                 return Task.CompletedTask;
 
             _timer?.Dispose();
@@ -917,9 +930,11 @@ namespace MudBlazor
 
         private Task CoerceValueToText()
         {
-            if (CoerceValue == false)
+            if (!CoerceValue)
                 return Task.CompletedTask;
+
             _timer?.Dispose();
+
             var value = Converter.Get(Text);
             return SetValueAsync(value, updateText: false);
         }
