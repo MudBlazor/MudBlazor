@@ -1,7 +1,9 @@
 ﻿@inherits MudFormComponent<T, string>
+
 @typeparam T
 @namespace MudBlazor
 @using Microsoft.AspNetCore.Components.Forms
+@using MudBlazor.Interfaces
 
 <MudInputControl Class="@Classname" Style="@Style" Error="HasErrors" ErrorText="@GetErrorText()" Required="@Required">
     <InputContent>
@@ -16,10 +18,17 @@
                    @attributes="UserAttributes"
                    required="@Required"
                    aria-required="@Required.ToString().ToLowerInvariant()"/>
-        @if (ButtonTemplate != null)
+        @if (ActivatorContent != null)
         {
-            <CascadingValue Name="ParentDisabled" Value="GetDisabledState()">
-                @ButtonTemplate(new FileUploadButtonTemplateContext<T>(this, _id))
+            <CascadingValue Value="@((IActivatable)this)"
+                            IsFixed="true">
+                <CascadingValue Name="ParentDisabled"
+                                Value="GetDisabledState()">
+                    <div @onclick="OpenFilePickerAsync"
+                         disabled="@GetDisabledState()">
+                        @ActivatorContent
+                    </div>
+                </CascadingValue>
             </CascadingValue>
         }
         @if (SelectedTemplate != null)
