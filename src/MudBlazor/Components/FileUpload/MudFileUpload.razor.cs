@@ -8,14 +8,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging;
+using Microsoft.JSInterop;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudFileUpload<T> : MudFormComponent<T, string>
+    public partial class MudFileUpload<T> : MudFormComponent<T, string>, IActivatable
     {
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; } = null!;
+
         public MudFileUpload() : base(new DefaultConverter<T>()) { }
 
         private readonly string _id = $"mud_fileupload_{Guid.NewGuid()}";
@@ -65,11 +71,11 @@ namespace MudBlazor
         public bool AppendMultipleFiles { get; set; }
 
         /// <summary>
-        /// Renders the button that triggers the input. Required for functioning.
+        /// Any clicks on the activator will open the file picker.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.FileUpload.Appearance)]
-        public RenderFragment<FileUploadButtonTemplateContext<T?>>? ButtonTemplate { get; set; }
+        [Category(CategoryTypes.FileUpload.Behavior)]
+        public RenderFragment? ActivatorContent { get; set; }
 
         /// <summary>
         /// Renders the selected files, if desired.
@@ -144,6 +150,12 @@ namespace MudBlazor
             _value = default;
             return NotifyValueChangedAsync();
         }
+
+        public async Task OpenFilePickerAsync()
+            => await JsRuntime.InvokeVoidAsync("mudWindow.click", _id);
+
+        public void Activate(object activator, MouseEventArgs args)
+            => _ = OpenFilePickerAsync();
 
         private async Task OnChangeAsync(InputFileChangeEventArgs args)
         {
