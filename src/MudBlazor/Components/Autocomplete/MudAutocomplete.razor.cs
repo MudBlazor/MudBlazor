@@ -238,7 +238,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool ResetValueOnEmptyText { get; set; } = false;
+        public bool ResetValueOnEmptyText { get; set; }
 
         /// <summary>
         /// Gets or sets whether the text will be selected (highlighted) when the component is activated.
@@ -404,7 +404,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public bool SelectValueOnTab { get; set; } = false;
+        public bool SelectValueOnTab { get; set; }
 
         /// <summary>
         /// Gets or sets whether a Clear icon button is displayed.
@@ -414,7 +414,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool Clearable { get; set; } = false;
+        public bool Clearable { get; set; }
 
         /// <summary>
         /// Occurs when the Clear button has been clicked.
@@ -469,7 +469,6 @@ namespace MudBlazor
         /// Changes the currently selected item to the specified value.
         /// </summary>
         /// <param name="value">The value to set.</param>
-        /// <returns>A <see cref="Task"/> object.</returns>
         public async Task SelectOption(T value)
         {
             _isProcessingValue = true;
@@ -627,7 +626,7 @@ namespace MudBlazor
 
             if (ProgressIndicatorInPopoverTemplate != null)
             {
-                // Open before searching if a progress indicator is defined. We won't open again after this, even if the user clicks away.
+                // Open before searching if a progress indicator is defined.
                 IsOpen = true;
             }
 
@@ -680,9 +679,9 @@ namespace MudBlazor
                 _selectedListItemIndex = _enabledItemIndices.Any() ? _enabledItemIndices[0] : -1;
             }
 
-            if (ProgressIndicatorInPopoverTemplate == null)
+            if (_isFocused)
             {
-                // Open after the search has finished if there was no progress indicator shown earlier.
+                // Open after the search has finished if the user hasn't focused somewhere else.
                 IsOpen = true;
             }
 
@@ -747,12 +746,13 @@ namespace MudBlazor
             {
                 // We need to catch Tab here because a tab will move focus to the next element and thus we'd never get the tab key in OnInputKeyUp.
                 case "Tab":
-                    if (!IsOpen)
-                        return;
-                    if (SelectValueOnTab)
-                        await OnEnterKey();
-                    else
-                        IsOpen = false;
+                    if (IsOpen)
+                    {
+                        if (SelectValueOnTab)
+                            await OnEnterKey();
+                        else
+                            IsOpen = false;
+                    }
                     break;
                 case "ArrowDown":
                     if (IsOpen)
