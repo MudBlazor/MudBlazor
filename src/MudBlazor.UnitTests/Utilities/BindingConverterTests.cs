@@ -17,7 +17,7 @@ namespace MudBlazor.UnitTests.Utilities
     {
         
         [Test]
-        public void FallbackConverterTests()
+        public void GlobalConverterTests()
         {
             var c10 = new DefaultConverter<Point>();
             DefaultConverter<Point>.GlobalGetFunc = x => $"[{x.X},{x.Y}]";
