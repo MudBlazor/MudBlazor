@@ -5,8 +5,6 @@ using System.Reflection;
 
 namespace MudBlazor
 {
-    
-    
     /// <summary>
     /// A universal T to string binding converter
     /// </summary>
@@ -177,7 +175,7 @@ namespace MudBlazor
                         UpdateGetError("Not a valid time span");
                     }
                 }
-                else if (GlobalSetFunc!=null)
+                else if (GlobalSetFunc != null)
                 {
                     try
                     {
@@ -200,8 +198,6 @@ namespace MudBlazor
 
             return default(T);
         }
-       
-        
 
         protected virtual string ConvertToString(T arg)
         {
@@ -321,8 +317,10 @@ namespace MudBlazor
                     var value = (TimeSpan?)(object)arg;
                     return value.Value.ToString(Format ?? DefaultTimeSpanFormat, Culture);
                 } 
-                else if(GlobalGetFunc !=null)
+                else if (GlobalGetFunc != null)
+                {
                     return GlobalGetFunc(arg);
+                }
                 return arg.ToString();
             }
             catch (FormatException e)
