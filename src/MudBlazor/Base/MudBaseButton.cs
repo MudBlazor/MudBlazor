@@ -28,7 +28,7 @@ namespace MudBlazor
         /// Gets or sets the HTML tag rendered for this component.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>button</c>. 
+        /// Defaults to <c>button</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]
@@ -151,7 +151,7 @@ namespace MudBlazor
             SetDefaultValues();
         }
 
-        //Set the default value for HtmlTag, Href and Target 
+        //Set the default value for HtmlTag, Href and Target
         private void SetDefaultValues()
         {
             if (GetDisabledState())

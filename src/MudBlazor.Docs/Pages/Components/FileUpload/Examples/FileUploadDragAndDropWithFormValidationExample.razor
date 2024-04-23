@@ -1,7 +1,4 @@
-﻿@using System.IO
-@using System.Text
-@using System.Threading
-@using FluentValidation
+﻿@using FluentValidation
 
 @namespace MudBlazor.Docs.Examples
 
@@ -14,17 +11,20 @@
              Validation="@_validationRules.ValidateValue">
         <MudItem xs="12">
             <MudFileUpload T="IReadOnlyList<IBrowserFile>"
-                           AppendMultipleFiles
+                           @ref="@_fileUpload"
                            @bind-Files="_model.Files"
-                           @bind-Files:after="@ClearDragClass"
                            For="@(() => _model.Files)"
+                           AppendMultipleFiles
                            Hidden="@false"
-                           InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20"
+                           InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
                            InputStyle="opacity:0"
+                           ErrorText="@string.Empty"
+                           tabindex="-1"
+                           @ondrop="@ClearDragClass"
                            @ondragenter="@SetDragClass"
                            @ondragleave="@ClearDragClass"
                            @ondragend="@ClearDragClass">
-                <ButtonTemplate>
+                <ActivatorContent>
                     <MudPaper Height="300px"
                               Outlined="true"
                               Class="@_dragClass">
@@ -36,29 +36,37 @@
                             <MudChip T="string" Color="Color.Dark" Text="@file" />
                         }
                     </MudPaper>
-                    <MudToolBar Gutters="false"
-                                Class="relative d-flex justify-end gap-4 z-30">
-                        <MudButton HtmlTag="label"
-                                   Color="Color.Primary"
-                                   for="@context.Id"
-                                   Variant="Variant.Filled">
-                            Open file picker
-                        </MudButton>
-                        <MudButton OnClick="@Upload"
-                                   Color="Color.Primary"
-                                   Disabled="@(!_isValid || !_isTouched || _model.Files is null || !_model.Files.Any())"
-                                   Variant="Variant.Filled">
-                            Upload
-                        </MudButton>
-                        <MudButton OnClick="@context.Actions.ClearAsync"
-                                   Color="Color.Error"
-                                   Disabled="@(_model.Files is null || !_model.Files.Any())"
-                                   Variant="Variant.Filled">
-                            Clear
-                        </MudButton>
-                    </MudToolBar>
-                </ButtonTemplate>
+                </ActivatorContent>
             </MudFileUpload>
+            <MudToolBar Gutters="@false"
+                        Class="relative d-flex justify-end gap-4">
+                <MudButton Color="Color.Primary"
+                           OnClick="@OpenFilePickerAsync"
+                           Variant="Variant.Filled">
+                    Open file picker
+                </MudButton>
+                <MudButton Color="Color.Primary"
+                           Disabled="@(!_isValid || !_isTouched || _model.Files is null || !_model.Files.Any())"
+                           OnClick="@Upload"
+                           Variant="Variant.Filled">
+                    Upload
+                </MudButton>
+                <MudButton Color="Color.Error"
+                           Disabled="@(_model.Files is null || !_model.Files.Any())"
+                           OnClick="@ClearAsync"
+                           Variant="Variant.Filled">
+                    Clear
+                </MudButton>
+            </MudToolBar>
+        </MudItem>
+        <MudItem>
+            @if (_fileUpload?.ValidationErrors.Any() ?? false)
+            {
+                <MudText Color="Color.Error"
+                         Typo="@Typo.caption">
+                    @_fileUpload?.ValidationErrors[0]
+                </MudText>
+            }
         </MudItem>
         <MudItem xs="12">
             IsValid: @_isValid - IsTouched: @_isTouched
@@ -75,10 +83,11 @@
 
     private Model _model =  new();
     private ModelFluentValidator _validationRules = new();
+    private MudFileUpload<IReadOnlyList<IBrowserFile>>? _fileUpload;
     private bool _isValid;
     private bool _isTouched;
     private const string FileContent = "this is content";
-    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full z-10";
+    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
     private string _dragClass = DefaultDragClass;
 
     private void Upload()
@@ -93,6 +102,12 @@
 
     private void ClearDragClass()
         => _dragClass = DefaultDragClass;
+
+    private Task OpenFilePickerAsync()
+        => _fileUpload?.OpenFilePickerAsync() ?? Task.CompletedTask;
+
+    private Task ClearAsync()
+        => _fileUpload?.ClearAsync() ?? Task.CompletedTask;
 
     public class ModelFluentValidator : AbstractValidator<Model>
     {
