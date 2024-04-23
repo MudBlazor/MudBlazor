@@ -241,14 +241,14 @@ namespace MudBlazor
         public bool ResetValueOnEmptyText { get; set; } = false;
 
         /// <summary>
-        /// Gets or sets whether the text will be selected (highlighted) when the Autocomplete is clicked.
+        /// Gets or sets whether the text will be selected (highlighted) when the component is activated.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool SelectOnClick { get; set; } = true;
+        public bool SelectOnActivation { get; set; } = true;
 
         /// <summary>
         /// Gets or sets whether other items can be selected without resetting the Value.
@@ -601,6 +601,7 @@ namespace MudBlazor
         /// </summary>
         public async Task CloseMenuAsync()
         {
+            CancelToken();
             _timer?.Dispose();
             await RestoreScrollPositionAsync();
             await CoerceTextToValue();
@@ -616,7 +617,7 @@ namespace MudBlazor
         /// </remarks>
         public async Task OpenMenuAsync()
         {
-            if (SelectOnClick)
+            if (SelectOnActivation)
             {
                 await SelectAsync();
             }
@@ -632,11 +633,6 @@ namespace MudBlazor
             {
                 // Open before searching if a progress indicator is defined. We won't open again after this, even if the user clicks away.
                 IsOpen = true;
-            }
-
-            if (IsLoading)
-            {
-                return;
             }
 
             var searchedItems = Array.Empty<T>();
@@ -749,7 +745,7 @@ namespace MudBlazor
             return "null";
         }
 
-        internal virtual async Task OnInputKeyDown(KeyboardEventArgs args)
+        protected virtual async Task OnInputKeyDownAsync(KeyboardEventArgs args)
         {
             switch (args.Key)
             {
@@ -793,7 +789,7 @@ namespace MudBlazor
             await base.InvokeKeyDownAsync(args);
         }
 
-        internal virtual async Task OnInputKeyUp(KeyboardEventArgs args)
+        protected virtual async Task OnInputKeyUpAsync(KeyboardEventArgs args)
         {
             switch (args.Key)
             {
@@ -990,6 +986,7 @@ namespace MudBlazor
 
             if (text == null)
                 return;
+
             await SetTextAsync(text, true);
         }
 

@@ -11,7 +11,6 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
-using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
@@ -354,7 +353,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Input("text");
             comp.WaitForAssertion(() => comp.Find(".mud-input-clear-button").Should().NotBeNull());
             // Text cleared and button removed after clicking clear button
-            comp.Find(".mud-input-adornment-icon-button").Click();
+            comp.Find(".mud-input-clear-button").Click();
             comp.WaitForAssertion(() => comp.FindAll(".mud-input-clear-button").Should().BeEmpty());
 
             // Button shows again after entering text
@@ -558,7 +557,6 @@ namespace MudBlazor.UnitTests.Components
             var listItemQuerySelector = "div.mud-list-item";
 
             var selectedItemIndexPropertyInfo = typeof(MudAutocomplete<string>).GetField("_selectedListItemIndex", BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new ArgumentException("Cannot find field named '_selectedListItemIndex' on type 'MudAutocomplete<T>'");
-            var onInputKeyUpMemberInfo = typeof(MudAutocomplete<string>).GetMethod("OnInputKeyUp", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new ArgumentException("Cannot find method named 'OnInputKeyUp' on type 'MudAutocomplete<T>'");
 
             // create the component
             var component = Context.RenderComponent<AutocompleteDisabledItemsTest>();
@@ -638,7 +636,6 @@ namespace MudBlazor.UnitTests.Components
             var selectedItemClassName = "mud-selected-item";
 
             var selectedItemIndexPropertyInfo = typeof(MudAutocomplete<string>).GetField("_selectedListItemIndex", BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new ArgumentException("Cannot find field named '_selectedListItemIndex' on type 'MudAutocomplete<T>'");
-            var onInputKeyUpMemberInfo = typeof(MudAutocomplete<string>).GetMethod("OnInputKeyUp", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new ArgumentException("Cannot find method named 'OnInputKeyUp' on type 'MudAutocomplete<T>'");
 
             // create the component
             var component = Context.RenderComponent<AutocompleteDisabledItemsTest>();
@@ -681,9 +678,9 @@ namespace MudBlazor.UnitTests.Components
             // define the event-args for arrow-down
             var arrowDownKeyboardEventArgs = new KeyboardEventArgs { Key = Key.Down.Value, Type = "keyup" };
 
-            // invoke directly (but twice)
-            onInputKeyUpMemberInfo.Invoke(autocompleteInstance, new[] { arrowDownKeyboardEventArgs });
-            onInputKeyUpMemberInfo.Invoke(autocompleteInstance, new[] { arrowDownKeyboardEventArgs });
+            // invoke key down twice
+            await autocompleteComponent.Find("input").KeyDownAsync(arrowDownKeyboardEventArgs);
+            await autocompleteComponent.Find("input").KeyDownAsync(arrowDownKeyboardEventArgs);
 
             // ensure that index '4' is selected
             component.WaitForAssertion(() => selectedItemIndexPropertyInfo.GetValue(autocompleteInstance).Should().Be(4));
@@ -728,35 +725,35 @@ namespace MudBlazor.UnitTests.Components
                 await Task.Delay(100);
 
                 //press Enter key
-                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Enter" }));
+                await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
                 //ensure autocomplete is closed and new value is committed/bound
                 comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
-                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Enter" }));
+                await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
                 comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
-                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Escape" }));
+                await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Escape" }));
                 comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
-                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
+                await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp" }));
                 comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
-                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true }));
+                await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true }));
                 comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
-                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
+                await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown" }));
                 comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
-                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Escape" }));
+                await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Escape" }));
                 comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
-                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "NumpadEnter" }));
+                await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "NumpadEnter" }));
                 comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
-                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
+                await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown" }));
                 comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
-                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
+                await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown" }));
 
                 //The value of the input should be Alabama
                 comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
@@ -776,30 +773,30 @@ namespace MudBlazor.UnitTests.Components
                 autocomplete.Value.Should().Be("Alabama");
                 autocomplete.Text.Should().Be("Alabama");
 
-                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
+                await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp" }));
                 comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
-                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
+                await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp" }));
                 comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
 
-                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
-                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyDown(new KeyboardEventArgs() { Key = "Tab" }));
-                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Tab" }));
+                await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp" }));
+                await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Tab" }));
+                await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Tab" }));
                 comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
                 autocompletecomp.SetParam("SelectValueOnTab", true);
-                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
-                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyDown(new KeyboardEventArgs() { Key = "Tab" }));
+                await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp" }));
+                await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Tab" }));
                 comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
 
-                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Backspace", CtrlKey = true, ShiftKey = true }));
+                await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Backspace", CtrlKey = true, ShiftKey = true }));
                 comp.WaitForAssertion(() => autocompletecomp.Instance.Value.Should().Be(null));
 
-                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyDown(new KeyboardEventArgs() { Key = "Tab" }));
+                await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Tab" }));
                 comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
                 //Check popover is closed if coerce text is true (it fixed with a PR)
                 autocomplete.CoerceText = true;
-                await comp.InvokeAsync(() => autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Enter" }));
+                await comp.InvokeAsync(() => autocompletecomp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
                 comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
                 await comp.InvokeAsync(() => autocomplete.OnEnterKey());
                 autocompletecomp.Find("input").Input("abc");
@@ -1087,10 +1084,10 @@ namespace MudBlazor.UnitTests.Components
             var autocomplete = autocompletecomp.Instance;
 
             //search for and select California
-            autocompletecomp.Find("input").Focus();
+            await comp.InvokeAsync(() => autocompletecomp.Find("input").Focus());
             autocompletecomp.Find("input").Input("Calif");
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
-            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Enter" }));
+            await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
             autocomplete.Text.Should().Be(californiaString);
             autocomplete.Value.StateName.Should().Be(californiaString);
 
@@ -1107,7 +1104,7 @@ namespace MudBlazor.UnitTests.Components
             //search for and select Virginia
             autocompletecomp.Find("input").Input("Virginia");
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
-            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Enter" }));
+            await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
             autocomplete.Text.Should().Be(virginiaString);
             autocomplete.Value.StateName.Should().Be(virginiaString);
 
@@ -1178,9 +1175,10 @@ namespace MudBlazor.UnitTests.Components
             var autocomplete = autocompletecomp.Instance;
 
             // Select the peach list item
+            autocompletecomp.Find("input").Focus();
             autocompletecomp.Find("input").Input(selectedItemString);
             comp.WaitForAssertion(() => comp.Find(popoverSelector).ClassList.Should().Contain("mud-popover-open"));
-            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Enter" }));
+            await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
             autocomplete.Text.Should().Be(selectedItemString);
             autocomplete.Value.Should().Be(selectedItemString);
 
