@@ -126,6 +126,18 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Using only one x-axis value should not throw an exception
+        /// this is from issue #7736
+        /// </summary>
+        [Test]
+        public void BarChartWithSingleXAxisValue()
+        {
+            var comp = Context.RenderComponent<BarChartWithSingleXAxisTest>();
+
+            comp.Markup.Should().NotContain("NaN");
+        }
+
+        /// <summary>
         /// High values should not lead to millions of horizontal grid lines
         /// this is from issue #1591 "Line chart is not able to plot big Double values"
         /// </summary>
@@ -136,6 +148,18 @@ namespace MudBlazor.UnitTests.Components
             // the test should run through instantly (max 5s for a slow build server). 
             // without the fix it took minutes on a fast computer
             var comp = Context.RenderComponent<LineChartWithBigValuesTest>();
+        }
+
+        /// <summary>
+        /// Zero values should not case an exception
+        /// this is from issue #8282 "Line chart is not able to plot all zeroes"
+        /// </summary>
+        [Test]
+        public void LineChartWithZeroValues()
+        {
+            var comp = Context.RenderComponent<LineChartWithZeroValuesTest>();
+
+            comp.Markup.Should().NotContain("NaN");
         }
 
         ///// <summary> 
@@ -152,7 +176,7 @@ namespace MudBlazor.UnitTests.Components
               .Add(p => p.ChartType, chartType)
               .Add(p => p.Width, "100%")
               .Add(p => p.Height, "300px")
-              .Add(p => p.CustomGraphics, "<text class='text-ref'>"+text+"</text>")
+              .Add(p => p.CustomGraphics, "<text class='text-ref'>" + text + "</text>")
             );
 
             //Checks if the innerHtml of the added text element matches the text parameter

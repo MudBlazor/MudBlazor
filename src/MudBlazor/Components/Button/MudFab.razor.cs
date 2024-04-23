@@ -1,19 +1,19 @@
-﻿using System;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudFab : MudBaseButton
+    public partial class MudFab : MudBaseButton, IHandleEvent
     {
         protected string Classname =>
             new CssBuilder("mud-button-root mud-fab")
                 .AddClass($"mud-fab-extended", !string.IsNullOrEmpty(Label))
                 .AddClass($"mud-fab-{Color.ToDescriptionString()}")
                 .AddClass($"mud-fab-size-{Size.ToDescriptionString()}")
-                .AddClass($"mud-ripple", !DisableRipple && !GetDisabledState())
-                .AddClass($"mud-fab-disable-elevation", DisableElevation)
+                .AddClass($"mud-ripple", Ripple && !GetDisabledState())
+                .AddClass($"mud-fab-disable-elevation", !DropShadow)
                 .AddClass(Class)
                 .Build();
 
@@ -30,13 +30,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
         public Size Size { get; set; } = Size.Large;
-
-        /// <summary>
-        /// If applied Icon will be added at the start of the component.
-        /// </summary>
-        [Obsolete("This property is obsolete. Use StartIcon instead.")]
-        [Parameter]
-        public string? Icon { get => StartIcon; set => StartIcon = value; }
 
         /// <summary>
         /// If applied Icon will be added at the start of the component.
@@ -73,11 +66,12 @@ namespace MudBlazor
         [Category(CategoryTypes.Button.Behavior)]
         public string? Label { get; set; }
 
-        /// <summary>
-        /// Title of the icon used for accessibility.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
-        public string? Title { get; set; }
+        /// <inheritdoc/>
+        /// <remarks>
+        /// See: https://github.com/MudBlazor/MudBlazor/issues/8365
+        /// <para/>
+        /// Since <see cref="MudFab"/> implements only single <see cref="EventCallback"/> <see cref="MudBaseButton.OnClick"/> this is safe to disable globally within the component.
+        /// </remarks>
+        Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg) => callback.InvokeAsync(arg);
     }
 }

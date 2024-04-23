@@ -126,7 +126,7 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.DropZone.Items)]
-        public Func<T,string, string>? ItemsClassSelector { get; set; }
+        public Func<T, string, string>? ItemsClassSelector { get; set; }
 
 
         public event EventHandler<MudDragAndDropItemTransaction<T>>? TransactionStarted;

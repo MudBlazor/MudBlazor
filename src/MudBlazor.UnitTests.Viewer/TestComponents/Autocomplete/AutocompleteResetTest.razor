@@ -33,7 +33,7 @@
         return Task.CompletedTask;
     }
 
-    private Task<IEnumerable<string>> Search(string value)
+    private Task<IEnumerable<string>> Search(string value, CancellationToken token)
     {
         if (string.IsNullOrEmpty(value))
         {

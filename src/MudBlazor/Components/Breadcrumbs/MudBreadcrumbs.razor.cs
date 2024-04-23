@@ -17,7 +17,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Breadcrumbs.Behavior)]
-        public List<BreadcrumbItem>? Items { get; set; }
+        public IReadOnlyList<BreadcrumbItem>? Items { get; set; }
 
         /// <summary>
         /// Specifies the separator between the items.

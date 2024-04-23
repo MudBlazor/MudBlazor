@@ -11,8 +11,8 @@
                 <MudSwitch T="bool" Label="Switch" />
                 <MudCheckBox T="bool" Label="CheckBox" />
                 <MudRadioGroup T="string">
-                    <MudRadio Option="@("1")">1</MudRadio>
-                    <MudRadio Option="@("2")">2</MudRadio>
+                    <MudRadio Value="@("1")">1</MudRadio>
+                    <MudRadio Value="@("2")">2</MudRadio>
                 </MudRadioGroup>
                 <MudForm ReadOnly="NestedReadOnly">
                     <MudText Align="Align.Center" Class="mb-n4 mt-2">Nested Form</MudText>
@@ -22,8 +22,8 @@
             </MudForm>
         </MudCardContent>
         <MudCardActions>
-            <MudCheckBox @bind-Checked="ReadOnly">ReadOnly</MudCheckBox>
-            <MudCheckBox @bind-Checked="NestedReadOnly">Nested ReadOnly</MudCheckBox>
+            <MudCheckBox @bind-Value="ReadOnly">ReadOnly</MudCheckBox>
+            <MudCheckBox @bind-Value="NestedReadOnly">Nested ReadOnly</MudCheckBox>
         </MudCardActions>
     </MudCard>
     <MudCard>
@@ -36,8 +36,8 @@
                 <MudSwitch T="bool" Label="Switch" />
                 <MudCheckBox T="bool" Label="CheckBox" />
                 <MudRadioGroup T="string">
-                    <MudRadio Option="@("1")">1</MudRadio>
-                    <MudRadio Option="@("2")">2</MudRadio>
+                    <MudRadio Value="@("1")">1</MudRadio>
+                    <MudRadio Value="@("2")">2</MudRadio>
                 </MudRadioGroup>
                 <MudForm Disabled="NestedDisabled">
                     <MudText Align="Align.Center" Class="mb-n4 mt-2">Nested Form</MudText>
@@ -47,8 +47,8 @@
             </MudForm>
         </MudCardContent>
         <MudCardActions>
-            <MudCheckBox @bind-Checked="Disabled">Disabled</MudCheckBox>
-            <MudCheckBox @bind-Checked="NestedDisabled">Nested Disabled</MudCheckBox>
+            <MudCheckBox @bind-Value="Disabled">Disabled</MudCheckBox>
+            <MudCheckBox @bind-Value="NestedDisabled">Nested Disabled</MudCheckBox>
         </MudCardActions>
     </MudCard>
 </MudStack>

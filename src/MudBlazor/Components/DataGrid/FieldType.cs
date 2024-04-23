@@ -25,7 +25,7 @@ namespace MudBlazor
 
         public static FieldType Identify(Type? type)
         {
-            var filedType = new FieldType
+            var fieldType = new FieldType
             {
                 InnerType = type,
                 IsString = TypeIdentifier.IsString(type),
@@ -36,7 +36,7 @@ namespace MudBlazor
                 IsGuid = TypeIdentifier.IsGuid(type)
             };
 
-            return filedType;
+            return fieldType;
         }
     }
 }

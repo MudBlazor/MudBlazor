@@ -18,7 +18,7 @@ namespace MudBlazor
             .AddClass(Class).Build();
 
         protected string ActionsStylename => new StyleBuilder()
-            .AddStyle("padding-left", "34px", IsExpandable).Build();
+            .AddStyle("padding-left", "34px", Expandable).Build();
 
 
         [CascadingParameter] public TableContext Context { get; set; }
@@ -35,7 +35,7 @@ namespace MudBlazor
 
         [Parameter] public bool IsEditSwitchBlocked { get; set; }
 
-        [Parameter] public bool IsExpandable { get; set; }
+        [Parameter] public bool Expandable { get; set; }
 
 
         [Parameter]
@@ -54,12 +54,6 @@ namespace MudBlazor
                     IsCheckedChanged.InvokeAsync(value);
                 }
             }
-        }
-
-        [Obsolete($"Use {nameof(OnRowClickedAsync)} instead.")]
-        public async void OnRowClicked(MouseEventArgs args)
-        {
-            await OnRowClickedAsync(args);
         }
 
         public async Task OnRowClickedAsync(MouseEventArgs args)
@@ -102,7 +96,7 @@ namespace MudBlazor
                 return default;
             }
         }
-        
+
         private EventCallback<MouseEventArgs> RowMouseLeaveEventCallback
         {
             get
@@ -115,7 +109,7 @@ namespace MudBlazor
                 return default;
             }
         }
-        
+
         private void StartEditingItem() => StartEditingItem(buttonClicked: true);
 
         private void StartEditingItem(bool buttonClicked)

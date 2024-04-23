@@ -1,10 +1,9 @@
-﻿
-#pragma warning disable CS1998 // async without await
-
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.UnitTests.TestComponents.Link;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -14,7 +13,7 @@ namespace MudBlazor.UnitTests.Components
     public class LinkTests : BunitTest
     {
         [Test]
-        public async Task NavLink_CheckDisabled()
+        public void NavLink_CheckDisabled()
         {
             var comp = Context.RenderComponent<MudLink>(
                 Parameter(nameof(MudLink.Href), "#"),
@@ -33,7 +32,7 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.RenderComponent<MudLink>(onClickDelegate);
             await comp.Find("a").ClickAsync(new MouseEventArgs());
-            
+
             calls.Should().Be(1);
         }
 
@@ -51,6 +50,20 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("a").ClickAsync(new MouseEventArgs());
 
             calls.Should().Be(0);
+        }
+
+        [Test]
+        public async Task LinkOnClickErrorContentCaughtException()
+        {
+            var comp = Context.RenderComponent<LinkErrorContenCaughtException>();
+            IElement AlertText() => MudAlert().Find("div.mud-alert-message");
+            IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
+            IRefreshableElementCollection<IElement> Links() => comp.FindAll("a.mud-link");
+            IElement MudLink() => Links()[0];
+
+            await MudLink().ClickAsync(new MouseEventArgs());
+
+            AlertText().InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
         }
     }
 }

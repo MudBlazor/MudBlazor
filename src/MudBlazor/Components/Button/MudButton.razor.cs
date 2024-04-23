@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudButton : MudBaseButton
+    public partial class MudButton : MudBaseButton, IHandleEvent
     {
         protected string Classname =>
             new CssBuilder("mud-button-root mud-button")
@@ -12,8 +13,8 @@ namespace MudBlazor
                 .AddClass($"mud-button-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
                 .AddClass($"mud-button-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}")
                 .AddClass($"mud-width-full", FullWidth)
-                .AddClass($"mud-ripple", !DisableRipple)
-                .AddClass($"mud-button-disable-elevation", DisableElevation)
+                .AddClass($"mud-ripple", Ripple)
+                .AddClass($"mud-button-disable-elevation", !DropShadow)
                 .AddClass(Class)
                 .Build();
 
@@ -98,5 +99,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public RenderFragment? ChildContent { get; set; }
+
+        /// <inheritdoc/>
+        /// <remarks>
+        /// See: https://github.com/MudBlazor/MudBlazor/issues/8365
+        /// <para/>
+        /// Since <see cref="MudButton"/> implements only single <see cref="EventCallback"/> <see cref="MudBaseButton.OnClick"/> this is safe to disable globally within the component.
+        /// </remarks>
+        Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg) => callback.InvokeAsync(arg);
     }
 }

@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -10,7 +11,15 @@ namespace MudBlazor
 #nullable enable
     public partial class MudRTLProvider : MudComponentBase
     {
-        private bool _rtl;
+        private readonly ParameterState<bool> _rtlState;
+
+        public MudRTLProvider()
+        {
+            var registerScope = CreateRegisterScope();
+            _rtlState = registerScope.RegisterParameter<bool>(nameof(RightToLeft))
+                .WithParameter(() => RightToLeft)
+                .WithChangeHandler(OnRightToLeftParameterChange);
+        }
 
         protected string Classname =>
             new CssBuilder("mud-rtl-provider")
@@ -23,15 +32,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.RTLProvider.Behavior)]
-        public bool RightToLeft
-        {
-            get => _rtl;
-            set
-            {
-                _rtl = value;
-                UserAttributes["dir"] = RightToLeft ? "rtl" : "ltr";
-            }
-        }
+        public bool RightToLeft { get; set; }
 
         /// <summary>
         /// Child content of the component.
@@ -39,5 +40,10 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.RTLProvider.Behavior)]
         public RenderFragment? ChildContent { get; set; }
+
+        private void OnRightToLeftParameterChange()
+        {
+            UserAttributes["dir"] = RightToLeft ? "rtl" : "ltr";
+        }
     }
 }

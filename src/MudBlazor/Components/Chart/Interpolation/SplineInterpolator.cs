@@ -40,17 +40,17 @@ namespace MudBlazor.Components.Chart
         }
         public void Interpolate()
         {
-            int resolution = InterpolatedXs.Length / n;
-            for (int i = 0; i < h.Length; i++)
+            var resolution = InterpolatedXs.Length / n;
+            for (var i = 0; i < h.Length; i++)
             {
-                for (int k = 0; k < resolution; k++)
+                for (var k = 0; k < resolution; k++)
                 {
-                    double deltaX = (double)k / resolution * h[i];
-                    double termA = a[i];
-                    double termB = b[i] * deltaX;
-                    double termC = c[i] * deltaX * deltaX;
-                    double termD = d[i] * deltaX * deltaX * deltaX;
-                    int interpolatedIndex = i * resolution + k;
+                    var deltaX = (double)k / resolution * h[i];
+                    var termA = a[i];
+                    var termB = b[i] * deltaX;
+                    var termC = c[i] * deltaX * deltaX;
+                    var termD = d[i] * deltaX * deltaX * deltaX;
+                    var interpolatedIndex = (i * resolution) + k;
                     InterpolatedXs[interpolatedIndex] = deltaX + GivenXs[i];
                     InterpolatedYs[interpolatedIndex] = termA + termB + termC + termD;
                 }
@@ -59,9 +59,9 @@ namespace MudBlazor.Components.Chart
             // After interpolation the last several values of the interpolated arrays
             // contain uninitialized data. This section identifies the values which are
             // populated with values and copies just the useful data into new arrays.
-            int pointsToKeep = resolution * (n - 1) + 1;
-            double[] interpolatedXsCopy = new double[pointsToKeep];
-            double[] interpolatedYsCopy = new double[pointsToKeep];
+            var pointsToKeep = (resolution * (n - 1)) + 1;
+            var interpolatedXsCopy = new double[pointsToKeep];
+            var interpolatedYsCopy = new double[pointsToKeep];
             Array.Copy(InterpolatedXs, 0, interpolatedXsCopy, 0, pointsToKeep - 1);
             Array.Copy(InterpolatedYs, 0, interpolatedYsCopy, 0, pointsToKeep - 1);
             InterpolatedXs = interpolatedXsCopy;
@@ -73,12 +73,12 @@ namespace MudBlazor.Components.Chart
         public double Integrate()
         {
             double integral = 0;
-            for (int i = 0; i < h.Length; i++)
+            for (var i = 0; i < h.Length; i++)
             {
-                double termA = a[i] * h[i];
-                double termB = b[i] * Math.Pow(h[i], 2) / 2.0;
-                double termC = c[i] * Math.Pow(h[i], 3) / 3.0;
-                double termD = d[i] * Math.Pow(h[i], 4) / 4.0;
+                var termA = a[i] * h[i];
+                var termB = b[i] * Math.Pow(h[i], 2) / 2.0;
+                var termC = c[i] * Math.Pow(h[i], 3) / 3.0;
+                var termD = d[i] * Math.Pow(h[i], 4) / 4.0;
                 integral += termA + termB + termC + termD;
             }
             return integral;

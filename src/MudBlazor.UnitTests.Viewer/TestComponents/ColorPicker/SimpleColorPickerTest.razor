@@ -6,17 +6,22 @@
 
 </MudPopoverProvider>
 
-<MudColorPicker @ref="_picker" @bind-Value="ColorValue" TextChanged="@((x) => { TextValue = x; ValueChangeCallbackCounter++;  })" Palette="Palette" 
-                DisableToolbar="DisableToolbar" 
-                DisableColorField="DisableColorField" 
-                DisablePreview="DisablePreview" 
+<MudColorPicker @ref="_picker"
+                @bind-Value="ColorValue"
+                TextChanged="@((x) => { TextValue = x; ValueChangeCallbackCounter++;  })"
+                Palette="Palette"
+                DisableToolbar="DisableToolbar"
+                DisableColorField="DisableColorField"
+                DisablePreview="DisablePreview"
                 DisableSliders="DisableSliders"
                 DisableInputs="DisableInput"
                 DisableModeSwitch="DisableModeSwitch"
                 DisableAlpha="DisableAlpha"
-                ColorPickerView="@ViewMode"
-                AlwaysUpdateBinding="AlwaysUpdateBinding"
-                ColorPickerMode="ColorPickerMode" PickerVariant="Variant" />
+                DisableDragEffect="DisableDragEffect"
+                ColorPickerView="ViewMode"
+                ColorPickerMode="ColorPickerMode"
+                PickerVariant="Variant"
+                Required="@Required" />
 
 @code {
     private MudColorPicker _picker;
@@ -36,25 +41,25 @@
     [Parameter] public bool DisableInput { get; set; } = false;
     [Parameter] public bool DisableModeSwitch { get; set; } = false;
     [Parameter] public bool DisableAlpha { get; set; } = false;
+    [Parameter] public bool DisableDragEffect { get; set; } = false;
     [Parameter] public ColorPickerView ViewMode { get; set; } = ColorPickerView.Spectrum;
     [Parameter] public PickerVariant Variant { get; set; } = PickerVariant.Static;
-    [Parameter] public bool AlwaysUpdateBinding { get; set; } = false;
+    [Parameter] public bool Required { get; set; }
 
     public async Task OpenPicker()
     {
         await InvokeAsync(() =>
         {
-            _picker.Open();
+            _picker.OpenAsync();
         });
     }
 
     public async Task ClosePicker()
     {
-        await InvokeAsync(() =>
+        await InvokeAsync(async () =>
         {
-            _picker.Close();
+            await _picker.CloseAsync();
         });
     }
-
 }
 

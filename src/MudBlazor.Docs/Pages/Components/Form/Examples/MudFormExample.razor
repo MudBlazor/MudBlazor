@@ -18,8 +18,8 @@
                                   Validation="@(new Func<string, string>(PasswordMatch))"/>
                     <div class="d-flex">
                         <MudRadioGroup T="string" Required="true" RequiredError="Account type is required!">
-                            <MudRadio Option="@("Personal")">Personal</MudRadio>
-                            <MudRadio Option="@("Professional")">Professional</MudRadio>
+                            <MudRadio Value="@("Personal")">Personal</MudRadio>
+                            <MudRadio Value="@("Professional")">Professional</MudRadio>
                         </MudRadioGroup>
                     </div>
                     <div class="d-flex align-center justify-space-between">
@@ -29,9 +29,9 @@
             </MudForm>   
         </MudPaper>
         <MudPaper Class="pa-4 mt-4">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@(()=>form.Validate())">Validate</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.ResetAsync())" Class="mx-2">Reset</MudButton>
-            <MudButton Variant="Variant.Filled" DisableElevation="true" OnClick="@(()=>form.ResetValidation())">Reset Validation</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" DropShadow="false" OnClick="@(()=>form.Validate())">Validate</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" DropShadow="false" OnClick="@(()=>form.ResetAsync())" Class="mx-2">Reset</MudButton>
+            <MudButton Variant="Variant.Filled" DropShadow="false" OnClick="@(()=>form.ResetValidation())">Reset Validation</MudButton>
         </MudPaper>
     </MudItem>
     <MudItem xs="12" sm="5">

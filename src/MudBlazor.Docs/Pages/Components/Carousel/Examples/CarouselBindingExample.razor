@@ -8,10 +8,10 @@
 		</div>
 	</ItemTemplate>
 </MudCarousel>
-<MudSwitch @bind-Checked="@_arrows" Color="Color.Primary">Show Arrows</MudSwitch>
-<MudSwitch @bind-Checked="@_bullets" Color="Color.Primary">Show Bullets</MudSwitch>
-<MudSwitch @bind-Checked="@_enableSwipeGesture" Color="Color.Primary">Enable Swap Gesture</MudSwitch>
-<MudSwitch @bind-Checked="@_autocycle" Color="Color.Primary">Auto Cycle (Default: 5 secs)</MudSwitch>
+<MudSwitch @bind-Value="_arrows" Color="Color.Primary">Show Arrows</MudSwitch>
+<MudSwitch @bind-Value="_bullets" Color="Color.Primary">Show Bullets</MudSwitch>
+<MudSwitch @bind-Value="_enableSwipeGesture" Color="Color.Primary">Enable Swap Gesture</MudSwitch>
+<MudSwitch @bind-Value="_autocycle" Color="Color.Primary">Auto Cycle (Default: 5 secs)</MudSwitch>
 <br />
 <MudButton Class="ma-2" Variant="Variant.Filled" Color="Color.Primary" OnClick="AddAsync">Add</MudButton>
 <MudButton Class="ma-2" Variant="Variant.Filled" Color="Color.Error" OnClick="@(async () => await DeleteAsync(_carousel.SelectedIndex))">Delete</MudButton>

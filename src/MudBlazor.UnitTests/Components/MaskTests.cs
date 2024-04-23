@@ -305,11 +305,16 @@ namespace MudBlazor.UnitTests.Components
         public async Task MaskTest_ChangeMask2()
         {
             var comp = Context.RenderComponent<MudMask>();
-            comp.SetParam(x => x.Mask, new PatternMask("(LL) UU") { Placeholder = '_', CleanDelimiters = true, MaskChars = new []
+            comp.SetParam(x => x.Mask, new PatternMask("(LL) UU")
+            {
+                Placeholder = '_',
+                CleanDelimiters = true,
+                MaskChars = new[]
             {
                 new MaskChar('L', "[a-z]"),
                 new MaskChar('U', "[A-Z]")
-            }});
+            }
+            });
             var maskField = comp.Instance;
 
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
@@ -330,7 +335,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Note: Keeping positions of input blocks works only with Placeholder, and only in certain scenarios. 
+        /// Note: Keeping positions of input blocks works only with Placeholder, and only in certain scenarios.
         /// </summary>
         /// <returns></returns>
         [Test]
@@ -339,7 +344,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudMask>();
             var maskField = comp.Instance;
 
-            await comp.InvokeAsync(() => comp.SetParam("Mask", new PatternMask("(aaa) 000-aa") {Placeholder = '_', CleanDelimiters = true }));
+            await comp.InvokeAsync(() => comp.SetParam("Mask", new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true }));
 
             await comp.InvokeAsync(() => maskField.OnCaretPositionChanged(1));
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
@@ -636,11 +641,11 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => maskField.OnPaste(null));
             comp.WaitForAssertion(() => maskField.Mask.ToString().Should().Be("123 |"));
             // ctrl or alt doesn't do anything
-            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1", CtrlKey = true}));
-            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1", AltKey = true}));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1", CtrlKey = true }));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1", AltKey = true }));
             comp.WaitForAssertion(() => maskField.Mask.ToString().Should().Be("123 |"));
             // clear via clear button
-            await comp.InvokeAsync(() => maskField.HandleClearButton(new MouseEventArgs()));
+            await comp.InvokeAsync(() => maskField.HandleClearButtonAsync(new MouseEventArgs()));
             comp.WaitForAssertion(() => maskField.Mask.ToString().Should().Be("|"));
             // ctrl + backspace clears input
             await comp.InvokeAsync(() => maskField.OnPaste("123"));
@@ -653,11 +658,11 @@ namespace MudBlazor.UnitTests.Components
         public async Task MaskTest_MultipleTFsLinkedViaTwoWayBinding()
         {
             var comp = Context.RenderComponent<MaskedTextFieldTwoWayBindingTest>();
-            var tfs=comp.FindComponents<MudTextField<string>>().Select(x=>x.Instance).ToArray();
-            var masks = comp.FindComponents<MudMask>().Select(x=>x.Instance).ToArray();
+            var tfs = comp.FindComponents<MudTextField<string>>().Select(x => x.Instance).ToArray();
+            var masks = comp.FindComponents<MudMask>().Select(x => x.Instance).ToArray();
             await comp.InvokeAsync(() => masks[0].OnPaste("123456"));
             masks[0].Mask.ToString().Should().Be("123-456|");
-            comp.WaitForAssertion(()=>masks[1].Mask.ToString().Should().Be("12/34/56|"));
+            comp.WaitForAssertion(() => masks[1].Mask.ToString().Should().Be("12/34/56|"));
             tfs[0].Text.Should().Be("123-456");
             tfs[1].Text.Should().Be("12/34/56");
             await comp.InvokeAsync(() => masks[1].HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
@@ -716,13 +721,13 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ReadonlyMaskedTextFieldTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
             var mask = comp.FindComponent<MudMask>().Instance;
-            var maskInput = comp.Find("input");
             var originalValue = textField.Text;
 
             originalValue.Should().Be("1234 1234 1234 1234");
 
             // paste
-            await comp.InvokeAsync(() => {
+            await comp.InvokeAsync(() =>
+            {
                 mask.OnSelect(0, mask.Text.Length);
                 mask.OnPaste("1234567890");
             });
@@ -734,13 +739,14 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() =>
             {
                 mask.OnSelect(0, mask.Text.Length);
-                maskInput.CutAsync(new ClipboardEventArgs { Type = "cut" });
+                comp.Find("input").CutAsync(new ClipboardEventArgs { Type = "cut" });
             });
             comp.WaitForAssertion(() => textField.Value.Should().Be(originalValue));
 
             comp.SetParam(p => p.ReadOnly, false);
             // paste
-            await comp.InvokeAsync(async () => {
+            await comp.InvokeAsync(async () =>
+            {
                 mask.OnSelect(0, mask.Text.Length);
                 mask.OnPaste("2222 2222 2222 2222");
             });
@@ -752,7 +758,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() =>
             {
                 mask.OnSelect(0, textField.Value.Length);
-                maskInput.Cut(new ClipboardEventArgs { Type = "cut" });
+                comp.Find("input").Cut(new ClipboardEventArgs { Type = "cut" });
             });
             comp.WaitForAssertion(() => textField.Value.Should().Be(""));
         }
@@ -766,32 +772,126 @@ namespace MudBlazor.UnitTests.Components
             var textFields = comp.FindComponents<MudTextField<string>>();
             var blockMaskComponent = masks[0];
             var blockMaskField = textFields[0].Instance;
-            var dateMaskComponent = masks[1];
-            var dateMaskField = textFields[1].Instance;
-            var multiMaskComponent = masks[2];
-            var multiMaskField = textFields[2].Instance;
-            var patternMaskComponent = masks[3];
-            var patternMaskField = textFields[3].Instance;
-            var regexMaskComponent = masks[4];
-            var regexMaskField = textFields[4].Instance;
-            
+            var prefixMaskComponent = masks[1];
+            var prefixMaskField = textFields[1].Instance;
+            var dateMaskComponent = masks[2];
+            var dateMaskField = textFields[2].Instance;
+            var multiMaskComponent = masks[3];
+            var multiMaskField = textFields[3].Instance;
+            var patternMaskComponent = masks[4];
+            var patternMaskField = textFields[4].Instance;
+            var regexMaskComponent = masks[5];
+            var regexMaskField = textFields[5].Instance;
+
             // act
-            
+
             // assert
             blockMaskComponent.Markup.Contains(blockMaskComponent.Instance.ClearIcon).Should().BeTrue();
             blockMaskField.Mask.Text.Should().Be(comp.Instance.BlockMaskValue);
-            
+
+            prefixMaskComponent.Markup.Contains(blockMaskComponent.Instance.ClearIcon).Should().BeTrue();
+            prefixMaskField.Mask.Text.Should().Be(comp.Instance.BlockMaskValue);
+
             dateMaskComponent.Markup.Contains(dateMaskComponent.Instance.ClearIcon).Should().BeTrue();
             dateMaskField.Mask.Text.Should().Be(comp.Instance.DateMaskValue);
-            
+
             multiMaskComponent.Markup.Contains(multiMaskComponent.Instance.ClearIcon).Should().BeTrue();
             multiMaskField.Mask.Text.Should().Be(comp.Instance.MultiMaskValue);
-            
+
             patternMaskComponent.Markup.Contains(patternMaskComponent.Instance.ClearIcon).Should().BeTrue();
             patternMaskField.Mask.Text.Should().Be(comp.Instance.PatternMaskValue);
-            
+
             regexMaskComponent.Markup.Contains(regexMaskComponent.Instance.ClearIcon).Should().BeTrue();
             regexMaskField.Mask.Text.Should().Be(comp.Instance.RegexMaskValue);
+        }
+
+        /// <summary>
+        /// Optional Mask should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalMask_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudMask>();
+
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required Mask should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredMask_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudMask>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required Mask attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredMaskAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudMask>();
+
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Optional Mask with multiple lines should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalMaskWithMultipleLines_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudMask>(parameters => parameters
+                .Add(p => p.Lines, 5));
+
+            comp.Find("textarea").HasAttribute("required").Should().BeFalse();
+            comp.Find("textarea").GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required Mask with multiple lines  should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredMaskWithMultipleLines_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudMask>(parameters => parameters
+                .Add(p => p.Required, true)
+                .Add(p => p.Lines, 5));
+
+            comp.Find("textarea").HasAttribute("required").Should().BeTrue();
+            comp.Find("textarea").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required Mask with multiple lines  attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredMaskWithMultipleLinesAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudMask>(parameters => parameters
+                .Add(p => p.Lines, 5));
+
+            comp.Find("textarea").HasAttribute("required").Should().BeFalse();
+            comp.Find("textarea").GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.Find("textarea").HasAttribute("required").Should().BeTrue();
+            comp.Find("textarea").GetAttribute("aria-required").Should().Be("true");
         }
     }
 }

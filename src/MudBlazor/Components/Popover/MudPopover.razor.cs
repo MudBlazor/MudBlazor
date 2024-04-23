@@ -1,6 +1,6 @@
 ﻿using System;
-using Microsoft.AspNetCore.Components;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -82,24 +82,22 @@ namespace MudBlazor
         /// <summary>
         /// Sets the length of time that the opening transition takes to complete.
         /// </summary>
+        /// <remarks>
+        /// Set globally via <see cref="MudGlobal.TransitionDuration"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public double Duration { get; set; } = 251;
+        public double Duration { get; set; } = MudGlobal.TransitionDuration.TotalMilliseconds;
 
         /// <summary>
         /// Sets the amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
         /// </summary>
+        /// <remarks>
+        /// Set globally via <see cref="MudGlobal.TransitionDelay"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public double Delay { get; set; } = 0;
-
-        /// <summary>
-        /// Sets the direction the popover will start from relative to its parent.
-        /// </summary>
-        /// 
-        [Obsolete("Use AnchorOrigin and TransformOrigin instead.", true)]
-        [Parameter]
-        public Direction Direction { get; set; } = Direction.Bottom;
+        public double Delay { get; set; } = MudGlobal.TransitionDelay.TotalMilliseconds;
 
         /// <summary>
         /// Set the anchor point on the element of the popover.
@@ -124,20 +122,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
         public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
-
-        /// <summary>
-        /// If true, the select menu will open either above or bellow the input depending on the direction.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use AnchorOrigin and TransformOrigin instead.", true)]
-        [Parameter] public bool OffsetX { get; set; }
-
-        /// <summary>
-        /// If true, the select menu will open either before or after the input depending on the direction.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use AnchorOrigin and TransformOrigin instead.", true)]
-        [Parameter] public bool OffsetY { get; set; }
 
         /// <summary>
         /// If true, the popover will have the same width at its parent element, default to false

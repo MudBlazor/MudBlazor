@@ -10,7 +10,7 @@
         <PropertyColumn Property="x => x.HiredOn" Filterable="false" />
     </Columns>
     <FilterTemplate>
-        <MudSwitch T="bool" Color="@Color.Primary" Checked="FilterHired" Label="Show Hired" CheckedChanged="@((value) => FilterHiredToggled(value, context))"></MudSwitch>
+        <MudSwitch T="bool" Color="@Color.Primary" Value="FilterHired" Label="Show Hired" ValueChanged="@((value) => FilterHiredToggled(value, context))"></MudSwitch>
     </FilterTemplate>
 </MudDataGrid>
 

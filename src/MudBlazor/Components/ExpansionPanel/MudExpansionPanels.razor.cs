@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -14,7 +14,7 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-expansion-panels")
-                .AddClass($"mud-expansion-panels-square", Square)
+                .AddClass("mud-expansion-panels-square", Square)
                 .AddClass(Class)
                 .Build();
 
@@ -47,18 +47,18 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// If true, the left and right padding is removed from all panels' <see cref="ChildContent"/>.
+        /// If true, left and right padding is added to all panels' <see cref="ChildContent"/>. Default is true
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
-        public bool DisableGutters { get; set; }
+        public bool Gutters { get; set; } = true;
 
         /// <summary>
-        /// If true, the borders around each panel will be removed.
+        /// Determines whether the borders around each panel are shown.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
-        public bool DisableBorders { get; set; }
+        public bool Outlined { get; set; } = true;
 
         /// <summary>
         /// Child content of component.
@@ -67,20 +67,18 @@ namespace MudBlazor
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
-        internal void AddPanel(MudExpansionPanel panel)
+        internal async Task AddPanelAsync(MudExpansionPanel panel)
         {
-            if (!MultiExpansion && _panels.Any(p => p.IsExpanded))
+            if (!MultiExpansion && _panels.Any(p => p._expandedState.Value))
             {
-                panel.Collapse(updateParent: false);
+                await panel.CollapseAsync();
             }
 
-            panel.NotifyIsExpandedChanged += UpdatePanelsOnPanelsChanged;
             _panels.Add(panel);
         }
 
-        public void RemovePanel(MudExpansionPanel panel)
+        internal void RemovePanel(MudExpansionPanel panel)
         {
-            panel.NotifyIsExpandedChanged -= UpdatePanelsOnPanelsChanged;
             _panels.Remove(panel);
             try
             {
@@ -89,44 +87,39 @@ namespace MudBlazor
             catch (InvalidOperationException) { /* this happens on page reload, probably a Blazor bug */ }
         }
 
-        internal void UpdatePanelsOnPanelsChanged(MudExpansionPanel panel)
+        internal async Task NotifyPanelsChanged(MudExpansionPanel panel)
         {
-            if(!MultiExpansion && panel.IsExpanded)
+            if (!MultiExpansion && panel._expandedState.Value)
             {
-                CollapseAllExcept(panel);
+                await CollapseAllExceptAsync(panel);
                 return;
             }
 
-            UpdateAll();
+            await UpdateAllAsync();
         }
 
-        public void UpdateAll()
+        public Task UpdateAllAsync()
         {
             MudExpansionPanel? last = null;
             foreach (var panel in _panels)
             {
                 if (last is not null)
                 {
-                    last.NextPanelExpanded = panel.IsExpanded;
+                    last.NextPanelExpanded = panel._expandedState.Value;
                 }
 
                 last = panel;
             }
             StateHasChanged();
-        }
 
-        [Obsolete("Use CollapseAllExcept instead.")]
-        [ExcludeFromCodeCoverage]
-        public void CloseAllExcept(MudExpansionPanel panel)
-        {
-            CollapseAllExcept(panel);
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Collapses all panels except the given one.
         /// </summary>
         /// <param name="panel">The panel not to collapse.</param>
-        public void CollapseAllExcept(MudExpansionPanel panel)
+        public async Task CollapseAllExceptAsync(MudExpansionPanel panel)
         {
             foreach (var expansionPanel in _panels)
             {
@@ -135,33 +128,33 @@ namespace MudBlazor
                     continue;
                 }
 
-                expansionPanel.Collapse(updateParent: false);
+                await expansionPanel.CollapseAsync();
             }
-            InvokeAsync(UpdateAll);
+            await InvokeAsync(UpdateAllAsync);
         }
 
         /// <summary>
         /// Collapses all panels.
         /// </summary>
-        public void CollapseAll()
+        public async Task CollapseAllAsync()
         {
             foreach (var expansionPanel in _panels)
             {
-                expansionPanel.Collapse(updateParent: false);
+                await expansionPanel.CollapseAsync();
             }
-            InvokeAsync(UpdateAll);
+            await InvokeAsync(UpdateAllAsync);
         }
 
         /// <summary>
         /// Expands all panels.
         /// </summary>
-        public void ExpandAll()
+        public async Task ExpandAllAsync()
         {
             foreach (var expansionPanel in _panels)
             {
-                expansionPanel.Expand(updateParent: false);
+                await expansionPanel.ExpandAsync();
             }
-            InvokeAsync(UpdateAll);
+            await InvokeAsync(UpdateAllAsync);
         }
     }
 }

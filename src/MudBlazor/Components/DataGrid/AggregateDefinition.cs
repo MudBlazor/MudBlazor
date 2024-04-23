@@ -133,7 +133,7 @@ namespace MudBlazor
             {
                 var cacheKey = ExpressionHasher.GetHashCode(expression);
                 var cacheObject = _cache.GetOrAdd(cacheKey, _ => expression.Compile());
-                
+
                 return cacheObject;
             }
         }

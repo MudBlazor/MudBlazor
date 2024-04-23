@@ -5,7 +5,7 @@ namespace MudBlazor.Services
 {
 #nullable enable
     /// <summary>
-    /// Represents options for <see cref="IBreakpointService"/>.
+    /// Represents options for <see cref="IBrowserViewportService"/>.
     /// </summary>
     public class ResizeOptions : IEquatable<ResizeOptions>
     {

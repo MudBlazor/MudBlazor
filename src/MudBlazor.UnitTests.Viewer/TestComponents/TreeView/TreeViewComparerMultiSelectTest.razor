@@ -1,0 +1,35 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTreeView T="string" @bind-SelectedValues="SelectedValues" Comparer="Comparer" SelectionMode="SelectionMode.MultiSelection">
+    <MudTreeViewItem Value='"AA"' @bind-Selected="Item1Selected" @ref="Item1"/>
+    <MudTreeViewItem Value='"AC"' @bind-Selected="Item2Selected" @ref="Item2"/>
+    
+</MudTreeView>
+
+@code{
+    [Parameter]
+    public IReadOnlyCollection<string> SelectedValues { get; set; }
+
+    public bool Item1Selected { get; set; }
+
+    public bool Item2Selected { get; set; }
+
+    public MudTreeViewItem<string> Item1 { get; set; }
+    
+    public MudTreeViewItem<string> Item2 { get; set; }
+
+    [Parameter]
+    public IEqualityComparer<string> Comparer { get; set; } = new DelegateEqualityComparer<string>(
+            (x, y) => 
+            {
+                if (x == null && y == null) return true;
+                if (x == null || y == null) return false;
+                return x.Equals(y);
+            },
+            obj => 
+            {
+                if (obj == null) return 0;
+                return obj.GetHashCode();
+            }
+        );
+}

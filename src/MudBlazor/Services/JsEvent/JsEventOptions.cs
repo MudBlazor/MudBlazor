@@ -9,9 +9,8 @@ namespace MudBlazor.Services
     public class JsEventOptions
     {
         /// <summary>
-        /// Class of the target node which should be observed for keyboard events
-        ///
-        /// Note: this must be a single class
+        /// <para>Class of the target node which should be observed for keyboard events</para>
+        /// <para>Note: this must be a single class</para>
         /// </summary>
         public string TargetClass { get; set; }
 

@@ -5,7 +5,6 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
@@ -98,7 +97,7 @@ namespace MudBlazor
 
         internal void HandleKeyDown(KeyboardEventArgs args)
         {
-             switch (args.Key)
+            switch (args.Key)
             {
                 case "Escape":
                     if (CloseOnEscapeKey)
@@ -123,9 +122,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Close and return null. 
-        /// 
-        /// This is a shorthand of Close(DialogResult.Ok((object)null));
+        /// <para>Close and return null. </para>
+        /// <para>This is a shorthand of Close(DialogResult.Ok((object)null));</para>
         /// </summary>
         public void Close()
         {
@@ -133,9 +131,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Close with dialog result.
-        /// 
-        /// Usage: Close(DialogResult.Ok(returnValue))
+        /// <para>Close with dialog result.</para>
+        /// <para>Usage: Close(DialogResult.Ok(returnValue))</para>
         /// </summary>
         public void Close(DialogResult dialogResult)
         {
@@ -143,9 +140,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Close and directly pass a return value. 
-        /// 
-        /// This is a shorthand for Close(DialogResult.Ok(returnValue))
+        /// <para>Close and directly pass a return value. </para>
+        /// <para>This is a shorthand for Close(DialogResult.Ok(returnValue))</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="returnValue"></param>
@@ -174,7 +170,7 @@ namespace MudBlazor
             DisableBackdropClick = SetDisableBackdropClick();
             CloseOnEscapeKey = SetCloseOnEscapeKey();
             Class = Classname;
-            BackgroundClassname = new CssBuilder("mud-overlay-dialog").AddClass(Options.ClassBackground).Build();
+            BackgroundClassname = new CssBuilder("mud-overlay-dialog").AddClass(Options.BackgroundClass).Build();
         }
 
         private string SetPosition()
@@ -236,6 +232,11 @@ namespace MudBlazor
 
             return false;
         }
+
+        protected string TitleClassname =>
+            new CssBuilder("mud-dialog-title")
+                .AddClass(_dialog?.TitleClass)
+                .Build();
 
         protected string Classname =>
             new CssBuilder("mud-dialog")
@@ -319,9 +320,6 @@ namespace MudBlazor
             TitleContent = dialog.TitleContent;
             StateHasChanged();
         }
-
-        [Obsolete($"Use {nameof(StateHasChanged)}. This method will be removed in v7.")]
-        public void ForceRender() => StateHasChanged();
 
         public new void StateHasChanged() => base.StateHasChanged();
 

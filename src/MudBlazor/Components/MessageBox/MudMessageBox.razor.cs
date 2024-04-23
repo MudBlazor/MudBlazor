@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -155,6 +156,10 @@ namespace MudBlazor
 
         private bool IsInline => DialogInstance == null;
 
+        protected string Classname =>
+            new CssBuilder("mud-message-box")
+            .Build();
+
         public async Task<bool?> Show(DialogOptions? options = null)
         {
             var parameters = new DialogParameters
@@ -171,7 +176,7 @@ namespace MudBlazor
                 [nameof(YesText)] = YesText,
                 [nameof(YesButton)] = YesButton,
             };
-            _reference = await DialogService.ShowAsync<MudMessageBox>(parameters: parameters, options: options, title: Title);
+            _reference = await DialogService.ShowAsync<MudMessageBox>(title: Title, parameters: parameters, options: options);
             var result = await _reference.Result;
             if (result.Canceled || result.Data is not bool data)
             {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -73,27 +72,6 @@ namespace MudBlazor
         public Color? BulletsColor { get; set; }
 
         /// <summary>
-        /// Gets or Sets if bottom bar with Delimiters must be visible.
-        /// Deprecated, use ShowBullets instead.
-        /// </summary>
-        [Category(CategoryTypes.Carousel.Behavior)]
-        [Obsolete($"Use {nameof(ShowBullets)} instead", false)]
-        [ExcludeFromCodeCoverage]
-        [Parameter]
-        public bool ShowDelimiters { get => ShowBullets; set => ShowBullets = value; }
-
-        /// <summary>
-        /// Gets or Sets the Delimiters color.
-        /// If not set, the color is determined based on the <see cref="MudCarouselItem.Color"/> property of the active child.
-        /// Deprecated, use BulletsColor instead.
-        /// </summary>
-        [Obsolete($"Use {nameof(BulletsColor)} instead", false)]
-        [Category(CategoryTypes.Carousel.Appearance)]
-        [ExcludeFromCodeCoverage]
-        [Parameter]
-        public Color? DelimitersColor { get => BulletsColor; set => BulletsColor = value; }
-
-        /// <summary>
         /// Gets or Sets automatic cycle on item collection.
         /// </summary>
         [Parameter]
@@ -156,16 +134,6 @@ namespace MudBlazor
         public string? BulletsClass { get; set; }
 
         /// <summary>
-        /// Gets or Sets custom class(es) for Delimiters buttons.
-        /// Deprecated, use BulletsClass instead.
-        /// </summary>
-        [Category(CategoryTypes.Carousel.Appearance)]
-        [Obsolete($"Use {nameof(BulletsClass)} instead", false)]
-        [ExcludeFromCodeCoverage]
-        [Parameter]
-        public string? DelimitersClass { get => BulletsClass; set => BulletsClass = value; }
-
-        /// <summary>
         /// Custom previous navigation icon.
         /// </summary>
         [Parameter]
@@ -222,16 +190,6 @@ namespace MudBlazor
         public bool EnableSwipeGesture { get; set; } = true;
 
         /// <summary>
-        /// Gets or Sets the Template for Delimiters.
-        /// Deprecated, use BulletsTemplate instead.
-        /// </summary>
-        [Category(CategoryTypes.Carousel.Appearance)]
-        [Obsolete($"Use {nameof(BulletTemplate)} instead", false)]
-        [ExcludeFromCodeCoverage]
-        [Parameter]
-        public RenderFragment<bool>? DelimiterTemplate { get => BulletTemplate; set => BulletTemplate = value; }
-
-        /// <summary>
         /// Called when selected Index changed on base class
         /// </summary>
         protected override void SelectionChanged()
@@ -270,22 +228,22 @@ namespace MudBlazor
         /// <summary>
         /// Provides Selection changes by horizontal swipe gesture
         /// </summary>
-        private void OnSwipe(SwipeDirection direction)
+        private void OnSwipeEnd(SwipeEventArgs e)
         {
             if (!EnableSwipeGesture)
             {
                 return;
             }
 
-            switch (direction)
+            switch (e.SwipeDirection)
             {
                 case SwipeDirection.LeftToRight:
-                    if(RightToLeft) Next();
+                    if (RightToLeft) Next();
                     else Previous();
                     break;
 
                 case SwipeDirection.RightToLeft:
-                    if(RightToLeft) Previous();
+                    if (RightToLeft) Previous();
                     else Next();
                     break;
             }

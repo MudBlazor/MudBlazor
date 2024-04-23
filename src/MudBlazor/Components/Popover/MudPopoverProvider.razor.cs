@@ -5,8 +5,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
@@ -27,7 +29,7 @@ namespace MudBlazor
         /// PopoverProvider. Set a cascading value with UsePopoverProvider=false to prevent it.
         /// </summary>
         [CascadingParameter(Name = "UsePopoverProvider")]
-        public bool IsEnabled { get; set; } = true;
+        public bool Enabled { get; set; } = true;
 
         public void Dispose()
         {
@@ -40,7 +42,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            if (IsEnabled == false)
+            if (Enabled == false)
             {
                 return;
             }
@@ -57,7 +59,7 @@ namespace MudBlazor
         {
             base.OnParametersSet();
 
-            if (!IsEnabled && _isConnectedToService)
+            if (!Enabled && _isConnectedToService)
             {
 #pragma warning disable CS0618
                 //TODO: For backward compatibility with old service. Should be removed in v7 with the _isConnectedToService
@@ -71,7 +73,7 @@ namespace MudBlazor
 
 #pragma warning disable CS0618
             //TODO: For backward compatibility with old service. Whole block should be removed in v7
-            if (IsEnabled && !_isConnectedToService)
+            if (Enabled && !_isConnectedToService)
             {
                 Service.FragmentsChanged -= Service_FragmentsChanged; // make sure to avoid multiple registration
                 Service.FragmentsChanged += Service_FragmentsChanged;
@@ -79,9 +81,9 @@ namespace MudBlazor
             }
 #pragma warning restore CS0618
 
-            // Let's in our new case ignore _isConnectedToService and always update the subscription except IsEnabled = false. The manager is specifically designed for it.
+            // Let's in our new case ignore _isConnectedToService and always update the subscription except Enabled = false. The manager is specifically designed for it.
             // The reason is because If an observer throws an exception during the PopoverCollectionUpdatedNotification, indicating a malfunction, it will be automatically unsubscribed.
-            if (IsEnabled)
+            if (Enabled)
             {
                 PopoverService.Subscribe(this);
             }
@@ -90,7 +92,7 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender && IsEnabled && PopoverService.PopoverOptions.ThrowOnDuplicateProvider)
+            if (firstRender && Enabled && PopoverService.PopoverOptions.ThrowOnDuplicateProvider)
             {
                 if (await PopoverService.GetProviderCountAsync() > 1)
                 {
@@ -118,7 +120,7 @@ namespace MudBlazor
         Guid IPopoverObserver.Id { get; } = Guid.NewGuid();
 
         /// <inheritdoc />
-        async Task IPopoverObserver.PopoverCollectionUpdatedNotificationAsync(PopoverHolderContainer container)
+        async Task IPopoverObserver.PopoverCollectionUpdatedNotificationAsync(PopoverHolderContainer container, CancellationToken cancellationToken)
         {
             switch (container.Operation)
             {
@@ -127,9 +129,14 @@ namespace MudBlazor
                     {
                         foreach (var holder in container.Holders)
                         {
-                            if (holder.ElementReference is not null)
+                            if (cancellationToken.IsCancellationRequested)
                             {
-                                await InvokeAsync(holder.ElementReference.StateHasChanged);
+                                return;
+                            }
+
+                            if (holder.ElementReference is IMudStateHasChanged stateHasChanged)
+                            {
+                                await InvokeAsync(stateHasChanged.StateHasChanged);
                             }
                         }
 

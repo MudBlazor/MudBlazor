@@ -30,7 +30,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () => await picker.Instance.SelectRangeAsync(0, 0));
 #pragma warning disable BL0005
             await comp.InvokeAsync(() => picker.Instance.Disabled = true);
-            await comp.InvokeAsync(() => picker.Instance.HandleKeyDown(new KeyboardEventArgs()));
+            await comp.InvokeAsync(() => picker.Instance.OnHandleKeyDownAsync(new KeyboardEventArgs()));
         }
 
         [Test]

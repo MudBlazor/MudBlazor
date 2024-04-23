@@ -12,13 +12,13 @@ namespace MudBlazor
     {
         protected string Classname =>
             new CssBuilder("mud-nav-item")
-                .AddClass($"mud-ripple", !DisableRipple && !Disabled)
                 .AddClass(Class)
                 .Build();
 
         protected string LinkClassname =>
             new CssBuilder("mud-nav-link")
                 .AddClass($"mud-nav-link-disabled", Disabled)
+                .AddClass($"mud-ripple", Ripple && !Disabled)
                 .Build();
 
         protected string IconClassname =>
@@ -36,8 +36,13 @@ namespace MudBlazor
             };
         }
 
+        protected int TabIndex => Disabled || NavigationContext is { Disabled: true } or { Expanded: false } ? -1 : 0;
+
         [CascadingParameter]
         private INavigationEventReceiver? NavigationEventReceiver { get; set; }
+
+        [CascadingParameter]
+        private NavigationContext? NavigationContext { get; set; }
 
         /// <summary>
         /// Icon to use if set.
