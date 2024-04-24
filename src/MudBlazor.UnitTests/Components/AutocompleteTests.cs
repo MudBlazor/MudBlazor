@@ -1067,6 +1067,55 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [TestCase(0)] //test toStringFunc
+        [TestCase(1)] //test toString
+        public async Task AutocompleteStrictFalseTest(int index)
+        {
+            var listItemQuerySelector = "div.mud-list-item";
+            var selectedItemClassName = "mud-selected-item";
+            var californiaString = "California";
+            var virginiaString = "Virginia";
+
+            var comp = Context.RenderComponent<AutocompleteStrictFalseTest>();
+            var autocompletecomp = comp.FindComponents<MudAutocomplete<AutocompleteStrictFalseTest.State>>()[index];
+            var autocomplete = autocompletecomp.Instance;
+
+            //search for and select California
+            autocompletecomp.Find("input").Input("Calif");
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
+            await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
+            autocomplete.Text.Should().Be(californiaString);
+            autocomplete.Value.StateName.Should().Be(californiaString);
+
+            //California should appear as index 5 and be selected
+            await comp.InvokeAsync(autocompletecomp.Instance.OpenMenuAsync); // reopen menu because Enter closes it.
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
+            var items = comp.FindComponents<MudListItem<AutocompleteStrictFalseTest.State>>().ToArray();
+            items.Length.Should().Be(10);
+            var item = items.SingleOrDefault(x => x.Markup.Contains(californiaString));
+            items.ToList().IndexOf(item).Should().Be(5);
+            comp.WaitForAssertion(() => items.Single(s => s.Markup.Contains(californiaString)).Find(listItemQuerySelector).ClassList.Should().Contain(selectedItemClassName));
+
+            await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Escape" })); // Close autocomplete.
+
+            //search for and select Virginia
+            autocompletecomp.Find("input").Input("Virginia");
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
+            await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
+            autocomplete.Text.Should().Be(virginiaString);
+            autocomplete.Value.StateName.Should().Be(virginiaString);
+
+            //West Virginia is not in the first 10 states, so it should not appear in the list
+            await comp.InvokeAsync(autocompletecomp.Instance.OpenMenuAsync); // reopen menu because Enter closes it.
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
+            var items2 = comp.FindComponents<MudListItem<AutocompleteStrictFalseTest.State>>().ToArray();
+            items2.Length.Should().Be(10);
+            var item2 = items2.SingleOrDefault(x => x.Markup.Contains(virginiaString));
+            items2.ToList().IndexOf(item).Should().Be(-1);
+            items2.Count(s => s.Find(listItemQuerySelector).ClassList.Contains(selectedItemClassName)).Should().Be(0);
+        }
+
+        [Test]
         public async Task Autocomplete_Should_Not_Throw_When_SearchFunc_Is_Null()
         {
             var comp = Context.RenderComponent<AutocompleteTest1>();
@@ -1103,6 +1152,44 @@ namespace MudBlazor.UnitTests.Components
             autocompletecomp.Find("input").KeyUp("a");
             //Assert
             result.Count.Should().Be(2);
+        }
+
+        /// <summary>
+        /// Test case for <seealso cref="https://github.com/MudBlazor/MudBlazor/issues/6412"/>
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_Highlight_Selected_Item_After_Disabled()
+        {
+            var disabledItemSelector = "mud-list-item-disabled";
+            var selectedItemSelector = "mud-selected-item";
+            var popoverSelector = "div.mud-popover";
+
+            var selectedItemString = "peach";
+            var disabledItemString = "carrot";
+
+            var comp = Context.RenderComponent<AutocompleteStrictFalseSelectedHighlight>();
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+
+            // Select the peach list item
+            autocompletecomp.Find("input").Input(selectedItemString);
+            comp.WaitForAssertion(() => comp.Find(popoverSelector).ClassList.Should().Contain("mud-popover-open"));
+            await comp.InvokeAsync(async () => await autocompletecomp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
+            autocomplete.Text.Should().Be(selectedItemString);
+            autocomplete.Value.Should().Be(selectedItemString);
+
+            // Opening the list of autocomplete
+            await comp.InvokeAsync(autocompletecomp.Instance.OpenMenuAsync);
+            comp.WaitForAssertion(() => comp.Find(popoverSelector).ClassList.Should().Contain("mud-popover-open"));
+            var listItems = comp.FindComponents<MudListItem<string>>().ToArray();
+
+            // Ensure that the carrot list item is disabled
+            var disabledItem = listItems.Single(x => x.Markup.Contains(disabledItemSelector));
+            disabledItem.Markup.Should().Contain(disabledItemString);
+
+            // Assert if the peach is highlighted
+            var selectedItem = listItems.Single(x => x.Markup.Contains(selectedItemSelector));
+            selectedItem.Markup.Should().Contain(selectedItemString);
         }
 
         /// <summary>
