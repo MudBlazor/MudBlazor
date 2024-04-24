@@ -627,6 +627,7 @@ namespace MudBlazor
             var searchedItems = Array.Empty<T>();
             CancelToken();
 
+            var wasFocused = _isFocused;
             var searchingWhileSelected = false;
             try
             {
@@ -679,9 +680,9 @@ namespace MudBlazor
                 _selectedListItemIndex = _enabledItemIndices.Any() ? _enabledItemIndices[0] : -1;
             }
 
-            if (_isFocused || ProgressIndicatorInPopoverTemplate == null)
+            if (_isFocused || !wasFocused)
             {
-                // Open after the search has finished if we're still focused after showing the progress indicator, or if we are showing the menu for the first time.
+                // Open after the search has finished if we're still focused (UI), or were never focused in the first place (programmatically).
                 IsOpen = true;
             }
 
