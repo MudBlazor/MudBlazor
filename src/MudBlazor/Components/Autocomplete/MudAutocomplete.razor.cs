@@ -624,18 +624,18 @@ namespace MudBlazor
                 return;
             }
 
-            if (ProgressIndicatorInPopoverTemplate != null)
-            {
-                // Open before searching if a progress indicator is defined.
-                IsOpen = true;
-            }
-
             var searchedItems = Array.Empty<T>();
             CancelToken();
 
             var searchingWhileSelected = false;
             try
             {
+                if (ProgressIndicatorInPopoverTemplate != null)
+                {
+                    // Open before searching if a progress indicator is defined.
+                    IsOpen = true;
+                }
+
                 // Search while selected if enabled and the Text is equivalent to the Value.
                 searchingWhileSelected = !Strict && Value != null && (Value.ToString() == Text || (ToStringFunc != null && ToStringFunc(Value) == Text));
 
@@ -679,9 +679,9 @@ namespace MudBlazor
                 _selectedListItemIndex = _enabledItemIndices.Any() ? _enabledItemIndices[0] : -1;
             }
 
-            if (_isFocused)
+            if (_isFocused || ProgressIndicatorInPopoverTemplate == null)
             {
-                // Open after the search has finished if the user hasn't focused somewhere else.
+                // Open after the search has finished if we're still focused after showing the progress indicator, or if we are showing the menu for the first time.
                 IsOpen = true;
             }
 
