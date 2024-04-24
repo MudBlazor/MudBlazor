@@ -1163,18 +1163,12 @@ namespace MudBlazor
 
         internal async Task OnRowMouseEnterAsync(MouseEventArgs args, T item, int rowIndex)
         {
-            if (RowMouseEnter.HasDelegate)
-            {
-                await RowMouseEnter.InvokeAsync(new DataGridRowHoverEventArgs<T>(args, item, rowIndex));
-            }
+            await RowMouseEnter.InvokeAsync(new DataGridRowHoverEventArgs<T>(args, item, rowIndex));
         }
 
         internal async Task OnRowMouseLeaveAsync(MouseEventArgs args, T item, int rowIndex)
         {
-            if (RowMouseLeave.HasDelegate)
-            {
-                await RowMouseLeave.InvokeAsync(new DataGridRowHoverEventArgs<T>(args, item, rowIndex));
-            }
+            await RowMouseLeave.InvokeAsync(new DataGridRowHoverEventArgs<T>(args, item, rowIndex));
         }
 
         /// <summary>
