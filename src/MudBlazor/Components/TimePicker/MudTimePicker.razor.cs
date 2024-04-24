@@ -340,7 +340,7 @@ namespace MudBlazor
 
         private string GetClockPointerColor()
         {
-            if (MouseDown)
+            if (PointerDown)
                 return $"mud-picker-time-clock-pointer mud-{Color.ToDescriptionString()}";
             else
                 return $"mud-picker-time-clock-pointer mud-picker-time-clock-pointer-animation mud-{Color.ToDescriptionString()}";
@@ -447,28 +447,28 @@ namespace MudBlazor
             _timeSet.Minute = TimeIntermediate.Value.Minutes;
         }
 
-        public bool MouseDown { get; set; }
+        public bool PointerDown { get; set; }
 
         /// <summary>
-        /// Sets Mouse Down bool to true if mouse is inside the clock mask.
+        /// Sets Pointer Down bool to true if pointer is inside the clock mask.
         /// </summary>
-        private void OnMouseDown(MouseEventArgs e)
+        private void OnPointerDown(PointerEventArgs e)
         {
-            MouseDown = true;
+            PointerDown = true;
         }
 
         /// <summary>
-        /// Sets Mouse Down bool to false if mouse is inside the clock mask.
+        /// Sets Pointer Down bool to false if pointer is inside the clock mask.
         /// </summary>
-        private async Task OnMouseUpAsync(MouseEventArgs e)
+        private async Task OnPointerUpAsync(PointerEventArgs e)
         {
-            if (MouseDown && _currentView == OpenTo.Minutes && _timeSet.Minute != _initialMinute || _currentView == OpenTo.Hours && _timeSet.Hour != _initialHour && TimeEditMode == TimeEditMode.OnlyHours)
+            if (PointerDown && _currentView == OpenTo.Minutes && _timeSet.Minute != _initialMinute || _currentView == OpenTo.Hours && _timeSet.Hour != _initialHour && TimeEditMode == TimeEditMode.OnlyHours)
             {
-                MouseDown = false;
+                PointerDown = false;
                 await SubmitAndCloseAsync();
             }
 
-            MouseDown = false;
+            PointerDown = false;
 
             if (_currentView == OpenTo.Hours && _timeSet.Hour != _initialHour && TimeEditMode == TimeEditMode.Normal)
             {
@@ -489,11 +489,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// If MouseDown is true enables "dragging" effect on the clock pin/stick.
+        /// If PointerDown is true enables "dragging" effect on the clock pin/stick.
         /// </summary>
-        private async Task OnMouseOverHourAsync(int value)
+        private async Task OnPointerOverHourAsync(int value)
         {
-            if (MouseDown)
+            if (PointerDown)
             {
                 _timeSet.Hour = HourAmPm(value);
                 await UpdateTimeAsync();
@@ -503,7 +503,7 @@ namespace MudBlazor
         /// <summary>
         /// On click for the hour "sticks", sets the hour.
         /// </summary>
-        private async Task OnMouseClickHourAsync(int value)
+        private async Task OnPointerClickHourAsync(int value)
         {
             _timeSet.Hour = HourAmPm(value);
 
@@ -524,11 +524,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// On mouse over for the minutes "sticks", sets the minute.
+        /// On pointer over for the minutes "sticks", sets the minute.
         /// </summary>
-        private async Task OnMouseOverMinuteAsync(int value)
+        private async Task OnPointerOverMinuteAsync(int value)
         {
-            if (MouseDown)
+            if (PointerDown)
             {
                 value = RoundToStepInterval(value);
                 _timeSet.Minute = value;
@@ -539,7 +539,7 @@ namespace MudBlazor
         /// <summary>
         /// On click for the minute "sticks", sets the minute.
         /// </summary>
-        private async Task OnMouseClickMinuteAsync(int value)
+        private async Task OnPointerClickMinuteAsync(int value)
         {
             value = RoundToStepInterval(value);
             _timeSet.Minute = value;
