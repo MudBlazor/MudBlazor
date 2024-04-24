@@ -26,6 +26,15 @@ namespace MudBlazor.UnitTests.Utilities
             c10.Set(new Point(1, 2)).Should().Be("[1,2]");
             c10.Get("[1,2]").Should().Be(new Point(1, 2));
         }
+        [Test]
+        public void GlobalConverterTestsErrorHandling()
+        {
+            var c10 = new DefaultConverter<Point>();
+            DefaultConverter<Point>.GlobalSetFunc = x => { var tmp = JsonSerializer.Deserialize<int[]>(x); return new Point(tmp[0], tmp[1]); };
+
+            c10.Get("[1,2").Should().Be(Point.Empty);
+            c10.GetErrorMessage.Should().Be("Not a valid Point");
+        }
 
         [Test]
         public void DefaultIntegerConverterTest()
