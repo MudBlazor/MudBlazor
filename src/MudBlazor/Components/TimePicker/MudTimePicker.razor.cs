@@ -73,7 +73,7 @@ namespace MudBlazor
 
         private void HandleParsingError()
         {
-            const string ParsingErrorMessage = "Not a valid time span.";
+            const string ParsingErrorMessage = "Not a valid time span";
             Converter.GetError = true;
             Converter.GetErrorMessage = ParsingErrorMessage;
             Converter.OnError?.Invoke(ParsingErrorMessage);
