@@ -35,7 +35,7 @@ namespace MudBlazor
         private MudInput<string> _elementReference;
         private CancellationTokenSource _cancellationTokenSrc;
         private Task _currentSearchTask;
-        private Timer _timer;
+        private Timer _debounceTimer;
         private T[] _items;
         private IList<int> _enabledItemIndices = new List<int>();
         private Func<T, string> _toStringFunc;
@@ -484,7 +484,7 @@ namespace MudBlazor
                 if (!_isCleared)
                     await SetTextAsync(optionText, false);
 
-                _timer?.Dispose();
+                _debounceTimer?.Dispose();
                 IsOpen = false;
 
                 await BeginValidateAsync();
@@ -537,7 +537,7 @@ namespace MudBlazor
 
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
-            _timer?.Dispose();
+            _debounceTimer?.Dispose();
 
             // This keeps the text from being set when clear() was called
             if (_isCleared)
@@ -548,7 +548,7 @@ namespace MudBlazor
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)
         {
-            _timer?.Dispose();
+            _debounceTimer?.Dispose();
 
             if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
                 await SetValueAsync(default(T), updateText);
@@ -556,7 +556,7 @@ namespace MudBlazor
             if (DebounceInterval <= 0)
                 await OpenMenuAsync();
             else
-                _timer = new Timer(OnDebounceComplete, null, DebounceInterval, Timeout.Infinite);
+                _debounceTimer = new Timer(OnDebounceComplete, null, DebounceInterval, Timeout.Infinite);
         }
 
         private void OnDebounceComplete(object stateInfo) => InvokeAsync(OpenMenuAsync);
@@ -602,7 +602,7 @@ namespace MudBlazor
         public async Task CloseMenuAsync()
         {
             CancelToken();
-            _timer?.Dispose();
+            _debounceTimer?.Dispose();
             await RestoreScrollPositionAsync();
             await CoerceTextToValue();
             IsOpen = false;
@@ -718,7 +718,7 @@ namespace MudBlazor
                 if (_elementReference != null)
                     await _elementReference.SetText("");
 
-                _timer?.Dispose();
+                _debounceTimer?.Dispose();
                 StateHasChanged();
             }
             finally
@@ -741,7 +741,7 @@ namespace MudBlazor
             return "null";
         }
 
-        protected virtual async Task OnInputKeyDownAsync(KeyboardEventArgs args)
+        private async Task OnInputKeyDownAsync(KeyboardEventArgs args)
         {
             switch (args.Key)
             {
@@ -786,7 +786,7 @@ namespace MudBlazor
             await base.InvokeKeyDownAsync(args);
         }
 
-        protected virtual async Task OnInputKeyUpAsync(KeyboardEventArgs args)
+        private async Task OnInputKeyUpAsync(KeyboardEventArgs args)
         {
             switch (args.Key)
             {
@@ -919,7 +919,7 @@ namespace MudBlazor
             if (!CoerceText)
                 return Task.CompletedTask;
 
-            _timer?.Dispose();
+            _debounceTimer?.Dispose();
 
             var text = Value == null ? null : GetItemString(Value);
 
@@ -935,7 +935,7 @@ namespace MudBlazor
             if (!CoerceValue)
                 return Task.CompletedTask;
 
-            _timer?.Dispose();
+            _debounceTimer?.Dispose();
 
             var value = Converter.Get(Text);
             return SetValueAsync(value, updateText: false);
@@ -943,7 +943,7 @@ namespace MudBlazor
 
         protected override void Dispose(bool disposing)
         {
-            _timer?.Dispose();
+            _debounceTimer?.Dispose();
 
             if (_cancellationTokenSrc != null)
             {
