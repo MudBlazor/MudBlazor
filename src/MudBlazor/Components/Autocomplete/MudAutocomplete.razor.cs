@@ -251,16 +251,6 @@ namespace MudBlazor
         public bool SelectOnActivation { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets whether other items can be selected without resetting the Value.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>true</c>.  When <c>true</c>, selecting an option will trigger a <see cref="SearchFunc"/> with the current Text.  Otherwise, an empty string is passed which can make it easier to view and select other options without resetting the Value. When <c>false</c>, <c>T</c> must either be a <c>record</c> or override the <c>GetHashCode</c> and <c>Equals</c> methods.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool Strict { get; set; } = true;
-
-        /// <summary>
         /// Gets or sets the debounce interval, in milliseconds.
         /// </summary>
         /// <remarks>
@@ -628,7 +618,6 @@ namespace MudBlazor
             CancelToken();
 
             var wasFocused = _isFocused;
-            var searchingWhileSelected = false;
             try
             {
                 if (ProgressIndicatorInPopoverTemplate != null)
@@ -637,12 +626,7 @@ namespace MudBlazor
                     IsOpen = true;
                 }
 
-                // Search while selected if enabled and the Text is equivalent to the Value.
-                searchingWhileSelected = !Strict && Value != null && (Value.ToString() == Text || (ToStringFunc != null && ToStringFunc(Value) == Text));
-
-                var searchText = searchingWhileSelected ? string.Empty : Text;
-                var searchTask = SearchFunc(searchText, _cancellationTokenSrc.Token);
-
+                var searchTask = SearchFunc(Text, _cancellationTokenSrc.Token);
                 _currentSearchTask = searchTask;
 
                 StateHasChanged();
@@ -671,14 +655,7 @@ namespace MudBlazor
 
             var enabledItems = _items.Select((item, idx) => (item, idx)).Where(tuple => ItemDisabledFunc?.Invoke(tuple.item) != true).ToList();
             _enabledItemIndices = enabledItems.Select(tuple => tuple.idx).ToList();
-            if (searchingWhileSelected) //compute the index of the currently select value, if it exists
-            {
-                _selectedListItemIndex = Array.IndexOf(_items, Value);
-            }
-            else
-            {
-                _selectedListItemIndex = _enabledItemIndices.Any() ? _enabledItemIndices[0] : -1;
-            }
+            _selectedListItemIndex = _enabledItemIndices.Any() ? _enabledItemIndices[0] : -1;
 
             if (_isFocused || !wasFocused)
             {
