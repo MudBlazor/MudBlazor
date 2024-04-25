@@ -4,7 +4,8 @@
 @inject HttpClient httpClient
 
 <MudDataGrid T="Element" MultiSelection="true" Items="@Elements" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter"
-    Hideable="true" RowClick="@RowClicked" RowContextMenuClick="RowRightClicked" SelectedItemsChanged="@SelectedItemsChanged">
+    Hideable="true" RowClick="@RowClicked" RowContextMenuClick="RowRightClicked" SelectedItemsChanged="@SelectedItemsChanged"
+    RowMouseEnter="OnRowMouseEnter" RowMouseLeave="OnRowMouseLeave">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
         <MudSpacer />
@@ -26,7 +27,12 @@
 </MudDataGrid>
 
 <div class="d-flex flex-wrap mt-4">
-    <MudSwitch @bind-Value="@_sortNameByLength" Color="Color.Primary">Sort Name Column By Length</MudSwitch>
+    <div class="d-flex justify-start align-center">
+        <MudSwitch @bind-Value="@_sortNameByLength" Color="Color.Primary">Sort Name Column By Length</MudSwitch>
+    </div>
+    <div class="d-flex justify-start align-center">
+        <MudSwitch @bind-Value="@_showRowMouseEnterLeaveEvents" Color="Color.Primary">Show RowMouseEnter/Leave Events</MudSwitch>
+    </div>
 </div>
 
 <MudExpansionPanels Style="flex:1">
@@ -49,6 +55,7 @@
     private IEnumerable<Element> Elements = new List<Element>();
     private string _searchString;
     private bool _sortNameByLength;
+    private bool _showRowMouseEnterLeaveEvents;
     private List<string> _events = new();
     // custom sort by name length
     private Func<Element, object> _sortBy => x =>
@@ -86,7 +93,7 @@
     {
         _events.Insert(0, $"Event = RowClick, Index = {args.RowIndex}, Data = {System.Text.Json.JsonSerializer.Serialize(args.Item)}");
     }
-    
+
     void RowRightClicked(DataGridRowClickEventArgs<Element> args)
     {
         _events.Insert(0, $"Event = RowRightClick, Index = {args.RowIndex}, Data = {System.Text.Json.JsonSerializer.Serialize(args.Item)}");
@@ -95,5 +102,21 @@
     void SelectedItemsChanged(HashSet<Element> items)
     {
         _events.Insert(0, $"Event = SelectedItemsChanged, Data = {System.Text.Json.JsonSerializer.Serialize(items)}");
+    }
+
+    void OnRowMouseEnter(DataGridRowHoverEventArgs<Element> args)
+    {
+        if (_showRowMouseEnterLeaveEvents)
+        {
+            _events.Insert(0, $"Event = RowMouseEnter, Index = {args.RowIndex}, Data = {System.Text.Json.JsonSerializer.Serialize(args.Item)}");
+        }
+    }
+
+    void OnRowMouseLeave(DataGridRowHoverEventArgs<Element> args)
+    {
+        if (_showRowMouseEnterLeaveEvents)
+        {
+            _events.Insert(0, $"Event = RowMouseLeave, Index = {args.RowIndex}, Data = {System.Text.Json.JsonSerializer.Serialize(args.Item)}");
+        }
     }
 }

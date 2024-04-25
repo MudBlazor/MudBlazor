@@ -770,6 +770,8 @@ namespace MudBlazor.UnitTests.Components
             // Include callbacks in test coverage.
             dataGrid.Instance.RowClick.HasDelegate.Should().Be(true);
             dataGrid.Instance.RowContextMenuClick.HasDelegate.Should().Be(true);
+            dataGrid.Instance.RowMouseEnter.HasDelegate.Should().Be(true);
+            dataGrid.Instance.RowMouseLeave.HasDelegate.Should().Be(true);
             dataGrid.Instance.SelectedItemChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.CommittedItemChanges.HasDelegate.Should().Be(true);
             dataGrid.Instance.StartedEditingItem.HasDelegate.Should().Be(true);
@@ -795,10 +797,19 @@ namespace MudBlazor.UnitTests.Components
             // Make sure that the callbacks have not been fired yet.
             comp.Instance.RowClicked.Should().Be(false);
             comp.Instance.RowContextMenuClicked.Should().Be(false);
+            comp.Instance.CurrentHoveredRowIndex.Should().Be(null);
+            comp.Instance.LastHoveredRowIndex.Should().Be(null);
             comp.Instance.SelectedItemChanged.Should().Be(false);
             comp.Instance.CommittedItemChanges.Should().Be(false);
             comp.Instance.StartedEditingItem.Should().Be(false);
             comp.Instance.CanceledEditingItem.Should().Be(false);
+
+            // Simulate hovering the first row (fire RowMouseEnter callback).
+            dataGrid.FindAll(".mud-table-body tr")[0].TriggerEvent("onmouseenter", new MouseEventArgs());
+
+            // Make sure that the callback has been fired.
+            comp.Instance.CurrentHoveredRowIndex.Should().Be(0);
+            comp.Instance.LastHoveredRowIndex.Should().Be(null);
 
             // Fire RowClick, SelectedItemChanged, SelectedItemsChanged, and StartedEditingItem callbacks.
             dataGrid.FindAll(".mud-table-body tr")[0].Click();
@@ -815,6 +826,20 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.SelectedItemChanged.Should().Be(true);
             comp.Instance.CommittedItemChanges.Should().Be(true);
             comp.Instance.CanceledEditingItem.Should().Be(false);
+
+            // Simulate hovering out of the first row (fire RowMouseLeave callback).
+            dataGrid.FindAll(".mud-table-body tr")[0].TriggerEvent("onmouseleave", new MouseEventArgs());
+
+            // Make sure that the callback has been fired.
+            comp.Instance.CurrentHoveredRowIndex.Should().Be(null);
+            comp.Instance.LastHoveredRowIndex.Should().Be(0);
+
+            // Simulate hovering the second row (fire RowMouseLeave callback).
+            dataGrid.FindAll(".mud-table-body tr")[1].TriggerEvent("onmouseenter", new MouseEventArgs());
+
+            // Make sure that the callback has been fired.
+            comp.Instance.CurrentHoveredRowIndex.Should().Be(1);
+            comp.Instance.LastHoveredRowIndex.Should().Be(0);
 
             // TODO: Triggering of the CancelEditingItem callback appears to require the Form edit mode
             // but we can brute force it by directly calling the CancelEditingItemAsync method on the datagrid

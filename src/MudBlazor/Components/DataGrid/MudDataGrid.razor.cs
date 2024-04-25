@@ -225,6 +225,16 @@ namespace MudBlazor
         [Parameter] public EventCallback<DataGridRowClickEventArgs<T>> RowContextMenuClick { get; set; }
 
         /// <summary>
+        /// Callback is called whenever a row starts being hovered (onmouseenter event).
+        /// </summary>
+        [Parameter] public EventCallback<DataGridRowHoverEventArgs<T>> RowMouseEnter { get; set; }
+
+        /// <summary>
+        /// Callback is called whenever a row stops being hovered (onmouseleave event).
+        /// </summary>
+        [Parameter] public EventCallback<DataGridRowHoverEventArgs<T>> RowMouseLeave { get; set; }
+
+        /// <summary>
         /// Callback is called when an item has begun to be edited. Returns the item being edited.
         /// </summary>
         [Parameter] public EventCallback<T> StartedEditingItem { get; set; }
@@ -1149,6 +1159,16 @@ namespace MudBlazor
         internal async Task OnContextMenuClickedAsync(MouseEventArgs args, T item, int rowIndex)
         {
             await RowContextMenuClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
+        }
+
+        internal async Task OnRowMouseEnterAsync(MouseEventArgs args, T item, int rowIndex)
+        {
+            await RowMouseEnter.InvokeAsync(new DataGridRowHoverEventArgs<T>(args, item, rowIndex));
+        }
+
+        internal async Task OnRowMouseLeaveAsync(MouseEventArgs args, T item, int rowIndex)
+        {
+            await RowMouseLeave.InvokeAsync(new DataGridRowHoverEventArgs<T>(args, item, rowIndex));
         }
 
         /// <summary>
