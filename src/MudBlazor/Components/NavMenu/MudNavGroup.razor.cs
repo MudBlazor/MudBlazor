@@ -138,7 +138,7 @@ namespace MudBlazor
 
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
-        
+
         /// <summary>
         /// Controls the render of the Title element, true to hide the Title
         /// </summary>
