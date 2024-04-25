@@ -574,7 +574,7 @@ namespace MudBlazor
         /// <summary>
         /// On click for the hour "sticks", sets the hour.
         /// </summary>
-        private async Task OnPointerClickHourAsync(int hour)
+        private async Task OnClickHourAsync(int hour)
         {
             _timeSet.Hour = HourAmPm(hour);
 
@@ -609,7 +609,7 @@ namespace MudBlazor
         /// <summary>
         /// On click for the minute "sticks", sets the minute.
         /// </summary>
-        private async Task OnPointerClickMinuteAsync(int minute)
+        private async Task OnClickMinuteAsync(int minute)
         {
             minute = RoundToStepInterval(minute);
             _timeSet.Minute = minute;
