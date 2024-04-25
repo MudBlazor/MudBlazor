@@ -68,5 +68,18 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("a").Click();
             comp.Instance.IsNavigated.Should().BeFalse();
         }
+
+        /// <summary>
+        /// Verify that when IconOnly is set on the MudNavLink component, the div with the class ".mud-nav-link-text" is not rendered
+        /// Also verify that when IconOnly is not set on the MudNavLink component, that the div with the class ".mud-nav-link-text" is rendered
+        /// </summary>
+        [Test]
+        public async Task NavLink_IconOnly_NoText()
+        {
+            var comp = Context.RenderComponent<MudNavLink>(Parameter(nameof(MudNavLink.IconOnly), true));
+            comp.FindAll(".mud-nav-link-text").Should().BeEmpty();
+            comp = Context.RenderComponent<MudNavLink>();
+            comp.FindAll(".mud-nav-link-text").Should().NotBeEmpty();
+        }
     }
 }

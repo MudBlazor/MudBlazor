@@ -16,9 +16,12 @@
                 {
                     <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname"/>
                 }
-                <div class="mud-nav-link-text">
-                    @ChildContent
-                </div>
+                @if (!IconOnly)
+                {
+                    <div class="mud-nav-link-text">
+                        @ChildContent
+                    </div>
+                }
             </NavLink>
         }
         else
@@ -30,9 +33,12 @@
                 {
                     <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname" />
                 }
-                <div class="mud-nav-link-text">
-                    @ChildContent
-                </div>
+                @if (!IconOnly)
+                {
+                    <div class="mud-nav-link-text">
+                        @ChildContent
+                    </div>
+                }
             </div>
         }
     }

@@ -1,0 +1,41 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Width="300px" Class="d-inline-flex py-3" Elevation="0">
+    <MudNavMenu>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" OnClick="ToggleSimpleCollapsed"></MudIconButton>
+        <MudDivider Class="my-2"/>
+        <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard" IconOnly="isSimpleCollapsed">Dashboard</MudNavLink>
+        <MudNavLink Href="/servers" Icon="@Icons.Material.Filled.Storage" IconOnly="isSimpleCollapsed">Servers</MudNavLink>
+        <MudNavLink Href="/billing" Icon="@Icons.Material.Filled.Receipt" Disabled="true" IconOnly="isSimpleCollapsed">Billing</MudNavLink>
+    </MudNavMenu>
+    <MudText Typo="Typo.body1" Class="pa-2">NavLink Only NavMenu</MudText>
+</MudPaper>
+<MudPaper Width="300px" Class="d-inline-flex py-3" Elevation="0">
+    <MudNavMenu>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" OnClick="ToggleComplexCollapsed"></MudIconButton>
+        <MudDivider Class="my-2"/>
+        <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard" IconOnly="isComplexCollapsed">Dashboard</MudNavLink>
+        <MudNavLink Href="/servers" Icon="@Icons.Material.Filled.Storage" IconOnly="isComplexCollapsed">Servers</MudNavLink>
+        <MudNavLink Href="/billing" Icon="@Icons.Material.Filled.Receipt" Disabled="true" IconOnly="isComplexCollapsed">Billing</MudNavLink>
+        <MudNavGroup Title="Settings" Icon="@Icons.Material.Filled.Settings" Expanded="true" IconOnly="isComplexCollapsed">
+            <MudNavLink Href="/users" Icon="@Icons.Material.Filled.People" IconColor="Color.Success" IconOnly="isComplexCollapsed">Users</MudNavLink>
+            <MudNavLink Href="/security" Icon="@Icons.Material.Filled.Security" IconColor="Color.Info" IconOnly="isComplexCollapsed">Security</MudNavLink>
+        </MudNavGroup>
+    </MudNavMenu>
+    <MudText Typo="Typo.body1" Class="pa-2">Even supports complex NavGroup setups</MudText>
+</MudPaper>
+
+@code {
+    private bool isSimpleCollapsed = false;
+    private bool isComplexCollapsed = false;
+
+    private void ToggleSimpleCollapsed()
+    {
+        isSimpleCollapsed = !isSimpleCollapsed;
+    }
+
+    private void ToggleComplexCollapsed()
+    {
+        isComplexCollapsed = !isComplexCollapsed;
+    }
+}

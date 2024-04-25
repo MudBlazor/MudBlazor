@@ -19,9 +19,12 @@
         {
             <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname" />
         }
-        <div Class="mud-nav-link-text">
-            @Title
-        </div>
+        @if (!IconOnly)
+        {
+            <div Class="mud-nav-link-text">
+                @Title
+            </div>
+        }
         @if (!HideExpandIcon)
         {
             <MudIcon Icon="@ExpandIcon" Class="@ExpandIconClassname" />

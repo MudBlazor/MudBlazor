@@ -58,6 +58,13 @@ namespace MudBlazor
         [Category(CategoryTypes.NavMenu.Appearance)]
         public Color IconColor { get; set; } = Color.Default;
 
+        /// <summary>
+        /// Controls the render of the child elements, true to hide child elements
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.Appearance)]
+        public bool IconOnly { get; set; } = false;
+
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
         public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;

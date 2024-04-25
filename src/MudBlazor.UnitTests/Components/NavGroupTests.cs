@@ -42,5 +42,18 @@ namespace MudBlazor.UnitTests.Components
 
             comp.FindAll("nav").Should().Contain(navNode => navNode.GetAttribute("aria-label") == expectedTitle);
         }
+
+        /// <summary>
+        /// Verify that when IconOnly is set on the MudNavGroup component, the div with the class ".mud-nav-link-text" is not rendered
+        /// Also verify that when IconOnly is not set on the MudNavGroup component, that the div with the class ".mud-nav-link-text" is rendered
+        /// </summary>
+        [Test]
+        public async Task NavGroup_IconOnly_NoText()
+        {
+            var comp = Context.RenderComponent<MudNavGroup>(Parameter(nameof(MudNavLink.IconOnly), true));
+            comp.FindAll(".mud-nav-link-text").Should().BeEmpty();
+            comp = Context.RenderComponent<MudNavGroup>();
+            comp.FindAll(".mud-nav-link-text").Should().NotBeEmpty();
+        }
     }
 }
