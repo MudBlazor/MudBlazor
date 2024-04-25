@@ -4,36 +4,38 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// Represents the top portion of a <see cref="MudCard"/>.
+    /// </summary>
     public partial class MudCardHeader : MudComponentBase
     {
-        protected string Classname =>
-            new CssBuilder("mud-card-header")
-                .AddClass(Class)
-                .Build();
+        protected string Classname => new CssBuilder("mud-card-header")
+            .AddClass(Class)
+            .Build();
 
         /// <summary>
-        /// If used renders child content of the CardHeaderAvatar.
+        /// Gets or sets any avatar to display.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Card.Behavior)]
         public RenderFragment? CardHeaderAvatar { get; set; }
 
         /// <summary>
-        /// If used renders child content of the CardHeaderContent.
+        /// Gets or sets the main content of the header.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Card.Behavior)]
         public RenderFragment? CardHeaderContent { get; set; }
 
         /// <summary>
-        /// If used renders child content of the CardHeaderActions.
+        /// Gets or sets any actions displayed in this header.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Card.Behavior)]
         public RenderFragment? CardHeaderActions { get; set; }
 
         /// <summary>
-        /// Optional child content
+        /// Gets or sets any additional content to display.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Card.Behavior)]
