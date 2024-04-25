@@ -277,8 +277,12 @@ window.mudpopoverHelper = {
                 offsetY += window.scrollY
             }
 
-            popoverContentNode.style['left'] = (left + offsetX) + 'px';
-            popoverContentNode.style['top'] = (top + offsetY) + 'px';
+            // make sure the popover doesn't go outside the window
+            var leftPos = Math.max(Math.min(left + offsetX, window.innerWidth - selfRect.width), 0);
+            var topPos = Math.max(Math.min(top + offsetY, window.innerHeight - selfRect.height), 0);
+
+            popoverContentNode.style['left'] = leftPos + 'px';
+            popoverContentNode.style['top'] = topPos + 'px';
 
             if (window.getComputedStyle(popoverNode).getPropertyValue('z-index') != 'auto') {
                 popoverContentNode.style['z-index'] = window.getComputedStyle(popoverNode).getPropertyValue('z-index');
