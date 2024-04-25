@@ -803,7 +803,6 @@ namespace MudBlazor
                     break;
                 case "Escape":
                     await CloseMenuAsync();
-                    await BlurAsync();
                     break;
                 case "Backspace":
                     if (args.CtrlKey && args.ShiftKey)
