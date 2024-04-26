@@ -3,13 +3,13 @@
 
 @if (ReadOnly)
 {
-    <span class="@Classame" style="@Stylename">
+    <span class="@ClassName" style="@Style">
         <MudIcon Icon="@ItemIcon" Size="@Size"></MudIcon>
     </span>
 }
 else
 {
-    <span class="@Classame" style="@Stylename" @onmouseover="HandleMouseOver" @onclick="HandleClick" @onmouseout="HandleMouseOut">
+    <span class="@ClassName" style="@Style" @onmouseover="HandleMouseOver" @onclick="HandleClick" @onmouseout="HandleMouseOut ">
         <input class="mud-rating-input" type="radio" tabindex="-1" value="@ItemValue" name="@Rating?.Name" disabled="@Disabled" checked="@(IsChecked)" @attributes="UserAttributes" />
         <MudIcon Icon="@ItemIcon" Size="@Size"></MudIcon>
     </span>

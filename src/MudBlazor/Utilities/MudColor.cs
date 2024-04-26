@@ -20,26 +20,22 @@ namespace MudBlazor.Utilities
         /// Output will be starting with a # and include r,g and b but no alpha values. Example #ab2a3d
         /// </summary>
         Hex,
-
         /// <summary>
         /// Output will be starting with a # and include r,g and b and alpha values. Example #ab2a3dff
         /// </summary>
         HexA,
-
         /// <summary>
         /// Will output css like output for value. Example rgb(12,15,40)
         /// </summary>
         RGB,
-
         /// <summary>
         /// Will output css like output for value with alpha. Example rgba(12,15,40,0.42)
         /// </summary>
         RGBA,
-
         /// <summary>
         /// Will output the color elements without any decorator and without alpha. Example 12,15,26
         /// </summary>
-        ColorElements,
+        ColorElements
     }
 
     /// <summary>
@@ -344,14 +340,6 @@ namespace MudBlazor.Utilities
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MudColor"/> class with the specified enum representation of a color.
-        /// </summary>
-        /// <param name="color">The enum representation of a color.</param>
-        public MudColor(Color color) : this(color switch { Color.Primary => "#594AE2", Color.Secondary => Colors.Pink.Accent3, Color.Tertiary => "#1EC8A5", _ => "#594AE2" })
-        {
-        }
-
-        /// <summary>
         /// Creates a new <see cref="MudColor"/> instance with the specified hue value while keeping the saturation, luminance, and alpha values unchanged.
         /// </summary>
         /// <param name="h">The hue component value (0 to 360).</param>
@@ -541,7 +529,7 @@ namespace MudBlazor.Utilities
         /// </summary>
         /// <param name="color">The enum representation of the color.</param>
         /// <returns>A new <see cref="MudColor"/> instance representing the color.</returns>
-        public static implicit operator MudColor(Color color) => new(color);
+        public static implicit operator MudColor(Color color) => FromColorEnum(color);
 
         /// <summary>
         /// Converts a <see cref="MudColor"/> instance to its string representation.
@@ -549,6 +537,19 @@ namespace MudBlazor.Utilities
         /// <param name="color">The MudColor instance to convert.</param>
         /// <returns>The string representation of the color.</returns>
         public static explicit operator string(MudColor? color) => color == null ? string.Empty : color.Value;
+
+        private static MudColor FromColorEnum(Color color)
+        {
+            var hex = color switch
+            {
+                Color.Primary => "#594AE2",
+                Color.Secondary => Colors.Pink.Accent3,
+                Color.Tertiary => "#1EC8A5",
+                _ => "#594AE2"
+            };
+
+            return new(hex);
+        }
 
         private byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new char[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
 

@@ -11,21 +11,16 @@ namespace MudBlazor
         /// <summary>
         /// Space separated class names
         /// </summary>
-        protected string Classame =>
-            new CssBuilder()
+        protected string ClassName =>
+            new CssBuilder("")
                 .AddClass($"mud-rating-item")
                 .AddClass($"mud-ripple mud-ripple-icon", Ripple)
-                .AddClass($"yellow-text.text-darken-3", Color == MudBlazor.Color.Default)
+                .AddClass($"yellow-text.text-darken-3", Color == Color.Default)
+                .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default)
                 .AddClass($"mud-rating-item-active", IsActive)
                 .AddClass($"mud-disabled", Disabled)
                 .AddClass($"mud-readonly", ReadOnly)
                 .AddClass(Class)
-                .Build();
-
-        protected string Stylename =>
-            new StyleBuilder()
-                .AddStyle("--mud-primary-color", Color.Value)
-                .AddStyle(Style)
                 .Build();
 
         [CascadingParameter]
@@ -44,10 +39,10 @@ namespace MudBlazor
         public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
-        /// The color of the component.
+        /// The color of the component. It supports the theme colors.
         /// </summary>
         [Parameter]
-        public MudColor Color { get; set; } = MudBlazor.Color.Default;
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.

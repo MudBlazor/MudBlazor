@@ -28,7 +28,7 @@ namespace MudBlazor
 
         protected string Stylename =>
             new StyleBuilder()
-                .AddStyle("--mud-palette-custom-color", Color.Value)
+                .AddStyle("--mud-primary-color", Color.Value)
                 .AddStyle(Style)
                 .Build();
 

@@ -145,23 +145,23 @@
 
   &:not(.mud-progress-linear-buffer) {
     &::before {
-      background-color: var(--mud-palette-custom-color);
+      background-color: var(--mud-primary-color);
     }
 
     .mud-progress-linear-bar {
-      background-color: var(--mud-palette-custom-color);
+      background-color: var(--mud-primary-color);
     }
   }
 
   &.mud-progress-linear-buffer {
     .mud-progress-linear-bar:first-child {
       background-size: 10px 10px;
-      background-image: radial-gradient(var(--mud-palette-custom-color) 0%, var(--mud-palette-custom-color) 16%, transparent 42%);
+      background-image: radial-gradient(var(--mud-primary-color) 0%, var(--mud-primary-color) 16%, transparent 42%);
       background-position: 0 -23px;
     }
 
     .mud-progress-linear-bar:nth-child(2) {
-      background-color: var(--mud-palette-custom-color);
+      background-color: var(--mud-primary-color);
     }
 
     .mud-progress-linear-bar:last-child {
@@ -176,7 +176,7 @@
         width: 100%;
         display: block;
         opacity: 0.4;
-        background-color: var(--mud-palette-custom-color);
+        background-color: var(--mud-primary-color);
       }
     }
   }
