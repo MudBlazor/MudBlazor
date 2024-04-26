@@ -96,7 +96,7 @@ namespace MudBlazor
     public enum InterpolationOption
     {
         /// <summary>
-        /// Lines are smoothed to pass through each data point as a natural spline..
+        /// Lines are smoothed to pass through each data point as a natural spline.
         /// </summary>
         NaturalSpline,
         /// <summary>

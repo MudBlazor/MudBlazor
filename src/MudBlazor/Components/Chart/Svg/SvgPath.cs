@@ -1,9 +1,11 @@
-﻿
+﻿using System.Diagnostics;
+
 namespace MudBlazor.Charts.SVG.Models
 {
     /// <summary>
     /// Represents an arbitrary SVG path.
     /// </summary>
+    [DebuggerDisplay("Index={Index}, Data={Data}")]
     public class SvgPath
     {
         /// <summary>
