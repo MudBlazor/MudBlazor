@@ -33,7 +33,7 @@ namespace MudBlazor
         /// Gets or sets the labels describing data values.
         /// </summary>
         /// <remarks>
-        /// Applies to <c>Pie</c> and <c>Donut</c> charts.  The number of labels in this array should be the same as the number of values in the <see cref="InputData"/> property.
+        /// Applies to <c>Pie</c> and <c>Donut</c> charts.  The number of labels in this array is typically the same as the number of values in the <see cref="InputData"/> property.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
@@ -43,7 +43,7 @@ namespace MudBlazor
         /// Gets or sets the labels applied to the horizontal axis.
         /// </summary>
         /// <remarks>
-        /// Applies to <c>Line</c>, <c>Bar</c>, and <c>StackedBar</c> charts.  The number of values in this array should be equal to the number of values in the <see cref="ChartSeries.Data"/> property.
+        /// Applies to <c>Line</c>, <c>Bar</c>, and <c>StackedBar</c> charts.  The number of values in this array is typically equal to the number of values in the <see cref="ChartSeries.Data"/> property.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]

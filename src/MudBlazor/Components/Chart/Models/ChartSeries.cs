@@ -3,7 +3,7 @@
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a set of charts to display in a <see cref="MudChart"/>.
+    /// Represents a set of data to display in a <see cref="MudChart"/>.
     /// </summary>
     /// <remarks>
     /// This class is typically used to display multiple sets of values in a line, bar, or stacked bar chart.
