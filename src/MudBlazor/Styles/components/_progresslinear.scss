@@ -1,266 +1,266 @@
 ﻿
 .mud-progress-linear {
-    position: relative;
+  position: relative;
 
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-        display: block;
-        opacity: 0.2;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    display: block;
+    opacity: 0.2;
+  }
+
+  &.horizontal {
+    width: 100%;
+
+    &.mud-progress-linear {
+      &-small {
+        height: 4px;
+      }
+
+      &-medium {
+        height: 8px;
+      }
+
+      &-large {
+        height: 12px;
+      }
     }
 
-    &.horizontal {
-        width: 100%;
+    .mud-progress-linear-dashed {
+      animation: mud-progress-linear-horizontal-keyframes-buffer 3s infinite linear;
+    }
+  }
 
-        &.mud-progress-linear {
-            &-small {
-                height: 4px;
-            }
+  &.vertical {
+    height: 100%;
 
-            &-medium {
-                height: 8px;
-            }
+    &.mud-progress-linear {
+      &-small {
+        width: 4px;
+      }
 
-            &-large {
-                height: 12px;
-            }
-        }
+      &-medium {
+        width: 8px;
+      }
 
-        .mud-progress-linear-dashed {
-            animation: mud-progress-linear-horizontal-keyframes-buffer 3s infinite linear;
-        }
+      &-large {
+        width: 12px;
+      }
+    }
+  }
+
+  .mud-progress-linear-content {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .mud-progress-linear-bars {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .mud-progress-linear-bar {
+    top: 0;
+    left: 0;
+    width: 100%;
+    bottom: 0;
+    position: absolute;
+    transition: transform 0.2s linear;
+    transform-origin: left;
+
+    &.mud-progress-linear-1-indeterminate {
+      &.horizontal {
+        width: auto;
+        animation: mud-progress-linear-horizontal-keyframes-indeterminate1 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+      }
+
+      &.vertical {
+        height: auto;
+        animation: mud-progress-linear-vertical-keyframes-indeterminate1 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+      }
     }
 
-    &.vertical {
-        height: 100%;
+    &.mud-progress-linear-2-indeterminate {
+      &.horizontal {
+        width: auto;
+        animation: mud-progress-linear-horizontal-keyframes-indeterminate2 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) 1.15s infinite;
+      }
 
-        &.mud-progress-linear {
-            &-small {
-                width: 4px;
-            }
-
-            &-medium {
-                width: 8px;
-            }
-
-            &-large {
-                width: 12px;
-            }
-        }
+      &.vertical {
+        height: auto;
+        animation: mud-progress-linear-vertical-keyframes-indeterminate2 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) 1.15s infinite;
+      }
     }
+  }
 
-    .mud-progress-linear-content {
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+  &.mud-progress-linear-color-default {
+    &:not(.mud-progress-linear-buffer) {
+      &::before {
+        background-color: var(--mud-palette-action-disabled);
+      }
 
-    .mud-progress-linear-bars {
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        overflow: hidden;
-    }
-
-    .mud-progress-linear-bar {
-        top: 0;
-        left: 0;
-        width: 100%;
-        bottom: 0;
-        position: absolute;
-        transition: transform 0.2s linear;
-        transform-origin: left;
-
-        &.mud-progress-linear-1-indeterminate {
-            &.horizontal {
-                width: auto;
-                animation: mud-progress-linear-horizontal-keyframes-indeterminate1 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
-            }
-
-            &.vertical {
-                height: auto;
-                animation: mud-progress-linear-vertical-keyframes-indeterminate1 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
-            }
-        }
-
-        &.mud-progress-linear-2-indeterminate {
-            &.horizontal {
-                width: auto;
-                animation: mud-progress-linear-horizontal-keyframes-indeterminate2 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) 1.15s infinite;
-            }
-
-            &.vertical {
-                height: auto;
-                animation: mud-progress-linear-vertical-keyframes-indeterminate2 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) 1.15s infinite;
-            }
-        }
-    }
-
-    &.mud-progress-linear-color-default {
-        &:not(.mud-progress-linear-buffer) {
-            &::before {
-                background-color: var(--mud-palette-action-disabled);
-            }
-
-            .mud-progress-linear-bar {
-                background-color: var(--mud-palette-action-default);
-            }
-        }
-
-        &.mud-progress-linear-buffer {
-            .mud-progress-linear-bar:first-child {
-                background-size: 10px 10px;
-                background-image: radial-gradient(var(--mud-palette-action-disabled) 0%, var(--mud-palette-action-disabled) 16%, transparent 42%);
-                background-position: 0 -23px;
-            }
-
-            .mud-progress-linear-bar:nth-child(2) {
-                background-color: var(--mud-palette-action-default);
-            }
-
-            .mud-progress-linear-bar:last-child {
-                transition: transform .4s linear;
-
-                &::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    height: 100%;
-                    width: 100%;
-                    display: block;
-                    opacity: 0.4;
-                    background-color: var(--mud-palette-action-disabled);
-                }
-            }
-        }
-    }
-
-    @each $color in $mud-palette-colors {
-        &.mud-progress-linear-color-#{$color} {
-
-            &:not(.mud-progress-linear-buffer) {
-                &::before {
-                    background-color: var(--mud-palette-#{$color});
-                }
-
-                .mud-progress-linear-bar {
-                    background-color: var(--mud-palette-#{$color});
-                }
-            }
-
-
-            &.mud-progress-linear-buffer {
-                .mud-progress-linear-bar:first-child {
-                    background-size: 10px 10px;
-                    background-image: radial-gradient(var(--mud-palette-#{$color}) 0%, var(--mud-palette-#{$color}) 16%, transparent 42%);
-                    background-position: 0 -23px;
-                }
-
-                .mud-progress-linear-bar:nth-child(2) {
-                    background-color: var(--mud-palette-#{$color});
-                }
-
-                .mud-progress-linear-bar:last-child {
-                    transition: transform .4s linear;
-
-                    &::before {
-                        content: '';
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        height: 100%;
-                        width: 100%;
-                        display: block;
-                        opacity: 0.4;
-                        background-color: var(--mud-palette-#{$color});
-                    }
-                }
-            }
-        }
-    }
-
-    &.mud-progress-indeterminate {
-        &.horizontal {
-            .mud-progress-linear-bar:first-child {
-                width: auto;
-                animation: mud-progress-linear-horizontal-keyframes-indeterminate1 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
-            }
-
-            .mud-progress-linear-bar:last-child {
-                width: auto;
-                animation: mud-progress-linear-horizontal-keyframes-indeterminate2 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) 1.15s infinite;
-            }
-        }
-
-        &.vertical {
-            .mud-progress-linear-bar:first-child {
-                height: auto;
-                animation: mud-progress-linear-vertical-keyframes-indeterminate1 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
-            }
-
-            .mud-progress-linear-bar:last-child {
-                height: auto;
-                animation: mud-progress-linear-vertical-keyframes-indeterminate2 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) 1.15s infinite;
-            }
-        }
+      .mud-progress-linear-bar {
+        background-color: var(--mud-palette-action-default);
+      }
     }
 
     &.mud-progress-linear-buffer {
+      .mud-progress-linear-bar:first-child {
+        background-size: 10px 10px;
+        background-image: radial-gradient(var(--mud-palette-action-disabled) 0%, var(--mud-palette-action-disabled) 16%, transparent 42%);
+        background-position: 0 -23px;
+      }
+
+      .mud-progress-linear-bar:nth-child(2) {
+        background-color: var(--mud-palette-action-default);
+      }
+
+      .mud-progress-linear-bar:last-child {
+        transition: transform .4s linear;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          width: 100%;
+          display: block;
+          opacity: 0.4;
+          background-color: var(--mud-palette-action-disabled);
+        }
+      }
+    }
+  }
+
+  @each $color in $mud-palette-colors {
+    &.mud-progress-linear-color-#{$color} {
+
+      &:not(.mud-progress-linear-buffer) {
+        &::before {
+          background-color: var(--mud-palette-#{$color});
+        }
+
+        .mud-progress-linear-bar {
+          background-color: var(--mud-palette-#{$color});
+        }
+      }
+
+
+      &.mud-progress-linear-buffer {
         .mud-progress-linear-bar:first-child {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            margin-top: 0;
+          background-size: 10px 10px;
+          background-image: radial-gradient(var(--mud-palette-#{$color}) 0%, var(--mud-palette-#{$color}) 16%, transparent 42%);
+          background-position: 0 -23px;
         }
 
         .mud-progress-linear-bar:nth-child(2) {
-            z-index: 1;
-            transition: transform .4s linear;
+          background-color: var(--mud-palette-#{$color});
         }
 
-        &.horizontal {
-            .mud-progress-linear-bar:first-child {
-                animation: mud-progress-linear-horizontal-keyframes-buffer 3s infinite linear;
-            }
-        }
+        .mud-progress-linear-bar:last-child {
+          transition: transform .4s linear;
 
-        &.vertical {
-            .mud-progress-linear-bar:first-child {
-                animation: mud-progress-linear-vertical-keyframes-buffer 3s infinite linear;
-            }
+          &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            display: block;
+            opacity: 0.4;
+            background-color: var(--mud-palette-#{$color});
+          }
         }
+      }
+    }
+  }
+
+  &.mud-progress-indeterminate {
+    &.horizontal {
+      .mud-progress-linear-bar:first-child {
+        width: auto;
+        animation: mud-progress-linear-horizontal-keyframes-indeterminate1 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+      }
+
+      .mud-progress-linear-bar:last-child {
+        width: auto;
+        animation: mud-progress-linear-horizontal-keyframes-indeterminate2 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) 1.15s infinite;
+      }
     }
 
-    &.mud-progress-linear-striped {
-        .mud-progress-linear-bar {
-            background-image: linear-gradient( 135deg,hsla(0,0%,100%,.25) 25%,transparent 0,transparent 50%,hsla(0,0%,100%,.25) 0,hsla(0,0%,100%,.25) 75%,transparent 0,transparent);
-            background-size: 40px 40px;
-            background-repeat: repeat;
-            animation: mud-progress-linear-striped-loading 10s linear infinite;
-        }
+    &.vertical {
+      .mud-progress-linear-bar:first-child {
+        height: auto;
+        animation: mud-progress-linear-vertical-keyframes-indeterminate1 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+      }
+
+      .mud-progress-linear-bar:last-child {
+        height: auto;
+        animation: mud-progress-linear-vertical-keyframes-indeterminate2 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) 1.15s infinite;
+      }
+    }
+  }
+
+  &.mud-progress-linear-buffer {
+    .mud-progress-linear-bar:first-child {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      margin-top: 0;
     }
 
-    &.mud-progress-linear-rounded {
-        border-radius: var(--mud-default-borderradius);
-
-        .mud-progress-linear-bars {
-            border-radius: var(--mud-default-borderradius);
-        }
-
-        .mud-progress-linear-bar {
-            border-radius: var(--mud-default-borderradius);
-        }
-
-        &::before {
-            border-radius: var(--mud-default-borderradius);
-        }
+    .mud-progress-linear-bar:nth-child(2) {
+      z-index: 1;
+      transition: transform .4s linear;
     }
+
+    &.horizontal {
+      .mud-progress-linear-bar:first-child {
+        animation: mud-progress-linear-horizontal-keyframes-buffer 3s infinite linear;
+      }
+    }
+
+    &.vertical {
+      .mud-progress-linear-bar:first-child {
+        animation: mud-progress-linear-vertical-keyframes-buffer 3s infinite linear;
+      }
+    }
+  }
+
+  &.mud-progress-linear-striped {
+    .mud-progress-linear-bar {
+      background-image: linear-gradient( 135deg,hsla(0,0%,100%,.25) 25%,transparent 0,transparent 50%,hsla(0,0%,100%,.25) 0,hsla(0,0%,100%,.25) 75%,transparent 0,transparent);
+      background-size: 40px 40px;
+      background-repeat: repeat;
+      animation: mud-progress-linear-striped-loading 10s linear infinite;
+    }
+  }
+
+  &.mud-progress-linear-rounded {
+    border-radius: var(--mud-default-borderradius);
+
+    .mud-progress-linear-bars {
+      border-radius: var(--mud-default-borderradius);
+    }
+
+    .mud-progress-linear-bar {
+      border-radius: var(--mud-default-borderradius);
+    }
+
+    &::before {
+      border-radius: var(--mud-default-borderradius);
+    }
+  }
 }

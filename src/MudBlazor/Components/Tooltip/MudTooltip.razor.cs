@@ -54,28 +54,22 @@ namespace MudBlazor
         /// <summary>
         /// Sets the length of time that the opening transition takes to complete.
         /// </summary>
+        /// <remarks>
+        /// Set globally via <see cref="MudGlobal.TransitionDuration"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
-        public double Duration { get; set; } = 251;
+        public double Duration { get; set; } = MudGlobal.TransitionDuration.TotalMilliseconds;
 
         /// <summary>
         /// Sets the amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
         /// </summary>
+        /// <remarks>
+        /// Set globally via <see cref="MudGlobal.TooltipDelay"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
-        public double Delay { get; set; } = 0;
-
-        /// <summary>
-        /// Changes the default transition delay in seconds.
-        /// </summary>
-        [Obsolete("Use Delay instead.", true)]
-        [ExcludeFromCodeCoverage]
-        [Parameter]
-        public double Delayed
-        {
-            get { return Delay / 1000; }
-            set { Delay = value * 1000; }
-        }
+        public double Delay { get; set; } = MudGlobal.TooltipDelay.TotalMilliseconds;
 
         /// <summary>
         /// Tooltip placement.

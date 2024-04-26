@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
 
 <MudPopoverProvider />
 
@@ -23,9 +24,9 @@
 		return text.Equals("carrot", StringComparison.InvariantCulture);
 	};
 
-	public async Task<IEnumerable<string>> Search(string text)
-	{
-		await Task.Delay(100);
+    public async Task<IEnumerable<string>> Search(string text, CancellationToken token)
+    {
+		await Task.Delay(100, token);
 
 		if (string.IsNullOrWhiteSpace(text))
 		{

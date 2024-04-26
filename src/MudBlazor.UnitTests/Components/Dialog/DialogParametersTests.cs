@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -17,10 +18,10 @@ public sealed class DialogParametersTests
     public void DialogParametersGeneric_Add_ShouldAddParameter()
     {
         var dialogParameters = new DialogParameters<DialogWithParameters>();
-        Assert.IsEmpty(dialogParameters._parameters);
+        dialogParameters._parameters.Should().BeEmpty();
 
         dialogParameters.Add(x => x.TestValue, "Test");
-        Assert.Contains(new KeyValuePair<string, object>("TestValue", "Test"), dialogParameters._parameters);
+        dialogParameters._parameters.Should().Contain(new KeyValuePair<string, object>("TestValue", "Test"));
     }
 
     [Test]
@@ -37,7 +38,7 @@ public sealed class DialogParametersTests
         dialogParameters._parameters = new() { { "TestValue", "Test" } };
 
         var parameter = dialogParameters.Get(x => x.TestValue);
-        Assert.AreEqual("Test", parameter);
+        parameter.Should().Be("Test");
     }
 
     [Test]
@@ -54,7 +55,7 @@ public sealed class DialogParametersTests
         dialogParameters._parameters = new() { { "TestValue", "Test" } };
 
         var parameter = dialogParameters.TryGet(x => x.TestValue);
-        Assert.AreEqual("Test", parameter!);
+        parameter!.Should().Be("Test");
     }
 
     [Test]
@@ -63,7 +64,7 @@ public sealed class DialogParametersTests
         var dialogParameters = new DialogParameters<DialogWithParameters>();
 
         var parameter = dialogParameters.TryGet(x => x.TestValue);
-        Assert.AreEqual(default(string), parameter);
+        parameter.Should().Be(default(string));
     }
 
     [Test]

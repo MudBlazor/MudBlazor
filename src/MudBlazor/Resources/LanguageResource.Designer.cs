@@ -285,6 +285,24 @@ namespace MudBlazor.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Move Down.
+        /// </summary>
+        public static string MudDataGrid_MoveDown {
+            get {
+                return ResourceManager.GetString("MudDataGrid.MoveDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Up.
+        /// </summary>
+        public static string MudDataGrid_MoveUp {
+            get {
+                return ResourceManager.GetString("MudDataGrid.MoveUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to not contains.
         /// </summary>
         public static string MudDataGrid_not_contains {
@@ -339,6 +357,15 @@ namespace MudBlazor.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sort.
+        /// </summary>
+        public static string MudDataGrid_Sort {
+            get {
+                return ResourceManager.GetString("MudDataGrid.Sort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to starts with.
         /// </summary>
         public static string MudDataGrid_starts_with {
@@ -380,6 +407,15 @@ namespace MudBlazor.Resources {
         public static string MudDataGrid_Value {
             get {
                 return ResourceManager.GetString("MudDataGrid.Value", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle {0}.
+        /// </summary>
+        public static string MudNavGroup_ToggleExpand {
+            get {
+                return ResourceManager.GetString("MudNavGroup_ToggleExpand", resourceCulture);
             }
         }
     }

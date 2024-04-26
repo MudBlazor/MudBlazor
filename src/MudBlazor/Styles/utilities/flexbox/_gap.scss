@@ -9,12 +9,15 @@ $value: 0;
     .gap-#{$breakpoint}#{$count} {
       gap: #{$value}px;
     }
+
     .gap-x-#{$breakpoint}#{$count} {
       column-gap: #{$value}px;
     }
+
     .gap-y-#{$breakpoint}#{$count} {
       row-gap: #{$value}px;
     }
+
     $count: $count + 1;
     $value: $value + 4;
   }

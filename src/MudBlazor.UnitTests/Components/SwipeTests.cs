@@ -76,7 +76,7 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.RenderComponent<MudSwipeArea>(ComponentParameter.CreateParameter("PreventDefault", true));
 
-            comp.WaitForState(() => comp.Instance.PreventDefault == true);
+            comp.WaitForState(() => comp.Instance.PreventDefault);
             comp.Instance._listenerIds.Should().BeEquivalentTo(listenerIds);
 
             var invocation = handler.VerifyInvoke("mudElementRef.addDefaultPreventingHandlers");

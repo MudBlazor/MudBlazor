@@ -15,9 +15,12 @@
 
         <DocsPageSection>
             <SectionHeader Title="Usage">
-                <Description>This is the simplest way of using the <CodeInline>Snackbar</CodeInline>. It provides the user with a temporary closable <CodeInline>Snackbar</CodeInline></Description>
+                <Description>
+                    This is the simplest way of using the <CodeInline>Snackbar</CodeInline>. It provides the user with a brief floating message.<br />
+                    It'll hide after some time unless the mouse is over it or it's the last thing touched on a touchscreen.
+                </Description>
             </SectionHeader>
-            <SectionContent Code="SnackbarUsageExample">
+            <SectionContent Code="@nameof(SnackbarUsageExample)">
                 <SnackbarUsageExample />
             </SectionContent>
         </DocsPageSection>
@@ -25,11 +28,10 @@
         <DocsPageSection>
             <SectionHeader Title="Html in messages">
                 <Description>
-                    Snackbar messages are rendered as HTML using <CodeInline>MarkupString</CodeInline>.<br />
-                    However, make sure not to use user-provided input, as that's not very secure.
+                    Snackbar messages can be rendered as HTML using <CodeInline>MarkupString</CodeInline>.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="SnackbarHtmlInMessageExample" ShowCode="false">
+            <SectionContent Code="@nameof(SnackbarHtmlInMessageExample)" ShowCode="false">
                 <SnackbarHtmlInMessageExample />
             </SectionContent>
         </DocsPageSection>
@@ -41,7 +43,7 @@
                     create Snackbars with more complex content.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="SnackbarFromRenderFragmentExample" ShowCode="false">
+            <SectionContent Code="@nameof(SnackbarFromRenderFragmentExample)" ShowCode="false">
                 <SnackbarFromRenderFragmentExample />
             </SectionContent>
         </DocsPageSection>
@@ -54,7 +56,7 @@
                     using the <CodeInline>componentParameters</CodeInline> argument.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="SnackbarFromCustomComponentExample" ShowCode="false">
+            <SectionContent Code="@nameof(SnackbarFromCustomComponentExample)" ShowCode="false">
                 <SnackbarFromCustomComponentExample />
             </SectionContent>
         </DocsPageSection>
@@ -66,7 +68,7 @@
                     To change the snackbar into an alert snackbar, simply pass down the <CodeInline>Severity</CodeInline> enum after the message.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="SnackbarSeverityExample" ShowCode="false">
+            <SectionContent Code="@nameof(SnackbarSeverityExample)" ShowCode="false">
                 <SnackbarSeverityExample />
             </SectionContent>
         </DocsPageSection>
@@ -87,7 +89,7 @@
                     Below, we pass along a modified configuration that differs from our globally-set <CodeInline>ShowCloseIcon</CodeInline>. In this case, it's also the Snackbar's default value.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="SnackbarConfigurationExample">
+            <SectionContent Code="@nameof(SnackbarConfigurationExample)">
                 <SnackbarConfigurationExample />
             </SectionContent>
         </DocsPageSection>
@@ -97,7 +99,7 @@
         <DocsPageSection>
             <SectionHeader Title="Snackbar Position">
             </SectionHeader>
-            <SectionContent Code="SnackbarPositionExample" ShowCode="false" Block="true">
+            <SectionContent Code="@nameof(SnackbarPositionExample)" ShowCode="false" Block="true">
                 <SnackbarPositionExample />
             </SectionContent>
         </DocsPageSection>
@@ -105,7 +107,7 @@
         <DocsPageSection>
             <SectionHeader Title="Snackbar Variants">
             </SectionHeader>
-            <SectionContent Code="SnackbarVariantsExample" ShowCode="false">
+            <SectionContent Code="@nameof(SnackbarVariantsExample)" ShowCode="false">
                 <SnackbarVariantsExample />
             </SectionContent>
         </DocsPageSection>
@@ -118,7 +120,7 @@
                     The snackbar's default behavior is to remain visible until the user closes the snackbar. When <CodeInline>CloseAfterNavigation</CodeInline> is set to <CodeInline>true</CodeInline> a snackbar will close after a user navigates away from the current page. Click both snackbars in the example and then navigate to another component to see this example in action.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="SnackbarNavigationExample" ShowCode="false">
+            <SectionContent Code="@nameof(SnackbarNavigationExample)" ShowCode="false">
                 <SnackbarNavigationExample />
             </SectionContent>
         </DocsPageSection>
@@ -131,7 +133,7 @@
                     A snackbar becomes clickable when a handler is defined in the <CodeInline>OnClick</CodeInline> property of the <CodeInline>SnackbarOptions</CodeInline> object.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="SnackbarOnClickExample" ShowCode="false">
+            <SectionContent Code="@nameof(SnackbarOnClickExample)" ShowCode="false">
                 <SnackbarOnClickExample />
             </SectionContent>
             <SectionHeader>
@@ -139,7 +141,7 @@
                     Alternatively, the <CodeInline>OnClick</CodeInline> handler can be attached to an action button by setting a label in the <CodeInline>Action</CodeInline> property.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="SnackbarActionButtonExample" ShowCode="false">
+            <SectionContent Code="@nameof(SnackbarActionButtonExample)" ShowCode="false">
                 <SnackbarActionButtonExample />
             </SectionContent>
         </DocsPageSection>
@@ -148,7 +150,7 @@
             <SectionHeader Title="Require Interaction">
                 <Description>With the <CodeInline>RequireInteraction</CodeInline> property set to true, the snackbar will not disappear until the user interacts with it.</Description>
             </SectionHeader>
-            <SectionContent Class="pa-0" Code="SnackbarRequireInteractionExample" ShowCode="false">
+            <SectionContent Class="pa-0" Code="@nameof(SnackbarRequireInteractionExample)" ShowCode="false">
                 <SnackbarRequireInteractionExample />
             </SectionContent>
         </DocsPageSection>
@@ -156,7 +158,7 @@
         <DocsPageSection>
             <SectionHeader Title="No Icon">
             </SectionHeader>
-            <SectionContent Code="SnackbarNoIconExample" ShowCode="false">
+            <SectionContent Code="@nameof(SnackbarNoIconExample)" ShowCode="false">
                 <SnackbarNoIconExample />
             </SectionContent>
         </DocsPageSection>
@@ -164,7 +166,7 @@
         <DocsPageSection>
             <SectionHeader Title="Custom Icon">
             </SectionHeader>
-            <SectionContent Code="SnackbarCustomIconExample" ShowCode="false">
+            <SectionContent Code="@nameof(SnackbarCustomIconExample)" ShowCode="false">
                 <SnackbarCustomIconExample />
             </SectionContent>
         </DocsPageSection>
@@ -176,7 +178,7 @@
                     Using the injected ISnackbar, you can use the <CodeInline>.Remove</CodeInline> method to remove a Snackbar programmatically.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="SnackbarRemoveExample" ShowCode="false">
+            <SectionContent Code="@nameof(SnackbarRemoveExample)" ShowCode="false">
                 <SnackbarRemoveExample />
             </SectionContent>
             <SectionHeader>
@@ -185,7 +187,7 @@
                     It will remove all the Snackbars with the specified key, including those that are not displayed due to <CodeInline>MaxDisplayedSnackbars</CodeInline>.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="SnackbarRemoveByKeyExample" ShowCode="false">
+            <SectionContent Code="@nameof(SnackbarRemoveByKeyExample)" ShowCode="false">
                 <SnackbarRemoveByKeyExample/>
             </SectionContent>
         </DocsPageSection>
@@ -198,7 +200,7 @@
                     a Snackbar created with a <CodeInline>RenderFragment</CodeInline> or a custom component, pass a key to <CodeInline>.Add</CodeInline>.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="SnackbarPreventDuplicatesExample" ShowCode="false">
+            <SectionContent Code="@nameof(SnackbarPreventDuplicatesExample)" ShowCode="false">
                 <SnackbarPreventDuplicatesExample />
             </SectionContent>
         </DocsPageSection>

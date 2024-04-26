@@ -13,7 +13,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudDropZone<T> : MudComponentBase, IDisposable
+    public partial class MudDropZone<T> : MudComponentBase, IDisposable where T : notnull
     {
         private bool _containerIsInitialized = false;
         private bool _canDrop = false;
@@ -135,12 +135,14 @@ namespace MudBlazor
 
         private int GetItemIndex(T item)
         {
-            if (!_indices.ContainsKey(item))
+            if (_indices.TryGetValue(item, out var index))
             {
-                _indices.Add(item, _indices.Count);
+                return index;
             }
 
-            return _indices[item];
+            var newIndex = _indices.Count;
+            _indices.Add(item, newIndex);
+            return newIndex;
         }
 
         private T[] GetItems()
@@ -264,7 +266,7 @@ namespace MudBlazor
 
             if (e.Success)
             {
-                if (e.OriginatedDropzoneIdentifier== Identifier && e.DestinationDropzoneIdentifier != e.OriginatedDropzoneIdentifier)
+                if (e.OriginatedDropzoneIdentifier == Identifier && e.DestinationDropzoneIdentifier != e.OriginatedDropzoneIdentifier)
                 {
                     if (e.Item is not null)
                     {

@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -14,7 +15,7 @@ namespace MudBlazor
 {
     // note: the MudTable code is split. Everything depending on the type parameter T of MudTable<T> is here in MudTable<T>
 
-    public partial class MudTable<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudTableBase
+    public partial class MudTable<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudTableBase, IDisposable
     {
         /// <summary>
         /// Defines how a table row looks like. Use MudTd to define the table cells and their content.
@@ -194,7 +195,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<TableRowClickEventArgs<T>> OnRowClick { get; set; }
 
-        internal override void FireRowClickEvent(MouseEventArgs args, MudTr row, object o)
+        internal override async Task FireRowClickEventAsync(MouseEventArgs args, MudTr row, object o)
         {
             var item = default(T);
             try
@@ -202,7 +203,53 @@ namespace MudBlazor
                 item = (T)o;
             }
             catch (Exception) { /*ignore*/}
-            OnRowClick.InvokeAsync(new TableRowClickEventArgs<T>()
+            await OnRowClick.InvokeAsync(new TableRowClickEventArgs<T>()
+            {
+                MouseEventArgs = args,
+                Row = row,
+                Item = item,
+            });
+        }
+
+        /// <summary>
+        /// Row hover start event.
+        /// </summary>
+        [Parameter] public EventCallback<TableRowHoverEventArgs<T>> OnRowMouseEnter { get; set; }
+
+        internal override bool HasRowMouseEnterEventHandler => OnRowMouseEnter.HasDelegate;
+
+        internal override async Task FireRowMouseEnterEventAsync(MouseEventArgs args, MudTr row, object o)
+        {
+            var item = default(T);
+            try
+            {
+                item = (T)o;
+            }
+            catch (Exception) { /*ignore*/}
+            await OnRowMouseEnter.InvokeAsync(new TableRowHoverEventArgs<T>()
+            {
+                MouseEventArgs = args,
+                Row = row,
+                Item = item,
+            });
+        }
+
+        /// <summary>
+        /// Row hover stop event.
+        /// </summary>
+        [Parameter] public EventCallback<TableRowHoverEventArgs<T>> OnRowMouseLeave { get; set; }
+
+        internal override bool HasRowMouseLeaveEventHandler => OnRowMouseLeave.HasDelegate;
+
+        internal override async Task FireRowMouseLeaveEventAsync(MouseEventArgs args, MudTr row, object o)
+        {
+            var item = default(T);
+            try
+            {
+                item = (T)o;
+            }
+            catch (Exception) { /*ignore*/}
+            await OnRowMouseLeave.InvokeAsync(new TableRowHoverEventArgs<T>()
             {
                 MouseEventArgs = args,
                 Row = row,
@@ -282,6 +329,13 @@ namespace MudBlazor
                 InvokeAsync(StateHasChanged);
             }
         }
+
+        /// <summary>
+        /// Checks if the row is selected.
+        /// If there is set a Comparer, uses the comparer, otherwise uses a direct contains
+        /// </summary>
+        protected bool IsCheckedRow(T item)
+            => _comparer is not null ? Context.Selection.Any(x => _comparer.Equals(x, item)) : Context.Selection.Contains(item);
 
         /// <summary>
         /// The Comparer to use for comparing selected items internally.
@@ -461,7 +515,7 @@ namespace MudBlazor
             var t = item.As<T>();
             if (t is null)
                 return false;
-            return FilteredItems?.Contains(t) ?? false;
+            return Items?.Contains(t) ?? false;
         }
 
         public override void UpdateSelection() => SelectedItemsChanged.InvokeAsync(SelectedItems);
@@ -471,7 +525,7 @@ namespace MudBlazor
             get
             {
                 Context.Table = this;
-                Context.TableStateHasChanged = this.StateHasChanged;
+                Context.TableStateHasChanged = StateHasChanged;
                 return Context;
             }
         }
@@ -513,14 +567,30 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// MudTable will automatically control loading animation visibility if ServerData is set.
-        /// See <see cref="MudTableBase.Loading"/>.
+        /// See <see cref="MudTableBase.Loading"/>.  Forward the provided cancellation token to
+        /// methods which support it.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
-        public Func<TableState, Task<TableData<T>>> ServerData { get; set; }
+        public Func<TableState, CancellationToken, Task<TableData<T>>> ServerData { get; set; }
+
+        private CancellationTokenSource _cancellationTokenSrc;
+
+        private void CancelToken()
+        {
+            try
+            {
+                _cancellationTokenSrc?.Cancel();
+            }
+            catch { /*ignored*/ }
+            finally
+            {
+                _cancellationTokenSrc = new CancellationTokenSource();
+            }
+        }
+
 
         internal override bool HasServerData => ServerData != null;
-
 
         TableData<T> _server_data = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private IEnumerable<T> _items;
@@ -542,7 +612,11 @@ namespace MudBlazor
                 SortLabel = label?.SortLabel
             };
 
-            _server_data = await ServerData(state);
+            // Cancel any prior request
+            CancelToken();
+
+            // Get data via the ServerData function
+            _server_data = await ServerData(state, _cancellationTokenSrc.Token);
 
             if (CurrentPage * RowsPerPage > _server_data.TotalItems)
                 CurrentPage = 0;
@@ -628,14 +702,29 @@ namespace MudBlazor
             if (_groupBy is not null)
             {
                 _groupBy.IsInitiallyExpanded = expand;
-                Context?.GroupRows.Where(gr => gr.GroupDefinition == _groupBy).ToList().ForEach(gr => gr.IsExpanded = _groupBy.IsInitiallyExpanded);
+                Context?.GroupRows.Where(gr => gr.GroupDefinition == _groupBy).ToList().ForEach(gr => gr.Expanded = _groupBy.IsInitiallyExpanded);
             }
         }
 
         private string ClearFilterCache()
         {
-            _currentRenderFilteredItemsCached = false; 
-            return ""; 
+            _currentRenderFilteredItemsCached = false;
+            return "";
+        }
+
+        /// <summary>
+        /// Releases resources used by this table.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <inheritdoc />
+        protected virtual void Dispose(bool disposing)
+        {
+            _cancellationTokenSrc?.Dispose();
         }
     }
 }

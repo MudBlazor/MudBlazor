@@ -14,7 +14,7 @@ jobs:
             if (body.includes("- [X] I would like to do a Pull Request")) {
               labels.push("wants to do a PR");
               const author = context.payload.issue.user.login;              
-              const comment = '👋 Thanks for wanting to do a PR @' + author + ' !\nWe suggest that you wait for an answer from @MudBlazor/contribution-team @MudBlazor/core-team . Otherwise we can not guarantee that your PR will be merged. As the library grows, we have to be very strict what PRs we can accept.'
+              const comment = 'Thanks for wanting to do a PR, @' + author + ' !\n\nWe try to merge all non-breaking bugfixes and will deliberate the value of new features for the community. Please note there is no guarantee your pull request will be merged, so if you want to be sure before investing the work, feel free to contact the team first.'
               github.rest.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,

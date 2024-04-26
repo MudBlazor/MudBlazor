@@ -2,7 +2,7 @@
 
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" role="alert" class="@Classname" Style="@Style" @onclick="OnClick">
+<div @attributes="UserAttributes" role="alert" class="@Classname" Style="@Style" @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)">
 <div class="@ClassPosition">
     @if (!NoIcon)
     {

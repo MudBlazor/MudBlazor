@@ -1,0 +1,18 @@
+﻿<div>
+    <MudChart ChartType="ChartType.Bar" ChartSeries="@Series" @bind-SelectedIndex="@_index" XAxisLabels="@XAxisLabels" Width="100%" Height="350px"></MudChart>
+</div>
+
+@code {
+    public static string __description__ = "Single x-axis value with 3 bars";
+
+    private int _index = -1; //default value cannot be 0 -> first selectedindex is 0.
+
+    public List<ChartSeries> Series = new List<ChartSeries>()
+    {
+        new ChartSeries() { Name = "United States", Data = new double[] { 40} },
+        new ChartSeries() { Name = "Germany", Data = new double[] { 19 } },
+        new ChartSeries() { Name = "Sweden", Data = new double[] { 8 } },
+    };
+
+    public string[] XAxisLabels = { "Jan" };
+}

@@ -1,4 +1,4 @@
-﻿@import '../../abstracts/variables';
+@import '../../abstracts/variables';
 
 @mixin flex-grow ($breakpoint) {
   .flex-#{$breakpoint}grow-0 {
@@ -6,6 +6,27 @@
   }
 
   .flex-#{$breakpoint}grow-1 {
+    flex-grow: 1 !important;
+  }
+
+  .flex-#{$breakpoint}grow-start > *:first-child {
+    flex-grow: 1 !important;
+  }
+
+  .flex-#{$breakpoint}grow-end > *:last-child {
+    flex-grow: 1 !important;
+  }
+
+  .flex-#{$breakpoint}grow-start-and-end > :first-child,
+  .flex-#{$breakpoint}grow-start-and-end > :last-child {
+    flex-grow: 1 !important;
+  }
+
+  .flex-#{$breakpoint}grow-middle > *:not(:first-child):not(:last-child) {
+    flex-grow: 1 !important;
+  }
+
+  .flex-#{$breakpoint}grow-all > * {
     flex-grow: 1 !important;
   }
 }

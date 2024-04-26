@@ -13,7 +13,7 @@
             <div class="d-flex">
                 @if (GroupDefinition.Expandable)
                 {
-                    <MudIconButton Class="mud-table-row-expander" Icon="@(IsExpanded ? ExpandIcon : CollapseIcon)" OnClick="@(() => IsExpanded = !IsExpanded)"/>
+                    <MudIconButton Class="mud-table-row-expander" Icon="@(Expanded ? ExpandIcon : CollapseIcon)" OnClick="@(() => Expanded = !Expanded)"/>
                 }
                 else
                 {
@@ -24,7 +24,7 @@
                 }
                 @if (IsCheckable)
                 {
-                    <MudCheckBox T="bool?" @bind-Checked="IsChecked" Class="mud-table-cell-checkbox"/>
+                    <MudCheckBox T="bool?" @bind-Value="IsChecked" Class="mud-table-cell-checkbox"/>
                 }
             </div>
         </MudTd>
@@ -41,7 +41,7 @@ else
 <MudText @attributes="@UserAttributes">@("There aren't any group definition to use with this component.")</MudText>
 }
 
-@if (IsExpanded)
+@if (Expanded)
 {
     Context?.UpdateRowCheckBoxes();
 

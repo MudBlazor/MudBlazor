@@ -7,7 +7,7 @@
         <Column T="Model" Field="@nameof(Model.Status)" />
         <Column T="Model" Field="@nameof(Model.Hired)">
             <FilterTemplate>
-                <MudSwitch T="bool" Color="@Color.Primary" Checked="@_filterHired" CheckedChanged="@((value) => ApplyFilter(value, context))"></MudSwitch>
+                <MudSwitch T="bool" Color="@Color.Primary" Value="@_filterHired" ValueChanged="@((value) => ApplyFilter(value, context))"></MudSwitch>
             </FilterTemplate>
         </Column>
         <Column T="Model" Field="@nameof(Model.HiredOn)" />

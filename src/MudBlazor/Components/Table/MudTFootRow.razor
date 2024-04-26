@@ -7,16 +7,16 @@
 	{
 		<MudTh />
 	}
-	@if (IsExpandable || ((Context?.Table.MultiSelection ?? false) && !IgnoreCheckbox))
+	@if (Expandable || ((Context?.Table.MultiSelection ?? false) && !IgnoreCheckbox))
     {
         <MudTd>
-            @if (IsExpandable)
+            @if (Expandable)
             {
                 <div class="ml-4 mr-5"></div>
             }
             @if (IsCheckable)
             {
-                <MudCheckBox @bind-Checked="IsChecked" Class="mud-table-cell-checkbox"/>
+                <MudCheckBox @bind-Value="IsChecked" Class="mud-table-cell-checkbox"/>
             }
         </MudTd>
     }

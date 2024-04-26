@@ -37,10 +37,13 @@ namespace MudBlazor
 
         public class FilterActions
         {
-            public Func<IFilterDefinition<T>, Task> ApplyFilterAsync { get; init; } = null!;
-            public Func<IEnumerable<IFilterDefinition<T>>, Task> ApplyFiltersAsync { get; init; } = null!;
-            public Func<IFilterDefinition<T>, Task> ClearFilterAsync { get; init; } = null!;
-            public Func<IEnumerable<IFilterDefinition<T>>, Task> ClearFiltersAsync { get; init; } = null!;
+            public required Func<IFilterDefinition<T>, Task> ApplyFilterAsync { get; init; }
+
+            public required Func<IEnumerable<IFilterDefinition<T>>, Task> ApplyFiltersAsync { get; init; }
+
+            public required Func<IFilterDefinition<T>, Task> ClearFilterAsync { get; init; }
+
+            public required Func<IEnumerable<IFilterDefinition<T>>, Task> ClearFiltersAsync { get; init; }
         }
     }
 }

@@ -33,15 +33,15 @@
                                 @for (int i = GetMinYear(); i <= GetMaxYear(); i++)
                                 {
                                     var year = i;
-                                    <div class="mud-picker-year" id="@(_componentId + year)" @onclick="(() => OnYearClicked(year))" @onclick:stopPropagation="true">
-                                        <MudText Typo="@GetYearTypo(year)" Class="@GetYearClasses(year)">@GetCalendarYear(year)</MudText>
+                                    <div class="mud-picker-year" id="@(_componentId + year)" @onclick="(async () => await OnYearClickedAsync(year))" @onclick:stopPropagation="true">
+                                        <MudText Typo="@GetYearTypo(year)" Class="@GetYearClasses(year)">@year</MudText>
                                     </div>
                                 }
                             </div>
                         }
                         else if (tempMonth == 0 && CurrentView == OpenTo.Month)
                         {
-                            var calendarYear = GetCalendarYear(PickerMonth?.Year ?? DateTime.Today.Year);
+                            var calendarYear = GetCalendarYear(PickerMonth ?? DateTime.Today);
                             var prevLabel = $"Go to previous year {calendarYear - 1}";
                             var nextLabel = $"Go to next year {calendarYear + 1}";
 
@@ -65,7 +65,7 @@
                                 @foreach (var month in GetAllMonths())
                                 {
                                     <button type="button" aria-label="@GetMonthName(month)" disabled="@IsMonthDisabled(month)"
-                                    class="mud-picker-month mud-button-root" @onclick="(() => OnMonthSelected(month))" @onclick:stopPropagation="true">
+                                    class="mud-picker-month mud-button-root" @onclick="(async () => await OnMonthSelectedAsync(month))" @onclick:stopPropagation="true">
                                         <MudText Typo="@GetMonthTypo(month)" Class="@GetMonthClasses(month)">@GetAbbreviatedMonthName(month)</MudText>
                                     </button>
                                 }
@@ -126,7 +126,7 @@
                                                 var selectedDay = !firstMonthFirstYear ? day : day.AddDays(-1);
                                                 <button @key="@(!firstMonthFirstYear ? selectedDay : tempId)" type="button" style="--day-id: @(!firstMonthFirstYear ? tempId: tempId + 1);"
                                                         class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon mud-picker-calendar-day @(!firstMonthFirstYear || day.Day == _picker_month.Value.Day? GetDayClasses(tempMonth, day) : GetDayClasses(tempMonth, selectedDay))"
-                                                        @onclick="(() => { var d = selectedDay; OnDayClicked(d); })"
+                                                        @onclick="(async () => { var d = selectedDay; await OnDayClickedAsync(d); })"
                                                         @onclick:stopPropagation="true"
                                                         aria-label='@selectedDay.ToString("dddd, dd MMMM yyyy")'
                                                         onmouseover="@(async () => await HandleMouseoverOnPickerCalendarDayButton(!firstMonthFirstYear ? tempId : tempId + 1))"

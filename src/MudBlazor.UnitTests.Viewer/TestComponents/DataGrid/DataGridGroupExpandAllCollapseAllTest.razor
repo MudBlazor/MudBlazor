@@ -132,7 +132,7 @@
         new("Transition Metal (d)",3,"Zirconium")
     };
 
-    private MudDataGrid<Element>? _dataGrid;
+    private MudDataGrid<Element> _dataGrid;
 
     public void RefreshList()
     {
@@ -147,10 +147,5 @@
     public void CollapseAllGroups()
     {
         _dataGrid?.CollapseAllGroups();
-    }
-
-    public void NavigateToPage(int pageNumber)
-    {
-        if (_dataGrid is not null) _dataGrid.CurrentPage = pageNumber;
     }
 }

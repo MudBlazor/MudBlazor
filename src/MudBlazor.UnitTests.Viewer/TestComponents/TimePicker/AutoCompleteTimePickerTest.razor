@@ -2,9 +2,9 @@
 
 <MudTimePicker Label="With action buttons" @bind-Time="time">
     <PickerActions>
-        <MudButton Class="mr-auto align-self-start" OnClick="@(() => context.Clear())">Clear</MudButton>
-        <MudButton OnClick="@(() => context.Close(false))">Cancel</MudButton>
-        <MudButton Id="theCloseButton" Color="Color.Primary" OnClick="@(() => context.Close())">Ok</MudButton>
+        <MudButton Class="mr-auto align-self-start" OnClick="@(() => context.ClearAsync())">Clear</MudButton>
+        <MudButton OnClick="@(() => context.CloseAsync(false))">Cancel</MudButton>
+        <MudButton Id="theCloseButton" Color="Color.Primary" OnClick="@(() => context.CloseAsync())">Ok</MudButton>
     </PickerActions>
 </MudTimePicker>
 

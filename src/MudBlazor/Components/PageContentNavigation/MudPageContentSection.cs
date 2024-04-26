@@ -68,8 +68,8 @@ namespace MudBlazor
         internal void SetLevelStructure(int counter, int diff)
         {
             LevelSortingValue = counter;
-            int levelDiff = diff / 10;
-            int value = counter + levelDiff;
+            var levelDiff = diff / 10;
+            var value = counter + levelDiff;
             foreach (var item in _children)
             {
                 item.SetLevelStructure(value, levelDiff);

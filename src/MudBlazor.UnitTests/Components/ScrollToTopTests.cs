@@ -1,8 +1,8 @@
-using MudBlazor.UnitTests.TestComponents;
+﻿using System;
 using Bunit;
-using NUnit.Framework;
 using FluentAssertions;
-using System;
+using MudBlazor.UnitTests.TestComponents;
+using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -25,7 +25,7 @@ namespace MudBlazor.UnitTests.Components
             scrollIntoViewInvocation.Arguments.Count.Should().Be(2);
 
             // checks invocation of js scroll function to ensure main functionality
-            comp.Find("span").Click();
+            comp.Find("span.mud-scroll-to-top").Click();
             var scrollToInvocation = Context.JSInterop.VerifyInvoke("mudScrollManager.scrollTo");
             scrollToInvocation.Arguments.Count.Should().Be(4);
 

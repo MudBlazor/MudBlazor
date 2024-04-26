@@ -92,13 +92,13 @@ namespace MudBlazor.UnitTests.Components
             // check initial state: form should be invalid due to having a required field that is not filled
             form.IsValid.Should().Be(false);
             form.IsTouched.Should().Be(false);
-            comp.FindComponents<MudSwitch<bool>>()[0].Instance.Checked.Should().Be(false);
-            comp.FindComponents<MudSwitch<bool>>()[1].Instance.Checked.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>()[0].Instance.Value.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>()[1].Instance.Value.Should().Be(false);
             // filling in the required field
             textFields[1].Find("input").Change("Fill in the required field to make this form valid");
             form.IsValid.Should().Be(true);
-            comp.FindComponents<MudSwitch<bool>>()[0].Instance.Checked.Should().Be(true);
-            comp.FindComponents<MudSwitch<bool>>()[1].Instance.Checked.Should().Be(true);
+            comp.FindComponents<MudSwitch<bool>>()[0].Instance.Value.Should().Be(true);
+            comp.FindComponents<MudSwitch<bool>>()[1].Instance.Value.Should().Be(true);
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace MudBlazor.UnitTests.Components
             var form = comp.FindComponent<MudForm>().Instance;
             // check initial state: form should be valid due to having no required field, but the user's two-way binding did override that value to false
             comp.WaitForAssertion(() => form.IsValid.Should().Be(true));
-            comp.WaitForAssertion(() => comp.FindComponent<MudSwitch<bool>>().Instance.Checked.Should().Be(true));
+            comp.WaitForAssertion(() => comp.FindComponent<MudSwitch<bool>>().Instance.Value.Should().Be(true));
         }
 
         /// <summary>
@@ -445,7 +445,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormWithCheckboxTest()
         {
-            var comp = Context.RenderComponent<FormWithCheckboxTest>();
+            var comp = Context.RenderComponent<FormWithCheckBoxAndTextFieldsTest>();
             var textFields = comp.FindAll("input");
             textFields.Count.Should().Be(4); // three textfields, one checkbox
             // let's fill in some values
@@ -459,9 +459,9 @@ namespace MudBlazor.UnitTests.Components
                 tf.Instance.Text.Should().NotBeNullOrEmpty();
             comp.FindComponent<MudTextField<int>>().Instance.Value.Should().Be(17);
             // then click the checkbox
-            comp.FindComponent<MudCheckBox<bool>>().Instance.Checked.Should().Be(true);
+            comp.FindComponent<MudCheckBox<bool>>().Instance.Value.Should().Be(true);
             comp.FindAll("input")[3].Change(false); // it was on before
-            comp.FindComponent<MudCheckBox<bool>>().Instance.Checked.Should().Be(false);
+            comp.FindComponent<MudCheckBox<bool>>().Instance.Value.Should().Be(false);
             // the text fields should be unchanged
             foreach (var tf in comp.FindComponents<MudTextField<string>>())
                 tf.Instance.Text.Should().NotBeNullOrEmpty();
@@ -475,7 +475,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormWithCheckboxTest2()
         {
-            var comp = Context.RenderComponent<FormWithCheckboxTest>();
+            var comp = Context.RenderComponent<FormWithCheckBoxAndTextFieldsTest>();
             var form = comp.FindComponent<MudForm>().Instance;
             form.IsValid.Should().BeTrue(because: "none of the fields are required");
         }
@@ -569,7 +569,7 @@ namespace MudBlazor.UnitTests.Components
             textfields[2].Instance.Text.Should().BeNullOrEmpty();
             comp.WaitForAssertion(() => checkbox.Instance.HasErrors.Should().BeFalse());
             checkbox.Instance.ErrorText.Should().BeNullOrEmpty();
-            comp.WaitForAssertion(() => checkbox.Instance.Checked.Should().BeFalse());
+            comp.WaitForAssertion(() => checkbox.Instance.Value.Should().BeFalse());
             // TODO: fill out the form with errors, field after field, check how fields get validation errors after blur
         }
 
@@ -614,7 +614,7 @@ namespace MudBlazor.UnitTests.Components
             var colorPickerComp = comp.FindComponent<MudColorPicker>();
             var colorPicker = comp.FindComponent<MudColorPicker>().Instance;
             var forbiddenColor = colorPicker.Value;
-            colorPickerComp.SetParam(x => x.Validation, new Func<MudColor?, string>(color => color != null && color.Value == forbiddenColor.Value ? $"{forbiddenColor.Value} is not allowed" : null));
+            colorPickerComp.SetParam(x => x.Validation, new Func<MudColor, string>(color => color != null && color.Value == forbiddenColor.Value ? $"{forbiddenColor.Value} is not allowed" : null));
             // should not be valid since the default color is invalid
             form.IsTouched.Should().BeFalse();
             form.IsValid.Should().BeFalse();
@@ -647,7 +647,7 @@ namespace MudBlazor.UnitTests.Components
             var colorPickerComp = comp.FindComponent<MudColorPicker>();
             var colorPicker = comp.FindComponent<MudColorPicker>().Instance;
             var forbiddenColor = colorPicker.Palette.First();
-            colorPickerComp.SetParam(x => x.Validation, new Func<MudColor?, string>(color => color != null && color.Value == forbiddenColor.Value ? $"{forbiddenColor.Value} is not allowed" : null));
+            colorPickerComp.SetParam(x => x.Validation, new Func<MudColor, string>(color => color != null && color.Value == forbiddenColor.Value ? $"{forbiddenColor.Value} is not allowed" : null));
             // initial form state
             form.IsTouched.Should().BeFalse();
             form.IsValid.Should().BeFalse();
@@ -1054,19 +1054,18 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// FileUpload should be validated like every other form component when a file is cleared via template action
+        /// FileUpload should be validated like every other form component when a file is cleared via ClearAsync method
         /// </summary>
         [Test]
-        public async Task Form_Should_Validate_FileUpload_When_File_Cleared_Via_Template_Action()
+        public async Task Form_Should_Validate_FileUpload_When_File_Cleared_Via_ClearAsync_Method()
         {
             var fileName = "cat.jpg";
             var fileToUpload = InputFileContent.CreateFromText("I am a cat image, trust me.", "cat.jpg");
-            var comp = Context.RenderComponent<FormWithFileUploadAndButtonTemplateContextTest>();
+            var comp = Context.RenderComponent<FormWithFileUploadAndDragAndDropActivatorTest>();
             var form = comp.FindComponent<MudForm>().Instance;
             var fileUploadComp = comp.FindComponent<MudFileUpload<IBrowserFile>>();
             var fileUploadInstance = comp.FindComponent<MudFileUpload<IBrowserFile>>().Instance;
             var input = fileUploadComp.FindComponent<InputFile>();
-            var clearButton = fileUploadComp.Find("button#upload-button");
 
             // check initial state: form should not be valid because form is untouched
             form.IsValid.Should().BeFalse();
@@ -1076,7 +1075,7 @@ namespace MudBlazor.UnitTests.Components
             fileUploadInstance.ErrorText.Should().BeNullOrEmpty();
 
             // clear files
-            await comp.InvokeAsync(() => clearButton.Click());
+            await comp.InvokeAsync(() => comp.Find("button#clear-button").Click());
             fileUploadInstance.Files.Should().BeNull();
 
             // form should now be invalid because a file is required
@@ -1550,7 +1549,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<FormShouldRegisterOnlyTopSubscribeToParentFormFormControlsTest>();
             var form = comp.FindComponent<MudFormTestable>().Instance;
 
-            Assert.AreEqual(14, form.FormControls.Count);
+            form.FormControls.Count.Should().Be(14);
         }
 
         /// <summary>
@@ -1606,21 +1605,21 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => textField.SetText("new value"));
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("new value");
-            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, textField);
+            textField.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
 
             numeric.Value.Should().Be(0);
             await comp.InvokeAsync(() => numeric.Increment());
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be(1);
-            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, numeric);
+            numeric.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
 
             var inputs = comp.FindAll("input").ToArray();
             // check initial state
-            radioGroup.SelectedOption.Should().Be(null);
+            radioGroup.Value.Should().Be(null);
             // click radio 1
             inputs[2].Click();
-            radioGroup.SelectedOption.Should().Be("1");
+            radioGroup.Value.Should().Be("1");
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("1");
-            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, radioGroup);
+            radioGroup.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
 
             var fileContent = InputFileContent.CreateFromText("", "upload.txt");
 
@@ -1629,7 +1628,7 @@ namespace MudBlazor.UnitTests.Components
             input.UploadFiles(fileContent);
 
             (comp.Instance.FormFieldChangedEventArgs.NewValue is IBrowserFile).Should().BeTrue();
-            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, mudFile);
+            mudFile.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
         }
 
         /// <summary>
@@ -1652,15 +1651,15 @@ namespace MudBlazor.UnitTests.Components
             var dateString = new DateTime(2022, 04, 03).ToShortDateString();
             await comp.InvokeAsync(() => datePicker.Find("input").Change(dateString));
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be(new DateTime(2022, 04, 03));
-            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, datePicker.Instance);
+            datePicker.Instance.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
 
             await comp.InvokeAsync(() => timePicker.Find("input").Change("00:45"));
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be(new TimeSpan(00, 45, 00));
-            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, timePicker.Instance);
+            timePicker.Instance.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
 
             await comp.InvokeAsync(() => colorPicker.Find("input").Change("#180f6fff"));
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be(new MudColor("#180f6fff"));
-            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, colorPicker.Instance);
+            colorPicker.Instance.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
         }
 
         /// <summary>
@@ -1934,6 +1933,70 @@ namespace MudBlazor.UnitTests.Components
             await validator.InvokeAsync(() => validator.Instance.ClearErrors());
 
             tf.Instance.ValidationErrors.Should().HaveCount(0);
+        }
+
+        /// <summary>
+        /// CheckBox should be validated like every other form component when ticked using mouse
+        /// </summary>
+        [Test]
+        public async Task FormWithCheckBoxTest_When_CheckBoxTickedUsingMouse()
+        {
+            var comp = Context.RenderComponent<FormWithCheckBoxTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var checkBox = comp.FindComponent<MudCheckBox<bool>>().Instance;
+
+            // check initial state: form should not be valid because checkBox is required
+            form.IsValid.Should().Be(false);
+            checkBox.Error.Should().BeFalse();
+            checkBox.ErrorText.Should().BeNullOrEmpty();
+
+            // tick checkBox with an emulated mouse click
+            comp.Find("input").Change(true);
+            form.IsTouched.Should().Be(true);
+            form.IsValid.Should().Be(true);
+            form.Errors.Length.Should().Be(0);
+            checkBox.Error.Should().BeFalse();
+            checkBox.ErrorText.Should().BeNullOrEmpty();
+
+            // untick checkBox with an emulated mouse click
+            comp.Find("input").Change(false);
+            form.IsValid.Should().Be(false);
+            form.Errors.Length.Should().Be(1);
+            form.Errors[0].Should().Be("Required");
+            checkBox.Error.Should().BeTrue();
+            checkBox.ErrorText.Should().Be("Required");
+        }
+
+        /// <summary>
+        /// CheckBox should be validated like every other form component when ticked using keyboard
+        /// </summary>
+        [Test]
+        public async Task FormWithCheckBoxTest_When_CheckBoxTickedUsingKeyboard()
+        {
+            var comp = Context.RenderComponent<FormWithCheckBoxTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var checkBox = comp.FindComponent<MudCheckBox<bool>>().Instance;
+
+            // check initial state: form should not be valid because checkBox is required
+            form.IsValid.Should().Be(false);
+            checkBox.Error.Should().BeFalse();
+            checkBox.ErrorText.Should().BeNullOrEmpty();
+
+            // tick checkBox with a key press
+            comp.Find("input").KeyDown(Key.Space);
+            form.IsTouched.Should().Be(true);
+            form.IsValid.Should().Be(true);
+            form.Errors.Length.Should().Be(0);
+            checkBox.Error.Should().BeFalse();
+            checkBox.ErrorText.Should().BeNullOrEmpty();
+
+            // untick checkBox with a key press
+            comp.Find("input").KeyDown(Key.Space);
+            form.IsValid.Should().Be(false);
+            form.Errors.Length.Should().Be(1);
+            form.Errors[0].Should().Be("Required");
+            checkBox.Error.Should().BeTrue();
+            checkBox.ErrorText.Should().Be("Required");
         }
     }
 }

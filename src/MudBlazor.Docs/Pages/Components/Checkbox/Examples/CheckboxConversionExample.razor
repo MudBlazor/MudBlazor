@@ -1,11 +1,11 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudCheckBox @bind-Checked="boolean">bool: @boolean</MudCheckBox>
-<MudCheckBox @bind-Checked="nullable" Color="Color.Primary">bool?: @nullable</MudCheckBox>
-<MudCheckBox @bind-Checked="integer" Color="Color.Secondary">int: @integer</MudCheckBox>
-<MudCheckBox @bind-Checked="str" Color="Color.Tertiary">string: "@(str)"</MudCheckBox>
-<MudCheckBox @bind-Checked="customstr" Converter="@(new CustomStringToBoolConverter())"> custom string: "@(customstr)"</MudCheckBox>
-<MudCheckBox @bind-Checked="obj" Converter="@(new ObjectToBoolConverter())">boxed bool: "@(obj.ToString())"</MudCheckBox>
+<MudCheckBox @bind-Value="boolean">bool: @boolean</MudCheckBox>
+<MudCheckBox @bind-Value="nullable" Color="Color.Primary">bool?: @nullable</MudCheckBox>
+<MudCheckBox @bind-Value="integer" Color="Color.Secondary">int: @integer</MudCheckBox>
+<MudCheckBox @bind-Value="str" Color="Color.Tertiary">string: "@(str)"</MudCheckBox>
+<MudCheckBox @bind-Value="customstr" Converter="@(new CustomStringToBoolConverter())"> custom string: "@(customstr)"</MudCheckBox>
+<MudCheckBox @bind-Value="obj" Converter="@(new ObjectToBoolConverter())">boxed bool: "@(obj.ToString())"</MudCheckBox>
 
 @code{ 
     public bool boolean { get; set; } = true;

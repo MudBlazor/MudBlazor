@@ -8,12 +8,12 @@ using System.Linq;
 
 namespace MudBlazor.Docs.WasmHost.Prerender
 {
-    public class LimitedConcurrentDictionary<TKey, TValue> 
+    public class LimitedConcurrentDictionary<TKey, TValue>
     {
         private ConcurrentDictionary<TKey, TValue> _dict = new();
-        private Int32 MaxCapacity { get; init; }
+        private int MaxCapacity { get; init; }
 
-        public LimitedConcurrentDictionary(Int32 maxCapacity)
+        public LimitedConcurrentDictionary(int maxCapacity)
         {
             MaxCapacity = maxCapacity;
         }

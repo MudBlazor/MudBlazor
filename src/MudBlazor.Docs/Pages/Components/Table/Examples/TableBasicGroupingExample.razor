@@ -18,7 +18,7 @@
           Items="@Elements"
           Virtualize="@_virtualize"
           GroupBy="@_groupDefinition"
-          GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
+          GroupHeaderStyle="background-color:var(--mud-palette-background-gray)"
           GroupFooterClass="mb-4"
           Dense="_dense"
           MultiSelection="_multiSelect">
@@ -59,11 +59,11 @@
     </GroupFooterTemplate>
 </MudTable>
 
-<MudSwitch @bind-Checked="_dense" Color="Color.Primary">Dense</MudSwitch>
-<MudSwitch @bind-Checked="_multiSelect" Color="Color.Primary">MultiSelect</MudSwitch>
-<MudSwitch @bind-Checked="_virtualize" Color="Color.Primary">Virtualize</MudSwitch>
-<MudSwitch @bind-Checked="_groupDefinition.Indentation" Color="Color.Primary">Indentation</MudSwitch>
-<MudSwitch @bind-Checked="_groupDefinition.Expandable" Color="Color.Primary">Expandable</MudSwitch>
+<MudSwitch @bind-Value="_dense" Color="Color.Primary">Dense</MudSwitch>
+<MudSwitch @bind-Value="_multiSelect" Color="Color.Primary">MultiSelect</MudSwitch>
+<MudSwitch @bind-Value="_virtualize" Color="Color.Primary">Virtualize</MudSwitch>
+<MudSwitch @bind-Value="_groupDefinition.Indentation" Color="Color.Primary">Indentation</MudSwitch>
+<MudSwitch @bind-Value="_groupDefinition.Expandable" Color="Color.Primary">Expandable</MudSwitch>
 
 @code { 
     private bool _dense = false;

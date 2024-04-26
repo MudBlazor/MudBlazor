@@ -63,3 +63,9 @@ const loadingScreenObserver = new MutationObserver((mutationsList, observer) => 
 
 // Start observing the document body for changes in the DOM.
 loadingScreenObserver.observe(document.body, { childList: true, subtree: true });
+
+// Return prerender status
+// For users we serve the wasm app without prerendering for bots we serve a prerendered wasm app
+function getPreRender() {
+    return document.documentElement.dataset.prerender;
+}

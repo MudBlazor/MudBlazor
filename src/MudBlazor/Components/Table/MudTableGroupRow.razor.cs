@@ -34,7 +34,8 @@ namespace MudBlazor
         /// <summary>
         /// Inner Items List for the Group
         /// </summary>
-        [Parameter] public IGrouping<object, T> Items
+        [Parameter]
+        public IGrouping<object, T> Items
         {
             get => _items;
             set
@@ -95,13 +96,13 @@ namespace MudBlazor
             }
         }
 
-        public bool IsExpanded { get; internal set; } = true;
+        public bool Expanded { get; internal set; } = true;
 
         protected override Task OnInitializedAsync()
         {
             if (GroupDefinition != null)
             {
-                IsExpanded = GroupDefinition.IsInitiallyExpanded;
+                Expanded = GroupDefinition.IsInitiallyExpanded;
                 ((TableContext<T>)Context)?.GroupRows.Add(this);
                 SyncInnerGroupItems();
             }

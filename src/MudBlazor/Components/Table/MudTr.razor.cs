@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
@@ -17,7 +18,7 @@ namespace MudBlazor
             .AddClass(Class).Build();
 
         protected string ActionsStylename => new StyleBuilder()
-            .AddStyle("padding-left", "34px", IsExpandable).Build();
+            .AddStyle("padding-left", "34px", Expandable).Build();
 
 
         [CascadingParameter] public TableContext Context { get; set; }
@@ -34,7 +35,7 @@ namespace MudBlazor
 
         [Parameter] public bool IsEditSwitchBlocked { get; set; }
 
-        [Parameter] public bool IsExpandable { get; set; }
+        [Parameter] public bool Expandable { get; set; }
 
 
         [Parameter]
@@ -55,7 +56,7 @@ namespace MudBlazor
             }
         }
 
-        public void OnRowClicked(MouseEventArgs args)
+        public async Task OnRowClickedAsync(MouseEventArgs args)
         {
             var table = Context?.Table;
             if (table is null)
@@ -64,7 +65,49 @@ namespace MudBlazor
             StartEditingItem(buttonClicked: false);
             if (table.MultiSelection && table.SelectOnRowClick && !table.IsEditable)
                 IsChecked = !IsChecked;
-            table.FireRowClickEvent(args, this, Item);
+            await table.FireRowClickEventAsync(args, this, Item);
+        }
+
+        public async Task OnRowMouseEnterAsync(MouseEventArgs args)
+        {
+            var table = Context?.Table;
+            if (table is null)
+                return;
+            await table.FireRowMouseEnterEventAsync(args, this, Item);
+        }
+
+        public async Task OnRowMouseLeaveAsync(MouseEventArgs args)
+        {
+            var table = Context?.Table;
+            if (table is null)
+                return;
+            await table.FireRowMouseLeaveEventAsync(args, this, Item);
+        }
+
+        private EventCallback<MouseEventArgs> RowMouseEnterEventCallback
+        {
+            get
+            {
+                var hasEventHandler = Context?.Table?.HasRowMouseEnterEventHandler ?? false;
+
+                if (hasEventHandler)
+                    return EventCallback.Factory.Create<MouseEventArgs>(this, OnRowMouseEnterAsync);
+
+                return default;
+            }
+        }
+
+        private EventCallback<MouseEventArgs> RowMouseLeaveEventCallback
+        {
+            get
+            {
+                var hasEventHandler = Context?.Table?.HasRowMouseLeaveEventHandler ?? false;
+
+                if (hasEventHandler)
+                    return EventCallback.Factory.Create<MouseEventArgs>(this, OnRowMouseLeaveAsync);
+
+                return default;
+            }
         }
 
         private void StartEditingItem() => StartEditingItem(buttonClicked: true);

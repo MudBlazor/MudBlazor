@@ -71,14 +71,14 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.Radio.Data)]
-        public T? SelectedOption
+        public T? Value
         {
             get => _value;
             set => SetSelectedOptionAsync(value, true).AndForget();
         }
 
         [Parameter]
-        public EventCallback<T> SelectedOptionChanged { get; set; }
+        public EventCallback<T> ValueChanged { get; set; }
 
         internal bool GetDisabledState() => Disabled || ParentDisabled; //internal because the MudRadio reads this value directly
 
@@ -92,11 +92,11 @@ namespace MudBlazor
 
                 if (updateRadio)
                 {
-                    var radio = _radios.FirstOrDefault(r => OptionEquals(r.Option, _value));
+                    var radio = _radios.FirstOrDefault(r => OptionEquals(r.Value, _value));
                     await SetSelectedRadioAsync(radio, false);
                 }
 
-                await SelectedOptionChanged.InvokeAsync(_value);
+                await ValueChanged.InvokeAsync(_value);
 
                 await BeginValidateAsync();
                 FieldChanged(_value);
@@ -131,7 +131,7 @@ namespace MudBlazor
 
                 if (updateOption)
                 {
-                    await SetSelectedOptionAsync(GetOptionOrDefault(_selectedRadio), false);
+                    await SetSelectedOptionAsync(GetValueOrDefault(_selectedRadio), false);
                 }
             }
         }
@@ -142,7 +142,7 @@ namespace MudBlazor
 
             if (_selectedRadio is null)
             {
-                if (OptionEquals(radio.Option, _value))
+                if (OptionEquals(radio.Value, _value))
                 {
                     return SetSelectedRadioAsync(radio, false);
                 }
@@ -160,19 +160,6 @@ namespace MudBlazor
             }
         }
 
-        [Obsolete($"Use {nameof(ResetValueAsync)} instead. This will be removed in v7")]
-        [ExcludeFromCodeCoverage]
-        protected override void ResetValue()
-        {
-            if (_selectedRadio is not null)
-            {
-                _selectedRadio.SetChecked(false);
-                _selectedRadio = null;
-            }
-
-            base.ResetValue();
-        }
-
         protected override Task ResetValueAsync()
         {
             if (_selectedRadio is not null)
@@ -184,9 +171,9 @@ namespace MudBlazor
             return base.ResetValueAsync();
         }
 
-        private static T? GetOptionOrDefault(MudRadio<T>? radio)
+        private static T? GetValueOrDefault(MudRadio<T>? radio)
         {
-            return radio is not null ? radio.Option : default;
+            return radio is not null ? radio.Value : default;
         }
 
         private static bool OptionEquals(T? option1, T? option2)

@@ -223,7 +223,7 @@
             {
                 Name = value.Name,
                 Type = value.PropertyType.ConvertToCSharpSource(),
-                Default = value.GetValue(mudTheme.Palette, null),
+                Default = value.GetValue(mudTheme.PaletteLight, null),
                 Dark = value.GetValue(mudTheme.PaletteDark, null),
                 CSSVariable = $"--mud-palette-{GetCssVar(value.Name)}"
             };

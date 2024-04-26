@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor.Docs.Examples
+@using System.Threading
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
@@ -7,7 +8,7 @@
     <MudItem xs="12" sm="6" md="4">
         <MudAutocomplete T="string" Label="US States" @bind-Value="value3" SearchFunc="@Search1" Variant="Variant.Outlined" ProgressIndicatorColor="SelectedColor">
             <ProgressIndicatorInPopoverTemplate>
-                <MudList Clickable="false">
+                <MudList T="string" ReadOnly>
                     <MudListItem>
                         Loading...
                     </MudListItem>
@@ -60,10 +61,10 @@
         "Washington", "West Virginia", "Wisconsin", "Wyoming",
     };
 
-    private async Task<IEnumerable<string>> Search1(string value)
+    private async Task<IEnumerable<string>> Search1(string value, CancellationToken token)
     {
         // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(1000);
+        await Task.Delay(1000, token);
 
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))

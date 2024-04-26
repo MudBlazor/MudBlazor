@@ -95,7 +95,7 @@ public partial class MudPaper : MudComponentBase
     /// <summary>
     /// Child content of the component.
     /// </summary>
-    [Parameter] 
+    [Parameter]
     [Category(CategoryTypes.Paper.Behavior)]
     public RenderFragment? ChildContent { get; set; }
 }

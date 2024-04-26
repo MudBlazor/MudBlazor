@@ -127,6 +127,14 @@ namespace MudBlazor
             return d.ToString(format);
         }
 
+        /// <summary>
+        /// Indicates whether lines in a LineChart can be individually hidden by the user. 
+        /// When set to true, the chart provides a checkboxes
+        /// to toggle the visibility of each line.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Chart.Behavior)]
+        public bool CanHideSeries { get; set; } = false;
     }
 
     public enum ChartType
@@ -134,6 +142,7 @@ namespace MudBlazor
         Donut,
         Line,
         Pie,
-        Bar
+        Bar,
+        StackedBar
     }
 }

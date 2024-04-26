@@ -277,25 +277,6 @@ namespace MudBlazor
         /// <summary>
         /// Reset all form controls and reset their validation state.
         /// </summary>
-        [Obsolete($"Use {nameof(ResetAsync)} instead. This will ve removed in v7")]
-        public void Reset()
-        {
-            foreach (var control in _formControls.ToArray())
-            {
-                control.Reset();
-            }
-
-            foreach (var form in ChildForms)
-            {
-                form.Reset();
-            }
-
-            EvaluateForm(debounce: false);
-        }
-
-        /// <summary>
-        /// Reset all form controls and reset their validation state.
-        /// </summary>
         public async Task ResetAsync()
         {
             foreach (var control in _formControls.ToArray())
@@ -334,7 +315,7 @@ namespace MudBlazor
         /// </summary>
         public void ResetTouched()
         {
-            this._touched = false;
+            _touched = false;
         }
 
         protected override Task OnAfterRenderAsync(bool firstRender)

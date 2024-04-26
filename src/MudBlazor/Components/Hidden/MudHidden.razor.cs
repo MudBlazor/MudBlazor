@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Services;
+using MudBlazor.State;
 
 namespace MudBlazor
 {
 #nullable enable
     public partial class MudHidden : MudComponentBase, IBrowserViewportObserver, IAsyncDisposable
     {
-        private bool _isHidden = true;
+        private readonly ParameterState<bool> _isHiddenState;
         private bool _serviceIsReady = false;
-        private Guid _breakpointServiceSubscriptionId;
         private Breakpoint _currentBreakpoint = Breakpoint.None;
-
-        [Inject]
-        [Obsolete]
-        public IBreakpointService BreakpointService { get; set; } = null!;
 
         [Inject]
         protected IBrowserViewportService BrowserViewportService { get; set; } = null!;
@@ -42,18 +37,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Hidden.Behavior)]
-        public bool IsHidden
-        {
-            get => _isHidden;
-            set
-            {
-                if (_isHidden != value)
-                {
-                    _isHidden = value;
-                    IsHiddenChanged.InvokeAsync(_isHidden);
-                }
-            }
-        }
+        public bool IsHidden { get; set; } = true;
 
         /// <summary>
         /// Fires when the breakpoint changes visibility of the component
@@ -67,6 +51,14 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Hidden.Behavior)]
         public RenderFragment? ChildContent { get; set; }
+
+        public MudHidden()
+        {
+            using var registerScope = CreateRegisterScope();
+            _isHiddenState = registerScope.RegisterParameter<bool>(nameof(IsHidden))
+                .WithParameter(() => IsHidden)
+                .WithEventCallback(() => IsHiddenChanged);
+        }
 
         protected override async Task OnParametersSetAsync()
         {
@@ -135,7 +127,7 @@ namespace MudBlazor
                 hidden = !hidden;
             }
 
-            IsHidden = hidden;
+            await _isHiddenState.SetValueAsync(hidden);
         }
     }
 }

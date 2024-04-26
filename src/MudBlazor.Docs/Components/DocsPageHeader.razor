@@ -19,6 +19,7 @@
         <meta Property="og:description" Content="@SubTitle" />
         <meta Name="twitter:description" Content="@SubTitle" />
     }
+    <link rel="canonical" href="@GetCanonicalUri()" />
 </HeadContent>
 
 @if (SpecialHeaderContent != null)
@@ -65,7 +66,6 @@ else
 }
 @if (_isApiPage && !string.IsNullOrEmpty(ComponentLink))
 {
-    <link Rel="canonical" Href="@($"https://mudblazor.com/{ComponentLink}")" />
     <DocsPageSection api-link-section>
         <SectionHeader Title="Pages" />
         <div class="docs-page-apilinks">
@@ -105,7 +105,7 @@ else
     {
         base.OnParametersSet();
         _isApiPage = NavigationManager.Uri.ToString().Contains("/api/");
-        _componentName = NavigationManager.Uri.ToString().Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+        _componentName = NavigationManager.GetComponentLink();
         _componentType = ApiLink.GetTypeFromComponentLink(_componentName);
         _component = MenuService.GetComponent(_componentType);
         _parentComponent = MenuService.GetParent(_componentType);
@@ -121,16 +121,16 @@ else
         return $"components/{_parentComponent?.Link}";
     }
 
-    string GetTitle() => $"{Title} - MudBlazor";
+    private string GetTitle() => $"{Title} - MudBlazor";
 
-    string GetSubTitle()
+    private string GetSubTitle()
     {
         if (string.IsNullOrEmpty(SubTitle))
             return "";
         return SubTitle.TrimEnd('.') + ".";
     }
 
-    string GetKeywords()
+    private string GetKeywords()
     {
         var keywords = new HashSet<string>(Regex.Split(Keywords ?? "", @",\s"));
         keywords.Add(Title);
@@ -143,5 +143,10 @@ else
         keywords.Remove("");
         keywords.Remove(null);
         return string.Join(", ", keywords);
+    }
+
+    private string GetCanonicalUri()
+    {
+        return NavigationManager.Uri.Replace(NavigationManager.BaseUri, "https://mudblazor.com/");
     }
 }
