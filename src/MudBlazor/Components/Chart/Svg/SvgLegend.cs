@@ -1,12 +1,16 @@
-﻿
-using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.Charts.SVG.Models
 {
+    /// <summary>
+    /// Represents a series of series labels as an SVG path.
+    /// </summary>
     public class SvgLegend
     {
+        /// <summary>
+        /// Gets or sets the position of this path within a list.
+        /// </summary>
         public int Index { get; set; }
         public string Labels { get; set; }
         public string Data { get; set; }

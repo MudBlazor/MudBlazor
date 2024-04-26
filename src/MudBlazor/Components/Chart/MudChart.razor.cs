@@ -8,6 +8,13 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
+    /// Represents a graphic display of data values in a line, bar, stacked bar, pie, or donut shape.
+    /// </summary>
+    public partial class MudChart
+    {
+    }
+
+    /// <summary>
     /// Represents a base class for designing <see cref="MudChart"/> components.
     /// </summary>
     public abstract class MudChartBase : MudComponentBase
@@ -16,7 +23,7 @@ namespace MudBlazor
         /// Gets or sets the data to be displayed.
         /// </summary>
         /// <remarks>
-        /// The values in this array should align with labels in the <see cref="InputLabels"/> property.
+        /// Applies to <c>Pie</c> and <c>Donut</c> charts.  The number of values in this array should be the same as the number of labels in the <see cref="InputLabels"/> property.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
@@ -26,7 +33,7 @@ namespace MudBlazor
         /// Gets or sets the labels describing data values.
         /// </summary>
         /// <remarks>
-        /// The values in this array should align with data values in the <see cref="InputData"/> property.
+        /// Applies to <c>Pie</c> and <c>Donut</c> charts.  The number of labels in this array should be the same as the number of values in the <see cref="InputData"/> property.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
@@ -35,6 +42,9 @@ namespace MudBlazor
         /// <summary>
         /// Gets or sets the labels applied to the horizontal axis.
         /// </summary>
+        /// <remarks>
+        /// Applies to <c>Line</c>, <c>Bar</c>, and <c>StackedBar</c> charts.  The number of values in this array should be equal to the number of values in the <see cref="ChartSeries.Data"/> property.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
         public string[] XAxisLabels { get; set; } = Array.Empty<string>();
@@ -147,7 +157,8 @@ namespace MudBlazor
         /// <summary>
         /// Occurs when the <see cref="SelectedIndex"/> has changed.
         /// </summary>
-        [Parameter] public EventCallback<int> SelectedIndexChanged { get; set; }
+        [Parameter] 
+        public EventCallback<int> SelectedIndexChanged { get; set; }
 
         /// <summary>
         /// Scales the input data to the range between 0 and 1
