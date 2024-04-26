@@ -1191,6 +1191,17 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Navigates to a specific page when the data grid has an attached MudPagination component.
+        /// </summary>
+        /// <param name="pageIndex">Index of the page to navigate to.</param>
+        public void NavigateTo(int pageIndex)
+        {
+            CurrentPage = Math.Min(Math.Max(0, pageIndex), numPages - 1);
+
+            GroupItems();
+        }
+
+        /// <summary>
         /// Sets the rows displayed per page when the data grid has an attached data pager.
         /// </summary>
         /// <param name="size">The page size.</param>
