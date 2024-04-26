@@ -157,7 +157,7 @@ namespace MudBlazor
         /// <summary>
         /// Occurs when the <see cref="SelectedIndex"/> has changed.
         /// </summary>
-        [Parameter] 
+        [Parameter]
         public EventCallback<int> SelectedIndexChanged { get; set; }
 
         /// <summary>
