@@ -11,7 +11,6 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
-using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;

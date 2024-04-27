@@ -93,7 +93,6 @@
     grid-template-columns: 1fr auto 1fr;
   }
 
-
   &.mud-disabled {
     cursor: default;
     pointer-events: none;
@@ -102,7 +101,7 @@
   }
 }
 
-.mud-toggle-item-icon {
+.mud-toggle-item-check-icon {
   font-size: 1.25em !important;
   justify-self: end;
 }

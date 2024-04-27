@@ -187,7 +187,7 @@ namespace MudBlazor
         public bool Ripple { get; set; } = true;
 
         /// <summary>
-        /// The size of all the items in the toggle group.
+        /// The size of the items in the toggle group.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
