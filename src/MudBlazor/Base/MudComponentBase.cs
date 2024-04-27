@@ -338,6 +338,7 @@ namespace MudBlazor
                         case "DisableColorField":
                         case "DisableAlpha":
                         case "DisableSidePadding":
+                        case "DisableOverlay":
                             NotifyIllegalParameter(parameter);
                             break;
                     }

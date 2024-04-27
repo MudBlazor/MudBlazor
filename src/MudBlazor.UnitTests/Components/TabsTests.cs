@@ -1106,7 +1106,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        ///  Depending on the DisableSliderAnimation parameter, it should toggle the transition style attribute
+        ///  Depending on the SliderAnimation parameter, it should toggle the transition style attribute
         /// </summary>
         [Test]
         public async Task ToggleTabsSliderAnimation()
@@ -1115,15 +1115,16 @@ namespace MudBlazor.UnitTests.Components
             //and before the calculation the slider is hidden to avoid movement on first load
             var comp = Context.RenderComponent<ToggleTabsSlideAnimationTest>(p => p.Add(x => x.SelectedTab, 0));
 
-            //Toggle DisableSliderAnimation to true
+            //Set SliderAnimation to true
+            //Check if style attr does not contain transform: none
+            comp.Instance.SliderAnimation = true;
+            comp.Find(".mud-tab-slider").GetAttribute("style").Contains("transition: none").Should().BeFalse();
+
+            //Set SliderAnimation to false
             //Check if style attr contains transform: none
-            comp.Instance.toggle = true;
+            comp.Instance.SliderAnimation = false;
             comp.Find(".mud-tab-slider").GetAttribute("style").Contains("transition:none").Should().BeTrue();
 
-            //Toggle DisableSliderAnimation to false
-            //Check if style attr does not contain transform: none
-            comp.Instance.toggle = false;
-            comp.Find(".mud-tab-slider").GetAttribute("style").Contains("transition: none").Should().BeFalse();
         }
 
         /// <summary>

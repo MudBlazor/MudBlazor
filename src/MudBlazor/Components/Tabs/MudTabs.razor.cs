@@ -23,7 +23,7 @@ namespace MudBlazor
         private bool _prevButtonDisabled;
         private bool _nextButtonDisabled;
         private bool _showScrollButtons;
-        private bool _disableSliderAnimation;
+        private bool _sliderAnimation = true;
         private ElementReference _tabsContentSize;
         private double _sliderSize;
         private double _sliderPosition;
@@ -171,14 +171,14 @@ namespace MudBlazor
         public bool Ripple { get; set; } = true;
 
         /// <summary>
-        /// If true, disables slider animation
+        /// If true, displays slider animation
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public bool DisableSliderAnimation
+        public bool SliderAnimation
         {
-            get => _disableSliderAnimation; 
-            set => _disableSliderAnimation = value;
+            get => _sliderAnimation; 
+            set => _sliderAnimation = value;
         }
 
         /// <summary>
@@ -525,15 +525,15 @@ namespace MudBlazor
             new StyleBuilder()
             .AddStyle("width", _sliderSize.ToPx(), Position is Position.Top or Position.Bottom)
             .AddStyle("right", _sliderPosition.ToPx(), Position is Position.Top or Position.Bottom)
-            .AddStyle("transition", _disableSliderAnimation ? "none" : "right .3s cubic-bezier(.64,.09,.08,1);", Position is Position.Top or Position.Bottom)
-            .AddStyle("transition", _disableSliderAnimation ? "none" : "top .3s cubic-bezier(.64,.09,.08,1);", IsVerticalTabs())
+            .AddStyle("transition", !_sliderAnimation ? "none" : "right .3s cubic-bezier(.64,.09,.08,1);", Position is Position.Top or Position.Bottom)
+            .AddStyle("transition", !_sliderAnimation ? "none" : "top .3s cubic-bezier(.64,.09,.08,1);", IsVerticalTabs())
             .AddStyle("height", _sliderSize.ToPx(), IsVerticalTabs())
             .AddStyle("top", _sliderPosition.ToPx(), IsVerticalTabs())
             .Build() : new StyleBuilder()
             .AddStyle("width", _sliderSize.ToPx(), Position is Position.Top or Position.Bottom)
             .AddStyle("left", _sliderPosition.ToPx(), Position is Position.Top or Position.Bottom)
-            .AddStyle("transition", _disableSliderAnimation ? "none" : "left .3s cubic-bezier(.64,.09,.08,1);", Position is Position.Top or Position.Bottom)
-            .AddStyle("transition", _disableSliderAnimation ? "none" : "top .3s cubic-bezier(.64,.09,.08,1);", IsVerticalTabs())
+            .AddStyle("transition", !_sliderAnimation ? "none" : "left .3s cubic-bezier(.64,.09,.08,1);", Position is Position.Top or Position.Bottom)
+            .AddStyle("transition", !_sliderAnimation ? "none" : "top .3s cubic-bezier(.64,.09,.08,1);", IsVerticalTabs())
             .AddStyle("height", _sliderSize.ToPx(), IsVerticalTabs())
             .AddStyle("top", _sliderPosition.ToPx(), IsVerticalTabs())
             .Build();
