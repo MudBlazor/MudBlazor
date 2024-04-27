@@ -177,7 +177,7 @@ namespace MudBlazor
         [Category(CategoryTypes.Tabs.Appearance)]
         public bool SliderAnimation
         {
-            get => _sliderAnimation; 
+            get => _sliderAnimation;
             set => _sliderAnimation = value;
         }
 
