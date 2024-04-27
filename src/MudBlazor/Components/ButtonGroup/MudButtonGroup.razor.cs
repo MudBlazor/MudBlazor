@@ -14,10 +14,11 @@ namespace MudBlazor
             .AddClass($"mud-button-group-{Variant.ToDescriptionString()}")
             .AddClass($"mud-button-group-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
             .AddClass($"mud-button-group-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}")
-            .AddClass("mud-button-group-vertical", VerticalAlign)
-            .AddClass("mud-button-group-horizontal", !VerticalAlign)
+            .AddClass("mud-button-group-vertical", Vertical)
+            .AddClass("mud-button-group-horizontal", !Vertical)
             .AddClass("mud-button-group-disable-elevation", !DropShadow)
             .AddClass("mud-button-group-rtl", RightToLeft)
+            .AddClass("mud-width-full", FullWidth)
             .AddClass(Class)
             .Build();
 
@@ -58,7 +59,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ButtonGroup.Appearance)]
-        public bool VerticalAlign { get; set; } = false;
+        public bool Vertical { get; set; }
 
         /// <summary>
         /// Gets or sets whether a shadow is displayed.
@@ -99,5 +100,12 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.ButtonGroup.Appearance)]
         public Variant Variant { get; set; } = Variant.Text;
+
+        /// <summary>
+        /// If true, the button group will take up 100% of available width.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ButtonGroup.Appearance)]
+        public bool FullWidth { get; set; }
     }
 }

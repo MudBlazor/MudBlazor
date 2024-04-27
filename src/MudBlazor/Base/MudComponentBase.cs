@@ -290,6 +290,15 @@ namespace MudBlazor
                             break;
                     }
                 }
+                else if (this is MudButtonGroup)
+                {
+                    switch (parameter)
+                    {
+                        case "VerticalAlign":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
                 else
                 {
                     switch (parameter)
