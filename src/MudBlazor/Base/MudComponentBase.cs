@@ -36,7 +36,7 @@ namespace MudBlazor
         public string? Class { get; set; }
 
         /// <summary>
-        /// Gets or sets any CSS styles applied to this component. 
+        /// Gets or sets any CSS styles applied to this component.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="Class"/> property to apply CSS classes.
@@ -277,6 +277,15 @@ namespace MudBlazor
                         case "Target":
                         case "HtmlTag":
                         case "ButtonType":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (MatchTypes(typeof(MudFileUpload<>)))
+                {
+                    switch (parameter)
+                    {
+                        case "ButtonTemplate":
                             NotifyIllegalParameter(parameter);
                             break;
                     }
