@@ -8,7 +8,7 @@ namespace MudBlazor
     /// <remarks>
     /// This class is typically used to display multiple sets of values in a line, bar, or stacked bar chart.
     /// </remarks>
-    [DebuggerDisplay("Name={Name}, IsVisible={IsVisible}, Index={Index}, Data={Data}")]
+    [DebuggerDisplay("{Index} = {Name} (Visible={IsVisible})")]
     public class ChartSeries
     {
         /// <summary>

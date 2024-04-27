@@ -8,7 +8,6 @@ namespace MudBlazor
     /// <remarks>
     /// This class is typically used to control display features of a chart such as: colors, the number of horizontal and vertical ticks, and line smoothing options.
     /// </remarks>
-    [DebuggerDisplay("DisableLegend={DisableLegend}, XAxisLines={XAxisLines}, YAxisLines={YAxisLines}, YAxisTicks={YAxisTicks}, YAxisFormat={YAxisFormat}")]
     public class ChartOptions
     {
         /// <summary>
@@ -99,14 +98,17 @@ namespace MudBlazor
         /// Lines are smoothed to pass through each data point as a natural spline.
         /// </summary>
         NaturalSpline,
+
         /// <summary>
         /// Lines are smoothed to pass through each data point as an end-point spline.
         /// </summary>
         EndSlope,
+
         /// <summary>
         /// Lines are smoothed to pass through each data point as a periodic spline.
         /// </summary>
         Periodic,
+
         /// <summary>
         /// Lines are straight from one point to the next.
         /// </summary>

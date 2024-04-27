@@ -5,7 +5,7 @@ namespace MudBlazor.Charts.SVG.Models
     /// <summary>
     /// Represents a circular shape drawn as an SVG path.
     /// </summary>
-    [DebuggerDisplay("Index={Index}, CX={CX}, CY={CY}, Radius={Radius}")]
+    [DebuggerDisplay("{Index} = {CX},{CY}, R={Radius}")]
     public class SvgCircle
     {
         /// <summary>
