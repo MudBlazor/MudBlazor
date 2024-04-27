@@ -336,6 +336,9 @@ namespace MudBlazor
                         case "InitiallyExpanded":
                         case "RightAlignSmall":
                         case "IsExpandable":
+                        case "IsChecked":
+                        case "IsCheckable":
+                        case "IsCheckedChanged":
                             NotifyIllegalParameter(parameter);
                             break;
                     }

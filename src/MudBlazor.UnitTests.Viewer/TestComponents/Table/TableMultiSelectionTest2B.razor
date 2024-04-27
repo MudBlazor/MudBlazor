@@ -3,7 +3,7 @@
 <MudText>SelectedItems { @string.Join(", ", selectedItems) }</MudText>
 <MudTable Items="items" @bind-SelectedItems="selectedItems" MultiSelection="true" CustomHeader="true">
     <HeaderContent>
-        <MudTHeadRow IsCheckable="true">
+        <MudTHeadRow Checkable="true">
             <MudTh>#</MudTh>
         </MudTHeadRow>
     </HeaderContent>
