@@ -18,7 +18,7 @@ namespace MudBlazor
             .AddClass("mud-button-group-horizontal", !Vertical)
             .AddClass("mud-button-group-disable-elevation", !DropShadow)
             .AddClass("mud-button-group-rtl", RightToLeft)
-            .AddClass("mud-width-full", FullWidth)
+            .AddClass("mud-full-width", FullWidth)
             .AddClass(Class)
             .Build();
 
