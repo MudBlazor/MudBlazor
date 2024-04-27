@@ -346,7 +346,6 @@ namespace MudBlazor
         /// <summary>
         /// Releases resources used by this component.
         /// </summary>
-        /// <returns></returns>
         public async ValueTask DisposeAsync()
         {
             await DisposeAsync(true);

@@ -7,7 +7,7 @@ namespace MudBlazor.Charts.SVG.Models
     /// <summary>
     /// Represents a series of series labels as an SVG path.
     /// </summary>
-    [DebuggerDisplay("Index={Index}, IsVisible={IsVisible}, Labels={Labels}, Data={Data}")]
+    [DebuggerDisplay("{Index} = {Labels}")]
     public class SvgLegend
     {
         /// <summary>
