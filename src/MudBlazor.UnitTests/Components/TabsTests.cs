@@ -1118,11 +1118,13 @@ namespace MudBlazor.UnitTests.Components
             //Set SliderAnimation to true
             //Check if style attr does not contain transform: none
             comp.Instance.SliderAnimation = true;
-            comp.Find(".mud-tab-slider").GetAttribute("style").Contains("transition: none").Should().BeFalse();
+            comp.Render();
+            comp.Find(".mud-tab-slider").GetAttribute("style").Contains("transition:none").Should().BeFalse();
 
             //Set SliderAnimation to false
             //Check if style attr contains transform: none
             comp.Instance.SliderAnimation = false;
+            comp.Render();
             comp.Find(".mud-tab-slider").GetAttribute("style").Contains("transition:none").Should().BeTrue();
 
         }
