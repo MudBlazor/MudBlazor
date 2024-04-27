@@ -647,16 +647,16 @@ namespace MudBlazor.UnitTests.Components
             var mudTable = comp.Instance.MudTable;
 
             // All row checkbox states must be false.
-            mudTable.Context.Rows.Count(r => r.Value.IsChecked).Should().Be(0);
+            mudTable.Context.Rows.Count(r => r.Value.Checked).Should().Be(0);
 
             // All grouprow checkbox states must be false.
-            mudTable.Context.GroupRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(14);
+            mudTable.Context.GroupRows.Count(r => r.Checked.HasValue && !r.Checked.Value).Should().Be(14);
 
             // The headerrow checkbox state must be false.
-            mudTable.Context.HeaderRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(1);
+            mudTable.Context.HeaderRows.Count(r => r.Checked.HasValue && !r.Checked.Value).Should().Be(1);
 
             // The footerrow checkbox state must be false.
-            mudTable.Context.FooterRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(0);
+            mudTable.Context.FooterRows.Count(r => r.Checked.HasValue && !r.Checked.Value).Should().Be(0);
         }
 
         /// <summary>

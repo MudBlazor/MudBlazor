@@ -78,7 +78,7 @@ namespace MudBlazor
 
         internal bool IsActive { get; set; }
 
-        private bool IsChecked => ItemValue == Rating?.SelectedValue;
+        private bool Checked => ItemValue == Rating?.SelectedValue;
 
         protected override void OnParametersSet()
         {
