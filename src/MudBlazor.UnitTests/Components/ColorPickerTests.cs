@@ -151,12 +151,12 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudColorPicker>();
 
-            comp.Instance.Alpha.Should().BeTrue();
-            comp.Instance.ColorField.Should().BeTrue();
-            comp.Instance.ModeSwitch.Should().BeTrue();
+            comp.Instance.ShowAlpha.Should().BeTrue();
+            comp.Instance.ShowColorField.Should().BeTrue();
+            comp.Instance.ShowModeSwitch.Should().BeTrue();
             comp.Instance.ShowInputs.Should().BeTrue();
             comp.Instance.ShowSliders.Should().BeTrue();
-            comp.Instance.Preview.Should().BeTrue();
+            comp.Instance.ShowPreview.Should().BeTrue();
             comp.Instance.ColorPickerMode.Should().Be(ColorPickerMode.RGB);
             comp.Instance.ColorPickerView.Should().Be(ColorPickerView.Spectrum);
             comp.Instance.UpdateBindingIfOnlyHSLChanged.Should().BeFalse();
@@ -510,15 +510,15 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Toggle_ColorField()
         {
-            var comp = Context.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.ColorField, true));
+            var comp = Context.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.ShowColorField, true));
 
             _ = comp.Find(_mudColorPickerCssSelector);
 
-            comp.SetParametersAndRender(p => p.Add(x => x.ColorField, false));
+            comp.SetParametersAndRender(p => p.Add(x => x.ShowColorField, false));
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(_mudColorPickerCssSelector));
 
-            comp.SetParametersAndRender(p => p.Add(x => x.ColorField, true));
+            comp.SetParametersAndRender(p => p.Add(x => x.ShowColorField, true));
 
             _ = comp.Find(_mudColorPickerCssSelector);
         }
@@ -526,15 +526,15 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Toggle_Preview()
         {
-            var comp = Context.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.Preview, true));
+            var comp = Context.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.ShowPreview, true));
 
             _ = comp.Find(_colorDotCssSelector);
 
-            comp.SetParametersAndRender(p => p.Add(x => x.Preview, false));
+            comp.SetParametersAndRender(p => p.Add(x => x.ShowPreview, false));
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(_colorDotCssSelector));
 
-            comp.SetParametersAndRender(p => p.Add(x => x.Preview, true));
+            comp.SetParametersAndRender(p => p.Add(x => x.ShowPreview, true));
 
             _ = comp.Find(_colorDotCssSelector);
         }
@@ -582,15 +582,15 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Toggle_ModeSwitch()
         {
-            var comp = Context.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.ModeSwitch, true));
+            var comp = Context.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.ShowModeSwitch, true));
 
             _ = comp.Find(_colorInputModeSwitchCssSelector);
 
-            comp.SetParametersAndRender(p => p.Add(x => x.ModeSwitch, false));
+            comp.SetParametersAndRender(p => p.Add(x => x.ShowModeSwitch, false));
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(_colorInputModeSwitchCssSelector));
 
-            comp.SetParametersAndRender(p => p.Add(x => x.ModeSwitch, true));
+            comp.SetParametersAndRender(p => p.Add(x => x.ShowModeSwitch, true));
 
             _ = comp.Find(_colorInputModeSwitchCssSelector);
         }
@@ -606,19 +606,19 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SimpleColorPickerTest>(p =>
             {
                 p.Add(x => x.ColorPickerMode, mode);
-                p.Add(x => x.Alpha, true);
+                p.Add(x => x.ShowAlpha, true);
                 p.Add(x => x.ColorValue, color);
             });
 
             _ = comp.Find(_alphaInputCssSelector);
 
-            comp.SetParametersAndRender(p => p.Add(x => x.Alpha, false));
+            comp.SetParametersAndRender(p => p.Add(x => x.ShowAlpha, false));
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(_alphaInputCssSelector));
             comp.Instance.ColorValue.Should().Be(expectedColor);
             comp.Instance.TextValue.Should().Be(expectedColor.ToString(MudColorOutputFormats.Hex));
 
-            comp.SetParametersAndRender(p => p.Add(x => x.Alpha, true));
+            comp.SetParametersAndRender(p => p.Add(x => x.ShowAlpha, true));
 
             _ = comp.Find(_alphaInputCssSelector);
             comp.Instance.ColorValue.Should().Be(expectedColor);
@@ -634,13 +634,13 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SimpleColorPickerTest>(p =>
             {
                 p.Add(x => x.ColorPickerMode, ColorPickerMode.HEX);
-                p.Add(x => x.Alpha, true);
+                p.Add(x => x.ShowAlpha, true);
                 p.Add(x => x.ColorValue, color);
             });
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(_alphaInputCssSelector));
 
-            comp.SetParametersAndRender(p => p.Add(x => x.Alpha, false));
+            comp.SetParametersAndRender(p => p.Add(x => x.ShowAlpha, false));
 
             comp.Instance.ColorValue.Should().Be(expectedColor);
 
@@ -652,7 +652,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.TextValue.Should().Be("#0cdc7c");
 
-            comp.SetParametersAndRender(p => p.Add(x => x.Alpha, true));
+            comp.SetParametersAndRender(p => p.Add(x => x.ShowAlpha, true));
             comp.Instance.ColorValue.Should().Be(expectedColor);
             inputs = comp.FindAll(".mud-picker-color-inputfield input");
             inputs.Should().ContainSingle();
@@ -955,7 +955,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 p.Add(x => x.ViewMode, view);
                 p.Add(x => x.Variant, variant);
-                p.Add(x => x.Preview, false);
+                p.Add(x => x.ShowPreview, false);
                 p.Add(x => x.ShowSliders, false);
                 p.Add(x => x.DisableInput, true);
             });
@@ -1002,7 +1002,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SimpleColorPickerTest>(p =>
             {
                 p.Add(x => x.ViewMode, view);
-                p.Add(x => x.Alpha, !disableAlpha);
+                p.Add(x => x.ShowAlpha, !disableAlpha);
                 p.Add(x => x.ColorValue, new MudColor(120, 121, 122, 1.0));
             });
 

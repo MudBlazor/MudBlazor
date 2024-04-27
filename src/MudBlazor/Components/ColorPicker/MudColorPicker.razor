@@ -20,7 +20,7 @@
              <MudIconButton Class="pa-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Palette)" Icon="@PaletteIcon" OnClick="(() => ChangeView(ColorPickerView.Palette))" />
          </MudPickerToolbar>
         <MudPickerContent Class="mud-picker-color-content">
-            @if(ColorField)
+            @if(ShowColorField)
             {
                 <div class="mud-picker-color-picker">
 					@if (_activeColorPickerView == ColorPickerView.Spectrum)
@@ -59,13 +59,13 @@
             }
             @if (_activeColorPickerView != ColorPickerView.GridCompact)
             {
-                @if (ShowSliders || ShowInputs || Preview)
+                @if (ShowSliders || ShowInputs || ShowPreview)
                 {
                     <div class="mud-picker-color-controls">
-                        @if (ShowSliders || Preview)
+                        @if (ShowSliders || ShowPreview)
                         {
                             <div class="mud-picker-color-controls-row">
-                                @if (Preview)
+                                @if (ShowPreview)
                                 {
                                     <div class="mud-picker-color-dot mud-picker-color-dot-current mud-ripple" @onclick="ToggleCollection">
                                         <div class="mud-picker-color-fill" style="@($"background: {_value.ToString(MudColorOutputFormats.RGBA)};")"></div>
@@ -78,7 +78,7 @@
 										{
                                             <MudSlider Class="mud-picker-color-slider hue" dir="ltr" T="int" Value="(int)_value.H" ValueChanged="UpdateBaseColorSlider" Step="1" Min="0" Max="360" />
                                         }
-                                        @if (Alpha)
+                                        @if (ShowAlpha)
                                         {
                                             <MudSlider Class="mud-picker-color-slider alpha" Value="_value.A" ValueChanged="SetAlpha" T="int"  Min="0" Max="255" Step="1" Style="@AlphaSliderStyle"  />
                                         }
@@ -182,7 +182,7 @@
                                             break;
                                     }
 
-                                    @if (Alpha && ColorPickerMode != ColorPickerMode.HEX)
+                                    @if (ShowAlpha && ColorPickerMode != ColorPickerMode.HEX)
                                     {
                                         <MudNumericField T="double"
                                                          Value="@(Math.Round(_value.A / 255.0, 2))"
@@ -197,7 +197,7 @@
                                                          Required="@Required" />
                                     }
                                 </div>
-                                @if (ModeSwitch)
+                                @if (ShowModeSwitch)
                                 {
                                     <div class="mud-picker-control-switch">
                                         <MudIconButton OnClick="ChangeMode" Icon="@ImportExportIcon" Class="pa-1 me-n1"></MudIconButton>

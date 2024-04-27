@@ -73,7 +73,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public bool Alpha
+        public bool ShowAlpha
         {
             get => _alpha;
             set
@@ -97,14 +97,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public bool ColorField { get; set; } = true;
+        public bool ShowColorField { get; set; } = true;
 
         /// <summary>
         /// If true, the switch to change color mode will be displayed.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public bool ModeSwitch { get; set; } = true;
+        public bool ShowModeSwitch { get; set; } = true;
 
         /// <summary>
         /// If true, textfield inputs and color mode switch will be displayed.
@@ -125,7 +125,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public bool Preview { get; set; } = true;
+        public bool ShowPreview { get; set; } = true;
 
         /// <summary>
         /// The initial mode (RGB, HSL or HEX) the picker should open. Defaults to RGB
@@ -544,11 +544,11 @@ namespace MudBlazor
         #region helper
 
         private string GetSelectorLocation() => $"translate({Math.Round(_selectorX, 2).ToString(CultureInfo.InvariantCulture)}px, {Math.Round(_selectorY, 2).ToString(CultureInfo.InvariantCulture)}px);";
-        private string GetColorTextValue() => (!Alpha || _activeColorPickerView is ColorPickerView.Palette or ColorPickerView.GridCompact) ? _value.ToString(MudColorOutputFormats.Hex) : _value.ToString(MudColorOutputFormats.HexA);
-        private int GetHexColorInputMaxLength() => !Alpha ? 7 : 9;
+        private string GetColorTextValue() => (!ShowAlpha || _activeColorPickerView is ColorPickerView.Palette or ColorPickerView.GridCompact) ? _value.ToString(MudColorOutputFormats.Hex) : _value.ToString(MudColorOutputFormats.HexA);
+        private int GetHexColorInputMaxLength() => !ShowAlpha ? 7 : 9;
 
         private EventCallback<MouseEventArgs> GetEventCallback() => EventCallback.Factory.Create<MouseEventArgs>(this, () => CloseAsync());
-        private bool IsAnyControlVisible() => Preview || ShowSliders || ShowInputs;
+        private bool IsAnyControlVisible() => ShowPreview || ShowSliders || ShowInputs;
         private EventCallback<MouseEventArgs> GetSelectPaletteColorCallback(MudColor color) => new EventCallbackFactory().Create(this, (MouseEventArgs _) => SelectPaletteColorAsync(color));
 
         private Color GetButtonColor(ColorPickerView view) => _activeColorPickerView == view ? Color.Primary : Color.Inherit;
