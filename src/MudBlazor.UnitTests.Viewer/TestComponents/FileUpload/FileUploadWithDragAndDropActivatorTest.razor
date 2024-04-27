@@ -7,7 +7,7 @@
                @bind-Files:after="@OnFilesChangedAsync"
                Accept=".png,.jpg,.jpeg"
                Hidden="@false"
-               InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20"
+               InputClass="absolute mud-full-width mud-full-height overflow-hidden z-20"
                InputStyle="opacity:0"
                tabindex="-1"
                @ondrop="@ClearDragClass"
@@ -53,7 +53,7 @@
 
     private string? _imageSource;
 
-    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mud-width-full mud-height-full";
+    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mud-full-width mud-full-height";
     private string _dragClass = DefaultDragClass;
 
     private void SetDragClass()

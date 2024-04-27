@@ -38,7 +38,7 @@ public partial class SectionContent
         new CssBuilder("docs-section-content-inner")
             .AddClass($"relative d-flex flex-grow-1 flex-wrap justify-center align-center", !Block)
             .AddClass($"d-block mx-auto", Block)
-            .AddClass($"mud-width-full", Block && FullWidth)
+            .AddClass($"mud-full-width", Block && FullWidth)
             .AddClass("pa-8", !_hasCode)
             .AddClass("px-8 pb-8 pt-2", _hasCode)
             .Build();

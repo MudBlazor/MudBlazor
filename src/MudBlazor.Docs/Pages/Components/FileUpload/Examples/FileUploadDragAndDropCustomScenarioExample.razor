@@ -8,7 +8,7 @@
                    OnFilesChanged="OnInputFileChanged"
                    AppendMultipleFiles
                    Hidden="@false"
-                   InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
+                   InputClass="absolute mud-full-width mud-full-height overflow-hidden z-10"
                    InputStyle="opacity:0"
                    tabindex="-1"
                    @ondrop="@ClearDragClass"
@@ -56,7 +56,7 @@
 
 @code {
 #nullable enable
-    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
+    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-full-width mud-full-height";
     private string _dragClass = DefaultDragClass;
     private readonly List<string> _fileNames = new();
     private MudFileUpload<IReadOnlyList<IBrowserFile>>? _fileUpload;

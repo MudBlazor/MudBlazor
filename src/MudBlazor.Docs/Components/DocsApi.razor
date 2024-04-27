@@ -26,7 +26,7 @@
                 <SectionHeader Title="Properties" />
                 <SectionContent Class="docs-content-api" Outlined="false">
                     <EnumSwitch T="Grouping" @bind-Value="_propertiesGrouping" />
-                    <MudTable Items="@properties" Elevation="0" Class="ma-0 mud-width-full" Breakpoint="@Breakpoint.Sm" GroupBy="@PropertiesGroupDefinition">
+                    <MudTable Items="@properties" Elevation="0" Class="ma-0 mud-full-width" Breakpoint="@Breakpoint.Sm" GroupBy="@PropertiesGroupDefinition">
                         <HeaderContent>
                             <MudTh>Name</MudTh>
                             <MudTh>Type</MudTh>
@@ -90,7 +90,7 @@
             <DocsPageSection>
                 <SectionHeader Title="EventCallbacks" />
                 <SectionContent Class="docs-content-api" Outlined="false">
-                    <MudTable Items="@eventCallbacks" Elevation="0" Class="ma-0 mud-width-full" Breakpoint="@Breakpoint.Sm">
+                    <MudTable Items="@eventCallbacks" Elevation="0" Class="ma-0 mud-full-width" Breakpoint="@Breakpoint.Sm">
                         <HeaderContent>
                             <MudTh>Name</MudTh>
                             <MudTh>Type</MudTh>
@@ -111,7 +111,7 @@
             <DocsPageSection>
                 <SectionHeader Title="Methods" />
                 <SectionContent Class="docs-content-api" Outlined="false">
-                    <MudTable Items="@methods" Elevation="0" Class="ma-0 mud-width-full" Breakpoint="@Breakpoint.Sm">
+                    <MudTable Items="@methods" Elevation="0" Class="ma-0 mud-full-width" Breakpoint="@Breakpoint.Sm">
                         <HeaderContent>
                             <MudTh>Name</MudTh>
                             <MudTd>Parameters</MudTd>

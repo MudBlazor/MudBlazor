@@ -16,7 +16,7 @@
                            For="@(() => _model.Files)"
                            AppendMultipleFiles
                            Hidden="@false"
-                           InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
+                           InputClass="absolute mud-full-width mud-full-height overflow-hidden z-10"
                            InputStyle="opacity:0"
                            ErrorText="@string.Empty"
                            tabindex="-1"
@@ -87,7 +87,7 @@
     private bool _isValid;
     private bool _isTouched;
     private const string FileContent = "this is content";
-    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
+    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-full-width mud-full-height";
     private string _dragClass = DefaultDragClass;
 
     private void Upload()

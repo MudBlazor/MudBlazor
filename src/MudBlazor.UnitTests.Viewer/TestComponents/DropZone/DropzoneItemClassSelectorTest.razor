@@ -6,7 +6,7 @@
          {
              var dropzone = i.ToString();
              <MudPaper Class="ma-4 flex-grow-1 ">
-                 <MudList T="string" Class="d-flex flex-column mud-height-full">
+                 <MudList T="string" Class="d-flex flex-column mud-full-height">
                      <MudListSubheader>Drop Zone @dropzone</MudListSubheader>
                     <MudDropZone T="DropItem" Identifier="@dropzone" Class="@($"flex-grow-1 dropzone-{dropzone}")" AllowReorder="true" />
                  </MudList>

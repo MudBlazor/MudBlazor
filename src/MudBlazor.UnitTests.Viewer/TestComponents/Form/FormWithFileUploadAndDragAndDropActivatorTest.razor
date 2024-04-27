@@ -15,7 +15,7 @@
                            @bind-Files="@_model.File"
                            Accept=".png,.jpg,.jpeg"
                            Hidden="@false"
-                           InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20"
+                           InputClass="absolute mud-full-width mud-full-height overflow-hidden z-20"
                            InputStyle="opacity:0"
                            tabindex="-1"
                            Required="@true"
@@ -77,7 +77,7 @@
     private bool _isTouched;
     private MudFileUpload<IBrowserFile>? _fileUpload;
     private const string FileContent = "this is content";
-    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full z-10";
+    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-full-width mud-full-height z-10";
     private string _dragClass = DefaultDragClass;
 
     protected override void OnInitialized()

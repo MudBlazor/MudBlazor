@@ -3,7 +3,7 @@
 @using MudBlazor.Utilities
 @namespace MudBlazor.Docs.Components.LandingPage
 
-<div class="d-flex mud-width-full mud-height-full">
+<div class="d-flex mud-full-width mud-full-height">
     <MudOverlay OnClick="@(() => ToggleMiniDrawer())" @bind-Visible="@overlayVisible" Absolute="true" ZIndex="1" />
     <div class="@MiniDrawerClassNames" style="@GetDrawerWidth()">
         <div class="d-flex align-center px-4">
@@ -80,7 +80,7 @@
                     </div>
                     <MudText Typo="Typo.h4">149,567</MudText>
                 </div>
-                <div class="d-flex align-end justify-end mud-height-full py-8">
+                <div class="d-flex align-end justify-end mud-full-height py-8">
                     <MudPaper Height="80%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t"/>
                     <MudPaper Height="95%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t"/>
                     <MudPaper Height="90%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t"/>
@@ -104,7 +104,7 @@
                     </div>
                     <MudText Typo="Typo.h4">12%</MudText>
                 </div>
-                <div class="d-flex align-end justify-end mud-height-full py-8">
+                <div class="d-flex align-end justify-end mud-full-height py-8">
                     <MudPaper Height="15%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t"/>
                     <MudPaper Height="20%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t"/>
                     <MudPaper Height="53%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t"/>
@@ -128,7 +128,7 @@
                     </div>
                     <MudText Typo="Typo.h4">3,6</MudText>
                 </div>
-                <div class="d-flex align-end justify-end mud-height-full py-8">
+                <div class="d-flex align-end justify-end mud-full-height py-8">
                     <MudPaper Height="10%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t"/>
                     <MudPaper Height="16%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t"/>
                     <MudPaper Height="26%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t"/>
@@ -219,7 +219,7 @@
                 <div class="d-flex gap-6 flex-grow-1">
                     <MudPaper Class="d-flex flex-column align-center py-2">
                         <MudText Typo="Typo.body2">100°C</MudText>
-                        <div class="mud-height-full my-n6">
+                        <div class="mud-full-height my-n6">
                             <MudSlider Value="@sliderValue" Vertical="true" Class="d-flex mx-n8"/>
                         </div>
                         <MudText Typo="Typo.body2">0°C</MudText>

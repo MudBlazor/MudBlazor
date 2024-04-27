@@ -14,7 +14,7 @@ namespace MudBlazor
             .AddClass($"mud-button-{Variant.ToDescriptionString()}")
             .AddClass($"mud-button-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
             .AddClass($"mud-button-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}")
-            .AddClass($"mud-width-full", FullWidth)
+            .AddClass($"mud-full-width", FullWidth)
             .AddClass($"mud-ripple", Ripple)
             .AddClass($"mud-button-disable-elevation", !DropShadow)
             .AddClass(Class)

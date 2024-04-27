@@ -2,7 +2,7 @@
 @using MudBlazor.Utilities
 
 
-<MudPaper Elevation="0" Class="mud-width-full mud-height-full d-flex justify-center align-end pb-8" MinHeight="600px" Style="@($"background-image:linear-gradient({_degrees}deg, {_gradientPrimary.ToString(MudColorOutputFormats.RGBA)} 0%, {_gradientSecondary.ToString(MudColorOutputFormats.RGBA)} 100%);")">
+<MudPaper Elevation="0" Class="mud-full-width mud-full-height d-flex justify-center align-end pb-8" MinHeight="600px" Style="@($"background-image:linear-gradient({_degrees}deg, {_gradientPrimary.ToString(MudColorOutputFormats.RGBA)} 0%, {_gradientSecondary.ToString(MudColorOutputFormats.RGBA)} 100%);")">
     <MudPaper Class="d-flex">
         <MudColorPicker Rounded="true" Class="rounded-tr-0" PickerVariant="PickerVariant.Static" DisableModeSwitch="true" Value="_pickerColor" ValueChanged="UpdateSelectedColor" />
         <div class="pa-2">
@@ -10,10 +10,10 @@
 
             <MudList T="string" SelectedValueChanged="ChangeSelectedColor">
                 <MudListItem Text="1">
-                    <div class="mud-width-full rounded py-4" style="@($"background-color:{_gradientPrimary};")"></div>
+                    <div class="mud-full-width rounded py-4" style="@($"background-color:{_gradientPrimary};")"></div>
                 </MudListItem>
                 <MudListItem Text="2">
-                    <div class="mud-width-full rounded py-4" style="@($"background-color:{_gradientSecondary};")"></div>
+                    <div class="mud-full-width rounded py-4" style="@($"background-color:{_gradientSecondary};")"></div>
                 </MudListItem>
             </MudList>
             <MudSlider Min="0" Max="360" Step="1" @bind-Value="_degrees" Class="px-2">Degrees</MudSlider>

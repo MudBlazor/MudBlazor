@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @using MudBlazor.Utilities
 
-<div class="d-flex flex-column mud-width-full mud-height-full">
+<div class="d-flex flex-column mud-full-width mud-full-height">
 	<MudToolBar Class="gap-4">
 		<MudButton OnClick="LoadServerData" Variant="Variant.Filled" Color="Color.Default">Load Data</MudButton>
 		<MudButton OnClick="SaveData" Variant="Variant.Filled" Color="Color.Primary">Save Data</MudButton>
@@ -15,7 +15,7 @@
 			{
 				var dropzone = i.ToString();
 				<MudPaper Class="ma-4 flex-grow-1">
-                    <MudList T="string" Class="d-flex flex-column mud-height-full">
+                    <MudList T="string" Class="d-flex flex-column mud-full-height">
 						<MudListSubheader>Drop Zone @dropzone</MudListSubheader>
 						<MudDropZone T="DropItem" Identifier="@dropzone" Class="flex-grow-1" AllowReorder="true" />
 					</MudList>

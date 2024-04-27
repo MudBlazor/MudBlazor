@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Height="200px" Style="overflow:hidden; position:relative;">
-    <MudDrawerContainer Class="mud-height-full">
+    <MudDrawerContainer Class="mud-full-height">
         <MudDrawer @bind-Open="@open" Elevation="0" Variant="@DrawerVariant.Persistent" Color="Color.Primary">
             <MudDrawerHeader>
                 <MudText Typo="Typo.h6">My App</MudText>
@@ -12,7 +12,7 @@
                 <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.People" IconColor="Color.Inherit">Community</MudNavLink>
             </MudNavMenu>
         </MudDrawer>
-        <div class="d-flex justify-center align-center mud-height-full">
+        <div class="d-flex justify-center align-center mud-full-height">
             <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@ToggleDrawer">Persistent drawer</MudButton>
         </div>
     </MudDrawerContainer>

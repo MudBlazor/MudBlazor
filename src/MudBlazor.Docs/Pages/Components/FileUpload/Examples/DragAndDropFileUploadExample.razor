@@ -4,7 +4,7 @@
 <MudPaper @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass" Height="300px" Outlined="true" Class="@_dragClass">
     @if (!_clearing) 
     {
-        <InputFile OnChange="OnInputFileChanged" multiple class="absolute mud-width-full mud-height-full overflow-hidden z-2" style="opacity:0;" />
+        <InputFile OnChange="OnInputFileChanged" multiple class="absolute mud-full-width mud-full-height overflow-hidden z-2" style="opacity:0;" />
     }
     <MudText Typo="Typo.h6">Drag and drop files here or click</MudText>
     @foreach (var file in _fileNames) 
@@ -19,7 +19,7 @@
 
 @code {
     private bool _clearing = false;
-    private static string _defaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
+    private static string _defaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-full-width mud-full-height";
     private string _dragClass = _defaultDragClass;
     private List<string> _fileNames = new List<string>();
 

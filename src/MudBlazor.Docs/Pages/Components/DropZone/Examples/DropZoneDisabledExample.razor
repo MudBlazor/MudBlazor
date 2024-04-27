@@ -4,15 +4,15 @@
                   ItemsSelector="@((item, dropzone) => item.TransferSlot == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-wrap">
     <ChildContent>
         <MudPaper Class="ma-4" Height="400px" Width="300px">
-            <MudList T="string" Class="mud-height-full">
-                <MudDropZone T="FileItem" Identifier="Company" Class="mud-height-full">
+            <MudList T="string" Class="mud-full-height">
+                <MudDropZone T="FileItem" Identifier="Company" Class="mud-full-height">
                     <MudListSubheader>Company Files</MudListSubheader>
                 </MudDropZone>
             </MudList>
         </MudPaper>
         <MudPaper Class="ma-4" Height="400px" Width="300px">
-            <MudList T="string" Class="mud-height-full">
-                <MudDropZone T="FileItem" Identifier="External" Class="mud-height-full">
+            <MudList T="string" Class="mud-full-height">
+                <MudDropZone T="FileItem" Identifier="External" Class="mud-full-height">
                     <MudListSubheader>External USB</MudListSubheader>
                 </MudDropZone>
             </MudList>

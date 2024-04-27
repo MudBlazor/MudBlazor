@@ -1049,12 +1049,12 @@ namespace MudBlazor.UnitTests.Components
             var autocompleteComp = comp.FindComponent<MudAutocomplete<string>>();
 
             autocompleteComp.Find("div.mud-select").ClassList.Should().Contain("mud-autocomplete");
-            autocompleteComp.Find("div.mud-select").ClassList.Should().NotContain("mud-width-full");
+            autocompleteComp.Find("div.mud-select").ClassList.Should().NotContain("mud-full-width");
 
             autocompleteComp.SetParam(p => p.FullWidth, true);
 
             autocompleteComp.Find("div.mud-select").ClassList.Should().Contain("mud-autocomplete");
-            autocompleteComp.Find("div.mud-select").ClassList.Should().Contain("mud-width-full");
+            autocompleteComp.Find("div.mud-select").ClassList.Should().Contain("mud-full-width");
         }
 
         [Test]
