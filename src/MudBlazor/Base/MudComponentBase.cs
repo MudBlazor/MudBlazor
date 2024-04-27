@@ -330,6 +330,13 @@ namespace MudBlazor
                         case "ToolBarClass":
                         case "DisableToolbar":
                         case "DisableLegend":
+                        case "DisableSliders":
+                        case "DisablePreview":
+                        case "DisableModeSwitch":
+                        case "DisableInputs":
+                        case "DisableDragEffect":
+                        case "DisableColorField":
+                        case "DisableAlpha":
                             NotifyIllegalParameter(parameter);
                             break;
                     }

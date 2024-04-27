@@ -20,7 +20,7 @@
              <MudIconButton Class="pa-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Palette)" Icon="@PaletteIcon" OnClick="(() => ChangeView(ColorPickerView.Palette))" />
          </MudPickerToolbar>
         <MudPickerContent Class="mud-picker-color-content">
-            @if(!DisableColorField)
+            @if(ColorField)
             {
                 <div class="mud-picker-color-picker">
 					@if (_activeColorPickerView == ColorPickerView.Spectrum)
@@ -59,26 +59,26 @@
             }
             @if (_activeColorPickerView != ColorPickerView.GridCompact)
             {
-                @if (!DisableSliders || !DisableInputs || !DisablePreview)
+                @if (ShowSliders || ShowInputs || Preview)
                 {
                     <div class="mud-picker-color-controls">
-                        @if (!DisableSliders || !DisablePreview)
+                        @if (ShowSliders || Preview)
                         {
                             <div class="mud-picker-color-controls-row">
-                                @if (!DisablePreview)
+                                @if (Preview)
                                 {
                                     <div class="mud-picker-color-dot mud-picker-color-dot-current mud-ripple" @onclick="ToggleCollection">
                                         <div class="mud-picker-color-fill" style="@($"background: {_value.ToString(MudColorOutputFormats.RGBA)};")"></div>
                                     </div>
                                 }
-                                @if (!DisableSliders && !_collectionOpen)
+                                @if (ShowSliders && !_collectionOpen)
                                 {
                                     <div class="mud-picker-color-sliders">
 										@if (_activeColorPickerView != ColorPickerView.Grid)
 										{
                                             <MudSlider Class="mud-picker-color-slider hue" dir="ltr" T="int" Value="(int)_value.H" ValueChanged="UpdateBaseColorSlider" Step="1" Min="0" Max="360" />
                                         }
-                                        @if (!DisableAlpha)
+                                        @if (Alpha)
                                         {
                                             <MudSlider Class="mud-picker-color-slider alpha" Value="_value.A" ValueChanged="SetAlpha" T="int"  Min="0" Max="255" Step="1" Style="@AlphaSliderStyle"  />
                                         }
@@ -95,7 +95,7 @@
                                 }
                             </div>
                         }
-                        @if (!DisableInputs)
+                        @if (ShowInputs)
                         {
                             <div class="mud-picker-color-controls-row">
                                 <div class="mud-picker-color-inputs">
@@ -182,7 +182,7 @@
                                             break;
                                     }
 
-                                    @if (!DisableAlpha && ColorPickerMode != ColorPickerMode.HEX)
+                                    @if (Alpha && ColorPickerMode != ColorPickerMode.HEX)
                                     {
                                         <MudNumericField T="double"
                                                          Value="@(Math.Round(_value.A / 255.0, 2))"
@@ -197,7 +197,7 @@
                                                          Required="@Required" />
                                     }
                                 </div>
-                                @if (!DisableModeSwitch)
+                                @if (ModeSwitch)
                                 {
                                     <div class="mud-picker-control-switch">
                                         <MudIconButton OnClick="ChangeMode" Icon="@ImportExportIcon" Class="pa-1 me-n1"></MudIconButton>
