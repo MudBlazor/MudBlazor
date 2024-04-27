@@ -84,19 +84,19 @@ namespace MudBlazor.Utilities
         /// Gets the hue component value of the color.
         /// </summary>
         [JsonIgnore]
-        public double H { get; private set; }
+        public double H { get; }
 
         /// <summary>
         /// Gets the luminance component value of the color.
         /// </summary>
         [JsonIgnore]
-        public double L { get; private set; }
+        public double L { get; }
 
         /// <summary>
         /// Gets the saturation component value of the color.
         /// </summary>
         [JsonIgnore]
-        public double S { get; private set; }
+        public double S { get; }
 
         /// <summary>
         /// Deserialization constructor for <see cref="MudColor"/>.
@@ -215,7 +215,10 @@ namespace MudBlazor.Utilities
             _valuesAsByte[2] = b;
             _valuesAsByte[3] = a;
 
-            CalculateHsl();
+            var (h, s, l) = CalculateHsl();
+            H = h;
+            S = s;
+            L = l;
         }
 
         /// <summary>
@@ -279,7 +282,7 @@ namespace MudBlazor.Utilities
                     throw new ArgumentException("Invalid color format.");
                 }
 
-                _valuesAsByte = new byte[]
+                _valuesAsByte = new[]
                 {
                     byte.Parse(parts[0], CultureInfo.InvariantCulture),
                     byte.Parse(parts[1], CultureInfo.InvariantCulture),
@@ -295,11 +298,12 @@ namespace MudBlazor.Utilities
                     throw new ArgumentException("Invalid color format.");
                 }
 
-                _valuesAsByte = new byte[]
+                _valuesAsByte = new[]
                 {
                     byte.Parse(parts[0], CultureInfo.InvariantCulture),
                     byte.Parse(parts[1], CultureInfo.InvariantCulture),
-                    byte.Parse(parts[2], CultureInfo.InvariantCulture), 255
+                    byte.Parse(parts[2], CultureInfo.InvariantCulture),
+                    byte.MaxValue
                 };
             }
             else
@@ -327,7 +331,7 @@ namespace MudBlazor.Utilities
                         throw new ArgumentException(@"Not a valid color.", nameof(value));
                 }
 
-                _valuesAsByte = new byte[]
+                _valuesAsByte = new[]
                 {
                     GetByteFromValuePart(value,0),
                     GetByteFromValuePart(value,2),
@@ -336,7 +340,10 @@ namespace MudBlazor.Utilities
                 };
             }
 
-            CalculateHsl();
+            var (h, s, l) = CalculateHsl();
+            H = h;
+            S = s;
+            L = l;
         }
 
         /// <summary>
@@ -531,7 +538,7 @@ namespace MudBlazor.Utilities
         /// <returns>The string representation of the color.</returns>
         public static explicit operator string(MudColor? color) => color == null ? string.Empty : color.Value;
 
-        private byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new char[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
+        private byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
 
         private static string[] SplitInputIntoParts(string value)
         {
@@ -547,7 +554,7 @@ namespace MudBlazor.Utilities
             return parts;
         }
 
-        private void CalculateHsl()
+        private (double h, double s, double l) CalculateHsl()
         {
             var h = 0D;
             var s = 0D;
@@ -599,9 +606,7 @@ namespace MudBlazor.Utilities
                 s = (max - min) / (2D - (max + min)); //(max-min > 0)?
             }
 
-            H = Math.Round(h.EnsureRange(360), 0);
-            S = Math.Round(s.EnsureRange(1), 2);
-            L = Math.Round(l.EnsureRange(1), 2);
+            return (Math.Round(h.EnsureRange(360), 0), Math.Round(s.EnsureRange(1), 2), Math.Round(l.EnsureRange(1), 2));
         }
 
         /// <inheritdoc />
