@@ -290,40 +290,40 @@ namespace MudBlazor
             await FocusAsync();
         }
 
-        protected string ToolbarClass =>
+        protected string ToolbarClassname =>
             new CssBuilder("mud-picker-timepicker-toolbar")
                 .AddClass($"mud-picker-timepicker-toolbar-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
                 .AddClass(Class)
                 .Build();
 
-        protected string HoursButtonClass =>
+        protected string HoursButtonClassname =>
             new CssBuilder("mud-timepicker-button")
                 .AddClass($"mud-timepicker-toolbar-text", _currentView == OpenTo.Minutes)
                 .Build();
 
-        protected string MinuteButtonClass =>
+        protected string MinuteButtonClassname =>
             new CssBuilder("mud-timepicker-button")
                 .AddClass($"mud-timepicker-toolbar-text", _currentView == OpenTo.Hours)
                 .Build();
 
-        protected string AmButtonClass =>
+        protected string AmButtonClassname =>
             new CssBuilder("mud-timepicker-button")
                 .AddClass($"mud-timepicker-toolbar-text", !IsAm) // gray it out
                 .Build();
 
-        protected string PmButtonClass =>
+        protected string PmButtonClassname =>
             new CssBuilder("mud-timepicker-button")
                 .AddClass($"mud-timepicker-toolbar-text", !IsPm) // gray it out
                 .Build();
 
-        private string HourDialClass =>
+        private string HourDialClassname =>
             new CssBuilder("mud-time-picker-hour")
                 .AddClass($"mud-time-picker-dial")
                 .AddClass($"mud-time-picker-dial-out", _currentView != OpenTo.Hours)
                 .AddClass($"mud-time-picker-dial-hidden", _currentView != OpenTo.Hours)
                 .Build();
 
-        private string MinuteDialClass =>
+        private string MinuteDialClassname =>
             new CssBuilder("mud-time-picker-minute")
                 .AddClass($"mud-time-picker-dial")
                 .AddClass($"mud-time-picker-dial-out", _currentView != OpenTo.Minutes)

@@ -494,15 +494,15 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Toggle_Toolbar()
         {
-            var comp = Context.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.DisableToolbar, false));
+            var comp = Context.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.ShowToolbar, true));
 
             _ = comp.Find(_toolbarCssSelector);
 
-            comp.SetParametersAndRender(p => p.Add(x => x.DisableToolbar, true));
+            comp.SetParametersAndRender(p => p.Add(x => x.ShowToolbar, false));
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(_toolbarCssSelector));
 
-            comp.SetParametersAndRender(p => p.Add(x => x.DisableToolbar, false));
+            comp.SetParametersAndRender(p => p.Add(x => x.ShowToolbar, true));
 
             _ = comp.Find(_toolbarCssSelector);
         }
@@ -668,7 +668,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudColorPicker>(p =>
             {
-                p.Add(x => x.DisableToolbar, false);
+                p.Add(x => x.ShowToolbar, true);
                 p.Add(x => x.PickerVariant, PickerVariant.Static);
             });
 
@@ -698,7 +698,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SimpleColorPickerTest>(p =>
             {
                 p.Add(x => x.Variant, variant);
-                p.Add(x => x.DisableToolbar, false);
+                p.Add(x => x.ShowToolbar, true);
             });
 
             if (variant is PickerVariant.Dialog or PickerVariant.Inline)
@@ -725,7 +725,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SimpleColorPickerTest>(p =>
             {
                 p.Add(x => x.ViewMode, view);
-                p.Add(x => x.DisableToolbar, false);
+                p.Add(x => x.ShowToolbar, true);
             });
 
             var toolbarButtons = comp.FindAll(".mud-toolbar .mud-icon-button button");
