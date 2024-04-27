@@ -17,16 +17,3 @@
         @Parent?.ItemTemplate(Item);
     }
 </li>
-
-@code {
-#nullable enable
-    [Parameter]
-    public BreadcrumbItem? Item { get; set; }
-
-    [CascadingParameter]
-    public MudBreadcrumbs? Parent { get; set; }
-
-    private string Classname => new CssBuilder("mud-breadcrumb-item")
-        .AddClass("mud-disabled", Item?.Disabled)
-        .Build();
-}

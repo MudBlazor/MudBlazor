@@ -30,8 +30,8 @@ namespace MudBlazor
 
         protected string CheckBoxClassname =>
             new CssBuilder("mud-button-root mud-icon-button")
-                .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", UnCheckedColor == null || (UnCheckedColor != null && BoolValue == true))
-                .AddClass($"mud-{UnCheckedColor?.ToDescriptionString()}-text hover:mud-{UnCheckedColor?.ToDescriptionString()}-hover", UnCheckedColor != null && BoolValue == false)
+                .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor == null || (UncheckedColor != null && BoolValue == true))
+                .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && BoolValue == false)
                 .AddClass($"mud-checkbox-dense", Dense)
                 .AddClass($"mud-ripple mud-ripple-checkbox", Ripple && !GetReadOnlyState() && !GetDisabledState())
                 .AddClass($"mud-disabled", GetDisabledState())
@@ -53,7 +53,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
-        public Color? UnCheckedColor { get; set; } = null;
+        public Color? UncheckedColor { get; set; } = null;
 
         /// <summary>
         /// The text/label will be displayed next to the checkbox if set.
@@ -144,8 +144,6 @@ namespace MudBlazor
 
         protected override Task OnChange(ChangeEventArgs args)
         {
-            Touched = true;
-
             // Apply only when TriState parameter is set to true and T is bool?
             if (TriState && typeof(T) == typeof(bool?))
             {
@@ -153,15 +151,15 @@ namespace MudBlazor
                 var boolValue = (bool?)(object?)_value;
                 if (!boolValue.HasValue)
                 {
-                    return SetBoolValueAsync(true);
+                    return SetBoolValueAsync(true, true);
                 }
 
                 return boolValue.Value
-                    ? SetBoolValueAsync(false)
-                    : SetBoolValueAsync(default);
+                    ? SetBoolValueAsync(false, true)
+                    : SetBoolValueAsync(default, true);
             }
 
-            return SetBoolValueAsync((bool?)args.Value);
+            return SetBoolValueAsync((bool?)args.Value, true);
         }
 
         protected void HandleKeyDown(KeyboardEventArgs obj)
@@ -174,15 +172,15 @@ namespace MudBlazor
             switch (obj.Key)
             {
                 case "Delete":
-                    SetBoolValueAsync(false);
+                    SetBoolValueAsync(false, true);
                     break;
                 case "Enter" or "NumpadEnter":
-                    SetBoolValueAsync(true);
+                    SetBoolValueAsync(true, true);
                     break;
                 case "Backspace":
                     if (TriState)
                     {
-                        SetBoolValueAsync(null);
+                        SetBoolValueAsync(null, true);
                     }
 
                     break;
@@ -190,16 +188,16 @@ namespace MudBlazor
                     switch (BoolValue)
                     {
                         case null:
-                            SetBoolValueAsync(true);
+                            SetBoolValueAsync(true, true);
                             break;
                         case true:
-                            SetBoolValueAsync(false);
+                            SetBoolValueAsync(false, true);
                             break;
                         case false when TriState:
-                            SetBoolValueAsync(null);
+                            SetBoolValueAsync(null, true);
                             break;
                         case false:
-                            SetBoolValueAsync(true);
+                            SetBoolValueAsync(true, true);
                             break;
                     }
 

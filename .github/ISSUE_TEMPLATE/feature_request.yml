@@ -53,7 +53,7 @@ body:
     id: pr
     attributes:
       label: Pull Request
-      description: Interested in implementing this feature yourself? Our team has limited time and rely on community contributions; If you want this soon, consider submitting a Pull Request. We appreciate all contributions and will try to review them swiftly for inclusion in the next version.
+      description: If you want to see this feature soon, consider submitting a Pull Request! Our team has limited resources so we rely on community contributions. We greatly appreciate all contributions and will review them as soon as possible for inclusion in the next version!
       options:
         - label: I would like to do a Pull Request
   - type: checkboxes

@@ -27,6 +27,7 @@ internal sealed class InternalMudLocalizer
     /// Gets the string resource with the given name.
     /// </summary>
     /// <param name="key">The name of the string resource.</param>
+    /// <param name="arguments">The list of arguments to be passed to the string resource.</param>
     /// <returns>The string resource as a <see cref="LocalizedString" />.</returns>
-    public LocalizedString this[string key] => _interceptor.Handle(key);
+    public LocalizedString this[string key, params string[] arguments] => _interceptor.Handle(key, arguments);
 }

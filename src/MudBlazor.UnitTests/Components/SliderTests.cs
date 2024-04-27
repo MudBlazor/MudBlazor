@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -32,13 +31,15 @@ namespace MudBlazor.UnitTests.Components
             slider.Immediate.Should().BeTrue();
             slider.TickMarkLabels.Should().BeNull();
 
-            slider.Converter.Should().NotBeNull();
             slider.Color.Should().Be(Color.Primary);
 
             slider.Variant.Should().Be(Variant.Text);
             slider.Variant.Should().Be(Variant.Text);
 
             slider.Size.Should().Be(Size.Small);
+            slider.ValueLabelCultureInfo.Should().Be(CultureInfo.InvariantCulture);
+            slider.ValueLabelStringFormat.Should().BeNull();
+            slider.ValueLabelContent.Should().BeNull();
         }
 
         [Test]
@@ -404,8 +405,36 @@ namespace MudBlazor.UnitTests.Components
 
             filling.GetAttribute("style").Should().Be($"width:80%;");
         }
+
+        [Test]
+        [TestCase(0.0, "$0.00")]
+        [TestCase(20.5, "$20.50")]
+        [TestCase(75.5, "$75.50")]
+        [TestCase(100.0, "$100.00")]
+        public void CustomCultureAndFormatting(decimal value, string expectedValueLabel)
+        {
+            var customCulture = (CultureInfo)CultureInfo.GetCultureInfo("en").Clone();
+            customCulture.NumberFormat.CurrencySymbol = "$";
+            var comp = Context.RenderComponent<MudSlider<decimal>>(x =>
+            {
+                x.Add(p => p.Value, value);
+                x.Add(p => p.Step, 0.5m);
+                x.Add(p => p.ValueLabel, true);
+                x.Add(p => p.ValueLabelCultureInfo, customCulture);
+                x.Add(p => p.ValueLabelStringFormat, "C");
+            });
+
+            var valueLabel = comp.Find(".mud-slider-value-label");
+            valueLabel.TextContent.Should().Be(expectedValueLabel);
+        }
+
+        [Test]
+        public void CustomValueLabelContent()
+        {
+            var comp = Context.RenderComponent<SliderWithCustomValueLabelContentTest>();
+            IElement AlertText() => MudAlert().Find("div.mud-alert-message");
+            IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
+            AlertText().InnerHtml.Should().Be("20");
+        }
     }
 }
-
-
-

@@ -5,21 +5,26 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// Represents a base class for designing components which contain items.
+    /// </summary>
+    /// <typeparam name="TChildComponent">The type of <see cref="MudComponentBase"/> managed by this component.</typeparam>
     public abstract class MudBaseItemsControl<TChildComponent> : MudComponentBase
             where TChildComponent : MudComponentBase
     {
         private int _selectedIndexField = -1;
 
         /// <summary>
-        /// Collection of T
+        /// Gets or sets the content within this component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.Data)]
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Selected Item's index
+        /// Gets or sets the index of the currently selected item.
         /// </summary>
+        /// <remarks>When this property changes, the <see cref="SelectedIndexChanged"/> event occurs.</remarks>
         [Parameter]
         [Category(CategoryTypes.General.Behavior)]
         public int SelectedIndex
@@ -39,27 +44,33 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Occurs when the <see cref="SelectedIndex"/> has changed.
+        /// </summary>
         [Parameter]
         public EventCallback<int> SelectedIndexChanged { get; set; }
 
         /// <summary>
-        /// Gets the Selected TChildComponent
+        /// Gets the previously selected item.
         /// </summary>
         public TChildComponent? LastContainer { get; private set; } = null;
 
         /// <summary>
-        /// Items - will be ignored when ItemsSource is not null
+        /// Gets the list of items.
         /// </summary>
+        /// <remarks>This property is ignored when <c>ItemsSource</c> is not null.</remarks>
         public List<TChildComponent> Items { get; } = new List<TChildComponent>();
 
         /// <summary>
-        /// Gets the Selected TChildComponent
+        /// Gets the currently selected item.
         /// </summary>
+        /// <remarks>This property returns the item in the <see cref="Items"/> property at the <see cref="SelectedIndex"/>.</remarks>
         public TChildComponent? SelectedContainer
         {
             get => SelectedIndex >= 0 && Items.Count > SelectedIndex ? Items[SelectedIndex] : null;
         }
 
+        /// <inheritdoc />
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -76,8 +87,11 @@ namespace MudBlazor
         internal bool _moveNext = true;
 
         /// <summary>
-        /// Move to Previous Item
+        /// Selects the previous item.
         /// </summary>
+        /// <remarks>
+        /// If the current <see cref="SelectedIndex" /> is <c>0</c>, the selection is changed to the index of the last item.
+        /// </remarks>
         public void Previous()
         {
             _moveNext = false;
@@ -93,8 +107,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Move to Next Item
+        /// Selects the next item.
         /// </summary>
+        /// <remarks>
+        /// If the current <see cref="SelectedIndex" /> is the last item, the selection is changed to <c>0</c>.
+        /// </remarks>
         public void Next()
         {
             _moveNext = true;
@@ -110,7 +127,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Move to Item at desired index
+        /// Changes the <see cref="SelectedIndex"/> to the specified value.
         /// </summary>
         public void MoveTo(int index)
         {
@@ -121,8 +138,15 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Occurs when the <see cref="SelectedIndex"/> has changed.
+        /// </summary>
         protected virtual void SelectionChanged() { }
 
+        /// <summary>
+        /// When overridden, adds an item to the list.
+        /// </summary>
+        /// <param name="item">The item to add.</param>
         public virtual void AddItem(TChildComponent item) { }
     }
 }

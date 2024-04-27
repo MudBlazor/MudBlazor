@@ -1,19 +1,20 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// Represents a base class for designing selection items.
+    /// </summary>
     public abstract class MudBaseSelectItem : MudComponentBase
     {
         [Inject]
         private NavigationManager UriHelper { get; set; } = null!;
 
         /// <summary>
-        /// If true, the input element will be disabled.
+        /// Gets or sets whether the user can interact with this item.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.Behavior)]
@@ -27,29 +28,35 @@ namespace MudBlazor
         public bool Ripple { get; set; } = true;
 
         /// <summary>
-        /// Link to a URL when clicked.
+        /// Gets or sets the URL to navigate to when this item is clicked.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.ClickAction)]
         public string? Href { get; set; }
 
         /// <summary>
-        /// If true, force browser to redirect outside component router-space.
+        /// Gets or sets whether a full page load occurs during navigation.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. When <c>true</c>, client-side routing is bypassed and the browser is forced to load the new page from the server.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.General.ClickAction)]
         public bool ForceLoad { get; set; }
 
         /// <summary>
-        /// Child content of component.
+        /// Gets or sets the content within this item.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Click event. Will not be called if <c>Href</c> is also set.
+        /// Occurs when the item has been clicked.
         /// </summary>
+        /// <remarks>
+        /// This event only occurs when the <see cref="Href"/> property is not set.
+        /// </remarks>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 

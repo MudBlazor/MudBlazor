@@ -208,6 +208,13 @@ namespace MudBlazor
         public string TabHeaderClass { get; set; }
 
         /// <summary>
+        /// Custom class/classes for the active tab
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public string ActiveTabClass { get; set; }
+
+        /// <summary>
         /// Custom class/classes for Selected Content Panel
         /// </summary>
         [Parameter]
@@ -548,6 +555,7 @@ namespace MudBlazor
               .AddClass($"mud-tab-active", when: () => panel == ActivePanel)
               .AddClass($"mud-disabled", panel.Disabled)
               .AddClass($"mud-ripple", !Ripple)
+              .AddClass(ActiveTabClass, when: () => panel == ActivePanel)
               .AddClass(TabPanelClass)
               .AddClass(panel.Class)
               .Build();

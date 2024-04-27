@@ -27,4 +27,4 @@ Please keep giving us your ideas so we can consider them for upcoming versions!
 
 ## Get Involved
 
-Contributions from the community are what makes MudBlazor successful. If you are proficient in technologies such as C#, Blazor, JavaScript, or CSS, and you wish to give something back, please contact the team on Discord! You can join our Contribution Team channel and discuss with other team members what you want to do to help and start making a difference on this very roadmap.
+Contributions from the community are what makes MudBlazor successful. If you are proficient in technologies such as C#, Blazor, JavaScript, or CSS, and you wish to give something back, please contact the team [on Discord](https://discord.gg/mudblazor)! You can join our Contribution Team channel and discuss with other team members what you want to do to help and start making a difference on this very roadmap.
