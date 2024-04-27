@@ -84,19 +84,19 @@ namespace MudBlazor.Utilities
         /// Gets the hue component value of the color.
         /// </summary>
         [JsonIgnore]
-        public double H { get; private init; }
+        public double H { get; }
 
         /// <summary>
         /// Gets the luminance component value of the color.
         /// </summary>
         [JsonIgnore]
-        public double L { get; private init; }
+        public double L { get; }
 
         /// <summary>
         /// Gets the saturation component value of the color.
         /// </summary>
         [JsonIgnore]
-        public double S { get; private init; }
+        public double S { get; }
 
         /// <summary>
         /// Deserialization constructor for <see cref="MudColor"/>.
@@ -554,7 +554,7 @@ namespace MudBlazor.Utilities
             return parts;
         }
 
-        private (double h, double s, double j) CalculateHsl()
+        private (double h, double s, double l) CalculateHsl()
         {
             var h = 0D;
             var s = 0D;
