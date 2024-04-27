@@ -20,7 +20,7 @@ namespace MudBlazor
         private bool _open, _rtl, _isRendered, _initial = true, _keepInitialState, _fixed = true;
         private Breakpoint _breakpoint = Breakpoint.Md, _screenBreakpoint = Breakpoint.None;
 
-        private bool OverlayVisible => _open && !DisableOverlay &&
+        private bool OverlayVisible => _open && Overlay &&
                                        (Variant == DrawerVariant.Temporary ||
                                         (_screenBreakpoint < Breakpoint && Variant == DrawerVariant.Mini) ||
                                         (_screenBreakpoint < Breakpoint && Variant == DrawerVariant.Responsive));
@@ -135,7 +135,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
-        public bool DisableOverlay { get; set; } = false;
+        public bool Overlay { get; set; } = true;
 
         /// <summary>
         /// Preserve open state for responsive drawer when window resized above <see cref="Breakpoint" />.
