@@ -147,7 +147,7 @@ public partial class SectionContent
 
     protected virtual async void RunOnTryMudBlazor()
     {
-        string firstFile = "";
+        var firstFile = "";
 
         if (Codes != null)
         {

@@ -128,7 +128,7 @@ namespace MudBlazor.UnitTests.Components
 
             itemsDiv.Should().HaveCount(5);
 
-            for (int i = 0; i < 5; i++)
+            for (var i = 0; i < 5; i++)
             {
                 itemsDiv[i].Click();
 

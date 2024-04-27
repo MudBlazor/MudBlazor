@@ -113,7 +113,7 @@ else if (Column != null && !Column.HiddenState.Value)
                         }
                         @if (groupable)
                         {
-                            if (Column?.grouping ?? false)
+                            if (Column?.GroupingState.Value ?? false)
                             {
                                 <MudMenuItem OnClick="@UngroupColumn">@Localizer["MudDataGrid.Ungroup"]</MudMenuItem>
                             }

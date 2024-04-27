@@ -25,7 +25,7 @@ namespace MudBlazor.Docs.WasmHost.Prerender
         public async Task Invoke(HttpContext context)
         {
             var path = context.Request.Path.ToString().ToLower();
-            if (path.Contains("webapi") == true)
+            if (path.Contains("webapi"))
             {
                 await _next(context);
                 return;
@@ -38,7 +38,7 @@ namespace MudBlazor.Docs.WasmHost.Prerender
             }
             else
             {
-                if (_responseCache.ContainsKey(path) == true)
+                if (_responseCache.ContainsKey(path))
                 {
                     context.Response.StatusCode = 200;
                     context.Response.ContentType = "text/html; charset=utf-8";

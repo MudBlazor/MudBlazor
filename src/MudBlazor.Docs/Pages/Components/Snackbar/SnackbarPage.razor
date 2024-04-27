@@ -25,15 +25,10 @@
             </SectionContent>
         </DocsPageSection>
 
-        @*
-        Vulnerability: This implementation may expose the application to XSS attacks.
-        See: https://github.com/MudBlazor/MudBlazor/issues/8146
-        *@
         <DocsPageSection>
             <SectionHeader Title="HTML in messages">
                 <Description>
-                    <CodeInline>@nameof(MudBlazor.Snackbar)</CodeInline> messages are rendered as HTML using <CodeInline>@nameof(MarkupString)</CodeInline>.<br />
-                    However, make sure not to use user-provided input, as that's not very secure.
+                    <CodeInline>@nameof(MudBlazor.Snackbar)</CodeInline> messages can be rendered as HTML using <CodeInline>@nameof(MarkupString)</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(SnackbarHtmlInMessageExample)" ShowCode="false">

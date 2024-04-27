@@ -28,14 +28,14 @@ namespace MudBlazor.Docs.Models
             return (string)field.GetValue(null);
         }
 
-        public static string GetSaveTypename(Type t) => LetterDigitOrUnderscoreRegularExpression().Replace(t.ConvertToCSharpSource(), "_").Replace("<T>", "").TrimEnd('_');
+        public static string GetSaveTypename(Type t) => PeriodRegularExpression().Replace(t.ConvertToCSharpSource(), "_").Replace("<T>", "").TrimEnd('_');
 
         private static string GetSaveMethodIdentifier(MethodInfo method) => LetterDigitOrUnderscoreRegularExpression().Replace(method.ToString().Replace("MudBlazor.Docs.Models.T", "T"), "_");  // method signature
 
-        [GeneratedRegex("[^A-Za-z0-9_]")]
-        private static partial Regex LetterDigitOrUnderscoreRegularExpression();
-
         [GeneratedRegex(@"[\.]")]
         private static partial Regex PeriodRegularExpression();
+
+        [GeneratedRegex("[^A-Za-z0-9_]")]
+        private static partial Regex LetterDigitOrUnderscoreRegularExpression();
     }
 }

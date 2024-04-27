@@ -95,7 +95,7 @@ namespace MudBlazor
     ///       - <i>Appearance</i> - Changing these properties doesn't change behavior of the component and behavior of the application, but only changes the appearance
     ///                             of the component irrelevant to the understanding of the application by a user. So in some way they are less important than the "Behavior"
     ///                             category, because they are only used to adjust the look of the application. Example properties are: a) <c>Elevation</c>, <c>Outlined</c>,
-    ///                             <c>Square</c>, <c>Rounded</c>, <c>DisableGutters</c>, <c>Dense</c>, <c>DisableRipple</c>; b) size, color, and typography of the item
+    ///                             <c>Square</c>, <c>Rounded</c>, <c>Gutters</c>, <c>Dense</c>, <c>Ripple</c>; b) size, color, and typography of the item
     ///                             and its subelements; c) CSS classes and styles of subelements; d) icons with the default value already set (because most often changing its value
     ///                             doesn't change passed information).<br/>
     ///       - <i>Common</i>     - Properties defined in <see cref="MudComponentBase"/>.

@@ -24,9 +24,9 @@ namespace MudBlazor
         protected string ClearButtonClassname =>
                     new CssBuilder()
                     .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
-                    .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons == true)
+                    .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons)
                     .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
-                    .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons == true)
+                    .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons)
                     .Build();
 
         /// <summary>

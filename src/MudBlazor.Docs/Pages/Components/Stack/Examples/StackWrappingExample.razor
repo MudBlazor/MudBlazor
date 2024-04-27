@@ -15,7 +15,7 @@
 
 <MudStack Row AlignItems="AlignItems.Center">
     <MudSwitch @bind-Value="_row" Color="Color.Primary">Row</MudSwitch>
-    <MudChipSet T="Wrap" Filter="true" Mandatory="true" @bind-SelectedValue="_wrap">
+    <MudChipSet T="Wrap" CheckMark @bind-SelectedValue="_wrap">
         <MudChip T="Wrap" Text="No Wrap" Value="@(Wrap.NoWrap)" SelectedColor="Color.Primary" Variant="Variant.Text" Default="true"/>
         <MudChip T="Wrap" Text="Wrap" Value="@(Wrap.Wrap)" SelectedColor="Color.Primary" Variant="Variant.Text" />
         <MudChip T="Wrap" Text="Wrap Reverse" Value="@(Wrap.WrapReverse)" SelectedColor="Color.Primary" Variant="Variant.Text" />

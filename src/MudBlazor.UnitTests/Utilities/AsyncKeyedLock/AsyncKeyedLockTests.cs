@@ -384,7 +384,7 @@ public class AsyncKeyedLockTests
     public void TestTimeoutWithInfiniteTimeoutAndCancellationToken()
     {
         var asyncKeyedLocker = new AsyncKeyedLocker<string>();
-        using (asyncKeyedLocker.Lock("test", Timeout.Infinite, new CancellationToken(false), out bool entered))
+        using (asyncKeyedLocker.Lock("test", Timeout.Infinite, new CancellationToken(false), out var entered))
         {
             entered.Should().BeTrue();
             asyncKeyedLocker.IsInUse("test").Should().BeTrue();

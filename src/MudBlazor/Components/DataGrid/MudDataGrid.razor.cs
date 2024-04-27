@@ -67,7 +67,7 @@ namespace MudBlazor
         protected string _tableStyle =>
             new StyleBuilder()
                 .AddStyle("height", Height, !string.IsNullOrWhiteSpace(Height))
-                .AddStyle("width", "max-content", when: (HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container))
+                .AddStyle("width", "max-content", when: HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container)
                 .AddStyle("overflow", "clip", when: (HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container) && hasStickyColumns)
                 .AddStyle("display", "block", when: HorizontalScrollbar)
             .Build();
@@ -145,7 +145,7 @@ namespace MudBlazor
 
         private static void Swap<TItem>(List<TItem> list, int indexA, int indexB)
         {
-            TItem tmp = list[indexA];
+            var tmp = list[indexA];
             list[indexA] = list[indexB];
             list[indexB] = tmp;
         }
@@ -827,7 +827,7 @@ namespace MudBlazor
         {
             get
             {
-                return RenderedColumns.FirstOrDefault(x => x.grouping);
+                return RenderedColumns.FirstOrDefault(x => x.GroupingState.Value);
             }
         }
 
@@ -1514,7 +1514,7 @@ namespace MudBlazor
         {
             foreach (var group in _allGroups)
             {
-                group.IsExpanded = true;
+                group.Expanded = true;
                 _groupExpansionsDict[group.Grouping.Key] = true;
             }
         }
@@ -1523,7 +1523,7 @@ namespace MudBlazor
         {
             foreach (var group in _allGroups)
             {
-                group.IsExpanded = false;
+                group.Expanded = false;
                 _groupExpansionsDict[group.Grouping.Key] = false;
             }
         }

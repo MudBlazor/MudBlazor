@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MudBlazor;
 
 /// <summary>
 /// Provides a comparer for <see cref="double"/> values with an epsilon tolerance.
 /// </summary>
+[DebuggerDisplay("Epsilon = {_epsilon}")]
 public class DoubleEpsilonEqualityComparer : IEqualityComparer<double>
 {
     /// <summary>

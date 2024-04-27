@@ -234,9 +234,9 @@ namespace MudBlazor
         protected override async Task OnPickerOpenedAsync()
         {
             await base.OnPickerOpenedAsync();
-            if (Editable == true && Text != null)
+            if (Editable && Text != null)
             {
-                DateTime? a = Converter.Get(Text);
+                var a = Converter.Get(Text);
                 if (a.HasValue)
                 {
                     a = new DateTime(a.Value.Year, a.Value.Month, 1);
@@ -626,7 +626,7 @@ namespace MudBlazor
 
         private ValueTask HandleMouseoverOnPickerCalendarDayButton(int tempId)
         {
-            return this.JsApiService.UpdateStyleProperty(_mudPickerCalendarContentElementId, "--selected-day", tempId);
+            return JsApiService.UpdateStyleProperty(_mudPickerCalendarContentElementId, "--selected-day", tempId);
         }
     }
 }

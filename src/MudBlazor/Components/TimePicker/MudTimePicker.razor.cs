@@ -389,8 +389,8 @@ namespace MudBlazor
         private string GetTransform(double angle, double radius, double offsetX, double offsetY)
         {
             angle = angle / 180 * Math.PI;
-            var x = (Math.Sin(angle) * radius + offsetX).ToString("F3", CultureInfo.InvariantCulture);
-            var y = ((Math.Cos(angle) + 1) * radius + offsetY).ToString("F3", CultureInfo.InvariantCulture);
+            var x = ((Math.Sin(angle) * radius) + offsetX).ToString("F3", CultureInfo.InvariantCulture);
+            var y = (((Math.Cos(angle) + 1) * radius) + offsetY).ToString("F3", CultureInfo.InvariantCulture);
             return $"transform: translate({x}px, {y}px);";
         }
 
@@ -552,7 +552,7 @@ namespace MudBlazor
             if (MinuteSelectionStep > 1) // Ignore if step is less than or equal to 1
             {
                 var interval = MinuteSelectionStep % 60;
-                value = (value + interval / 2) / interval * interval;
+                value = (value + (interval / 2)) / interval * interval;
                 if (value == 60) // For when it rounds up to 60
                 {
                     value = 0;
@@ -585,11 +585,11 @@ namespace MudBlazor
                 case "ArrowRight":
                     if (IsOpen)
                     {
-                        if (obj.CtrlKey == true)
+                        if (obj.CtrlKey)
                         {
                             await ChangeHourAsync(1);
                         }
-                        else if (obj.ShiftKey == true)
+                        else if (obj.ShiftKey)
                         {
                             if (_timeSet.Minute > 55)
                             {
@@ -610,11 +610,11 @@ namespace MudBlazor
                 case "ArrowLeft":
                     if (IsOpen)
                     {
-                        if (obj.CtrlKey == true)
+                        if (obj.CtrlKey)
                         {
                             await ChangeHourAsync(-1);
                         }
-                        else if (obj.ShiftKey == true)
+                        else if (obj.ShiftKey)
                         {
                             if (_timeSet.Minute < 5)
                             {
@@ -637,11 +637,11 @@ namespace MudBlazor
                     {
                         IsOpen = true;
                     }
-                    else if (obj.AltKey == true)
+                    else if (obj.AltKey)
                     {
                         IsOpen = false;
                     }
-                    else if (obj.ShiftKey == true)
+                    else if (obj.ShiftKey)
                     {
                         await ChangeHourAsync(5);
                     }
@@ -655,7 +655,7 @@ namespace MudBlazor
                     {
                         IsOpen = true;
                     }
-                    else if (obj.ShiftKey == true)
+                    else if (obj.ShiftKey)
                     {
                         await ChangeHourAsync(-5);
                     }

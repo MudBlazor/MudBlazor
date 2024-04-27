@@ -38,6 +38,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("{");
                 cb.IndentLevel++;
                 cb.AddLine("// These tests just check all the API pages to see if they throw any exceptions");
+                cb.AddLine("[System.CodeDom.Compiler.GeneratedCodeAttribute(\"MudBlazor.Docs.Compiler\", \"0.0.0.0\")]");
                 cb.AddLine("public partial class ApiDocsTests");
                 cb.AddLine("{");
                 cb.IndentLevel++;
@@ -85,7 +86,7 @@ namespace MudBlazor.Docs.Compiler
         {
             var attributes = (ObsoleteAttribute[])
                 type.GetCustomAttributes(typeof(ObsoleteAttribute), false);
-            return (attributes != null && attributes.Length > 0);
+            return attributes != null && attributes.Length > 0;
         }
 
         private static string SafeTypeName(Type type, bool removeT = false)

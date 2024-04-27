@@ -83,10 +83,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Opening and closing an inline dialog. Click on open will open the inlined dialog.
-        ///
+        /// <para>Opening and closing an inline dialog. Click on open will open the inlined dialog.</para>
+        /// <para>
         /// Note: this test uses two different components, one containing the dialog provider and
         /// one containing the open button and the inline dialog
+        /// </para>
         /// </summary>
         [Test]
         public void InlineDialogTest()

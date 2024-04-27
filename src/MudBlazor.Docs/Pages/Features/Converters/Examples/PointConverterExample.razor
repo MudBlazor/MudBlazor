@@ -1,0 +1,34 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using System.Drawing
+@using System.Globalization;
+@using System.Text.Json
+@using Color = MudBlazor.Color
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField Label="Point"
+                      Variant="Variant.Outlined"
+                      @bind-Value="_point"
+                      Immediate="true" />
+    </MudItem>
+    
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField Label="Mirrored point" 
+                      Variant="Variant.Outlined"  
+                      @bind-Value="_point" 
+                      Immediate="true"/>
+    </MudItem>
+
+</MudGrid>
+
+@code {
+    Point _point;
+
+    protected override void OnInitialized()
+    {
+        // should be in your Startup:
+        DefaultConverter<Point>.GlobalGetFunc = x => $"[{x.X}, {x.Y}]";
+        DefaultConverter<Point>.GlobalSetFunc = x => { var tmp = JsonSerializer.Deserialize<int[]>(x); return new Point(tmp[0], tmp[1]); };
+
+    }
+}

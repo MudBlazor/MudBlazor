@@ -40,6 +40,13 @@ namespace MudBlazor
                 .AddClass("mud-dialog", PickerVariant == PickerVariant.Dialog)
                 .Build();
 
+        protected string PickerPaperStylename =>
+            new StyleBuilder()
+                .AddStyle("transition-duration", $"{Math.Round(MudGlobal.TransitionDuration.TotalMilliseconds)}ms")
+                .AddStyle("transition-delay", $"{Math.Round(MudGlobal.TransitionDelay.TotalMilliseconds)}ms")
+                .AddStyle(Style)
+                .Build();
+
         protected string PickerInlineClassname =>
             new CssBuilder("mud-picker-inline-paper")
                 .Build();
@@ -162,11 +169,11 @@ namespace MudBlazor
         protected bool GetDisabledState() => Disabled || ParentDisabled;
 
         /// <summary>
-        /// If true, the input will not have an underline.
+        /// Determines whether the input has an underline. Default is true
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public bool DisableUnderLine { get; set; }
+        public bool Underline { get; set; } = true;
 
         /// <summary>
         /// If true, no date or time can be defined.
@@ -553,7 +560,7 @@ namespace MudBlazor
             switch (args.Key)
             {
                 case "Backspace":
-                    if (args.CtrlKey == true && args.ShiftKey == true)
+                    if (args.CtrlKey && args.ShiftKey)
                     {
                         await ClearAsync();
                         _value = default;
