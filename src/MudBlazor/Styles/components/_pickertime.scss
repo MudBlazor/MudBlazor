@@ -103,6 +103,7 @@
     position: relative;
     border-radius: 50%;
     pointer-events: none;
+    touch-action: pinch-zoom;
     background-color: rgba(0,0,0,.07);
 
     .mud-picker-time-clock-mask {
