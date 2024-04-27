@@ -339,6 +339,8 @@ namespace MudBlazor
                         case "DisableAlpha":
                         case "DisableSidePadding":
                         case "DisableOverlay":
+                        case "DisableSliderAnimation":
+                        case "DisableModifiers":
                             NotifyIllegalParameter(parameter);
                             break;
                     }
