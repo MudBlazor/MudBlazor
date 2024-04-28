@@ -142,7 +142,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Click outside the dialog (or any other method) must update the IsVisible parameter two-way binding on close
+        /// Click outside the dialog (or any other method) must update the Visible parameter two-way binding on close
         /// </summary>
         /// <returns></returns>
         [Test]

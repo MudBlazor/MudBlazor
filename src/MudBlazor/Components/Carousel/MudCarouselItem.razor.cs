@@ -68,7 +68,7 @@ namespace MudBlazor
         [Category(CategoryTypes.Carousel.Appearance)]
         public string? CustomTransitionExit { get; set; }
 
-        public bool IsVisible => Parent is not null && (Parent.LastContainer == this || Parent.SelectedIndex == Parent.Items.IndexOf(this));
+        public bool Visible => Parent is not null && (Parent.LastContainer == this || Parent.SelectedIndex == Parent.Items.IndexOf(this));
 
         protected override Task OnInitializedAsync()
         {
