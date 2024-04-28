@@ -51,12 +51,12 @@ namespace MudBlazor
         public bool XAxisLines { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the legend is hidden.
+        /// Gets or sets whether the legend is shown.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.
+        /// Defaults to <c>true</c>.
         /// </remarks>
-        public bool DisableLegend { get; set; }
+        public bool ShowLegend { get; set; } = true;
 
         /// <summary>
         /// Gets or sets a list of colors applied to series values.

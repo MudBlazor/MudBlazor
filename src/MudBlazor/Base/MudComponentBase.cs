@@ -336,6 +336,20 @@ namespace MudBlazor
                         case "InitiallyExpanded":
                         case "RightAlignSmall":
                         case "IsExpandable":
+                        case "ToolBarClass":
+                        case "DisableToolbar":
+                        case "DisableLegend":
+                        case "DisableSliders":
+                        case "DisablePreview":
+                        case "DisableModeSwitch":
+                        case "DisableInputs":
+                        case "DisableDragEffect":
+                        case "DisableColorField":
+                        case "DisableAlpha":
+                        case "DisableSidePadding":
+                        case "DisableOverlay":
+                        case "DisableSliderAnimation":
+                        case "DisableModifiers":
                         case "IsChecked":
                         case "IsCheckable":
                         case "IsCheckedChanged":
