@@ -3070,7 +3070,8 @@ namespace MudBlazor.UnitTests.Components
             // amount with invariant culture (decimals separated by point)
             var amountHeader = dataGrid.FindAll("th .mud-menu button")[2];
             amountHeader.Click();
-            var filterAmount = comp.FindAll(".mud-list-item-clickable")[1];
+
+            var filterAmount = comp.FindAll(".mud-list-item")[1];
             filterAmount.Click();
 
             var filterField = comp.Find(".filters-panel .filter-field .mud-select-input");
@@ -3088,7 +3089,7 @@ namespace MudBlazor.UnitTests.Components
             // total with es-ES culture (decimals separated by comma)
             var totalHeader = dataGrid.FindAll("th .mud-menu button")[3];
             totalHeader.Click();
-            var filterTotal = comp.FindAll(".mud-list-item-clickable")[1];
+            var filterTotal = comp.FindAll(".mud-list-item")[1];
             filterTotal.Click();
 
             var filterTotalField = comp.Find(".filters-panel .filter-field .mud-select-input");
