@@ -32,7 +32,6 @@ namespace MudBlazor.Docs.Services
             //Individual elements
             .AddItem("Container", typeof(MudContainer))
             .AddItem("Grid", typeof(MudGrid), typeof(MudItem))
-            .AddItem("Matrix", typeof(MudMatrix), typeof(MudMatrixItem))
             .AddItem("Hidden", typeof(MudHidden))
             .AddItem("Breakpoint Provider", typeof(MudBreakpointProvider))
             .AddItem("Chips", typeof(MudChip))
