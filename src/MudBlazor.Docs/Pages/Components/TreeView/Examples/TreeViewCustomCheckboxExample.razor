@@ -7,7 +7,7 @@
 		  <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.TreeItems">
 			  <Content>
 				  <MudTreeViewItemToggleButton @bind-Expanded="@context.Expanded" Visible="@context.HasChild" />
-				  <MudCheckBox T="bool?" Value="@(context.HasPartialChildSelection() ? null : context.IsChecked)" ValueChanged="@((e) => CheckedChanged(context))"></MudCheckBox>
+				  <MudCheckBox T="bool?" Value="@(context.HasPartialChildSelection() ? null : context.Checked)" ValueChanged="@((e) => CheckedChanged(context))"></MudCheckBox>
 				  <MudText>@context.Text</MudText>
 			  </Content>
 		  </MudTreeViewItem>
@@ -27,7 +27,7 @@
 
         public bool Expanded { get; set; } = false;
 
-        public bool IsChecked { get; set; } = false;
+        public bool Checked { get; set; } = false;
 
         public bool HasChild => TreeItems != null && TreeItems.Count > 0;
 
@@ -46,7 +46,7 @@
 
         public bool HasPartialChildSelection()
         {
-            int iChildrenCheckedCount = (from c in TreeItems where c.IsChecked select c).Count();
+            int iChildrenCheckedCount = (from c in TreeItems where c.Checked select c).Count();
             return HasChild && iChildrenCheckedCount > 0 && iChildrenCheckedCount < TreeItems.Count();
         }
 
@@ -56,25 +56,25 @@
         public bool? GetChecked()
         {
             if (TreeItems.Count == 0)
-                return IsChecked;
+                return Checked;
             if (HasPartialChildSelection())
                 return null;
-            return IsChecked = TreeItems.All(x => x.IsChecked);
+            return Checked = TreeItems.All(x => x.Checked);
         }
     }
 
     protected void CheckedChanged(TreeItemData item)
     {
-        item.IsChecked = !item.IsChecked;
-        // checked status on any child items should mirrror this parent item
+        item.Checked = !item.Checked;
+        // checked status on any child items should mirror this parent item
         if (item.HasChild) {
             foreach (TreeItemData child in item.TreeItems) {
-                child.IsChecked = item.IsChecked;
+                child.Checked = item.Checked;
             }
         }
         // if there's a parent and all children are checked/unchecked, parent should match
         if (item.Parent != null) {
-            item.Parent.IsChecked = item.Parent.TreeItems.All(i => i.IsChecked);
+            item.Parent.Checked = item.Parent.TreeItems.All(i => i.Checked);
         }
     }
 

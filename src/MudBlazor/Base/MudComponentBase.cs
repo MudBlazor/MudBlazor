@@ -350,6 +350,9 @@ namespace MudBlazor
                         case "DisableOverlay":
                         case "DisableSliderAnimation":
                         case "DisableModifiers":
+                        case "IsChecked":
+                        case "IsCheckable":
+                        case "IsCheckedChanged":
                             NotifyIllegalParameter(parameter);
                             break;
                     }

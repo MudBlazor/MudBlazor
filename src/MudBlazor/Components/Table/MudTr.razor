@@ -34,13 +34,13 @@
             }
         </MudTd>
     }
-    @if (Expandable || IsCheckable)
+    @if (Expandable || Checkable)
     {
         <MudElement HtmlTag="@("Td")" Class="mud-table-cell">
             <div class="d-flex" style="@ActionsStylename">
-                @if (IsCheckable)
+                @if (Checkable)
                 {
-                    <MudCheckBox @bind-Value="IsChecked" StopClickPropagation="true" Class="mud-table-cell-checkbox"></MudCheckBox>
+                    <MudCheckBox @bind-Value="Checked" StopClickPropagation="true" Class="mud-table-cell-checkbox"></MudCheckBox>
                 }
             </div>
         </MudElement>
