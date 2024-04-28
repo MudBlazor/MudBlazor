@@ -63,7 +63,7 @@
     </DocsPageContent>
 </DocsPage>
 
-<MudDrawer @bind-Open="@_iconDrawerOpen" ClipMode="DrawerClipMode.Always" Anchor="Anchor.End" DisableOverlay="true" Elevation="0" Width="260px" Class="mud-icondrawer" Variant="@DrawerVariant.Temporary">
+<MudDrawer @bind-Open="@_iconDrawerOpen" ClipMode="DrawerClipMode.Always" Anchor="Anchor.End" Overlay="false" Elevation="0" Width="260px" Class="mud-icondrawer" Variant="@DrawerVariant.Temporary">
     <MudToolBar Dense="true" Gutters="false" Class="pl-4 py-8">
         <MudIcon Size="Size.Large" Icon="@SelectedIcon.Code" Class="mr-4"/>
         <MudText Typo="Typo.subtitle1">@SelectedIcon.Name</MudText>

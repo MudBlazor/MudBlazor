@@ -1054,19 +1054,18 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// FileUpload should be validated like every other form component when a file is cleared via template action
+        /// FileUpload should be validated like every other form component when a file is cleared via ClearAsync method
         /// </summary>
         [Test]
-        public async Task Form_Should_Validate_FileUpload_When_File_Cleared_Via_Template_Action()
+        public async Task Form_Should_Validate_FileUpload_When_File_Cleared_Via_ClearAsync_Method()
         {
             var fileName = "cat.jpg";
             var fileToUpload = InputFileContent.CreateFromText("I am a cat image, trust me.", "cat.jpg");
-            var comp = Context.RenderComponent<FormWithFileUploadAndButtonTemplateContextTest>();
+            var comp = Context.RenderComponent<FormWithFileUploadAndDragAndDropActivatorTest>();
             var form = comp.FindComponent<MudForm>().Instance;
             var fileUploadComp = comp.FindComponent<MudFileUpload<IBrowserFile>>();
             var fileUploadInstance = comp.FindComponent<MudFileUpload<IBrowserFile>>().Instance;
             var input = fileUploadComp.FindComponent<InputFile>();
-            var clearButton = fileUploadComp.Find("button#upload-button");
 
             // check initial state: form should not be valid because form is untouched
             form.IsValid.Should().BeFalse();
@@ -1076,7 +1075,7 @@ namespace MudBlazor.UnitTests.Components
             fileUploadInstance.ErrorText.Should().BeNullOrEmpty();
 
             // clear files
-            await comp.InvokeAsync(() => clearButton.Click());
+            await comp.InvokeAsync(() => comp.Find("button#clear-button").Click());
             fileUploadInstance.Files.Should().BeNull();
 
             // form should now be invalid because a file is required

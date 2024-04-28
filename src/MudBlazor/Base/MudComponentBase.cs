@@ -36,7 +36,7 @@ namespace MudBlazor
         public string? Class { get; set; }
 
         /// <summary>
-        /// Gets or sets any CSS styles applied to this component. 
+        /// Gets or sets any CSS styles applied to this component.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="Class"/> property to apply CSS classes.
@@ -285,6 +285,24 @@ namespace MudBlazor
                             break;
                     }
                 }
+                else if (MatchTypes(typeof(MudFileUpload<>)))
+                {
+                    switch (parameter)
+                    {
+                        case "ButtonTemplate":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (this is MudButtonGroup)
+                {
+                    switch (parameter)
+                    {
+                        case "VerticalAlign":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
                 else
                 {
                     switch (parameter)
@@ -322,6 +340,23 @@ namespace MudBlazor
                         case "InitiallyExpanded":
                         case "RightAlignSmall":
                         case "IsExpandable":
+                        case "ToolBarClass":
+                        case "DisableToolbar":
+                        case "DisableLegend":
+                        case "DisableSliders":
+                        case "DisablePreview":
+                        case "DisableModeSwitch":
+                        case "DisableInputs":
+                        case "DisableDragEffect":
+                        case "DisableColorField":
+                        case "DisableAlpha":
+                        case "DisableSidePadding":
+                        case "DisableOverlay":
+                        case "DisableSliderAnimation":
+                        case "DisableModifiers":
+                        case "IsChecked":
+                        case "IsCheckable":
+                        case "IsCheckedChanged":
                             NotifyIllegalParameter(parameter);
                             break;
                     }

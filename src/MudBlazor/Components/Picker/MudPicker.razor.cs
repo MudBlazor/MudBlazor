@@ -194,18 +194,18 @@ namespace MudBlazor
         public bool Editable { get; set; } = false;
 
         /// <summary>
-        /// Hide toolbar and show only date/time views.
+        /// If true, show toolbar. If false, show only date/time views.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
-        public bool DisableToolbar { get; set; }
+        public bool ShowToolbar { get; set; } = true;
 
         /// <summary>
-        /// User class names for picker's ToolBar, separated by space
+        /// User class names for picker's Toolbar, separated by space
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
-        public string ToolBarClass { get; set; }
+        public string ToolbarClass { get; set; }
 
         /// <summary>
         /// Picker container option

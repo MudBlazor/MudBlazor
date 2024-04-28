@@ -98,7 +98,7 @@ namespace MudBlazor
         public double Max { get; set; } = 100.0;
 
         /// <summary>
-        /// The maximum allowed value of the linear progress. Should not be equal to min.
+        /// The current value of the linear progress. Should be between min and max.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
