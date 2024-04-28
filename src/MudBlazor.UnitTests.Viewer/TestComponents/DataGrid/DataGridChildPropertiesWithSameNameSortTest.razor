@@ -1,0 +1,25 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid Items="@_employees" Sortable="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Manager.Name" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public record Employee(string Name, Manager Manager);
+    public record Manager(string Name);
+    private IEnumerable<Employee> _employees;
+
+    protected override void OnInitialized()
+    {
+        _employees = new List<Employee>
+        {
+            new("Sam", new Manager("Test")),
+            new("Alicia", new Manager("Test1")),
+            new("Ira", new Manager("Test2")),
+            new("John", new Manager("Test4")),
+        };
+    }
+}

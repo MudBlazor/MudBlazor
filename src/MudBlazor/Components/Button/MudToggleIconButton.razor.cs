@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudToggleIconButton : MudComponentBase
     {
         /// <summary>
@@ -15,35 +16,36 @@ namespace MudBlazor
         /// <summary>
         /// Fires whenever toggled is changed. 
         /// </summary>
-        [Parameter] public EventCallback<bool> ToggledChanged { get; set; }
+        [Parameter]
+        public EventCallback<bool> ToggledChanged { get; set; }
 
         /// <summary>
         /// The Icon that will be used in the untoggled state.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
-        public string Icon { get; set; }
+        public string? Icon { get; set; }
 
         /// <summary>
         /// The Icon that will be used in the toggled state.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
-        public string ToggledIcon { get; set; }
+        public string? ToggledIcon { get; set; }
 
         /// <summary>
         /// Title of the icon used for accessibility.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         /// <summary>
         /// Title used in toggled state, if different.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
-        public string ToggledTitle { get; set; }
+        public string? ToggledTitle { get; set; }
 
         /// <summary>
         /// The color of the icon in the untoggled state. It supports the theme colors.
@@ -81,11 +83,11 @@ namespace MudBlazor
         public Edge Edge { get; set; }
 
         /// <summary>
-        /// If true, disables ripple effect.
+        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public bool DisableRipple { get; set; }
+        public bool Ripple { get; set; } = true;
 
         /// <summary>
         /// If true, the button will be disabled.
@@ -100,6 +102,20 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
         public Variant Variant { get; set; } = Variant.Text;
+
+        /// <summary>
+        /// Determines whether the component has a drop-shadow. Default is true
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public bool DropShadow { get; set; } = true;
+
+        /// <summary>
+        /// If true, the click event bubbles up to the containing/parent component.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public bool ClickPropagation { get; set; }
 
         public Task Toggle()
         {

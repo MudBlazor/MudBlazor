@@ -4,18 +4,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
-using static MudBlazor.Docs.Examples.TableRelationalExample;
+using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -115,7 +114,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs()));
             //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
             await comp.InvokeAsync(() => headerCell.Instance.RemoveSortAsync());
-            await comp.InvokeAsync(() => headerCell.Instance.AddFilterAsync());
+            await comp.InvokeAsync(() => headerCell.Instance.AddFilter());
             await comp.InvokeAsync(() => headerCell.Instance.OpenFilters());
 
             await comp.InvokeAsync(() => dataGrid.Instance.SortMode = SortMode.None);
@@ -123,6 +122,32 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.DropContainerHasChanged();
             // Since Sortable is now false, the click handler (and element holding it) should no longer exist.
             dataGrid.FindAll(".column-header .sortable-column-header").Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task DataGridSortableHeaderRowTest()
+        {
+            var comp = Context.RenderComponent<DataGridSortableHeaderRowTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableHeaderRowTest.Item>>();
+
+            // Count the number of rows including header.
+            var rows = dataGrid.FindAll("tr");
+            rows.Count.Should().Be(6, because: "2 header rows + 3 data rows + 1 footer row");
+
+            var cells = dataGrid.FindAll("td");
+            cells.Count.Should().Be(9, because: "We have 3 data rows with three columns");
+
+            // Check the values of rows without sorting
+            cells[0].TextContent.Should().Be("B"); cells[1].TextContent.Should().Be("42"); cells[2].TextContent.Should().Be("555");
+            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("73"); cells[5].TextContent.Should().Be("7");
+            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("11"); cells[8].TextContent.Should().Be("4444");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => { return x.Name; }));
+            cells = dataGrid.FindAll("td");
+
+            cells[0].TextContent.Should().Be("A"); cells[1].TextContent.Should().Be("73"); cells[2].TextContent.Should().Be("7");
+            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("11"); cells[5].TextContent.Should().Be("4444");
+            cells[6].TextContent.Should().Be("B"); cells[7].TextContent.Should().Be("42"); cells[8].TextContent.Should().Be("555");
         }
 
         [Test]
@@ -233,6 +258,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGrid_SetParameters_ServerData_Items_Throw()
+        {
+            var serverDataFunc =
+                new Func<GridState<TestModel1>, Task<GridData<TestModel1>>>((x) => throw new NotImplementedException());
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+                Context.RenderComponent<MudDataGrid<TestModel1>>(
+                    Parameter(nameof(MudDataGrid<TestModel1>.ServerData), serverDataFunc),
+                    Parameter(nameof(MudDataGrid<TestModel1>.Items), Array.Empty<TestModel1>())
+                )
+            );
+            exception.Message.Should().Be(
+                """
+                MudBlazor.MudDataGrid`1[MudBlazor.UnitTests.Components.TestModel1] can only accept one item source from its parameters. Do not supply both 'Items' and 'ServerData'.
+                """
+            );
+        }
+
+        [Test]
+        public async Task DataGrid_SetParameters_ServerData_QuickFilter_Throw()
+        {
+            var serverDataFunc =
+                new Func<GridState<TestModel1>, Task<GridData<TestModel1>>>((x) => throw new NotImplementedException());
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+                Context.RenderComponent<MudDataGrid<TestModel1>>(
+                    Parameter(nameof(MudDataGrid<TestModel1>.ServerData), serverDataFunc),
+                    Parameter(nameof(MudDataGrid<TestModel1>.QuickFilter), (TestModel1 x) => true)
+                )
+            );
+            exception.Message.Should().Be("Do not supply both 'ServerData' and 'QuickFilter'.");
+        }
+
+        [Test]
         public async Task DataGridFilterableServerDataTest()
         {
             var comp = Context.RenderComponent<DataGridFilterableServerDataTest>();
@@ -266,6 +323,36 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridSingleSelectionTest()
+        {
+            var comp = Context.RenderComponent<DataGridSingleSelectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSingleSelectionTest.Item>>();
+
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+
+            // select first item programmatically
+            var firstItem = dataGrid.Instance.Items.ElementAt(0);
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(true, firstItem));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+            dataGrid.Instance.SelectedItem.Should().Be(firstItem);
+
+            // select second item programmatically (still should be only one item selected)
+            var secondItem = dataGrid.Instance.Items.ElementAt(1);
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(true, secondItem));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+            dataGrid.Instance.SelectedItem.Should().Be(secondItem);
+
+            // deselect an item programmatically
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(false, secondItem));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.SelectedItem.Should().BeNull();
+
+            // nothing should happen as the "select all" shouldn't do anything in single selection mode
+            dataGrid.FindAll("input")[0].Change(true);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+        }
+
+        [Test]
         public async Task DataGridMultiSelectionTest()
         {
             var comp = Context.RenderComponent<DataGridMultiSelectionTest>();
@@ -273,15 +360,15 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
             dataGrid.FindAll("input")[0].Change(true);
-            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(4);
 
             // deselect an item programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(false, dataGrid.Instance.SelectedItems.First()));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(2);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
 
             // select an item programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(dataGrid.Instance.Items.First()));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(4);
 
             // deselect all programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));
@@ -289,13 +376,59 @@ namespace MudBlazor.UnitTests.Components
 
             // select all programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(true));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(4);
 
             // deselect from the footer
             dataGrid.Find("tfoot input").Change(false);
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
         }
-        
+
+        [Test]
+        public async Task DataGridMultiSelectionTest_Should_Not_Render_Footer_If_ShowInFooter_Is_False()
+        {
+            var comp = Context.RenderComponent<DataGridMultiSelectionTest>(
+                Parameter(nameof(MudBlazor.UnitTests.TestComponents.DataGridMultiSelectionTest.ShowInFooter), false));
+            comp.FindAll("td.footer-cell").Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task DataGridSelectAllWithFilterTest()
+        {
+            var comp = Context.RenderComponent<DataGridMultiSelectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridMultiSelectionTest.Item>>();
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4, because: "all four rows shown by default");
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0, because: "no selected items by default");
+
+            var twoBFilter = new FilterDefinition<DataGridMultiSelectionTest.Item>
+            {
+                Column = dataGrid.Instance.RenderedColumns.FirstOrDefault(c => c.PropertyName == "Name"),
+                Operator = FilterOperator.String.Equal,
+                Value = "B"
+            };
+
+            // Add a FilterDefinition to filter where the Name == "B".
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(twoBFilter));
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(2, because: "two 'B' rows shown per the filter");
+
+            // select-all
+            dataGrid.FindAll("input[type=checkbox]")[0].Change(true);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(2, because: "only the two 'B' rows that are visible should get selected");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ClearFiltersAsync());
+            dataGrid.Render();
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4, because: "all rows should be shown when filter disapplied");
+            dataGrid.Instance.SelectedItems.Count.Should().Be(2, because: "selection should not have changed when filter disapplied");
+            dataGrid.FindAll("input")[0].IsChecked().Should().BeFalse(because: "select all checkbox should reflect 'not all selected' state");
+            dataGrid.FindAll("tfoot input")[0].IsChecked().Should().BeFalse(because: "select all checkbox should reflect 'not all selected' state");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(twoBFilter));
+            dataGrid.FindAll("input[type=checkbox]")[0].IsChecked().Should().BeTrue(because: "select all checkbox should reflect 'all selected' state");
+            dataGrid.FindAll("tfoot input[type=checkbox]")[0].IsChecked().Should().BeTrue(because: "select all checkbox should reflect 'all selected' state");
+        }
+
         [Test]
         public async Task DataGridServerMultiSelectionTest()
         {
@@ -328,10 +461,37 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridEditableSelectionTest()
+        {
+            var comp = Context.RenderComponent<DataGridEditableWithSelectColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditableWithSelectColumnTest.Item>>();
+
+            // test that all rows, header and footer have cell with a checkbox
+            dataGrid.FindAll("input.mud-checkbox-input").Count().Should().Be(dataGrid.Instance.Items.Count() + 2);
+
+            //test that changing header sets all items selected
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.FindAll("input.mud-checkbox-input")[0].Change(true);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(dataGrid.Instance.Items.Count());
+            //test that changing footer unselects all items
+            dataGrid.FindAll("input.mud-checkbox-input")[^1].Change(false);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            //test that changing value in each row selects an item in grid
+            for (var i = 1; i < dataGrid.Instance.Items.Count(); i++)
+            {
+                dataGrid.FindAll("input.mud-checkbox-input")[i].Change(true);
+                dataGrid.Instance.SelectedItems.Count.Should().Be(i);
+            }
+        }
+
+        [Test]
         public async Task DataGridPaginationTest()
         {
             var comp = Context.RenderComponent<DataGridPaginationTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationTest.Item>>();
+            // check that the page size dropdown is shown
+            comp.FindComponents<MudSelect<string>>().Count.Should().Be(1);
+
             dataGrid.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20");
 
             // test that we are on the first page of results
@@ -361,6 +521,53 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.CurrentPage.Should().Be(0);
         }
 
+
+        [Test]
+        public async Task DataGridPaginationPageSizeDropDownTest()
+        {
+            var comp = Context.RenderComponent<DataGridPaginationTest>(self => self.Add(x => x.PageSizeDropDown, false));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationTest.Item>>();
+            dataGrid.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20");
+
+            // test that we are on the first page of results
+            dataGrid.Find(".mud-table-body td").TextContent.Trim().Should().Be("0");
+
+            // page size drop-down is not shown
+            comp.FindComponents<MudSelect<string>>().Should().BeEmpty();
+        }
+
+        [Test]
+        public void DataGridHideNavigationTest()
+        {
+            var comp = Context.RenderComponent<DataGridPaginationTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationTest.Item>>();
+            var pagerContent = comp.FindComponent<MudDataGridPager<DataGridPaginationTest.Item>>();
+
+            comp.Markup.Should().Contain("mud-table-pagination-actions");
+            comp.Markup.Should().Contain("M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z");
+            comp.Markup.Should().Contain("1-10 of 20");
+            pagerContent.SetParam("ShowNavigation", false);
+            comp.Markup.Should().NotContain("mud-table-pagination-actions");
+            pagerContent.SetParam("ShowPageNumber", false);
+            comp.Markup.Should().NotContain("1-10 of 20");
+        }
+
+        [Test]
+        public async Task DataGridRowsPerPageTwoWayBindingTest()
+        {
+            var comp = Context.RenderComponent<DataGridRowsPerPageBindingTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridRowsPerPageBindingTest.Item>>();
+
+            // confirm that BoundRowsPerPage is equal to the initial value of 5 (See DataGridRowsPerPageBindingTest)
+            comp.Instance.BoundRowsPerPage.Should().Be(5);
+
+            // programmatically set the datagrid rowsPerPage to 10
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.SetRowsPerPageAsync(10));
+
+            // confirm that BoundRowsPerPage changes when rowsPerPage is set to 10
+            comp.Instance.BoundRowsPerPage.Should().Be(10);
+        }
+
         [Test]
         public async Task DataGridInlineEditTest()
         {
@@ -385,6 +592,21 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridInlineEditWithNullableChangeTest()
+        {
+            var comp = Context.RenderComponent<DataGridCellEditWithNullableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellEditWithNullableTest.Model>>();
+
+            // try setting a value to null
+            dataGrid.FindAll("td input")[1].Change("");
+            dataGrid.Instance.Items.First().Age.Should().Be(null);
+
+            // try setting the value back to something not null
+            dataGrid.FindAll("td input")[1].Change("15");
+            dataGrid.Instance.Items.First().Age.Should().Be(15);
+        }
+
+        [Test]
         public async Task DataGridInlineEditWithNullableTest()
         {
             var comp = Context.RenderComponent<DataGridCellEditWithNullableTest>();
@@ -395,7 +617,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td input")[2].GetAttribute("value").Trim().Should().Be("Johanna");
             dataGrid.FindAll("td input")[3].GetAttribute("value").Trim().Should().Be("23");
             dataGrid.FindAll("td input")[4].GetAttribute("value").Trim().Should().Be("Steve");
-            Assert.IsNull(dataGrid.FindAll("td input")[5].GetAttribute("value"));
+            dataGrid.FindAll("td input")[5].GetAttribute("value").Should().BeNull();
             dataGrid.FindAll(".mud-table-body tr td input")[0].Change("Jonathan");
             dataGrid.FindAll(".mud-table-body tr td input")[1].Change(52);
             dataGrid.FindAll(".mud-table-body tr td input")[0].GetAttribute("value").Trim().Should().Be("Jonathan");
@@ -456,7 +678,8 @@ namespace MudBlazor.UnitTests.Components
 
             //open edit dialog
             dataGrid.FindAll("tbody tr")[1].Click();
-
+            //No close button
+            comp.FindAll("button[aria-label=\"close\"]").Should().BeEmpty();
             //edit data
             comp.FindAll("div input")[0].Change("Galadriel");
             comp.FindAll("div input")[1].Change(1);
@@ -493,7 +716,38 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("J K Simmons");
 
             var textfield = comp.FindComponent<MudTextField<string>>();
-            Assert.AreSame(comp.Instance.FormFieldChangedEventArgs.Field, textfield.Instance);
+            textfield.Instance.Should().BeSameAs(comp.Instance.FormFieldChangedEventArgs.Field);
+        }
+
+        [Test]
+        public async Task DataGridFormValidationErrorsPreventUpdateTest()
+        {
+            var comp = Context.RenderComponent<DataGridFormValidationErrorsPreventUpdateTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFormValidationErrorsPreventUpdateTest.Model>>();
+
+            // open form dialog
+            dataGrid.Find("tbody tr button").Click();
+            dataGrid.Instance.isEditFormOpen.Should().BeTrue();
+
+            var field = comp.FindComponents<MudTextField<string>>()[2];
+
+            // edit data
+            field.Instance.Value.Should().Be("Augusta_Homenick26@mud.com");
+            field.WaitForElement("input").Change("not-a-valid-email-address");
+
+            // check the change occurred
+            field.Instance.Value.Should().Be("not-a-valid-email-address");
+
+            // ensure that validation message is displayed
+            field.Markup.Should().Contain("This is not a valid e-mail address");
+
+            var button = comp.FindComponents<MudButton>().Single(b => b.Markup.Contains("Save"));
+            button.WaitForElement("button").Click();
+
+            // dialog should still be open and the items data should not have been updated
+            using AssertionScope scope = new();
+            dataGrid.Instance.isEditFormOpen.Should().BeTrue();
+            comp.Instance.Items[0].Email.Should().Be("Augusta_Homenick26@mud.com");
         }
 
         [Test]
@@ -515,6 +769,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Include callbacks in test coverage.
             dataGrid.Instance.RowClick.HasDelegate.Should().Be(true);
+            dataGrid.Instance.RowContextMenuClick.HasDelegate.Should().Be(true);
             dataGrid.Instance.SelectedItemChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.CommittedItemChanges.HasDelegate.Should().Be(true);
             dataGrid.Instance.StartedEditingItem.HasDelegate.Should().Be(true);
@@ -539,6 +794,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Make sure that the callbacks have not been fired yet.
             comp.Instance.RowClicked.Should().Be(false);
+            comp.Instance.RowContextMenuClicked.Should().Be(false);
             comp.Instance.SelectedItemChanged.Should().Be(false);
             comp.Instance.CommittedItemChanges.Should().Be(false);
             comp.Instance.StartedEditingItem.Should().Be(false);
@@ -547,11 +803,15 @@ namespace MudBlazor.UnitTests.Components
             // Fire RowClick, SelectedItemChanged, SelectedItemsChanged, and StartedEditingItem callbacks.
             dataGrid.FindAll(".mud-table-body tr")[0].Click();
 
+            // Fire RowContextMenuClick
+            dataGrid.FindAll(".mud-table-body tr")[0].ContextMenu();
+
             // Edit an item.
             dataGrid.FindAll(".mud-table-body tr td input")[0].Change("A test");
 
             // Make sure that the callbacks have been fired.
             comp.Instance.RowClicked.Should().Be(true);
+            comp.Instance.RowContextMenuClicked.Should().Be(true);
             comp.Instance.SelectedItemChanged.Should().Be(true);
             comp.Instance.CommittedItemChanges.Should().Be(true);
             comp.Instance.CanceledEditingItem.Should().Be(false);
@@ -560,6 +820,52 @@ namespace MudBlazor.UnitTests.Components
             // but we can brute force it by directly calling the CancelEditingItemAsync method on the datagrid
             await dataGrid.InvokeAsync(dataGrid.Instance.CancelEditingItemAsync);
             comp.Instance.CanceledEditingItem.Should().Be(true);
+        }
+
+        [Test]
+        public async Task DataGridEditComplexPropertyExpressionTest()
+        {
+            var comp = Context.RenderComponent<DataGridEditComplexPropertyExpressionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditComplexPropertyExpressionTest.Item>>();
+
+
+            dataGrid.Render();
+
+            // Make sure that the value is as expected before we try to change it
+            comp.Instance.Items[0].Name.Should().Be("A");
+            comp.Instance.Items[0].SubItem.SubProperty.Should().Be("A-D");
+            comp.Instance.Items[0].SubItem.SubItem2.SubProperty2.Should().Be("A-D-E");
+
+            // Edit an item 'normally'
+            dataGrid.FindAll(".mud-table-body tr td input")[0].Change("Test 1");
+            comp.Instance.Items[0].Name.Should().Be("Test 1");
+
+            // Edit an item that has a sub property like x.Something.SomethingElse
+            dataGrid.FindAll(".mud-table-body tr td input")[1].Change("Test 2");
+            comp.Instance.Items[0].SubItem.SubProperty.Should().Be("Test 2");
+
+            // Edit an item that has a sub property like x.Something.SomethingElse.SomethingElseAgain
+            dataGrid.FindAll(".mud-table-body tr td input")[2].Change("Test 3");
+            comp.Instance.Items[0].SubItem.SubItem2.SubProperty2.Should().Be("Test 3");
+        }
+
+        [Test]
+        public async Task DataGridOnContextMenuClickWhenIsGrouped()
+        {
+            var comp = Context.RenderComponent<DataGridGroupExpandedTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedTest.Fruit>>();
+
+            // Include callbacks in test coverage.
+            dataGrid.Instance.RowContextMenuClick.HasDelegate.Should().Be(true);
+
+            // Make sure that the callbacks have not been fired yet.
+            comp.Instance.RowContextMenuClicked.Should().Be(false);
+
+            // Fire RowContextMenuClick
+            dataGrid.FindAll(".mud-table-body tr")[1].ContextMenu();
+
+            // Make sure that the callbacks have been fired.
+            comp.Instance.RowContextMenuClicked.Should().Be(true);
         }
 
         [Test]
@@ -643,29 +949,33 @@ namespace MudBlazor.UnitTests.Components
             {
                 Column = nameColumn,
                 Operator = FilterOperator.String.Contains,
-                Value = "Joe",
-                DataGrid = dataGrid.Instance
+                Value = "Joe"
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Does not contain", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("joe", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Does not contain", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
 
             //case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
                 Column = nameColumn,
                 Operator = FilterOperator.String.Contains,
-                Value = "Joe",
-                DataGrid = dataGrid.Instance
+                Value = "Joe"
             };
-            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Does not contain", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("joe", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null)));
+            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Does not contain", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
 
             // null value default case sensitivity
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -673,27 +983,31 @@ namespace MudBlazor.UnitTests.Components
                 Column = nameColumn,
                 Operator = FilterOperator.String.Contains,
                 Value = null,
-                DataGrid = dataGrid.Instance
             };
-            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.Default;
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Does not contain", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new(null, 45, null, null, null)));
+            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Does not contain", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
 
             // null value default case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
                 Column = nameColumn,
                 Operator = FilterOperator.String.Contains,
-                Value = null,
-                DataGrid = dataGrid.Instance
+                Value = null
             };
-            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Does not contain", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new(null, 45, null, null, null)));
+            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Does not contain", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -704,44 +1018,50 @@ namespace MudBlazor.UnitTests.Components
             {
                 Column = nameColumn,
                 Operator = FilterOperator.String.NotContains,
-                Value = "Joe",
-                DataGrid = dataGrid.Instance
+                Value = "Joe"
             };
-            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.Default;
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Does not contain", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("joe", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null)));
+            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Does not contain", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
 
             // case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
                 Column = nameColumn,
                 Operator = FilterOperator.String.NotContains,
-                Value = "Joe",
-                DataGrid = dataGrid.Instance
+                Value = "Joe"
             };
-            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Does not contain", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("joe", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null)));
+            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Does not contain", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
                 Column = nameColumn,
                 Operator = FilterOperator.String.NotContains,
-                Value = null,
-                DataGrid = dataGrid.Instance
+                Value = null
             };
-            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.Default;
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Does not contain", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new(null, 45, null, null, null)));
+            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Does not contain", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -752,29 +1072,33 @@ namespace MudBlazor.UnitTests.Components
             {
                 Column = nameColumn,
                 Operator = FilterOperator.String.Equal,
-                Value = "Joe",
-                DataGrid = dataGrid.Instance
+                Value = "Joe"
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Not Joe", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Not Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeFalse();
 
             //case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
                 Column = nameColumn,
                 Operator = FilterOperator.String.Equal,
-                Value = "Joe",
-                DataGrid = dataGrid.Instance
+                Value = "Joe"
             };
-            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Not Joe", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("joe", 45, null, null, null)));
+            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Not Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeTrue();
 
             // null value default case sensitivity
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -782,29 +1106,32 @@ namespace MudBlazor.UnitTests.Components
                 Column = nameColumn,
                 Operator = FilterOperator.String.Equal,
                 Value = null,
-                DataGrid = dataGrid.Instance
             };
-            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.Default;
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Joe Not", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new(null, 45, null, null, null)));
+            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
 
             // null value case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
                 Column = nameColumn,
                 Operator = FilterOperator.String.Equal,
-                Value = null,
-                DataGrid = dataGrid.Instance
+                Value = null
             };
-            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
-
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Joe Not", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("joe", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new(null, 45, null, null, null)));
+            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -815,44 +1142,50 @@ namespace MudBlazor.UnitTests.Components
             {
                 Column = nameColumn,
                 Operator = FilterOperator.String.NotEqual,
-                Value = "Joe",
-                DataGrid = dataGrid.Instance
+                Value = "Joe"
             };
-            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.Default;
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Not Joe", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("joe", 45, null, null, null)));
+            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Not Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeTrue();
 
             //case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
                 Column = nameColumn,
                 Operator = FilterOperator.String.NotEqual,
-                Value = "Joe",
-                DataGrid = dataGrid.Instance
+                Value = "Joe"
             };
-            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Not Joe", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("joe", 45, null, null, null)));
+            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Not Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
                 Column = nameColumn,
                 Operator = FilterOperator.String.NotEqual,
-                Value = null,
-                DataGrid = dataGrid.Instance
+                Value = null
             };
-            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.Default;
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Joe Not", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new(null, 45, null, null, null)));
+            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -863,43 +1196,49 @@ namespace MudBlazor.UnitTests.Components
             {
                 Column = nameColumn,
                 Operator = FilterOperator.String.StartsWith,
-                Value = "Joe",
-                DataGrid = dataGrid.Instance
+                Value = "Joe"
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Not Joe", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Not Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeFalse();
 
             //case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
                 Column = nameColumn,
                 Operator = FilterOperator.String.StartsWith,
-                Value = "Joe",
-                DataGrid = dataGrid.Instance
+                Value = "Joe"
             };
-            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Not Joe", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("joe", 45, null, null, null)));
+            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Not Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
                 Column = nameColumn,
                 Operator = FilterOperator.String.StartsWith,
-                Value = null,
-                DataGrid = dataGrid.Instance
+                Value = null
             };
-            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.Default;
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Not Joe", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new(null, 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
+            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Not Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -910,43 +1249,49 @@ namespace MudBlazor.UnitTests.Components
             {
                 Column = nameColumn,
                 Operator = FilterOperator.String.EndsWith,
-                Value = "Joe",
-                DataGrid = dataGrid.Instance
+                Value = "Joe"
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Joe Not", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeFalse();
 
             //case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
                 Column = nameColumn,
                 Operator = FilterOperator.String.EndsWith,
-                Value = "Joe",
-                DataGrid = dataGrid.Instance
+                Value = "Joe"
             };
-            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Joe Not", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("joe", 45, null, null, null)));
+            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
                 Column = nameColumn,
                 Operator = FilterOperator.String.EndsWith,
-                Value = null,
-                DataGrid = dataGrid.Instance
+                Value = null
             };
-            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.Default;
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Joe Not", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new(null, 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
+            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -956,14 +1301,16 @@ namespace MudBlazor.UnitTests.Components
             {
                 Column = nameColumn,
                 Operator = FilterOperator.String.Empty,
-                Value = null,
-                DataGrid = dataGrid.Instance
+                Value = null
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Joe Not", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new(null, 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new(String.Empty, 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(string.Empty, 45, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -971,13 +1318,15 @@ namespace MudBlazor.UnitTests.Components
                 Column = nameColumn,
                 Operator = FilterOperator.String.NotEmpty,
                 Value = null,
-                DataGrid = dataGrid.Instance
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Joe Not", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(String.Empty, 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(string.Empty, 45, null, null, null, null)).Should().BeFalse();
 
             #endregion
 
@@ -987,28 +1336,32 @@ namespace MudBlazor.UnitTests.Components
             {
                 Column = nameColumn,
                 Operator = FilterOperator.String.NotEmpty,
-                Value = null,
-                DataGrid = dataGrid.Instance
+                Value = null
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Joe Not", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(String.Empty, 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(string.Empty, 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
                 Column = nameColumn,
                 Operator = FilterOperator.String.NotEmpty,
-                Value = null,
-                DataGrid = dataGrid.Instance
+                Value = null
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Joe Not", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("", 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(String.Empty, 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(string.Empty, 45, null, null, null, null)).Should().BeFalse();
 
             #endregion
 
@@ -1017,625 +1370,16 @@ namespace MudBlazor.UnitTests.Components
             {
                 Column = nameColumn,
                 Operator = null,
-                Value = "Joe",
-                DataGrid = dataGrid.Instance
+                Value = "Joe"
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Joe Not", 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new(null, 45, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
         }
-
-        //[Test]
-        //public async Task FilterDefinitionStringForIDictionaryTest()
-        //{
-        //    var filterDefinition = new FilterDefinition<IDictionary<string, object>>();
-        //    Func<IDictionary<string, object>, bool> func = null;
-
-        //    #region FilterOperator.String.Contains
-
-        //    //default case sensitivity
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Name",
-        //        Operator = FilterOperator.String.Contains,
-        //        Value = "Joe",
-        //        //FieldType = typeof(string),
-        //        DataGrid = new MudDataGrid<IDictionary<string, object>>()
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Does not contain" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-
-        //    //case insensitive
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Name",
-        //        Operator = FilterOperator.String.Contains,
-        //        Value = "Joe",
-        //        //FieldType = typeof(string),
-        //        DataGrid = new MudDataGrid<IDictionary<string, object>>()
-        //    };
-        //    filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Does not contain" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Name",
-        //        Operator = FilterOperator.String.Contains,
-        //        Value = null,
-        //        //FieldType = typeof(string),
-        //        DataGrid = new MudDataGrid<IDictionary<string, object>>()
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Does not contain" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-
-        //    #endregion
-
-        //    #region FilterOperator.String.NotContains
-        //    //default case sensitivity
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Name",
-        //        Operator = FilterOperator.String.NotContains,
-        //        Value = "Joe",
-        //        //FieldType = typeof(string),
-        //        DataGrid = new MudDataGrid<IDictionary<string, object>>()
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Does not contain" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-
-        //    //case insensitive
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Name",
-        //        Operator = FilterOperator.String.NotContains,
-        //        Value = "Joe",
-        //        //FieldType = typeof(string),
-        //        DataGrid = new MudDataGrid<IDictionary<string, object>>()
-        //    };
-        //    filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Does not contain" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Name",
-        //        Operator = FilterOperator.String.NotContains,
-        //        Value = null,
-        //        //FieldType = typeof(string),
-        //        DataGrid = new MudDataGrid<IDictionary<string, object>>()
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Does not contain" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-
-        //    #endregion
-
-        //    #region FilterOperator.String.Equal
-
-        //    //default case sensitivity
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Name",
-        //        Operator = FilterOperator.String.Equal,
-        //        Value = "Joe",
-        //        //FieldType = typeof(string),
-        //        DataGrid = new MudDataGrid<IDictionary<string, object>>()
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Not Joe" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
-
-        //    //case insensitive
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Name",
-        //        Operator = FilterOperator.String.Equal,
-        //        Value = "Joe",
-        //        //FieldType = typeof(string),
-        //        DataGrid = new MudDataGrid<IDictionary<string, object>>()
-        //    };
-        //    filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Not Joe" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Name",
-        //        Operator = FilterOperator.String.Equal,
-        //        Value = null,
-        //        //FieldType = typeof(string),
-        //        DataGrid = new MudDataGrid<IDictionary<string, object>>()
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-
-        //    #endregion
-
-        //    #region FilterOperator.String.NotEqual
-
-        //    //default case sensitivity
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Name",
-        //        Operator = FilterOperator.String.NotEqual,
-        //        Value = "Joe",
-        //        //FieldType = typeof(string),
-        //        DataGrid = new MudDataGrid<IDictionary<string, object>>()
-        //    };
-
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Not Joe" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
-
-        //    //case insensitive
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Name",
-        //        Operator = FilterOperator.String.NotEqual,
-        //        Value = "Joe",
-        //        //FieldType = typeof(string),
-        //        DataGrid = new MudDataGrid<IDictionary<string, object>>()
-        //    };
-        //    filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Not Joe" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Name",
-        //        Operator = FilterOperator.String.NotEqual,
-        //        Value = null,
-        //        //FieldType = typeof(string),
-        //        DataGrid = new MudDataGrid<IDictionary<string, object>>()
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-
-        //    #endregion
-
-        //    #region FilterOperator.String.StartsWith
-
-        //    //default case sensitivity
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Name",
-        //        Operator = FilterOperator.String.StartsWith,
-        //        Value = "Joe",
-        //        //FieldType = typeof(string),
-        //        DataGrid = new MudDataGrid<IDictionary<string, object>>()
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Not Joe" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
-
-        //    //case insensitive
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Name",
-        //        Operator = FilterOperator.String.StartsWith,
-        //        Value = "Joe",
-        //        //FieldType = typeof(string),
-        //        DataGrid = new MudDataGrid<IDictionary<string, object>>()
-        //    };
-        //    filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Not Joe" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Name",
-        //        Operator = FilterOperator.String.StartsWith,
-        //        Value = null,
-        //        //FieldType = typeof(string),
-        //        DataGrid = new MudDataGrid<IDictionary<string, object>>()
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Not Joe" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
-
-        //    #endregion
-
-        //    #region FilterOperator.String.EndsWith
-        //    //default case sensitivity
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Name",
-        //        Operator = FilterOperator.String.EndsWith,
-        //        Value = "Joe",
-        //        //FieldType = typeof(string),
-        //        DataGrid = new MudDataGrid<IDictionary<string, object>>()
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
-
-        //    //case insensitive
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Name",
-        //        Operator = FilterOperator.String.EndsWith,
-        //        Value = "Joe",
-        //        //FieldType = typeof(string),
-        //        DataGrid = new MudDataGrid<IDictionary<string, object>>()
-        //    };
-        //    filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Name",
-        //        Operator = FilterOperator.String.EndsWith,
-        //        Value = null,
-        //        //FieldType = typeof(string),
-        //        DataGrid = new MudDataGrid<IDictionary<string, object>>()
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
-
-        //    #endregion
-
-        //    #region FilterOperator.String.Empty
-
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Name",
-        //        Operator = FilterOperator.String.Empty,
-        //        Value = null,
-        //        //FieldType = typeof(string),
-        //        DataGrid = new MudDataGrid<IDictionary<string, object>>()
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", String.Empty }, { "Age", 45 } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Name",
-        //        Operator = FilterOperator.String.NotEmpty,
-        //        Value = null,
-        //        //FieldType = typeof(string),
-        //        DataGrid = new MudDataGrid<IDictionary<string, object>>()
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", String.Empty }, { "Age", 45 } }));
-
-        //    #endregion
-
-        //    #region FilterOperator.String.NotEmpty
-
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Name",
-        //        Operator = FilterOperator.String.NotEmpty,
-        //        Value = null,
-        //        //FieldType = typeof(string),
-        //        DataGrid = new MudDataGrid<IDictionary<string, object>>()
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", String.Empty }, { "Age", 45 } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Name",
-        //        Operator = FilterOperator.String.NotEmpty,
-        //        Value = null,
-        //        //FieldType = typeof(string),
-        //        DataGrid = new MudDataGrid<IDictionary<string, object>>()
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", String.Empty }, { "Age", 45 } }));
-
-        //    #endregion
-
-        //    // handle null operator
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Name",
-        //        Operator = null,
-        //        Value = "Joe",
-        //        //FieldType = typeof(string),
-        //        DataGrid = new MudDataGrid<IDictionary<string, object>>()
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
-        //}
-
-        //[Test]
-        //public async Task FilterDefinitionNumberForDictionaryTest()
-        //{
-        //    var filterDefinition = new FilterDefinition<IDictionary<string, object>>();
-        //    Func<IDictionary<string, object>, bool> func = null;
-
-        //    #region FilterOperator.Number.Equal
-
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Age",
-        //        Operator = FilterOperator.Number.Equal,
-        //        Value = 45,
-        //        //FieldType = typeof(int)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 456 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Age",
-        //        Operator = FilterOperator.Number.Equal,
-        //        Value = null,
-        //        //FieldType = typeof(int)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    // data type is an int
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 456 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
-
-        //    #endregion
-
-        //    #region FilterOperator.Number.NotEqual
-
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Age",
-        //        Operator = FilterOperator.Number.NotEqual,
-        //        Value = 45,
-        //        //FieldType = typeof(int)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 456 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Age",
-        //        Operator = FilterOperator.Number.NotEqual,
-        //        Value = null,
-        //        //FieldType = typeof(int)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 456 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
-
-        //    #endregion
-
-        //    #region FilterOperator.Number.GreaterThan
-
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Age",
-        //        Operator = FilterOperator.Number.GreaterThan,
-        //        Value = 45,
-        //        //FieldType = typeof(int)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 456 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Age",
-        //        Operator = FilterOperator.Number.GreaterThan,
-        //        Value = null,
-        //        //FieldType = typeof(int)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 456 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
-
-        //    #endregion
-
-        //    #region FilterOperator.Number.LessThan
-
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Age",
-        //        Operator = FilterOperator.Number.LessThan,
-        //        Value = 45,
-        //        //FieldType = typeof(int)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 4 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Age",
-        //        Operator = FilterOperator.Number.LessThan,
-        //        Value = null,
-        //        //FieldType = typeof(int)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 4 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
-
-        //    #endregion
-
-        //    #region FilterOperator.Number.GreaterThanOrEqual
-
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Age",
-        //        Operator = FilterOperator.Number.GreaterThanOrEqual,
-        //        Value = 45,
-        //        //FieldType = typeof(int)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 4 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Age",
-        //        Operator = FilterOperator.Number.GreaterThanOrEqual,
-        //        Value = null,
-        //        //FieldType = typeof(int)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 4 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 } }));
-
-        //    #endregion
-
-        //    #region FilterOperator.Number.LessThanOrEqual
-
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Age",
-        //        Operator = FilterOperator.Number.LessThanOrEqual,
-        //        Value = 45,
-        //        //FieldType = typeof(int)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 46 } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Age",
-        //        Operator = FilterOperator.Number.LessThanOrEqual,
-        //        Value = null,
-        //        //FieldType = typeof(int)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 46 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 } }));
-
-        //    #endregion
-
-        //    // null operator
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Age",
-        //        Operator = null,
-        //        Value = 45,
-        //        //FieldType = typeof(int)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 456 } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 } }));
-        //}
 
         [Test]
         public async Task FilterDefinitionBoolTest()
@@ -1652,10 +1396,13 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Boolean.Is,
                 Value = true
             };
-            var func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Sam", 45, null, false, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, true, null)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null)));
+            var func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 45, null, false, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, true, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1664,10 +1411,13 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Boolean.Is,
                 Value = null
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, false, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, true, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 45, null, false, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, true, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1678,60 +1428,14 @@ namespace MudBlazor.UnitTests.Components
                 Operator = null,
                 Value = true
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, false, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, true, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 45, null, false, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, true, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
         }
-
-        //[Test]
-        //public async Task FilterDefinitionBoolForDictionaryTest()
-        //{
-        //    #region FilterOperator.Boolean.Is
-
-        //    var filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Hired",
-        //        Operator = FilterOperator.Boolean.Is,
-        //        Value = true,
-        //        //FieldType = typeof(bool)
-        //    };
-        //    var func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Hired", false } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Hired", true } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Hired", null } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Hired",
-        //        Operator = FilterOperator.Boolean.Is,
-        //        Value = null,
-        //        //FieldType = typeof(bool)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Hired", false } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Hired", true } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Hired", null } }));
-
-        //    #endregion
-
-        //    // null operator
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Hired",
-        //        Operator = null,
-        //        Value = true,
-        //        //FieldType = typeof(bool)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Hired", false } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Hired", true } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Hired", null } }));
-        //}
 
         [Test]
         public async Task FilterDefinitionEnumTest()
@@ -1748,10 +1452,13 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Enum.Is,
                 Value = Severity.Normal
             };
-            var func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Sam", 456, Severity.Info, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, Severity.Normal, null, null)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null)));
+            var func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, Severity.Info, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, Severity.Normal, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1760,10 +1467,13 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Enum.Is,
                 Value = null
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 456, Severity.Info, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, Severity.Normal, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, Severity.Info, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Normal, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1775,10 +1485,13 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Enum.IsNot,
                 Value = Severity.Normal
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Sam", 456, Severity.Normal, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, Severity.Info, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, Severity.Info, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1787,10 +1500,13 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Enum.IsNot,
                 Value = null
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 456, Severity.Normal, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, Severity.Info, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Info, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1801,91 +1517,14 @@ namespace MudBlazor.UnitTests.Components
                 Operator = null,
                 Value = Severity.Normal
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 456, Severity.Normal, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, Severity.Info, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Info, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
         }
-
-        //[Test]
-        //public async Task FilterDefinitionEnumForDictionaryTest()
-        //{
-        //    #region FilterOperator.Enum.Is
-
-        //    var filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Status",
-        //        Operator = FilterOperator.Enum.Is,
-        //        Value = Severity.Normal,
-        //        //FieldType = typeof(Severity)
-        //    };
-        //    var func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", Severity.Info } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", Severity.Normal } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", null } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Status",
-        //        Operator = FilterOperator.Enum.Is,
-        //        Value = null,
-        //        //FieldType = typeof(Severity)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", Severity.Info } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", Severity.Normal } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", null } }));
-
-        //    #endregion
-
-        //    #region FilterOperator.Enum.IsNot
-
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Status",
-        //        Operator = FilterOperator.Enum.IsNot,
-        //        Value = Severity.Normal,
-        //        //FieldType = typeof(Severity)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", Severity.Normal } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", Severity.Info } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", null } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Status",
-        //        Operator = FilterOperator.Enum.IsNot,
-        //        Value = null,
-        //        //FieldType = typeof(Severity)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", Severity.Normal } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", Severity.Info } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", null } }));
-
-        //    #endregion
-
-        //    // null operator
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Status",
-        //        Operator = null,
-        //        Value = Severity.Normal,
-        //        //FieldType = typeof(Severity)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", Severity.Normal } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", Severity.Info } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", null } }));
-        //}
 
         [Test]
         public async Task FilterDefinitionDateTimeTest()
@@ -1903,9 +1542,12 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.Is,
                 Value = utcnow
             };
-            var func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null)));
+            var func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1914,9 +1556,12 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.Is,
                 Value = null
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1928,9 +1573,12 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.IsNot,
                 Value = utcnow
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Sam", 45, null, null, utcnow)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1939,9 +1587,12 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.IsNot,
                 Value = null
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1953,9 +1604,12 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.After,
                 Value = utcnow
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Sam", 45, null, null, utcnow)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1964,9 +1618,12 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.After,
                 Value = null
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1978,9 +1635,12 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.OnOrAfter,
                 Value = utcnow
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1989,9 +1649,12 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.OnOrAfter,
                 Value = null
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -2003,9 +1666,12 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.Before,
                 Value = utcnow
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Sam", 45, null, null, utcnow)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2014,9 +1680,12 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.Before,
                 Value = null
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -2028,9 +1697,12 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.OnOrBefore,
                 Value = utcnow
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2039,9 +1711,12 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.OnOrBefore,
                 Value = null
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -2053,9 +1728,12 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.Empty,
                 Value = utcnow
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Sam", 45, null, null, utcnow)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2064,9 +1742,12 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.Empty,
                 Value = null
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Sam", 45, null, null, utcnow)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -2078,9 +1759,12 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.NotEmpty,
                 Value = utcnow
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2089,9 +1773,12 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.NotEmpty,
                 Value = null
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
 
             #endregion
 
@@ -2102,261 +1789,13 @@ namespace MudBlazor.UnitTests.Components
                 Operator = null,
                 Value = utcnow
             };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
         }
-
-        //[Test]
-        //public async Task FilterDefinitionDateTimeForDictionaryTest()
-        //{
-        //    var utcnow = DateTime.UtcNow;
-
-        //    #region FilterOperator.DateTime.Is
-
-        //    var filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Date",
-        //        Operator = FilterOperator.DateTime.Is,
-        //        Value = utcnow,
-        //        //FieldType = typeof(DateTime)
-        //    };
-        //    var func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Date",
-        //        Operator = FilterOperator.DateTime.Is,
-        //        Value = null,
-        //        //FieldType = typeof(DateTime)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
-
-        //    #endregion
-
-        //    #region FilterOperator.DateTime.IsNot
-
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Date",
-        //        Operator = FilterOperator.DateTime.IsNot,
-        //        Value = utcnow,
-        //        //FieldType = typeof(DateTime)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Date",
-        //        Operator = FilterOperator.DateTime.IsNot,
-        //        Value = null,
-        //        //FieldType = typeof(DateTime)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
-
-        //    #endregion
-
-        //    #region FilterOperator.DateTime.After
-
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Date",
-        //        Operator = FilterOperator.DateTime.After,
-        //        Value = utcnow,
-        //        //FieldType = typeof(DateTime)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Date",
-        //        Operator = FilterOperator.DateTime.After,
-        //        Value = null,
-        //        //FieldType = typeof(DateTime)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
-
-        //    #endregion
-
-        //    #region FilterOperator.DateTime.OnOrAfter
-
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Date",
-        //        Operator = FilterOperator.DateTime.OnOrAfter,
-        //        Value = utcnow,
-        //        //FieldType = typeof(DateTime)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Date",
-        //        Operator = FilterOperator.DateTime.OnOrAfter,
-        //        Value = null,
-        //        //FieldType = typeof(DateTime)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
-
-        //    #endregion
-
-        //    #region FilterOperator.DateTime.Before
-
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Date",
-        //        Operator = FilterOperator.DateTime.Before,
-        //        Value = utcnow,
-        //        //FieldType = typeof(DateTime)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Date",
-        //        Operator = FilterOperator.DateTime.Before,
-        //        Value = null,
-        //        //FieldType = typeof(DateTime)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
-
-        //    #endregion
-
-        //    #region FilterOperator.DateTime.OnOrBefore
-
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Date",
-        //        Operator = FilterOperator.DateTime.OnOrBefore,
-        //        Value = utcnow,
-        //        //FieldType = typeof(DateTime)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Date",
-        //        Operator = FilterOperator.DateTime.OnOrBefore,
-        //        Value = null,
-        //        //FieldType = typeof(DateTime)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
-
-        //    #endregion
-
-        //    #region FilterOperator.DateTime.Empty
-
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Date",
-        //        Operator = FilterOperator.DateTime.Empty,
-        //        Value = utcnow,
-        //        //FieldType = typeof(DateTime)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Date",
-        //        Operator = FilterOperator.DateTime.Empty,
-        //        Value = null,
-        //        //FieldType = typeof(DateTime)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
-
-        //    #endregion
-
-        //    #region FilterOperator.DateTime.NotEmpty
-
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Date",
-        //        Operator = FilterOperator.DateTime.NotEmpty,
-        //        Value = utcnow,
-        //        //FieldType = typeof(DateTime)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
-
-        //    // null value
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Date",
-        //        Operator = FilterOperator.DateTime.NotEmpty,
-        //        Value = null,
-        //        //FieldType = typeof(DateTime)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
-        //    Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
-
-        //    #endregion
-
-        //    // null operator
-        //    filterDefinition = new FilterDefinition<IDictionary<string, object>>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        //Field = "Date",
-        //        Operator = null,
-        //        Value = utcnow,
-        //        //FieldType = typeof(DateTime)
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
-        //    Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
-        //}
 
         [Test]
         public async Task FilterDefinitionNumberTest()
@@ -2373,10 +1812,13 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Number.Equal,
                 Value = 45
             };
-            var func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Sam", 456, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("Sam", null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null)));
+            var func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Sam", null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2385,11 +1827,14 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Number.Equal,
                 Value = null
             };
-            var func2 = filterDefinition.GenerateFilterFunction();
+            var func2 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
             // data type is an int
-            Assert.IsTrue(func2.Invoke(new("Sam", 456, null, null, null)));
-            Assert.IsTrue(func2.Invoke(new("Sam", null, null, null, null)));
-            Assert.IsTrue(func2.Invoke(new("Joe", 45, null, null, null)));
+            func2.Invoke(new("Sam", 456, null, null, null, null)).Should().BeTrue();
+            func2.Invoke(new("Sam", null, null, null, null, null)).Should().BeTrue();
+            func2.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -2401,10 +1846,13 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Number.NotEqual,
                 Value = 45
             };
-            var func3 = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func3.Invoke(new("Sam", 456, null, null, null)));
-            Assert.IsTrue(func3.Invoke(new("Sam", null, null, null, null)));
-            Assert.IsFalse(func3.Invoke(new("Joe", 45, null, null, null)));
+            var func3 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func3.Invoke(new("Sam", 456, null, null, null, null)).Should().BeTrue();
+            func3.Invoke(new("Sam", null, null, null, null, null)).Should().BeTrue();
+            func3.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2413,10 +1861,13 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Number.NotEqual,
                 Value = null
             };
-            var func4 = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func4.Invoke(new("Sam", 456, null, null, null)));
-            Assert.IsTrue(func4.Invoke(new("Sam", null, null, null, null)));
-            Assert.IsTrue(func4.Invoke(new("Joe", 45, null, null, null)));
+            var func4 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func4.Invoke(new("Sam", 456, null, null, null, null)).Should().BeTrue();
+            func4.Invoke(new("Sam", null, null, null, null, null)).Should().BeTrue();
+            func4.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -2428,10 +1879,13 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Number.GreaterThan,
                 Value = 45
             };
-            var func5 = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func5.Invoke(new("Sam", 456, null, null, null)));
-            Assert.IsFalse(func5.Invoke(new("Joe", 45, null, null, null)));
-            Assert.IsFalse(func5.Invoke(new("Joe", null, null, null, null)));
+            var func5 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func5.Invoke(new("Sam", 456, null, null, null, null)).Should().BeTrue();
+            func5.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
+            func5.Invoke(new("Joe", null, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2440,10 +1894,13 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Number.GreaterThan,
                 Value = null
             };
-            var func6 = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func6.Invoke(new("Sam", 456, null, null, null)));
-            Assert.IsTrue(func6.Invoke(new("Joe", 45, null, null, null)));
-            Assert.IsTrue(func6.Invoke(new("Joe", null, null, null, null)));
+            var func6 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func6.Invoke(new("Sam", 456, null, null, null, null)).Should().BeTrue();
+            func6.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func6.Invoke(new("Joe", null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -2455,10 +1912,13 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Number.LessThan,
                 Value = 45
             };
-            var func7 = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func7.Invoke(new("Sam", 4, null, null, null)));
-            Assert.IsFalse(func7.Invoke(new("Joe", 45, null, null, null)));
-            Assert.IsFalse(func7.Invoke(new("Joe", null, null, null, null)));
+            var func7 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func7.Invoke(new("Sam", 4, null, null, null, null)).Should().BeTrue();
+            func7.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
+            func7.Invoke(new("Joe", null, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2467,10 +1927,13 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Number.LessThan,
                 Value = null
             };
-            var func8 = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func8.Invoke(new("Sam", 4, null, null, null)));
-            Assert.IsTrue(func8.Invoke(new("Joe", 45, null, null, null)));
-            Assert.IsTrue(func8.Invoke(new("Joe", null, null, null, null)));
+            var func8 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func8.Invoke(new("Sam", 4, null, null, null, null)).Should().BeTrue();
+            func8.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func8.Invoke(new("Joe", null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -2482,10 +1945,13 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Number.GreaterThanOrEqual,
                 Value = 45
             };
-            var func9 = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func9.Invoke(new("Sam", 4, null, null, null)));
-            Assert.IsFalse(func9.Invoke(new("Sam", null, null, null, null)));
-            Assert.IsTrue(func9.Invoke(new("Joe", 45, null, null, null)));
+            var func9 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func9.Invoke(new("Sam", 4, null, null, null, null)).Should().BeFalse();
+            func9.Invoke(new("Sam", null, null, null, null, null)).Should().BeFalse();
+            func9.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2494,10 +1960,13 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Number.GreaterThanOrEqual,
                 Value = null
             };
-            var func10 = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func10.Invoke(new("Sam", 4, null, null, null)));
-            Assert.IsTrue(func10.Invoke(new("Sam", null, null, null, null)));
-            Assert.IsTrue(func10.Invoke(new("Joe", 45, null, null, null)));
+            var func10 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func10.Invoke(new("Sam", 4, null, null, null, null)).Should().BeTrue();
+            func10.Invoke(new("Sam", null, null, null, null, null)).Should().BeTrue();
+            func10.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -2509,10 +1978,13 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Number.LessThanOrEqual,
                 Value = 45
             };
-            var func11 = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func11.Invoke(new("Sam", 46, null, null, null)));
-            Assert.IsFalse(func11.Invoke(new("Sam", null, null, null, null)));
-            Assert.IsTrue(func11.Invoke(new("Joe", 45, null, null, null)));
+            var func11 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func11.Invoke(new("Sam", 46, null, null, null, null)).Should().BeFalse();
+            func11.Invoke(new("Sam", null, null, null, null, null)).Should().BeFalse();
+            func11.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2521,10 +1993,13 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Number.LessThanOrEqual,
                 Value = null
             };
-            var func12 = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func12.Invoke(new("Sam", 46, null, null, null)));
-            Assert.IsTrue(func12.Invoke(new("Sam", null, null, null, null)));
-            Assert.IsTrue(func12.Invoke(new("Joe", 45, null, null, null)));
+            var func12 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func12.Invoke(new("Sam", 46, null, null, null, null)).Should().BeTrue();
+            func12.Invoke(new("Sam", null, null, null, null, null)).Should().BeTrue();
+            func12.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -2535,10 +2010,54 @@ namespace MudBlazor.UnitTests.Components
                 Operator = null,
                 Value = 45
             };
-            var func13 = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func13.Invoke(new("Sam", 456, null, null, null)));
-            Assert.IsTrue(func13.Invoke(new("Sam", null, null, null, null)));
-            Assert.IsTrue(func13.Invoke(new("Joe", 45, null, null, null)));
+            var func13 = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func13.Invoke(new("Sam", 456, null, null, null, null)).Should().BeTrue();
+            func13.Invoke(new("Sam", null, null, null, null, null)).Should().BeTrue();
+            func13.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+        }
+
+        [Test]
+        public async Task FilterDefinitionReplaceWithCustom()
+        {
+            var comp = Context.RenderComponent<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+            dataGrid.Instance.SetDefaultFilterDefinition<CustomFilterDefinitionMock<DataGridFiltersTest.Model>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
+
+            // add a filter via the AddFilter method
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter());
+
+            // check the number of filters displayed in the filters panel
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
+
+            var filterDefinitionInstance = dataGrid.Instance.FilterDefinitions.FirstOrDefault();
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+            filterDefinitionInstance.Should().NotBeNull();
+            filterDefinitionInstance.Should().BeOfType<CustomFilterDefinitionMock<DataGridFiltersTest.Model>>();
+        }
+
+        [Test]
+        public async Task DataGridClickFilterButtonTest()
+        {
+            var comp = Context.RenderComponent<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+            IElement FilterButton() => dataGrid.FindAll(".filter-button")[0];
+
+            // click on the filter button
+            FilterButton().Click();
+
+            // check the number of filters displayed in the filters panel is 1
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
+
+            // click again on the filter button
+            FilterButton().Click();
+
+            // check the number of filters displayed in the filters panel is still 1 (no duplicate filter)
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
         }
 
         [Test]
@@ -2582,28 +2101,36 @@ namespace MudBlazor.UnitTests.Components
                 Operator = "is",
                 Value = DateTime.UtcNow.Date
             };
+            // test filter definition on the ApplicationId property (Guid equals)
+            var filterDefinition6 = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("ApplicationId"),
+                Operator = "equals",
+                Value = Guid.NewGuid()
+            };
 
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition));
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition2));
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition3));
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition4));
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition5));
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition6));
             await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
 
             // check the number of filters displayed in the filters panel
-            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(5);
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(6);
 
             // click the Add Filter button in the filters panel to add a filter
-            dataGrid.FindAll(".filters-panel > button")[0].Click();
+            comp.FindAll(".filters-panel > button")[0].Click();
 
             // check the number of filters displayed in the filters panel is 1 more because we added a filter
-            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(6);
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(7);
 
             // add a filter via the AddFilter method
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilter());
 
             // check the number of filters displayed in the filters panel is 1 more because we added a filter
-            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(7);
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(8);
 
             // add a filter via the AddFilter method
             //await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(Guid.NewGuid(), "Status"));
@@ -2613,11 +2140,11 @@ namespace MudBlazor.UnitTests.Components
             }));
 
             // check the number of filters displayed in the filters panel is 1 more because we added a filter
-            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(8);
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(9);
 
             // toggle the filters menu (should be closed after this)
             await comp.InvokeAsync(() => dataGrid.Instance.ToggleFiltersMenu());
-            dataGrid.FindAll(".filters-panel").Count.Should().Be(0);
+            comp.FindAll(".filters-panel").Count.Should().Be(0);
 
             // test internal filter class for string data type.
             var internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition, null);
@@ -2648,6 +2175,12 @@ namespace MudBlazor.UnitTests.Components
             filterDefinition5.Value.Should().Be(date.Date);
             await comp.InvokeAsync(() => internalFilter.TimeValueChanged(date.TimeOfDay));
             filterDefinition5.Value.Should().Be(date);
+            // test internal filter class for guid data type.
+            var guid = Guid.NewGuid();
+            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition6, null);
+            filterDefinition6.Column.dataType.Should().Be(typeof(Guid?));
+            await comp.InvokeAsync(() => internalFilter.GuidValueChanged(guid));
+            filterDefinition6.Value.Should().Be(guid);
         }
 
         [Test]
@@ -2689,28 +2222,25 @@ namespace MudBlazor.UnitTests.Components
             var filters = dataGrid.Instance.FilterDefinitions;
 
             // assertions for string
-            Assert.AreEqual(filterDefinition.Id, filters[0].Id);
-            //Assert.AreEqual(filterDefinition.Field, filters[0].Field);
-            Assert.AreEqual(filterDefinition.Operator, filters[0].Operator);
-            Assert.AreEqual(filterDefinition.Value, filters[0].Value);
+            filters[0].Id.Should().Be(filterDefinition.Id);
+            filters[0].Operator.Should().Be(filterDefinition.Operator);
+            filters[0].Value.Should().Be(filterDefinition.Value);
             filters[0].Value = "Not Joe";
-            Assert.AreEqual(filterDefinition.Value, "Not Joe");
+            filterDefinition.Value.Should().Be("Not Joe");
 
             // assertions for int
-            Assert.AreEqual(filterDefinition2.Id, filters[1].Id);
-            //Assert.AreEqual(filterDefinition2.Field, filters[1].Field);
-            Assert.AreEqual(filterDefinition2.Operator, filters[1].Operator);
-            Assert.AreEqual(filterDefinition2.Value, filters[1].Value);
+            filters[1].Id.Should().Be(filterDefinition2.Id);
+            filters[1].Operator.Should().Be(filterDefinition2.Operator);
+            filters[1].Value.Should().Be(filterDefinition2.Value);
             filters[1].Value = 45;
-            Assert.AreEqual(filterDefinition2.Value, 45);
+            filterDefinition2.Value.Should().Be(45);
 
             // assertions for Enum
-            Assert.AreEqual(filterDefinition3.Id, filters[2].Id);
-            //Assert.AreEqual(filterDefinition3.Field, filters[2].Field);
-            Assert.AreEqual(filterDefinition3.Operator, filters[2].Operator);
-            Assert.AreEqual(filterDefinition3.Value, filters[2].Value);
+            filters[2].Id.Should().Be(filterDefinition3.Id);
+            filters[2].Operator.Should().Be(filterDefinition3.Operator);
+            filters[2].Value.Should().Be(filterDefinition3.Value);
             filters[2].Value = Severity.Error;
-            Assert.AreEqual(filterDefinition3.Value, Severity.Error);
+            filterDefinition3.Value.Should().Be(Severity.Error);
         }
 
         [Test]
@@ -2723,11 +2253,79 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridColReorderRowFiltersTest()
+        {
+            var comp = Context.RenderComponent<DataGridColReorderRowFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColReorderRowFiltersTest.Model>>();
+
+            await comp.InvokeAsync(() =>
+            {
+                // Should have 4 entries, 2 headers and an extra
+                dataGrid.FindAll("tr").Count.Should().Be(7);
+
+                var switchButton = dataGrid.Find("button.switch-button");
+                switchButton.Click();
+
+                var filterHeaders = dataGrid.FindAll("input");
+                var ageFilter = filterHeaders[0];
+                var nameFilter = filterHeaders[1];
+
+                ageFilter.Input(27);
+                // Should have 1 entry + 3
+                dataGrid.FindAll("tr").Count.Should().Be(4);
+
+                dataGrid.Instance.ClearFiltersAsync();
+                nameFilter.Input("a");
+                // Should have 3 entries + 3
+                dataGrid.FindAll("tr").Count.Should().Be(6);
+            });
+        }
+
+        [Test]
+        public async Task DataGridColReorderRowModifiedFiltersTest()
+        {
+            var comp = Context.RenderComponent<DataGridColReorderRowFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColReorderRowFiltersTest.Model>>();
+
+            await comp.InvokeAsync(async () =>
+            {
+                // Should have 4 entries, 2 headers and an extra
+                dataGrid.FindAll("tr").Count.Should().Be(7);
+
+                var ageCol = dataGrid.Instance.RenderedColumns.First(c => c.PropertyName == "Age");
+                var modifiedAgeFilter = ageCol.FilterContext.FilterDefinition;
+                modifiedAgeFilter.Operator = ">";
+
+                var nameCol = dataGrid.Instance.RenderedColumns.First(c => c.PropertyName == "Name");
+                var modifiedNameFilter = nameCol.FilterContext.FilterDefinition;
+                modifiedNameFilter.Operator = "not contains";
+
+                await dataGrid.Instance.AddFilterAsync(modifiedAgeFilter);
+                await dataGrid.Instance.AddFilterAsync(modifiedNameFilter);
+
+                var switchButton = dataGrid.Find("button.switch-button");
+                switchButton.Click();
+
+                var filterHeaders = dataGrid.FindAll("input");
+                var ageFilter = filterHeaders[0];
+                var nameFilter = filterHeaders[1];
+
+                ageFilter.Input(27);
+                // Should have 3 entries + 3
+                dataGrid.FindAll("tr").Count.Should().Be(6);
+
+                nameFilter.Input("a");
+                // Should have 1 entry + 3
+                dataGrid.FindAll("tr").Count.Should().Be(4);
+            });
+        }
+
+        [Test]
         public async Task DataGridHeaderTemplateTest()
         {
             var comp = Context.RenderComponent<DataGridHeaderTemplateTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridHeaderTemplateTest.Model>>();
-            
+
             dataGrid.Find("thead th").TextContent.Trim().Should().Be("test");
 
             dataGrid.Find("span.column-header").FirstChild.NodeName.Should().Be("svg");
@@ -2819,15 +2417,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridServerDataQuickFilterTest()
-        {
-            var comp = Context.RenderComponent<DataGridServerDataQuickFilterTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataQuickFilterTest.Item>>();
-
-            dataGrid.FindAll("tr").Count.Should().Be(3);
-        }
-
-        [Test]
         public async Task DataGridServerPaginationTest()
         {
             var comp = Context.RenderComponent<DataGridServerPaginationTest>();
@@ -2864,13 +2453,13 @@ namespace MudBlazor.UnitTests.Components
             var popoverProvider = comp.FindComponent<MudPopoverProvider>();
             var popover = dataGrid.FindComponent<MudPopover>();
 
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
             await comp.InvokeAsync(() =>
             {
                 var columnHamburger = dataGrid.FindAll("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
                 columnHamburger[2].Click();
 
-                var listItems = popoverProvider.FindComponents<MudListItem>();
+                var listItems = popoverProvider.FindComponents<MudListItem<object>>();
                 listItems.Count.Should().Be(2);
                 var clickablePopover = listItems[1].Find(".mud-list-item");
                 clickablePopover.Click();
@@ -2878,42 +2467,45 @@ namespace MudBlazor.UnitTests.Components
                 //dataGrid.Instance._columns[0].Hide();
                 ((IMudStateHasChanged)dataGrid.Instance).StateHasChanged();
             });
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(1);
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(5);
             await comp.InvokeAsync(() =>
             {
                 var columnsButton = dataGrid.Find("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
                 columnsButton.Click();
 
                 popover.Instance.Open.Should().BeTrue("Should be open once clicked");
-                var listItems = popoverProvider.FindComponents<MudListItem>();
+                var listItems = popoverProvider.FindComponents<MudListItem<object>>();
                 listItems.Count.Should().Be(1);
                 var clickablePopover = listItems[0].Find(".mud-list-item");
                 clickablePopover.Click();
 
-                // at this point, the column picker should be open
-                var switches = dataGrid.FindComponents<MudSwitch<bool>>();
-                switches.Count.Should().Be(2);
+                var switches = comp.FindComponents<MudSwitch<bool>>();
+                switches.Count.Should().Be(6);
 
-                var buttons = dataGrid.FindComponents<MudButton>();
+                var iconbuttons = comp.FindComponents<MudIconButton>();
+                iconbuttons.Count.Should().Be(29);
+
+
+                var buttons = comp.FindComponents<MudButton>();
                 // this is the show all button
                 buttons[1].Find("button").Click();
                 // 2 columns, 0 hidden
-                dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
+                comp.FindAll(".mud-table-head th").Count.Should().Be(6);
 
                 //dataGrid.Instance._columns[0].Hide();
                 ((IMudStateHasChanged)dataGrid.Instance).StateHasChanged();
             });
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
+            comp.FindAll(".mud-table-head th").Count.Should().Be(6);
 
             await comp.InvokeAsync(() => dataGrid.Instance.ShowColumnsPanel());
-            dataGrid.FindAll(".mud-paper.columns-panel").Count.Should().Be(1);
+            comp.FindAll(".mud-data-grid-columns-panel").Count.Should().Be(1);
             await comp.InvokeAsync(() => dataGrid.Instance.HideColumnsPanel());
-            dataGrid.FindAll(".mud-paper.columns-panel").Count.Should().Be(0);
+            comp.FindAll(".mud-data-grid-columns-panel").Count.Should().Be(0);
 
             await comp.InvokeAsync(() => dataGrid.Instance.HideAllColumnsAsync());
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(0);
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(3);
             await comp.InvokeAsync(() => dataGrid.Instance.ShowAllColumnsAsync());
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
         }
 
         [Test]
@@ -2932,33 +2524,91 @@ namespace MudBlazor.UnitTests.Components
             columnsButton.Click();
 
             popover.Instance.Open.Should().BeTrue("Should be open once clicked");
-            var listItems = popoverProvider.FindComponents<MudListItem>();
+            var listItems = popoverProvider.FindComponents<MudListItem<object>>();
             listItems.Count.Should().Be(1);
             var clickablePopover = listItems[0].Find(".mud-list-item");
             clickablePopover.Click();
 
             // at this point, the column picker should be open
-            var switches = dataGrid.FindComponents<MudSwitch<bool>>();
-            switches.Count.Should().Be(2);
+            var switches = comp.FindComponents<MudSwitch<bool>>();
+            switches.Count.Should().Be(6);
 
-            switches[0].Instance.Checked.Should().BeFalse();
-            switches[1].Instance.Checked.Should().BeTrue();
+            switches[0].Instance.Value.Should().BeFalse();
+            switches[1].Instance.Value.Should().BeTrue();
+            switches[2].Instance.Value.Should().BeFalse();
+            switches[3].Instance.Value.Should().BeFalse();
+            switches[4].Instance.Value.Should().BeFalse();
+            switches[0].Instance.Value.Should().BeFalse();
 
-            var buttons = dataGrid.FindComponents<MudButton>();
+            var buttons = comp.FindComponents<MudButton>();
 
             // this is the hide all button
             buttons[0].Find("button").Click();
-            switches[0].Instance.Checked.Should().BeTrue();
-            switches[1].Instance.Checked.Should().BeTrue();
-            // 2 columns, 2 hidden
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(0);
+            //all hideable columns should be hidden;
+            switches[0].Instance.Value.Should().BeTrue();
+            switches[1].Instance.Value.Should().BeTrue();
+            switches[2].Instance.Value.Should().BeTrue();
+            switches[3].Instance.Value.Should().BeFalse();
+            switches[4].Instance.Value.Should().BeFalse();
+            switches[5].Instance.Value.Should().BeFalse();
+
+            // 6 columns, 3 hidden
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(3);
 
             // this is the show all button
             buttons[1].Find("button").Click();
-            switches[0].Instance.Checked.Should().BeFalse();
-            switches[1].Instance.Checked.Should().BeFalse();
-            // 2 columns, 0 hidden
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
+            switches[0].Instance.Value.Should().BeFalse();
+            switches[1].Instance.Value.Should().BeFalse();
+            switches[2].Instance.Value.Should().BeFalse();
+            switches[3].Instance.Value.Should().BeFalse();
+            switches[4].Instance.Value.Should().BeFalse();
+            switches[5].Instance.Value.Should().BeFalse();
+
+            // 6 columns, 0 hidden
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
+
+            //programatically changing the hidden which overrides hideable
+            await dataGrid.InvokeAsync(async () =>
+            {
+                foreach (var column in dataGrid.Instance.RenderedColumns)
+                {
+                    await column.HiddenState.SetValueAsync(true);
+                };
+            });
+
+            comp = Context.RenderComponent<DataGridColumnHiddenTest>();
+            switches = comp.FindComponents<MudSwitch<bool>>();
+            switches.Count.Should().Be(6);
+            switches[0].Instance.Value.Should().BeTrue();
+            switches[1].Instance.Value.Should().BeTrue();
+            switches[2].Instance.Value.Should().BeTrue();
+            switches[3].Instance.Value.Should().BeTrue();
+            switches[4].Instance.Value.Should().BeTrue();
+            switches[5].Instance.Value.Should().BeTrue();
+            // 6 columns, 6 hidden
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(0);
+
+            //programatically changing the hidden which overrides hideable
+            await dataGrid.InvokeAsync(async () =>
+            {
+                foreach (var column in dataGrid.Instance.RenderedColumns)
+                {
+                    await column.HiddenState.SetValueAsync(false);
+                };
+            });
+
+            comp = Context.RenderComponent<DataGridColumnHiddenTest>();
+            switches = comp.FindComponents<MudSwitch<bool>>();
+            switches.Count.Should().Be(6);
+            switches[0].Instance.Value.Should().BeFalse();
+            switches[1].Instance.Value.Should().BeFalse();
+            switches[2].Instance.Value.Should().BeFalse();
+            switches[3].Instance.Value.Should().BeFalse();
+            switches[4].Instance.Value.Should().BeFalse();
+            switches[5].Instance.Value.Should().BeFalse();
+
+            // 6 columns, 0 hidden
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
         }
 
         // This is not easily convertable to the new property expression.
@@ -3055,6 +2705,18 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridFilterableFalseTest()
+        {
+            var comp = Context.RenderComponent<DataGridFilterableFalseTest>();
+
+            comp.Find(".filter-button").Click();
+            comp.FindAll(".filters-panel").Count.Should().Be(1);
+
+            comp.FindAll("div.mud-input-control")[0].Click();
+            comp.FindAll("div.mud-list-item").Count.Should().Be(3);
+        }
+
+        [Test]
         public async Task DataGridColumnPopupCustomFilteringTest()
         {
             var comp = Context.RenderComponent<DataGridColumnPopupCustomFilteringTest>();
@@ -3080,11 +2742,11 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.FindAll("tbody tr").Count.Should().Be(4);
 
-            await comp.InvokeAsync(() =>
+            await comp.InvokeAsync(async () =>
             {
-                comp.Instance.FilterHiredToggled(true, dataGrid.Instance);
+                await comp.Instance.FilterHiredToggled(true, dataGrid.Instance);
             });
-            
+
             dataGrid.Render();
             dataGrid.FindAll("tbody tr").Count.Should().Be(1);
         }
@@ -3133,7 +2795,6 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
         }
 
-
         [Test]
         public async Task DataGridServerDataColumnFilterRowTest()
         {
@@ -3155,10 +2816,44 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridColumnFilterRowPropertyTest()
+        {
+            var comp = Context.RenderComponent<DataGridColumnFilterRowPropertyTest>();
+
+            Assert.DoesNotThrow(() => comp.FindComponent<MudTextField<string>>());
+            Assert.DoesNotThrow(() => comp.FindComponent<MudNumericField<double?>>());
+            Assert.DoesNotThrow(() => comp.FindComponent<MudSelect<Enum>>());
+            Assert.DoesNotThrow(() => comp.FindComponent<MudSelect<bool?>>());
+            Assert.DoesNotThrow(() => comp.FindComponent<MudDatePicker>());
+        }
+
+        [Test]
         public async Task DataGridStickyColumnsTest()
         {
             var comp = Context.RenderComponent<DataGridStickyColumnsTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridStickyColumnsTest.Model>>();
+
+            dataGrid.Find("th").ClassList.Should().Contain("sticky-left");
+            dataGrid.FindAll("th").Last().ClassList.Should().Contain("sticky-right");
+        }
+
+        [Test]
+        public async Task DataGridStickyColumnsResizerTest()
+        {
+            var comp = Context.RenderComponent<DataGridStickyColumnsResizerTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridStickyColumnsResizerTest.Model>>();
+
+            var header = dataGrid.Find(".mud-table-toolbar");
+            header.GetAttribute("style").Should().Contain("position:sticky");
+            header.GetAttribute("style").Should().Contain("left:0px");
+
+            var footer = dataGrid.Find(".mud-table-pagination");
+            footer.GetAttribute("style").Should().Contain("position:sticky");
+            footer.GetAttribute("style").Should().Contain("left:0px");
+
+            var body = dataGrid.Find(".mud-table-container");
+            body.GetAttribute("style").Should().Contain("width:max-content");
+            body.GetAttribute("style").Should().Contain("overflow:clip");
 
             dataGrid.Find("th").ClassList.Should().Contain("sticky-left");
             dataGrid.FindAll("th").Last().ClassList.Should().Contain("sticky-right");
@@ -3181,8 +2876,10 @@ namespace MudBlazor.UnitTests.Components
 
             await cell._cellContext.Actions.ToggleHierarchyVisibilityForItemAsync();
             cell._cellContext.OpenHierarchies.Should().Contain(item);
+            cell._cellContext.IsOpened.Should().Be(true);
             await cell._cellContext.Actions.ToggleHierarchyVisibilityForItemAsync();
             cell._cellContext.OpenHierarchies.Should().NotContain(item);
+            cell._cellContext.IsOpened.Should().Be(false);
         }
 
         [Test]
@@ -3472,6 +3169,29 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridParentAndChildSamePropertyNameSortTest()
+        {
+            var comp = Context.RenderComponent<DataGridChildPropertiesWithSameNameSortTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridChildPropertiesWithSameNameSortTest.Employee>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Manager.Name", SortDirection.Ascending, x => x.Manager.Name));
+            dataGrid.Instance.DropContainerHasChanged();
+            dataGrid.FindAll("th .sortable-column-header")[1].TextContent.Trim().Should().Be("Name");
+            dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(false);
+            dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(true);
+            dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
+            dataGrid.Instance.GetColumnSortDirection("Manager.Name").Should().Be(SortDirection.Ascending);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name));
+            dataGrid.Instance.DropContainerHasChanged();
+            dataGrid.FindAll("th .sortable-column-header")[0].TextContent.Trim().Should().Be("Name");
+            dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(true);
+            dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(false);
+            dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.Ascending);
+            dataGrid.Instance.GetColumnSortDirection("Manager.Name").Should().Be(SortDirection.None);
+        }
+
+        [Test]
         public async Task DataGridCustomSortTest()
         {
             var comp = Context.RenderComponent<DataGridCustomSortableTest>();
@@ -3554,7 +3274,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridGroupExpandedTest()
+        public async Task DataGridGroupExpandedTrueTest()
         {
             var comp = Context.RenderComponent<DataGridGroupExpandedTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedTest.Fruit>>();
@@ -3568,11 +3288,11 @@ namespace MudBlazor.UnitTests.Components
                 comp.Instance.AddFruit());
             // datagrid should be expanded with the new category
             dataGrid.Render();
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(5);
         }
 
         [Test]
-        public async Task DataGridGroupExpandedAsyncTest()
+        public async Task DataGridGroupExpandedTrueAsyncTest()
         {
             var comp = Context.RenderComponent<DataGridGroupExpandedAsyncTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedAsyncTest.Fruit>>();
@@ -3581,16 +3301,16 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.CollapseAllGroups();
             dataGrid.Render();
             // after all groups are collapsed
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
             await comp.InvokeAsync(() =>
                 comp.Instance.AddFruit());
             // datagrid should be expanded with the new category
             dataGrid.Render();
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(5));
         }
 
         [Test]
-        public async Task DataGridGroupExpandedServerDataTest()
+        public async Task DataGridGroupExpandedTrueServerDataTest()
         {
             var comp = Context.RenderComponent<DataGridGroupExpandedServerDataTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedServerDataTest.Fruit>>();
@@ -3599,12 +3319,64 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.CollapseAllGroups();
             dataGrid.Render();
             // after all groups are collapsed
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
-            await comp.InvokeAsync(() =>
-                comp.Instance.AddFruit());
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
+            await comp.InvokeAsync(() => comp.Instance.AddFruit());
             // datagrid should be expanded with the new category
             dataGrid.Render();
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(5));
+        }
+
+        [Test]
+        public async Task DataGridGroupExpandedFalseTest()
+        {
+            var comp = Context.RenderComponent<DataGridGroupExpandedFalseTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseTest.Fruit>>();
+
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
+            comp.Instance.ExpandAllGroups();
+            dataGrid.Render();
+            // after all groups are expanded
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(7);
+            await comp.InvokeAsync(() =>
+                comp.Instance.AddFruit());
+            // datagrid should be collapsed with the new category
+            dataGrid.Render();
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(8);
+        }
+
+        [Test]
+        public async Task DataGridGroupExpandedFalseAsyncTest()
+        {
+            var comp = Context.RenderComponent<DataGridGroupExpandedFalseAsyncTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseAsyncTest.Fruit>>();
+
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
+            dataGrid.Instance.ExpandAllGroups();
+            dataGrid.Render();
+            // after all groups are expanded
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
+            await comp.InvokeAsync(() =>
+                comp.Instance.AddFruit());
+            // datagrid should be collapsed with the new category
+            dataGrid.Render();
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(8));
+        }
+
+        [Test]
+        public async Task DataGridGroupExpandedFalseServerDataTest()
+        {
+            var comp = Context.RenderComponent<DataGridGroupExpandedFalseServerDataTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseServerDataTest.Fruit>>();
+
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
+            dataGrid.Instance.ExpandAllGroups();
+            dataGrid.Render();
+            // after all groups are expanded
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
+            await comp.InvokeAsync(() => comp.Instance.AddFruit());
+            // datagrid should be collapsed with the new category
+            dataGrid.Render();
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(8));
         }
 
         [Test]
@@ -3636,12 +3408,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ExpandAllGroups();
             comp.Render();
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(14);
-            comp.Instance.NavigateToPage(1);
-            comp.Render();
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.Next));
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(18);
             comp.Instance.CollapseAllGroups();
-            comp.Instance.NavigateToPage(0);
-            comp.Render();
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
             comp.Instance.RefreshList();
             comp.Render();
@@ -3668,7 +3439,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableTest.Item>>();
 
             var initialFilterCount = dataGrid.Instance.FilteringRunCount;
-            
+
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => { return x.Name; }));
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 1);
 
@@ -3696,7 +3467,7 @@ namespace MudBlazor.UnitTests.Components
             //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
             await comp.InvokeAsync(() => headerCell.Instance.RemoveSortAsync());
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 7);
-            await comp.InvokeAsync(() => headerCell.Instance.AddFilterAsync());
+            await comp.InvokeAsync(() => headerCell.Instance.AddFilter());
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 8);
             await comp.InvokeAsync(() => headerCell.Instance.OpenFilters());
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 9);
@@ -3707,6 +3478,31 @@ namespace MudBlazor.UnitTests.Components
             // Since Sortable is now false, the click handler (and element holding it) should no longer exist.
             dataGrid.Instance.DropContainerHasChanged();
             dataGrid.FindAll(".column-header .sortable-column-header").Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task DataGridSelectOnRowClickTest()
+        {
+            var comp = Context.RenderComponent<DataGridMultiSelectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridMultiSelectionTest.Item>>();
+
+            // click on the first row
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.FindAll("tbody.mud-table-body td")[1].Click();
+            dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+
+            var parameters = new List<ComponentParameter>();
+            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.SelectOnRowClick), false));
+            dataGrid.SetParametersAndRender(parameters.ToArray());
+
+            // deselect all programmatically
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+
+            // click on the first row
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.FindAll("tbody.mud-table-body td")[1].Click();
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
         }
 
         [Test]
@@ -3750,6 +3546,259 @@ namespace MudBlazor.UnitTests.Components
             newHeaderValues[4].InnerHtml.Should().Be("HiredOn");
 
         }
-    
+        [Test]
+        public void DataGridEditFormDialogIsCustomizableTest()
+        {
+            var comp = Context.RenderComponent<DataGridEditFormCustomizedDialogTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditFormCustomizedDialogTest.Model>>();
+
+            //open edit dialog
+            dataGrid.FindAll("tbody tr")[1].Click();
+            //check if dialog is open
+            comp.FindAll("div.mud-dialog-container").Should().NotBeEmpty();
+            //find button with arialabel close in dialog
+            var closeButton = comp.Find("button[aria-label=\"close\"]");
+            closeButton.Should().NotBeNull();
+            //click close button
+            comp.Find("button[aria-label=\"close\"]").Click();
+            //check if dialog is closed
+            comp.FindAll("div.mud-dialog-container").Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task DataGridDragAndDropWithDynamicColumnsTest()
+        {
+            var comp = Context.RenderComponent<DataGridDragAndDropWithDynamicColumnsTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridDragAndDropWithDynamicColumnsTest.Model>>();
+            dataGrid.Instance.DropContainerHasChanged();
+
+            var headerValues = dataGrid.FindAll(".sortable-column-header");
+            headerValues.Count.Should().Be(5, because: "5 columns in DataGridFiltersTest");
+
+            headerValues[0].InnerHtml.Should().Be("Name");
+            headerValues[1].InnerHtml.Should().Be("Age");
+            headerValues[2].InnerHtml.Should().Be("Status");
+            headerValues[3].InnerHtml.Should().Be("Hired");
+            headerValues[4].InnerHtml.Should().Be("HiredOn");
+
+            var container = dataGrid.Find(".mud-drop-container");
+            container.Children.Should().HaveCount(1);
+
+            var zone = dataGrid.FindAll(".mud-drop-zone");
+            zone.Count.Should().Be(5, because: "5 columns in DataGridFiltersTest");
+
+            var firstDropZone = zone[1];
+            var firstDropItem = firstDropZone.Children[0];
+
+            var secondDropZone = zone[2];
+            var secondDropItem = secondDropZone.Children[0];
+
+            await firstDropItem.DragStartAsync(new DragEventArgs());
+            await secondDropItem.DropAsync(new DragEventArgs());
+
+            var newHeaderValues = dataGrid.FindAll(".sortable-column-header");
+            newHeaderValues.Count.Should().Be(5, because: "5 columns in DataGridFiltersTest");
+
+            newHeaderValues[0].InnerHtml.Should().Be("Name");
+            newHeaderValues[1].InnerHtml.Should().Be("Status");
+            newHeaderValues[2].InnerHtml.Should().Be("Age");
+            newHeaderValues[3].InnerHtml.Should().Be("Hired");
+            newHeaderValues[4].InnerHtml.Should().Be("HiredOn");
+        }
+
+        [Test]
+        public void DataGridRedundantMenuTest()
+        {
+            var comp = Context.RenderComponent<DataGridRedundantMenuTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridRedundantMenuTest.Model>>();
+
+            dataGrid.Instance.FilterMode = DataGridFilterMode.ColumnFilterRow;
+            dataGrid.Instance.SortMode = SortMode.None;
+
+            // Render after applying conditions
+            comp.Render();
+
+            // Assert that the `column-options` span is present but empty
+            var columnOptionsSpan = comp.Find(".column-options");
+            columnOptionsSpan.Should().NotBeNull();
+            columnOptionsSpan.TextContent.Trim().Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task ShouldSetIsGenderGroupedToTrueWhenGroupingIsApplied()
+        {
+            // Render the DataGridGroupingTest component for testing.
+            var comp = Context.RenderComponent<DataGridColumnGroupingTest>();
+
+            // Attempt to find the MudPopoverProvider component within the rendered component.
+            // MudPopoverProvider is used to manage popovers in the component, including the grouping popover.
+            var popoverProvider = comp.FindComponent<MudPopoverProvider>();
+
+            // Assert that initially, before any user interaction, IsGenderGrouped should be false.
+            comp.Instance.IsGenderGrouped.Should().Be(false);
+
+            // Find the button within the 'th' element with class 'gender' that triggers the popover for grouping.
+            var genderHeaderOption = comp.Find("th.gender .mud-menu button");
+
+            // Simulate a click on the gender header group button to open the popover with grouping options.
+            genderHeaderOption.Click();
+
+            // Find all MudListItem components within the popoverProvider.
+            // These list items represent the individual options within the grouping popover.
+            var listItems = popoverProvider.FindComponents<MudListItem<object>>();
+
+            // Assert that there are exactly 2 list items (options) available in the popover.
+            listItems.Count.Should().Be(2);
+
+            // From the list items found, select the second one which is expected to be the clickable option for grouping.
+            var clickablePopover = listItems[1].Find(".mud-list-item");
+
+            // click on the grouping option to apply grouping to the data grid.
+            clickablePopover.Click();
+
+            // After clicking the grouping option, assert that IsGenderGrouped is now true, indicating that
+            // the action of applying grouping has successfully updated the component's state.
+            comp.Instance.IsGenderGrouped.Should().Be(true);
+        }
+
+        [Test]
+        public async Task DataGridDynamicColumnsTest()
+        {
+            var comp = Context.RenderComponent<DataGridDynamicColumnsTest>();
+
+            comp.Instance.GridRenderedColumnsCount.Should().Be(0);
+
+            comp.Instance.AddColumns();
+
+            comp.Instance.GridRenderedColumnsCount.Should().Be(3);
+
+            comp.Instance.RemoveColumn();
+
+            comp.Instance.GridRenderedColumnsCount.Should().Be(2);
+
+            comp.Instance.RemoveAllColumns();
+
+            comp.Instance.GridRenderedColumnsCount.Should().Be(0);
+        }
+
+        [Test]
+        public void DataGridSelectColumnTest()
+        {
+            var comp = Context.RenderComponent<DataGridSelectColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<int>>();
+            var rowCheckbox = dataGrid.FindAll("td input");
+            var selectAllCheckboxes = dataGrid.FindComponents<MudCheckBox<bool?>>();
+
+            selectAllCheckboxes[0].Instance.Value.Should().BeFalse();
+            selectAllCheckboxes[1].Instance.Value.Should().BeFalse();
+
+            rowCheckbox[0].Change(true);
+
+            selectAllCheckboxes[0].Instance.Value.Should().Be(default);
+            selectAllCheckboxes[1].Instance.Value.Should().Be(default);
+
+            rowCheckbox[1].Change(true);
+
+            selectAllCheckboxes[0].Instance.Value.Should().BeTrue();
+            selectAllCheckboxes[1].Instance.Value.Should().BeTrue();
+
+            rowCheckbox[1].Change(false);
+
+            selectAllCheckboxes[0].Instance.Value.Should().Be(default);
+            selectAllCheckboxes[1].Instance.Value.Should().Be(default);
+
+            rowCheckbox[0].Change(false);
+
+            selectAllCheckboxes[0].Instance.Value.Should().BeFalse();
+            selectAllCheckboxes[1].Instance.Value.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task DataGridGroupingTestBoundAndUnboundScenarios()
+        {
+            var comp = Context.RenderComponent<DataGridColumnGroupingTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnGroupingTest.Model>>();
+            var popoverProvider = comp.FindComponent<MudPopoverProvider>();
+
+            // Assert that initially, before any user interaction, IsGenderGrouped and IsAgeGrouped should be false
+            comp.Instance.IsGenderGrouped.Should().Be(false);
+            comp.Instance.IsAgeGrouped.Should().Be(false);
+
+            var ageGrouping = comp.Find(".GroupByAge");
+            ageGrouping.Click();
+            comp.Instance.IsAgeGrouped.Should().Be(true);
+            comp.Instance.IsGenderGrouped.Should().Be(false);
+            var rows = dataGrid.FindAll("tr");
+            rows.Count.Should().Be(5, because: "1 header row + 3 data rows + 1 footer row");
+
+            var genderGrouping = comp.Find(".GroupByGender");
+            genderGrouping.Click();
+            comp.Instance.IsGenderGrouped.Should().Be(true);
+            comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
+            rows = dataGrid.FindAll("tr");
+            rows.Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
+
+            //click age grouping in grid
+            var headerOption = comp.Find("th.age .mud-menu button");
+            headerOption.Click();
+            var listItems = popoverProvider.FindComponents<MudListItem<object>>();
+            listItems.Count.Should().Be(2);
+            var clickablePopover = listItems[1].Find(".mud-list-item");
+            clickablePopover.Click();
+            comp.Instance.IsAgeGrouped.Should().Be(true);
+            comp.Instance.IsGenderGrouped.Should().Be(false);
+            rows = dataGrid.FindAll("tr");
+            rows.Count.Should().Be(5, because: "1 header row + 3 data rows + 1 footer row");
+
+            //click gender grouping in grid
+            headerOption = comp.Find("th.gender .mud-menu button");
+            headerOption.Click();
+            listItems = popoverProvider.FindComponents<MudListItem<object>>();
+            listItems.Count.Should().Be(2);
+            clickablePopover = listItems[1].Find(".mud-list-item");
+            clickablePopover.Click();
+            comp.Instance.IsGenderGrouped.Should().Be(true);
+            comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
+            rows = dataGrid.FindAll("tr");
+            rows.Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
+
+            //click Name grouping in grid
+            headerOption = comp.Find("th.name .mud-menu button");
+            headerOption.Click();
+            listItems = popoverProvider.FindComponents<MudListItem<object>>();
+            listItems.Count.Should().Be(2);
+            clickablePopover = listItems[1].Find(".mud-list-item");
+            clickablePopover.Click();
+            comp.Instance.IsGenderGrouped.Should().Be(false);
+            comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
+            rows = dataGrid.FindAll("tr");
+            rows.Count.Should().Be(6, because: "1 header row + 4 data rows + 1 footer row");
+        }
+
+        [Test]
+        public async Task FilterDefinitionTestHasFilterProperty()
+        {
+            var comp = Context.RenderComponent<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFiltersTest.Model>
+            { Column = dataGrid.Instance.GetColumnByPropertyName("Name"), Operator = FilterOperator.String.Empty }));
+
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFiltersTest.Model>
+            { Column = dataGrid.Instance.GetColumnByPropertyName("Age"), Operator = FilterOperator.Number.GreaterThan, Value = 30 }));
+
+            // test filter definition without value
+            var nameHeaderCell = dataGrid.FindComponents<HeaderCell<DataGridFiltersTest.Model>>()[0];
+            nameHeaderCell.Instance.hasFilter.Should().BeTrue();
+
+            // test filter definition with value
+            var ageHeaderCell = dataGrid.FindComponents<HeaderCell<DataGridFiltersTest.Model>>()[1];
+            ageHeaderCell.Instance.hasFilter.Should().BeTrue();
+
+            // test filter not applied
+            var statusHeaderCell = dataGrid.FindComponents<HeaderCell<DataGridFiltersTest.Model>>()[2];
+            statusHeaderCell.Instance.hasFilter.Should().BeFalse();
+        }
+
     }
 }

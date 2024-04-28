@@ -9,6 +9,15 @@
      @ondrop="HandleDrop"
      @ondragenter="HandleDragEnter"
      @ondragleave="HandleDragLeave"
+     @ondragover:preventDefault
+     @ondragenter:preventDefault
+     @ondrop:preventDefault
+     @ondrop:stopPropagation
+     @ondragenter:stopPropagation
+     @ondragend:stopPropagation
+     @ondragover:stopPropagation
+     @ondragleave:stopPropagation
+     @ondragstart:stopPropagation
      @attributes="UserAttributes">
 
     @ChildContent
@@ -49,7 +58,8 @@
                         ZoneIdentifier="@Identifier"
                         Disabled="@GetItemDisabledStatus(item)"
                         Index="indexCopy"
-                        DisabledClass="@(DisabledClass ?? Container?.DisabledClass)">
+                        DisabledClass="@(DisabledClass ?? Container?.DisabledClass)"
+                        Class="@(GetItemClassUsingSelector(item))">
                 @{
                     var renderer = GetItemTemplate();
                 }

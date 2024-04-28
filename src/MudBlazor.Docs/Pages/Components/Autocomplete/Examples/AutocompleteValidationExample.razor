@@ -1,5 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @using System.ComponentModel.DataAnnotations
+@using System.Threading
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
@@ -52,11 +53,11 @@
 	</MudItem>
     <MudItem xs="12" md="12">
         <MudText Class="mb-n3" Typo="Typo.body2">
-            <MudChip>@(choice1.State ?? "Not selected")</MudChip><MudChip>@(choice2.State ?? "Not selected")</MudChip><MudChip>@(choice3.State ?? "Not selected")</MudChip>
+            <MudChip T="string">@(choice1.State ?? "Not selected")</MudChip><MudChip T="string">@(choice2.State ?? "Not selected")</MudChip><MudChip T="string">@(choice3.State ?? "Not selected")</MudChip>
         </MudText>
     </MudItem>
     <MudItem xs="12" md="12" class="flex-column">
-        <MudSwitch @bind-Checked="coerceValue" Color="Color.Tertiary">Coerce Value to Text (if not found)</MudSwitch>
+        <MudSwitch @bind-Value="coerceValue" Color="Color.Tertiary">Coerce Value to Text (if not found)</MudSwitch>
     </MudItem>
 </MudGrid>
 
@@ -95,10 +96,10 @@
         "Washington", "West Virginia", "Wisconsin", "Wyoming",
     };
 
-    private async Task<IEnumerable<string>> SearchAsync(string value)
+    private async Task<IEnumerable<string>> SearchAsync(string value, CancellationToken token)
     {
         // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(5);
+        await Task.Delay(5, token);
 
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))

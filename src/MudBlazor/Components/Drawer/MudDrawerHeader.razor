@@ -2,8 +2,6 @@
 @using MudBlazor.Utilities
 @inherits MudComponentBase
 
-
-
 @if (LinkToIndex)
 {
     <a @attributes="UserAttributes" class="@Classname" style="@Style" href="/">
@@ -17,14 +15,13 @@ else
     </div>
 }
 
-
 @code {
-
+#nullable enable
     protected string Classname =>
-    new CssBuilder("mud-drawer-header")
-       .AddClass($"mud-drawer-header-dense", Dense)
-      .AddClass(Class)
-    .Build();
+        new CssBuilder("mud-drawer-header")
+            .AddClass($"mud-drawer-header-dense", Dense)
+            .AddClass(Class)
+            .Build();
 
     /// <summary>
     /// If true, compact padding will be used, same as the Appbar.
@@ -34,17 +31,16 @@ else
     public bool Dense { get; set; }
 
     /// <summary>
-    /// Child content of component.
-    /// </summary>
-    [Parameter] 
-    [Category(CategoryTypes.Drawer.Behavior)]
-    public RenderFragment ChildContent { get; set; }
-
-    /// <summary>
     /// If true, the component will link to index page with an a element instead of div.
     /// </summary>
     [Parameter] 
     [Category(CategoryTypes.Drawer.Behavior)]
     public bool LinkToIndex { get; set; }
 
+    /// <summary>
+    /// Child content of component.
+    /// </summary>
+    [Parameter] 
+    [Category(CategoryTypes.Drawer.Behavior)]
+    public RenderFragment? ChildContent { get; set; }
 }

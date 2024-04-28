@@ -6,7 +6,7 @@
 	@if (Visible)
 	{
 		<span class="@WrapperClass">
-			<span class="@BadgeClassName" @onclick="HandleBadgeClick">
+			<span class="@BadgeClassName" @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(HandleBadgeClick)">
 				@if (!Dot)
 				{
 					@if (!string.IsNullOrEmpty(Icon))

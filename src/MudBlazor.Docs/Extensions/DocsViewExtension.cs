@@ -1,6 +1,8 @@
 ﻿using Blazor.Analytics;
 using Blazored.LocalStorage;
+using BytexDigital.Blazor.Components.CookieConsent;
 using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Docs.Pages.Consent.Prompt;
 using MudBlazor.Docs.Services;
 using MudBlazor.Docs.Services.Notifications;
 using MudBlazor.Docs.Services.UserPreferences;
@@ -32,6 +34,7 @@ namespace MudBlazor.Docs.Extensions
 #pragma warning restore 0618
             });
 
+            services.AddScoped<IDocsJsApiService, DocsJsApiService>();
             services.AddSingleton<DiscordApiClient>();
             services.AddSingleton<NugetApiClient>();
             services.AddSingleton<GitHubApiClient>();
@@ -41,11 +44,77 @@ namespace MudBlazor.Docs.Extensions
             services.AddBlazoredLocalStorage();
             services.AddScoped<IUserPreferencesService, UserPreferencesService>();
             services.AddScoped<INotificationService, InMemoryNotificationService>();
-            services.AddScoped<IPeriodicTableService, PeriodicTableService>();
+            services.AddSingleton<IPeriodicTableService, PeriodicTableService>();
             services.AddSingleton<IRenderQueueService, RenderQueueService>();
             services.AddScoped<LayoutService>();
             services.AddGoogleAnalytics("G-PRYNCB61NV");
+            services.AddCookieConsent(options =>
+            {
+                options.Revision = 1;
+                options.PolicyUrl = "/mud/cookie-policy";
 
+                // Replace default prompt. We don't use the modal.
+                options.ConsentPromptVariant = new MudCookieConsentPromptVariant();
+
+                options.Categories.Add(new CookieCategory()
+                {
+                    IsRequired = true,
+                    TitleText = new()
+                    {
+                        ["en"] = "Azure Cloud Platform",
+                    },
+                    DescriptionText = new()
+                    {
+                        ["en"] = "It is used for load balancing to make sure the visitor page requests are routed to the same server in any browsing session.",
+                    },
+                    Services =
+                    [
+                        new CookieCategoryService
+                        {
+                            Identifier = "necessary",
+                            PolicyUrl = "https://privacy.microsoft.com/en-us/privacystatementy",
+                            TitleText = new()
+                            {
+                                ["en"] = "Azure App Service",
+                            },
+                            ShowPolicyText = new()
+                            {
+                                ["en"] = "Display policies",
+                            },
+                        }
+                    ]
+                });
+
+                options.Categories.Add(new CookieCategory
+                {
+                    TitleText = new()
+                    {
+                        ["en"] = "Google Services",
+                    },
+                    DescriptionText = new()
+                    {
+                        ["en"] = "Allows the integration and usage of Google services.",
+                    },
+                    Identifier = "google",
+                    IsPreselected = true,
+                    Services =
+                    [
+                        new CookieCategoryService
+                        {
+                            Identifier = "google-analytics",
+                            PolicyUrl = "https://policies.google.com/privacy",
+                            TitleText = new()
+                            {
+                                ["en"] = "Google Analytics",
+                            },
+                            ShowPolicyText = new()
+                            {
+                                ["en"] = "Display policies",
+                            }
+                        }
+                    ]
+                });
+            });
         }
     }
 }

@@ -16,7 +16,7 @@
                      Disabled="@GetDisabledState()"
                      Margin="@Margin"
                      Required="@Required"
-                     ForId="@FieldId">
+                     ForId="@InputIdState.Value">
         <InputContent>
             <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
                 @if (_mask == null)
@@ -24,8 +24,12 @@
                     <MudInput T="string"
                               @ref="InputReference"
                               @attributes="UserAttributes"
+                              Label="@Label"
                               InputType="@InputType"
+                              InputMode="@InputMode"
                               Lines="@Lines"
+                              MaxLines="@MaxLines"
+                              AutoGrow="@AutoGrow"
                               Style="@Style"
                               Variant="@Variant"
                               TextUpdateSuppression="@TextUpdateSuppression"
@@ -33,7 +37,7 @@
                               ValueChanged="(s) => SetTextAsync(s)"
                               Placeholder="@Placeholder"
                               Disabled=@GetDisabledState()
-                              DisableUnderLine="@DisableUnderLine"
+                              Underline="@Underline"
                               ReadOnly="@GetReadOnlyState()"
                               MaxLength="@MaxLength"
                               Adornment="@Adornment"
@@ -50,22 +54,25 @@
                               OnBlur="@OnBlurredAsync"
                               OnKeyDown="@InvokeKeyDownAsync"
                               OnInternalInputChanged="OnChange"
-                              OnKeyPress="@InvokeKeyPress"
                               OnKeyUp="@InvokeKeyUpAsync"
                               KeyDownPreventDefault="KeyDownPreventDefault"
-                              KeyPressPreventDefault="KeyPressPreventDefault"
                               KeyUpPreventDefault="KeyUpPreventDefault"
                               HideSpinButtons="true"
                               Clearable="@Clearable"
                               OnClearButtonClick="@OnClearButtonClick"
-                              Pattern="@Pattern"/>
+                              Pattern="@Pattern"
+                              ShrinkLabel="@ShrinkLabel"
+                              InputId="@InputIdState.Value"
+                              Required="@Required"/>
                 }
                 else
                 {
                     <MudMask @ref="_maskReference"
                              @attributes="UserAttributes"
+                             Label="@Label"
                              Mask="@_mask"
                              InputType="@InputType"
+                             InputMode="@InputMode"
                              Lines="@Lines"
                              Style="@Style"
                              Variant="@Variant"
@@ -73,8 +80,8 @@
                              Value="@Text"
                              ValueChanged="OnMaskedValueChanged"
                              Placeholder="@Placeholder"
-                            Disabled=@GetDisabledState()
-                             DisableUnderLine="@DisableUnderLine"
+                             Disabled=@GetDisabledState()
+                             Underline="@Underline"
                              ReadOnly="@GetReadOnlyState()"
                              MaxLength="@MaxLength"
                              Adornment="@Adornment"
@@ -87,7 +94,9 @@
                              Immediate="@Immediate"
                              Margin="@Margin" OnBlur="@OnBlurredAsync"
                              Clearable="@Clearable"
-                             OnClearButtonClick="@OnClearButtonClick"/>
+                             OnClearButtonClick="@OnClearButtonClick"
+                             InputId="@InputIdState.Value"
+                             Required="@Required"/>
                 }
             </CascadingValue>
         </InputContent>

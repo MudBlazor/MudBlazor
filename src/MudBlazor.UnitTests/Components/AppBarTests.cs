@@ -1,4 +1,4 @@
-// Copyright (c) MudBlazor 2023
+﻿// Copyright (c) MudBlazor 2023
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -67,5 +67,16 @@ namespace MudBlazor.UnitTests.Components
                .And
                .Contain("mud-appbar-fixed-bottom");
         }
+
+        /// <summary>
+        /// AppBar must not set WrapContent true by default as this is not backwards compatible
+        /// </summary>
+        [Test]
+        public void AppBar_WrapContent_ShouldBeFalseByDefault()
+        {
+            var comp = Context.RenderComponent<MudAppBar>();
+            comp.FindComponent<MudToolBar>().Instance.WrapContent.Should().Be(false);
+        }
+
     }
 }

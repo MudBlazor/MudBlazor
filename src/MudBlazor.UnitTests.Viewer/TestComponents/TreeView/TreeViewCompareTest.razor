@@ -1,0 +1,44 @@
+﻿@using System.Collections
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTreeView T="string" SelectionMode="SelectionMode.ToggleSelection" @bind-SelectedValue="SelectedValue" Comparer="Comparer">
+    <MudTreeViewItem Value='"Ax"' @bind-Selected="_item1Selected">
+        <MudTreeViewItem Value='"Bx"' />
+    </MudTreeViewItem>
+    <MudTreeViewItem Value='"Cx"' @bind-Selected="_item2Selected">
+        <MudTreeViewItem Value='"Dx"' />
+    </MudTreeViewItem>
+</MudTreeView>
+
+<p class="selected-value">
+    @SelectedValue
+</p>
+<p class="item1-activated">
+    @_item1Selected
+</p>
+<p class="item2-activated">
+    @_item2Selected
+</p>
+@code{
+    [Parameter]
+    public string SelectedValue { get; set; }
+
+    private bool _item1Selected;
+
+    private bool _item2Selected;
+
+    [Parameter]
+    public IEqualityComparer<string> Comparer { get; set; } = new DelegateEqualityComparer<string>(
+            (x, y) => 
+            {
+                if (x == null && y == null) return true;
+                if (x == null || y == null) return false;
+                return x.Equals(y);
+            },
+            obj => 
+            {
+                if (obj == null) return 0;
+                return obj.GetHashCode();
+            }
+        );
+}

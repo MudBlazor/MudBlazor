@@ -1,9 +1,9 @@
-<!--https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-reference -->
+﻿<!--https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-reference -->
 <!--Use: dotnet msbuild -preprocess:<fileName>.xml to evaluate this project-->
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
   <!--Outside Visual Studio SolutionDir is not available-->  
@@ -13,7 +13,7 @@
 
   <!--Project path for code generator-->
   <PropertyGroup>
-    <BinDocsCompiler>$(SolutionDir)MudBlazor.Docs.Compiler/bin/Debug/net7.0/MudBlazor.Docs.Compiler.dll</BinDocsCompiler>
+    <BinDocsCompiler>$(SolutionDir)MudBlazor.Docs.Compiler/bin/Debug/net8.0/MudBlazor.Docs.Compiler.dll</BinDocsCompiler>
     <ProjectDocsCompiler>dotnet run --configuration release --project "$(SolutionDir)MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj"</ProjectDocsCompiler>
   </PropertyGroup>
 
@@ -67,6 +67,7 @@
       <FilesToClean Include="./NewFilesToBuild.txt" />
       <FilesToClean Include="./Models/Snippets.generated.cs" />
       <FilesToClean Include="./Models/DocStrings.generated.cs" />
+      <FilesToClean Include="./wwwroot/MudBlazorDocs.css" />
       <FilesToClean Include="./wwwroot/MudBlazorDocs.min.css" />
     </ItemGroup>
     <Delete Files="@(FilesToClean)" />
@@ -74,12 +75,14 @@
 
   <!--Packages-->
   <ItemGroup>
-    <PackageReference Include="Blazor-Analytics" Version="3.11.0" />
-    <PackageReference Include="FluentValidation" Version="11.5.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
-    <PackageReference Include="Blazored.LocalStorage" Version="4.3.0" />
+    <PackageReference Include="Blazor-Analytics" Version="3.12.0" />
+    <PackageReference Include="BytexDigital.Blazor.Components.CookieConsent" Version="1.2.0-preview.1698872627" />
+    <PackageReference Include="FluentValidation" Version="11.9.0" />
+    <PackageReference Include="FuzzySharp" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.3" />
+    <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
   </ItemGroup>
 
   <!--Project dependencies-->
@@ -89,31 +92,20 @@
     <ProjectReference Include="..\MudBlazor.SourceCodeGenerator\MudBlazor.SourceCodeGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
-  <!--Excubo  webcompiler -  used for scss and js compilation-->
-  <Target Name="ToolRestore">
-    <Exec Command="dotnet tool restore" StandardOutputImportance="high" />
-  </Target>
+  <PropertyGroup>
+    <SassCompilerEnableWatcher>false</SassCompilerEnableWatcher>
+  </PropertyGroup>
 
-  <Target Name="WebCompiler" DependsOnTargets="ToolRestore">
-    <Exec Command="dotnet webcompiler ./Styles/MudBlazorDocs.scss -c excubowebcompiler.json" StandardOutputImportance="high" StandardErrorImportance="high" />
-  </Target>
-
-  <!--Output of Excubo webcompiler-->
-  <Target Name="IncludeGeneratedStaticFiles" DependsOnTargets="WebCompiler" BeforeTargets="BeforeBuild">
-    <Error Condition="!Exists('$(MSBuildProjectDirectory)/wwwroot/MudBlazorDocs.min.css')" Text="Missing MudBlazorDocs.min.css in wwwroot" />
-    <!--If we ever bundle js  for the docs site uncomment the below check-->
-    <!--<Error Condition="!Exists('wwwroot/MudBlazorDocs.min.js')" Text="Missing MudBlazorDocs.min.js in wwwroot" />-->
-    <ItemGroup>
-      <!--Include without duplication-->
-      <_NewCompiledDocsCssFiles Include="wwwroot\MudBlazorDocs.min.css" Exclude="@(Content)" />
-      <Content Include="@(_NewCompiledDocsCssFiles)" />
-    </ItemGroup>
-  </Target>
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.SassCompiler" Version="1.72.0">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
 
   <!--Dont Include in build output-->
   <ItemGroup>
     <Content Remove="compilerconfig.json" />
-    <Content Remove="excubowebcompiler.json" />
+    <Content Remove="sasscompiler.json" />
   </ItemGroup>
 
 </Project>

@@ -34,8 +34,8 @@
 </MudDataGrid>
 
 <div class="d-flex flex-wrap mt-4">
-    <MudSwitch T="bool" @bind-Checked="_customizeGroupTemplate" Color="@Color.Primary">Customize Group Template</MudSwitch>
-    <MudSwitch T="bool" Checked="@_customizeGroupBy" Color="@Color.Primary" CheckedChanged="@CustomizeByGroupChanged">Customize Group By</MudSwitch>
+    <MudSwitch T="bool" @bind-Value="_customizeGroupTemplate" Color="@Color.Primary">Customize Group Template</MudSwitch>
+    <MudSwitch T="bool" Value="@_customizeGroupBy" Color="@Color.Primary" ValueChanged="@CustomizeByGroupChanged">Customize Group By</MudSwitch>
     <MudButton OnClick="@ExpandAllGroups" Color="@Color.Primary">Expand All</MudButton>
     <MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary">Collapse All</MudButton>
 </div>

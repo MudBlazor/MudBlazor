@@ -1,0 +1,17 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack>
+    <MudDateRangePicker @bind-DateRange="@_dateRange" Margin="Margin.Dense" ReadOnly="@(!_editable)" Clearable="@_clearable" 
+                        PlaceholderStart="Start Date" PlaceholderEnd="End Date"/>
+
+    <MudStack Row="true">
+        <MudSwitch @bind-Value="_editable" Color="Color.Secondary">Editable</MudSwitch>
+        <MudSwitch @bind-Value="_clearable" Color="Color.Secondary">Clearable</MudSwitch>
+    </MudStack>
+</MudStack>
+
+@code {
+    private bool _editable = true;
+    private bool _clearable = true;
+    private DateRange _dateRange { get; set; }
+}

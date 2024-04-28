@@ -12,7 +12,7 @@ namespace MudBlazor
     internal class Filter<T>
     {
         private readonly MudDataGrid<T> _dataGrid;
-        private readonly FilterDefinition<T> _filterDefinition;
+        private readonly IFilterDefinition<T> _filterDefinition;
         private readonly Column<T>? _column;
 
         internal string? _valueString;
@@ -21,11 +21,12 @@ namespace MudBlazor
         internal bool? _valueBool;
         internal DateTime? _valueDate;
         internal TimeSpan? _valueTime;
+        internal Guid? _valueGuid;
 
         internal Column<T>? FilterColumn =>
             _column ?? (_dataGrid.RenderedColumns?.FirstOrDefault(c => c.PropertyName == _filterDefinition.Column?.PropertyName));
 
-        public Filter(MudDataGrid<T> dataGrid, FilterDefinition<T> filterDefinition, Column<T>? column)
+        public Filter(MudDataGrid<T> dataGrid, IFilterDefinition<T> filterDefinition, Column<T>? column)
         {
             _dataGrid = dataGrid;
             _filterDefinition = filterDefinition;
@@ -47,6 +48,8 @@ namespace MudBlazor
                 _valueDate = _filterDefinition.Value == null ? null : dateTime;
                 _valueTime = _filterDefinition.Value == null ? null : dateTime.TimeOfDay;
             }
+            else if (fieldType.IsGuid)
+                _valueGuid = _filterDefinition.Value as Guid?;
         }
 
         internal async Task RemoveFilterAsync()
@@ -57,11 +60,9 @@ namespace MudBlazor
         internal void FieldChanged(Column<T> column)
         {
             _filterDefinition.Column = column;
-            //_filterDefinition.Field = column.PropertyName;
-            //_filterDefinition.FieldType = column.PropertyType;
-            _filterDefinition.PropertyExpression = column.PropertyExpression;
             var operators = FilterOperator.GetOperatorByDataType(column.PropertyType);
             _filterDefinition.Operator = operators.FirstOrDefault();
+            _filterDefinition.Title = column.Title;
             _filterDefinition.Value = null;
         }
 
@@ -132,6 +133,13 @@ namespace MudBlazor
                 _filterDefinition.Value = date;
             }
 
+            _dataGrid.GroupItems();
+        }
+
+        internal void GuidValueChanged(Guid? value)
+        {
+            _valueGuid = value;
+            _filterDefinition.Value = _valueGuid;
             _dataGrid.GroupItems();
         }
     }

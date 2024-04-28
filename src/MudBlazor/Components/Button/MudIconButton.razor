@@ -12,8 +12,9 @@
             target="@Target"
             rel="@GetRel()"
             disabled="@GetDisabledState()"
-            title="@Title">
-    @if (!String.IsNullOrEmpty(Icon))
+            title="@Title"
+            ClickPropagation="@ClickPropagation">
+    @if (!string.IsNullOrEmpty(Icon))
     {
         <span class="mud-icon-button-label">
             <MudIcon Icon="@Icon" Size="@Size" />

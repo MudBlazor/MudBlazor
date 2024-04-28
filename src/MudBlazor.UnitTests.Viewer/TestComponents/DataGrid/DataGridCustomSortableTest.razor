@@ -9,7 +9,7 @@
     </Columns>
 </MudDataGrid>
 <MudButton OnClick="CallSort" Variant="Variant.Outlined">Set Sort on Name Column</MudButton>
-<MudSwitch @bind-Checked="@NaturalSortingEnabled">Enable Natural Sorting</MudSwitch>
+<MudSwitch @bind-Value="@NaturalSortingEnabled">Enable Natural Sorting</MudSwitch>
 
 @code {
     public static string __description__ = @"Test in browser custom sorting of DataGrid. Note that the 'Name' column is being sorted using a natural sorting algorithm.";

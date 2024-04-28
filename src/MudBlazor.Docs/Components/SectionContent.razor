@@ -45,7 +45,7 @@
 @if (_hasCode)
 {
     <div class="@SourceClassname">
-        <div class="docs-section-source-container">
+        <div class="docs-section-source-container" id="@_snippetId">
             @CodeComponent(_activeCode)
         </div>
         <MudIconButton Icon="@Icons.Material.Outlined.FileCopy" Size="Size.Small" Class="copy-code-button" @onclick="CopyTextToClipboard" />

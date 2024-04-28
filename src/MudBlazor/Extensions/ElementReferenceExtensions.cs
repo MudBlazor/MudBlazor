@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -9,6 +8,7 @@ using MudBlazor.Interop;
 
 namespace MudBlazor
 {
+#nullable enable
     [ExcludeFromCodeCoverage]
     public static class ElementReferenceExtensions
     {
@@ -17,12 +17,13 @@ namespace MudBlazor
 
         internal static IJSRuntime? GetJSRuntime(this ElementReference elementReference)
         {
-            if (elementReference.Context is not WebElementReferenceContext context)
+            if (elementReference.Context is WebElementReferenceContext context)
             {
-                return null;
+                return (IJSRuntime?)jsRuntimeProperty?.GetValue(context);
             }
 
-            return (IJSRuntime?)jsRuntimeProperty?.GetValue(context);
+            return null;
+
         }
 
         public static ValueTask MudFocusFirstAsync(this ElementReference elementReference, int skip = 0, int min = 0) =>

@@ -1,19 +1,21 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" class="@ContainerClass" style="@RootStyle" @onmouseenter="@HandleMouseEnter" @onmouseleave="@HandleMouseLeave" @onmouseup="@HandleMouseUp" @onfocusin="@HandleFocusIn" @onfocusout="@HandleFocusOut" >
-	@ChildContent
-	@if (TooltipContent != null || string.IsNullOrEmpty(Text) == false)
-	{
-		<MudPopover Open="_isVisible" Duration="@Duration" Delay="@Delay" AnchorOrigin="@_anchorOrigin" TransformOrigin="@_transformOrigin" Class="@Classname" Style="@Style" Paper="false">
-				@if (TooltipContent != null)
-				{
-					@TooltipContent
-				}
-				else if (!String.IsNullOrEmpty(Text))
-				{
-					@Text
-				}
-		</MudPopover>
-	}
+<div @attributes="UserAttributes" class="@ContainerClass" style="@RootStyle" @onmouseenter="@HandleMouseEnter" @onmouseleave="@HandleMouseLeave" @onmouseup="@HandleMouseUp" @onfocusin="@HandleFocusIn" @onfocusout="@HandleFocusOut">
+    @ChildContent
+    @if (TooltipContent is not null || !string.IsNullOrEmpty(Text))
+    {
+        <MudPopover Open="_isVisible" Duration="@Duration" Delay="@Delay" AnchorOrigin="@_anchorOrigin" TransformOrigin="@_transformOrigin" Class="@Classname" Style="@Style" Paper="false">
+            @if (TooltipContent is not null)
+            {
+                <div class="d-block">
+                    @TooltipContent
+                </div>
+            }
+            else if (!string.IsNullOrEmpty(Text))
+            {
+                @Text
+            }
+        </MudPopover>
+    }
 </div>

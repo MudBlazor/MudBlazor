@@ -72,17 +72,6 @@ namespace MudBlazor
                 return _maskReference.SelectRangeAsync(pos1, pos2);
         }
 
-        [Obsolete($"Use {nameof(ResetValueAsync)} instead. This will be removed in v7")]
-        [ExcludeFromCodeCoverage]
-        protected override void ResetValue()
-        {
-            if (_mask == null)
-                InputReference.Reset();
-            else
-                _maskReference.Reset();
-            base.ResetValue();
-        }
-
         protected override async Task ResetValueAsync()
         {
             if (_mask == null)
@@ -120,7 +109,6 @@ namespace MudBlazor
             await _maskReference.Clear();
             _maskReference.OnPaste(text);
         }
-
 
         private IMask _mask = null;
 
@@ -166,8 +154,20 @@ namespace MudBlazor
         {
             await SetTextAsync(s);
         }
-    }
 
-    [Obsolete("MudTextFieldString is no longer available.", true)]
-    public class MudTextFieldString : MudTextField<string> { }
+        /// <summary>
+        /// If true the input element will grow automatically with the text.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.General.Behavior)]
+        public bool AutoGrow { get; set; }
+
+        /// <summary>
+        /// If AutoGrow is set to true, the input element will not grow bigger than MaxLines lines. If MaxLines is set to 0
+        /// or less, the property will be ignored.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.General.Behavior)]
+        public int MaxLines { get; set; }
+    }
 }

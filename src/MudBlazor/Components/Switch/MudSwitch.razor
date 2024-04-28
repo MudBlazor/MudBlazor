@@ -2,14 +2,13 @@
 @inherits MudBooleanInput<T>
 @typeparam T
 
-
 <MudInputControl Class="@Classname" Style="@Style" Error="@HasErrors" ErrorText="@GetErrorText()" Required="@Required">
     <InputContent>
         <label class="@LabelClassname" style="@Style" @onkeydown="@HandleKeyDown" id="@_elementId">
             <span class="@SpanClassname">
                 <span tabindex="0" class="@SwitchClassname">
                     <span class="mud-switch-button">
-                        <input tabindex="-1" @attributes="UserAttributes" aria-checked="@((BoolValue == true).ToString().ToLower())" aria-readonly="@(GetDisabledState().ToString().ToLower())" type="checkbox" class="mud-switch-input" checked="@BoolValue" @onchange="@OnChange" disabled="@GetDisabledState()" @onclick:preventDefault="@GetReadOnlyState()"/>
+                        <input tabindex="-1" @attributes="UserAttributes" aria-checked="@((BoolValue == true).ToString().ToLower())" aria-readonly="@(GetDisabledState().ToString().ToLower())" type="checkbox" class="mud-switch-input" checked="@BoolValue" @onchange="@OnChange" disabled="@GetDisabledState()" @onclick:preventDefault="@GetReadOnlyState()" required="@Required" aria-required="@Required.ToString().ToLowerInvariant()" />
                         <span class="@ThumbClassname">
                             @if (!string.IsNullOrEmpty(ThumbIcon))
                             {
@@ -20,7 +19,7 @@
                 </span>
                 <span class="@TrackClassname"></span>
             </span>
-            @if (!String.IsNullOrEmpty(Label))
+            @if (!string.IsNullOrEmpty(Label))
             {
                 <MudText Class="@SwitchLabelClassname" Color="HasErrors ? Color.Error : Color.Inherit">
                     @Label
@@ -35,11 +34,3 @@
         </label>
     </InputContent>
 </MudInputControl>
-
-@code
-{
-    [Parameter]
-    [Category(CategoryTypes.FormComponent.Behavior)]
-    public RenderFragment ChildContent { get; set; }
-}
-

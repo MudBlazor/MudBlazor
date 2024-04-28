@@ -1,25 +1,26 @@
 @namespace MudBlazor.Docs.Examples
 
-<MudTreeView Items="@TreeItems" Hover="true" Width="100%">
-    <ItemTemplate Context="item">
-        <MudTreeViewItem Items="@item.TreeItems" Icon="@item.Icon">
-            <BodyContent>
-                <div style="display: grid; grid-template-columns: 1fr auto; align-items: center; width: 100%">
-                    <MudText Style="justify-self: start;">@item.Text</MudText>
-                    <div style="justify-self: end;">
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Color="Color.Inherit" />
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" Color="Color.Inherit" />
+<MudPaper Width="400px" Elevation="2">
+    <MudTreeView Items="@TreeItems" Hover="true">
+        <ItemTemplate Context="item">
+            <MudTreeViewItem Items="@item.TreeItems" Icon="@item.Icon">
+                <BodyContent>
+                    <div style="display: grid; grid-template-columns: 1fr auto; align-items: center; width: 100%">
+                        <MudText Style="justify-self: start;">@item.Text</MudText>
+                        <div style="justify-self: end;">
+                            <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Color="Color.Inherit" />
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" Color="Color.Inherit" />
+                        </div>
                     </div>
-                </div>
-            </BodyContent>
-        </MudTreeViewItem>
-    </ItemTemplate>
-</MudTreeView>
-
+                </BodyContent>
+            </MudTreeViewItem>
+        </ItemTemplate>
+    </MudTreeView>
+</MudPaper>
 
 @code {
 
-    private HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
+    private List<TreeItemData> TreeItems { get; set; } = new();
 
     public class TreeItemData
     {
@@ -27,7 +28,7 @@
 
         public string Icon { get; set; }
 
-        public HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
+        public List<TreeItemData> TreeItems { get; set; } = new();
 
         public TreeItemData(string text, string icon)
         {
@@ -43,12 +44,12 @@
         TreeItems.Add(new TreeItemData("content", Icons.Custom.FileFormats.FileDocument));
         TreeItems.Add(new TreeItemData("src", Icons.Custom.FileFormats.FileCode)
         {
-            TreeItems = new HashSet<TreeItemData>()
+            TreeItems = new()
             {
                 new TreeItemData("MudBlazor", Icons.Custom.Brands.MudBlazor),
                 new TreeItemData("MudBlazor.Docs", Icons.Custom.FileFormats.FileDocument)
                 {
-                    TreeItems = new HashSet<TreeItemData>()
+                    TreeItems = new()
                     {
                         new TreeItemData("_Imports.razor", Icons.Material.Filled.AlternateEmail),
                         new TreeItemData( "compilerconfig.json", Icons.Custom.FileFormats.FileImage),
@@ -60,7 +61,6 @@
                 new TreeItemData("MudBlazor.Docs.Compiler", Icons.Material.Filled.Folder),
                 new TreeItemData("MudBlazor.Docs.Server", Icons.Material.Filled.Folder),
                 new TreeItemData("MudBlazor.UnitTests", Icons.Material.Filled.Folder),
-                new TreeItemData("MudBlazor.UnitTests.Viewer", Icons.Material.Filled.Folder),
                 new TreeItemData(".editorconfig", Icons.Custom.FileFormats.FileCode),
                 new TreeItemData("MudBlazor.sln", Icons.Custom.Brands.MicrosoftVisualStudio)
             }

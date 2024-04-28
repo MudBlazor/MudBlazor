@@ -210,7 +210,17 @@ namespace MudBlazor
                 _ = OnEvaluateForm();
         }
 
-        private void OnTimerComplete(object stateInfo) => InvokeAsync(OnEvaluateForm);
+        private void OnTimerComplete(object stateInfo)
+        {
+            try
+            {
+                InvokeAsync(OnEvaluateForm);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"An error occured while executing {nameof(OnEvaluateForm)}: {e.Message}");
+            }
+        }
 
         private bool _shouldRender = true; // <-- default is true, we need the form children to render
 
@@ -267,25 +277,6 @@ namespace MudBlazor
         /// <summary>
         /// Reset all form controls and reset their validation state.
         /// </summary>
-        [Obsolete($"Use {nameof(ResetAsync)} instead. This will ve removed in v7")]
-        public void Reset()
-        {
-            foreach (var control in _formControls.ToArray())
-            {
-                control.Reset();
-            }
-
-            foreach (var form in ChildForms)
-            {
-                form.Reset();
-            }
-
-            EvaluateForm(debounce: false);
-        }
-
-        /// <summary>
-        /// Reset all form controls and reset their validation state.
-        /// </summary>
         public async Task ResetAsync()
         {
             foreach (var control in _formControls.ToArray())
@@ -317,6 +308,14 @@ namespace MudBlazor
             }
 
             EvaluateForm(debounce: false);
+        }
+
+        /// <summary>
+        /// Reset the isTouched property
+        /// </summary>
+        public void ResetTouched()
+        {
+            _touched = false;
         }
 
         protected override Task OnAfterRenderAsync(bool firstRender)
@@ -358,6 +357,11 @@ namespace MudBlazor
         public void Dispose()
         {
             _timer?.Dispose();
+            if (ParentMudForm != null)
+            {
+                ParentMudForm.ChildForms.Remove(this);
+                ParentMudForm.EvaluateForm(); // Need this to refresh the form state
+            }
         }
     }
 }

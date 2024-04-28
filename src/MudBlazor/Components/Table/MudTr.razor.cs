@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
@@ -17,7 +18,7 @@ namespace MudBlazor
             .AddClass(Class).Build();
 
         protected string ActionsStylename => new StyleBuilder()
-            .AddStyle("padding-left", "34px", IsExpandable).Build();
+            .AddStyle("padding-left", "34px", Expandable).Build();
 
 
         [CascadingParameter] public TableContext Context { get; set; }
@@ -26,7 +27,7 @@ namespace MudBlazor
 
         [Parameter] public object Item { get; set; }
 
-        [Parameter] public bool IsCheckable { get; set; }
+        [Parameter] public bool Checkable { get; set; }
 
         [Parameter] public bool IsEditable { get; set; }
 
@@ -34,15 +35,15 @@ namespace MudBlazor
 
         [Parameter] public bool IsEditSwitchBlocked { get; set; }
 
-        [Parameter] public bool IsExpandable { get; set; }
+        [Parameter] public bool Expandable { get; set; }
 
 
         [Parameter]
-        public EventCallback<bool> IsCheckedChanged { get; set; }
+        public EventCallback<bool> CheckedChanged { get; set; }
 
         private bool _checked;
         [Parameter]
-        public bool IsChecked
+        public bool Checked
         {
             get => _checked;
             set
@@ -50,12 +51,12 @@ namespace MudBlazor
                 if (value != _checked)
                 {
                     _checked = value;
-                    IsCheckedChanged.InvokeAsync(value);
+                    CheckedChanged.InvokeAsync(value);
                 }
             }
         }
 
-        public void OnRowClicked(MouseEventArgs args)
+        public async Task OnRowClickedAsync(MouseEventArgs args)
         {
             var table = Context?.Table;
             if (table is null)
@@ -63,8 +64,50 @@ namespace MudBlazor
             table.SetSelectedItem(Item);
             StartEditingItem(buttonClicked: false);
             if (table.MultiSelection && table.SelectOnRowClick && !table.IsEditable)
-                IsChecked = !IsChecked;
-            table.FireRowClickEvent(args, this, Item);
+                Checked = !Checked;
+            await table.FireRowClickEventAsync(args, this, Item);
+        }
+
+        public async Task OnRowMouseEnterAsync(MouseEventArgs args)
+        {
+            var table = Context?.Table;
+            if (table is null)
+                return;
+            await table.FireRowMouseEnterEventAsync(args, this, Item);
+        }
+
+        public async Task OnRowMouseLeaveAsync(MouseEventArgs args)
+        {
+            var table = Context?.Table;
+            if (table is null)
+                return;
+            await table.FireRowMouseLeaveEventAsync(args, this, Item);
+        }
+
+        private EventCallback<MouseEventArgs> RowMouseEnterEventCallback
+        {
+            get
+            {
+                var hasEventHandler = Context?.Table?.HasRowMouseEnterEventHandler ?? false;
+
+                if (hasEventHandler)
+                    return EventCallback.Factory.Create<MouseEventArgs>(this, OnRowMouseEnterAsync);
+
+                return default;
+            }
+        }
+
+        private EventCallback<MouseEventArgs> RowMouseLeaveEventCallback
+        {
+            get
+            {
+                var hasEventHandler = Context?.Table?.HasRowMouseLeaveEventHandler ?? false;
+
+                if (hasEventHandler)
+                    return EventCallback.Factory.Create<MouseEventArgs>(this, OnRowMouseLeaveAsync);
+
+                return default;
+            }
         }
 
         private void StartEditingItem() => StartEditingItem(buttonClicked: true);
@@ -121,11 +164,11 @@ namespace MudBlazor
             if (_checked != checkedState)
             {
                 if (notify)
-                    IsChecked = checkedState;
+                    Checked = checkedState;
                 else
                 {
                     _checked = checkedState;
-                    if (IsCheckable)
+                    if (Checkable)
                         InvokeAsync(StateHasChanged);
                 }
             }

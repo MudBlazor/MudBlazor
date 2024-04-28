@@ -16,7 +16,7 @@ namespace MudBlazor
 
         public ICollection<SortDefinition<T>> SortDefinitions { get; set; } = new List<SortDefinition<T>>();
 
-        public ICollection<FilterDefinition<T>> FilterDefinitions { get; set; } = new List<FilterDefinition<T>>();
+        public ICollection<IFilterDefinition<T>> FilterDefinitions { get; set; } = new List<IFilterDefinition<T>>();
     }
 
     public class GridData<T>

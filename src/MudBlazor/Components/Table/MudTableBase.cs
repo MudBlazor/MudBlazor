@@ -16,7 +16,7 @@ namespace MudBlazor
         internal bool IsEditing => _editingItem != null;
 
         private int _currentPage = 0;
-        private int? _rowsPerPage;
+        internal int? _rowsPerPage;
         private bool _isFirstRendered = false;
 
         protected string Classname =>
@@ -242,6 +242,20 @@ namespace MudBlazor
         public string HeaderClass { get; set; }
 
         /// <summary>
+        /// Add a style to table container
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Appearance)]
+        public string ContainerStyle { get; set; }
+
+        /// <summary>
+        /// Add a class to table container
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Appearance)]
+        public string ContainerClass { get; set; }
+
+        /// <summary>
         /// Add MudTd cells here to define the table footer. If<see cref="CustomFooter"/> is set, add one or more MudTFootRow instead.
         /// </summary>
         [Parameter]
@@ -309,22 +323,6 @@ namespace MudBlazor
         /// Event is called before the item is modified in inline editing.
         /// </summary>
         [Parameter] public EventCallback<object> OnPreviewEditClick { get; set; }
-
-        /// <summary>
-        /// Command executed when the user clicks on the CommitEdit Button.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Table.Editing)]
-        [Obsolete($"Use {nameof(OnCommitEditClick)} instead. This will be removed in v7.")]
-        public ICommand CommitEditCommand { get; set; }
-
-        /// <summary>
-        /// Command parameter for the CommitEdit Button. By default, will be the row level item model, if you won't set anything else.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Table.Editing)]
-        [Obsolete("This will be removed in v7.")]
-        public object CommitEditCommandParameter { get; set; }
 
         /// <summary>
         /// Tooltip for the CommitEdit Button.
@@ -448,14 +446,12 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Behavior)]
         public int OverscanCount { get; set; } = 3;
 
-        #region --> Obsolete Forwarders for Backwards-Compatiblilty
         /// <summary>
-        /// Alignment of the table cell text when breakpoint is smaller than <see cref="Breakpoint" />
+        /// Gets the size of each item in pixels. Defaults to 50px.
         /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("This property is not needed anymore, the cells width/alignment is done automatically.", true)]
-        [Parameter] public bool RightAlignSmall { get; set; } = true;
-        #endregion
+        [Parameter]
+        [Category(CategoryTypes.Table.Behavior)]
+        public float ItemSize { get; set; } = 50f;
 
         public abstract TableContext TableContext { get; }
 
@@ -517,15 +513,6 @@ namespace MudBlazor
         internal async Task OnCommitEditHandler(MouseEventArgs ev, object item)
         {
             await OnCommitEditClick.InvokeAsync(ev);
-#pragma warning disable CS0618
-            if (CommitEditCommand?.CanExecute(CommitEditCommandParameter) ?? false)
-            {
-                var parameter = CommitEditCommandParameter;
-                if (parameter == null)
-                    parameter = item;
-                CommitEditCommand.Execute(parameter);
-            }
-#pragma warning restore CS0618
         }
 
         internal Task OnPreviewEditHandler(object item)
@@ -538,19 +525,29 @@ namespace MudBlazor
             return OnCancelEditClick.InvokeAsync(ev);
         }
 
-        protected string TableStyle
+        protected string TableContainerStyle
             => new StyleBuilder()
+                .AddStyle(ContainerStyle)
                 .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
+                .Build();
+
+        protected string TableContainerClass
+            => new CssBuilder(ContainerClass)
                 .Build();
 
         internal abstract bool HasServerData { get; }
 
         internal abstract Task InvokeServerLoadFunc();
 
-        internal abstract void FireRowClickEvent(MouseEventArgs args, MudTr mudTr, object item);
+        internal abstract Task FireRowClickEventAsync(MouseEventArgs args, MudTr mudTr, object item);
+
+        internal abstract Task FireRowMouseEnterEventAsync(MouseEventArgs args, MudTr mudTr, object item);
+
+        internal abstract Task FireRowMouseLeaveEventAsync(MouseEventArgs args, MudTr mudTr, object item);
 
         internal abstract void OnHeaderCheckboxClicked(bool checkedState);
-
+        internal abstract bool HasRowMouseEnterEventHandler { get; }
+        internal abstract bool HasRowMouseLeaveEventHandler { get; }
         internal abstract bool IsEditable { get; }
 
         public abstract bool ContainsItem(object item);

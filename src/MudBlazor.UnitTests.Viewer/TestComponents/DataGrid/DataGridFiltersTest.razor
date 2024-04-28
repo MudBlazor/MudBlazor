@@ -8,17 +8,18 @@
         <PropertyColumn Property="x => x.Status" />
         <PropertyColumn Property="x => x.Hired" />
         <PropertyColumn Property="x => x.HiredOn" />
+        <PropertyColumn Property="x => x.ApplicationId" />
     </Columns>
 </MudDataGrid>
 
 @code {
     private IEnumerable<Model> _items = new List<Model>()
     {
-        new Model("Sam", 56, Severity.Normal, false, null), 
-        new Model("Alicia", 54, Severity.Info, null, null), 
-        new Model("Ira", 27, Severity.Success, true, new DateTime(2011, 1, 2)),
-        new Model("John", 32, Severity.Warning, false, null)
+        new Model("Sam", 56, Severity.Normal, false, null, null),
+        new Model("Alicia", 54, Severity.Info, null, null, new Guid("b7accfd5-928d-48ad-8a0c-9448ae37bf96")),
+        new Model("Ira", 27, Severity.Success, true, new DateTime(2011, 1, 2), null),
+        new Model("John", 32, Severity.Warning, false, null, null)
     };
 
-    public record Model (string Name, int? Age, Severity? Status, bool? Hired, DateTime? HiredOn);
+    public record Model (string Name, int? Age, Severity? Status, bool? Hired, DateTime? HiredOn, Guid? ApplicationId);
 }

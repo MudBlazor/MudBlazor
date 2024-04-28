@@ -5,13 +5,12 @@
 <TemplateColumn T="T" Tag="@("hierarchy-column")" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderStyle="width:0%"
     Filterable="false" IsEditable="false">
     <CellTemplate>
-        <label class="ma-n3">
-            <MudIconButton
+         <MudIconButton 
+            Class="ma-n3 pa-1"
             Icon="@(context.OpenHierarchies.Contains(context.Item) ?  OpenIcon : ClosedIcon)" 
             OnClick="context.Actions.ToggleHierarchyVisibilityForItemAsync"
             Size="@IconSize"
             Disabled="ButtonDisabledFunc.Invoke(context.Item)"/>
-        </label>
     </CellTemplate>
 </TemplateColumn>
 

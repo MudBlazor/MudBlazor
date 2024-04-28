@@ -12,14 +12,14 @@ namespace MudBlazor
 {
     public partial class MudDialog : MudComponentBase
     {
-        protected string ContentClass => new CssBuilder("mud-dialog-content")
-          .AddClass($"mud-dialog-no-side-padding", DisableSidePadding)
-          .AddClass(ClassContent)
-        .Build();
+        protected string ContentClassname => new CssBuilder("mud-dialog-content")
+            .AddClass("mud-dialog-no-side-padding", DisableSidePadding)
+            .AddClass(ContentClass)
+            .Build();
 
-        protected string ActionClass => new CssBuilder("mud-dialog-actions")
-          .AddClass(ClassActions)
-        .Build();
+        protected string ActionsClassname => new CssBuilder("mud-dialog-actions")
+            .AddClass(ActionsClass)
+            .Build();
 
         [CascadingParameter] private MudDialogInstance DialogInstance { get; set; }
         [CascadingParameter(Name = "IsNested")] private bool IsNested { get; set; }
@@ -73,18 +73,25 @@ namespace MudBlazor
         public bool DisableSidePadding { get; set; }
 
         /// <summary>
+        /// CSS class that will be applied to the dialog title container
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Appearance)]
+        public string TitleClass { get; set; }
+
+        /// <summary>
         /// CSS class that will be applied to the dialog content
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Appearance)]
-        public string ClassContent { get; set; }
+        public string ContentClass { get; set; }
 
         /// <summary>
         /// CSS class that will be applied to the action buttons container
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Appearance)]
-        public string ClassActions { get; set; }
+        public string ActionsClass { get; set; }
 
         /// <summary>
         /// CSS styles to be applied to the dialog content
@@ -121,7 +128,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
-        public DefaultFocus DefaultFocus { get; set; }
+        public DefaultFocus DefaultFocus { get; set; } = DefaultFocus.Element;
 
         private bool IsInline => IsNested || DialogInstance == null;
 
@@ -144,13 +151,17 @@ namespace MudBlazor
                 [nameof(Class)] = Class,
                 [nameof(Style)] = Style,
                 [nameof(Tag)] = Tag,
+                [nameof(UserAttributes)] = UserAttributes,
                 [nameof(TitleContent)] = TitleContent,
                 [nameof(DialogContent)] = DialogContent,
                 [nameof(DialogActions)] = DialogActions,
+                [nameof(OnBackdropClick)] = OnBackdropClick,
                 [nameof(DisableSidePadding)] = DisableSidePadding,
-                [nameof(ClassContent)] = ClassContent,
-                [nameof(ClassActions)] = ClassActions,
+                [nameof(TitleClass)] = TitleClass,
+                [nameof(ContentClass)] = ContentClass,
+                [nameof(ActionsClass)] = ActionsClass,
                 [nameof(ContentStyle)] = ContentStyle,
+                [nameof(DefaultFocus)] = DefaultFocus,
             };
             _reference = DialogService.Show<MudDialog>(title, parameters, options ?? Options);
             _reference.Result.ContinueWith(t =>

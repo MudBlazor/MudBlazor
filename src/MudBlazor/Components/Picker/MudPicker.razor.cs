@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Interfaces;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
@@ -17,25 +14,24 @@ namespace MudBlazor
         public MudPicker() : base(new Converter<T, string>()) { }
         protected MudPicker(Converter<T, string> converter) : base(converter) { }
 
-        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
+        [Inject]
+        private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
 
         private string _elementId = "picker" + Guid.NewGuid().ToString().Substring(0, 8);
 
-        [Inject] private IBrowserWindowSizeProvider WindowSizeListener { get; set; }
-
-        protected string PickerClass =>
+        protected string PickerClassname =>
             new CssBuilder("mud-picker")
-                .AddClass($"mud-picker-inline", PickerVariant != PickerVariant.Static)
-                .AddClass($"mud-picker-static", PickerVariant == PickerVariant.Static)
-                .AddClass($"mud-rounded", PickerVariant == PickerVariant.Static && !_pickerSquare)
+                .AddClass("mud-picker-inline", PickerVariant != PickerVariant.Static)
+                .AddClass("mud-picker-static", PickerVariant == PickerVariant.Static)
+                .AddClass("mud-rounded", PickerVariant == PickerVariant.Static && !_pickerSquare)
                 .AddClass($"mud-elevation-{_pickerElevation}", PickerVariant == PickerVariant.Static)
-                .AddClass($"mud-picker-input-button", !Editable && PickerVariant != PickerVariant.Static)
-                .AddClass($"mud-picker-input-text", Editable && PickerVariant != PickerVariant.Static)
-                .AddClass($"mud-disabled", GetDisabledState() && PickerVariant != PickerVariant.Static)
+                .AddClass("mud-picker-input-button", !Editable && PickerVariant != PickerVariant.Static)
+                .AddClass("mud-picker-input-text", Editable && PickerVariant != PickerVariant.Static)
+                .AddClass("mud-disabled", GetDisabledState() && PickerVariant != PickerVariant.Static)
                 .AddClass(Class)
                 .Build();
 
-        protected string PickerPaperClass =>
+        protected string PickerPaperClassname =>
             new CssBuilder("mud-picker")
                 .AddClass("mud-picker-paper")
                 .AddClass("mud-picker-view", PickerVariant == PickerVariant.Inline)
@@ -44,36 +40,33 @@ namespace MudBlazor
                 .AddClass("mud-dialog", PickerVariant == PickerVariant.Dialog)
                 .Build();
 
-        protected string PickerInlineClass =>
+        protected string PickerPaperStylename =>
+            new StyleBuilder()
+                .AddStyle("transition-duration", $"{Math.Round(MudGlobal.TransitionDuration.TotalMilliseconds)}ms")
+                .AddStyle("transition-delay", $"{Math.Round(MudGlobal.TransitionDelay.TotalMilliseconds)}ms")
+                .AddStyle(Style)
+                .Build();
+
+        protected string PickerInlineClassname =>
             new CssBuilder("mud-picker-inline-paper")
                 .Build();
 
-        protected string PickerContainerClass =>
+        protected string PickerContainerClassname =>
             new CssBuilder("mud-picker-container")
                 .AddClass("mud-paper-square", _pickerSquare)
                 .AddClass("mud-picker-container-landscape",
                     Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
                 .Build();
 
-        protected string PickerInputClass =>
-            new CssBuilder("mud-input-input-control").AddClass(Class)
+        protected string PickerInputClassname =>
+            new CssBuilder("mud-input-input-control")
+                .AddClass(Class)
                 .Build();
 
-        protected string ActionClass => new CssBuilder("mud-picker-actions")
-            .AddClass(ClassActions)
-            .Build();
-
-        /// <summary>
-        /// Sets the icon of the input text field
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Parameter]
-        [Obsolete("Use AdornmentIcon instead.", true)]
-        public string InputIcon
-        {
-            get { return AdornmentIcon; }
-            set { AdornmentIcon = value; }
-        }
+        protected string ActionsClassname =>
+            new CssBuilder("mud-picker-actions")
+                .AddClass(ActionsClass)
+                .Build();
 
         /// <summary>
         /// The color of the adornment if used. It supports the theme colors.
@@ -170,8 +163,17 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Disabled { get; set; }
-        [CascadingParameter(Name = "ParentDisabled")] private bool ParentDisabled { get; set; }
+
+        [CascadingParameter(Name = "ParentDisabled")]
+        private bool ParentDisabled { get; set; }
         protected bool GetDisabledState() => Disabled || ParentDisabled;
+
+        /// <summary>
+        /// Determines whether the input has an underline. Default is true
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool Underline { get; set; } = true;
 
         /// <summary>
         /// If true, no date or time can be defined.
@@ -179,7 +181,9 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool ReadOnly { get; set; }
-        [CascadingParameter(Name = "ParentReadOnly")] private bool ParentReadOnly { get; set; }
+
+        [CascadingParameter(Name = "ParentReadOnly")]
+        private bool ParentReadOnly { get; set; }
         protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
         /// <summary>
@@ -211,18 +215,6 @@ namespace MudBlazor
         public PickerVariant PickerVariant { get; set; } = PickerVariant.Inline;
 
         /// <summary>
-        ///  Variant of the text input
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Parameter]
-        [Obsolete("Use Variant instead.", true)]
-        public Variant InputVariant
-        {
-            get { return Variant; }
-            set { Variant = value; }
-        }
-
-        /// <summary>
         /// Variant of the text input
         /// </summary>
         [Parameter]
@@ -230,7 +222,7 @@ namespace MudBlazor
         public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        /// Sets if the icon will be att start or end, set to false to disable.
+        /// Sets if the icon will be att start or end, set to None to disable.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
@@ -258,17 +250,24 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Primary;
 
         /// <summary>
-        /// Changes the cursor appearance.
-        /// </summary>
-        [Obsolete("This is enabled now by default when you use Editable=true. You can remove the parameter.", false)]
-        [Parameter]
-        public bool AllowKeyboardInput { get; set; }
-
-        /// <summary>
         /// Fired when the text changes.
         /// </summary>
         [Parameter]
         public EventCallback<string> TextChanged { get; set; }
+
+        /// <summary>
+        /// If true and Editable is true, update Text immediately on typing.
+        /// If false, Text is updated only on Enter or loss of focus.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool ImmediateText { get; set; }
+
+        /// <summary>
+        /// Fired when the text input is clicked.
+        /// </summary>
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnClick { get; set; }
 
         /// <summary>
         /// The currently selected string value (two-way bindable)
@@ -288,7 +287,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
-        public string ClassActions { get; set; }
+        public string ActionsClass { get; set; }
 
         /// <summary>
         /// Define the action buttons here
@@ -337,7 +336,7 @@ namespace MudBlazor
             {
                 _text = value;
                 if (callback)
-                    await StringValueChanged(_text);
+                    await StringValueChangedAsync(_text);
                 await TextChanged.InvokeAsync(_text);
             }
         }
@@ -345,59 +344,56 @@ namespace MudBlazor
         /// <summary>
         /// Value change hook for descendants.
         /// </summary>
-        protected virtual Task StringValueChanged(string value)
+        protected virtual Task StringValueChangedAsync(string value)
         {
             return Task.CompletedTask;
         }
 
         protected bool IsOpen { get; set; }
 
-        public void ToggleOpen()
+        public Task ToggleOpenAsync()
         {
             if (IsOpen)
-                Close();
+            {
+                return CloseAsync();
+            }
             else
-                Open();
+            {
+                return OpenAsync();
+            }
         }
 
-        public void Close(bool submit = true)
+        public async Task CloseAsync(bool submit = true)
         {
             IsOpen = false;
 
             if (submit)
             {
-                Submit();
+                await SubmitAsync();
             }
 
-            OnClosed();
+            await OnClosedAsync();
             StateHasChanged();
         }
 
-        public void Open()
+        public Task OpenAsync()
         {
             IsOpen = true;
             StateHasChanged();
-            OnOpened();
+
+            return OnOpenedAsync();
         }
 
-        private void CloseOverlay() => Close(PickerActions == null);
+        private Task CloseOverlayAsync() => CloseAsync(PickerActions == null);
 
-        protected internal virtual void Submit() { }
+        protected internal virtual Task SubmitAsync() => Task.CompletedTask;
 
-        public virtual void Clear(bool close = true)
+        public virtual async Task ClearAsync(bool close = true)
         {
             if (close && PickerVariant != PickerVariant.Static)
             {
-                Close(false);
+                await CloseAsync(false);
             }
-        }
-
-        [Obsolete($"Use {nameof(ResetValueAsync)} instead. This will be removed in v7")]
-        [ExcludeFromCodeCoverage]
-        protected override void ResetValue()
-        {
-            _inputReference?.Reset();
-            base.ResetValue();
         }
 
         protected override async Task ResetValueAsync()
@@ -426,6 +422,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            base.OnInitialized();
             if (PickerVariant == PickerVariant.Static)
             {
                 IsOpen = true;
@@ -453,11 +450,11 @@ namespace MudBlazor
                 Label = For.GetLabelString();
         }
 
-        private async Task EnsureKeyInterceptor()
+        private async Task EnsureKeyInterceptorAsync()
         {
             if (_keyInterceptor == null)
             {
-                _keyInterceptor = _keyInterceptorFactory.Create();
+                _keyInterceptor = KeyInterceptorFactory.Create();
 
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
@@ -477,82 +474,103 @@ namespace MudBlazor
             }
         }
 
+        private async Task OnClickAsync(MouseEventArgs args)
+        {
+            if (!Editable)
+            {
+                await ToggleStateAsync();
+            }
+
+            if (OnClick.HasDelegate)
+            {
+                await OnClick.InvokeAsync(args);
+            }
+        }
+
+        /// <summary>
+        /// 'HandleKeyDown' needed to be async in order to call other async methods. Because
+        /// the HandleKeyDown is virtual and the base needs to be called from overriden methods
+        /// we can't use 'async void'. This would break the synchronous behavior of those
+        /// overriden methods. The KeyInterceptor does not support async behavior, so we have to
+        /// add this hook method for handling the KeyDown event.
+        /// This method can be removed when the KeyInterceptor supports async behavior.
+        /// </summary>
+        /// <param name="args"></param>
+        private async void HandleKeyDown(KeyboardEventArgs args)
+        {
+            await OnHandleKeyDownAsync(args);
+        }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender == true)
+            if (firstRender)
             {
-                await EnsureKeyInterceptor();
+                await EnsureKeyInterceptorAsync();
             }
 
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        protected internal void ToggleState()
+        protected internal async Task ToggleStateAsync()
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
             if (IsOpen)
             {
                 IsOpen = false;
-                OnClosed();
+                await OnClosedAsync();
             }
             else
             {
                 IsOpen = true;
-                OnOpened();
-                FocusAsync();
+                await OnOpenedAsync();
+                await FocusAsync();
             }
         }
 
-        protected virtual async void OnOpened()
+        protected virtual async Task OnOpenedAsync()
         {
-            OnPickerOpened();
+            await OnPickerOpenedAsync();
 
             if (PickerVariant == PickerVariant.Inline)
             {
-                await _pickerInlineRef.MudChangeCssAsync(PickerInlineClass);
+                await _pickerInlineRef.MudChangeCssAsync(PickerInlineClassname);
             }
 
-            await EnsureKeyInterceptor();
+            await EnsureKeyInterceptorAsync();
             await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "key+none" });
         }
 
-        protected virtual async void OnClosed()
+        protected virtual async Task OnClosedAsync()
         {
-            OnPickerClosed();
+            await OnPickerClosedAsync();
 
-            await EnsureKeyInterceptor();
+            await EnsureKeyInterceptorAsync();
             await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
         }
 
-        protected virtual void OnPickerOpened()
-        {
-            PickerOpened.InvokeAsync(this);
-        }
+        protected virtual Task OnPickerOpenedAsync() => PickerOpened.InvokeAsync(this);
 
-        protected virtual void OnPickerClosed()
-        {
-            PickerClosed.InvokeAsync(this);
-        }
+        protected virtual Task OnPickerClosedAsync() => PickerClosed.InvokeAsync(this);
 
-        protected internal virtual void HandleKeyDown(KeyboardEventArgs obj)
+        protected internal virtual async Task OnHandleKeyDownAsync(KeyboardEventArgs args)
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
-            switch (obj.Key)
+            switch (args.Key)
             {
                 case "Backspace":
-                    if (obj.CtrlKey == true && obj.ShiftKey == true)
+                    if (args.CtrlKey && args.ShiftKey)
                     {
-                        Clear();
-                        _value = default(T);
-                        Reset();
+                        await ClearAsync();
+                        _value = default;
+                        await ResetAsync();
                     }
 
                     break;
                 case "Escape":
                 case "Tab":
-                    Close(false);
+                    await CloseAsync(false);
                     break;
             }
         }
@@ -561,16 +579,17 @@ namespace MudBlazor
         {
             base.Dispose(disposing);
 
-            if (disposing == true)
+            if (disposing)
             {
                 if (_keyInterceptor != null)
                 {
                     _keyInterceptor.KeyDown -= HandleKeyDown;
-                    _keyInterceptor.Dispose();
+                    if (IsJSRuntimeAvailable)
+                    {
+                        _keyInterceptor.Dispose();
+                    }
                 }
-
             }
         }
-
     }
 }

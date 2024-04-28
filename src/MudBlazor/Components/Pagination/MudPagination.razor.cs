@@ -6,24 +6,25 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.VisualBasic;
-using MudBlazor.Extensions;
-using MudBlazor.Internal;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudPagination : MudComponentBase
     {
-        #region Css Classes
+        private int _count = 1;
+        private int _selected = 1;
+        private int _middleCount = 3;
+        private int _boundaryCount = 2;
+        private bool _selectedFirstSet;
 
         private string Classname =>
             new CssBuilder("mud-pagination")
                 .AddClass($"mud-pagination-{Variant.ToDescriptionString()}")
                 .AddClass($"mud-pagination-{Size.ToDescriptionString()}")
-                .AddClass("mud-pagination-disable-elevation", DisableElevation)
+                .AddClass("mud-pagination-disable-elevation", !DropShadow)
                 .AddClass("mud-pagination-rtl", RightToLeft)
                 .AddClass(Class)
                 .Build();
@@ -38,11 +39,8 @@ namespace MudBlazor
                 .AddClass("mud-pagination-item-selected")
                 .Build();
 
-        #endregion
-
-        #region Parameter
-
-        private int _count = 1;
+        [CascadingParameter(Name = "RightToLeft")]
+        public bool RightToLeft { get; set; }
 
         /// <summary>
         /// The number of pages.
@@ -59,8 +57,6 @@ namespace MudBlazor
             }
         }
 
-        private int _boundaryCount = 2;
-
         /// <summary>
         /// The number of items at the start and end of the pagination.
         /// </summary>
@@ -75,8 +71,6 @@ namespace MudBlazor
             }
         }
 
-        private int _middleCount = 3;
-
         /// <summary>
         /// The number of items in the middle of the pagination.
         /// </summary>
@@ -90,9 +84,6 @@ namespace MudBlazor
                 _middleCount = Math.Max(1, value);
             }
         }
-
-        private bool _selectedFirstSet;
-        private int _selected = 1;
 
         /// <summary>
         /// The selected page number.
@@ -149,11 +140,11 @@ namespace MudBlazor
         public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
-        /// If true, no drop-shadow will be used.
+        /// Determines whether the component has a drop-shadow. Default is true
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
-        public bool DisableElevation { get; set; }
+        public bool DropShadow { get; set; } = true;
 
         /// <summary>
         /// If true, the pagination will be disabled.
@@ -230,22 +221,16 @@ namespace MudBlazor
         [Category(CategoryTypes.Pagination.Appearance)]
         public string LastIcon { get; set; } = Icons.Material.Filled.LastPage;
 
-        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
-
-        #endregion
-
-        #region Methods
-
         /*generates an array representing the pagination numbers, e.g. for Count==11, MiddleCount==3, BoundaryCount==1,
          Selected==6 the output will be the int array [1, 2, -1, 5, 6, 7, -1, 10, 11]
          -1 is displayed as "..." in the ui*/
         private IEnumerable<int> GeneratePagination()
         {
             //return array {1, ..., Count} if Count is small 
-            if (Count <= 4 || Count <= 2 * BoundaryCount + MiddleCount + 2)
+            if (Count <= 4 || Count <= (2 * BoundaryCount) + MiddleCount + 2)
                 return Enumerable.Range(1, Count).ToArray();
 
-            var length = 2 * BoundaryCount + MiddleCount + 2;
+            var length = (2 * BoundaryCount) + MiddleCount + 2;
             var pages = new int[length];
 
             //set start boundary items, e.g. if BoundaryCount == 3 => [1, 2, 3, ...]
@@ -261,13 +246,13 @@ namespace MudBlazor
             }
 
             //calculate start value for middle items
-            var startValue = 0;
-            if (Selected <= BoundaryCount + MiddleCount / 2 + 1)
+            int startValue;
+            if (Selected <= BoundaryCount + (MiddleCount / 2) + 1)
                 startValue = BoundaryCount + 2;
-            else if (Selected >= Count - BoundaryCount - MiddleCount / 2)
+            else if (Selected >= Count - BoundaryCount - (MiddleCount / 2))
                 startValue = Count - BoundaryCount - MiddleCount;
             else
-                startValue = Selected - MiddleCount / 2;
+                startValue = Selected - (MiddleCount / 2);
 
             //set middle items, e.g. if MiddleCount == 3 and Selected == 5 and Count == 11 => [..., 4, 5, 6, ...] 
             for (var i = 0; i < MiddleCount; i++)
@@ -276,10 +261,10 @@ namespace MudBlazor
             }
 
             //set start delimiter "..." when selected page is far enough to the end, dots are represented as -1
-            pages[BoundaryCount] = (BoundaryCount + MiddleCount / 2 + 1 < Selected) ? -1 : BoundaryCount + 1;
+            pages[BoundaryCount] = (BoundaryCount + (MiddleCount / 2) + 1 < Selected) ? -1 : BoundaryCount + 1;
 
             //set end delimiter "..." when selected page is far enough to the start, dots are represented as -1
-            pages[length - BoundaryCount - 1] = (Count - BoundaryCount - MiddleCount / 2 > Selected) ? -1 : Count - BoundaryCount;
+            pages[length - BoundaryCount - 1] = (Count - BoundaryCount - (MiddleCount / 2) > Selected) ? -1 : Count - BoundaryCount;
 
             //remove ellipsis if difference is small enough, e.g convert [..., 5 , -1 , 7, ...] to [..., 5, 6, 7, ...]
             for (var i = 0; i < length - 2; i++)
@@ -324,7 +309,5 @@ namespace MudBlazor
         {
             Selected = pageIndex + 1;
         }
-
-        #endregion
     }
 }

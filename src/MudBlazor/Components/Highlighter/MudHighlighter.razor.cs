@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 using static MudBlazor.Components.Highlighter.Splitter;
 
@@ -51,6 +52,13 @@ public partial class MudHighlighter : MudComponentBase
     [Category(CategoryTypes.Highlighter.Behavior)]
     public bool UntilNextBoundary { get; set; }
 
+    /// <summary>
+    /// If true, renders text as a <see cref="RenderFragment"/>.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Highlighter.Appearance)]
+    public bool Markup { get; set; }
+
     //TODO
     //Accept regex highlightings
     // [Parameter] public bool IsRegex { get; set; }
@@ -59,4 +67,10 @@ public partial class MudHighlighter : MudComponentBase
     {
         _fragments = GetFragments(Text, HighlightedText, HighlightedTexts, out _regex, CaseSensitive, UntilNextBoundary);
     }
+
+    bool IsMatch(string fragment) => !string.IsNullOrWhiteSpace(fragment) &&
+                                     !string.IsNullOrWhiteSpace(_regex) &&
+                                     Regex.IsMatch(fragment, _regex, CaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase);
+
+    static RenderFragment ToRenderFragment(string markupContent) => builder => { builder.AddMarkupContent(0, markupContent); };
 }

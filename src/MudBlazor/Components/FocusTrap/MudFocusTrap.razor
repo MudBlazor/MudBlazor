@@ -19,7 +19,8 @@
          tabindex="-1">
     </div>
 
-    <div tabindex="-1">
+    <div class="mud-focus-trap-child-container outline-none"
+         tabindex="-1">
         @ChildContent
     </div>
 
@@ -35,7 +36,3 @@
     </div>
 
 </div>
-
-@code {
-    string TrapTabIndex => (Disabled? "-1" : "0");
-}

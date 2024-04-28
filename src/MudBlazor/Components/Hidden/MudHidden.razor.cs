@@ -1,20 +1,22 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Services;
+using MudBlazor.State;
 
 namespace MudBlazor
 {
-
-    public partial class MudHidden : MudComponentBase, IAsyncDisposable
+#nullable enable
+    public partial class MudHidden : MudComponentBase, IBrowserViewportObserver, IAsyncDisposable
     {
-        private Breakpoint _currentBreakpoint = Breakpoint.None;
+        private readonly ParameterState<bool> _isHiddenState;
         private bool _serviceIsReady = false;
-        private Guid _breakpointServiceSubscriptionId;
+        private Breakpoint _currentBreakpoint = Breakpoint.None;
 
-        [Inject] public IBreakpointService BreakpointService { get; set; }
+        [Inject]
+        protected IBrowserViewportService BrowserViewportService { get; set; } = null!;
 
-        [CascadingParameter] public Breakpoint CurrentBreakpointFromProvider { get; set; } = Breakpoint.None;
+        [CascadingParameter]
+        public Breakpoint CurrentBreakpointFromProvider { get; set; } = Breakpoint.None;
 
         /// <summary>
         /// The screen size(s) depending on which the ChildContent should not be rendered (or should be, if Invert is true)
@@ -30,83 +32,50 @@ namespace MudBlazor
         [Category(CategoryTypes.Hidden.Behavior)]
         public bool Invert { get; set; }
 
-        private bool _isHidden = true;
-
         /// <summary>
         /// True if the component is not visible (two-way bindable)
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Hidden.Behavior)]
-        public bool IsHidden
-        {
-            get => _isHidden;
-            set
-            {
-                if (_isHidden != value)
-                {
-                    _isHidden = value;
-                    IsHiddenChanged.InvokeAsync(_isHidden);
-
-                }
-            }
-        }
+        public bool IsHidden { get; set; } = true;
 
         /// <summary>
         /// Fires when the breakpoint changes visibility of the component
         /// </summary>
-        [Parameter] public EventCallback<bool> IsHiddenChanged { get; set; }
+        [Parameter]
+        public EventCallback<bool> IsHiddenChanged { get; set; }
 
         /// <summary>
         /// Child content of component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Hidden.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
-        protected void Update(Breakpoint currentBreakpoint)
+        public MudHidden()
         {
-            if (CurrentBreakpointFromProvider != Breakpoint.None)
-            {
-                currentBreakpoint = CurrentBreakpointFromProvider;
-            }
-            else if (_serviceIsReady == false) { return; }
-
-            if (currentBreakpoint == Breakpoint.None) { return; }
-
-            _currentBreakpoint = currentBreakpoint;
-
-            var hidden = BreakpointService.IsMediaSize(Breakpoint, currentBreakpoint);
-            if (Invert == true)
-            {
-                hidden = !hidden;
-            }
-
-            IsHidden = hidden;
+            using var registerScope = CreateRegisterScope();
+            _isHiddenState = registerScope.RegisterParameter<bool>(nameof(IsHidden))
+                .WithParameter(() => IsHidden)
+                .WithEventCallback(() => IsHiddenChanged);
         }
 
-        protected override void OnParametersSet()
+        protected override async Task OnParametersSetAsync()
         {
-            base.OnParametersSet();
-            Update(_currentBreakpoint);
+            await base.OnParametersSetAsync();
+            await UpdateAsync(_currentBreakpoint);
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
-            if (firstRender == true)
+
+            if (firstRender)
             {
                 if (CurrentBreakpointFromProvider == Breakpoint.None)
                 {
-                    var attachResult = await BreakpointService.SubscribeAsync((x) =>
-                    {
-                        Update(x);
-                        InvokeAsync(StateHasChanged);
-                    });
-
                     _serviceIsReady = true;
-                    _breakpointServiceSubscriptionId = attachResult.SubscriptionId;
-                    Update(attachResult.Breakpoint);
-                    StateHasChanged();
+                    await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
                 }
                 else
                 {
@@ -115,6 +84,50 @@ namespace MudBlazor
             }
         }
 
-        public async ValueTask DisposeAsync() => await BreakpointService.UnsubscribeAsync(_breakpointServiceSubscriptionId);
+        public async ValueTask DisposeAsync()
+        {
+            if (IsJSRuntimeAvailable)
+            {
+                await BrowserViewportService.UnsubscribeAsync(this);
+            }
+        }
+
+        Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();
+
+        async Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
+        {
+            await UpdateAsync(browserViewportEventArgs.Breakpoint);
+            await InvokeAsync(StateHasChanged);
+        }
+
+        protected async Task UpdateAsync(Breakpoint currentBreakpoint)
+        {
+            if (CurrentBreakpointFromProvider != Breakpoint.None)
+            {
+                currentBreakpoint = CurrentBreakpointFromProvider;
+            }
+            else
+            {
+                if (!_serviceIsReady)
+                {
+                    return;
+                }
+            }
+
+            if (currentBreakpoint == Breakpoint.None)
+            {
+                return;
+            }
+
+            _currentBreakpoint = currentBreakpoint;
+
+            var hidden = await BrowserViewportService.IsBreakpointWithinReferenceSizeAsync(Breakpoint, currentBreakpoint);
+            if (Invert)
+            {
+                hidden = !hidden;
+            }
+
+            await _isHiddenState.SetValueAsync(hidden);
+        }
     }
 }

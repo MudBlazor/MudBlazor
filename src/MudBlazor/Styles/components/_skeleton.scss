@@ -1,44 +1,44 @@
 ﻿
 .mud-skeleton {
-    height: 1.2em;
-    display: block;
-    background-color: rgba(0, 0, 0, 0.11);
+  height: 1.2em;
+  display: block;
+  background-color: rgba(0, 0, 0, 0.11);
 }
 
 .mud-skeleton-text {
-    height: auto;
-    transform: scale(1, 0.60);
-    margin-top: 0;
-    border-radius: var(--mud-default-borderradius);
-    margin-bottom: 0;
-    transform-origin: 0 60%;
+  height: auto;
+  transform: scale(1, 0.60);
+  margin-top: 0;
+  border-radius: var(--mud-default-borderradius);
+  margin-bottom: 0;
+  transform-origin: 0 60%;
 }
 
 .mud-skeleton-text:empty:before {
-    content: "\00a0";
+  content: "\00a0";
 }
 
 .mud-skeleton-circle {
-    border-radius: 50%;
+  border-radius: 50%;
 }
 
 .mud-skeleton-pulse {
-    animation: mud-skeleton-keyframes-pulse 1.5s ease-in-out 0.5s infinite;
+  animation: mud-skeleton-keyframes-pulse 1.5s ease-in-out 0.5s infinite;
 }
 
 .mud-skeleton-wave {
-    overflow: hidden;
-    position: relative;
+  overflow: hidden;
+  position: relative;
 }
 
 .mud-skeleton-wave::after {
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    content: "";
-    position: absolute;
-    animation: mud-skeleton-keyframes-wave 1.6s linear 0.5s infinite;
-    transform: translateX(-100%);
-    background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.04), transparent);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  content: "";
+  position: absolute;
+  animation: mud-skeleton-keyframes-wave 1.6s linear 0.5s infinite;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.04), transparent);
 }

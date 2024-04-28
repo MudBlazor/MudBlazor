@@ -43,7 +43,7 @@ namespace MudBlazor.Components.Highlighter
             builder.Append("((?:");
 
             //this becomes true if `AppendPattern` was called at least once.
-            bool hasAtLeastOnePattern = false;
+            var hasAtLeastOnePattern = false;
             if (!string.IsNullOrEmpty(highlightedText))
             {
                 AppendPattern(highlightedText);

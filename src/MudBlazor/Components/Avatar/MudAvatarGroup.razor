@@ -7,8 +7,15 @@
     </CascadingValue>
     @if(_avatars.Count > Max)
     {
-        <MudAvatar Class="@MaxAvatarClassname" Color="@MaxColor" Size="@MaxSize" Variant="@MaxVariant" Rounded="@MaxRounded" Square="@MaxSquare" Elevation="@MaxElevation">
-            @($"+{_avatars.Count - Max}")
-        </MudAvatar>
+        @if (MaxAvatarsTemplate != null)
+        {
+            @MaxAvatarsTemplate.Invoke(_avatars.Count - Max)
+        }
+        else
+        {
+           <MudAvatar Class="@MaxAvatarClassname" Color="@MaxColor" Size="@MaxSize" Variant="@MaxVariant" Rounded="@MaxRounded" Square="@MaxSquare" Elevation="@MaxElevation">
+                @($"+{_avatars.Count - Max}")
+           </MudAvatar>
+        }
     }
 </div>

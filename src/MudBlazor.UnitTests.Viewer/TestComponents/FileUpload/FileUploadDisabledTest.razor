@@ -1,9 +1,11 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
 <MudFileUpload T="IBrowserFile" Disabled="Disabled">
-    <ButtonTemplate>
-        <MudButton HtmlTag="label" for="@context">Upload</MudButton>
-    </ButtonTemplate>
+    <ActivatorContent>
+        <MudButton>
+            Upload
+        </MudButton>
+    </ActivatorContent>
 </MudFileUpload>
 
 @code{

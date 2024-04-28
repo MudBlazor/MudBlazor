@@ -13,25 +13,13 @@ namespace MudBlazor
     {
         private readonly MudDataGrid<T> _dataGrid;
 
-        internal FilterDefinition<T>? FilterDefinition { get; set; }
+        internal IFilterDefinition<T>? FilterDefinition { get; set; }
 
         internal HeaderCell<T>? HeaderCell { get; set; }
 
-        public IEnumerable<T> Items
-        {
-            get
-            {
-                return _dataGrid.Items;
-            }
-        }
+        public IEnumerable<T> Items => _dataGrid.Items;
 
-        public List<FilterDefinition<T>> FilterDefinitions
-        {
-            get
-            {
-                return _dataGrid.FilterDefinitions;
-            }
-        }
+        public List<IFilterDefinition<T>> FilterDefinitions => _dataGrid.FilterDefinitions;
 
         public FilterActions Actions { get; }
 
@@ -49,10 +37,13 @@ namespace MudBlazor
 
         public class FilterActions
         {
-            public Func<FilterDefinition<T>, Task> ApplyFilterAsync { get; init; } = null!;
-            public Func<IEnumerable<FilterDefinition<T>>, Task> ApplyFiltersAsync { get; init; } = null!;
-            public Func<FilterDefinition<T>, Task> ClearFilterAsync { get; init; } = null!;
-            public Func<IEnumerable<FilterDefinition<T>>, Task> ClearFiltersAsync { get; init; } = null!;
+            public required Func<IFilterDefinition<T>, Task> ApplyFilterAsync { get; init; }
+
+            public required Func<IEnumerable<IFilterDefinition<T>>, Task> ApplyFiltersAsync { get; init; }
+
+            public required Func<IFilterDefinition<T>, Task> ClearFilterAsync { get; init; }
+
+            public required Func<IEnumerable<IFilterDefinition<T>>, Task> ClearFiltersAsync { get; init; }
         }
     }
 }

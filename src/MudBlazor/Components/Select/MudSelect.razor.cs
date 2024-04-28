@@ -24,9 +24,19 @@ namespace MudBlazor
         private bool? _selectAllChecked;
         private IKeyInterceptor _keyInterceptor;
 
+        protected string OuterClassname =>
+            new CssBuilder("mud-select")
+            .AddClass(OuterClass)
+            .Build();
+
         protected string Classname =>
             new CssBuilder("mud-select")
             .AddClass(Class)
+            .Build();
+
+        protected string InputClassname =>
+            new CssBuilder("mud-select-input")
+            .AddClass(InputClass)
             .Build();
 
         [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
@@ -47,7 +57,7 @@ namespace MudBlazor
                 index = 0;
             MudSelectItem<T> item = null;
             // the loop allows us to jump over disabled items until we reach the next non-disabled one
-            for (int i = 0; i < _items.Count; i++)
+            for (var i = 0; i < _items.Count; i++)
             {
                 index += direction;
                 if (index < 0)
@@ -77,7 +87,7 @@ namespace MudBlazor
             await ScrollToItemAsync(item);
         }
         private ValueTask ScrollToItemAsync(MudSelectItem<T> item)
-            =>item != null? ScrollManager.ScrollToListItemAsync(item.ItemId): ValueTask.CompletedTask;
+            => item != null ? ScrollManager.ScrollToListItemAsync(item.ItemId) : ValueTask.CompletedTask;
         private async Task SelectFirstItem(string startChar = null)
         {
             if (_items == null || _items.Count == 0)
@@ -135,6 +145,18 @@ namespace MudBlazor
             await _elementReference.SetText(Text);
             await ScrollToItemAsync(item);
         }
+
+        /// <summary>
+        /// The outer div's classnames, seperated by space.
+        /// </summary>
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        [Parameter] public string OuterClass { get; set; }
+
+        /// <summary>
+        /// Input's classnames, seperated by space.
+        /// </summary>
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        [Parameter] public string InputClass { get; set; }
 
         /// <summary>
         /// Fired when dropdown opens.
@@ -365,7 +387,7 @@ namespace MudBlazor
                     return false;
                 if (!_shadowLookup.TryGetValue(Value, out var item))
                     return false;
-                return (item.ChildContent != null);
+                return item.ChildContent != null;
             }
         }
 
@@ -446,8 +468,7 @@ namespace MudBlazor
         protected Dictionary<T, MudSelectItem<T>> _valueLookup = new();
         protected Dictionary<T, MudSelectItem<T>> _shadowLookup = new();
 
-        // note: this must be object to satisfy MudList
-        private object _activeItemId = null;
+        private string _activeItemId;
 
         internal bool Add(MudSelectItem<T> item)
         {
@@ -500,27 +521,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public Origin TransformOrigin { get; set; } = Origin.TopCenter;
-
-        /// <summary>
-        /// Sets the direction the Select menu should open.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
-        [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
-
-        /// <summary>
-        /// If true, the Select menu will open either before or after the input (left/right).
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
-        [Parameter] public bool OffsetX { get; set; }
-
-        /// <summary>
-        /// If true, the Select menu will open either before or after the input (top/bottom).
-        /// </summary>
-        /// [ExcludeFromCodeCoverage]
-        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
-        [Parameter] public bool OffsetY { get; set; }
 
         /// <summary>
         /// If true, the Select's input will not show any values that are not defined in the dropdown.
@@ -608,14 +608,14 @@ namespace MudBlazor
                 _selectedValues.Add(value);
             }
 
-            HilightItemForValue(value);
+            HilightItemForValueAsync(value);
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 await SetValueAsync((T)(object)Text, updateText: false);
             await InvokeAsync(StateHasChanged);
         }
 
-        private async void HilightItemForValue(T value)
+        private async void HilightItemForValueAsync(T value)
         {
             if (value == null)
             {
@@ -645,7 +645,7 @@ namespace MudBlazor
             if (MultiSelection)
                 HilightItem(_items.FirstOrDefault(x => !x.Disabled));
             else
-                HilightItemForValue(Value);
+                HilightItemForValueAsync(Value);
         }
 
         private void UpdateSelectAllChecked()
@@ -657,7 +657,7 @@ namespace MudBlazor
                 {
                     _selectAllChecked = false;
                 }
-                else if (_items.Count == _selectedValues.Count)
+                else if (_items.Count(x => !x.Disabled) == _selectedValues.Count)
                 {
                     _selectAllChecked = true;
                 }
@@ -706,11 +706,11 @@ namespace MudBlazor
         {
             _isOpen = false;
             UpdateIcon();
-            if (focusAgain == true)
+            if (focusAgain)
             {
                 StateHasChanged();
                 await OnBlur.InvokeAsync(new FocusEventArgs());
-                _elementReference.FocusAsync().AndForget(ignoreExceptions:true);
+                _elementReference.FocusAsync().AndForget(ignoreExceptions: true);
                 StateHasChanged();
             }
 
@@ -762,7 +762,7 @@ namespace MudBlazor
                     },
                 });
                 _keyInterceptor.KeyDown += HandleKeyDown;
-                _keyInterceptor.KeyUp += HandleKeyUp;    
+                _keyInterceptor.KeyUp += HandleKeyUp;
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -876,7 +876,7 @@ namespace MudBlazor
                     await CloseMenu(false);
                     break;
                 case "ArrowUp":
-                    if (obj.AltKey == true)
+                    if (obj.AltKey)
                     {
                         await CloseMenu();
                         break;
@@ -892,7 +892,7 @@ namespace MudBlazor
                         break;
                     }
                 case "ArrowDown":
-                    if (obj.AltKey == true)
+                    if (obj.AltKey)
                     {
                         await OpenMenu();
                         break;
@@ -949,7 +949,7 @@ namespace MudBlazor
                     }
                 case "a":
                 case "A":
-                    if (obj.CtrlKey == true)
+                    if (obj.CtrlKey)
                     {
                         if (MultiSelection)
                         {
@@ -972,10 +972,6 @@ namespace MudBlazor
         {
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
-
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use Clear instead.", true)]
-        public Task ClearAsync() => Clear();
 
         /// <summary>
         /// Clear the selection
@@ -1000,7 +996,7 @@ namespace MudBlazor
             else
                 _selectAllChecked = true;
             // Define the items selection
-            if (_selectAllChecked.Value == true)
+            if (_selectAllChecked.Value)
                 await SelectAllItems();
             else
                 await Clear();
@@ -1044,29 +1040,36 @@ namespace MudBlazor
             _shadowLookup.Remove(item.Value);
         }
 
-        internal void OnLostFocus(FocusEventArgs obj)
+        private async Task OnFocusOutAsync(FocusEventArgs focusEventArgs)
         {
             if (_isOpen)
             {
                 // when the menu is open we immediately get back the focus if we lose it (i.e. because of checkboxes in multi-select)
                 // otherwise we can't receive key strokes any longer
-                _elementReference.FocusAsync().AndForget(ignoreExceptions:true);
+                await FocusAsync();
             }
-            base.OnBlur.InvokeAsync(obj);
+        }
+
+        internal Task OnBlurAsync(FocusEventArgs obj)
+        {
+            return base.OnBlur.InvokeAsync(obj);
         }
 
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
 
-            if (disposing == true)
+            if (disposing)
             {
                 if (_keyInterceptor != null)
                 {
                     _keyInterceptor.KeyDown -= HandleKeyDown;
                     _keyInterceptor.KeyUp -= HandleKeyUp;
 
-                    _keyInterceptor.Dispose();
+                    if (IsJSRuntimeAvailable)
+                    {
+                        _keyInterceptor.Dispose();
+                    }
                 }
             }
         }
@@ -1080,7 +1083,7 @@ namespace MudBlazor
         protected override bool HasValue(T value)
         {
             if (MultiSelection)
-                return SelectedValues?.Count() > 0;
+                return SelectedValues?.Any() ?? false;
             else
                 return base.HasValue(value);
         }

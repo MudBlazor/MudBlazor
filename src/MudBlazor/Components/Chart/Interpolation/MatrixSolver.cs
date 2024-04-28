@@ -57,7 +57,7 @@ namespace MudBlazor.Components.Chart
                         {
                             if (!calcError)
                             {
-                                m.a[i + 1, l] = m.a[i + 1, l] * m.a[k, k] - m.a[k, l] * m.a[i + 1, k];
+                                m.a[i + 1, l] = (m.a[i + 1, l] * m.a[k, k]) - (m.a[k, l] * m.a[i + 1, k]);
                                 if (m.a[i + 1, l] > 10E260)
                                 {
                                     m.a[i + 1, k] = 0;
@@ -65,7 +65,7 @@ namespace MudBlazor.Components.Chart
                                 }
                             }
                         }
-                        m.y[i + 1] = m.y[i + 1] * m.a[k, k] - m.y[k] * m.a[i + 1, k];
+                        m.y[i + 1] = (m.y[i + 1] * m.a[k, k]) - (m.y[k] * m.a[i + 1, k]);
                         m.a[i + 1, k] = 0;
                     }
                 }
@@ -80,7 +80,7 @@ namespace MudBlazor.Components.Chart
             {
                 for (l = maxOrder - 1; l >= k; l--)
                 {
-                    m.y[k] = m.y[k] - m.x[l] * m.a[k, l];
+                    m.y[k] = m.y[k] - (m.x[l] * m.a[k, l]);
                 }
                 if (m.a[k, k] != 0)
                     m.x[k] = m.y[k] / m.a[k, k];

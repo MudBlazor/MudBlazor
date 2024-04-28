@@ -1,59 +1,58 @@
 ﻿.mud-card {
-    
 }
 
 .mud-card-header {
-    display: flex;
-    padding: 16px;
-    align-items: center;
-    border-top-left-radius: inherit;
-    border-top-right-radius: inherit;
+  display: flex;
+  padding: 16px;
+  align-items: center;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
 
-    & .mud-card-header-avatar {
-        flex: 0 0 auto;
-        margin-right: 16px;
-        margin-inline-end: 16px;
-        margin-inline-start: unset;
+  & .mud-card-header-avatar {
+    flex: 0 0 auto;
+    margin-right: 16px;
+    margin-inline-end: 16px;
+    margin-inline-start: unset;
+  }
+
+  & .mud-card-header-content {
+    flex: 1 1 auto;
+
+    & .mud-typography {
+      margin-bottom: 0;
     }
+  }
 
-    & .mud-card-header-content {
-        flex: 1 1 auto;
-
-        & .mud-typography {
-            margin-bottom: 0;
-        }
-    }
-
-    & .mud-card-header-actions {
-        flex: 0 0 auto;
-        align-self: flex-start;
-        margin-top: -8px;
-        margin-right: -8px;
-        margin-inline-end: -8px;
-        margin-inline-start: unset;
-    }
+  & .mud-card-header-actions {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    margin-top: -8px;
+    margin-right: -8px;
+    margin-inline-end: -8px;
+    margin-inline-start: unset;
+  }
 }
 
 .mud-card-media {
-    display: block;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    border-top-left-radius: inherit;
-    border-top-right-radius: inherit;
+  display: block;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
 }
 
 .mud-card-header + .mud-card-media {
-    border-top-left-radius: 0px;
-    border-top-right-radius: 0px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
 }
 
 .mud-card-content {
-    padding: 16px;
+  padding: 16px;
 }
 
 .mud-card-actions {
-    display: flex;
-    padding: 8px;
-    align-items: center;
+  display: flex;
+  padding: 8px;
+  align-items: center;
 }

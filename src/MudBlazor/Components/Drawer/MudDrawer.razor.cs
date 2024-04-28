@@ -2,79 +2,82 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudDrawer : MudComponentBase, IDisposable, INavigationEventReceiver
+#nullable enable
+    public partial class MudDrawer : MudComponentBase, INavigationEventReceiver, IBrowserViewportObserver, IDisposable
     {
         private double _height;
-        private ElementReference _contentRef;
+        private int _disposeCount;
         private DrawerClipMode _clipMode;
+        private ElementReference _contentRef;
         private bool? _isOpenWhenLarge = null;
+        private bool _closeOnMouseLeave = false;
         private bool _open, _rtl, _isRendered, _initial = true, _keepInitialState, _fixed = true;
         private Breakpoint _breakpoint = Breakpoint.Md, _screenBreakpoint = Breakpoint.None;
-        private Guid _breakpointListenerSubscriptionId;
 
         private bool OverlayVisible => _open && !DisableOverlay &&
-            (Variant == DrawerVariant.Temporary ||
-             (_screenBreakpoint < Breakpoint && Variant == DrawerVariant.Mini) ||
-             (_screenBreakpoint < Breakpoint && Variant == DrawerVariant.Responsive));
+                                       (Variant == DrawerVariant.Temporary ||
+                                        (_screenBreakpoint < Breakpoint && Variant == DrawerVariant.Mini) ||
+                                        (_screenBreakpoint < Breakpoint && Variant == DrawerVariant.Responsive));
 
         protected string Classname =>
-        new CssBuilder("mud-drawer")
-          .AddClass($"mud-drawer-fixed", Fixed)
-          .AddClass($"mud-drawer-pos-{GetPosition()}")
-          .AddClass($"mud-drawer--open", Open)
-          .AddClass($"mud-drawer--closed", !Open)
-          .AddClass($"mud-drawer--initial", _initial)
-          .AddClass($"mud-drawer-{Breakpoint.ToDescriptionString()}")
-          .AddClass($"mud-drawer-clipped-{_clipMode.ToDescriptionString()}")
-          .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
-          .AddClass($"mud-elevation-{Elevation}")
-          .AddClass($"mud-drawer-{Variant.ToDescriptionString()}")
-          .AddClass(Class)
-        .Build();
+            new CssBuilder("mud-drawer")
+                .AddClass($"mud-drawer-fixed", Fixed)
+                .AddClass($"mud-drawer-pos-{GetPosition()}")
+                .AddClass($"mud-drawer--open", Open)
+                .AddClass($"mud-drawer--closed", !Open)
+                .AddClass($"mud-drawer--initial", _initial)
+                .AddClass($"mud-drawer-{Breakpoint.ToDescriptionString()}")
+                .AddClass($"mud-drawer-clipped-{_clipMode.ToDescriptionString()}")
+                .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
+                .AddClass($"mud-elevation-{Elevation}")
+                .AddClass($"mud-drawer-{Variant.ToDescriptionString()}")
+                .AddClass(Class)
+                .Build();
 
         protected string OverlayClass =>
-        new CssBuilder("mud-drawer-overlay mud-overlay-drawer")
-          .AddClass($"mud-drawer-pos-{GetPosition()}")
-          .AddClass($"mud-drawer-overlay--open", Open)
-          .AddClass($"mud-drawer-overlay-{Variant.ToDescriptionString()}")
-          .AddClass($"mud-drawer-overlay-{Breakpoint.ToDescriptionString()}")
-          .AddClass($"mud-drawer-overlay--initial", _initial)
-        .Build();
+            new CssBuilder("mud-drawer-overlay mud-overlay-drawer")
+                .AddClass($"mud-drawer-pos-{GetPosition()}")
+                .AddClass($"mud-drawer-overlay--open", Open)
+                .AddClass($"mud-drawer-overlay-{Variant.ToDescriptionString()}")
+                .AddClass($"mud-drawer-overlay-{Breakpoint.ToDescriptionString()}")
+                .AddClass($"mud-drawer-overlay--initial", _initial)
+                .Build();
 
         protected string Stylename =>
-        new StyleBuilder()
-            //.AddStyle("width", Width, !string.IsNullOrWhiteSpace(Width) && !Fixed)
-            .AddStyle("--mud-drawer-width", Width, !string.IsNullOrWhiteSpace(Width) && (!Fixed || Variant == DrawerVariant.Temporary))
-            .AddStyle("height", Height, !string.IsNullOrWhiteSpace(Height))
-            .AddStyle("--mud-drawer-content-height",
-                string.IsNullOrWhiteSpace(Height) ? _height.ToPx() : Height,
-                Anchor == Anchor.Bottom || Anchor == Anchor.Top)
-            .AddStyle("visibility", "hidden", string.IsNullOrWhiteSpace(Height) && _height == 0 && (Anchor == Anchor.Bottom || Anchor == Anchor.Top))
-            .AddStyle(Style)
-        .Build();
+            new StyleBuilder()
+                //.AddStyle("width", Width, !string.IsNullOrWhiteSpace(Width) && !Fixed)
+                .AddStyle("--mud-drawer-width", Width, !string.IsNullOrWhiteSpace(Width) && (!Fixed || Variant == DrawerVariant.Temporary))
+                .AddStyle("height", Height, !string.IsNullOrWhiteSpace(Height))
+                .AddStyle("--mud-drawer-content-height", string.IsNullOrWhiteSpace(Height) ? _height.ToPx() : Height, Anchor == Anchor.Bottom || Anchor == Anchor.Top)
+                .AddStyle("visibility", "hidden", string.IsNullOrWhiteSpace(Height) && _height == 0 && (Anchor == Anchor.Bottom || Anchor == Anchor.Top))
+                .AddStyle(Style)
+                .Build();
 
-        [Inject] public IBreakpointService Breakpointistener { get; set; }
+        [Inject]
+        protected IBrowserViewportService BrowserViewportService { get; set; } = null!;
 
-        [CascadingParameter] MudDrawerContainer DrawerContainer { get; set; }
+        [CascadingParameter]
+        private MudDrawerContainer? DrawerContainer { get; set; }
 
         [CascadingParameter(Name = "RightToLeft")]
-        bool RightToLeft
+        private bool RightToLeft
         {
             get => _rtl;
             set
             {
-                if (_rtl != value)
+                if (_rtl == value)
                 {
-                    _rtl = value;
-                    DrawerContainer?.FireDrawersChanged();
+                    return;
                 }
+
+                _rtl = value;
+                (DrawerContainer as IMudStateHasChanged)?.StateHasChanged();
             }
         }
 
@@ -88,8 +91,6 @@ namespace MudBlazor
             get => _fixed && DrawerContainer is MudLayout;
             set
             {
-                if (_fixed == value)
-                    return;
                 _fixed = value;
             }
         }
@@ -127,7 +128,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// Show overlay for responsive and temporary drawers.
@@ -166,10 +167,10 @@ namespace MudBlazor
                 _breakpoint = value;
                 if (_isRendered)
                 {
-                    UpdateBreakpointState(_screenBreakpoint);
+                    _ = UpdateBreakpointStateAsync(_screenBreakpoint);
                 }
 
-                DrawerContainer?.FireDrawersChanged();
+                (DrawerContainer as IMudStateHasChanged)?.StateHasChanged();
             }
         }
 
@@ -201,36 +202,37 @@ namespace MudBlazor
                     _ = UpdateHeight();
                 }
 
-                DrawerContainer?.FireDrawersChanged();
+                (DrawerContainer as IMudStateHasChanged)?.StateHasChanged();
                 OpenChanged.InvokeAsync(_open);
             }
         }
 
-        [Parameter] public EventCallback<bool> OpenChanged { get; set; }
+        [Parameter]
+        public EventCallback<bool> OpenChanged { get; set; }
 
         /// <summary>
         /// Width of left/right drawer. Only for non-fixed drawers.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Appearance)]
-        public string Width { get; set; }
+        public string? Width { get; set; }
 
         /// <summary>
         /// Width of left/right drawer. Only for non-fixed drawers.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Appearance)]
-        public string MiniWidth { get; set; }
+        public string? MiniWidth { get; set; }
 
         /// <summary>
         /// Height of top/bottom temporary drawer
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Appearance)]
-        public string Height { get; set; }
+        public string? Height { get; set; }
 
         /// <summary>
-        /// Specify how the drawer should behave inside a MudLayout. It affects the position relative to <b>MudAppbar</b>
+        /// Specify how the drawer should behave inside a MudLayout. It affects the position relative to <see cref="MudAppBar"/>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
@@ -246,7 +248,7 @@ namespace MudBlazor
                 _clipMode = value;
                 if (Fixed)
                 {
-                    DrawerContainer?.FireDrawersChanged();
+                    (DrawerContainer as IMudStateHasChanged)?.StateHasChanged();
                 }
                 StateHasChanged();
             }
@@ -266,17 +268,7 @@ namespace MudBlazor
             if (firstRender)
             {
                 await UpdateHeight();
-                var result = await Breakpointistener.SubscribeAsync(UpdateBreakpointState);
-                var currentBreakpoint = result.Breakpoint;
-
-                _breakpointListenerSubscriptionId = result.SubscriptionId;
-
-                _screenBreakpoint = result.Breakpoint;
-                if (_screenBreakpoint < Breakpoint && _open)
-                {
-                    _keepInitialState = true;
-                    await OpenChanged.InvokeAsync(false);
-                }
+                await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
 
                 _isRendered = true;
                 if (string.IsNullOrWhiteSpace(Height) && (Anchor == Anchor.Bottom || Anchor == Anchor.Top))
@@ -294,7 +286,6 @@ namespace MudBlazor
             GC.SuppressFinalize(this);
         }
 
-        int _disposeCount;
         public virtual void Dispose(bool disposing)
         {
             if (Interlocked.Increment(ref _disposeCount) == 1)
@@ -303,37 +294,23 @@ namespace MudBlazor
                 {
                     DrawerContainer?.Remove(this);
 
-                    if (_breakpointListenerSubscriptionId != default)
+                    if (IsJSRuntimeAvailable)
                     {
-                        Breakpointistener.UnsubscribeAsync(_breakpointListenerSubscriptionId).AndForget();
+                        BrowserViewportService.UnsubscribeAsync(this).AndForget();
                     }
                 }
             }
         }
 
-        private void CloseDrawer()
-        {
-            if (Open)
-            {
-                OpenChanged.InvokeAsync(false);
-            }
-        }
+        private Task CloseDrawerAsync() => Open ? OpenChanged.InvokeAsync(false) : Task.CompletedTask;
 
-        public async Task OnNavigation()
+        async Task INavigationEventReceiver.OnNavigation()
         {
             if (Variant == DrawerVariant.Temporary ||
-                (Variant == DrawerVariant.Responsive && await Breakpointistener.GetBreakpoint() < Breakpoint))
+                (Variant == DrawerVariant.Responsive && await BrowserViewportService.GetCurrentBreakpointAsync() < Breakpoint))
             {
                 await OpenChanged.InvokeAsync(false);
             }
-        }
-
-        private void ResizeListener_OnBreakpointChanged(object sender, Breakpoint breakpoint)
-        {
-            if (!_isRendered)
-                return;
-
-            InvokeAsync(() => UpdateBreakpointState(breakpoint));
         }
 
         private async Task UpdateHeight()
@@ -341,12 +318,12 @@ namespace MudBlazor
             _height = (await _contentRef.MudGetBoundingClientRectAsync())?.Height ?? 0;
         }
 
-        private async void UpdateBreakpointState(Breakpoint breakpoint)
+        private async Task UpdateBreakpointStateAsync(Breakpoint breakpoint)
         {
             var isStateChanged = false;
             if (breakpoint == Breakpoint.None)
             {
-                breakpoint = await Breakpointistener.GetBreakpoint();
+                breakpoint = await BrowserViewportService.GetCurrentBreakpointAsync();
             }
 
             if (breakpoint < Breakpoint && _screenBreakpoint >= Breakpoint && (Variant == DrawerVariant.Responsive || Variant == DrawerVariant.Mini))
@@ -360,7 +337,7 @@ namespace MudBlazor
             {
                 if (Open && PreserveOpenState)
                 {
-                    DrawerContainer?.FireDrawersChanged();
+                    (DrawerContainer as IMudStateHasChanged)?.StateHasChanged();
                     isStateChanged = true;
                 }
                 else if (_isOpenWhenLarge != null)
@@ -380,37 +357,60 @@ namespace MudBlazor
 
         internal string GetPosition()
         {
-            switch (Anchor)
+            return Anchor switch
             {
-                case Anchor.Start:
-                    return RightToLeft ? "right" : "left";
-                case Anchor.End:
-                    return RightToLeft ? "left" : "right";
-                default: break;
-            }
-
-            return Anchor.ToDescriptionString();
+                Anchor.Start => RightToLeft ? "right" : "left",
+                Anchor.End => RightToLeft ? "left" : "right",
+                _ => Anchor.ToDescriptionString()
+            };
         }
 
-
-        private bool closeOnMouseLeave = false;
-
-        public async void OnMouseEnter()
+        private async Task OnMouseEnterAsync()
         {
             if (Variant == DrawerVariant.Mini && !Open && OpenMiniOnHover)
             {
-                closeOnMouseLeave = true;
+                _closeOnMouseLeave = true;
                 await OpenChanged.InvokeAsync(true);
             }
         }
 
-        public async void OnMouseLeave()
+        private async Task OnMouseLeaveAsync()
         {
-            if (Variant == DrawerVariant.Mini && Open && closeOnMouseLeave)
+            if (Variant == DrawerVariant.Mini && Open && _closeOnMouseLeave)
             {
-                closeOnMouseLeave = false;
+                _closeOnMouseLeave = false;
                 await OpenChanged.InvokeAsync(false);
             }
+        }
+
+        Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();
+
+        ResizeOptions IBrowserViewportObserver.ResizeOptions { get; } = new()
+        {
+            ReportRate = 50,
+            NotifyOnBreakpointOnly = false
+        };
+
+        async Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
+        {
+            if (browserViewportEventArgs.IsImmediate)
+            {
+                _screenBreakpoint = browserViewportEventArgs.Breakpoint;
+                if (_screenBreakpoint < Breakpoint && _open)
+                {
+                    _keepInitialState = true;
+                    await OpenChanged.InvokeAsync(false);
+                }
+
+                return;
+            }
+
+            if (!_isRendered)
+            {
+                return;
+            }
+
+            await InvokeAsync(() => UpdateBreakpointStateAsync(browserViewportEventArgs.Breakpoint));
         }
     }
 }

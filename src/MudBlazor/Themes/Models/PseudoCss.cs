@@ -4,9 +4,10 @@
 
 namespace MudBlazor
 {
+#nullable enable
     public class PseudoCss
     {
-        private string scope = ":root";
+        private string _scope = ":root";
 
         /// <summary>
         /// Set different scopes for the generated Theme
@@ -17,15 +18,17 @@ namespace MudBlazor
         /// </remarks>
         public string Scope
         {
-            get => scope; 
+            get => _scope;
             set
             {
                 if (string.IsNullOrEmpty(value))
-                    scope = ":root";
+                {
+                    _scope = ":root";
+                }
                 else
                 {
                     var trimmed = value.Trim(':');
-                    scope = $":{trimmed}";
+                    _scope = $":{trimmed}";
                 }
             }
         }

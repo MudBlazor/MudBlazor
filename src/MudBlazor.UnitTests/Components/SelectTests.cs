@@ -26,8 +26,19 @@ namespace MudBlazor.UnitTests.Components
             var select = comp.FindComponent<MudSelect<string>>();
             await comp.InvokeAsync(() => select.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter" }));
             await comp.InvokeAsync(() => select.SetParam("ListClass", "my-list-class"));
-            var list = comp.FindComponent<MudList>();
             comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-list-class"));
+        }
+
+        [Test]
+        public async Task SelectTest_CheckLayerClass()
+        {
+            var comp = Context.RenderComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => comp.SetParam("OuterClass", "my-outer-class"));
+            await comp.InvokeAsync(() => comp.SetParam("Class", "my-main-class"));
+            await comp.InvokeAsync(() => comp.SetParam("InputClass", "my-input-class"));
+            comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-outer-class"));
+            comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-main-class"));
+            comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-input-class"));
         }
 
         /// <summary>
@@ -78,9 +89,9 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("1"));
             //Check user on blur implementation works
             var @switch = comp.FindComponent<MudSwitch<bool>>();
-            @switch.Instance.Checked = true;
-            await comp.InvokeAsync(() => select.Instance.OnLostFocus(new FocusEventArgs()));
-            comp.WaitForAssertion(() => @switch.Instance.Checked.Should().Be(false));
+            @switch.Instance.Value = true;
+            await comp.InvokeAsync(() => select.Instance.OnBlurAsync(new FocusEventArgs()));
+            comp.WaitForAssertion(() => @switch.Instance.Value.Should().Be(false));
         }
 
         /// <summary>
@@ -325,7 +336,7 @@ namespace MudBlazor.UnitTests.Components
             string.Join(",", selectedValues).Should().Be("2");
 
             input.Click();
-            comp.WaitForAssertion(()=>comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             items = comp.FindAll("div.mud-list-item").ToArray();
 
             items[0].Click();
@@ -498,25 +509,25 @@ namespace MudBlazor.UnitTests.Components
             menu.ClassList.Should().Contain("mud-popover-open");
 
             // get the first (select all item) and check if it is selected
-            var selectAllItem = comp.FindComponent<MudListItem>();
+            var selectAllItem = comp.FindComponent<MudListItem<string>>();
             selectAllItem.Instance.Icon.Should().Be("<path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z\"/>");
 
             // Check that all normal select items are actually selected
-            var items = comp.FindComponents<MudSelectItem<string>>().Where(x=>x.Instance.HideContent==false).ToArray();
+            var items = comp.FindComponents<MudSelectItem<string>>().Where(x => x.Instance.HideContent == false).ToArray();
 
             items.Should().HaveCount(7);
             foreach (var item in items)
             {
                 item.Instance.IsSelected.Should().BeTrue();
-                item.FindComponent<MudListItem>().Instance.Icon.Should().Be("<path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z\"/>");
+                item.FindComponent<MudListItem<string>>().Instance.Icon.Should().Be("<path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z\"/>");
             }
 
             // Check shadow items
-            var shadowItems = comp.FindComponents<MudSelectItem<string>>().Where(x => x.Instance.HideContent == true).ToArray();
+            var shadowItems = comp.FindComponents<MudSelectItem<string>>().Where(x => x.Instance.HideContent).ToArray();
             foreach (var item in shadowItems)
             {
                 // shadow items don't render, their state is irrelevant, all they do is provide render fragments to the select
-                Assert.Throws<Bunit.Rendering.ComponentNotFoundException>(() => item.FindComponent<MudListItem>());
+                Assert.Throws<Bunit.Rendering.ComponentNotFoundException>(() => item.FindComponent<MudListItem<string>>());
             }
         }
 
@@ -532,8 +543,33 @@ namespace MudBlazor.UnitTests.Components
             input.Click();
             menu.ClassList.Should().Contain("mud-popover-open");
             // Check that the icon corresponds to an unchecked checkbox
-            var mudListItem = comp.FindComponent<MudListItem>();
+            var mudListItem = comp.FindComponent<MudListItem<string>>();
             mudListItem.Instance.Icon.Should().Be("<path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z\"/>");
+        }
+        [Test]
+        public void MultiSelect_SelectAll4()
+        {
+            var comp = Context.RenderComponent<MultiSelectTest7>();
+            // select element needed for the test
+            var select = comp.FindComponent<MudSelect<string>>();
+            var menu = comp.Find("div.mud-popover");
+            var input = comp.Find("div.mud-input-control");
+            // Open the menu
+            input.Click();
+            menu.ClassList.Should().Contain("mud-popover-open");
+            // now click the first checkbox to select all
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            select.Instance.SelectedValues.Should().HaveCount(0);
+            items[0].Click();
+            // validate the result. all items that are not disabled should be selected
+            comp.WaitForAssertion(() => select.Instance.SelectedValues.Should().HaveCount(3));
+            select.Instance.SelectedValues.ElementAt(0).Should().Be("FirstA");
+            select.Instance.SelectedValues.ElementAt(1).Should().Be("SecondA");
+            select.Instance.SelectedValues.ElementAt(2).Should().Be("ThirdA");
+            // now click the first checkbox again to unselect all
+            items[0].Click();
+            // validate the result. all items should be un-selected
+            comp.WaitForAssertion(() => select.Instance.SelectedValues.Should().HaveCount(0));
         }
 
         [Test]
@@ -556,7 +592,7 @@ namespace MudBlazor.UnitTests.Components
             input.Click();
             menu.ClassList.Should().Contain("mud-popover-open");
             // now click an item and see the value change
-            comp.WaitForAssertion(()=> comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
 
             comp.FindAll("div.mud-list-item")[1].Click();
             // menu should be closed now
@@ -776,7 +812,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-input-control").Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             // Nr 2 should be hilited
-            comp.WaitForAssertion(()=>comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
             comp.FindAll("div.mud-list-item")[1].ToMarkup().Should().Contain("mud-selected-item");
             // now click an item and see the value change
             comp.FindAll("div.mud-list-item")[0].Click();
@@ -994,6 +1030,24 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task SelectTest_KeyboardNavigation_MultiSelect_Focus()
+        {
+            var comp = Context.RenderComponent<MultiSelectTest6>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            var mudSelectElement = comp.Find(".mud-select");
+            comp.Find("div.mud-input-control").Click();
+            select.Instance._isOpen.Should().BeTrue();
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            items[0].Click();
+            items[2].Click();
+            //emulate focus out
+            mudSelectElement.FocusOut();
+            comp.WaitForAssertion(() => select.Instance.Text.Should().Be("Alaska, Alabama, American Samoa"));
+            //check if we received focus event from the MudSelect.OnFocusOutAsync
+            Context.JSInterop.VerifyFocusAsyncInvoke();
+        }
+
+        [Test]
         public async Task SelectTest_ItemlessSelect()
         {
             var comp = Context.RenderComponent<MudSelect<string>>();
@@ -1053,7 +1107,6 @@ namespace MudBlazor.UnitTests.Components
                 x.Add(c => c.MultiSelection, false);
             });
             var select = comp.FindComponent<MudSelect<string>>();
-            var input = comp.Find("div.mud-input-control");
 
             comp.Instance.ValueChangeCount.Should().Be(0);
             comp.Instance.ValuesChangeCount.Should().Be(0);
@@ -1086,7 +1139,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => select.Validate());
             select.ValidationErrors.First().Should().Be("Required");
 
-            //1b. Check on T type - MultiSelect of T(e.g. class object) 
+            //1b. Check on T type - MultiSelect of T(e.g. class object)
             var selectWithT = comp.FindComponent<MudSelect<MultiSelectTestRequiredValue.TestClass>>().Instance;
             selectWithT.Required.Should().BeTrue();
             await comp.InvokeAsync(() => selectWithT.Validate());
@@ -1094,14 +1147,14 @@ namespace MudBlazor.UnitTests.Components
 
             //2a. Now check when SelectedItems is greater than one - Validation Should Pass
             var inputs = comp.FindAll("div.mud-input-control");
-            inputs[0].Click();//The 2nd one is the 
+            inputs[0].Click();//The 2nd one is the
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
             await comp.InvokeAsync(() => select.Validate());
             select.ValidationErrors.Count.Should().Be(0);
-            
+
             //2b.
-            inputs[1].Click();//selectWithT 
+            inputs[1].Click();//selectWithT
             //wait for render and it will find 5 items from the component
             comp.WaitForState(() => comp.FindAll("div.mud-list-item").Count == 5);
             items = comp.FindAll("div.mud-list-item").ToArray();
@@ -1126,6 +1179,104 @@ namespace MudBlazor.UnitTests.Components
             });
             select.SelectedValues.Count().Should().Be(1);
             select.Text.Should().Be("test");
+        }
+
+        /// <summary>
+        /// A select component with a label should auto-generate an id and use that id on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void SelectWithLabel_Should_GenerateIdForInputAndAccompanyingLabel()
+        {
+            var comp = Context.RenderComponent<MudSelect<string>>(parameters
+                => parameters.Add(p => p.Label, "Test Label"));
+
+            comp.Find("input").Id.Should().NotBeNullOrEmpty();
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(comp.Find("input").Id);
+        }
+
+        /// <summary>
+        /// A select component with a label and UserAttributesId should use the UserAttributesId on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void SelectWithLabelAndUserAttributesId_Should_UseUserAttributesIdForInputAndAccompanyingLabel()
+        {
+            var expectedId = "userattributes-id";
+            var comp = Context.RenderComponent<MudSelect<string>>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        { "Id", expectedId }
+                    }));
+
+            comp.Find("input").Id.Should().Be(expectedId);
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
+        }
+
+        /// <summary>
+        /// A select component with a label, a UserAttributesId, and an InputId should use the InputId on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void SelectWithLabelAndUserAttributesIdAndInputId_Should_UseInputIdForInputAndAccompanyingLabel()
+        {
+            var expectedId = "input-id";
+            var comp = Context.RenderComponent<MudSelect<string>>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        { "Id", "userattributes-id" }
+                    })
+                    .Add(p => p.InputId, expectedId));
+
+            comp.Find("input").Id.Should().Be(expectedId);
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
+        }
+
+        /// <summary>
+        /// Optional Select should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalSelect_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudSelect<string>>();
+
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required Select should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredSelect_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudSelect<string>>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required Select attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredSelectAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudSelect<string>>();
+
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
         }
     }
 }

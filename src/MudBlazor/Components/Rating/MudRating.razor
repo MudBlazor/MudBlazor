@@ -1,13 +1,12 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-
 <span tabindex="@(Disabled?-1:0)" @onkeydown="HandleKeyDown" @attributes="UserAttributes" class="@ClassName" style="@Style" >
     <CascadingValue Value="this" >
         @for (int i = 1; i <= MaxValue; i++)
         {
             <MudRatingItem Class="@RatingItemsClass" Style="@RatingItemsStyle" ItemValue="@i"
-                           DisableRipple="DisableRipple" Disabled="Disabled" ReadOnly="ReadOnly" Color="Color"
+                           Ripple="@Ripple" Disabled="Disabled" ReadOnly="ReadOnly" Color="Color"
                            Size="Size" ItemClicked="HandleItemClicked" ItemHovered="HandleItemHovered"/>
         }
     </CascadingValue>

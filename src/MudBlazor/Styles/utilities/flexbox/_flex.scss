@@ -4,12 +4,15 @@
   .flex-#{$breakpoint}1 {
     flex: 1 1 0% !important;
   }
+
   .flex-#{$breakpoint}auto {
     flex: 1 1 auto !important;
   }
+
   .flex-#{$breakpoint}initial {
     flex: 0 1 auto !important;
   }
+
   .flex-#{$breakpoint}none {
     flex: none !important;
   }

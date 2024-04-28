@@ -62,15 +62,15 @@ namespace MudBlazor.UnitTests.Components
         public async Task Chip_Link_Test()
         {
             var comp = Context.RenderComponent<ChipLinkTest>();
-            var chip = comp.FindComponent<MudChip>();
+            var chip = comp.FindComponent<MudChip<string>>();
 
             await comp.InvokeAsync(() => ((IMudStateHasChanged)chip.Instance).StateHasChanged());
-            await comp.InvokeAsync(() => chip.Instance.OnClickHandler(new MouseEventArgs()));
+            await comp.InvokeAsync(() => chip.Instance.OnClickAsync(new MouseEventArgs()));
 
             comp.WaitForAssertion(() => comp.Find("#chip-click-test-expected-value").InnerHtml.Should().Be(""));
 #pragma warning disable BL0005
             await comp.InvokeAsync(() => chip.Instance.Target = "_blank");
-            await comp.InvokeAsync(() => chip.Instance.OnClickHandler(new MouseEventArgs()));
+            await comp.InvokeAsync(() => chip.Instance.OnClickAsync(new MouseEventArgs()));
 
             comp.WaitForAssertion(() => comp.Find("#chip-click-test-expected-value").InnerHtml.Should().Be(""));
         }
@@ -87,6 +87,14 @@ namespace MudBlazor.UnitTests.Components
             var chip = comp.Find("div.mud-chip");
             chip.ClassName.Should().Contain("mud-clickable");
             chip.ClassName.Should().Contain("mud-ripple");
+        }
+
+        [Test]
+        public void Chip_Should_Render_Avatar_Test()
+        {
+            var comp = Context.RenderComponent<ChipAvatarContentTest>();
+
+            comp.Find("div.mud-chip").InnerHtml.Should().Contain("mud-avatar");
         }
     }
 }

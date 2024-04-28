@@ -6,7 +6,7 @@
     <MudAppBar Elevation="1" Dense="@dense">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
         <MudSpacer />
-        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Href="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
     </MudAppBar>
     <MudDrawer @bind-Open="@open" ClipMode="clipMode" Breakpoint="@breakpoint" PreserveOpenState="@preserveOpenState" Elevation="1" Variant="@DrawerVariant.Mini">
         <MudNavMenu>
@@ -28,8 +28,8 @@
                 <MudSelectItem Value="@Breakpoint.Lg">Breakpoint.Lg</MudSelectItem>
                 <MudSelectItem Value="@Breakpoint.Xl">Breakpoint.Xl</MudSelectItem>
             </MudSelect>
-            <MudSwitch @bind-Checked="@preserveOpenState" Label="Preserve open state" Color="Color.Primary" Style="width:100%;" />
-            <MudSwitch @bind-Checked="@dense" Label="Dense appbar" Color="Color.Primary" Style="width:100%;" />
+            <MudSwitch @bind-Value="preserveOpenState" Label="Preserve open state" Color="Color.Primary" Style="width:100%;" />
+            <MudSwitch @bind-Value="dense" Label="Dense appbar" Color="Color.Primary" Style="width:100%;" />
         </MudContainer>
     </MudMainContent>
 </MudLayout>

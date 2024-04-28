@@ -5,23 +5,35 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Services;
 
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudBreakpointProvider : IAsyncDisposable
+    /// <summary>
+    /// Represents a cascading parameter which exposes the window's current breakpoint (xs, sm, md, lg, xl).
+    /// </summary>
+    public partial class MudBreakpointProvider : IBrowserViewportObserver, IAsyncDisposable
     {
-        private Guid _breakPointListenerSubscriptionId;
-
+        /// <summary>
+        /// Gets or sets the current breakpoint.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Breakpoint.Always"/>.
+        /// </remarks>
         public Breakpoint Breakpoint { get; private set; } = Breakpoint.Always;
 
+        /// <summary>
+        /// Occurs when <see cref="Breakpoint"/> has changed.
+        /// </summary>
         [Parameter]
         public EventCallback<Breakpoint> OnBreakpointChanged { get; set; }
 
         [Inject]
-        public IBreakpointService Service { get; set; } = null!;
+        protected IBrowserViewportService BrowserViewportService { get; set; } = null!;
 
+        /// <summary>
+        /// Gets or sets the content within this component.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.BreakpointProvider.Behavior)]
         public RenderFragment? ChildContent { get; set; }
@@ -32,24 +44,25 @@ namespace MudBlazor
 
             if (firstRender)
             {
-                var attachResult = await Service.SubscribeAsync(SetBreakpointCallback);
-                _breakPointListenerSubscriptionId = attachResult.SubscriptionId;
-                Breakpoint = attachResult.Breakpoint;
-                await OnBreakpointChanged.InvokeAsync(Breakpoint);
-                StateHasChanged();
+                await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
             }
         }
 
-        private void SetBreakpointCallback(Breakpoint breakpoint)
+        public async ValueTask DisposeAsync()
         {
-            InvokeAsync(() =>
+            if (IsJSRuntimeAvailable)
             {
-                Breakpoint = breakpoint;
-                OnBreakpointChanged.InvokeAsync(breakpoint);
-                StateHasChanged();
-            }).AndForget();
+                await BrowserViewportService.UnsubscribeAsync(this);
+            }
         }
 
-        public async ValueTask DisposeAsync() => await Service.UnsubscribeAsync(_breakPointListenerSubscriptionId);
+        Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();
+
+        async Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
+        {
+            Breakpoint = browserViewportEventArgs.Breakpoint;
+            await OnBreakpointChanged.InvokeAsync(browserViewportEventArgs.Breakpoint);
+            await InvokeAsync(StateHasChanged);
+        }
     }
 }

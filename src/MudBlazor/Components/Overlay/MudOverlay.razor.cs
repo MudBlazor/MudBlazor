@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -10,7 +10,7 @@ namespace MudBlazor
 #nullable enable
     public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     {
-        private bool _visible;
+        private readonly ParameterState<bool> _visibleState;
 
         protected string Classname =>
             new CssBuilder("mud-overlay")
@@ -51,17 +51,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Overlay.Behavior)]
-        public bool Visible
-        {
-            get => _visible;
-            set
-            {
-                if (_visible == value)
-                    return;
-                _visible = value;
-                VisibleChanged.InvokeAsync(_visible);
-            }
-        }
+        public bool Visible { get; set; }
 
         /// <summary>
         /// If true overlay will set Visible false on click.
@@ -113,50 +103,51 @@ namespace MudBlazor
         public int ZIndex { get; set; } = 5;
 
         /// <summary>
-        /// Command parameter.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Overlay.ClickAction)]
-        [Obsolete($"This will be removed in v7.")]
-        public object? CommandParameter { get; set; }
-
-        /// <summary>
-        /// Command executed when the user clicks on an element.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Overlay.ClickAction)]
-        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
-        public ICommand? Command { get; set; }
-
-        /// <summary>
         /// Fired when the overlay is clicked
         /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+        public MudOverlay()
+        {
+            using var registerScope = CreateRegisterScope();
+            _visibleState = registerScope.RegisterParameter<bool>(nameof(Visible))
+                .WithParameter(() => Visible)
+                .WithEventCallback(() => VisibleChanged)
+                .WithChangeHandler(OnVisibleParameterChangedAsync);
+        }
+
         protected internal async Task OnClickHandlerAsync(MouseEventArgs ev)
         {
             if (AutoClose)
-                Visible = false;
-            await OnClick.InvokeAsync(ev);
-#pragma warning disable CS0618
-            if (Command?.CanExecute(CommandParameter) ?? false)
             {
-                Command.Execute(CommandParameter);
+                await _visibleState.SetValueAsync(false);
             }
-#pragma warning restore CS0618
+
+            await OnClick.InvokeAsync(ev);
         }
 
         //if not visible or CSS `position:absolute`, don't lock scroll
         protected override async Task OnAfterRenderAsync(bool firstTime)
         {
             if (!LockScroll || Absolute)
+            {
                 return;
+            }
 
             if (Visible)
+            {
                 await BlockScrollAsync();
+            }
             else
+            {
                 await UnblockScrollAsync();
+            }
+        }
+
+        private Task OnVisibleParameterChangedAsync()
+        {
+            return VisibleChanged.InvokeAsync(_visibleState.Value);
         }
 
         //locks the scroll attaching a CSS class to the specified element, in this case the body
@@ -174,7 +165,12 @@ namespace MudBlazor
         //When disposing the overlay, remove the class that prevented scrolling
         public ValueTask DisposeAsync()
         {
-            return UnblockScrollAsync();
+            if (IsJSRuntimeAvailable)
+            {
+                return UnblockScrollAsync();
+            }
+
+            return ValueTask.CompletedTask;
         }
     }
 }

@@ -120,5 +120,15 @@ namespace MudBlazor.UnitTests.Components
 
             comp.FindComponent<MudAvatarGroup>().Instance._avatars.Count.Should().Be(0);
         }
+
+        [Test]
+        public void AvatarGroupMaxAvatarsTemplateTest()
+        {
+            var comp = Context.RenderComponent<AvatarGroupMaxAvatarsTemplateTest>();
+
+            comp.FindComponent<MudButton>().Should().NotBeNull();
+
+            comp.FindComponent<MudAvatarGroup>().FindAll(".mud-avatar-group-max-avatar").Should().HaveCount(0);
+        }
     }
 }

@@ -7,17 +7,16 @@
     .selected {
         background-color: #1E88E5 !important;
     }
-
-        .selected > td {
-            color: white !important;
-        }
-
-            .selected > td .mud-input {
-                color: white !important;
-            }
+    .selected > td {
+        color: white !important;
+    }
+    .selected > td .mud-input {
+        color: white !important;
+    }
 </style>
 
-<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" @ref="mudTable" RowClassFunc="@SelectedRowClassFunc" OnRowClick="RowClickEvent" T="Element">
+<MudTable T="Element" Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" @ref="mudTable"
+          RowClass="cursor-pointer" RowClassFunc="@SelectedRowClassFunc" OnRowClick="RowClickEvent">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>

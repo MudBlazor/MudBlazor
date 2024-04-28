@@ -12,15 +12,21 @@
 </MudDialog>
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-    [Parameter] public string TestValue { get; set; }
-    [Parameter] public Color Color_Test { get; set; }
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
 
-    public int ParamtersSetCounter { get; private set; }
+    [Parameter]
+    public string TestValue { get; set; }
+
+    [Parameter]
+    public Color ColorTest { get; set; }
+
+    public int ParametersSetCounter { get; private set; }
+
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-        ParamtersSetCounter++;
+        ParametersSetCounter++;
     }
 
     private void OnTest()

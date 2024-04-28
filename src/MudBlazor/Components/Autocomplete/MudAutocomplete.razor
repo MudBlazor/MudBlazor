@@ -5,23 +5,28 @@
 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
     <div class="@AutocompleteClassname">
         <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" HelperTextOnFocus="@HelperTextOnFocus" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
-                         Error="@Error" ErrorText="@ErrorText" Disabled="@GetDisabledState()" @onclick="@ToggleMenu" Required="@Required" ForId="@FieldId">
+                         Error="@Error" ErrorText="@ErrorText" Disabled="@GetDisabledState()" Required="@Required" ForId="@InputIdState.Value">
             <InputContent>
                 <MudInput @ref="_elementReference" @key="_elementKey" InputType="InputType.Text"
                           Class="mud-select-input" Margin="@Margin"
                           Variant="@Variant"
+                          Label="@Label"
                           TextUpdateSuppression="@TextUpdateSuppression"
-                          Value="@Text" DisableUnderLine="@DisableUnderLine"
+                          Value="@Text" Underline="@Underline"
                           Disabled="@GetDisabledState()" ReadOnly="@GetReadOnlyState()" Error="@Error"
-                          OnAdornmentClick="@OnAdornmentClick" AdornmentIcon="@CurrentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
+                          OnAdornmentClick="@AdornmentClickHandler" AdornmentIcon="@CurrentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
                           Clearable="@(!GetReadOnlyState() && Clearable)" OnClearButtonClick="@OnClearButtonClick"
                           @attributes="UserAttributes"
-                          TextChanged="OnTextChanged" OnBlur="OnInputBlurred"
-                          OnKeyDown="@this.OnInputKeyDown"
-                          OnKeyUp="@this.OnInputKeyUp" autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"
+                          TextChanged="OnTextChanged"
+                          @onclick="@OnInputClicked"
+                          @onfocus="@OnInputFocused" OnBlur="OnInputBlurred"
+                          OnKeyDown="@OnInputKeyDownAsync"
+                          OnKeyUp="@OnInputKeyUpAsync" autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"
                           Placeholder="@Placeholder" Immediate="true"
                           InputMode="@InputMode" Pattern="@Pattern"
-                          T="string" />
+                          ShrinkLabel="@ShrinkLabel"
+                          Required="@Required"
+                          InputId="@InputIdState.Value"></MudInput>
 
                 @if (ShowProgressIndicator && IsLoading)
                 {
@@ -32,7 +37,7 @@
                     else
                     {
                         <div class="@CircularProgressClassname">
-                            <MudProgressCircular Color="ProgressIndicatorColor" Indeterminate="true" Size="Size.Small"/>
+                            <MudProgressCircular Color="ProgressIndicatorColor" Indeterminate="true" Size="Size.Small" />
                         </div>
                     }
                 }
@@ -44,20 +49,20 @@
                     }
                     else if (_items != null && _items.Length != 0)
                     {
-                        @if (BeforeItemsTemplate != null)
-                        {
-                            <div class="pa-1">
-                                @BeforeItemsTemplate
-                            </div>
-                        }
-                        <MudList Class="@ListClass" Clickable="true" Dense="@Dense">
+                        <MudList T="T" Class="@ListClass" Dense="@Dense">
+                            @if (BeforeItemsTemplate != null)
+                            {
+                                <div class="mud-autocomplete-before-items pa-1">
+                                    @BeforeItemsTemplate
+                                </div>
+                            }
                             @for (var index = 0; index < _items.Length; index++)
                             {
                                 var item = _items[index];
                                 bool isSelected = index == _selectedListItemIndex;
                                 bool isDisabled = !_enabledItemIndices.Contains(index);
                                 var captureIndex = index;
-                                <MudListItem @key="@item" id="@GetListItemId(captureIndex)" Disabled="@(isDisabled)" OnClick="@(async () => await ListItemOnClick(item))" OnClickHandlerPreventDefault="true" Class="@(isSelected ? "mud-selected-item mud-primary-text mud-primary-hover" : "")">
+                                <MudListItem T="T" Value="@item" @key="@item" id="@GetListItemId(captureIndex)" Disabled="@(isDisabled)" OnClick="@(async () => await ListItemOnClick(item))" OnClickHandlerPreventDefault="true" Class="@GetListItemClassname(isSelected)">
                                     @if (ItemTemplate == null)
                                     {
                                         @GetItemString(item)
@@ -72,6 +77,7 @@
                                             @ItemTemplate(item)
                                         else
                                             @ItemSelectedTemplate(item)
+
                                     }
                                     else
                                     {
@@ -79,36 +85,24 @@
                                     }
                                 </MudListItem>
                             }
-                            @if (MoreItemsTemplate != null && _itemsReturned > MaxItems)
+                            @if (MoreItemsTemplate != null && _returnedItemsCount > MaxItems)
                             {
-                                <div class="pa-1">
+                                <div class="mud-autocomplete-more-items pa-1">
                                     @MoreItemsTemplate
+                                </div>
+                            }
+                            @if (AfterItemsTemplate != null)
+                            {
+                                <div class="mud-autocomplete-after-items pa-1">
+                                    @AfterItemsTemplate
                                 </div>
                             }
                         </MudList>
                     }
                     else if (NoItemsTemplate != null)
                     {
-                        @if (BeforeItemsTemplate != null)
-                        {
-                            <div class="pa-1">
-                                @BeforeItemsTemplate
-                            </div>
-                        }
-                        <div class="pa-1">
+                        <div class="mud-autocomplete-no-items pa-1">
                             @NoItemsTemplate
-                        </div>
-                    }
-                    else if (BeforeItemsTemplate != null && IsLoading is false)
-                    {
-                        <div class="pa-1">
-                            @BeforeItemsTemplate
-                        </div>
-                    }
-                    @if (AfterItemsTemplate != null && IsLoading is false)
-                    {
-                        <div class="pa-1">
-                            @AfterItemsTemplate
                         </div>
                     }
                 </MudPopover>
@@ -117,4 +111,4 @@
     </div>
 </CascadingValue>
 
-<MudOverlay Visible="IsOpen" OnClick="@ToggleMenu" @ontouchstart="@ToggleMenu" LockScroll="false" />
+<MudOverlay Visible="IsOpen" OnClick="CloseMenuAsync" @ontouchstart="CloseMenuAsync" LockScroll="false" />
