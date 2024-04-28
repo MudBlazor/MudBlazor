@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.Charts.SVG.Models
@@ -23,7 +24,6 @@ namespace MudBlazor.Charts.SVG.Models
         /// Gets or sets the data values to display.
         /// </summary>
         public string Data { get; set; }
-        public bool Visible { get; set; } = true;
 
         /// <summary>
         /// Gets or sets whether the legend is displayed.
