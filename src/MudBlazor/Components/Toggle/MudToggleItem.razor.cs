@@ -26,7 +26,8 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
-        protected string TextClassname => new CssBuilder()
+        protected string TextClassname => new CssBuilder("mud-toggle-item-text")
+            .AddClass("mud-typography mud-typography-align-center")
             .AddClass(Parent?.TextClass)
             .Build();
 

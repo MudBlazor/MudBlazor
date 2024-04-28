@@ -9,10 +9,12 @@
     }
     @if (ChildContent is not null)
     {
-        @ChildContent(IsSelected)
+        <div class="mud-toggle-item-content">
+            @ChildContent(IsSelected)
+        </div>
     }
     else
     {
-        <MudText Class="@TextClassname" Align="Align.Center">@(Text == null ? Value : Text)</MudText>
+        <p class="@TextClassname">@(Text == null ? Value : Text)</p>
     }
 </div>

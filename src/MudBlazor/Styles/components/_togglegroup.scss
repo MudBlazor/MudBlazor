@@ -23,10 +23,6 @@
     color: var(--mud-palette-action-disabled) !important;
     border-color: var(--mud-palette-action-disabled) !important;
   }
-
-  p {
-    font-size: 0.875em !important;
-  }
 }
 
 .mud-toggle-group-horizontal {
@@ -101,7 +97,17 @@
   }
 }
 
+.mud-toggle-item-text {
+  font-size: 0.875em !important;
+}
+
 .mud-toggle-item-check-icon {
   font-size: 1.25em !important;
   justify-self: end;
+}
+
+.mud-toggle-item-content {
+  /*Restore initial scaling for custom content*/
+  font-size: 1rem !important;
+  display: contents;
 }
