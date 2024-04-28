@@ -1,31 +1,31 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-    <MudPaper Width="300px">
-    <MudList T="string" @bind-SelectedValue="SelectedValue" SelectionMode="@SelectionMode" ReadOnly="@ReadOnly" Color="@Color.Info">
-            <MudListSubheader>
-                Your drink:
-            <MudChip Color="@Color.Info">
-                @(SelectedValue ?? "You are dry")
-            </MudChip>
-            </MudListSubheader>
-            <MudListItem Text="Milk" />
-            <MudListItem Text="Sparkling Water" Value='"Carbonated H²O"' />
-            <MudListItem Text="Teas">
-                <NestedList>
-                    <MudListItem Text="English Tea" Value='"Earl Grey"' />
-                    <MudListItem Text="Chinese Tea" Value='"Gunpowder Tea"' />
-                    <MudListItem Text="Bubble Tea" />
-                </NestedList>
-            </MudListItem>
-            <MudListItem Text="Coffees">
-                <NestedList>
-                    <MudListItem Text="Irish Coffee" />
-                    <MudListItem Text="Double Espresso" />
-                    <MudListItem Text="Cafe Latte" />
-                </NestedList>
-            </MudListItem>
-        </MudList>
-    </MudPaper>
+<MudPaper Width="300px">
+<MudList T="string" @bind-SelectedValue="SelectedValue" SelectionMode="@SelectionMode" ReadOnly="@ReadOnly" Color="@Color.Info">
+        <MudListSubheader>
+            Your drink:
+        <MudChip Color="@Color.Info">
+            @(SelectedValue ?? "You are dry")
+        </MudChip>
+        </MudListSubheader>
+        <MudListItem Text="Milk" />
+        <MudListItem Text="Sparkling Water" Value='"Carbonated H²O"' />
+        <MudListItem Text="Teas">
+            <NestedList>
+                <MudListItem Text="English Tea" Value='"Earl Grey"' />
+                <MudListItem Text="Chinese Tea" Value='"Gunpowder Tea"' />
+                <MudListItem Text="Bubble Tea" />
+            </NestedList>
+        </MudListItem>
+        <MudListItem Text="Coffees">
+            <NestedList>
+                <MudListItem Text="Irish Coffee" />
+                <MudListItem Text="Double Espresso" />
+                <MudListItem Text="Cafe Latte" />
+            </NestedList>
+        </MudListItem>
+    </MudList>
+</MudPaper>
 
 <MudStack Row Justify="Justify.Center" Style="width: 100%" Wrap="Wrap.Wrap">
     <MudRadioGroup @bind-Value="SelectionMode">
