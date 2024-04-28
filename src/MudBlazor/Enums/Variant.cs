@@ -8,7 +8,7 @@ namespace MudBlazor
     public enum Variant
     {
         /// <summary>
-        /// The component has drop shadow, background or border.
+        /// The component has no drop shadow, background or border.
         /// </summary>
         [Description("text")]
         Text,

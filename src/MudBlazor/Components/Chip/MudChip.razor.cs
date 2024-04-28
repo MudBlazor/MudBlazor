@@ -118,7 +118,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public Color? Color { get; set; }
 
     /// <summary>
-    /// The chip color to use when selected, only works together with ChipSet, Color.Inherit for default value.
+    /// Gets or sets the color of the chip when it is selected.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.  When set, this color is used for a selected chip, otherwise <see cref="Color"/> is used.
