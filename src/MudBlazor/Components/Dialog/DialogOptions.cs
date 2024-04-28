@@ -18,7 +18,7 @@ namespace MudBlazor
 
         public MaxWidth? MaxWidth { get; set; }
 
-        public bool? DisableBackdropClick { get; set; }
+        public bool? BackdropClick { get; set; }
         public bool? CloseOnEscapeKey { get; set; }
         public bool? NoHeader { get; set; }
         public bool? CloseButton { get; set; }

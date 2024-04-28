@@ -13,7 +13,7 @@ namespace MudBlazor
     public partial class MudDialog : MudComponentBase
     {
         protected string ContentClassname => new CssBuilder("mud-dialog-content")
-            .AddClass("mud-dialog-no-side-padding", DisableSidePadding)
+            .AddClass("mud-dialog-no-side-padding", !Gutters)
             .AddClass(ContentClass)
             .Build();
 
@@ -58,7 +58,7 @@ namespace MudBlazor
         /// <summary>
         /// Defines delegate with custom logic when user clicks overlay behind dialogue.
         /// Is being invoked instead of default "Backdrop Click" logic.
-        /// Setting DisableBackdropClick to "true" disables both - OnBackdropClick as well
+        /// Setting BackdropClick to "false" disables both - OnBackdropClick as well
         /// as the default logic.
         /// </summary>
         [Parameter]
@@ -66,11 +66,11 @@ namespace MudBlazor
         public EventCallback<MouseEventArgs> OnBackdropClick { get; set; }
 
         /// <summary>
-        /// No padding at the sides
+        /// Add padding at the sides
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Appearance)]
-        public bool DisableSidePadding { get; set; }
+        public bool Gutters { get; set; } = true;
 
         /// <summary>
         /// CSS class that will be applied to the dialog title container
@@ -156,7 +156,7 @@ namespace MudBlazor
                 [nameof(DialogContent)] = DialogContent,
                 [nameof(DialogActions)] = DialogActions,
                 [nameof(OnBackdropClick)] = OnBackdropClick,
-                [nameof(DisableSidePadding)] = DisableSidePadding,
+                [nameof(Gutters)] = Gutters,
                 [nameof(TitleClass)] = TitleClass,
                 [nameof(ContentClass)] = ContentClass,
                 [nameof(ActionsClass)] = ActionsClass,

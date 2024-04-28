@@ -9,6 +9,9 @@ using MudBlazor.Components.Chart.Interpolation;
 
 namespace MudBlazor.Charts
 {
+    /// <summary>
+    /// Represents a chart which displays series values as connected lines.
+    /// </summary>
     partial class Line : MudChartBase
     {
         private const double BoundWidth = 650.0;
@@ -18,7 +21,11 @@ namespace MudBlazor.Charts
         private const double VerticalStartSpace = 25.0;
         private const double VerticalEndSpace = 25.0;
 
-        [CascadingParameter] public MudChart MudChartParent { get; set; }
+        /// <summary>
+        /// Gets or sets the chart, if any, containing this component.
+        /// </summary>
+        [CascadingParameter]
+        public MudChart MudChartParent { get; set; }
 
         private List<SvgPath> _horizontalLines = new();
         private List<SvgText> _horizontalValues = new();

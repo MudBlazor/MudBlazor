@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -10,8 +11,8 @@ namespace MudBlazor
 #nullable enable
     public partial class MudListItem<T> : MudComponentBase, IDisposable
     {
-        private Typo _textTypo;
         private bool _selected;
+        private bool MultiSelection => MudList?.SelectionMode == SelectionMode.MultiSelection;
 
         private ParameterState<bool> _expandedState;
 
@@ -25,12 +26,12 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-list-item")
-                .AddClass("mud-list-item-dense", (Dense ?? MudList?.Dense) ?? false)
+                .AddClass("mud-list-item-dense", GetDense())
                 .AddClass("mud-list-item-gutters", Gutters || MudList?.Gutters == true)
-                .AddClass("mud-list-item-clickable", MudList?.GetReadOnly() != true)
-                .AddClass("mud-ripple", MudList?.GetReadOnly() != true && !Ripple && !GetDisabled())
-                .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text", _selected && !GetDisabled())
-                .AddClass($"mud-{MudList?.Color.ToDescriptionString()}-hover", _selected && !GetDisabled())
+                .AddClass("mud-list-item-clickable", GetClickable())
+                .AddClass("mud-ripple", !Ripple && GetClickable())
+                .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text", !MultiSelection && _selected && !GetDisabled())
+                .AddClass($"mud-{MudList?.Color.ToDescriptionString()}-hover", !MultiSelection && _selected && !GetDisabled())
                 .AddClass("mud-list-item-disabled", GetDisabled())
                 .AddClass(Class)
                 .Build();
@@ -40,6 +41,8 @@ namespace MudBlazor
 
         [CascadingParameter]
         protected MudList<T>? MudList { get; set; }
+
+        private MudList<T>? TopLevelList => MudList?.TopLevelList;
 
         /// <summary>
         /// The text to display
@@ -110,11 +113,11 @@ namespace MudBlazor
         public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
-        /// The color of the adornment if used. It supports the theme colors.
+        /// The color of the ExpandLessIcon and ExpandMoreIcon. It supports the theme colors.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Expanding)]
-        public Color AdornmentColor { get; set; } = Color.Default;
+        public Color ExpandIconColor { get; set; } = Color.Default;
 
         /// <summary>
         /// Custom expand less icon.
@@ -169,9 +172,13 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
+        /// <summary>
+        /// If set, clicking the list item will only execute the OnClick handler and prevent all other
+        /// functionality such as following Href or selection.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public bool OnClickHandlerPreventDefault { get; set; }
+        public bool OnClickPreventDefault { get; set; }
 
         /// <summary>
         /// Add child list items here to create a nested list.
@@ -186,41 +193,25 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
-        protected async Task OnClickHandlerAsync(MouseEventArgs eventArgs)
-        {
-            if (GetDisabled() || MudList?.GetReadOnly() == true)
-            {
-                return;
-            }
+        private IEqualityComparer<T?> Comparer => MudList?.Comparer ?? EqualityComparer<T?>.Default;
 
-            if (!OnClickHandlerPreventDefault)
+        private bool ReadOnly => TopLevelList is not null && TopLevelList.ReadOnly;
+
+        private SelectionMode SelectionMode => TopLevelList?.SelectionMode ?? SelectionMode.SingleSelection;
+
+        private Typo TextTypo => GetDense() ? Typo.body2 : Typo.body1;
+
+        private bool GetClickable()
+        {
+            if (Disabled)
             {
-                if (NestedList != null)
-                {
-                    await _expandedState.SetValueAsync(!_expandedState.Value);
-                }
-                else if (Href != null)
-                {
-                    if (MudList is not null)
-                    {
-                        await MudList.SetSelectedValueAsync(GetValue());
-                    }
-                    await OnClick.InvokeAsync(eventArgs);
-                    UriHelper.NavigateTo(Href, ForceLoad);
-                }
-                else
-                {
-                    if (MudList is not null)
-                    {
-                        await MudList.SetSelectedValueAsync(GetValue());
-                    }
-                    await OnClick.InvokeAsync(eventArgs);
-                }
+                return false;
             }
-            else
+            if (NestedList != null)
             {
-                await OnClick.InvokeAsync(eventArgs);
+                return true;
             }
+            return !GetReadOnly();
         }
 
         protected override async Task OnInitializedAsync()
@@ -229,23 +220,49 @@ namespace MudBlazor
             if (MudList is not null)
             {
                 await MudList.RegisterAsync(this);
-                OnListParametersChanged();
-                MudList.ParametersChanged += OnListParametersChanged;
             }
         }
 
-        private void OnListParametersChanged()
+        protected async Task OnClickHandlerAsync(MouseEventArgs eventArgs)
         {
-            if ((Dense ?? MudList?.Dense) ?? false)
+            if (GetDisabled())
             {
-                _textTypo = Typo.body2;
+                return;
             }
-            else if (!((Dense ?? MudList?.Dense) ?? false))
+            if (OnClickPreventDefault)
             {
-                _textTypo = Typo.body1;
+                await OnClick.InvokeAsync(eventArgs);
+                return;
             }
-
-            StateHasChanged();
+            if (NestedList != null)
+            {
+                await _expandedState.SetValueAsync(!_expandedState.Value);
+                return;
+            }
+            if (TopLevelList is not null && !GetReadOnly())
+            {
+                var value = GetValue();
+                if (MultiSelection)
+                {
+                    await OnCheckboxChangedAsync();
+                }
+                else
+                {
+                    if (SelectionMode == SelectionMode.SingleSelection)
+                    {
+                        await TopLevelList.SetSelectedValueAsync(value);
+                    }
+                    else // ToggleSelection
+                    {
+                        await TopLevelList.SetSelectedValueAsync(_selected ? default : value);
+                    }
+                }
+            }
+            await OnClick.InvokeAsync(eventArgs);
+            if (Href != null)
+            {
+                UriHelper.NavigateTo(Href, ForceLoad);
+            }
         }
 
         internal void SetSelected(bool selected)
@@ -254,7 +271,6 @@ namespace MudBlazor
             {
                 return;
             }
-
             _selected = selected;
             StateHasChanged();
         }
@@ -262,22 +278,58 @@ namespace MudBlazor
         internal T? GetValue()
         {
             if (typeof(T) == typeof(string) && Value is null && Text is not null)
+            {
                 return (T)(object)Text;
+            }
             return Value;
         }
 
-        private bool GetDisabled() => Disabled || (MudList?.GetDisabled() ?? false);
+        private bool GetDisabled() => Disabled || MudList?.GetDisabled() == true || TopLevelList?.GetDisabled() == true;
+
+        private bool GetReadOnly() => MudList?.ReadOnly == true || TopLevelList?.GetReadOnly() == true;
+
+        private bool GetDense() => Dense ?? MudList?.Dense == true;
+
+        private bool? GetCheckBoxState() => _selected;
+
+        private async Task OnCheckboxChangedAsync()
+        {
+            if (TopLevelList is null || ReadOnly || GetDisabled())
+            {
+                return;
+            }
+            if (_selected)
+            {
+                await TopLevelList.DeselectValueAsync(GetValue());
+            }
+            else
+            {
+                await TopLevelList.SelectValueAsync(GetValue());
+            }
+        }
+
+        private string GetIndeterminateIcon()
+        {
+            // Note: this will only become important should we ever want to add checkboxes for nesting list items similar to treeview
+            // in non-tristate mode we need to fake the checked status. the actual status of the checkbox is irrelevant,
+            // only _selected matters!
+            return _selected ? GetCheckedIcon() : GetUncheckedIcon();
+        }
+
+        private Color GetCheckBoxColor() => TopLevelList?.CheckBoxColor ?? default;
+
+        private string GetCheckedIcon() => TopLevelList?.CheckedIcon ?? Icons.Material.Filled.CheckBox;
+
+        private string GetUncheckedIcon() => TopLevelList?.UncheckedIcon ?? Icons.Material.Filled.CheckBoxOutlineBlank;
 
         public void Dispose()
         {
+            if (MudList is null)
+            {
+                return;
+            }
             try
             {
-                if (MudList is null)
-                {
-                    return;
-                }
-
-                MudList.ParametersChanged -= OnListParametersChanged;
                 MudList.Unregister(this);
             }
             catch (Exception) { /*ignore*/ }

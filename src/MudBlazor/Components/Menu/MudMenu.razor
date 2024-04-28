@@ -15,8 +15,7 @@
             </div>
         </CascadingValue>
     }
-    else if (string.IsNullOrEmpty(Icon))
-    {
+    else if (string.IsNullOrEmpty(Icon)) {
         <MudButton StartIcon="@StartIcon"
                    EndIcon="@EndIcon"
                    IconColor="@IconColor"
@@ -31,8 +30,7 @@
             @Label
         </MudButton>
     }
-    else
-    {
+    else {
         <MudIconButton Variant="@Variant" Icon="@Icon" Color="@Color" Size="@Size" Disabled="@Disabled" Ripple="@Ripple" DropShadow="@DropShadow" @onclick="@ToggleMenuAsync"
                        aria-label="@AriaLabel" />
     }

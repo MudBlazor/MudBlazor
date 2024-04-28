@@ -230,6 +230,7 @@ namespace MudBlazor
                     {
                         case "Filter":
                         case "MultiSelection":
+                        case "Multiselection":
                         case "Mandatory":
                         case "SelectedChip":
                         case "SelectedChipChanged":
@@ -248,6 +249,8 @@ namespace MudBlazor
                         case "Clickable":
                         case "Avatar":
                         case "AvatarClass":
+                        case "AdornmentColor":
+                        case "OnClickHandlerPreventDefault":
                             NotifyIllegalParameter(parameter);
                             break;
                     }
@@ -262,6 +265,7 @@ namespace MudBlazor
                         case "ActivatedValue":
                         case "ActivatedValueChanged":
                         case "Multiselection":
+                        case "MultiSelection":
                         case "Activated":
                         case "ExpandedIcon":
                         case "SelectedItem":
@@ -286,6 +290,15 @@ namespace MudBlazor
                     switch (parameter)
                     {
                         case "ButtonTemplate":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (this is MudButtonGroup)
+                {
+                    switch (parameter)
+                    {
+                        case "VerticalAlign":
                             NotifyIllegalParameter(parameter);
                             break;
                     }
@@ -327,6 +340,23 @@ namespace MudBlazor
                         case "InitiallyExpanded":
                         case "RightAlignSmall":
                         case "IsExpandable":
+                        case "ToolBarClass":
+                        case "DisableToolbar":
+                        case "DisableLegend":
+                        case "DisableSliders":
+                        case "DisablePreview":
+                        case "DisableModeSwitch":
+                        case "DisableInputs":
+                        case "DisableDragEffect":
+                        case "DisableColorField":
+                        case "DisableAlpha":
+                        case "DisableSidePadding":
+                        case "DisableOverlay":
+                        case "DisableSliderAnimation":
+                        case "DisableModifiers":
+                        case "IsChecked":
+                        case "IsCheckable":
+                        case "IsCheckedChanged":
                         case "IsVisible":
                             NotifyIllegalParameter(parameter);
                             break;
