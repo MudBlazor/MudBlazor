@@ -124,11 +124,11 @@ namespace MudBlazor
         [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
 
         /// <summary>
-        /// Define the element that will receive the focus when the dialog is opened
+        /// Defines the element that will receive the focus when the dialog is opened.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
-        public DefaultFocus DefaultFocus { get; set; } = DefaultFocus.Element;
+        public DefaultFocus DefaultFocus { get; set; } = MudGlobal.DialogDefaultFocus;
 
         private bool IsInline => IsNested || DialogInstance == null;
 

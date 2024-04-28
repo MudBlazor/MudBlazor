@@ -24,6 +24,11 @@ public static class MudGlobal
     public static TimeSpan TooltipDelay { get; set; } = TimeSpan.Zero;
 
     /// <summary>
+    /// The default <see cref="MudDialog.DefaultFocus"/>.
+    /// </summary>
+    public static DefaultFocus DialogDefaultFocus { get; set; } = DefaultFocus.Element;
+
+    /// <summary>
     /// Global unhandled exception handler for such exceptions which can not be bubbled up. Note: this is not a global catch-all.
     /// It just allows the user to handle such exceptions which were suppressed inside MudBlazor using Task.AndForget() in places
     /// where it is impossible to await the task. Exceptions in user code or in razor files will still crash your app if you are not carefully
