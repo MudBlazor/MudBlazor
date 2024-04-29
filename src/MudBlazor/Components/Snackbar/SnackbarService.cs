@@ -119,6 +119,24 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Displays a snackbar containing the text/HTML.
+        /// </summary>
+        /// <param name="message">Specifies the content of the snackbar.</param>
+        /// <param name="severity">The severity of the snackbar. Dictates the color and default icon of the notification.</param>
+        /// <param name="configure">Additional configuration for the snackbar.</param>
+        /// <param name="key">If no key is passed, defaults to the content of the message. This message will not be shown while any other message with the same key is being shown.</param>
+        /// <returns>The snackbar created by the parameters.</returns>
+        public Snackbar Add(MarkupString message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null, string key = "")
+        {
+            if (message.ToString().IsEmpty()) return null;
+
+            var componentParams = new Dictionary<string, object>() { { "Message", message } };
+            var keyToUse = string.IsNullOrEmpty(key) ? message.ToString() : key;
+
+            return Add<SnackbarMessageMarkupString>(componentParams, severity, configure, keyToUse);
+        }
+
+        /// <summary>
         /// Displays a snackbar containing the text.
         /// </summary>
         /// <param name="message">The string which specifies the content of the snackbar.</param>
@@ -131,7 +149,7 @@ namespace MudBlazor
             if (message.IsEmpty()) return null;
             message = message.Trimmed();
 
-            var componentParams = new Dictionary<string, object>() { { "Message", new MarkupString(message) } };
+            var componentParams = new Dictionary<string, object>() { { "Message", message } };
 
             return AddCore<SnackbarMessageText>(message, componentParams, severity, configure, string.IsNullOrEmpty(key) ? message : key);
         }

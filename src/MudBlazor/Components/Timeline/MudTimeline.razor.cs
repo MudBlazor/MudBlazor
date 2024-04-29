@@ -16,7 +16,7 @@ namespace MudBlazor
                 .AddClass($"mud-timeline-position-{ConvertTimelinePosition().ToDescriptionString()}")
                 .AddClass($"mud-timeline-reverse", Reverse && TimelinePosition == TimelinePosition.Alternate)
                 .AddClass($"mud-timeline-align-{TimelineAlign.ToDescriptionString()}")
-                .AddClass($"mud-timeline-modifiers", !DisableModifiers)
+                .AddClass($"mud-timeline-modifiers", Modifiers)
                 .AddClass($"mud-timeline-rtl", RightToLeft)
                 .AddClass(Class)
                 .Build();
@@ -53,11 +53,11 @@ namespace MudBlazor
         public bool Reverse { get; set; } = false;
 
         /// <summary>
-        /// If true, disables all TimelineItem modifiers, like adding a caret to a MudCard.
+        /// If true, enables all TimelineItem modifiers, like adding a caret to a MudCard. Enabled by default.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Timeline.Behavior)]
-        public bool DisableModifiers { get; set; } = false;
+        public bool Modifiers { get; set; } = true;
 
         private TimelinePosition ConvertTimelinePosition()
         {

@@ -5,6 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
@@ -34,7 +36,7 @@ namespace MudBlazor
         public string? Class { get; set; }
 
         /// <summary>
-        /// Gets or sets any CSS styles applied to this component. 
+        /// Gets or sets any CSS styles applied to this component.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="Class"/> property to apply CSS classes.
@@ -127,7 +129,7 @@ namespace MudBlazor
                             break;
                     }
                 }
-                else if (GetType() == typeof(MudRadio<>))
+                else if (MatchTypes(typeof(MudRadio<>)))
                 {
                     switch (parameter)
                     {
@@ -145,7 +147,7 @@ namespace MudBlazor
                             break;
                     }
                 }
-                else if (GetType() == typeof(MudCheckBox<>) || GetType() == typeof(MudSwitch<>))
+                else if (MatchTypes(typeof(MudCheckBox<>), typeof(MudSwitch<>)))
                 {
                     switch (parameter)
                     {
@@ -154,7 +156,7 @@ namespace MudBlazor
                             break;
                     }
                 }
-                else if (this is MudPopover || GetType() == typeof(MudAutocomplete<>) || GetType() == typeof(MudSelect<>))
+                else if (MatchTypes(typeof(MudPopover), typeof(MudAutocomplete<>), typeof(MudSelect<>)))
                 {
                     switch (parameter)
                     {
@@ -165,7 +167,7 @@ namespace MudBlazor
                             break;
                     }
                 }
-                else if (GetType() == typeof(MudToggleGroup<>))
+                else if (MatchTypes(typeof(MudToggleGroup<>)))
                 {
                     switch (parameter)
                     {
@@ -184,7 +186,7 @@ namespace MudBlazor
                             break;
                     }
                 }
-                else if (GetType() == typeof(MudSlider<>))
+                else if (MatchTypes(typeof(MudSlider<>)))
                 {
                     switch (parameter)
                     {
@@ -193,7 +195,7 @@ namespace MudBlazor
                             break;
                     }
                 }
-                else if (GetType() == typeof(MudRadioGroup<>))
+                else if (MatchTypes(typeof(MudRadioGroup<>)))
                 {
                     switch (parameter)
                     {
@@ -212,7 +214,7 @@ namespace MudBlazor
                             break;
                     }
                 }
-                else if (GetType() == typeof(MudChip<>))
+                else if (MatchTypes(typeof(MudChip<>)))
                 {
                     switch (parameter)
                     {
@@ -222,12 +224,13 @@ namespace MudBlazor
                             break;
                     }
                 }
-                else if (GetType() == typeof(MudChipSet<>))
+                else if (MatchTypes(typeof(MudChipSet<>)))
                 {
                     switch (parameter)
                     {
                         case "Filter":
                         case "MultiSelection":
+                        case "Multiselection":
                         case "Mandatory":
                         case "SelectedChip":
                         case "SelectedChipChanged":
@@ -237,7 +240,7 @@ namespace MudBlazor
                             break;
                     }
                 }
-                else if (GetType() == typeof(MudList<>))
+                else if (MatchTypes(typeof(MudList<>), typeof(MudListItem<>)))
                 {
                     switch (parameter)
                     {
@@ -246,11 +249,13 @@ namespace MudBlazor
                         case "Clickable":
                         case "Avatar":
                         case "AvatarClass":
+                        case "AdornmentColor":
+                        case "OnClickHandlerPreventDefault":
                             NotifyIllegalParameter(parameter);
                             break;
                     }
                 }
-                else if (GetType() == typeof(MudTreeView<>) || GetType() == typeof(MudTreeViewItem<>))
+                else if (MatchTypes(typeof(MudTreeView<>), typeof(MudTreeViewItem<>)))
                 {
                     switch (parameter)
                     {
@@ -260,6 +265,7 @@ namespace MudBlazor
                         case "ActivatedValue":
                         case "ActivatedValueChanged":
                         case "Multiselection":
+                        case "MultiSelection":
                         case "Activated":
                         case "ExpandedIcon":
                         case "SelectedItem":
@@ -275,6 +281,24 @@ namespace MudBlazor
                         case "Target":
                         case "HtmlTag":
                         case "ButtonType":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (MatchTypes(typeof(MudFileUpload<>)))
+                {
+                    switch (parameter)
+                    {
+                        case "ButtonTemplate":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (this is MudButtonGroup)
+                {
+                    switch (parameter)
+                    {
+                        case "VerticalAlign":
                             NotifyIllegalParameter(parameter);
                             break;
                     }
@@ -316,6 +340,23 @@ namespace MudBlazor
                         case "InitiallyExpanded":
                         case "RightAlignSmall":
                         case "IsExpandable":
+                        case "ToolBarClass":
+                        case "DisableToolbar":
+                        case "DisableLegend":
+                        case "DisableSliders":
+                        case "DisablePreview":
+                        case "DisableModeSwitch":
+                        case "DisableInputs":
+                        case "DisableDragEffect":
+                        case "DisableColorField":
+                        case "DisableAlpha":
+                        case "DisableSidePadding":
+                        case "DisableOverlay":
+                        case "DisableSliderAnimation":
+                        case "DisableModifiers":
+                        case "IsChecked":
+                        case "IsCheckable":
+                        case "IsCheckedChanged":
                             NotifyIllegalParameter(parameter);
                             break;
                     }
@@ -323,10 +364,16 @@ namespace MudBlazor
             }
         }
 
+        internal bool MatchTypes(params Type[] types)
+        {
+            var self = GetType().IsGenericType ? GetType().GetGenericTypeDefinition() : GetType();
+            return types.Any(type => self == type);
+        }
+
         [ExcludeFromCodeCoverage]
         private void NotifyIllegalParameter(string parameter)
         {
-            throw new ArgumentException($"Illegal parameter '{parameter}'. This was removed in v7.0.0, see Migration Guide for more info https://github.com/MudBlazor/MudBlazor/issues/8447");
+            throw new ArgumentException($"Illegal parameter '{parameter}' in component of type '{GetType().Name}'. This was removed in v7.0.0, see Migration Guide for more info https://github.com/MudBlazor/MudBlazor/issues/8447");
         }
     }
 }

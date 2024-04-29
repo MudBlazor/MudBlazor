@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Charts
 @inherits MudChartBase
 
-@if (MudChartParent?.ChartOptions.DisableLegend != true)
+@if (MudChartParent?.ChartOptions.ShowLegend ?? true)
 {
     <div @attributes="UserAttributes" class="mud-chart-legend">
         @foreach (var item in Data)        

@@ -3086,7 +3086,8 @@ namespace MudBlazor.UnitTests.Components
             // amount with invariant culture (decimals separated by point)
             var amountHeader = dataGrid.FindAll("th .mud-menu button")[2];
             amountHeader.Click();
-            var filterAmount = comp.FindAll(".mud-list-item-clickable")[1];
+
+            var filterAmount = comp.FindAll(".mud-list-item")[1];
             filterAmount.Click();
 
             var filterField = comp.Find(".filters-panel .filter-field .mud-select-input");
@@ -3104,7 +3105,7 @@ namespace MudBlazor.UnitTests.Components
             // total with es-ES culture (decimals separated by comma)
             var totalHeader = dataGrid.FindAll("th .mud-menu button")[3];
             totalHeader.Click();
-            var filterTotal = comp.FindAll(".mud-list-item-clickable")[1];
+            var filterTotal = comp.FindAll(".mud-list-item")[1];
             filterTotal.Click();
 
             var filterTotalField = comp.Find(".filters-panel .filter-field .mud-select-input");
@@ -3789,6 +3790,31 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
             rows = dataGrid.FindAll("tr");
             rows.Count.Should().Be(6, because: "1 header row + 4 data rows + 1 footer row");
+        }
+
+        [Test]
+        public async Task FilterDefinitionTestHasFilterProperty()
+        {
+            var comp = Context.RenderComponent<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFiltersTest.Model>
+            { Column = dataGrid.Instance.GetColumnByPropertyName("Name"), Operator = FilterOperator.String.Empty }));
+
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFiltersTest.Model>
+            { Column = dataGrid.Instance.GetColumnByPropertyName("Age"), Operator = FilterOperator.Number.GreaterThan, Value = 30 }));
+
+            // test filter definition without value
+            var nameHeaderCell = dataGrid.FindComponents<HeaderCell<DataGridFiltersTest.Model>>()[0];
+            nameHeaderCell.Instance.hasFilter.Should().BeTrue();
+
+            // test filter definition with value
+            var ageHeaderCell = dataGrid.FindComponents<HeaderCell<DataGridFiltersTest.Model>>()[1];
+            ageHeaderCell.Instance.hasFilter.Should().BeTrue();
+
+            // test filter not applied
+            var statusHeaderCell = dataGrid.FindComponents<HeaderCell<DataGridFiltersTest.Model>>()[2];
+            statusHeaderCell.Instance.hasFilter.Should().BeFalse();
         }
 
     }

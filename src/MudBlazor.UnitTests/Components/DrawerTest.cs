@@ -52,7 +52,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DrawerTest1>(
                 Parameter(nameof(DrawerTest1.Variant), DrawerVariant.Temporary),
-                Parameter(nameof(DrawerTest1.DisableOverlay), true));
+                Parameter(nameof(DrawerTest1.Overlay), false));
 
             comp.Find("button").Click();
             comp.FindAll("aside+mud-overlay-drawer").Count.Should().Be(0);
