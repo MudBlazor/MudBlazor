@@ -7,10 +7,10 @@
         <DocsPageSection>
             <SectionHeader Title="Default Data Grid">
                 <Description>
-                    The <CodeInline>&lt;MudDataGrid></CodeInline> is used to display and work with small amounts of data up to very large datasets, easily and efficiently. In it's 
-                    simplest form, the data grid is just a table, displaying data from a data source. In it's most complex form, the data grid allows filtering, editing, grouping, and much more.
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> is used to display and work with small amounts of data up to very large datasets, easily and efficiently. In its 
+                    simplest form, the data grid is just a table, displaying data from a data source. In its most complex form, the data grid allows filtering, editing, grouping, and much more.
                     <br><br>
-                    Using the data grid is pretty simple to start with and just requires setting the <CodeInline>Items</CodeInline> property to an collection of data as IEnumerable, and adding 
+                    Using the data grid is pretty simple to start with and just requires setting the <CodeInline>Items</CodeInline> property to a collection of data as IEnumerable, and adding 
                     <CodeInline>Columns</CodeInline>.
                 </Description>
             </SectionHeader>
@@ -82,7 +82,7 @@
                     applied to the data source. To disable editing on a column, set its <CodeInline>IsEditable</CodeInline> property to <CodeInline>false</CodeInline>. 
                     To mark a property as not required, set its <CodeInline>Required</CodeInline> property to <CodeInline>false</CodeInline>.
                     <br><br>
-                    By default, the built in editing in the data grid automatically supplies the proper input component for each cell. However, this can be overridden
+                    By default, the built-in editing in the data grid automatically supplies the proper input component for each cell. However, this can be overridden
                     by supplying an <CodeInline>&lt;EditTemplate></CodeInline>. Inside the template, you have full control over the editing. Take a look at the Position
                     column below.
 
@@ -164,7 +164,7 @@
                     It is possible to customize filtering by utilizing the <CodeInline>&lt;FilterTemplate></CodeInline> available on the <CodeInline>&lt;MudDataGrid></CodeInline>
                     as well as each <CodeInline>&lt;Column></CodeInline>. In the example below, the Sign column is customized.
                     <br><br>
-                    Inside of the <CodeInline>&lt;FilterTemplate></CodeInline> on the data grid while using <CodeInline>DataGridFilterMode.Simple</CodeInline>, the context is set to the 
+                    Inside the <CodeInline>&lt;FilterTemplate></CodeInline> on the data grid while using <CodeInline>DataGridFilterMode.Simple</CodeInline>, the context is set to the 
                     data grid's FilterDefinitions to allow for customizing the filtering behavior.
                     <br><br>
                     When using the <CodeInline>&lt;FilterTemplate></CodeInline> in the column specific filter modes, the context is a <CodeInline>DataGridFilterMode.Simple</CodeInline>
@@ -180,7 +180,7 @@
         <DocsPageSection>
             <SectionHeader Title="Row Detail View">
                 <Description>
-                    The The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to create hierarchical layouts. To do that the <CodeInline>HierarchyColumn</CodeInline> has to be added in the <CodeInline>Columns</CodeInline> definitions. 
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to create hierarchical layouts. To do that the <CodeInline>HierarchyColumn</CodeInline> has to be added in the <CodeInline>Columns</CodeInline> definitions. 
                     <br><br>
                     You can customize the icon to toggle the RowDetail and also disable the toggle button.
                 </Description>
@@ -213,7 +213,7 @@
                     or choose to tailor the display to your needs. There are 6 different <CodeInline>AggregateTypes</CodeInline> that can be used with the 
                     <CodeInline>AggregateDefinition</CodeInline>: Avg, Count, Custom, Max, Min and Sum. For more control over the data aggregation, you can choose the
                     <CodeInline>AggregationType.Custom</CodeInline> and supply your own function which will return a formatted string to display. Lastly, for 
-                    complete control over the data aggregation including the look and feel, you use <CodeInline>&lt;FooterTemplate></CodeInline> which has it's
+                    complete control over the data aggregation including the look and feel, you use <CodeInline>&lt;FooterTemplate></CodeInline> which has its
                     context set to the <CodeInline>CurrentPageItems</CodeInline>.
                     <br><br>
                     Aggregation is automatically applied to groups when the data grid is grouped by a column. Try it out by grouping the Status column!
@@ -273,7 +273,7 @@
                 <Description>
                     DataGrid <CodeInline>Culture</CodeInline> (CultureInfo) property is used to display and editing/filter columns data.
                     Each <CodeInline>&lt;Column></CodeInline> can define his own culture,
-                    to allow specify its format individually.
+                    to allow to specify its format individually.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridColumnCultureExample)" ShowCode="false" Block="true" FullWidth="true">
@@ -298,9 +298,9 @@
             <SectionHeader Title="Columns Panel">
                 <Description>
                     The <CodeInline>&lt;MudDataGrid></CodeInline> can open a columns panel using <CodeInline>ShowColumnsPanel</CodeInline>. 
-                    The panel allows the re-ordering, hiding, filtering and grouping of columns. The enabled functionality matches the grid and column options with the exception of column re-ordering.
+                    The panel allows the re-ordering, hiding, filtering and grouping of columns. The enabled functionality matches the grid and column options except column re-ordering.
                     <br><br>
-                    Column re-ordering is enabled in the panel using the <CodeInline>ColumnsPanelReordering</CodeInline> property. Re-ordering is on an insert basis so it does not respect the column level <CodeInline>DragAndDropEnabled</CodeInline> property which swaps columns.
+                    Column re-ordering is enabled in the panel using the <CodeInline>ColumnsPanelReordering</CodeInline> property. Re-ordering is on an insert basis, so it does not respect the column level <CodeInline>DragAndDropEnabled</CodeInline> property which swaps columns.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridColumnsPanelExample)" ShowCode="false" Block="true" FullWidth="true">

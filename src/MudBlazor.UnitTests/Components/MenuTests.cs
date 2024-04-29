@@ -347,9 +347,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MenuAccessibilityTest>(parameters => parameters
                 .Add(p => p.Label, label)
                 .Add(p => p.AriaLabel, ariaLabel));
-            var button = comp.Find("button");
 
-            button.GetAttribute("aria-label").Should().Be(expectedAriaLabel);
+            comp.Find("button").GetAttribute("aria-label").Should().Be(expectedAriaLabel);
         }
 
         [Test]
@@ -360,9 +359,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MenuAccessibilityTest>(parameters => parameters
                 .Add(p => p.Icon, Icons.Material.Filled.Accessibility)
                 .Add(p => p.AriaLabel, ariaLabel));
-            var button = comp.Find("button");
 
-            button.GetAttribute("aria-label").Should().Be(expectedAriaLabel);
+            comp.Find("button").GetAttribute("aria-label").Should().Be(expectedAriaLabel);
         }
     }
 }

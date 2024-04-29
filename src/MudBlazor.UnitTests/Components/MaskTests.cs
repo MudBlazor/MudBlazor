@@ -721,7 +721,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ReadonlyMaskedTextFieldTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
             var mask = comp.FindComponent<MudMask>().Instance;
-            var maskInput = comp.Find("input");
             var originalValue = textField.Text;
 
             originalValue.Should().Be("1234 1234 1234 1234");
@@ -740,7 +739,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() =>
             {
                 mask.OnSelect(0, mask.Text.Length);
-                maskInput.CutAsync(new ClipboardEventArgs { Type = "cut" });
+                comp.Find("input").CutAsync(new ClipboardEventArgs { Type = "cut" });
             });
             comp.WaitForAssertion(() => textField.Value.Should().Be(originalValue));
 
@@ -759,7 +758,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() =>
             {
                 mask.OnSelect(0, textField.Value.Length);
-                maskInput.Cut(new ClipboardEventArgs { Type = "cut" });
+                comp.Find("input").Cut(new ClipboardEventArgs { Type = "cut" });
             });
             comp.WaitForAssertion(() => textField.Value.Should().Be(""));
         }
@@ -814,9 +813,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudMask>();
 
-            var input = comp.Find("input");
-            input.HasAttribute("required").Should().BeFalse();
-            input.GetAttribute("aria-required").Should().Be("false");
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
         }
 
         /// <summary>
@@ -828,9 +826,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudMask>(parameters => parameters
                 .Add(p => p.Required, true));
 
-            var input = comp.Find("input");
-            input.HasAttribute("required").Should().BeTrue();
-            input.GetAttribute("aria-required").Should().Be("true");
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
         }
 
         /// <summary>
@@ -841,15 +838,14 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudMask>();
 
-            var input = comp.Find("input");
-            input.HasAttribute("required").Should().BeFalse();
-            input.GetAttribute("aria-required").Should().Be("false");
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
 
             comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.Required, true));
 
-            input.HasAttribute("required").Should().BeTrue();
-            input.GetAttribute("aria-required").Should().Be("true");
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
         }
 
         /// <summary>
@@ -861,9 +857,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudMask>(parameters => parameters
                 .Add(p => p.Lines, 5));
 
-            var input = comp.Find("textarea");
-            input.HasAttribute("required").Should().BeFalse();
-            input.GetAttribute("aria-required").Should().Be("false");
+            comp.Find("textarea").HasAttribute("required").Should().BeFalse();
+            comp.Find("textarea").GetAttribute("aria-required").Should().Be("false");
         }
 
         /// <summary>
@@ -876,9 +871,8 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Required, true)
                 .Add(p => p.Lines, 5));
 
-            var input = comp.Find("textarea");
-            input.HasAttribute("required").Should().BeTrue();
-            input.GetAttribute("aria-required").Should().Be("true");
+            comp.Find("textarea").HasAttribute("required").Should().BeTrue();
+            comp.Find("textarea").GetAttribute("aria-required").Should().Be("true");
         }
 
         /// <summary>
@@ -890,15 +884,14 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudMask>(parameters => parameters
                 .Add(p => p.Lines, 5));
 
-            var input = comp.Find("textarea");
-            input.HasAttribute("required").Should().BeFalse();
-            input.GetAttribute("aria-required").Should().Be("false");
+            comp.Find("textarea").HasAttribute("required").Should().BeFalse();
+            comp.Find("textarea").GetAttribute("aria-required").Should().Be("false");
 
             comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.Required, true));
 
-            input.HasAttribute("required").Should().BeTrue();
-            input.GetAttribute("aria-required").Should().Be("true");
+            comp.Find("textarea").HasAttribute("required").Should().BeTrue();
+            comp.Find("textarea").GetAttribute("aria-required").Should().Be("true");
         }
     }
 }

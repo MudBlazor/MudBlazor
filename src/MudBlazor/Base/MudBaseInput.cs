@@ -425,6 +425,7 @@ namespace MudBlazor
             {
                 Text = text;
                 _validated = false;
+
                 if (!string.IsNullOrWhiteSpace(Text))
                 {
                     Touched = true;
@@ -515,20 +516,24 @@ namespace MudBlazor
 
         protected virtual async Task SetValueAsync(T? value, bool updateText = true, bool force = false)
         {
-            if (!EqualityComparer<T>.Default.Equals(Value, value) || force)
+            if (EqualityComparer<T>.Default.Equals(Value, value) && !force)
             {
-                _isDirty = true;
-                _validated = false;
-                Value = value;
-                await ValueChanged.InvokeAsync(Value);
-                if (updateText)
-                {
-                    await UpdateTextPropertyAsync(false);
-                }
-
-                FieldChanged(Value);
-                await BeginValidateAsync();
+                return;
             }
+
+            _isDirty = true;
+            _validated = false;
+            Value = value;
+
+            await ValueChanged.InvokeAsync(Value);
+
+            if (updateText)
+            {
+                await UpdateTextPropertyAsync(false);
+            }
+
+            FieldChanged(Value);
+            await BeginValidateAsync();
         }
 
         /// <summary>

@@ -14,11 +14,11 @@ public partial class MudPickerToolbar : MudComponentBase
             .Build();
 
     /// <summary>
-    /// Hide toolbar
+    /// If true, show toolbar
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Picker.Behavior)]
-    public bool DisableToolbar { get; set; }
+    public bool ShowToolbar { get; set; } = true;
 
     /// <summary>
     /// Sets the orientation of the toolbar

@@ -15,7 +15,7 @@ using static Bunit.ComponentParameterFactory;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class TreeViewTest : BunitTest
+    public class TreeViewTests : BunitTest
     {
         [Test]
         public void TreeView_ClickWhileDisabled_DoesNotChangeSelection()
@@ -467,20 +467,20 @@ namespace MudBlazor.UnitTests.Components
         public void TreeViewItem_DoubleClick_CheckExpanded()
         {
             var comp = Context.RenderComponent<TreeViewTest3>();
-            var itemIsExpanded = false;
+            var itemExpanded = false;
 
             var item = comp.FindComponent<MudTreeViewItem<string>>();
-            item.SetParametersAndRender(Parameter(nameof(MudTreeViewItem<string>.OnDoubleClick), new EventCallback<MouseEventArgs>(null, (Action)(() => itemIsExpanded = !itemIsExpanded))));
+            item.SetParametersAndRender(Parameter(nameof(MudTreeViewItem<string>.OnDoubleClick), new EventCallback<MouseEventArgs>(null, (Action)(() => itemExpanded = !itemExpanded))));
 
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
 
             comp.Find("div.mud-treeview-item-content").DoubleClick();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
-            itemIsExpanded.Should().BeTrue();
+            itemExpanded.Should().BeTrue();
 
             comp.Find("div.mud-treeview-item-content").DoubleClick();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(0);
-            itemIsExpanded.Should().BeFalse();
+            itemExpanded.Should().BeFalse();
         }
 
         [Test]
@@ -782,6 +782,142 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-launch").Value.Should().Be(true);
             comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-tasks").Value.Should().Be(false);
             comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").Value.Should().Be(false);
+        }
+
+        [Test]
+        public void TreeViewAutoExpansionTest()
+        {
+            var comp = Context.RenderComponent<TreeViewAutoExpandTest>(self => self.Add(x => x.AutoExpand, true));
+            var isExpanded = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
+                .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
+            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("div").Click();
+            isExpanded("C:").Should().Be(false);
+            isExpanded("config").Should().Be(false);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(false);
+            isExpanded("logo.png").Should().Be(false);
+            // select and check that along the path to the value all parents were expanded, nothing else
+            select("tasks.json");
+            isExpanded("C:").Should().Be(true);
+            isExpanded("config").Should().Be(true);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(false);
+            isExpanded("logo.png").Should().Be(false);
+            // reset all to collapsed and check
+            comp.Find("button.collapse-all").Click();
+            isExpanded("C:").Should().Be(false);
+            isExpanded("config").Should().Be(false);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(false);
+            isExpanded("logo.png").Should().Be(false);
+            // select and check that along the path to the value all parents were expanded, nothing else
+            // here images itself must not be expanded, only its parent
+            select("images");
+            isExpanded("C:").Should().Be(true);
+            isExpanded("config").Should().Be(false);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(false);
+            isExpanded("logo.png").Should().Be(false);
+        }
+
+        [Test]
+        public void TreeViewAutoExpansion_ShouldNot_ExpandNonExpandableItems()
+        {
+            var comp = Context.RenderComponent<TreeViewAutoExpandTest>(self => self.Add(x => x.AutoExpand, true).Add(x => x.ConfigCanExpand, false));
+            var isExpanded = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
+                .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
+            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("div").Click();
+            isExpanded("C:").Should().Be(false);
+            isExpanded("config").Should().Be(false);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(false);
+            isExpanded("logo.png").Should().Be(false);
+            // select and check that along the path to the value all parents were expanded, nothing else
+            select("tasks.json");
+            isExpanded("C:").Should().Be(true);
+            isExpanded("config").Should().Be(false); // <--- shouldn't be expanded because it can't
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(false);
+            isExpanded("logo.png").Should().Be(false);
+            // reset all to collapsed and check
+            comp.Find("button.collapse-all").Click();
+            isExpanded("C:").Should().Be(false);
+            isExpanded("config").Should().Be(false);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(false);
+            isExpanded("logo.png").Should().Be(false);
+            // select and check that along the path to the value all parents were expanded, nothing else
+            // here images itself must not be expanded, only its parent
+            select("logo.png");
+            isExpanded("C:").Should().Be(true);
+            isExpanded("config").Should().Be(false);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(true);
+            isExpanded("logo.png").Should().Be(false);
+        }
+
+        [Test]
+        public void TreeViewExpandAllCollapseAllTest()
+        {
+            var comp = Context.RenderComponent<TreeViewAutoExpandTest>(self => self.Add(x => x.AutoExpand, false));
+            var isExpanded = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
+                .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
+            isExpanded("C:").Should().Be(false);
+            isExpanded("config").Should().Be(false);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(false);
+            isExpanded("logo.png").Should().Be(false);
+            comp.Find("button.expand-all").Click();
+            isExpanded("C:").Should().Be(true);
+            isExpanded("config").Should().Be(true);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(true);
+            isExpanded("logo.png").Should().Be(false);
+            comp.Find("button.collapse-all").Click();
+            isExpanded("C:").Should().Be(false);
+            isExpanded("config").Should().Be(false);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(false);
+            isExpanded("logo.png").Should().Be(false);
+        }
+
+        [Test]
+        public void TreeViewExpandAll_ShouldNot_ExpandNonExpandableItems()
+        {
+            var comp = Context.RenderComponent<TreeViewAutoExpandTest>(self => self.Add(x => x.ConfigCanExpand, false));
+            var isExpanded = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
+                .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
+            isExpanded("C:").Should().Be(false);
+            isExpanded("config").Should().Be(false);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(false);
+            isExpanded("logo.png").Should().Be(false);
+            comp.Find("button.expand-all").Click();
+            isExpanded("C:").Should().Be(true);
+            isExpanded("config").Should().Be(false); // <--- shouldn't be expanded because it can't
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(true);
+            isExpanded("logo.png").Should().Be(false);
+            comp.Find("button.collapse-all").Click();
+            isExpanded("C:").Should().Be(false);
+            isExpanded("config").Should().Be(false);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(false);
+            isExpanded("logo.png").Should().Be(false);
         }
     }
 }

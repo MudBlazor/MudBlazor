@@ -2,7 +2,7 @@
 @using MudBlazor.Interfaces
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" Class="@Classname" Style="@Style"
+<div @attributes="UserAttributes" class="@Classname" style="@Style"
         @onmouseenter="@MouseEnterAsync"
         @onmouseleave="@MouseLeaveAsync"
         @oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? ToggleMenuAsync : null)"
@@ -15,8 +15,7 @@
             </div>
         </CascadingValue>
     }
-    else if (string.IsNullOrEmpty(Icon))
-    {
+    else if (string.IsNullOrEmpty(Icon)) {
         <MudButton StartIcon="@StartIcon"
                    EndIcon="@EndIcon"
                    IconColor="@IconColor"
@@ -31,15 +30,14 @@
             @Label
         </MudButton>
     }
-    else
-    {
+    else {
         <MudIconButton Variant="@Variant" Icon="@Icon" Color="@Color" Size="@Size" Disabled="@Disabled" Ripple="@Ripple" DropShadow="@DropShadow" @onclick="@ToggleMenuAsync"
                        aria-label="@AriaLabel" />
     }
     @* The portal has to include  the cascading values inside, because it's not able to teletransport the cascade *@
     <MudPopover Open="@_isOpen" Class="@PopoverClass" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" RelativeWidth="@FullWidth" Style="@_popoverStyle" @ontouchend:preventDefault>
         <CascadingValue Value="@this">
-            <MudList T="object" Class="@ListClass" Clickable="true" Dense="@Dense"
+            <MudList T="object" Class="@ListClass" Dense="@Dense"
                 @onmouseenter="@MouseEnterAsync"
                 @onmouseleave="@MouseLeaveAsync">
                 @ChildContent

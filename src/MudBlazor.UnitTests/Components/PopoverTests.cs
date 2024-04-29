@@ -1061,29 +1061,29 @@ namespace MudBlazor.UnitTests.Components
         public void MudPopoverProvider_DefaultValue()
         {
             var provider = new MudPopoverProvider();
-            provider.IsEnabled.Should().BeTrue();
+            provider.Enabled.Should().BeTrue();
         }
 
         [Test]
         public void MudPopoverProvider_RenderElementsBasedOnEnableState()
         {
-            var comp = Context.RenderComponent<PopoverProviderTest>(p => p.Add(x => x.ProviderIsEnabled, true));
+            var comp = Context.RenderComponent<PopoverProviderTest>(p => p.Add(x => x.ProviderEnabled, true));
             comp.Find("#my-content").TextContent.Should().Be("Popover content");
 
             for (var i = 0; i < 3; i++)
             {
-                comp.SetParametersAndRender(p => p.Add(x => x.ProviderIsEnabled, false));
+                comp.SetParametersAndRender(p => p.Add(x => x.ProviderEnabled, false));
                 Assert.Throws<ElementNotFoundException>(() => comp.Find("#my-content"));
 
-                comp.SetParametersAndRender(p => p.Add(x => x.ProviderIsEnabled, true));
+                comp.SetParametersAndRender(p => p.Add(x => x.ProviderEnabled, true));
                 comp.Find("#my-content").TextContent.Should().Be("Popover content");
             }
         }
 
         [Test]
-        public void MudPopoverProvider_NoRenderWhenIsEnabledIsFalse()
+        public void MudPopoverProvider_NoRenderWhenEnabledIsFalse()
         {
-            var comp = Context.RenderComponent<PopoverProviderTest>(p => p.Add(x => x.ProviderIsEnabled, false));
+            var comp = Context.RenderComponent<PopoverProviderTest>(p => p.Add(x => x.ProviderEnabled, false));
             Assert.Throws<ElementNotFoundException>(() => comp.Find("#my-content"));
         }
 

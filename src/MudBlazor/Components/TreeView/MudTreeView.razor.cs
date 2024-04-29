@@ -31,16 +31,16 @@ namespace MudBlazor
                 .WithChangeHandler(OnComparerChangedAsync);
             registerScope.RegisterParameter<SelectionMode>(nameof(SelectionMode))
                 .WithParameter(() => SelectionMode)
-                .WithChangeHandler(OnParameterChanged);
+                .WithChangeHandler(OnParameterChangedAsync);
             registerScope.RegisterParameter<bool>(nameof(TriState))
                 .WithParameter(() => TriState)
-                .WithChangeHandler(OnParameterChanged);
+                .WithChangeHandler(OnParameterChangedAsync);
             registerScope.RegisterParameter<bool>(nameof(Disabled))
                 .WithParameter(() => Disabled)
-                .WithChangeHandler(OnParameterChanged);
+                .WithChangeHandler(OnParameterChangedAsync);
             registerScope.RegisterParameter<bool>(nameof(ReadOnly))
                 .WithParameter(() => ReadOnly)
-                .WithChangeHandler(OnParameterChanged);
+                .WithChangeHandler(OnParameterChangedAsync);
             _selection = new();
         }
 
@@ -118,6 +118,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.TreeView.ClickAction)]
         public bool ExpandOnDoubleClick { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether the tree automatically expands to reveal the selected item.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public bool AutoExpand { get; set; }
 
         /// <summary>
         /// Hover effect for item's on mouse-over.
@@ -230,14 +237,54 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Selecting)]
         public bool ReadOnly { get; set; }
 
+        /// <summary>
+        /// Custom checked icon.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
+
+        /// <summary>
+        /// Custom unchecked icon.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
+
+        /// <summary>
+        /// Custom tri-state indeterminate icon.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender && MudTreeRoot == this)
             {
                 _isFirstRender = false;
-                UpdateItems();
+                await UpdateItemsAsync();
             }
             await base.OnAfterRenderAsync(firstRender);
+        }
+
+
+        /// <summary>
+        /// Expands all items and their children recursively.
+        /// </summary>
+        public async Task ExpandAllAsync()
+        {
+            foreach (var item in _childItems)
+                await item.ExpandAllAsync();
+        }
+
+        /// <summary>
+        /// Collapses all items and their children recursively.
+        /// </summary>
+        public async Task CollapseAllAsync()
+        {
+            foreach (var item in _childItems)
+                await item.CollapseAllAsync();
         }
 
         /// <summary>
@@ -247,7 +294,9 @@ namespace MudBlazor
         {
             // on first render the children are not yet initialized, so ignore this update
             if (_isFirstRender)
+            {
                 return Task.CompletedTask;
+            }
             return SetSelectedValueAsync(args.Value);
         }
 
@@ -268,22 +317,27 @@ namespace MudBlazor
         private Task OnComparerChangedAsync(ParameterChangedEventArgs<IEqualityComparer<T?>> args)
         {
             if (_isFirstRender)
+            {
                 return Task.CompletedTask;
-            UpdateItems();
-            return Task.CompletedTask;
+            }
+            return UpdateItemsAsync();
         }
 
-        private void OnParameterChanged()
+        private Task OnParameterChangedAsync()
         {
             if (_isFirstRender)
-                return;
-            UpdateItems();
+            {
+                return Task.CompletedTask;
+            }
+            return UpdateItemsAsync();
         }
 
         internal async Task OnItemClickAsync(MudTreeViewItem<T> clickedItem)
         {
             if (ReadOnly)
+            {
                 return;
+            }
             if (MultiSelection)
             {
                 var items = clickedItem.GetChildItemsRecursive();
@@ -293,17 +347,23 @@ namespace MudBlazor
                 foreach (var item in items.Where(x => x.GetValue() is not null))
                 {
                     if (allSelected)
+                    {
                         _selection.Remove(item.GetValue()!);
+                    }
                     else
+                    {
                         _selection.Add(item.GetValue()!);
+                    }
                 }
                 await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
-                UpdateItems();
+                await UpdateItemsAsync();
                 return;
             }
             var selected = clickedItem.GetState<bool>(nameof(MudTreeViewItem<T>.Selected));
             if (ToggleSelection)
+            {
                 await SetSelectedValueAsync(selected ? default : clickedItem.GetValue()); // <-- toggle selected value
+            }
             else if (!selected)
             {
                 // SingleSelection
@@ -318,8 +378,10 @@ namespace MudBlazor
             // Note: Setting Selected="false" has no effect however because it would cancel the initialization of the SelectedValue or SelectedValues !
             var value = item.GetValue();
             if (value is not null && item.GetState<bool>(nameof(MudTreeViewItem<T>.Selected)))
+            {
                 await SelectAsync(value);
-            item.UpdateSelectionState(GetSelection());
+            }
+            await item.UpdateSelectionStateAsync(GetSelection());
         }
 
         internal void RemoveChild(MudTreeViewItem<T> item)
@@ -335,7 +397,7 @@ namespace MudBlazor
                 if (!_isFirstRender)
                 {
                     await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
-                    UpdateItems();
+                    await UpdateItemsAsync();
                 }
                 return;
             }
@@ -343,14 +405,16 @@ namespace MudBlazor
             await _selectedValueState.SetValueAsync(value);
             if (!_isFirstRender)
             {
-                UpdateItems();
+                await UpdateItemsAsync();
             }
         }
 
         internal async Task UnselectAsync(T value)
         {
             if (_isFirstRender || !MultiSelection)
+            {
                 return;
+            }
             _selection.Remove(value);
             await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
         }
@@ -367,7 +431,7 @@ namespace MudBlazor
             var isValid = value != null && GetChildValuesRecursive().Contains(value);
             // note: if there is no item that corresponds to the value, the value is reset to default!
             await _selectedValueState.SetValueAsync(isValid ? value : default);
-            UpdateItems();
+            await UpdateItemsAsync();
         }
 
         ///  <summary>
@@ -379,22 +443,24 @@ namespace MudBlazor
             var allChildValues = GetChildValuesRecursive();
             var newSelection = new HashSet<T>(newValues.Where(x => allChildValues.Contains(x)), Comparer);
             if (_selection.SetEquals(newSelection))
+            {
                 return;
+            }
             _selection = newSelection;
             await _selectedValuesState.SetValueAsync(newSelection);
-            UpdateItems();
+            await UpdateItemsAsync();
         }
 
         /// <summary>
         /// Let the items update their selection state visualization and state according to
         /// the selection in the tree view
         /// </summary>
-        private void UpdateItems()
+        private async Task UpdateItemsAsync()
         {
             var selection = GetSelection();
             foreach (var item in _childItems)
             {
-                item.UpdateSelectionState(selection);
+                await item.UpdateSelectionStateAsync(selection);
             }
         }
 
@@ -402,12 +468,16 @@ namespace MudBlazor
         {
             HashSet<T> selection;
             if (MultiSelection)
+            {
                 selection = new HashSet<T>(_selection, Comparer);
+            }
             else
             {
                 selection = new HashSet<T>(Comparer);
                 if (_selectedValueState.Value != null)
+                {
                     selection.Add(_selectedValueState.Value);
+                }
             }
             return selection;
         }
@@ -422,9 +492,13 @@ namespace MudBlazor
             {
                 var value = item.GetValue();
                 if (value is not null)
+                {
                     values.Add(value);
+                }
                 if (item.ChildItems.Count > 0)
+                {
                     GetChildValuesRecursive(item.ChildItems, values);
+                }
             }
 
             return values;

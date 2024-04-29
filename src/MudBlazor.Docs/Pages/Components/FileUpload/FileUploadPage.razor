@@ -3,16 +3,15 @@
 <DocsPage>
     <DocsPageHeader Title="File Upload">
         <Description>
-
             <MudText Typo="@Typo.body1" Class="mt-4">
-                To create a file upload button, two elements are needed: a <CodeInline>label</CodeInline> or <CodeInline>button</CodeInline> and an <CodeInline>input</CodeInline>.
+                To create a file upload button, two elements are needed: an activator (using the <CodeInline>ActivatorContent</CodeInline> parameter) and an <CodeInline>input</CodeInline>.
             </MudText>
             <br />
             <MudText Typo="@Typo.body1">
-                When we set the <CodeInline>for</CodeInline> attribute to the same value as the <CodeInline>id</CodeInline> of the input, we enable the input to be triggered by clicking on the label or button. We then hide the input.
+                The <CodeInline>MudFileUpload</CodeInline> component provides public <CodeInline>ClearAsync</CodeInline> and <CodeInline>OpenFilePickerAsync</CodeInline>
+                methods that can be used as <CodeInline>OnClick</CodeInline> events for buttons.
             </MudText>
             <br />
-
             <MudText Typo="@Typo.body1">
                 After uploading the files, you will receive an <CodeInline>IReadOnlyList&#60IBrowserFile&#62</CodeInline> or <CodeInline>IBrowserFile</CodeInline> and you will need to manually handle the upload in <CodeInline>HandleFilesChanged</CodeInline>.
                 Instead of using <CodeInline>multiple</CodeInline> to allow multiple files, you set T to <CodeInline>IReadOnlyList&#60IBrowserFile&#62</CodeInline>. Using <CodeInline>IBrowserFile</CodeInline> restricts the component to a single file.
@@ -26,9 +25,8 @@
         <DocsPageSection>
             <SectionHeader Title="Use any type of MudButton">
                 <Description>
-                    Use a <CodeInline>MudButton</CodeInline>, a <CodeInline>MudIconButton</CodeInline> or a <CodeInline>MudFab</CodeInline> with the HtmlTag property set to "label" within the <CodeInline>ButtonTemplate</CodeInline> render fragment.
-                    Be sure to set the button's ID using the <CodeInline>&#64;context</CodeInline> parameter. <br />
-                    A <CodeInline>MudFileUpload</CodeInline> can be <CodeInline>Disabled</CodeInline> and it will Disable its child button automatically.
+                    Use a <CodeInline>MudButton</CodeInline>, a <CodeInline>MudIconButton</CodeInline> or a <CodeInline>MudFab</CodeInline> with the <CodeInline>ActivatorContent</CodeInline> render fragment.
+                    A <CodeInline>MudFileUpload</CodeInline> can be <CodeInline>Disabled</CodeInline> and it will disable its child button automatically.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FileUploadButtonExample)">
@@ -41,7 +39,19 @@
                 <Description>
                     Allow multiple files with <CodeInline>T="IReadOnlyList&#60IBrowserFile&#62"</CodeInline> or limit the valid file types with <CodeInline>Accept</CodeInline>.
                     To upload more than 10 files, you must specify a <CodeInline>MaximumFileCount</CodeInline>.
+
+                    <MudAlert Class="my-3"
+                              Dense
+                              Severity="Severity.Info">
+                        Note: Some browsers or platforms may require specific values for the <CodeInline>Accept</CodeInline> attribute.
+                        <br>
+                        <br>
+                        In MAUI using an Android device for example, you should use <CodeInline>Accept="image/png, image/jpg"</CodeInline> rather than <CodeInline>Accept=".png, .jpg"</CodeInline>.
+                        <br>
+                        Refer to the <a href="https://learn.microsoft.com/en-us/dotnet/maui/platform-integration/storage/file-picker?view=net-maui-8.0&tabs=android#platform-differences">MAUI docs</a> for more information.
+                    </MudAlert>
                 </Description>
+
             </SectionHeader>
             <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FileUploadMultipleAcceptExample)">
                 <FileUploadMultipleAcceptExample />
@@ -53,7 +63,7 @@
                 <Description>
                     Use the <CodeInline>For</CodeInline> property to validate your files within a form, and bind your files to your model class using <CodeInline>&#64;bind-Files</CodeInline>.
                     You can then handle the file upload logic within your <CodeInline>MudForm</CodeInline> submit method.
-                    The <CodeInline>ButtonTemplate</CodeInline> property provides the <CodeInline>&#64;context.Actions.ClearAsync</CodeInline> action that you can bind to a button to clear files and update the form state.
+                    The component provides a public <CodeInline>ClearAsync</CodeInline> method that you can use as <CodeInline>OnClick</CodeInline> handler for a button to clear files and update the form state.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FileUploadValidationExample)">

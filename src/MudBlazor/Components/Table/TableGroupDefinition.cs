@@ -83,7 +83,7 @@ namespace MudBlazor
             {
                 _expandable = value;
                 if (_expandable == false)
-                    Context?.GroupRows.Where(gr => gr.GroupDefinition == this).ToList().ForEach(gr => gr.IsExpanded = IsInitiallyExpanded);
+                    Context?.GroupRows.Where(gr => gr.GroupDefinition == this).ToList().ForEach(gr => gr.Expanded = IsInitiallyExpanded);
             }
         }
 

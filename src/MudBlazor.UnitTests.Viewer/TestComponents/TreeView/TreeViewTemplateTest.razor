@@ -2,7 +2,7 @@
 
 <MudTreeView SelectionMode="SelectionMode.MultiSelection" Items="TreeItems" Style="width: 500px;">
     <ItemTemplate>
-        <MudTreeViewItem @bind-Selected="@context.IsSelected" @bind-Expanded="@context.IsExpanded" Icon="@context.Icon"
+        <MudTreeViewItem @bind-Selected="@context.IsSelected" @bind-Expanded="@context.Expanded" Icon="@context.Icon"
                          Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" Items="@context.TreeItems" />
     </ItemTemplate>
 </MudTreeView>
@@ -19,7 +19,7 @@
 
         public bool IsSelected { get; set; }
 
-        public bool IsExpanded { get; set; }
+        public bool Expanded { get; set; }
 
         public HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
 
@@ -39,7 +39,7 @@
         TreeItems.Add(new TreeItemData("Trash", Icons.Material.Filled.Delete));
         TreeItems.Add(new TreeItemData("Categories", Icons.Material.Filled.Label)
         {
-            IsExpanded = true,
+            Expanded = true,
             TreeItems = new HashSet<TreeItemData>()
             {
                 new TreeItemData("Social", Icons.Material.Filled.Group, 90),

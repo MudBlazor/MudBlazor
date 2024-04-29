@@ -15,27 +15,27 @@ public partial class ParameterStateChildBindingTestComp : MudComponentBase
 {
     private readonly List<(bool lastValue, bool value)> _parameterChangedEvents = new();
 
-    private readonly ParameterState<bool> _isExpandedState;
+    private readonly ParameterState<bool> _expandedState;
 
     [Parameter]
     public string? Id { get; set; }
 
     [Parameter]
-    public bool IsExpanded { get; set; }
+    public bool Expanded { get; set; }
 
     [Parameter]
-    public EventCallback<bool> IsExpandedChanged { get; set; }
+    public EventCallback<bool> ExpandedChanged { get; set; }
 
-    public bool IsExpandedStateValue => _isExpandedState.Value;
+    public bool ExpandedStateValue => _expandedState.Value;
 
     public IReadOnlyList<(bool lastValue, bool value)> ParameterChangedEvents => _parameterChangedEvents;
 
     public ParameterStateChildBindingTestComp()
     {
         using var registerScope = CreateRegisterScope();
-        _isExpandedState = registerScope.RegisterParameter<bool>(nameof(IsExpanded))
-            .WithParameter(() => IsExpanded)
-            .WithEventCallback(() => IsExpandedChanged)
+        _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
+            .WithParameter(() => Expanded)
+            .WithEventCallback(() => ExpandedChanged)
             .WithChangeHandler(OnParameterChanged);
     }
 
@@ -46,6 +46,6 @@ public partial class ParameterStateChildBindingTestComp : MudComponentBase
 
     public Task ToggleAsync()
     {
-        return _isExpandedState.SetValueAsync(!_isExpandedState.Value);
+        return _expandedState.SetValueAsync(!_expandedState.Value);
     }
 }

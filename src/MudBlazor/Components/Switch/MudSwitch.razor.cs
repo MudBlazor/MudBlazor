@@ -35,8 +35,8 @@ namespace MudBlazor
         protected string SwitchClassname =>
             new CssBuilder("mud-button-root mud-icon-button mud-switch-base")
                 .AddClass($"mud-ripple mud-ripple-switch", Ripple && !GetReadOnlyState() && !GetDisabledState())
-                .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", BoolValue == true)
-                .AddClass($"mud-{UnCheckedColor.ToDescriptionString()}-text hover:mud-{UnCheckedColor.ToDescriptionString()}-hover", BoolValue == false)
+                .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == true)
+                .AddClass($"mud-{UncheckedColor.ToDescriptionString()}-text hover:mud-{UncheckedColor.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == false)
                 .AddClass($"mud-switch-disabled", GetDisabledState())
                 .AddClass($"mud-readonly", GetReadOnlyState())
                 .AddClass($"mud-checked", BoolValue)
@@ -46,7 +46,7 @@ namespace MudBlazor
         protected string TrackClassname =>
             new CssBuilder("mud-switch-track")
                 .AddClass($"mud-{Color.ToDescriptionString()}", BoolValue == true)
-                .AddClass($"mud-{UnCheckedColor.ToDescriptionString()}", BoolValue == false)
+                .AddClass($"mud-{UncheckedColor.ToDescriptionString()}", BoolValue == false)
                 .Build();
 
         protected string ThumbClassname =>
@@ -71,7 +71,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
-        public Color UnCheckedColor { get; set; } = Color.Default;
+        public Color UncheckedColor { get; set; } = Color.Default;
 
         /// <summary>
         /// The text/label will be displayed next to the switch if set.

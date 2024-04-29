@@ -3,7 +3,10 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Drawing;
 using System.Globalization;
+using System.Text.Json;
+using ColorCode.Compilation.Languages;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -12,6 +15,27 @@ namespace MudBlazor.UnitTests.Utilities
     [TestFixture]
     public class BindingConverterTests
     {
+
+        [Test]
+        public void GlobalConverterTests()
+        {
+            var c10 = new DefaultConverter<Point>();
+            DefaultConverter<Point>.GlobalGetFunc = x => $"[{x.X},{x.Y}]";
+            DefaultConverter<Point>.GlobalSetFunc = x => { var tmp = JsonSerializer.Deserialize<int[]>(x); return new Point(tmp[0], tmp[1]); };
+
+            c10.Set(new Point(1, 2)).Should().Be("[1,2]");
+            c10.Get("[1,2]").Should().Be(new Point(1, 2));
+        }
+        [Test]
+        public void GlobalConverterTestsErrorHandling()
+        {
+            var c10 = new DefaultConverter<Point>();
+            DefaultConverter<Point>.GlobalSetFunc = x => { var tmp = JsonSerializer.Deserialize<int[]>(x); return new Point(tmp[0], tmp[1]); };
+
+            c10.Get("[1,2").Should().Be(Point.Empty);
+            c10.GetErrorMessage.Should().Be("Not a valid Point");
+        }
+
         [Test]
         public void DefaultIntegerConverterTest()
         {
