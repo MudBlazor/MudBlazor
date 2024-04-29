@@ -16,12 +16,43 @@ public static class MudGlobal
         public static DefaultFocus DefaultFocus { get; set; } = DefaultFocus.Element;
     }
 
+    public static class OverlayDefaults
+    {
+        /// <summary>
+        /// The default transition delay for <see cref="MudOverlay"/> and <see cref="MudPicker{T}"/>.
+        /// </summary>
+        public static TimeSpan Delay { get; set; } = TransitionDefaults.Delay;
+
+        /// <summary>
+        /// The default transition time for components like <see cref="MudTooltip"/>, <see cref="MudOverlay"/>, <see cref="MudPicker{T}"/>.
+        /// </summary>
+        public static TimeSpan Duration { get; set; } = TransitionDefaults.Duration;
+    }
+
+    public static class PickerDefaults
+    {
+        /// <summary>
+        /// The default transition delay for <see cref="MudOverlay"/> and <see cref="MudPicker{T}"/>.
+        /// </summary>
+        public static TimeSpan Delay { get; set; } = TransitionDefaults.Delay;
+
+        /// <summary>
+        /// The default transition time for components like <see cref="MudTooltip"/>, <see cref="MudOverlay"/>, <see cref="MudPicker{T}"/>.
+        /// </summary>
+        public static TimeSpan Duration { get; set; } = TransitionDefaults.Duration;
+    }
+
     public static class TooltipDefaults
     {
         /// <summary>
-        /// The default <see cref="MudTooltip.Delay"/>.
+        /// The default transition delay for <see cref="MudOverlay"/> and <see cref="MudPicker{T}"/>.
         /// </summary>
-        public static TimeSpan Delay { get; set; } = TimeSpan.Zero;
+        public static TimeSpan Delay { get; set; } = TransitionDefaults.Delay;
+
+        /// <summary>
+        /// The default transition time for components like <see cref="MudTooltip"/>, <see cref="MudOverlay"/>, <see cref="MudPicker{T}"/>.
+        /// </summary>
+        public static TimeSpan Duration { get; set; } = TransitionDefaults.Duration;
     }
 
     public static class TransitionDefaults
