@@ -16,6 +16,7 @@ namespace MudBlazor
                 .AddClass("mud-disabled", baseInput.Disabled)
                 .AddClass("mud-input-error", baseInput.HasErrors)
                 .AddClass("mud-ltr", baseInput.GetInputType() == InputType.Email || baseInput.GetInputType() == InputType.Telephone)
+                .AddClass($"mud-typography-{baseInput.Typo.ToDescriptionString()}")
                 .AddClass(baseInput.Class)
                 .Build();
 
@@ -25,7 +26,6 @@ namespace MudBlazor
                 .AddClass($"mud-input-root-{baseInput.Variant.ToDescriptionString()}")
                 .AddClass($"mud-input-root-adorned-{baseInput.Adornment.ToDescriptionString()}", baseInput.Adornment != Adornment.None)
                 .AddClass($"mud-input-root-margin-{baseInput.Margin.ToDescriptionString()}", when: () => baseInput.Margin != Margin.None)
-                .AddClass($"mud-typography-{baseInput.Typo.ToDescriptionString()}")
                 .AddClass(baseInput.Class)
                 .Build();
 

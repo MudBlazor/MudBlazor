@@ -196,6 +196,7 @@
 
 .mud-input > input, div.mud-input-slot {
   &.mud-input-root {
+    font: inherit;
     color: currentColor;
     width: 100%;
     border: 0;
