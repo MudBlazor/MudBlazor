@@ -42,8 +42,8 @@ namespace MudBlazor
 
         protected string PickerPaperStylename =>
             new StyleBuilder()
-                .AddStyle("transition-duration", $"{Math.Round(MudGlobal.TransitionDuration.TotalMilliseconds)}ms")
-                .AddStyle("transition-delay", $"{Math.Round(MudGlobal.TransitionDelay.TotalMilliseconds)}ms")
+                .AddStyle("transition-duration", $"{Math.Round(MudGlobal.TransitionDefaults.Duration.TotalMilliseconds)}ms")
+                .AddStyle("transition-delay", $"{Math.Round(MudGlobal.TransitionDefaults.Delay.TotalMilliseconds)}ms")
                 .AddStyle(Style)
                 .Build();
 
