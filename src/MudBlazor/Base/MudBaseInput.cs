@@ -216,9 +216,6 @@ namespace MudBlazor
         /// <summary>
         /// Typography for the input text.
         /// </summary>
-        /// <remarks>
-        /// Uses the default typography if <c>null</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Typo Typo { get; set; } = Typo.input;
