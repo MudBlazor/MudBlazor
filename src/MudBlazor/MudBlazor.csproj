@@ -110,6 +110,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\MudBlazor.SourceCodeGenerator\MudBlazor.SourceCodeGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 

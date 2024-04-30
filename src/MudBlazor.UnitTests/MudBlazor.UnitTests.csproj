@@ -51,6 +51,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" />
     <ProjectReference Include="..\MudBlazor.Docs\MudBlazor.Docs.csproj" />
     <ProjectReference Include="..\MudBlazor.Docs.Compiler\MudBlazor.Docs.Compiler.csproj" />
     <ProjectReference Include="..\MudBlazor.SourceCodeGenerator\MudBlazor.SourceCodeGenerator.csproj" />
