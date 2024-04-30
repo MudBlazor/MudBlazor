@@ -183,7 +183,7 @@ public sealed class DoNotUseUnknownParameterForRazorComponentAnalyzer : Diagnost
                             foreach (var attribute in IgnoreAttributes)
                                 descriptor.Parameters.Add(attribute.Key);
 
-                            //HACKY READ OF ADDITIONAL UserAttributes
+                            //HACKY READ OF ADDITIONAL UserAttributes experiment
                             /*if (member.Name.Equals("UserAttributes"))
                             {
                                 descriptor.Parameters.Add("UserAttributes");
