@@ -45,7 +45,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
-        public Margin Margin { get; set; } = Margin.None;
+        public Margin Margin { get; set; } = Margin.Default;
 
         /// <summary>
         /// If true, compact vertical padding will be applied to all navmenu items.

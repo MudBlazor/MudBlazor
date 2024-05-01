@@ -20,7 +20,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Bordered.Should().Be(false);
             comp.Instance.Color.Should().Be(Color.Default);
             comp.Instance.Dense.Should().Be(false);
-            comp.Instance.Margin.Should().Be(Margin.None);
+            comp.Instance.Margin.Should().Be(Margin.Default);
             comp.Instance.Rounded.Should().Be(false);
 
             comp.FindAll("mud-navmenu-bordered").Count.Should().Be(0);

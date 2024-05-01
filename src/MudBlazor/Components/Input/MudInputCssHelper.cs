@@ -10,13 +10,12 @@ namespace MudBlazor
                 .AddClass($"mud-input-{baseInput.Variant.ToDescriptionString()}")
                 .AddClass($"mud-input-{baseInput.Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(baseInput.Label))
                 .AddClass($"mud-input-adorned-{baseInput.Adornment.ToDescriptionString()}", baseInput.Adornment != Adornment.None)
-                .AddClass($"mud-input-margin-{baseInput.Margin.ToDescriptionString()}", when: () => baseInput.Margin != Margin.None)
+                .AddClass($"mud-input-margin-{baseInput.Margin.ToDescriptionString()}", when: () => baseInput.Margin != Margin.Default)
                 .AddClass("mud-input-underline", when: () => baseInput.Underline && baseInput.Variant != Variant.Outlined)
                 .AddClass("mud-shrink", when: shrinkWhen)
                 .AddClass("mud-disabled", baseInput.Disabled)
                 .AddClass("mud-input-error", baseInput.HasErrors)
                 .AddClass("mud-ltr", baseInput.GetInputType() == InputType.Email || baseInput.GetInputType() == InputType.Telephone)
-                .AddClass($"mud-typography-{baseInput.Typo.ToDescriptionString()}")
                 .AddClass(baseInput.Class)
                 .Build();
 
@@ -25,7 +24,7 @@ namespace MudBlazor
                 .AddClass("mud-input-root")
                 .AddClass($"mud-input-root-{baseInput.Variant.ToDescriptionString()}")
                 .AddClass($"mud-input-root-adorned-{baseInput.Adornment.ToDescriptionString()}", baseInput.Adornment != Adornment.None)
-                .AddClass($"mud-input-root-margin-{baseInput.Margin.ToDescriptionString()}", when: () => baseInput.Margin != Margin.None)
+                .AddClass($"mud-input-root-margin-{baseInput.Margin.ToDescriptionString()}", when: () => baseInput.Margin != Margin.Default)
                 .AddClass(baseInput.Class)
                 .Build();
 

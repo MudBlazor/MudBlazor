@@ -27,7 +27,7 @@ namespace MudBlazor
                 .AddClass($"mud-input-{Variant.ToDescriptionString()}")
                 .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
                 .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
-                .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
+                .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.Default)
                 .AddClass("mud-input-underline", when: () => Underline && Variant != Variant.Outlined)
                 .AddClass("mud-shrink",
                     when: () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start ||
@@ -43,7 +43,7 @@ namespace MudBlazor
                 .AddClass("mud-input-root")
                 .AddClass($"mud-input-root-{Variant.ToDescriptionString()}")
                 .AddClass($"mud-input-root-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
-                .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
+                .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.Default)
                 .AddClass(Class)
                 .Build();
 

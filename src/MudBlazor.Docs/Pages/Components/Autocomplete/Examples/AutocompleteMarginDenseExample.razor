@@ -16,18 +16,18 @@
 </MudGrid>
 
 @code {
-    Margin _margin = Margin.None;
+    Margin _margin = Margin.Default;
     bool _dense = false;
 
     private void ChangeMargin()
     {
-        if (_margin == Margin.None)
+        if (_margin == Margin.Default)
         {
             _margin = Margin.Dense;
         }
         else
         {
-            _margin = Margin.None;
+            _margin = Margin.Default;
         }
     }
 

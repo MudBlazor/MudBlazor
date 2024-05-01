@@ -4,8 +4,8 @@ namespace MudBlazor
 {
     public enum Margin
     {
-        [Description("none")]
-        None,
+        [Description("default")]
+        Default,
         [Description("dense")]
         Dense,
         [Description("normal")]
