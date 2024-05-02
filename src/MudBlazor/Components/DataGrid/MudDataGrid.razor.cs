@@ -463,6 +463,14 @@ namespace MudBlazor
         [Parameter] public DialogOptions EditDialogOptions { get; set; }
 
         /// <summary>
+        /// Sets the deep copy resolver.
+        /// </summary>
+        /// <remarks>
+        /// This resolved is used during EditMode.
+        /// </remarks>
+        [Parameter] public IDeepCopyResolver<T> DeepCopyResolver { get; set; } = new SystemTextJsonDeepCopyResolver<T>();
+
+        /// <summary>
         /// The data to display in the table. MudTable will render one row per item
         /// </summary>
         ///
@@ -861,7 +869,6 @@ namespace MudBlazor
 
         #endregion
 
-        [UnconditionalSuppressMessage("Trimming", "IL2046: 'RequiresUnreferencedCodeAttribute' annotations must match across all interface implementations or overrides.", Justification = "Suppressing because we annotating the whole component with RequiresUnreferencedCodeAttribute for information that generic type must be preserved.")]
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -879,7 +886,6 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        [UnconditionalSuppressMessage("Trimming", "IL2046: 'RequiresUnreferencedCodeAttribute' annotations must match across all interface implementations or overrides.", Justification = "Suppressing because we annotating the whole component with RequiresUnreferencedCodeAttribute for information that generic type must be preserved.")]
         public override async Task SetParametersAsync(ParameterView parameters)
         {
             var sortModeBefore = SortMode;
@@ -1330,7 +1336,7 @@ namespace MudBlazor
             editingSourceItem = item;
             EditingCanceledEvent?.Invoke();
             _previousEditingItem = _editingItem;
-            _editingItem = JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(item));
+            _editingItem = DeepCopyResolver.CloneObject(item);
             StartedEditingItemEvent?.Invoke();
             await StartedEditingItem.InvokeAsync(_editingItem);
             isEditFormOpen = true;
