@@ -37,12 +37,14 @@ namespace MudBlazor
 
         private string _classname =>
             new CssBuilder(Column?.HeaderClass)
+                .AddClass(Column?.HeaderClassFunc?.Invoke(DataGrid?.CurrentPageItems ?? Enumerable.Empty<T>()))
                 .AddClass(Column?.headerClassname)
                 .AddClass(Class)
             .Build();
 
         private string _style =>
             new StyleBuilder()
+                .AddStyle(Column?.HeaderStyleFunc?.Invoke(DataGrid?.CurrentPageItems ?? Enumerable.Empty<T>()))
                 .AddStyle(Column?.HeaderStyle)
                 .AddStyle("width", Width?.ToPx(), when: Width.HasValue)
                 .AddStyle(Style)

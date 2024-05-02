@@ -52,9 +52,9 @@ namespace MudBlazor
         #region HeaderCell Properties
 
         [Parameter] public string HeaderClass { get; set; }
-        [Parameter] public Func<T, string> HeaderClassFunc { get; set; }
+        [Parameter] public Func<IEnumerable<T>, string> HeaderClassFunc { get; set; }
         [Parameter] public string HeaderStyle { get; set; }
-        [Parameter] public Func<T, string> HeaderStyleFunc { get; set; }
+        [Parameter] public Func<IEnumerable<T>, string> HeaderStyleFunc { get; set; }
 
         /// <summary>
         /// Determines whether this columns data can be sorted. This overrides the SortMode parameter on the DataGrid.
@@ -163,9 +163,9 @@ namespace MudBlazor
         #region FooterCell Properties
 
         [Parameter] public string FooterClass { get; set; }
-        [Parameter] public Func<T, string> FooterClassFunc { get; set; }
+        [Parameter] public Func<IEnumerable<T>, string> FooterClassFunc { get; set; }
         [Parameter] public string FooterStyle { get; set; }
-        [Parameter] public Func<T, string> FooterStyleFunc { get; set; }
+        [Parameter] public Func<IEnumerable<T>, string> FooterStyleFunc { get; set; }
         [Parameter] public bool EnableFooterSelection { get; set; }
         [Parameter] public AggregateDefinition<T> AggregateDefinition { get; set; }
 
