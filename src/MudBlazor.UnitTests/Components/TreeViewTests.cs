@@ -919,5 +919,17 @@ namespace MudBlazor.UnitTests.Components
             isExpanded("images").Should().Be(false);
             isExpanded("logo.png").Should().Be(false);
         }
+        [Test]
+        public void TreeViewItem_SetParameters_ValueIsSetNull_WhenTextUnset_RootServerdataIsSet_Throw()
+        {
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+            {
+                var comp = Context.RenderComponent<TreeViewTest8>();
+                comp.SetParametersAndRender();
+                comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
+            });
+
+            exception.Message.Should().Be("'MudTreeView.ServerData' requires 'ItemTemplate.MudTreeViewItem.Value' to be supplied.");
+        }
     }
 }
