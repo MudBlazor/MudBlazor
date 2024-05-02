@@ -241,7 +241,7 @@ namespace MudBlazor
         public bool ResetValueOnEmptyText { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the text will be selected (highlighted) when the component is activated.
+        /// Gets or sets whether the text will be selected (highlighted) when the component receives focus.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.

@@ -163,6 +163,7 @@ namespace MudBlazor
                         case "Direction":
                         case "OffsetX":
                         case "OffsetY":
+                        case "SelectOnClick":
                             NotifyIllegalParameter(parameter);
                             break;
                     }
