@@ -931,8 +931,8 @@ namespace MudBlazor.UnitTests.Components
             });
 
 #nullable enable 
-            MudTreeView<T>? nullInstanceTree =null;
-            MudTreeViewItem<T>? nullInstanceItem =null;
+            MudTreeView<T>? nullInstanceTree = null;
+            MudTreeViewItem<T>? nullInstanceItem = null;
 #nullable disable
 
             exception.Message.Should().Be($"'{nameof(MudTreeView<T>)}.{nameof(nullInstanceTree.ServerData)}' requires '{nameof(nullInstanceTree.ItemTemplate)}.{nameof(MudTreeViewItem<T>)}.{nameof(nullInstanceItem.Value)}' to be supplied.");
