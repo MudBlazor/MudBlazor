@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
@@ -929,7 +930,12 @@ namespace MudBlazor.UnitTests.Components
                 comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
             });
 
-            exception.Message.Should().Be("'MudTreeView.ServerData' requires 'ItemTemplate.MudTreeViewItem.Value' to be supplied.");
+#nullable enable 
+            MudTreeView<T>? nullInstanceTree =null;
+            MudTreeViewItem<T>? nullInstanceItem =null;
+#nullable disable
+
+            exception.Message.Should().Be($"'{nameof(MudTreeView<T>)}.{nameof(nullInstanceTree.ServerData)}' requires '{nameof(nullInstanceTree.ItemTemplate)}.{nameof(MudTreeViewItem<T>)}.{nameof(nullInstanceItem.Value)}' to be supplied.");
         }
     }
 }
