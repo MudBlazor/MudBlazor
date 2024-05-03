@@ -29,7 +29,7 @@ namespace MudBlazor
                 .AddClass("mud-list-item-dense", GetDense())
                 .AddClass("mud-list-item-gutters", Gutters || MudList?.Gutters == true)
                 .AddClass("mud-list-item-clickable", GetClickable())
-                .AddClass("mud-ripple", !Ripple && GetClickable())
+                .AddClass("mud-ripple", Ripple && GetClickable())
                 .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text", !MultiSelection && _selected && !GetDisabled())
                 .AddClass($"mud-{MudList?.Color.ToDescriptionString()}-hover", !MultiSelection && _selected && !GetDisabled())
                 .AddClass("mud-list-item-disabled", GetDisabled())
