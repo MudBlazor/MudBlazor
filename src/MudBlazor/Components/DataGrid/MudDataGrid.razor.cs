@@ -468,7 +468,7 @@ namespace MudBlazor
         /// <remarks>
         /// This resolved is used during EditMode.
         /// </remarks>
-        [Parameter] public IDeepCopyResolver<T> DeepCopyResolver { get; set; } = new SystemTextJsonDeepCopyResolver<T>();
+        [Parameter] public ICloneStrategy<T> CloneStrategy { get; set; } = new SystemTextJsonDeepCloneStrategy<T>();
 
         /// <summary>
         /// The data to display in the table. MudTable will render one row per item
@@ -1335,7 +1335,7 @@ namespace MudBlazor
             editingSourceItem = item;
             EditingCanceledEvent?.Invoke();
             _previousEditingItem = _editingItem;
-            _editingItem = DeepCopyResolver.CloneObject(item);
+            _editingItem = CloneStrategy.CloneObject(item);
             StartedEditingItemEvent?.Invoke();
             await StartedEditingItem.InvokeAsync(_editingItem);
             isEditFormOpen = true;

@@ -9,7 +9,7 @@ namespace MudBlazor;
 /// Represents an interface for resolving deep copy operations for objects of type <typeparamref name="T"/>.
 /// </summary>
 /// <typeparam name="T">The type of the object to be deep-copied.</typeparam>
-public interface IDeepCopyResolver<T>
+public interface ICloneStrategy<T>
 {
     /// <summary>
     /// Clones the specified object of type <typeparamref name="T"/>.
