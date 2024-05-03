@@ -9,7 +9,7 @@ namespace MudBlazor.State.Builder;
 /// <summary>
 /// Represents a scope for registering parameters.
 /// </summary>
-internal interface IParameterRegistrationBuilderScope : IDisposable
+public interface IParameterRegistrationBuilderScope : IDisposable
 {
     /// <summary>
     /// Creates a parameter builder for registering a parameter.
