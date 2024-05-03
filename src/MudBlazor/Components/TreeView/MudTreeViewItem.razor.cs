@@ -363,7 +363,7 @@ namespace MudBlazor
                     await MudTreeRoot.AddChildAsync(this);
                 }
             }
-            base.OnInitializedAsync();
+            await base.OnInitializedAsync();
         }
 
         private Task OnSelectedParameterChangedAsync(ParameterChangedEventArgs<bool> arg)
