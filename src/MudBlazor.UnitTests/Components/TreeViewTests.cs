@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
@@ -918,6 +919,23 @@ namespace MudBlazor.UnitTests.Components
             isExpanded("tasks.json").Should().Be(false);
             isExpanded("images").Should().Be(false);
             isExpanded("logo.png").Should().Be(false);
+        }
+        [Test]
+        public void TreeViewItem_SetParameters_ValueIsSetNull_WhenTextUnset_RootServerdataIsSet_Throw()
+        {
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+            {
+                var comp = Context.RenderComponent<TreeViewTest8>();
+                comp.SetParametersAndRender();
+                comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
+            });
+
+#nullable enable 
+            MudTreeView<T>? nullInstanceTree = null;
+            MudTreeViewItem<T>? nullInstanceItem = null;
+#nullable disable
+
+            exception.Message.Should().Be($"'{nameof(MudTreeView<T>)}.{nameof(nullInstanceTree.ServerData)}' requires '{nameof(nullInstanceTree.ItemTemplate)}.{nameof(MudTreeViewItem<T>)}.{nameof(nullInstanceItem.Value)}' to be supplied.");
         }
     }
 }
