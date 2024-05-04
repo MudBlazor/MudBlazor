@@ -674,7 +674,7 @@ namespace MudBlazor
         /// Whether the <see cref="For"/> property is <c>null</c>.
         /// </summary>
         [MemberNotNullWhen(false, nameof(For))]
-        public bool IsForNull => For is null;
+        public bool ForIsNull => For is null;
 
         /// <summary>
         /// Stores the list of validation attributes attached to the property targeted by <seealso cref="For"/>. If <seealso cref="For"/> is null, this property is null too.

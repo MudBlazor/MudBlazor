@@ -338,7 +338,7 @@ namespace MudBlazor
         {
             if (Validation == null) return;
 
-            if (!formComponent.IsForNull && (formComponent.Validation == null || (OverrideFieldValidation ?? true)))
+            if (!formComponent.ForIsNull && (formComponent.Validation == null || (OverrideFieldValidation ?? true)))
             {
                 formComponent.Validation = Validation;
             }
