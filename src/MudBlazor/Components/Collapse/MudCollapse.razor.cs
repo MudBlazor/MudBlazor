@@ -60,7 +60,7 @@ namespace MudBlazor
         public int? MaxHeight { get; set; }
 
         /// <summary>
-        /// Gets or sets any content within this panel.
+        /// The content within this panel.
         /// </summary>
         [Parameter]
         public RenderFragment? ChildContent { get; set; }

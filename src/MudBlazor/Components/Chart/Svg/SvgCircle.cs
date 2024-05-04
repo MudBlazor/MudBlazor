@@ -34,7 +34,7 @@ namespace MudBlazor.Charts.SVG.Models
         public string StrokeDashArray { get; set; }
 
         /// <summary>
-        /// Gets or sets an offset applied to the <see cref="StrokeDashArray"/>.
+        /// The offset applied to the <see cref="StrokeDashArray"/>.
         /// </summary>
         public double StrokeDashOffset { get; set; }
     }

@@ -71,7 +71,7 @@ namespace MudBlazor
         public Size? IconSize { get; set; }
 
         /// <summary>
-        /// Gets or sets any CSS classes applied to icons.
+        /// The CSS classes applied to icons.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.
@@ -121,7 +121,7 @@ namespace MudBlazor
         public bool FullWidth { get; set; }
 
         /// <summary>
-        /// Gets or sets any content within this component.
+        /// The content within this component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]

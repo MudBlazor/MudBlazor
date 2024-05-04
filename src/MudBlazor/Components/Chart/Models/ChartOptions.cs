@@ -59,7 +59,7 @@ namespace MudBlazor
         public bool ShowLegend { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets a list of colors applied to series values.
+        /// The list of colors applied to series values.
         /// </summary>
         /// <remarks>
         /// Defaults to an array of <c>20</c> colors.

@@ -44,7 +44,7 @@ namespace MudBlazor
         public bool Outlined { get; set; }
 
         /// <summary>
-        /// Gets or sets any content within this component.
+        /// The content within this component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Card.Behavior)]

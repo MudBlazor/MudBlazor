@@ -156,7 +156,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets whether a problem has occurred during conversion.
+        /// Whether a problem has occurred during conversion.
         /// </summary>
         /// <remarks>
         /// When <c>true</c>, the <see cref="Converter"/> was unable to convert values, usually due to invalid input.
@@ -165,7 +165,7 @@ namespace MudBlazor
         public bool ConversionError => _converter.GetError;
 
         /// <summary>
-        /// Gets an error describing why type conversion failed.
+        /// The error describing why type conversion failed.
         /// </summary>
         /// <remarks>
         /// When set, returns the reason that the <see cref="Converter"/> was unable to convert values, usually due to invalid input.
@@ -173,7 +173,7 @@ namespace MudBlazor
         public string? ConversionErrorMessage => _converter.GetErrorMessage;
 
         /// <summary>
-        /// Gets whether an error, conversion error, or validation error is active.
+        /// Whether an error, conversion error, or validation error is active.
         /// </summary>
         /// <remarks>
         /// When <c>true</c>, the <see cref="Error"/> property is <c>true</c>, or <see cref="ConversionError"/> is <c>true</c>, or one or more <see cref="ValidationErrors"/> exists.
@@ -181,7 +181,7 @@ namespace MudBlazor
         public bool HasErrors => Error || ConversionError || ValidationErrors.Count > 0;
 
         /// <summary>
-        /// Gets the current error or conversion error.
+        /// The current error or conversion error.
         /// </summary>
         /// <returns>
         /// This property returns the value in <see cref="ErrorText"/> or <see cref="ConversionErrorMessage"/>.
@@ -203,7 +203,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets whether the user has interacted with this input, or focus has been released.
+        /// Whether the user has interacted with this input, or focus has been released.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the user has performed input, or focus has moved away from this input.  This property is typically used to show the <see cref="RequiredError"/> text only after the user has interacted with this input.
@@ -213,7 +213,7 @@ namespace MudBlazor
         #region MudForm Validation
 
         /// <summary>
-        /// Gets or sets a list of problems with the current input value.
+        /// The list of problems with the current input value.
         /// </summary>
         /// <remarks>
         /// When using a <see cref="MudForm"/>, this property is updated when validation has been performed.  Use the <see cref="Validation"/> property to control what validations are performed.

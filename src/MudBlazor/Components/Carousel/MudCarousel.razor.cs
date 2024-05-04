@@ -53,7 +53,7 @@ namespace MudBlazor
         public bool ShowArrows { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets where the arrows are displayed, if <see cref="ShowArrows"/> is <c>true</c>.
+        /// The position where the arrows are displayed, if <see cref="ShowArrows"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Position.Center"/>.
@@ -145,7 +145,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets or sets any custom CSS classes for the "Next" and "Previous" icons when <see cref="ShowArrows"/> is <c>true</c>.
+        /// The custom CSS classes for the "Next" and "Previous" icons when <see cref="ShowArrows"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Separate each CSS class with spaces.
@@ -155,7 +155,7 @@ namespace MudBlazor
         public string? NavigationButtonsClass { get; set; }
 
         /// <summary>
-        /// Gets or sets any custom CSS classes for bullets when <see cref="ShowBullets"/> is <c>true</c>.
+        /// The custom CSS classes for bullets when <see cref="ShowBullets"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Separate each CSS class with spaces.
@@ -199,21 +199,21 @@ namespace MudBlazor
         public string NextIcon { get; set; } = Icons.Material.Filled.NavigateNext;
 
         /// <summary>
-        /// Gets or sets any custom template for the "Next" button.
+        /// The custom template for the "Next" button.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Carousel.Appearance)]
         public RenderFragment? NextButtonTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets any custom template for the "Previous" button.
+        /// The custom template for the "Previous" button.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Carousel.Appearance)]
         public RenderFragment? PreviousButtonTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets any custom template for bullets.
+        /// The custom template for bullets.
         /// </summary>
         /// <remarks>
         /// When set, the template will be used and the <see cref="CheckedIcon"/> and <see cref="UncheckedIcon"/> properties will be ignored.

@@ -81,7 +81,7 @@ namespace MudBlazor
         public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
-        /// Gets or sets any text displayed in the button.
+        /// The text displayed in the button.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.

@@ -57,14 +57,14 @@ namespace MudBlazor
         public List<ChartSeries> ChartSeries { get; set; } = new();
 
         /// <summary>
-        /// Gets or sets display options applied to the chart.
+        /// The display options applied to the chart.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chart.Appearance)]
         public ChartOptions ChartOptions { get; set; } = new();
 
         /// <summary>
-        /// Gets or sets any custom graphics within this chart.
+        /// The custom graphics within this chart.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chart.Appearance)]

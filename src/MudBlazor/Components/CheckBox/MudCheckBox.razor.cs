@@ -123,7 +123,7 @@ namespace MudBlazor
         public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
-        /// Gets or sets any child content for the component.
+        /// The content within this checkbox.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]

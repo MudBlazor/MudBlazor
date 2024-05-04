@@ -28,7 +28,7 @@ namespace MudBlazor
         public RenderFragment<TData>? ItemTemplate { get; set; }
 
         /// <summary>
-        /// Gets the currently selected item.
+        /// The currently selected item.
         /// </summary>
         /// <remarks>
         /// This property will return either an item from the <c>Items</c> property, or an item from <see cref="ItemsSource"/> if <c>Items</c> is <c>null</c>.

@@ -58,7 +58,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
-    /// Gets or sets how many selections are allowed.
+    /// The mode controlling how many selections are allowed.
     /// </summary>
     /// <remarks>
     /// Defaults to <see cref="SelectionMode.SingleSelection"/>.  Other values include <see cref="SelectionMode.MultiSelection"/> and <see cref="SelectionMode.ToggleSelection"/>.

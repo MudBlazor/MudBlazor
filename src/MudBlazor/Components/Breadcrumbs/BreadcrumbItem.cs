@@ -26,7 +26,7 @@ namespace MudBlazor
         public bool Disabled { get; }
 
         /// <summary>
-        /// Gets or sets any custom icon for this item.
+        /// The custom icon for this item.
         /// </summary>
         public string? Icon { get; }
 

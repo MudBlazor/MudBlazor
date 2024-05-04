@@ -33,7 +33,7 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// Gets or sets any content displayed within this component.
+        /// The content displayed within this component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Carousel.Behavior)]
@@ -72,14 +72,14 @@ namespace MudBlazor
         public Transition Transition { get; set; } = Transition.Slide;
 
         /// <summary>
-        /// Gets or sets any custom CSS transition used to blend into this carousel item.
+        /// The custom CSS transition used to blend into this carousel item.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Carousel.Appearance)]
         public string? CustomTransitionEnter { get; set; }
 
         /// <summary>
-        /// Gets or sets any custom CSS transition used to blend away from this carousel item.
+        /// The custom CSS transition used to blend away from this carousel item.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Carousel.Appearance)]

@@ -129,7 +129,7 @@ namespace MudBlazor
         public object? Content { get; set; }
 
         /// <summary>
-        /// Gets or sets any CSS classes applied to the badge.
+        /// The CSS classes applied to the badge.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.
@@ -139,7 +139,7 @@ namespace MudBlazor
         public string? BadgeClass { get; set; }
 
         /// <summary>
-        /// Gets or sets any child content for the component.
+        /// The content within this badge.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Badge.Behavior)]

@@ -132,7 +132,7 @@ namespace MudBlazor
         public string? MaxAvatarClass { get; set; }
 
         /// <summary>
-        /// Gets or sets a template used to render avatars when the number of avatars exceeds <see cref="Max"/>.
+        /// The template used to render avatars when the number of avatars exceeds <see cref="Max"/>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AvatarGroup.Appearance)]

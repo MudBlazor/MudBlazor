@@ -148,7 +148,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public Variant? Variant { get; set; }
 
     /// <summary>
-    /// Gets or sets any avatar content to display inside the chip.
+    /// The avatar content to display inside the chip.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
@@ -222,7 +222,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public bool? Ripple { get; set; }
 
     /// <summary>
-    /// Gets or sets any custom content within this chip.
+    /// The content within this chip.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Behavior)]

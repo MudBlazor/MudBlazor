@@ -13,7 +13,7 @@ namespace MudBlazor
     public abstract class MudBaseButton : MudComponentBase
     {
         /// <summary>
-        /// Gets or sets any custom activation behavior.
+        /// The custom activation behavior.
         /// </summary>
         /// <remarks>
         /// Default to <c>null</c>.  This property is used to implement a custom behavior beyond a basic button click.  The activation will occur during the <see cref="OnClick"/> event.

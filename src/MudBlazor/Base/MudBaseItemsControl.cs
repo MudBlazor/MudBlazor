@@ -51,18 +51,18 @@ namespace MudBlazor
         public EventCallback<int> SelectedIndexChanged { get; set; }
 
         /// <summary>
-        /// Gets the previously selected item.
+        /// The previously selected item.
         /// </summary>
         public TChildComponent? LastContainer { get; private set; } = null;
 
         /// <summary>
-        /// Gets the list of items.
+        /// The list of items.
         /// </summary>
         /// <remarks>This property is ignored when <c>ItemsSource</c> is not null.</remarks>
         public List<TChildComponent> Items { get; } = new List<TChildComponent>();
 
         /// <summary>
-        /// Gets the currently selected item.
+        /// The currently selected item.
         /// </summary>
         /// <remarks>This property returns the item in the <see cref="Items"/> property at the <see cref="SelectedIndex"/>.</remarks>
         public TChildComponent? SelectedContainer

@@ -42,7 +42,7 @@ namespace MudBlazor
         public bool OverrideStyles { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets any custom content within this group.
+        /// The custom content within this group.
         /// </summary>
         /// <remarks>
         /// This property allows for custom content to displayed inside of the group, but it is not required.

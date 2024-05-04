@@ -57,10 +57,10 @@ namespace MudBlazor
         public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
-        /// Gets or sets any negative margin applied.
+        /// The amount of negative margin applied.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Edge.False"/>.
+        /// Defaults to <see cref="Edge.False"/>.  Other values are <see cref="Edge.Start"/> and <see cref="Edge.End"/>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
@@ -77,7 +77,7 @@ namespace MudBlazor
         public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        /// Gets or sets any custom content within this button.
+        /// The custom content within this button.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Only displays if <see cref="Icon"/> is not set.

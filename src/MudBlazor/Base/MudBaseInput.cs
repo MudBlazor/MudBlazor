@@ -19,7 +19,7 @@ namespace MudBlazor
     {
         private bool _isDirty;
         /// <summary>
-        /// Gets whether validation has been performed during a validation cycle.
+        /// Whether validation has been performed during a validation cycle.
         /// </summary>
         /// <remarks>
         /// This field is set to <c>true</c> to prevent validation from occurring more than once during a validation cycle.  Each change in the <see cref="Value"/> will reset this field to <c>false</c>.
@@ -148,7 +148,7 @@ namespace MudBlazor
         public Adornment Adornment { get; set; } = Adornment.None;
 
         /// <summary>
-        /// Gets whether validation only occurs when the user changes the <see cref="Value"/>.
+        /// Whether validation only occurs when the user changes the <see cref="Value"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>. When <c>true</c>, validation only occurs if the user has changed the input value at least once.
@@ -231,7 +231,7 @@ namespace MudBlazor
         public string? Placeholder { get; set; }
 
         /// <summary>
-        /// Gets or sets an optional character count and stop count.
+        /// The optional character count and stop count.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  When <c>0</c>, the current character count is displayed.  When <c>1</c> or greater, the character count and this count are displayed.
@@ -702,7 +702,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets the type of input received by this component.
+        /// The type of input received by this component.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="InputType.Text"/>.

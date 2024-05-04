@@ -97,7 +97,7 @@ namespace MudBlazor
         public string ListItemClass { get; set; }
 
         /// <summary>
-        /// Gets or sets where the popover will open from.
+        /// The location where the popover will open from.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Origin.BottomCenter" />.
@@ -201,7 +201,7 @@ namespace MudBlazor
         public Color ProgressIndicatorColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// Gets or sets a function used to search for items.
+        /// The function used to search for items.
         /// </summary>
         /// <remarks>
         /// This function searches for items containing the specified <c>string</c> value, and returns items which match up to the <see cref="MaxItems"/> property.  You can use the provided <see cref="CancellationToken"/> which is marked as canceled when the user changes the search text or selects a value from the list.
