@@ -1,10 +1,9 @@
-﻿
-using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -23,32 +22,32 @@ namespace MudBlazor.UnitTests.Components
             var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
             var inputs = comp.FindAll("input[type=\"radio\"].mud-rating-input").ToArray();
             // check initial state
-            comp.Instance.SelectedValue.Should().Be(0);
+            comp.Instance.GetState(x=> x.SelectedValue).Should().Be(0);
             ratingItemsSpans.Length.Should().Be(5);
             inputs.Length.Should().Be(5);
 
             // click first rating item
             ratingItemsSpans[0].Click();
-            comp.Instance.SelectedValue.Should().Be(1);
+            comp.Instance.GetState(x => x.SelectedValue).Should().Be(1);
 
             // click 2nd rating item
             ratingItemsSpans[1].Click();
-            comp.Instance.SelectedValue.Should().Be(2);
+            comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 3rd rating item
             ratingItemsSpans[2].Click();
-            comp.Instance.SelectedValue.Should().Be(3);
+            comp.Instance.GetState(x => x.SelectedValue).Should().Be(3);
 
             // click 4th rating item
             ratingItemsSpans[3].Click();
-            comp.Instance.SelectedValue.Should().Be(4);
+            comp.Instance.GetState(x => x.SelectedValue).Should().Be(4);
 
             // click 5th rating item
             ratingItemsSpans[4].Click();
-            comp.Instance.SelectedValue.Should().Be(5);
+            comp.Instance.GetState(x => x.SelectedValue).Should().Be(5);
 
             ratingItemsSpans[1].Click();
-            comp.Instance.SelectedValue.Should().Be(2);
+            comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
         }
 
         /// <summary>
@@ -61,32 +60,32 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
             // check initial state
-            comp.Instance.SelectedValue.Should().Be(0);
+            comp.Instance.GetState(x => x.SelectedValue).Should().Be(0);
             ratingItemsSpans.Length.Should().Be(5);
 
             // click 2nd rating item
             ratingItemsSpans[1].Click();
-            comp.Instance.SelectedValue.Should().Be(2);
+            comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 2nd rating item
             ratingItemsSpans[1].Click();
-            comp.Instance.SelectedValue.Should().Be(0);
+            comp.Instance.GetState(x => x.SelectedValue).Should().Be(0);
 
             // click 2nd rating item
             ratingItemsSpans[1].Click();
-            comp.Instance.SelectedValue.Should().Be(2);
+            comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click first rating item
             ratingItemsSpans[0].Click();
-            comp.Instance.SelectedValue.Should().Be(1);
+            comp.Instance.GetState(x => x.SelectedValue).Should().Be(1);
 
             // click first rating item
             ratingItemsSpans[0].Click();
-            comp.Instance.SelectedValue.Should().Be(0);
+            comp.Instance.GetState(x => x.SelectedValue).Should().Be(0);
 
             // click first rating item
             ratingItemsSpans[0].Click();
-            comp.Instance.SelectedValue.Should().Be(1);
+            comp.Instance.GetState(x => x.SelectedValue).Should().Be(1);
         }
 
         /// <summary>
@@ -98,7 +97,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudRating>(("SelectedValue", 3));
             // print the generated html
             // check initial state
-            comp.Instance.SelectedValue.Should().Be(3);
+            comp.Instance.GetState(x => x.SelectedValue).Should().Be(3);
         }
 
         /// <summary>
@@ -112,47 +111,47 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
             // check initial state
-            comp.Instance.SelectedValue.Should().Be(2);
+            comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
             ratingItemsSpans.Length.Should().Be(5);
 
             // click first rating item
             ratingItemsSpans[0].Click();
-            comp.Instance.SelectedValue.Should().Be(2);
+            comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 2nd rating item
             ratingItemsSpans[1].Click();
-            comp.Instance.SelectedValue.Should().Be(2);
+            comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 3rd rating item
             ratingItemsSpans[2].Click();
-            comp.Instance.SelectedValue.Should().Be(2);
+            comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 4th rating item
             ratingItemsSpans[3].Click();
-            comp.Instance.SelectedValue.Should().Be(2);
+            comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 5th rating item
             ratingItemsSpans[4].Click();
-            comp.Instance.SelectedValue.Should().Be(2);
+            comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
         }
 
         /// <summary>
         /// Initialized MaxValue by parameter should equal rating items count.
         /// </summary>
         [Test]
-        public void RatingTest5()
+        public async Task RatingTest5()
         {
             var comp = Context.RenderComponent<MudRating>(("MaxValue", 12));
             // print the generated html
             // select elements needed for the test
             var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
             // check initial state
-            comp.Instance.SelectedValue.Should().Be(0);
+            comp.Instance.GetState(x => x.SelectedValue).Should().Be(0);
             ratingItemsSpans.Length.Should().Be(12);
 
-            comp.Instance.HandleItemHovered(6);
+            await comp.Instance.HandleItemHoveredAsync(6);
             comp.Instance.HoveredValue.Should().Be(6);
-            comp.Instance.SelectedValue.Should().Be(0);
+            comp.Instance.GetState(x => x.SelectedValue).Should().Be(0);
             comp.Instance.IsRatingHover.Should().Be(true);
         }
 
@@ -170,44 +169,43 @@ namespace MudBlazor.UnitTests.Components
             var item = comp.FindComponent<MudRatingItem>();
             // print the generated html
 
-            await comp.InvokeAsync(() => item.Instance.HandleMouseOut(new MouseEventArgs()));
-            await comp.InvokeAsync(() => item.Instance.HandleMouseOver(new MouseEventArgs()));
+            await comp.InvokeAsync(() => item.Instance.HandleMouseOutAsync(new MouseEventArgs()));
+            await comp.InvokeAsync(() => item.Instance.HandleMouseOverAsync(new MouseEventArgs()));
 
-            await comp.InvokeAsync(() => comp.Instance.HoveredValue = 15);
+            await comp.InvokeAsync(() => comp.Instance.SetHoveredValueAsync(15));
             await comp.InvokeAsync(() => item.Instance.SelectIcon());
-#pragma warning disable BL0005
-            await comp.InvokeAsync(() => comp.Instance.SelectedValue = 12);
-            await comp.InvokeAsync(() => comp.Instance.HoveredValue = 0);
+            comp.SetParam(x => x.SelectedValue, 12);
+            await comp.InvokeAsync(() => comp.Instance.SetHoveredValueAsync(0));
             await comp.InvokeAsync(() => item.Instance.SelectIcon());
-            await comp.InvokeAsync(() => comp.Instance.SelectedValue = 0);
+            comp.SetParam(x => x.SelectedValue, 0);
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(1));
+            comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(1));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(0));
+            comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(0));
             //ArrowLeft should not decrease when the value is 0
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(0));
+            comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(0));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(12));
+            comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(12));
             //Shift+ArrowKey should not go beyond the max value
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(12));
+            comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(12));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(0));
+            comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(0));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(0));
+            comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(0));
 
-            comp.SetParam("Disabled", true);
+            comp.SetParam(x=> x.Disabled, true);
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(0));
+            comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(0));
 
-            await comp.InvokeAsync(() => item.Instance.HandleMouseOut(new MouseEventArgs()));
-            await comp.InvokeAsync(() => item.Instance.HandleMouseOver(new MouseEventArgs()));
+            await comp.InvokeAsync(() => item.Instance.HandleMouseOutAsync(new MouseEventArgs()));
+            await comp.InvokeAsync(() => item.Instance.HandleMouseOverAsync(new MouseEventArgs()));
         }
     }
 }
