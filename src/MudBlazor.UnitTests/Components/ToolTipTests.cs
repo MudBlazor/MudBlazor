@@ -331,5 +331,28 @@ namespace MudBlazor.UnitTests.Components
 
             tooltipComp.Style.Should().Contain("background-color").And.Contain("orangered");
         }
+
+
+        [Test]
+        public void Tooltip_Disabled_Default_False()
+        {
+            var comp = Context.RenderComponent<TooltipDisabledPropertyTest>();
+            var tooltipComp = comp.FindComponent<MudTooltip>().Instance;
+            tooltipComp.Disabled.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task Tooltip_Disabled_NoPopover()
+        {
+            var comp = Context.RenderComponent<TooltipDisabledPropertyTest>(p =>
+            {
+                p.Add(x => x.Disabled, true);
+            });
+
+            var button = comp.Find("button");
+            await button.ParentElement.TriggerEventAsync("onfocusin", new FocusEventArgs());
+
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+        }
     }
 }

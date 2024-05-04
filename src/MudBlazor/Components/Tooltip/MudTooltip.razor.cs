@@ -43,7 +43,7 @@ namespace MudBlazor
         public string Text { get; set; } = string.Empty;
 
         /// <summary>
-        /// If true, a arrow will be displayed pointing towards the content from the tooltip.
+        /// If true, an arrow will be displayed pointing towards the content from the tooltip.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
@@ -150,6 +150,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public EventCallback<bool> VisibleChanged { get; set; }
+
+        /// <summary>
+        /// If true, the tooltip will be disabled.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Disabled { get; set; }
 
         private void HandleMouseEnter()
         {
