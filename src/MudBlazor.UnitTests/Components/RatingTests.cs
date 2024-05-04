@@ -22,7 +22,7 @@ namespace MudBlazor.UnitTests.Components
             var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
             var inputs = comp.FindAll("input[type=\"radio\"].mud-rating-input").ToArray();
             // check initial state
-            comp.Instance.GetState(x=> x.SelectedValue).Should().Be(0);
+            comp.Instance.GetState(x => x.SelectedValue).Should().Be(0);
             ratingItemsSpans.Length.Should().Be(5);
             inputs.Length.Should().Be(5);
 
@@ -200,7 +200,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(0));
 
-            comp.SetParam(x=> x.Disabled, true);
+            comp.SetParam(x => x.Disabled, true);
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(0));
 
