@@ -10,7 +10,7 @@ namespace MudBlazor.Utilities.Clone;
 
 #nullable enable
 /// <summary>
-/// Provides a deep copy resolver implementation using System.Text.Json.
+/// Provides a deep copy implementation using System.Text.Json.
 /// </summary>
 /// <remarks>
 /// This implementation is <b>not</b> trim safe.
@@ -24,7 +24,7 @@ public sealed class SystemTextJsonDeepCloneStrategy<T> : ICloneStrategy<T>
     public T? CloneObject(T item) => JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(item));
 
     /// <summary>
-    /// Represents a static field providing an instance of <see cref="SystemTextJsonDeepCloneStrategy{T}"/> as the default deep clone strategy.
+    /// Represents a static field providing an instance of <see cref="SystemTextJsonDeepCloneStrategy{T}"/>.
     /// </summary>
     public static readonly ICloneStrategy<T> Instance = new SystemTextJsonDeepCloneStrategy<T>();
 }
