@@ -22,7 +22,7 @@ namespace MudBlazor
         public MudColorPicker() : base(new DefaultConverter<MudColor>())
         {
             AdornmentIcon = Icons.Material.Outlined.Palette;
-            ShowToolbar = true;
+            ShowToolbar = false;
             Value = "#594ae2"; // MudBlazor Blue
             Text = GetColorTextValue();
             AdornmentAriaLabel = "Open Color Picker";
