@@ -33,7 +33,7 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// Gets or sets any content displayed within this component.
+        /// The content displayed within this component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Carousel.Behavior)]
@@ -43,7 +43,7 @@ namespace MudBlazor
         protected internal MudBaseItemsControl<MudCarouselItem>? Parent { get; set; }
 
         /// <summary>
-        /// Gets or sets whether text is displayed Right-to-Left (RTL).
+        /// Whether text is displayed Right-to-Left (RTL).
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, text will display property for RTL languages such as Arabic, Hebrew, and Persian.
@@ -52,7 +52,7 @@ namespace MudBlazor
         public bool RightToLeft { get; set; }
 
         /// <summary>
-        /// Gets or sets the color of this item. 
+        /// The color of this item. 
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
@@ -62,7 +62,7 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// Gets or sets the effect used to blend from this item to a different <see cref="MudCarouselItem"/>.
+        /// The effect used to blend from this item to a different <see cref="MudCarouselItem"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Transition.Slide"/>.
@@ -72,21 +72,21 @@ namespace MudBlazor
         public Transition Transition { get; set; } = Transition.Slide;
 
         /// <summary>
-        /// Gets or sets any custom CSS transition used to blend into this carousel item.
+        /// The custom CSS transition used to blend into this carousel item.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Carousel.Appearance)]
         public string? CustomTransitionEnter { get; set; }
 
         /// <summary>
-        /// Gets or sets any custom CSS transition used to blend away from this carousel item.
+        /// The custom CSS transition used to blend away from this carousel item.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Carousel.Appearance)]
         public string? CustomTransitionExit { get; set; }
 
         /// <summary>
-        /// Gets or sets whether this item is currently visible.
+        /// Whether this item is currently visible.
         /// </summary>
         public bool IsVisible => Parent is not null && (Parent.LastContainer == this || Parent.SelectedIndex == Parent.Items.IndexOf(this));
 

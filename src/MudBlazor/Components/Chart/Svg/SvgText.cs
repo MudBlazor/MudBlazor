@@ -9,17 +9,17 @@ namespace MudBlazor.Charts.SVG.Models
     public class SvgText
     {
         /// <summary>
-        /// Gets or sets the horizontal position of the text.
+        /// The horizontal position of the text.
         /// </summary>
         public double X { get; set; }
 
         /// <summary>
-        /// Gets or sets the vertical position of the text.
+        /// The vertical position of the text.
         /// </summary>
         public double Y { get; set; }
 
         /// <summary>
-        /// Gets or sets the text to display.
+        /// The text to display.
         /// </summary>
         public string Value { get; set; }
     }
