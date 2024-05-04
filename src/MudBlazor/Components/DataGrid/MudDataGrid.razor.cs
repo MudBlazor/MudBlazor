@@ -5,15 +5,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Clone;
 
 namespace MudBlazor
 {
@@ -466,9 +465,9 @@ namespace MudBlazor
         /// Sets the deep copy resolver.
         /// </summary>
         /// <remarks>
-        /// This resolved is used during EditMode.
+        /// This strategy is used during EditMode.
         /// </remarks>
-        [Parameter] public ICloneStrategy<T> CloneStrategy { get; set; } = new SystemTextJsonDeepCloneStrategy<T>();
+        [Parameter] public ICloneStrategy<T> CloneStrategy { get; set; } = SystemTextJsonDeepCloneStrategy<T>.Instance;
 
         /// <summary>
         /// The data to display in the table. MudTable will render one row per item

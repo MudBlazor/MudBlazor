@@ -4,7 +4,7 @@
 
 using System;
 
-namespace MudBlazor;
+namespace MudBlazor.Utilities.Clone;
 
 #nullable enable
 /// <summary>
@@ -15,4 +15,9 @@ public sealed class CloneableCloneStrategy<T> : ICloneStrategy<T> where T : IClo
 {
     /// <inheritdoc />
     public T? CloneObject(T item) => (T?)item.Clone();
+
+    /// <summary>
+    /// Represents a static field providing an instance of <see cref="CloneableCloneStrategy{T}"/> as the default deep clone strategy.
+    /// </summary>
+    public static readonly ICloneStrategy<T> Instance = new CloneableCloneStrategy<T>();
 }

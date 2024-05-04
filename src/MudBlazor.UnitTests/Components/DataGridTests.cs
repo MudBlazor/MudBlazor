@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.Utilities.Clone;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -698,6 +699,64 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td")[8].Html().Trim().Should().Be("snakex64");
 
             //if no crash occurs, we know the datagrid is properly filtering out the GetOnly property when calling set
+        }
+
+        [Test(Description = "Checks if clone strategy is working, if we used default one it would fail as STJ doesn't support abstract classes without additional configuration.")]
+        public async Task DataGridDialogEditCloneStrategyTest1()
+        {
+            var comp = Context.RenderComponent<DataGridFormEditCloneStrategyTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFormEditCloneStrategyTest.Movement>>();
+
+            dataGrid.FindAll("td")[0].Html().Trim().Should().Be("James");
+            dataGrid.FindAll("td")[1].Html().Trim().Should().Be("Robert");
+            dataGrid.FindAll("td")[2].Html().Trim().Should().Be("1");
+            dataGrid.FindAll("td")[3].Html().Trim().Should().Be("first");
+            dataGrid.FindAll("td")[4].Html().Trim().Should().Be("John");
+            dataGrid.FindAll("td")[5].Html().Trim().Should().Be("David");
+            dataGrid.FindAll("td")[6].Html().Trim().Should().Be("2");
+            dataGrid.FindAll("td")[7].Html().Trim().Should().Be("second");
+
+            //open edit dialog
+            dataGrid.FindAll("tbody tr")[1].Click();
+            //No close button
+            comp.FindAll("button[aria-label=\"close\"]").Should().BeEmpty();
+            //edit data
+            comp.FindAll("div input")[0].Change("Galadriel");
+            comp.FindAll("div input")[1].Change("Steve");
+            comp.FindAll("div input")[2].Change("3");
+
+            comp.Find(".mud-dialog-actions .mud-button-filled-primary").Click();
+
+            dataGrid.FindAll("td")[0].Html().Trim().Should().Be("James");
+            dataGrid.FindAll("td")[1].Html().Trim().Should().Be("Robert");
+            dataGrid.FindAll("td")[2].Html().Trim().Should().Be("1");
+            dataGrid.FindAll("td")[3].Html().Trim().Should().Be("first");
+            dataGrid.FindAll("td")[4].Html().Trim().Should().Be("Galadriel");
+            dataGrid.FindAll("td")[5].Html().Trim().Should().Be("Steve");
+            dataGrid.FindAll("td")[6].Html().Trim().Should().Be("3");
+            dataGrid.FindAll("td")[7].Html().Trim().Should().Be("second");
+        }
+
+        [Test]
+        public async Task DataGridDialogEditCloneStrategyTest2()
+        {
+            var comp = Context.RenderComponent<DataGridFormEditCloneStrategyTest>(parameters => parameters
+                .Add(p => p.CloneStrategy, SystemTextJsonDeepCloneStrategy<DataGridFormEditCloneStrategyTest.Movement>.Instance));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFormEditCloneStrategyTest.Movement>>();
+
+            dataGrid.FindAll("td")[0].Html().Trim().Should().Be("James");
+            dataGrid.FindAll("td")[1].Html().Trim().Should().Be("Robert");
+            dataGrid.FindAll("td")[2].Html().Trim().Should().Be("1");
+            dataGrid.FindAll("td")[3].Html().Trim().Should().Be("first");
+            dataGrid.FindAll("td")[4].Html().Trim().Should().Be("John");
+            dataGrid.FindAll("td")[5].Html().Trim().Should().Be("David");
+            dataGrid.FindAll("td")[6].Html().Trim().Should().Be("2");
+            dataGrid.FindAll("td")[7].Html().Trim().Should().Be("second");
+
+            //open edit dialog
+            var openDialog = () => dataGrid.FindAll("tbody tr")[1].Click();
+
+            openDialog.Should().Throw<NotSupportedException>("STJ doesn't support abstract classes without polymorphic type discriminators.");
         }
 
         /// <summary>
