@@ -31,7 +31,7 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// Gets or sets the icon displayed before the text.
+        /// The icon displayed before the text.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use <see cref="EndIcon"/> to display an icon after the text.
@@ -41,7 +41,7 @@ namespace MudBlazor
         public string? StartIcon { get; set; }
 
         /// <summary>
-        /// Gets or sets the icon displayed after the text.
+        /// The icon displayed after the text.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use <see cref="StartIcon"/> to display an icon before the text.
@@ -51,7 +51,7 @@ namespace MudBlazor
         public string? EndIcon { get; set; }
 
         /// <summary>
-        /// Gets or sets the color of icons.
+        /// The color of icons.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Inherit"/>.  
@@ -61,7 +61,7 @@ namespace MudBlazor
         public Color IconColor { get; set; } = Color.Inherit;
 
         /// <summary>
-        /// Gets or sets the size of icons.
+        /// The size of icons.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  When <c>null</c>, the value of <see cref="Size"/> is used.
@@ -81,7 +81,7 @@ namespace MudBlazor
         public string? IconClass { get; set; }
 
         /// <summary>
-        /// Gets or sets the color of the button.
+        /// The color of the button.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
@@ -91,7 +91,7 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// Gets or sets the size of the button.
+        /// The size of the button.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Size.Medium"/>.   Use the <see cref="IconSize"/> property to set the size of icons.
@@ -101,7 +101,7 @@ namespace MudBlazor
         public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
-        /// Gets or sets the display variation to use.
+        /// The display variation to use.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Variant.Text"/>.
@@ -111,7 +111,7 @@ namespace MudBlazor
         public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        /// Gets or sets whether the button takes up 100% of the container width.
+        /// Whether the button takes up 100% of the container width.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.

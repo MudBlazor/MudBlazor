@@ -9,27 +9,27 @@ namespace MudBlazor.Charts.SVG.Models
     public class SvgCircle
     {
         /// <summary>
-        /// Gets or sets the position of this path within a list.
+        /// The position of this path within a list.
         /// </summary>
         public int Index { get; set; }
 
         /// <summary>
-        /// Gets or sets the horizontal position of the center of the circle.
+        /// The horizontal position of the center of the circle.
         /// </summary>
         public double CX { get; set; }
 
         /// <summary>
-        /// Gets or sets the vertical position of the center of the circle.
+        /// The vertical position of the center of the circle.
         /// </summary>
         public double CY { get; set; }
 
         /// <summary>
-        /// Gets or sets the distance from the center of the circle to the edge.
+        /// The distance from the center of the circle to the edge.
         /// </summary>
         public double Radius { get; set; }
 
         /// <summary>
-        /// Gets or sets the pattern of dashes and gaps used to paint the outline of the circle.
+        /// The pattern of dashes and gaps used to paint the outline of the circle.
         /// </summary>
         public string StrokeDashArray { get; set; }
 

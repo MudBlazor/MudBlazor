@@ -44,7 +44,7 @@ namespace MudBlazor
         internal bool SubscribeToParentForm { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets whether an input is required.
+        /// Whether an input is required.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, an error with the text in <see cref="RequiredError"/> will be shown during validation if no input was given.
@@ -54,7 +54,7 @@ namespace MudBlazor
         public bool Required { get; set; }
 
         /// <summary>
-        /// Gets or sets the text displayed during validation if no input was given.
+        /// The text displayed during validation if no input was given.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>"Required"</c>.  This text is only shown when <see cref="Required"/> is <c>true</c>.
@@ -64,14 +64,14 @@ namespace MudBlazor
         public string RequiredError { get; set; } = "Required";
 
         /// <summary>
-        /// Gets or sets the text displayed if the <see cref="Error"/> property is <c>true</c>.
+        /// The text displayed if the <see cref="Error"/> property is <c>true</c>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public string? ErrorText { get; set; }
 
         /// <summary>
-        /// Gets or sets whether an error is displayed.
+        /// Whether an error is displayed.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the text in <see cref="ErrorText"/> is displayed.
@@ -81,7 +81,7 @@ namespace MudBlazor
         public bool Error { get; set; }
 
         /// <summary>
-        /// Gets or sets the ID of the error description element, for use by <c>aria-describedby</c> when <see cref="Error"/> is <c>true</c>.
+        /// The ID of the error description element, for use by <c>aria-describedby</c> when <see cref="Error"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  When set and the <see cref="Error"/> property is <c>true</c>, an <c>aria-describedby</c> attribute is rendered to improve accessibility for users.
@@ -91,7 +91,7 @@ namespace MudBlazor
         public string? ErrorId { get; set; }
 
         /// <summary>
-        /// Gets or sets the type converter for this input.
+        /// The type converter for this input.
         /// </summary>
         /// <remarks>
         /// This property provides a way to customize conversions between <typeparamref name="T"/> objects and <typeparamref name="U"/> values.  If no converter is specified, a default will be chosen based on the kind of input.
@@ -117,7 +117,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets or sets the culture used to format and interpret values such as dates and currency.
+        /// The culture used to format and interpret values such as dates and currency.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="CultureInfo.InvariantCulture"/>.
@@ -221,7 +221,7 @@ namespace MudBlazor
         public List<string> ValidationErrors { get; set; } = new();
 
         /// <summary>
-        /// Gets or sets the function used to detect problems with the input.
+        /// The function used to detect problems with the input.
         /// </summary>
         /// <remarks>
         /// When using a <see cref="MudForm"/>, this property can be any of several kinds of functions:
@@ -641,7 +641,7 @@ namespace MudBlazor
         #region --> Blazor EditForm validation support
 
         /// <summary>
-        /// Gets or sets the context used to perform validation.
+        /// The context used to perform validation.
         /// </summary>
         /// <remarks>
         /// When using an <see cref="EditForm"/>, gets a context used to perform validation.
@@ -661,7 +661,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets or sets the model field containing validation attributes.
+        /// The model field containing validation attributes.
         /// </summary>
         /// <remarks>
         /// When using an <see cref="EditForm"/>, this property is used to find data annotation validation attributes such as <see cref="MaxLengthAttribute"/> used to perform validation.
@@ -671,7 +671,7 @@ namespace MudBlazor
         public Expression<Func<T>>? For { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the <see cref="For"/> property is <c>null</c>.
+        /// Whether the <see cref="For"/> property is <c>null</c>.
         /// </summary>
         [MemberNotNullWhen(false, nameof(For))]
         public bool IsForNull => For is null;

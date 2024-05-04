@@ -66,7 +66,7 @@ namespace MudBlazor
         public Dictionary<string, object?> UserAttributes { get; set; } = new Dictionary<string, object?>();
 
         /// <summary>
-        /// Gets or sets whether <see cref="JSRuntime" /> is available.
+        /// Whether <see cref="JSRuntime" /> is available.
         /// </summary>
         protected bool IsJSRuntimeAvailable { get; set; }
 

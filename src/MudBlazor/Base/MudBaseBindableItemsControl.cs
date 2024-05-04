@@ -14,14 +14,14 @@ namespace MudBlazor
         where TChildComponent : MudComponentBase
     {
         /// <summary>
-        /// Gets or sets the items.
+        /// The items.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.Data)]
         public IEnumerable<TData>? ItemsSource { get; set; }
 
         /// <summary>
-        /// Gets or sets the template used to display each item.
+        /// The template used to display each item.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.Appearance)]

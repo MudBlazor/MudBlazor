@@ -27,7 +27,7 @@ namespace MudBlazor
         protected bool AsButton => Variant != Variant.Text;
 
         /// <summary>
-        /// Gets or sets the icon to display.
+        /// The icon to display.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -37,7 +37,7 @@ namespace MudBlazor
         public string? Icon { get; set; }
 
         /// <summary>
-        /// Gets or sets the color of the button.
+        /// The color of the button.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
@@ -47,7 +47,7 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// Gets or sets the size of the button.
+        /// The size of the button.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Size.Medium"/>.
@@ -67,7 +67,7 @@ namespace MudBlazor
         public Edge Edge { get; set; }
 
         /// <summary>
-        /// Gets or sets the variation to use.
+        /// The variation to use.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Variant.Text"/>.  Other values include <see cref="Variant.Filled"/> and <see cref="Variant.Outlined"/>.

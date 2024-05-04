@@ -11,17 +11,17 @@ namespace MudBlazor
     public class BreadcrumbItem
     {
         /// <summary>
-        /// Gets or sets the text to display.
+        /// The text to display.
         /// </summary>
         public string Text { get; }
 
         /// <summary>
-        /// Gets or sets the URL to navigate to when clicked.
+        /// The URL to navigate to when clicked.
         /// </summary>
         public string? Href { get; }
 
         /// <summary>
-        /// Gets or sets whether this item cannot be clicked.
+        /// Whether this item cannot be clicked.
         /// </summary>
         public bool Disabled { get; }
 

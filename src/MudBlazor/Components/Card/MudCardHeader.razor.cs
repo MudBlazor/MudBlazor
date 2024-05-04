@@ -21,7 +21,7 @@ namespace MudBlazor
         public RenderFragment? CardHeaderAvatar { get; set; }
 
         /// <summary>
-        /// Gets or sets the main content of the header.
+        /// The main content of the header.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Card.Behavior)]

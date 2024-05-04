@@ -43,7 +43,7 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// Gets or sets the color of the checkbox.
+        /// The color of the checkbox.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
@@ -53,7 +53,7 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// Gets or sets the color of the checkbox when its <c>Value</c> is <c>false</c> or <c>null</c>.
+        /// The color of the checkbox when its <c>Value</c> is <c>false</c> or <c>null</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Theme colors are supported.
@@ -63,7 +63,7 @@ namespace MudBlazor
         public Color? UncheckedColor { get; set; } = null;
 
         /// <summary>
-        /// Gets or sets the text to display next to the checkbox.
+        /// The text to display next to the checkbox.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -73,7 +73,7 @@ namespace MudBlazor
         public string? Label { get; set; }
 
         /// <summary>
-        /// Gets or sets the position of the <see cref="Label" /> text.
+        /// The position of the <see cref="Label" /> text.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="LabelPosition.End"/>.
@@ -83,7 +83,7 @@ namespace MudBlazor
         public LabelPosition LabelPosition { get; set; } = LabelPosition.End;
 
         /// <summary>
-        /// Gets or sets whether the checkbox can be controlled with the keyboard.
+        /// Whether the checkbox can be controlled with the keyboard.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  The <c>Space</c> key cycles through true and false values (or true/false/null states if <see cref="TriState"/> is <c>true</c>). <c>Delete</c> will clear the checkbox. <c>Enter</c> (or <c>NumPadEnter</c>) will set the checkbox.  <c>Backspace</c> will set an indeterminate value.
@@ -93,7 +93,7 @@ namespace MudBlazor
         public bool KeyboardEnabled { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets whether a ripple effect is shown whhen the checkbox is clicked.
+        /// Whether a ripple effect is shown whhen the checkbox is clicked.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -103,7 +103,7 @@ namespace MudBlazor
         public bool Ripple { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets whether compact padding will be used.
+        /// Whether compact padding will be used.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -113,7 +113,7 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// Gets or sets the size of the checkbox.
+        /// The size of the checkbox.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Size.Medium"/>.
@@ -130,7 +130,7 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Gets or sets the icon to display for a checked state.
+        /// The icon to display for a checked state.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.CheckBox"/>.
@@ -140,7 +140,7 @@ namespace MudBlazor
         public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
 
         /// <summary>
-        /// Gets or sets the icon to display for an unchecked state.
+        /// The icon to display for an unchecked state.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.CheckBoxOutlineBlank"/>.
@@ -150,7 +150,7 @@ namespace MudBlazor
         public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
 
         /// <summary>
-        /// Gets or sets the icon to display for an indeterminate state.
+        /// The icon to display for an indeterminate state.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.IndeterminateCheckBox"/>.
@@ -160,7 +160,7 @@ namespace MudBlazor
         public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
 
         /// <summary>
-        /// Gets or sets whether the checkbox can cycle to an indeterminate state.
+        /// Whether the checkbox can cycle to an indeterminate state.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the checkbox can support an indeterminate state such as a <c>null</c> value, in addition to <c>true</c> and <c>false</c>.

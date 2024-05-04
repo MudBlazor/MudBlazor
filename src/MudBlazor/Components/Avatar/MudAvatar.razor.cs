@@ -30,7 +30,7 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// Gets or sets the size of the drop shadow.
+        /// The size of the drop shadow.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>0</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
@@ -40,7 +40,7 @@ namespace MudBlazor
         public int Elevation { set; get; } = 0;
 
         /// <summary>
-        /// Gets or sets whether rounded corners are disabled.
+        /// Whether rounded corners are disabled.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -50,7 +50,7 @@ namespace MudBlazor
         public bool Square { get; set; }
 
         /// <summary>
-        /// Gets or sets whether corners are rounded.
+        /// Whether corners are rounded.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
@@ -60,7 +60,7 @@ namespace MudBlazor
         public bool Rounded { get; set; }
 
         /// <summary>
-        /// Gets or sets the color of the avatar.
+        /// The color of the avatar.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
@@ -70,7 +70,7 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// Gets or sets the size of the avatar.
+        /// The size of the avatar.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Size.Medium"/>.
@@ -80,7 +80,7 @@ namespace MudBlazor
         public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
-        /// Gets or sets the display variant to use.
+        /// The display variant to use.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Variant.Filled" />. The variant changes the appearance of the avatar, such as <c>Text</c>, <c>Outlined</c>, or <c>Filled</c>.
@@ -90,7 +90,7 @@ namespace MudBlazor
         public Variant Variant { get; set; } = Variant.Filled;
 
         /// <summary>
-        /// Gets or sets the content within the avatar.
+        /// The content within the avatar.
         /// </summary>
         /// <remarks>
         /// This property allows for custom content to displayed inside of the avatar, but it is not required.

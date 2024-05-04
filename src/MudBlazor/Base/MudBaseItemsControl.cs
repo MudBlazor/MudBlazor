@@ -15,14 +15,14 @@ namespace MudBlazor
         private int _selectedIndexField = -1;
 
         /// <summary>
-        /// Gets or sets the content within this component.
+        /// The content within this component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.Data)]
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Gets or sets the index of the currently selected item.
+        /// The index of the currently selected item.
         /// </summary>
         /// <remarks>When this property changes, the <see cref="SelectedIndexChanged"/> event occurs.</remarks>
         [Parameter]

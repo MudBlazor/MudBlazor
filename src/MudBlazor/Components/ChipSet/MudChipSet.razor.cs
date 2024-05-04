@@ -51,7 +51,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
         .Build();
 
     /// <summary>
-    /// Gets or sets the content within this chipset.
+    /// The content within this chipset.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.ChipSet.Behavior)]
@@ -68,7 +68,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public SelectionMode SelectionMode { get; set; } = SelectionMode.SingleSelection;
 
     /// <summary>
-    /// Gets or sets whether all chips in this set are closeable.
+    /// Whether all chips in this set are closeable.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.
@@ -78,7 +78,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public bool AllClosable { get; set; } = false;
 
     /// <summary>
-    /// Gets or sets the default variant for all chips in this set.
+    /// The default variant for all chips in this set.
     /// </summary>
     /// <remarks>
     /// Defaults to <see cref="Variant.Filled"/>.  Can be overridden by setting <see cref="MudChip{T}.Variant"/>.
@@ -88,7 +88,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public Variant Variant { get; set; } = Variant.Filled;
 
     /// <summary>
-    /// Gets or sets the default color for all chips in this set.
+    /// The default color for all chips in this set.
     /// </summary>
     /// <remarks>
     /// Defaults to <see cref="Color.Default"/>.  Can be overridden by setting <see cref="MudChip{T}.Color"/>.
@@ -98,7 +98,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public Color Color { get; set; } = Color.Default;
 
     /// <summary>
-    /// Gets or sets the default color for all selected chips in this set.
+    /// The default color for all selected chips in this set.
     /// </summary>
     /// <remarks>
     /// Defaults to <see cref="Color.Inherit"/>.  Can be overridden by setting <see cref="MudChip{T}.SelectedColor"/>.
@@ -108,7 +108,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public Color SelectedColor { get; set; } = Color.Inherit;
 
     /// <summary>
-    /// Gets or sets the default icon color for all chips in this set.
+    /// The default icon color for all chips in this set.
     /// </summary>
     /// <remarks>
     /// Defaults to <see cref="Color.Inherit"/>.  Can be overridden by setting <see cref="MudChip{T}.IconColor"/>.
@@ -118,7 +118,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public Color IconColor { get; set; } = Color.Inherit;
 
     /// <summary>
-    /// Gets or sets the default size for all chips in this set.
+    /// The default size for all chips in this set.
     /// </summary>
     /// <remarks>
     /// Defaults to <see cref="Size.Medium"/>.  Can be overridden by setting <see cref="MudChip{T}.Size"/>.
@@ -128,14 +128,14 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public Size Size { get; set; } = Size.Medium;
 
     /// <summary>
-    /// Gets or sets whether checkmarks are shown for selected chips.
+    /// Whether checkmarks are shown for selected chips.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.ChipSet.Appearance)]
     public bool CheckMark { get; set; }
 
     /// <summary>
-    /// Gets or sets the default icon shown for selected chips in this set.
+    /// The default icon shown for selected chips in this set.
     /// </summary>
     /// <remarks>
     /// Defaults to <see cref="Icons.Material.Filled.Check"/>.  Can be overridden by setting <see cref="MudChip{T}.CheckedIcon"/>.
@@ -145,7 +145,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public string CheckedIcon { get; set; } = Icons.Material.Filled.Check;
 
     /// <summary>
-    /// Gets or sets the default close icon shown for closeable chips in this set.
+    /// The default close icon shown for closeable chips in this set.
     /// </summary>
     /// <remarks>
     /// Defaults to <see cref="Icons.Material.Filled.Cancel"/>.  Can be overridden by setting <see cref="MudChip{T}.CloseIcon"/>.
@@ -155,7 +155,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public string CloseIcon { get; set; } = Icons.Material.Filled.Cancel;
 
     /// <summary>
-    /// Gets or sets whether a ripple effect is shown for chips in this set.
+    /// Whether a ripple effect is shown for chips in this set.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>true</c>.  Can be overridden by setting <see cref="MudChip{T}.Ripple"/>.
@@ -165,7 +165,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public bool Ripple { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets whether the theme border radius is used be default for chips in this set.
+    /// Whether the theme border radius is used be default for chips in this set.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.  When <c>true</c>, the <see cref="LayoutProperties.DefaultBorderRadius"/> is used for chip edges.  Can be overridden by setting <see cref="MudChip{T}.Label"/>.
@@ -175,7 +175,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public bool Label { get; set; }
 
     /// <summary>
-    /// Gets or sets whether the user cannot interact with this chip.
+    /// Whether the user cannot interact with this chip.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.  When <c>true</c>, the all chips are visibly disabled and interaction is not allowed.  Overrides any value set for <see cref="MudChip{T}.Disabled"/>.
@@ -185,7 +185,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public bool Disabled { get; set; }
 
     /// <summary>
-    /// Gets or sets whether chips in this set are clickable.
+    /// Whether chips in this set are clickable.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.  When <c>true</c>, chips cannot be clicked even if <see cref="MudChip{T}.OnClick"/> is set.
@@ -195,7 +195,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public bool ReadOnly { get; set; } = false;
 
     /// <summary>
-    /// Gets or sets the comparer used to determine when a selection has changed.
+    /// The comparer used to determine when a selection has changed.
     /// </summary>
     /// <remarks>
     /// Defaults to <see cref="EqualityComparer{T}.Default"/>.
@@ -205,7 +205,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public IEqualityComparer<T?> Comparer { get; set; } = EqualityComparer<T?>.Default;
 
     /// <summary>
-    /// Gets or sets the currently selected value.
+    /// The currently selected value.
     /// </summary>
     /// <remarks>
     /// This property is used when <see cref="SelectionMode"/> is <see cref="SelectionMode.SingleSelection" /> or <see cref="SelectionMode.ToggleSelection"/>.
@@ -224,7 +224,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public EventCallback<T?> SelectedValueChanged { get; set; }
 
     /// <summary>
-    /// Gets or sets the currently selected chips in this set. 
+    /// The currently selected chips in this set. 
     /// </summary>
     /// <remarks>
     /// This event occurs when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection" />.

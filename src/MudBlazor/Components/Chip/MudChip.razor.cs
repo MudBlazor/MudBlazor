@@ -40,13 +40,13 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     internal readonly ParameterState<bool> IsSelectedState;
 
     /// <summary>
-    /// Gets or sets the service used to navigate the browser to another URL.
+    /// The service used to navigate the browser to another URL.
     /// </summary>
     [Inject]
     public NavigationManager? UriHelper { get; set; }
 
     /// <summary>
-    /// Gets or sets the service used to perform browser actions such as navigation.
+    /// The service used to perform browser actions such as navigation.
     /// </summary>
     [Inject]
     public IJsApiService? JsApiService { get; set; }
@@ -108,7 +108,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     private MudChipSet<T>? ChipSet { get; set; }
 
     /// <summary>
-    /// Gets or sets the color of this chip.
+    /// The color of this chip.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.  When <see cref="SelectedColor"/> is set, this color is used when the chip is unselected.
@@ -118,7 +118,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public Color? Color { get; set; }
 
     /// <summary>
-    /// Gets or sets the color of the chip when it is selected.
+    /// The color of the chip when it is selected.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.  When set, this color is used for a selected chip, otherwise <see cref="Color"/> is used.
@@ -128,7 +128,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public Color? SelectedColor { get; set; }
 
     /// <summary>
-    /// Gets or sets the size of the chip.
+    /// The size of the chip.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.
@@ -138,7 +138,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public Size? Size { get; set; }
 
     /// <summary>
-    /// Gets or sets the display variation to use.
+    /// The display variation to use.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.
@@ -155,7 +155,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public RenderFragment? AvatarContent { get; set; }
 
     /// <summary>
-    /// Gets or sets whether the theme border radius is used for the chip edges.
+    /// Whether the theme border radius is used for the chip edges.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.  When <c>true</c>, the <see cref="LayoutProperties.DefaultBorderRadius"/> is used for chip edges.
@@ -165,7 +165,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public bool? Label { get; set; }
 
     /// <summary>
-    /// Gets or sets whether the user cannot interact with this chip.
+    /// Whether the user cannot interact with this chip.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.  When <c>true</c>, the chip is visibly disabled and interaction is not allowed.
@@ -175,7 +175,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public bool Disabled { get; set; }
 
     /// <summary>
-    /// Gets or sets the icon to display within the chip.
+    /// The icon to display within the chip.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.  Use the <see cref="IconColor"/> to control the color of this icon.
@@ -185,7 +185,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public string? Icon { get; set; }
 
     /// <summary>
-    /// Gets or sets the icon to display when <see cref="IsSelected"/> is <c>true</c>.
+    /// The icon to display when <see cref="IsSelected"/> is <c>true</c>.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.
@@ -195,7 +195,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public string? CheckedIcon { get; set; }
 
     /// <summary>
-    /// Gets or sets the color of the <see cref="Icon"/>.
+    /// The color of the <see cref="Icon"/>.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.
@@ -205,14 +205,14 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public Color? IconColor { get; set; }
 
     /// <summary>
-    /// Gets or sets the close icon to display when <see cref="OnClose"/> is set.
+    /// The close icon to display when <see cref="OnClose"/> is set.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
     public string? CloseIcon { get; set; }
 
     /// <summary>
-    /// Gets or sets whether a ripple effect is show when the chip is clicked.
+    /// Whether a ripple effect is show when the chip is clicked.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.
@@ -229,7 +229,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
-    /// Gets or sets the URL to navigate to when the chip is clicked.
+    /// The URL to navigate to when the chip is clicked.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.  Use <see cref="Target"/> to control where the URL is opened.
@@ -239,7 +239,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public string? Href { get; set; }
 
     /// <summary>
-    /// Gets or sets the target to open URLs if <see cref="Href"/> is set.
+    /// The target to open URLs if <see cref="Href"/> is set.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.  This value is typically <c>_blank</c>, <c>_self</c>, <c>_parent</c>, <c>_top</c>, or the name of an <c>iframe</c>.
@@ -249,7 +249,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public string? Target { get; set; }
 
     /// <summary>
-    /// Gets or sets the text label for the chip.
+    /// The text label for the chip.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.  This will be shown so long as <see cref="ChildContent"/> is not set.
@@ -259,7 +259,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public string? Text { get; set; }
 
     /// <summary>
-    /// Gets or sets the value applied when the chip is selected.
+    /// The value applied when the chip is selected.
     /// </summary>
     /// <remarks>
     /// When part of a <see cref="MudChipSet{T}"/>, the <see cref="MudChipSet{T}.SelectedValue"/> is set to this value when the chip is selected.  Once set, the value should not change.
@@ -269,7 +269,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public T? Value { get; set; }
 
     /// <summary>
-    /// Gets or sets whether a full page refresh is performed when navigating to the URL in <see cref="Href"/>.
+    /// Whether a full page refresh is performed when navigating to the URL in <see cref="Href"/>.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.  When <c>true</c>, client-side routing is bypassed and a full page reload occurs.
@@ -279,7 +279,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public bool ForceLoad { get; set; }
 
     /// <summary>
-    /// Gets or sets whether this chip is selected by default when part of a <see cref="MudChipSet{T}"/>.
+    /// Whether this chip is selected by default when part of a <see cref="MudChipSet{T}"/>.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.
@@ -306,7 +306,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     internal bool ShowCheckMark => IsSelectedState.Value && ChipSet?.CheckMark == true;
 
     /// <summary>
-    /// Gets or sets whether this chip is selected.
+    /// Whether this chip is selected.
     /// </summary>
     /// <remarks>
     /// When <c>true</c>, the chip is displayed in a selected state.

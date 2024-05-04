@@ -67,7 +67,7 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// Gets or sets the CSS classes applied to the popover.
+        /// The CSS classes applied to the popover.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.
@@ -77,7 +77,7 @@ namespace MudBlazor
         public string PopoverClass { get; set; }
 
         /// <summary>
-        /// Gets or sets the CSS classes applied to the internal list.
+        /// The CSS classes applied to the internal list.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.
@@ -87,7 +87,7 @@ namespace MudBlazor
         public string ListClass { get; set; }
 
         /// <summary>
-        /// Gets or sets the CSS classes applied to internal list items.
+        /// The CSS classes applied to internal list items.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.
@@ -107,7 +107,7 @@ namespace MudBlazor
         public Origin AnchorOrigin { get; set; } = Origin.BottomCenter;
 
         /// <summary>
-        /// Gets or sets the transform origin point for the popover.
+        /// The transform origin point for the popover.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Origin.TopCenter"/>.
@@ -117,7 +117,7 @@ namespace MudBlazor
         public Origin TransformOrigin { get; set; } = Origin.TopCenter;
 
         /// <summary>
-        /// Gets or sets whether compact padding will be used.
+        /// Whether compact padding will be used.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -127,7 +127,7 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// Gets or sets the "open" Autocomplete icon.
+        /// The "open" Autocomplete icon.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.ArrowDropDown"/>.
@@ -137,7 +137,7 @@ namespace MudBlazor
         public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         /// <summary>
-        /// Gets or sets the "close" Autocomplete icon.
+        /// The "close" Autocomplete icon.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.ArrowDropDown"/>.
@@ -147,7 +147,7 @@ namespace MudBlazor
         public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         /// <summary>
-        /// Gets or sets the maximum height, in pixels, of the Autocomplete when it is open.
+        /// The maximum height, in pixels, of the Autocomplete when it is open.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>300</c>.
@@ -157,7 +157,7 @@ namespace MudBlazor
         public int MaxHeight { get; set; } = 300;
 
         /// <summary>
-        /// Gets or sets the function used to get the display text for each item.
+        /// The function used to get the display text for each item.
         /// </summary>
         /// <remarks>
         /// Defaults to the <c>ToString()</c> method of items.
@@ -181,7 +181,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets or sets whether to show the progress indicator during searches.
+        /// Whether to show the progress indicator during searches.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  The progress indicator uses the color specified in the <see cref="ProgressIndicatorColor"/> property.
@@ -191,7 +191,7 @@ namespace MudBlazor
         public bool ShowProgressIndicator { get; set; } = false;
 
         /// <summary>
-        /// Gets or sets the color of the progress indicator.
+        /// The color of the progress indicator.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Default"/>.  This property is used when <see cref="ShowProgressIndicator"/> is <c>true</c>.
@@ -211,7 +211,7 @@ namespace MudBlazor
         public Func<string, CancellationToken, Task<IEnumerable<T>>> SearchFunc { get; set; }
 
         /// <summary>
-        /// Gets or sets the maximum number of items to display.
+        /// The maximum number of items to display.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>10</c>.  A value of <c>null</c> will display all items.
@@ -221,7 +221,7 @@ namespace MudBlazor
         public int? MaxItems { get; set; } = 10;
 
         /// <summary>
-        /// Gets or sets the minimum number of characters typed to initiate a search.
+        /// The minimum number of characters typed to initiate a search.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>0</c>.
@@ -231,7 +231,7 @@ namespace MudBlazor
         public int MinCharacters { get; set; } = 0;
 
         /// <summary>
-        /// Gets or sets whether to reset the selected value if the user deletes the text.
+        /// Whether to reset the selected value if the user deletes the text.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -241,7 +241,7 @@ namespace MudBlazor
         public bool ResetValueOnEmptyText { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the text will be selected (highlighted) when the component receives focus.
+        /// Whether the text will be selected (highlighted) when the component receives focus.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -251,7 +251,7 @@ namespace MudBlazor
         public bool SelectOnActivation { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets whether other items can be selected without resetting the Value.
+        /// Whether other items can be selected without resetting the Value.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  When <c>true</c>, selecting an option will trigger a <see cref="SearchFunc"/> with the current Text.  Otherwise, an empty string is passed which can make it easier to view and select other options without resetting the Value. When <c>false</c>, <c>T</c> must either be a <c>record</c> or override the <c>GetHashCode</c> and <c>Equals</c> methods.
@@ -261,7 +261,7 @@ namespace MudBlazor
         public bool Strict { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets the debounce interval, in milliseconds.
+        /// The debounce interval, in milliseconds.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>100</c>.  A higher value can help reduce the number of calls to <see cref="SearchFunc"/>, which can improve responsiveness.
@@ -271,7 +271,7 @@ namespace MudBlazor
         public int DebounceInterval { get; set; } = 100;
 
         /// <summary>
-        /// Gets or sets the custom template used to display unselected items.
+        /// The custom template used to display unselected items.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="ItemSelectedTemplate"/> property to control the display of selected items.
@@ -281,7 +281,7 @@ namespace MudBlazor
         public RenderFragment<T> ItemTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template used to display selected items.
+        /// The custom template used to display selected items.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="ItemTemplate"/> property to control the display of unselected items.
@@ -291,7 +291,7 @@ namespace MudBlazor
         public RenderFragment<T> ItemSelectedTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template used to display disabled items.
+        /// The custom template used to display disabled items.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -301,7 +301,7 @@ namespace MudBlazor
         public RenderFragment<T> ItemDisabledTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template used when the number of items returned by <see cref="SearchFunc"/> is more than the value of the <see cref="MaxItems"/> property.
+        /// The custom template used when the number of items returned by <see cref="SearchFunc"/> is more than the value of the <see cref="MaxItems"/> property.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -311,7 +311,7 @@ namespace MudBlazor
         public RenderFragment MoreItemsTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template used when no items are returned by <see cref="SearchFunc"/>.
+        /// The custom template used when no items are returned by <see cref="SearchFunc"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -321,7 +321,7 @@ namespace MudBlazor
         public RenderFragment NoItemsTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template shown above the list of items, if <see cref="SearchFunc"/> returns items to display.  Otherwise, the fragment is hidden.
+        /// The custom template shown above the list of items, if <see cref="SearchFunc"/> returns items to display.  Otherwise, the fragment is hidden.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="AfterItemsTemplate"/> property to control content displayed below items.
@@ -331,7 +331,7 @@ namespace MudBlazor
         public RenderFragment BeforeItemsTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template shown below the list of items, if <see cref="SearchFunc"/> returns items to display.  Otherwise, the fragment is hidden.
+        /// The custom template shown below the list of items, if <see cref="SearchFunc"/> returns items to display.  Otherwise, the fragment is hidden.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="BeforeItemsTemplate"/> property to control content displayed above items.
@@ -341,7 +341,7 @@ namespace MudBlazor
         public RenderFragment AfterItemsTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template used for the progress indicator when <see cref="ShowProgressIndicator"/> is <c>true</c>.
+        /// The custom template used for the progress indicator when <see cref="ShowProgressIndicator"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="ProgressIndicatorInPopoverTemplate"/> property to control content displayed for the progress indicator inside the popover.
@@ -351,7 +351,7 @@ namespace MudBlazor
         public RenderFragment ProgressIndicatorTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template used for the progress indicator inside the popover when <see cref="ShowProgressIndicator"/> is <c>true</c>.
+        /// The custom template used for the progress indicator inside the popover when <see cref="ShowProgressIndicator"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="ProgressIndicatorTemplate"/> property to control content displayed for the progress indicator.
@@ -361,7 +361,7 @@ namespace MudBlazor
         public RenderFragment ProgressIndicatorInPopoverTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the <c>Text</c> property is overridden when an item is selected.
+        /// Whether the <c>Text</c> property is overridden when an item is selected.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  When <c>true</c>, selecting a value will update the Text property.  When <c>false</c>, incomplete values for Text are allowed.
@@ -371,7 +371,7 @@ namespace MudBlazor
         public bool CoerceText { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets whether the <c>Value</c> property is set even if no match is found by <see cref="SearchFunc"/>.
+        /// Whether the <c>Value</c> property is set even if no match is found by <see cref="SearchFunc"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the user input will be applied to the Value property which allows it to be validated and show an error message.
@@ -381,7 +381,7 @@ namespace MudBlazor
         public bool CoerceValue { get; set; }
 
         /// <summary>
-        /// Gets or sets the function used to determine if an item should be disabled.
+        /// The function used to determine if an item should be disabled.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -397,7 +397,7 @@ namespace MudBlazor
         public EventCallback<bool> IsOpenChanged { get; set; }
 
         /// <summary>
-        /// Gets or sets whether pressing the <c>Tab</c> key updates the Value to the currently selected item.
+        /// Whether pressing the <c>Tab</c> key updates the Value to the currently selected item.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -407,7 +407,7 @@ namespace MudBlazor
         public bool SelectValueOnTab { get; set; }
 
         /// <summary>
-        /// Gets or sets whether a Clear icon button is displayed.
+        /// Whether a Clear icon button is displayed.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <c>ClearIcon</c> property to control the Clear button icon.
@@ -435,7 +435,7 @@ namespace MudBlazor
         public EventCallback<int> ReturnedItemsCountChanged { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the search result drop-down is currently displayed.
+        /// Whether the search result drop-down is currently displayed.
         /// </summary>
         /// <remarks>
         /// When this property changes, the <see cref="IsOpenChanged"/> event will occur.
