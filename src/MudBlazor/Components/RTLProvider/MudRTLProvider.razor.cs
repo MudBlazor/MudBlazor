@@ -9,6 +9,9 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// Represents a language support provider for Right-to-Left (RTL) languages such as Arabic, Hebrew, and Persian.
+    /// </summary>
     public partial class MudRTLProvider : MudComponentBase
     {
         private readonly ParameterState<bool> _rtlState;
@@ -28,14 +31,17 @@ namespace MudBlazor
                 .Build();
 
         /// <summary>
-        /// If true, changes the layout to RightToLeft.
+        /// Gets or sets whether text is displayed Right-to-Left (RTL).
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, text will display properly for RTL languages such as Arabic, Hebrew, and Persian.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.RTLProvider.Behavior)]
         public bool RightToLeft { get; set; }
 
         /// <summary>
-        /// Child content of the component.
+        /// The content within this component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.RTLProvider.Behavior)]

@@ -42,12 +42,6 @@ namespace MudBlazor
         [CascadingParameter]
         protected internal MudBaseItemsControl<MudCarouselItem>? Parent { get; set; }
 
-        /// <summary>
-        /// Gets or sets whether text is displayed Right-to-Left (RTL).
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, text will display property for RTL languages such as Arabic, Hebrew, and Persian.
-        /// </remarks>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
