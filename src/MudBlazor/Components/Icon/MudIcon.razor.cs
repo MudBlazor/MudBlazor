@@ -35,7 +35,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Icon.Appearance)]
         public Size Size { get; set; } = Size.Medium;
-        
+
         /// <summary>
         /// If true, will ignore custom color if set.
         /// </summary>
