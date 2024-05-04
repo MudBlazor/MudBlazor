@@ -15,9 +15,6 @@ using MudBlazor.Utilities.Throttle;
 
 namespace MudBlazor
 {
-    /// <summary>
-    /// Represents a sophisticated and customizable pop-up for choosing a color.
-    /// </summary>
     public partial class MudColorPicker : MudPicker<MudColor>
     {
         private readonly ParameterState<int> _throttleIntervalState;
@@ -67,23 +64,13 @@ namespace MudBlazor
 
         #region Parameters
 
-        /// <summary>
-        /// Gets or sets whether text is displayed Right-to-Left (RTL).
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, text will display properly for RTL languages such as Arabic, Hebrew, and Persian.
-        /// </remarks>
-        [CascadingParameter(Name = "RightToLeft")]
-        public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         private bool _alpha = true;
 
         /// <summary>
-        /// Whether alpha transparency options are shown.
+        /// If true, Alpha options will be displayed and color output will be RGBA, HSLA or HEXA and not RGB, HSL or HEX.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>true</c>.  When <c>true</c>, alpha options will be displayed and color output will be <c>RGBA</c>, <c>HSLA</c> or <c>HEXA</c> instead of <c>RGB</c>, <c>HSL</c> or <c>HEX</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public bool ShowAlpha
@@ -106,61 +93,43 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Whether the color field will be displayed.
+        /// If true, the color field will be displayed.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>true</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public bool ShowColorField { get; set; } = true;
 
         /// <summary>
-        /// Whether the switch to change the color mode will be displayed.
+        /// If true, the switch to change color mode will be displayed.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>true</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public bool ShowModeSwitch { get; set; } = true;
 
         /// <summary>
-        /// Whether the text inputs, color mode, and switch will be displayed.
+        /// If true, textfield inputs and color mode switch will be displayed.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>true</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public bool ShowInputs { get; set; } = true;
 
         /// <summary>
-        /// Whether hue and alpha sliders are displayed.
+        /// If true, hue and alpha sliders will be displayed.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>true</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public bool ShowSliders { get; set; } = true;
 
         /// <summary>
-        /// Whether a preview of the color is displayed.
+        /// If true, the preview color box will be displayed, note that the preview color functions as a button as well for collection colors.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>true</c>.  When <c>true</c>, the preview color can be used as a button for collection colors.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public bool ShowPreview { get; set; } = true;
 
         /// <summary>
-        /// The initial color channels shown.
+        /// The initial mode (RGB, HSL or HEX) the picker should open. Defaults to RGB
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="ColorPickerMode.RGB"/>.  Other values are <see cref="ColorPickerMode.HEX"/> for hexadecimal values and <see cref="ColorPickerMode.HSL"/> for hue/saturation/lightness mode.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public ColorPickerMode ColorPickerMode { get; set; } = ColorPickerMode.RGB;
@@ -169,11 +138,8 @@ namespace MudBlazor
         private ColorPickerView _activeColorPickerView = ColorPickerView.Spectrum;
 
         /// <summary>
-        /// The initial view.
+        /// The initial view of the picker. Views can be changed if toolbar is enabled.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="ColorPickerView.Spectrum"/>.   The view can be changed if <c>ShowToolbar</c> is <c>true</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public ColorPickerView ColorPickerView
@@ -190,21 +156,15 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Whether changes to the bound value only occur when HSL values change.
+        /// If true, binding changes occurred also when HSL values changed without a corresponding RGB change
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, the bound value changes when HSL values change, even if the RGB values have not changed.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool UpdateBindingIfOnlyHSLChanged { get; set; } = false;
 
         /// <summary>
-        /// The currently selected color as a <see cref="MudColor"/>.
+        /// A two-way bindable property representing the selected value. MudColor is a utility class that can be used to get the value as RGB, HSL, hex or other value
         /// </summary>
-        /// <remarks>
-        /// You can use properties in <see cref="MudColor"/> to get color channel values such as <c>RGB</c>, <c>HSL</c>, <c>HEX</c> and more.  When this value changes, the <see cref="ValueChanged"/> event occurs.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
         public MudColor Value
@@ -213,18 +173,11 @@ namespace MudBlazor
             set => SetColorAsync(value).AndForget();
         }
 
-        /// <summary>
-        /// Occurs when the <see cref="Value"/> property has changed.
-        /// </summary>
-        [Parameter]
-        public EventCallback<MudColor> ValueChanged { get; set; }
+        [Parameter] public EventCallback<MudColor> ValueChanged { get; set; }
 
         /// <summary>
-        /// The list of quick colors to display.
+        /// MudColor list of predefined colors. The first five colors will show up as the quick colors on preview dot click.
         /// </summary>
-        /// <remarks>
-        /// Defaults to a list of <c>35</c> colors.  The first five colors show as the quick colors when the preview dot is clicked.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public IEnumerable<MudColor> Palette { get; set; } = new MudColor[]
@@ -252,78 +205,62 @@ namespace MudBlazor
         };
 
         /// <summary>
-        /// Whether the selected color can continue to change while the mouse button is down.
+        /// <para>
+        /// When set to false, no mouse move events in the spectrum mode will be captured, so the selector circle won't fellow the mouse.
+        /// Under some conditions like long latency the visual representation might not reflect the user behaviour anymore. So, it can be disabled.
+        /// </para>
+        /// <para>Enabled by default</para>
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>true</c>.  When <c>false</c>, conditions like long latency are better supported and can be adjusted via the <see cref="ThrottleInterval"/> property.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public bool DragEffect { get; set; } = true;
 
         /// <summary>
-        /// The custom icon to dislay for the close button.
+        /// Custom close icon.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Icons.Material.Filled.Close"/>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
         public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
 
         /// <summary>
-        /// The icon to display for the spectrum mode button.
+        /// Custom spectrum icon.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Icons.Material.Filled.Tune"/>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
         public string SpectrumIcon { get; set; } = Icons.Material.Filled.Tune;
 
         /// <summary>
-        /// The icon to display for the grid mode button.
+        /// Custom grid icon.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Icons.Material.Filled.Apps"/>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
         public string GridIcon { get; set; } = Icons.Material.Filled.Apps;
 
         /// <summary>
-        /// The icon to display for the custom palette button.
+        /// Custom palette icon.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Icons.Material.Filled.Palette"/>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
         public string PaletteIcon { get; set; } = Icons.Material.Filled.Palette;
 
         /// <summary>
-        /// The icon to display for the import/export button.
+        /// Custom import/export icon.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Icons.Material.Filled.ImportExport"/>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
         public string ImportExportIcon { get; set; } = Icons.Material.Filled.ImportExport;
 
         /// <summary>
-        /// The delay, in milliseconds, between updates to the selected color when <see cref="DragEffect"/> is <c>true</c>.
+        /// <para>The delay (in milliseconds) after dragging the pointer before the color binding updates.</para>
+        /// <para>Updates are instant if the throttling interval is <c>0</c>.</para>
+        /// <para>Default interval is <c>300ms</c>.</para>
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>300</c> milliseconds between updates.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public int ThrottleInterval { get; set; } = 300;
 
         #endregion
 
-        /// <inheritdoc />
         protected override void OnInitialized()
         {
             base.OnInitialized();
@@ -359,9 +296,6 @@ namespace MudBlazor
             }
         }
 
-        /// <summary>
-        /// Refreshes the current color change mode.
-        /// </summary>
         public void ChangeMode() =>
             ColorPickerMode = ColorPickerMode switch
             {
@@ -371,12 +305,6 @@ namespace MudBlazor
                 _ => ColorPickerMode.RGB,
             };
 
-        /// <summary>
-        /// Changes to the specified color selection view.
-        /// </summary>
-        /// <param name="value">
-        /// The new view to display.
-        /// </param>
         public void ChangeView(ColorPickerView value)
         {
             _activeColorPickerView = value;
@@ -539,92 +467,57 @@ namespace MudBlazor
         #region updating inputs
 
         /// <summary>
-        /// Sets the red channel of the selected color.
+        /// Set the R (red) component of the color picker
         /// </summary>
-        /// <param name="value">
-        /// A value between <c>0</c> (no red) and <c>255</c> (max red).
-        /// </param>
-        /// <remarks>
-        /// Often used with <see cref="SetG(int)"/> and <see cref="SetB(int)"/>.
-        /// </remarks>
+        /// <param name="value">A value between 0 (no red) or 255 (max red)</param>
         public void SetR(int value) => Value = Value.SetR(value);
 
         /// <summary>
-        /// Sets the green channel of the selected color.
+        /// Set the G (green) component of the color picker
         /// </summary>
-        /// <param name="value">
-        /// A value between <c>0</c> (no green) and <c>255</c> (max green).
-        /// </param>
-        /// <remarks>
-        /// Often used with <see cref="SetR(int)"/> and <see cref="SetB(int)"/>.
-        /// </remarks>
+        /// <param name="value">A value between 0 (no green) or 255 (max green)</param>
         public void SetG(int value) => Value = Value.SetG(value);
 
         /// <summary>
-        /// Sets the blue channel of the selected color.
+        /// Set the B (blue) component of the color picker
         /// </summary>
-        /// <param name="value">
-        /// A value between <c>0</c> (no blue) and <c>255</c> (max blue).
-        /// </param>
-        /// <remarks>
-        /// Often used with <see cref="SetR(int)"/> and <see cref="SetG(int)"/>.
-        /// </remarks>
+        /// <param name="value">A value between 0 (no blue) or 255 (max blue)</param>
         public void SetB(int value) => Value = Value.SetB(value);
 
         /// <summary>
-        /// Sets the hue channel of the selected color.
+        /// Set the H (hue) component of the color picker
         /// </summary>
-        /// <param name="value">
-        /// A value between <c>0.0</c> and <c>360.0</c>, in degrees.
-        /// </param>
-        /// <remarks>
-        /// Often used with <see cref="SetS(double)"/> and <see cref="SetL(double)"/>.
-        /// </remarks>
+        /// <param name="value">A value between 0 and 360 (degrees)</param>
         public void SetH(double value) => Value = Value.SetH(value);
 
         /// <summary>
-        /// Sets the saturation channel of the selected color.
+        /// Set the S (saturation) component of the color picker
         /// </summary>
-        /// <param name="value">
-        /// A value between <c>0.0</c> (no saturation) and <c>1.0</c> (max saturation).
-        /// </param>
-        /// <remarks>
-        /// Often used with <see cref="SetH(double)"/> and <see cref="SetL(double)"/>.
-        /// </remarks>
+        /// <param name="value">A value between 0.0 (no saturation) and 1.0 (max saturation)</param>
         public void SetS(double value) => Value = Value.SetS(value);
 
         /// <summary>
-        /// Sets the lightness channel of the selected color.
+        /// Set the L (Lightness) component of the color picker
         /// </summary>
-        /// <param name="value">
-        /// A value between <c>0.0</c> (darkest/black) and <c>1.0</c> (brightest/white).
-        /// </param>
-        /// <remarks>
-        /// Often used with <see cref="SetH(double)"/> and <see cref="SetS(double)"/>.
-        /// </remarks>
+        /// <param name="value">A value between 0.0 (no light, black) and 1.0 (max light, white)</param>
         public void SetL(double value) => Value = Value.SetL(value);
 
         /// <summary>
-        /// Sets the transparency channel of the selected color.
+        /// Set the Alpha (transparency) component of the color picker
         /// </summary>
-        /// <param name="value">
-        /// A value between <c>0.0</c> (fully transparent) and <c>1.0</c> (solid).
-        /// </param>
+        /// <param name="value">A value between 0.0 (full transparent) and 1.0 (solid) </param>
         public void SetAlpha(double value) => Value = Value.SetAlpha(value);
 
         /// <summary>
-        /// Sets the transparency channel of the selected color.
+        /// Set the Alpha (transparency) component of the color picker
         /// </summary>
-        /// <param name="value">
-        /// A value between <c>0</c> (fully transparent) and <c>1</c> (solid).</param>
+        /// <param name="value">A value between 0 (full transparent) and 1 (solid) </param>
         public void SetAlpha(int value) => Value = Value.SetAlpha(value);
 
         /// <summary>
-        /// Sets the selected color to the specified value.
+        /// Set the color of the picker based on the string input
         /// </summary>
-        /// <param name="input">
-        /// A string value formatted as hexadecimal (<c>#FF0000</c>), RGB (<c>rgb(255,0,0)</c>), or RGBA (<c>rgba(255,0,0,255)</c>.
-        /// </param>
+        /// <param name="input">Accepting different formats for a color representation such as rbg, rgba, #</param>
         public void SetInputString(string input)
         {
             MudColor color;
