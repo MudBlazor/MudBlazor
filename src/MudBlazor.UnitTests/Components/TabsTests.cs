@@ -1267,5 +1267,15 @@ namespace MudBlazor.UnitTests.Components
             tabs[1].InnerHtml.Contains("mud-icon-root mud-svg-icon").Should().BeFalse(); // The close icon is not shown.
             tabs[2].InnerHtml.Contains("mud-icon-root mud-svg-icon").Should().BeTrue();
         }
+
+        [Test]
+        public void Tabs_HaveRipple_WhenRippleIsTrue()
+        {
+            var comp = Context.RenderComponent<TabsRippleTest>(parameters => parameters.Add(p => p.Ripple, true));
+            comp.FindAll("div.mud-ripple").Count.Should().BeGreaterThan(0);
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Ripple, false));
+            comp.FindAll("div.mud-ripple").Count.Should().Be(0);
+        }
     }
 }
