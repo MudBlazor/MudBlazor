@@ -210,8 +210,10 @@ namespace MudBlazor
         void IForm.Update(IFormComponent formControl)
         {
             // Note: We don't want to make IForm.Update async because it makes no sense for the inputs to wait
-            // for form evaluation, especially when multiple input parameter changes result in form updates
-            // AndForget reports exceptions via MudGlobal.UnhandledExceptionHandler
+            // for form evaluation, especially when multiple input parameters change which results in several form 
+            // updates which are debounced anyway via a timer.
+
+            // Validation exceptions are observed via AndForget() which reports exceptions via MudGlobal.UnhandledExceptionHandler
             EvaluateFormAsync().AndForget();
         }
 

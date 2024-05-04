@@ -16,7 +16,7 @@ namespace MudBlazor
         {
             get
             {
-                ValidateAsync().RunSynchronously();
+                ValidateAsync().Wait();
                 return Errors.Length <= 0;
             }
         }
