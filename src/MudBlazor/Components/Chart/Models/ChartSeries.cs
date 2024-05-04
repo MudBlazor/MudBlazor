@@ -27,7 +27,7 @@ namespace MudBlazor
         /// <summary>
         /// Whether this series is displayed in the chart.
         /// </summary>
-        public bool IsVisible { get; set; } = true;
+        public bool Visible { get; set; } = true;
 
         /// <summary>
         /// The position of this series within a list.

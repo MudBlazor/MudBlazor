@@ -105,23 +105,23 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
-        public bool IsVisible
+        public bool Visible
         {
-            get => _isVisible;
+            get => _visible;
             set
             {
-                if (_isVisible == value)
+                if (_visible == value)
                     return;
-                _isVisible = value;
-                IsVisibleChanged.InvokeAsync(value);
+                _visible = value;
+                VisibleChanged.InvokeAsync(value);
             }
         }
-        private bool _isVisible;
+        private bool _visible;
 
         /// <summary>
         /// Raised when the inline dialog's display status changes.
         /// </summary>
-        [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
+        [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
 
         /// <summary>
         /// Defines the element that will receive the focus when the dialog is opened.
@@ -166,8 +166,8 @@ namespace MudBlazor
             _reference = DialogService.Show<MudDialog>(title, parameters, options ?? Options);
             _reference.Result.ContinueWith(t =>
             {
-                _isVisible = false;
-                InvokeAsync(() => IsVisibleChanged.InvokeAsync(false));
+                _visible = false;
+                InvokeAsync(() => VisibleChanged.InvokeAsync(false));
             });
             return _reference;
         }
@@ -176,13 +176,13 @@ namespace MudBlazor
         {
             if (IsInline)
             {
-                if (_isVisible && _reference == null)
+                if (_visible && _reference == null)
                 {
-                    Show(); // if isVisible and we don't have any reference we need to call Show
+                    Show(); // if visible and we don't have any reference we need to call Show
                 }
                 else if (_reference != null)
                 {
-                    if (IsVisible)
+                    if (Visible)
                         (_reference.Dialog as IMudStateHasChanged)?.StateHasChanged(); // forward render update to instance
                     else
                         Close(); // if we still have reference but it's not visible call Close

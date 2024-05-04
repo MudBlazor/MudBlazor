@@ -28,10 +28,10 @@ namespace MudBlazor.Charts.SVG.Models
         /// <summary>
         /// Whether the legend is displayed.
         /// </summary>
-        public bool IsVisible { get; set; } = true;
+        public bool Visible { get; set; } = true;
 
         /// <summary>
-        /// Occurs when the <see cref="IsVisible"/> property has changed.
+        /// Occurs when the <see cref="Visible"/> property has changed.
         /// </summary>
         public EventCallback<SvgLegend> OnVisibilityChanged { get; set; }
 
@@ -40,7 +40,7 @@ namespace MudBlazor.Charts.SVG.Models
         /// </summary>
         public async Task HandleCheckboxChangeAsync()
         {
-            IsVisible = !IsVisible;
+            Visible = !Visible;
             await OnVisibilityChanged.InvokeAsync(this);
         }
     }

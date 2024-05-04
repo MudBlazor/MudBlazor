@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -8,7 +6,7 @@ namespace MudBlazor
 #nullable enable
     public partial class MudTooltip : MudComponentBase
     {
-        private bool _isVisible;
+        private bool _visible;
         private Origin _anchorOrigin;
         private Origin _transformOrigin;
 
@@ -134,30 +132,30 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool IsVisible
+        public bool Visible
         {
-            get => _isVisible;
+            get => _visible;
             set
             {
-                if (value == _isVisible)
+                if (value == _visible)
                     return;
-                _isVisible = value;
-                IsVisibleChanged.InvokeAsync(_isVisible).AndForget();
+                _visible = value;
+                VisibleChanged.InvokeAsync(_visible).AndForget();
             }
         }
 
         /// <summary>
-        /// An event triggered when the state of IsVisible has changed
+        /// An event triggered when the state of Visible has changed
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public EventCallback<bool> IsVisibleChanged { get; set; }
+        public EventCallback<bool> VisibleChanged { get; set; }
 
         private void HandleMouseEnter()
         {
             if (ShowOnHover)
             {
-                IsVisible = true;
+                Visible = true;
             }
         }
 
@@ -165,14 +163,14 @@ namespace MudBlazor
         {
             if (ShowOnHover == false)
                 return;
-            IsVisible = false;
+            Visible = false;
         }
 
         private void HandleFocusIn()
         {
             if (ShowOnFocus)
             {
-                IsVisible = true;
+                Visible = true;
             }
         }
 
@@ -183,14 +181,14 @@ namespace MudBlazor
                 return;
             }
 
-            IsVisible = false;
+            Visible = false;
         }
 
         private void HandleMouseUp()
         {
             if (ShowOnClick)
             {
-                IsVisible = !IsVisible;
+                Visible = !Visible;
             }
         }
 

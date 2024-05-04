@@ -358,6 +358,8 @@ namespace MudBlazor
                         case "IsChecked":
                         case "IsCheckable":
                         case "IsCheckedChanged":
+                        case "IsVisible":
+                        case "IsVisibleChanged":
                             NotifyIllegalParameter(parameter);
                             break;
                     }

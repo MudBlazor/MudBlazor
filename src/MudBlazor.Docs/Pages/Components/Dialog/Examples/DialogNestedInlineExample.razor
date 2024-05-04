@@ -6,12 +6,12 @@
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Open2Async">Open With Show</MudButton>
 
 @*Outer inline dialog*@
-<MudDialog @bind-IsVisible="_visible">
+<MudDialog @bind-Visible="_visible">
     <DialogContent>
         <MudText>Hi There, I'm an inline dialog!</MudText>
         <MudButton Variant="Variant.Filled" Color="Color.Tertiary" OnClick="OpenNested">Open Nested</MudButton>
         @*Nested inline dialog*@
-        <MudDialog @bind-IsVisible="_nestedVisible">
+        <MudDialog @bind-Visible="_nestedVisible">
             <DialogContent>
                 <MudText Class="nested">Nested inline dialog!</MudText>
             </DialogContent>

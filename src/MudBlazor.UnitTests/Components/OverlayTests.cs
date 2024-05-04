@@ -92,11 +92,11 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<OverlayVisibleBindingWithAutoCloseTest>();
             IElement Button() => comp.Find("#showBtn");
 
-            comp.Instance.IsVisible.Should().BeFalse();
+            comp.Instance.Visible.Should().BeFalse();
             await Button().ClickAsync(new MouseEventArgs());
-            comp.Instance.IsVisible.Should().BeTrue();
+            comp.Instance.Visible.Should().BeTrue();
             await comp.Find("div.mud-overlay").ClickAsync(new MouseEventArgs());
-            comp.Instance.IsVisible.Should().BeFalse();
+            comp.Instance.Visible.Should().BeFalse();
         }
     }
 }
