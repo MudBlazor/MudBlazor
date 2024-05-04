@@ -462,7 +462,7 @@ namespace MudBlazor
         [Parameter] public DialogOptions EditDialogOptions { get; set; }
 
         /// <summary>
-        /// Sets the deep copy resolver.
+        /// Sets the deep copy strategy.
         /// </summary>
         /// <remarks>
         /// This strategy is used during EditMode.
