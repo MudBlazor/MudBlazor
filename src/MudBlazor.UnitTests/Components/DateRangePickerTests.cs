@@ -616,7 +616,7 @@ namespace MudBlazor.UnitTests.Components
             dateRangePickerInstance.DateRange.Should().Be(null);
 
             // validated the picker
-            await dateRangePickerComponent.InvokeAsync(() => dateRangePickerInstance.Validate());
+            await dateRangePickerComponent.InvokeAsync(() => dateRangePickerInstance.ValidateAsync());
             dateRangePickerInstance.Error.Should().BeTrue("Value is required and should be handled as invalid");
             dateRangePickerInstance.ErrorText.Should().Be(errorMessage);
 

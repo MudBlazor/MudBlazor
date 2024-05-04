@@ -1116,7 +1116,7 @@ namespace MudBlazor
         /// <returns></returns>
         internal async Task CommitItemChangesAsync()
         {
-            await _editForm.Validate();
+            await _editForm.ValidateAsync();
             if (!_editForm.IsValid)
             {
                 return;

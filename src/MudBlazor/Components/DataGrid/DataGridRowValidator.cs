@@ -5,6 +5,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
 using MudBlazor.Interfaces;
 
 namespace MudBlazor
@@ -15,7 +16,7 @@ namespace MudBlazor
         {
             get
             {
-                Validate();
+                ValidateAsync().RunSynchronously();
                 return Errors.Length <= 0;
             }
         }
@@ -56,12 +57,12 @@ namespace MudBlazor
         protected HashSet<IFormComponent> _formControls = new HashSet<IFormComponent>();
 
         [ExcludeFromCodeCoverage]
-        public void Validate()
+        public async Task ValidateAsync()
         {
             _errors.Clear();
             foreach (var formControl in _formControls.ToArray())
             {
-                formControl.Validate();
+                await formControl.ValidateAsync();
                 foreach (var err in formControl.ValidationErrors)
                 {
                     _errors.Add(err);

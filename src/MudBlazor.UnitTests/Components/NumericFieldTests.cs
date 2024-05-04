@@ -620,7 +620,7 @@ namespace MudBlazor.UnitTests.Components
             numericField.Value.Should().Be(value);
             await comp.InvokeAsync(() =>
             {
-                numericField.Validate().Wait();
+                numericField.ValidateAsync().Wait();
             });
             numericField.Value.Should().Be(value);
         }
