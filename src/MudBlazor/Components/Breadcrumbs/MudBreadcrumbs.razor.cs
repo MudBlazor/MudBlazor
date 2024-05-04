@@ -16,14 +16,14 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// Gets or sets the list of items to display.
+        /// The list of items to display.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Breadcrumbs.Behavior)]
         public IReadOnlyList<BreadcrumbItem>? Items { get; set; }
 
         /// <summary>
-        /// Gets or sets the separator shown between items.
+        /// The separator shown between items.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>/</c>.  Will not be shown if <see cref="SeparatorTemplate"/> is set.
@@ -33,21 +33,21 @@ namespace MudBlazor
         public string Separator { get; set; } = "/";
 
         /// <summary>
-        /// Gets or sets the content shown between items.
+        /// The content shown between items.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Breadcrumbs.Appearance)]
         public RenderFragment? SeparatorTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template used to display items.
+        /// The custom template used to display items.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Breadcrumbs.Behavior)]
         public RenderFragment<BreadcrumbItem>? ItemTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the maximum number of items to dislpay.
+        /// The maximum number of items to dislpay.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  If <see cref="Collapsed"/> is <c>true</c> and the number of items exceeds this value, the breadcrumbs will automatically collapse.
@@ -57,7 +57,7 @@ namespace MudBlazor
         public byte? MaxItems { get; set; }
 
         /// <summary>
-        /// Gets or sets the icon to display when items are collapsed.
+        /// The icon to display when items are collapsed.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>Icons.Material.Filled.SettingsEthernet</c>.  Displays when <see cref="Collapsed"/> and the number of items exceeds <see cref="MaxItems"/>.
@@ -67,7 +67,7 @@ namespace MudBlazor
         public string ExpanderIcon { get; set; } = Icons.Material.Filled.SettingsEthernet;
 
         /// <summary>
-        /// Gets or sets whether items are allowed to be collapsed when the number of items exceeds <see cref="MaxItems"/>.
+        /// Whether items are allowed to be collapsed when the number of items exceeds <see cref="MaxItems"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.

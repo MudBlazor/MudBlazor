@@ -219,5 +219,15 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-list-item").Count.Should().Be(9); // 7 choices, 2 groups
             comp.FindAll("div.mud-list-item-dense").Count.Should().Be(expectedDenseClassCount); // 7 choices, 2 groups
         }
+
+        [Test]
+        public void ListItem_HasRipple_WhenRippleIsTrue()
+        {
+            var comp = Context.RenderComponent<ListItemRippleTest>(parameters => parameters.Add(p => p.Ripple, true));
+            comp.FindAll("div.mud-ripple").Count.Should().BeGreaterThan(0);
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Ripple, false));
+            comp.FindAll("div.mud-ripple").Count.Should().Be(0);
+        }
     }
 }

@@ -26,7 +26,7 @@ namespace MudBlazor
         public bool RightToLeft { get; set; }
 
         /// <summary>
-        /// Gets or sets whether this group's style overrides the style of individual buttons.
+        /// Whether this group's style overrides the style of individual buttons.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  When <c>true</c>, the button styles are defined by this group.
@@ -36,7 +36,7 @@ namespace MudBlazor
         public bool OverrideStyles { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets any custom content within this group.
+        /// The custom content within this group.
         /// </summary>
         /// <remarks>
         /// This property allows for custom content to displayed inside of the group, but it is not required.
@@ -46,7 +46,7 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Gets or sets whether buttons are displayed vertically.
+        /// Whether buttons are displayed vertically.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, buttons will be displayed vertically, otherwise horizontally.
@@ -56,7 +56,7 @@ namespace MudBlazor
         public bool Vertical { get; set; }
 
         /// <summary>
-        /// Gets or sets whether a shadow is displayed.
+        /// Whether a shadow is displayed.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -66,7 +66,7 @@ namespace MudBlazor
         public bool DropShadow { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets the color of all buttons in this group.
+        /// The color of all buttons in this group.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Default" />.  Theme colors are supported.
@@ -76,7 +76,7 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// Gets or sets the size of all buttons in the group.
+        /// The size of all buttons in the group.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Size.Medium"/>.
@@ -86,7 +86,7 @@ namespace MudBlazor
         public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
-        /// Gets or sets the display variant of all buttons in the group.
+        /// The display variant of all buttons in the group.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Variant.Text"/>.  Other supported values are <see cref="Variant.Outlined"/> and <see cref="Variant.Filled"/>.

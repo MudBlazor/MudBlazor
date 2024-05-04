@@ -12,12 +12,12 @@ namespace MudBlazor
     public class ChartSeries
     {
         /// <summary>
-        /// Gets or sets the legend label for this series.
+        /// The legend label for this series.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the values to display.
+        /// The values to display.
         /// </summary>
         /// <remarks>
         /// The number of values in this array is typically equal to the number of values in the <see cref="MudChart"/> <c>XAxisLabels</c> property.
@@ -25,12 +25,12 @@ namespace MudBlazor
         public double[] Data { get; set; }
 
         /// <summary>
-        /// Gets or sets whether this series is displayed in the chart.
+        /// Whether this series is displayed in the chart.
         /// </summary>
-        public bool IsVisible { get; set; } = true;
+        public bool Visible { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets the position of this series within a list.
+        /// The position of this series within a list.
         /// </summary>
         public int Index { get; set; }
     }

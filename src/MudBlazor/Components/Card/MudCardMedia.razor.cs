@@ -18,7 +18,7 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// Gets or sets the title of the media.
+        /// The title of the media.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  This property can improve accessibility by describing the media in the <see cref="Image"/> property.
@@ -28,14 +28,14 @@ namespace MudBlazor
         public string? Title { get; set; }
 
         /// <summary>
-        /// Gets or sets the URL of the image to display.
+        /// The URL of the image to display.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Card.Behavior)]
         public string? Image { get; set; }
 
         /// <summary>
-        /// Gets or sets the height, in pixels, of the <see cref="Image"/>.
+        /// The height, in pixels, of the <see cref="Image"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>300</c>.

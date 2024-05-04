@@ -42,7 +42,7 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// Gets or sets whether content within this panel is visible.
+        /// Whether content within this panel is visible.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -51,7 +51,7 @@ namespace MudBlazor
         public bool Expanded { get; set; }
 
         /// <summary>
-        /// Gets or sets the maximum allowed height of this panel, in pixels.
+        /// The maximum allowed height of this panel, in pixels.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -60,7 +60,7 @@ namespace MudBlazor
         public int? MaxHeight { get; set; }
 
         /// <summary>
-        /// Gets or sets any content within this panel.
+        /// The content within this panel.
         /// </summary>
         [Parameter]
         public RenderFragment? ChildContent { get; set; }
