@@ -8,12 +8,12 @@ namespace MudBlazor.Charts.SVG.Models
     public class SvgPath
     {
         /// <summary>
-        /// Gets or sets the position of this path within a list.
+        /// The position of this path within a list.
         /// </summary>
         public int Index { get; set; }
 
         /// <summary>
-        /// Gets or sets the SVG path to draw.
+        /// The SVG path to draw.
         /// </summary>
         public string Data { get; set; }
     }

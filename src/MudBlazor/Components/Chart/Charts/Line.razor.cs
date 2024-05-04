@@ -22,7 +22,7 @@ namespace MudBlazor.Charts
         private const double VerticalEndSpace = 25.0;
 
         /// <summary>
-        /// Gets or sets the chart, if any, containing this component.
+        /// The chart, if any, containing this component.
         /// </summary>
         [CascadingParameter]
         public MudChart MudChartParent { get; set; }

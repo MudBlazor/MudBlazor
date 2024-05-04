@@ -28,7 +28,7 @@ namespace MudBlazor
                 .Build();
 
         /// <summary>
-        /// Gets or sets a value indicating whether the appbar will be placed at the bottom of the screen instead of the top.
+        /// Gets or sets whether the appbar will be placed at the bottom of the screen instead of the top.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AppBar.Behavior)]
@@ -45,7 +45,7 @@ namespace MudBlazor
         public int Elevation { set; get; } = 4;
 
         /// <summary>
-        /// Gets or sets a value indicating whether compact padding will be used.
+        /// Gets or sets whether compact padding will be used.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -55,7 +55,7 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether left and right padding is added to the appbar.
+        /// Gets or sets whether left and right padding is added to the appbar.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -75,7 +75,7 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// Gets or sets a value indicating whether the appbar remains in the same place when the page is scrolled.
+        /// Gets or sets whether the appbar remains in the same place when the page is scrolled.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -85,7 +85,7 @@ namespace MudBlazor
         public bool Fixed { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets a value indicating whether the appbar content is allowed to wrap.
+        /// Gets or sets whether the appbar content is allowed to wrap.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.

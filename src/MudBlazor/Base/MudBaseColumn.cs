@@ -35,13 +35,13 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets or sets the way to render this column.
+        /// The way to render this column.
         /// </summary>
         [CascadingParameter(Name = "Mode")]
         public Rendermode Mode { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the column is displayed.
+        /// Whether the column is displayed.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -50,7 +50,7 @@ namespace MudBlazor
         public bool Visible { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets the text to display for the column header.
+        /// The text to display for the column header.
         /// </summary>
         [Parameter]
         public string HeaderText { get; set; }
