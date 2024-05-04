@@ -181,7 +181,7 @@ namespace MudBlazor
         /// The size of the icon.
         /// </summary>
         /// <remarks>
-        /// Default to <see cref="Size.Medium"/>.
+        /// Defaults to <see cref="Size.Medium"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]

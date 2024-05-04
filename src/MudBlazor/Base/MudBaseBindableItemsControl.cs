@@ -14,7 +14,7 @@ namespace MudBlazor
         where TChildComponent : MudComponentBase
     {
         /// <summary>
-        /// The items.
+        /// The alternate source of items if <c>Items</c> is not set.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.Data)]

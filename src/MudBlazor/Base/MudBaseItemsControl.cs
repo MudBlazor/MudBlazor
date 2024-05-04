@@ -24,7 +24,9 @@ namespace MudBlazor
         /// <summary>
         /// The index of the currently selected item.
         /// </summary>
-        /// <remarks>When this property changes, the <see cref="SelectedIndexChanged"/> event occurs.</remarks>
+        /// <remarks>
+        /// When this property changes, the <see cref="SelectedIndexChanged"/> event occurs.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.General.Behavior)]
         public int SelectedIndex
@@ -58,13 +60,17 @@ namespace MudBlazor
         /// <summary>
         /// The list of items.
         /// </summary>
-        /// <remarks>This property is ignored when <c>ItemsSource</c> is not null.</remarks>
+        /// <remarks>
+        /// This property is ignored when <c>ItemsSource</c> is not null.
+        /// </remarks>
         public List<TChildComponent> Items { get; } = new List<TChildComponent>();
 
         /// <summary>
         /// The currently selected item.
         /// </summary>
-        /// <remarks>This property returns the item in the <see cref="Items"/> property at the <see cref="SelectedIndex"/>.</remarks>
+        /// <remarks>
+        /// This property returns the item in the <see cref="Items"/> property at the <see cref="SelectedIndex"/>.
+        /// </remarks>
         public TChildComponent? SelectedContainer
         {
             get => SelectedIndex >= 0 && Items.Count > SelectedIndex ? Items[SelectedIndex] : null;
@@ -146,7 +152,9 @@ namespace MudBlazor
         /// <summary>
         /// When overridden, adds an item to the list.
         /// </summary>
-        /// <param name="item">The item to add.</param>
+        /// <param name="item">
+        /// The item to add.
+        /// </param>
         public virtual void AddItem(TChildComponent item) { }
     }
 }
