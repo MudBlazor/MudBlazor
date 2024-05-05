@@ -230,7 +230,6 @@ namespace MudBlazor
                 await _valueState.SetValueAsync(result);
                 await _nullableValueState.SetValueAsync(result);
             }
-
         }
 
         private Task OnValueParameterChangedAsync(ParameterChangedEventArgs<T> arg) => _nullableValueState.SetValueAsync(arg.Value);
