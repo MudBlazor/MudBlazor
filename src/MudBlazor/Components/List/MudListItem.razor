@@ -10,8 +10,8 @@
             href="@Href"
             tabindex="0"
             target="@Target"
-            PreventDefault="@ApplyPreventDefault"
-            ClickPropagation="@ApplyClickPropagation">
+            PreventDefault="@GetPreventDefault()"
+            ClickPropagation="@GetClickPropagation()">
     @if (AvatarContent is not null)
     {
         <div class="mud-list-item-avatar">

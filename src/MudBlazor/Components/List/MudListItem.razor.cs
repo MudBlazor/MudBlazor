@@ -343,9 +343,9 @@ namespace MudBlazor
         /// </summary>        
         private string HtmlTag => string.IsNullOrEmpty(Href) || OnClickPreventDefault ? "div" : "a";
 
-        private bool ApplyPreventDefault => GetDisabled();
+        private bool GetPreventDefault() => GetDisabled();
 
-        private bool ApplyClickPropagation => false;
+        private bool GetClickPropagation() => false;
 
         public void Dispose()
         {
