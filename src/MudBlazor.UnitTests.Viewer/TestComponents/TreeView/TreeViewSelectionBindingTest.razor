@@ -1,0 +1,28 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTreeView Class="tree1" T="string" SelectionMode="@SelectionMode" @bind-SelectedValue="SelectedValue" @bind-SelectedValues="SelectedValues">
+    <MudTreeViewItem Class="item-1" Value='"item1"'>
+        <MudTreeViewItem Class="item-1-1" Value='"item1.1"' />
+        <MudTreeViewItem Class="item-1-2" Value='"item1.2"' />
+    </MudTreeViewItem>
+</MudTreeView>
+
+<MudTreeView Class="tree2" T="string" SelectionMode="@SelectionMode" @bind-SelectedValue="SelectedValue" @bind-SelectedValues="SelectedValues">
+    <MudTreeViewItem Class="item-1" Value='"item1"'>
+        <MudTreeViewItem Class="item-1-1" Value='"item1.1"' />
+        <MudTreeViewItem Class="item-1-2" Value='"item1.2"' />
+    </MudTreeViewItem>
+</MudTreeView>
+
+<p class="selected-value">
+    @SelectedValue
+</p>
+<p class="selected-values">
+    @(string.Join( ", ", (SelectedValues ?? Array.Empty<string>()).OrderBy(x=>x)))
+</p>
+
+@code {
+    [Parameter] public SelectionMode SelectionMode { get; set; }
+    [Parameter] public string SelectedValue { get; set; }
+    [Parameter] public IReadOnlyCollection<string> SelectedValues { get; set; }
+}

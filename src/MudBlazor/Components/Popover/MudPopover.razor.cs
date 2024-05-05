@@ -83,21 +83,21 @@ namespace MudBlazor
         /// Sets the length of time that the opening transition takes to complete.
         /// </summary>
         /// <remarks>
-        /// Set globally via <see cref="MudGlobal.TransitionDuration"/>.
+        /// Set globally via <see cref="MudGlobal.TransitionDefaults.Duration"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public double Duration { get; set; } = MudGlobal.TransitionDuration.TotalMilliseconds;
+        public double Duration { get; set; } = MudGlobal.TransitionDefaults.Duration.TotalMilliseconds;
 
         /// <summary>
         /// Sets the amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
         /// </summary>
         /// <remarks>
-        /// Set globally via <see cref="MudGlobal.TransitionDelay"/>.
+        /// Set globally via <see cref="MudGlobal.TransitionDefaults.Delay"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public double Delay { get; set; } = MudGlobal.TransitionDelay.TotalMilliseconds;
+        public double Delay { get; set; } = MudGlobal.TransitionDefaults.Delay.TotalMilliseconds;
 
         /// <summary>
         /// Set the anchor point on the element of the popover.

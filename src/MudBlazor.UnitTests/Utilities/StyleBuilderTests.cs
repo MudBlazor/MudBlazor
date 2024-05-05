@@ -1,16 +1,130 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using MudBlazor.Utilities;
 using NUnit.Framework;
 
 namespace UtilityTests
 {
+#nullable enable
+    [TestFixture]
     public class StyleBuilderTests
     {
         [Test]
+        public void AddStyle_With_Condition_Func_And_Nullable_Value_Adds_Style_Correctly()
+        {
+            // Arrange
+            var styleBuilder = new StyleBuilder();
+
+            // Act
+            styleBuilder.AddStyle("color", "red", true);
+            styleBuilder.AddStyle("font-size", "12px", false);
+            styleBuilder.AddStyle("background-color", () => "blue", true);
+            styleBuilder.AddStyle("border", () => "1px solid black", false);
+
+            // Assert
+            styleBuilder.Build().Should().Be("color:red;background-color:blue;");
+        }
+
+        [Test]
+        public void AddStyle_With_Func_Value_And_Condition_Adds_Style_Correctly()
+        {
+            // Arrange
+            var styleBuilder = new StyleBuilder();
+            static bool Condition1() => true;
+            static bool Condition2() => false;
+
+            // Act
+            styleBuilder.AddStyle("color", () => "red", Condition1);
+            styleBuilder.AddStyle("font-size", () => "12px", Condition2);
+            styleBuilder.AddStyle("background-color", () => "blue", Condition1);
+            styleBuilder.AddStyle("border", () => "1px solid black", Condition2);
+
+            // Assert
+            styleBuilder.Build().Should().Be("color:red;background-color:blue;");
+        }
+
+        [Test]
+        public void AddStyle_With_Builder_And_Condition_Func_Adds_Style_Correctly()
+        {
+            // Arrange
+            var styleBuilder = new StyleBuilder();
+            var nestedBuilder1 = new StyleBuilder().AddStyle("font-weight", "bold");
+            var nestedBuilder2 = new StyleBuilder().AddStyle("text-decoration", "underline");
+            static bool Condition() => true;
+
+            // Act
+            styleBuilder.AddStyle(nestedBuilder1, Condition);
+            styleBuilder.AddStyle(nestedBuilder2, () => false);
+
+            // Assert
+            styleBuilder.Build().Should().Be("font-weight:bold;");
+        }
+
+        [Test]
+        public void AddStyle_With_Value_And_Null_Condition()
+        {
+            // Arrange
+            const string Prop = "color";
+            const string Value = "red";
+
+            // Act
+            var styleBuilder = new StyleBuilder()
+                .AddStyle(Prop, Value, null);
+
+            // Assert
+            styleBuilder.Build().Should().BeEmpty();
+        }
+
+        [Test]
+        public void AddStyle_With_Value_And_Condition_Func_Adds_Style_Conditionally()
+        {
+            // Arrange
+            const string Prop = "font-size";
+            const string Value = "12px";
+            bool Condition() => true;
+
+            // Act
+            var styleBuilder = new StyleBuilder()
+                .AddStyle(Prop, Value, Condition);
+
+            // Assert
+            styleBuilder.Build().Should().Be("font-size:12px;");
+        }
+
+        [Test]
+        public void AddStyle_With_Func_Value_And_Null_Condition()
+        {
+            // Arrange
+            const string Prop = "color";
+            string? Value() => "red";
+
+            // Act
+            var styleBuilder = new StyleBuilder()
+                .AddStyle(Prop, Value, null);
+
+            // Assert
+            styleBuilder.Build().Should().BeEmpty();
+        }
+
+        [Test]
+        public void AddStyle_With_Condition_Func_Null_Condition()
+        {
+            // Arrange
+            var nestedBuilder = new StyleBuilder().AddStyle("font-weight", "bold");
+
+            // Act
+            var styleBuilder = new StyleBuilder()
+                .AddStyle(nestedBuilder, null);
+
+            // Assert
+            styleBuilder.Build().Should().BeEmpty();
+        }
+
+        [Test]
         public void ShouldBuildConditionalInlineStyles()
         {
-            //arrange
+            // Arrange
             var hasBorder = true;
             var isOnTop = false;
             var top = 2;
@@ -18,22 +132,22 @@ namespace UtilityTests
             var left = 4;
             var right = 20;
 
-            //act
-            var classToRender = new StyleBuilder("background-color", "DodgerBlue")
+            // Act
+            var styleBuilder = new StyleBuilder("background-color", "DodgerBlue")
                             .AddStyle("border-width", $"{top}px {right}px {bottom}px {left}px", when: hasBorder)
                             .AddStyle("z-index", "999", when: isOnTop)
                             .AddStyle("z-index", "-1", when: !isOnTop)
                             .AddStyle("padding", "35px")
                             .Build();
-            //assert
-            classToRender.Should().Be("background-color:DodgerBlue;border-width:2px 20px 10px 4px;z-index:-1;padding:35px;");
+
+            // Assert
+            styleBuilder.Should().Be("background-color:DodgerBlue;border-width:2px 20px 10px 4px;z-index:-1;padding:35px;");
         }
 
         [Test]
         public void ShouldBuildConditionalInlineStylesFromAttributes()
         {
-
-            //arrange
+            // Arrange
             var hasBorder = true;
             var isOnTop = false;
             var top = 2;
@@ -41,36 +155,40 @@ namespace UtilityTests
             var left = 4;
             var right = 20;
 
-            //act
-            var styleToRender = new StyleBuilder("background-color", "DodgerBlue")
+            // Act
+            var styleBuilder1 = new StyleBuilder("background-color", "DodgerBlue")
                             .AddStyle("border-width", $"{top}px {right}px {bottom}px {left}px", when: hasBorder)
                             .AddStyle("z-index", "999", when: isOnTop)
                             .AddStyle("z-index", "-1", when: !isOnTop)
                             .AddStyle("padding", "35px")
                             .Build();
 
-            IReadOnlyDictionary<string, object> attributes = new Dictionary<string, object> { { "style", styleToRender } };
+            IReadOnlyDictionary<string, object> attributes = new Dictionary<string, object> { { "style", styleBuilder1 } };
 
-            var classToRender = new StyleBuilder().AddStyleFromAttributes(attributes).Build();
-            //assert
-            classToRender.Should().Be("background-color:DodgerBlue;border-width:2px 20px 10px 4px;z-index:-1;padding:35px;");
+            var styleBuilder2 = new StyleBuilder().AddStyleFromAttributes(attributes).Build();
+
+            // Assert
+            styleBuilder2.Should().Be("background-color:DodgerBlue;border-width:2px 20px 10px 4px;z-index:-1;padding:35px;");
         }
 
         [Test]
         public void ShouldAddExistingStyle()
         {
-            var styleToRender = StyleBuilder.Empty()
+            // Arrange
+            var styleBuilder = StyleBuilder.Empty()
                 .AddStyle("background-color:DodgerBlue;")
                 .AddStyle("padding", "35px")
                 .Build();
 
-            var styleToRenderFromDefaultConstructor = StyleBuilder.Default(styleToRender).Build();
+            // Act
+            var styleToRenderFromDefaultConstructor = StyleBuilder.Default(styleBuilder).Build();
 
+            // Assert
             // Double ;; is valid HTML.
             // The CSS syntax allows for empty declarations, which means that you can add leading and trailing semicolons as you like. For instance, this is valid CSS
             // .foo { ;;;display:none;;;color:black;;; }
             // Trimming is possible, but is it worth the operations for a non-issue?
-            styleToRender.Should().Be("background-color:DodgerBlue;;padding:35px;");
+            styleBuilder.Should().Be("background-color:DodgerBlue;;padding:35px;");
             styleToRenderFromDefaultConstructor.Should().Be("background-color:DodgerBlue;;padding:35px;;");
 
         }
@@ -78,32 +196,32 @@ namespace UtilityTests
         [Test]
         public void ShouldNotAddEmptyStyle()
         {
-            var styleToRender = StyleBuilder.Empty().AddStyle("");
+            // Act
+            var styleBuilder = StyleBuilder.Empty().AddStyle("");
 
-            styleToRender.NullIfEmpty().Should().BeNull();
-
+            // Assert
+            styleBuilder.NullIfEmpty().Should().BeNull();
         }
 
         [Test]
         public void ShouldAddNestedStyles()
         {
-
-
+            // Act
             var child = StyleBuilder.Empty()
                 .AddStyle("background-color", "DodgerBlue")
                 .AddStyle("padding", "35px");
 
-            var styleToRender = StyleBuilder.Empty()
+            var styleBuilder = StyleBuilder.Empty()
                 .AddStyle(child)
                 .AddStyle("z-index", "-1")
                 .Build();
 
+            // Assert
             // Double ;; is valid HTML.
             // The CSS syntax allows for empty declarations, which means that you can add leading and trailing semicolons as you like. For instance, this is valid CSS
             // .foo { ;;;display:none;;;color:black;;; }
             // Trimming is possible, but is it worth the operations for a non-issue?
-            styleToRender.Should().Be("background-color:DodgerBlue;padding:35px;z-index:-1;");
-
+            styleBuilder.Should().Be("background-color:DodgerBlue;padding:35px;z-index:-1;");
         }
 
         [Test]
@@ -118,7 +236,8 @@ namespace UtilityTests
             //bool HasOverline = false;
             //bool HasStrikeout = true;
 
-            var styleToRender = StyleBuilder.Empty()
+            // Act
+            var styleBuilder = StyleBuilder.Empty()
                 .AddStyle("text-decoration", v => v
                             .AddValue("underline", true)
                             .AddValue("overline", false)
@@ -127,30 +246,75 @@ namespace UtilityTests
                 .AddStyle("z-index", "-1")
                 .Build();
 
+            // Assert
             // Double ;; is valid HTML.
             // The CSS syntax allows for empty declarations, which means that you can add leading and trailing semicolons as you like. For instance, this is valid CSS
             // .foo { ;;;display:none;;;color:black;;; }
             // Trimming is possible, but is it worth the operations for a non-issue?
-            styleToRender.Should().Be("text-decoration:underline line-through;z-index:-1;");
+            styleBuilder.Should().Be("text-decoration:underline line-through;z-index:-1;");
 
         }
 
         [Test]
         public void ShouldBuildStyleWithFunc()
         {
-            {
-                //arrange
-                // Simulates Razor Components attribute splatting feature
-                IReadOnlyDictionary<string, object> attributes = new Dictionary<string, object> { { "class", "my-custom-class-1" } };
+            // Arrange
+            // Simulates Razor Components attribute splatting feature
+            IReadOnlyDictionary<string, object> attributes = new Dictionary<string, object> { { "class", "my-custom-class-1" } };
 
-                //act
-                var styleToRender = StyleBuilder.Empty()
-                                .AddStyle("background-color", () => attributes["style"].ToString(), when: attributes.ContainsKey("style"))
-                                .AddStyle("background-color", "black")
-                                .Build();
-                //assert
-                styleToRender.Should().Be("background-color:black;");
-            }
+            // Act
+            var styleBuilder = StyleBuilder.Empty()
+                .AddStyle("background-color", () => attributes["style"].ToString(), when: attributes.ContainsKey("style"))
+                .AddStyle("background-color", "black")
+                .Build();
+
+            // Assert
+            styleBuilder.Should().Be("background-color:black;");
+        }
+
+        [Test]
+        public void ShouldAddStyleWithFunc()
+        {
+            // Arrange
+            var styleToAdd = "background-color: green";
+
+            // Act
+            var styleBuilder = StyleBuilder.Empty()
+                .AddStyle(styleToAdd, () => true)
+                .Build();
+
+            // Assert
+            styleBuilder.Should().Be("background-color: green;");
+        }
+
+        [Test]
+        public void ShouldAddConditionalStyle()
+        {
+            // Arrange
+            var styleToAdd = "background-color: green";
+
+            // Act
+            var styleBuilder = StyleBuilder.Empty()
+                .AddStyle(styleToAdd, true)
+                .Build();
+
+            // Assert
+            styleBuilder.Should().Be("background-color: green;");
+        }
+
+        [Test]
+        public void ShouldAddConditionalStyleWithNullFunc()
+        {
+            // Arrange
+            var styleToAdd = "background-color: green";
+
+            // Act
+            var styleBuilder = StyleBuilder.Empty()
+                .AddStyle(styleToAdd, when: null)
+                .Build();
+
+            // Assert
+            styleBuilder.Should().Be(string.Empty);
         }
     }
 }

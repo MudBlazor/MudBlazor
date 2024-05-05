@@ -142,7 +142,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Click outside the dialog (or any other method) must update the IsVisible parameter two-way binding on close
+        /// Click outside the dialog (or any other method) must update the Visible parameter two-way binding on close
         /// </summary>
         /// <returns></returns>
         [Test]
@@ -878,7 +878,7 @@ namespace MudBlazor.UnitTests.Components
             var parameters = new DialogParameters<DialogWithContentClass>
             {
                 { x => x.ContentClass, contentClass },
-                { x => x.DisableSidePadding, disablePadding }
+                { x => x.Gutters, !disablePadding }
             };
 
             await comp.InvokeAsync(async () => dialogReference = await service!.ShowAsync<DialogWithContentClass>(string.Empty, parameters));

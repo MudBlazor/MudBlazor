@@ -11,6 +11,10 @@ using MudBlazor.State.Builder;
 namespace MudBlazor;
 
 #nullable enable
+
+/// <summary>
+/// Represents a base class for designing components which maintain state.
+/// </summary>
 public class ComponentBaseWithState : ComponentBase
 {
     internal readonly ParameterSet Parameters;
@@ -46,7 +50,7 @@ public class ComponentBaseWithState : ComponentBase
     /// Creates a scope for registering parameters.
     /// </summary>
     /// <returns>A <see cref="ParameterRegistrationBuilderScope"/> instance for registering parameters.</returns>
-    internal IParameterRegistrationBuilderScope CreateRegisterScope()
+    protected IParameterRegistrationBuilderScope CreateRegisterScope()
     {
         if (_scope.IsLocked)
         {

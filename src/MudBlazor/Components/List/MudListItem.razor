@@ -21,11 +21,16 @@
     else if (!string.IsNullOrWhiteSpace(Icon))
     {
         <div class="mud-list-item-icon">
-            <MudIcon Icon="@Icon" Color="@IconColor" Size="@IconSize" />
+            <MudIcon Icon="@Icon" Disabled="@GetDisabled()" Color="@IconColor" Size="@IconSize" />
         </div>
     }
+    @if (MultiSelection && NestedList is null) {
+        <MudCheckBox T="bool?" TriState ReadOnly="@ReadOnly" Class="mud-list-item-checkbox my-n2 ms-n2" Disabled="@GetDisabled()"
+                     CheckedIcon="@GetCheckedIcon()" UncheckedIcon="@GetUncheckedIcon()" IndeterminateIcon="@GetIndeterminateIcon()" Color="@GetCheckBoxColor()" UncheckedColor="@GetCheckBoxColor()"
+                    @bind-Value:get="GetCheckBoxState()" @bind-Value:set="@(x=>OnCheckboxChangedAsync())"/>
+    }
     <div class="mud-list-item-text @(Inset? "mud-list-item-text-inset" : "")">
-        <MudText Typo="@_textTypo">
+        <MudText Typo="@TextTypo">
             @if (ChildContent != null)
             {
                 @ChildContent
@@ -36,16 +41,15 @@
             }
         </MudText>
     </div>
-    @if (NestedList != null)
-    {
-        <MudIcon Icon="@($"{(_expandedState.Value ? ExpandLessIcon : ExpandMoreIcon)}")" Size="@IconSize" Color="@AdornmentColor" />
+    @if (NestedList != null) {
+        <MudIcon Disabled="@GetDisabled()" Icon="@($"{(_expandedState.Value ? ExpandLessIcon : ExpandMoreIcon)}")" Size="@IconSize" Color="@ExpandIconColor" />
     }
     </MudElement>
     @if (NestedList != null)
 {
     <MudCollapse Expanded="@_expandedState.Value">
-        <MudList T="T" ReadOnly="@(MudList?.ReadOnly ?? false)" Color="@(MudList?.Color ?? Color.Primary)" Padding="false" Class="mud-nested-list"
-                 Disabled="@GetDisabled()" Dense="@((Dense ??  MudList?.Dense) ?? false)">
+        <MudList T="T" Class="mud-nested-list" Comparer="@Comparer" SelectionMode="@SelectionMode" ReadOnly="@ReadOnly" Color="@(MudList?.Color ?? Color.Primary)"
+                 Padding="false" Disabled="@GetDisabled()" Dense="@GetDense()">
             @NestedList
         </MudList>
     </MudCollapse>

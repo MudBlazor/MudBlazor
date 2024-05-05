@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Interfaces;
 using MudBlazor.Services;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -13,27 +14,47 @@ namespace MudBlazor
     {
         private double _height;
         private int _disposeCount;
-        private DrawerClipMode _clipMode;
+        private readonly ParameterState<bool> _rtlState;
+        private readonly ParameterState<bool> _openState;
+        private readonly ParameterState<Breakpoint> _breakpointState;
+        private readonly ParameterState<DrawerClipMode> _clipModeState;
         private ElementReference _contentRef;
-        private bool? _isOpenWhenLarge = null;
         private bool _closeOnMouseLeave = false;
-        private bool _open, _rtl, _isRendered, _initial = true, _keepInitialState, _fixed = true;
-        private Breakpoint _breakpoint = Breakpoint.Md, _screenBreakpoint = Breakpoint.None;
+        private bool _isRendered;
+        private bool _fixed = true;
+        private bool _initial = true;
+        private bool _keepInitialState;
+        private Breakpoint _lastUpdatedBreakpoint = Breakpoint.None;
 
-        private bool OverlayVisible => _open && !DisableOverlay &&
-                                       (Variant == DrawerVariant.Temporary ||
-                                        (_screenBreakpoint < Breakpoint && Variant == DrawerVariant.Mini) ||
-                                        (_screenBreakpoint < Breakpoint && Variant == DrawerVariant.Responsive));
+        public MudDrawer()
+        {
+            using var registerScope = CreateRegisterScope();
+            _clipModeState = registerScope.RegisterParameter<DrawerClipMode>(nameof(ClipMode))
+                .WithParameter(() => ClipMode)
+                .WithChangeHandler(OnClipModeParameterChange);
+            _breakpointState = registerScope.RegisterParameter<Breakpoint>(nameof(Breakpoint))
+                .WithParameter(() => Breakpoint)
+                .WithChangeHandler(OnBreakpointParameterChangedAsync);
+            _openState = registerScope.RegisterParameter<bool>(nameof(Open))
+                .WithParameter(() => Open)
+                .WithEventCallback(() => OpenChanged)
+                .WithChangeHandler(OnOpenParameterChangedAsync);
+            _rtlState = registerScope.RegisterParameter<bool>(nameof(RightToLeft))
+                .WithParameter(() => RightToLeft)
+                .WithChangeHandler(OnRightToLeftParameterChanged);
+        }
+
+        private bool OverlayVisible => _openState.Value && Overlay && (Variant == DrawerVariant.Temporary || (IsBelowCurrentBreakpoint() && IsResponsiveOrMini()));
 
         protected string Classname =>
             new CssBuilder("mud-drawer")
                 .AddClass($"mud-drawer-fixed", Fixed)
                 .AddClass($"mud-drawer-pos-{GetPosition()}")
-                .AddClass($"mud-drawer--open", Open)
-                .AddClass($"mud-drawer--closed", !Open)
+                .AddClass($"mud-drawer--open", _openState.Value)
+                .AddClass($"mud-drawer--closed", !_openState.Value)
                 .AddClass($"mud-drawer--initial", _initial)
-                .AddClass($"mud-drawer-{Breakpoint.ToDescriptionString()}")
-                .AddClass($"mud-drawer-clipped-{_clipMode.ToDescriptionString()}")
+                .AddClass($"mud-drawer-{_breakpointState.Value.ToDescriptionString()}")
+                .AddClass($"mud-drawer-clipped-{_clipModeState.Value.ToDescriptionString()}")
                 .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
                 .AddClass($"mud-elevation-{Elevation}")
                 .AddClass($"mud-drawer-{Variant.ToDescriptionString()}")
@@ -43,19 +64,18 @@ namespace MudBlazor
         protected string OverlayClass =>
             new CssBuilder("mud-drawer-overlay mud-overlay-drawer")
                 .AddClass($"mud-drawer-pos-{GetPosition()}")
-                .AddClass($"mud-drawer-overlay--open", Open)
+                .AddClass($"mud-drawer-overlay--open", _openState.Value)
                 .AddClass($"mud-drawer-overlay-{Variant.ToDescriptionString()}")
-                .AddClass($"mud-drawer-overlay-{Breakpoint.ToDescriptionString()}")
+                .AddClass($"mud-drawer-overlay-{_breakpointState.Value.ToDescriptionString()}")
                 .AddClass($"mud-drawer-overlay--initial", _initial)
                 .Build();
 
         protected string Stylename =>
             new StyleBuilder()
-                //.AddStyle("width", Width, !string.IsNullOrWhiteSpace(Width) && !Fixed)
                 .AddStyle("--mud-drawer-width", Width, !string.IsNullOrWhiteSpace(Width) && (!Fixed || Variant == DrawerVariant.Temporary))
                 .AddStyle("height", Height, !string.IsNullOrWhiteSpace(Height))
                 .AddStyle("--mud-drawer-content-height", string.IsNullOrWhiteSpace(Height) ? _height.ToPx() : Height, Anchor == Anchor.Bottom || Anchor == Anchor.Top)
-                .AddStyle("visibility", "hidden", string.IsNullOrWhiteSpace(Height) && _height == 0 && (Anchor == Anchor.Bottom || Anchor == Anchor.Top))
+                .AddStyle("visibility", "hidden", string.IsNullOrWhiteSpace(Height) && _height == 0 && Anchor is Anchor.Bottom or Anchor.Top)
                 .AddStyle(Style)
                 .Build();
 
@@ -66,20 +86,7 @@ namespace MudBlazor
         private MudDrawerContainer? DrawerContainer { get; set; }
 
         [CascadingParameter(Name = "RightToLeft")]
-        private bool RightToLeft
-        {
-            get => _rtl;
-            set
-            {
-                if (_rtl == value)
-                {
-                    return;
-                }
-
-                _rtl = value;
-                (DrawerContainer as IMudStateHasChanged)?.StateHasChanged();
-            }
-        }
+        private bool RightToLeft { get; set; }
 
         /// <summary>
         /// If true, drawer position will be fixed. (CSS position: fixed;)
@@ -135,14 +142,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
-        public bool DisableOverlay { get; set; } = false;
-
-        /// <summary>
-        /// Preserve open state for responsive drawer when window resized above <see cref="Breakpoint" />.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Drawer.Behavior)]
-        public bool PreserveOpenState { get; set; } = false;
+        public bool Overlay { get; set; } = true;
 
         /// <summary>
         /// Open drawer automatically on mouse enter when <see cref="Variant" /> parameter is set to <see cref="DrawerVariant.Mini" />.
@@ -156,56 +156,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
-        public Breakpoint Breakpoint
-        {
-            get => _breakpoint;
-            set
-            {
-                if (value == _breakpoint)
-                    return;
-
-                _breakpoint = value;
-                if (_isRendered)
-                {
-                    _ = UpdateBreakpointStateAsync(_screenBreakpoint);
-                }
-
-                (DrawerContainer as IMudStateHasChanged)?.StateHasChanged();
-            }
-        }
+        public Breakpoint Breakpoint { get; set; } = Breakpoint.Md;
 
         /// <summary>
         /// Sets the opened state on the drawer. Can be used with two-way binding to close itself on navigation.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
-        public bool Open
-        {
-            get => _open;
-            set
-            {
-                if (_open == value)
-                {
-                    return;
-                }
-                _open = value;
-                if (_isRendered && _initial && !_keepInitialState)
-                {
-                    _initial = false;
-                }
-                if (_keepInitialState)
-                {
-                    _keepInitialState = false;
-                }
-                if (_isRendered && value && (Anchor == Anchor.Top || Anchor == Anchor.Bottom))
-                {
-                    _ = UpdateHeight();
-                }
-
-                (DrawerContainer as IMudStateHasChanged)?.StateHasChanged();
-                OpenChanged.InvokeAsync(_open);
-            }
-        }
+        public bool Open { get; set; }
 
         [Parameter]
         public EventCallback<bool> OpenChanged { get; set; }
@@ -236,23 +194,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
-        public DrawerClipMode ClipMode
-        {
-            get => _clipMode;
-            set
-            {
-                if (_clipMode == value)
-                {
-                    return;
-                }
-                _clipMode = value;
-                if (Fixed)
-                {
-                    (DrawerContainer as IMudStateHasChanged)?.StateHasChanged();
-                }
-                StateHasChanged();
-            }
-        }
+        public DrawerClipMode ClipMode { get; set; }
 
         protected override void OnInitialized()
         {
@@ -267,11 +209,11 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                await UpdateHeight();
+                await UpdateHeightAsync();
                 await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
 
                 _isRendered = true;
-                if (string.IsNullOrWhiteSpace(Height) && (Anchor == Anchor.Bottom || Anchor == Anchor.Top))
+                if (string.IsNullOrWhiteSpace(Height) && Anchor is Anchor.Bottom or Anchor.Top)
                 {
                     StateHasChanged();
                 }
@@ -302,84 +244,133 @@ namespace MudBlazor
             }
         }
 
-        private Task CloseDrawerAsync() => Open ? OpenChanged.InvokeAsync(false) : Task.CompletedTask;
-
-        async Task INavigationEventReceiver.OnNavigation()
+        private async Task OnOpenParameterChangedAsync(ParameterChangedEventArgs<bool> arg)
         {
-            if (Variant == DrawerVariant.Temporary ||
-                (Variant == DrawerVariant.Responsive && await BrowserViewportService.GetCurrentBreakpointAsync() < Breakpoint))
+            if (_isRendered && _initial && !_keepInitialState)
             {
-                await OpenChanged.InvokeAsync(false);
+                _initial = false;
             }
+            if (_keepInitialState)
+            {
+                _keepInitialState = false;
+            }
+            if (_isRendered && arg.Value && Anchor is Anchor.Top or Anchor.Bottom)
+            {
+                await UpdateHeightAsync();
+            }
+
+            DrawerContainerUpdate();
         }
 
-        private async Task UpdateHeight()
+        private async Task OnBreakpointParameterChangedAsync(ParameterChangedEventArgs<Breakpoint> arg)
+        {
+            if (_isRendered)
+            {
+                await UpdateBreakpointStateAsync(_lastUpdatedBreakpoint);
+            }
+
+            DrawerContainerUpdate();
+        }
+
+        private void OnClipModeParameterChange()
+        {
+            if (Fixed)
+            {
+                DrawerContainerUpdate();
+            }
+
+            StateHasChanged();
+        }
+
+        private void OnRightToLeftParameterChanged() => DrawerContainerUpdate();
+
+        private void DrawerContainerUpdate() => (DrawerContainer as IMudStateHasChanged)?.StateHasChanged();
+
+        private Task CloseDrawerAsync()
+        {
+            if (_openState.Value)
+            {
+                return _openState.SetValueAsync(false);
+            }
+
+            return Task.CompletedTask;
+        }
+
+        private async Task UpdateHeightAsync()
         {
             _height = (await _contentRef.MudGetBoundingClientRectAsync())?.Height ?? 0;
         }
 
         private async Task UpdateBreakpointStateAsync(Breakpoint breakpoint)
         {
-            var isStateChanged = false;
             if (breakpoint == Breakpoint.None)
             {
                 breakpoint = await BrowserViewportService.GetCurrentBreakpointAsync();
             }
 
-            if (breakpoint < Breakpoint && _screenBreakpoint >= Breakpoint && (Variant == DrawerVariant.Responsive || Variant == DrawerVariant.Mini))
+            var isStateChanged = false;
+            if (ShouldCloseDrawer(breakpoint))
             {
-                _isOpenWhenLarge = Open;
-
-                await OpenChanged.InvokeAsync(false);
+                await _openState.SetValueAsync(false);
                 isStateChanged = true;
             }
-            else if (breakpoint >= Breakpoint && _screenBreakpoint < Breakpoint && (Variant == DrawerVariant.Responsive || Variant == DrawerVariant.Mini))
+            else if (ShouldOpenDrawer(breakpoint))
             {
-                if (Open && PreserveOpenState)
-                {
-                    (DrawerContainer as IMudStateHasChanged)?.StateHasChanged();
-                    isStateChanged = true;
-                }
-                else if (_isOpenWhenLarge != null)
-                {
-                    await OpenChanged.InvokeAsync(_isOpenWhenLarge.Value);
-                    _isOpenWhenLarge = null;
-                    isStateChanged = true;
-                }
+                await _openState.SetValueAsync(true);
+                isStateChanged = true;
             }
 
-            _screenBreakpoint = breakpoint;
+            _lastUpdatedBreakpoint = breakpoint;
             if (isStateChanged)
             {
-                StateHasChanged();
+                await InvokeAsync(StateHasChanged);
             }
         }
+
+        private bool IsBelowCurrentBreakpoint() => IsBelowBreakpoint(_lastUpdatedBreakpoint);
+
+        private bool IsBelowBreakpoint(Breakpoint breakpoint) => breakpoint < _breakpointState.Value;
+
+        private bool IsResponsiveOrMini() => Variant is DrawerVariant.Responsive or DrawerVariant.Mini;
+
+        private bool ShouldCloseDrawer(Breakpoint breakpoint) => IsBelowBreakpoint(breakpoint) && !IsBelowCurrentBreakpoint() && IsResponsiveOrMini();
+
+        private bool ShouldOpenDrawer(Breakpoint breakpoint) => !IsBelowBreakpoint(breakpoint) && IsBelowCurrentBreakpoint() && IsResponsiveOrMini();
 
         internal string GetPosition()
         {
             return Anchor switch
             {
-                Anchor.Start => RightToLeft ? "right" : "left",
-                Anchor.End => RightToLeft ? "left" : "right",
+                Anchor.Start => _rtlState.Value ? "right" : "left",
+                Anchor.End => _rtlState.Value ? "left" : "right",
                 _ => Anchor.ToDescriptionString()
             };
         }
 
         private async Task OnMouseEnterAsync()
         {
-            if (Variant == DrawerVariant.Mini && !Open && OpenMiniOnHover)
+            if (Variant == DrawerVariant.Mini && !_openState.Value && OpenMiniOnHover)
             {
                 _closeOnMouseLeave = true;
-                await OpenChanged.InvokeAsync(true);
+                await _openState.SetValueAsync(true);
             }
         }
 
         private async Task OnMouseLeaveAsync()
         {
-            if (Variant == DrawerVariant.Mini && Open && _closeOnMouseLeave)
+            if (Variant == DrawerVariant.Mini && _openState.Value && _closeOnMouseLeave)
             {
                 _closeOnMouseLeave = false;
-                await OpenChanged.InvokeAsync(false);
+                await _openState.SetValueAsync(false);
+            }
+        }
+
+        async Task INavigationEventReceiver.OnNavigation()
+        {
+            if (Variant == DrawerVariant.Temporary ||
+                (Variant == DrawerVariant.Responsive && await BrowserViewportService.GetCurrentBreakpointAsync() < _breakpointState.Value))
+            {
+                await _openState.SetValueAsync(false);
             }
         }
 
@@ -395,11 +386,12 @@ namespace MudBlazor
         {
             if (browserViewportEventArgs.IsImmediate)
             {
-                _screenBreakpoint = browserViewportEventArgs.Breakpoint;
-                if (_screenBreakpoint < Breakpoint && _open)
+                var isBelowBreakpoint = IsBelowBreakpoint(browserViewportEventArgs.Breakpoint);
+                _lastUpdatedBreakpoint = browserViewportEventArgs.Breakpoint;
+                if (isBelowBreakpoint && _openState.Value)
                 {
                     _keepInitialState = true;
-                    await OpenChanged.InvokeAsync(false);
+                    await _openState.SetValueAsync(false);
                 }
 
                 return;

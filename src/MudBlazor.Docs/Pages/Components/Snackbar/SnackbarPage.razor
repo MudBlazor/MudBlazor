@@ -28,8 +28,7 @@
         <DocsPageSection>
             <SectionHeader Title="Html in messages">
                 <Description>
-                    Snackbar messages are rendered as HTML using <CodeInline>MarkupString</CodeInline>.<br />
-                    However, make sure not to use user-provided input, as that's not very secure.
+                    Snackbar messages can be rendered as HTML using <CodeInline>MarkupString</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(SnackbarHtmlInMessageExample)" ShowCode="false">
@@ -151,7 +150,7 @@
             <SectionHeader Title="Require Interaction">
                 <Description>With the <CodeInline>RequireInteraction</CodeInline> property set to true, the snackbar will not disappear until the user interacts with it.</Description>
             </SectionHeader>
-            <SectionContent Class="pa-0" Code="SnackbarRequireInteractionExample" ShowCode="false">
+            <SectionContent Class="pa-0" Code="@nameof(SnackbarRequireInteractionExample)" ShowCode="false">
                 <SnackbarRequireInteractionExample />
             </SectionContent>
         </DocsPageSection>

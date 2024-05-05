@@ -44,6 +44,7 @@
 
   &.mud-readonly, .mud-readonly:hover {
     cursor: default;
+    background-color: transparent !important;
   }
 
   & .mud-radio-dense {

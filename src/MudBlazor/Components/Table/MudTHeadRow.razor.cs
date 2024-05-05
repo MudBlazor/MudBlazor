@@ -17,7 +17,7 @@ namespace MudBlazor
         /// <summary>
         /// Add a multi-select checkbox that will select/unselect every item in the table
         /// </summary>
-        [Parameter] public bool IsCheckable { get; set; }
+        [Parameter] public bool Checkable { get; set; }
 
         /// <summary>
         /// Specify behavior in case the table is multi-select mode. If set to <c>true</c>, it won't render an additional empty column.
@@ -29,7 +29,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool IgnoreEditable { get; set; }
 
-        [Parameter] public bool IsExpandable { get; set; }
+        [Parameter] public bool Expandable { get; set; }
 
         /// <summary>
         /// On click event
@@ -37,7 +37,7 @@ namespace MudBlazor
         [Parameter] public EventCallback<MouseEventArgs> OnRowClick { get; set; }
 
         private bool? _checked = false;
-        public bool? IsChecked
+        public bool? Checked
         {
             get => _checked;
             set
@@ -45,7 +45,7 @@ namespace MudBlazor
                 if (value != _checked)
                 {
                     _checked = value;
-                    if (IsCheckable)
+                    if (Checkable)
                         Context.Table.OnHeaderCheckboxClicked(_checked.HasValue && _checked.Value);
                 }
             }
@@ -67,11 +67,11 @@ namespace MudBlazor
             if (_checked != checkedState)
             {
                 if (notify)
-                    IsChecked = checkedState;
+                    Checked = checkedState;
                 else
                 {
                     _checked = checkedState;
-                    if (IsCheckable)
+                    if (Checkable)
                         InvokeAsync(StateHasChanged);
                 }
             }

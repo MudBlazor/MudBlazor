@@ -8,7 +8,7 @@ namespace MudBlazor
 #nullable enable
     public partial class MudMessageBox : MudComponentBase
     {
-        private bool _isVisible;
+        private bool _visible;
         private IDialogReference? _reference;
         private ActivatableCallback? _yesCallback, _cancelCallback, _noCallback;
 
@@ -121,20 +121,20 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.MessageBox.Behavior)]
-        public bool IsVisible
+        public bool visible
         {
-            get => _isVisible;
+            get => _visible;
             set
             {
-                if (_isVisible == value)
+                if (_visible == value)
                 {
                     return;
                 }
 
-                _isVisible = value;
+                _visible = value;
                 if (IsInline)
                 {
-                    if (_isVisible)
+                    if (_visible)
                     {
                         _ = Show();
                     }
@@ -144,7 +144,7 @@ namespace MudBlazor
                     }
                 }
 
-                IsVisibleChanged.InvokeAsync(value);
+                VisibleChanged.InvokeAsync(value);
             }
         }
 
@@ -152,7 +152,7 @@ namespace MudBlazor
         /// Raised when the inline dialog's display status changes.
         /// </summary>
         [Parameter]
-        public EventCallback<bool> IsVisibleChanged { get; set; }
+        public EventCallback<bool> VisibleChanged { get; set; }
 
         private bool IsInline => DialogInstance == null;
 
