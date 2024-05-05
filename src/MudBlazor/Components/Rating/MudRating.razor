@@ -5,9 +5,10 @@
     <CascadingValue Value="this" >
         @for (int i = 1; i <= MaxValue; i++)
         {
-            <MudRatingItem Class="@RatingItemsClass" Style="@RatingItemsStyle" ItemValue="@i"
+            var currentValue = i;
+            <MudRatingItem Class="@RatingItemsClass" Style="@RatingItemsStyle" ItemValue="@currentValue"
                            Ripple="@Ripple" Disabled="Disabled" ReadOnly="ReadOnly" Color="Color"
-                           Size="Size" ItemClicked="HandleItemClicked" ItemHovered="HandleItemHovered"/>
+                           Size="Size" ItemClicked="HandleItemClickedAsync" ItemHovered="HandleItemHoveredAsync" />
         }
     </CascadingValue>
 </span>
