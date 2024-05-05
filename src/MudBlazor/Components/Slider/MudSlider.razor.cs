@@ -9,18 +9,27 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudSlider<T> : MudComponentBase where T : INumber<T>
+    public partial class MudSlider<T> : MudComponentBase where T : struct, INumber<T>
     {
         private int _tickMarkCount = 0;
         private readonly ParameterState<T> _valueState;
+        private readonly ParameterState<T?> _nullableValueState;
 
         public MudSlider()
         {
             using var registerScope = CreateRegisterScope();
             _valueState = registerScope.RegisterParameter<T>(nameof(Value))
                 .WithParameter(() => Value)
-                .WithEventCallback(() => ValueChanged);
+                .WithEventCallback(() => ValueChanged)
+                .WithChangeHandler(OnValueParameterChangedAsync);
+            _nullableValueState = registerScope.RegisterParameter<T?>(nameof(NullableValue))
+                .WithParameter(() => NullableValue)
+                .WithEventCallback(() => NullableValueChanged);
         }
+
+        private Task OnValueParameterChangedAsync(ParameterChangedEventArgs<T> arg) => _nullableValueState.SetValueAsync(arg.Value);
+
+        private Task OnNullableValueParameterChangedAsync(ParameterChangedEventArgs<T?> arg) => _valueState.SetValueAsync(arg.Value.GetValueOrDefault(T.Zero));
 
         protected string Classname =>
             new CssBuilder("mud-slider")
@@ -72,8 +81,15 @@ namespace MudBlazor
         public EventCallback<T> ValueChanged { get; set; }
 
         [Parameter]
+        public EventCallback<T?> NullableValueChanged { get; set; }
+
+        [Parameter]
         [Category(CategoryTypes.Slider.Data)]
         public T Value { get; set; } = T.Zero;
+
+        [Parameter]
+        [Category(CategoryTypes.Slider.Data)]
+        public T? NullableValue { get; set; } = default;
 
         /// <summary>
         /// The color of the component. It supports the Primary, Secondary and Tertiary theme colors.
@@ -181,16 +197,16 @@ namespace MudBlazor
             return Math.Round(result, 2);
         }
 
-        private string? GetValueText => _valueState.Value?.ToString(null, CultureInfo.InvariantCulture);
+        private string GetValueText => _valueState.Value.ToString(null, CultureInfo.InvariantCulture);
 
-        private Task SetValueTextAsync(string? text)
+        private async Task SetValueTextAsync(string? text)
         {
             if (T.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out var result))
             {
-                return _valueState.SetValueAsync(result);
+                await _valueState.SetValueAsync(result);
+                await _nullableValueState.SetValueAsync(result);
             }
 
-            return Task.CompletedTask;
         }
 
         private string Width => CalculatePosition().ToString(CultureInfo.InvariantCulture);

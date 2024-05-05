@@ -1,0 +1,9 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSlider T="int" @bind-Value="@_value" @bind-NullableValue="@_nullableValue" />
+<MudText>Value: @_value</MudText>
+<MudText>Nullable Value: @(_nullableValue is null ? "null" : _nullableValue)</MudText>
+@code {
+    private int _value;
+    private int? _nullableValue;
+}
