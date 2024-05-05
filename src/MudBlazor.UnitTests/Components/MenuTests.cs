@@ -351,7 +351,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.FalseInvocationCount.Should().Be(1);
         }
 
-       [Test]
+        [Test]
         public void ItemsWithHrefShouldRenderAsAnchor()
         {
             var comp = Context.RenderComponent<MenuHrefTest>();
@@ -365,7 +365,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("a.mud-list-item")[1].Click(); // enabled
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
         }
-        
+
         [Test]
         [TestCase("x", null, null)]
         [TestCase(null, "Close menu", "Close menu")]

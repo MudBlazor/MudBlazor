@@ -78,7 +78,10 @@ namespace MudBlazor
         public string? Target { get; set; }
 
         /// <summary>
-        /// If true in combination with <see cref="Href"/>, force browser to redirect outside component router-space.
+        /// If true in combination with <see cref="Href"/>, bypasses client-side routing 
+        /// and forces the browser to load the new page from the server, whether or not 
+        /// the URI would normally be handled by the client-side router.
+        /// <see cref="NavigationManager.NavigateTo(string, bool, bool)"/>
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.ClickAction)]
