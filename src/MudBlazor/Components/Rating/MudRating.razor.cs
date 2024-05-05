@@ -160,7 +160,7 @@ namespace MudBlazor
             }
         }
 
-        protected internal async void HandleKeyDown(KeyboardEventArgs keyboardEventArgs)
+        protected internal async Task HandleKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
         {
             if (Disabled || ReadOnly)
             {
