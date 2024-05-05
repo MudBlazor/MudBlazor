@@ -13,7 +13,7 @@ namespace MudBlazor
     {
         protected string Classname =>
             new CssBuilder("mud-form")
-            .AddClass($"gap-y-{Spacing}", Spacing > 0)
+            .AddClass($"gap-{Spacing}", Spacing > 0)
             .AddClass(Class)
        .Build();
 
