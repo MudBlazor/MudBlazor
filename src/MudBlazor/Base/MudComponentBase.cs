@@ -26,7 +26,7 @@ namespace MudBlazor
         protected ILogger Logger => _logger ??= LoggerFactory.CreateLogger(GetType());
 
         /// <summary>
-        /// Gets or sets CSS classes applied to this component.
+        /// The CSS classes applied to this component.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.  Use the <see cref="Style"/> property to apply custom CSS styles.
@@ -36,7 +36,7 @@ namespace MudBlazor
         public string? Class { get; set; }
 
         /// <summary>
-        /// Gets or sets any CSS styles applied to this component. 
+        /// The CSS styles applied to this component.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="Class"/> property to apply CSS classes.
@@ -46,7 +46,7 @@ namespace MudBlazor
         public string? Style { get; set; }
 
         /// <summary>
-        /// Gets or sets an arbitrary object to link to this component.
+        /// The arbitrary object to link to this component.
         /// </summary>
         /// <remarks>
         /// This property is typically used to associate additional information with this component, such as a model containing data for this component.
@@ -56,7 +56,7 @@ namespace MudBlazor
         public object? Tag { get; set; }
 
         /// <summary>
-        /// Gets or sets any additional HTML attributes to apply to this component.
+        /// The additional HTML attributes to apply to this component.
         /// </summary>
         /// <remarks>
         /// This property is typically used to provide additional HTML attributes during rendering such as ARIA accessibility tags or a custom ID.
@@ -66,7 +66,7 @@ namespace MudBlazor
         public Dictionary<string, object?> UserAttributes { get; set; } = new Dictionary<string, object?>();
 
         /// <summary>
-        /// Gets or sets whether <see cref="JSRuntime" /> is available.
+        /// Whether <see cref="JSRuntime" /> is available.
         /// </summary>
         protected bool IsJSRuntimeAvailable { get; set; }
 
@@ -163,6 +163,7 @@ namespace MudBlazor
                         case "Direction":
                         case "OffsetX":
                         case "OffsetY":
+                        case "SelectOnClick":
                             NotifyIllegalParameter(parameter);
                             break;
                     }
@@ -172,6 +173,9 @@ namespace MudBlazor
                     switch (parameter)
                     {
                         case "Outline":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                        case "Dense":
                             NotifyIllegalParameter(parameter);
                             break;
                     }
@@ -230,6 +234,7 @@ namespace MudBlazor
                     {
                         case "Filter":
                         case "MultiSelection":
+                        case "Multiselection":
                         case "Mandatory":
                         case "SelectedChip":
                         case "SelectedChipChanged":
@@ -248,6 +253,8 @@ namespace MudBlazor
                         case "Clickable":
                         case "Avatar":
                         case "AvatarClass":
+                        case "AdornmentColor":
+                        case "OnClickHandlerPreventDefault":
                             NotifyIllegalParameter(parameter);
                             break;
                     }
@@ -262,6 +269,7 @@ namespace MudBlazor
                         case "ActivatedValue":
                         case "ActivatedValueChanged":
                         case "Multiselection":
+                        case "MultiSelection":
                         case "Activated":
                         case "ExpandedIcon":
                         case "SelectedItem":
@@ -277,6 +285,24 @@ namespace MudBlazor
                         case "Target":
                         case "HtmlTag":
                         case "ButtonType":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (MatchTypes(typeof(MudFileUpload<>)))
+                {
+                    switch (parameter)
+                    {
+                        case "ButtonTemplate":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (this is MudButtonGroup)
+                {
+                    switch (parameter)
+                    {
+                        case "VerticalAlign":
                             NotifyIllegalParameter(parameter);
                             break;
                     }
@@ -318,6 +344,25 @@ namespace MudBlazor
                         case "InitiallyExpanded":
                         case "RightAlignSmall":
                         case "IsExpandable":
+                        case "ToolBarClass":
+                        case "DisableToolbar":
+                        case "DisableLegend":
+                        case "DisableSliders":
+                        case "DisablePreview":
+                        case "DisableModeSwitch":
+                        case "DisableInputs":
+                        case "DisableDragEffect":
+                        case "DisableColorField":
+                        case "DisableAlpha":
+                        case "DisableSidePadding":
+                        case "DisableOverlay":
+                        case "DisableSliderAnimation":
+                        case "DisableModifiers":
+                        case "IsChecked":
+                        case "IsCheckable":
+                        case "IsCheckedChanged":
+                        case "IsVisible":
+                        case "IsVisibleChanged":
                             NotifyIllegalParameter(parameter);
                             break;
                     }

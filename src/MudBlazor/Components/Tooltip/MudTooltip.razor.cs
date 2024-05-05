@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -8,7 +6,7 @@ namespace MudBlazor
 #nullable enable
     public partial class MudTooltip : MudComponentBase
     {
-        private bool _isVisible;
+        private bool _visible;
         private Origin _anchorOrigin;
         private Origin _transformOrigin;
 
@@ -55,21 +53,21 @@ namespace MudBlazor
         /// Sets the length of time that the opening transition takes to complete.
         /// </summary>
         /// <remarks>
-        /// Set globally via <see cref="MudGlobal.TransitionDuration"/>.
+        /// Set globally via <see cref="MudGlobal.TransitionDefaults.Duration"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
-        public double Duration { get; set; } = MudGlobal.TransitionDuration.TotalMilliseconds;
+        public double Duration { get; set; } = MudGlobal.TransitionDefaults.Duration.TotalMilliseconds;
 
         /// <summary>
         /// Sets the amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
         /// </summary>
         /// <remarks>
-        /// Set globally via <see cref="MudGlobal.TooltipDelay"/>.
+        /// Set globally via <see cref="MudGlobal.TooltipDefaults.Delay"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
-        public double Delay { get; set; } = MudGlobal.TooltipDelay.TotalMilliseconds;
+        public double Delay { get; set; } = MudGlobal.TooltipDefaults.Delay.TotalMilliseconds;
 
         /// <summary>
         /// Tooltip placement.
@@ -134,30 +132,30 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool IsVisible
+        public bool Visible
         {
-            get => _isVisible;
+            get => _visible;
             set
             {
-                if (value == _isVisible)
+                if (value == _visible)
                     return;
-                _isVisible = value;
-                IsVisibleChanged.InvokeAsync(_isVisible).AndForget();
+                _visible = value;
+                VisibleChanged.InvokeAsync(_visible).AndForget();
             }
         }
 
         /// <summary>
-        /// An event triggered when the state of IsVisible has changed
+        /// An event triggered when the state of Visible has changed
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public EventCallback<bool> IsVisibleChanged { get; set; }
+        public EventCallback<bool> VisibleChanged { get; set; }
 
         private void HandleMouseEnter()
         {
             if (ShowOnHover)
             {
-                IsVisible = true;
+                Visible = true;
             }
         }
 
@@ -165,14 +163,14 @@ namespace MudBlazor
         {
             if (ShowOnHover == false)
                 return;
-            IsVisible = false;
+            Visible = false;
         }
 
         private void HandleFocusIn()
         {
             if (ShowOnFocus)
             {
-                IsVisible = true;
+                Visible = true;
             }
         }
 
@@ -183,14 +181,14 @@ namespace MudBlazor
                 return;
             }
 
-            IsVisible = false;
+            Visible = false;
         }
 
         private void HandleMouseUp()
         {
             if (ShowOnClick)
             {
-                IsVisible = !IsVisible;
+                Visible = !Visible;
             }
         }
 

@@ -13,7 +13,7 @@ namespace MudBlazor
     public abstract class MudBaseButton : MudComponentBase
     {
         /// <summary>
-        /// Gets or sets any custom activation behavior.
+        /// The custom activation behavior.
         /// </summary>
         /// <remarks>
         /// Default to <c>null</c>.  This property is used to implement a custom behavior beyond a basic button click.  The activation will occur during the <see cref="OnClick"/> event.
@@ -25,17 +25,17 @@ namespace MudBlazor
         private bool ParentDisabled { get; set; }
 
         /// <summary>
-        /// Gets or sets the HTML tag rendered for this component.
+        /// The HTML tag rendered for this component.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>button</c>. 
+        /// Defaults to <c>button</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]
         public string HtmlTag { get; set; } = "button";
 
         /// <summary>
-        /// Gets or sets the type of button.
+        /// The type of button.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>Button</c>. Other values are <c>Submit</c> to submit a form, and <c>Reset</c> to clear a form.
@@ -45,7 +45,7 @@ namespace MudBlazor
         public ButtonType ButtonType { get; set; }
 
         /// <summary>
-        /// Gets or sets the URL to navigate to when the button is clicked.
+        /// The URL to navigate to when the button is clicked.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>. When clicked, the browser will navigate to this URL.  Use the <see cref="Target"/> property to target a specific tab.
@@ -55,7 +55,7 @@ namespace MudBlazor
         public string? Href { get; set; }
 
         /// <summary>
-        /// Gets or sets the browser tab/window opened when a click occurs and <see cref="Href"/> is set.
+        /// The browser tab/window opened when a click occurs and <see cref="Href"/> is set.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>. This property allows navigation to open a new tab/window or to reuse a specific tab.  Possible values are <c>_blank</c>, <c>_self</c>, <c>_parent</c>, <c>_top</c>, <c>noopener</c>, or the name of an <c>iframe</c> element.
@@ -65,7 +65,7 @@ namespace MudBlazor
         public string? Target { get; set; }
 
         /// <summary>
-        /// Gets or sets the relationship between the current document and the linked document when <see cref="Href"/> is set.
+        /// The relationship between the current document and the linked document when <see cref="Href"/> is set.
         /// </summary>
         /// <remarks>
         /// This property is typically used by web crawlers to get more information about a link.  Common values can be found here: <see href="https://www.w3schools.com/tags/att_a_rel.asp" />
@@ -75,7 +75,7 @@ namespace MudBlazor
         public string? Rel { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the user can interact with this button.
+        /// Whether the user can interact with this button.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -85,7 +85,7 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// Gets or sets the title of this button.
+        /// The title of this button.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  This property is typically used to improve accessibility.
@@ -95,7 +95,7 @@ namespace MudBlazor
         public string? Title { get; set; }
 
         /// <summary>
-        /// Gets or sets whether a click event is bubbled up to the parent component.
+        /// Whether a click event is bubbled up to the parent component.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -105,7 +105,7 @@ namespace MudBlazor
         public bool ClickPropagation { get; set; }
 
         /// <summary>
-        /// Gets or sets whether a shadow is displayed.
+        /// Whether a shadow is displayed.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -115,7 +115,7 @@ namespace MudBlazor
         public bool DropShadow { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets whether a ripple effect is shown when the user clicks the button.
+        /// Whether a ripple effect is shown when the user clicks the button.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -151,7 +151,7 @@ namespace MudBlazor
             SetDefaultValues();
         }
 
-        //Set the default value for HtmlTag, Href and Target 
+        //Set the default value for HtmlTag, Href and Target
         private void SetDefaultValues()
         {
             if (GetDisabledState())
@@ -170,6 +170,8 @@ namespace MudBlazor
         }
 
         protected ElementReference _elementReference;
+
+        protected bool GetClickPropagation() => HtmlTag != "button" || ClickPropagation;
 
         /// <summary>
         /// Obtains focus for this button.

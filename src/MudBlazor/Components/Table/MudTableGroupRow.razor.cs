@@ -58,7 +58,7 @@ namespace MudBlazor
         /// <summary>
         /// Add a multi-select checkbox that will select/unselect every item in the table
         /// </summary>
-        [Parameter] public bool IsCheckable { get; set; }
+        [Parameter] public bool Checkable { get; set; }
 
         [Parameter] public string HeaderClass { get; set; }
         [Parameter] public string FooterClass { get; set; }
@@ -82,7 +82,7 @@ namespace MudBlazor
         [Parameter] public EventCallback<MouseEventArgs> OnRowClick { get; set; }
 
         private bool? _checked = false;
-        public bool? IsChecked
+        public bool? Checked
         {
             get => _checked;
             set
@@ -90,7 +90,7 @@ namespace MudBlazor
                 if (value != _checked)
                 {
                     _checked = value;
-                    if (IsCheckable)
+                    if (Checkable)
                         Table.OnGroupHeaderCheckboxClicked(_checked.HasValue && _checked.Value, Items.ToList());
                 }
             }
@@ -127,11 +127,11 @@ namespace MudBlazor
             if (_checked != checkedState)
             {
                 if (notify)
-                    IsChecked = checkedState;
+                    Checked = checkedState;
                 else
                 {
                     _checked = checkedState;
-                    if (IsCheckable)
+                    if (Checkable)
                         InvokeAsync(StateHasChanged);
                 }
             }

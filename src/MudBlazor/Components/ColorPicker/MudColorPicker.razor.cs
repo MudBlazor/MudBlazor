@@ -22,7 +22,7 @@ namespace MudBlazor
         public MudColorPicker() : base(new DefaultConverter<MudColor>())
         {
             AdornmentIcon = Icons.Material.Outlined.Palette;
-            DisableToolbar = true;
+            ShowToolbar = false;
             Value = "#594ae2"; // MudBlazor Blue
             Text = GetColorTextValue();
             AdornmentAriaLabel = "Open Color Picker";
@@ -66,23 +66,23 @@ namespace MudBlazor
 
         [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
-        private bool _disableAlpha;
+        private bool _alpha = true;
 
         /// <summary>
-        /// If true, Alpha options will not be displayed and color output will be RGB, HSL or HEX and not RGBA, HSLA or HEXA.
+        /// If true, Alpha options will be displayed and color output will be RGBA, HSLA or HEXA and not RGB, HSL or HEX.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public bool DisableAlpha
+        public bool ShowAlpha
         {
-            get => _disableAlpha;
+            get => _alpha;
             set
             {
-                if (value != _disableAlpha)
+                if (value != _alpha)
                 {
-                    _disableAlpha = value;
+                    _alpha = value;
 
-                    if (value)
+                    if (!_alpha)
                     {
                         Value = Value.SetAlpha(1.0);
                     }
@@ -93,39 +93,39 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// If true, the color field will not be displayed.
+        /// If true, the color field will be displayed.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public bool DisableColorField { get; set; } = false;
+        public bool ShowColorField { get; set; } = true;
 
         /// <summary>
-        /// If true, the switch to change color mode will not be displayed.
+        /// If true, the switch to change color mode will be displayed.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public bool DisableModeSwitch { get; set; } = false;
+        public bool ShowModeSwitch { get; set; } = true;
 
         /// <summary>
-        /// If true, textfield inputs and color mode switch will not be displayed.
+        /// If true, textfield inputs and color mode switch will be displayed.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public bool DisableInputs { get; set; } = false;
+        public bool ShowInputs { get; set; } = true;
 
         /// <summary>
-        /// If true, hue and alpha sliders will not be displayed.
+        /// If true, hue and alpha sliders will be displayed.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public bool DisableSliders { get; set; } = false;
+        public bool ShowSliders { get; set; } = true;
 
         /// <summary>
-        /// If true, the preview color box will not be displayed, note that the preview color functions as a button as well for collection colors.
+        /// If true, the preview color box will be displayed, note that the preview color functions as a button as well for collection colors.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public bool DisablePreview { get; set; } = false;
+        public bool ShowPreview { get; set; } = true;
 
         /// <summary>
         /// The initial mode (RGB, HSL or HEX) the picker should open. Defaults to RGB
@@ -206,14 +206,14 @@ namespace MudBlazor
 
         /// <summary>
         /// <para>
-        /// When set to true, no mouse move events in the spectrum mode will be captured, so the selector circle won't fellow the mouse.
+        /// When set to false, no mouse move events in the spectrum mode will be captured, so the selector circle won't fellow the mouse.
         /// Under some conditions like long latency the visual representation might not reflect the user behaviour anymore. So, it can be disabled.
         /// </para>
         /// <para>Enabled by default</para>
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public bool DisableDragEffect { get; set; } = false;
+        public bool DragEffect { get; set; } = true;
 
         /// <summary>
         /// Custom close icon.
@@ -440,7 +440,7 @@ namespace MudBlazor
 
         private async Task OnPointerMoveAsync(PointerEventArgs e)
         {
-            if (e.Buttons == 1 && !DisableDragEffect)
+            if (e.Buttons == 1 && DragEffect)
             {
                 SetSelectorBasedOnPointerEvents(e, true);
 
@@ -544,11 +544,11 @@ namespace MudBlazor
         #region helper
 
         private string GetSelectorLocation() => $"translate({Math.Round(_selectorX, 2).ToString(CultureInfo.InvariantCulture)}px, {Math.Round(_selectorY, 2).ToString(CultureInfo.InvariantCulture)}px);";
-        private string GetColorTextValue() => (DisableAlpha || _activeColorPickerView is ColorPickerView.Palette or ColorPickerView.GridCompact) ? _value.ToString(MudColorOutputFormats.Hex) : _value.ToString(MudColorOutputFormats.HexA);
-        private int GetHexColorInputMaxLength() => DisableAlpha ? 7 : 9;
+        private string GetColorTextValue() => (!ShowAlpha || _activeColorPickerView is ColorPickerView.Palette or ColorPickerView.GridCompact) ? _value.ToString(MudColorOutputFormats.Hex) : _value.ToString(MudColorOutputFormats.HexA);
+        private int GetHexColorInputMaxLength() => !ShowAlpha ? 7 : 9;
 
         private EventCallback<MouseEventArgs> GetEventCallback() => EventCallback.Factory.Create<MouseEventArgs>(this, () => CloseAsync());
-        private bool IsAnyControlVisible() => !(DisablePreview && DisableSliders && DisableInputs);
+        private bool IsAnyControlVisible() => ShowPreview || ShowSliders || ShowInputs;
         private EventCallback<MouseEventArgs> GetSelectPaletteColorCallback(MudColor color) => new EventCallbackFactory().Create(this, (MouseEventArgs _) => SelectPaletteColorAsync(color));
 
         private Color GetButtonColor(ColorPickerView view) => _activeColorPickerView == view ? Color.Primary : Color.Inherit;

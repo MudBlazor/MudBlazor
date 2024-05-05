@@ -9,6 +9,9 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// Represents a container for content which can be collapsed and expanded.
+    /// </summary>
     public partial class MudCollapse : MudComponentBase
     {
         internal enum CollapseState
@@ -23,44 +26,54 @@ namespace MudBlazor
         private ElementReference _wrapper;
         internal CollapseState _state = CollapseState.Exited;
 
-        protected string Stylename =>
-            new StyleBuilder()
-                .AddStyle("max-height", MaxHeight.ToPx(), MaxHeight != null)
-                .AddStyle("height", "auto", _state == CollapseState.Entered)
-                .AddStyle("height", _height.ToPx(), _state is CollapseState.Entering or CollapseState.Exiting)
-                .AddStyle("animation-duration", $"{CalculatedAnimationDuration.ToString("#.##", CultureInfo.InvariantCulture)}s", _state == CollapseState.Entering)
-                .AddStyle(Style)
-                .Build();
+        protected string Stylename => new StyleBuilder()
+            .AddStyle("max-height", MaxHeight.ToPx(), MaxHeight != null)
+            .AddStyle("height", "auto", _state == CollapseState.Entered)
+            .AddStyle("height", _height.ToPx(), _state is CollapseState.Entering or CollapseState.Exiting)
+            .AddStyle("animation-duration", $"{CalculatedAnimationDuration.ToString("#.##", CultureInfo.InvariantCulture)}s", _state == CollapseState.Entering)
+            .AddStyle(Style)
+            .Build();
 
-        protected string Classname =>
-            new CssBuilder("mud-collapse-container")
-                .AddClass($"mud-collapse-entering", _state == CollapseState.Entering)
-                .AddClass($"mud-collapse-entered", _state == CollapseState.Entered)
-                .AddClass($"mud-collapse-exiting", _state == CollapseState.Exiting)
-                .AddClass(Class)
-                .Build();
+        protected string Classname => new CssBuilder("mud-collapse-container")
+            .AddClass($"mud-collapse-entering", _state == CollapseState.Entering)
+            .AddClass($"mud-collapse-entered", _state == CollapseState.Entered)
+            .AddClass($"mud-collapse-exiting", _state == CollapseState.Exiting)
+            .AddClass(Class)
+            .Build();
 
         /// <summary>
-        /// If true, expands the panel, otherwise collapse it. Setting this prop enables control over the panel.
+        /// Whether content within this panel is visible.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         public bool Expanded { get; set; }
 
         /// <summary>
-        /// Explicitly sets the height for the Collapse element to override the css default.
+        /// The maximum allowed height of this panel, in pixels.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         public int? MaxHeight { get; set; }
 
         /// <summary>
-        /// Child content of component.
+        /// The content within this panel.
         /// </summary>
         [Parameter]
         public RenderFragment? ChildContent { get; set; }
 
+        /// <summary>
+        /// Occurs when the collapse or expand animation has finished.
+        /// </summary>
         [Parameter]
         public EventCallback OnAnimationEnd { get; set; }
 
+        /// <summary>
+        /// Occurs when the <see cref="Expanded"/> property has changed.
+        /// </summary>
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
 
@@ -141,6 +154,9 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        /// <summary>
+        /// Completes an ongoing animation.
+        /// </summary>
         public Task AnimationEndAsync()
         {
             if (_state == CollapseState.Entering)

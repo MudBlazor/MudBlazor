@@ -10,6 +10,11 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 #nullable enable
+
+/// <summary>
+/// Represents a set of multiple <see cref="MudChip{T}"/> components.
+/// </summary>
+/// <typeparam name="T">The type of item managed by this component.</typeparam>
 public partial class MudChipSet<T> : MudComponentBase, IDisposable
 {
     public MudChipSet()
@@ -41,129 +46,160 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     private bool MultiSelection => SelectionMode == SelectionMode.MultiSelection;
     private bool Mandatory => SelectionMode == SelectionMode.SingleSelection;
 
-    protected string Classname =>
-        new CssBuilder("mud-chipset")
-            .AddClass(Class)
-            .Build();
+    protected string Classname => new CssBuilder("mud-chipset")
+        .AddClass(Class)
+        .Build();
 
     /// <summary>
-    /// Child content of component.
+    /// The content within this chipset.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.ChipSet.Behavior)]
     public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
-    /// Allows selecting more than one chip.
+    /// The mode controlling how many selections are allowed.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="SelectionMode.SingleSelection"/>.  Other values include <see cref="SelectionMode.MultiSelection"/> and <see cref="SelectionMode.ToggleSelection"/>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.ChipSet.Behavior)]
     public SelectionMode SelectionMode { get; set; } = SelectionMode.SingleSelection;
 
     /// <summary>
-    /// Will make all chips closable.
+    /// Whether all chips in this set are closeable.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.ChipSet.Behavior)]
     public bool AllClosable { get; set; } = false;
 
     /// <summary>
-    /// The default chip variant if they don't set their own.
-    /// Chips may override this.
+    /// The default variant for all chips in this set.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="Variant.Filled"/>.  Can be overridden by setting <see cref="MudChip{T}.Variant"/>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
     public Variant Variant { get; set; } = Variant.Filled;
 
     /// <summary>
-    /// The default chip color if they don't set their own.
-    /// Chips may override this.
+    /// The default color for all chips in this set.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="Color.Default"/>.  Can be overridden by setting <see cref="MudChip{T}.Color"/>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
     public Color Color { get; set; } = Color.Default;
 
     /// <summary>
-    /// The default selected chip color. Color.Inherit for default value.
-    /// Chips may override this.
+    /// The default color for all selected chips in this set.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="Color.Inherit"/>.  Can be overridden by setting <see cref="MudChip{T}.SelectedColor"/>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
     public Color SelectedColor { get; set; } = Color.Inherit;
 
     /// <summary>
-    /// The default icon color for all chips.
-    /// Chips may override this.
+    /// The default icon color for all chips in this set.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="Color.Inherit"/>.  Can be overridden by setting <see cref="MudChip{T}.IconColor"/>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
     public Color IconColor { get; set; } = Color.Inherit;
 
     /// <summary>
-    /// The default chip size.
-    /// Chips may override this.
+    /// The default size for all chips in this set.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="Size.Medium"/>.  Can be overridden by setting <see cref="MudChip{T}.Size"/>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
     public Size Size { get; set; } = Size.Medium;
 
     /// <summary>
-    ///  Will show a check-mark for the selected components.
+    /// Whether checkmarks are shown for selected chips.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.ChipSet.Appearance)]
     public bool CheckMark { get; set; }
 
     /// <summary>
-    /// The default checked icon for all chips.
-    /// Chips may override this.
+    /// The default icon shown for selected chips in this set.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="Icons.Material.Filled.Check"/>.  Can be overridden by setting <see cref="MudChip{T}.CheckedIcon"/>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
     public string CheckedIcon { get; set; } = Icons.Material.Filled.Check;
 
     /// <summary>
-    /// Rhe default close icon for all chips, only shown if OnClose is set.
-    /// Chips may override this.
+    /// The default close icon shown for closeable chips in this set.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="Icons.Material.Filled.Cancel"/>.  Can be overridden by setting <see cref="MudChip{T}.CloseIcon"/>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
     public string CloseIcon { get; set; } = Icons.Material.Filled.Cancel;
 
     /// <summary>
-    /// Ripple default setting for all chips. If true, a ripple effect is applied to clickable chips on click.
-    /// Chips may override this.
+    /// Whether a ripple effect is shown for chips in this set.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>true</c>.  Can be overridden by setting <see cref="MudChip{T}.Ripple"/>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
     public bool Ripple { get; set; } = true;
 
     /// <summary>
-    /// Removes circle edges and applies theme default. This setting is for all chips,
-    /// unless they override it.
+    /// Whether the theme border radius is used be default for chips in this set.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.  When <c>true</c>, the <see cref="LayoutProperties.DefaultBorderRadius"/> is used for chip edges.  Can be overridden by setting <see cref="MudChip{T}.Label"/>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
     public bool Label { get; set; }
 
     /// <summary>
-    /// If true, all chips will be disabled.
-    /// Although chips have their own setting they can NOT override this.
+    /// Whether the user cannot interact with this chip.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.  When <c>true</c>, the all chips are visibly disabled and interaction is not allowed.  Overrides any value set for <see cref="MudChip{T}.Disabled"/>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Chip.Behavior)]
     public bool Disabled { get; set; }
 
     /// <summary>
-    ///  Will make all chips read only.
+    /// Whether chips in this set are clickable.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.  When <c>true</c>, chips cannot be clicked even if <see cref="MudChip{T}.OnClick"/> is set.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.ChipSet.Behavior)]
     public bool ReadOnly { get; set; } = false;
 
     /// <summary>
-    /// The Comparer to use for comparing selected values internally.
+    /// The comparer used to determine when a selection has changed.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="EqualityComparer{T}.Default"/>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.ChipSet.Behavior)]
     public IEqualityComparer<T?> Comparer { get; set; } = EqualityComparer<T?>.Default;
@@ -171,31 +207,43 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     /// <summary>
     /// The currently selected value.
     /// </summary>
+    /// <remarks>
+    /// This property is used when <see cref="SelectionMode"/> is <see cref="SelectionMode.SingleSelection" /> or <see cref="SelectionMode.ToggleSelection"/>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.ChipSet.Behavior)]
     public T? SelectedValue { get; set; }
 
     /// <summary>
-    /// Called whenever SelectedValue changes
+    /// Occurs when <see cref="SelectedValue"/> has changed.
     /// </summary>
+    /// <remarks>
+    /// This property is used when <see cref="SelectionMode"/> is <see cref="SelectionMode.SingleSelection" /> or <see cref="SelectionMode.ToggleSelection"/>.
+    /// </remarks>
     [Parameter]
     public EventCallback<T?> SelectedValueChanged { get; set; }
 
     /// <summary>
-    /// The currently selected values if MultiSelection="true".
+    /// The currently selected chips in this set. 
     /// </summary>
+    /// <remarks>
+    /// This event occurs when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection" />.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.ChipSet.Behavior)]
     public IReadOnlyCollection<T>? SelectedValues { get; set; }
 
     /// <summary>
-    /// Called whenever SelectedValues changes
+    /// Occurs when <see cref="SelectedValues"/> has changed.
     /// </summary>
+    /// <remarks>
+    /// This event occurs when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection" />.
+    /// </remarks>
     [Parameter]
     public EventCallback<IReadOnlyCollection<T>?> SelectedValuesChanged { get; set; }
 
     /// <summary>
-    /// Called when a Chip was deleted (by click on the close icon)
+    /// Occurs when any chip has been closed.
     /// </summary>
     [Parameter]
     public EventCallback<MudChip<T>> OnClose { get; set; }
@@ -351,6 +399,9 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
 
     private bool _disposed;
 
+    /// <summary>
+    /// Releases unused resources.
+    /// </summary>
     public void Dispose()
     {
         _disposed = true;

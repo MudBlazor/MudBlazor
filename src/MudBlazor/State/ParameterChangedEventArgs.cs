@@ -8,7 +8,7 @@ namespace MudBlazor.State;
 /// Represents event arguments containing the last and current values of a parameter.
 /// </summary>
 /// <typeparam name="T">The type of the parameter value.</typeparam>
-internal class ParameterChangedEventArgs<T> : EventArgs
+public class ParameterChangedEventArgs<T> : EventArgs
 {
     /// <summary>
     /// Gets the associated parameter name of the component's <see cref="ParameterAttribute"/>.

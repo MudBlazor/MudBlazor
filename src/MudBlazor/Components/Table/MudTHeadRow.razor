@@ -3,12 +3,10 @@
 @inherits MudComponentBase
 
 <tr class="@Classname" @onclick="@OnRowClick" style="@Style" @attributes="@UserAttributes">
-
 	@if (Context.DisplayApplyButtonAtStart(IgnoreEditable) || Context.DisplayEditbuttonAtStart(IgnoreEditable))
 	{
 		<MudTh />
 	}
-
 	@if (Expandable || ((Context?.Table.MultiSelection ?? false) && !IgnoreCheckbox))
 	{
 		<MudTh>
@@ -16,9 +14,9 @@
 			{
 				<div class="ml-4 mr-5"></div>
 			}
-			@if (IsCheckable)
+			@if (Checkable)
 			{
-				<MudCheckBox @bind-Value="IsChecked" Class="mud-table-cell-checkbox" />
+				<MudCheckBox @bind-Value="Checked" Class="mud-table-cell-checkbox" />
 			}
 		</MudTh>
 	}

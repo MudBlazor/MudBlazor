@@ -1,0 +1,91 @@
+﻿@using System.IO
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudFileUpload T="IBrowserFile"
+               @ref="@_fileUpload"
+               @bind-Files="File"
+               @bind-Files:after="@OnFilesChangedAsync"
+               Accept=".png,.jpg,.jpeg"
+               Hidden="@false"
+               InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20"
+               InputStyle="opacity:0"
+               tabindex="-1"
+               @ondrop="@ClearDragClass"
+               @ondragenter="@SetDragClass"
+               @ondragleave="@ClearDragClass"
+               @ondragend="@ClearDragClass">
+    <ActivatorContent>
+        <MudPaper Height="300px"
+                  Outlined="true"
+                  Class="@_dragClass">
+            <MudText Typo="Typo.h6">
+                Drag and drop files here or click
+            </MudText>
+            <MudChip T="string"
+                     Color="Color.Dark"
+                     Text="@File?.Name"
+                     tabindex="-1" />
+            <br>
+            <MudImage Class="rounded"
+                      Height="200"
+                      Src="@_imageSource" />
+        </MudPaper>
+    </ActivatorContent>
+</MudFileUpload>
+<MudToolBar Gutters="@false"
+            Class="relative d-flex justify-end gap-4">
+    <MudButton Id="open-file-picker-button"
+               OnClick="@OpenFilePickerAsync">
+        Open file picker
+    </MudButton>
+    <MudButton Id="clear-button"
+               OnClick="@ClearAsync">
+        Clear
+    </MudButton>
+</MudToolBar>
+
+@code {
+#nullable enable
+    [Parameter]
+    public IBrowserFile? File { get; set; }
+
+    private MudFileUpload<IBrowserFile>? _fileUpload;
+
+    private string? _imageSource;
+
+    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mud-width-full mud-height-full";
+    private string _dragClass = DefaultDragClass;
+
+    private void SetDragClass()
+        => _dragClass = $"{DefaultDragClass} mud-border-primary";
+
+    private void ClearDragClass()
+        => _dragClass = DefaultDragClass;
+
+    private Task OpenFilePickerAsync()
+        => _fileUpload?.OpenFilePickerAsync() ?? Task.CompletedTask;
+
+    private Task ClearAsync()
+    {
+        _imageSource = null;
+        return _fileUpload?.ClearAsync() ?? Task.CompletedTask;
+    }
+
+    private async Task OnFilesChangedAsync()
+    {
+        if (File is null)
+        {
+            return;
+        }
+
+        using var memoryStream = new MemoryStream();
+        await File.OpenReadStream(int.MaxValue).CopyToAsync(memoryStream);
+        var buffer = memoryStream.ToArray();
+
+        _imageSource = ConvertByteToImage(File.ContentType, buffer);
+        StateHasChanged();
+    }
+
+    private static string ConvertByteToImage(string contentType, byte[] buffer)
+        => $"data:{contentType};base64,{Convert.ToBase64String(buffer)}";
+}

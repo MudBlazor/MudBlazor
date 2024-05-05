@@ -1,7 +1,7 @@
 ﻿@page "/components/colorpicker"
 
 <DocsPage>
-    <DocsPageHeader Title="Color Picker" SubTitle="A short description of the component." />
+    <DocsPageHeader Title="Color Picker" SubTitle="A sophisticated and customizable pop-up for choosing a color." />
     <DocsPageContent>
 
         <DocsPageSection>
@@ -33,7 +33,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="Color Picker Mode">
-                <Description>You can set the default mode of the colorpicker with the <CodeInline>ColorPickerMode</CodeInline> prop. This can be useful combined with <CodeInline>DisableModeSwitch</CodeInline> to force the usage of a specific color mode.</Description>
+                <Description>You can set the default mode of the colorpicker with the <CodeInline>ColorPickerMode</CodeInline> prop. This can be useful combined with <CodeInline>ShowModeSwitch="false"</CodeInline> to force the usage of a specific color mode.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(ColorPickerColorModeExample)">
                 <ColorPickerColorModeExample />
@@ -51,7 +51,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="Alpha">
-                <Description>You can disable the alpha slider and its textfield counterpart by setting <CodeInline>DisableAlpha</CodeInline> to true, doing so will remove any transparency from the color and output RGB, HSL, HEX instead of RGBA, HSLA and HEXA.</Description>
+                <Description>You can disable the alpha slider and its textfield counterpart by setting <CodeInline>ShowAlpha="false"</CodeInline>. Doing so will remove any transparency from the color and output RGB, HSL, HEX instead of RGBA, HSLA and HEXA.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(ColorPickerAlphaExample)">
                 <ColorPickerAlphaExample />
@@ -60,7 +60,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="Switch Mode">
-                <Description>Switch Mode lets the user switch betwen RGB, HSL and HEX the button can be disabled with <CodeInline>DisableModeSwitch</CodeInline> set to true, this can be useful if you want to control what type of input/output should be used.</Description>
+                <Description>Switch Mode lets the user switch betwen RGB, HSL and HEX the button can be disabled with <CodeInline>ShowModeSwitch="false"</CodeInline>, this can be useful if you want to control what type of input/output should be used.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(ColorPickerSwitchModeExample)">
                 <ColorPickerSwitchModeExample />
@@ -115,7 +115,7 @@
             <SectionHeader Title="Drag Interaction">
                 <Description>
                     The <CodeInline>ThrottleInterval</CodeInline> property controls how long to wait until the color is updated while dragging the pointer in the spectrum view.
-                    If the <CodeInline>DisableDragEffect</CodeInline> property is set to true, the color selector (circle) will no longer follow the pointer.
+                    If the <CodeInline>DragEffect</CodeInline> property is set to false, the color selector (circle) will no longer follow the pointer.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(ColorPickerDragExample)">

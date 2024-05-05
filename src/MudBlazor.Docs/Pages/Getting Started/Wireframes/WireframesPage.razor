@@ -168,7 +168,7 @@
             </MudGrid>
         </DocsPageSection>
     </DocsPageContent>
-    <MudOverlay Visible="isVisible" DarkBackground="true" ZIndex="9999" >
+    <MudOverlay Visible="visible" DarkBackground="true" ZIndex="9999" >
         <MudContainer MaxWidth="MaxWidth.ExtraLarge">
             <MudPaper Class="docs-section-wireframe" Elevation="24">
                 <MudIconButton Class="close-button" Icon="@Icons.Material.Filled.Close" Color="Color.Secondary" OnClick="@(e => ToggleOverlay(false))"/>
@@ -183,7 +183,7 @@
 @code {
     [Inject] public Microsoft.AspNetCore.Components.NavigationManager UriHelper { get; set; }
 
-    private bool isVisible;
+    private bool visible;
     private string exampleCode;
 
     public void NavigateToWireFrame(string wireframe)
@@ -194,6 +194,6 @@
     public void ToggleOverlay(bool value, string code = null)
     {
         exampleCode = code;
-        isVisible = value;
+        visible = value;
     }
 }

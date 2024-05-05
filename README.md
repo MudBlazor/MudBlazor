@@ -45,20 +45,26 @@ MudBlazor is an ambitious Material Design component framework for Blazor with an
 
 :information_source: Currently only interactive rendering modes are supported - [Learn more](https://learn.microsoft.com/aspnet/core/blazor/components/render-modes).
 
+:warning: Blazor only supports [current browser versions](https://learn.microsoft.com/en-us/aspnet/core/blazor/supported-platforms).
+To ensure a seamless experience with MudBlazor, please use an up-to-date web browser.
+If a browser version is no longer maintained by its publisher, we cannot guarantee compatibility with MudBlazor.
+
 ## Stats
 ![Alt](https://repobeats.axiom.co/api/embed/db53a44092e88fc34a4c0f37db12773b6787ec7e.svg "Repobeats analytics image")
 
 ## Contributing
 👋 Thanks for wanting to contribute!  
-We will try to merge all (non-breaking) bugfix PRs and we will deliberate the value of feature PRs for the community.
-But be warned that there is no guarantee that new features will be merged.
-If you want to be sure before investing the work please contact the team about your planned feature PR.
+Contributions from the community are what makes MudBlazor successful.
 
-Check out the [contribution guidelines](/CONTRIBUTING.md) to understand our goals and to learn more about the internals of the project.
+If you are familiar with technologies like C#, Blazor, JavaScript, or CSS, and wish to give something back, please consider submitting a pull request!
+We try to merge all non-breaking bugfixes and will deliberate the value of new features for the community.
+Please note there is no guarantee your PR will be merged, so if you want to be sure before investing the work, feel free to [contact the team](https://discord.gg/mudblazor) first.
+
+Check out the [contribution guidelines](/CONTRIBUTING.md) to understand our goals and learn more about the internals of the project.
 
 ## Getting Started
-- Full installation instructions can be found at [mudblazor.com](https://mudblazor.com/getting-started/installation).  
-- Alternatively use one of our templates from the [MudBlazor.Templates](https://github.com/mudblazor/Templates) repo.
+Full installation instructions can be found [on our website](https://mudblazor.com/getting-started/installation).  
+Alternatively use one of our templates from the [MudBlazor.Templates](https://github.com/mudblazor/Templates) repo.
 
 ### Quick Installation Guide
 Install Package
@@ -72,6 +78,7 @@ Add the following to `_Imports.razor`
 Add the following to the `MainLayout.razor` or `App.razor`
 ```razor
 <MudThemeProvider/>
+<MudPopoverProvider/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 ```

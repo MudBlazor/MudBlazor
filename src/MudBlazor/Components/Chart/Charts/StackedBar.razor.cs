@@ -5,9 +5,16 @@ using MudBlazor.Charts.SVG.Models;
 
 namespace MudBlazor.Charts
 {
+    /// <summary>
+    /// Represents a chart which displays series values as portions of vertical rectangles.
+    /// </summary>
     partial class StackedBar : MudChartBase
     {
-        [CascadingParameter] public MudChart MudChartParent { get; set; }
+        /// <summary>
+        /// The chart, if any, containing this component.
+        /// </summary>
+        [CascadingParameter]
+        public MudChart MudChartParent { get; set; }
 
         private List<SvgPath> _horizontalLines = new();
         private List<SvgText> _horizontalValues = new();
@@ -20,6 +27,7 @@ namespace MudBlazor.Charts
 
         private List<SvgPath> _bars = new();
 
+        /// <inheritdoc />
         protected override void OnParametersSet()
         {
             base.OnParametersSet();

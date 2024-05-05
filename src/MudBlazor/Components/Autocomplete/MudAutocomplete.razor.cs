@@ -27,14 +27,15 @@ namespace MudBlazor
         private bool _isCleared;
         private bool _isClearing;
         private bool _isProcessingValue;
-        private int _selectedListItemIndex = 0;
+        private int _selectedListItemIndex;
         private int _elementKey = 0;
         private int _returnedItemsCount;
         private bool _isOpen;
+        private bool _doNotOpenMenuOnNextFocus;
         private MudInput<string> _elementReference;
         private CancellationTokenSource _cancellationTokenSrc;
         private Task _currentSearchTask;
-        private Timer _timer;
+        private Timer _debounceTimer;
         private T[] _items;
         private IList<int> _enabledItemIndices = new List<int>();
         private Func<T, string> _toStringFunc;
@@ -66,7 +67,7 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// Gets or sets the CSS classes applied to the popover.
+        /// The CSS classes applied to the popover.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.
@@ -76,7 +77,7 @@ namespace MudBlazor
         public string PopoverClass { get; set; }
 
         /// <summary>
-        /// Gets or sets the CSS classes applied to the internal list.
+        /// The CSS classes applied to the internal list.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.
@@ -86,7 +87,7 @@ namespace MudBlazor
         public string ListClass { get; set; }
 
         /// <summary>
-        /// Gets or sets the CSS classes applied to internal list items.
+        /// The CSS classes applied to internal list items.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.
@@ -96,7 +97,7 @@ namespace MudBlazor
         public string ListItemClass { get; set; }
 
         /// <summary>
-        /// Gets or sets where the popover will open from.
+        /// The location where the popover will open from.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Origin.BottomCenter" />.
@@ -106,7 +107,7 @@ namespace MudBlazor
         public Origin AnchorOrigin { get; set; } = Origin.BottomCenter;
 
         /// <summary>
-        /// Gets or sets the transform origin point for the popover.
+        /// The transform origin point for the popover.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Origin.TopCenter"/>.
@@ -116,7 +117,7 @@ namespace MudBlazor
         public Origin TransformOrigin { get; set; } = Origin.TopCenter;
 
         /// <summary>
-        /// Gets or sets whether compact padding will be used.
+        /// Whether compact padding will be used.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -126,7 +127,7 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// Gets or sets the "open" Autocomplete icon.
+        /// The "open" Autocomplete icon.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.ArrowDropDown"/>.
@@ -136,7 +137,7 @@ namespace MudBlazor
         public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         /// <summary>
-        /// Gets or sets the "close" Autocomplete icon.
+        /// The "close" Autocomplete icon.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.ArrowDropDown"/>.
@@ -146,7 +147,7 @@ namespace MudBlazor
         public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         /// <summary>
-        /// Gets or sets the maximum height, in pixels, of the Autocomplete when it is open.
+        /// The maximum height, in pixels, of the Autocomplete when it is open.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>300</c>.
@@ -156,7 +157,7 @@ namespace MudBlazor
         public int MaxHeight { get; set; } = 300;
 
         /// <summary>
-        /// Gets or sets the function used to get the display text for each item.
+        /// The function used to get the display text for each item.
         /// </summary>
         /// <remarks>
         /// Defaults to the <c>ToString()</c> method of items.
@@ -170,6 +171,7 @@ namespace MudBlazor
             {
                 if (_toStringFunc == value)
                     return;
+
                 _toStringFunc = value;
                 Converter = new Converter<T>
                 {
@@ -179,7 +181,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets or sets whether to show the progress indicator during searches. 
+        /// Whether to show the progress indicator during searches.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  The progress indicator uses the color specified in the <see cref="ProgressIndicatorColor"/> property.
@@ -189,7 +191,7 @@ namespace MudBlazor
         public bool ShowProgressIndicator { get; set; } = false;
 
         /// <summary>
-        /// Gets or sets the color of the progress indicator.
+        /// The color of the progress indicator.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Default"/>.  This property is used when <see cref="ShowProgressIndicator"/> is <c>true</c>.
@@ -199,7 +201,7 @@ namespace MudBlazor
         public Color ProgressIndicatorColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// Gets or sets a function used to search for items.
+        /// The function used to search for items.
         /// </summary>
         /// <remarks>
         /// This function searches for items containing the specified <c>string</c> value, and returns items which match up to the <see cref="MaxItems"/> property.  You can use the provided <see cref="CancellationToken"/> which is marked as canceled when the user changes the search text or selects a value from the list.
@@ -209,7 +211,7 @@ namespace MudBlazor
         public Func<string, CancellationToken, Task<IEnumerable<T>>> SearchFunc { get; set; }
 
         /// <summary>
-        /// Gets or sets the maximum number of items to display.
+        /// The maximum number of items to display.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>10</c>.  A value of <c>null</c> will display all items.
@@ -219,7 +221,7 @@ namespace MudBlazor
         public int? MaxItems { get; set; } = 10;
 
         /// <summary>
-        /// Gets or sets the minimum number of characters typed to initiate a search.
+        /// The minimum number of characters typed to initiate a search.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>0</c>.
@@ -229,27 +231,27 @@ namespace MudBlazor
         public int MinCharacters { get; set; } = 0;
 
         /// <summary>
-        /// Gets or sets whether to reset the selected value if the user deletes the text.
+        /// Whether to reset the selected value if the user deletes the text.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool ResetValueOnEmptyText { get; set; } = false;
+        public bool ResetValueOnEmptyText { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the text will be selected (highlighted) when the Autocomplete is clicked.
+        /// Whether the text will be selected (highlighted) when the component receives focus.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool SelectOnClick { get; set; } = true;
+        public bool SelectOnActivation { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets whether other items can be selected without resetting the Value.
+        /// Whether other items can be selected without resetting the Value.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  When <c>true</c>, selecting an option will trigger a <see cref="SearchFunc"/> with the current Text.  Otherwise, an empty string is passed which can make it easier to view and select other options without resetting the Value. When <c>false</c>, <c>T</c> must either be a <c>record</c> or override the <c>GetHashCode</c> and <c>Equals</c> methods.
@@ -259,7 +261,7 @@ namespace MudBlazor
         public bool Strict { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets the debounce interval, in milliseconds.
+        /// The debounce interval, in milliseconds.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>100</c>.  A higher value can help reduce the number of calls to <see cref="SearchFunc"/>, which can improve responsiveness.
@@ -269,7 +271,7 @@ namespace MudBlazor
         public int DebounceInterval { get; set; } = 100;
 
         /// <summary>
-        /// Gets or sets the custom template used to display unselected items.
+        /// The custom template used to display unselected items.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="ItemSelectedTemplate"/> property to control the display of selected items.
@@ -279,7 +281,7 @@ namespace MudBlazor
         public RenderFragment<T> ItemTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template used to display selected items.
+        /// The custom template used to display selected items.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="ItemTemplate"/> property to control the display of unselected items.
@@ -289,7 +291,7 @@ namespace MudBlazor
         public RenderFragment<T> ItemSelectedTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template used to display disabled items.
+        /// The custom template used to display disabled items.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -299,7 +301,7 @@ namespace MudBlazor
         public RenderFragment<T> ItemDisabledTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template used when the number of items returned by <see cref="SearchFunc"/> is more than the value of the <see cref="MaxItems"/> property.
+        /// The custom template used when the number of items returned by <see cref="SearchFunc"/> is more than the value of the <see cref="MaxItems"/> property.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -309,7 +311,7 @@ namespace MudBlazor
         public RenderFragment MoreItemsTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template used when no items are returned by <see cref="SearchFunc"/>.
+        /// The custom template used when no items are returned by <see cref="SearchFunc"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -319,7 +321,7 @@ namespace MudBlazor
         public RenderFragment NoItemsTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template shown above the list of items, if <see cref="SearchFunc"/> returns items to display.  Otherwise, the fragment is hidden.
+        /// The custom template shown above the list of items, if <see cref="SearchFunc"/> returns items to display.  Otherwise, the fragment is hidden.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="AfterItemsTemplate"/> property to control content displayed below items.
@@ -329,7 +331,7 @@ namespace MudBlazor
         public RenderFragment BeforeItemsTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template shown below the list of items, if <see cref="SearchFunc"/> returns items to display.  Otherwise, the fragment is hidden.
+        /// The custom template shown below the list of items, if <see cref="SearchFunc"/> returns items to display.  Otherwise, the fragment is hidden.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="BeforeItemsTemplate"/> property to control content displayed above items.
@@ -339,7 +341,7 @@ namespace MudBlazor
         public RenderFragment AfterItemsTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template used for the progress indicator when <see cref="ShowProgressIndicator"/> is <c>true</c>.
+        /// The custom template used for the progress indicator when <see cref="ShowProgressIndicator"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="ProgressIndicatorInPopoverTemplate"/> property to control content displayed for the progress indicator inside the popover.
@@ -349,7 +351,7 @@ namespace MudBlazor
         public RenderFragment ProgressIndicatorTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template used for the progress indicator inside the popover when <see cref="ShowProgressIndicator"/> is <c>true</c>.
+        /// The custom template used for the progress indicator inside the popover when <see cref="ShowProgressIndicator"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="ProgressIndicatorTemplate"/> property to control content displayed for the progress indicator.
@@ -359,7 +361,7 @@ namespace MudBlazor
         public RenderFragment ProgressIndicatorInPopoverTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the <c>Text</c> property is overridden when an item is selected.
+        /// Whether the <c>Text</c> property is overridden when an item is selected.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  When <c>true</c>, selecting a value will update the Text property.  When <c>false</c>, incomplete values for Text are allowed.
@@ -369,17 +371,17 @@ namespace MudBlazor
         public bool CoerceText { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets whether the <c>Value</c> property is set even if no match is found by <see cref="SearchFunc"/>.
+        /// Whether the <c>Value</c> property is set even if no match is found by <see cref="SearchFunc"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, the user input will be applied to the Value property which allows it to be validated and show an error message. 
+        /// Defaults to <c>false</c>.  When <c>true</c>, the user input will be applied to the Value property which allows it to be validated and show an error message.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool CoerceValue { get; set; }
 
         /// <summary>
-        /// Gets or sets the function used to determine if an item should be disabled.
+        /// The function used to determine if an item should be disabled.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -395,24 +397,24 @@ namespace MudBlazor
         public EventCallback<bool> IsOpenChanged { get; set; }
 
         /// <summary>
-        /// Gets or sets whether pressing the <c>Tab</c> key updates the Value to the currently selected item.
+        /// Whether pressing the <c>Tab</c> key updates the Value to the currently selected item.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  
+        /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public bool SelectValueOnTab { get; set; } = false;
+        public bool SelectValueOnTab { get; set; }
 
         /// <summary>
-        /// Gets or sets whether a Clear icon button is displayed.
+        /// Whether a Clear icon button is displayed.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <c>ClearIcon</c> property to control the Clear button icon.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool Clearable { get; set; } = false;
+        public bool Clearable { get; set; }
 
         /// <summary>
         /// Occurs when the Clear button has been clicked.
@@ -433,7 +435,7 @@ namespace MudBlazor
         public EventCallback<int> ReturnedItemsCountChanged { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the search result drop-down is currently displayed.
+        /// Whether the search result drop-down is currently displayed.
         /// </summary>
         /// <remarks>
         /// When this property changes, the <see cref="IsOpenChanged"/> event will occur.
@@ -467,60 +469,42 @@ namespace MudBlazor
         /// Changes the currently selected item to the specified value.
         /// </summary>
         /// <param name="value">The value to set.</param>
-        /// <returns>A <see cref="Task"/> object.</returns>
         public async Task SelectOption(T value)
         {
             _isProcessingValue = true;
             try
             {
                 await SetValueAsync(value);
+
                 if (_items != null)
                     _selectedListItemIndex = Array.IndexOf(_items, value);
+
                 var optionText = GetItemString(value);
+
                 if (!_isCleared)
                     await SetTextAsync(optionText, false);
-                _timer?.Dispose();
+
+                _debounceTimer?.Dispose();
                 IsOpen = false;
+
                 await BeginValidateAsync();
-                if (!_isCleared)
-                    _elementReference?.SetText(optionText);
-                _elementReference?.FocusAsync().AndForget();
+
+                if (_elementReference is not null)
+                {
+                    if (!_isCleared)
+                    {
+                        await _elementReference.SetText(optionText);
+                    }
+
+                    _doNotOpenMenuOnNextFocus = true;
+                    await FocusAsync();
+                }
+
                 StateHasChanged();
             }
             finally
             {
                 _isProcessingValue = false;
-            }
-        }
-
-        /// <summary>
-        /// Opens or closes the drop-down of items.
-        /// </summary>
-        /// <remarks>
-        /// If the Autocomplete is currently disabled or read-only, it will not be opened.
-        /// </remarks>
-        public async Task ToggleMenu()
-        {
-            if ((GetDisabledState() || GetReadOnlyState()) && !IsOpen)
-                return;
-            await ChangeMenu(!IsOpen);
-        }
-
-        private async Task ChangeMenu(bool open)
-        {
-            if (open)
-            {
-                if (SelectOnClick)
-                    await _elementReference.SelectAsync();
-                await OnSearchAsync();
-            }
-            else
-            {
-                _timer?.Dispose();
-                await RestoreScrollPositionAsync();
-                await CoerceTextToValue();
-                IsOpen = false;
-                StateHasChanged();
             }
         }
 
@@ -545,31 +529,37 @@ namespace MudBlazor
                 base.OnAfterRender(firstRender);
                 return;
             }
+
             _isCleared = false;
+
             base.OnAfterRender(firstRender);
         }
 
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
-            _timer?.Dispose();
+            _debounceTimer?.Dispose();
+
             // This keeps the text from being set when clear() was called
             if (_isCleared)
                 return Task.CompletedTask;
+
             return base.UpdateTextPropertyAsync(updateValue);
         }
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)
         {
-            _timer?.Dispose();
+            _debounceTimer?.Dispose();
+
             if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
                 await SetValueAsync(default(T), updateText);
+
             if (DebounceInterval <= 0)
-                await OnSearchAsync();
+                await OpenMenuAsync();
             else
-                _timer = new Timer(OnTimerComplete, null, DebounceInterval, Timeout.Infinite);
+                _debounceTimer = new Timer(OnDebounceComplete, null, DebounceInterval, Timeout.Infinite);
         }
 
-        private void OnTimerComplete(object stateInfo) => InvokeAsync(OnSearchAsync);
+        private void OnDebounceComplete(object stateInfo) => InvokeAsync(OpenMenuAsync);
 
         private void CancelToken()
         {
@@ -590,11 +580,42 @@ namespace MudBlazor
             return ReturnedItemsCountChanged.InvokeAsync(value);
         }
 
+        /// <summary>
+        /// Opens or closes the drop-down of items depending on whether it was closed or open.
+        /// </summary>
         /// <remarks>
-        /// This async method needs to return a task and be awaited in order for
-        /// unit tests that trigger this method to work correctly.
+        /// Will have no effect if the autocomplete is disabled or read-only.
         /// </remarks>
-        private async Task OnSearchAsync()
+        public Task ToggleMenuAsync()
+        {
+            if ((GetDisabledState() || GetReadOnlyState()) && !IsOpen)
+            {
+                return Task.CompletedTask;
+            }
+
+            return IsOpen ? CloseMenuAsync() : OpenMenuAsync();
+        }
+
+        /// <summary>
+        /// Closes the drop-down of items.
+        /// </summary>
+        public async Task CloseMenuAsync()
+        {
+            CancelToken();
+            _debounceTimer?.Dispose();
+            await RestoreScrollPositionAsync();
+            await CoerceTextToValue();
+            IsOpen = false;
+            StateHasChanged();
+        }
+
+        /// <summary>
+        /// Opens the drop-down of items.
+        /// </summary>
+        /// <remarks>
+        /// Will have no effect if the autocomplete is disabled or read-only.
+        /// </remarks>
+        public async Task OpenMenuAsync()
         {
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
             {
@@ -606,17 +627,20 @@ namespace MudBlazor
             var searchedItems = Array.Empty<T>();
             CancelToken();
 
+            var wasFocused = _isFocused;
             var searchingWhileSelected = false;
             try
             {
                 if (ProgressIndicatorInPopoverTemplate != null)
                 {
+                    // Open before searching if a progress indicator is defined.
                     IsOpen = true;
                 }
 
-                searchingWhileSelected = !Strict && Value != null && (Value.ToString() == Text || (ToStringFunc != null && ToStringFunc(Value) == Text)); //search while selected if enabled and the Text is equivalent to the Value
-                var searchText = searchingWhileSelected ? string.Empty : Text;
+                // Search while selected if enabled and the Text is equivalent to the Value.
+                searchingWhileSelected = !Strict && Value != null && (Value.ToString() == Text || (ToStringFunc != null && ToStringFunc(Value) == Text));
 
+                var searchText = searchingWhileSelected ? string.Empty : Text;
                 var searchTask = SearchFunc(searchText, _cancellationTokenSrc.Token);
 
                 _currentSearchTask = searchTask;
@@ -637,10 +661,12 @@ namespace MudBlazor
             }
 
             await SetReturnedItemsCountAsync(searchedItems.Length);
+
             if (MaxItems.HasValue)
             {
                 searchedItems = searchedItems.Take(MaxItems.Value).ToArray();
             }
+
             _items = searchedItems;
 
             var enabledItems = _items.Select((item, idx) => (item, idx)).Where(tuple => ItemDisabledFunc?.Invoke(tuple.item) != true).ToList();
@@ -651,10 +677,14 @@ namespace MudBlazor
             }
             else
             {
-                _selectedListItemIndex = _enabledItemIndices.Any() ? _enabledItemIndices.First() : -1;
+                _selectedListItemIndex = _enabledItemIndices.Any() ? _enabledItemIndices[0] : -1;
             }
 
-            IsOpen = true;
+            if (_isFocused || !wasFocused)
+            {
+                // Open after the search has finished if we're still focused (UI), or were never focused in the first place (programmatically).
+                IsOpen = true;
+            }
 
             if (_items?.Length == 0)
             {
@@ -681,11 +711,14 @@ namespace MudBlazor
             {
                 _isCleared = true;
                 IsOpen = false;
+
                 await SetTextAsync(null, updateValue: false);
                 await CoerceValueToText();
+
                 if (_elementReference != null)
                     await _elementReference.SetText("");
-                _timer?.Dispose();
+
+                _debounceTimer?.Dispose();
                 StateHasChanged();
             }
             finally
@@ -708,58 +741,39 @@ namespace MudBlazor
             return "null";
         }
 
-        internal virtual async Task OnInputKeyDown(KeyboardEventArgs args)
+        private async Task OnInputKeyDownAsync(KeyboardEventArgs args)
         {
             switch (args.Key)
             {
+                // We need to catch Tab here because a tab will move focus to the next element and thus we'd never get the tab key in OnInputKeyUp.
                 case "Tab":
-                    // NOTE: We need to catch Tab in Keydown because a tab will move focus to the next element and thus
-                    // in OnInputKeyUp we'd never get the tab key
-                    if (!IsOpen)
-                        return;
-                    if (SelectValueOnTab)
-                        await OnEnterKey();
-                    else
-                        IsOpen = false;
-                    break;
-            }
-            await base.InvokeKeyDownAsync(args);
-        }
-
-        internal virtual async Task OnInputKeyUp(KeyboardEventArgs args)
-        {
-            switch (args.Key)
-            {
-                case "Enter":
-                case "NumpadEnter":
-                    if (!IsOpen)
+                    if (IsOpen)
                     {
-                        await ToggleMenu();
-                    }
-                    else
-                    {
-                        await OnEnterKey();
+                        if (SelectValueOnTab)
+                            await OnEnterKey();
+                        else
+                            IsOpen = false;
                     }
                     break;
                 case "ArrowDown":
-                    if (!IsOpen)
-                    {
-                        await ToggleMenu();
-                    }
-                    else
+                    if (IsOpen)
                     {
                         var increment = _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) + 1) - _selectedListItemIndex;
                         await SelectNextItem(increment < 0 ? 1 : increment);
+                    }
+                    else
+                    {
+                        await ToggleMenuAsync();
                     }
                     break;
                 case "ArrowUp":
                     if (args.AltKey)
                     {
-                        await ChangeMenu(open: false);
+                        await CloseMenuAsync();
                     }
                     else if (!IsOpen)
                     {
-                        await ToggleMenu();
+                        await ToggleMenuAsync();
                     }
                     else
                     {
@@ -767,17 +781,28 @@ namespace MudBlazor
                         await SelectNextItem(-(decrement < 0 ? 1 : decrement));
                     }
                     break;
-                case "Escape":
-                    await ChangeMenu(open: false);
-                    break;
-                case "Tab":
-                    await Task.Delay(1);
-                    if (!IsOpen)
-                        return;
-                    if (SelectValueOnTab)
+            }
+
+            await base.InvokeKeyDownAsync(args);
+        }
+
+        private async Task OnInputKeyUpAsync(KeyboardEventArgs args)
+        {
+            switch (args.Key)
+            {
+                case "Enter":
+                case "NumpadEnter":
+                    if (IsOpen)
+                    {
                         await OnEnterKey();
+                    }
                     else
-                        await ToggleMenu();
+                    {
+                        await ToggleMenuAsync();
+                    }
+                    break;
+                case "Escape":
+                    await CloseMenuAsync();
                     break;
                 case "Backspace":
                     if (args.CtrlKey && args.ShiftKey)
@@ -786,6 +811,7 @@ namespace MudBlazor
                     }
                     break;
             }
+
             await base.InvokeKeyUpAsync(args);
         }
 
@@ -793,6 +819,7 @@ namespace MudBlazor
         {
             if (increment == 0 || _items == null || _items.Length == 0 || !_enabledItemIndices.Any())
                 return ValueTask.CompletedTask;
+
             // if we are at the end, or the beginning we just do an rollover
             _selectedListItemIndex = Math.Clamp(value: ((10 * _items.Length) + _selectedListItemIndex + increment) % _items.Length, min: 0, max: _items.Length - 1);
             return ScrollToListItem(_selectedListItemIndex);
@@ -805,6 +832,7 @@ namespace MudBlazor
         public ValueTask ScrollToListItem(int index)
         {
             var id = GetListItemId(index);
+
             //id of the scrolled element
             return ScrollManager.ScrollToListItemAsync(id);
         }
@@ -812,7 +840,9 @@ namespace MudBlazor
         //This restores the scroll position after closing the menu and element being 0
         private ValueTask RestoreScrollPositionAsync()
         {
-            if (_selectedListItemIndex != 0) return ValueTask.CompletedTask;
+            if (_selectedListItemIndex != 0)
+                return ValueTask.CompletedTask;
+
             return ScrollManager.ScrollToListItemAsync(GetListItemId(0));
         }
 
@@ -823,12 +853,14 @@ namespace MudBlazor
 
         internal async Task OnEnterKey()
         {
-            if (IsOpen == false)
+            if (!IsOpen)
                 return;
+
             try
             {
                 if (_items == null || _items.Length == 0)
                     return;
+
                 if (_selectedListItemIndex >= 0 && _selectedListItemIndex < _items.Length)
                     await SelectOption(_items[_selectedListItemIndex]);
             }
@@ -839,9 +871,43 @@ namespace MudBlazor
             }
         }
 
+        private Task OnInputClicked()
+        {
+            return _isFocused ? OnInputFocused() : Task.CompletedTask;
+        }
+
+        private async Task OnInputFocused()
+        {
+            _isFocused = true;
+
+            if (_doNotOpenMenuOnNextFocus || IsOpen || GetDisabledState() || GetReadOnlyState())
+            {
+                _doNotOpenMenuOnNextFocus = false;
+                return;
+            }
+
+            if (SelectOnActivation)
+            {
+                await SelectAsync();
+            }
+
+            // Open the menu.
+            await OpenMenuAsync();
+        }
+
+        private async Task AdornmentClickHandler()
+        {
+            await FocusAsync();
+
+            await OnAdornmentClick.InvokeAsync();
+        }
+
         private Task OnInputBlurred(FocusEventArgs args)
         {
+            _isFocused = false;
+
             return OnBlur.InvokeAsync(args);
+
             // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value,
             // resulting in a premature validation. thus, don't call base
             //base.OnBlurred(args);
@@ -849,10 +915,10 @@ namespace MudBlazor
 
         private Task CoerceTextToValue()
         {
-            if (CoerceText == false)
+            if (!CoerceText)
                 return Task.CompletedTask;
 
-            _timer?.Dispose();
+            _debounceTimer?.Dispose();
 
             var text = Value == null ? null : GetItemString(Value);
 
@@ -865,16 +931,18 @@ namespace MudBlazor
 
         private Task CoerceValueToText()
         {
-            if (CoerceValue == false)
+            if (!CoerceValue)
                 return Task.CompletedTask;
-            _timer?.Dispose();
+
+            _debounceTimer?.Dispose();
+
             var value = Converter.Get(Text);
             return SetValueAsync(value, updateText: false);
         }
 
         protected override void Dispose(bool disposing)
         {
-            _timer?.Dispose();
+            _debounceTimer?.Dispose();
 
             if (_cancellationTokenSrc != null)
             {
@@ -929,6 +997,7 @@ namespace MudBlazor
 
             if (text == null)
                 return;
+
             await SetTextAsync(text, true);
         }
 
