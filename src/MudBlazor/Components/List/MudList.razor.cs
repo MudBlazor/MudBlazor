@@ -319,8 +319,8 @@ namespace MudBlazor
         {
             foreach (var item in _items.ToArray())
             {
-                var isSelected = value is not null && Comparer.Equals(value, item.GetValue());
-                item.SetSelected(isSelected);
+                var selected = value is not null && Comparer.Equals(value, item.GetValue());
+                item.SetSelected(selected);
             }
             foreach (var childList in _childLists.ToArray())
             {
@@ -336,8 +336,8 @@ namespace MudBlazor
             foreach (var listItem in _items.ToArray())
             {
                 var itemValue = listItem.GetValue();
-                var isSelected = itemValue is not null && selection.Contains(itemValue);
-                listItem.SetSelected(isSelected);
+                var selected = itemValue is not null && selection.Contains(itemValue);
+                listItem.SetSelected(selected);
             }
             foreach (var childList in _childLists.ToArray())
             {

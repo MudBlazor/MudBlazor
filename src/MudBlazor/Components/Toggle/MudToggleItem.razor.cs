@@ -12,15 +12,15 @@ namespace MudBlazor
     public partial class MudToggleItem<T> : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-toggle-item")
-            .AddClass($"mud-theme-{Parent?.Color.ToDescriptionString()}", IsSelected && string.IsNullOrEmpty(Parent?.SelectedClass))
-            .AddClass(Parent?.SelectedClass, IsSelected && !string.IsNullOrEmpty(Parent?.SelectedClass))
-            .AddClass("mud-toggle-item-selected", IsSelected)
+            .AddClass($"mud-theme-{Parent?.Color.ToDescriptionString()}", Selected && string.IsNullOrEmpty(Parent?.SelectedClass))
+            .AddClass(Parent?.SelectedClass, Selected && !string.IsNullOrEmpty(Parent?.SelectedClass))
+            .AddClass("mud-toggle-item-selected", Selected)
             .AddClass($"mud-toggle-item-{Parent?.Color.ToDescriptionString()}")
             .AddClass("mud-toggle-item-vertical", Parent?.Vertical == true)
             .AddClass("mud-toggle-item-delimiter", Parent?.Delimiters == true)
             .AddClass("mud-ripple", Parent?.Ripple == true)
             .AddClass($"mud-border-{Parent?.Color.ToDescriptionString()} border-solid")
-            .AddClass("mud-toggle-delimiter-alternative", Parent?.SelectionMode == SelectionMode.MultiSelection && IsSelected && Parent?.Color != Color.Default)
+            .AddClass("mud-toggle-delimiter-alternative", Parent?.SelectionMode == SelectionMode.MultiSelection && Selected && Parent?.Color != Color.Default)
             .AddClass("mud-toggle-item-fixed", Parent?.CheckMark == true && Parent?.FixedContent == true)
             .AddClass("mud-disabled", GetDisabledState())
             .AddClass(Class)
@@ -65,7 +65,7 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Appearance)]
         public string? SelectedIcon { get; set; } = Icons.Material.Filled.Check;
 
-        private string? CurrentIcon => IsSelected ? SelectedIcon ?? UnselectedIcon : UnselectedIcon;
+        private string? CurrentIcon => Selected ? SelectedIcon ?? UnselectedIcon : UnselectedIcon;
 
         /// <summary>
         /// The text to show. You need to set this only if you want a text that differs from the Value. If null,
@@ -91,11 +91,11 @@ namespace MudBlazor
 
         public void SetSelected(bool selected)
         {
-            IsSelected = selected;
+            Selected = selected;
             StateHasChanged();
         }
 
-        protected internal bool IsSelected { get; private set; }
+        protected internal bool Selected { get; private set; }
 
         protected async Task HandleOnClickAsync()
         {
