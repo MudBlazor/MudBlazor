@@ -95,7 +95,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// It is <b>not</b> recommended to two-way bind both <see cref="Value"/> and <see cref="NullableValue"/> at the same time.
-        /// Because they sync with each other, when attempting to reset <see cref="NullableValue"/> back to null, it will update <see cref="Value"/> to zero,
+        /// Because they will sync with each other, when attempting to reset <see cref="NullableValue"/> back to null, it will update <see cref="Value"/> to zero,
         /// and subsequently, <see cref="Value"/> will update <see cref="NullableValue"/> to zero.
         /// </remarks>
         [Parameter]
@@ -107,7 +107,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// It is <b>not</b> recommended to two-way bind both <see cref="Value"/> and <see cref="NullableValue"/> at the same time.
-        /// Because they sync with each other, when attempting to reset <see cref="NullableValue"/> back to null, it will update <see cref="Value"/> to zero,
+        /// Because they will sync with each other, when attempting to reset <see cref="NullableValue"/> back to null, it will update <see cref="Value"/> to zero,
         /// and subsequently, <see cref="Value"/> will update <see cref="NullableValue"/> to zero.
         /// </remarks>
         [Parameter]
