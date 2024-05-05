@@ -16,6 +16,7 @@ namespace MudBlazor
     public partial class MudSlider<T> : MudComponentBase where T : struct, INumber<T>
     {
         private int _tickMarkCount = 0;
+        private bool _nullableValueResetToDefault = false;
         private readonly ParameterState<T> _valueState;
         private readonly ParameterState<T?> _nullableValueState;
 
@@ -93,11 +94,6 @@ namespace MudBlazor
         /// <summary>
         /// The value of the slider.
         /// </summary>
-        /// <remarks>
-        /// It is <b>not</b> recommended to two-way bind both <see cref="Value"/> and <see cref="NullableValue"/> at the same time.
-        /// Because they will sync with each other, when attempting to reset <see cref="NullableValue"/> back to null, it will update <see cref="Value"/> to zero,
-        /// and subsequently, <see cref="Value"/> will update <see cref="NullableValue"/> to zero.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Slider.Data)]
         public T Value { get; set; } = T.Zero;
@@ -105,11 +101,6 @@ namespace MudBlazor
         /// <summary>
         /// The nullable value of the slider.
         /// </summary>
-        /// <remarks>
-        /// It is <b>not</b> recommended to two-way bind both <see cref="Value"/> and <see cref="NullableValue"/> at the same time.
-        /// Because they will sync with each other, when attempting to reset <see cref="NullableValue"/> back to null, it will update <see cref="Value"/> to zero,
-        /// and subsequently, <see cref="Value"/> will update <see cref="NullableValue"/> to zero.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Slider.Data)]
         public T? NullableValue { get; set; } = default;
@@ -232,9 +223,31 @@ namespace MudBlazor
             }
         }
 
-        private Task OnValueParameterChangedAsync(ParameterChangedEventArgs<T> arg) => _nullableValueState.SetValueAsync(arg.Value);
+        private Task OnValueParameterChangedAsync(ParameterChangedEventArgs<T> arg)
+        {
+            if (_nullableValueResetToDefault)
+            {
+                _nullableValueResetToDefault = false;
 
-        private Task OnNullableValueParameterChangedAsync(ParameterChangedEventArgs<T?> arg) => _valueState.SetValueAsync(arg.Value.GetValueOrDefault(T.Zero));
+                return Task.CompletedTask;
+            }
+
+            return _nullableValueState.SetValueAsync(arg.Value);
+        }
+
+        private Task OnNullableValueParameterChangedAsync(ParameterChangedEventArgs<T?> arg)
+        {
+            if (arg.Value is null)
+            {
+                // if Value and NullableValue will be two-way bind at same time they will sync each other.
+                // When attempting to reset NullableValue back to null, Value to zero,
+                // and subsequently, Value will update NullableValue to zero.
+                // This check prevents this.
+                _nullableValueResetToDefault = true;
+            }
+
+            return _valueState.SetValueAsync(arg.Value.GetValueOrDefault(T.Zero));
+        }
 
         private string Width => CalculatePosition().ToString(CultureInfo.InvariantCulture);
     }
