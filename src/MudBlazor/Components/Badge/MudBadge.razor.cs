@@ -32,7 +32,7 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// Gets or sets the location of the badge.
+        /// The location of the badge.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Origin.TopRight" />.
@@ -42,7 +42,7 @@ namespace MudBlazor
         public Origin Origin { get; set; } = Origin.TopRight;
 
         /// <summary>
-        /// Gets or sets the size of the drop shadow.
+        /// The size of the drop shadow.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>0</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
@@ -52,7 +52,7 @@ namespace MudBlazor
         public int Elevation { set; get; } = 0;
 
         /// <summary>
-        /// Gets or sets whether the badge can be seen.
+        /// Whether the badge can be seen.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -62,7 +62,7 @@ namespace MudBlazor
         public bool Visible { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets the color of the badge.
+        /// The color of the badge.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
@@ -72,7 +72,7 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// Gets or sets whether a dot is displayed instead of any content.
+        /// Whether a dot is displayed instead of any content.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -82,7 +82,7 @@ namespace MudBlazor
         public bool Dot { get; set; }
 
         /// <summary>
-        /// Gets or sets whether to display <see cref="ChildContent"/> over the main badge content.
+        /// Whether to display <see cref="ChildContent"/> over the main badge content.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -92,7 +92,7 @@ namespace MudBlazor
         public bool Overlap { get; set; }
 
         /// <summary>
-        /// Gets or sets whether a border is displayed around the badge.
+        /// Whether a border is displayed around the badge.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -102,14 +102,14 @@ namespace MudBlazor
         public bool Bordered { get; set; }
 
         /// <summary>
-        /// Gets or sets the icon to display in the badge.
+        /// The icon to display in the badge.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Badge.Behavior)]
         public string? Icon { get; set; }
 
         /// <summary>
-        /// Gets or sets the maximum number allowed in the <see cref="Content"/> property.
+        /// The maximum number allowed in the <see cref="Content"/> property.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>99</c>.
@@ -119,7 +119,7 @@ namespace MudBlazor
         public int Max { get; set; } = 99;
 
         /// <summary>
-        /// Gets or sets the <c>string</c> or <c>int</c> value to display inside the badge.
+        /// The <c>string</c> or <c>int</c> value to display inside the badge.
         /// </summary>
         /// <remarks>
         /// Supported types are <c>string</c> and <c>int</c>.
@@ -129,7 +129,7 @@ namespace MudBlazor
         public object? Content { get; set; }
 
         /// <summary>
-        /// Gets or sets any CSS classes applied to the badge.
+        /// The CSS classes applied to the badge.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.
@@ -139,7 +139,7 @@ namespace MudBlazor
         public string? BadgeClass { get; set; }
 
         /// <summary>
-        /// Gets or sets any child content for the component.
+        /// The content within this badge.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Badge.Behavior)]

@@ -25,7 +25,7 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// Gets or sets the amount of space between avatars, between <c>0</c> and <c>16</c>.
+        /// The amount of space between avatars, between <c>0</c> and <c>16</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>3</c>.
@@ -35,7 +35,7 @@ namespace MudBlazor
         public int Spacing { get; set; } = 3;
 
         /// <summary>
-        /// Gets or sets whether an outline is displayed for the group.
+        /// Whether an outline is displayed for the group.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  This property is useful to differentiate avatars which are the same color or use images.
@@ -45,14 +45,14 @@ namespace MudBlazor
         public bool Outlined { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets the color of the outline when <see cref="Outlined"/> is <c>true</c>.
+        /// The color of the outline when <see cref="Outlined"/> is <c>true</c>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AvatarGroup.Appearance)]
         public Color OutlineColor { get; set; } = Color.Surface;
 
         /// <summary>
-        /// Gets or sets the size of the drop shadow when the number of avatars exceeds <see cref="Max"/>.
+        /// The size of the drop shadow when the number of avatars exceeds <see cref="Max"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>0</c>.
@@ -62,7 +62,7 @@ namespace MudBlazor
         public int MaxElevation { set; get; } = 0;
 
         /// <summary>
-        /// Gets or sets whether rounded corners are disabled when the number of avatars exceeds <see cref="Max"/>.
+        /// Whether rounded corners are disabled when the number of avatars exceeds <see cref="Max"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the <c>border-radius</c> CSS style is set to <c>0</c>.
@@ -72,7 +72,7 @@ namespace MudBlazor
         public bool MaxSquare { get; set; }
 
         /// <summary>
-        /// Gets or sets whether corners are rounded when the number of avatars exceeds <see cref="Max"/>.
+        /// Whether corners are rounded when the number of avatars exceeds <see cref="Max"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
@@ -82,7 +82,7 @@ namespace MudBlazor
         public bool MaxRounded { get; set; }
 
         /// <summary>
-        /// Gets or sets the color of the avatar when the number of avatars exceeds <see cref="Max"/>.
+        /// The color of the avatar when the number of avatars exceeds <see cref="Max"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
@@ -92,7 +92,7 @@ namespace MudBlazor
         public Color MaxColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// Gets or sets the size of the avatar when the number of avatars exceeds <see cref="Max"/>.
+        /// The size of the avatar when the number of avatars exceeds <see cref="Max"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Size.Medium"/>.
@@ -102,7 +102,7 @@ namespace MudBlazor
         public Size MaxSize { get; set; } = Size.Medium;
 
         /// <summary>
-        /// Gets or sets the display variant to use when the number of avatars exceeds <see cref="Max"/>.
+        /// The display variant to use when the number of avatars exceeds <see cref="Max"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Variant.Filled" />. The variant changes the appearance of the avatar, such as <c>Text</c>, <c>Outlined</c>, or <c>Filled</c>.
@@ -112,7 +112,7 @@ namespace MudBlazor
         public Variant MaxVariant { get; set; } = Variant.Filled;
 
         /// <summary>
-        /// Gets or sets the maximum allowed avatars to display.
+        /// The maximum allowed avatars to display.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>0</c>.  When <c>0</c>, no maximum is enforced.  Otherwise, a "+#" avatar is shown for the number of avatars exceeding this number.
@@ -122,7 +122,7 @@ namespace MudBlazor
         public int Max { get; set; }
 
         /// <summary>
-        /// Gets or sets the CSS class applied when the number of avatars exceeds <see cref="Max"/>.
+        /// The CSS class applied when the number of avatars exceeds <see cref="Max"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -132,14 +132,14 @@ namespace MudBlazor
         public string? MaxAvatarClass { get; set; }
 
         /// <summary>
-        /// Gets or sets a template used to render avatars when the number of avatars exceeds <see cref="Max"/>.
+        /// The template used to render avatars when the number of avatars exceeds <see cref="Max"/>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AvatarGroup.Appearance)]
         public RenderFragment<int>? MaxAvatarsTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the content within this component.
+        /// The content within this component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AvatarGroup.Behavior)]

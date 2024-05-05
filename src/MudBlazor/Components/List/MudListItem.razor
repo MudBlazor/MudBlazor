@@ -10,7 +10,7 @@
     }
     else if (!string.IsNullOrWhiteSpace(Icon)) {
         <div class="mud-list-item-icon">
-            <MudIcon Icon="@Icon" Color="@IconColor" Size="@IconSize" />
+            <MudIcon Icon="@Icon" Disabled="@GetDisabled()" Color="@IconColor" Size="@IconSize" />
         </div>
     }
     @if (MultiSelection && NestedList is null) {
@@ -29,7 +29,7 @@
         </MudText>
     </div>
     @if (NestedList != null) {
-        <MudIcon Icon="@($"{(_expandedState.Value ? ExpandLessIcon : ExpandMoreIcon)}")" Size="@IconSize" Color="@ExpandIconColor" />
+        <MudIcon Disabled="@GetDisabled()" Icon="@($"{(_expandedState.Value ? ExpandLessIcon : ExpandMoreIcon)}")" Size="@IconSize" Color="@ExpandIconColor" />
     }
 </div>
 @if (NestedList != null) {
