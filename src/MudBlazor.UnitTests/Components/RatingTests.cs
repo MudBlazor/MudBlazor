@@ -8,11 +8,12 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
+#nullable enable
     [TestFixture]
     public class RatingTests : BunitTest
     {
         /// <summary>
-        /// click should change selected value
+        /// Click should change selected value
         /// </summary>
         [Test]
         public void RatingTest1()
@@ -51,7 +52,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// click already selected item should change selected value to 0
+        /// Click already selected item should change selected value to 0
         /// </summary>
         [Test]
         public void RatingTest2()
@@ -89,12 +90,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        ///  initialized selected value by parameter should equal component selected value
+        /// Initialized selected value by parameter should equal component selected value
         /// </summary>
         [Test]
         public void RatingTest3()
         {
-            var comp = Context.RenderComponent<MudRating>(("SelectedValue", 3));
+            var comp = Context.RenderComponent<MudRating>(parameters => parameters
+                .Add(p => p.SelectedValue, 3));
             // print the generated html
             // check initial state
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(3);
@@ -106,7 +108,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RatingTest4()
         {
-            var comp = Context.RenderComponent<MudRating>(("Disabled", true), ("SelectedValue", 2));
+            var comp = Context.RenderComponent<MudRating>(parameters => parameters
+                .Add(p => p.Disabled, true)
+                .Add(p => p.SelectedValue, 2));
             // print the generated html
             // select elements needed for the test
             var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
@@ -141,7 +145,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task RatingTest5()
         {
-            var comp = Context.RenderComponent<MudRating>(("MaxValue", 12));
+            var comp = Context.RenderComponent<MudRating>(parameters => parameters
+                .Add(p => p.MaxValue, 12));
             // print the generated html
             // select elements needed for the test
             var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
@@ -158,14 +163,16 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ReadOnlyRating_ShouldNotRenderInputs()
         {
-            var comp = Context.RenderComponent<MudRating>(("ReadOnly", true));
+            var comp = Context.RenderComponent<MudRating>(parameters => parameters
+                .Add(p => p.ReadOnly, true));
             comp.FindAll("input").Should().BeEmpty();
         }
 
         [Test]
         public async Task RatingTest_KeyboardNavigation()
         {
-            var comp = Context.RenderComponent<MudRating>(("MaxValue", 12));
+            var comp = Context.RenderComponent<MudRating>(parameters => parameters
+                .Add(p => p.MaxValue, 12));
             var item = comp.FindComponent<MudRatingItem>();
             // print the generated html
 
@@ -179,29 +186,29 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => item.Instance.SelectIcon());
             comp.SetParam(x => x.SelectedValue, 0);
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs { Key = "ArrowRight", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(1));
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs { Key = "ArrowLeft", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(0));
             //ArrowLeft should not decrease when the value is 0
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs { Key = "ArrowLeft", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(0));
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(12));
             //Shift+ArrowKey should not go beyond the max value
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(12));
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(0));
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(0));
 
             comp.SetParam(x => x.Disabled, true);
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs { Key = "ArrowRight", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(0));
 
             await comp.InvokeAsync(() => item.Instance.HandleMouseOutAsync(new MouseEventArgs()));
