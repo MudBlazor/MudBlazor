@@ -42,7 +42,15 @@
         
         <DocsPageSection>
             <SectionHeader Title="Nullable">
-                <Description>If undefined state is required use <CodeInline>@nameof(MudSlider<double>.NullableValue)</CodeInline>.</Description>
+                <Description>
+                    If undefined state is required use <CodeInline>@nameof(MudSlider<double>.NullableValue)</CodeInline>.
+
+                    <MudAlert Severity="Severity.Info" Class="mt-3">
+                        It is not recommended to two-way bind both <CodeInline>@nameof(MudSlider<double>.Value)</CodeInline> and <CodeInline>@nameof(MudSlider<double>.NullableValue)</CodeInline> at the same time.
+                        Because they sync with each other, when attempting to reset <CodeInline>@nameof(MudSlider<double>.NullableValue)</CodeInline> back to null, it will update <CodeInline>@nameof(MudSlider<double>.Value)</CodeInline> to zero,
+                        and subsequently, <CodeInline>@nameof(MudSlider<double>.Value)</CodeInline> will update <CodeInline>@nameof(MudSlider<double>.NullableValue)</CodeInline> to zero.
+                    </MudAlert>
+                </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(SliderNullableExample)">
                 <SliderNullableExample />

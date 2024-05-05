@@ -9,6 +9,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// Represents a slider component, allowing users to select a value within a specified range.
+    /// </summary>
+    /// <typeparam name="T">The type of the value the slider represents.</typeparam>
     public partial class MudSlider<T> : MudComponentBase where T : struct, INumber<T>
     {
         private int _tickMarkCount = 0;
@@ -24,12 +28,9 @@ namespace MudBlazor
                 .WithChangeHandler(OnValueParameterChangedAsync);
             _nullableValueState = registerScope.RegisterParameter<T?>(nameof(NullableValue))
                 .WithParameter(() => NullableValue)
-                .WithEventCallback(() => NullableValueChanged);
+                .WithEventCallback(() => NullableValueChanged)
+                .WithChangeHandler(OnNullableValueParameterChangedAsync);
         }
-
-        private Task OnValueParameterChangedAsync(ParameterChangedEventArgs<T> arg) => _nullableValueState.SetValueAsync(arg.Value);
-
-        private Task OnNullableValueParameterChangedAsync(ParameterChangedEventArgs<T?> arg) => _valueState.SetValueAsync(arg.Value.GetValueOrDefault(T.Zero));
 
         protected string Classname =>
             new CssBuilder("mud-slider")
@@ -77,16 +78,38 @@ namespace MudBlazor
         [Category(CategoryTypes.Slider.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
+        /// <summary>
+        /// Event callback invoked when the value of the slider changes.
+        /// </summary>
         [Parameter]
         public EventCallback<T> ValueChanged { get; set; }
 
+        /// <summary>
+        /// Event callback invoked when the nullable value of the slider changes.
+        /// </summary>
         [Parameter]
         public EventCallback<T?> NullableValueChanged { get; set; }
 
+        /// <summary>
+        /// The value of the slider.
+        /// </summary>
+        /// <remarks>
+        /// It is <b>not</b> recommended to two-way bind both <see cref="Value"/> and <see cref="NullableValue"/> at the same time.
+        /// Because they sync with each other, when attempting to reset <see cref="NullableValue"/> back to null, it will update <see cref="Value"/> to zero,
+        /// and subsequently, <see cref="Value"/> will update <see cref="NullableValue"/> to zero.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Slider.Data)]
         public T Value { get; set; } = T.Zero;
 
+        /// <summary>
+        /// The nullable value of the slider.
+        /// </summary>
+        /// <remarks>
+        /// It is <b>not</b> recommended to two-way bind both <see cref="Value"/> and <see cref="NullableValue"/> at the same time.
+        /// Because they sync with each other, when attempting to reset <see cref="NullableValue"/> back to null, it will update <see cref="Value"/> to zero,
+        /// and subsequently, <see cref="Value"/> will update <see cref="NullableValue"/> to zero.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Slider.Data)]
         public T? NullableValue { get; set; } = default;
@@ -170,8 +193,9 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public RenderFragment<T>? ValueLabelContent { get; set; }
+        public RenderFragment<SliderContext<T>>? ValueLabelContent { get; set; }
 
+        /// <inheritdoc />
         protected override void OnParametersSet()
         {
             if (TickMarks)
@@ -208,6 +232,10 @@ namespace MudBlazor
             }
 
         }
+
+        private Task OnValueParameterChangedAsync(ParameterChangedEventArgs<T> arg) => _nullableValueState.SetValueAsync(arg.Value);
+
+        private Task OnNullableValueParameterChangedAsync(ParameterChangedEventArgs<T?> arg) => _valueState.SetValueAsync(arg.Value.GetValueOrDefault(T.Zero));
 
         private string Width => CalculatePosition().ToString(CultureInfo.InvariantCulture);
     }

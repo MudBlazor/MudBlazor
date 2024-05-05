@@ -46,7 +46,7 @@
                 }
                 else
                 {
-                    @ValueLabelContent(_valueState.Value)
+                    @ValueLabelContent(new SliderContext<T>(_valueState.Value, _nullableValueState.Value))
                 }
             </div>
         }
