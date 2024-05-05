@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
@@ -20,34 +21,34 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudRating>();
             // select elements needed for the test
-            var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
-            var inputs = comp.FindAll("input[type=\"radio\"].mud-rating-input").ToArray();
+            IRefreshableElementCollection<IElement> RatingItemsSpans() => comp.FindAll("span.mud-rating-item");
+            IRefreshableElementCollection<IElement> Inputs() => comp.FindAll("input[type=\"radio\"].mud-rating-input");
             // check initial state
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(0);
-            ratingItemsSpans.Length.Should().Be(5);
-            inputs.Length.Should().Be(5);
+            RatingItemsSpans().Count.Should().Be(5);
+            Inputs().Count.Should().Be(5);
 
             // click first rating item
-            ratingItemsSpans[0].Click();
+            RatingItemsSpans()[0].Click();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(1);
 
             // click 2nd rating item
-            ratingItemsSpans[1].Click();
+            RatingItemsSpans()[1].Click();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 3rd rating item
-            ratingItemsSpans[2].Click();
+            RatingItemsSpans()[2].Click();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(3);
 
             // click 4th rating item
-            ratingItemsSpans[3].Click();
+            RatingItemsSpans()[3].Click();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(4);
 
             // click 5th rating item
-            ratingItemsSpans[4].Click();
+            RatingItemsSpans()[4].Click();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(5);
 
-            ratingItemsSpans[1].Click();
+            RatingItemsSpans()[1].Click();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
         }
 
@@ -59,33 +60,33 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudRating>();
             // select elements needed for the test
-            var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
+            IRefreshableElementCollection<IElement> RatingItemsSpans() => comp.FindAll("span.mud-rating-item");
             // check initial state
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(0);
-            ratingItemsSpans.Length.Should().Be(5);
+            RatingItemsSpans().Count.Should().Be(5);
 
             // click 2nd rating item
-            ratingItemsSpans[1].Click();
+            RatingItemsSpans()[1].Click();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 2nd rating item
-            ratingItemsSpans[1].Click();
+            RatingItemsSpans()[1].Click();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(0);
 
             // click 2nd rating item
-            ratingItemsSpans[1].Click();
+            RatingItemsSpans()[1].Click();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click first rating item
-            ratingItemsSpans[0].Click();
+            RatingItemsSpans()[0].Click();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(1);
 
             // click first rating item
-            ratingItemsSpans[0].Click();
+            RatingItemsSpans()[0].Click();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(0);
 
             // click first rating item
-            ratingItemsSpans[0].Click();
+            RatingItemsSpans()[0].Click();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(1);
         }
 
@@ -113,29 +114,29 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.SelectedValue, 2));
             // print the generated html
             // select elements needed for the test
-            var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
+            IRefreshableElementCollection<IElement> RatingItemsSpans() => comp.FindAll("span.mud-rating-item");
             // check initial state
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
-            ratingItemsSpans.Length.Should().Be(5);
+            RatingItemsSpans().Count.Should().Be(5);
 
             // click first rating item
-            ratingItemsSpans[0].Click();
+            RatingItemsSpans()[0].Click();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 2nd rating item
-            ratingItemsSpans[1].Click();
+            RatingItemsSpans()[1].Click();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 3rd rating item
-            ratingItemsSpans[2].Click();
+            RatingItemsSpans()[2].Click();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 4th rating item
-            ratingItemsSpans[3].Click();
+            RatingItemsSpans()[3].Click();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
 
             // click 5th rating item
-            ratingItemsSpans[4].Click();
+            RatingItemsSpans()[4].Click();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
         }
 
@@ -149,10 +150,10 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.MaxValue, 12));
             // print the generated html
             // select elements needed for the test
-            var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
+            IRefreshableElementCollection<IElement> RatingItemsSpans() => comp.FindAll("span.mud-rating-item");
             // check initial state
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(0);
-            ratingItemsSpans.Length.Should().Be(12);
+            RatingItemsSpans().Count.Should().Be(12);
 
             await comp.Instance.HandleItemHoveredAsync(6);
             comp.Instance.HoveredValue.Should().Be(6);
