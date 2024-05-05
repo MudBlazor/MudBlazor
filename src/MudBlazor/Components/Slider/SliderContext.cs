@@ -4,6 +4,7 @@
 
 namespace MudBlazor;
 
+#nullable enable
 /// <summary>
 /// Represents the context of a slider component, containing both the value and nullable value of the slider.
 /// </summary>
