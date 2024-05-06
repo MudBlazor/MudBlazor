@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
@@ -29,14 +28,9 @@ namespace MudBlazor
 
         [Parameter] public bool Checkable { get; set; }
 
-        [Parameter] public bool IsEditable { get; set; }
-
-        [Parameter] public bool IsEditing { get; set; }
-
-        [Parameter] public bool IsEditSwitchBlocked { get; set; }
+        [Parameter] public bool Editable { get; set; }
 
         [Parameter] public bool Expandable { get; set; }
-
 
         [Parameter]
         public EventCallback<bool> CheckedChanged { get; set; }
@@ -63,7 +57,7 @@ namespace MudBlazor
                 return;
             table.SetSelectedItem(Item);
             StartEditingItem(buttonClicked: false);
-            if (table.MultiSelection && table.SelectOnRowClick && !table.IsEditable)
+            if (table.MultiSelection && table.SelectOnRowClick && !table.Editable)
                 Checked = !Checked;
             await table.FireRowClickEventAsync(args, this, Item);
         }
@@ -114,7 +108,7 @@ namespace MudBlazor
 
         private void StartEditingItem(bool buttonClicked)
         {
-            if (Context?.Table.IsEditable == true && Context?.Table.IsEditing == true && Context?.Table.IsEditRowSwitchingBlocked == true) return;
+            if (Context?.Table.Editable == true && Context?.Table.Editing == true && Context?.Table.IsEditRowSwitchingBlocked == true) return;
 
             if ((Context?.Table.EditTrigger == TableEditTrigger.RowClick && buttonClicked) || (Context?.Table.EditTrigger == TableEditTrigger.EditButton && !buttonClicked)) return;
 
@@ -125,7 +119,7 @@ namespace MudBlazor
                 return;
 
             // Manage edition the first time the row is clicked and if the table is editable
-            if (!hasBeenClickedFirstTime && IsEditable)
+            if (!hasBeenClickedFirstTime && Editable)
             {
                 // Sets hasBeenClickedFirstTime to true
                 hasBeenClickedFirstTime = true;

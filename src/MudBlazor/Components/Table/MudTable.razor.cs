@@ -418,7 +418,7 @@ namespace MudBlazor
             get
             {
                 if (_currentRenderFilteredItemsCached) return _preEditSort;
-                if (IsEditing && HasPreEditSort)
+                if (Editing && HasPreEditSort)
                     return _preEditSort;
                 if (HasServerData)
                     _preEditSort = _server_data.Items?.ToList();
@@ -633,7 +633,7 @@ namespace MudBlazor
             return InvokeServerLoadFunc();
         }
 
-        internal override bool IsEditable { get => (RowEditingTemplate != null) || (Columns != null); }
+        internal override bool Editable { get => (RowEditingTemplate != null) || (Columns != null); }
 
         //GROUPING:
         private IEnumerable<IGrouping<object, T>> GroupItemsPage
