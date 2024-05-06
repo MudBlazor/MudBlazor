@@ -319,7 +319,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase(Color.Success, "success")]
-        [TestCase(Color.Surface, "surface")]
+        [TestCase(Color.Tertiary, "tertiary")]
         [TestCase(Color.Error, "error")]
         public void TestClassesForColor(Color color, string expectedString)
         {
