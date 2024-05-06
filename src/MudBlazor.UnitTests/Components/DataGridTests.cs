@@ -2935,10 +2935,10 @@ namespace MudBlazor.UnitTests.Components
 
             await cell._cellContext.Actions.ToggleHierarchyVisibilityForItemAsync();
             cell._cellContext.OpenHierarchies.Should().Contain(item);
-            cell._cellContext.IsOpened.Should().Be(true);
+            cell._cellContext.Open.Should().Be(true);
             await cell._cellContext.Actions.ToggleHierarchyVisibilityForItemAsync();
             cell._cellContext.OpenHierarchies.Should().NotContain(item);
-            cell._cellContext.IsOpened.Should().Be(false);
+            cell._cellContext.Open.Should().Be(false);
         }
 
         [Test]

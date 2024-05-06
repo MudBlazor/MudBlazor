@@ -30,7 +30,7 @@ namespace MudBlazor
         private int _selectedListItemIndex;
         private int _elementKey = 0;
         private int _returnedItemsCount;
-        private bool _isOpen;
+        private bool _open;
         private bool _doNotOpenMenuOnNextFocus;
         private MudInput<string> _elementReference;
         private CancellationTokenSource _cancellationTokenSrc;
@@ -391,10 +391,10 @@ namespace MudBlazor
         public Func<T, bool> ItemDisabledFunc { get; set; }
 
         /// <summary>
-        /// Occurs when the <see cref="IsOpen"/> property has changed.
+        /// Occurs when the <see cref="Open"/> property has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<bool> IsOpenChanged { get; set; }
+        public EventCallback<bool> OpenChanged { get; set; }
 
         /// <summary>
         /// Whether pressing the <c>Tab</c> key updates the Value to the currently selected item.
@@ -438,26 +438,26 @@ namespace MudBlazor
         /// Whether the search result drop-down is currently displayed.
         /// </summary>
         /// <remarks>
-        /// When this property changes, the <see cref="IsOpenChanged"/> event will occur.
+        /// When this property changes, the <see cref="OpenChanged"/> event will occur.
         /// </remarks>
-        public bool IsOpen
+        public bool Open
         {
-            get => _isOpen;
+            get => _open;
             // Note: the setter is protected because it was needed by a user who derived his own autocomplete from this class.
-            // Note: setting IsOpen will not open or close it. Use ToggleMenu() for that.
+            // Note: setting Open will not open or close it. Use ToggleMenu() for that.
             protected set
             {
-                if (_isOpen == value)
+                if (_open == value)
                     return;
-                _isOpen = value;
+                _open = value;
 
-                IsOpenChanged.InvokeAsync(_isOpen).AndForget();
+                OpenChanged.InvokeAsync(_open).AndForget();
             }
         }
 
         private bool IsLoading => _currentSearchTask is { IsCompleted: false };
 
-        private string CurrentIcon => !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
+        private string CurrentIcon => !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _open ? CloseIcon : OpenIcon;
 
         public MudAutocomplete()
         {
@@ -485,7 +485,7 @@ namespace MudBlazor
                     await SetTextAsync(optionText, false);
 
                 _debounceTimer?.Dispose();
-                IsOpen = false;
+                Open = false;
 
                 await BeginValidateAsync();
 
@@ -588,12 +588,12 @@ namespace MudBlazor
         /// </remarks>
         public Task ToggleMenuAsync()
         {
-            if ((GetDisabledState() || GetReadOnlyState()) && !IsOpen)
+            if ((GetDisabledState() || GetReadOnlyState()) && !Open)
             {
                 return Task.CompletedTask;
             }
 
-            return IsOpen ? CloseMenuAsync() : OpenMenuAsync();
+            return Open ? CloseMenuAsync() : OpenMenuAsync();
         }
 
         /// <summary>
@@ -605,7 +605,7 @@ namespace MudBlazor
             _debounceTimer?.Dispose();
             await RestoreScrollPositionAsync();
             await CoerceTextToValue();
-            IsOpen = false;
+            Open = false;
             StateHasChanged();
         }
 
@@ -619,7 +619,7 @@ namespace MudBlazor
         {
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
             {
-                IsOpen = false;
+                Open = false;
                 StateHasChanged();
                 return;
             }
@@ -634,7 +634,7 @@ namespace MudBlazor
                 if (ProgressIndicatorInPopoverTemplate != null)
                 {
                     // Open before searching if a progress indicator is defined.
-                    IsOpen = true;
+                    Open = true;
                 }
 
                 // Search while selected if enabled and the Text is equivalent to the Value.
@@ -683,7 +683,7 @@ namespace MudBlazor
             if (_isFocused || !wasFocused)
             {
                 // Open after the search has finished if we're still focused (UI), or were never focused in the first place (programmatically).
-                IsOpen = true;
+                Open = true;
             }
 
             if (_items?.Length == 0)
@@ -710,7 +710,7 @@ namespace MudBlazor
             try
             {
                 _isCleared = true;
-                IsOpen = false;
+                Open = false;
 
                 await SetTextAsync(null, updateValue: false);
                 await CoerceValueToText();
@@ -747,16 +747,16 @@ namespace MudBlazor
             {
                 // We need to catch Tab here because a tab will move focus to the next element and thus we'd never get the tab key in OnInputKeyUp.
                 case "Tab":
-                    if (IsOpen)
+                    if (Open)
                     {
                         if (SelectValueOnTab)
                             await OnEnterKey();
                         else
-                            IsOpen = false;
+                            Open = false;
                     }
                     break;
                 case "ArrowDown":
-                    if (IsOpen)
+                    if (Open)
                     {
                         var increment = _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) + 1) - _selectedListItemIndex;
                         await SelectNextItem(increment < 0 ? 1 : increment);
@@ -771,7 +771,7 @@ namespace MudBlazor
                     {
                         await CloseMenuAsync();
                     }
-                    else if (!IsOpen)
+                    else if (!Open)
                     {
                         await ToggleMenuAsync();
                     }
@@ -792,7 +792,7 @@ namespace MudBlazor
             {
                 case "Enter":
                 case "NumpadEnter":
-                    if (IsOpen)
+                    if (Open)
                     {
                         await OnEnterKey();
                     }
@@ -853,7 +853,7 @@ namespace MudBlazor
 
         internal async Task OnEnterKey()
         {
-            if (!IsOpen)
+            if (!Open)
                 return;
 
             try
@@ -866,8 +866,8 @@ namespace MudBlazor
             }
             finally
             {
-                if (IsOpen)
-                    IsOpen = false;
+                if (Open)
+                    Open = false;
             }
         }
 
@@ -880,7 +880,7 @@ namespace MudBlazor
         {
             _isFocused = true;
 
-            if (_doNotOpenMenuOnNextFocus || IsOpen || GetDisabledState() || GetReadOnlyState())
+            if (_doNotOpenMenuOnNextFocus || Open || GetDisabledState() || GetReadOnlyState())
             {
                 _doNotOpenMenuOnNextFocus = false;
                 return;
