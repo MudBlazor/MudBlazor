@@ -175,6 +175,9 @@ namespace MudBlazor
                         case "Outline":
                             NotifyIllegalParameter(parameter);
                             break;
+                        case "Dense":
+                            NotifyIllegalParameter(parameter);
+                            break;
                     }
                 }
                 else if (this is MudAvatar)

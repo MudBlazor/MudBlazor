@@ -5,15 +5,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Clone;
 
 namespace MudBlazor
 {
@@ -463,6 +462,14 @@ namespace MudBlazor
         [Parameter] public DialogOptions EditDialogOptions { get; set; }
 
         /// <summary>
+        /// Sets the deep copy strategy.
+        /// </summary>
+        /// <remarks>
+        /// This strategy is used during EditMode.
+        /// </remarks>
+        [Parameter] public ICloneStrategy<T> CloneStrategy { get; set; } = SystemTextJsonDeepCloneStrategy<T>.Instance;
+
+        /// <summary>
         /// The data to display in the table. MudTable will render one row per item
         /// </summary>
         ///
@@ -861,7 +868,6 @@ namespace MudBlazor
 
         #endregion
 
-        [UnconditionalSuppressMessage("Trimming", "IL2046: 'RequiresUnreferencedCodeAttribute' annotations must match across all interface implementations or overrides.", Justification = "Suppressing because we annotating the whole component with RequiresUnreferencedCodeAttribute for information that generic type must be preserved.")]
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -879,7 +885,6 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        [UnconditionalSuppressMessage("Trimming", "IL2046: 'RequiresUnreferencedCodeAttribute' annotations must match across all interface implementations or overrides.", Justification = "Suppressing because we annotating the whole component with RequiresUnreferencedCodeAttribute for information that generic type must be preserved.")]
         public override async Task SetParametersAsync(ParameterView parameters)
         {
             var sortModeBefore = SortMode;
@@ -1322,7 +1327,6 @@ namespace MudBlazor
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        [UnconditionalSuppressMessage("Trimming", "IL2026: Using member 'System.Text.Json.JsonSerializer.Deserialize<T>(string, System.Text.Json.JsonSerializerOptions?)' which has 'RequiresUnreferencedCodeAttribute' can break functionality when trimming application code. JSON serialization and deserialization might require types that cannot be statically analyzed. Use the overload that takes a JsonTypeInfo or JsonSerializerContext, or make sure all of the required types are preserved.", Justification = "Suppressing because T is a type supplied by the user and it is unlikely that it is not referenced by their code.")]
         public async Task SetEditingItemAsync(T item)
         {
             if (ReadOnly) return;
@@ -1330,7 +1334,7 @@ namespace MudBlazor
             editingSourceItem = item;
             EditingCanceledEvent?.Invoke();
             _previousEditingItem = _editingItem;
-            _editingItem = JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(item));
+            _editingItem = CloneStrategy.CloneObject(item);
             StartedEditingItemEvent?.Invoke();
             await StartedEditingItem.InvokeAsync(_editingItem);
             isEditFormOpen = true;
