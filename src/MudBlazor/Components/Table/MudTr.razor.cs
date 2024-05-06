@@ -18,7 +18,7 @@ namespace MudBlazor
             .AddClass(Class).Build();
 
         protected string ActionsStylename => new StyleBuilder()
-            .AddStyle("padding-left", "34px", IsExpandable).Build();
+            .AddStyle("padding-left", "34px", Expandable).Build();
 
 
         [CascadingParameter] public TableContext Context { get; set; }
@@ -27,7 +27,7 @@ namespace MudBlazor
 
         [Parameter] public object Item { get; set; }
 
-        [Parameter] public bool IsCheckable { get; set; }
+        [Parameter] public bool Checkable { get; set; }
 
         [Parameter] public bool IsEditable { get; set; }
 
@@ -35,15 +35,15 @@ namespace MudBlazor
 
         [Parameter] public bool IsEditSwitchBlocked { get; set; }
 
-        [Parameter] public bool IsExpandable { get; set; }
+        [Parameter] public bool Expandable { get; set; }
 
 
         [Parameter]
-        public EventCallback<bool> IsCheckedChanged { get; set; }
+        public EventCallback<bool> CheckedChanged { get; set; }
 
         private bool _checked;
         [Parameter]
-        public bool IsChecked
+        public bool Checked
         {
             get => _checked;
             set
@@ -51,7 +51,7 @@ namespace MudBlazor
                 if (value != _checked)
                 {
                     _checked = value;
-                    IsCheckedChanged.InvokeAsync(value);
+                    CheckedChanged.InvokeAsync(value);
                 }
             }
         }
@@ -64,7 +64,7 @@ namespace MudBlazor
             table.SetSelectedItem(Item);
             StartEditingItem(buttonClicked: false);
             if (table.MultiSelection && table.SelectOnRowClick && !table.IsEditable)
-                IsChecked = !IsChecked;
+                Checked = !Checked;
             await table.FireRowClickEventAsync(args, this, Item);
         }
 
@@ -164,11 +164,11 @@ namespace MudBlazor
             if (_checked != checkedState)
             {
                 if (notify)
-                    IsChecked = checkedState;
+                    Checked = checkedState;
                 else
                 {
                     _checked = checkedState;
-                    if (IsCheckable)
+                    if (Checkable)
                         InvokeAsync(StateHasChanged);
                 }
             }

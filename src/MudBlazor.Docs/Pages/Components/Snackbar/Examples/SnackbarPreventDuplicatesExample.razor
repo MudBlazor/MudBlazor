@@ -16,7 +16,7 @@
         // Then we try to show all three in quick succession, but only the first pops!
         SnackbarService.Add("This is the only snackbar that will be shown", configure: config, key: "mudblazor");
         SnackbarService.Add(@<span>This one has the same key</span>, configure: config, key: "mudblazor");
-        SnackbarService.Add<MudChip>(new Dictionary<string, object>() {
+        SnackbarService.Add<MudChip<T>>(new Dictionary<string, object>() {
             { "Text", "This one also has the same key" }
         }, configure: config, key: "mudblazor");
     }

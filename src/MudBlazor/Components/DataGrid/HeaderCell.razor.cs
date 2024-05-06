@@ -175,7 +175,7 @@ namespace MudBlazor
                 if (DataGrid == null)
                     return false;
 
-                return DataGrid.FilterDefinitions.Any(x => x.Column?.PropertyName == Column?.PropertyName && x.Operator != null && x.Value != null);
+                return DataGrid.FilterDefinitions.Any(x => x.Column?.PropertyName == Column?.PropertyName && x.Operator != null);
             }
         }
 

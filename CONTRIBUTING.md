@@ -159,7 +159,7 @@ Using our new `ParameterState` pattern all this is not required.
 
 ### Example of a good Parameter definition
 ```c#
-private IParameterState<bool> _expandedState;
+private readonly ParameterState<bool> _expandedState;
 
 [Parameter]
 public bool Expanded { get; set; }
@@ -170,19 +170,18 @@ In the constructor, we register the parameter so that the base class can manage 
 ```c#
 public MudCollapse()
 {
-    _expandedState = RegisterParameter(
-        nameof(Expanded),           // the property name is needed for automatic value change detection in SetParametersAsync
-        () => Expanded,             // a get func enabling the ParameterState to read the parameter value w/o resorting to Reflection
-        () => ExpandedChanged,      // a get func enabling the ParameterState to get the EventCallback of the parameter (if the param is two-way bindable)
-        ExpandedChangedHandlerAsync // the change handler 
-    );
+    using var registerScope = CreateRegisterScope();
+    _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded)) // the property name is needed for automatic value change detection in SetParametersAsync
+        .WithParameter(() => Expanded) // a get func enabling the ParameterState to read the parameter value w/o resorting to Reflection
+        .WithEventCallback(() => ExpandedChanged) // a get func enabling the ParameterState to get the EventCallback of the parameter (if the param is two-way bindable)
+        .WithChangeHandler(OnExpandedChangedAsync); // the change handler 
 }
 ```
 
 The code from the setter moves into the change handler function which is async so the called functions can be awaited.
 
 ```c#
-private async Task ExpandedChangedHandlerAsync()
+private async Task OnExpandedChangedAsync()
 {
     if (_isRendered)
     {
@@ -198,7 +197,7 @@ private async Task ExpandedChangedHandlerAsync()
 }
 ```
 
-There are a couple of overloads for the `RegisterParameter` method for different use-cases. For instance, you don't always need an `EventCallback` for every parameter. 
+There are a couple of builders for the `RegisterParameter` method for different use-cases. For instance, you don't always need an `EventCallback` for every parameter. 
 Some parameters need async logic in their change handler other don't, etc.
 
 ### Can I share change handlers between parameters?
@@ -207,8 +206,9 @@ Yes, if you pass them as a method group like in the example below, shared parame
 
 ```c#
     // Param1 and Param2 share the same change handler
-    _param1State = RegisterParameter(nameof(Param1), () => Param1, OnParametersChanged);
-    _param2State = RegisterParameter(nameof(Param2), () => Param2, OnParametersChanged);
+    using var registerScope = CreateRegisterScope();
+    _param1State = registerScope.RegisterParameter<int>(nameof(Param1)).WithParameter(() => Param1).WithChangeHandler(OnParametersChanged);
+    _param2State = registerScope.RegisterParameter<int>(nameof(Param2)).WithParameter(() => Param2).WithChangeHandler(OnParametersChanged);
 ```
 
 **NB**: if you pass lambda functions as change handlers they will be called once each for every changed parameter even if they contain the same code!
@@ -240,7 +240,7 @@ private Task ToggleAsync()
 
 ### Example of a good code
 ```c#
-private IParameterState<bool> _expandedState;
+private readonly ParameterState<bool> _expandedState;
 
 [Parameter]
 public bool Expanded { get; set; }
@@ -250,16 +250,15 @@ public EventCallback<bool> ExpandedChanged { get; set; }
 
 public MudTreeViewItemToggleButton()
 {
-    _expandedState = RegisterParameter(
-        nameof(Expanded),
-        () => Expanded,
-        () => ExpandedChanged
-    );
+    using var registerScope = CreateRegisterScope();
+    _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
+        .WithParameter(() => Expanded)
+        .WithEventCallback(() => ExpandedChanged);
 }
 
 private Task ToggleAsync()
 {
-	return _expanded.SetValueAsync(!_expanded.Value);
+	return _expandedState.SetValueAsync(!_expandedState.Value);
 }
 ```
 

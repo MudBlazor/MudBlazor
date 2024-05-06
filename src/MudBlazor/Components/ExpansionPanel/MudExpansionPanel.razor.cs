@@ -9,24 +9,24 @@ namespace MudBlazor
 #nullable enable
     public partial class MudExpansionPanel : MudComponentBase, IDisposable
     {
-        internal IParameterState<bool> _isExpandedState;
+        internal readonly ParameterState<bool> _expandedState;
 
         [CascadingParameter]
         private MudExpansionPanels? Parent { get; set; }
 
         protected string Classname =>
             new CssBuilder("mud-expand-panel")
-                .AddClass("mud-panel-expanded", _isExpandedState.Value)
+                .AddClass("mud-panel-expanded", _expandedState.Value)
                 .AddClass("mud-panel-next-expanded", NextPanelExpanded)
                 .AddClass("mud-disabled", Disabled)
                 .AddClass($"mud-elevation-{Parent?.Elevation.ToString()}")
-                .AddClass($"mud-expand-panel-border", Parent?.DisableBorders != true)
+                .AddClass($"mud-expand-panel-border", Parent?.Outlined == true)
                 .AddClass(Class)
                 .Build();
 
         protected string PanelContentClassname =>
             new CssBuilder("mud-expand-panel-content")
-                .AddClass("mud-expand-panel-gutters", DisableGutters || Parent?.DisableGutters == true)
+                .AddClass("mud-expand-panel-disable-gutters", !Gutters && Parent?.Gutters != true)
                 .AddClass("mud-expand-panel-dense", Dense || Parent?.Dense == true)
                 .Build();
 
@@ -73,24 +73,24 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// If true, the left and right padding is removed from <see cref="ChildContent"/>.
+        /// If true, left and right padding is added to the <see cref="ChildContent"/>. Default is true .
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
-        public bool DisableGutters { get; set; }
+        public bool Gutters { get; set; } = true;
 
         /// <summary>
-        /// Raised when IsExpanded changes.
+        /// Raised when <see cref="Expanded"/> changes.
         /// </summary>
         [Parameter]
-        public EventCallback<bool> IsExpandedChanged { get; set; }
+        public EventCallback<bool> ExpandedChanged { get; set; }
 
         /// <summary>
         /// Expansion state of the panel (two-way bindable)
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
-        public bool IsExpanded { get; set; }
+        public bool Expanded { get; set; }
 
         /// <summary>
         /// If true, the component will be disabled.
@@ -110,10 +110,14 @@ namespace MudBlazor
 
         public MudExpansionPanel()
         {
-            _isExpandedState = RegisterParameter(nameof(IsExpanded), () => IsExpanded, () => IsExpandedChanged, IsExpandedParameterChangedAsync);
+            using var registerScope = CreateRegisterScope();
+            _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
+                .WithParameter(() => Expanded)
+                .WithEventCallback(() => ExpandedChanged)
+                .WithChangeHandler(OnExpandedParameterChangedAsync);
         }
 
-        private Task IsExpandedParameterChangedAsync(ParameterChangedEventArgs<bool> args)
+        private Task OnExpandedParameterChangedAsync(ParameterChangedEventArgs<bool> args)
         {
             if (Parent is null)
             {
@@ -130,7 +134,7 @@ namespace MudBlazor
                 return;
             }
 
-            await _isExpandedState.SetValueAsync(!_isExpandedState.Value);
+            await _expandedState.SetValueAsync(!_expandedState.Value);
             if (Parent is not null)
             {
                 await Parent.NotifyPanelsChanged(this);
@@ -139,7 +143,7 @@ namespace MudBlazor
 
         public async Task ExpandAsync()
         {
-            await _isExpandedState.SetValueAsync(true);
+            await _expandedState.SetValueAsync(true);
             if (Parent is not null)
             {
                 await Parent.NotifyPanelsChanged(this);
@@ -148,7 +152,7 @@ namespace MudBlazor
 
         public async Task CollapseAsync()
         {
-            await _isExpandedState.SetValueAsync(false);
+            await _expandedState.SetValueAsync(false);
             if (Parent is not null)
             {
                 await Parent.NotifyPanelsChanged(this);

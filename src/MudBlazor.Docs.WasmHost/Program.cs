@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MudBlazor.Docs.Extensions;
-using MudBlazor.Docs.WasmHost.Prerender;
 using MudBlazor.Docs.Services;
 using MudBlazor.Docs.Services.Notifications;
+using MudBlazor.Docs.WasmHost.Prerender;
 using MudBlazor.Examples.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,7 +31,7 @@ builder.Services.AddScoped(sp =>
 });
 builder.Services.TryAddDocsViewServices();
 //set the capacity max so that content is not queue. Again this is for prerending to serve the entire page back to crawler
-builder.Services.AddSingleton<IRenderQueueService>(new RenderQueueService { Capacity = int.MaxValue });
+builder.Services.AddScoped<IRenderQueueService>(s => new RenderQueueService { Capacity = int.MaxValue });
 
 builder.Services.AddSingleton<ICrawlerIdentifier>(new FileBasedCrawlerIdentifier("CrawlerInfo.json"));
 

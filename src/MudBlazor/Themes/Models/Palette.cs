@@ -1,5 +1,4 @@
-﻿using System;
-using MudBlazor.Utilities;
+﻿using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -223,16 +222,6 @@ namespace MudBlazor
         public virtual MudColor DividerLight { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.8).ToString(MudColorOutputFormats.RGBA);
 
         /// <summary>
-        /// Gets or sets the default color for chips.
-        /// </summary>
-        public virtual MudColor ChipDefault { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.08).ToString(MudColorOutputFormats.RGBA);
-
-        /// <summary>
-        /// Gets or sets the default hover color for chips.
-        /// </summary>
-        public virtual MudColor ChipDefaultHover { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.12).ToString(MudColorOutputFormats.RGBA);
-
-        /// <summary>
         /// Gets or sets the darkened value of the primary color.
         /// </summary>
         public string PrimaryDarken
@@ -380,7 +369,7 @@ namespace MudBlazor
         /// Gets or sets the opacity value for hover effect.
         /// </summary>
         public double HoverOpacity { get; set; } = 0.06;
-        
+
         /// <summary>
         /// Gets or sets the opacity for the ripple effect.
         /// </summary>
@@ -390,7 +379,7 @@ namespace MudBlazor
         /// Gets or sets the opacity for the ripple effect on specific elements like filled buttons.
         /// </summary>
         public double RippleOpacitySecondary { get; set; } = 0.2;
-        
+
         /// <summary>
         /// Gets or sets the default gray color.
         /// </summary>

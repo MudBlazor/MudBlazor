@@ -1,8 +1,8 @@
-﻿using MudBlazor.UnitTests.TestComponents;
+﻿using System;
 using Bunit;
-using NUnit.Framework;
 using FluentAssertions;
-using System;
+using MudBlazor.UnitTests.TestComponents;
+using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {

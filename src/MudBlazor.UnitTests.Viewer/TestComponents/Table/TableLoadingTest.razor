@@ -31,8 +31,8 @@
     <LoadingContent>Loading...</LoadingContent>
 </MudTable>
 
-<MudSwitch id="switch" @bind-Checked="isLoading">Show Loading</MudSwitch>
-<MudSwitch id="multi-selection" @bind-Checked="isMultiSelectionEnabled">Enable Multi-selection</MudSwitch>
+<MudSwitch id="switch" @bind-Value="isLoading">Show Loading</MudSwitch>
+<MudSwitch id="multi-selection" @bind-Value="isMultiSelectionEnabled">Enable Multi-selection</MudSwitch>
 
  @code {
     public static string __description__ = @"

@@ -83,10 +83,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Opening and closing an inline dialog. Click on open will open the inlined dialog.
-        ///
+        /// <para>Opening and closing an inline dialog. Click on open will open the inlined dialog.</para>
+        /// <para>
         /// Note: this test uses two different components, one containing the dialog provider and
         /// one containing the open button and the inline dialog
+        /// </para>
         /// </summary>
         [Test]
         public void InlineDialogTest()
@@ -141,7 +142,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Click outside the dialog (or any other method) must update the IsVisible parameter two-way binding on close
+        /// Click outside the dialog (or any other method) must update the Visible parameter two-way binding on close
         /// </summary>
         /// <returns></returns>
         [Test]
@@ -877,7 +878,7 @@ namespace MudBlazor.UnitTests.Components
             var parameters = new DialogParameters<DialogWithContentClass>
             {
                 { x => x.ContentClass, contentClass },
-                { x => x.DisableSidePadding, disablePadding }
+                { x => x.Gutters, !disablePadding }
             };
 
             await comp.InvokeAsync(async () => dialogReference = await service!.ShowAsync<DialogWithContentClass>(string.Empty, parameters));

@@ -1,28 +1,44 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudChipSet @bind-SelectedChips="selected" MultiSelection="@MultiSelection" Filter="filter">
-    <MudChip Text="Milk"></MudChip>
-    <MudChip Text="Eggs" Default="true"></MudChip>
-    <MudChip Text="Soap"></MudChip>
-    <MudChip Text="Corn flakes"></MudChip>
-    <MudChip Text="Salad" Default="true"></MudChip>
-    <MudChip Text="Apples"></MudChip>
-    <MudChip Text="Red wine"></MudChip>
+<MudChipSet @bind-SelectedValue="_selectedValue" @bind-SelectedValues="_selectedValues" SelectionMode="@SelectionMode" CheckMark="_checkMark">
+    <MudChip Value="@("Milk")" Default="true" />
+    <MudChip Value="@("Eggs")" />
+    <MudChip Value="@("Soap")" Default="false" />
+    <MudChip Value="@("Corn flakes")" Default="true" />
+    <MudChip Value="@("Salad")" />
+    <MudChip Value="@("Apples")" />
+    <MudChip Value="@("Red wine")" />
 </MudChipSet>
 
+<div class="selected-value">
+    <MudText>@_selectedValue</MudText>
+</div>
+<div class="selected-values">
+    @if (_selectedValues is { Count: > 0 }) {
+        <MudText>@string.Join(", ", _selectedValues.OrderBy(x => x))</MudText>
+    }
+    else {
+        <MudText>Nothing selected</MudText>
+    }
+</div>
 
-@if (selected != null && selected.Length>0)
-{
-    <MudText>@string.Join(", ", selected.Select(chip=>chip.Text).OrderBy(x => x))</MudText>
-}
-else
-{
-    <MudText>Nothing selected.</MudText>
-}
-<MudCheckBox @bind-Checked="filter">Filter</MudCheckBox>
+<MudCheckBox @bind-Value="_checkMark">CheckMark</MudCheckBox>
+
 @code
 {
-    [Parameter] public bool MultiSelection { get; set; }
-    bool filter = false;
-    MudChip[] selected;
+    [Parameter]
+    public SelectionMode SelectionMode { get; set; } = SelectionMode.ToggleSelection;
+
+    [Parameter]
+    public string[] InitialValues { get; set; }
+
+    private bool _checkMark = false;
+    private IReadOnlyCollection<string> _selectedValues;
+    private string _selectedValue;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _selectedValues = InitialValues;
+    }
 }

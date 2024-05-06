@@ -18,7 +18,8 @@ namespace MudBlazor
     public abstract partial class Column<T> : MudComponentBase, IDisposable
     {
         private static readonly RenderFragment<CellContext<T>> EmptyChildContent = _ => builder => { };
-        internal IParameterState<bool> HiddenState { get; }
+        internal ParameterState<bool> HiddenState { get; }
+        internal ParameterState<bool> GroupingState { get; }
 
         internal readonly Guid uid = Guid.NewGuid();
 
@@ -186,8 +187,6 @@ namespace MudBlazor
                 .AddClass(Class)
             .Build();
 
-        internal bool grouping;
-
         #region Computed Properties
 
         internal Type dataType
@@ -271,16 +270,31 @@ namespace MudBlazor
 
         protected Column()
         {
-            HiddenState = RegisterParameter(nameof(Hidden), () => Hidden, () => HiddenChanged);
+            using var registerScope = CreateRegisterScope();
+            HiddenState = registerScope.RegisterParameter<bool>(nameof(Hidden))
+                .WithParameter(() => Hidden)
+                .WithEventCallback(() => HiddenChanged);
+            GroupingState = registerScope.RegisterParameter<bool>(nameof(Grouping))
+                .WithParameter(() => Grouping)
+                .WithEventCallback(() => GroupingChanged)
+                .WithChangeHandler(OnGroupingParameterChangedAsync);
+        }
+
+        private async Task OnGroupingParameterChangedAsync()
+        {
+            if (GroupingState.Value)
+            {
+                if (DataGrid is not null)
+                {
+                    await DataGrid.ChangedGrouping(this);
+                }
+            }
         }
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
             groupBy = GroupBy;
-
-            if (groupable && Grouping)
-                grouping = Grouping;
 
             if (DataGrid != null)
                 DataGrid.AddColumn(this);
@@ -345,12 +359,10 @@ namespace MudBlazor
         // Allows child components to change column grouping.
         internal async Task SetGrouping(bool g)
         {
-            if (groupable)
-            {
-                grouping = g;
+            await GroupingState.SetValueAsync(g);
+
+            if (GroupingState.Value)
                 await DataGrid?.ChangedGrouping(this);
-                await GroupingChanged.InvokeAsync(grouping);
-            }
         }
 
         /// <summary>
@@ -358,10 +370,9 @@ namespace MudBlazor
         /// </summary>
         internal async Task RemoveGrouping()
         {
-            if (grouping)
+            if (GroupingState.Value)
             {
-                grouping = false;
-                await GroupingChanged.InvokeAsync(grouping);
+                await GroupingState.SetValueAsync(false);
             }
         }
 

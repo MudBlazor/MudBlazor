@@ -183,7 +183,7 @@ public class PatternMask : BaseMask
             ModifyPartiallyAlignedMask(mask, text, maskOffset, ref textIndex, ref maskIndex, ref alignedText);
         }
         // fill any delimiters if possible
-        for (int i = maskIndex; i < mask.Length; i++)
+        for (var i = maskIndex; i < mask.Length; i++)
         {
             var maskChar = mask[i];
             if (!IsDelimiter(maskChar))
@@ -257,8 +257,7 @@ public class PatternMask : BaseMask
     public override void UpdateFrom(IMask other)
     {
         base.UpdateFrom(other);
-        var o = other as PatternMask;
-        if (o == null)
+        if (other is not PatternMask o)
             return;
         Placeholder = o.Placeholder;
         CleanDelimiters = o.CleanDelimiters;

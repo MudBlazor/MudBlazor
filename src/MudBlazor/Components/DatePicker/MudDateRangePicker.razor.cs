@@ -159,16 +159,19 @@ namespace MudBlazor
         /// <returns></returns>
         public ValueTask SelectRangeEndAsync(int pos1, int pos2) => _rangeInput.SelectRangeEndAsync(pos1, pos2);
 
-        protected override Task DateFormatChanged(string newFormat)
+        protected override Task DateFormatChangedAsync(string newFormat)
         {
             Touched = true;
+            _rangeText = new Range<string>(
+                Converter.Set(_dateRange?.Start),
+                Converter.Set(_dateRange?.End));
             return SetTextAsync(_dateRange?.ToString(Converter), false);
         }
 
-        protected override Task StringValueChanged(string value)
+        protected override Task StringValueChangedAsync(string value)
         {
             Touched = true;
-            // Update the daterange property (without updating back the Value property)
+            // Update the date range property (without updating back the Value property)
             return SetDateRangeAsync(ParseDateRangeValue(value), false);
         }
 

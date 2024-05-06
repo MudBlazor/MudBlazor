@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
-using System.Threading;
 
 
 namespace MudBlazor
@@ -319,7 +319,7 @@ namespace MudBlazor
         /// If there is set a Comparer, uses the comparer, otherwise uses a direct contains
         /// </summary>
         protected bool IsCheckedRow(T item)
-            => _comparer != null ? Context.Selection.Any(x => _comparer.Equals(x, item)) : Context.Selection.Contains(item);
+            => _comparer is not null ? Context.Selection.Any(x => _comparer.Equals(x, item)) : Context.Selection.Contains(item);
 
         /// <summary>
         /// The Comparer to use for comparing selected items internally.
@@ -499,7 +499,7 @@ namespace MudBlazor
             var t = item.As<T>();
             if (t is null)
                 return false;
-            return FilteredItems?.Contains(t) ?? false;
+            return Items?.Contains(t) ?? false;
         }
 
         public override void UpdateSelection() => SelectedItemsChanged.InvokeAsync(SelectedItems);
@@ -509,7 +509,7 @@ namespace MudBlazor
             get
             {
                 Context.Table = this;
-                Context.TableStateHasChanged = this.StateHasChanged;
+                Context.TableStateHasChanged = StateHasChanged;
                 return Context;
             }
         }
@@ -686,7 +686,7 @@ namespace MudBlazor
             if (_groupBy is not null)
             {
                 _groupBy.IsInitiallyExpanded = expand;
-                Context?.GroupRows.Where(gr => gr.GroupDefinition == _groupBy).ToList().ForEach(gr => gr.IsExpanded = _groupBy.IsInitiallyExpanded);
+                Context?.GroupRows.Where(gr => gr.GroupDefinition == _groupBy).ToList().ForEach(gr => gr.Expanded = _groupBy.IsInitiallyExpanded);
             }
         }
 

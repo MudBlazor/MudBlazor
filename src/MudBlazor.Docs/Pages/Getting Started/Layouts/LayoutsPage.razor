@@ -15,7 +15,7 @@
                 <Description>
                     MudBlazor comes with many components of varying functions and behaviours. Some are built to control the layout of your application, and others may be used to provide other key functions, behaviours and operations for these components.
                     <br /><br />
-                    Notably, the three most important providers are <CodeInline>MudThemeProvider</CodeInline>, <CodeInline>MudDialogProvider</CodeInline> and <CodeInline>MudSnackbarProvider</CodeInline>. If you have followed the installation guide, these will already be in your MainLayout page.
+                    Notably, the four most important providers are <CodeInline>@nameof(MudThemeProvider)</CodeInline>, <CodeInline>@nameof(MudPopoverProvider)</CodeInline>, <CodeInline>@nameof(MudDialogProvider)</CodeInline> and <CodeInline>@nameof(MudSnackbarProvider)</CodeInline>. If you have followed the installation guide, these will already be in your MainLayout page.
                     <br /><br />
                     <CodeInline>MudThemeProvider</CodeInline> is the component which provides your app with theme settings such as colors, fonts, shadows and other layout properties. It provides the MudBlazor theme by default. There should only exist one instance of the <CodeInline>MudThemeProvider</CodeInline> in your project.
                     <br /><br />
@@ -68,13 +68,13 @@
             <SectionHeader Title="Ready for More?">
             </SectionHeader>
             <div class="d-flex flex-row flex-wrap mud-width-full">
-                <MudList Clickable="true" Class="flex-grow-1 flex-shrink-0 mud-paper-outlined rounded py-0 mr-2">
+                <MudList T="string" Class="flex-grow-1 flex-shrink-0 mud-paper-outlined rounded py-0 mr-2">
                     <MudListItem Icon="@Icons.Material.Filled.FileDownloadDone" IconColor="Color.Success" Class="pl-6" Href="/getting-started/installation">
                         <MudText Typo="Typo.body1">Installation</MudText>
                         <MudText Typo="Typo.body2">Getting Started</MudText>
                     </MudListItem>
                 </MudList>
-                <MudList Clickable="true" Class="flex-grow-1 flex-shrink-0 mud-paper-outlined rounded py-0 ml-2">
+                <MudList T="string" Class="flex-grow-1 flex-shrink-0 mud-paper-outlined rounded py-0 ml-2">
                     <MudListItem Icon="@Icons.Material.Filled.FilterFrames" IconColor="Color.Secondary" Class="pl-6" Href="/getting-started/wireframes">
                         <MudText Typo="Typo.body1">Wireframes</MudText>
                         <MudText Typo="Typo.body2">Copy, paste layouts</MudText>

@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDrawer @ref="@Drawer" @bind-Open="@isOpen" Variant="@Variant" DisableOverlay="@DisableOverlay" ClipMode="@ClipMode"></MudDrawer>
+<MudDrawer @ref="@Drawer" @bind-Open="@isOpen" Variant="@Variant" Overlay="@Overlay" ClipMode="@ClipMode"></MudDrawer>
 <button @onclick="@HandleButtonClick" />
 
 @code {
@@ -12,7 +12,7 @@
     public DrawerVariant Variant { get; set; }
 
     [Parameter]
-    public bool DisableOverlay { get; set; }
+    public bool Overlay { get; set; } = true;
 
     [Parameter]
     public DrawerClipMode ClipMode { get; set; }

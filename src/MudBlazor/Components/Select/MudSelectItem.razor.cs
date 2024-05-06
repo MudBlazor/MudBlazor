@@ -11,7 +11,7 @@ namespace MudBlazor
     /// </summary>
     public partial class MudSelectItem<T> : MudBaseSelectItem, IDisposable
     {
-        private String GetCssClasses() => new CssBuilder()
+        private string GetCssClasses() => new CssBuilder()
             .AddClass(Class)
             .Build();
 
@@ -33,7 +33,7 @@ namespace MudBlazor
                 _parent.CheckGenericTypeMatch(this);
                 if (MudSelect == null)
                     return;
-                bool isSelected = MudSelect.Add(this);
+                var isSelected = MudSelect.Add(this);
                 if (_parent.MultiSelection)
                 {
                     MudSelect.SelectionChangedFromOutside += OnUpdateSelectionStateFromOutside;

@@ -5,15 +5,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Clone;
 
 namespace MudBlazor
 {
@@ -67,7 +66,7 @@ namespace MudBlazor
         protected string _tableStyle =>
             new StyleBuilder()
                 .AddStyle("height", Height, !string.IsNullOrWhiteSpace(Height))
-                .AddStyle("width", "max-content", when: (HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container))
+                .AddStyle("width", "max-content", when: HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container)
                 .AddStyle("overflow", "clip", when: (HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container) && hasStickyColumns)
                 .AddStyle("display", "block", when: HorizontalScrollbar)
             .Build();
@@ -145,7 +144,7 @@ namespace MudBlazor
 
         private static void Swap<TItem>(List<TItem> list, int indexA, int indexB)
         {
-            TItem tmp = list[indexA];
+            var tmp = list[indexA];
             list[indexA] = list[indexB];
             list[indexB] = tmp;
         }
@@ -461,6 +460,14 @@ namespace MudBlazor
         /// Fine tune the edit dialog.
         /// </summary>
         [Parameter] public DialogOptions EditDialogOptions { get; set; }
+
+        /// <summary>
+        /// Sets the deep copy strategy.
+        /// </summary>
+        /// <remarks>
+        /// This strategy is used during EditMode.
+        /// </remarks>
+        [Parameter] public ICloneStrategy<T> CloneStrategy { get; set; } = SystemTextJsonDeepCloneStrategy<T>.Instance;
 
         /// <summary>
         /// The data to display in the table. MudTable will render one row per item
@@ -827,7 +834,7 @@ namespace MudBlazor
         {
             get
             {
-                return RenderedColumns.FirstOrDefault(x => x.grouping);
+                return RenderedColumns.FirstOrDefault(x => x.GroupingState.Value);
             }
         }
 
@@ -861,7 +868,6 @@ namespace MudBlazor
 
         #endregion
 
-        [UnconditionalSuppressMessage("Trimming", "IL2046: 'RequiresUnreferencedCodeAttribute' annotations must match across all interface implementations or overrides.", Justification = "Suppressing because we annotating the whole component with RequiresUnreferencedCodeAttribute for information that generic type must be preserved.")]
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -879,7 +885,6 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        [UnconditionalSuppressMessage("Trimming", "IL2046: 'RequiresUnreferencedCodeAttribute' annotations must match across all interface implementations or overrides.", Justification = "Suppressing because we annotating the whole component with RequiresUnreferencedCodeAttribute for information that generic type must be preserved.")]
         public override async Task SetParametersAsync(ParameterView parameters)
         {
             var sortModeBefore = SortMode;
@@ -1322,7 +1327,6 @@ namespace MudBlazor
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        [UnconditionalSuppressMessage("Trimming", "IL2026: Using member 'System.Text.Json.JsonSerializer.Deserialize<T>(string, System.Text.Json.JsonSerializerOptions?)' which has 'RequiresUnreferencedCodeAttribute' can break functionality when trimming application code. JSON serialization and deserialization might require types that cannot be statically analyzed. Use the overload that takes a JsonTypeInfo or JsonSerializerContext, or make sure all of the required types are preserved.", Justification = "Suppressing because T is a type supplied by the user and it is unlikely that it is not referenced by their code.")]
         public async Task SetEditingItemAsync(T item)
         {
             if (ReadOnly) return;
@@ -1330,7 +1334,7 @@ namespace MudBlazor
             editingSourceItem = item;
             EditingCanceledEvent?.Invoke();
             _previousEditingItem = _editingItem;
-            _editingItem = JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(item));
+            _editingItem = CloneStrategy.CloneObject(item);
             StartedEditingItemEvent?.Invoke();
             await StartedEditingItem.InvokeAsync(_editingItem);
             isEditFormOpen = true;
@@ -1514,7 +1518,7 @@ namespace MudBlazor
         {
             foreach (var group in _allGroups)
             {
-                group.IsExpanded = true;
+                group.Expanded = true;
                 _groupExpansionsDict[group.Grouping.Key] = true;
             }
         }
@@ -1523,7 +1527,7 @@ namespace MudBlazor
         {
             foreach (var group in _allGroups)
             {
-                group.IsExpanded = false;
+                group.Expanded = false;
                 _groupExpansionsDict[group.Grouping.Key] = false;
             }
         }

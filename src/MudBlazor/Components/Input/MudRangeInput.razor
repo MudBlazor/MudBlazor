@@ -16,11 +16,39 @@
         </div>
     }
 
-    <input @ref="_elementReferenceStart" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" @bind-value="@TextStart" @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
-           placeholder="@PlaceholderStart" disabled=@GetDisabledState() readonly="@GetReadOnlyState()" @onblur="@OnBlurredAsync" @onkeydown="@InvokeKeyDownAsync" @onkeyup="@InvokeKeyUpAsync" inputmode="@InputMode.ToString()" pattern="@Pattern" />
+    <input @ref="_elementReferenceStart"
+           @attributes="UserAttributes"
+           type="@InputTypeString"
+           class="@InputClassname"
+           @bind-value="@TextStart"
+           @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
+           placeholder="@PlaceholderStart"
+           disabled=@GetDisabledState()
+           readonly="@GetReadOnlyState()"
+           @onblur="@OnBlurredAsync"
+           @onkeydown="@InvokeKeyDownAsync"
+           @onkeyup="@InvokeKeyUpAsync"
+           inputmode="@InputMode.ToString()"
+           pattern="@Pattern"
+           required="@Required"
+           aria-required="@Required.ToString().ToLowerInvariant()" />
     <MudIcon Class="mud-range-input-separator mud-flip-x-rtl" Icon="@SeparatorIcon" Color="@Color.Default" />
-    <input @ref="_elementReferenceEnd" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" @bind-value="@TextEnd" @bind-value:event="@((Immediate ? "oninput" : "onchange"))" inputmode="@InputMode.ToString()" pattern="@Pattern"
-           placeholder="@PlaceholderEnd" disabled=@GetDisabledState() readonly="@GetReadOnlyState()" @onblur="@OnBlurredAsync" @onkeydown="@InvokeKeyDownAsync" @onkeyup="@InvokeKeyUpAsync" />
+    <input @ref="_elementReferenceEnd"
+           @attributes="UserAttributes"
+           type="@InputTypeString"
+           class="@InputClassname"
+           @bind-value="@TextEnd"
+           @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
+           inputmode="@InputMode.ToString()"
+           pattern="@Pattern"
+           placeholder="@PlaceholderEnd"
+           disabled=@GetDisabledState()
+           readonly="@GetReadOnlyState()"
+           @onblur="@OnBlurredAsync"
+           @onkeydown="@InvokeKeyDownAsync"
+           @onkeyup="@InvokeKeyUpAsync"
+           required="@Required"
+           aria-required="@Required.ToString().ToLowerInvariant()" />
 
     @if (IsClearable() && !GetDisabledState())
     {

@@ -6,10 +6,11 @@ namespace MudBlazor
 {
 
     /// <summary>
-    /// A universal T to double binding converter
-    ///
+    /// <para>A universal T to double binding converter</para>
+    /// <para>
     /// Note: currently not in use. Should we ever use it, remove
     /// the  [ExcludeFromCodeCoverage] attribute
+    /// </para>
     /// </summary>
     [ExcludeFromCodeCoverage]
     public class NumericConverter<T> : Converter<T, double>
@@ -150,25 +151,6 @@ namespace MudBlazor
                 return double.NaN;
             }
         }
-
-
-        #region --> Floating Point comparison
-
-        [ExcludeFromCodeCoverage]
-        [Obsolete($"Use {nameof(DoubleEpsilonEqualityComparer)} instead.")]
-        public static bool AreEqual(double a, double b)
-        {
-            return DoubleEpsilonEqualityComparer.Default.Equals(a, b);
-        }
-
-        [ExcludeFromCodeCoverage]
-        [Obsolete($"Use {nameof(DoubleEpsilonEqualityComparer)} instead.")]
-        public static bool AreEqual(double a, double b, double epsilon)
-        {
-            return new DoubleEpsilonEqualityComparer(epsilon).Equals(a, b);
-        }
-
-        #endregion
     }
 
     [ExcludeFromCodeCoverage]

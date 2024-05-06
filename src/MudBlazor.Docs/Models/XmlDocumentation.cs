@@ -13,7 +13,7 @@ using System.Xml;
 
 namespace MudBlazor.Docs.Models
 {
-    public static class XmlDocumentation
+    public static partial class XmlDocumentation
     {
 
         #region System.Reflection.Assembly
@@ -208,7 +208,7 @@ namespace MudBlazor.Docs.Models
                 var result = type.IsNested
                     ? ConvertToCsharpSource(type.DeclaringType) + "."
                     : ""; //: type.Namespace + ".";
-                result += Regex.Replace(type.Name, "`.*", string.Empty);
+                result += BacktickRegularExpression().Replace(type.Name, string.Empty);
                 if (type.IsGenericType)
                 {
                     result += "<";
@@ -451,7 +451,7 @@ namespace MudBlazor.Docs.Models
                     : type.Namespace + ".";
 
                 string typeNameString = isMethodParameter
-                    ? typeNameString = Regex.Replace(type.Name, @"`\d+", string.Empty)
+                    ? typeNameString = TypeNameRegularExpression().Replace(type.Name, string.Empty)
                     : typeNameString = type.Name;
 
                 var genericArgumentsString = type.IsGenericType && isMethodParameter
@@ -507,8 +507,8 @@ namespace MudBlazor.Docs.Models
 
         public static string XmlDocumentationKeyHelper(string typeFullNameString, string memberNameString)
         {
-            var key = Regex.Replace(typeFullNameString, @"\[.*\]", string.Empty).Replace('+', '.');
-            if (!(memberNameString is null))
+            var key = DocumentationKeyRegularExpression().Replace(typeFullNameString, string.Empty).Replace('+', '.');
+            if (memberNameString is not null)
             {
                 key += "." + memberNameString;
             }
@@ -571,7 +571,7 @@ namespace MudBlazor.Docs.Models
         public static string GetDocumentation(this ParameterInfo parameterInfo)
         {
             var memberDocumentation = parameterInfo.Member.GetDocumentation();
-            if (!(memberDocumentation is null))
+            if (memberDocumentation is not null)
             {
                 var regexPattern =
                     Regex.Escape(@"<param name=" + "\"" + parameterInfo.Name + "\"" + @">") +
@@ -586,6 +586,15 @@ namespace MudBlazor.Docs.Models
             }
             return null;
         }
+
+        [GeneratedRegex("`.*")]
+        private static partial Regex BacktickRegularExpression();
+
+        [GeneratedRegex(@"`\d+")]
+        private static partial Regex TypeNameRegularExpression();
+
+        [GeneratedRegex(@"\[.*\]")]
+        private static partial Regex DocumentationKeyRegularExpression();
 
         #endregion
 

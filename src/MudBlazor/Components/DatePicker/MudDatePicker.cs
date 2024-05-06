@@ -75,13 +75,13 @@ namespace MudBlazor
             }
         }
 
-        protected override Task DateFormatChanged(string newFormat)
+        protected override Task DateFormatChangedAsync(string newFormat)
         {
             Touched = true;
             return SetTextAsync(Converter.Set(_value), false);
         }
 
-        protected override Task StringValueChanged(string value)
+        protected override Task StringValueChangedAsync(string value)
         {
             Touched = true;
             // Update the date property (without updating back the Value property)
@@ -195,7 +195,7 @@ namespace MudBlazor
             _selectedDate = null;
             await SetDateAsync(null, true);
 
-            if (AutoClose == true)
+            if (AutoClose)
             {
                 await CloseAsync(false);
             }
@@ -218,16 +218,15 @@ namespace MudBlazor
             var diff = Culture.Calendar.GetYear(date) - Culture.Calendar.GetYear(yearDate);
             var calenderYear = Culture.Calendar.GetYear(date);
             return calenderYear - diff;
-
         }
 
         //To be completed on next PR
-        protected internal override async void HandleKeyDown(KeyboardEventArgs obj)
+        protected internal override async Task OnHandleKeyDownAsync(KeyboardEventArgs args)
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
-            base.HandleKeyDown(obj);
-            switch (obj.Key)
+            await base.OnHandleKeyDownAsync(args);
+            switch (args.Key)
             {
                 case "ArrowRight":
                     if (IsOpen)
@@ -246,11 +245,11 @@ namespace MudBlazor
                     {
                         IsOpen = true;
                     }
-                    else if (obj.AltKey == true)
+                    else if (args.AltKey)
                     {
                         IsOpen = false;
                     }
-                    else if (obj.ShiftKey == true)
+                    else if (args.ShiftKey)
                     {
 
                     }
@@ -264,7 +263,7 @@ namespace MudBlazor
                     {
                         IsOpen = true;
                     }
-                    else if (obj.ShiftKey == true)
+                    else if (args.ShiftKey)
                     {
 
                     }

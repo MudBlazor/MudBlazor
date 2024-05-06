@@ -91,7 +91,7 @@ namespace MudBlazor.Docs.Models
                 [typeof(Donut)] = "donutchart",
                 [typeof(Line)] = "linechart",
                 [typeof(Pie)] = "piechart",
-                [typeof(MudChip)] = "chips",
+                [typeof(MudChip<T>)] = "chips",
                 [typeof(ChartOptions)] = "options"
             };
 
