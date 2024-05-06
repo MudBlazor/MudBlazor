@@ -26,7 +26,5 @@ namespace MudBlazor
         Transparent,
         [Description("inherit")]
         Inherit,
-        [Description("surface")]
-        Surface
     }
 }

@@ -49,7 +49,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AvatarGroup.Appearance)]
-        public Color OutlineColor { get; set; } = Color.Surface;
+        public Color OutlineColor { get; set; }
 
         /// <summary>
         /// The size of the drop shadow when the number of avatars exceeds <see cref="Max"/>.

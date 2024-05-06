@@ -93,7 +93,6 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Dark, "dark")]
         [TestCase(Color.Transparent, "transparent")]
         [TestCase(Color.Inherit, "inherit")]
-        [TestCase(Color.Surface, "surface")]
         public void CheckColorCssClass(Color color, string expectedColorClass)
         {
             var comp = Context.RenderComponent<MudSlider<int>>(x => x.Add(p => p.Color, color));
