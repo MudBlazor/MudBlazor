@@ -342,16 +342,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Tooltip_Disabled_NoPopover()
+        public async Task Tooltip_Disabled_Button_OnFocusIn_NoPopover()
         {
             var comp = Context.RenderComponent<TooltipDisabledPropertyTest>(p =>
             {
-                p.Add(x => x.Disabled, true);
+                p.Add(x => x.TooltipDisabled, true);
             });
 
             var button = comp.Find("button");
             await button.ParentElement.TriggerEventAsync("onfocusin", new FocusEventArgs());
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+        }
 
+        [Test]
+        public async Task Tooltip_Disabled_Button_OnMouseEnter_NoPopover()
+        {
+            var comp = Context.RenderComponent<TooltipDisabledPropertyTest>(p =>
+            {
+                p.Add(x => x.TooltipDisabled, true);
+            });
+
+            var button = comp.Find("button");
+            await button.ParentElement.TriggerEventAsync("onmouseenter", new MouseEventArgs());
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
         }
     }
