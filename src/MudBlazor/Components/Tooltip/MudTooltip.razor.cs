@@ -152,7 +152,7 @@ namespace MudBlazor
         public EventCallback<bool> VisibleChanged { get; set; }
 
         /// <summary>
-        /// If true, the tooltip will be disabled.
+        /// If true, the tooltip will be disabled; the popover will not be visible.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
