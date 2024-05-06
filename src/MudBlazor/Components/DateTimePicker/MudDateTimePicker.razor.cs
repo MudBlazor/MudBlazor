@@ -6,7 +6,6 @@ using System;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MudBlazor
 {
@@ -197,6 +196,9 @@ namespace MudBlazor
         private TimeSpan? _timePicked { get; set; }
         private DateTime? _pickerMonth { get; set; }
 
+        private bool _datePickedChanged { get; set; }
+        private bool _timePickedChanged { get; set; }
+
         private MudDatePicker _datePickerRef { get; set; }
         private MudTimePicker _timePickerRef { get; set; }
 
@@ -209,6 +211,13 @@ namespace MudBlazor
             Converter.SetFunc = OnSet;
             ((DefaultConverter<DateTime?>)Converter).Culture = Culture;
             ((DefaultConverter<DateTime?>)Converter).Format = null;
+        }
+
+        protected override async Task OnPickerOpenedAsync()
+        {
+            _datePickedChanged = false;
+            _timePickedChanged = false;
+            await base.OnPickerOpenedAsync();
         }
 
         protected string OnSet(DateTime? value)
@@ -342,6 +351,7 @@ namespace MudBlazor
         /// </summary>
         protected void DateSelected(DateTime? date)
         {
+            _datePickedChanged = _datePicked?.Date != date?.Date;
             _datePicked = date;
             SubmitAndClose();
         }
@@ -351,6 +361,7 @@ namespace MudBlazor
         /// </summary>
         protected void TimeSelected(TimeSpan? time)
         {
+            _timePickedChanged = _timePicked is not null && (_timePicked?.Minutes != time?.Minutes || _timePicked?.Seconds != time?.Seconds);
             _timePicked = time;
             SubmitAndClose();
         }
@@ -361,9 +372,17 @@ namespace MudBlazor
         protected void SetDateTime(DateTime? dateTime, bool updateValue)
             => SetDateTimeAsync(dateTime, updateValue).AndForget();
 
+        /// <summary>
+        /// Goes to the specific date
+        /// </summary>
+        /// <param name="date"></param>
+        /// <param name="submitDate"></param>
         public async Task GoToDate(DateTime date, bool submitDate = true)
             => await _datePickerRef.GoToDate(date, submitDate);
 
+        /// <summary>
+        /// Goes to the current date
+        /// </summary>
         public void GoToDate()
             => _datePickerRef.GoToDate();
 
@@ -400,7 +419,7 @@ namespace MudBlazor
 
         private void SubmitAndClose()
         {
-            if (AutoClose && PickerVariant is not PickerVariant.Static && GetPartialDateTime() is not null)
+            if (AutoClose && PickerVariant is not PickerVariant.Static && _datePickedChanged && _timePickedChanged)
             {
                 CloseAsync().AndForget();
             }

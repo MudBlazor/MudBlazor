@@ -14,6 +14,7 @@
                        FixDay="@FixDay"
                        FixMonth="@FixMonth"
                        FixYear="@FixYear"
+                       StartMonth="StartMonth"
                        MinDateTime="@MinDate"
                        MaxDateTime="@MaxDate"
                        FirstDayOfWeek="@FirstDayOfWeek"
@@ -57,6 +58,8 @@ else
     [Parameter] public DateTime? MaxDate { get; set; }
     [Parameter] public Func<DateTime, string> AdditionalDateClassesFunc { get; set; }
     [Parameter] public bool AutoClose { get; set; } = false;
+    [Parameter] public DateTime? StartMonth { get; set; }
+    [Parameter] public string TitleDateTimeFormat { get; set; }
 
     public async Task Open() => await InvokeAsync(() => _picker.OpenAsync());
     public async Task Close() => await InvokeAsync(() => _picker.CloseAsync());

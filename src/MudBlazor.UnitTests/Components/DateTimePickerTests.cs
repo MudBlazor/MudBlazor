@@ -82,6 +82,24 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DateTimePicker_GoToDate_Test()
+        {
+            var comp = OpenPicker();
+            var picker = comp.FindComponent<MudDateTimePicker>().Instance;
+            picker.GoToDate();
+            comp.Find(".mud-picker-calendar-header button.mud-button-month").TrimmedText().Should().Be(DateTime.Now.ToString("MMMM yyyy"));
+            await comp.InvokeAsync(() => picker.GoToDate(DateTime.Parse("2024-06-26")));
+            comp.Find(".mud-picker-calendar-header button.mud-button-month").TrimmedText().Should().Be(DateTime.Parse("2024-06-26").ToString("MMMM yyyy"));
+        }
+
+        [Test]
+        public async Task DateTimePicker_TitleDateTimeFormat_Test()
+        {
+            var comp = OpenPicker(Parameter("TitleDateTimeFormat", "hh yyyy MMMM dddd"));
+
+        }
+
+        [Test]
         public async Task SetPickerValue_CheckDate_SetPickerDate_CheckValue()
         {
             var culture = CultureInfo.CurrentCulture;
@@ -355,6 +373,7 @@ namespace MudBlazor.UnitTests.Components
             // Click on external dial (16 hours) and then click on 35 minutes
             comp.FindAll("div.mud-hour")[7].Click();
             comp.FindAll("div.mud-minute")[35].Click();
+            comp.Find("div.mud-overlay").Click();
             picker.Instance.DateTime.Should().Be(DateTime.Parse($"{DateTime.Now.Year}-4-23 16:35:00"));
         }
 
@@ -389,7 +408,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-hour")[7].Click();
             comp.FindAll("div.mud-minute")[35].Click();
             comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
-            // comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0), TimeSpan.FromSeconds(5));
         }
 
         [Test]
