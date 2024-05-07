@@ -1,5 +1,7 @@
 ﻿<div class="d-flex align-center flex-grow-1 d-md-none">
-    <MudIconButton OnClick="DrawerToggleCallback" Icon="@Icons.Material.Rounded.Notes" Color="Color.Inherit" Edge="Edge.Start" />
+    <MudTooltip Delay="1000" Text="Drawer">
+        <MudIconButton OnClick="DrawerToggleCallback" Icon="@Icons.Material.Rounded.Notes" Color="Color.Inherit" Edge="Edge.Start" />
+    </MudTooltip>
     <MudSpacer />
     <NavLink ActiveClass="d-flex align-center" href="/">
         <MudBlazorLogo Class="docs-mudblazor-logo" />
@@ -19,7 +21,7 @@
     <MudButton Href="/docs/overview" Color="Color.Inherit" Variant="Variant.Text" Class="@GetActiveClass(DocsBasePage.Docs)">Docs</MudButton>
     <MudButton Href="/mud/introduction" Color="Color.Inherit" Variant="Variant.Text" Class="@GetActiveClass(DocsBasePage.DiscoverMore)">Learn More</MudButton>
     <MudMenu Color="Color.Inherit" Variant="Variant.Text" Class="mx-1 px-3" PopoverClass="docs-layout-menu-shadow" ListClass="d-flex px-4 pb-2 docs-appbar-special-menu" LockScroll="true" Label="Products" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
-        <MudList T="string" Clickable="true">
+        <MudList T="string">
             <MudListSubheader>
                 Products
             </MudListSubheader>
@@ -64,15 +66,15 @@
     <MudSpacer />
     @if (DisplaySearchBar)
     {
-        <MudAutocomplete @ref="_searchAutocomplete" T="ApiLinkServiceEntry" Class="docs-search-bar ml-4"
+        <MudAutocomplete @ref="_searchAutocomplete" T="ApiLinkServiceEntry" Class="docs-search-bar mx-4"
                          AutoFocus="false" Placeholder="Search" Variant="Variant.Outlined" MaxHeight="480"
                          SearchFunc="async (text, token) => await Search(text, token)" DebounceInterval="0"
-                         ValueChanged="OnSearchResult" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search">
+                         ValueChanged="OnSearchResult" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentAriaLabel="Search adornment">
             <ItemTemplate Context="result">
                 <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
             </ItemTemplate>
         </MudAutocomplete>
-        <MudDivider FlexItem="true" Vertical="true" DividerType="DividerType.Middle" Class="my-4" />
+        <MudDivider FlexItem="true" Vertical="true" DividerType="DividerType.Middle" Class="mx-4 my-4" />
     }
     else
     {
@@ -81,6 +83,9 @@
         </MudTooltip>
     }
     <AppbarButtons />
+    <MudTooltip Delay="1000" Text="GitHub">
+        <MudIconButton Href="https://github.com/MudBlazor/MudBlazor/" Target="_blank" Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Edge="Edge.End" />
+    </MudTooltip>
 </div>
 
 <MudDialog @bind-Visible="IsSearchDialogOpen" Options="_dialogOptions" Class="docs-gray-bg" ContentClass="docs-mobile-dialog-search d-flex flex-column" DefaultFocus="DefaultFocus.FirstChild">
@@ -88,7 +93,7 @@
         <MudAutocomplete @ref="_searchAutocomplete" T="ApiLinkServiceEntry" PopoverClass="docs-mobile-dialog-search-popover"
                          AutoFocus="true" Placeholder="Search" Clearable="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
                          SearchFunc="async (text, token) => await Search(text, token)" DebounceInterval="0"
-                         ValueChanged="OnSearchResult" IsOpenChanged="o => _searchDialogAutocompleteOpen = o" ReturnedItemsCountChanged="c => _searchDialogReturnedItemsCount = c">
+                         ValueChanged="OnSearchResult" OpenChanged="o => _searchDialogAutocompleteOpen = o" ReturnedItemsCountChanged="c => _searchDialogReturnedItemsCount = c">
             <ItemTemplate Context="result">
                 <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
             </ItemTemplate>

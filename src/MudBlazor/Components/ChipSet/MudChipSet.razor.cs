@@ -278,8 +278,8 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
             foreach (var chip in _chips.ToArray())
             {
                 var value = chip.GetValue();
-                var isSelected = Comparer.Equals(value, newValue);
-                await chip.UpdateSelectionStateAsync(isSelected);
+                var selected = Comparer.Equals(value, newValue);
+                await chip.UpdateSelectionStateAsync(selected);
             }
         }
         await _selectedValue.SetValueAsync(newValue);
@@ -304,12 +304,12 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
         foreach (var chip in _chips.ToArray())
         {
             var value = chip.GetValue();
-            bool isSelected;
+            bool selected;
             if (MultiSelection)
-                isSelected = value is not null && _selection.Contains(value);
+                selected = value is not null && _selection.Contains(value);
             else
-                isSelected = Comparer.Equals(_selectedValue, value);
-            await chip.UpdateSelectionStateAsync(isSelected);
+                selected = Comparer.Equals(_selectedValue, value);
+            await chip.UpdateSelectionStateAsync(selected);
         }
     }
 
@@ -359,7 +359,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
         StateHasChanged();
     }
 
-    internal async Task OnChipIsSelectedChangedAsync(MudChip<T> chip, bool isSelected)
+    internal async Task OnChipSelectedChangedAsync(MudChip<T> chip, bool selected)
     {
         var value = chip.GetValue();
         if (!MultiSelection)
@@ -372,7 +372,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
             else
             {
                 // Toggle Selection
-                await UpdateSelectedValueAsync(isSelected ? value : default);
+                await UpdateSelectedValueAsync(selected ? value : default);
             }
             return;
         }
@@ -380,7 +380,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
         if (value is null)
             return;
         var newSelection = new HashSet<T>(_selection, Comparer);
-        if (isSelected)
+        if (selected)
         {
             newSelection.Add(value);
         }

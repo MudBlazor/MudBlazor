@@ -10,7 +10,7 @@
         }
     </HeaderTemplate>
     <CellTemplate>
-        <MudCheckBox T="bool" Size="@Size" Value="@context.IsSelected" ValueChanged="@context.Actions.SetSelectedItemAsync" />
+        <MudCheckBox T="bool" Size="@Size" Value="@context.Selected" ValueChanged="@context.Actions.SetSelectedItemAsync" />
     </CellTemplate>
 </TemplateColumn>
 

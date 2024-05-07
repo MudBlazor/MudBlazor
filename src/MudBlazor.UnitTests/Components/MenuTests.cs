@@ -101,14 +101,14 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MenuTest1>();
             var menu = comp.FindComponent<MudMenu>().Instance;
-            menu.IsOpen.Should().BeFalse();
+            menu.Open.Should().BeFalse();
 
             var args = new MouseEventArgs { OffsetX = 1.0, OffsetY = 1.0 };
             await comp.InvokeAsync(() => menu.OpenMenuAsync(args));
-            menu.IsOpen.Should().BeTrue();
+            menu.Open.Should().BeTrue();
 
             await comp.InvokeAsync(() => menu.CloseMenuAsync());
-            menu.IsOpen.Should().BeFalse();
+            menu.Open.Should().BeFalse();
         }
 
         [Test]
