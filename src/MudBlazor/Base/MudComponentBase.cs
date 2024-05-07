@@ -363,6 +363,7 @@ namespace MudBlazor
                         case "IsCheckedChanged":
                         case "IsVisible":
                         case "IsVisibleChanged":
+                        case "IsActive":
                         case "ItemIsDisabled":
                         case "IsSelected":
                         case "IsSelectedChanged":

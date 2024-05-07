@@ -29,7 +29,7 @@ namespace MudBlazor
         /// <summary>
         /// The currently active session. null if there is no section selected
         /// </summary>
-        public MudPageContentSection? ActiveSection => _sections.FirstOrDefault(x => x.IsActive);
+        public MudPageContentSection? ActiveSection => _sections.FirstOrDefault(x => x.Active);
 
         /// <summary>
         /// The text displayed about the section links. Defaults to "Contents"
@@ -98,7 +98,7 @@ namespace MudBlazor
 
         private string GetNavLinkClass(MudPageContentSection section) =>
             new CssBuilder("page-content-navigation-navlink")
-                .AddClass("active", section.IsActive)
+                .AddClass("active", section.Active)
                 .AddClass($"navigation-level-{section.Level}")
                 .Build();
 
