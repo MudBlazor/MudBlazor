@@ -47,7 +47,7 @@
   --mud-ripple-color: var(--mud-palette-text-primary);
 
   @media(hover: hover) and (pointer: fine) {
-    &:hover, &:focus {
+    &:hover {
       background-color: var(--mud-palette-action-default-hover);
     }
   }
@@ -77,7 +77,7 @@
       --mud-ripple-color: var(--mud-palette-#{$color});
 
       @media(hover: hover) and (pointer: fine) {
-        &:hover, &:focus {
+        &:hover {
           background-color: var(--mud-palette-#{$color}-hover);
         }
       }
@@ -104,7 +104,7 @@
   }
 
   @media(hover: hover) and (pointer: fine) {
-    &:hover, &:focus {
+    &:hover {
       background-color: var(--mud-palette-action-default-hover);
     }
   }
@@ -120,7 +120,7 @@
       border: 1px solid var(--mud-palette-#{$color});
 
       @media(hover: hover) and (pointer: fine) {
-        &:hover, &:focus {
+        &:hover {
           border: 1px solid var(--mud-palette-#{$color});
           background-color: var(--mud-palette-#{$color}-hover);
         }
@@ -180,7 +180,7 @@
       background-color: var(--mud-palette-#{$color});
 
       @media(hover: hover) and (pointer: fine) {
-        &:hover, &:focus {
+        &:hover {
           background-color: var(--mud-palette-#{$color}-darken);
         }
       }
