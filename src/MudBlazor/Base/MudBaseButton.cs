@@ -171,7 +171,7 @@ namespace MudBlazor
 
         protected ElementReference _elementReference;
 
-        public bool GetClickPropagation() => HtmlTag != "button" || ClickPropagation;
+        protected bool GetClickPropagation() => HtmlTag != "button" || ClickPropagation;
 
         /// <summary>
         /// Obtains focus for this button.

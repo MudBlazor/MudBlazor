@@ -1,0 +1,40 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudTooltip Arrow Disabled=@TooltipDisabled ShowOnHover=@ShowOnHover ShowOnFocus=@ShowOnFocus>
+    <ChildContent>
+        <MudButton Disabled=@ButtonDisabled>My Button</MudButton>
+    </ChildContent>
+    <TooltipContent>
+        <div id="my-tooltip-content">
+            <p>Some Text</p>
+        </div>
+    </TooltipContent>
+</MudTooltip>
+
+<MudStack Row>
+    <MudSwitch @bind-Value=@ShowOnHover>ShowOnHover: @ShowOnHover</MudSwitch>
+    <MudSwitch @bind-Value=@ShowOnFocus>ShowOnFocus: @ShowOnFocus</MudSwitch>
+</MudStack>
+<MudStack Row>
+    <MudSwitch @bind-Value=@TooltipDisabled>Tooltip disabled: @TooltipDisabled</MudSwitch>
+    <MudSwitch @bind-Value=@ButtonDisabled>Button disabled: @ButtonDisabled</MudSwitch>
+</MudStack>
+
+@code
+{
+    public static string __description__ = "Test used to validate a disabled tooltip";
+
+    [Parameter]
+    public bool TooltipDisabled { get; set; }
+
+    [Parameter]
+    public bool ButtonDisabled { get; set; }
+
+    [Parameter]
+    public bool ShowOnHover { get; set; } = true; // Default
+
+    [Parameter]
+    public bool ShowOnFocus { get; set; } = true; // Default
+}
