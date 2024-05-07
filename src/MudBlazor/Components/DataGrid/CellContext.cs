@@ -27,7 +27,7 @@ namespace MudBlazor
             }
         }
 
-        public bool IsOpened
+        public bool Open
         {
             get
             {
