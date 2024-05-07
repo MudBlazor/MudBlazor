@@ -364,6 +364,8 @@ namespace MudBlazor
                         case "IsVisible":
                         case "IsVisibleChanged":
                         case "ItemIsDisabled":
+                        case "IsSelected":
+                        case "IsSelectedChanged":
                             NotifyIllegalParameter(parameter);
                             break;
                     }
