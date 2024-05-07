@@ -1036,7 +1036,7 @@ namespace MudBlazor.UnitTests.Components
             var select = comp.FindComponent<MudSelect<string>>();
             var mudSelectElement = comp.Find(".mud-select");
             comp.Find("div.mud-input-control").Click();
-            select.Instance._isOpen.Should().BeTrue();
+            select.Instance._open.Should().BeTrue();
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[0].Click();
             items[2].Click();

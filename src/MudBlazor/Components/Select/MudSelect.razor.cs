@@ -550,7 +550,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
-        internal bool _isOpen;
+        internal bool _open;
 
         public string _currentIcon { get; set; }
 
@@ -672,7 +672,7 @@ namespace MudBlazor
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
-            if (_isOpen)
+            if (_open)
                 await CloseMenu(true);
             else
                 await OpenMenu();
@@ -682,7 +682,7 @@ namespace MudBlazor
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
-            _isOpen = true;
+            _open = true;
             UpdateIcon();
             StateHasChanged();
             await HilightSelectedValue();
@@ -704,7 +704,7 @@ namespace MudBlazor
 
         public async Task CloseMenu(bool focusAgain = true)
         {
-            _isOpen = false;
+            _open = false;
             UpdateIcon();
             if (focusAgain)
             {
@@ -722,7 +722,7 @@ namespace MudBlazor
 
         private void UpdateIcon()
         {
-            _currentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
+            _currentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _open ? CloseIcon : OpenIcon;
         }
 
         protected override void OnInitialized()
@@ -865,7 +865,7 @@ namespace MudBlazor
             if (GetDisabledState() || GetReadOnlyState())
                 return;
             var key = obj.Key.ToLowerInvariant();
-            if (_isOpen && key.Length == 1 && key != " " && !(obj.CtrlKey || obj.ShiftKey || obj.AltKey || obj.MetaKey))
+            if (_open && key.Length == 1 && key != " " && !(obj.CtrlKey || obj.ShiftKey || obj.AltKey || obj.MetaKey))
             {
                 await SelectFirstItem(key);
                 return;
@@ -881,7 +881,7 @@ namespace MudBlazor
                         await CloseMenu();
                         break;
                     }
-                    else if (_isOpen == false)
+                    else if (_open == false)
                     {
                         await OpenMenu();
                         break;
@@ -897,7 +897,7 @@ namespace MudBlazor
                         await OpenMenu();
                         break;
                     }
-                    else if (_isOpen == false)
+                    else if (_open == false)
                     {
                         await OpenMenu();
                         break;
@@ -924,7 +924,7 @@ namespace MudBlazor
                     var index = _items.FindIndex(x => x.ItemId == (string)_activeItemId);
                     if (!MultiSelection)
                     {
-                        if (!_isOpen)
+                        if (!_open)
                         {
                             await OpenMenu();
                             return;
@@ -935,7 +935,7 @@ namespace MudBlazor
                     }
                     else
                     {
-                        if (_isOpen == false)
+                        if (_open == false)
                         {
                             await OpenMenu();
                             break;
@@ -1042,7 +1042,7 @@ namespace MudBlazor
 
         private async Task OnFocusOutAsync(FocusEventArgs focusEventArgs)
         {
-            if (_isOpen)
+            if (_open)
             {
                 // when the menu is open we immediately get back the focus if we lose it (i.e. because of checkboxes in multi-select)
                 // otherwise we can't receive key strokes any longer
