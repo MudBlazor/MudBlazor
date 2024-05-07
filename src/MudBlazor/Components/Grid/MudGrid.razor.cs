@@ -12,13 +12,15 @@ public partial class MudGrid : MudComponentBase
 {
     protected string Classname =>
         new CssBuilder("mud-grid")
-            .AddClass($"mud-grid-spacing-xs-{Spacing.ToString()}")
+            .AddClass($"gap-{Spacing}")
             .AddClass($"justify-{Justify.ToDescriptionString()}")
             .AddClass(Class)
             .Build();
 
     /// <summary>
-    /// Defines the spacing between its items.
+    /// The gap between items, measured in increments of <c>4px</c>.
+    /// <br/>
+    /// Maximum is <c>16</c>.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Grid.Behavior)]
