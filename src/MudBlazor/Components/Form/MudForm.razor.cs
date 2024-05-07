@@ -106,6 +106,7 @@ namespace MudBlazor
 
         /// <summary>
         /// The gap between items, measured in increments of <c>4px</c>.
+        /// <br/>
         /// Maximum is <c>16</c>.
         /// </summary>
         [Parameter]
