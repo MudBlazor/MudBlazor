@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
+
 namespace MudBlazor.Docs.Compiler
 {
     public partial class DocStrings
@@ -33,23 +36,24 @@ namespace MudBlazor.Docs.Compiler
                 cb.IndentLevel++;
 
                 var assembly = typeof(MudText).Assembly;
-                foreach (var type in assembly.GetTypes().OrderBy(t => GetSaveTypename(t)))
+                foreach (var type in assembly.GetTypes())
                 {
+                    var saveTypename = GetSaveTypename(type);
+
                     foreach (var property in type.GetPropertyInfosWithAttribute<ParameterAttribute>())
                     {
                         var doc = property.GetDocumentation() ?? "";
-                        doc = convertSeeTags(doc);
-                        doc = XmlTagRegularExpression().Replace(doc, "");  // remove all other XML tags
-                        cb.AddLine($"public const string {GetSaveTypename(type)}_{property.Name} = @\"{EscapeDescription(doc).Trim()}\";\n");
+                        doc = ConvertXmlDocumentationTags(type, doc);
+                        cb.AddLine($"public const string {saveTypename}_{property.Name} = @\"{EscapeDescription(doc).Trim()}\";\n");
                     }
 
                     // TableContext was causing conflicts due to the imperfect mapping from the name of class to the name of field in DocStrings
-                    if (type.IsSubclassOf(typeof(Attribute)) || GetSaveTypename(type) == "TypeInference"
-                            || type == typeof(Utilities.CssBuilder) || type == typeof(TableContext) || GetSaveTypename(type).StartsWith("EventUtil_"))
+                    if (type.IsSubclassOf(typeof(Attribute)) || saveTypename == "TypeInference"
+                            || type == typeof(Utilities.CssBuilder) || type == typeof(TableContext) || saveTypename.StartsWith("EventUtil_"))
                         continue;
 
                     // Check if base class has same name as derived class and use only declared to prevent double generation of methods
-                    var declaredOnly = type.BaseType is not null && GetSaveTypename(type.BaseType) == GetSaveTypename(type);
+                    var declaredOnly = type.BaseType is not null && GetSaveTypename(type.BaseType) == saveTypename;
 
                     foreach (var method in type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy | (declaredOnly ? BindingFlags.DeclaredOnly : BindingFlags.Default)))
                     {
@@ -60,7 +64,7 @@ namespace MudBlazor.Docs.Compiler
                                 continue;
 
                             var doc = method.GetDocumentation() ?? "";
-                            cb.AddLine($"public const string {GetSaveTypename(type)}_method_{GetSaveMethodIdentifier(method)} = @\"{EscapeDescription(doc)}\";\n");
+                            cb.AddLine($"public const string {saveTypename}_method_{GetSaveMethodIdentifier(method)} = @\"{EscapeDescription(doc)}\";\n");
                         }
                     }
                 }
@@ -109,6 +113,115 @@ namespace MudBlazor.Docs.Compiler
             });
         }
 
+        /// <summary>
+        /// Converts XML documentation elements to their HTML equivalents.
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <returns></returns>
+        private static string ConvertXmlDocumentationTags(Type type, string doc)
+        {
+            // Combine the summary and remarks
+            var summary = SummaryRegEx().Match(doc).Groups.GetValueOrDefault("1");
+            var remarks = RemarksRegEx().Match(doc).Groups.GetValueOrDefault("1");
+            var documentation = $"{summary} {remarks}".Trim();
+            // Convert common XML documentation elements to HTML
+            documentation = documentation
+                .Replace("<c>", "<code class=\"docs-code docs-code-primary\">", StringComparison.OrdinalIgnoreCase)
+                .Replace("</c>", "</code>", StringComparison.OrdinalIgnoreCase)
+                .Replace("<para>", "<p>")
+                .Replace("</para>", "</p>");
+            // Resolve "<see cref" links 
+            foreach (var link in LinkableCrefRegularExpression().Matches(documentation).Cast<Match>())
+            {
+                var before = link.Value;
+                var linkType = link.Groups.GetValueOrDefault("1").Value;
+                var after = link.Groups.GetValueOrDefault("2").Value;
+                var components = after.Split(".");
+                if (after.StartsWith("System", StringComparison.OrdinalIgnoreCase) || after.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase))
+                {
+                    var className = components[components.Length - 2];
+                    var memberName = components[components.Length - 1];
+                    after = "<a target=\"microsoft\" href=\"https://learn.microsoft.com/en-us/dotnet/api/" + after + ">" + className + "." + memberName + "</a>";
+                    documentation = documentation.Replace(before, after);
+                }
+                else if (after.StartsWith("MudBlazor."))
+                {
+                    if (linkType == "T")
+                    {
+                        // MudBlazor type
+                        var className = components[components.Length - 1];
+                        var folderName = className.Replace("Mud", "").Replace("Item", "");
+                        /* Uncomment to use API documentation link instead of linking to GitHub:
+                        var apiPageName = className.Replace("Mud", "").Replace("`1", "").ToLowerInvariant();
+                        after = "<a href=\"api/" + apiPageName + "\"><code class=\"docs-code docs-code-primary\">" + className + "</code></a>";
+                        */
+                        after = "<a target=\"Source\" href=\"https://github.com/MudBlazor/MudBlazor/blob/dev/src/MudBlazor/Components/" + folderName + "\">"
+                              + "<code class=\"docs-code docs-code-primary\">" + className + "</code></a>";
+                        documentation = documentation.Replace(before, after);
+                    }
+                    else if (linkType == "F")
+                    {
+                        // MudBlazor field (probably an enum)
+                        after = components[components.Length - 2] + "." + components[components.Length - 1];
+                        after = "<code class=\"docs-code docs-code-primary\">" + after + "</code>";
+                        documentation = documentation.Replace(before, after);
+                    }
+                    else if (linkType == "P" || linkType == "M" || linkType == "E")
+                    {
+                        if (after.StartsWith("MudBlazor.Icons"))
+                        {
+                            // MudBlazor icon
+                            after = "<code class=\"docs-code docs-code-primary\">" + after + "</code>";
+                            documentation = documentation.Replace(before, after);
+                        }
+                        else
+                        {
+                            // MudBlazor property or method
+                            var namespaceAndClass = components[components.Length - 3] + "." + components[components.Length - 2];
+                            var baseType = type.Assembly.GetType(namespaceAndClass);
+                            var className = components[components.Length - 2];
+                            var memberName = components[components.Length - 1];
+
+                            // Do we inherit from the linked type?
+                            if (baseType.IsSubclassOfGeneric(type))
+                            {
+                                // Member in a base class
+                                var apiPageName = type.Name.Replace("Mud", "").Replace("`1", "").Replace("`2", "").ToLowerInvariant();
+                                after = "<a href=\"api/" + apiPageName + "#" + memberName + "\"><code class=\"docs-code docs-code-primary\">" + memberName + "</code></a>";
+                                documentation = documentation.Replace(before, after);
+                            }
+                            else
+                            {
+                                // Member in another MudBlazor class
+                                var apiPageName = className.Replace("Mud", "").Replace("`1", "").ToLowerInvariant();
+                                after = "<a href=\"api/" + apiPageName + "#" + memberName + "\"><code class=\"docs-code docs-code-primary\">" + memberName + "</code></a>";
+                                documentation = documentation.Replace(before, after);
+                            }
+                            //if (className == "MudComponentBase")
+                            //{
+
+                            //}
+                            //if (type.Name == className || type.BaseType.Name == className)
+                            //{
+                            //    after = components[components.Length - 1];
+                            //    after = "<a href=\"api/" + apiPageName + "#" + after + "\"><code class=\"docs-code docs-code-primary\">" + after + "</code></a>";
+                            //    documentation = documentation.Replace(before, after);
+                            //}
+                        }
+                    }
+                }
+                else
+                {
+                    // Some other external type
+                    after = components[components.Length - 2] + "." + components[components.Length - 1];
+                    after = "<code class=\"docs-code docs-code-primary\">" + after + "</code>";
+                    documentation = documentation.Replace(before, after);
+                }
+            }
+
+            return documentation;
+        }
+
         private static string EscapeDescription(string doc)
         {
             return doc.Replace("\"", "\"\"");
@@ -117,14 +230,23 @@ namespace MudBlazor.Docs.Compiler
         [GeneratedRegex(@"</?.+?>")]
         private static partial Regex XmlTagRegularExpression();
 
+        [GeneratedRegex(@"<summary>\s*([ \S]*)\s*<\/summary>")]
+        private static partial Regex SummaryRegEx();
+
+        [GeneratedRegex(@"<remarks>\s*([ \S]*)\s*<\/remarks>")]
+        private static partial Regex RemarksRegEx();
+
         [GeneratedRegex(@"[\.,<>]")]
         private static partial Regex SaveTypenameRegularExpression();
 
         [GeneratedRegex("[^A-Za-z0-9_]")]
         private static partial Regex AlphanumericUnderscoreRegularExpression();
 
-        [GeneratedRegex("<see cref=\"[TFPME]:(MudBlazor\\.)?([^>]+)\" */>")]
+        [GeneratedRegex("<see cref=\"[TFPME]:(MudBlazor\\.)?([^>]+)\" */> ")]
         private static partial Regex SeeCrefRegularExpression();
+
+        [GeneratedRegex("<see cref=\"([TPFME]):([\\S]*)\"\\s\\/>")]
+        private static partial Regex LinkableCrefRegularExpression();
 
         [GeneratedRegex("`1")]
         private static partial Regex BacktickRegularExpression();

@@ -28,9 +28,9 @@
                     <EnumSwitch T="Grouping" @bind-Value="_propertiesGrouping" />
                     <MudTable Items="@properties" Elevation="0" Class="ma-0 mud-width-full" Breakpoint="@Breakpoint.Sm" GroupBy="@PropertiesGroupDefinition">
                         <HeaderContent>
-                            <MudTh>Name</MudTh>
-                            <MudTh>Type</MudTh>
-                            <MudTd>Default</MudTd>
+                            <MudTh Style="max-width:20%;">Name</MudTh>
+                            <MudTh Style="max-width:20%;overflow-wrap:break-word;">Type</MudTh>
+                            <MudTd Style="max-width:20%;overflow-wrap:break-word;">Default</MudTd>
                             <MudTh>Description</MudTh>
                         </HeaderContent>
                         <GroupHeaderTemplate>
@@ -48,7 +48,7 @@
                             }
                         </GroupHeaderTemplate>
                         <RowTemplate>
-                            <MudTd Class="docs-content-api-cell" DataLabel="Name">
+                            <MudTd id="@context.Name" Class="docs-content-api-cell" DataLabel="Name">
                                 <CodeInline>@context.Name</CodeInline>
                                 @if (_propertiesGrouping == Grouping.Inheritance && IsOverridden(context.PropertyInfo))
                                 {
@@ -56,7 +56,7 @@
                                 }
                             </MudTd>
                             <MudTd Class="docs-content-api-cell" DataLabel="Type">
-                                <div style="display: inline-flex; flex-direction: row; align-items: center; white-space: nowrap;">
+                                <div style="display: inline-flex; flex-direction: row; align-items: center;">
                                     <DocsTypeInfo Type="@context.Type" />
                                     @if (context.IsTwoWay)
                                     {
@@ -77,7 +77,7 @@
                                     @def
                                 }
                             </MudTd>
-                            <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
+                            <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@((MarkupString)context.Description)</MudTd>
                         </RowTemplate>
                         <GroupFooterTemplate></GroupFooterTemplate>
                     </MudTable>
@@ -92,14 +92,14 @@
                 <SectionContent Class="docs-content-api" Outlined="false">
                     <MudTable Items="@eventCallbacks" Elevation="0" Class="ma-0 mud-width-full" Breakpoint="@Breakpoint.Sm">
                         <HeaderContent>
-                            <MudTh>Name</MudTh>
-                            <MudTh>Type</MudTh>
+                            <MudTh Style="max-width:20%;">Name</MudTh>
+                            <MudTh Style="max-width:20%;overflow-wrap:break-word;">Type</MudTh>
                             <MudTh>Description</MudTh>
                         </HeaderContent>
                         <RowTemplate>
-                            <MudTd Class="docs-content-api-cell" DataLabel="Name"><CodeInline>@context.Name</CodeInline></MudTd>
+                            <MudTd id="@context.Name" Class="docs-content-api-cell" DataLabel="Name"><CodeInline>@context.Name</CodeInline></MudTd>
                             <MudTd Class="docs-content-api-cell" DataLabel="Type">@context.Type.GetTypeDisplayName()</MudTd>
-                            <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
+                            <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@((MarkupString)context.Description)</MudTd>
                         </RowTemplate>
                     </MudTable>
                 </SectionContent>
@@ -113,29 +113,29 @@
                 <SectionContent Class="docs-content-api" Outlined="false">
                     <MudTable Items="@methods" Elevation="0" Class="ma-0 mud-width-full" Breakpoint="@Breakpoint.Sm">
                         <HeaderContent>
-                            <MudTh>Name</MudTh>
-                            <MudTd>Parameters</MudTd>
-                            <MudTh>Return</MudTh>
+                            <MudTh Style="max-width:20%;">Name</MudTh>
+                            <MudTd Style="max-width:20%;">Parameters</MudTd>
+                            <MudTh Style="max-width:20%;">Return</MudTh>
                             <MudTh>Description</MudTh>
                         </HeaderContent>
                         <RowTemplate>
-                            <MudTd Class="docs-content-api-cell" DataLabel="Name"><CodeInline>@context.Signature</CodeInline></MudTd>
+                            <MudTd id="@context.Signature" Class="docs-content-api-cell" DataLabel="Name"><CodeInline>@context.Signature</CodeInline></MudTd>
                             <MudTd Class="docs-content-api-cell" DataLabel="Parameters">
                             @if (context.Parameters != null)
                             {
                                 foreach (var parameterInfo in context.Parameters)
                                 {
-                                    <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@($"{parameterInfo.ParameterType.GetTypeDisplayName()} {parameterInfo.Name}{AnalyseMethodDocumentation(context.Documentation, "param", parameterInfo.Name)}")</div>
+                                    <div style="display: flex; flex-direction: row; align-items: center;">@($"{parameterInfo.ParameterType.GetTypeDisplayName()} {parameterInfo.Name}{AnalyseMethodDocumentation(context.Documentation, "param", parameterInfo.Name)}")</div>
                                 }
                             }
                             </MudTd>
                             <MudTd Class="docs-content-api-cell" DataLabel="Return">
                             @if (@context.Return != null && context.Return.ParameterType.GetTypeDisplayName() != "void")
                             {
-                                <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@($"{context.Return.ParameterType.GetTypeDisplayName()}{AnalyseMethodDocumentation(context.Documentation, "returns")}")</div>
+                                <div style="display: flex; flex-direction: row; align-items: center;">@($"{context.Return.ParameterType.GetTypeDisplayName()}{AnalyseMethodDocumentation(context.Documentation, "returns")}")</div>
                             }
                             </MudTd>
-                            <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(AnalyseMethodDocumentation(context.Documentation, "summary")))</MudTd>
+                            <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@((MarkupString)AnalyseMethodDocumentation(context.Documentation, "summary"))</MudTd>
                         </RowTemplate>
                     </MudTable>
                 </SectionContent>
