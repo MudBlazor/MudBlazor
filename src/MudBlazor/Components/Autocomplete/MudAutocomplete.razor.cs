@@ -913,6 +913,11 @@ namespace MudBlazor
             //base.OnBlurred(args);
         }
 
+        private Task OnOverlayVisibleChanged(bool visible)
+        {
+            return visible ? Task.CompletedTask : CloseMenuAsync();
+        }
+
         private Task CoerceTextToValue()
         {
             if (!CoerceText)
