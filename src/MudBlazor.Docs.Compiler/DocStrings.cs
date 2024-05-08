@@ -15,14 +15,13 @@ namespace MudBlazor.Docs.Compiler
 
         public bool Execute()
         {
-            var paths = new Paths();
             var success = true;
             try
             {
                 var currentCode = string.Empty;
-                if (File.Exists(paths.DocStringsFilePath))
+                if (File.Exists(Paths.DocStringsFilePath))
                 {
-                    currentCode = File.ReadAllText(paths.DocStringsFilePath);
+                    currentCode = File.ReadAllText(Paths.DocStringsFilePath);
                 }
 
                 var cb = new CodeBuilder();
@@ -40,32 +39,36 @@ namespace MudBlazor.Docs.Compiler
                 {
                     var saveTypename = GetSaveTypename(type);
 
-                    foreach (var property in type.GetPropertyInfosWithAttribute<ParameterAttribute>())
-                    {
-                        var doc = property.GetDocumentation() ?? "";
-                        doc = ConvertXmlDocumentationTags(type, doc);
-                        cb.AddLine($"public const string {saveTypename}_{property.Name} = @\"{EscapeDescription(doc).Trim()}\";\n");
-                    }
-
                     // TableContext was causing conflicts due to the imperfect mapping from the name of class to the name of field in DocStrings
-                    if (type.IsSubclassOf(typeof(Attribute)) || saveTypename == "TypeInference"
-                            || type == typeof(Utilities.CssBuilder) || type == typeof(TableContext) || saveTypename.StartsWith("EventUtil_"))
+                    if (type.IsSubclassOf(typeof(Attribute))
+                        || saveTypename == "TypeInference"
+                        || type == typeof(Utilities.CssBuilder)
+                        || type == typeof(TableContext)
+                        || saveTypename.StartsWith("EventUtil_"))
                         continue;
 
                     // Check if base class has same name as derived class and use only declared to prevent double generation of methods
                     var declaredOnly = type.BaseType is not null && GetSaveTypename(type.BaseType) == saveTypename;
+                    var properties = type.GetPropertyInfosWithAttribute<ParameterAttribute>();
+                    var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy | (declaredOnly ? BindingFlags.DeclaredOnly : BindingFlags.Default));
 
-                    foreach (var method in type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy | (declaredOnly ? BindingFlags.DeclaredOnly : BindingFlags.Default)))
+                    foreach (var property in properties)
                     {
-                        if (!hiddenMethods.Any(x => x.Contains(method.Name)) && !method.Name.StartsWith("get_") && !method.Name.StartsWith("set_"))
-                        {
-                            // omit methods defined in System.Enum
-                            if (GetBaseDefinitionClass(method) == typeof(Enum))
-                                continue;
+                        var doc = property.GetDocumentation() ?? "";
+                        doc = ConvertXmlDocumentationTags(type, doc);
+                        cb.AddLine($"public const string {saveTypename}_{property.Name} = @\"{EscapeDescription(doc)}\";\n");
+                    }
 
-                            var doc = method.GetDocumentation() ?? "";
-                            cb.AddLine($"public const string {saveTypename}_method_{GetSaveMethodIdentifier(method)} = @\"{EscapeDescription(doc)}\";\n");
+                    foreach (var method in methods)
+                    {
+                        if (hiddenMethods.Contains(method.Name) || method.Name.StartsWith("get_") || method.Name.StartsWith("set_") || GetBaseDefinitionClass(method) == typeof(Enum))
+                        {
+                            continue;
                         }
+
+                        var doc = method.GetDocumentation() ?? "";
+                        doc = ConvertXmlDocumentationTags(type, doc);
+                        cb.AddLine($"public const string {saveTypename}_method_{GetSaveMethodIdentifier(method)} = @\"{EscapeDescription(doc)}\";\n");
                     }
                 }
 
@@ -76,12 +79,12 @@ namespace MudBlazor.Docs.Compiler
 
                 if (currentCode != cb.ToString())
                 {
-                    File.WriteAllText(paths.DocStringsFilePath, cb.ToString());
+                    File.WriteAllText(Paths.DocStringsFilePath, cb.ToString());
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error generating {paths.DocStringsFilePath} : {e.Message}");
+                Console.WriteLine($"Error generating {Paths.DocStringsFilePath} : {e.Message}");
                 success = false;
             }
 
@@ -120,6 +123,8 @@ namespace MudBlazor.Docs.Compiler
         /// <returns></returns>
         private static string ConvertXmlDocumentationTags(Type type, string doc)
         {
+            // Anything to do?
+            if (string.IsNullOrEmpty(doc)) { return string.Empty; }
             // Combine the summary and remarks
             var summary = SummaryRegEx().Match(doc).Groups.GetValueOrDefault("1");
             var remarks = RemarksRegEx().Match(doc).Groups.GetValueOrDefault("1");
