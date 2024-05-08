@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Rendering;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
@@ -78,33 +76,7 @@ public partial class MudText : MudComponentBase
     [Category(CategoryTypes.Text.Behavior)]
     public string? HtmlTag { get; set; }
 
-    /// <summary>
-    /// Constructs the render tree for the <see cref="MudText"/> component and applies styles and classes based on the current parameters.
-    /// </summary>
-    protected override void BuildRenderTree(RenderTreeBuilder builder)
-    {
-        base.BuildRenderTree(builder);
-
-        // Determine the appropriate HTML tag to use based on the Typo property, or use the specified HtmlTag.
-        var tagName = HtmlTag ?? GetTagName(Typo);
-
-        // Begin constructing the HTML element with the appropriate tag.
-        builder.OpenElement(0, tagName);
-
-        // Add any user-specified attributes that are not null.
-        foreach (var attribute in UserAttributes.Where(a => a.Value != null))
-            builder.AddAttribute(1, attribute.Key, attribute.Value);
-
-        // Add the computed class string and any user-defined styles.
-        builder.AddAttribute(2, "class", Classname);
-        builder.AddAttribute(3, "style", Style);
-
-        // Add the child content of the component.
-        builder.AddContent(4, ChildContent);
-
-        // Close the HTML element.
-        builder.CloseElement();
-    }
+    private string GetActualTag() => HtmlTag ?? GetTagName(Typo);
 
     private static string GetTagName(Typo typo) => typo switch
     {
