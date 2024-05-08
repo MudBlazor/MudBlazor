@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MudBlazor
 {
