@@ -317,7 +317,8 @@ namespace MudBlazor
         {
             if (Date.HasValue)
             {
-                PickerMonth = new DateTime(Date.Value.Year, Date.Value.Month, 1);
+                PickerMonth = new DateTime(Culture.Calendar.GetYear(Date.Value), Culture.Calendar.GetMonth(Date.Value),
+                    1, Culture.Calendar);
                 ScrollToYear();
             }
         }
@@ -327,7 +328,8 @@ namespace MudBlazor
         /// </summary>
         public async Task GoToDate(DateTime date, bool submitDate = true)
         {
-            PickerMonth = new DateTime(date.Year, date.Month, 1);
+            PickerMonth = new DateTime(Culture.Calendar.GetYear(date), Culture.Calendar.GetMonth(date), 1,
+                Culture.Calendar);
             if (submitDate)
             {
                 await SetDateAsync(date, true);
