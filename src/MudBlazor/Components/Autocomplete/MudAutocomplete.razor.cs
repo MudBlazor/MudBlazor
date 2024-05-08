@@ -913,7 +913,7 @@ namespace MudBlazor
             //base.OnBlurred(args);
         }
 
-        private Task OnOverlayVisibleChanged(bool willBeVisible)
+        private Task OnOverlayVisibleChangedAsync(bool willBeVisible)
         {
             if (!willBeVisible && Open)
             {
