@@ -93,7 +93,7 @@
         <MudAutocomplete @ref="_searchAutocomplete" T="ApiLinkServiceEntry" PopoverClass="docs-mobile-dialog-search-popover"
                          AutoFocus="true" Placeholder="Search" Clearable="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
                          SearchFunc="async (text, token) => await Search(text, token)" DebounceInterval="0"
-                         ValueChanged="OnSearchResult" IsOpenChanged="o => _searchDialogAutocompleteOpen = o" ReturnedItemsCountChanged="c => _searchDialogReturnedItemsCount = c">
+                         ValueChanged="OnSearchResult" OpenChanged="o => _searchDialogAutocompleteOpen = o" ReturnedItemsCountChanged="c => _searchDialogReturnedItemsCount = c">
             <ItemTemplate Context="result">
                 <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
             </ItemTemplate>

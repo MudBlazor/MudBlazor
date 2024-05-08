@@ -348,9 +348,9 @@ namespace MudBlazor
             if (SelectionMode == SelectionMode.MultiSelection)
             {
                 var selectedValues = new HashSet<T?>(_values.Value ?? Array.Empty<T?>());
-                item.SetSelected(!item.IsSelected);
+                item.SetSelected(!item.Selected);
 
-                if (item.IsSelected)
+                if (item.Selected)
                 {
                     selectedValues.Add(itemValue);
                 }
@@ -363,7 +363,7 @@ namespace MudBlazor
             }
             else if (SelectionMode == SelectionMode.ToggleSelection)
             {
-                if (item.IsSelected)
+                if (item.Selected)
                 {
                     item.SetSelected(false);
                     await _value.SetValueAsync(default);

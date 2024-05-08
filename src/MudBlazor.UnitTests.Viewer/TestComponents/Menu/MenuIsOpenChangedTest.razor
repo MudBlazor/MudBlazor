@@ -4,7 +4,7 @@
 
 <MudMenu
     @ref="Menu"
-    IsOpenChanged="@(o => _ = o ? TrueInvocationCount++ : FalseInvocationCount++)"/>
+    OpenChanged="@(o => _ = o ? TrueInvocationCount++ : FalseInvocationCount++)"/>
 
 
 @code {

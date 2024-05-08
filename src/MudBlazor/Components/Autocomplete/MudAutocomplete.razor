@@ -43,7 +43,7 @@
                     }
                 }
 
-                <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
+                <MudPopover Open="@Open" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
                     @if (ProgressIndicatorInPopoverTemplate != null && IsLoading)
                     {
                         @ProgressIndicatorInPopoverTemplate
@@ -112,4 +112,4 @@
     </div>
 </CascadingValue>
 
-<MudOverlay Visible="IsOpen" OnClick="CloseMenuAsync" @ontouchstart="CloseMenuAsync" LockScroll="false" />
+<MudOverlay Visible="Open" OnClick="CloseMenuAsync" @ontouchstart="CloseMenuAsync" LockScroll="false" />
