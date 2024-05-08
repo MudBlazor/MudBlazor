@@ -44,7 +44,7 @@ namespace MudBlazor
         protected IDialogService DialogService { get; set; }
 
         /// <summary>
-        /// Define the dialog title as a renderfragment (overrides Title)
+        /// Define the dialog title as a RenderFragment (overrides Title)
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
@@ -137,14 +137,14 @@ namespace MudBlazor
         [Category(CategoryTypes.Dialog.Behavior)]
         public DefaultFocus DefaultFocus { get; set; } = MudGlobal.DialogDefaults.DefaultFocus;
 
-        private bool IsInline => IsNested || DialogInstance == null;
+        private bool IsInline => IsNested || DialogInstance is null;
 
         /// <summary>
-        /// Show this inlined dialog
+        /// Shows this inlined dialog asynchronously.
         /// </summary>
-        /// <param name="title"></param>
-        /// <param name="options"></param>
-        /// <returns></returns>
+        /// <param name="title">The title of the dialog.</param>
+        /// <param name="options">The options for the dialog.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task<IDialogReference> ShowAsync(string title = null, DialogOptions options = null)
         {
             if (!IsInline)
@@ -190,6 +190,24 @@ namespace MudBlazor
             return _reference;
         }
 
+        /// <summary>
+        /// Closes the currently open inlined dialog asynchronously.
+        /// </summary>
+        /// <param name="result">The result to be passed to the dialog's completion task.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public async Task CloseAsync(DialogResult result = null)
+        {
+            if (!IsInline || _reference is null)
+            {
+                return;
+            }
+
+            await _visibleState.SetValueAsync(false);
+            _reference.Close(result);
+            _reference = null;
+        }
+
+        /// <inheritdoc/>
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (IsInline)
@@ -199,7 +217,7 @@ namespace MudBlazor
                     // If visible and we don't have any reference we need to call Show
                     await ShowAsync();
                 }
-                else if (_reference != null)
+                else if (_reference is not null)
                 {
                     if (_visibleState.Value)
                     {
@@ -217,22 +235,7 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        /// <summary>
-        /// Close the currently open inlined dialog
-        /// </summary>
-        /// <param name="result"></param>
-        public async Task CloseAsync(DialogResult result = null)
-        {
-            if (!IsInline || _reference is null)
-            {
-                return;
-            }
-
-            await _visibleState.SetValueAsync(false);
-            _reference.Close(result);
-            _reference = null;
-        }
-
+        /// <inheritdoc/>
         protected override void OnInitialized()
         {
             base.OnInitialized();
