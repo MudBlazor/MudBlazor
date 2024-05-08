@@ -3,8 +3,6 @@
 @using MudBlazor.Utilities
 @typeparam T
 
-
-
 @(ClearFilterCache()) @*Clear filtered items cache for this render*@
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
@@ -21,7 +19,7 @@
         {
             <div Class="mud-table-smalldevices-sortselect">
                 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed>
-                    <MudSelect Value="@Context.CurrentSortLabel" Label="@SortLabel" ValueChanged="@(v => Context.SetSortFunc(v, override_direction_none: true))" T="MudTableSortLabel<T>">
+                    <MudSelect Value="@Context.CurrentSortLabel" Label="@SortLabel" ValueChanged="@(v => Context.SetSortFunc(v, overrideDirectionNone: true))" T="MudTableSortLabel<T>">
                         @foreach (var label in Context.SortLabels)
                         {
                             <MudSelectItem Value="@label">@label.ChildContent</MudSelectItem>
@@ -104,7 +102,7 @@
                                       Checked="@(IsCheckedRow(item))"
                                       CheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
 
-                                   @if ((!ReadOnly) && Editable && object.Equals(_editingItem, item))
+                                   @if ((!ReadOnly) && Editable && Equals(_editingItem, item))
                                    {
                                         <CascadingValue Value="@Validator" IsFixed="true">
                                            @if(RowEditingTemplate != null)
@@ -141,7 +139,7 @@
                             </MudVirtualize>
                         }
                     }
-                    @if(!(CurrentPageItems != null && CurrentPageItems.Any())
+                    @if(!(CurrentPageItems is not null && CurrentPageItems.Any())
                         && (Loading ? LoadingContent != null : NoRecordsContent != null)
                     )
                     {
@@ -171,7 +169,7 @@
                         else
                         {
                             <MudTFootRow Checkable="MultiSelection" Expandable="@(GroupBy?.Expandable ?? false)">
-                                @if (@FooterContent != null)
+                                @if (FooterContent != null)
                                 {
                                     @FooterContent
                                 }
@@ -218,7 +216,7 @@
              <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" Checkable="MultiSelection" Editable="IsItemEditable(item)" Expandable="expandable"
                         Checked="Context.Selection.Contains(item)" CheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
 
-                    @if ((!ReadOnly) && Editable && object.Equals(_editingItem, item))
+                    @if ((!ReadOnly) && Editable && Equals(_editingItem, item))
                     {
                         <CascadingValue Value="@Validator" IsFixed="true">
                             @if(RowEditingTemplate != null)

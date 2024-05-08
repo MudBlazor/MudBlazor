@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
     /// Represents a base class for designing column components.
     /// </summary>
@@ -53,11 +54,8 @@ namespace MudBlazor
         /// The text to display for the column header.
         /// </summary>
         [Parameter]
-        public string HeaderText { get; set; }
+        public string? HeaderText { get; set; }
 
-        protected bool IsDefault<T>(T value)
-        {
-            return EqualityComparer<T>.Default.Equals(value, default(T));
-        }
+        protected bool IsDefault<T>(T value) => EqualityComparer<T>.Default.Equals(value, default(T));
     }
 }
