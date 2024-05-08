@@ -18,7 +18,7 @@ namespace MudBlazor
                 .AddClass($"mud-ripple mud-ripple-icon", Ripple)
                 .AddClass($"yellow-text.text-darken-3", Color == Color.Default)
                 .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default)
-                .AddClass($"mud-rating-item-active", IsActive)
+                .AddClass($"mud-rating-item-active", Active)
                 .AddClass($"mud-disabled", Disabled)
                 .AddClass($"mud-readonly", ReadOnly)
                 .AddClass(Class)
@@ -77,7 +77,7 @@ namespace MudBlazor
 
         internal string? ItemIcon { get; set; }
 
-        internal bool IsActive { get; set; }
+        internal bool Active { get; set; }
 
         private bool Checked => ItemValue == Rating?.GetState<int>(nameof(Rating.SelectedValue));
 
@@ -125,7 +125,7 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
-            IsActive = false;
+            Active = false;
 
             return ItemHovered.InvokeAsync(null);
         }
@@ -137,7 +137,7 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
-            IsActive = true;
+            Active = true;
 
             return ItemHovered.InvokeAsync(ItemValue);
         }
@@ -149,7 +149,7 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
-            IsActive = false;
+            Active = false;
             var ratingSelectedValue = Rating?.GetState<int>(nameof(Rating.SelectedValue));
 
             return ItemClicked.InvokeAsync(ratingSelectedValue == ItemValue ? 0 : ItemValue);
