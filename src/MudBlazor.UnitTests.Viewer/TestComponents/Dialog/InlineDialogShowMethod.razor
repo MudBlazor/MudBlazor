@@ -1,0 +1,43 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@inject IDialogService DialogService
+
+<MudButton OnClick="OpenDialog" Class="open-dialog-button">
+    Options Dialog
+</MudButton>
+
+<MudDialog @ref="dialog">
+    <DialogContent>
+        <p>Here be dragons</p>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Class="close-dialog-button" OnClick="Close">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private MudDialog dialog;
+
+    private async Task OpenDialog()
+    {
+        var dialogInstance = dialog.Show("Options Dialog");
+
+        try
+        {
+            var result = await dialogInstance.Result;
+
+            if (result != null)
+                await DialogService.ShowMessageBox("result", result.Data as string);
+            else
+                await DialogService.ShowMessageBox("error", "result was null");
+        }
+        catch (Exception e)
+        {
+            await DialogService.ShowMessageBox("error", e.ToString());
+        }
+    }
+
+    private void Close()
+    {
+        dialog.Close(DialogResult.Ok("dialog was successfully closed"));
+    }
+}
