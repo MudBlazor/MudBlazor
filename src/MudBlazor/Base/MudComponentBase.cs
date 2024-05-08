@@ -307,6 +307,15 @@ namespace MudBlazor
                             break;
                     }
                 }
+                else if (this is MudText)
+                {
+                    switch (parameter)
+                    {
+                        case "Inline":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
                 else
                 {
                     switch (parameter)
