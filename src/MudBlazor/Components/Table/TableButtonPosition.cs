@@ -25,8 +25,8 @@ namespace MudBlazor
 
     public static class TableButtonPositionExtentions
     {
-        public static bool IsEditable(this TableContext context, bool ignoreEditable) =>
-            (context?.Table.IsEditable ?? false) && !ignoreEditable;
+        public static bool Editable(this TableContext context, bool ignoreEditable) =>
+            (context?.Table.Editable ?? false) && !ignoreEditable;
 
         public static bool DisplayApplyButtonAtStart(this TableApplyButtonPosition position) =>
             position is TableApplyButtonPosition.Start or TableApplyButtonPosition.StartAndEnd;
@@ -34,7 +34,7 @@ namespace MudBlazor
             position is TableEditButtonPosition.Start or TableEditButtonPosition.StartAndEnd;
 
         public static bool DisplayApplyButtonAtStart(this TableContext context, bool ignoreEditable) =>
-            context.IsEditable(ignoreEditable) && context.Table.ApplyButtonPosition.DisplayApplyButtonAtStart();
+            context.Editable(ignoreEditable) && context.Table.ApplyButtonPosition.DisplayApplyButtonAtStart();
 
         public static bool DisplayApplyButtonAtEnd(this TableApplyButtonPosition position) =>
             position is TableApplyButtonPosition.End or TableApplyButtonPosition.StartAndEnd;
@@ -42,12 +42,12 @@ namespace MudBlazor
             position is TableEditButtonPosition.End or TableEditButtonPosition.StartAndEnd;
 
         public static bool DisplayApplyButtonAtEnd(this TableContext context, bool ignoreEditable) =>
-            context.IsEditable(ignoreEditable) && context.Table.ApplyButtonPosition.DisplayApplyButtonAtEnd();
+            context.Editable(ignoreEditable) && context.Table.ApplyButtonPosition.DisplayApplyButtonAtEnd();
 
         public static bool DisplayEditbuttonAtStart(this TableContext context, bool ignoreEditable) =>
-            context.IsEditable(ignoreEditable) && context.Table.EditButtonPosition.DisplayEditButtonAtStart() && context.Table.EditTrigger == TableEditTrigger.EditButton;
+            context.Editable(ignoreEditable) && context.Table.EditButtonPosition.DisplayEditButtonAtStart() && context.Table.EditTrigger == TableEditTrigger.EditButton;
 
         public static bool DisplayEditbuttonAtEnd(this TableContext context, bool ignoreEditable) =>
-            context.IsEditable(ignoreEditable) && context.Table.EditButtonPosition.DisplayEditButtonAtEnd() && context.Table.EditTrigger == TableEditTrigger.EditButton;
+            context.Editable(ignoreEditable) && context.Table.EditButtonPosition.DisplayEditButtonAtEnd() && context.Table.EditTrigger == TableEditTrigger.EditButton;
     }
 }

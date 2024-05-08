@@ -370,6 +370,9 @@ namespace MudBlazor
                         case "ItemIsDisabled":
                         case "IsSelected":
                         case "IsSelectedChanged":
+                        case "IsEditable":
+                        case "IsEditing":
+                        case "IsEditSwitchBlocked":
                             NotifyIllegalParameter(parameter);
                             break;
                     }

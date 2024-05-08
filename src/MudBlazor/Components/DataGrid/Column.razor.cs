@@ -155,7 +155,7 @@ namespace MudBlazor
         [Parameter] public Func<T, string> CellClassFunc { get; set; }
         [Parameter] public string CellStyle { get; set; }
         [Parameter] public Func<T, string> CellStyleFunc { get; set; }
-        [Parameter] public bool IsEditable { get; set; } = true;
+        [Parameter] public bool Editable { get; set; } = true;
         [Parameter] public RenderFragment<CellContext<T>> EditTemplate { get; set; }
 
         #endregion

@@ -13,7 +13,7 @@ namespace MudBlazor
     public abstract class MudTableBase : MudComponentBase
     {
         internal object _editingItem = null;
-        internal bool IsEditing => _editingItem != null;
+        internal bool Editing => _editingItem != null;
 
         private int _currentPage = 0;
         internal int? _rowsPerPage;
@@ -360,14 +360,14 @@ namespace MudBlazor
         public bool CanCancelEdit { get; set; }
 
         /// <summary>
-        /// Set the positon of the CommitEdit and CancelEdit button, if <see cref="IsEditable"/> IsEditable is true. Defaults to the end of the row
+        /// Set the positon of the CommitEdit and CancelEdit button, if <see cref="Editable"/> is true. Defaults to the end of the row
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
         public TableApplyButtonPosition ApplyButtonPosition { get; set; } = TableApplyButtonPosition.End;
 
         /// <summary>
-        /// Set the positon of the StartEdit button, if <see cref="IsEditable"/> IsEditable is true. Defaults to the end of the row
+        /// Set the positon of the StartEdit button, if <see cref="Editable"/> is true. Defaults to the end of the row
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
@@ -548,7 +548,7 @@ namespace MudBlazor
         internal abstract void OnHeaderCheckboxClicked(bool checkedState);
         internal abstract bool HasRowMouseEnterEventHandler { get; }
         internal abstract bool HasRowMouseLeaveEventHandler { get; }
-        internal abstract bool IsEditable { get; }
+        internal abstract bool Editable { get; }
 
         public abstract bool ContainsItem(object item);
         public abstract void UpdateSelection();
