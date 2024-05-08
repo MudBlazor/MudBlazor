@@ -568,9 +568,9 @@ namespace MudBlazor.UnitTests.Components
             await _provider.InvokeAsync(() =>
                 primary = _service.Add("ah, ah, ah, ah, stayin' alive", Severity.Normal, c =>
                 {
-                    c.ShowTransitionDuration = 40;
-                    c.HideTransitionDuration = 40;
-                    c.VisibleStateDuration = 40;
+                    c.ShowTransitionDuration = int.MaxValue;
+                    c.VisibleStateDuration = 50;
+                    c.HideTransitionDuration = 100;
                 })
             );
 
