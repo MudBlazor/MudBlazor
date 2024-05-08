@@ -163,11 +163,11 @@ namespace MudBlazor
                 [nameof(ContentStyle)] = ContentStyle,
                 [nameof(DefaultFocus)] = DefaultFocus,
             };
+            Visible = true;
             _reference = DialogService.Show<MudDialog>(title, parameters, options ?? Options);
             _reference.Result.ContinueWith(t =>
             {
-                _visible = false;
-                InvokeAsync(() => VisibleChanged.InvokeAsync(false));
+                return InvokeAsync(() => Visible = false);
             });
             return _reference;
         }
@@ -176,7 +176,7 @@ namespace MudBlazor
         {
             if (IsInline)
             {
-                if (_visible && _reference == null)
+                if (Visible && _reference == null)
                 {
                     Show(); // if visible and we don't have any reference we need to call Show
                 }
@@ -199,6 +199,7 @@ namespace MudBlazor
         {
             if (!IsInline || _reference == null)
                 return;
+            Visible = false;
             _reference.Close(result);
             _reference = null;
         }
