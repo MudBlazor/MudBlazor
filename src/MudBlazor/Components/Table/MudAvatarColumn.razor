@@ -1,6 +1,7 @@
 ﻿@typeparam T
 @namespace MudBlazor
 @inherits MudBaseColumn
+
 @if (Visible)
 {
     @if (Mode == Rendermode.Header)
@@ -9,16 +10,10 @@
     }
     else if (Mode is Rendermode.Item or Rendermode.Edit)
     {
-        <MudTd><MudAvatar Size="Size.Small">@Value.ToString()</MudAvatar></MudTd>
+        <MudTd><MudAvatar Size="Size.Small">@Value?.ToString()</MudAvatar></MudTd>
     }
     else if (Mode == Rendermode.Footer)
     {
         <MudTd></MudTd>
     }
-}
-
-@code {
-
-    [Parameter]
-    public T Value { get; set; }
 }
