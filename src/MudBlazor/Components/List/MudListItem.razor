@@ -38,8 +38,11 @@
             else
             {
                 @Text
-                <br />
-                <MudText Class="mud-list-item-secondary-text" Typo="Typo.subtitle2">@SecondaryText</MudText>
+                @if (!string.IsNullOrEmpty(SecondaryText))
+                {
+                    <br />
+                    <MudText Class="mud-list-item-secondary-text" Typo="Typo.subtitle2">@SecondaryText</MudText>
+                }
             }
         </MudText>
     </div>
