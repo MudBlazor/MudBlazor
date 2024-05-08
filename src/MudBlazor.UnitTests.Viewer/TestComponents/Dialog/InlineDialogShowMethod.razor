@@ -1,43 +1,44 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 @inject IDialogService DialogService
 
-<MudButton OnClick="OpenDialog" Class="open-dialog-button">
+<MudButton OnClick="OpenDialogAsync" Class="open-dialog-button">
     Options Dialog
 </MudButton>
 
-<MudDialog @ref="dialog">
+<MudDialog @ref="_dialog">
     <DialogContent>
         <p>Here be dragons</p>
     </DialogContent>
     <DialogActions>
-        <MudButton Class="close-dialog-button" OnClick="Close">Ok</MudButton>
+        <MudButton Class="close-dialog-button" OnClick="CloseAsync">Ok</MudButton>
     </DialogActions>
 </MudDialog>
 
 @code {
-    private MudDialog dialog;
+    private MudDialog _dialog;
 
-    private async Task OpenDialog()
+    private async Task OpenDialogAsync()
     {
-        var dialogInstance = dialog.Show("Options Dialog");
+        var dialogInstance = await _dialog.ShowAsync("Options Dialog");
 
         try
         {
             var result = await dialogInstance.Result;
 
-            if (result != null)
+            if (result is not null)
+            {
                 await DialogService.ShowMessageBox("result", result.Data as string);
+            }
             else
+            {
                 await DialogService.ShowMessageBox("error", "result was null");
+            }
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            await DialogService.ShowMessageBox("error", e.ToString());
+            await DialogService.ShowMessageBox("error", exception.ToString());
         }
     }
 
-    private void Close()
-    {
-        dialog.Close(DialogResult.Ok("dialog was successfully closed"));
-    }
+    private Task CloseAsync() => _dialog.CloseAsync(DialogResult.Ok("dialog was successfully closed"));
 }
