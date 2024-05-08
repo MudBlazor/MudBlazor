@@ -51,6 +51,13 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Behavior)]
         public string? Text { get; set; }
 
+        /// <summary>
+        /// The secondary text to display
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public string? SecondaryText { get; set; }
+
         [Parameter]
         [Category(CategoryTypes.List.Selecting)]
         public T? Value { get; set; }
