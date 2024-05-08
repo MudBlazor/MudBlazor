@@ -307,6 +307,15 @@ namespace MudBlazor
                             break;
                     }
                 }
+                else if (this is MudText)
+                {
+                    switch (parameter)
+                    {
+                        case "Inline":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
                 else
                 {
                     switch (parameter)
@@ -370,6 +379,9 @@ namespace MudBlazor
                         case "ItemIsDisabled":
                         case "IsSelected":
                         case "IsSelectedChanged":
+                        case "IsEditable":
+                        case "IsEditing":
+                        case "IsEditSwitchBlocked":
                             NotifyIllegalParameter(parameter);
                             break;
                     }

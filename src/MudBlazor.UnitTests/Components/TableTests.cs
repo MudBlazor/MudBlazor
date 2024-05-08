@@ -2281,10 +2281,10 @@ namespace MudBlazor.UnitTests.Components
 
                 trs[0].Click();
                 tableInstance.SelectedItem.Should().Be(5);
-                tableInstance.IsEditing.Should().BeFalse();
+                tableInstance.Editing.Should().BeFalse();
 
                 trs[1].Click();
-                tableInstance.IsEditing.Should().BeTrue();
+                tableInstance.Editing.Should().BeTrue();
                 tableInstance.SelectedItem.Should().Be(10);
 
 

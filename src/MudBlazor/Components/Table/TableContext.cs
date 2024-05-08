@@ -106,7 +106,7 @@ namespace MudBlazor
 
         public override void ManagePreviousEditedRow(MudTr row)
         {
-            if (Table.IsEditable)
+            if (Table.Editable)
             {
                 // Reset edition values of the edited row
                 // if another row is selected for edition
