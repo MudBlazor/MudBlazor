@@ -1,8 +1,6 @@
 ﻿using Bunit;
-using NUnit.Framework;
-using MudBlazor;
-using Microsoft.AspNetCore.Components;
 using FluentAssertions;
+using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components;
 
