@@ -38,6 +38,22 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Editing)]
         public RenderFragment<T> RowEditingTemplate { get; set; }
 
+        /// <summary>
+        /// A function that returns whether or not an item should be editable. Use to remove editing for certain rows.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Editing)]
+        public Func<T, bool> RowEditableFunc { get; set; }
+
+        private bool IsItemEditable(T item)
+        {
+            if (!IsEditable)
+                return false;
+            if (RowEditableFunc == null)
+                return true;
+            return RowEditableFunc(item);
+        }
+
         #region Code for column based approach
         /// <summary>
         /// Defines how a table column looks like. Columns components should inherit from MudBaseColumn

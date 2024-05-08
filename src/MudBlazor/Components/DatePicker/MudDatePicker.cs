@@ -230,25 +230,25 @@ namespace MudBlazor
             switch (args.Key)
             {
                 case "ArrowRight":
-                    if (IsOpen)
+                    if (Open)
                     {
 
                     }
                     break;
                 case "ArrowLeft":
-                    if (IsOpen)
+                    if (Open)
                     {
 
                     }
                     break;
                 case "ArrowUp":
-                    if (IsOpen == false && Editable == false)
+                    if (Open == false && Editable == false)
                     {
-                        IsOpen = true;
+                        Open = true;
                     }
                     else if (args.AltKey)
                     {
-                        IsOpen = false;
+                        Open = false;
                     }
                     else if (args.ShiftKey)
                     {
@@ -260,9 +260,9 @@ namespace MudBlazor
                     }
                     break;
                 case "ArrowDown":
-                    if (IsOpen == false && Editable == false)
+                    if (Open == false && Editable == false)
                     {
-                        IsOpen = true;
+                        Open = true;
                     }
                     else if (args.ShiftKey)
                     {
@@ -278,7 +278,7 @@ namespace MudBlazor
                     break;
                 case "Enter":
                 case "NumpadEnter":
-                    if (!IsOpen)
+                    if (!Open)
                     {
                         await OpenAsync();
                     }
@@ -292,7 +292,7 @@ namespace MudBlazor
                 case " ":
                     if (!Editable)
                     {
-                        if (!IsOpen)
+                        if (!Open)
                         {
                             await OpenAsync();
                         }

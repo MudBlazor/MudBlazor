@@ -114,6 +114,8 @@ namespace MudBlazor
 
         private void StartEditingItem(bool buttonClicked)
         {
+            if (!IsEditable) return;
+
             if (Context?.Table.IsEditable == true && Context?.Table.IsEditing == true && Context?.Table.IsEditRowSwitchingBlocked == true) return;
 
             if ((Context?.Table.EditTrigger == TableEditTrigger.RowClick && buttonClicked) || (Context?.Table.EditTrigger == TableEditTrigger.EditButton && !buttonClicked)) return;

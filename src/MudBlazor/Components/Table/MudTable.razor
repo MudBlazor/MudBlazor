@@ -100,7 +100,7 @@
                                 <MudVirtualize Enabled="@Virtualize" Items="@CurrentPageItems?.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
                                @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
                                @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
-                               <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" Checkable="MultiSelection" IsEditable="IsEditable"
+                               <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" Checkable="MultiSelection" IsEditable="IsItemEditable(item)"
                                       Checked="@(IsCheckedRow(item))"
                                       CheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
 
@@ -215,7 +215,7 @@
                 var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).AddClass(customClass, !string.IsNullOrEmpty(customClass)).Build();
                 var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build();
              } 
-             <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" Checkable="MultiSelection" IsEditable="IsEditable" Expandable="expandable"
+             <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" Checkable="MultiSelection" IsEditable="IsItemEditable(item)" Expandable="expandable"
                         Checked="Context.Selection.Contains(item)" CheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
 
                     @if ((!ReadOnly) && IsEditable && object.Equals(_editingItem, item))
