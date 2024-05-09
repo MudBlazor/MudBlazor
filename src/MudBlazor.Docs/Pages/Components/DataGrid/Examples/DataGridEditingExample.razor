@@ -7,7 +7,7 @@
     StartedEditingItem="@StartedEditingItem" CanceledEditingItem="@CanceledEditingItem" CommittedItemChanges="@CommittedItemChanges"
     Bordered="true" Dense="true" EditTrigger="@(_editTriggerRowClick ? DataGridEditTrigger.OnRowClick : DataGridEditTrigger.Manual)">
     <Columns>
-        <PropertyColumn Property="x => x.Number" Title="Nr" IsEditable="false" />
+        <PropertyColumn Property="x => x.Number" Title="Nr" Editable="false" />
         <PropertyColumn Property="x => x.Sign" />
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Position">

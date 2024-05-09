@@ -576,6 +576,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task PersianCalendarTest_GoToDate()
+        {
+            var cal = new PersianCalendar();
+            var comp = Context.RenderComponent<PersianDatePickerTest>();
+            var datePicker = comp.FindComponent<MudDatePicker>().Instance;
+            await comp.InvokeAsync(() => datePicker.OpenAsync());
+            datePicker.Text.Should().Be("1399/11/26");
+            await comp.InvokeAsync(() => datePicker.GoToDate(new DateTime(2024, 5, 8)));
+            comp.WaitForAssertion(() => datePicker.Text.Should().Be("1403/02/19"));
+            var button = comp
+                .FindAll(".mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-picker-calendar-day.mud-day")
+                .Single(x => x.GetAttribute("style") == "--day-id: 1;");
+            button.TextContent.Should().Be("1");
+        }
+
+        [Test]
         public void SetPickerValue_CheckText()
         {
             var date = DateTime.Now;

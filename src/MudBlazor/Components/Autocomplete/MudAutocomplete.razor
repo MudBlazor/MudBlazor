@@ -107,4 +107,4 @@
     </div>
 </CascadingValue>
 
-<MudOverlay Visible="Open" OnClick="CloseMenuAsync" @ontouchstart="CloseMenuAsync" LockScroll="false" />
+<MudOverlay AutoClose Visible="Open" VisibleChanged="OnOverlayVisibleChangedAsync" LockScroll="false" />
