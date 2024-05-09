@@ -82,13 +82,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Behavior)]
         public RenderFragment<T>? Columns { get; set; }
 
-        /// <summary>
-        /// Comma separated list of columns to show if there is no templates defined
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Table.Behavior)]
-        public string? QuickColumns { get; set; }
-
         // Workaround because "where T : new()" didn't work with Blazor components
         // T must have a default constructor, otherwise we cannot show headers when Items collection
         // is empty
@@ -111,53 +104,11 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             if (HasServerData)
+            {
                 Loading = true;
-
-            if (Columns == null && RowTemplate == null && RowEditingTemplate == null)
-            {
-                string[]? quickcolumnslist = null;
-                if (!string.IsNullOrWhiteSpace(QuickColumns))
-                {
-                    quickcolumnslist = QuickColumns.Split(",");
-                }
-                // Create template from T
-                Columns = context => builder =>
-                {
-                    var myType = context!.GetType();
-                    IList<PropertyInfo> propertylist = new List<PropertyInfo>(myType.GetProperties().Where(p => p.PropertyType.IsPublic));
-
-                    if (quickcolumnslist == null)
-                    {
-                        foreach (var propinfo in propertylist)
-                        {
-                            BuildMudColumnTemplateItem(context, builder, propinfo);
-                        }
-                    }
-                    else
-                    {
-                        foreach (var colname in quickcolumnslist)
-                        {
-                            var propinfo = propertylist.SingleOrDefault(pl => pl.Name == colname);
-                            if (propinfo != null)
-                            {
-                                BuildMudColumnTemplateItem(context, builder, propinfo);
-                            }
-                        }
-                    }
-                };
             }
         }
 
-        private static void BuildMudColumnTemplateItem(T context, RenderTreeBuilder builder, PropertyInfo propinfo)
-        {
-            if (propinfo.PropertyType.IsPrimitive || propinfo.PropertyType == typeof(string))
-            {
-                builder.OpenComponent<MudColumn<string>>(0);
-                builder.AddAttribute(1, "Value", propinfo.GetValue(context)?.ToString());
-                builder.AddAttribute(2, "HeaderText", propinfo.Name);
-                builder.CloseComponent();
-            }
-        }
         #endregion
         /// <summary>
         /// Defines the table body content when there are no matching records found
