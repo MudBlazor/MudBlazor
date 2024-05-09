@@ -182,10 +182,10 @@ namespace MudBlazor
             // ReSharper restore MethodHasAsyncOverload
 
             // Do not await this!
-            _ = _reference.Result.ContinueWith(t =>
+            _reference.Result.ContinueWith(t =>
             {
                 return InvokeAsync(() => _visibleState.SetValueAsync(false));
-            });
+            }).AndForget();
 
             return _reference;
         }
