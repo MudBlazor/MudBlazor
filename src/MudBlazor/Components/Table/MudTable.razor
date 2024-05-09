@@ -53,9 +53,7 @@
                                 
                                 @if (Columns != null)
                                 {
-                                    <CascadingValue Value="MudBaseColumn.Rendermode.Header" Name="Mode">
-                                        @Columns(Def)
-                                    </CascadingValue>
+                                    @Columns(Def)
                                 }
                             </MudTHeadRow>
                         }
@@ -111,9 +109,7 @@
 										    }
 										    @if (Columns != null)
 										    {
-											    <CascadingValue Value="MudBaseColumn.Rendermode.Edit" Name="Mode">
-												    @Columns(item)
-											    </CascadingValue>
+                                                @Columns(item)
 										    }
                                         </CascadingValue>
                                    }
@@ -125,9 +121,7 @@
 										}
 										@if (Columns != null)
 										{
-											<CascadingValue Value="MudBaseColumn.Rendermode.Item" Name="Mode">
-												@Columns(item)
-											</CascadingValue>
+                                            @Columns(item)
 										}
                                    }
                                </MudTr>
@@ -175,9 +169,7 @@
                                 }
                                 @if (Columns != null)
                                 {
-                                    <CascadingValue Value="MudBaseColumn.Rendermode.Footer" Name="Mode">
                                         @Columns(Def)
-                                    </CascadingValue>
                                 }
                             </MudTFootRow>
                         }
@@ -225,9 +217,7 @@
 							}
 							@if (Columns != null)
 							{
-								<CascadingValue Value="MudBaseColumn.Rendermode.Edit" Name="Mode">
-									@Columns(item)
-								</CascadingValue>
+                                @Columns(item)
 							}
                         </CascadingValue>
                     }
@@ -239,9 +229,7 @@
 						}
 						@if (Columns != null)
 						{
-							<CascadingValue Value="MudBaseColumn.Rendermode.Item" Name="Mode">
-								@Columns(item)
-							</CascadingValue>
+                            @Columns(item)
 						}
                     }
                 </MudTr>
