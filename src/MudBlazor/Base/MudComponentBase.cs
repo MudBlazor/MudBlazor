@@ -316,6 +316,15 @@ namespace MudBlazor
                             break;
                     }
                 }
+                else if (MatchTypes(typeof(MudTable<>)))
+                {
+                    switch (parameter)
+                    {
+                        case "QuickColumns":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
                 else
                 {
                     switch (parameter)
