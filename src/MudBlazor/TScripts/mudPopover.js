@@ -277,9 +277,9 @@ window.mudpopoverHelper = {
                 offsetY += window.scrollY
             }
 
-            // make sure the popover doesn't go outside the window
-            var leftPos = Math.max(Math.min(left + offsetX, window.innerWidth - selfRect.width), 0);
-            var topPos = Math.max(Math.min(top + offsetY, window.innerHeight - selfRect.height), 0);
+            // make sure the popover doesn't go outside the viewport
+            var leftPos = Math.max(Math.min(left + offsetX, window.scrollX + window.innerWidth - selfRect.width), window.scrollX);
+            var topPos = Math.max(Math.min(top + offsetY, window.scrollY + window.innerHeight - selfRect.height), window.scrollY);
 
             popoverContentNode.style['left'] = leftPos + 'px';
             popoverContentNode.style['top'] = topPos + 'px';
