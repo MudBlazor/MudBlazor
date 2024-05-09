@@ -7,11 +7,11 @@
 @if (HeaderTemplate != null && GroupDefinition != null)
 {
 <tr class="@HeaderClassname" @onclick="@OnRowClick" style="@HeaderStyle" @attributes="@UserAttributes">        
-    @if ((GroupDefinition?.IsThisOrParentExpandable ?? false) || (Context?.Table.MultiSelection ?? false))
+    @if ((GroupDefinition?.IsThisOrParentExpandable ?? false) || (Context?.Table?.MultiSelection ?? false))
     {
         <MudTd>
             <div class="d-flex">
-                @if (GroupDefinition.Expandable)
+                @if (GroupDefinition?.Expandable ?? false)
                 {
                     <MudIconButton Class="mud-table-row-expander" Icon="@(Expanded ? ExpandIcon : CollapseIcon)" OnClick="@(() => Expanded = !Expanded)"/>
                 }
@@ -29,8 +29,8 @@
             </div>
         </MudTd>
     }
-    @HeaderTemplate(new TableGroupData<object, T>(GroupDefinition.GroupName, Items.Key, Items.ToList()))
-    @if ((Context?.Table.Editable ?? false))
+    @HeaderTemplate(new TableGroupData<object, T>(GroupDefinition?.GroupName, Items?.Key, Items?.ToList() ?? new List<T>()))
+    @if ((Context?.Table?.Editable ?? false))
     {
         <MudTd />
     }
@@ -65,7 +65,7 @@ else
     @if (FooterTemplate != null && GroupDefinition != null)
     {
         <tr class="@FooterClassname" @onclick="@OnRowClick" style="@FooterStyle" @attributes="@UserAttributes">
-            @if ((GroupDefinition?.IsThisOrParentExpandable ?? false) || (Context?.Table.MultiSelection ?? false))
+            @if ((GroupDefinition?.IsThisOrParentExpandable ?? false) || (Context?.Table?.MultiSelection ?? false))
             {
                 <MudTd/>
             }

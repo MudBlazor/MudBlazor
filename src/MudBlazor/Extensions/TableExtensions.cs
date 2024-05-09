@@ -31,6 +31,6 @@ namespace MudBlazor
         /// <summary>
         /// Disabled the edit button if edit row switching is blocked and the provided item is not being edited
         /// </summary>
-        public static bool EditButtonDisabled<T>(this TableContext context, T item) => (context?.Table.IsEditRowSwitchingBlocked ?? false) && context?.Table._editingItem != null && !ReferenceEquals(context?.Table._editingItem, item);
+        public static bool EditButtonDisabled<T>(this TableContext? context, T item) => (context?.Table?.IsEditRowSwitchingBlocked ?? false) && context?.Table._editingItem != null && !ReferenceEquals(context?.Table._editingItem, item);
     }
 }
