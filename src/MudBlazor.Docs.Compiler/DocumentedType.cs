@@ -26,10 +26,5 @@ public class DocumentedType
     public Dictionary<string, DocumentedProperty> Properties { get; set; } = [];
     public Dictionary<string, DocumentedMethod> Methods { get; set; } = [];
     public Dictionary<string, DocumentedEvent> Events { get; set; } = [];
-    public bool IsEmpty =>
-        string.IsNullOrEmpty(Summary)
-        && string.IsNullOrEmpty(Remarks)
-        && Properties.All(property => property.Value.IsEmpty)
-        && Methods.All(method => method.Value.IsEmpty)
-        && Events.All(events => events.Value.IsEmpty);
+    public Dictionary<string, DocumentedField> Fields { get; set; } = [];
 }

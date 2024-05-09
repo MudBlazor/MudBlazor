@@ -13,16 +13,10 @@ namespace MudBlazor.Docs.Models;
 [DebuggerDisplay("({PropertyTypeName}) {Name}: {Summary}")]
 public sealed class DocumentedProperty
 {
-    public string Name { get; set; }
-    public string Key { get; set; }
     public string Summary { get; set; }
     public string Remarks { get; set; }
-    public Type PropertyType { get; set; }
-    public string PropertyTypeName { get; set; }
-    public string PropertyTypeFullName { get; set; }
-    public Type DeclaringType { get; set; }
-    public string DeclaringTypeName { get; set; }
-    public string DeclaringTypeFullName { get; set; }
+    public string Type { get; set; }
+    public string DeclaringType { get; set; }
     public bool IsPublic { get; set; }
     public bool IsProtected { get; set; }
     public bool IsParameter { get; set; }

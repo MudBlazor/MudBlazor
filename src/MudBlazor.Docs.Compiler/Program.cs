@@ -12,7 +12,7 @@ namespace MudBlazor.Docs.Compiler
             var success =
                 new CodeSnippets().Execute()
                 && new DocStrings().Execute()
-                && new MudComponentDocumenter(typeof(MudText).Assembly).Execute()
+                && new MudComponentDocumenter().Execute()
                 && new ExamplesMarkup().Execute()
                 && new TestsForExamples().Execute()
                 && new TestsForApiPages().Execute();

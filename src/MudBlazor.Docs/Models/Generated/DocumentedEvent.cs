@@ -8,9 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MudBlazor.Docs.Models
+namespace MudBlazor.Docs.Models;
+
+public class DocumentedEvent
 {
-    public class DocumentedEvent
-    {
-    }
 }

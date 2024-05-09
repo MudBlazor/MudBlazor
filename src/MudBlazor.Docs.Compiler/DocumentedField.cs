@@ -4,6 +4,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor.Docs.Compiler;
 
@@ -11,8 +12,9 @@ namespace MudBlazor.Docs.Compiler;
 /// Represents a documented parameter for a method.
 /// </summary>
 [DebuggerDisplay("({TypeName}) {Name}: {Summary}")]
-public sealed class DocumentedParameter
+public sealed class DocumentedField
 {
+    public string Key { get; set; }
     public string Name { get; set; }
     public Type Type { get; set; }
     public string TypeFullName { get; set; }

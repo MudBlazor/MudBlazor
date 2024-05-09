@@ -5,14 +5,15 @@
 using System;
 using System.Diagnostics;
 
-namespace MudBlazor.Docs.Compiler;
+namespace MudBlazor.Docs.Models;
 
 /// <summary>
 /// Represents a documented parameter for a method.
 /// </summary>
 [DebuggerDisplay("({TypeName}) {Name}: {Summary}")]
-public sealed class DocumentedParameter
+public sealed class DocumentedField
 {
+    public string Key { get; set; }
     public string Name { get; set; }
     public Type Type { get; set; }
     public string TypeFullName { get; set; }

@@ -14,13 +14,12 @@ namespace MudBlazor.Docs.Models;
 [DebuggerDisplay("{Name}: Summary={Summary}")]
 public class DocumentedType
 {
-    public string Name { get; set; }
-    public string Key { get; set; }
     public string Summary { get; set; }
     public string Remarks { get; set; }
     public bool IsPublic { get; set; }
     public bool IsAbstract { get; set; }
-    public List<DocumentedProperty> Properties { get; set; } = [];
-    public List<DocumentedMethod> Methods { get; set; } = [];
-    public List<DocumentedEvent> Events { get; set; } = [];
+    public Dictionary<string, DocumentedProperty> Properties { get; set; } = [];
+    public Dictionary<string, DocumentedMethod> Methods { get; set; } = [];
+    public Dictionary<string, DocumentedField> Fields { get; set; } = [];
+    public Dictionary<string, DocumentedEvent> Events { get; set; } = [];
 }

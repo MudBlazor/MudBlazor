@@ -2,7 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Frozen;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MudBlazor.Docs.Models;
 
@@ -11,5 +13,8 @@ namespace MudBlazor.Docs.Models;
 /// </summary>
 public static partial class ApiDocumentation
 {
-    public static List<DocumentedType> Types { get; set; }
+    /// <summary>
+    /// The types which have documentation.
+    /// </summary>
+    public static FrozenDictionary<string, DocumentedType> Types { get; private set; }
 }

@@ -28,5 +28,4 @@ public sealed class DocumentedProperty
     public bool IsParameter { get; set; }
     public string Category { get; set; }
     public int? Order { get; set; }
-    public bool IsEmpty => string.IsNullOrEmpty(Summary) && string.IsNullOrEmpty(Remarks);
 }

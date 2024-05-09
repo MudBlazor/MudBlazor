@@ -18,16 +18,38 @@ namespace MudBlazor.Docs.Compiler;
 /// Represents a generator of HTML documentation based on XML documentation files.
 /// </summary>
 /// <remarks>
-/// This class documents a MudBlazor assembly by documenting types inheriting from <see cref="MudComponentBase"/>, including properties 
-/// decorated with <see cref="ParameterAttribute"/>, as well as any public type mentioned in a public or protected method parameter. This
-/// approach should automatically create "public-facing documentation" as more components and types are added.
+/// <para>
+/// This class documents the MudBlazor assembly, including all public types, properties, methods, events, and fields.  Inherited
+/// members are supported, as well as "see cref" links.  Once all documentation has been loaded, several types are made available 
+/// to the <c>MudBlazor.Docs</c> such as <see cref="DocumentedType"/>, <see cref="DocumentedMethod"/>, <see cref="DocumentedProperty"/>,
+/// <see cref="DocumentedEvent"/>, and <see cref="DocumentedField"/>, in a strongly typed manner. 
+/// </para>
+/// <para>
+/// This class also produces metrics which can be used during DevOps builds to enforce a minimum level of documentation.  You can
+/// use the <see cref="CriticalTypes"/> property to control which types are most important for documentation.
+/// </para>
 /// </remarks>
-public partial class MudComponentDocumenter(Assembly assembly)
+public partial class MudComponentDocumenter()
 {
+    /// <summary>
+    /// The assembly to document.
+    /// </summary>
+    public Assembly Assembly { get; set; } = typeof(_Imports).Assembly;
+
     /// <summary>
     /// The types in the assembly.
     /// </summary>
     public SortedDictionary<string, Type> Types { get; set; } = [];
+
+    /// <summary>
+    /// The generated documentation for events.
+    /// </summary>
+    public SortedDictionary<string, DocumentedEvent> DocumentedEvents { get; private set; } = [];
+
+    /// <summary>
+    /// The generated documentation for fields.
+    /// </summary>
+    public SortedDictionary<string, DocumentedField> DocumentedFields { get; private set; } = [];
 
     /// <summary>
     /// The generated documentation for types.
@@ -50,9 +72,52 @@ public partial class MudComponentDocumenter(Assembly assembly)
     public SortedDictionary<string, DocumentedMethod> DocumentedMethods { get; private set; } = [];
 
     /// <summary>
+    /// The types which have documentation but could not be linked to a reflected type.
+    /// </summary>
+    /// <remarks>
+    /// When items exist in this list, the code may need to be improved to find the reflected type.
+    /// </remarks>
+    public List<string> UnresolvedTypes { get; set; } = [];
+
+    /// <summary>
+    /// The properties which have documentation but could not be linked to a reflected property.
+    /// </summary>
+    /// <remarks>
+    /// When items exist in this list, the code may need to be improved to find the reflected property.
+    /// </remarks>
+    public List<string> UnresolvedProperties { get; set; } = [];
+
+    /// <summary>
+    /// The types which have documentation but could not be linked to a reflected field.
+    /// </summary>
+    /// <remarks>
+    /// When items exist in this list, the code may need to be improved to find the reflected field.
+    /// </remarks>
+    public List<string> UnresolvedFields { get; set; } = [];
+
+    /// <summary>
+    /// The types which have documentation but could not be linked to a reflected method.
+    /// </summary>
+    /// <remarks>
+    /// When items exist in this list, the code may need to be improved to find the reflected method.
+    /// </remarks>
+    public List<string> UnresolvedMethods { get; set; } = [];
+
+    /// <summary>
+    /// The types which have documentation but could not be linked to a reflected event.
+    /// </summary>
+    /// <remarks>
+    /// When items exist in this list, the code may need to be improved to find the reflected event.
+    /// </remarks>
+    public List<string> UnresolvedEvents { get; set; } = [];
+
+    /// <summary>
     /// (For documentation coverage metrics), the most important types to have well documented.
     /// </summary>
-    public List<string> CriticalTypes =
+    /// <remarks>
+    /// This property is only used to calculate metrics.
+    /// </remarks>
+    public static List<string> CriticalTypes =
     [
         // Core MudBlazor Components (base classes aren't necessary)
         "MudAlert",
@@ -248,7 +313,7 @@ public partial class MudComponentDocumenter(Assembly assembly)
     /// <summary>
     /// Any methods to exclude from documentation.
     /// </summary>
-    private List<string> ExcludedMethods =
+    private static List<string> ExcludedMethods =
     [
         // Object methods
         "ToString",
@@ -287,13 +352,13 @@ public partial class MudComponentDocumenter(Assembly assembly)
     };
 
     /// <summary>
-    /// Generates HTML documentation for all assemblies.
+    /// Generates documentation for all types.
     /// </summary>
     public bool Execute()
     {
         AddTypesToDocument();
         MergeXmlDocumentation();
-        ExportGeneratedCode();
+        ExportApiDocumentation();
         CalculateDocumentationCoverage();
         return true;
     }
@@ -303,17 +368,16 @@ public partial class MudComponentDocumenter(Assembly assembly)
     /// </summary>
     public void AddTypesToDocument()
     {
-        // Look for any public types
-        Types = new(assembly.GetTypes().Where(type => type.IsPublic).ToDictionary(r => r.Name, v => v));
-
-        var y = string.Join("\", \"", Types.Where(t => t.Value.Name.StartsWith("Mud")).Select(type => type.Value.Name));
+        // Get all public types as a sorted dictionary
+        Types = new(Assembly.GetTypes().Where(type => type.IsPublic).ToDictionary(r => r.Name, v => v));
 
         foreach (var type in Types)
         {
             var documentedType = AddTypeToDocument(type.Value);
             AddPropertiesToDocument(type.Value, documentedType);
             AddMethodsToDocument(type.Value, documentedType);
-            // AddEventsToDocument(type);
+            AddFieldsToDocument(type.Value, documentedType);
+            AddEventsToDocument(type.Value, documentedType);
         }
     }
 
@@ -323,11 +387,6 @@ public partial class MudComponentDocumenter(Assembly assembly)
     /// <param name="type">The type to add.</param>
     public DocumentedType AddTypeToDocument(Type type)
     {
-        // Is this a non-MudBlazor type?  Or is it already documented?  If so, skip it
-        if (type.FullName == null || !type.FullName.StartsWith("MudBlazor"))
-        {
-            return null;
-        }
         // Is the type already documented?
         if (!DocumentedTypes.TryGetValue(type.FullName, out var documentedType))
         {
@@ -341,10 +400,10 @@ public partial class MudComponentDocumenter(Assembly assembly)
                 Name = type.Name,
                 Type = type,
             };
-        }
 
-        // Add the populated type
-        DocumentedTypes.Add(type.FullName, documentedType);
+            // Add the populated type
+            DocumentedTypes.Add(type.FullName, documentedType);
+        }
 
         return documentedType;
     }
@@ -390,8 +449,84 @@ public partial class MudComponentDocumenter(Assembly assembly)
                 };
                 DocumentedProperties.Add(key, documentedProperty);
             }
-
+            // Link the property to the type
             documentedType.Properties.Add(documentedProperty.Key, documentedProperty);
+        }
+    }
+
+    /// <summary>
+    /// Adds fields for the specified type.
+    /// </summary>
+    /// <param name="type">the type to examine.</param>
+    public void AddFieldsToDocument(Type type, DocumentedType documentedType)
+    {
+        // Look for public properties 
+        var fields = type.GetFields().ToList();
+        // Add protected methods
+        fields.AddRange(type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic));
+        // Remove private and backing fields
+        fields.RemoveAll(field => field.Name.Contains("k__BackingField") || field.Name == "value__");
+        // Remove duplicates
+        fields = fields.DistinctBy(property => property.Name).ToList();
+        // Go through each property
+        foreach (var field in fields)
+        {
+            var category = field.GetCustomAttribute<CategoryAttribute>();
+            var blazorParameter = field.GetCustomAttribute<ParameterAttribute>();
+            var key = $"{type.FullName}.{field.Name}";
+
+            // Has this property been documented before?
+            if (!DocumentedFields.TryGetValue(key, out var documentedField))
+            {
+                // No.
+                documentedField = new DocumentedField()
+                {
+                    Key = key,
+                    Name = field.Name,
+                    Type = field.FieldType,
+                    TypeName = field.FieldType.Name,
+                    TypeFullName = field.FieldType.FullName,
+                };
+                DocumentedFields.Add(key, documentedField);
+            }
+            // Link the property to the type
+            documentedType.Fields.Add(documentedField.Key, documentedField);
+        }
+    }
+
+    /// <summary>
+    /// Adds events for the specified type.
+    /// </summary>
+    /// <param name="type">the type to examine.</param>
+    public void AddEventsToDocument(Type type, DocumentedType documentedType)
+    {
+        // Look for public properties 
+        var events = type.GetEvents().ToList();
+        // Add protected methods
+        events.AddRange(type.GetEvents(BindingFlags.Instance | BindingFlags.NonPublic));
+        // Remove duplicates
+        events = events.DistinctBy(property => property.Name).ToList();
+        // Go through each property
+        foreach (var eventItem in events)
+        {
+            var category = eventItem.GetCustomAttribute<CategoryAttribute>();
+            var blazorParameter = eventItem.GetCustomAttribute<ParameterAttribute>();
+            var key = $"{eventItem.DeclaringType.FullName}.{eventItem.Name}";
+
+            // Has this property been documented before?
+            if (!DocumentedEvents.TryGetValue(key, out var documentedEvent))
+            {
+                // No.
+                documentedEvent = new DocumentedEvent()
+                {
+                    Key = key,
+                    Name = eventItem.Name,
+                    Type = eventItem.EventHandlerType,
+                };
+                DocumentedEvents.Add(key, documentedEvent);
+            }
+            // Link the property to the type
+            documentedType.Events.Add(documentedEvent.Name, documentedEvent);
         }
     }
 
@@ -495,12 +630,14 @@ public partial class MudComponentDocumenter(Assembly assembly)
     public void MergeXmlDocumentation()
     {
         // Load the XML documentation file
-        var path = assembly.Location.Replace(".dll", ".xml", StringComparison.OrdinalIgnoreCase);
+        var path = Assembly.Location.Replace(".dll", ".xml", StringComparison.OrdinalIgnoreCase);
         using var reader = new XmlTextReader(path);
         reader.WhitespaceHandling = WhitespaceHandling.None;
         reader.DtdProcessing = DtdProcessing.Ignore;
+        // Move to the first member
+        reader.ReadToFollowing("member");
         // Read each "<member name=...>" element
-        while (reader.ReadToFollowing("member"))
+        while (!reader.EOF)
         {
             var memberTypeAndName = reader.GetAttribute("name").Split(":");
             var content = reader.ReadInnerXml();
@@ -512,12 +649,23 @@ public partial class MudComponentDocumenter(Assembly assembly)
                 case "P": // Property
                     DocumentProperty(memberTypeAndName[1], content);
                     break;
+                case "M": // Method
+                    DocumentMethod(memberTypeAndName[1], content);
+                    break;
+                case "F": // Field (or Enum)
+                    DocumentField(memberTypeAndName[1], content);
+                    break;
+                case "E": // Event
+                    DocumentEvent(memberTypeAndName[1], content);
+                    break;
+            }
+            // Are we at the end of the document?
+            if (reader.NodeType == XmlNodeType.EndElement && reader.Name == "members")
+            {
+                break;
             }
         }
     }
-
-    public List<string> UnresolvedTypes { get; set; } = [];
-    public List<string> UnresolvedProperties { get; set; } = [];
 
     /// <summary>
     /// Adds HTML documentation for the specified type.
@@ -526,10 +674,10 @@ public partial class MudComponentDocumenter(Assembly assembly)
     /// <param name="xmlContent">The raw XML documentation for the member.</param>
     public void DocumentType(string memberFullName, string xmlContent)
     {
-        if (DocumentedTypes.TryGetValue(memberFullName, out var documentedType))
+        if (DocumentedTypes.TryGetValue(memberFullName, out var type))
         {
-            documentedType.Remarks = GetRemarks(xmlContent);
-            documentedType.Summary = GetSummary(xmlContent);
+            type.Remarks = GetRemarks(xmlContent);
+            type.Summary = GetSummary(xmlContent);
         }
         else
         {
@@ -545,14 +693,77 @@ public partial class MudComponentDocumenter(Assembly assembly)
     public void DocumentProperty(string memberFullName, string xmlContent)
     {
         // Get the documented type and property
-        if (DocumentedProperties.TryGetValue(memberFullName, out var documentedProperty))
+        if (DocumentedProperties.TryGetValue(memberFullName, out var property))
         {
-            documentedProperty.Remarks = GetRemarks(xmlContent);
-            documentedProperty.Summary = GetSummary(xmlContent);
+            property.Remarks = GetRemarks(xmlContent);
+            property.Summary = GetSummary(xmlContent);
         }
         else
         {
             UnresolvedProperties.Add(memberFullName);
+        }
+    }
+
+    /// <summary>
+    /// Adds HTML documentation for the specified field.
+    /// </summary>
+    /// <param name="memberFullName">The namespace and class of the member.</param>
+    /// <param name="xmlContent">The raw XML documentation for the member.</param>
+    public void DocumentField(string memberFullName, string xmlContent)
+    {
+        if (DocumentedFields.TryGetValue(memberFullName, out var field))
+        {
+            field.Summary = GetSummary(xmlContent);
+        }
+        else
+        {
+            var enumPart = memberFullName.Substring(0, memberFullName.LastIndexOf("."));
+            var valuePart = memberFullName.Substring(enumPart.Length + 1);
+
+            if (DocumentedFields.TryGetValue(enumPart, out var enumerationItem))
+            {
+                enumerationItem.Summary = GetSummary(xmlContent);
+            }
+            else
+            {
+                UnresolvedFields.Add(memberFullName);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Adds HTML documentation for the specified field.
+    /// </summary>
+    /// <param name="memberFullName">The namespace and class of the member.</param>
+    /// <param name="xmlContent">The raw XML documentation for the member.</param>
+    public void DocumentMethod(string memberFullName, string xmlContent)
+    {
+        if (DocumentedMethods.TryGetValue(memberFullName, out var documentedType))
+        {
+            documentedType.Summary = GetSummary(xmlContent);
+            documentedType.Remarks = GetRemarks(xmlContent);
+        }
+        else
+        {
+            UnresolvedMethods.Add(memberFullName);
+        }
+    }
+
+    /// <summary>
+    /// Adds HTML documentation for the specified field.
+    /// </summary>
+    /// <param name="memberFullName">The namespace and class of the member.</param>
+    /// <param name="xmlContent">The raw XML documentation for the member.</param>
+    public void DocumentEvent(string memberFullName, string xmlContent)
+    {
+        if (DocumentedEvents.TryGetValue(memberFullName, out var documentedType))
+        {
+            documentedType.Summary = GetSummary(xmlContent);
+            documentedType.Remarks = GetRemarks(xmlContent);
+        }
+        else
+        {
+            UnresolvedEvents.Add(memberFullName);
         }
     }
 
@@ -600,60 +811,21 @@ public partial class MudComponentDocumenter(Assembly assembly)
     /// <summary>
     /// Serializes all documentation to the MudBlazor.Docs "Generated" folder.
     /// </summary>
-    public void ExportGeneratedCode()
+    public void ExportApiDocumentation()
     {
-        using var writer = File.CreateText(Paths.ApiDocumentationFilePath);
+        using var writer = new ApiDocumentationWriter(DocumentedTypes, Paths.ApiDocumentationFilePath);
 
-        writer.WriteLine("//-----------------------------------------------------------------------");
-        writer.WriteLine("// This file is autogenerated by MudBlazor.Docs.Compiler");
-        writer.WriteLine("// Any changes to this file will be overwritten on build");
-        writer.WriteLine("// <auto-generated />");
-        writer.WriteLine("//-----------------------------------------------------------------------");
-        writer.WriteLine();
-        writer.WriteLine("namespace MudBlazor.Docs.Models;");
-        writer.WriteLine();
-        writer.WriteLine("[System.CodeDom.Compiler.GeneratedCodeAttribute(\"MudBlazor.Docs.Compiler\", \"0.0.0.0\")]");
-        writer.WriteLine("public static partial class ApiDocumentation");
-        writer.WriteLine("{");
-        writer.WriteLine("\tstatic ApiDocumentation()");
-        writer.WriteLine("\t{");
+        writer.WriteHeader();
+        writer.WriteClassStart();
+        writer.WriteConstructorStart();
 
         foreach (var type in DocumentedTypes)
         {
-            writer.WriteLine($"\t\tTypes.Add(new()");
-            writer.WriteLine("\t\t{");
-            writer.WriteLine($"\t\t\tName = \"{type.Value.Name}\",");
-            writer.WriteLine($"\t\t\tSummary = \"{Escape(type.Value.Summary)}\",");
-            writer.WriteLine($"\t\t\tRemarks = \"{Escape(type.Value.Remarks)}\",");
-            writer.WriteLine("\t\t\tProperties =");
-            writer.WriteLine("\t\t\t[");
-
-            foreach (var property in type.Value.Properties)
-            {
-                writer.WriteLine("\t\t\t\tnew()");
-                writer.WriteLine("\t\t\t\t{");
-                writer.WriteLine($"\t\t\t\t\tName = \"{property.Value.Name}\",");
-                writer.WriteLine($"\t\t\t\t\tSummary = \"{Escape(property.Value.Summary)}\",");
-                writer.WriteLine($"\t\t\t\t\tRemarks = \"{Escape(property.Value.Remarks)}\"");
-                writer.WriteLine("\t\t\t\t},");
-            }
-
-            writer.WriteLine("\t\t\t]");
-            writer.WriteLine("\t\t});");
+            writer.WriteType(type);
         }
 
-        writer.WriteLine("\t}");
-        writer.WriteLine("}");
-    }
-
-    /// <summary>
-    /// Formats a string for use in C# code.
-    /// </summary>
-    /// <param name="code"></param>
-    /// <returns></returns>
-    public string Escape(string code)
-    {
-        return code?.Replace("\"", "\\\"");
+        writer.WriteConstructorEnd();
+        writer.WriteClassEnd();
     }
 
     /// <summary>
@@ -661,35 +833,53 @@ public partial class MudComponentDocumenter(Assembly assembly)
     /// </summary>
     public void CalculateDocumentationCoverage()
     {
+        // Calculate how well the most critical items are documented
         var totalCriticalTypes = DocumentedTypes.Count(type => CriticalTypes.Contains(type.Value.Name));
         var totalCriticalDocumentedTypes = DocumentedTypes.Count(type => CriticalTypes.Contains(type.Value.Name) && !string.IsNullOrEmpty(type.Value.Summary));
-        var totalTypes = DocumentedTypes.Count;
-        var totalProperties = DocumentedProperties.Count;
-        var totalMethods = DocumentedMethods.Count;
-        var totalUnresolvedTypes = UnresolvedTypes.Count;
-        var totalUnresolvedProperties = UnresolvedProperties.Count;
+        var criticalTypeCoverage = totalCriticalDocumentedTypes / (double)totalCriticalTypes;
+        // Calculate how many items have good documentation
         var summarizedTypes = DocumentedTypes.Count(type => !string.IsNullOrEmpty(type.Value.Summary));
         var summarizedProperties = DocumentedProperties.Count(property => !string.IsNullOrEmpty(property.Value.Summary));
         var summarizedMethods = DocumentedMethods.Count(method => !string.IsNullOrEmpty(method.Value.Summary));
-        var criticalTypeCoverage = totalCriticalDocumentedTypes / (double)totalCriticalTypes;
-        var typeCoverage = summarizedTypes / (double)totalTypes;
-        var methodCoverage = summarizedMethods / (double)totalMethods;
-        var propertyCoverage = summarizedProperties / (double)totalProperties;
+        var summarizedFields = DocumentedFields.Count(field => !string.IsNullOrEmpty(field.Value.Summary));
+        var summarizedEvents = DocumentedEvents.Count(eventItem => !string.IsNullOrEmpty(eventItem.Value.Summary));
+        // Calculate the coverage metrics for documentation
+        var typeCoverage = summarizedTypes / (double)DocumentedTypes.Count;
+        var propertyCoverage = summarizedProperties / (double)DocumentedProperties.Count;
+        var methodCoverage = summarizedMethods / (double)DocumentedMethods.Count;
+        var fieldCoverage = summarizedFields / (double)DocumentedFields.Count;
+        var eventCoverage = summarizedEvents / (double)DocumentedEvents.Count;
 
-        Console.WriteLine("Summary of MudBlazor XML Documentation:");
+        Console.WriteLine("XML Documentation Coverage for MudBlazor:");
         Console.WriteLine();
-        Console.WriteLine($"Core Types: {totalCriticalDocumentedTypes} of {totalCriticalTypes} core types ({criticalTypeCoverage:P2})");
-        Console.WriteLine($"Types:      {summarizedTypes} of {totalTypes} ({typeCoverage:P2}) other types");
+        Console.WriteLine($"Core Types: {totalCriticalDocumentedTypes} of {totalCriticalTypes} ({criticalTypeCoverage:P0}) core types");
+        Console.WriteLine($"Types:      {summarizedTypes} of {DocumentedTypes.Count} ({typeCoverage:P0}) other types");
+        Console.WriteLine($"Properties: {summarizedProperties} of {DocumentedProperties.Count} ({propertyCoverage:P0}) properties");
+        Console.WriteLine($"Methods:    {summarizedMethods} of {DocumentedMethods.Count} ({methodCoverage:P0}) methods");
+        Console.WriteLine($"Fields:     {summarizedFields} of {DocumentedFields.Count} ({fieldCoverage:P0}) fields/enums");
+        Console.WriteLine($"Events:     {summarizedEvents} of {DocumentedEvents.Count} ({eventCoverage:P0}) events");
+        Console.WriteLine();
+
         if (UnresolvedTypes.Count > 0)
         {
-            Console.WriteLine($"            {UnresolvedTypes.Count} types have XML documentation which couldn't be matched to a type.");
+            Console.WriteLine($"WARNING: {UnresolvedTypes.Count} types have XML documentation which couldn't be matched to a type.");
         }
-        Console.WriteLine($"Properties: {summarizedProperties}/{totalProperties} ({propertyCoverage:P2}) ({UnresolvedProperties.Count} ignored)");
         if (UnresolvedProperties.Count > 0)
         {
-            Console.WriteLine($"            {UnresolvedProperties.Count} properties have XML documentation which couldn't be matched to a type's property.");
+            Console.WriteLine($"WARNING: {UnresolvedProperties.Count} properties have XML documentation which couldn't be matched to a type's property.");
         }
-        Console.WriteLine($"Methods:    {summarizedMethods}/{totalMethods} ({methodCoverage:P2})");
+        if (UnresolvedMethods.Count > 0)
+        {
+            Console.WriteLine($"WARNING: {UnresolvedMethods.Count} methods have XML documentation which couldn't be matched to a type's property.");
+        }
+        if (UnresolvedEvents.Count > 0)
+        {
+            Console.WriteLine($"WARNING: {UnresolvedEvents.Count} events have XML documentation which couldn't be matched to a type's property.");
+        }
+        if (UnresolvedFields.Count > 0)
+        {
+            Console.WriteLine($"WARNING: {UnresolvedFields.Count} fields have XML documentation which couldn't be matched to a type's property.");
+        }
     }
 
     /// <summary>

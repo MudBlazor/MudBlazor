@@ -24,5 +24,4 @@ public class DocumentedMethod
     public Type ReturnType { get; set; }
     public string ReturnTypeName { get; set; }
     public string ReturnTypeFullName { get; set; }
-    public bool IsEmpty => string.IsNullOrEmpty(Summary) && string.IsNullOrEmpty(Remarks);
 }
