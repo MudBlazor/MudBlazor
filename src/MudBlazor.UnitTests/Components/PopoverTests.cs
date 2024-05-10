@@ -1041,7 +1041,7 @@ namespace MudBlazor.UnitTests.Components
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
-            popoverElement.ClassList.Should().NotContain("mud-elevation-8");
+            popoverElement.ClassList.Should().NotContainMatch("mud-elevation-*");
         }
 
         [Test]

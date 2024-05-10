@@ -60,7 +60,7 @@ namespace MudBlazor
         /// Determines whether the popover has a drop-shadow. Default is true.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.Menu.Appearance)]
+        [Category(CategoryTypes.Popover.Appearance)]
         public bool DropShadow { get; set; } = true;
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public int Elevation { set; get; } = MudGlobal.Popover.Elevation;
+        public int Elevation { set; get; } = MudGlobal.PopoverDefaults.Elevation;
 
         /// <summary>
         /// If true, border-radius is set to 0.
