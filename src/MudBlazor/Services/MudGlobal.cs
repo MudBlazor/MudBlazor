@@ -16,6 +16,18 @@ public static class MudGlobal
         public static DefaultFocus DefaultFocus { get; set; } = DefaultFocus.Element;
     }
 
+    public static class InputDefaults
+    {
+        /// <summary>
+        /// Whether the label is allowed to appear inside the input if no <see cref="MudBaseInput{T}.Value"/> is specified.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// When <c>true</c>, the label will not move into the input when the input is empty.
+        /// </remarks>
+        public static bool ShrinkLabel { get; set; }
+    }
+
     public static class OverlayDefaults
     {
         /// <summary>
