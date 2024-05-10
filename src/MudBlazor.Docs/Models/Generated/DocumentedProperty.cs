@@ -7,19 +7,22 @@ using System.Diagnostics;
 
 namespace MudBlazor.Docs.Models;
 
+#nullable enable
+
 /// <summary>
 /// Represents documentation for a property.
 /// </summary>
 [DebuggerDisplay("({PropertyTypeName}) {Name}: {Summary}")]
 public sealed class DocumentedProperty
 {
-    public string Summary { get; set; }
-    public string Remarks { get; set; }
-    public string Type { get; set; }
-    public string DeclaringType { get; set; }
+    public string Name { get; set; } = "";
+    public string? Summary { get; set; }
+    public string? Remarks { get; set; }
+    public string Type { get; set; } = "";
+    public string? DeclaringType { get; set; }
     public bool IsPublic { get; set; }
     public bool IsProtected { get; set; }
     public bool IsParameter { get; set; }
-    public string Category { get; set; }
+    public string? Category { get; set; }
     public int? Order { get; set; }
 }

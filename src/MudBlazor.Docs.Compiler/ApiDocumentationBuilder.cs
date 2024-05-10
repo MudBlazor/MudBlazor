@@ -813,17 +813,11 @@ public partial class MudComponentDocumenter()
     /// </summary>
     public void ExportApiDocumentation()
     {
-        using var writer = new ApiDocumentationWriter(DocumentedTypes, Paths.ApiDocumentationFilePath);
-
+        using var writer = new ApiDocumentationWriter(Paths.ApiDocumentationFilePath);
         writer.WriteHeader();
         writer.WriteClassStart();
-        writer.WriteConstructorStart();
-
-        foreach (var type in DocumentedTypes)
-        {
-            writer.WriteType(type);
-        }
-
+        writer.WriteConstructorStart(DocumentedTypes.Count);
+        writer.WriteTypes(DocumentedTypes);
         writer.WriteConstructorEnd();
         writer.WriteClassEnd();
     }

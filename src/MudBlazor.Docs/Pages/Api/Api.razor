@@ -1,25 +1,41 @@
-﻿@page "/api/{component}"
-@using MudBlazor.Docs.Extensions
+﻿@page "/api/{TypeName}"
+@using MudBlazor.Docs.Components
+@namespace MudBlazor.Docs.Pages.Api
 
-
-@if (ComponentType == null)
-{
-    <MudProgressCircular Indeterminate="true"></MudProgressCircular>
-}
-else
-{
-    <DocsApi Type="@ComponentType"></DocsApi>
-}
-
-
-@code {
-    [Parameter] public string component { get; set; }
-
-    public Type ComponentType { get; set; }
-
-    protected override void OnParametersSet()
+<DocsPage>
+    @if (DocumentedType != null)
     {
-        ComponentType = ApiLink.GetTypeFromComponentLink(component);
-        StateHasChanged();
+        <DocsPageHeader Title="@(@DocumentedType.Name + " API")" SubTitle="@DocumentedType.Summary" />
+        <DocsPageContent>
+            @if (!string.IsNullOrEmpty(DocumentedType.Remarks))
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Overview" />
+                    <SectionContent Outlined="true">
+                        <MudText>@DocumentedType.Remarks</MudText>
+                    </SectionContent>
+                </DocsPageSection>
+            }
+            <DocsPageSection>
+                <SectionHeader Title="Properties" />
+                <SectionContent Outlined="true">
+                    @if (DocumentedType.Properties.Count > 0)
+                    {
+                        <ApiPropertyTable Type="@DocumentedType" />
+                    }
+                </SectionContent>
+            </DocsPageSection>
+        </DocsPageContent>
     }
-}
+    else
+    {
+        <DocsPageHeader Title="@(TypeName + " Not Found")" />
+        <DocsPageContent>
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudAlert Severity="Severity.Warning">Sorry, the type @TypeName was not found.</MudAlert>
+                </MudItem>
+            </MudGrid>
+        </DocsPageContent>
+    }
+</DocsPage>

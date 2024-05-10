@@ -1,0 +1,49 @@
+﻿<MudTable T="DocumentedProperty" @ref="Table" ServerData="@GetData" Elevation="0" Class="ma-0 mud-width-full" Hover="true" AllowUnsorted="false" GroupBy="@CurrentGroups">
+    <ToolBarContent>
+        <MudGrid Class="pa-0">
+            <MudItem xs="6">
+                <MudChipSet T="string" @bind-SelectedValues="SelectedCategories" SelectionMode="SelectionMode.MultiSelection" CheckMark="true">
+                    <MudChip T="string" Variant="Variant.Text" Size="Size.Small" Label="true" Value="@null" Text="General" Default="@true" OnClick="@(() => Table.ReloadServerData())"></MudChip>
+                    @foreach (var category in Type.PropertyCategories)
+                    {
+                        <MudChip T="string" Variant="Variant.Text" Size="Size.Small" Label="true" Value="@category" Text="@category" Default="@true" OnClick="@(() => Table.ReloadServerData())"></MudChip>
+                    }
+                </MudChipSet>
+            </MudItem>
+            <MudItem xs="6">
+                <MudTextField T="string" Clearable="true" Immediate="true" ValueChanged="OnSearchAsync" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Small"></MudTextField>
+            </MudItem>
+        </MudGrid>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="Name" InitialDirection="SortDirection.Ascending">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="Type" InitialDirection="SortDirection.Ascending">Type</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="Description" InitialDirection="SortDirection.Ascending">Description</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <GroupHeaderTemplate>
+        @if (CurrentGrouping == Grouping.Inheritance)
+        {
+            <MudTh colspan="4">
+                <MudText Typo="Typo.h6">@context.Key</MudText>
+            </MudTh>
+        }
+        else if (CurrentGrouping == Grouping.Categories)
+        {
+            <MudTh colspan="4">
+                <MudText Typo="Typo.h6">@(context.Key ?? "General")</MudText>
+            </MudTh>
+        }
+    </GroupHeaderTemplate>
+    <RowTemplate>
+        <MudTd Class="docs-content-api-cell" DataLabel="Name">
+            <MudHighlighter Text="@context.Name" HighlightedText="@Keyword" />
+        </MudTd>
+        <MudTd Class="docs-content-api-cell" DataLabel="Type">
+            <CodeInline>@context.Type</CodeInline>
+        </MudTd>
+        <MudTd id="@context.Name" Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">
+            @((MarkupString)(context.Summary + " " + context.Remarks))
+        </MudTd>
+    </RowTemplate>
+    <GroupFooterTemplate></GroupFooterTemplate>
+</MudTable>

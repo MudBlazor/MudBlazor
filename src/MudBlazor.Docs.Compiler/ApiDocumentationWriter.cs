@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -10,14 +11,8 @@ namespace MudBlazor.Docs.Compiler;
 /// <summary>
 /// Represents a writer for generated API documentation.
 /// </summary>
-/// <remarks>
-/// Creates a new instance with types and the default output path.
-/// </remarks>
-/// <param name="types">The types to document.</param>
-public sealed class ApiDocumentationWriter(IDictionary<string, DocumentedType> types, string filePath) : StreamWriter(File.Create(filePath))
+public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.Create(filePath))
 {
-    private IDictionary<string, DocumentedType> types = types;
-
     /// <summary>
     /// The current indentation level.
     /// </summary>
@@ -26,8 +21,7 @@ public sealed class ApiDocumentationWriter(IDictionary<string, DocumentedType> t
     /// <summary>
     /// Creates a new instance with types and the default output path.
     /// </summary>
-    /// <param name="types">The types to document.</param>
-    public ApiDocumentationWriter(IDictionary<string, DocumentedType> types) : this(types, Paths.ApiDocumentationFilePath)
+    public ApiDocumentationWriter() : this(Paths.ApiDocumentationFilePath)
     {
     }
 
@@ -36,7 +30,7 @@ public sealed class ApiDocumentationWriter(IDictionary<string, DocumentedType> t
     /// </summary>
     public void WriteHeader()
     {
-        WriteLine("// Copyright (c) MudBlazor 2021");
+        WriteLine($"// Copyright (c) MudBlazor {DateTime.Now.Year}");
         WriteLine("// MudBlazor licenses this file to you under the MIT license.");
         WriteLine("// See the LICENSE file in the project root for more information.");
         WriteLine();
@@ -59,7 +53,10 @@ public sealed class ApiDocumentationWriter(IDictionary<string, DocumentedType> t
     /// </summary>
     public void WriteClassStart()
     {
-        WriteLine("[GeneratedCodeAttribute(\"MudBlazor.Docs.Compiler\", \"0.0.0.0\")]");
+        WriteLine("/// <summary>");
+        WriteLine("/// Represents all of the XML documentation for public-facing classes.");
+        WriteLine("/// </summary>");
+        WriteLine($"[GeneratedCodeAttribute(\"MudBlazor.Docs.Compiler\", \"{typeof(ApiDocumentationWriter).Assembly.GetName().Version}\")]");
         WriteLine("public static partial class ApiDocumentation");
         WriteLine("{");
         Indent();
@@ -75,15 +72,26 @@ public sealed class ApiDocumentationWriter(IDictionary<string, DocumentedType> t
     }
 
     /// <summary>
+    /// Writes a series of tabs to indent the line.
+    /// </summary>
+    public void WriteIndent()
+    {
+        for (var index = 0; index < IndentLevel; index++)
+        {
+            Write("\t");
+        }
+    }
+
+    /// <summary>
     /// Writes the start of the ApiDocumentation constructor.
     /// </summary>
-    public void WriteConstructorStart()
+    public void WriteConstructorStart(int typeCount)
     {
         WriteLineIndented("static ApiDocumentation()");
         WriteLineIndented("{");
         Indent();
         WriteLineIndented("// Build all of the documented types");
-        WriteLineIndented($"var types = new Dictionary<string, DocumentedType>({types.Count});");
+        WriteLineIndented($"var types = new Dictionary<string, DocumentedType>({typeCount});");
     }
 
     /// <summary>
@@ -92,10 +100,7 @@ public sealed class ApiDocumentationWriter(IDictionary<string, DocumentedType> t
     /// <param name="text">The text to write.</param>
     public void WriteIndented(string text)
     {
-        for (var index = 0; index < IndentLevel; index++)
-        {
-            Write("\t");
-        }
+        WriteIndent();
         Write(text);
     }
 
@@ -115,7 +120,6 @@ public sealed class ApiDocumentationWriter(IDictionary<string, DocumentedType> t
     public void WriteConstructorEnd()
     {
         WriteLine();
-        WriteLineIndented("// Convert to a frozen dictionary");
         WriteLineIndented($"Types = types.ToFrozenDictionary();");
         Outdent();
         WriteLine("}");
@@ -154,6 +158,78 @@ public sealed class ApiDocumentationWriter(IDictionary<string, DocumentedType> t
     public static string Escape(string code) => code?.Replace("\"", "\\\"");
 
     /// <summary>
+    /// Serializes an XML summary for a category.
+    /// </summary>
+    /// <param name="category"></param>
+    public void WriteCategory(string category)
+    {
+        if (!string.IsNullOrEmpty(category))
+        {
+            Write($"Category = \"{category}\", ");
+        }
+    }
+
+    /// <summary>
+    /// Serializes an XML summary for a member.
+    /// </summary>
+    /// <param name="summary"></param>
+    public void WriteSummary(string summary)
+    {
+        if (!string.IsNullOrEmpty(summary))
+        {
+            Write($"Summary = \"{Escape(summary)}\", ");
+        }
+    }
+
+    /// <summary>
+    /// Serializes an XML summary for a member.
+    /// </summary>
+    /// <param name="remarks"></param>
+    public void WriteSummaryIndented(string remarks)
+    {
+        if (!string.IsNullOrEmpty(remarks))
+        {
+            WriteIndented($"Summary = \"{Escape(remarks)}\", ");
+        }
+    }
+
+    /// <summary>
+    /// Serializes an XML remarks for a member.
+    /// </summary>
+    /// <param name="remarks"></param>
+    public void WriteRemarks(string remarks)
+    {
+        if (!string.IsNullOrEmpty(remarks))
+        {
+            Write($"Remarks = \"{Escape(remarks)}\", ");
+        }
+    }
+
+    /// <summary>
+    /// Serializes an XML remarks for a member.
+    /// </summary>
+    /// <param name="remarks"></param>
+    public void WriteRemarksIndented(string remarks)
+    {
+        if (!string.IsNullOrEmpty(remarks))
+        {
+            WriteIndented($"Remarks = \"{Escape(remarks)}\", ");
+        }
+    }
+
+    /// <summary>
+    /// Serializes all of the specified types.
+    /// </summary>
+    /// <param name="types"></param>
+    public void WriteTypes(IDictionary<string, DocumentedType> types)
+    {
+        foreach (var type in types)
+        {
+            WriteType(type);
+        }
+    }
+
+    /// <summary>
     /// Serializes the specified type.
     /// </summary>
     /// <param name="type">The type to serialize.</param>
@@ -162,19 +238,12 @@ public sealed class ApiDocumentationWriter(IDictionary<string, DocumentedType> t
         WriteIndented($"types.Add(\"{type.Value.Name}\", new()");
         WriteLine(" {");
         Indent();
-        // Is there any summary?
-        if (!string.IsNullOrEmpty(type.Value.Summary))
-        {
-            WriteLineIndented($"Summary = \"{Escape(type.Value.Summary)}\",");
-        }
-        // Is there any remarks?
-        if (!string.IsNullOrEmpty(type.Value.Remarks))
-        {
-            WriteLineIndented($"Remarks = \"{Escape(type.Value.Remarks)}\",");
-        }
+        WriteLineIndented($"Name = \"{type.Value.Name}\", ");
+        WriteSummaryIndented(type.Value.Summary);
+        WriteLine();
+        WriteRemarks(type.Value.Remarks);
         WriteProperties(type.Value);
         WriteFields(type.Value);
-
         Outdent();
         WriteLineIndented("});");
     }
@@ -208,7 +277,7 @@ public sealed class ApiDocumentationWriter(IDictionary<string, DocumentedType> t
 
         foreach (var property in type.Properties)
         {
-            WriteProperty(type, property);
+            WriteProperty(type, property.Value);
         }
 
         Outdent();
@@ -220,7 +289,7 @@ public sealed class ApiDocumentationWriter(IDictionary<string, DocumentedType> t
     /// </summary>
     /// <param name="type">The current type being serialized.</param>
     /// <param name="property">The property to serialize.</param>
-    public void WriteProperty(DocumentedType type, KeyValuePair<string, DocumentedProperty> property)
+    public void WriteProperty(DocumentedType type, DocumentedProperty property)
     {
         /* Example:
          
@@ -229,26 +298,31 @@ public sealed class ApiDocumentationWriter(IDictionary<string, DocumentedType> t
          */
 
         WriteIndented("{ ");
-        Write($"\"{property.Value.Name}\", new()");
+        Write($"\"{property.Name}\", new()");
         Write(" { ");
-        Write($"Type = \"{Escape(property.Value.PropertyTypeName)}\", ");
-        // Is this property declared in another type (like a base class)?
-        if (!string.IsNullOrEmpty(property.Value.DeclaringTypeName) && type.Name != property.Value.DeclaringTypeName)
-        {
-            Write($"DeclaringType = \"{Escape(property.Value.DeclaringTypeName)}\", ");
-        }
-        // Is there a summary?
-        if (!string.IsNullOrEmpty(property.Value.Summary))
-        {
-            Write($"Summary = \"{Escape(property.Value.Summary)}\", ");
-        }
-        // Is there any remarks?
-        if (!string.IsNullOrEmpty(property.Value.Remarks))
-        {
-            Write($"Remarks = \"{Escape(property.Value.Remarks)}\"");
-        }
+        Write($"Name = \"{property.Name}\", ");
+        Write($"Type = \"{property.PropertyTypeName}\", ");
+        WriteDeclaringType(type, property);
+        WriteCategory(property.Category);
+        WriteSummary(property.Summary);
+        WriteRemarks(property.Remarks);
+
         Write(" }");
         WriteLine(" },");
+    }
+
+    /// <summary>
+    /// Writes the type in which the property was declared, if it's another type.
+    /// </summary>
+    /// <param name="type">The type containing the property.</param>
+    /// <param name="property">The property being described.</param>
+    public void WriteDeclaringType(DocumentedType type, DocumentedProperty property)
+    {
+        // Is this property declared in another type (like a base class)?
+        if (!string.IsNullOrEmpty(property.DeclaringTypeName) && type.Name != property.DeclaringTypeName)
+        {
+            Write($"DeclaringType = \"{Escape(property.DeclaringTypeName)}\", ");
+        }
     }
 
     /// <summary>
@@ -283,13 +357,7 @@ public sealed class ApiDocumentationWriter(IDictionary<string, DocumentedType> t
         WriteIndented("{ ");
         Write($"\"{field.Value.Name}\", new()");
         Write(" { ");
-
-        // Is there a summary?
-        if (!string.IsNullOrEmpty(field.Value.Summary))
-        {
-            Write($"Summary = \"{Escape(field.Value.Summary)}\"");
-        }
-
+        WriteSummary(field.Value.Summary);
         Write(" }");
         WriteLine(" },");
     }

@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace MudBlazor.Docs.Models;
 
@@ -14,12 +15,20 @@ namespace MudBlazor.Docs.Models;
 [DebuggerDisplay("{Name}: Summary={Summary}")]
 public class DocumentedType
 {
+    public string Name { get; set; }
     public string Summary { get; set; }
     public string Remarks { get; set; }
-    public bool IsPublic { get; set; }
-    public bool IsAbstract { get; set; }
     public Dictionary<string, DocumentedProperty> Properties { get; set; } = [];
     public Dictionary<string, DocumentedMethod> Methods { get; set; } = [];
     public Dictionary<string, DocumentedField> Fields { get; set; } = [];
     public Dictionary<string, DocumentedEvent> Events { get; set; } = [];
+
+    /// <summary>
+    /// Gets the unique categories of properties for this type.
+    /// </summary>
+    public List<string> PropertyCategories => Properties.Values
+        .Where(property => property.Category != null)
+        .Select(property => property.Category)
+        .Distinct()
+        .ToList();
 }
