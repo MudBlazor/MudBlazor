@@ -2,12 +2,12 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-namespace MudBlazor
-{
+namespace MudBlazor;
+
 #nullable enable
-    public enum TableEditTrigger
-    {
-        RowClick,
-        EditButton
-    }
+public enum TableApplyButtonPosition
+{
+    Start,
+    End,
+    StartAndEnd,
 }
