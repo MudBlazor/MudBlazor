@@ -2004,9 +2004,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudForm>();
 
-            comp.Find("form.mud-form").ClassList.Should().NotContainMatch("gap*");
-
-            for (var i = 1; i <= 16; i++)
+            for (var i = 0; i <= 20; i++)
             {
                 comp.SetParam(x => x.Spacing, i);
                 comp.Find("form.mud-form").ClassList.Should().Contain($"gap-{i}");
