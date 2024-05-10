@@ -146,6 +146,29 @@ namespace MudBlazor
         /// <summary>
         /// Switching point for responsive drawers
         /// </summary>
+        /// <remarks>
+        /// The <see cref="Breakpoint"/> enum represents the breakpoints at which the drawer behavior changes. Supported breakpoints are:
+        /// <list type="bullet">
+        /// <item><description><see cref="Breakpoint.Xs"/></description></item>
+        /// <item><description><see cref="Breakpoint.Sm"/></description></item>
+        /// <item><description><see cref="Breakpoint.Md"/></description></item>
+        /// <item><description><see cref="Breakpoint.Lg"/></description></item>
+        /// <item><description><see cref="Breakpoint.Xl"/></description></item>
+        /// <item><description><see cref="Breakpoint.Xxl"/></description></item>
+        /// </list>
+        /// For convenience, other breakpoint combinations are aliased as follows:
+        /// <list type="bullet">
+        /// <item><description><see cref="Breakpoint.SmAndDown"/>: Aliases to <see cref="Breakpoint.Sm"/></description></item>
+        /// <item><description><see cref="Breakpoint.MdAndDown"/>: Aliases to <see cref="Breakpoint.Md"/></description></item>
+        /// <item><description><see cref="Breakpoint.LgAndDown"/>: Aliases to <see cref="Breakpoint.Lg"/></description></item>
+        /// <item><description><see cref="Breakpoint.XlAndDown"/>: Aliases to <see cref="Breakpoint.Xl"/></description></item>
+        /// <item><description><see cref="Breakpoint.SmAndUp"/>: Aliases to <see cref="Breakpoint.Sm"/></description></item>
+        /// <item><description><see cref="Breakpoint.MdAndUp"/>: Aliases to <see cref="Breakpoint.Md"/></description></item>
+        /// <item><description><see cref="Breakpoint.LgAndUp"/>: Aliases to <see cref="Breakpoint.Lg"/></description></item>
+        /// <item><description><see cref="Breakpoint.XlAndUp"/>: Aliases to <see cref="Breakpoint.Xl"/></description></item>
+        /// </list>
+        /// Setting the value to <see cref="Breakpoint.None"/> will always close the drawer, while <see cref="Breakpoint.Always"/> will always keep it open.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public Breakpoint Breakpoint { get; set; } = Breakpoint.Md;
