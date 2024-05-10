@@ -37,7 +37,7 @@ namespace MudBlazor
 
         internal void Add(MudDrawer drawer)
         {
-            if (Fixed && !drawer.Fixed)
+            if (Fixed && !drawer.IsFixed)
                 return;
 
             _drawers.Add(drawer);

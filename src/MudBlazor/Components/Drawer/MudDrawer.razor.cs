@@ -21,7 +21,6 @@ namespace MudBlazor
         private ElementReference _contentRef;
         private bool _closeOnMouseLeave = false;
         private bool _isRendered;
-        private bool _fixed = true;
         private bool _initial = true;
         private bool _keepInitialState;
         private Breakpoint _lastUpdatedBreakpoint = Breakpoint.None;
@@ -48,7 +47,7 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-drawer")
-                .AddClass($"mud-drawer-fixed", Fixed)
+                .AddClass($"mud-drawer-fixed", IsFixed)
                 .AddClass($"mud-drawer-pos-{GetPosition()}")
                 .AddClass($"mud-drawer--open", _openState.Value)
                 .AddClass($"mud-drawer--closed", !_openState.Value)
@@ -72,7 +71,7 @@ namespace MudBlazor
 
         protected string Stylename =>
             new StyleBuilder()
-                .AddStyle("--mud-drawer-width", Width, !string.IsNullOrWhiteSpace(Width) && (!Fixed || Variant == DrawerVariant.Temporary))
+                .AddStyle("--mud-drawer-width", Width, !string.IsNullOrWhiteSpace(Width) && (!IsFixed || Variant == DrawerVariant.Temporary))
                 .AddStyle("height", Height, !string.IsNullOrWhiteSpace(Height))
                 .AddStyle("--mud-drawer-content-height", string.IsNullOrWhiteSpace(Height) ? _height.ToPx() : Height, Anchor == Anchor.Bottom || Anchor == Anchor.Top)
                 .AddStyle("visibility", "hidden", string.IsNullOrWhiteSpace(Height) && _height == 0 && Anchor is Anchor.Bottom or Anchor.Top)
@@ -93,14 +92,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
-        public bool Fixed
-        {
-            get => _fixed && DrawerContainer is MudLayout;
-            set
-            {
-                _fixed = value;
-            }
-        }
+        public bool Fixed { get; set; } = true;
 
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
@@ -274,7 +266,7 @@ namespace MudBlazor
 
         private void OnClipModeParameterChange()
         {
-            if (Fixed)
+            if (IsFixed)
             {
                 DrawerContainerUpdate();
             }
@@ -329,22 +321,13 @@ namespace MudBlazor
 
         private bool IsBelowCurrentBreakpoint() => IsBelowBreakpoint(_lastUpdatedBreakpoint);
 
-        private bool IsBelowBreakpoint(Breakpoint breakpoint)
-        {
-            // See BreakpointNormalize comment
-            return breakpoint switch
-            {
-                Breakpoint.Always => true,
-                Breakpoint.None => false,
-                _ => BreakpointNormalize(breakpoint) < BreakpointNormalize(_breakpointState.Value)
-            };
-        }
+        private bool IsBelowBreakpoint(Breakpoint breakpoint) => breakpoint < BreakpointNormalize(_breakpointState.Value);
 
         private bool IsResponsiveOrMini() => Variant is DrawerVariant.Responsive or DrawerVariant.Mini;
 
-        private bool ShouldCloseDrawer(Breakpoint breakpoint) => IsBelowBreakpoint(breakpoint) && !IsBelowCurrentBreakpoint() && IsResponsiveOrMini();
+        private bool ShouldCloseDrawer(Breakpoint breakpoint) => IsResponsiveOrMini() && (_breakpointState.Value == Breakpoint.None || (IsBelowBreakpoint(breakpoint) && !IsBelowCurrentBreakpoint()));
 
-        private bool ShouldOpenDrawer(Breakpoint breakpoint) => !IsBelowBreakpoint(breakpoint) && IsBelowCurrentBreakpoint() && IsResponsiveOrMini();
+        private bool ShouldOpenDrawer(Breakpoint breakpoint) => IsResponsiveOrMini() && (_breakpointState.Value == Breakpoint.Always || (!IsBelowBreakpoint(breakpoint) && IsBelowCurrentBreakpoint()));
 
         internal string GetPosition()
         {
@@ -355,6 +338,8 @@ namespace MudBlazor
                 _ => Anchor.ToDescriptionString()
             };
         }
+
+        internal bool IsFixed => Fixed && DrawerContainer is MudLayout;
 
         private async Task OnMouseEnterAsync()
         {
@@ -395,12 +380,18 @@ namespace MudBlazor
         {
             if (browserViewportEventArgs.IsImmediate)
             {
-                var isBelowBreakpoint = IsBelowBreakpoint(browserViewportEventArgs.Breakpoint);
                 _lastUpdatedBreakpoint = browserViewportEventArgs.Breakpoint;
-                if (isBelowBreakpoint && _openState.Value)
+                if (HandleBreakpointNone())
                 {
-                    _keepInitialState = true;
-                    await _openState.SetValueAsync(false);
+                    await InitialOpenState(false);
+                }
+                else if (HandleBreakpointAlways())
+                {
+                    await InitialOpenState(true);
+                }
+                else if (HandleBelowBreakpointAndOpenState())
+                {
+                    await InitialOpenState(false);
                 }
 
                 return;
@@ -412,6 +403,16 @@ namespace MudBlazor
             }
 
             await InvokeAsync(() => UpdateBreakpointStateAsync(browserViewportEventArgs.Breakpoint));
+            return;
+
+            bool HandleBreakpointNone() => _breakpointState.Value == Breakpoint.None;
+            bool HandleBreakpointAlways() => _breakpointState.Value == Breakpoint.Always;
+            bool HandleBelowBreakpointAndOpenState() => IsBelowBreakpoint(browserViewportEventArgs.Breakpoint) && _openState.Value;
+            Task InitialOpenState(bool open)
+            {
+                _keepInitialState = true;
+                return _openState.SetValueAsync(open);
+            }
         }
 
         private static Breakpoint BreakpointNormalize(Breakpoint breakpoint)
