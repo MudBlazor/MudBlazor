@@ -421,7 +421,7 @@ namespace MudBlazor
             // However, some users may supply additional breakpoints such as SmAndDown, MdAndDown, LgAndDown, XlAndDown, SmAndUp, MdAndUp, LgAndUp, XlAndUp, None, and Always.
             // The IBrowserViewportService provides an IsBreakpointWithinReferenceSizeAsync method that considers these additional breakpoints.
             // However, utilizing it would constitute a breaking change.
-            // For instance, users who previously specified Sm would find that their drawer opens only on screens of that size but not on any larger ones.
+            // For instance, users who previously specified Sm would find that their drawer opens only on screens of that size but not on any larger ones and switch to SmAndUp.
             // To maintain backward compatibility, we decided to alias SmAndUp and SmAndDown to simply Sm, and similarly for other breakpoints.
 
             return breakpoint switch
