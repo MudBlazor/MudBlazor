@@ -96,4 +96,12 @@ public static class MudGlobal
     {
         Console.Write(ex);
     }
+
+    public static class Popover
+    {
+        /// <summary>
+        /// The default elevation level for <see cref="MudPopover"/>.
+        /// </summary>
+        public static int Elevation { get; set; } = 8;
+    }
 }

@@ -5,6 +5,7 @@
 	<MudPopover Open="true" Style="my-custom-style:3px"
 				MaxHeight="@MaxHeight"
 				Paper="Paper"
+                DropShadow=@DropShadow
 				Elevation="Elevation"
 				Square="Square"
 				Fixed="Fixed"
@@ -31,4 +32,5 @@
 	[Parameter] public bool RelativeWidth { get; set; } = false;
 	[Parameter] public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipNever;
 	[Parameter] public double Duration { get; set; } = 251;
+    [Parameter] public bool DropShadow { get; set; } = true; // Default
 }
