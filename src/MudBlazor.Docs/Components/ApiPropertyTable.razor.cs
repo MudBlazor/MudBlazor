@@ -46,6 +46,14 @@ public partial class ApiPropertyTable
     /// </summary>
     public Grouping CurrentGrouping { get; set; } = Grouping.Categories!;
 
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Table != null)
+        {
+            await Table.ReloadServerData();
+        }
+    }
+
     /// <summary>
     /// Requests data for the table.
     /// </summary>
@@ -112,9 +120,9 @@ public partial class ApiPropertyTable
         {
             return CurrentGrouping switch
             {
-                Grouping.Categories => new() { Selector = (property) => property.Category },
-                Grouping.Inheritance => new() { Selector = (property) => property.DeclaringType },
-                _ => new() { Selector = (property) => property.Category }
+                Grouping.Categories => new() { Selector = (property) => property.Category ?? "" },
+                Grouping.Inheritance => new() { Selector = (property) => property.DeclaringType ?? "" },
+                _ => new() { Selector = (property) => property.Category ?? "" }
             };
         }
     }

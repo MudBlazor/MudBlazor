@@ -27,8 +27,8 @@ public class DocumentedType
     /// Gets the unique categories of properties for this type.
     /// </summary>
     public List<string> PropertyCategories => Properties.Values
-        .Where(property => property.Category != null)
-        .Select(property => property.Category)
+        .Select(property => property.Category ?? "General")
         .Distinct()
+        .Order()
         .ToList();
 }

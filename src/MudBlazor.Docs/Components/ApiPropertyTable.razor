@@ -3,7 +3,6 @@
         <MudGrid Class="pa-0">
             <MudItem xs="6">
                 <MudChipSet T="string" @bind-SelectedValues="SelectedCategories" SelectionMode="SelectionMode.MultiSelection" CheckMark="true">
-                    <MudChip T="string" Variant="Variant.Text" Size="Size.Small" Label="true" Value="@null" Text="General" Default="@true" OnClick="@(() => Table.ReloadServerData())"></MudChip>
                     @foreach (var category in Type.PropertyCategories)
                     {
                         <MudChip T="string" Variant="Variant.Text" Size="Size.Small" Label="true" Value="@category" Text="@category" Default="@true" OnClick="@(() => Table.ReloadServerData())"></MudChip>
