@@ -45,13 +45,13 @@ namespace MudBlazor.UnitTests.Components
         {
             return breakpoint switch
             {
-                Breakpoint.Xs => new BrowserWindowSize { Height = 0, Width = 0 },
-                Breakpoint.Sm => new BrowserWindowSize { Height = 400, Width = 600 },
-                Breakpoint.Md => new BrowserWindowSize { Height = 640, Width = 960 },
-                Breakpoint.Lg => new BrowserWindowSize { Height = 720, Width = 1280 },
-                Breakpoint.Xl => new BrowserWindowSize { Height = 1080, Width = 1920 },
-                Breakpoint.Xxl => new BrowserWindowSize { Height = 1440, Width = 2560 },
-                _ => throw new InvalidEnumArgumentException("Only acceptable breakpoints are: Xs, Sm, Md, Lg, Xl and Xxl")
+                Breakpoint.Xs or Breakpoint.None => new BrowserWindowSize { Height = 0, Width = 0 },
+                Breakpoint.Sm or Breakpoint.SmAndDown or Breakpoint.SmAndUp => new BrowserWindowSize { Height = 400, Width = 600 },
+                Breakpoint.Md or Breakpoint.MdAndDown or Breakpoint.MdAndUp => new BrowserWindowSize { Height = 640, Width = 960 },
+                Breakpoint.Lg or Breakpoint.LgAndDown or Breakpoint.LgAndUp => new BrowserWindowSize { Height = 720, Width = 1280 },
+                Breakpoint.Xl or Breakpoint.XlAndDown or Breakpoint.XlAndUp => new BrowserWindowSize { Height = 1080, Width = 1920 },
+                Breakpoint.Xxl or Breakpoint.Always => new BrowserWindowSize { Height = 1440, Width = 2560 },
+                _ => throw new InvalidEnumArgumentException("Not acceptable breakpoint")
             };
         }
 
@@ -198,6 +198,7 @@ namespace MudBlazor.UnitTests.Components
 
         [TestCase(Breakpoint.Xs)]
         [TestCase(Breakpoint.Sm)]
+        //[TestCase(Breakpoint.SmAndUp)]
         [TestCase(Breakpoint.Md)]
         [TestCase(Breakpoint.Lg)]
         [TestCase(Breakpoint.Xl)]

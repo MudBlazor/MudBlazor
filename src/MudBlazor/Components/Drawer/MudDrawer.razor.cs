@@ -329,7 +329,16 @@ namespace MudBlazor
 
         private bool IsBelowCurrentBreakpoint() => IsBelowBreakpoint(_lastUpdatedBreakpoint);
 
-        private bool IsBelowBreakpoint(Breakpoint breakpoint) => breakpoint < _breakpointState.Value;
+        private bool IsBelowBreakpoint(Breakpoint breakpoint)
+        {
+            // See BreakpointNormalize comment
+            return breakpoint switch
+            {
+                Breakpoint.Always => true,
+                Breakpoint.None => false,
+                _ => BreakpointNormalize(breakpoint) < BreakpointNormalize(_breakpointState.Value)
+            };
+        }
 
         private bool IsResponsiveOrMini() => Variant is DrawerVariant.Responsive or DrawerVariant.Mini;
 
@@ -403,6 +412,25 @@ namespace MudBlazor
             }
 
             await InvokeAsync(() => UpdateBreakpointStateAsync(browserViewportEventArgs.Breakpoint));
+        }
+
+        private static Breakpoint BreakpointNormalize(Breakpoint breakpoint)
+        {
+            // Historically, MudDrawer only functioned with breakpoints like Xs, Sm, Md, Lg, Xl, and Xxl.
+            // However, some users may supply additional breakpoints such as SmAndDown, MdAndDown, LgAndDown, XlAndDown, SmAndUp, MdAndUp, LgAndUp, XlAndUp, None, and Always.
+            // The IBrowserViewportService provides an IsBreakpointWithinReferenceSizeAsync method that considers these additional breakpoints.
+            // However, utilizing it would constitute a breaking change.
+            // For instance, users who previously specified Sm would find that their drawer opens only on screens of that size but not on any larger ones.
+            // To maintain backward compatibility, we decided to alias SmAndUp and SmAndDown to simply Sm, and similarly for other breakpoints.
+
+            return breakpoint switch
+            {
+                Breakpoint.SmAndDown or Breakpoint.SmAndUp => Breakpoint.Sm,
+                Breakpoint.MdAndDown or Breakpoint.MdAndUp => Breakpoint.Md,
+                Breakpoint.LgAndDown or Breakpoint.LgAndUp => Breakpoint.Lg,
+                Breakpoint.XlAndUp or Breakpoint.XlAndDown => Breakpoint.Xl,
+                _ => breakpoint,
+            };
         }
     }
 }
