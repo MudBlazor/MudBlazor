@@ -29,7 +29,7 @@ namespace MudBlazor.Docs.Compiler;
 /// use the <see cref="CriticalTypes"/> property to control which types are most important for documentation.
 /// </para>
 /// </remarks>
-public partial class MudComponentDocumenter()
+public partial class ApiDocumentationBuilder()
 {
     /// <summary>
     /// The assembly to document.

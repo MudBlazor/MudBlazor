@@ -69,9 +69,7 @@ public partial class ApiPropertyTable
 
         // Get properties which are in the selected categories
         var properties = Type.Properties.Values
-            .Where(property => SelectedCategories != null
-                && (SelectedCategories.Contains(property.Category)
-                    || (SelectedCategories.Contains("General") && string.IsNullOrEmpty(property.Category))));
+            .Where(property => SelectedCategories != null && SelectedCategories.Contains(property.Category));
 
         // Filter by any search keyword
         if (!string.IsNullOrEmpty(Keyword))
