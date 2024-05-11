@@ -73,7 +73,7 @@ namespace MudBlazor
         private bool _alpha = true;
 
         /// <summary>
-        /// Whether alpha transparency options are shown.
+        /// Shows alpha transparency options.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  When <c>true</c>, alpha options will be displayed and color output will be <c>RGBA</c>, <c>HSLA</c> or <c>HEXA</c> instead of <c>RGB</c>, <c>HSL</c> or <c>HEX</c>.
@@ -100,7 +100,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Whether the color field will be displayed.
+        /// Displays the color field.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -110,7 +110,7 @@ namespace MudBlazor
         public bool ShowColorField { get; set; } = true;
 
         /// <summary>
-        /// Whether the switch to change the color mode will be displayed.
+        /// Displays the switch to change the color mode.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -120,7 +120,7 @@ namespace MudBlazor
         public bool ShowModeSwitch { get; set; } = true;
 
         /// <summary>
-        /// Whether the text inputs, color mode, and switch will be displayed.
+        /// Displays the text inputs, current mode, and mode switch.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -130,7 +130,7 @@ namespace MudBlazor
         public bool ShowInputs { get; set; } = true;
 
         /// <summary>
-        /// Whether hue and alpha sliders are displayed.
+        /// Displays hue and alpha sliders.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -140,7 +140,7 @@ namespace MudBlazor
         public bool ShowSliders { get; set; } = true;
 
         /// <summary>
-        /// Whether a preview of the color is displayed.
+        /// Displays a preview of the color.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  When <c>true</c>, the preview color can be used as a button for collection colors.
@@ -184,7 +184,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Whether changes to the bound value only occur when HSL values change.
+        /// Limits updates to the bound value to when HSL values change.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the bound value changes when HSL values change, even if the RGB values have not changed.
@@ -246,7 +246,7 @@ namespace MudBlazor
         };
 
         /// <summary>
-        /// Whether the selected color can continue to change while the mouse button is down.
+        /// Continues to update the selected color while the mouse button is down.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  When <c>false</c>, conditions like long latency are better supported and can be adjusted via the <see cref="ThrottleInterval"/> property.

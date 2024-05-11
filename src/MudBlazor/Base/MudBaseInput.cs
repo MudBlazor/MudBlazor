@@ -19,7 +19,7 @@ namespace MudBlazor
     {
         private bool _isDirty;
         /// <summary>
-        /// Whether validation has been performed during a validation cycle.
+        /// Prevents validation from occurring more than once during a validation cycle.
         /// </summary>
         /// <remarks>
         /// This field is set to <c>true</c> to prevent validation from occurring more than once during a validation cycle.  Each change in the <see cref="Value"/> will reset this field to <c>false</c>.
@@ -42,7 +42,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Whether the component can receive input.
+        /// Allows the component to receive input.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -55,7 +55,7 @@ namespace MudBlazor
         private bool ParentDisabled { get; set; }
 
         /// <summary>
-        /// Whether the input can be changed by the user.
+        /// Prevents the input from being changed by the user.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the user can copy text in the control, but cannot change the <see cref="Value" />.
@@ -68,7 +68,7 @@ namespace MudBlazor
         private bool ParentReadOnly { get; set; }
 
         /// <summary>
-        /// Whether this input fills the full width of its container.
+        /// Fills the full width of the parent container.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -78,7 +78,7 @@ namespace MudBlazor
         public bool FullWidth { get; set; }
 
         /// <summary>
-        /// Whether the <see cref="Value"/> is changed as soon as input is received.
+        /// Changes the <see cref="Value"/> as soon as input is received.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the <see cref="Value"/> property will be updated any time user input occurs.  Otherwise, <see cref="Value"/> is updated when the user presses <c>Enter</c> or the input loses focus.
@@ -88,7 +88,7 @@ namespace MudBlazor
         public bool Immediate { get; set; }
 
         /// <summary>
-        /// Whether the input has an underline.
+        /// Displays an underline for the input.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -108,7 +108,7 @@ namespace MudBlazor
         public string? HelperText { get; set; }
 
         /// <summary>
-        /// Whether the <see cref="HelperText"/> is only shown when this input has focus.
+        /// Displays the <see cref="HelperText"/> only when this input has focus.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -148,7 +148,7 @@ namespace MudBlazor
         public Adornment Adornment { get; set; } = Adornment.None;
 
         /// <summary>
-        /// Whether validation only occurs when the user changes the <see cref="Value"/>.
+        /// Limits validation to when the user changes the <see cref="Value"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>. When <c>true</c>, validation only occurs if the user has changed the input value at least once.
@@ -261,7 +261,7 @@ namespace MudBlazor
         public string? Label { get; set; }
 
         /// <summary>
-        /// Whether this input automatically receives focus.
+        /// Automatically receives focus.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the input will receive focus automatically.
@@ -285,7 +285,7 @@ namespace MudBlazor
         public string? Text { get; set; }
 
         /// <summary>
-        /// Whether the text cannot be updated via a bound value.
+        /// Prevents the text from being updated via a bound value.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  Applies only to Blazor Server (BSS) applications.  When <c>false</c>, the input's text can be updated programmatically while the input has focus.
@@ -315,7 +315,7 @@ namespace MudBlazor
         public virtual string? Pattern { get; set; }
 
         /// <summary>
-        /// Whether the label is allowed to appear inside the input if no <see cref="Value"/> is specified.
+        /// Shows the label inside the input if no <see cref="Value"/> is specified.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the label will not move into the input when the input is empty.
@@ -349,7 +349,7 @@ namespace MudBlazor
         public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
         /// <summary>
-        /// Whether the default key-down action occurs.
+        /// Allows the default key-down action to occur.
         /// </summary>
         /// <remarks>
         /// When <c>true</c>, the browser will not perform its default behavior when a key-down occurs.  This is typically used when a key-down needs to override a browser's default behavior.
@@ -365,7 +365,7 @@ namespace MudBlazor
         public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
 
         /// <summary>
-        /// Whether the default key-up action occurs.
+        /// Prevents the default key-up action.
         /// </summary>
         /// <remarks>
         /// When <c>true</c>, the browser will not perform its default behavior when a key-up occurs.  This is typically used when a key-up needs to override the browser's default behavior.

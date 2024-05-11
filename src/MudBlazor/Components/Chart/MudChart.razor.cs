@@ -174,7 +174,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Whether lines can be hidden when <see cref="ChartType"/> is <see cref="ChartType.Line"/>.
+        /// Allows series to be hidden when <see cref="ChartType"/> is <see cref="ChartType.Line"/>.
         /// </summary>
         /// <remarks>
         /// When <c>true</c>, checkboxes are displayed which can toggle visibility of each line.

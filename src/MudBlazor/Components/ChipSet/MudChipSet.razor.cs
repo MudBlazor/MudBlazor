@@ -68,7 +68,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public SelectionMode SelectionMode { get; set; } = SelectionMode.SingleSelection;
 
     /// <summary>
-    /// Whether all chips in this set are closeable.
+    /// Allows all chips in this set to be closed.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.
@@ -128,7 +128,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public Size Size { get; set; } = Size.Medium;
 
     /// <summary>
-    /// Whether checkmarks are shown for selected chips.
+    /// Shows checkmarks for selected chips.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.ChipSet.Appearance)]
@@ -155,7 +155,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public string CloseIcon { get; set; } = Icons.Material.Filled.Cancel;
 
     /// <summary>
-    /// Whether a ripple effect is shown for chips in this set.
+    /// Shows a ripple effect when a chip is clicked.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>true</c>.  Can be overridden by setting <see cref="MudChip{T}.Ripple"/>.
@@ -165,7 +165,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public bool Ripple { get; set; } = true;
 
     /// <summary>
-    /// Whether the theme border radius is used be default for chips in this set.
+    /// Uses the theme border radius for chips in this set.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.  When <c>true</c>, the <see cref="LayoutProperties.DefaultBorderRadius"/> is used for chip edges.  Can be overridden by setting <see cref="MudChip{T}.Label"/>.
@@ -175,7 +175,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public bool Label { get; set; }
 
     /// <summary>
-    /// Whether the user cannot interact with this chip.
+    /// Prevents the user from interacting with chips in this set.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.  When <c>true</c>, the all chips are visibly disabled and interaction is not allowed.  Overrides any value set for <see cref="MudChip{T}.Disabled"/>.
@@ -185,7 +185,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public bool Disabled { get; set; }
 
     /// <summary>
-    /// Whether chips in this set are clickable.
+    /// Prevents chips in this set from being clicked.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.  When <c>true</c>, chips cannot be clicked even if <see cref="MudChip{T}.OnClick"/> is set.

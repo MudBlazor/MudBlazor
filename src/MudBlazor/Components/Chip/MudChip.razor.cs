@@ -155,7 +155,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public RenderFragment? AvatarContent { get; set; }
 
     /// <summary>
-    /// Whether the theme border radius is used for the chip edges.
+    /// Uses the theme border radius for chip edges.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.  When <c>true</c>, the <see cref="LayoutProperties.DefaultBorderRadius"/> is used for chip edges.
@@ -165,7 +165,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public bool? Label { get; set; }
 
     /// <summary>
-    /// Whether the user cannot interact with this chip.
+    /// Prevents the user from interacting with this chip.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.  When <c>true</c>, the chip is visibly disabled and interaction is not allowed.
@@ -212,7 +212,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public string? CloseIcon { get; set; }
 
     /// <summary>
-    /// Whether a ripple effect is show when the chip is clicked.
+    /// Displays a ripple effect when this chip is clicked.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.
@@ -269,7 +269,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public T? Value { get; set; }
 
     /// <summary>
-    /// Whether a full page refresh is performed when navigating to the URL in <see cref="Href"/>.
+    /// Performs a full page refresh when navigating to the URL in <see cref="Href"/>.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.  When <c>true</c>, client-side routing is bypassed and a full page reload occurs.
@@ -279,7 +279,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public bool ForceLoad { get; set; }
 
     /// <summary>
-    /// Whether this chip is selected by default when part of a <see cref="MudChipSet{T}"/>.
+    /// Selects this chip by default when part of a <see cref="MudChipSet{T}"/>.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.
@@ -306,7 +306,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     internal bool ShowCheckMark => SelectedState.Value && ChipSet?.CheckMark == true;
 
     /// <summary>
-    /// Whether this chip is selected.
+    /// Selects this chip.
     /// </summary>
     /// <remarks>
     /// When <c>true</c>, the chip is displayed in a selected state.
