@@ -54,6 +54,14 @@ public static class MudGlobal
         public static TimeSpan Duration { get; set; } = TransitionDefaults.Duration;
     }
 
+    public static class PopoverDefaults
+    {
+        /// <summary>
+        /// The default elevation level for <see cref="MudPopover"/>.
+        /// </summary>
+        public static int Elevation { get; set; } = 8;
+    }
+
     public static class TooltipDefaults
     {
         /// <summary>
