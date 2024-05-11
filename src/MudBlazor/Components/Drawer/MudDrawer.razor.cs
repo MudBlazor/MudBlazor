@@ -101,7 +101,7 @@ namespace MudBlazor
         public bool Fixed { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets the size of the drop shadow.
+        /// The size of the drop shadow.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>4</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
@@ -111,7 +111,7 @@ namespace MudBlazor
         public int Elevation { set; get; } = 1;
 
         /// <summary>
-        /// Sets the edge of the container that the drawer will appear.
+        /// The edge of the container that the drawer will appear.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Anchor.Start" />.
@@ -121,10 +121,10 @@ namespace MudBlazor
         public Anchor Anchor { get; set; } = Anchor.Start;
 
         /// <summary>
-        /// Gets or sets the color of the drawer. It supports the theme colors.
+        /// The color of the drawer.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.
+        /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Appearance)]
@@ -145,7 +145,7 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Darkens the screen with an overlay when displaying this drawer.
+        /// For responsive and temporary drawers, darkens the screen with an overlay when displaying this drawer.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  Applies when <see cref="Variant"/> is <see cref="DrawerVariant.Responsive"/> or <see cref="DrawerVariant.Temporary"/>.
@@ -155,7 +155,7 @@ namespace MudBlazor
         public bool Overlay { get; set; } = true;
 
         /// <summary>
-        /// Opens this drawer when the mouse hovers over it.
+        /// For mini drawers, opens this drawer when the mouse hovers over it.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  Applies when <see cref="Variant" /> is set to <see cref="DrawerVariant.Mini" />.
@@ -191,7 +191,7 @@ namespace MudBlazor
         public EventCallback<bool> OpenChanged { get; set; }
 
         /// <summary>
-        /// The width of this drawer, for non-fixed or temporary drawers.
+        /// For non-fixed or temporary drawers, the width of this drawer.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Values such as <c>300px</c> and <c>30%</c> are supported.  Applies to non-fixed or <see cref="DrawerVariant.Temporary"/> drawers anchored to the left or right.
@@ -201,7 +201,7 @@ namespace MudBlazor
         public string? Width { get; set; }
 
         /// <summary>
-        /// The width of this drawer, for mini drawers.
+        /// For mini drawers, the width of this drawer.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Values such as <c>300px</c> and <c>30%</c> are supported. Applies to <see cref="DrawerVariant.Mini"/> drawers achored to the left or right.
