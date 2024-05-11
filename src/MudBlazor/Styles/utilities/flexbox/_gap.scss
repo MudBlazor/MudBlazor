@@ -1,11 +1,11 @@
-﻿@import '../../abstracts/variables';
+@import '../../abstracts/variables';
 
 $count: 0;
 $value: 0;
 
 @mixin gap($breakpoint) {
 
-  @while $count < 17 {
+  @while $count < 21 {
     .gap-#{$breakpoint}#{$count} {
       gap: #{$value}px;
     }

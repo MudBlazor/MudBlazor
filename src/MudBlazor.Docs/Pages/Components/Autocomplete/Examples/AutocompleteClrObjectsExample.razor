@@ -24,15 +24,23 @@
             </ItemSelectedTemplate>
         </MudAutocomplete>
     </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value3"
+                   SearchFunc="@Search" ItemDisabledFunc="@((Element e) => (e.Name.Contains("H")))" ToStringFunc="@(e=> e==null?null : $"{e.Name} ({e.Sign})")">
+            <ItemDisabledTemplate>
+                <MudText>Not available: @context.ToString()</MudText>
+            </ItemDisabledTemplate>
+        </MudAutocomplete>
+    </MudItem>
     <MudItem xs="12" md="12">
         <MudText Class="mb-n3" Typo="Typo.body2">
-            Selected values: <MudChip T="string">@(value1?.ToString() ?? "Not selected")</MudChip><MudChip T="string">@(value2?.ToString() ?? "Not selected")</MudChip>
+            Selected values: <MudChip T="string">@(value1?.ToString() ?? "Not selected")</MudChip><MudChip T="string">@(value2?.ToString() ?? "Not selected")</MudChip><MudChip T="string">@(value3?.ToString() ?? "Not selected")</MudChip>
         </MudText>
     </MudItem>
 </MudGrid>
 
 @code {
-    private Element value1, value2;
+    private Element value1, value2, value3;
 
     private async Task<IEnumerable<Element>> Search(string value, CancellationToken token)
     {
