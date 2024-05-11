@@ -175,6 +175,9 @@ namespace MudBlazor
                         case "Outline":
                             NotifyIllegalParameter(parameter);
                             break;
+                        case "Dense":
+                            NotifyIllegalParameter(parameter);
+                            break;
                     }
                 }
                 else if (this is MudAvatar)
@@ -304,6 +307,24 @@ namespace MudBlazor
                             break;
                     }
                 }
+                else if (this is MudText)
+                {
+                    switch (parameter)
+                    {
+                        case "Inline":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
+                else if (MatchTypes(typeof(MudTable<>)))
+                {
+                    switch (parameter)
+                    {
+                        case "QuickColumns":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
                 else
                 {
                     switch (parameter)
@@ -360,6 +381,16 @@ namespace MudBlazor
                         case "IsCheckedChanged":
                         case "IsVisible":
                         case "IsVisibleChanged":
+                        case "IsOpen":
+                        case "IsOpened":
+                        case "IsOpenChanged":
+                        case "IsActive":
+                        case "ItemIsDisabled":
+                        case "IsSelected":
+                        case "IsSelectedChanged":
+                        case "IsEditable":
+                        case "IsEditing":
+                        case "IsEditSwitchBlocked":
                             NotifyIllegalParameter(parameter);
                             break;
                     }

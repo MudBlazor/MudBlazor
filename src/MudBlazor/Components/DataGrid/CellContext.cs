@@ -19,7 +19,7 @@ namespace MudBlazor
 
         public CellActions Actions { get; }
 
-        public bool IsSelected
+        public bool Selected
         {
             get
             {
@@ -27,7 +27,7 @@ namespace MudBlazor
             }
         }
 
-        public bool IsOpened
+        public bool Open
         {
             get
             {

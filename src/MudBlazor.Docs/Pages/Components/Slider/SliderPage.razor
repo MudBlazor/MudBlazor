@@ -39,6 +39,17 @@
                 <SliderMinMaxExample />
             </SectionContent>
         </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Nullable">
+                <Description>
+                    If undefined state is required use <CodeInline>@nameof(MudSlider<double>.NullableValue)</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SliderNullableExample)">
+                <SliderNullableExample />
+            </SectionContent>
+        </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Ticks" />
@@ -66,11 +77,11 @@
         <DocsPageSection>
             <SectionHeader Title="Value Label">
                 <Description>
-                    Use the slider below to see the value label, this can be used by setting <CodeInline>@nameof(MudSlider<T>.ValueLabel)</CodeInline> property to true.
+                    Use the slider below to see the value label, this can be used by setting <CodeInline>@nameof(MudSlider<double>.ValueLabel)</CodeInline> property to true.
                     <br />
-                    Use <CodeInline>@nameof(MudSlider<T>.ValueLabelStringFormat)</CodeInline> and <CodeInline>@nameof(MudSlider<T>.ValueLabelCultureInfo)</CodeInline> to change the formatting.
+                    Use <CodeInline>@nameof(MudSlider<double>.ValueLabelFormat)</CodeInline> and <CodeInline>@nameof(MudSlider<double>.Culture)</CodeInline> to change the formatting.
                     <br />
-                    For more customization use <CodeInline>@nameof(MudSlider<T>.ValueLabelContent)</CodeInline> RenderFragment.
+                    For more customization use <CodeInline>@nameof(MudSlider<double>.ValueLabelContent)</CodeInline> RenderFragment.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(SliderValueLabelExample)">

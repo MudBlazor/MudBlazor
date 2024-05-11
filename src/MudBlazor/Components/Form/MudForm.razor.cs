@@ -13,6 +13,7 @@ namespace MudBlazor
     {
         protected string Classname =>
             new CssBuilder("mud-form")
+            .AddClass($"gap-{Spacing}", Spacing >= 0)
             .AddClass(Class)
        .Build();
 
@@ -102,6 +103,17 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Form.Behavior)]
         public bool SuppressImplicitSubmission { get; set; } = true;
+
+        /// <summary>
+        /// The gap between items, measured in increments of <c>4px</c>.
+        /// <br/>
+        /// Maximum is <c>20</c>.
+        /// <br/>
+        /// Default is no spacing.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Form.Behavior)]
+        public int Spacing { set; get; }
 
         /// <summary>
         /// Raised when IsValid changes.

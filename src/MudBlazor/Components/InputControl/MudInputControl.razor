@@ -15,7 +15,7 @@
     @if (Error || !string.IsNullOrEmpty(HelperText) || !string.IsNullOrEmpty(CounterText))
     {
         <div class="@HelperContainer">
-            <p class="@HelperClass">
+            <span class="@HelperClass">
                 <div class="d-flex">
                     @if (Error)
                     {
@@ -36,7 +36,7 @@
                         </div>            
                     }
                 </div>
-            </p>
+            </span>
         </div>
     }
     @ChildContent
