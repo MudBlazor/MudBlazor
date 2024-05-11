@@ -167,14 +167,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public CultureInfo ValueLabelCultureInfo { get; set; } = CultureInfo.InvariantCulture;
+        public CultureInfo Culture { get; set; } = CultureInfo.InvariantCulture;
 
         /// <summary>
         /// Sets the formatting information used for ValueLabel. Default is no formatting.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public string? ValueLabelStringFormat { get; set; }
+        public string? ValueLabelFormat { get; set; }
 
         /// <summary>
         /// Sets custom RenderFragment for ValueLabel.
