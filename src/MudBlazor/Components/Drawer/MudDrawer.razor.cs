@@ -344,7 +344,7 @@ namespace MudBlazor
 
         private bool IsBelowCurrentBreakpoint() => IsBelowBreakpoint(_lastUpdatedBreakpoint);
 
-        private bool IsBelowBreakpoint(Breakpoint breakpoint) => breakpoint < BreakpointNormalize(_breakpointState.Value);
+        private bool IsBelowBreakpoint(Breakpoint breakpoint) => breakpoint < NormalizeBreakpoint(_breakpointState.Value);
 
         private bool IsResponsiveOrMini() => Variant is DrawerVariant.Responsive or DrawerVariant.Mini;
 
@@ -438,7 +438,7 @@ namespace MudBlazor
             }
         }
 
-        private static Breakpoint BreakpointNormalize(Breakpoint breakpoint)
+        private static Breakpoint NormalizeBreakpoint(Breakpoint breakpoint)
         {
             // Historically, MudDrawer only functioned with breakpoints like Xs, Sm, Md, Lg, Xl, and Xxl.
             // However, some users may supply additional breakpoints such as SmAndDown, MdAndDown, LgAndDown, XlAndDown, SmAndUp, MdAndUp, LgAndUp, XlAndUp, None, and Always.
