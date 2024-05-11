@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -419,7 +420,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.NullableValue.Should().BeNull();
 
             IElement Input() => comp.Find(".mud-slider-input");
-            await Input().InputAsync(new ChangeEventArgs { Value = value.ToString() });
+            var converter = new DefaultConverter<double?> { Culture = CultureInfo.InvariantCulture };
+            await Input().InputAsync(new ChangeEventArgs { Value = converter.Set(value) });
             comp.Instance.NullableValue.Should().Be(value);
         }
 
@@ -436,7 +438,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Value.Should().Be(0);
 
             IElement Input() => comp.Find(".mud-slider-input");
-            await Input().InputAsync(new ChangeEventArgs { Value = value.ToString() });
+            var converter = new DefaultConverter<double?>() { Culture = CultureInfo.InvariantCulture };
+            await Input().InputAsync(new ChangeEventArgs { Value = converter.Set(value) });
             comp.Instance.NullableValue.Should().Be(value);
             comp.Instance.Value.Should().Be(value.GetValueOrDefault(0));
         }
