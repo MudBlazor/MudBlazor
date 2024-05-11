@@ -18,7 +18,7 @@ namespace MudBlazor
         public MudBooleanInput() : base(new BoolConverter<T?>()) { }
 
         /// <summary>
-        /// PRevents the user from interacting with this input.
+        /// Prevents the user from interacting with this input.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.

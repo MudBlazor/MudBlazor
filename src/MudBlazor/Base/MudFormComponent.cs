@@ -203,7 +203,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Indicates the user has interacted with this input or focus has been released.
+        /// Indicates whether the user has interacted with this input or the focus has been released.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the user has performed input, or focus has moved away from this input.  This property is typically used to show the <see cref="RequiredError"/> text only after the user has interacted with this input.
@@ -671,7 +671,7 @@ namespace MudBlazor
         public Expression<Func<T>>? For { get; set; }
 
         /// <summary>
-        /// Indicates if the <see cref="For"/> property is <c>null</c>.
+        /// Indicates whether the <see cref="For"/> property is <c>null</c>.
         /// </summary>
         [MemberNotNullWhen(false, nameof(For))]
         public bool IsForNull => For is null;

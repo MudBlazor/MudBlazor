@@ -14,7 +14,7 @@ namespace MudBlazor
         private NavigationManager UriHelper { get; set; } = null!;
 
         /// <summary>
-        /// PRevents the user from interacting with this item.
+        /// Prevents the user from interacting with this item.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.Behavior)]
