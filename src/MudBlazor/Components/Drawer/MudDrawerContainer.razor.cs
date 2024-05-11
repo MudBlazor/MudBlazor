@@ -7,6 +7,9 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// Represents a container for a <see cref="MudDrawer"/> component.
+    /// </summary>
     public partial class MudDrawerContainer : MudComponentBase
     {
         protected bool Fixed { get; set; } = false;
@@ -31,6 +34,9 @@ namespace MudBlazor
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
+        /// <summary>
+        /// Custom content within this component.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public RenderFragment? ChildContent { get; set; }
