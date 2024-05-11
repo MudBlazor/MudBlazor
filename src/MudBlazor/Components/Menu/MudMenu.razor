@@ -35,7 +35,8 @@
                        aria-label="@AriaLabel" />
     }
     @* The portal has to include  the cascading values inside, because it's not able to teletransport the cascade *@
-    <MudPopover Open="@_open" Class="@PopoverClass" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" RelativeWidth="@FullWidth" Style="@_popoverStyle" @ontouchend:preventDefault>
+    <MudPopover Open="@_open" Class="@PopoverClass" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" RelativeWidth="@FullWidth" Style="@_popoverStyle" @ontouchend:preventDefault
+                DropShadow="@DropShadow">
         <CascadingValue Value="@this">
             <MudList T="object" Class="@ListClass" Dense="@Dense"
                 @onmouseenter="@MouseEnterAsync"
