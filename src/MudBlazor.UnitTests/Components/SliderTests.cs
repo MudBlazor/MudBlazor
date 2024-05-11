@@ -38,8 +38,8 @@ namespace MudBlazor.UnitTests.Components
             slider.Variant.Should().Be(Variant.Text);
 
             slider.Size.Should().Be(Size.Small);
-            slider.ValueLabelCultureInfo.Should().Be(CultureInfo.InvariantCulture);
-            slider.ValueLabelStringFormat.Should().BeNull();
+            slider.Culture.Should().Be(CultureInfo.InvariantCulture);
+            slider.ValueLabelFormat.Should().BeNull();
             slider.ValueLabelContent.Should().BeNull();
         }
 
@@ -483,8 +483,8 @@ namespace MudBlazor.UnitTests.Components
                 x.Add(p => p.Value, value);
                 x.Add(p => p.Step, 0.5m);
                 x.Add(p => p.ValueLabel, true);
-                x.Add(p => p.ValueLabelCultureInfo, customCulture);
-                x.Add(p => p.ValueLabelStringFormat, "C");
+                x.Add(p => p.Culture, customCulture);
+                x.Add(p => p.ValueLabelFormat, "C");
             });
 
             IElement ValueLabel() => comp.Find(".mud-slider-value-label");
