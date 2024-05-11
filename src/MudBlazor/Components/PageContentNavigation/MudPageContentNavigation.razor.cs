@@ -150,7 +150,7 @@ namespace MudBlazor
             else if (_sections.Count == 1 && ActivateFirstSectionAsDefault)
             {
                 section.Activate();
-                _scrollSpy?.SetSectionAsActive(section.Id).AndForget();
+                _scrollSpy?.SetSectionAsActive(section.Id).CatchAndLog();
             }
 
             if (forceUpdate)

@@ -563,7 +563,7 @@ namespace MudBlazor
             var changed = base.SetConverter(value);
             if (changed)
             {
-                UpdateTextPropertyAsync(false).AndForget();      // refresh only Text property from current Value
+                UpdateTextPropertyAsync(false).CatchAndLog();      // refresh only Text property from current Value
             }
 
             return changed;
@@ -574,7 +574,7 @@ namespace MudBlazor
             var changed = base.SetCulture(value);
             if (changed)
             {
-                UpdateTextPropertyAsync(false).AndForget();      // refresh only Text property from current Value
+                UpdateTextPropertyAsync(false).CatchAndLog();      // refresh only Text property from current Value
             }
 
             return changed;
@@ -586,7 +586,7 @@ namespace MudBlazor
             if (changed)
             {
                 ((Converter<T>)Converter).Format = value;
-                UpdateTextPropertyAsync(false).AndForget();      // refresh only Text property from current Value
+                UpdateTextPropertyAsync(false).CatchAndLog();      // refresh only Text property from current Value
             }
 
             return changed;
@@ -632,7 +632,7 @@ namespace MudBlazor
         public virtual void ForceRender(bool forceTextUpdate)
         {
             _forceTextUpdate = true;
-            UpdateTextPropertyAsync(false).AndForget();
+            UpdateTextPropertyAsync(false).CatchAndLog();
             StateHasChanged();
         }
 

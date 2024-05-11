@@ -277,7 +277,7 @@ namespace MudBlazor
         public string Text
         {
             get => _text;
-            set => SetTextAsync(value, true).AndForget();
+            set => SetTextAsync(value, true).CatchAndLog();
         }
 
         private string _text;

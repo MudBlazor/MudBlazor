@@ -185,7 +185,7 @@ namespace MudBlazor
             _reference.Result.ContinueWith(t =>
             {
                 return InvokeAsync(() => _visibleState.SetValueAsync(false));
-            }).AndForget();
+            }).CatchAndLog();
 
             return _reference;
         }

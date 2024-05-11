@@ -170,7 +170,7 @@ namespace MudBlazor
         public MudColor Value
         {
             get => _value;
-            set => SetColorAsync(value).AndForget();
+            set => SetColorAsync(value).CatchAndLog();
         }
 
         [Parameter] public EventCallback<MudColor> ValueChanged { get; set; }

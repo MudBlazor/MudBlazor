@@ -14,7 +14,7 @@ namespace MudBlazor
         /// <summary>
         /// Task will be awaited and exceptions will be forwarded to MudBlazorGlobal.UnhandledExceptionHandler.
         /// </summary>
-        public static async void AndForget(this Task task, bool ignoreExceptions = false)
+        public static async void CatchAndLog(this Task task, bool ignoreExceptions = false)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace MudBlazor
         /// <summary>
         /// ValueTask will be awaited and exceptions will be forwarded to MudBlazorGlobal.UnhandledExceptionHandler.
         /// </summary>
-        public static async void AndForget(this ValueTask task, bool ignoreExceptions = false)
+        public static async void CatchAndLog(this ValueTask task, bool ignoreExceptions = false)
         {
             try
             {
@@ -50,7 +50,7 @@ namespace MudBlazor
         /// <summary>
         /// ValueTask(bool) will be awaited and exceptions will be forwarded to MudBlazorGlobal.UnhandledExceptionHandler.
         /// </summary>
-        public static async void AndForget<T>(this ValueTask<T> task, bool ignoreExceptions = false)
+        public static async void CatchAndLog<T>(this ValueTask<T> task, bool ignoreExceptions = false)
         {
             try
             {
