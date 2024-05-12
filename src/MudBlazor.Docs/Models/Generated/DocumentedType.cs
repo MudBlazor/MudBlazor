@@ -16,8 +16,14 @@ namespace MudBlazor.Docs.Models;
 public class DocumentedType
 {
     public string Name { get; set; }
+    public string ApiUrl => "/api/" + (IsComponent ? Name.Replace("Mud", "") : Name);
+    public string ComponentUrl => "/component/" + (IsComponent ? Name.Replace("Mud", "") : Name);
+    public bool IsComponent { get; set; }
     public string Summary { get; set; }
     public string Remarks { get; set; }
+    public string BaseTypeName { get; set; }
+    public DocumentedType BaseType => ApiDocumentation.GetType(BaseTypeName);
+    public List<DocumentedType> Children => ApiDocumentation.Types.Values.Where(type => type.BaseTypeName == Name).ToList();
     public Dictionary<string, DocumentedProperty> Properties { get; set; } = [];
     public Dictionary<string, DocumentedMethod> Methods { get; set; } = [];
     public Dictionary<string, DocumentedField> Fields { get; set; } = [];

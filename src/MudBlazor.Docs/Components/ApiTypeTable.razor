@@ -1,1 +1,30 @@
-﻿
+﻿<MudTable T="DocumentedType" @ref="Table" ServerData="@GetData" Elevation="0" Class="ma-0 mud-width-full" Hover="true" AllowUnsorted="false">
+    <ToolBarContent>
+        <MudGrid Class="pa-0">
+            <MudItem xs="6">
+                <MudChipSet T="string" @bind-SelectedValues="SelectedCategories" SelectionMode="SelectionMode.MultiSelection" CheckMark="true">
+                    <MudChip T="string" Variant="Variant.Text" Size="Size.Small" Label="true" Text="Components" Default="@true" OnClick="@(() => Table.ReloadServerData())"></MudChip>
+                    <MudChip T="string" Variant="Variant.Text" Size="Size.Small" Label="true" Text="Types" Default="@true" OnClick="@(() => Table.ReloadServerData())"></MudChip>
+                </MudChipSet>
+            </MudItem>
+            <MudItem xs="6">
+                <MudTextField T="string" Clearable="true" Immediate="true" ValueChanged="OnSearchAsync" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Small"></MudTextField>
+            </MudItem>
+        </MudGrid>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel T="DocumentedType" SortLabel="Name" InitialDirection="SortDirection.Ascending">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="DocumentedType" SortLabel="Description">Description</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd Class="docs-content-api-cell" DataLabel="Name">
+            <MudLink Href="@context.ApiUrl">
+                <MudHighlighter Text="@context.Name" HighlightedText="@Keyword" />
+            </MudLink>
+        </MudTd>
+        <MudTd id="@context.Name" Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">
+            @((MarkupString)(context.Summary + " " + context.Remarks))
+        </MudTd>
+    </RowTemplate>
+    <GroupFooterTemplate></GroupFooterTemplate>
+</MudTable>

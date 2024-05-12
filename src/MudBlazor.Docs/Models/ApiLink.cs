@@ -27,16 +27,14 @@ namespace MudBlazor.Docs.Models
         /// </summary>
         public static Type? GetTypeFromComponentLink(string component)
         {
-            if (component.Contains('#'))
-            {
-                component = component[..component.IndexOf('#')];
-            }
-
             if (string.IsNullOrEmpty(component))
             {
                 return null;
             }
-
+            if (component.Contains('#'))
+            {
+                component = component[..component.IndexOf('#')];
+            }
             if (InverseSpecialCase.TryGetValue(component, out var type))
             {
                 return type;

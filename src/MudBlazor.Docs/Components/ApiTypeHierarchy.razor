@@ -1,0 +1,10 @@
+﻿<MudTreeView T="DocumentedTypeTreeItem" Hover="true" Items="@Root" SelectionMode="SelectionMode.SingleSelection" @bind-SelectedValue="@SelectedType">
+    <ItemTemplate>
+        <MudTreeViewItem T="DocumentedTypeTreeItem" Expanded="true" Text="@context.Name" 
+            Items="@context.Children" 
+            IconColor="@context.IconColor" Icon="@context.Icon" 
+            Selected="@(context.Name == Type.Name)"
+            OnClick="@(() => OnTypeClicked(context))"
+            />
+    </ItemTemplate>
+</MudTreeView>

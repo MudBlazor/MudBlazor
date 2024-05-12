@@ -20,6 +20,7 @@ public sealed class DocumentedProperty
     public string? Remarks { get; set; }
     public string Type { get; set; } = "";
     public string? DeclaringType { get; set; }
+    public string? DeclaringTypeApiLink => $"/api/{DeclaringType}";
     public bool IsPublic { get; set; }
     public bool IsProtected { get; set; }
     public bool IsParameter { get; set; }

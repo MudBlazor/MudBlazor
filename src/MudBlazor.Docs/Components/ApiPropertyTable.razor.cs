@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -39,7 +40,27 @@ public partial class ApiPropertyTable
     /// <summary>
     /// The currently selected categories.
     /// </summary>
-    public IReadOnlyCollection<string>? SelectedCategories { get; set; }
+    public IReadOnlyCollection<string> SelectedCategories { get; set; } = [];
+
+    /// <summary>
+    /// The currently selected view.
+    /// </summary>
+    public IReadOnlyCollection<string> SelectedViews { get; set; } = [];
+
+    /// <summary>
+    /// Shows inherited properties.
+    /// </summary>
+    public bool IncludeInherited => SelectedViews.Contains("Inherited");
+
+    /// <summary>
+    /// Shows properties.
+    /// </summary>
+    public bool IncludeProperties => SelectedViews.Contains("Properties");
+
+    /// <summary>
+    /// Shows Blazor parameters.
+    /// </summary>
+    public bool IncludeParameters => SelectedViews.Contains("Parameters");
 
     /// <summary>
     /// The currently selected grouping.
@@ -69,7 +90,7 @@ public partial class ApiPropertyTable
 
         // Get properties which are in the selected categories
         var properties = Type.Properties.Values
-            .Where(property => SelectedCategories != null && SelectedCategories.Contains(property.Category));
+            .Where(property => SelectedCategories != null && property.Category != null && SelectedCategories.Contains(property.Category));
 
         // Filter by any search keyword
         if (!string.IsNullOrEmpty(Keyword))
@@ -81,21 +102,45 @@ public partial class ApiPropertyTable
             );
         }
 
-        // Sort results
-        switch (state.SortLabel)
+        // Filter by property type
+        if (IncludeParameters && IncludeProperties)
         {
-            case "Name":
-                properties = state.SortDirection == SortDirection.Ascending ? properties.OrderBy(property => property.Name) : properties.OrderByDescending(property => property.Name);
-                break;
-            case "Type":
-                properties = state.SortDirection == SortDirection.Ascending ? properties.OrderBy(property => property.Type) : properties.OrderByDescending(property => property.Type);
-                break;
-            case "Description":
-                properties = state.SortDirection == SortDirection.Ascending ? properties.OrderBy(property => property.Summary) : properties.OrderByDescending(property => property.Summary);
-                break;
-            default:
-                properties = state.SortDirection == SortDirection.Ascending ? properties.OrderBy(property => property.Name) : properties.OrderByDescending(property => property.Name);
-                break;
+            // Everything
+        }
+        else if (IncludeProperties)
+        {
+            properties = properties.Where(property => !property.IsParameter);
+        }
+        else if (IncludeParameters)
+        {
+            properties = properties.Where(property => property.IsParameter);
+        }
+        else
+        {
+            return new TableData<DocumentedProperty> { };
+        }
+
+        // What's the grouping?
+        if (this.CurrentGrouping == Grouping.Categories)
+        {
+            // Sort by category
+            var orderedProperties = properties.OrderBy(property => property.Category);
+
+            // ... then by sort column
+            orderedProperties = state.SortLabel switch
+            {
+                "Name" => state.SortDirection == SortDirection.Ascending ? orderedProperties.ThenBy(property => property.Name) : orderedProperties.ThenByDescending(property => property.Name),
+                "Type" => state.SortDirection == SortDirection.Ascending ? orderedProperties.ThenBy(property => property.Type) : orderedProperties.ThenByDescending(property => property.Type),
+                "Description" => state.SortDirection == SortDirection.Ascending ? orderedProperties.ThenBy(property => property.Summary) : orderedProperties.ThenByDescending(property => property.Summary),
+                _ => state.SortDirection == SortDirection.Ascending ? orderedProperties.ThenBy(property => property.Name) : orderedProperties.ThenByDescending(property => property.Name),
+            };
+
+            properties = orderedProperties;
+        }
+        else
+        {
+            // TODO
+            Debugger.Break();
         }
 
         // Make the final results
@@ -138,12 +183,40 @@ public partial class ApiPropertyTable
             await Table.ReloadServerData();
         }
     }
+
+    [Inject]
+    private NavigationManager? Browser { get; set; }
+
+    /// <summary>
+    /// Occurs when a declaring type has been clicked.
+    /// </summary>
+    /// <param name="url"></param>
+    /// <returns></returns>
+    public void OnDeclaringTypeClicked(string url)
+    {
+        // Force a new load (otherwise MudChips won't properly update)
+        Browser?.NavigateTo(url, false);
+    }
 }
 
+/// <summary>
+/// Indicates the method that properties for a type are grouped.
+/// </summary>
 public enum Grouping
 {
+    /// <summary>
+    /// Properties are grouped by category.
+    /// </summary>
     Categories,
+
+    /// <summary>
+    /// Properties are grouped by their declaring type.
+    /// </summary>
     Inheritance,
+
+    /// <summary>
+    /// Properties are not grouped.
+    /// </summary>
     None
 }
 

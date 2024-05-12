@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 
 namespace MudBlazor.Docs.Compiler;
@@ -239,9 +240,10 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
         WriteLine(" {");
         Indent();
         WriteLineIndented($"Name = \"{type.Value.Name}\", ");
+        WriteBaseTypeIndented(type.Value.BaseType);
+        WriteIsComponentIndented(type.Value.Type.IsSubclassOf(typeof(MudComponentBase)));
         WriteSummaryIndented(type.Value.Summary);
-        WriteLine();
-        WriteRemarks(type.Value.Remarks);
+        WriteRemarksIndented(type.Value.Remarks);
         WriteProperties(type.Value);
         WriteFields(type.Value);
         Outdent();
@@ -304,11 +306,49 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
         Write($"Type = \"{property.PropertyTypeName}\", ");
         WriteDeclaringType(type, property);
         WriteCategory(property.Category);
+        WriteIsParameter(property.IsParameter);
         WriteSummary(property.Summary);
         WriteRemarks(property.Remarks);
 
         Write(" }");
         WriteLine(" },");
+    }
+
+    /// <summary>
+    /// Writes whether the type inherits from <see cref="MudComponentBase"/>.
+    /// </summary>
+    /// <param name="isComponent"></param>
+    public void WriteIsComponentIndented(bool isComponent)
+    {
+        if (isComponent)
+        {
+            WriteIndent();
+            WriteLine($"IsComponent = true, ");
+        }
+    }
+
+    /// <summary>
+    /// Writes whether a property is a parameter.
+    /// </summary>
+    /// <param name="isParameter"></param>
+    public void WriteIsParameter(bool isParameter)
+    {
+        if (isParameter)
+        {
+            Write($"IsParameter = true, ");
+        }
+    }
+
+    /// <summary>
+    /// Writes the name of the given base type.
+    /// </summary>
+    /// <param name="baseType"></param>
+    public void WriteBaseTypeIndented(Type baseType)
+    {
+        if (baseType != null)
+        {
+            WriteLineIndented($"BaseTypeName = \"{baseType.Name}\", ");
+        }
     }
 
     /// <summary>

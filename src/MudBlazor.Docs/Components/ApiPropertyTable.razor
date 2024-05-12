@@ -1,24 +1,26 @@
 ﻿<MudTable T="DocumentedProperty" @ref="Table" ServerData="@GetData" Elevation="0" Class="ma-0 mud-width-full" Hover="true" AllowUnsorted="false" GroupBy="@CurrentGroups">
     <ToolBarContent>
         <MudGrid Class="pa-0">
-            <MudItem xs="6">
+            <MudItem xs="5">
                 <MudChipSet T="string" @bind-SelectedValues="SelectedCategories" SelectionMode="SelectionMode.MultiSelection" CheckMark="true">
                     @foreach (var category in Type.PropertyCategories)
                     {
-                        <MudChip T="string" Variant="Variant.Text" Size="Size.Small" Label="true" Value="@category" Text="@category" Default="@true" OnClick="@(() => Table.ReloadServerData())"></MudChip>
+                        <MudChip T="string" Variant="Variant.Text" Size="Size.Small" Label="true" Text="@category" Default="true" OnClick="@(() => Table.ReloadServerData())"></MudChip>
                     }
                 </MudChipSet>
             </MudItem>
-            <MudItem xs="6">
+            <MudItem xs="5">
+                <MudChipSet T="string" @bind-SelectedValues="SelectedViews" SelectionMode="SelectionMode.MultiSelection" CheckMark="true">
+                    <MudChip T="string" Variant="Variant.Text" Size="Size.Small" Label="true" Text="Properties" Default="true" OnClick="@(() => Table.ReloadServerData())"></MudChip>
+                    <MudChip T="string" Variant="Variant.Text" Size="Size.Small" Label="true" Text="Parameters" Default="true" OnClick="@(() => Table.ReloadServerData())"></MudChip>
+                    <MudChip T="string" Variant="Variant.Text" Size="Size.Small" Label="true" Text="Inherited" Default="true" OnClick="@(() => Table.ReloadServerData())"></MudChip>
+                </MudChipSet>
+            </MudItem>
+            <MudItem xs="2">
                 <MudTextField T="string" Clearable="true" Immediate="true" ValueChanged="OnSearchAsync" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Small"></MudTextField>
             </MudItem>
         </MudGrid>
     </ToolBarContent>
-    <HeaderContent>
-        <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="Name" InitialDirection="SortDirection.Ascending">Name</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="Type" InitialDirection="SortDirection.Ascending">Type</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="Description" InitialDirection="SortDirection.Ascending">Description</MudTableSortLabel></MudTh>
-    </HeaderContent>
     <GroupHeaderTemplate>
         @if (CurrentGrouping == Grouping.Inheritance)
         {
@@ -33,13 +35,34 @@
             </MudTh>
         }
     </GroupHeaderTemplate>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="Name" InitialDirection="SortDirection.Ascending">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="Type">Type</MudTableSortLabel></MudTh>
+        @if (IncludeInherited)
+        {
+            <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="DeclaringType">Declared In</MudTableSortLabel></MudTh>
+        }
+        <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="Description">Description</MudTableSortLabel></MudTh>
+    </HeaderContent>
     <RowTemplate>
-        <MudTd Class="docs-content-api-cell" DataLabel="Name">
+        <MudTd Class="docs-content-api-cell" Style="white-space: nowrap;" DataLabel="Name">
+            @if (context.IsParameter)
+            {
+                <MudTooltip Text="Parameter">
+                    <MudIcon Class="pt-3" Size="Size.Large" Icon="@Icons.Material.Filled.TextSnippet" />
+                </MudTooltip>
+            }
             <MudHighlighter Text="@context.Name" HighlightedText="@Keyword" />
         </MudTd>
         <MudTd Class="docs-content-api-cell" DataLabel="Type">
             <CodeInline>@context.Type</CodeInline>
         </MudTd>
+        @if (IncludeInherited)
+        {
+            <MudTd Class="docs-content-api-cell" DataLabel="Declaring Type">
+                <MudLink OnClick="@(() => OnDeclaringTypeClicked(@context.DeclaringTypeApiLink))"><CodeInline>@context.DeclaringType</CodeInline></MudLink>
+            </MudTd>
+        }
         <MudTd id="@context.Name" Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">
             @((MarkupString)(context.Summary + " " + context.Remarks))
         </MudTd>
