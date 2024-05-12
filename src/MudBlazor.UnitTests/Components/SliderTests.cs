@@ -414,14 +414,14 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(20.5)]
         [TestCase(75.5)]
         [TestCase(100.0)]
+        [SetCulture("en-US")]
         public async Task NullableBinding(double? value)
         {
             var comp = Context.RenderComponent<SliderWithNullable>();
             comp.Instance.NullableValue.Should().BeNull();
 
             IElement Input() => comp.Find(".mud-slider-input");
-            var converter = new DefaultConverter<double?> { Culture = CultureInfo.InvariantCulture };
-            await Input().InputAsync(new ChangeEventArgs { Value = converter.Set(value) });
+            await Input().InputAsync(new ChangeEventArgs { Value = value.ToString() });
             comp.Instance.NullableValue.Should().Be(value);
         }
 
@@ -431,6 +431,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(20.5)]
         [TestCase(75.5)]
         [TestCase(100.0)]
+        [SetCulture("en-US")]
         public async Task TwoBindValues1(double? value)
         {
             var comp = Context.RenderComponent<SliderWithTwoBindValues>();
@@ -438,8 +439,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Value.Should().Be(0);
 
             IElement Input() => comp.Find(".mud-slider-input");
-            var converter = new DefaultConverter<double?>() { Culture = CultureInfo.InvariantCulture };
-            await Input().InputAsync(new ChangeEventArgs { Value = converter.Set(value) });
+            await Input().InputAsync(new ChangeEventArgs { Value = value.ToString() });
             comp.Instance.NullableValue.Should().Be(value);
             comp.Instance.Value.Should().Be(value.GetValueOrDefault(0));
         }
