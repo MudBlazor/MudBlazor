@@ -20,7 +20,7 @@ public enum DrawerVariant
     Responsive,
 
     /// <summary>
-    /// The drawer will open outside of its container, shifting other content upon open.
+    /// The drawer will open outside of its container, shifting other contents when opened.
     /// </summary>
     [Description("persistent")]
     Persistent,
