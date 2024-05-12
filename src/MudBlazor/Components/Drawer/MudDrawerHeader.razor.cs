@@ -10,7 +10,7 @@ namespace MudBlazor;
 #nullable enable
 
 /// <summary>
-/// Represents content att the top of a <see cref="MudDrawer"/>.
+/// Represents content at the top of a <see cref="MudDrawer"/>.
 /// </summary>
 public partial class MudDrawerHeader
 {
@@ -21,7 +21,7 @@ public partial class MudDrawerHeader
           .Build();
 
     /// <summary>
-    /// Gets or sets whether compact padding will be used.
+    /// Uses compact padding.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.

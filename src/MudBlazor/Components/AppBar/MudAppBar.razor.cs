@@ -105,7 +105,7 @@ namespace MudBlazor
         public string? ToolBarClass { get; set; }
 
         /// <summary>
-        /// Gets or sets any content within this component.
+        /// Gets or sets any child content for the component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AppBar.Behavior)]

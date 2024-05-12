@@ -131,14 +131,14 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        ///  Variant of the drawer. It specifies how the drawer will be displayed.
+        /// Variant of the drawer. It specifies how the drawer will be displayed.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public DrawerVariant Variant { get; set; } = DrawerVariant.Responsive;
 
         /// <summary>
-        /// Gets or sets any content within this component.
+        /// The content within this component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
