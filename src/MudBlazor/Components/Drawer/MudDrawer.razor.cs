@@ -21,7 +21,6 @@ namespace MudBlazor
         private ElementReference _contentRef;
         private bool _closeOnMouseLeave = false;
         private bool _isRendered;
-        private bool _fixed = true;
         private bool _initial = true;
         private bool _keepInitialState;
         private Breakpoint _lastUpdatedBreakpoint = Breakpoint.None;
@@ -48,7 +47,7 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-drawer")
-                .AddClass($"mud-drawer-fixed", Fixed)
+                .AddClass($"mud-drawer-fixed", IsFixed)
                 .AddClass($"mud-drawer-pos-{GetPosition()}")
                 .AddClass($"mud-drawer--open", _openState.Value)
                 .AddClass($"mud-drawer--closed", !_openState.Value)
@@ -72,7 +71,7 @@ namespace MudBlazor
 
         protected string Stylename =>
             new StyleBuilder()
-                .AddStyle("--mud-drawer-width", Width, !string.IsNullOrWhiteSpace(Width) && (!Fixed || Variant == DrawerVariant.Temporary))
+                .AddStyle("--mud-drawer-width", Width, !string.IsNullOrWhiteSpace(Width) && (!IsFixed || Variant == DrawerVariant.Temporary))
                 .AddStyle("height", Height, !string.IsNullOrWhiteSpace(Height))
                 .AddStyle("--mud-drawer-content-height", string.IsNullOrWhiteSpace(Height) ? _height.ToPx() : Height, Anchor == Anchor.Bottom || Anchor == Anchor.Top)
                 .AddStyle("visibility", "hidden", string.IsNullOrWhiteSpace(Height) && _height == 0 && Anchor is Anchor.Bottom or Anchor.Top)
@@ -93,14 +92,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
-        public bool Fixed
-        {
-            get => _fixed && DrawerContainer is MudLayout;
-            set
-            {
-                _fixed = value;
-            }
-        }
+        public bool Fixed { get; set; } = true;
 
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
@@ -154,6 +146,29 @@ namespace MudBlazor
         /// <summary>
         /// Switching point for responsive drawers
         /// </summary>
+        /// <remarks>
+        /// The <see cref="Breakpoint"/> enum represents the breakpoints at which the drawer behavior changes. Supported breakpoints are:
+        /// <list type="bullet">
+        /// <item><description><see cref="Breakpoint.Xs"/></description></item>
+        /// <item><description><see cref="Breakpoint.Sm"/></description></item>
+        /// <item><description><see cref="Breakpoint.Md"/></description></item>
+        /// <item><description><see cref="Breakpoint.Lg"/></description></item>
+        /// <item><description><see cref="Breakpoint.Xl"/></description></item>
+        /// <item><description><see cref="Breakpoint.Xxl"/></description></item>
+        /// </list>
+        /// For convenience, other breakpoint combinations are aliased as follows:
+        /// <list type="bullet">
+        /// <item><description><see cref="Breakpoint.SmAndDown"/>: Aliases to <see cref="Breakpoint.Sm"/></description></item>
+        /// <item><description><see cref="Breakpoint.MdAndDown"/>: Aliases to <see cref="Breakpoint.Md"/></description></item>
+        /// <item><description><see cref="Breakpoint.LgAndDown"/>: Aliases to <see cref="Breakpoint.Lg"/></description></item>
+        /// <item><description><see cref="Breakpoint.XlAndDown"/>: Aliases to <see cref="Breakpoint.Xl"/></description></item>
+        /// <item><description><see cref="Breakpoint.SmAndUp"/>: Aliases to <see cref="Breakpoint.Sm"/></description></item>
+        /// <item><description><see cref="Breakpoint.MdAndUp"/>: Aliases to <see cref="Breakpoint.Md"/></description></item>
+        /// <item><description><see cref="Breakpoint.LgAndUp"/>: Aliases to <see cref="Breakpoint.Lg"/></description></item>
+        /// <item><description><see cref="Breakpoint.XlAndUp"/>: Aliases to <see cref="Breakpoint.Xl"/></description></item>
+        /// </list>
+        /// Setting the value to <see cref="Breakpoint.None"/> will always close the drawer, while <see cref="Breakpoint.Always"/> will always keep it open.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public Breakpoint Breakpoint { get; set; } = Breakpoint.Md;
@@ -274,7 +289,7 @@ namespace MudBlazor
 
         private void OnClipModeParameterChange()
         {
-            if (Fixed)
+            if (IsFixed)
             {
                 DrawerContainerUpdate();
             }
@@ -329,13 +344,13 @@ namespace MudBlazor
 
         private bool IsBelowCurrentBreakpoint() => IsBelowBreakpoint(_lastUpdatedBreakpoint);
 
-        private bool IsBelowBreakpoint(Breakpoint breakpoint) => breakpoint < _breakpointState.Value;
+        private bool IsBelowBreakpoint(Breakpoint breakpoint) => breakpoint < NormalizeBreakpoint(_breakpointState.Value);
 
         private bool IsResponsiveOrMini() => Variant is DrawerVariant.Responsive or DrawerVariant.Mini;
 
-        private bool ShouldCloseDrawer(Breakpoint breakpoint) => IsBelowBreakpoint(breakpoint) && !IsBelowCurrentBreakpoint() && IsResponsiveOrMini();
+        private bool ShouldCloseDrawer(Breakpoint breakpoint) => IsResponsiveOrMini() && (_breakpointState.Value == Breakpoint.None || (IsBelowBreakpoint(breakpoint) && !IsBelowCurrentBreakpoint()));
 
-        private bool ShouldOpenDrawer(Breakpoint breakpoint) => !IsBelowBreakpoint(breakpoint) && IsBelowCurrentBreakpoint() && IsResponsiveOrMini();
+        private bool ShouldOpenDrawer(Breakpoint breakpoint) => IsResponsiveOrMini() && (_breakpointState.Value == Breakpoint.Always || (!IsBelowBreakpoint(breakpoint) && IsBelowCurrentBreakpoint()));
 
         internal string GetPosition()
         {
@@ -346,6 +361,8 @@ namespace MudBlazor
                 _ => Anchor.ToDescriptionString()
             };
         }
+
+        internal bool IsFixed => Fixed && DrawerContainer is MudLayout;
 
         private async Task OnMouseEnterAsync()
         {
@@ -386,12 +403,18 @@ namespace MudBlazor
         {
             if (browserViewportEventArgs.IsImmediate)
             {
-                var isBelowBreakpoint = IsBelowBreakpoint(browserViewportEventArgs.Breakpoint);
                 _lastUpdatedBreakpoint = browserViewportEventArgs.Breakpoint;
-                if (isBelowBreakpoint && _openState.Value)
+                if (HandleBreakpointNone())
                 {
-                    _keepInitialState = true;
-                    await _openState.SetValueAsync(false);
+                    await InitialOpenState(false);
+                }
+                else if (HandleBreakpointAlways())
+                {
+                    await InitialOpenState(true);
+                }
+                else if (HandleBelowBreakpointAndOpenState())
+                {
+                    await InitialOpenState(false);
                 }
 
                 return;
@@ -403,6 +426,35 @@ namespace MudBlazor
             }
 
             await InvokeAsync(() => UpdateBreakpointStateAsync(browserViewportEventArgs.Breakpoint));
+            return;
+
+            bool HandleBreakpointNone() => _breakpointState.Value == Breakpoint.None;
+            bool HandleBreakpointAlways() => _breakpointState.Value == Breakpoint.Always;
+            bool HandleBelowBreakpointAndOpenState() => IsBelowBreakpoint(browserViewportEventArgs.Breakpoint) && _openState.Value;
+            Task InitialOpenState(bool open)
+            {
+                _keepInitialState = true;
+                return _openState.SetValueAsync(open);
+            }
+        }
+
+        private static Breakpoint NormalizeBreakpoint(Breakpoint breakpoint)
+        {
+            // Historically, MudDrawer only functioned with breakpoints like Xs, Sm, Md, Lg, Xl, and Xxl.
+            // However, some users may supply additional breakpoints such as SmAndDown, MdAndDown, LgAndDown, XlAndDown, SmAndUp, MdAndUp, LgAndUp, XlAndUp, None, and Always.
+            // The IBrowserViewportService provides an IsBreakpointWithinReferenceSizeAsync method that considers these additional breakpoints.
+            // However, utilizing it would constitute a breaking change.
+            // For instance, users who previously specified Sm would find that their drawer opens only on screens of that size but not on any larger ones, requiring them to switch to SmAndUp.
+            // To maintain backward compatibility, we decided to alias SmAndUp and SmAndDown to simply Sm, and similarly for other breakpoints.
+
+            return breakpoint switch
+            {
+                Breakpoint.SmAndDown or Breakpoint.SmAndUp => Breakpoint.Sm,
+                Breakpoint.MdAndDown or Breakpoint.MdAndUp => Breakpoint.Md,
+                Breakpoint.LgAndDown or Breakpoint.LgAndUp => Breakpoint.Lg,
+                Breakpoint.XlAndUp or Breakpoint.XlAndDown => Breakpoint.Xl,
+                _ => breakpoint,
+            };
         }
     }
 }

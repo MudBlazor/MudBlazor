@@ -1429,5 +1429,27 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").HasAttribute("required").Should().BeTrue();
             comp.Find("input").GetAttribute("aria-required").Should().Be("true");
         }
+
+        /// <summary>
+        /// Ensure that the ItemDisabledTemplate and ItemSelectedTemplate both can display when ItemTemplate isn't provided (null)
+        /// </summary>
+        [Test]
+        public void AutocompleteItemTemplateDisplayTest()
+        {
+            var comp = Context.RenderComponent<AutocompleteItemTemplateDisplayTest>();
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+
+            // Search for a to get Alabama, Alaska, American Samoa,...
+            autocompletecomp.Find("input").Input("a");
+
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            // Any state with 'l' is disabled: ItemDisabledFunc="@((string state) => (state.Contains('l')))"
+            var items = comp.FindComponents<MudListItem<string>>().ToArray();
+            // Alabama should have the ItemDisabledTemplate applied "Alabama Disabled State"
+            items.First().Markup.Should().Contain("Alabama Disabled State");
+            // American Samoa should have the ItemSelectedTemplate applied "American Samoa Selected State"
+            items[2].Markup.Should().Contain("American Samoa Selected State");
+        }
     }
 }

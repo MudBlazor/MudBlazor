@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -38,8 +39,8 @@ namespace MudBlazor.UnitTests.Components
             slider.Variant.Should().Be(Variant.Text);
 
             slider.Size.Should().Be(Size.Small);
-            slider.ValueLabelCultureInfo.Should().Be(CultureInfo.InvariantCulture);
-            slider.ValueLabelStringFormat.Should().BeNull();
+            slider.Culture.Should().Be(CultureInfo.InvariantCulture);
+            slider.ValueLabelFormat.Should().BeNull();
             slider.ValueLabelContent.Should().BeNull();
         }
 
@@ -413,6 +414,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(20.5)]
         [TestCase(75.5)]
         [TestCase(100.0)]
+        [SetCulture("en-US")]
         public async Task NullableBinding(double? value)
         {
             var comp = Context.RenderComponent<SliderWithNullable>();
@@ -429,6 +431,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(20.5)]
         [TestCase(75.5)]
         [TestCase(100.0)]
+        [SetCulture("en-US")]
         public async Task TwoBindValues1(double? value)
         {
             var comp = Context.RenderComponent<SliderWithTwoBindValues>();
@@ -483,8 +486,8 @@ namespace MudBlazor.UnitTests.Components
                 x.Add(p => p.Value, value);
                 x.Add(p => p.Step, 0.5m);
                 x.Add(p => p.ValueLabel, true);
-                x.Add(p => p.ValueLabelCultureInfo, customCulture);
-                x.Add(p => p.ValueLabelStringFormat, "C");
+                x.Add(p => p.Culture, customCulture);
+                x.Add(p => p.ValueLabelFormat, "C");
             });
 
             IElement ValueLabel() => comp.Find(".mud-slider-value-label");
