@@ -19,12 +19,14 @@ $columns: 12; // Number of columns in the grid system.
 // Generate spacing classes dynamically.
 @for $i from 1 through $max-spacing-steps {
   .mud-grid-spacing-xs-#{$i} {
-    width: calc(100% + #{$base-spacing * 2 * $i}); // Adjust width based on spacing increment.
-    margin: -#{$base-spacing * $i}; // Negative margin for gutters.
+    width: calc(100% + #{$base-spacing * $i}); // Adjust width based on spacing increment.
+    margin-left: -#{$base-spacing * $i}; // Negative margin for item padding.
+    margin-top: -#{$base-spacing * $i}; // Negative margin for item padding.
   }
 
   .mud-grid-spacing-xs-#{$i} > .mud-grid-item {
-    padding: #{$base-spacing * $i};
+    padding-left: #{$base-spacing * $i};
+    padding-top: #{$base-spacing * $i};
   }
 }
 
