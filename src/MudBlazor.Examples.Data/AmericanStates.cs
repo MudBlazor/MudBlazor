@@ -7,7 +7,7 @@ namespace MudBlazor.Examples.Data;
 public static class AmericanStates
 {
     private static readonly string[] _states =
-    [
+    {
         "Alabama", "Alaska", "American Samoa", "Arizona",
         "Arkansas", "California", "Colorado", "Connecticut",
         "Delaware", "District of Columbia", "Federated States of Micronesia",
@@ -22,7 +22,7 @@ public static class AmericanStates
         "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
         "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
         "Washington", "West Virginia", "Wisconsin", "Wyoming"
-    ];
+    };
 
     public static IEnumerable<string> GetStates(string value = "")
     {
