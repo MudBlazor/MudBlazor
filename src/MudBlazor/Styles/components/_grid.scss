@@ -1,7 +1,7 @@
 @import '../abstracts/variables';
 
 $base-spacing: 4px; // Base unit for spacing in the grid.
-$max-spacing-steps: 10; // Maximum steps for dynamic spacing.
+$max-spacing-steps: 20; // Maximum steps for dynamic spacing.
 $columns: 12; // Number of columns in the grid system.
 
 .mud-grid {

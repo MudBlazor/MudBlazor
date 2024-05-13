@@ -18,7 +18,9 @@ public partial class MudGrid : MudComponentBase
             .Build();
 
     /// <summary>
-    /// Defines the spacing between its items.
+    /// The gap between items, measured in increments of <c>4px</c>.
+    /// <br/>
+    /// Maximum is <c>20</c>.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Grid.Behavior)]
