@@ -40,7 +40,7 @@ namespace MudBlazor
         public int Elevation { set; get; } = 0;
 
         /// <summary>
-        /// Whether rounded corners are disabled.
+        /// Disables rounded corners.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -50,7 +50,7 @@ namespace MudBlazor
         public bool Square { get; set; }
 
         /// <summary>
-        /// Whether corners are rounded.
+        /// Shows rounded corners.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.

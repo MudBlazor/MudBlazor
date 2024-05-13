@@ -67,7 +67,7 @@ namespace MudBlazor
         public string ExpanderIcon { get; set; } = Icons.Material.Filled.SettingsEthernet;
 
         /// <summary>
-        /// Whether items are allowed to be collapsed when the number of items exceeds <see cref="MaxItems"/>.
+        /// Collapses items when the number of items exceeds <see cref="MaxItems"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
