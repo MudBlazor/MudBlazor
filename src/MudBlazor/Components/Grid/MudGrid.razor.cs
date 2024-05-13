@@ -24,7 +24,7 @@ public partial class MudGrid : MudComponentBase
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Grid.Behavior)]
-    public int Spacing { set; get; } = 3;
+    public int Spacing { set; get; } = 6;
 
     /// <summary>
     /// Defines the distribution of children along the main axis within a <see cref="MudStack"/> component.
