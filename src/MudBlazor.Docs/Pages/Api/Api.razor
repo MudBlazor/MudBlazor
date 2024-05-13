@@ -8,7 +8,12 @@
         <DocsPageHeader Title="@(@DocumentedType.Name + " API")" SubTitle="@DocumentedType.Summary" />
         <DocsPageContent>
             <MudBreadcrumbs Items="@Items" />
-            <ApiTypeHierarchy Type="@DocumentedType" />
+
+            <DocsPageSection>
+                <SectionHeader Title="Inheritance" />
+                <ApiTypeHierarchy Type="@DocumentedType" />
+            </DocsPageSection>
+
             <DocsPageSection>
                 <SectionHeader Title="Properties" />
                 <SectionContent Outlined="true">

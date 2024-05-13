@@ -2,9 +2,7 @@
     <ItemTemplate>
         <MudTreeViewItem T="DocumentedTypeTreeItem" Expanded="true" Text="@context.Name" 
             Items="@context.Children" 
-            IconColor="@context.IconColor" Icon="@context.Icon" 
             Selected="@(context.Name == Type.Name)"
-            OnClick="@(() => OnTypeClicked(context))"
-            />
+            OnClick="@(() => OnTypeClicked(context))" />
     </ItemTemplate>
 </MudTreeView>

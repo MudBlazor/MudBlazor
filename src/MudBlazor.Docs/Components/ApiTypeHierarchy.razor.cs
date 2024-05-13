@@ -112,9 +112,6 @@ public partial class ApiTypeHierarchy
         public string? Name { get; set; }
         public string? ApiUrl { get; set; }
         public bool Expanded { get; set; }
-        public bool IsMudBlazorType => Name != null && Name.StartsWith("Mud");
-        public string? Icon => IsMudBlazorType ? @Icons.Custom.Brands.MudBlazor : null;
-        public Color IconColor => IsMudBlazorType ? Color.Primary : Color.Default;
         public List<DocumentedTypeTreeItem> Children { get; set; } = [];
     }
 }
