@@ -12,7 +12,7 @@ public partial class MudGrid : MudComponentBase
 {
     protected string Classname =>
         new CssBuilder("mud-grid")
-            .AddClass($"gap-{Spacing}", Spacing > 0)
+            .AddClass($"gap-{Spacing}")
             .AddClass($"justify-{Justify.ToDescriptionString()}")
             .AddClass(Class)
             .Build();
