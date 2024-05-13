@@ -75,12 +75,6 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
-        /// <summary>
-        /// Whether text is displayed Right-to-Left (RTL).
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, text will display property for RTL languages such as Arabic, Hebrew, and Persian.
-        /// </remarks>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
@@ -180,7 +174,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Whether lines can be hidden when <see cref="ChartType"/> is <see cref="ChartType.Line"/>.
+        /// Allows series to be hidden when <see cref="ChartType"/> is <see cref="ChartType.Line"/>.
         /// </summary>
         /// <remarks>
         /// When <c>true</c>, checkboxes are displayed which can toggle visibility of each line.
