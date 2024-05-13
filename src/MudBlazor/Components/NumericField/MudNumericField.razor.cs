@@ -193,7 +193,7 @@ namespace MudBlazor
                 }
 
                 await SetValueAsync(ConstrainBoundaries(nextValue).value);
-                _elementReference.SetText(Text).CatchAndLog();
+                await _elementReference.SetText(Text);
             }
             catch (OverflowException)
             {
@@ -281,15 +281,14 @@ namespace MudBlazor
                     await Decrement();
                     break;
             }
-            OnKeyDown.InvokeAsync(obj).CatchAndLog();
+            await OnKeyDown.InvokeAsync(obj);
         }
 
         protected Task HandleKeyUp(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return Task.CompletedTask;
-            OnKeyUp.InvokeAsync(obj).CatchAndLog();
-            return Task.CompletedTask;
+            return OnKeyUp.InvokeAsync(obj);
         }
 
         protected async Task OnMouseWheel(WheelEventArgs obj)
