@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -413,6 +414,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(20.5)]
         [TestCase(75.5)]
         [TestCase(100.0)]
+        [SetCulture("en-US")]
         public async Task NullableBinding(double? value)
         {
             var comp = Context.RenderComponent<SliderWithNullable>();
@@ -429,6 +431,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(20.5)]
         [TestCase(75.5)]
         [TestCase(100.0)]
+        [SetCulture("en-US")]
         public async Task TwoBindValues1(double? value)
         {
             var comp = Context.RenderComponent<SliderWithTwoBindValues>();

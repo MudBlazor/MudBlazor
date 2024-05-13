@@ -12,6 +12,22 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class ListTests : BunitTest
     {
+
+        [Test]
+        public void ListRenderTest()
+        {
+            var comp = Context.RenderComponent<ListSelectionTest>();
+            var listItem = comp.FindComponent<MudListItem<string>>();
+            comp.Markup.Should().Contain("Sparkling Water");
+            comp.Markup.Should().NotContain("Roger Waters");
+            comp.Markup.Should().NotContain("High Hopes");
+            listItem.SetParam("Text", "Roger Waters");
+            listItem.SetParam("SecondaryText", "High Hopes");
+            comp.Markup.Should().NotContain("Sparkling Water");
+            comp.Markup.Should().Contain("Roger Waters");
+            comp.Markup.Should().Contain("High Hopes");
+        }
+
         /// <summary>
         /// <para>Clicking the drinks selects them. The child lists are updated accordingly, meaning, only ever 1 list item can have the active class.</para>
         /// <para>In this test no item is selected to begin with</para>
