@@ -2,7 +2,7 @@
 
 <MudDataGrid Items="@_items">
     <Columns>
-        <PropertyColumn Property="x => x.Name" CellStyleFunc="@_cellStyleFunc" HeaderStyleFunc="@_headerStyleFunc" />
+        <PropertyColumn Property="x => x.Name" CellStyleFunc="@_cellStyleFunc" HeaderStyleFunc="@_headerStyleFunc" HeaderClassFunc="@_headerClassFunc" />
     </Columns>
 </MudDataGrid>
 
@@ -45,6 +45,19 @@
         }
 
         return style;
+    };
+    
+    // add classes to the header according to the presence of elements.
+    private Func<IEnumerable<Item>, string> _headerClassFunc => x =>
+    {
+        var classes = "";
+        
+        foreach (var item in x)
+        {
+            classes += "class-" + item.Name + " ";
+        }
+
+        return classes.ToLower().Trim();
     };
 
     public class Item
