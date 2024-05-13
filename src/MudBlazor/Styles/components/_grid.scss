@@ -1,7 +1,7 @@
 @import '../abstracts/variables';
 
-$base-spacing: 4px; // Base unit for spacing in the grid.
-$max-spacing-steps: 20; // Maximum steps for dynamic spacing.
+$base-spacing: 4px; // Base unit for spacing in the grid. It's important to keep this in sync with the spacing values in the variables file.
+$max-spacing-steps: 20; // Maximum spacing steps.
 $columns: 12; // Number of columns in the grid system.
 
 .mud-grid {
@@ -16,17 +16,17 @@ $columns: 12; // Number of columns in the grid system.
   box-sizing: border-box;
 }
 
-// Generate spacing classes dynamically.
+// Generate spacing classes.
 @for $i from 1 through $max-spacing-steps {
   .mud-grid-spacing-xs-#{$i} {
     width: calc(100% + #{$base-spacing * $i}); // Adjust width based on spacing increment.
-    margin-left: -#{$base-spacing * $i}; // Negative margin for item padding.
-    margin-top: -#{$base-spacing * $i}; // Negative margin for item padding.
+    margin-left: -#{$base-spacing * $i}; // Negative margin for item spacing.
+    margin-top: -#{$base-spacing * $i}; // Negative margin for item spacing.
   }
 
   .mud-grid-spacing-xs-#{$i} > .mud-grid-item {
-    padding-left: #{$base-spacing * $i};
-    padding-top: #{$base-spacing * $i};
+    padding-left: #{$base-spacing * $i}; // Add spacing.
+    padding-top: #{$base-spacing * $i}; // Add spacing.
   }
 }
 
