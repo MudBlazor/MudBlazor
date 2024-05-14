@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -6,9 +8,17 @@ namespace MudBlazor
 #nullable enable
     public partial class MudTooltip : MudComponentBase
     {
-        private bool _visible;
+        private readonly ParameterState<bool> _visibleState;
         private Origin _anchorOrigin;
         private Origin _transformOrigin;
+
+        public MudTooltip()
+        {
+            using var registerScope = CreateRegisterScope();
+            _visibleState = registerScope.RegisterParameter<bool>(nameof(Visible))
+                .WithParameter(() => Visible)
+                .WithEventCallback(() => VisibleChanged);
+        }
 
         protected string ContainerClass => new CssBuilder("mud-tooltip-root")
             .AddClass("mud-tooltip-inline", Inline)
@@ -17,9 +27,9 @@ namespace MudBlazor
 
         protected string Classname => new CssBuilder("mud-tooltip")
             .AddClass("d-flex")
-            .AddClass($"mud-tooltip-default", Color == Color.Default)
+            .AddClass("mud-tooltip-default", Color == Color.Default)
             .AddClass($"mud-tooltip-{ConvertPlacement().ToDescriptionString()}")
-            .AddClass($"mud-tooltip-arrow", Arrow)
+            .AddClass("mud-tooltip-arrow", Arrow)
             .AddClass($"mud-border-{Color.ToDescriptionString()}", Arrow && Color != Color.Default)
             .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
             .AddClass(Class)
@@ -132,17 +142,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool Visible
-        {
-            get => _visible;
-            set
-            {
-                if (value == _visible)
-                    return;
-                _visible = value;
-                VisibleChanged.InvokeAsync(_visible).CatchAndLog();
-            }
-        }
+        public bool Visible { get; set; }
 
         /// <summary>
         /// An event triggered when the state of Visible has changed
@@ -158,45 +158,29 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Disabled { get; set; }
 
-        private void HandleMouseEnter()
+        private Task HandleMouseEnterAsync()
         {
-            if (ShowOnHover)
-            {
-                Visible = true;
-            }
+            return ShowOnHover ? _visibleState.SetValueAsync(true) : Task.CompletedTask;
         }
 
-        private void HandleMouseLeave()
+        private Task HandleMouseLeaveAsync()
         {
-            if (ShowOnHover == false)
-                return;
-            Visible = false;
+            return ShowOnHover ? _visibleState.SetValueAsync(false) : Task.CompletedTask;
         }
 
-        private void HandleFocusIn()
+        private Task HandleFocusInAsync()
         {
-            if (ShowOnFocus)
-            {
-                Visible = true;
-            }
+            return ShowOnFocus ? _visibleState.SetValueAsync(true) : Task.CompletedTask;
         }
 
-        private void HandleFocusOut()
+        private Task HandleFocusOutAsync()
         {
-            if (ShowOnFocus == false)
-            {
-                return;
-            }
-
-            Visible = false;
+            return ShowOnFocus ? _visibleState.SetValueAsync(false) : Task.CompletedTask;
         }
 
-        private void HandleMouseUp()
+        private Task HandleMouseUpAsync()
         {
-            if (ShowOnClick)
-            {
-                Visible = !Visible;
-            }
+            return ShowOnClick ? _visibleState.SetValueAsync(!_visibleState.Value) : Task.CompletedTask;
         }
 
         private Origin ConvertPlacement()
@@ -232,10 +216,8 @@ namespace MudBlazor
 
                 return Origin.CenterRight;
             }
-            else
-            {
-                return Origin.BottomCenter;
-            }
+
+            return Origin.BottomCenter;
         }
     }
 }
