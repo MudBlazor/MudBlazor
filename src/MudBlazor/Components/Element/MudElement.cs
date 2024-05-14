@@ -74,6 +74,10 @@ namespace MudBlazor
             // Splatted attributes.
             foreach (var attribute in UserAttributes)
             {
+                // checking if the value is null, we can get rid of null event handlers
+                // for example `@onmouseenter=@(Open ? HandleEnter : null)`
+                // this is a powerful feature that in normal HTML elements doesn't work, because
+                // Blazor adds always the attribute value and creates an EventCallback.
                 if (attribute.Value is not null)
                 {
                     builder.AddAttribute(s++, attribute.Key, attribute.Value);
