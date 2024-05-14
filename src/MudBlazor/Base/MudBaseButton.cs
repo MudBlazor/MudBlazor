@@ -95,6 +95,16 @@ namespace MudBlazor
         public string? Title { get; set; }
 
         /// <summary>
+        /// The ARIA label for the button.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public string? AriaLabel { get; set; }
+
+        /// <summary>
         /// Allows the click event to bubble up to the parent component.
         /// </summary>
         /// <remarks>

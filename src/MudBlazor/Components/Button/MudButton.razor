@@ -3,16 +3,17 @@
 
 <MudElement @bind-Ref="@_elementReference"
             HtmlTag="@HtmlTag"
-            Class="@Classname" 
+            Class="@Classname"
             Style="@Style"
             @attributes="UserAttributes"
             @onclick="OnClickHandler"
             type="@ButtonType.ToDescriptionString()"
-            href="@Href" 
+            href="@Href"
             target="@Target"
             rel="@GetRel()"
             disabled="@GetDisabledState()"
             title="@Title"
+            aria-label="@AriaLabel"
             ClickPropagation="@GetClickPropagation()">
     <span class="mud-button-label">
         @if (!string.IsNullOrWhiteSpace(StartIcon))
