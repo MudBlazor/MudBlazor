@@ -2,7 +2,7 @@
 @typeparam T
 @inherits MudComponentBase
 
-<div tabindex="0" role="button" @attributes="UserAttributes" class="@Classname" style="@Style" @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnClickAsync)">
+<div tabindex="0" role="@Role" @attributes="UserAttributes" class="@Classname" style="@Style" @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnClickAsync)">
     @{
         if (AvatarContent is not null)
         {

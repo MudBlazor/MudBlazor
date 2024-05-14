@@ -65,6 +65,8 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     private bool IsClickable => !ChipSet?.ReadOnly ?? (OnClick.HasDelegate || !string.IsNullOrEmpty(Href));
 
+    private string? Role => IsClickable ? "button" : null;
+
     internal Variant GetVariant()
     {
         var chipSetVariant = ChipSet?.Variant ?? MudBlazor.Variant.Filled;
@@ -215,7 +217,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// The ARIA label for the close icon button.
     /// </summary>
     [Parameter]
-    [Category(CategoryTypes.Chip.Appearance)]
+    [Category(CategoryTypes.Chip.Behavior)]
     public string? CloseIconAriaLabel { get; set; } = "Close chip";
 
     /// <summary>

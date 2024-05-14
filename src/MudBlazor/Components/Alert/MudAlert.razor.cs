@@ -78,7 +78,7 @@ namespace MudBlazor
         /// The ARIA label for the close icon button.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.Alert.Appearance)]
+        [Category(CategoryTypes.Alert.Behavior)]
         public string? CloseIconAriaLabel { get; set; } = "Close alert";
 
         /// <summary>

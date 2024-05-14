@@ -6,7 +6,7 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// A primitive component that allows rendering any HTML element specified through the HtmlTag property.
+    /// A primitive component that allows rendering any HTML element specified through the <see cref="HtmlTag"/> property.
     /// </summary>
     /// <remarks>
     /// Useful for creating custom elements with dynamic tag names.
@@ -14,7 +14,7 @@ namespace MudBlazor
     public class MudElement : MudComponentBase
     {
         /// <summary>
-        /// Specifies the content to be rendered inside the element.
+        /// The content to be rendered inside the element.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Element.Misc)]
@@ -32,8 +32,10 @@ namespace MudBlazor
 
         /// <summary>
         /// The <see cref="ElementReference"/> to bind to.
-        /// Use like <c>@bind-Ref="myRef"</c>.
         /// </summary>
+        /// <remarks>
+        /// Use like <c>@bind-Ref="myRef"</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Element.Misc)]
         public ElementReference? Ref { get; set; }
@@ -45,7 +47,7 @@ namespace MudBlazor
         public EventCallback<ElementReference> RefChanged { get; set; }
 
         /// <summary>
-        /// Determines whether click events should propagate beyond this element.
+        /// Propagates click events beyond this element.
         /// </summary>
         /// <remarks>
         /// Default is <c>true</c>, allowing propagation.
@@ -55,8 +57,11 @@ namespace MudBlazor
         public bool ClickPropagation { get; set; } = true;
 
         /// <summary>
-        /// Determines whether the default action for the onclick event should be prevented.
+        /// Prevents the default action for the <c>onclick</c> event.
         /// </summary>
+        /// <remarks>
+        /// Default is <c>false</c>, allowing default actions.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public bool PreventDefault { get; set; }
@@ -66,36 +71,36 @@ namespace MudBlazor
             base.BuildRenderTree(builder);
 
             // Initialize the sequence number.
-            var s = 0;
+            // https://learn.microsoft.com/en-us/aspnet/core/blazor/advanced-scenarios.
+            var seq = 0;
 
             // Open element.
-            builder.OpenElement(s++, HtmlTag);
+            builder.OpenElement(seq++, HtmlTag);
 
             // Splatted attributes.
             foreach (var attribute in UserAttributes)
             {
-                // checking if the value is null, we can get rid of null event handlers
-                // for example `@onmouseenter=@(Open ? HandleEnter : null)`
-                // this is a powerful feature that in normal HTML elements doesn't work, because
-                // Blazor adds always the attribute value and creates an EventCallback.
+                // Check if the attribute value is not null before adding it to the builder.
+                // This avoids adding null event handlers, such as `@onmouseenter=@(Open ? HandleEnter : null)`.
+                // This is useful because Blazor always adds the attribute value and creates an EventCallback in normal HTML elements.
                 if (attribute.Value is not null)
                 {
-                    builder.AddAttribute(s++, attribute.Key, attribute.Value);
+                    builder.AddAttribute(seq++, attribute.Key, attribute.Value);
                 }
             }
 
             // Add class and style attributes.
-            builder.AddAttribute(s++, "class", Class);
-            builder.AddAttribute(s++, "style", Style);
+            builder.AddAttribute(seq++, "class", Class);
+            builder.AddAttribute(seq++, "style", Style);
 
             // Add event attributes.
-            builder.AddEventStopPropagationAttribute(s++, "onclick", !ClickPropagation);
-            builder.AddEventPreventDefaultAttribute(s++, "onclick", PreventDefault);
+            builder.AddEventStopPropagationAttribute(seq++, "onclick", !ClickPropagation);
+            builder.AddEventPreventDefaultAttribute(seq++, "onclick", PreventDefault);
 
             // Capture the element reference if specified.
             if (Ref != null)
             {
-                builder.AddElementReferenceCapture(s++, async capturedRef =>
+                builder.AddElementReferenceCapture(seq++, async capturedRef =>
                 {
                     Ref = capturedRef;
                     await RefChanged.InvokeAsync(Ref.Value);
@@ -103,7 +108,7 @@ namespace MudBlazor
             }
 
             // Add child content.
-            builder.AddContent(s++, ChildContent);
+            builder.AddContent(seq++, ChildContent);
 
             // Close element.
             builder.CloseElement();
