@@ -99,7 +99,7 @@ namespace MudBlazor.Services
             _isDisposed = true;
             KeyDown = null;
             KeyUp = null;
-            Disconnect().AndForget();
+            Disconnect().CatchAndLog();
             _dotNetRef.Dispose();
         }
 

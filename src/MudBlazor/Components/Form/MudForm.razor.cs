@@ -48,7 +48,7 @@ namespace MudBlazor
             if (IsValid == value)
                 return;
             IsValid = value;
-            IsValidChanged.InvokeAsync(IsValid).AndForget();
+            IsValidChanged.InvokeAsync(IsValid).CatchAndLog();
         }
 
         // Note: w/o any children the form is automatically valid.
@@ -186,7 +186,7 @@ namespace MudBlazor
 
         void IForm.FieldChanged(IFormComponent formControl, object newValue)
         {
-            FieldChanged.InvokeAsync(new FormFieldChangedEventArgs { Field = formControl, NewValue = newValue }).AndForget();
+            FieldChanged.InvokeAsync(new FormFieldChangedEventArgs { Field = formControl, NewValue = newValue }).CatchAndLog();
         }
 
         void IForm.Add(IFormComponent formControl)

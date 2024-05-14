@@ -253,7 +253,7 @@ namespace MudBlazor
 
                     if (IsJSRuntimeAvailable)
                     {
-                        BrowserViewportService.UnsubscribeAsync(this).AndForget();
+                        BrowserViewportService.UnsubscribeAsync(this).CatchAndLog();
                     }
                 }
             }

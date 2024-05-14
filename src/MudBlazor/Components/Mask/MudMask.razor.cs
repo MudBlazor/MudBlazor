@@ -372,12 +372,12 @@ namespace MudBlazor
             _selection = selection;
             if (selection == null)
             {
-                _elementReference.MudSelectRangeAsync(caret, caret).AndForget();
+                _elementReference.MudSelectRangeAsync(caret, caret).CatchAndLog();
             }
             else
             {
                 var sel = selection.Value;
-                _elementReference.MudSelectRangeAsync(sel.Item1, sel.Item2).AndForget();
+                _elementReference.MudSelectRangeAsync(sel.Item1, sel.Item2).CatchAndLog();
             }
         }
 

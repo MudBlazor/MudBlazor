@@ -451,7 +451,7 @@ namespace MudBlazor
                     return;
                 _open = value;
 
-                OpenChanged.InvokeAsync(_open).AndForget();
+                OpenChanged.InvokeAsync(_open).CatchAndLog();
             }
         }
 

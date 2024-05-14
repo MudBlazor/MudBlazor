@@ -140,7 +140,7 @@ namespace MudBlazor
                 if (value == _visible)
                     return;
                 _visible = value;
-                VisibleChanged.InvokeAsync(_visible).AndForget();
+                VisibleChanged.InvokeAsync(_visible).CatchAndLog();
             }
         }
 
