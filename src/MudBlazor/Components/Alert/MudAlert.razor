@@ -1,5 +1,4 @@
 ﻿@namespace MudBlazor
-
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes" role="alert" aria-live="assertive" class="@Classname" Style="@Style" @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)">
@@ -17,7 +16,7 @@
 @if (ShowCloseIcon)
 {
     <div class="mud-alert-close">
-        <MudIconButton Icon="@CloseIcon" @onclick="OnCloseIconClickAsync" Size="Size.Small" aria-label="@CloseIconAriaLabel" />
+        <MudIconButton Class="mud-alert-close-button" Icon="@CloseIcon" @onclick="OnCloseIconClickAsync" Size="Size.Small" aria-label="@CloseIconAriaLabel" />
     </div>
 }
 </div>

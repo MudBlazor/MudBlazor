@@ -215,7 +215,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// The ARIA label for the close icon button.
     /// </summary>
     [Parameter]
-    [Category(CategoryTypes.Alert.Appearance)]
+    [Category(CategoryTypes.Chip.Appearance)]
     public string? CloseIconAriaLabel { get; set; } = "Close chip";
 
     /// <summary>
