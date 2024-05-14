@@ -378,7 +378,7 @@ namespace MudBlazor
             else
             {
                 var sel = selection.Value;
-               await  _elementReference.MudSelectRangeAsync(sel.Item1, sel.Item2);
+                await _elementReference.MudSelectRangeAsync(sel.Item1, sel.Item2);
             }
         }
 
