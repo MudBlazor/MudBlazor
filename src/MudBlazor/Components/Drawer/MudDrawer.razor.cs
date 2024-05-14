@@ -10,6 +10,9 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// Represents a navigation panel docked to the side of the page.
+    /// </summary>
     public partial class MudDrawer : MudComponentBase, INavigationEventReceiver, IBrowserViewportObserver, IDisposable
     {
         private double _height;
@@ -88,29 +91,41 @@ namespace MudBlazor
         private bool RightToLeft { get; set; }
 
         /// <summary>
-        /// If true, drawer position will be fixed. (CSS position: fixed;)
+        /// Shows the drawer in the same position even if the page is scrolled.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public bool Fixed { get; set; } = true;
 
         /// <summary>
-        /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
+        /// The size of the drop shadow.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>4</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Appearance)]
         public int Elevation { set; get; } = 1;
 
         /// <summary>
-        /// Side from which the drawer will appear.
+        /// The edge of the container that the drawer will appear.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Anchor.Start" />.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public Anchor Anchor { get; set; } = Anchor.Start;
 
         /// <summary>
-        /// The color of the component. It supports the theme colors.
+        /// The color of the drawer.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Appearance)]
         public Color Color { get; set; } = Color.Default;
@@ -123,89 +138,110 @@ namespace MudBlazor
         public DrawerVariant Variant { get; set; } = DrawerVariant.Responsive;
 
         /// <summary>
-        /// Child content of component.
+        /// The content within this component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Show overlay for responsive and temporary drawers.
+        /// For responsive and temporary drawers, darkens the screen with an overlay when displaying this drawer.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  Applies when <see cref="Variant"/> is <see cref="DrawerVariant.Responsive"/> or <see cref="DrawerVariant.Temporary"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public bool Overlay { get; set; } = true;
 
         /// <summary>
-        /// Open drawer automatically on mouse enter when <see cref="Variant" /> parameter is set to <see cref="DrawerVariant.Mini" />.
+        /// For mini drawers, opens this drawer when the mouse hovers over it.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  Applies when <see cref="Variant" /> is set to <see cref="DrawerVariant.Mini" />.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public bool OpenMiniOnHover { get; set; }
 
         /// <summary>
-        /// Switching point for responsive drawers
+        /// The browser width at which responsive drawers are hidden.
         /// </summary>
-        /// <remarks>
-        /// The <see cref="Breakpoint"/> enum represents the breakpoints at which the drawer behavior changes. Supported breakpoints are:
-        /// <list type="bullet">
-        /// <item><description><see cref="Breakpoint.Xs"/></description></item>
-        /// <item><description><see cref="Breakpoint.Sm"/></description></item>
-        /// <item><description><see cref="Breakpoint.Md"/></description></item>
-        /// <item><description><see cref="Breakpoint.Lg"/></description></item>
-        /// <item><description><see cref="Breakpoint.Xl"/></description></item>
-        /// <item><description><see cref="Breakpoint.Xxl"/></description></item>
-        /// </list>
-        /// For convenience, other breakpoint combinations are aliased as follows:
-        /// <list type="bullet">
-        /// <item><description><see cref="Breakpoint.SmAndDown"/>: Aliases to <see cref="Breakpoint.Sm"/></description></item>
-        /// <item><description><see cref="Breakpoint.MdAndDown"/>: Aliases to <see cref="Breakpoint.Md"/></description></item>
-        /// <item><description><see cref="Breakpoint.LgAndDown"/>: Aliases to <see cref="Breakpoint.Lg"/></description></item>
-        /// <item><description><see cref="Breakpoint.XlAndDown"/>: Aliases to <see cref="Breakpoint.Xl"/></description></item>
-        /// <item><description><see cref="Breakpoint.SmAndUp"/>: Aliases to <see cref="Breakpoint.Sm"/></description></item>
-        /// <item><description><see cref="Breakpoint.MdAndUp"/>: Aliases to <see cref="Breakpoint.Md"/></description></item>
-        /// <item><description><see cref="Breakpoint.LgAndUp"/>: Aliases to <see cref="Breakpoint.Lg"/></description></item>
-        /// <item><description><see cref="Breakpoint.XlAndUp"/>: Aliases to <see cref="Breakpoint.Xl"/></description></item>
-        /// </list>
-        /// Setting the value to <see cref="Breakpoint.None"/> will always close the drawer, while <see cref="Breakpoint.Always"/> will always keep it open.
-        /// </remarks>
+        /// <remarks> 
+        /// Defaults to <see cref="Breakpoint.Md"/>.  Supported breakpoints are: 
+        /// <list type="bullet"> 
+        /// <item><description><see cref="Breakpoint.Xs"/></description></item> 
+        /// <item><description><see cref="Breakpoint.Sm"/></description></item> 
+        /// <item><description><see cref="Breakpoint.Md"/></description></item> 
+        /// <item><description><see cref="Breakpoint.Lg"/></description></item> 
+        /// <item><description><see cref="Breakpoint.Xl"/></description></item> 
+        /// <item><description><see cref="Breakpoint.Xxl"/></description></item> 
+        /// </list> 
+        /// Other breakpoint combinations are aliased as follows: 
+        /// <list type="bullet"> 
+        /// <item><description><see cref="Breakpoint.SmAndDown"/>: Aliases to <see cref="Breakpoint.Sm"/></description></item> 
+        /// <item><description><see cref="Breakpoint.MdAndDown"/>: Aliases to <see cref="Breakpoint.Md"/></description></item> 
+        /// <item><description><see cref="Breakpoint.LgAndDown"/>: Aliases to <see cref="Breakpoint.Lg"/></description></item> 
+        /// <item><description><see cref="Breakpoint.XlAndDown"/>: Aliases to <see cref="Breakpoint.Xl"/></description></item> 
+        /// <item><description><see cref="Breakpoint.SmAndUp"/>: Aliases to <see cref="Breakpoint.Sm"/></description></item> 
+        /// <item><description><see cref="Breakpoint.MdAndUp"/>: Aliases to <see cref="Breakpoint.Md"/></description></item> 
+        /// <item><description><see cref="Breakpoint.LgAndUp"/>: Aliases to <see cref="Breakpoint.Lg"/></description></item> 
+        /// <item><description><see cref="Breakpoint.XlAndUp"/>: Aliases to <see cref="Breakpoint.Xl"/></description></item> 
+        /// </list> 
+        /// Setting the value to <see cref="Breakpoint.None"/> will always close the drawer, while <see cref="Breakpoint.Always"/> will always keep it open. 
+        /// </remarks> 
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public Breakpoint Breakpoint { get; set; } = Breakpoint.Md;
 
         /// <summary>
-        /// Sets the opened state on the drawer. Can be used with two-way binding to close itself on navigation.
+        /// Displays this drawer.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  Raises the <see cref="OpenChanged"/> event upon change.  When bound via <c>@bind-Open</c>, this property is updated when this drawer closes itself.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public bool Open { get; set; }
 
+        /// <summary>
+        /// Occurs when the <see cref="Open"/> value has changed.
+        /// </summary>
         [Parameter]
         public EventCallback<bool> OpenChanged { get; set; }
 
         /// <summary>
-        /// Width of left/right drawer. Only for non-fixed drawers.
+        /// For non-fixed or temporary drawers, the width of this drawer.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Values such as <c>300px</c> and <c>30%</c> are supported.  Applies to non-fixed or <see cref="DrawerVariant.Temporary"/> drawers anchored to the left or right.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Appearance)]
         public string? Width { get; set; }
 
         /// <summary>
-        /// Width of left/right drawer. Only for non-fixed drawers.
+        /// For mini drawers, the width of this drawer.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Values such as <c>300px</c> and <c>30%</c> are supported. Applies to <see cref="DrawerVariant.Mini"/> drawers achored to the left or right.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Appearance)]
         public string? MiniWidth { get; set; }
 
         /// <summary>
-        /// Height of top/bottom temporary drawer
+        /// The height of this drawer.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Values such as <c>300px</c> and <c>30%</c> are supported. Applies to drawers achored to the top or bottom.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Appearance)]
         public string? Height { get; set; }
 
         /// <summary>
-        /// Specify how the drawer should behave inside a MudLayout. It affects the position relative to <see cref="MudAppBar"/>.
+        /// The position of this drawer when opened, relative to a <see cref="MudAppBar"/> when inside a <see cref="MudLayout"/>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
