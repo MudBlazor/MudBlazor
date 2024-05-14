@@ -935,6 +935,7 @@ namespace MudBlazor
                 CurrentPage = 0;
 
             Loading = false;
+            GroupItems(true);
             StateHasChanged();
             PagerStateHasChangedEvent?.Invoke();
         }
