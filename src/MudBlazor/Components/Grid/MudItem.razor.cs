@@ -12,12 +12,12 @@ public partial class MudItem : MudComponentBase
 {
     protected string Classname =>
         new CssBuilder("mud-grid-item")
-            .AddClass($"mud-grid-item-xs-{xs.ToString()}", xs != 0)
-            .AddClass($"mud-grid-item-sm-{sm.ToString()}", sm != 0)
-            .AddClass($"mud-grid-item-md-{md.ToString()}", md != 0)
-            .AddClass($"mud-grid-item-lg-{lg.ToString()}", lg != 0)
-            .AddClass($"mud-grid-item-xl-{xl.ToString()}", xl != 0)
-            .AddClass($"mud-grid-item-xxl-{xxl.ToString()}", xxl != 0)
+            .AddClass($"mud-grid-item-xs-{xs}", xs != 0)
+            .AddClass($"mud-grid-item-sm-{sm}", sm != 0)
+            .AddClass($"mud-grid-item-md-{md}", md != 0)
+            .AddClass($"mud-grid-item-lg-{lg}", lg != 0)
+            .AddClass($"mud-grid-item-xl-{xl}", xl != 0)
+            .AddClass($"mud-grid-item-xxl-{xxl}", xxl != 0)
             .AddClass(Class)
             .Build();
 

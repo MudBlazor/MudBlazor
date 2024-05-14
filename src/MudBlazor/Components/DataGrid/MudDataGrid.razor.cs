@@ -717,7 +717,7 @@ namespace MudBlazor
                         _groupExpansionsDict.Clear();
 
                         foreach (var column in RenderedColumns)
-                            column.RemoveGrouping().AndForget();
+                            column.RemoveGrouping().CatchAndLog();
                     }
                 }
             }

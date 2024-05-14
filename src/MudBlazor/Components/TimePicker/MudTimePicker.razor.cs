@@ -146,7 +146,7 @@ namespace MudBlazor
                 }
 
                 Touched = true;
-                SetTextAsync(Converter.Set(_value), false).AndForget();
+                SetTextAsync(Converter.Set(_value), false).CatchAndLog();
             }
         }
 
@@ -172,7 +172,7 @@ namespace MudBlazor
                 }
 
                 Touched = true;
-                SetTextAsync(Converter.Set(_value), false).AndForget();
+                SetTextAsync(Converter.Set(_value), false).CatchAndLog();
             }
         }
 
@@ -184,7 +184,7 @@ namespace MudBlazor
         public TimeSpan? Time
         {
             get => _value;
-            set => SetTimeAsync(value, true).AndForget();
+            set => SetTimeAsync(value, true).CatchAndLog();
         }
 
         protected async Task SetTimeAsync(TimeSpan? time, bool updateValue)

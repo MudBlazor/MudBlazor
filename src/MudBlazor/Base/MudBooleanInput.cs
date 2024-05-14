@@ -115,7 +115,7 @@ namespace MudBlazor
             var changed = base.SetConverter(value);
             if (changed)
             {
-                SetBoolValueAsync(Converter.Set(Value)).AndForget();
+                SetBoolValueAsync(Converter.Set(Value)).CatchAndLog();
             }
 
             return changed;
