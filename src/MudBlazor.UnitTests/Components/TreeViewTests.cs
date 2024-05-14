@@ -385,7 +385,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Unselected_Select_CheckSelected_Deselect_CheckDeselected()
         {
-            var comp = Context.RenderComponent<TreeViewTest1>();
+            var comp = Context.RenderComponent<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.MultiSelection));
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
             comp.Find("button").Click();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
@@ -395,7 +395,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Item1Selected.Should().BeTrue();
             comp.FindAll("input.mud-checkbox-input")[2].Change(false);
             comp.Instance.SubItemSelected.Should().BeFalse();
-            comp.Instance.Item1Selected.Should().BeTrue();
+            comp.Instance.Item1Selected.Should().BeFalse(); // <-- selecting child updates parent in multi-selection mode
         }
 
         [Test]

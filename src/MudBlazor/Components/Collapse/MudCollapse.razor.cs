@@ -42,7 +42,7 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// Whether content within this panel is visible.
+        /// Displays content within this panel.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
