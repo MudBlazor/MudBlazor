@@ -27,6 +27,26 @@ namespace MudBlazor
         public string HtmlTag { get; set; } = "span";
 
         /// <summary>
+        /// The title of this element.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c> and won't be added unless it has a value.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Element.Misc)]
+        public string? Title { get; set; }
+
+        /// <summary>
+        /// The ARIA label for this element.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c> and won't be added unless it has a value.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Element.Misc)]
+        public string? AriaLabel { get; set; }
+
+        /// <summary>
         /// The ElementReference to bind to.
         /// Use like @bind-Ref="myRef"
         /// </summary>
@@ -48,41 +68,50 @@ namespace MudBlazor
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
             base.BuildRenderTree(builder);
-            //Open
+            // Open element
             builder.OpenElement(0, HtmlTag);
 
-            //splatted attributes
+            // Splatted attributes
             foreach (var attribute in UserAttributes)
             {
-                // checking if the value is null, we can get rid of null event handlers
-                // for example `@onmouseenter=@(Open ? HandleEnter : null)`
-                // this is a powerful feature that in normal HTML elements doesn't work, because
-                // Blazor adds always the attribute value and creates an EventCallback
                 if (attribute.Value != null)
                     builder.AddAttribute(1, attribute.Key, attribute.Value);
             }
-            //Class
+
+            // Add class and style attributes
             builder.AddAttribute(2, "class", Class);
-            //Style
             builder.AddAttribute(3, "style", Style);
 
-            builder.AddEventStopPropagationAttribute(5, "onclick", !ClickPropagation);
-            builder.AddEventPreventDefaultAttribute(6, "onclick", PreventDefault);
+            // Only add if not null so it won't overwrite anything.
+            if (Title != null)
+            {
+                builder.AddAttribute(4, "title", Title);
+            }
 
-            //Reference capture
+            // Only add if not null so it won't overwrite anything.
+            if (AriaLabel != null)
+            {
+                builder.AddAttribute(5, "aria-label", AriaLabel);
+            }
+
+            // Add event attributes
+            builder.AddEventStopPropagationAttribute(6, "onclick", !ClickPropagation);
+            builder.AddEventPreventDefaultAttribute(7, "onclick", PreventDefault);
+
+            // Reference capture
             if (Ref != null)
             {
-                builder.AddElementReferenceCapture(7, async capturedRef =>
+                builder.AddElementReferenceCapture(8, async capturedRef =>
                 {
                     Ref = capturedRef;
                     await RefChanged.InvokeAsync(Ref.Value);
                 });
             }
 
-            //Content
-            builder.AddContent(10, ChildContent);
+            // Add child content
+            builder.AddContent(9, ChildContent);
 
-            //Close
+            // Close element
             builder.CloseElement();
         }
     }
