@@ -48,41 +48,42 @@ namespace MudBlazor
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
             base.BuildRenderTree(builder);
-            //Open
-            builder.OpenElement(0, HtmlTag);
 
-            //splatted attributes
+            // Initialize the sequence number
+            var s = 0;
+
+            // Open element
+            builder.OpenElement(s++, HtmlTag);
+
+            // Splatted attributes
             foreach (var attribute in UserAttributes)
             {
-                // checking if the value is null, we can get rid of null event handlers
-                // for example `@onmouseenter=@(Open ? HandleEnter : null)`
-                // this is a powerful feature that in normal HTML elements doesn't work, because
-                // Blazor adds always the attribute value and creates an EventCallback
-                if (attribute.Value != null)
-                    builder.AddAttribute(1, attribute.Key, attribute.Value);
+                if (attribute.Value is not null)
+                    builder.AddAttribute(s++, attribute.Key, attribute.Value);
             }
-            //Class
-            builder.AddAttribute(2, "class", Class);
-            //Style
-            builder.AddAttribute(3, "style", Style);
 
-            builder.AddEventStopPropagationAttribute(5, "onclick", !ClickPropagation);
-            builder.AddEventPreventDefaultAttribute(6, "onclick", PreventDefault);
+            // Add class and style attributes
+            builder.AddAttribute(s++, "class", Class);
+            builder.AddAttribute(s++, "style", Style);
 
-            //Reference capture
+            // Add event attributes
+            builder.AddEventStopPropagationAttribute(s++, "onclick", !ClickPropagation);
+            builder.AddEventPreventDefaultAttribute(s++, "onclick", PreventDefault);
+
+            // Reference capture
             if (Ref != null)
             {
-                builder.AddElementReferenceCapture(7, async capturedRef =>
+                builder.AddElementReferenceCapture(s++, async capturedRef =>
                 {
                     Ref = capturedRef;
                     await RefChanged.InvokeAsync(Ref.Value);
                 });
             }
 
-            //Content
-            builder.AddContent(10, ChildContent);
+            // Add child content
+            builder.AddContent(s++, ChildContent);
 
-            //Close
+            // Close element
             builder.CloseElement();
         }
     }
