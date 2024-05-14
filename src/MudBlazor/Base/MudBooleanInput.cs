@@ -18,7 +18,7 @@ namespace MudBlazor
         public MudBooleanInput() : base(new BoolConverter<T?>()) { }
 
         /// <summary>
-        /// Whether the user can interact with this input.
+        /// Prevents the user from interacting with this input.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -33,7 +33,7 @@ namespace MudBlazor
         protected bool GetDisabledState() => Disabled || ParentDisabled;
 
         /// <summary>
-        /// Whether the use can change the input.
+        /// Prevents the user from changing the input.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the user can copy the input but cannot change it.
@@ -63,7 +63,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Whether the parent component also handles the click event.
+        /// Prevents the parent component from receiving click events.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  When <c>true</c>, the click will not bubble up to parent components.

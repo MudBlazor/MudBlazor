@@ -43,9 +43,9 @@ app.MapFallbackToPage("/_Host");
 using (var scope = app.Services.CreateScope())
 {
     var notificationService = scope.ServiceProvider.GetService<INotificationService>();
-    if (notificationService is InMemoryNotificationService inmemoryService)
+    if (notificationService is InMemoryNotificationService inMemoryService)
     {
-        inmemoryService.Preload();
+        inMemoryService.Preload();
     }
 }
 

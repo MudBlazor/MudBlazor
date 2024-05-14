@@ -87,7 +87,7 @@ namespace MudBlazor.Utilities
         public double H { get; }
 
         /// <summary>
-        /// Gets the luminance component value of the color.
+        /// Gets the lightness component value of the color.
         /// </summary>
         [JsonIgnore]
         public double L { get; }
@@ -121,11 +121,11 @@ namespace MudBlazor.Utilities
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MudColor"/> class with the specified hue, saturation, luminance, and alpha values.
+        /// Initializes a new instance of the <see cref="MudColor"/> class with the specified hue, saturation, lightness, and alpha values.
         /// </summary>
         /// <param name="h">The hue component value (0 to 360).</param>
         /// <param name="s">The saturation component value (0.0 to 1.0).</param>
-        /// <param name="l">The luminance component value (0.0 to 1.0).</param>
+        /// <param name="l">The lightness component value (0.0 to 1.0).</param>
         /// <param name="a">The alpha component value (0 to 1.0).</param>
         public MudColor(double h, double s, double l, double a)
             : this(h, s, l, (int)(a * 255.0).EnsureRange(255))
@@ -133,11 +133,11 @@ namespace MudBlazor.Utilities
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MudColor"/> class with the specified hue, saturation, luminance, and alpha values.
+        /// Initializes a new instance of the <see cref="MudColor"/> class with the specified hue, saturation, lightness, and alpha values.
         /// </summary>
         /// <param name="h">The hue component value (0 to 360).</param>
         /// <param name="s">The saturation component value (0.0 to 1.0).</param>
-        /// <param name="l">The luminance component value (0.0 to 1.0).</param>
+        /// <param name="l">The lightness component value (0.0 to 1.0).</param>
         /// <param name="a">The alpha component value (0 to 255).</param>
         public MudColor(double h, double s, double l, int a)
         {
@@ -347,24 +347,24 @@ namespace MudBlazor.Utilities
         }
 
         /// <summary>
-        /// Creates a new <see cref="MudColor"/> instance with the specified hue value while keeping the saturation, luminance, and alpha values unchanged.
+        /// Creates a new <see cref="MudColor"/> instance with the specified hue value while keeping the saturation, lightness, and alpha values unchanged.
         /// </summary>
         /// <param name="h">The hue component value (0 to 360).</param>
         /// <returns>A new <see cref="MudColor"/> instance with the specified hue value.</returns>
         public MudColor SetH(double h) => new(h, S, L, A);
 
         /// <summary>
-        /// Creates a new <see cref="MudColor"/> instance with the specified saturation value while keeping the hue, luminance, and alpha values unchanged.
+        /// Creates a new <see cref="MudColor"/> instance with the specified saturation value while keeping the hue, lightness, and alpha values unchanged.
         /// </summary>
         /// <param name="s">The saturation component value (0.0 to 1.0).</param>
         /// <returns>A new <see cref="MudColor"/> instance with the specified saturation value.</returns>
         public MudColor SetS(double s) => new(H, s, L, A);
 
         /// <summary>
-        /// Creates a new <see cref="MudColor"/> instance with the specified luminance value while keeping the hue, saturation, and alpha values unchanged.
+        /// Creates a new <see cref="MudColor"/> instance with the specified lightness value while keeping the hue, saturation, and alpha values unchanged.
         /// </summary>
-        /// <param name="l">The luminance component value (0.0 to 1.0).</param>
-        /// <returns>A new <see cref="MudColor"/> instance with the specified luminance value.</returns>
+        /// <param name="l">The lightness component value (0.0 to 1.0).</param>
+        /// <returns>A new <see cref="MudColor"/> instance with the specified lightness value.</returns>
         public MudColor SetL(double l) => new(H, S, l, A);
 
         /// <summary>
@@ -403,10 +403,10 @@ namespace MudBlazor.Utilities
         public MudColor SetAlpha(double a) => new(R, G, B, a);
 
         /// <summary>
-        /// Creates a new <see cref="MudColor"/> instance by adjusting the luminance component value by the specified amount.
+        /// Creates a new <see cref="MudColor"/> instance by adjusting the lightness component value by the specified amount.
         /// </summary>
-        /// <param name="amount">The amount to adjust the luminance by (-1.0 to 1.0).</param>
-        /// <returns>A new <see cref="MudColor"/> instance with the adjusted luminance.</returns>
+        /// <param name="amount">The amount to adjust the lightness by (-1.0 to 1.0).</param>
+        /// <returns>A new <see cref="MudColor"/> instance with the adjusted lightness.</returns>
         public MudColor ChangeLightness(double amount) => new(H, S, Math.Max(0, Math.Min(1, L + amount)), A);
 
         /// <summary>
@@ -436,7 +436,7 @@ namespace MudBlazor.Utilities
         public MudColor ColorRgbDarken() => ColorDarken(0.075);
 
         /// <summary>
-        /// Checks whether the HSL (Hue, Saturation, Luminance) values of this <see cref="MudColor"/> instance have changed compared to another <see cref="MudColor"/> instance.
+        /// Checks whether the HSL (Hue, Saturation, lightness) values of this <see cref="MudColor"/> instance have changed compared to another <see cref="MudColor"/> instance.
         /// </summary>
         /// <param name="value">The <see cref="MudColor"/> instance to compare HSL values with.</param>
         /// <returns>True if the HSL values have changed; otherwise, false.</returns>
@@ -589,7 +589,7 @@ namespace MudBlazor.Utilities
                 h = ((60D * (r - g)) / (max - min)) + 240D;
             }
 
-            // luminance
+            // lightness
             var l = (max + min) / 2D;
 
             // saturation

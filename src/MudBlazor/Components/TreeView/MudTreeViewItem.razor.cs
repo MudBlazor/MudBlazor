@@ -59,7 +59,7 @@ namespace MudBlazor
         private MudTreeView<T>? MudTreeRoot { get; set; }
 
         [CascadingParameter]
-        private MudTreeViewItem<T>? Parent { get; set; }
+        internal MudTreeViewItem<T>? Parent { get; set; }
 
         /// <summary>
         /// Value of the TreeViewItem. Acts as the displayed text if no text is set.
@@ -259,9 +259,9 @@ namespace MudBlazor
 
         private string CheckedIcon => MudTreeRoot?.CheckedIcon ?? Icons.Material.Filled.CheckBox;
 
-        private string UncheckedIcon => MudTreeRoot?.CheckedIcon ?? Icons.Material.Filled.CheckBoxOutlineBlank;
+        private string UncheckedIcon => MudTreeRoot?.UncheckedIcon ?? Icons.Material.Filled.CheckBoxOutlineBlank;
 
-        private string IndeterminateIcon => MudTreeRoot?.CheckedIcon ?? Icons.Material.Filled.IndeterminateCheckBox;
+        private string IndeterminateIcon => MudTreeRoot?.IndeterminateIcon ?? Icons.Material.Filled.IndeterminateCheckBox;
 
         private bool _loading;
 

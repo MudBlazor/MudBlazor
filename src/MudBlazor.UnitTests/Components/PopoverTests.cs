@@ -855,6 +855,7 @@ namespace MudBlazor.UnitTests.Components
 
             popover.MaxHeight.Should().BeNull();
             popover.Paper.Should().BeTrue();
+            popover.DropShadow.Should().BeTrue();
             popover.Elevation.Should().Be(8);
             popover.Square.Should().BeFalse();
             popover.Open.Should().BeFalse();
@@ -1030,6 +1031,17 @@ namespace MudBlazor.UnitTests.Components
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
             popoverElement.ClassList.Should().Contain(new[] { "mud-popover-open", $"mud-popover-overflow-{expectedClass}", "my-custom-class" });
+        }
+
+        [Test]
+        public void MudPopover_Property_DropShadow_False_NoElevation()
+        {
+            var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
+                x => x.DropShadow, false));
+
+            var popoverElement = comp.Find(".test-popover-content").ParentElement;
+
+            popoverElement.ClassList.Should().NotContainMatch("mud-elevation-*");
         }
 
         [Test]

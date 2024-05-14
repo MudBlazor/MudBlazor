@@ -42,12 +42,6 @@ namespace MudBlazor
         [CascadingParameter]
         protected internal MudBaseItemsControl<MudCarouselItem>? Parent { get; set; }
 
-        /// <summary>
-        /// Whether text is displayed Right-to-Left (RTL).
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, text will display property for RTL languages such as Arabic, Hebrew, and Persian.
-        /// </remarks>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
@@ -86,7 +80,7 @@ namespace MudBlazor
         public string? CustomTransitionExit { get; set; }
 
         /// <summary>
-        /// Whether this item is currently visible.
+        /// Displays this item.
         /// </summary>
         public bool Visible => Parent is not null && (Parent.LastContainer == this || Parent.SelectedIndex == Parent.Items.IndexOf(this));
 

@@ -117,7 +117,7 @@ namespace MudBlazor
         public Origin TransformOrigin { get; set; } = Origin.TopCenter;
 
         /// <summary>
-        /// Whether compact padding will be used.
+        /// Uses compact padding.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -181,7 +181,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Whether to show the progress indicator during searches.
+        /// Shows the progress indicator during searches.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  The progress indicator uses the color specified in the <see cref="ProgressIndicatorColor"/> property.
@@ -231,7 +231,7 @@ namespace MudBlazor
         public int MinCharacters { get; set; } = 0;
 
         /// <summary>
-        /// Whether to reset the selected value if the user deletes the text.
+        /// Reset the selected value if the user deletes the text.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -241,7 +241,7 @@ namespace MudBlazor
         public bool ResetValueOnEmptyText { get; set; }
 
         /// <summary>
-        /// Whether the text will be selected (highlighted) when the component receives focus.
+        /// Highlights the text when the component receives focus.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -251,7 +251,7 @@ namespace MudBlazor
         public bool SelectOnActivation { get; set; } = true;
 
         /// <summary>
-        /// Whether other items can be selected without resetting the Value.
+        /// Selects items without resetting the <c>Value</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  When <c>true</c>, selecting an option will trigger a <see cref="SearchFunc"/> with the current Text.  Otherwise, an empty string is passed which can make it easier to view and select other options without resetting the Value. When <c>false</c>, <c>T</c> must either be a <c>record</c> or override the <c>GetHashCode</c> and <c>Equals</c> methods.
@@ -361,7 +361,7 @@ namespace MudBlazor
         public RenderFragment ProgressIndicatorInPopoverTemplate { get; set; }
 
         /// <summary>
-        /// Whether the <c>Text</c> property is overridden when an item is selected.
+        /// Overrides the <c>Text</c> property when an item is selected.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  When <c>true</c>, selecting a value will update the Text property.  When <c>false</c>, incomplete values for Text are allowed.
@@ -371,7 +371,7 @@ namespace MudBlazor
         public bool CoerceText { get; set; } = true;
 
         /// <summary>
-        /// Whether the <c>Value</c> property is set even if no match is found by <see cref="SearchFunc"/>.
+        /// Sets the <c>Value</c> property even if no match is found by <see cref="SearchFunc"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the user input will be applied to the Value property which allows it to be validated and show an error message.
@@ -397,7 +397,7 @@ namespace MudBlazor
         public EventCallback<bool> OpenChanged { get; set; }
 
         /// <summary>
-        /// Whether pressing the <c>Tab</c> key updates the Value to the currently selected item.
+        /// Updates the Value to the currently selected item when pressing the <c>Tab</c> key.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -407,7 +407,7 @@ namespace MudBlazor
         public bool SelectValueOnTab { get; set; }
 
         /// <summary>
-        /// Whether a Clear icon button is displayed.
+        /// Displays the Clear icon button.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <c>ClearIcon</c> property to control the Clear button icon.
@@ -435,7 +435,7 @@ namespace MudBlazor
         public EventCallback<int> ReturnedItemsCountChanged { get; set; }
 
         /// <summary>
-        /// Whether the search result drop-down is currently displayed.
+        /// Displays the search result drop-down.
         /// </summary>
         /// <remarks>
         /// When this property changes, the <see cref="OpenChanged"/> event will occur.

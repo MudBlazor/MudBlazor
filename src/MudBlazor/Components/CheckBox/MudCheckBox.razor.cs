@@ -83,7 +83,7 @@ namespace MudBlazor
         public LabelPosition LabelPosition { get; set; } = LabelPosition.End;
 
         /// <summary>
-        /// Whether the checkbox can be controlled with the keyboard.
+        /// Allows this checkbox to be controlled via the keyboard.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  The <c>Space</c> key cycles through true and false values (or true/false/null states if <see cref="TriState"/> is <c>true</c>). <c>Delete</c> will clear the checkbox. <c>Enter</c> (or <c>NumPadEnter</c>) will set the checkbox.  <c>Backspace</c> will set an indeterminate value.
@@ -93,7 +93,7 @@ namespace MudBlazor
         public bool KeyboardEnabled { get; set; } = true;
 
         /// <summary>
-        /// Whether a ripple effect is shown whhen the checkbox is clicked.
+        /// Shows a ripple effect when this checkbox is clicked.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -103,7 +103,7 @@ namespace MudBlazor
         public bool Ripple { get; set; } = true;
 
         /// <summary>
-        /// Whether compact padding will be used.
+        /// Uses compact padding.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -160,7 +160,7 @@ namespace MudBlazor
         public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
 
         /// <summary>
-        /// Whether the checkbox can cycle to an indeterminate state.
+        /// Allows the checkbox to have an indeterminate state.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the checkbox can support an indeterminate state such as a <c>null</c> value, in addition to <c>true</c> and <c>false</c>.

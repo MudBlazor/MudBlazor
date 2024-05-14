@@ -1,4 +1,6 @@
-﻿.mud-card {
+.mud-card {
+  display: flex;
+  flex-direction: column;
 }
 
 .mud-card-header {
@@ -48,6 +50,7 @@
 }
 
 .mud-card-content {
+  flex-grow: 1;
   padding: 16px;
 }
 
