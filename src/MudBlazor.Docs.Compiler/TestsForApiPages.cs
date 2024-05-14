@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor.Docs.Compiler
 {
 #nullable enable
-    public class TestsForApiPages
+    public partial class TestsForApiPages
     {
         public bool Execute()
         {
@@ -101,10 +101,10 @@ namespace MudBlazor.Docs.Compiler
 
             if (removeT)
             {
-                return s_genericTypeRegex.Replace(type.Name, string.Empty);
+                return _genericTypeRegex.Replace(type.Name, string.Empty);
             }
 
-            return s_genericTypeRegex.Replace(type.Name, $"<{string.Join(',', GetGenericTypeArguments(type))}>");
+            return _genericTypeRegex.Replace(type.Name, $"<{string.Join(',', GetGenericTypeArguments(type))}>");
         }
 
         private static IEnumerable<string> GetGenericTypeArguments(Type type)
@@ -114,7 +114,7 @@ namespace MudBlazor.Docs.Compiler
                 yield break;
             }
 
-            if (s_genericTypeIndexCache.TryGetValue(type.GetGenericTypeDefinition(), out var genericTypes))
+            if (_genericTypeIndexCache.TryGetValue(type.GetGenericTypeDefinition(), out var genericTypes))
             {
                 foreach (var genericType in genericTypes)
                 {
@@ -134,15 +134,18 @@ namespace MudBlazor.Docs.Compiler
         /// Regular expression to match generic number at the end of a type name.
         /// example: for input MyType`2 it matches `2
         /// </summary>
-        private static readonly Regex s_genericTypeRegex = new Regex("`\\d?$", RegexOptions.Compiled);
+        private static readonly Regex _genericTypeRegex = GenericTypeRegex();
 
         /// <summary>
         /// Cache for generic types that have a specific type for each generic argument.
         /// </summary>
-        private static readonly Dictionary<Type, string[]> s_genericTypeIndexCache = new()
+        private static readonly Dictionary<Type, string[]> _genericTypeIndexCache = new()
         {
             { typeof(MudSlider<>), ["decimal"]},
             { typeof(MudSwitch<>), ["bool"]}
         };
+
+        [GeneratedRegex("`\\d?$", RegexOptions.Compiled)]
+        private static partial Regex GenericTypeRegex();
     }
 }
