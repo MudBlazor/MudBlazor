@@ -5,7 +5,6 @@
                Size="(Toggled ? ToggledSize : Size)"
                Color="(Toggled ? ToggledColor : Color)"
                Title="@(Toggled ? ToggledTitle ?? Title : Title)"
-               AriaLabel="@(Toggled ? ToggledAriaLabel ?? AriaLabel : AriaLabel)"
                Variant="Variant"
                Disabled="Disabled"
                Edge="Edge"
@@ -15,5 +14,6 @@
                Style="@Style"
                DropShadow="@DropShadow"
                ClickPropagation="ClickPropagation"
-               aria-pressed="@((Toggled ? "true" : "false"))"
+               aria-pressed="@(Toggled ? "true" : "false")"
+               aria-label="@(Toggled ? ToggledAriaLabel ?? AriaLabel : AriaLabel)"
                @attributes="UserAttributes" />
