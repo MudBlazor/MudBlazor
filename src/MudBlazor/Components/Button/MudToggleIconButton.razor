@@ -14,6 +14,6 @@
                Style="@Style"
                DropShadow="@DropShadow"
                ClickPropagation="ClickPropagation"
-               aria-pressed="@(Toggled ? "true" : "false")"
-               aria-label="@(Toggled ? ToggledAriaLabel ?? AriaLabel : AriaLabel)"
+               aria-pressed="@((Toggled ? "true" : "false"))"
+               aria-label="@((Toggled ? ToggledAriaLabel ?? AriaLabel : AriaLabel))"
                @attributes="UserAttributes" />

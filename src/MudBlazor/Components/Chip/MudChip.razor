@@ -33,7 +33,7 @@
         }
         @if (OnClose.HasDelegate || ChipSet?.AllClosable == true)
         {
-            <MudIconButton Class="mud-chip-close-button" Icon="@GetCloseIcon()" OnClick="OnCloseAsync" Size="MudBlazor.Size.Small" AriaLabel="@CloseIconAriaLabel" />
+            <MudIconButton Class="mud-chip-close-button" Icon="@GetCloseIcon()" OnClick="OnCloseAsync" Size="MudBlazor.Size.Small" aria-label="@CloseIconAriaLabel" />
         }
     </span>
 </div>
