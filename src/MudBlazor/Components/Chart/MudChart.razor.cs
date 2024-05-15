@@ -68,6 +68,9 @@ namespace MudBlazor
         }
     }
 
+    /// <summary>
+    /// Shared a base class for designing category <see cref="MudChart"/> and <see cref="MudTimeSeriesChart"/> components.
+    /// </summary>
     public abstract class MudChartBase : MudComponentBase
     {
         /// <summary>
