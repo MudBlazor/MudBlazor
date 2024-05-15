@@ -24,10 +24,6 @@ namespace MudBlazor.Docs.Compiler;
 /// to the <c>MudBlazor.Docs</c> such as <see cref="DocumentedType"/>, <see cref="DocumentedMethod"/>, <see cref="DocumentedProperty"/>,
 /// <see cref="DocumentedEvent"/>, and <see cref="DocumentedField"/>, in a strongly typed manner. 
 /// </para>
-/// <para>
-/// This class also produces metrics which can be used during DevOps builds to enforce a minimum level of documentation.  You can
-/// use the <see cref="CriticalTypes"/> property to control which types are most important for documentation.
-/// </para>
 /// </remarks>
 public partial class ApiDocumentationBuilder()
 {
@@ -39,37 +35,32 @@ public partial class ApiDocumentationBuilder()
     /// <summary>
     /// The types in the assembly.
     /// </summary>
-    public SortedDictionary<string, Type> Types { get; set; } = [];
+    public SortedDictionary<string, Type> PublicTypes { get; set; } = [];
 
     /// <summary>
     /// The generated documentation for events.
     /// </summary>
-    public SortedDictionary<string, DocumentedEvent> DocumentedEvents { get; private set; } = [];
+    public SortedDictionary<string, DocumentedEvent> Events { get; private set; } = [];
 
     /// <summary>
     /// The generated documentation for fields.
     /// </summary>
-    public SortedDictionary<string, DocumentedField> DocumentedFields { get; private set; } = [];
+    public SortedDictionary<string, DocumentedField> Fields { get; private set; } = [];
 
     /// <summary>
     /// The generated documentation for types.
     /// </summary>
-    public SortedDictionary<string, DocumentedType> DocumentedTypes { get; private set; } = [];
-
-    /// <summary>
-    /// The generated documentation for the most important types.
-    /// </summary>
-    public SortedDictionary<string, DocumentedType> DocumentedCriticalTypes { get; private set; }
+    public SortedDictionary<string, DocumentedType> Types { get; private set; } = [];
 
     /// <summary>
     /// The generated documentation for properties.
     /// </summary>
-    public SortedDictionary<string, DocumentedProperty> DocumentedProperties { get; private set; } = [];
+    public SortedDictionary<string, DocumentedProperty> Properties { get; private set; } = [];
 
     /// <summary>
     /// The generated documentation for methods.
     /// </summary>
-    public SortedDictionary<string, DocumentedMethod> DocumentedMethods { get; private set; } = [];
+    public SortedDictionary<string, DocumentedMethod> Methods { get; private set; } = [];
 
     /// <summary>
     /// The types which have documentation but could not be linked to a reflected type.
@@ -170,9 +161,9 @@ public partial class ApiDocumentationBuilder()
     public void AddTypesToDocument()
     {
         // Get all public types as a sorted dictionary
-        Types = new(Assembly.GetTypes().Where(type => type.IsPublic).ToDictionary(r => r.Name, v => v));
+        PublicTypes = new(Assembly.GetTypes().Where(type => type.IsPublic).ToDictionary(r => r.Name, v => v));
 
-        foreach (var type in Types)
+        foreach (var type in PublicTypes)
         {
             var documentedType = AddTypeToDocument(type.Value);
             AddPropertiesToDocument(type.Value, documentedType);
@@ -189,7 +180,7 @@ public partial class ApiDocumentationBuilder()
     public DocumentedType AddTypeToDocument(Type type)
     {
         // Is the type already documented?
-        if (!DocumentedTypes.TryGetValue(type.FullName, out var documentedType))
+        if (!Types.TryGetValue(type.FullName, out var documentedType))
         {
             // No.
             documentedType = new DocumentedType()
@@ -203,7 +194,7 @@ public partial class ApiDocumentationBuilder()
             };
 
             // Add the populated type
-            DocumentedTypes.Add(type.FullName, documentedType);
+            Types.Add(type.FullName, documentedType);
         }
 
         return documentedType;
@@ -229,7 +220,7 @@ public partial class ApiDocumentationBuilder()
             var key = GetTypeFullName(property);
 
             // Has this property been documented before?
-            if (!DocumentedProperties.TryGetValue(key, out var documentedProperty))
+            if (!Properties.TryGetValue(key, out var documentedProperty))
             {
                 // No.
                 documentedProperty = new DocumentedProperty()
@@ -248,7 +239,7 @@ public partial class ApiDocumentationBuilder()
                     PropertyTypeName = property.PropertyType.Name,
                     PropertyTypeFullName = property.PropertyType.FullName
                 };
-                DocumentedProperties.Add(key, documentedProperty);
+                Properties.Add(key, documentedProperty);
             }
             // Link the property to the type
             documentedType.Properties.Add(documentedProperty.Key, documentedProperty);
@@ -277,7 +268,7 @@ public partial class ApiDocumentationBuilder()
             var key = $"{type.FullName}.{field.Name}";
 
             // Has this property been documented before?
-            if (!DocumentedFields.TryGetValue(key, out var documentedField))
+            if (!Fields.TryGetValue(key, out var documentedField))
             {
                 // No.
                 documentedField = new DocumentedField()
@@ -288,7 +279,7 @@ public partial class ApiDocumentationBuilder()
                     TypeName = field.FieldType.Name,
                     TypeFullName = field.FieldType.FullName,
                 };
-                DocumentedFields.Add(key, documentedField);
+                Fields.Add(key, documentedField);
             }
             // Link the property to the type
             documentedType.Fields.Add(documentedField.Key, documentedField);
@@ -315,7 +306,7 @@ public partial class ApiDocumentationBuilder()
             var key = $"{eventItem.DeclaringType.FullName}.{eventItem.Name}";
 
             // Has this property been documented before?
-            if (!DocumentedEvents.TryGetValue(key, out var documentedEvent))
+            if (!Events.TryGetValue(key, out var documentedEvent))
             {
                 // No.
                 documentedEvent = new DocumentedEvent()
@@ -324,7 +315,7 @@ public partial class ApiDocumentationBuilder()
                     Name = eventItem.Name,
                     Type = eventItem.EventHandlerType,
                 };
-                DocumentedEvents.Add(key, documentedEvent);
+                Events.Add(key, documentedEvent);
             }
             // Link the property to the type
             documentedType.Events.Add(documentedEvent.Name, documentedEvent);
@@ -344,7 +335,7 @@ public partial class ApiDocumentationBuilder()
             return $"{property.DeclaringType.FullName}.{property.Name}";
         }
         // Is there a type by name?
-        else if (Types.TryGetValue(property.DeclaringType.Name, out var type))
+        else if (PublicTypes.TryGetValue(property.DeclaringType.Name, out var type))
         {
             return $"{type.FullName}.{property.Name}";
         }
@@ -387,7 +378,7 @@ public partial class ApiDocumentationBuilder()
             var key = $"{method.ReflectedType.FullName}.{method.Name}";
 
             // Has this been documented before?
-            if (!DocumentedMethods.TryGetValue(key, out var documentedMethod))
+            if (!Methods.TryGetValue(key, out var documentedMethod))
             {
                 // No.
                 documentedMethod = new DocumentedMethod()
@@ -413,7 +404,7 @@ public partial class ApiDocumentationBuilder()
                     documentedMethod.Parameters.Add(parameter.Name, documentedParameter);
                 }
                 // Add to the list
-                DocumentedMethods.Add(key, documentedMethod);
+                Methods.Add(key, documentedMethod);
             }
             else
             {
@@ -475,7 +466,7 @@ public partial class ApiDocumentationBuilder()
     /// <param name="xmlContent">The raw XML documentation for the member.</param>
     public void DocumentType(string memberFullName, string xmlContent)
     {
-        if (DocumentedTypes.TryGetValue(memberFullName, out var type))
+        if (Types.TryGetValue(memberFullName, out var type))
         {
             type.Remarks = GetRemarks(xmlContent);
             type.Summary = GetSummary(xmlContent);
@@ -494,7 +485,7 @@ public partial class ApiDocumentationBuilder()
     public void DocumentProperty(string memberFullName, string xmlContent)
     {
         // Get the documented type and property
-        if (DocumentedProperties.TryGetValue(memberFullName, out var property))
+        if (Properties.TryGetValue(memberFullName, out var property))
         {
             property.Remarks = GetRemarks(xmlContent);
             property.Summary = GetSummary(xmlContent);
@@ -512,7 +503,7 @@ public partial class ApiDocumentationBuilder()
     /// <param name="xmlContent">The raw XML documentation for the member.</param>
     public void DocumentField(string memberFullName, string xmlContent)
     {
-        if (DocumentedFields.TryGetValue(memberFullName, out var field))
+        if (Fields.TryGetValue(memberFullName, out var field))
         {
             field.Summary = GetSummary(xmlContent);
         }
@@ -521,7 +512,7 @@ public partial class ApiDocumentationBuilder()
             var enumPart = memberFullName.Substring(0, memberFullName.LastIndexOf("."));
             var valuePart = memberFullName.Substring(enumPart.Length + 1);
 
-            if (DocumentedFields.TryGetValue(enumPart, out var enumerationItem))
+            if (Fields.TryGetValue(enumPart, out var enumerationItem))
             {
                 enumerationItem.Summary = GetSummary(xmlContent);
             }
@@ -539,7 +530,7 @@ public partial class ApiDocumentationBuilder()
     /// <param name="xmlContent">The raw XML documentation for the member.</param>
     public void DocumentMethod(string memberFullName, string xmlContent)
     {
-        if (DocumentedMethods.TryGetValue(memberFullName, out var documentedType))
+        if (Methods.TryGetValue(memberFullName, out var documentedType))
         {
             documentedType.Summary = GetSummary(xmlContent);
             documentedType.Remarks = GetRemarks(xmlContent);
@@ -557,7 +548,7 @@ public partial class ApiDocumentationBuilder()
     /// <param name="xmlContent">The raw XML documentation for the member.</param>
     public void DocumentEvent(string memberFullName, string xmlContent)
     {
-        if (DocumentedEvents.TryGetValue(memberFullName, out var documentedType))
+        if (Events.TryGetValue(memberFullName, out var documentedType))
         {
             documentedType.Summary = GetSummary(xmlContent);
             documentedType.Remarks = GetRemarks(xmlContent);
@@ -617,8 +608,8 @@ public partial class ApiDocumentationBuilder()
         using var writer = new ApiDocumentationWriter(Paths.ApiDocumentationFilePath);
         writer.WriteHeader();
         writer.WriteClassStart();
-        writer.WriteConstructorStart(DocumentedTypes.Count);
-        writer.WriteTypes(DocumentedTypes);
+        writer.WriteConstructorStart(Types.Count);
+        writer.WriteTypes(Types);
         writer.WriteConstructorEnd();
         writer.WriteClassEnd();
     }
@@ -629,25 +620,25 @@ public partial class ApiDocumentationBuilder()
     public void CalculateDocumentationCoverage()
     {
         // Calculate how many items have good documentation
-        var summarizedTypes = DocumentedTypes.Count(type => !string.IsNullOrEmpty(type.Value.Summary));
-        var summarizedProperties = DocumentedProperties.Count(property => !string.IsNullOrEmpty(property.Value.Summary));
-        var summarizedMethods = DocumentedMethods.Count(method => !string.IsNullOrEmpty(method.Value.Summary));
-        var summarizedFields = DocumentedFields.Count(field => !string.IsNullOrEmpty(field.Value.Summary));
-        var summarizedEvents = DocumentedEvents.Count(eventItem => !string.IsNullOrEmpty(eventItem.Value.Summary));
+        var summarizedTypes = Types.Count(type => !string.IsNullOrEmpty(type.Value.Summary));
+        var summarizedProperties = Properties.Count(property => !string.IsNullOrEmpty(property.Value.Summary));
+        var summarizedMethods = Methods.Count(method => !string.IsNullOrEmpty(method.Value.Summary));
+        var summarizedFields = Fields.Count(field => !string.IsNullOrEmpty(field.Value.Summary));
+        var summarizedEvents = Events.Count(eventItem => !string.IsNullOrEmpty(eventItem.Value.Summary));
         // Calculate the coverage metrics for documentation
-        var typeCoverage = summarizedTypes / (double)DocumentedTypes.Count;
-        var propertyCoverage = summarizedProperties / (double)DocumentedProperties.Count;
-        var methodCoverage = summarizedMethods / (double)DocumentedMethods.Count;
-        var fieldCoverage = summarizedFields / (double)DocumentedFields.Count;
-        var eventCoverage = summarizedEvents / (double)DocumentedEvents.Count;
+        var typeCoverage = summarizedTypes / (double)Types.Count;
+        var propertyCoverage = summarizedProperties / (double)Properties.Count;
+        var methodCoverage = summarizedMethods / (double)Methods.Count;
+        var fieldCoverage = summarizedFields / (double)Fields.Count;
+        var eventCoverage = summarizedEvents / (double)Events.Count;
 
         Console.WriteLine("XML Documentation Coverage for MudBlazor:");
         Console.WriteLine();
-        Console.WriteLine($"Types:      {summarizedTypes} of {DocumentedTypes.Count} ({typeCoverage:P0}) other types");
-        Console.WriteLine($"Properties: {summarizedProperties} of {DocumentedProperties.Count} ({propertyCoverage:P0}) properties");
-        Console.WriteLine($"Methods:    {summarizedMethods} of {DocumentedMethods.Count} ({methodCoverage:P0}) methods");
-        Console.WriteLine($"Fields:     {summarizedFields} of {DocumentedFields.Count} ({fieldCoverage:P0}) fields/enums");
-        Console.WriteLine($"Events:     {summarizedEvents} of {DocumentedEvents.Count} ({eventCoverage:P0}) events");
+        Console.WriteLine($"Types:      {summarizedTypes} of {Types.Count} ({typeCoverage:P0}) other types");
+        Console.WriteLine($"Properties: {summarizedProperties} of {Properties.Count} ({propertyCoverage:P0}) properties");
+        Console.WriteLine($"Methods:    {summarizedMethods} of {Methods.Count} ({methodCoverage:P0}) methods");
+        Console.WriteLine($"Fields:     {summarizedFields} of {Fields.Count} ({fieldCoverage:P0}) fields/enums");
+        Console.WriteLine($"Events:     {summarizedEvents} of {Events.Count} ({eventCoverage:P0}) events");
         Console.WriteLine();
 
         if (UnresolvedTypes.Count > 0)
