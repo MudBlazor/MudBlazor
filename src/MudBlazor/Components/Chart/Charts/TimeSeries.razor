@@ -39,13 +39,12 @@
             var series = _series[chartLine.Index];
             var colour = MudChartParent.ChartOptions.ChartPalette.GetValue(chartLine.Index % MudChartParent.ChartOptions.ChartPalette.Count());
 
+            <path class="mud-chart-line" @onclick="() => SelectedIndex = chartLine.Index" fill="none" stroke="@colour" stroke-opacity="@series.StrokeOpacity" stroke-width="@MudChartParent.ChartOptions.LineStrokeWidth" d="@chartLine.Data"></path>
+
             if (series.Type == TimeSeriesDiplayType.Area)
             {
-                <path class="mud-chart-line" @onclick="() => SelectedIndex = chartLine.Index" fill="@colour" fill-opacity="@series.FillOpacity" stroke="@colour" stroke-opacity="@series.StrokeOpacity" stroke-width="@MudChartParent.ChartOptions.LineStrokeWidth" d="@chartLine.Data"></path>
-            }
-            else
-            {
-                <path class="mud-chart-line" @onclick="() => SelectedIndex = chartLine.Index" fill="none" stroke="@colour" stroke-opacity="@series.StrokeOpacity" stroke-width="@MudChartParent.ChartOptions.LineStrokeWidth" d="@chartLine.Data"></path>
+                var chartArea = _chartAreas[chartLine.Index];
+                <path class="mud-chart-line" @onclick="() => SelectedIndex = chartLine.Index" fill="@colour" fill-opacity="@series.FillOpacity" d="@chartArea.Data"></path>
             }
         }
     </g>

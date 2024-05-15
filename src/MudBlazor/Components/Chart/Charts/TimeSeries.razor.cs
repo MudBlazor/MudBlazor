@@ -29,6 +29,7 @@ namespace MudBlazor.Charts
         private List<TimeSeriesChartSeries> _series = new();
 
         private List<SvgPath> _chartLines = new();
+        private Dictionary<int, SvgPath> _chartAreas = new();
 
         protected override void OnParametersSet()
         {
@@ -59,8 +60,8 @@ namespace MudBlazor.Charts
             {
                 var minY = _series.SelectMany(series => series.Data).Min(x => x.Value);
                 var maxY = _series.SelectMany(series => series.Data).Max(x => x.Value);
-                
-                var includeYAxisZeroPoint = MudChartParent?.ChartOptions.YAxisRequireZeroPoint ?? _series.Any(x => x.Type == TimeSeriesDiplayType.Area || x.RequireYAxisZeroPoint);
+
+                var includeYAxisZeroPoint = MudChartParent?.ChartOptions.YAxisRequireZeroPoint ?? _series.Any(x => x.Type == TimeSeriesDiplayType.Area);
                 if (includeYAxisZeroPoint)
                 {
                     minY = Math.Min(minY, 0); // we want to include the 0 in the grid
@@ -158,6 +159,7 @@ namespace MudBlazor.Charts
         {
             _legends.Clear();
             _chartLines.Clear();
+            _chartAreas.Clear();
 
             if (_series.Count == 0)
                 return;
@@ -169,6 +171,7 @@ namespace MudBlazor.Charts
             for (var i = 0; i < _series.Count; i++)
             {
                 StringBuilder chartLine = new StringBuilder();
+                StringBuilder chartArea = new StringBuilder();
 
                 var series = _series[i];
                 var data = series.Data;
@@ -219,32 +222,21 @@ namespace MudBlazor.Charts
                 }
                 else
                 {
-                    if (series.Type == TimeSeriesDiplayType.Area)
-                    {
-                        // add an extra point based on the x of the first point and 0 to add the area to the bottom
-                    }
-
                     var firstPointX = 0d;
+                    var firstPointY = 0d;
                     var zeroPointY = GetYForZeroPoint();
                     for (var j = 0; j < data.Count; j++)
                     {
-                        if (j == 0)
-                            chartLine.Append("M ");
-                        else
-                            chartLine.Append(" L ");
-
                         var (x, y) = GetXYForDataPoint(j);
 
-                        if (j == 0 && series.Type == TimeSeriesDiplayType.Area)
+                        if (j == 0)
                         {
                             firstPointX = x;
-
-                            // add an extra point based on the x of the first point and 0 to add the area to the bottom
-                            chartLine.Append(ToS(firstPointX));
-                            chartLine.Append(' ');
-                            chartLine.Append(ToS(zeroPointY));
-                            chartLine.Append(" L ");
+                            firstPointY = y;
+                            chartLine.Append("M ");
                         }
+                        else
+                            chartLine.Append(" L ");
 
                         chartLine.Append(ToS(x));
                         chartLine.Append(' ');
@@ -252,19 +244,27 @@ namespace MudBlazor.Charts
 
                         if (j == data.Count - 1 && series.Type == TimeSeriesDiplayType.Area)
                         {
+                            chartArea.Append(chartLine.ToString()); // the line up to this point is the same as the area, so we can reuse it
+
                             // add an extra point based on the x of the last point and 0 to add the area to the bottom
 
-                            chartLine.Append(" L ");
-                            chartLine.Append(ToS(x));
-                            chartLine.Append(' ');
-                            chartLine.Append(ToS(zeroPointY));
+                            chartArea.Append(" L ");
+                            chartArea.Append(ToS(x));
+                            chartArea.Append(' ');
+                            chartArea.Append(ToS(zeroPointY));
 
                             // add an extra point based on the x of the first point and 0 to close the area
 
-                            chartLine.Append(" L ");
-                            chartLine.Append(ToS(firstPointX));
-                            chartLine.Append(' ');
-                            chartLine.Append(ToS(zeroPointY));
+                            chartArea.Append(" L ");
+                            chartArea.Append(ToS(firstPointX));
+                            chartArea.Append(' ');
+                            chartArea.Append(ToS(zeroPointY));
+
+                            // add an the first point again to close the area
+                            chartArea.Append(" L ");
+                            chartArea.Append(ToS(firstPointX));
+                            chartArea.Append(' ');
+                            chartArea.Append(ToS(firstPointY));
                         }
                     }
                 }
@@ -276,7 +276,18 @@ namespace MudBlazor.Charts
                         Data = chartLine.ToString()
                     };
                     _chartLines.Add(line);
+
+                    if (series.Type == TimeSeriesDiplayType.Area)
+                    {
+                        var area = new SvgPath()
+                        {
+                            Index = i,
+                            Data = chartArea.ToString()
+                        };
+                        _chartAreas.Add(i, area);
+                    }
                 }
+
                 var legend = new SvgLegend()
                 {
                     Index = i,
