@@ -180,11 +180,11 @@ namespace MudBlazor
         /// Row hover start event.
         /// </summary>
         [Parameter]
-        public EventCallback<TableRowHoverEventArgs<T>> OnRowMouseEnter { get; set; }
+        public EventCallback<TableRowHoverEventArgs<T>> OnRowPointerEnter { get; set; }
 
-        internal override bool HasRowMouseEnterEventHandler => OnRowMouseEnter.HasDelegate;
+        internal override bool HasRowPointerEnterEventHandler => OnRowPointerEnter.HasDelegate;
 
-        internal override async Task FireRowMouseEnterEventAsync(MouseEventArgs args, MudTr row, object? o)
+        internal override async Task FireRowPointerEnterEventAsync(PointerEventArgs args, MudTr row, object? o)
         {
             var item = default(T);
             try
@@ -192,18 +192,18 @@ namespace MudBlazor
                 item = (T?)o;
             }
             catch (Exception) { /*ignore*/}
-            await OnRowMouseEnter.InvokeAsync(new TableRowHoverEventArgs<T>(args, row, item));
+            await OnRowPointerEnter.InvokeAsync(new TableRowHoverEventArgs<T>(args, row, item));
         }
 
         /// <summary>
         /// Row hover stop event.
         /// </summary>
         [Parameter]
-        public EventCallback<TableRowHoverEventArgs<T>> OnRowMouseLeave { get; set; }
+        public EventCallback<TableRowHoverEventArgs<T>> OnRowPointerLeave { get; set; }
 
-        internal override bool HasRowMouseLeaveEventHandler => OnRowMouseLeave.HasDelegate;
+        internal override bool HasRowPointerLeaveEventHandler => OnRowPointerLeave.HasDelegate;
 
-        internal override async Task FireRowMouseLeaveEventAsync(MouseEventArgs args, MudTr row, object? o)
+        internal override async Task FireRowPointerLeaveEventAsync(PointerEventArgs args, MudTr row, object? o)
         {
             var item = default(T);
             try
@@ -211,7 +211,7 @@ namespace MudBlazor
                 item = (T?)o;
             }
             catch (Exception) { /*ignore*/}
-            await OnRowMouseLeave.InvokeAsync(new TableRowHoverEventArgs<T>(args, row, item));
+            await OnRowPointerLeave.InvokeAsync(new TableRowHoverEventArgs<T>(args, row, item));
         }
 
         /// <summary>

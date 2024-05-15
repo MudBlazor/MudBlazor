@@ -176,8 +176,8 @@ namespace MudBlazor.UnitTests.Components
             var item = comp.FindComponent<MudRatingItem>();
             // print the generated html
 
-            await comp.InvokeAsync(() => item.Instance.HandleMouseOutAsync(new MouseEventArgs()));
-            await comp.InvokeAsync(() => item.Instance.HandleMouseOverAsync(new MouseEventArgs()));
+            await comp.InvokeAsync(() => item.Instance.HandlePointerOutAsync(new PointerEventArgs()));
+            await comp.InvokeAsync(() => item.Instance.HandlePointerOverAsync(new PointerEventArgs()));
 
             await comp.InvokeAsync(() => comp.Instance.SetHoveredValueAsync(15));
             await comp.InvokeAsync(() => item.Instance.SelectIcon());
@@ -211,8 +211,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDownAsync(new KeyboardEventArgs { Key = "ArrowRight", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.GetState(x => x.SelectedValue).Should().Be(0));
 
-            await comp.InvokeAsync(() => item.Instance.HandleMouseOutAsync(new MouseEventArgs()));
-            await comp.InvokeAsync(() => item.Instance.HandleMouseOverAsync(new MouseEventArgs()));
+            await comp.InvokeAsync(() => item.Instance.HandlePointerOutAsync(new PointerEventArgs()));
+            await comp.InvokeAsync(() => item.Instance.HandlePointerOverAsync(new PointerEventArgs()));
         }
     }
 }

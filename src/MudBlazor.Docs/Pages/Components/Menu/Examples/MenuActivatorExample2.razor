@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 
-<MudMenu FullWidth="true" ActivationEvent="@MouseEvent.LeftClick">
+<MudMenu FullWidth="true" ActivationEvent="@PointerEvent.LeftClick">
     <ActivatorContent>
         <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Left click</MudChip>
     </ActivatorContent>
@@ -13,7 +13,7 @@
     </ChildContent>
 </MudMenu>
 
-<MudMenu ActivationEvent="@MouseEvent.RightClick">
+<MudMenu ActivationEvent="@PointerEvent.RightClick">
     <ActivatorContent>
         <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Right click</MudChip>
     </ActivatorContent>
@@ -25,9 +25,9 @@
     </ChildContent>
 </MudMenu>
 
-<MudMenu FullWidth="true" ActivationEvent="@MouseEvent.MouseOver" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
+<MudMenu FullWidth="true" ActivationEvent="@PointerEvent.HoverOver" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
     <ActivatorContent>
-        <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Mouse over</MudChip>
+        <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Hover over</MudChip>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem>Profile</MudMenuItem>

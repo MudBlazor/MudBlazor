@@ -26,17 +26,10 @@ namespace MudBlazor.UnitTests.Services
         {
             _runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
             _service = new EventListener(_runtimeMock.Object);
-#if NET7_0_OR_GREATER
-            _expectedProperties = new[] {
+            _expectedProperties = [
              "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
              "movementX", "movementY", "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
-            };
-#else
-            _expectedProperties  = new[] {
-            "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
-            "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
-            };
-#endif
+            ];
         }
 
         private bool ContainsEqual(IEnumerable<string> firstColl, IEnumerable<string> secondColl)
@@ -262,7 +255,7 @@ namespace MudBlazor.UnitTests.Services
             // a second time shouldn't change something
             await _service.DisposeAsync();
 
-            // a normal dispose shouldnt' change something
+            // a normal dispose shouldn't change something
             _service.Dispose();
 
             _runtimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>

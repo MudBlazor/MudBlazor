@@ -1,22 +1,21 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace MudBlazor
-{
+namespace MudBlazor;
+
 #nullable enable
-    public class TableRowHoverEventArgs<T> : EventArgs
+public class TableRowHoverEventArgs<T> : EventArgs
+{
+    public PointerEventArgs PointerEventArgs { get; }
+
+    public MudTr Row { get; }
+
+    public T? Item { get; }
+
+    public TableRowHoverEventArgs(PointerEventArgs pointerEventArgs, MudTr row, T? item)
     {
-        public MouseEventArgs MouseEventArgs { get; }
-
-        public MudTr Row { get; }
-
-        public T? Item { get; }
-
-        public TableRowHoverEventArgs(MouseEventArgs mouseEventArgs, MudTr row, T? item)
-        {
-            MouseEventArgs = mouseEventArgs;
-            Row = row;
-            Item = item;
-        }
+        PointerEventArgs = pointerEventArgs;
+        Row = row;
+        Item = item;
     }
 }

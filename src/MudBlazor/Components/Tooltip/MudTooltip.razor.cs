@@ -104,7 +104,9 @@ namespace MudBlazor
         [Category(CategoryTypes.Tooltip.Appearance)]
         public string? RootStyle { get; set; }
 
+        /// <summary>
         /// Classes applied directly to root component of the tooltip
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
         public string? RootClass { get; set; }
@@ -158,7 +160,7 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Disabled { get; set; }
 
-        private void HandleMouseEnter()
+        private void HandlePointerEnter()
         {
             if (ShowOnHover)
             {
@@ -166,7 +168,7 @@ namespace MudBlazor
             }
         }
 
-        private void HandleMouseLeave()
+        private void HandlePointerLeave()
         {
             if (ShowOnHover == false)
                 return;
@@ -191,7 +193,7 @@ namespace MudBlazor
             Visible = false;
         }
 
-        private void HandleMouseUp()
+        private void HandlePointerUp()
         {
             if (ShowOnClick)
             {
@@ -217,7 +219,7 @@ namespace MudBlazor
                 return Origin.TopCenter;
             }
 
-            if (Placement == Placement.Left || Placement == Placement.Start && !RightToLeft || Placement == Placement.End && RightToLeft)
+            if (Placement == Placement.Left || (Placement == Placement.Start && !RightToLeft) || (Placement == Placement.End && RightToLeft))
             {
                 _anchorOrigin = Origin.CenterLeft;
                 _transformOrigin = Origin.CenterRight;
@@ -225,7 +227,7 @@ namespace MudBlazor
                 return Origin.CenterLeft;
             }
 
-            if (Placement == Placement.Right || Placement == Placement.End && !RightToLeft || Placement == Placement.Start && RightToLeft)
+            if (Placement == Placement.Right || (Placement == Placement.End && !RightToLeft) || (Placement == Placement.Start && RightToLeft))
             {
                 _anchorOrigin = Origin.CenterRight;
                 _transformOrigin = Origin.CenterLeft;

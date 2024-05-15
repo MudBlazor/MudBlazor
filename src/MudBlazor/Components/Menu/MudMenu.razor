@@ -3,10 +3,10 @@
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style"
-        @onmouseenter="@MouseEnterAsync"
-        @onmouseleave="@MouseLeaveAsync"
-        @oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? ToggleMenuAsync : null)"
-        @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick)">
+        @onpointerenter="@PointerEnterAsync"
+        @onpointerleave="@PointerLeaveAsync"
+        @oncontextmenu="@(ActivationEvent == PointerEvent.RightClick ? ToggleMenuAsync : null)"
+        @oncontextmenu:preventDefault="@(ActivationEvent == PointerEvent.RightClick)">
     @if (ActivatorContent != null)
     {
         <CascadingValue Value="@((IActivatable) this)" IsFixed="true">
@@ -39,11 +39,11 @@
                 DropShadow="@DropShadow">
         <CascadingValue Value="@this">
             <MudList T="object" Class="@ListClass" Dense="@Dense"
-                @onmouseenter="@MouseEnterAsync"
-                @onmouseleave="@MouseLeaveAsync">
+                @onpointerenter="@PointerEnterAsync"
+                @onpointerleave="@PointerLeaveAsync">
                 @ChildContent
             </MudList>
         </CascadingValue>
     </MudPopover>
-    <MudOverlay Visible="@(_open && ActivationEvent != MouseEvent.MouseOver)" OnClick="@ToggleMenuAsync" LockScroll="LockScroll" />
+    <MudOverlay Visible="@(_open && ActivationEvent != PointerEvent.HoverOver)" OnClick="@ToggleMenuAsync" LockScroll="LockScroll" />
 </div>

@@ -12,7 +12,7 @@ namespace MudBlazor
     {
         private bool _open;
         private string? _popoverStyle;
-        private bool _isMouseOver = false;
+        private bool _isPointerOver;
 
         protected string Classname =>
             new CssBuilder("mud-menu")
@@ -140,7 +140,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.Behavior)]
-        public MouseEvent ActivationEvent { get; set; } = MouseEvent.LeftClick;
+        public PointerEvent ActivationEvent { get; set; } = PointerEvent.LeftClick;
 
         /// <summary>
         /// Set the anchor origin point to determine where the popover will open from.
@@ -212,7 +212,7 @@ namespace MudBlazor
         public Task CloseMenuAsync()
         {
             _open = false;
-            _isMouseOver = false;
+            _isPointerOver = false;
             _popoverStyle = null;
             StateHasChanged();
 
@@ -222,9 +222,10 @@ namespace MudBlazor
         /// <summary>
         /// Opens the menu.
         /// </summary>
-        /// <param name="args">The arguments of the calling mouse event. If
-        /// <see cref="PositionAtCursor"/> is true, the menu will be positioned using the
-        /// coordinates in this parameter.</param>
+        /// <param name="args">
+        /// The arguments of the calling mouse/pointer event.
+        /// If <see cref="PositionAtCursor"/> is true, the menu will be positioned using the coordinates in this parameter.
+        /// </param>
         public Task OpenMenuAsync(EventArgs args)
         {
             if (Disabled)
@@ -258,7 +259,6 @@ namespace MudBlazor
         /// <summary>
         /// Toggle the visibility of the menu.
         /// </summary>
-        /// <param name="args">Either <see cref="MouseEventArgs"/> or <see cref="TouchEventArgs"/></param>
         public async Task ToggleMenuAsync(EventArgs args)
         {
             if (Disabled)
@@ -269,12 +269,12 @@ namespace MudBlazor
             // oncontextmenu turns a touch event into MouseEventArgs but with a button of -1.
             if (args is MouseEventArgs mouseEventArgs && mouseEventArgs.Button != -1)
             {
-                if (ActivationEvent == MouseEvent.LeftClick && mouseEventArgs.Button != 0 && !_open)
+                if (ActivationEvent == PointerEvent.LeftClick && mouseEventArgs.Button != 0 && !_open)
                 {
                     return;
                 }
 
-                if (ActivationEvent == MouseEvent.RightClick && mouseEventArgs.Button != 2 && !_open)
+                if (ActivationEvent == PointerEvent.RightClick && mouseEventArgs.Button != 2 && !_open)
                 {
                     return;
                 }
@@ -290,23 +290,23 @@ namespace MudBlazor
             }
         }
 
-        private async Task MouseEnterAsync(MouseEventArgs args)
+        private async Task PointerEnterAsync(PointerEventArgs args)
         {
-            _isMouseOver = true;
+            _isPointerOver = true;
 
-            if (ActivationEvent == MouseEvent.MouseOver)
+            if (ActivationEvent == PointerEvent.HoverOver)
             {
                 await OpenMenuAsync(args);
             }
         }
 
-        private async Task MouseLeaveAsync()
+        private async Task PointerLeaveAsync()
         {
-            _isMouseOver = false;
+            _isPointerOver = false;
 
             await Task.Delay(100);
 
-            if (ActivationEvent == MouseEvent.MouseOver && !_isMouseOver)
+            if (ActivationEvent == PointerEvent.HoverOver && !_isPointerOver)
             {
                 await CloseMenuAsync();
             }

@@ -40,7 +40,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Check if the OnRowMouseEnter and OnRowMouseLeave event callbacks are fired as intended
+        /// Check if the OnRowPointerEnter and OnRowPointerLeave event callbacks are fired as intended
         /// </summary>
         [Test]
         public void TableRowHover()
@@ -50,22 +50,22 @@ namespace MudBlazor.UnitTests.Components
 
             var trs = comp.FindAll("tr");
 
-            trs[0].TriggerEvent("onmouseenter", new MouseEventArgs());
+            trs[0].TriggerEvent("onpointerenter", new PointerEventArgs());
             comp.Find("p").TextContent.Trim().Should().Be("Current: 'A', last: ''");
 
-            trs[0].TriggerEvent("onmouseleave", new MouseEventArgs());
+            trs[0].TriggerEvent("onpointerleave", new PointerEventArgs());
             comp.Find("p").TextContent.Trim().Should().Be("Current: '', last: 'A'");
 
-            trs[1].TriggerEvent("onmouseenter", new MouseEventArgs());
+            trs[1].TriggerEvent("onpointerenter", new PointerEventArgs());
             comp.Find("p").TextContent.Trim().Should().Be("Current: 'B', last: 'A'");
 
-            trs[1].TriggerEvent("onmouseleave", new MouseEventArgs());
+            trs[1].TriggerEvent("onpointerleave", new PointerEventArgs());
             comp.Find("p").TextContent.Trim().Should().Be("Current: '', last: 'B'");
 
-            trs[0].TriggerEvent("onmouseenter", new MouseEventArgs());
+            trs[0].TriggerEvent("onpointerenter", new PointerEventArgs());
             comp.Find("p").TextContent.Trim().Should().Be("Current: 'A', last: 'B'");
 
-            trs[0].TriggerEvent("onmouseleave", new MouseEventArgs());
+            trs[0].TriggerEvent("onpointerleave", new PointerEventArgs());
             comp.Find("p").TextContent.Trim().Should().Be("Current: '', last: 'A'");
         }
 

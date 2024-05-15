@@ -74,7 +74,7 @@ namespace MudBlazor
             await table.FireRowClickEventAsync(args, this, Item);
         }
 
-        public async Task OnRowMouseEnterAsync(MouseEventArgs args)
+        public async Task OnRowPointerEnterAsync(PointerEventArgs args)
         {
             var table = Context?.Table;
             if (table is null)
@@ -82,10 +82,10 @@ namespace MudBlazor
                 return;
             }
 
-            await table.FireRowMouseEnterEventAsync(args, this, Item);
+            await table.FireRowPointerEnterEventAsync(args, this, Item);
         }
 
-        public async Task OnRowMouseLeaveAsync(MouseEventArgs args)
+        public async Task OnRowPointerLeaveAsync(PointerEventArgs args)
         {
             var table = Context?.Table;
             if (table is null)
@@ -93,33 +93,33 @@ namespace MudBlazor
                 return;
             }
 
-            await table.FireRowMouseLeaveEventAsync(args, this, Item);
+            await table.FireRowPointerLeaveEventAsync(args, this, Item);
         }
 
-        private EventCallback<MouseEventArgs> RowMouseEnterEventCallback
+        private EventCallback<PointerEventArgs> RowPointerEnterEventCallback
         {
             get
             {
-                var hasEventHandler = Context?.Table?.HasRowMouseEnterEventHandler ?? false;
+                var hasEventHandler = Context?.Table?.HasRowPointerEnterEventHandler ?? false;
 
                 if (hasEventHandler)
                 {
-                    return EventCallback.Factory.Create<MouseEventArgs>(this, OnRowMouseEnterAsync);
+                    return EventCallback.Factory.Create<PointerEventArgs>(this, OnRowPointerEnterAsync);
                 }
 
                 return default;
             }
         }
 
-        private EventCallback<MouseEventArgs> RowMouseLeaveEventCallback
+        private EventCallback<PointerEventArgs> RowPointerLeaveEventCallback
         {
             get
             {
-                var hasEventHandler = Context?.Table?.HasRowMouseLeaveEventHandler ?? false;
+                var hasEventHandler = Context?.Table?.HasRowPointerLeaveEventHandler ?? false;
 
                 if (hasEventHandler)
                 {
-                    return EventCallback.Factory.Create<MouseEventArgs>(this, OnRowMouseLeaveAsync);
+                    return EventCallback.Factory.Create<PointerEventArgs>(this, OnRowPointerLeaveAsync);
                 }
 
                 return default;
