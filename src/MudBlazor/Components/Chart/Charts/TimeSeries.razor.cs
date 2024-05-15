@@ -292,7 +292,7 @@ namespace MudBlazor.Charts
                 {
                     Index = i,
                     Labels = _series[i].Name,
-                    IsVisible = _series[i].IsVisible,
+                    Visible = _series[i].IsVisible,
                     OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
                 };
                 _legends.Add(legend);
@@ -304,7 +304,7 @@ namespace MudBlazor.Charts
             var series = _series[legend.Index];
             if (series != null)
             {
-                series.IsVisible = legend.IsVisible;
+                series.IsVisible = legend.Visible;
                 OnParametersSet();
             }
         }

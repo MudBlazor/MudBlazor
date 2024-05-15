@@ -70,6 +70,7 @@ namespace MudBlazor
 
     public abstract class MudChartBase : MudComponentBase
     {
+        /// <summary>
         /// The display options applied to the chart.
         /// </summary>
         [Parameter]
