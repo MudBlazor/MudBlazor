@@ -16,8 +16,10 @@ namespace MudBlazor.Docs.Models;
 public class DocumentedType
 {
     public string Name { get; set; }
-    public string ApiUrl => "/api/" + (IsComponent ? Name.Replace("Mud", "") : Name);
-    public string ComponentUrl => "/component/" + (IsComponent ? Name.Replace("Mud", "") : Name);
+    public string LegacyApiUrl => "/api/" + (IsComponent ? Name.Replace("Mud", "") : Name);
+    public string ApiUrl => "/api/" + Name;
+    public string ElementName => (IsComponent ? $"<{Name}>" : null);
+    public string ComponentUrl => (IsComponent ? "/components/" + Name.Replace("Mud", "") : null);
     public bool IsComponent { get; set; }
     public string Summary { get; set; }
     public string Remarks { get; set; }

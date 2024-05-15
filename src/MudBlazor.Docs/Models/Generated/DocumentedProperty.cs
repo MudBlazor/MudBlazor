@@ -19,6 +19,7 @@ public sealed class DocumentedProperty
     public string? Summary { get; set; }
     public string? Remarks { get; set; }
     public string Type { get; set; } = "";
+    public string TypeCSharp => Type.Replace("Boolean", "bool").Replace("Int32", "int").Replace("Int64", "long").Replace("String", "string");
     public string? DeclaringType { get; set; }
     public string? DeclaringTypeApiLink => $"/api/{DeclaringType}";
     public bool IsPublic { get; set; }

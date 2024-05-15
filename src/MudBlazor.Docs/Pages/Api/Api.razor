@@ -7,11 +7,26 @@
     {
         <DocsPageHeader Title="@(@DocumentedType.Name + " API")" SubTitle="@DocumentedType.Summary" />
         <DocsPageContent>
-            <MudBreadcrumbs Items="@Items" />
+            <ApiBreadcrumbs Type="@DocumentedType" />
+
+            <DocsPageSection>
+                <SectionHeader Title="Examples" />
+                <MudGrid>
+                    <MudItem xs="6">
+                        <MudLink Href="@DocumentedType.ComponentUrl">@DocumentedType.ElementName</MudLink>
+                    </MudItem>
+                    <MudItem xs="6"></MudItem>
+                </MudGrid>
+            </DocsPageSection>
 
             <DocsPageSection>
                 <SectionHeader Title="Inheritance" />
-                <ApiTypeHierarchy Type="@DocumentedType" />
+                <MudGrid>
+                    <MudItem xs="5">
+                        <ApiTypeHierarchy Type="@DocumentedType" />
+                    </MudItem>
+                    <MudItem xs="7"></MudItem>
+                </MudGrid>
             </DocsPageSection>
 
             <DocsPageSection>

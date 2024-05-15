@@ -1,7 +1,9 @@
-﻿<MudTable T="DocumentedProperty" @ref="Table" ServerData="@GetData" Elevation="0" Class="ma-0 mud-width-full" Hover="true" AllowUnsorted="false" GroupBy="@CurrentGroups">
+﻿<MudTable T="DocumentedProperty" @ref="Table" ServerData="@GetData" 
+    Elevation="0" Class="ma-0 mud-width-full" Hover="true" Dense="true"
+    AllowUnsorted="false" GroupBy="@CurrentGroups">
     <ToolBarContent>
         <MudGrid Class="pa-0">
-            <MudItem xs="5">
+            <MudItem xs="6">
                 <MudChipSet T="string" @bind-SelectedValues="SelectedCategories" SelectionMode="SelectionMode.MultiSelection" CheckMark="true">
                     @foreach (var category in Type.PropertyCategories)
                     {
@@ -9,15 +11,12 @@
                     }
                 </MudChipSet>
             </MudItem>
-            <MudItem xs="5">
+            <MudItem xs="6">
                 <MudChipSet T="string" @bind-SelectedValues="SelectedViews" SelectionMode="SelectionMode.MultiSelection" CheckMark="true">
                     <MudChip T="string" Variant="Variant.Text" Size="Size.Small" Label="true" Text="Properties" Default="true" OnClick="@(() => Table.ReloadServerData())"></MudChip>
                     <MudChip T="string" Variant="Variant.Text" Size="Size.Small" Label="true" Text="Parameters" Default="true" OnClick="@(() => Table.ReloadServerData())"></MudChip>
-                    <MudChip T="string" Variant="Variant.Text" Size="Size.Small" Label="true" Text="Inherited" Default="true" OnClick="@(() => Table.ReloadServerData())"></MudChip>
+                    <MudChip T="string" Variant="Variant.Text" Size="Size.Small" Label="true" Text="Inherited" Default="false" OnClick="@(() => Table.ReloadServerData())"></MudChip>
                 </MudChipSet>
-            </MudItem>
-            <MudItem xs="2">
-                <MudTextField T="string" Clearable="true" Immediate="true" ValueChanged="OnSearchAsync" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Small"></MudTextField>
             </MudItem>
         </MudGrid>
     </ToolBarContent>
@@ -45,17 +44,11 @@
         <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="Description">Description</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd Class="docs-content-api-cell" Style="white-space: nowrap;" DataLabel="Name">
-            @if (context.IsParameter)
-            {
-                <MudTooltip Text="Parameter">
-                    <MudIcon Class="pt-3" Size="Size.Large" Icon="@Icons.Material.Filled.TextSnippet" />
-                </MudTooltip>
-            }
-            <MudHighlighter Text="@context.Name" HighlightedText="@Keyword" />
+        <MudTd Class="docs-content-api-cell" Style="white-space: nowrap;" DataLabel="Name">           
+            <CodeInline>@context.Name</CodeInline>
         </MudTd>
         <MudTd Class="docs-content-api-cell" DataLabel="Type">
-            <CodeInline>@context.Type</CodeInline>
+            <CodeInline>@context.TypeCSharp</CodeInline>
         </MudTd>
         @if (IncludeInherited)
         {

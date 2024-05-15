@@ -1,8 +1,30 @@
-﻿<MudTreeView T="DocumentedTypeTreeItem" Hover="true" Items="@Root" SelectionMode="SelectionMode.SingleSelection" @bind-SelectedValue="@SelectedType">
+﻿<MudTreeView T="DocumentedTypeTreeItem" Dense="true" Items="@Root" SelectionMode="SelectionMode.SingleSelection" @bind-SelectedValue="@SelectedType">
     <ItemTemplate>
-        <MudTreeViewItem T="DocumentedTypeTreeItem" Expanded="true" Text="@context.Name" 
-            Items="@context.Children" 
-            Selected="@(context.Name == Type.Name)"
-            OnClick="@(() => OnTypeClicked(context))" />
+        <MudTreeViewItem T="DocumentedTypeTreeItem" Expanded="@context.Expanded" Text="@context.Name" Items="@context.Children"
+                         Selected="@(context.Name == Type.Name)" OnClick="@(() => OnTypeClicked(context))">
+            <Content>
+                @if (context.IsRoot)
+                {
+                    <MudIcon Icon="@Icons.Material.Filled.Home" Color="Color.Primary" Class="mr-2" />
+                }
+                else
+                {
+                    <MudTreeViewItemToggleButton @bind-Expanded="@context.Expanded" Visible="@(context.Children.Count > 0)" />
+                }
+                @if (context.Name == Type.Name)
+                {
+                    <MudIcon Icon="@Icons.Custom.Brands.MudBlazor" Color="Color.Primary" Class="mr-2" />
+                    <MudText>@context.Name</MudText>
+                }
+                else if(!string.IsNullOrEmpty(context.ApiUrl))
+                {
+                    <MudLink Href="@context.ApiUrl">@context.Name</MudLink>
+                }
+                else
+                {
+                    <MudText>@context.Name</MudText>
+                }
+            </Content>
+        </MudTreeViewItem>
     </ItemTemplate>
 </MudTreeView>

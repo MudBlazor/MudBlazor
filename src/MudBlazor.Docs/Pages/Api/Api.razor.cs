@@ -28,14 +28,8 @@ public partial class Api
     /// </summary>
     public DocumentedType DocumentedType { get; set; }
 
-    /// <summary>
-    /// Gets the breadcrumb items.
-    /// </summary>
-    public List<BreadcrumbItem> Items { get; set; }
-
     protected override void OnParametersSet()
     {
         DocumentedType = ApiDocumentation.GetType(TypeName);
-        Items = DocumentedType == null ? new() : [new("Index", "/api"), new(DocumentedType.Name, null, true)];        
     }
 }

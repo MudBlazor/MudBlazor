@@ -76,7 +76,7 @@ public partial class ApiTypeHierarchy
                 }
             }
             // Now check for types inheriting from this type
-            foreach (var descendant in ApiDocumentation.Types.Values.Where(type => type.BaseTypeName == Type.Name))
+            foreach (var descendant in ApiDocumentation.Types.Values.OrderBy(type => type.Name).Where(type => type.BaseTypeName == Type.Name))
             {
                 SelectedType.Children.Add(new()
                 {
@@ -84,6 +84,8 @@ public partial class ApiTypeHierarchy
                     Name = descendant.Name,
                 });
             }
+            // Finally, flag the root
+            Root[0].IsRoot = true;
             StateHasChanged();
         }
     }
@@ -104,11 +106,23 @@ public partial class ApiTypeHierarchy
     }
 
     /// <summary>
+    /// Occurs when a node is expanded or collapsed.
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="expanded"></param>
+    public void OnExpandedChanged(DocumentedTypeTreeItem item, bool expanded)
+    {
+        item.Expanded = expanded;
+        StateHasChanged();
+    }
+
+    /// <summary>
     /// Represents a node in a documented type tree view.
     /// </summary>
     [DebuggerDisplay("{Name}={ApiUrl}, Children={Children.Count}")]
     public class DocumentedTypeTreeItem
     {
+        public bool IsRoot { get; set; }
         public string? Name { get; set; }
         public string? ApiUrl { get; set; }
         public bool Expanded { get; set; }

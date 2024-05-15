@@ -33,11 +33,6 @@ public partial class ApiPropertyTable
     public DocumentedType? Type { get; set; }
 
     /// <summary>
-    /// Any search keyword to find.
-    /// </summary>
-    public string Keyword { get; set; } = "";
-
-    /// <summary>
     /// The currently selected categories.
     /// </summary>
     public IReadOnlyCollection<string> SelectedCategories { get; set; } = [];
@@ -91,16 +86,6 @@ public partial class ApiPropertyTable
         // Get properties which are in the selected categories
         var properties = Type.Properties.Values
             .Where(property => SelectedCategories != null && property.Category != null && SelectedCategories.Contains(property.Category));
-
-        // Filter by any search keyword
-        if (!string.IsNullOrEmpty(Keyword))
-        {
-            properties = properties.Where(property =>
-                property.Name.Contains(Keyword, StringComparison.OrdinalIgnoreCase)
-                || (property.Summary != null && property.Summary.Contains(Keyword, StringComparison.OrdinalIgnoreCase))
-                || (property.Remarks != null && property.Remarks.Contains(Keyword, StringComparison.OrdinalIgnoreCase))
-            );
-        }
 
         // Filter by property type
         if (IncludeParameters && IncludeProperties)
@@ -167,20 +152,6 @@ public partial class ApiPropertyTable
                 Grouping.Inheritance => new() { Selector = (property) => property.DeclaringType ?? "" },
                 _ => new() { Selector = (property) => property.Category ?? "" }
             };
-        }
-    }
-
-    /// <summary>
-    /// Occurs when the search keyword has changed.
-    /// </summary>
-    /// <param name="keyword"></param>
-    /// <returns></returns>
-    public async Task OnSearchAsync(string keyword)
-    {
-        Keyword = keyword;
-        if (Table != null)
-        {
-            await Table.ReloadServerData();
         }
     }
 
