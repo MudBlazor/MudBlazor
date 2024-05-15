@@ -24,7 +24,7 @@ namespace MudBlazor
         }
 
         [Inject] protected IScrollManager ScrollManager { get; set; }
-        
+
         [Inject] private IJsApiService JsApiService { get; set; }
 
         /// <summary>
@@ -66,14 +66,14 @@ namespace MudBlazor
                     defaultConverter.Format = value;
                     _dateFormatTouched = true;
                 }
-                DateFormatChanged(value);
+                DateFormatChangedAsync(value);
             }
         }
 
         /// <summary>
         /// Date format value change hook for descendants.
         /// </summary>
-        protected virtual Task DateFormatChanged(string newFormat)
+        protected virtual Task DateFormatChangedAsync(string newFormat)
         {
             return Task.CompletedTask;
         }
@@ -231,12 +231,12 @@ namespace MudBlazor
 
         protected OpenTo CurrentView;
 
-        protected override void OnPickerOpened()
+        protected override async Task OnPickerOpenedAsync()
         {
-            base.OnPickerOpened();
-            if (Editable == true && Text != null)
+            await base.OnPickerOpenedAsync();
+            if (Editable && Text != null)
             {
-                DateTime? a = Converter.Get(Text);
+                var a = Converter.Get(Text);
                 if (a.HasValue)
                 {
                     a = new DateTime(a.Value.Year, a.Value.Month, 1);
@@ -264,7 +264,7 @@ namespace MudBlazor
         {
             var monthStartDate = _picker_month ?? DateTime.Today.StartOfMonth(Culture);
             // Return the min supported datetime of the calendar when this is year 1 and first month!
-            if (_picker_month.HasValue && _picker_month.Value.Year == 1 && _picker_month.Value.Month == 1)
+            if (_picker_month is { Year: 1, Month: 1 })
             {
                 return Culture.Calendar.MinSupportedDateTime;
             }
@@ -334,16 +334,16 @@ namespace MudBlazor
             return nextView;
         }
 
-        protected virtual async void SubmitAndClose()
+        protected virtual async Task SubmitAndCloseAsync()
         {
             if (PickerActions == null)
             {
-                Submit();
+                await SubmitAsync();
 
                 if (PickerVariant != PickerVariant.Static)
                 {
                     await Task.Delay(ClosingDelay);
-                    Close(false);
+                    await CloseAsync(false);
                 }
             }
         }
@@ -353,13 +353,13 @@ namespace MudBlazor
         /// <summary>
         /// User clicked on a day
         /// </summary>
-        protected abstract void OnDayClicked(DateTime dateTime);
+        protected abstract Task OnDayClickedAsync(DateTime dateTime);
 
         /// <summary>
         /// user clicked on a month
         /// </summary>
         /// <param name="month"></param>
-        protected virtual void OnMonthSelected(DateTime month)
+        protected virtual Task OnMonthSelectedAsync(DateTime month)
         {
             PickerMonth = month;
             var nextView = GetNextView();
@@ -367,13 +367,15 @@ namespace MudBlazor
             {
                 CurrentView = (OpenTo)nextView;
             }
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// user clicked on a year
         /// </summary>
         /// <param name="year"></param>
-        protected virtual void OnYearClicked(int year)
+        protected virtual Task OnYearClickedAsync(int year)
         {
             var current = GetMonthStart(0);
             PickerMonth = new DateTime(year, current.Month, 1, Culture.Calendar);
@@ -382,6 +384,8 @@ namespace MudBlazor
             {
                 CurrentView = (OpenTo)nextView;
             }
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -622,7 +626,7 @@ namespace MudBlazor
 
         private ValueTask HandleMouseoverOnPickerCalendarDayButton(int tempId)
         {
-            return this.JsApiService.UpdateStyleProperty(_mudPickerCalendarContentElementId, "--selected-day", tempId);
+            return JsApiService.UpdateStyleProperty(_mudPickerCalendarContentElementId, "--selected-day", tempId);
         }
     }
 }

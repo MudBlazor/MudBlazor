@@ -2,11 +2,12 @@
 @page "/docs/overview"
 
 <DocsPage DisplayFooter="true">
-    <DocsPageHeader Title="Explore MudBlazor" SubTitle="Discover articles from MudBlazor team.">
+    <DocsPageHeader Title="Explore MudBlazor">
         <SpecialHeaderContent>
-            <MudText Typo="Typo.h2" Inline="true" Class="docs-title">Explore&nbsp;</MudText>
-            <MudText Typo="Typo.h2" Inline="true" Color="Color.Primary" Class="docs-title">MudBlazor</MudText>
-            <MudText Typo="Typo.subtitle1" Class="docs-title-description">Discover our library and all components to power your next project.</MudText>
+            <MudText Typo="Typo.h2" Class="docs-title d-inline">Explore&nbsp;</MudText>
+            <MudText Typo="Typo.h2" Class="docs-title d-inline" Color="Color.Primary">MudBlazor</MudText>
+            <br>
+            <MudText Typo="Typo.subtitle1" Class="docs-title-description">Discover our library and all its components to power your next project.</MudText>
         </SpecialHeaderContent>
     </DocsPageHeader>
     <DocsPageContent>
@@ -15,7 +16,7 @@
                 <MudItem xs="12" md="3" Class="mt-16">
                     <div class="docs-sticky-info explore-text">
                         <MudText Typo="Typo.h5">Foundation</MudText>
-                        <MudText Typo="Typo.subtitle1">Themeing, Colors, Typography…</MudText>
+                        <MudText Typo="Typo.subtitle1">Theming, Colors, Typography…</MudText>
                     </div>
                 </MudItem>
                 <MudItem xs="12" md="9" Class="mt-16">
@@ -49,12 +50,12 @@
                 <MudItem xs="12" md="3" Class="mt-16">
                     <div class="docs-sticky-info explore-text">
                         <MudText Typo="Typo.h5">Layout</MudText>
-                        <MudText Typo="Typo.subtitle1">Container, Grid, Surfaces...</MudText>
+                        <MudText Typo="Typo.subtitle1">Container, Grid, Surfaces…</MudText>
                     </div>
                 </MudItem>
                 <MudItem xs="12" md="9" Class="mt-16">
                     <div class="explore-mudblazor-items">
-                        <DocsExploreCard Title="AppBar">
+                        <DocsExploreCard Title="App Bar">
                             <MudPaper Elevation="25" Width="100%" Height="68px">
                                 <MudPaper Elevation="0" Width="100%" Height="12px" Square="true" Class="mud-theme-primary rounded-t"/>
                             </MudPaper>
@@ -104,7 +105,7 @@
                 <MudItem xs="12" md="3" Class="mt-16">
                     <div class="docs-sticky-info explore-text">
                         <MudText Typo="Typo.h5">Buttons</MudText>
-                        <MudText Typo="Typo.subtitle1">Regular, Icon, Floating...</MudText>
+                        <MudText Typo="Typo.subtitle1">Regular, Icon, FAB…</MudText>
                     </div>
                 </MudItem>
                 <MudItem xs="12" md="9" Class="mt-16">
@@ -145,7 +146,7 @@
                 <MudItem xs="12" md="3" Class="mt-16">
                     <div class="docs-sticky-info explore-text">
                         <MudText Typo="Typo.h5">Inputs</MudText>
-                        <MudText Typo="Typo.subtitle1">Forms, Text Fields, Numeric Fields...</MudText>
+                        <MudText Typo="Typo.subtitle1">Forms, Fields, Pickers…</MudText>
                     </div>
                 </MudItem>
                 <MudItem xs="12" md="9" Class="mt-16">
@@ -162,7 +163,7 @@
                                 </MudPaper>
                             </div>
                         </DocsExploreCard>
-                        <DocsExploreCard Title="Checkbox">
+                        <DocsExploreCard Title="Check Box">
                             <MudPaper Elevation="25" Class="pa-2 rounded-lg d-flex justify-center align-center">
                                 <MudIcon Icon="@Icons.Material.Rounded.Check" Color="Color.Primary" Size="Size.Large" />
                             </MudPaper>
@@ -278,7 +279,7 @@
                 <MudItem xs="12" md="3" Class="mt-16">
                     <div class="docs-sticky-info explore-text">
                         <MudText Typo="Typo.h5">Data Display</MudText>
-                        <MudText Typo="Typo.subtitle1">Lists, Tables, Tabs, Pagination...</MudText>
+                        <MudText Typo="Typo.subtitle1">Lists, Tables, Tabs…</MudText>
                     </div>
                 </MudItem>
                 <MudItem xs="12" md="9" Class="mt-16">
@@ -487,7 +488,7 @@
                                 <MudPaper Elevation="0" Width="18px" Height="18px" Class="mud-theme-primary rounded-0 mt-n6 z-10" Style="transform:rotate(45deg);"/>
                             </div>
                         </DocsExploreCard>
-                        <DocsExploreCard Title="TreeView">
+                        <DocsExploreCard Title="Tree View">
                             <div class="d-flex flex-column flex-grow-1">
                                 <MudPaper Elevation="25" Width="100%" Class="px-2 py-1 d-flex align-center">
                                     <MudIcon Icon="@Icons.Material.Rounded.KeyboardArrowDown" Color="Color.Primary" Class="my-n2 ml-n2" Size="Size.Small"/>
@@ -509,7 +510,7 @@
                 <MudItem xs="12" md="3" Class="mt-16">
                     <div class="docs-sticky-info explore-text">
                         <MudText Typo="Typo.h5">Navigation</MudText>
-                        <MudText Typo="Typo.subtitle1">Links, Menus and Navigation</MudText>
+                        <MudText Typo="Typo.subtitle1">Links, Menus, Navigation</MudText>
                     </div>
                 </MudItem>
                 <MudItem xs="12" md="9" Class="mt-16">
@@ -671,7 +672,5 @@
 </DocsPage>
 
 @code {
-
     [Inject] IMenuService MenuService { get; set; } 
-
 }

@@ -46,8 +46,10 @@
     text-transform: uppercase;
     margin: 40px auto !important;
 
-    &:hover {
-      background-color: var(--mud-palette-action-default-hover);
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--mud-palette-action-default-hover);
+      }
     }
   }
 }

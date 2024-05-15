@@ -176,7 +176,7 @@ namespace MudBlazor.UnitTests.Components
               .Add(p => p.ChartType, chartType)
               .Add(p => p.Width, "100%")
               .Add(p => p.Height, "300px")
-              .Add(p => p.CustomGraphics, "<text class='text-ref'>"+text+"</text>")
+              .Add(p => p.CustomGraphics, "<text class='text-ref'>" + text + "</text>")
             );
 
             //Checks if the innerHtml of the added text element matches the text parameter

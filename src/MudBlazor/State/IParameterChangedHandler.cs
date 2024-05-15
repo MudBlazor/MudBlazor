@@ -10,11 +10,13 @@ namespace MudBlazor.State;
 /// <summary>
 /// Represents an interface for handling parameter change.
 /// </summary>
-internal interface IParameterChangedHandler
+/// <typeparam name="T">The type of the component's property value.</typeparam>
+public interface IParameterChangedHandler<T>
 {
     /// <summary>
     /// Handles parameter changes asynchronously.
     /// </summary>
+    /// <param name="parameterChangedEventArgs">The <see cref="ParameterChangedEventArgs{T}"/> containing the information about the last and current values of a parameter.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    Task HandleAsync();
+    Task HandleAsync(ParameterChangedEventArgs<T> parameterChangedEventArgs);
 }

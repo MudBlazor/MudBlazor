@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FuzzySharp;
 using MudBlazor.Docs.Models;
 
 namespace MudBlazor.Docs.Services
@@ -9,9 +10,8 @@ namespace MudBlazor.Docs.Services
 #nullable enable
     public class ApiLinkService : IApiLinkService
     {
-        private readonly Dictionary<string, ApiLinkServiceEntry> _lookup = [];
+        private readonly Dictionary<string, ApiLinkServiceEntry> _entries = [];
 
-        //constructor with DI
         public ApiLinkService(IMenuService menuService)
         {
             Register(menuService.Api); // this also registers components
@@ -21,9 +21,75 @@ namespace MudBlazor.Docs.Services
             RegisterAliases();
         }
 
+        public Task<IReadOnlyCollection<ApiLinkServiceEntry>> Search(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>([]);
+            }
+
+            // Case is ignored.
+            text = text.ToLowerInvariant();
+
+            // Calculate the ratios of all keywords to the search input.
+            var ratios = new Dictionary<ApiLinkServiceEntry, double>();
+            foreach (var (keyword, entry) in _entries)
+            {
+                var ratio = GetSearchMatchRatio(text, keyword);
+
+                // Assign the highest ratio so far to the entry.
+                if (ratios.TryGetValue(entry, out var highestRatio))
+                {
+                    if (ratio > highestRatio)
+                    {
+                        ratios[entry] = ratio;
+                    }
+                }
+                else
+                {
+                    ratios.Add(entry, ratio);
+                }
+            }
+
+            // Return the most accurate and highest quality results.
+            return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>(
+                ratios
+                .Where(x => x.Value > 65)
+                .OrderByDescending(x => x.Value)
+                .Select(x => x.Key)
+                .ToList()
+            );
+        }
+
+        private double GetSearchMatchRatio(string search, string keyword)
+        {
+            var ratio = Fuzz.Ratio(keyword, search);
+            var partialOutOfOrderRatio = Fuzz.PartialTokenSortRatio(keyword, search);
+            var averageRatio = (ratio + partialOutOfOrderRatio) / 2.0;
+
+            return averageRatio;
+        }
+
+        private void AddEntry(ApiLinkServiceEntry entry)
+        {
+            void AddKeyword(string? k)
+            {
+                if (!string.IsNullOrWhiteSpace(k))
+                {
+                    _entries[k.ToLowerInvariant()] = entry;
+                }
+            }
+
+            AddKeyword(entry.Title);
+            AddKeyword(entry.SubTitle);
+            AddKeyword(entry.ComponentName);
+            AddKeyword(entry.Link);
+        }
+
         public void RegisterPage(string title, string? subtitle, Type? componentType, string? link = null)
         {
             link ??= ApiLink.GetComponentLinkFor(componentType!);
+
             var entry = new ApiLinkServiceEntry
             {
                 Title = title,
@@ -31,52 +97,25 @@ namespace MudBlazor.Docs.Services
                 ComponentType = componentType,
                 Link = link
             };
-            _lookup[title.ToLowerInvariant()] = entry;
 
-            if (componentType is not null)
-            {
-                _lookup[componentType.Name.ToLowerInvariant()] = entry;
-            }
-
-            if (subtitle is not null)
-            {
-                _lookup[subtitle.ToLowerInvariant()] = entry;
-            }
-        }
-
-        public Task<IReadOnlyCollection<ApiLinkServiceEntry>> Search(string text)
-        {
-            if (string.IsNullOrWhiteSpace(text))
-            {
-                return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>(Array.Empty<ApiLinkServiceEntry>());
-            }
-
-            var textLowerInvariant = text.ToLowerInvariant();
-
-            return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>(
-                _lookup
-                    .Where(x => IsMatch(x, textLowerInvariant))
-                    .Select(x => x.Value)
-                    .Distinct()
-                    .OrderByDescending(e => e.Title.StartsWith(textLowerInvariant, StringComparison.InvariantCultureIgnoreCase))
-                    .ToArray()
-            );
+            AddEntry(entry);
         }
 
         private void RegisterAliases()
         {
-            // Add search texts here which users might search and direct them to the correct component or page
+            // Add search texts here which users might search and direct them to the correct component or page.
             RegisterPage("Backdrop", subtitle: "Go to Overlay", componentType: typeof(MudOverlay));
             RegisterPage("Box", subtitle: "Go to Paper", componentType: typeof(MudPaper));
-            RegisterPage("ComboBox", subtitle: "Go to Select", componentType: typeof(MudSelect<T>));
-            RegisterPage("Drag & Drop", subtitle: "Go to DropZone", componentType: typeof(MudDropZone<T>));
+            RegisterPage("Combo Box", subtitle: "Go to Select", componentType: typeof(MudSelect<T>));
+            RegisterPage("Drag & Drop", subtitle: "Go to Drop Zone", componentType: typeof(MudDropZone<T>));
             RegisterPage("Dropdown", subtitle: "Go to Select", componentType: typeof(MudSelect<T>));
-            RegisterPage("Harmonica", subtitle: "Go to ExpansionPanels", componentType: typeof(MudExpansionPanels));
+            RegisterPage("Expander", subtitle: "Go to Collapse", componentType: typeof(MudCollapse));
+            RegisterPage("Harmonica", subtitle: "Go to Expansion Panels", componentType: typeof(MudExpansionPanels));
             RegisterPage("Horizontal Line", subtitle: "Go to Divider", componentType: typeof(MudDivider));
             RegisterPage("Hiliter", subtitle: "Go to Highlighter", componentType: typeof(MudHighlighter));
             RegisterPage("Notification", subtitle: "Go to Snackbar", componentType: typeof(MudSnackbarProvider));
             RegisterPage("Popup", subtitle: "Go to Popover", componentType: typeof(MudPopover));
-            RegisterPage("SidePanel", subtitle: "Go to Drawer", componentType: typeof(MudDrawer));
+            RegisterPage("Side Panel", subtitle: "Go to Drawer", componentType: typeof(MudDrawer));
             RegisterPage("Toast", subtitle: "Go to Snackbar", componentType: typeof(MudSnackbarProvider));
             RegisterPage("Typeahead", subtitle: "Go to Autocomplete", componentType: typeof(MudAutocomplete<T>));
         }
@@ -85,23 +124,12 @@ namespace MudBlazor.Docs.Services
         {
             foreach (var item in items)
             {
-                // components
                 RegisterPage(
                     title: item.Name,
                     subtitle: $"{item.ComponentName} usage examples",
                     componentType: item.Type,
                     link: $"components/{item.Link}"
                 );
-
-                // ~henon: I removed the API pages from the dropdown as this duplicates the search entries unnecessarily
-                // 99% of all users are searching for the examples and the API is still accessible from the examples page
-                //api
-                //RegisterPage(
-                //    title: $"{item.Name} API" ,
-                //    subtitle: $"{item.ComponentName} API documentation",
-                //    componentType: item.Type,
-                //    link: ApiLink.GetApiLinkFor(item.Type)
-                //    );
             }
         }
 
@@ -116,37 +144,6 @@ namespace MudBlazor.Docs.Services
                     link: link.Href
                 );
             }
-        }
-
-        private static bool IsMatch(in KeyValuePair<string, ApiLinkServiceEntry> keyValuePair, string text)
-        {
-            if (keyValuePair.Key.Contains(text))
-            {
-                return true;
-            }
-
-            var entry = keyValuePair.Value;
-            if (entry.Title.Contains(text, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return true;
-            }
-
-            if (entry.SubTitle is not null && entry.SubTitle.Contains(text, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return true;
-            }
-
-            if (entry.ComponentName is not null && entry.ComponentName.Contains(text, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return true;
-            }
-
-            if (entry.Link.Contains(text, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return true;
-            }
-
-            return false;
         }
     }
 }

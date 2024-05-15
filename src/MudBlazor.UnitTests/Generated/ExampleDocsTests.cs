@@ -23,13 +23,6 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             ctx.Services.AddSingleton<IDialogService>(new DialogService());
             ctx.Services.AddSingleton<ISnackbar, SnackbarService>();
-#pragma warning disable CS0618
-            //TODO: Remove in v7
-            ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
-            ctx.Services.AddSingleton<IBreakpointService>(new MockBreakpointService());
-            ctx.Services.AddSingleton<IResizeService>(new MockResizeService());
-            ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
-#pragma warning restore CS0618
             ctx.Services.AddSingleton<IBrowserViewportService>(new MockBrowserViewportService());
             ctx.Services.AddTransient<IScrollManager, MockScrollManager>();
             ctx.Services.AddTransient<IScrollListenerFactory, MockScrollListenerFactory>();
@@ -45,7 +38,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddSingleton<IMudPopoverService, MockPopoverService>();
 #pragma warning restore CS0618
             ctx.Services.AddSingleton<IPopoverService, MockPopoverServiceV2>();
-            ctx.Services.AddSingleton<IRenderQueueService, RenderQueueService>();
+            ctx.Services.AddScoped<IRenderQueueService, RenderQueueService>();
             ctx.Services.AddTransient<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
             ctx.Services.AddTransient<InternalMudLocalizer>();
             ctx.Services.AddOptions();

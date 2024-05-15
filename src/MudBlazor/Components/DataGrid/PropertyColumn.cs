@@ -89,7 +89,7 @@ namespace MudBlazor
         /// <exception cref="NullReferenceException"></exception>
         private object RecursiveGetSubProperties(MemberExpression memberExpression, object item)
         {
-            if (memberExpression.Expression is MemberExpression subMemberExpress && subMemberExpress.Member is PropertyInfo propertyInfo)
+            if (memberExpression.Expression is MemberExpression { Member: PropertyInfo propertyInfo } subMemberExpress)
             {
                 var subObject = RecursiveGetSubProperties(subMemberExpress, item);
 
@@ -99,7 +99,7 @@ namespace MudBlazor
             return item;
         }
 
-        protected internal override void SetProperty(object item, object value)
+        protected internal override void SetProperty(object item, object? value)
         {
             var expression = Property.Body;
 

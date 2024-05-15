@@ -12,6 +12,7 @@
    * [Parameter Registration or Why we can't have Logic in Parameter Setters](#parameter-registration-or-why-we-cant-have-logic-in-parameter-setters)
       + [Example of a bad Parameter definition](#example-of-a-bad-parameter-definition)
       + [Example of a good Parameter definition](#example-of-a-good-parameter-definition)
+      + [Can I share change handlers between parameters?](#can-i-share-change-handlers-between-parameters)
       + [What about the bad parameters all over the MudBlazor code base?](#what-about-the-bad-parameters-all-over-the-mudblazor-code-base)
    * [Avoid overwriting parameters in Blazor Components](#avoid-overwriting-parameters-in-blazor-components)
       + [Example of a bad code](#example-of-a-bad-code)
@@ -42,8 +43,7 @@ Please make sure that you follow our [code of conduct](/CODE_OF_CONDUCT.md)
 
 ## Minimal Prerequisites to Compile from Source
 
-- [.NET 6.0 SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
-- [.NET 7.0 SDK](https://dotnet.microsoft.com/download/dotnet/7.0)
+- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 
 ## Pull Requests
 - Your Pull Request (PR) must only consist of one topic. It is better to split Pull Requests with more than one feature or bug fix in seperate Pull Requests
@@ -56,7 +56,7 @@ Please make sure that you follow our [code of conduct](/CODE_OF_CONDUCT.md)
 - If there are new changes in the main repo, you should either merge the main repo's (upstream) dev or rebase your branch onto it.
 - Before working on a large change, it is recommended to first open an issue to discuss it with others
 - If your Pull Request is still in progress, convert it to a draft Pull Request
-- Your commit messages should follow the following format: 
+- The PR Title should follow the following format: 
 ```
 <component name>: <short description of changes in imperative> (<linked issue>)
 ```
@@ -64,7 +64,7 @@ For example:
 ```
  DateRangePicker: Fix initializing DateRange with null values (#1997)
 ```
-
+- To keep your branch up to date with the `dev` branch simply merge `dev`. **Don't rebase** because if you rebase the wrong direction your PR will include tons of unrelated commits from dev.
 - Your Pull Request should not include any unnecessary refactoring
 - If there are visual changes, you should include a screenshot, gif or video
 - If there are any coresponding issues, link them to the Pull Request. Include `Fixes #<issue nr>` for bug fixes and `Closes #<issue nr>` for other issues in the description ([Link issues guide](https://docs.github.com/en/github/managing-your-work-on-github/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword)) 
@@ -149,7 +149,7 @@ public bool Expanded
 
 Note how the setter is invoking async functions which can not be awaited, because property setters can only have synchronous code. As a result, the async 
 functions are invoked and their return value `Task` is discarded. This not only creates hard to test multi-threaded behavior, it also prevents the user of this 
-component from being able to catch any errors in the asnc functions. Any exceptions that happen in these asynchronous functions may or may not bubble up
+component from being able to catch any errors in the async functions. Any exceptions that happen in these asynchronous functions may or may not bubble up
 to the user. In some cases Blazor just catches them and they are silently ignored, in other cases they may cause application crashes that can't be prevented with `try catch`. 
 
 The alternative would be to move the code from the setter into `SetParametersAsync` and depending on the component you would also need code in `OnInitializedAsync`. 
@@ -159,7 +159,7 @@ Using our new `ParameterState` pattern all this is not required.
 
 ### Example of a good Parameter definition
 ```c#
-private ParameterState<bool> _expandedState;
+private readonly ParameterState<bool> _expandedState;
 
 [Parameter]
 public bool Expanded { get; set; }
@@ -170,19 +170,18 @@ In the constructor, we register the parameter so that the base class can manage 
 ```c#
 public MudCollapse()
 {
-    _expandedState = RegisterParameter(
-        nameof(Expanded),           // the property name is needed for automatic value change detection in SetParametersAsync
-        () => Expanded,             // a get func enabling the ParameterState to read the parameter value w/o resorting to Reflection
-        () => ExpandedChanged,      // a get func enabling the ParameterState to get the EventCallback of the parameter (if the param is two-way bindable)
-        ExpandedChangedHandlerAsync // the change handler 
-    );
+    using var registerScope = CreateRegisterScope();
+    _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded)) // the property name is needed for automatic value change detection in SetParametersAsync
+        .WithParameter(() => Expanded) // a get func enabling the ParameterState to read the parameter value w/o resorting to Reflection
+        .WithEventCallback(() => ExpandedChanged) // a get func enabling the ParameterState to get the EventCallback of the parameter (if the param is two-way bindable)
+        .WithChangeHandler(OnExpandedChangedAsync); // the change handler 
 }
 ```
 
 The code from the setter moves into the change handler function which is async so the called functions can be awaited.
 
 ```c#
-private async Task ExpandedChangedHandlerAsync()
+private async Task OnExpandedChangedAsync()
 {
     if (_isRendered)
     {
@@ -198,15 +197,29 @@ private async Task ExpandedChangedHandlerAsync()
 }
 ```
 
-There are a couple of overloads for the `RegisterParameter` method for different use-cases. For instance, you don't always need an `EventCallback` for every parameter. 
+There are a couple of builders for the `RegisterParameter` method for different use-cases. For instance, you don't always need an `EventCallback` for every parameter. 
 Some parameters need async logic in their change handler other don't, etc.
+
+### Can I share change handlers between parameters?
+
+Yes, if you pass them as a method group like in the example below, shared parameter change handlers will be called only once, even if multiple parameters change at the same time.
+
+```c#
+    // Param1 and Param2 share the same change handler
+    using var registerScope = CreateRegisterScope();
+    _param1State = registerScope.RegisterParameter<int>(nameof(Param1)).WithParameter(() => Param1).WithChangeHandler(OnParametersChanged);
+    _param2State = registerScope.RegisterParameter<int>(nameof(Param2)).WithParameter(() => Param2).WithChangeHandler(OnParametersChanged);
+```
+
+**NB**: if you pass lambda functions as change handlers they will be called once each for every changed parameter even if they contain the same code!
 
 ### What about the bad parameters all over the MudBlazor code base?
 
 We are slowly but surely refactoring all of those, you can help if you like.
 
 ## Avoid overwriting parameters in Blazor Components
-This `ParameterState` framework offers a solution to prevent parameter overwriting issues.
+
+The `ParameterState` framework offers a solution to prevent parameter overwriting issues.
 For a detailed explanation of this problem, refer to the [article](https://learn.microsoft.com/en-us/aspnet/core/blazor/components/overwriting-parameters?view=aspnetcore-8.0#overwritten-parameters).
 
 ### Example of a bad code
@@ -227,7 +240,7 @@ private Task ToggleAsync()
 
 ### Example of a good code
 ```c#
-private ParameterState<bool> _expandedState;
+private readonly ParameterState<bool> _expandedState;
 
 [Parameter]
 public bool Expanded { get; set; }
@@ -237,16 +250,15 @@ public EventCallback<bool> ExpandedChanged { get; set; }
 
 public MudTreeViewItemToggleButton()
 {
-    _expandedState = RegisterParameter(
-        nameof(Expanded),
-        () => Expanded,
-        () => ExpandedChanged
-    );
+    using var registerScope = CreateRegisterScope();
+    _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
+        .WithParameter(() => Expanded)
+        .WithEventCallback(() => ExpandedChanged);
 }
 
 private Task ToggleAsync()
 {
-	return _expanded.SetValueAsync(!_expanded.Value);
+	return _expandedState.SetValueAsync(!_expandedState.Value);
 }
 ```
 

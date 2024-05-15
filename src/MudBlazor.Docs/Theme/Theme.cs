@@ -16,7 +16,7 @@ namespace MudBlazor.Docs
         {
             var theme = new MudTheme()
             {
-                Palette = LandingPageLightPalette,
+                PaletteLight = LandingPageLightPalette,
                 PaletteDark = LandingPageDarkPalette,
                 Shadows = LandingPageShadows,
                 LayoutProperties = LandingPageLayoutProperties,
@@ -30,14 +30,14 @@ namespace MudBlazor.Docs
         {
             var theme = new MudTheme()
             {
-                Palette = DocsLightPalette,
+                PaletteLight = DocsLightPalette,
                 PaletteDark = DocsDarkPalette,
                 LayoutProperties = new LayoutProperties()
             };
             return theme;
         }
 
-        
+
 
         #region Docs
 
@@ -48,15 +48,15 @@ namespace MudBlazor.Docs
             AppbarBackground = "rgba(255,255,255,0.8)",
             DrawerBackground = "#ffffff",
             GrayLight = "#e8e8e8",
-            GrayLighter = "#f9f9f9"
+            GrayLighter = "#f9f9f9",
         };
 
-        private static readonly PaletteDark DocsDarkPalette  = new()
+        private static readonly PaletteDark DocsDarkPalette = new()
         {
             Primary = "#7e6fff",
-            Surface= "#1e1e2d",
+            Surface = "#1e1e2d",
             Background = "#1a1a27",
-            BackgroundGrey = "#151521",
+            BackgroundGray = "#151521",
             AppbarText = "#92929f",
             AppbarBackground = "rgba(26,26,39,0.8)",
             DrawerBackground = "#1a1a27",
@@ -77,7 +77,7 @@ namespace MudBlazor.Docs
             LinesDefault = "#33323e",
             TableLines = "#33323e",
             Divider = "#292838",
-            OverlayLight = "#1e1e2d80"
+            OverlayLight = "#1e1e2d80",
         };
         #endregion
         #region LandingPage
@@ -146,20 +146,20 @@ namespace MudBlazor.Docs
         {
             AppbarText = "#424242",
             AppbarBackground = "rgba(0,0,0,0)",
-            BackgroundGrey = "#F9FAFC",
+            BackgroundGray = "#F9FAFC",
             TextSecondary = "#425466",
             Dark = "#110E2D",
             DarkLighten = "#1A1643",
             GrayDefault = "#4B5563",
             GrayLight = "#9CA3AF",
-            GrayLighter = "#adbdccff"
+            GrayLighter = "#adbdccff",
         };
         private static readonly PaletteDark LandingPageDarkPalette = new()
         {
             AppbarText = "#92929f",
             AppbarBackground = "rgba(0,0,0,0)",
-            BackgroundGrey = "#1a1a27",
-            Surface= "#1e1e2d",
+            BackgroundGray = "#1a1a27",
+            Surface = "#1e1e2d",
             Background = "#151521",
             Dark = "#111019",
             DarkLighten = "#1A1643",
@@ -171,7 +171,7 @@ namespace MudBlazor.Docs
             DrawerText = "#92929f",
             DrawerBackground = "#151521",
             OverlayLight = "#1e1e2d80",
-            Divider = "#5c5c6a"
+            Divider = "#5c5c6a",
         };
 
         private static readonly Shadow LandingPageShadows = new()

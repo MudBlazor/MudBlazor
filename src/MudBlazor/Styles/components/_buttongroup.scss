@@ -11,6 +11,7 @@
   &.mud-button-group-override-styles {
     .mud-button {
       color: var(--mud-palette-text-primary);
+      --mud-ripple-color: var(--mud-palette-text-primary);
     }
 
     .mud-button-root {
@@ -18,7 +19,13 @@
       box-shadow: none;
       border: none;
 
-      &:hover, &:focus-visible {
+      @media(hover: hover) and (pointer: fine) {
+        &:hover {
+          background-color: var(--mud-palette-action-default-hover);
+        }
+      }
+
+      &:focus-visible, &:active {
         background-color: var(--mud-palette-action-default-hover);
       }
     }
@@ -102,8 +109,15 @@
       &.mud-button-group-text-#{$color} {
         .mud-button-root {
           color: var(--mud-palette-#{$color});
+          --mud-ripple-color: var(--mud-palette-#{$color});
 
-          &:hover, &:focus-visible {
+          @media(hover: hover) and (pointer: fine) {
+            &:hover {
+              background-color: var(--mud-palette-#{$color}-hover);
+            }
+          }
+
+          &:focus-visible, &:active {
             background-color: var(--mud-palette-#{$color}-hover);
           }
         }
@@ -143,8 +157,15 @@
       &.mud-button-group-outlined-#{$color} .mud-button-root {
         color: var(--mud-palette-#{$color});
         border: 1px solid var(--mud-palette-#{$color});
+        --mud-ripple-color: var(--mud-palette-#{$color});
 
-        &:hover, &:focus-visible {
+        @media(hover: hover) and (pointer: fine) {
+          &:hover {
+            background-color: var(--mud-palette-#{$color}-hover);
+          }
+        }
+
+        &:focus-visible, &:active {
           background-color: var(--mud-palette-#{$color}-hover);
         }
       }
@@ -158,7 +179,13 @@
   .mud-button-root {
     box-shadow: none;
 
-    &:hover, &:focus-visible {
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        box-shadow: var(--mud-elevation-4);
+      }
+    }
+
+    &:focus-visible, &:active {
       box-shadow: var(--mud-elevation-4);
     }
   }
@@ -194,8 +221,16 @@
         .mud-button-root {
           background-color: var(--mud-palette-#{$color});
           color: var(--mud-palette-#{$color}-text);
+          --mud-ripple-color: var(--mud-palette-#{$color}-text);
+          --mud-ripple-opacity: var(--mud-ripple-opacity-secondary);
 
-          &:hover, &:focus-visible {
+          @media(hover: hover) and (pointer: fine) {
+            &:hover {
+              background-color: var(--mud-palette-#{$color}-darken);
+            }
+          }
+
+          &:focus-visible, &:active {
             background-color: var(--mud-palette-#{$color}-darken);
           }
         }

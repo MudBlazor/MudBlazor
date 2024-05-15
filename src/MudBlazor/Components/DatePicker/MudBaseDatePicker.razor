@@ -9,7 +9,7 @@
 
     protected override RenderFragment PickerContent =>
     @<CascadingValue Value="@this" IsFixed="true">
-        <MudPickerToolbar Class="mud-picker-datepicker-toolbar" DisableToolbar="@DisableToolbar" Orientation="@Orientation" PickerVariant="@PickerVariant" Color="@Color">
+        <MudPickerToolbar Class="mud-picker-datepicker-toolbar" ShowToolbar="@ShowToolbar" Orientation="@Orientation" PickerVariant="@PickerVariant" Color="@Color">
             <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-year" OnClick="OnYearClick">@GetFormattedYearString()</MudButton>
             <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-date" OnClick="OnFormattedDateClick">@GetTitleDateString()</MudButton>
         </MudPickerToolbar>
@@ -33,7 +33,7 @@
                                 @for (int i = GetMinYear(); i <= GetMaxYear(); i++)
                                 {
                                     var year = i;
-                                    <div class="mud-picker-year" id="@(_componentId + year)" @onclick="(() => OnYearClicked(year))" @onclick:stopPropagation="true">
+                                    <div class="mud-picker-year" id="@(_componentId + year)" @onclick="(async () => await OnYearClickedAsync(year))" @onclick:stopPropagation="true">
                                         <MudText Typo="@GetYearTypo(year)" Class="@GetYearClasses(year)">@year</MudText>
                                     </div>
                                 }
@@ -65,7 +65,7 @@
                                 @foreach (var month in GetAllMonths())
                                 {
                                     <button type="button" aria-label="@GetMonthName(month)" disabled="@IsMonthDisabled(month)"
-                                    class="mud-picker-month mud-button-root" @onclick="(() => OnMonthSelected(month))" @onclick:stopPropagation="true">
+                                    class="mud-picker-month mud-button-root" @onclick="(async () => await OnMonthSelectedAsync(month))" @onclick:stopPropagation="true">
                                         <MudText Typo="@GetMonthTypo(month)" Class="@GetMonthClasses(month)">@GetAbbreviatedMonthName(month)</MudText>
                                     </button>
                                 }
@@ -126,7 +126,7 @@
                                                 var selectedDay = !firstMonthFirstYear ? day : day.AddDays(-1);
                                                 <button @key="@(!firstMonthFirstYear ? selectedDay : tempId)" type="button" style="--day-id: @(!firstMonthFirstYear ? tempId: tempId + 1);"
                                                         class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon mud-picker-calendar-day @(!firstMonthFirstYear || day.Day == _picker_month.Value.Day? GetDayClasses(tempMonth, day) : GetDayClasses(tempMonth, selectedDay))"
-                                                        @onclick="(() => { var d = selectedDay; OnDayClicked(d); })"
+                                                        @onclick="(async () => { var d = selectedDay; await OnDayClickedAsync(d); })"
                                                         @onclick:stopPropagation="true"
                                                         aria-label='@selectedDay.ToString("dddd, dd MMMM yyyy")'
                                                         onmouseover="@(async () => await HandleMouseoverOnPickerCalendarDayButton(!firstMonthFirstYear ? tempId : tempId + 1))"

@@ -15,7 +15,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudMask : MudBaseInput<string>, IDisposable
+    public partial class MudMask : MudBaseInput<string>
     {
         public MudMask()
         {
@@ -25,9 +25,10 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-input")
                 .AddClass($"mud-input-{Variant.ToDescriptionString()}")
+                .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
                 .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
                 .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
-                .AddClass("mud-input-underline", when: () => DisableUnderLine == false && Variant != Variant.Outlined)
+                .AddClass("mud-input-underline", when: () => Underline && Variant != Variant.Outlined)
                 .AddClass("mud-shrink",
                     when: () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start ||
                                 !string.IsNullOrWhiteSpace(Placeholder))
@@ -149,7 +150,7 @@ namespace MudBlazor
                     new JsEventOptions
                     {
                         //EnableLogging = true,
-                        TargetClass = "mud-input-slot", 
+                        TargetClass = "mud-input-slot",
                         TagName = "INPUT"
                     });
                 _jsEvent.CaretPositionChanged += OnCaretPositionChanged;
@@ -195,7 +196,7 @@ namespace MudBlazor
             try
             {
                 if ((e.CtrlKey && e.Key != "Backspace") || e.AltKey || GetReadOnlyState())
-                        return;
+                    return;
                 switch (e.Key)
                 {
                     case "Backspace":
@@ -214,7 +215,7 @@ namespace MudBlazor
                         return;
                 }
 
-                if (Regex.IsMatch(e.Key, @"^.$"))
+                if (ValidCharacterRegularExpression().IsMatch(e.Key))
                 {
                     Mask.Insert(e.Key);
                     await Update();
@@ -329,7 +330,7 @@ namespace MudBlazor
             var text = Text;
             if (Mask.Selection != null)
             {
-                (_, text, _)=BaseMask.SplitSelection(text, Mask.Selection.Value);
+                (_, text, _) = BaseMask.SplitSelection(text, Mask.Selection.Value);
             }
             _jsApiService.CopyToClipboardAsync(text);
         }
@@ -371,12 +372,12 @@ namespace MudBlazor
             _selection = selection;
             if (selection == null)
             {
-                _elementReference.MudSelectRangeAsync(caret, caret).AndForget();
+                _elementReference.MudSelectRangeAsync(caret, caret).CatchAndLog();
             }
             else
             {
                 var sel = selection.Value;
-                _elementReference.MudSelectRangeAsync(sel.Item1, sel.Item2).AndForget();
+                _elementReference.MudSelectRangeAsync(sel.Item1, sel.Item2).CatchAndLog();
             }
         }
 
@@ -424,7 +425,7 @@ namespace MudBlazor
             if (GetReadOnlyState())
                 return;
 
-            if (_selection!=null)
+            if (_selection != null)
                 Mask.Delete();
             await Update();
         }
@@ -433,7 +434,7 @@ namespace MudBlazor
         {
             base.Dispose(disposing);
 
-            if (disposing == true)
+            if (disposing)
             {
                 if (_keyInterceptor != null)
                 {
@@ -447,5 +448,8 @@ namespace MudBlazor
                 }
             }
         }
+
+        [GeneratedRegex(@"^.$")]
+        private static partial Regex ValidCharacterRegularExpression();
     }
 }

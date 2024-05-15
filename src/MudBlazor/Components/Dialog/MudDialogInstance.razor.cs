@@ -5,7 +5,6 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
@@ -61,7 +60,7 @@ namespace MudBlazor
 
         private string Position { get; set; }
         private string DialogMaxWidth { get; set; }
-        private bool DisableBackdropClick { get; set; }
+        private bool BackdropClick { get; set; } = true;
         private bool CloseOnEscapeKey { get; set; }
         private bool NoHeader { get; set; }
         private bool CloseButton { get; set; }
@@ -98,7 +97,7 @@ namespace MudBlazor
 
         internal void HandleKeyDown(KeyboardEventArgs args)
         {
-             switch (args.Key)
+            switch (args.Key)
             {
                 case "Escape":
                     if (CloseOnEscapeKey)
@@ -123,9 +122,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Close and return null. 
-        /// 
-        /// This is a shorthand of Close(DialogResult.Ok((object)null));
+        /// <para>Close and return null. </para>
+        /// <para>This is a shorthand of Close(DialogResult.Ok((object)null));</para>
         /// </summary>
         public void Close()
         {
@@ -133,9 +131,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Close with dialog result.
-        /// 
-        /// Usage: Close(DialogResult.Ok(returnValue))
+        /// <para>Close with dialog result.</para>
+        /// <para>Usage: Close(DialogResult.Ok(returnValue))</para>
         /// </summary>
         public void Close(DialogResult dialogResult)
         {
@@ -143,9 +140,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Close and directly pass a return value. 
-        /// 
-        /// This is a shorthand for Close(DialogResult.Ok(returnValue))
+        /// <para>Close and directly pass a return value. </para>
+        /// <para>This is a shorthand for Close(DialogResult.Ok(returnValue))</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="returnValue"></param>
@@ -171,10 +167,10 @@ namespace MudBlazor
             CloseButton = SetCloseButton();
             FullWidth = SetFullWidth();
             FullScreen = SetFulScreen();
-            DisableBackdropClick = SetDisableBackdropClick();
+            BackdropClick = SetBackdropClick();
             CloseOnEscapeKey = SetCloseOnEscapeKey();
             Class = Classname;
-            BackgroundClassname = new CssBuilder("mud-overlay-dialog").AddClass(Options.ClassBackground).Build();
+            BackgroundClassname = new CssBuilder("mud-overlay-dialog").AddClass(Options.BackgroundClass).Build();
         }
 
         private string SetPosition()
@@ -237,6 +233,11 @@ namespace MudBlazor
             return false;
         }
 
+        protected string TitleClassname =>
+            new CssBuilder("mud-dialog-title")
+                .AddClass(_dialog?.TitleClass)
+                .Build();
+
         protected string Classname =>
             new CssBuilder("mud-dialog")
                 .AddClass(DialogMaxWidth, !FullScreen)
@@ -270,15 +271,15 @@ namespace MudBlazor
             return false;
         }
 
-        private bool SetDisableBackdropClick()
+        private bool SetBackdropClick()
         {
-            if (Options.DisableBackdropClick.HasValue)
-                return Options.DisableBackdropClick.Value;
+            if (Options.BackdropClick.HasValue)
+                return Options.BackdropClick.Value;
 
-            if (GlobalDialogOptions.DisableBackdropClick.HasValue)
-                return GlobalDialogOptions.DisableBackdropClick.Value;
+            if (GlobalDialogOptions.BackdropClick.HasValue)
+                return GlobalDialogOptions.BackdropClick.Value;
 
-            return false;
+            return true;
         }
 
         private bool SetCloseOnEscapeKey()
@@ -294,7 +295,7 @@ namespace MudBlazor
 
         private async Task HandleBackgroundClickAsync(MouseEventArgs args)
         {
-            if (DisableBackdropClick)
+            if (!BackdropClick)
                 return;
 
             if (_dialog is null || !_dialog.OnBackdropClick.HasDelegate)
@@ -319,9 +320,6 @@ namespace MudBlazor
             TitleContent = dialog.TitleContent;
             StateHasChanged();
         }
-
-        [Obsolete($"Use {nameof(StateHasChanged)}. This method will be removed in v7.")]
-        public void ForceRender() => StateHasChanged();
 
         public new void StateHasChanged() => base.StateHasChanged();
 

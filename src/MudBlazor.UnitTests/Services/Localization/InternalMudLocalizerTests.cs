@@ -1,10 +1,10 @@
-﻿using Moq;
-using NUnit.Framework;
-using System;
+﻿using System;
 using FluentAssertions;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging.Abstractions;
+using Moq;
 using MudBlazor.Resources;
+using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Services.Localization;
 

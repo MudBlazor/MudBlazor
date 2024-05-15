@@ -89,10 +89,10 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.DropZone.Disabled)]
-        public Func<T, bool>? ItemIsDisabled { get; set; }
+        public Func<T, bool>? ItemDisabled { get; set; }
 
         /// <summary>
-        /// If a drop item is disabled (determinate by <see cref="ItemIsDisabled"/>). This class is applied to the element. Overrides value provided by drop container
+        /// If a drop item is disabled (determinate by <see cref="ItemDisabled"/>). This class is applied to the element. Overrides value provided by drop container
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.DropZone.Disabled)]
@@ -135,12 +135,14 @@ namespace MudBlazor
 
         private int GetItemIndex(T item)
         {
-            if (!_indices.ContainsKey(item))
+            if (_indices.TryGetValue(item, out var index))
             {
-                _indices.Add(item, _indices.Count);
+                return index;
             }
 
-            return _indices[item];
+            var newIndex = _indices.Count;
+            _indices.Add(item, newIndex);
+            return newIndex;
         }
 
         private T[] GetItems()
@@ -178,7 +180,7 @@ namespace MudBlazor
         private bool GetItemDisabledStatus(T item)
         {
             var result = false;
-            var predicate = ItemIsDisabled ?? Container?.ItemIsDisabled;
+            var predicate = ItemDisabled ?? Container?.ItemDisabled;
             if (predicate is not null)
             {
                 result = predicate(item);
@@ -264,7 +266,7 @@ namespace MudBlazor
 
             if (e.Success)
             {
-                if (e.OriginatedDropzoneIdentifier== Identifier && e.DestinationDropzoneIdentifier != e.OriginatedDropzoneIdentifier)
+                if (e.OriginatedDropzoneIdentifier == Identifier && e.DestinationDropzoneIdentifier != e.OriginatedDropzoneIdentifier)
                 {
                     if (e.Item is not null)
                     {

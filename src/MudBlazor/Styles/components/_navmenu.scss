@@ -1,4 +1,4 @@
-﻿@import '../abstracts/variables';
+@import '../abstracts/variables';
 
 .mud-navmenu {
   margin: 0;
@@ -70,10 +70,12 @@
     pointer-events: none;
   }
 
-  &:hover:not(.mud-nav-link-disabled) {
-    cursor: pointer;
-    text-decoration: none;
-    background-color: var(--mud-palette-action-default-hover);
+  @media(hover: hover) and (pointer: fine) {
+    &:hover:not(.mud-nav-link-disabled) {
+      cursor: pointer;
+      text-decoration: none;
+      background-color: var(--mud-palette-action-default-hover);
+    }
   }
 
   &:focus:not(.mud-nav-link-disabled) {
@@ -155,7 +157,13 @@
       color: var(--mud-palette-primary);
       background-color: var(--mud-palette-action-default-hover);
 
-      &:hover:not(.mud-nav-link-disabled), &:focus-visible:not(.mud-nav-link-disabled) {
+      @media(hover: hover) and (pointer: fine) {
+        &:hover:not(.mud-nav-link-disabled) {
+          background-color: var(--mud-palette-action-default-hover);
+        }
+      }
+
+      &:focus-visible:not(.mud-nav-link-disabled), &:active:not(.mud-nav-link-disabled) {
         background-color: var(--mud-palette-action-default-hover);
       }
     }
@@ -169,9 +177,16 @@
     &.mud-navmenu-#{$color} {
       .mud-nav-link.active:not(.mud-nav-link-disabled) {
         color: var(--mud-palette-#{$color});
+        --mud-ripple-color: var(--mud-palette-#{$color});
         background-color: var(--mud-palette-#{$color}-hover);
 
-        &:hover:not(.mud-nav-link-disabled), &:focus-visible:not(.mud-nav-link-disabled) {
+        @media(hover: hover) and (pointer: fine) {
+          &:hover:not(.mud-nav-link-disabled) {
+            background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
+          }
+        }
+
+        &:focus-visible:not(.mud-nav-link-disabled), &:active:not(.mud-nav-link-disabled) {
           background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
         }
 

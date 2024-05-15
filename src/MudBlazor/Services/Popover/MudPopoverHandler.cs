@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using MudBlazor.Interfaces;
 using MudBlazor.Interop;
 
 namespace MudBlazor;
@@ -74,7 +75,7 @@ public class MudPopoverHandler : IMudPopoverHolder
         Fragment = fragment;
         SetComponentBaseParameters(componentBase, @class, @style, showContent);
         // this basically calls StateHasChanged on the Popover
-        ElementReference?.StateHasChanged();
+        (ElementReference as IMudStateHasChanged)?.StateHasChanged();
         _updater?.Invoke(); // <-- this doesn't do anything anymore except making unit tests happy 
     }
 
@@ -91,7 +92,7 @@ public class MudPopoverHandler : IMudPopoverHolder
 
             Fragment = fragment;
             SetComponentBaseParameters(componentBase, @class, @style, showContent);
-            ElementReference?.StateHasChanged();
+            (ElementReference as IMudStateHasChanged)?.StateHasChanged();
             _updater?.Invoke(); // <-- this doesn't do anything anymore except making unit tests happy
         }
         finally

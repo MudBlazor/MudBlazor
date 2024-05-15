@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -15,6 +16,8 @@ namespace MudBlazor.Docs.Shared;
 public partial class Appbar
 {
     private bool _searchDialogOpen;
+    private bool _searchDialogAutocompleteOpen;
+    private int _searchDialogReturnedItemsCount;
     private string _badgeTextSoon = "coming soon";
     private MudAutocomplete<ApiLinkServiceEntry> _searchAutocomplete = null!;
     private DialogOptions _dialogOptions = new() { Position = DialogPosition.TopCenter, NoHeader = true };
@@ -24,7 +27,7 @@ public partial class Appbar
         {
             Title = "Installation",
             Link = "getting-started/installation",
-            SubTitle = "Getting started with MudBlazor fast and easy."
+            SubTitle = "Get started with MudBlazor fast and easy."
         },
 
         new ApiLinkServiceEntry
@@ -91,6 +94,17 @@ public partial class Appbar
         }
     ];
 
+    public bool IsSearchDialogOpen
+    {
+        get => _searchDialogOpen;
+        set
+        {
+            _searchDialogAutocompleteOpen = default;
+            _searchDialogReturnedItemsCount = default;
+            _searchDialogOpen = value;
+        }
+    }
+
     [Inject]
     private NavigationManager NavigationManager { get; set; } = null!;
 
@@ -101,10 +115,10 @@ public partial class Appbar
     private LayoutService LayoutService { get; set; } = null!;
 
     [Parameter]
-    public bool DisplaySearchBar { get; set; }
+    public EventCallback<MouseEventArgs> DrawerToggleCallback { get; set; }
 
     [Parameter]
-    public EventCallback<MouseEventArgs> DrawerToggleCallback { get; set; }
+    public bool DisplaySearchBar { get; set; } = true;
 
     private async void OnSearchResult(ApiLinkServiceEntry entry)
     {
@@ -118,17 +132,16 @@ public partial class Appbar
         return page == LayoutService.GetDocsBasePage(NavigationManager.Uri) ? "mud-chip-text mud-chip-color-primary mx-1 px-3" : "mx-1 px-3";
     }
 
-    private Task<IReadOnlyCollection<ApiLinkServiceEntry>> Search(string text)
+    private Task<IReadOnlyCollection<ApiLinkServiceEntry>> Search(string text, CancellationToken token)
     {
         if (string.IsNullOrWhiteSpace(text))
         {
-            // the user just clicked the autocomplete open, show the most popular pages as search result according to our analytics data
-            // ordered by popularity
+            // The user just opened the popover so show the most popular pages according to our analytics data as search results.
             return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>(_apiLinkServiceEntries);
         }
 
         return ApiLinkService.Search(text);
     }
 
-    private void OpenSearchDialog() => _searchDialogOpen = true;
+    private void OpenSearchDialog() => IsSearchDialogOpen = true;
 }

@@ -15,10 +15,11 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public abstract partial class Column<T> : MudComponentBase
+    public abstract partial class Column<T> : MudComponentBase, IDisposable
     {
         private static readonly RenderFragment<CellContext<T>> EmptyChildContent = _ => builder => { };
         internal ParameterState<bool> HiddenState { get; }
+        internal ParameterState<bool> GroupingState { get; }
 
         internal readonly Guid uid = Guid.NewGuid();
 
@@ -51,12 +52,12 @@ namespace MudBlazor
         #region HeaderCell Properties
 
         [Parameter] public string HeaderClass { get; set; }
-        [Parameter] public Func<T, string> HeaderClassFunc { get; set; }
+        [Parameter] public Func<IEnumerable<T>, string> HeaderClassFunc { get; set; }
         [Parameter] public string HeaderStyle { get; set; }
-        [Parameter] public Func<T, string> HeaderStyleFunc { get; set; }
+        [Parameter] public Func<IEnumerable<T>, string> HeaderStyleFunc { get; set; }
 
         /// <summary>
-        /// Determines whether this columns data can be sorted. This overrides the Sortable parameter on the DataGrid.
+        /// Determines whether this columns data can be sorted. This overrides the SortMode parameter on the DataGrid.
         /// </summary>
         [Parameter] public bool? Sortable { get; set; }
 
@@ -117,7 +118,7 @@ namespace MudBlazor
         /// <summary>
         /// Specifies whether the column is grouped.
         /// </summary>
-        [Parameter] public bool Grouping { get; set; }        
+        [Parameter] public bool Grouping { get; set; }
         [Parameter] public EventCallback<bool> GroupingChanged { get; set; }
 
         /// <summary>
@@ -130,7 +131,7 @@ namespace MudBlazor
         [Parameter] public RenderFragment<FilterContext<T>> FilterTemplate { get; set; }
 
         public string Identifier { get; set; }
-        
+
 
         private CultureInfo _culture;
         /// <summary>
@@ -154,7 +155,7 @@ namespace MudBlazor
         [Parameter] public Func<T, string> CellClassFunc { get; set; }
         [Parameter] public string CellStyle { get; set; }
         [Parameter] public Func<T, string> CellStyleFunc { get; set; }
-        [Parameter] public bool IsEditable { get; set; } = true;
+        [Parameter] public bool Editable { get; set; } = true;
         [Parameter] public RenderFragment<CellContext<T>> EditTemplate { get; set; }
 
         #endregion
@@ -162,9 +163,9 @@ namespace MudBlazor
         #region FooterCell Properties
 
         [Parameter] public string FooterClass { get; set; }
-        [Parameter] public Func<T, string> FooterClassFunc { get; set; }
+        [Parameter] public Func<IEnumerable<T>, string> FooterClassFunc { get; set; }
         [Parameter] public string FooterStyle { get; set; }
-        [Parameter] public Func<T, string> FooterStyleFunc { get; set; }
+        [Parameter] public Func<IEnumerable<T>, string> FooterStyleFunc { get; set; }
         [Parameter] public bool EnableFooterSelection { get; set; }
         [Parameter] public AggregateDefinition<T> AggregateDefinition { get; set; }
 
@@ -180,21 +181,11 @@ namespace MudBlazor
                 .AddClass(Class)
             .Build();
 
-        internal string cellClassname;
-        //internal string cellClassname =>
-        //    new CssBuilder("mud-table-cell")
-        //        .AddClass("mud-table-cell-hide", HideSmall)
-        //        .AddClass("sticky-right", StickyRight)
-        //        .AddClass(Class)
-        //    .Build();
-
         internal string footerClassname =>
             new CssBuilder("mud-table-cell")
                 .AddClass("mud-table-cell-hide", HideSmall)
                 .AddClass(Class)
             .Build();
-
-        internal bool grouping;
 
         #region Computed Properties
 
@@ -203,32 +194,6 @@ namespace MudBlazor
             get
             {
                 return PropertyType;
-            }
-        }
-
-        // This returns the data type for an object when T is an IDictionary<string, object>.
-        internal Type innerDataType
-        {
-            get
-            {
-                // Handle case where T is IDictionary.
-                if (typeof(T) == typeof(IDictionary<string, object>))
-                {
-                    // We need to get the actual type here so we need to look at actual data.
-                    // get the first item where we have a non-null value in the field to be filtered.
-                    var first = DataGrid.Items.FirstOrDefault(x => ((IDictionary<string, object>)x)[PropertyName] != null);
-
-                    if (first != null)
-                    {
-                        return ((IDictionary<string, object>)first)[PropertyName].GetType();
-                    }
-                    else
-                    {
-                        return typeof(object);
-                    }
-                }
-
-                return dataType;
             }
         }
 
@@ -305,16 +270,31 @@ namespace MudBlazor
 
         protected Column()
         {
-            HiddenState = RegisterParameter(nameof(Hidden), () => Hidden, () => HiddenChanged);
+            using var registerScope = CreateRegisterScope();
+            HiddenState = registerScope.RegisterParameter<bool>(nameof(Hidden))
+                .WithParameter(() => Hidden)
+                .WithEventCallback(() => HiddenChanged);
+            GroupingState = registerScope.RegisterParameter<bool>(nameof(Grouping))
+                .WithParameter(() => Grouping)
+                .WithEventCallback(() => GroupingChanged)
+                .WithChangeHandler(OnGroupingParameterChangedAsync);
+        }
+
+        private async Task OnGroupingParameterChangedAsync()
+        {
+            if (GroupingState.Value)
+            {
+                if (DataGrid is not null)
+                {
+                    await DataGrid.ChangedGrouping(this);
+                }
+            }
         }
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
             groupBy = GroupBy;
-
-            if (groupable && Grouping)
-                grouping = Grouping;
 
             if (DataGrid != null)
                 DataGrid.AddColumn(this);
@@ -379,12 +359,10 @@ namespace MudBlazor
         // Allows child components to change column grouping.
         internal async Task SetGrouping(bool g)
         {
-            if (groupable)
-            {
-                grouping = g;
+            await GroupingState.SetValueAsync(g);
+
+            if (GroupingState.Value)
                 await DataGrid?.ChangedGrouping(this);
-                await GroupingChanged.InvokeAsync(grouping);
-            }
         }
 
         /// <summary>
@@ -392,10 +370,9 @@ namespace MudBlazor
         /// </summary>
         internal async Task RemoveGrouping()
         {
-            if (grouping)
+            if (GroupingState.Value)
             {
-                grouping = false;
-                await GroupingChanged.InvokeAsync(grouping);
+                await GroupingState.SetValueAsync(false);
             }
         }
 
@@ -413,6 +390,12 @@ namespace MudBlazor
         {
             await HiddenState.SetValueAsync(!HiddenState.Value);
             ((IMudStateHasChanged)DataGrid).StateHasChanged();
+        }
+
+        public virtual void Dispose()
+        {
+            if (DataGrid != null)
+                DataGrid.RemoveColumn(this);
         }
 
 

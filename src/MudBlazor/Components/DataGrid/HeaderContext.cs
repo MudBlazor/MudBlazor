@@ -24,14 +24,23 @@ namespace MudBlazor
 
         public HeaderActions Actions { get; }
 
-        public bool IsAllSelected
+        public bool? IsAllSelected
         {
             get
             {
-                
-                if (_dataGrid.Selection != null && (Items?.Any() ?? false))
+                if (_dataGrid.Selection is not null && (Items?.Any() ?? false))
                 {
-                    return _dataGrid.Selection.Count == Items.Count();
+                    if (_dataGrid.Selection.Count == Items.Count())
+                    {
+                        return true;
+                    }
+
+                    if (_dataGrid.Selection.Count == 0)
+                    {
+                        return false;
+                    }
+
+                    return null;
                 }
 
                 return false;
@@ -43,14 +52,14 @@ namespace MudBlazor
             _dataGrid = dataGrid;
             Actions = new HeaderActions
             {
-                SetSelectAllAsync = x => _dataGrid.SetSelectAllAsync(x),
+                SetSelectAllAsync = x => _dataGrid.SetSelectAllAsync(x ?? false),
             };
 
         }
 
         public class HeaderActions
         {
-            public Func<bool, Task> SetSelectAllAsync { get; init; } = null!;
+            public required Func<bool?, Task> SetSelectAllAsync { get; init; }
         }
     }
 }

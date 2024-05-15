@@ -1,4 +1,4 @@
-﻿@import '../abstracts/variables';
+@import '../abstracts/variables';
 
 .mud-treeview {
   margin: 0px;
@@ -10,6 +10,7 @@
     &.mud-treeview-selected-#{$color} {
       .mud-treeview-item-content.mud-treeview-item-selected {
         color: var(--mud-palette-#{$color});
+        --mud-ripple-color: var(--mud-palette-#{$color});
         background-color: var(--mud-palette-#{$color}-hover);
       }
     }
@@ -50,6 +51,12 @@
       padding: 4px;
     }
   }
+
+  &.mud-treeview-item-disabled {
+    color: var(--mud-palette-action-disabled) !important;
+    cursor: default !important;
+    pointer-events: none !important;
+  }
 }
 
 .mud-treeview-item-content {
@@ -60,8 +67,10 @@
   transition: background-color 150ms cubic-bezier(.4,0,.2,1) 0ms;
 }
 
-.mud-treeview-hover .mud-treeview-item-content:hover {
-  background-color: var(--mud-palette-action-default-hover);
+@media(hover: hover) and (pointer: fine) {
+  .mud-treeview-hover .mud-treeview-item-content:hover {
+    background-color: var(--mud-palette-action-default-hover);
+  }
 }
 
 .mud-treeview-item-arrow {

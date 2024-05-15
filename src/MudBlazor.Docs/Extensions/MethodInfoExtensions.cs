@@ -72,7 +72,7 @@ namespace MudBlazor.Docs.Extensions
                         stringBuilder.Append("this ");
                     }
                 }
-                else if (secondParameter == true)
+                else if (secondParameter)
                 {
                     secondParameter = false;
                 }

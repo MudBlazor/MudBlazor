@@ -44,8 +44,10 @@
     margin: 6px;
     background-color: var(--mud-palette-surface);
 
-    &:hover {
-      background-color: var(--mud-palette-action-default-hover);
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--mud-palette-action-default-hover);
+      }
     }
   }
 
@@ -54,10 +56,12 @@
     height: 23px;
     overflow: hidden;
 
-    &:hover {
-      & .mud-typography {
-        cursor: pointer;
-        font-weight: 500;
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        & .mud-typography {
+          cursor: pointer;
+          font-weight: 500;
+        }
       }
     }
   }
@@ -93,8 +97,10 @@
     animation: mud-animation-fadein 500ms;
     transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 
-    &:hover {
-      background-color: var(--mud-palette-action-default-hover);
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--mud-palette-action-default-hover);
+      }
     }
 
     & .mud-picker-year-selected {
@@ -121,8 +127,10 @@
     justify-content: center;
     transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 
-    &:hover {
-      background-color: var(--mud-palette-action-default-hover);
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--mud-palette-action-default-hover);
+      }
     }
 
     & .mud-picker-month-selected {
@@ -280,8 +288,10 @@
     font-size: 0.75rem;
     font-weight: 500;
 
-    &:hover {
-      background-color: var(--mud-palette-action-default-hover);
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--mud-palette-action-default-hover);
+      }
     }
 
     &.mud-hidden {
@@ -324,13 +334,15 @@
         background-color: var(--mud-palette-action-default-hover);
       }
 
-      &.mud-range-selection:hover {
-        &.mud-range-start-selected {
-          border-radius: 50%;
-        }
+      @media(hover: hover) and (pointer: fine) {
+        &.mud-range-selection:hover {
+          &.mud-range-start-selected {
+            border-radius: 50%;
+          }
 
-        &:not(.mud-range-start-selected) {
-          border-radius: 0% 50% 50% 0%;
+          &:not(.mud-range-start-selected) {
+            border-radius: 0% 50% 50% 0%;
+          }
         }
       }
 
@@ -345,9 +357,11 @@
 
 @each $color in $mud-palette-colors {
   .mud-range-selection-#{$color} {
-    &:hover {
-      color: var(--mud-palette-#{$color}-text) !important;
-      background-color: var(--mud-palette-#{$color}) !important;
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        color: var(--mud-palette-#{$color}-text) !important;
+        background-color: var(--mud-palette-#{$color}) !important;
+      }
     }
   }
 }
@@ -375,9 +389,11 @@
       border-radius: 50% 0% 0% 50%;
     }
 
-    &.mud-range-selection:hover {
-      &:not(.mud-range-start-selected) {
-        border-radius: 50% 0% 0% 50%;
+    @media(hover: hover) and (pointer: fine) {
+      &.mud-range-selection:hover {
+        &:not(.mud-range-start-selected) {
+          border-radius: 50% 0% 0% 50%;
+        }
       }
     }
   }

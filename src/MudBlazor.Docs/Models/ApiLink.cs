@@ -92,8 +92,8 @@ namespace MudBlazor.Docs.Models
                 [typeof(Line)] = "linechart",
                 [typeof(TimeSeries)] = "timeserieschart",
                 [typeof(Pie)] = "piechart",
-                [typeof(MudChip)] = "chips",
-                [typeof(ChartOptions)] = "options",
+                [typeof(MudChip<T>)] = "chips",
+                [typeof(ChartOptions)] = "options"
             };
 
         // this is the inversion of above lookup

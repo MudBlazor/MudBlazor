@@ -1,4 +1,4 @@
-﻿@import '../abstracts/variables';
+@import '../abstracts/variables';
 
 .mud-radio {
   cursor: pointer;
@@ -12,7 +12,23 @@
     color: var(--mud-palette-text-primary);
   }
 
-  &.mud-disabled, .mud-disabled:hover, .mud-disabled:focus-visible {
+  @media(hover: hover) and (pointer: fine) {
+    .mud-disabled:hover {
+      cursor: default;
+      background-color: transparent !important;
+
+      & > .mud-radio-content {
+        color: var(--mud-palette-text-disabled);
+      }
+
+      & * {
+        cursor: default;
+        color: var(--mud-palette-text-disabled);
+      }
+    }
+  }
+
+  &.mud-disabled, .mud-disabled:focus-visible, .mud-disabled:active {
     cursor: default;
     background-color: transparent !important;
 
@@ -28,6 +44,7 @@
 
   &.mud-readonly, .mud-readonly:hover {
     cursor: default;
+    background-color: transparent !important;
   }
 
   & .mud-radio-dense {
@@ -37,8 +54,10 @@
   &.mud-checked {
     color: var(--mud-palette-action-default);
 
-    &:hover {
-      background-color: var(--mud-palette-action-default-hover);
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--mud-palette-action-default-hover);
+      }
     }
   }
 }
@@ -83,32 +102,44 @@
 
 .mud-radio-content-placement- {
   &start {
-    margin-left: 16px;
     margin-right: -11px;
-    margin-inline-start: 16px;
     margin-inline-end: -11px;
     flex-direction: row-reverse;
+
+    &.mud-radio-with-content {
+      margin-left: 16px;
+      margin-inline-start: 16px;
+    }
   }
 
   &end {
     margin-left: -11px;
-    margin-right: 16px;
     margin-inline-start: -11px;
-    margin-inline-end: 16px;
     flex-direction: row;
+
+    &.mud-radio-with-content {
+      margin-right: 16px;
+      margin-inline-end: 16px;
+    }
   }
 
   &top {
-    margin-left: 16px;
-    margin-inline-start: 16px;
     margin-inline-end: unset;
     flex-direction: column-reverse;
+
+    &.mud-radio-with-content {
+      margin-left: 16px;
+      margin-inline-start: 16px;
+    }
   }
 
   &bottom {
-    margin-left: 16px;
-    margin-inline-start: 16px;
     margin-inline-end: unset;
     flex-direction: column;
+
+    &.mud-radio-with-content {
+      margin-left: 16px;
+      margin-inline-start: 16px;
+    }
   }
 }

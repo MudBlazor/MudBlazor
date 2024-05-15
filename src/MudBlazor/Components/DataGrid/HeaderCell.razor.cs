@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -24,7 +23,7 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         private SortDirection _initialDirection;
-        private bool _isSelected;
+        private bool _selected;
 
         [Parameter]
         public SortDirection SortDirection
@@ -38,12 +37,14 @@ namespace MudBlazor
 
         private string _classname =>
             new CssBuilder(Column?.HeaderClass)
+                .AddClass(Column?.HeaderClassFunc?.Invoke(DataGrid?.CurrentPageItems ?? Enumerable.Empty<T>()))
                 .AddClass(Column?.headerClassname)
                 .AddClass(Class)
             .Build();
 
         private string _style =>
             new StyleBuilder()
+                .AddStyle(Column?.HeaderStyleFunc?.Invoke(DataGrid?.CurrentPageItems ?? Enumerable.Empty<T>()))
                 .AddStyle(Column?.HeaderStyle)
                 .AddStyle("width", Width?.ToPx(), when: Width.HasValue)
                 .AddStyle(Style)
@@ -124,7 +125,7 @@ namespace MudBlazor
                     return false;
 
                 return Column?.ShowFilterIcon ?? DataGrid?.ShowFilterIcons ?? true;
-            }              
+            }
         }
 
         private bool hideable
@@ -160,18 +161,12 @@ namespace MudBlazor
         {
             get
             {
-                if (_initialDirection == SortDirection.Descending)
+                return _initialDirection switch
                 {
-                    return "sort-direction-icon mud-direction-desc";
-                }
-                else if (_initialDirection == SortDirection.Ascending)
-                {
-                    return "sort-direction-icon mud-direction-asc";
-                }
-                else
-                {
-                    return "sort-direction-icon";
-                }
+                    SortDirection.Descending => "sort-direction-icon mud-direction-desc",
+                    SortDirection.Ascending => "sort-direction-icon mud-direction-asc",
+                    _ => "sort-direction-icon"
+                };
             }
         }
 
@@ -182,7 +177,7 @@ namespace MudBlazor
                 if (DataGrid == null)
                     return false;
 
-                return DataGrid.FilterDefinitions.Any(x => x.Column?.PropertyName == Column?.PropertyName && x.Operator != null && x.Value != null);
+                return DataGrid.FilterDefinitions.Any(x => x.Column?.PropertyName == Column?.PropertyName && x.Operator != null);
             }
         }
 
@@ -204,6 +199,7 @@ namespace MudBlazor
 
         protected override async Task OnInitializedAsync()
         {
+            await base.OnInitializedAsync();
             _initialDirection = Column?.InitialDirection ?? SortDirection.None;
 
             if (_initialDirection != SortDirection.None)
@@ -230,7 +226,7 @@ namespace MudBlazor
         /// <param name="removedSorts">The removed sorts.</param>
         private void OnGridSortChanged(Dictionary<string, SortDefinition<T>> activeSorts, HashSet<string> removedSorts)
         {
-            if ((Column.Sortable.HasValue && !Column.Sortable.Value) || string.IsNullOrWhiteSpace(Column.PropertyName))
+            if (Column == null || (Column.Sortable.HasValue && !Column.Sortable.Value) || string.IsNullOrWhiteSpace(Column.PropertyName))
                 return;
 
             if (null != removedSorts && removedSorts.Contains(Column.PropertyName))
@@ -245,13 +241,13 @@ namespace MudBlazor
 
         private void OnSelectedAllItemsChanged(bool value)
         {
-            _isSelected = value;
+            _selected = value;
             StateHasChanged();
         }
 
         private void OnSelectedItemsChanged(HashSet<T> items)
         {
-            _isSelected = items.Count == DataGrid.GetFilteredItemsCount();
+            _selected = items.Count == DataGrid.GetFilteredItemsCount();
             StateHasChanged();
         }
 

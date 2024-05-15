@@ -20,8 +20,8 @@
 </MudDataGrid>
 
 <div class="d-flex flex-column mt-4">
-    <MudSwitch @bind-Checked="@_reorderingEnabled" Color="Color.Primary">DragDropColumnReordering</MudSwitch>
-    <MudSwitch @bind-Checked="@_applyDropClassesOnDragStarted" Color="Color.Primary">ApplyDropClassesOnDragStarted</MudSwitch>
+    <MudSwitch @bind-Value="_reorderingEnabled" Color="Color.Primary">DragDropColumnReordering</MudSwitch>
+    <MudSwitch @bind-Value="_applyDropClassesOnDragStarted" Color="Color.Primary">ApplyDropClassesOnDragStarted</MudSwitch>
 </div>
 
 @code {

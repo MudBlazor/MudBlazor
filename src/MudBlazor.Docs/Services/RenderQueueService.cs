@@ -31,10 +31,11 @@ namespace MudBlazor.Docs.Services
             Capacity = 3;
         }
 
-        public void Clear() {
+        public void Clear()
+        {
             lock (_queue)
             {
-                _queue.Clear();                
+                _queue.Clear();
                 _tcs?.TrySetResult();
                 _tcs = null;
             }
@@ -94,7 +95,7 @@ namespace MudBlazor.Docs.Services
 
         public Task WaitUntilEmpty()
         {
-            lock(_queue)
+            lock (_queue)
             {
                 if (_queue.Count == 0)
                     return Task.CompletedTask;

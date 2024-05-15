@@ -1,0 +1,28 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudGrid>
+    <MudItem>
+        <MudDatePicker @ref="@Picker"
+                       Style="max-width: 300px"
+                       Placeholder="dd-MM-yyyy"
+                       Editable="true"
+                       Required="false"
+                       Mask="@(new DateMask("dd-MM-yyyy"))"
+                       DateFormat="dd-MM-yyyy"
+                       Variant="Variant.Outlined"
+                       @bind-Date="SelectedDate">
+        </MudDatePicker>
+    </MudItem>
+    <MudItem Class="align-self-center">
+        <MudText>@Picker?.Text</MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public static string __description__ = "Selected date should show in input on first selection";
+
+    public DateTime? SelectedDate { get; set; }
+    public MudDatePicker Picker { get; set; }
+}

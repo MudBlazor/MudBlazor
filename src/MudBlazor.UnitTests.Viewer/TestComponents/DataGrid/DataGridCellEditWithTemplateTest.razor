@@ -6,7 +6,7 @@
         <PropertyColumn Property="x => x.Age" />
         <PropertyColumn Property="x => x.Hired">
             <EditTemplate>
-                <MudCheckBox T="bool" @bind-Checked="context.Item.Hired" Label="Hired" Required />
+                <MudCheckBox T="bool" @bind-Value="context.Item.Hired" Label="Hired" Required />
             </EditTemplate>
         </PropertyColumn>
     </Columns>

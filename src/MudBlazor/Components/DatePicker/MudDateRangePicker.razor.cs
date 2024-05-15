@@ -22,6 +22,27 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// The short hint displayed in the start input before the user enters a value.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string PlaceholderStart { get; set; }
+
+        /// <summary>
+        /// The short hint displayed in the end input before the user enters a value.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string PlaceholderEnd { get; set; }
+
+        /// <summary>
+        /// Custom separator icon, leave null for default.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string SeparatorIcon { get; set; } = Icons.Material.Filled.ArrowRightAlt;
+
+        /// <summary>
         /// Fired when the DateFormat changes.
         /// </summary>
         [Parameter] public EventCallback<DateRange> DateRangeChanged { get; set; }
@@ -34,7 +55,7 @@ namespace MudBlazor
         public DateRange DateRange
         {
             get => _dateRange;
-            set => SetDateRangeAsync(value, true).AndForget();
+            set => SetDateRangeAsync(value, true).CatchAndLog();
         }
 
         protected async Task SetDateRangeAsync(DateRange range, bool updateValue)
@@ -92,7 +113,7 @@ namespace MudBlazor
 
                 Touched = true;
                 _rangeText = value;
-                SetDateRangeAsync(ParseDateRangeValue(value?.Start, value?.End), false).AndForget();
+                SetDateRangeAsync(ParseDateRangeValue(value?.Start, value?.End), false).CatchAndLog();
             }
         }
 
@@ -138,23 +159,23 @@ namespace MudBlazor
         /// <returns></returns>
         public ValueTask SelectRangeEndAsync(int pos1, int pos2) => _rangeInput.SelectRangeEndAsync(pos1, pos2);
 
-        protected override Task DateFormatChanged(string newFormat)
+        protected override Task DateFormatChangedAsync(string newFormat)
         {
             Touched = true;
+            _rangeText = new Range<string>(
+                Converter.Set(_dateRange?.Start),
+                Converter.Set(_dateRange?.End));
             return SetTextAsync(_dateRange?.ToString(Converter), false);
         }
 
-        protected override Task StringValueChanged(string value)
+        protected override Task StringValueChangedAsync(string value)
         {
             Touched = true;
-            // Update the daterange property (without updating back the Value property)
+            // Update the date range property (without updating back the Value property)
             return SetDateRangeAsync(ParseDateRangeValue(value), false);
         }
 
-        protected override bool HasValue(DateTime? value)
-        {
-            return null != value && value.HasValue;
-        }
+        protected override bool HasValue(DateTime? value) => value is not null;
 
         private DateRange ParseDateRangeValue(string value)
         {
@@ -166,10 +187,11 @@ namespace MudBlazor
             return DateRange.TryParse(start, end, Converter, out var dateRange) ? dateRange : null;
         }
 
-        protected override void OnPickerClosed()
+        protected override Task OnPickerClosedAsync()
         {
             _firstDate = null;
-            base.OnPickerClosed();
+
+            return base.OnPickerClosedAsync();
         }
 
         private bool CheckDateRange(DateTime day, Func<DateTime, DateTime, bool> compareStart, Func<DateTime, DateTime, bool> compareEnd)
@@ -247,7 +269,7 @@ namespace MudBlazor
             return b.Build();
         }
 
-        protected override async void OnDayClicked(DateTime dateTime)
+        protected override async Task OnDayClickedAsync(DateTime dateTime)
         {
             if (_firstDate == null || _firstDate > dateTime || _secondDate != null)
             {
@@ -259,23 +281,23 @@ namespace MudBlazor
             _secondDate = dateTime;
             if (PickerActions == null || AutoClose)
             {
-                Submit();
+                await SubmitAsync();
 
                 if (PickerVariant != PickerVariant.Static)
                 {
                     await Task.Delay(ClosingDelay);
-                    Close(false);
+                    await CloseAsync(false);
                 }
             }
         }
 
-        protected override void OnOpened()
+        protected override Task OnOpenedAsync()
         {
             _secondDate = null;
-            base.OnOpened();
+            return base.OnOpenedAsync();
         }
 
-        protected internal override async void Submit()
+        protected internal override async Task SubmitAsync()
         {
             if (GetReadOnlyState())
                 return;
@@ -288,11 +310,11 @@ namespace MudBlazor
             _secondDate = null;
         }
 
-        public override void Clear(bool close = true)
+        public override Task ClearAsync(bool close = true)
         {
             DateRange = null;
             _firstDate = _secondDate = null;
-            base.Clear();
+            return base.ClearAsync(close);
         }
 
         protected override string GetTitleDateString()
@@ -317,8 +339,6 @@ namespace MudBlazor
             var diff = Culture.Calendar.GetYear(date) - Culture.Calendar.GetYear(yearDate);
             var calenderYear = Culture.Calendar.GetYear(date);
             return calenderYear - diff;
-
         }
-
     }
 }

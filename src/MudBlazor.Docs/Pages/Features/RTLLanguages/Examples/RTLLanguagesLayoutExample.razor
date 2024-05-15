@@ -24,7 +24,7 @@
         </MudCardActions>
     </MudCard>
 </MudRTLProvider>
-<MudSwitch @bind-Checked="@_rightToLeft" Label="Toggle Right to Left" Color="Color.Primary"/>
+<MudSwitch @bind-Value="_rightToLeft" Label="Toggle Right to Left" Color="Color.Primary"/>
 
 @code {
     private bool _rightToLeft = true;

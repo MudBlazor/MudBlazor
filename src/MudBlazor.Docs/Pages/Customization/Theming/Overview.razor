@@ -11,7 +11,7 @@
                     No configuration or theme is needed, by default it will use MudBlazor's default theme.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="OverviewThemesDefaultExample" />
+            <SectionContent Code="@nameof(OverviewThemesDefaultExample)" />
         </DocsPageSection>
         
         <DocsPageSection>
@@ -20,11 +20,11 @@
             </SectionHeader>
             <ul class="docs-list mx-2">
                 <li><MudLink Href="/customization/palette">Palette</MudLink></li>
-                <li><MudText Inline="true">Shadows</MudText></li>
+                <li><MudText HtmlTag="span">Shadows</MudText></li>
                 <li><MudLink Href="/customization/typography">Typography</MudLink></li>
-                <li><MudText Inline="true">Layout Properties</MudText></li>
+                <li><MudText HtmlTag="span">Layout Properties</MudText></li>
                 <li><MudLink Href="/customization/z-index">z-index</MudLink></li>
-                <li><MudText Inline="true">Pseudo CSS scope</MudText></li>
+                <li><MudText HtmlTag="span">Pseudo CSS scope</MudText></li>
                 <li><MudLink Href="/customization/pseudocss">Pseudo CSS</MudLink></li>
             </ul>
             <MudText Class="mt-4">You can find all the <MudLink Href="/customization/default-theme" Color="Color.Secondary">Default Theme</MudLink> values under customization.</MudText>
@@ -34,14 +34,14 @@
             <SectionHeader Title="Scrollbar">
                 <Description>The MudBlazor styled scrollbar can be turned off in the themeprovider with the <CodeInline>DefaultScrollbar</CodeInline> property.</Description>
             </SectionHeader>
-            <SectionContent Code="OverviewThemesScrollbarExample" />
+            <SectionContent Code="@nameof(OverviewThemesScrollbarExample)" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Dark Palette">
                 <Description>Dark palettes are integrated in <CodeInline>MudTheme</CodeInline>. Just set <CodeInline>IsDarkMode</CodeInline> to  <CodeInline>true</CodeInline>.</Description>
             </SectionHeader>
-            <SectionContent Code="OverviewThemesDarkPaletteExampleSource">
+            <SectionContent Code="@nameof(OverviewThemesDarkPaletteExampleSource)">
                 <OverviewThemesDarkPaletteExample/>
             </SectionContent>
         </DocsPageSection>
@@ -50,14 +50,14 @@
             <SectionHeader Title="System preference">
                 <Description>With <CodeInline>GetSystemPreference()</CodeInline> you can get the user defined dark theme preference. Returns <CodeInline>true</CodeInline> if dark mode is preferred.</Description>
             </SectionHeader>
-            <SectionContent Code="OverviewThemesSystemPreferenceExample"/>
+            <SectionContent Code="@nameof(OverviewThemesSystemPreferenceExample)"/>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Watch system preference">
                 <Description><CodeInline>WatchSystemPreference(Func)</CodeInline> calls Func when the system preferences change. <CodeInline>true</CodeInline> if dark mode is preferred.</Description>
             </SectionHeader>
-            <SectionContent Code="OverviewThemesWatchSystemPreferenceExample"/>
+            <SectionContent Code="@nameof(OverviewThemesWatchSystemPreferenceExample)"/>
         </DocsPageSection>
         
         <DocsPageSection>
@@ -66,7 +66,7 @@
                     <CodeInline>Palette</CodeInline> defines the color of the Light Palette. <CodeInline>PaletteDark</CodeInline> on the other hand defines the colors of
                     the Dark Palette.</Description>
             </SectionHeader>
-            <SectionContent Code="OverviewThemesCustomExample" />
+            <SectionContent Code="@nameof(OverviewThemesCustomExample)" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

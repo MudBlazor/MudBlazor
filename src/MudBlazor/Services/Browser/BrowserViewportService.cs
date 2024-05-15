@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -12,7 +13,6 @@ using Microsoft.JSInterop;
 using MudBlazor.Extensions;
 using MudBlazor.Interop;
 using MudBlazor.Services;
-using MudBlazor.Utilities.AsyncKeyedLock;
 using MudBlazor.Utilities.ObserverManager;
 
 namespace MudBlazor;
@@ -21,13 +21,10 @@ namespace MudBlazor;
 /// <summary>
 /// Represents a service that serves to listen to browser window size changes and breakpoints.
 /// </summary>
-/// <remarks>
-/// This service replaces <see cref="IBreakpointService"/>, <see cref="IResizeService"/> and <see cref="IResizeListenerService"/>.
-/// </remarks>
 internal class BrowserViewportService : IBrowserViewportService
 {
     private bool _disposed;
-    private readonly AsyncKeyedLocker<Guid> _semaphore;
+    private readonly SemaphoreSlim _semaphore;
     private readonly ResizeListenerInterop _resizeListenerInterop;
     private readonly Lazy<DotNetObjectReference<BrowserViewportService>> _dotNetReferenceLazy;
     private readonly ObserverManager<BrowserViewportSubscription, IBrowserViewportObserver> _observerManager;
@@ -52,11 +49,7 @@ internal class BrowserViewportService : IBrowserViewportService
     public BrowserViewportService(ILogger<BrowserViewportService> logger, IJSRuntime jsRuntime, IOptions<ResizeOptions>? options = null)
     {
         ResizeOptions = options?.Value ?? new ResizeOptions();
-        _semaphore = new AsyncKeyedLocker<Guid>(lockOptions =>
-        {
-            lockOptions.PoolSize = 300;
-            lockOptions.PoolInitialFill = 50;
-        });
+        _semaphore = new SemaphoreSlim(1, 1);
         _resizeListenerInterop = new ResizeListenerInterop(jsRuntime);
         _observerManager = new ObserverManager<BrowserViewportSubscription, IBrowserViewportObserver>(logger);
         _dotNetReferenceLazy = new Lazy<DotNetObjectReference<BrowserViewportService>>(CreateDotNetObjectReference);
@@ -101,8 +94,10 @@ internal class BrowserViewportService : IBrowserViewportService
             return;
         }
 
-        using (await _semaphore.LockAsync(observer.Id))
+        try
         {
+            await _semaphore.WaitAsync();
+
             // Always clone the ResizeOptions, regardless of the circumstances.
             // This is necessary because the options may originate from the "ResizeOptions" variable (IOptions<ResizeOptions>) - these are the user-defined options when adding this service in the DI container.
             // Only the user should be allowed to modify these settings, and the service should not directly modify the reference to prevent potential bugs.
@@ -129,6 +124,10 @@ internal class BrowserViewportService : IBrowserViewportService
                     await observer.NotifyBrowserViewportChangeAsync(new BrowserViewportEventArgs(subscription.JavaScriptListenerId, latestWindowSize, latestBreakpoint, isImmediate: true));
                 }
             }
+        }
+        finally
+        {
+            _semaphore.Release();
         }
     }
 
@@ -159,13 +158,19 @@ internal class BrowserViewportService : IBrowserViewportService
     /// <inheritdoc />
     public async Task UnsubscribeAsync(Guid observerId)
     {
-        using (await _semaphore.LockAsync(observerId))
+        try
         {
+            await _semaphore.WaitAsync();
+
             var subscription = await RemoveJavaScriptListener(observerId);
             if (subscription is not null)
             {
                 _observerManager.Unsubscribe(subscription);
             }
+        }
+        finally
+        {
+            _semaphore.Release();
         }
     }
 
@@ -271,8 +276,6 @@ internal class BrowserViewportService : IBrowserViewportService
                 {
                     _dotNetReferenceLazy.Value.Dispose();
                 }
-
-                _semaphore.Dispose();
 
                 // https://github.com/MudBlazor/MudBlazor/pull/5367#issuecomment-1258649968
                 // Fixed in NET8

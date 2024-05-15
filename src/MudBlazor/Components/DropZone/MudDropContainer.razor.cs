@@ -101,10 +101,10 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.DropZone.Disabled)]
-        public Func<T, bool>? ItemIsDisabled { get; set; }
+        public Func<T, bool>? ItemDisabled { get; set; }
 
         /// <summary>
-        /// If a drop item is disabled (determinate by <see cref="ItemIsDisabled"/>). This class is applied to the element
+        /// If a drop item is disabled (determinate by <see cref="ItemDisabled"/>). This class is applied to the element
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.DropZone.Disabled)]
@@ -126,7 +126,7 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.DropZone.Items)]
-        public Func<T,string, string>? ItemsClassSelector { get; set; }
+        public Func<T, string, string>? ItemsClassSelector { get; set; }
 
 
         public event EventHandler<MudDragAndDropItemTransaction<T>>? TransactionStarted;

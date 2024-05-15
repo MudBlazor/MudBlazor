@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
@@ -11,7 +10,7 @@ namespace MudBlazor
 #nullable enable
     public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     {
-        private ParameterState<bool> _visibleState;
+        private readonly ParameterState<bool> _visibleState;
 
         protected string Classname =>
             new CssBuilder("mud-overlay")
@@ -104,22 +103,6 @@ namespace MudBlazor
         public int ZIndex { get; set; } = 5;
 
         /// <summary>
-        /// Command parameter.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Overlay.ClickAction)]
-        [Obsolete($"This will be removed in v7.")]
-        public object? CommandParameter { get; set; }
-
-        /// <summary>
-        /// Command executed when the user clicks on an element.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Overlay.ClickAction)]
-        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
-        public ICommand? Command { get; set; }
-
-        /// <summary>
         /// Fired when the overlay is clicked
         /// </summary>
         [Parameter]
@@ -127,35 +110,42 @@ namespace MudBlazor
 
         public MudOverlay()
         {
-            _visibleState = RegisterParameter(nameof(Visible), () => Visible, () => VisibleChanged, VisibleParameterChangedHandlerAsync);
+            using var registerScope = CreateRegisterScope();
+            _visibleState = registerScope.RegisterParameter<bool>(nameof(Visible))
+                .WithParameter(() => Visible)
+                .WithEventCallback(() => VisibleChanged)
+                .WithChangeHandler(OnVisibleParameterChangedAsync);
         }
 
         protected internal async Task OnClickHandlerAsync(MouseEventArgs ev)
         {
             if (AutoClose)
-                Visible = false;
-            await OnClick.InvokeAsync(ev);
-#pragma warning disable CS0618
-            if (Command?.CanExecute(CommandParameter) ?? false)
             {
-                Command.Execute(CommandParameter);
+                await _visibleState.SetValueAsync(false);
             }
-#pragma warning restore CS0618
+
+            await OnClick.InvokeAsync(ev);
         }
 
         //if not visible or CSS `position:absolute`, don't lock scroll
         protected override async Task OnAfterRenderAsync(bool firstTime)
         {
             if (!LockScroll || Absolute)
+            {
                 return;
+            }
 
             if (Visible)
+            {
                 await BlockScrollAsync();
+            }
             else
+            {
                 await UnblockScrollAsync();
+            }
         }
 
-        private Task VisibleParameterChangedHandlerAsync()
+        private Task OnVisibleParameterChangedAsync()
         {
             return VisibleChanged.InvokeAsync(_visibleState.Value);
         }

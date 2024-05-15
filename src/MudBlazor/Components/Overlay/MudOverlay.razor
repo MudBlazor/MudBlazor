@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-@if (Visible)
+@if (_visibleState.Value)
 {
     <div @attributes="UserAttributes" class="@Classname" style="@Styles" @onclick="OnClickHandlerAsync" @onclick:stopPropagation="true">
         @if(LightBackground || DarkBackground)

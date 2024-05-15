@@ -11,7 +11,7 @@ namespace MudBlazor.UnitTests.Utilities.Mask;
 [TestFixture]
 public class PatternMaskTests
 {
-    
+
     [Test]
     public void BaseMask_Internals()
     {
@@ -134,7 +134,7 @@ public class PatternMaskTests
         mask.Text.Should().Be("(+12) 345 6789");
         mask.GetCleanText().Should().Be("123456789");
     }
-    
+
     [Test]
     public void PatternMask_Delete()
     {
@@ -238,7 +238,7 @@ public class PatternMaskTests
     [Test]
     public void PatternMask_ChangeMaskChars()
     {
-        var mask=new PatternMask("(bb+) 999-bb")
+        var mask = new PatternMask("(bb+) 999-bb")
         {
             MaskChars = new MaskChar[] { MaskChar.Letter('b'), MaskChar.Digit('9'), MaskChar.LetterOrDigit('+'), },
         };
@@ -276,7 +276,7 @@ public class PatternMaskTests
         mask.SetText("abc12");
         mask.Selection = (1, 2);
         mask.ToString().Should().Be("([a]bc) 12");
-        mask.UpdateFrom(new PatternMask("999") { Placeholder = '#', MaskChars = new []{ new MaskChar('9', "[0-9]")}, CleanDelimiters = true });
+        mask.UpdateFrom(new PatternMask("999") { Placeholder = '#', MaskChars = new[] { new MaskChar('9', "[0-9]") }, CleanDelimiters = true });
         mask.MaskChars.Length.Should().Be(1); // '9'
         mask.MaskChars[0].Char.Should().Be('9');
         mask.MaskChars[0].Regex.Should().Be("[0-9]");

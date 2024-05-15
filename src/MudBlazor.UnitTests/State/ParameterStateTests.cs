@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
+using MudBlazor.State.Builder;
 using MudBlazor.UnitTests.State.Mocks;
 using NUnit.Framework;
 
@@ -24,7 +25,12 @@ public class ParameterStateTests
         const int NewValue = 10;
         var eventFired = false;
         var callback = new EventCallback<int>(null, () => { eventFired = true; });
-        var parameterState = ParameterState.Attach(nameof(InitialValue), () => InitialValue, () => callback);
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(nameof(InitialValue)))
+            .WithGetParameterValueFunc(() => InitialValue)
+            .WithEventCallbackFunc(() => callback)
+            .Attach();
 
         // Act
         parameterState.OnInitialized();
@@ -42,7 +48,12 @@ public class ParameterStateTests
         const int InitialValue = 5;
         var eventFired = false;
         var callback = new EventCallback<int>(null, () => { eventFired = true; });
-        var parameterState = ParameterState.Attach(nameof(InitialValue), () => InitialValue, () => callback);
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(nameof(InitialValue)))
+            .WithGetParameterValueFunc(() => InitialValue)
+            .WithEventCallbackFunc(() => callback)
+            .Attach();
 
         // Act
         parameterState.OnInitialized();
@@ -58,7 +69,11 @@ public class ParameterStateTests
     {
         // Arrange
         const int InitialValue = 5;
-        var parameterState = ParameterState.Attach(nameof(InitialValue), () => InitialValue, () => (EventCallback<int>)default);
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(nameof(InitialValue)))
+            .WithGetParameterValueFunc(() => InitialValue)
+            .Attach();
 
         // Act
         parameterState.OnInitialized();
@@ -75,7 +90,11 @@ public class ParameterStateTests
         var initialValue = 5;
         const int NewValue = 10;
         // ReSharper disable once AccessToModifiedClosure
-        var parameterState = ParameterState.Attach(nameof(initialValue), () => initialValue, () => (EventCallback<int>)default);
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(nameof(initialValue)))
+            .WithGetParameterValueFunc(() => initialValue)
+            .Attach();
 
         // Act
         parameterState.OnParametersSet();
@@ -90,19 +109,87 @@ public class ParameterStateTests
     }
 
     [Test]
-    public async Task ParameterChangeHandleAsync_HandlesParameterChangeIfHandlerExists()
+    public async Task ParameterChangeHandleAsync_ShouldFire_WhenParameterChanged()
     {
         // Arrange
         const int InitialValue = 5;
-        var parameterChangedHandlerMock = new ParameterChangedHandlerMock();
-        var parameterState = ParameterState<int>.Attach(nameof(InitialValue), () => InitialValue, () => default, parameterChangedHandlerMock);
+        const int NewValue = 10;
+        const string ParameterName = nameof(InitialValue);
+        var parameterChangedHandlerMock = new ParameterChangedHandlerMock<int>();
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(ParameterName))
+            .WithGetParameterValueFunc(() => InitialValue)
+            .WithParameterChangedHandler(parameterChangedHandlerMock)
+            .Attach();
+        var parametersDictionary = new Dictionary<string, object?>
+        {
+            { ParameterName, NewValue }
+        };
+        var parameters = ParameterView.FromDictionary(parametersDictionary);
+
+        // Act
+        var changed = parameterState.HasParameterChanged(parameters);
+        await parameterState.ParameterChangeHandleAsync();
+
+        // Assert
+        changed.Should().BeTrue();
+        parameterState.HasHandler.Should().BeTrue();
+        parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
+        {
+            new ParameterChangedEventArgs<int>(ParameterName, InitialValue, NewValue)
+        });
+    }
+
+    [Test]
+    public async Task ParameterChangeHandleAsync_ShouldNotFire_WhenParameterNotChanged()
+    {
+        // Arrange
+        const int InitialValue = 5;
+        const string ParameterName = nameof(InitialValue);
+        var parameterChangedHandlerMock = new ParameterChangedHandlerMock<int>();
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(ParameterName))
+            .WithGetParameterValueFunc(() => InitialValue)
+            .WithParameterChangedHandler(parameterChangedHandlerMock)
+            .Attach();
+        var parametersDictionary = new Dictionary<string, object?>
+        {
+            { ParameterName, InitialValue }
+        };
+        var parameters = ParameterView.FromDictionary(parametersDictionary);
+
+        // Act
+        var changed = parameterState.HasParameterChanged(parameters);
+        await parameterState.ParameterChangeHandleAsync();
+
+        // Assert
+        changed.Should().BeFalse();
+        parameterState.HasHandler.Should().BeTrue();
+        parameterChangedHandlerMock.Changes.Should().BeEmpty();
+    }
+
+    [Test]
+    public async Task ParameterChangeHandleAsync_ShouldNotFire_WhenHasParameterChangedNotCalled()
+    {
+        // Arrange
+        const int InitialValue = 5;
+        const string ParameterName = nameof(InitialValue);
+        var parameterChangedHandlerMock = new ParameterChangedHandlerMock<int>();
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(ParameterName))
+            .WithGetParameterValueFunc(() => InitialValue)
+            .WithParameterChangedHandler(parameterChangedHandlerMock)
+            .Attach();
 
         // Act
         await parameterState.ParameterChangeHandleAsync();
 
         // Assert
         parameterState.HasHandler.Should().BeTrue();
-        parameterChangedHandlerMock.FireCount.Should().Be(1);
+        parameterChangedHandlerMock.Changes.Should().BeEmpty("HasParameterChanged wasn't called.");
     }
 
     [Test]
@@ -110,7 +197,11 @@ public class ParameterStateTests
     {
         // Arrange
         const int InitialValue = 5;
-        var parameterState = ParameterState.Attach(nameof(InitialValue), () => InitialValue, () => (EventCallback<int>)default);
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(nameof(InitialValue)))
+            .WithGetParameterValueFunc(() => InitialValue)
+            .Attach();
 
         // Act & Assert
         await parameterState.ParameterChangeHandleAsync(); //Does nothing, we are making coverage happy
@@ -123,11 +214,15 @@ public class ParameterStateTests
         // Arrange
         const int InitialValue = 5;
         const int NewValue = 10;
-        var parameterName = nameof(InitialValue);
-        var parameterState = ParameterState.Attach(parameterName, () => InitialValue, () => (EventCallback<int>)default);
+        const string ParameterName = nameof(InitialValue);
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(ParameterName))
+            .WithGetParameterValueFunc(() => InitialValue)
+            .Attach();
         var parametersDictionary = new Dictionary<string, object?>
         {
-            { parameterName, NewValue }
+            { ParameterName, NewValue }
         };
         var parameters = ParameterView.FromDictionary(parametersDictionary);
 
@@ -143,11 +238,15 @@ public class ParameterStateTests
     {
         // Arrange
         const int InitialValue = 5;
-        var parameterName = nameof(InitialValue);
-        var parameterState = ParameterState.Attach(parameterName, () => InitialValue, () => (EventCallback<int>)default);
+        const string ParameterName = nameof(InitialValue);
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(ParameterName))
+            .WithGetParameterValueFunc(() => InitialValue)
+            .Attach();
         var parametersDictionary = new Dictionary<string, object?>
         {
-            { parameterName, InitialValue }
+            { ParameterName, InitialValue }
         };
         var parameters = ParameterView.FromDictionary(parametersDictionary);
 
@@ -162,8 +261,16 @@ public class ParameterStateTests
     public void Equals_ReturnsTrueForSameParameterName()
     {
         // Arrange
-        var parameterState1 = ParameterState.Attach("TestParameter", () => 5, () => (EventCallback<int>)default);
-        var parameterState2 = ParameterState.Attach("TestParameter", () => 10, () => (EventCallback<int>)default);
+        var parameterState1 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata("TestParameter"))
+            .WithGetParameterValueFunc(() => 5)
+            .Attach();
+        var parameterState2 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata("TestParameter"))
+            .WithGetParameterValueFunc(() => 10)
+            .Attach();
 
         // Act
         var result = parameterState1.Equals(parameterState2);
@@ -176,8 +283,16 @@ public class ParameterStateTests
     public void Equals_ReturnsFalseForDifferentParameterName()
     {
         // Arrange
-        var parameterState1 = ParameterState.Attach("TestParameter1", () => 5, () => (EventCallback<int>)default);
-        var parameterState2 = ParameterState.Attach("TestParameter2", () => 10, () => (EventCallback<int>)default);
+        var parameterState1 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata("TestParameter1"))
+            .WithGetParameterValueFunc(() => 5)
+            .Attach();
+        var parameterState2 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata("TestParameter2"))
+            .WithGetParameterValueFunc(() => 10)
+            .Attach();
 
         // Act
         var result = parameterState1.Equals(parameterState2);
@@ -190,7 +305,11 @@ public class ParameterStateTests
     public void Equals_ReturnsTrueForSameReference()
     {
         // Arrange
-        var parameterState = ParameterState.Attach("TestParameter1", () => 5, () => (EventCallback<int>)default);
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata("TestParameter1"))
+            .WithGetParameterValueFunc(() => 5)
+            .Attach();
 
         // Act
         var result = parameterState.Equals(parameterState);
@@ -203,7 +322,11 @@ public class ParameterStateTests
     public void Equals_ReturnsFalseForNull()
     {
         // Arrange
-        var parameterState = ParameterState.Attach("TestParameter1", () => 5, () => (EventCallback<int>)default);
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata("TestParameter1"))
+            .WithGetParameterValueFunc(() => 5)
+            .Attach();
 
         // Act
         var result = parameterState.Equals(null);
@@ -216,7 +339,11 @@ public class ParameterStateTests
     public void Equals_WithDifferentType_ReturnsFalse()
     {
         // Arrange
-        var parameterState = ParameterState.Attach("TestParameter1", () => 5, () => (EventCallback<int>)default);
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata("TestParameter1"))
+            .WithGetParameterValueFunc(() => 5)
+            .Attach();
         var otherObject = new object();
 
         // Act
@@ -230,8 +357,16 @@ public class ParameterStateTests
     public void GetHashCode_ReturnsTrueForSameParameterName()
     {
         // Arrange
-        var parameterState1 = ParameterState.Attach("TestParameter", () => 5, () => (EventCallback<int>)default);
-        var parameterState2 = ParameterState.Attach("TestParameter", () => 10, () => (EventCallback<int>)default);
+        var parameterState1 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata("TestParameter"))
+            .WithGetParameterValueFunc(() => 5)
+            .Attach();
+        var parameterState2 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata("TestParameter"))
+            .WithGetParameterValueFunc(() => 10)
+            .Attach();
 
         // Act
         var hashCode1 = parameterState1.GetHashCode();
@@ -246,8 +381,16 @@ public class ParameterStateTests
     public void GetHashCode_ReturnsFalseForDifferentParameterName()
     {
         // Arrange
-        var parameterState1 = ParameterState.Attach("TestParameter1", () => 5, () => (EventCallback<int>)default);
-        var parameterState2 = ParameterState.Attach("TestParameter2", () => 10, () => (EventCallback<int>)default);
+        var parameterState1 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata("TestParameter1"))
+            .WithGetParameterValueFunc(() => 5)
+            .Attach();
+        var parameterState2 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata("TestParameter2"))
+            .WithGetParameterValueFunc(() => 10)
+            .Attach();
 
         // Act
         var hashCode1 = parameterState1.GetHashCode();
@@ -256,5 +399,25 @@ public class ParameterStateTests
 
         // Assert
         result.Should().BeFalse();
+    }
+
+    [Test]
+    public void ImplicitOperator()
+    {
+        // Arrange
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata("TestParameter1"))
+            .WithGetParameterValueFunc(() => 5)
+            .Attach();
+
+        // Act
+        parameterState.OnInitialized();
+        var value1 = parameterState.Value;
+        int value2 = parameterState;
+
+        // Assert
+        value1.Should().Be(5);
+        value2.Should().Be(5);
     }
 }

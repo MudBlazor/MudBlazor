@@ -1,4 +1,4 @@
-﻿
+
 .mud-link {
   &.mud-link-underline-none {
     text-decoration: none;
@@ -7,7 +7,13 @@
   &.mud-link-underline-hover {
     text-decoration: none;
 
-    &:hover, &:focus-visible {
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    &:focus-visible, &:active {
       text-decoration: underline;
     }
   }

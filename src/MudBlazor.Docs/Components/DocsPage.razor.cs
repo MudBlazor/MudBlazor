@@ -4,8 +4,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Models;
@@ -62,7 +62,7 @@ namespace MudBlazor.Docs.Components
             var relativePath = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
             if (relativePath.Contains("#"))
             {
-                _anchor = relativePath.Split(new[] {"#"}, StringSplitOptions.RemoveEmptyEntries)[1];
+                _anchor = relativePath.Split(new[] { "#" }, StringSplitOptions.RemoveEmptyEntries)[1];
             }
         }
 

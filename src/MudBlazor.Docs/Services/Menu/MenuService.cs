@@ -30,10 +30,10 @@ namespace MudBlazor.Docs.Services
             .AddItem("Grid", typeof(MudGrid), typeof(MudItem))
             .AddItem("Hidden", typeof(MudHidden))
             .AddItem("Breakpoint Provider", typeof(MudBreakpointProvider))
-            .AddItem("Chips", typeof(MudChip))
-            .AddItem("ChipSet", typeof(MudChipSet))
+            .AddItem("Chips", typeof(MudChip<T>))
+            .AddItem("Chip Set", typeof(MudChipSet<T>))
             .AddItem("Badge", typeof(MudBadge))
-            .AddItem("AppBar", typeof(MudAppBar))
+            .AddItem("App Bar", typeof(MudAppBar))
             .AddItem("Drawer", typeof(MudDrawer), typeof(MudDrawerHeader), typeof(MudDrawerContainer))
             .AddItem("Drop Zone", typeof(MudDropZone<T>), typeof(MudDropContainer<T>), typeof(MudDynamicDropItem<T>))
             .AddItem("Link", typeof(MudLink))
@@ -51,7 +51,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Expansion Panels", typeof(MudExpansionPanels), typeof(MudExpansionPanel))
             .AddItem("Image", typeof(MudImage))
             .AddItem("Icons", typeof(MudIcon))
-            .AddItem("List", typeof(MudList), typeof(MudListItem), typeof(MudListSubheader))
+            .AddItem("List", typeof(MudList<T>), typeof(MudListItem<T>), typeof(MudListSubheader))
             .AddItem("Paper", typeof(MudPaper))
             .AddItem("Rating", typeof(MudRating), typeof(MudRatingItem))
             .AddItem("Skeleton", typeof(MudSkeleton))
@@ -64,12 +64,12 @@ namespace MudBlazor.Docs.Services
             .AddItem("Highlighter", typeof(MudHighlighter))
             .AddItem("Element", typeof(MudElement))
             .AddItem("Focus Trap", typeof(MudFocusTrap))
-            .AddItem("TreeView", typeof(MudTreeView<T>), typeof(MudTreeViewItem<T>), typeof(MudTreeViewItemToggleButton))
+            .AddItem("Tree View", typeof(MudTreeView<T>), typeof(MudTreeViewItem<T>), typeof(MudTreeViewItemToggleButton))
             .AddItem("Breadcrumbs", typeof(MudBreadcrumbs))
-            .AddItem("ScrollToTop", typeof(MudScrollToTop))
+            .AddItem("Scroll To Top", typeof(MudScrollToTop))
             .AddItem("Popover", typeof(MudPopover))
-            .AddItem("SwipeArea", typeof(MudSwipeArea))
-            .AddItem("ToolBar", typeof(MudToolBar))
+            .AddItem("Swipe Area", typeof(MudSwipeArea))
+            .AddItem("Tool Bar", typeof(MudToolBar))
             .AddItem("Carousel", typeof(MudCarousel<T>), typeof(MudCarouselItem))
             .AddItem("Timeline", typeof(MudTimeline), typeof(MudTimelineItem))
             .AddItem("Pagination", typeof(MudPagination))
@@ -82,7 +82,7 @@ namespace MudBlazor.Docs.Services
             //Inputs
             .AddNavGroup("Form & Inputs", false, new DocsComponents()
                 .AddItem("Radio", typeof(MudRadio<T>), typeof(MudRadioGroup<T>))
-                .AddItem("Checkbox", typeof(MudCheckBox<T>))
+                .AddItem("Check Box", typeof(MudCheckBox<T>))
                 .AddItem("Select", typeof(MudSelect<T>), typeof(MudSelectItem<T>))
                 .AddItem("Slider", typeof(MudSlider<T>))
                 .AddItem("Switch", typeof(MudSwitch<T>))
@@ -92,12 +92,13 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Autocomplete", typeof(MudAutocomplete<T>))
                 .AddItem("Field", typeof(MudField))
                 .AddItem("File Upload", typeof(MudFileUpload<T>))
-                .AddItem("ToggleGroup", typeof(MudToggleGroup<T>), typeof(MudToggleItem<T>))
+                .AddItem("Toggle Group", typeof(MudToggleGroup<T>), typeof(MudToggleItem<T>))
             )
 
             //Pickers
             .AddNavGroup("Pickers", false, new DocsComponents()
                 .AddItem("Date Picker", typeof(MudDatePicker))
+                .AddItem("Date Range Picker", typeof(MudDateRangePicker))
                 .AddItem("Time Picker", typeof(MudTimePicker))
                 .AddItem("Color Picker", typeof(MudColorPicker))
             )
@@ -106,8 +107,8 @@ namespace MudBlazor.Docs.Services
             .AddNavGroup("Buttons", false, new DocsComponents()
                 .AddItem("Button", typeof(MudButton))
                 .AddItem("Button Group", typeof(MudButtonGroup))
-                .AddItem("IconButton", typeof(MudIconButton))
-                .AddItem("ToggleIconButton", typeof(MudToggleIconButton))
+                .AddItem("Icon Button", typeof(MudIconButton))
+                .AddItem("Toggle Icon Button", typeof(MudToggleIconButton))
                 .AddItem("Button FAB", typeof(MudFab))
             )
 
@@ -223,7 +224,7 @@ namespace MudBlazor.Docs.Services
         public MudComponent? GetParent(Type? child)
         {
             return child is not null
-                ? _parents.GetValueOrDefault(child) 
+                ? _parents.GetValueOrDefault(child)
                 : null;
         }
 
@@ -235,7 +236,7 @@ namespace MudBlazor.Docs.Services
             }
 
             return _componentLookup.TryGetValue(type, out var component)
-                ? component 
+                ? component
                 : _parents.GetValueOrDefault(type);
         }
 

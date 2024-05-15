@@ -1,15 +1,15 @@
 ﻿#pragma warning disable BL0005 // Set parameter outside component
 
-using AngleSharp.Html.Dom;
-using Bunit;
-using FluentAssertions;
-using MudBlazor.UnitTests.TestComponents;
-using NUnit.Framework;
 using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Html.Dom;
+using Bunit;
+using FluentAssertions;
+using MudBlazor.UnitTests.TestComponents;
+using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
@@ -38,6 +38,45 @@ namespace MudBlazor.UnitTests.Components
             picker.FixYear.Should().Be(null);
             picker.FixMonth.Should().Be(null);
             picker.FixDay.Should().Be(null);
+            picker.PlaceholderStart.Should().Be(null);
+            picker.PlaceholderEnd.Should().Be(null);
+            picker.SeparatorIcon.Should().Be(Icons.Material.Filled.ArrowRightAlt);
+        }
+
+        [Test]
+        public void DateRangePickerPlaceHolders()
+        {
+            var comp = Context.RenderComponent<MudDateRangePicker>();
+            comp.SetParametersAndRender(
+                parameters =>
+                parameters
+                .Add(picker => picker.PlaceholderStart, "Start")
+                .Add(picker => picker.PlaceholderEnd, "End")
+                );
+
+            var startInput = comp.Find("input").Attributes["placeholder"].Value.Should().Be("Start");
+            var endInput = comp.FindAll("input").Skip(1).First().Attributes["placeholder"].Value.Should().Be("End");
+        }
+
+        [Test]
+        public void DateRangePickerSeparatorIcon()
+        {
+            var newIcon = Icons.Material.Filled.Star;
+            var comp = Context.RenderComponent<MudDateRangePicker>();
+            comp.SetParametersAndRender(
+                parameters =>
+                parameters
+                .Add(picker => picker.SeparatorIcon, newIcon)
+                );
+            var markup = comp.Markup;
+
+            // Only check first svg section
+            string startText = "<svg", endText = "</svg>";
+            var sectionStart = markup.IndexOf(startText);
+            var length = markup.IndexOf(endText) - sectionStart + endText.Length;
+            var section = markup.Substring(sectionStart, length);
+
+            section.Should().Contain(newIcon);
         }
 
         [Test]
@@ -61,7 +100,7 @@ namespace MudBlazor.UnitTests.Components
         public void DateRangePicker_Preset_Timestamp()
         {
             var comp = Context.RenderComponent<DateRangePickerPresetRangeWithTimestampTest>();
-            
+
             comp.Markup.Should().Contain("mud-range-start-selected");
             comp.Markup.Should().Contain("mud-range-end-selected");
         }
@@ -99,8 +138,8 @@ namespace MudBlazor.UnitTests.Components
             var watch = Stopwatch.StartNew();
             for (var i = 0; i < 10000; i++)
             {
-                await comp.InvokeAsync(() => datepicker.Open());
-                await comp.InvokeAsync(() => datepicker.Close());
+                await comp.InvokeAsync(() => datepicker.OpenAsync());
+                await comp.InvokeAsync(() => datepicker.CloseAsync());
             }
             watch.Stop();
             watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
@@ -419,7 +458,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.IsDateDisabledFunc.Should().Be(isDisabledFunc);
             comp.FindAll("button.mud-picker-calendar-day").Select(button => ((IHtmlButtonElement)button).IsDisabled)
-                .Should().OnlyContain(disabled => disabled == true);
+                .Should().OnlyContain(disabled => disabled);
         }
 
         [Test]
@@ -470,12 +509,12 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-picker-calendar-day").Select(button => ((IHtmlButtonElement)button).IsDisabled)
                 .Should().OnlyContain(disabled => disabled == false);
         }
-        
+
         [Test]
         public void AdditionalDateClassesFunc_ClassIsAdded()
         {
             Func<DateTime, string> additionalDateClassesFunc = date => "__addedtestclass__";
-            
+
             var comp = OpenPicker(Parameter(nameof(MudDateRangePicker.AdditionalDateClassesFunc), additionalDateClassesFunc));
 
             var daysCount = comp.FindAll("button.mud-picker-calendar-day")
@@ -486,13 +525,13 @@ namespace MudBlazor.UnitTests.Components
                 .Where(button => ((IHtmlButtonElement)button).ClassName.Contains("__addedtestclass__"))
                 .Should().HaveCount(daysCount);
         }
-        
+
         [Test]
         public void SetRangeTextFunc_NullInputNoError()
         {
             var comp = Context.RenderComponent<MudDateRangePicker>(parameters =>
                 parameters.Add(p => p.DateRange,
-                    new DateRange(new DateTime(2020, 12, 26),null))); 
+                    new DateRange(new DateTime(2020, 12, 26), null)));
             comp.Find("input").Change("");
             comp.Instance.DateRange.End.Should().BeNull();
             comp.Instance.DateRange.Start.Should().BeNull();
@@ -505,7 +544,7 @@ namespace MudBlazor.UnitTests.Components
             var dateTime = new DateTime(2020, 12, 26);
             var comp = Context.RenderComponent<MudDateRangePicker>(parameters =>
                 parameters.Add(p => p.DateRange, null)
-                    .Add(p=>p.Culture, CultureInfo.CurrentCulture));
+                    .Add(p => p.Culture, CultureInfo.CurrentCulture));
             comp.Find("input").Change(dateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern));
             comp.Instance.DateRange.Start.Should().Be(dateTime);
 
@@ -577,7 +616,7 @@ namespace MudBlazor.UnitTests.Components
             dateRangePickerInstance.DateRange.Should().Be(null);
 
             // validated the picker
-            await dateRangePickerComponent.InvokeAsync(()=> dateRangePickerInstance.Validate());
+            await dateRangePickerComponent.InvokeAsync(() => dateRangePickerInstance.Validate());
             dateRangePickerInstance.Error.Should().BeTrue("Value is required and should be handled as invalid");
             dateRangePickerInstance.ErrorText.Should().Be(errorMessage);
 
@@ -591,7 +630,7 @@ namespace MudBlazor.UnitTests.Components
             dateRangePickerInstance.ErrorText.Should().BeNullOrWhiteSpace();
 
             // reset value
-            await dateRangePickerComponent.InvokeAsync(() => dateRangePickerInstance.Clear());
+            await dateRangePickerComponent.InvokeAsync(() => dateRangePickerInstance.ClearAsync());
 
             // assert values have benn nulled
             dateRangePickerInstance.Text.Should().BeNullOrEmpty();
@@ -644,7 +683,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Clicking day buttons to select a date range
             comp.FindAll("button.mud-picker-calendar-day")
-               .Where(x => x.TrimmedText().Equals("10")).First().Click();
+                .Where(x => x.TrimmedText().Equals("10")).First().Click();
             comp.FindAll("button.mud-picker-calendar-day")
                 .Where(x => x.TrimmedText().Equals("11")).First().Click();
 
@@ -688,8 +727,6 @@ namespace MudBlazor.UnitTests.Components
 
             picker.DateRange.Should().Be(new DateRange(null, null));
         }
-        
-        
 
         [Test]
         public async Task OnMouseOver_ShouldCallJavaScriptFunction()
@@ -711,6 +748,131 @@ namespace MudBlazor.UnitTests.Components
                 .HaveElementAt(1, "--selected-day")
                 .And
                 .HaveElementAt(2, 5);
+        }
+
+        /// <summary>
+        /// Optional DateRangePicker should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalDateRangePicker_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudDateRangePicker>();
+
+            comp.FindAll("input").Should().AllSatisfy(input =>
+            {
+                input.HasAttribute("required").Should().BeFalse();
+                input.GetAttribute("aria-required").Should().Be("false");
+            });
+        }
+
+        /// <summary>
+        /// Required DateRangePicker should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredDateRangePicker_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudDateRangePicker>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.FindAll("input").Should().AllSatisfy(input =>
+            {
+                input.HasAttribute("required").Should().BeTrue();
+                input.GetAttribute("aria-required").Should().Be("true");
+            });
+        }
+
+        /// <summary>
+        /// Required and aria-required DateRangePicker attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredDateRangePickerAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudDateRangePicker>();
+
+            comp.FindAll("input").Should().AllSatisfy(input =>
+            {
+                input.HasAttribute("required").Should().BeFalse();
+                input.GetAttribute("aria-required").Should().Be("false");
+            });
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.FindAll("input").Should().AllSatisfy(input =>
+            {
+                input.HasAttribute("required").Should().BeTrue();
+                input.GetAttribute("aria-required").Should().Be("true");
+            });
+        }
+
+        [Test]
+        public void FormatFirst_Should_RenderCorrectly()
+        {
+            DateRange range = new DateRange(new DateTime(2024, 04, 22), new DateTime(2024, 04, 23));
+            var comp = Context.RenderComponent<DateRangePickerFormatTest>
+            (parameters =>
+            {
+                parameters.Add(p => p.DateRange, range);
+                parameters.Add(p => p.FormatFirst, true);
+            });
+            var instance = comp.FindComponent<MudDateRangePicker>().Instance;
+            instance.DateRange.Should().Be(range);
+            instance.DateFormat.Should().Be("yyyy MMMM dd");
+            comp.Markup.Should().Contain("2024 April 22");
+            comp.Markup.Should().Contain("2024 April 23");
+        }
+
+        [Test]
+        public void FormatLast_Should_RenderCorrectly()
+        {
+            DateRange range = new DateRange(new DateTime(2024, 04, 22), new DateTime(2024, 04, 23));
+            var comp = Context.RenderComponent<DateRangePickerFormatTest>
+            (parameters =>
+            {
+                parameters.Add(p => p.DateRange, range);
+                parameters.Add(p => p.FormatFirst, false);
+            });
+            var instance = comp.FindComponent<MudDateRangePicker>().Instance;
+            instance.DateRange.Should().Be(range);
+            instance.DateFormat.Should().Be("yyyy MMMM dd");
+            comp.Markup.Should().Contain("2024 April 22");
+            comp.Markup.Should().Contain("2024 April 23");
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void CheckCloseOnClearDateRangePicker(bool closeOnClear)
+        {
+            // Define a date range for comparison
+            var initialDateRange = new DateRange(
+                new DateTime(DateTime.Now.Year, DateTime.Now.Month, 01),
+                new DateTime(DateTime.Now.Year, DateTime.Now.Month, 02));
+
+            // Get access to the date range picker of the instance
+            var comp = Context.RenderComponent<DateRangePickerCloseOnClearTest>(
+                Parameter(nameof(DateRangePickerCloseOnClearTest.DateRange), initialDateRange),
+                Parameter(nameof(DateRangePickerCloseOnClearTest.CloseOnClear), closeOnClear));
+
+            // Open the date range picker
+            comp.Find("input").Click();
+
+            // Clicking day buttons to select a date range
+            comp
+                .FindAll("button.mud-button").First(x => x.TrimmedText().Equals("Clear")).Click();
+
+            // Check that the date range was cleared
+            comp.Instance.DateRange.Should().NotBe(initialDateRange);
+            if (closeOnClear)
+            {
+                // Check that the component is closed
+                comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            }
+            else
+            {
+                // Check that the component is open
+                comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            }
         }
     }
 }

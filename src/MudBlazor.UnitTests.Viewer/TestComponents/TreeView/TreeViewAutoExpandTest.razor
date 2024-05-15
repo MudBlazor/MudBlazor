@@ -1,0 +1,39 @@
+﻿
+<MudTreeView @ref="TreeView" Hover AutoExpand="@AutoExpand" @bind-SelectedValue="SelectedValue" SelectionMode="@SelectionMode.ToggleSelection">
+    <MudTreeViewItem Value='"C:"' Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen">
+        <MudTreeViewItem Value='"config"' CanExpand="@ConfigCanExpand" Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen">
+            <MudTreeViewItem Value='"launch.json"' Icon="@Icons.Custom.FileFormats.FileCode" />
+            <MudTreeViewItem Value='"tasks.json"' Icon="@Icons.Custom.FileFormats.FileCode" />
+        </MudTreeViewItem>
+        <MudTreeViewItem Value='"images"' Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen">
+            <MudTreeViewItem Value='"logo.png"' Icon="@Icons.Custom.FileFormats.FileImage" />
+        </MudTreeViewItem>
+    </MudTreeViewItem>
+</MudTreeView>
+
+<MudStack Row Justify="Justify.Center" Style="width: 100%" Wrap="Wrap.Wrap">
+    <MudButton Class="expand-all" Color="Color.Primary" OnClick="@(()=>TreeView.ExpandAllAsync())" Variant="Variant.Filled">Expand All</MudButton>
+    <MudButton Class="collapse-all" Color="Color.Dark" OnClick="@(()=>TreeView.CollapseAllAsync())" Variant="Variant.Filled">Collapse All</MudButton>
+    <MudChipSet T="string" @bind-SelectedValue="SelectedValue" Color="Color.Primary" Variant="Variant.Text" SelectionMode="@SelectionMode.ToggleSelection">
+        <MudChip Text="config" />
+        <MudChip Text="launch.json" />
+        <MudChip Text="tasks.json" />
+        <MudChip Text="images" />
+        <MudChip Text="logo.png" />
+    </MudChipSet>
+    <MudSwitch @bind-Value="AutoExpand" Color="Color.Primary">AutoExpand</MudSwitch>
+</MudStack>
+
+@code {
+    public MudTreeView<string> TreeView;
+
+    [Parameter]
+    public string SelectedValue { get; set; } = null;
+
+    [Parameter]
+    public bool AutoExpand { get; set; } = true;
+
+    [Parameter]
+    public bool ConfigCanExpand { get; set; } = true;
+
+}
