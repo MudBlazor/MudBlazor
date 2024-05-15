@@ -93,6 +93,7 @@ namespace MudBlazor
             .Build();
 
         [CascadingParameter(Name = "RightToLeft")]
+        [Category(CategoryTypes.Chart.Behavior)]
         public bool RightToLeft { get; set; }
 
         /// <summary>
@@ -174,6 +175,7 @@ namespace MudBlazor
         /// Occurs when the <see cref="SelectedIndex"/> has changed.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Chart.Behavior)]
         public EventCallback<int> SelectedIndexChanged { get; set; }
 
         protected string ToS(double d, string format = null)

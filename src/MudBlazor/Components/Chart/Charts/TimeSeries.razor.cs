@@ -17,7 +17,8 @@ namespace MudBlazor.Charts
         private const double VerticalStartSpace = 25.0;
         private const double VerticalEndSpace = 25.0;
 
-        [CascadingParameter] public MudTimeSeriesChartBase MudChartParent { get; set; }
+        [CascadingParameter] 
+        public MudTimeSeriesChartBase MudChartParent { get; set; }
 
         private List<SvgPath> _horizontalLines = new();
         private List<SvgText> _horizontalValues = new();
