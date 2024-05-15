@@ -75,13 +75,6 @@ namespace MudBlazor
         public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
 
         /// <summary>
-        /// The ARIA label for the close icon button.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Alert.Behavior)]
-        public string? CloseIconAriaLabel { get; set; } = "Close alert";
-
-        /// <summary>
         /// Gets or sets whether a close icon is displayed.
         /// </summary>
         /// <remarks>

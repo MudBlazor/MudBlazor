@@ -214,13 +214,6 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public string? CloseIcon { get; set; }
 
     /// <summary>
-    /// The ARIA label for the close icon button.
-    /// </summary>
-    [Parameter]
-    [Category(CategoryTypes.Chip.Behavior)]
-    public string? CloseIconAriaLabel { get; set; } = "Close chip";
-
-    /// <summary>
     /// Displays a ripple effect when this chip is clicked.
     /// </summary>
     /// <remarks>
