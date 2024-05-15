@@ -817,6 +817,13 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.FindAll("td")[1].GetAttribute("style").Should().Contain("background-color:#E5BDE5");
             dataGrid.FindAll("td")[2].GetAttribute("style").Should().Contain("font-weight:bold");
+
+            dataGrid.FindAll("th")[0].GetAttribute("style").Should().Contain("background-color:#E5BDE5");
+            dataGrid.FindAll("th")[0].GetAttribute("style").Should().Contain("font-weight:bold");
+
+            dataGrid.FindAll("th")[0].GetAttribute("class").Should().Contain("class-a");
+            dataGrid.FindAll("th")[0].GetAttribute("class").Should().Contain("class-b");
+            dataGrid.FindAll("th")[0].GetAttribute("class").Should().Contain("class-c");
         }
 
         [Test]

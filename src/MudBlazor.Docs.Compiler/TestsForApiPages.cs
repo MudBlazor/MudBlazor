@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.Docs.Compiler
 {
 #nullable enable
-    public class TestsForApiPages
+    public partial class TestsForApiPages
     {
         public bool Execute()
         {
@@ -97,30 +98,53 @@ namespace MudBlazor.Docs.Compiler
                 return type.Name;
             }
 
-            var genericTypename = type.Name;
             if (removeT)
             {
-                return genericTypename.Replace("`1", string.Empty).Replace("`2", string.Empty);
+                return _genericTypeRegex.Replace(type.Name, string.Empty);
             }
 
-            if (RequiresStructConstraint(type))
-            {
-                return genericTypename.Replace("`1", "<TStruct>").Replace("`2", "<T, U>");
-            }
-            return genericTypename.Replace("`1", "<T>").Replace("`2", "<T, U>");
+            return _genericTypeRegex.Replace(type.Name, $"<{string.Join(',', GetGenericTypeArguments(type))}>");
         }
 
-        private static bool RequiresStructConstraint(Type componentType)
+        private static IEnumerable<string> GetGenericTypeArguments(Type type)
         {
-            if (componentType.IsGenericType)
+            if (!type.IsGenericType)
             {
-                var genericArgs = componentType.GetGenericArguments();
-                var requiresStructConstraint = genericArgs.Any(arg => arg.GenericParameterAttributes.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint));
-
-                return requiresStructConstraint;
+                yield break;
             }
 
-            return false;
+            if (_genericTypeIndexCache.TryGetValue(type.GetGenericTypeDefinition(), out var genericTypes))
+            {
+                foreach (var genericType in genericTypes)
+                {
+                    yield return genericType;
+                }
+            }
+            else
+            {
+                for (var i = 0; i < type.GetGenericArguments().Length; i++)
+                {
+                    yield return "string";
+                }
+            }
         }
+
+        /// <summary>
+        /// Regular expression to match generic number at the end of a type name.
+        /// example: for input MyType`2 it matches `2
+        /// </summary>
+        private static readonly Regex _genericTypeRegex = GenericTypeRegex();
+
+        /// <summary>
+        /// Cache for generic types that have a specific type for each generic argument.
+        /// </summary>
+        private static readonly Dictionary<Type, string[]> _genericTypeIndexCache = new()
+        {
+            { typeof(MudSlider<>), ["decimal"]},
+            { typeof(MudSwitch<>), ["bool"]}
+        };
+
+        [GeneratedRegex("`\\d?$", RegexOptions.Compiled)]
+        private static partial Regex GenericTypeRegex();
     }
 }

@@ -19,7 +19,7 @@
         else
         {
             // Reset after a while to prevent sudden collapse.
-            Task.Delay(350).ContinueWith(t => _panelContent = null).AndForget(); 
+            Task.Delay(350).ContinueWith(t => _panelContent = null).CatchAndLog(); 
         }
     }
 

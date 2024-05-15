@@ -24,7 +24,7 @@ namespace MudBlazor
         public DateTime? Date
         {
             get => _value;
-            set => SetDateAsync(value, true).AndForget();
+            set => SetDateAsync(value, true).CatchAndLog();
         }
 
         private DateTime _lastSetTime = DateTime.MinValue;

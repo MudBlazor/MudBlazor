@@ -111,7 +111,7 @@ namespace MudBlazor
         public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        /// Whether the button takes up 100% of the container width.
+        /// Expands the button to 100% of the container width.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.

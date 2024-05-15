@@ -66,8 +66,11 @@ namespace MudBlazor
         public Dictionary<string, object?> UserAttributes { get; set; } = new Dictionary<string, object?>();
 
         /// <summary>
-        /// Whether <see cref="JSRuntime" /> is available.
+        /// Whether the <see cref="JSRuntime" /> is available.
         /// </summary>
+        /// <remarks>
+        /// When <c>true</c>, JavaScript interop calls can be made.
+        /// </remarks>
         protected bool IsJSRuntimeAvailable { get; set; }
 
         /// <summary>
@@ -391,6 +394,8 @@ namespace MudBlazor
                         case "IsEditable":
                         case "IsEditing":
                         case "IsEditSwitchBlocked":
+                        case "IsHidden":
+                        case "IsHiddenChanged":
                             NotifyIllegalParameter(parameter);
                             break;
                     }

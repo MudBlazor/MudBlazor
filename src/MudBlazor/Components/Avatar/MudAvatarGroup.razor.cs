@@ -35,7 +35,7 @@ namespace MudBlazor
         public int Spacing { get; set; } = 3;
 
         /// <summary>
-        /// Whether an outline is displayed for the group.
+        /// Displays an outline for the group.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  This property is useful to differentiate avatars which are the same color or use images.
@@ -62,7 +62,7 @@ namespace MudBlazor
         public int MaxElevation { set; get; } = 0;
 
         /// <summary>
-        /// Whether rounded corners are disabled when the number of avatars exceeds <see cref="Max"/>.
+        /// Disables rounded corners when the number of avatars exceeds <see cref="Max"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the <c>border-radius</c> CSS style is set to <c>0</c>.
@@ -72,7 +72,7 @@ namespace MudBlazor
         public bool MaxSquare { get; set; }
 
         /// <summary>
-        /// Whether corners are rounded when the number of avatars exceeds <see cref="Max"/>.
+        /// Shows rounded corners when the number of avatars exceeds <see cref="Max"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
