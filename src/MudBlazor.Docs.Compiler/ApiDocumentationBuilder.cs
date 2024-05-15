@@ -656,19 +656,19 @@ public partial class ApiDocumentationBuilder()
         }
         if (UnresolvedProperties.Count > 0)
         {
-            Console.WriteLine($"WARNING: {UnresolvedProperties.Count} properties have XML documentation which couldn't be matched to a type's property.");
+            Console.WriteLine($"API Builder: WARNING: {UnresolvedProperties.Count} properties have XML documentation which couldn't be matched to a type's property.");
         }
         if (UnresolvedMethods.Count > 0)
         {
-            Console.WriteLine($"WARNING: {UnresolvedMethods.Count} methods have XML documentation which couldn't be matched to a type's property.");
+            Console.WriteLine($"API Builder: WARNING: {UnresolvedMethods.Count} methods have XML documentation which couldn't be matched to a type's property.");
         }
         if (UnresolvedEvents.Count > 0)
         {
-            Console.WriteLine($"WARNING: {UnresolvedEvents.Count} events have XML documentation which couldn't be matched to a type's property.");
+            Console.WriteLine($"API Builder: WARNING: {UnresolvedEvents.Count} events have XML documentation which couldn't be matched to a type's property.");
         }
         if (UnresolvedFields.Count > 0)
         {
-            Console.WriteLine($"WARNING: {UnresolvedFields.Count} fields have XML documentation which couldn't be matched to a type's property.");
+            Console.WriteLine($"API Builder: WARNING: {UnresolvedFields.Count} fields have XML documentation which couldn't be matched to a type's property.");
         }
     }
 

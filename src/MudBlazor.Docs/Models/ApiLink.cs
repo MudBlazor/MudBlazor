@@ -10,7 +10,7 @@ namespace MudBlazor.Docs.Models
     {
         public static string GetApiLinkFor(Type type)
         {
-            return $"api/{GetComponentName(type)}";
+            return $"api/{type.Name}";
         }
 
         public static string GetComponentLinkFor(Type type)
