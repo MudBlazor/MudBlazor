@@ -74,7 +74,7 @@ namespace MudBlazor
         public T? Value
         {
             get => _value;
-            set => SetSelectedOptionAsync(value, true).AndForget();
+            set => SetSelectedOptionAsync(value, true).CatchAndLog();
         }
 
         [Parameter]

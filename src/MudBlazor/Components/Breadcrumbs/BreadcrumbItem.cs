@@ -21,7 +21,7 @@ namespace MudBlazor
         public string? Href { get; }
 
         /// <summary>
-        /// Whether this item cannot be clicked.
+        /// Prevents this item from being clicked.
         /// </summary>
         public bool Disabled { get; }
 

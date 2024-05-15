@@ -59,7 +59,7 @@ namespace MudBlazor
         private MudTreeView<T>? MudTreeRoot { get; set; }
 
         [CascadingParameter]
-        private MudTreeViewItem<T>? Parent { get; set; }
+        internal MudTreeViewItem<T>? Parent { get; set; }
 
         /// <summary>
         /// Value of the TreeViewItem. Acts as the displayed text if no text is set.

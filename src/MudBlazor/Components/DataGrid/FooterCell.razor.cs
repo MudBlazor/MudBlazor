@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -18,12 +19,14 @@ namespace MudBlazor
 
         private string _classname =>
             new CssBuilder("footer-cell")
+                .AddClass(Column?.FooterClassFunc?.Invoke(items ?? Enumerable.Empty<T>()))
                 .AddClass(Column?.FooterClass)
                 .AddClass(Column?.footerClassname)
                 .AddClass(Class)
             .Build();
         private string _style =>
             new StyleBuilder()
+                .AddStyle(Column?.FooterStyleFunc?.Invoke(items ?? Enumerable.Empty<T>()))
                 .AddStyle(Column?.FooterStyle)
                 .AddStyle(Style)
                 .AddStyle("font-weight", "600")

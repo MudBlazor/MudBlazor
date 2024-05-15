@@ -270,7 +270,7 @@ namespace MudBlazor
                 _selectedValues = new HashSet<T>(set, _comparer);
                 SelectionChangedFromOutside?.Invoke(_selectedValues);
                 if (!MultiSelection)
-                    SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
+                    SetValueAsync(_selectedValues.FirstOrDefault()).CatchAndLog();
                 else
                 {
                     //Warning. Here the Converter was not set yet
@@ -278,16 +278,16 @@ namespace MudBlazor
                     {
                         SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
                             selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
-                            multiSelectionTextFunc: MultiSelectionTextFunc).AndForget();
+                            multiSelectionTextFunc: MultiSelectionTextFunc).CatchAndLog();
                     }
                     else
                     {
-                        SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue: false).AndForget();
+                        SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue: false).CatchAndLog();
                     }
                 }
                 SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues, _comparer));
                 if (MultiSelection && typeof(T) == typeof(string))
-                    SetValueAsync((T)(object)Text, updateText: false).AndForget();
+                    SetValueAsync((T)(object)Text, updateText: false).CatchAndLog();
             }
         }
 
@@ -454,7 +454,7 @@ namespace MudBlazor
                 if (value != _multiSelection)
                 {
                     _multiSelection = value;
-                    UpdateTextPropertyAsync(false).AndForget();
+                    UpdateTextPropertyAsync(false).CatchAndLog();
                 }
             }
         }
@@ -603,7 +603,7 @@ namespace MudBlazor
                 }
 
                 await SetValueAsync(value);
-                _elementReference.SetText(Text).AndForget();
+                _elementReference.SetText(Text).CatchAndLog();
                 _selectedValues.Clear();
                 _selectedValues.Add(value);
             }
@@ -710,7 +710,7 @@ namespace MudBlazor
             {
                 StateHasChanged();
                 await OnBlur.InvokeAsync(new FocusEventArgs());
-                _elementReference.FocusAsync().AndForget(ignoreExceptions: true);
+                _elementReference.FocusAsync().CatchAndLog(ignoreExceptions: true);
                 StateHasChanged();
             }
 
@@ -964,13 +964,13 @@ namespace MudBlazor
                     }
                     break;
             }
-            OnKeyDown.InvokeAsync(obj).AndForget();
+            OnKeyDown.InvokeAsync(obj).CatchAndLog();
 
         }
 
         internal void HandleKeyUp(KeyboardEventArgs obj)
         {
-            OnKeyUp.InvokeAsync(obj).AndForget();
+            OnKeyUp.InvokeAsync(obj).CatchAndLog();
         }
 
         /// <summary>
@@ -1023,7 +1023,7 @@ namespace MudBlazor
             await BeginValidateAsync();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
-                SetValueAsync((T)(object)Text, updateText: false).AndForget();
+                SetValueAsync((T)(object)Text, updateText: false).CatchAndLog();
         }
 
         public void RegisterShadowItem(MudSelectItem<T> item)
