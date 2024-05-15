@@ -5,7 +5,7 @@
     @ChildContent
     @if (!Disabled && (TooltipContent is not null || !string.IsNullOrEmpty(Text)))
     {
-        <MudPopover Open="_visibleState.Value" Duration="@Duration" Delay="@Delay" AnchorOrigin="@_anchorOrigin" TransformOrigin="@_transformOrigin" Class="@Classname" Style="@Style" Paper="false">
+        <MudPopover Open="@_visibleState.Value" Duration="@Duration" Delay="@Delay" AnchorOrigin="@_anchorOrigin" TransformOrigin="@_transformOrigin" Class="@Classname" Style="@Style" Paper="false">
             @if (TooltipContent is not null)
             {
                 <div class="d-block">
