@@ -60,7 +60,7 @@ namespace MudBlazor.Charts
                 var minY = _series.SelectMany(series => series.Data).Min(x => x.Value);
                 var maxY = _series.SelectMany(series => series.Data).Max(x => x.Value);
                 
-                var includeYAxisZeroPoint = _series.Any(x => x.Type == TimeSeriesDiplayType.Area || x.RequireYAxisZeroPoint);
+                var includeYAxisZeroPoint = MudChartParent?.ChartOptions.YAxisRequireZeroPoint ?? _series.Any(x => x.Type == TimeSeriesDiplayType.Area || x.RequireYAxisZeroPoint);
                 if (includeYAxisZeroPoint)
                 {
                     minY = Math.Min(minY, 0); // we want to include the 0 in the grid

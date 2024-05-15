@@ -19,6 +19,9 @@
     public ChartOptions Options = new ChartOptions
         {
             YAxisLines = false,
+            YAxisTicks = 500,
+            MaxNumYAxisTicks = 10,
+            YAxisRequireZeroPoint = true,
             XAxisLines = false,
         };
 
@@ -42,7 +45,6 @@
                 Name = "Series 1",
                 Data = Enumerable.Range(-360, 360).Select(x => new TimeSeriesChartSeries.TimeValue(now.AddSeconds(x * 10), rand.Next(2000, 15000))).ToList(),
                 IsVisible = true,
-                RequireYAxisZeroPoint = true,
             };
 
         Series.Add(_chart1);

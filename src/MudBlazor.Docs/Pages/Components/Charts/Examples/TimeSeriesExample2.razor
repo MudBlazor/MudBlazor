@@ -16,7 +16,14 @@
 @code
 {
     private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.
-    public ChartOptions Options = new ChartOptions() { };
+    public ChartOptions Options = new ChartOptions
+        {
+            YAxisLines = false,
+            YAxisTicks = 500,
+            MaxNumYAxisTicks = 10,
+            YAxisRequireZeroPoint = true,
+            XAxisLines = false,
+        };
 
     private TimeSeriesChartSeries _chart1 = new();
 

@@ -15,6 +15,7 @@
         public string YAxisFormat { get; set; }
         public bool YAxisLines { get; set; } = true;
         public bool XAxisLines { get; set; }
+        public bool YAxisRequireZeroPoint { get; set; }
 
         /// <summary>
         /// If true, legend will not be displayed.
