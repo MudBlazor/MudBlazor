@@ -112,205 +112,6 @@ public partial class ApiDocumentationBuilder()
     public List<string> UnresolvedEvents { get; set; } = [];
 
     /// <summary>
-    /// (For documentation coverage metrics), the most important types to have well documented.
-    /// </summary>
-    /// <remarks>
-    /// This property is only used to calculate metrics.
-    /// </remarks>
-    public static List<string> CriticalTypes =
-    [
-        // Core MudBlazor Components (base classes aren't necessary)
-        "MudAlert",
-        "MudAppBar",
-        "MudAutocomplete`1",
-        "MudAvatar",
-        "MudAvatarGroup",
-        "MudBadge",
-        "MudBreadcrumbs",
-        "MudBreakpointProvider",
-        "MudButton",
-        "MudButtonGroup",
-        "MudCard",
-        "MudCardActions",
-        "MudCardContent",
-        "MudCardHeader",
-        "MudCardMedia",
-        "MudCarousel`1",
-        "MudCarouselItem",
-        "MudChart",
-        "MudCheckBox`1",
-        "MudChip`1",
-        "MudChipSet`1",
-        "MudCollapse",
-        "MudColor",
-        "MudColorPicker",
-        "MudContainer",
-        "MudDataGrid`1",
-        "MudDataGridPager`1",
-        "MudDatePicker",
-        "MudDateRangePicker",
-        "MudDialog",
-        "MudDialogInstance",
-        "MudDialogProvider",
-        "MudDivider",
-        "MudDragAndDropIndexChangedEventArgs",
-        "MudDragAndDropItemTransaction`1",
-        "MudDragAndDropTransactionFinishedEventArgs`1",
-        "MudDrawer",
-        "MudDrawerContainer",
-        "MudDrawerHeader",
-        "MudDropContainer`1",
-        "MudDropZone`1",
-        "MudDynamicDropItem`1",
-        "MudDynamicTabs",
-        "MudElement",
-        "MudExpansionPanel",
-        "MudExpansionPanels",
-        "MudFab",
-        "MudField",
-        "MudFileUpload`1",
-        "MudFlexBreak",
-        "MudFocusTrap",
-        "MudForm",
-        "MudGlobal",
-        "MudGrid",
-        "MudHidden",
-        "MudHighlighter",
-        "MudIcon",
-        "MudIconButton",
-        "MudImage",
-        "MudInput`1",
-        "MudInputAdornment",
-        "MudInputControl",
-        "MudInputLabel",
-        "MudInputString",
-        "MudItem",
-        "MudItemDropInfo`1",
-        "MudLayout",
-        "MudLink",
-        "MudList`1",
-        "MudListItem`1",
-        "MudListSubheader",
-        "MudLocalizer",
-        "MudMainContent",
-        "MudMask",
-        "MudMenu",
-        "MudMenuItem",
-        "MudMessageBox",
-        "MudNavGroup",
-        "MudNavLink",
-        "MudNavMenu",
-        "MudNumericField`1",
-        "MudOverlay",
-        "MudPageContentNavigation",
-        "MudPageContentSection",
-        "MudPagination",
-        "MudPaper",
-        "MudPicker`1",
-        "MudPickerContent",
-        "MudPickerToolbar",
-        "MudPopover",
-        "MudPopoverBase",
-        "MudPopoverHandler",
-        "MudPopoverProvider",
-        "MudProgressCircular",
-        "MudProgressLinear",
-        "MudRadio`1",
-        "MudRadioGroup`1",
-        "MudRangeInput`1",
-        "MudRating",
-        "MudRatingItem",
-        "MudRender",
-        "MudRTLProvider",
-        "MudScrollToTop",
-        "MudSelect`1",
-        "MudSelectItem`1",
-        "MudSimpleTable",
-        "MudSkeleton",
-        "MudSlider`1",
-        "MudSnackbarProvider",
-        "MudSortableColumn`2",
-        "MudSpacer",
-        "MudSparkLine",
-        "MudStack",
-        "MudSwipeArea",
-        "MudSwitch`1",
-        "MudTable`1",
-        "MudTableGroupRow`1",
-        "MudTablePager",
-        "MudTableSortLabel`1",
-        "MudTabPanel",
-        "MudTabs",
-        "MudTd",
-        "MudText",
-        "MudTextField`1",
-        "MudTFootRow",
-        "MudTh",
-        "MudTHeadRow",
-        "MudTheme",
-        "MudThemeProvider",
-        "MudTimeline",
-        "MudTimelineItem",
-        "MudTimePicker",
-        "MudToggleGroup`1",
-        "MudToggleIconButton",
-        "MudToggleItem`1",
-        "MudToolBar",
-        "MudTooltip",
-        "MudTr",
-        "MudTreeView`1",
-        "MudTreeViewItem`1",
-        "MudTreeViewItemToggleButton",
-        "MudVirtualize`1",
-        // Charts
-        "Bar",
-        "Donut",
-        "Line",
-        "Pie",
-        "StackedBar",
-        "ChartOptions",
-        "ChartSeries",
-        // Common enumerations
-        "Adornment",
-        "Align",
-        "Anchor",
-        "ButtonType",
-        "Color",
-        "ColorPickerMode",
-        "ColorPickerView",
-        "Direction",
-        "DrawerClipMode",
-        "DrawerVariant",
-        "Edge",
-        "HorizontalAlignment",
-        "InputMode",
-        "InputType",
-        "Justify",
-        "Margin",
-        "MaxWidth",
-        "Orientation",
-        "Origin",
-        "PickerVariant",
-        "Placement",
-        "Position",
-        "Severity",
-        "Size",
-        "SkeletonType",
-        "SortDirection",
-        "SortMode",
-        "TimelineAlign",
-        "TimelinePosition",
-        "Transition",
-        "Typo",
-        "Variant",
-        "Width",
-        "Wrap",
-        // Commonly classes for components
-        "TableState",
-        "BreadcrumbItem",
-    ];
-
-    /// <summary>
     /// Any methods to exclude from documentation.
     /// </summary>
     private static List<string> ExcludedMethods =
@@ -827,10 +628,6 @@ public partial class ApiDocumentationBuilder()
     /// </summary>
     public void CalculateDocumentationCoverage()
     {
-        // Calculate how well the most critical items are documented
-        var totalCriticalTypes = DocumentedTypes.Count(type => CriticalTypes.Contains(type.Value.Name));
-        var totalCriticalDocumentedTypes = DocumentedTypes.Count(type => CriticalTypes.Contains(type.Value.Name) && !string.IsNullOrEmpty(type.Value.Summary));
-        var criticalTypeCoverage = totalCriticalDocumentedTypes / (double)totalCriticalTypes;
         // Calculate how many items have good documentation
         var summarizedTypes = DocumentedTypes.Count(type => !string.IsNullOrEmpty(type.Value.Summary));
         var summarizedProperties = DocumentedProperties.Count(property => !string.IsNullOrEmpty(property.Value.Summary));
@@ -846,7 +643,6 @@ public partial class ApiDocumentationBuilder()
 
         Console.WriteLine("XML Documentation Coverage for MudBlazor:");
         Console.WriteLine();
-        Console.WriteLine($"Core Types: {totalCriticalDocumentedTypes} of {totalCriticalTypes} ({criticalTypeCoverage:P0}) core types");
         Console.WriteLine($"Types:      {summarizedTypes} of {DocumentedTypes.Count} ({typeCoverage:P0}) other types");
         Console.WriteLine($"Properties: {summarizedProperties} of {DocumentedProperties.Count} ({propertyCoverage:P0}) properties");
         Console.WriteLine($"Methods:    {summarizedMethods} of {DocumentedMethods.Count} ({methodCoverage:P0}) methods");
@@ -856,7 +652,7 @@ public partial class ApiDocumentationBuilder()
 
         if (UnresolvedTypes.Count > 0)
         {
-            Console.WriteLine($"WARNING: {UnresolvedTypes.Count} types have XML documentation which couldn't be matched to a type.");
+            Console.WriteLine($"API Builder: WARNING: {UnresolvedTypes.Count} types have XML documentation which couldn't be matched to a type.");
         }
         if (UnresolvedProperties.Count > 0)
         {
