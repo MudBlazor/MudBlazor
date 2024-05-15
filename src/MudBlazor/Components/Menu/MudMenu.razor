@@ -45,5 +45,5 @@
             </MudList>
         </CascadingValue>
     </MudPopover>
-    <MudOverlay Visible="@(_open && ActivationEvent != PointerEvent.HoverOver)" OnClick="@ToggleMenuAsync" LockScroll="LockScroll" />
+    <MudOverlay Visible="@(_open && ActivationEvent != PointerEvent.PointerOver)" OnClick="@ToggleMenuAsync" LockScroll="LockScroll" />
 </div>

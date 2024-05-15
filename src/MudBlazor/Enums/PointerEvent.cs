@@ -4,5 +4,5 @@ public enum PointerEvent
 {
     LeftClick,
     RightClick,
-    HoverOver,
+    PointerOver,
 }
