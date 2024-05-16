@@ -35,15 +35,15 @@ namespace MudBlazor
             new CssBuilder("mud-picker")
                 .AddClass("mud-picker-paper")
                 .AddClass("mud-picker-view", PickerVariant == PickerVariant.Inline)
-                .AddClass("mud-picker-open", IsOpen && PickerVariant == PickerVariant.Inline)
+                .AddClass("mud-picker-open", Open && PickerVariant == PickerVariant.Inline)
                 .AddClass("mud-picker-popover-paper", PickerVariant == PickerVariant.Inline)
                 .AddClass("mud-dialog", PickerVariant == PickerVariant.Dialog)
                 .Build();
 
         protected string PickerPaperStylename =>
             new StyleBuilder()
-                .AddStyle("transition-duration", $"{Math.Round(MudGlobal.TransitionDuration.TotalMilliseconds)}ms")
-                .AddStyle("transition-delay", $"{Math.Round(MudGlobal.TransitionDelay.TotalMilliseconds)}ms")
+                .AddStyle("transition-duration", $"{Math.Round(MudGlobal.TransitionDefaults.Duration.TotalMilliseconds)}ms")
+                .AddStyle("transition-delay", $"{Math.Round(MudGlobal.TransitionDefaults.Delay.TotalMilliseconds)}ms")
                 .AddStyle(Style)
                 .Build();
 
@@ -277,7 +277,7 @@ namespace MudBlazor
         public string Text
         {
             get => _text;
-            set => SetTextAsync(value, true).AndForget();
+            set => SetTextAsync(value, true).CatchAndLog();
         }
 
         private string _text;
@@ -349,11 +349,11 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
-        protected bool IsOpen { get; set; }
+        protected bool Open { get; set; }
 
         public Task ToggleOpenAsync()
         {
-            if (IsOpen)
+            if (Open)
             {
                 return CloseAsync();
             }
@@ -365,7 +365,7 @@ namespace MudBlazor
 
         public async Task CloseAsync(bool submit = true)
         {
-            IsOpen = false;
+            Open = false;
 
             if (submit)
             {
@@ -378,7 +378,7 @@ namespace MudBlazor
 
         public Task OpenAsync()
         {
-            IsOpen = true;
+            Open = true;
             StateHasChanged();
 
             return OnOpenedAsync();
@@ -425,7 +425,7 @@ namespace MudBlazor
             base.OnInitialized();
             if (PickerVariant == PickerVariant.Static)
             {
-                IsOpen = true;
+                Open = true;
                 if (Elevation == 8)
                 {
                     _pickerElevation = 0;
@@ -515,14 +515,14 @@ namespace MudBlazor
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
-            if (IsOpen)
+            if (Open)
             {
-                IsOpen = false;
+                Open = false;
                 await OnClosedAsync();
             }
             else
             {
-                IsOpen = true;
+                Open = true;
                 await OnOpenedAsync();
                 await FocusAsync();
             }

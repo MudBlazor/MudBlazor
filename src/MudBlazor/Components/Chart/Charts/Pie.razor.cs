@@ -11,7 +11,7 @@ namespace MudBlazor.Charts
     partial class Pie : MudChartBase
     {
         /// <summary>
-        /// Gets or sets the chart, if any, containing this component.
+        /// The chart, if any, containing this component.
         /// </summary>
         [CascadingParameter]
         public MudChart MudChartParent { get; set; }

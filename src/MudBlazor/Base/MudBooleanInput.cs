@@ -18,7 +18,7 @@ namespace MudBlazor
         public MudBooleanInput() : base(new BoolConverter<T?>()) { }
 
         /// <summary>
-        /// Gets or sets whether the user can interact with this input.
+        /// Prevents the user from interacting with this input.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -33,7 +33,7 @@ namespace MudBlazor
         protected bool GetDisabledState() => Disabled || ParentDisabled;
 
         /// <summary>
-        /// Gets or sets whether the use can change the input.
+        /// Prevents the user from changing the input.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the user can copy the input but cannot change it.
@@ -48,7 +48,7 @@ namespace MudBlazor
         protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
         /// <summary>
-        /// Gets or sets the currently selected value.
+        /// The currently selected value.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
@@ -63,7 +63,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets or sets whether the parent component also handles the click event.
+        /// Prevents the parent component from receiving click events.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  When <c>true</c>, the click will not bubble up to parent components.
@@ -115,7 +115,7 @@ namespace MudBlazor
             var changed = base.SetConverter(value);
             if (changed)
             {
-                SetBoolValueAsync(Converter.Set(Value)).AndForget();
+                SetBoolValueAsync(Converter.Set(Value)).CatchAndLog();
             }
 
             return changed;

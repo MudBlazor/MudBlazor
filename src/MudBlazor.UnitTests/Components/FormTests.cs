@@ -1998,5 +1998,17 @@ namespace MudBlazor.UnitTests.Components
             checkBox.Error.Should().BeTrue();
             checkBox.ErrorText.Should().Be("Required");
         }
+
+        [Test]
+        public async Task FormSpacingClass()
+        {
+            var comp = Context.RenderComponent<MudForm>();
+
+            for (var i = 0; i <= 20; i++)
+            {
+                comp.SetParam(x => x.Spacing, i);
+                comp.Find("form.mud-form").ClassList.Should().Contain($"gap-{i}");
+            }
+        }
     }
 }

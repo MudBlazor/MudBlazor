@@ -13,7 +13,7 @@ namespace MudBlazor.Extensions;
 /// <summary>
 /// Provides extension methods for <see cref="ComponentBaseWithState"/> components to facilitate accessing parameter states.
 /// </summary>
-internal static class ComponentBaseWithStateExtensions
+public static class ComponentBaseWithStateExtensions
 {
     /// <summary>
     /// Gets the read-only parameter state of a specified property in the component.

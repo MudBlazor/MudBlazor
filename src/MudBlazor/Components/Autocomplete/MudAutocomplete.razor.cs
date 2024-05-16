@@ -30,7 +30,7 @@ namespace MudBlazor
         private int _selectedListItemIndex;
         private int _elementKey = 0;
         private int _returnedItemsCount;
-        private bool _isOpen;
+        private bool _open;
         private bool _doNotOpenMenuOnNextFocus;
         private MudInput<string> _elementReference;
         private CancellationTokenSource _cancellationTokenSrc;
@@ -67,7 +67,7 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// Gets or sets the CSS classes applied to the popover.
+        /// The CSS classes applied to the popover.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.
@@ -77,7 +77,7 @@ namespace MudBlazor
         public string PopoverClass { get; set; }
 
         /// <summary>
-        /// Gets or sets the CSS classes applied to the internal list.
+        /// The CSS classes applied to the internal list.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.
@@ -87,7 +87,7 @@ namespace MudBlazor
         public string ListClass { get; set; }
 
         /// <summary>
-        /// Gets or sets the CSS classes applied to internal list items.
+        /// The CSS classes applied to internal list items.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.
@@ -97,7 +97,7 @@ namespace MudBlazor
         public string ListItemClass { get; set; }
 
         /// <summary>
-        /// Gets or sets where the popover will open from.
+        /// The location where the popover will open from.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Origin.BottomCenter" />.
@@ -107,7 +107,7 @@ namespace MudBlazor
         public Origin AnchorOrigin { get; set; } = Origin.BottomCenter;
 
         /// <summary>
-        /// Gets or sets the transform origin point for the popover.
+        /// The transform origin point for the popover.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Origin.TopCenter"/>.
@@ -117,7 +117,7 @@ namespace MudBlazor
         public Origin TransformOrigin { get; set; } = Origin.TopCenter;
 
         /// <summary>
-        /// Gets or sets whether compact padding will be used.
+        /// Uses compact padding.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -127,7 +127,7 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// Gets or sets the "open" Autocomplete icon.
+        /// The "open" Autocomplete icon.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.ArrowDropDown"/>.
@@ -137,7 +137,7 @@ namespace MudBlazor
         public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         /// <summary>
-        /// Gets or sets the "close" Autocomplete icon.
+        /// The "close" Autocomplete icon.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.ArrowDropDown"/>.
@@ -147,7 +147,7 @@ namespace MudBlazor
         public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         /// <summary>
-        /// Gets or sets the maximum height, in pixels, of the Autocomplete when it is open.
+        /// The maximum height, in pixels, of the Autocomplete when it is open.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>300</c>.
@@ -157,7 +157,7 @@ namespace MudBlazor
         public int MaxHeight { get; set; } = 300;
 
         /// <summary>
-        /// Gets or sets the function used to get the display text for each item.
+        /// The function used to get the display text for each item.
         /// </summary>
         /// <remarks>
         /// Defaults to the <c>ToString()</c> method of items.
@@ -181,7 +181,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets or sets whether to show the progress indicator during searches.
+        /// Shows the progress indicator during searches.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  The progress indicator uses the color specified in the <see cref="ProgressIndicatorColor"/> property.
@@ -191,7 +191,7 @@ namespace MudBlazor
         public bool ShowProgressIndicator { get; set; } = false;
 
         /// <summary>
-        /// Gets or sets the color of the progress indicator.
+        /// The color of the progress indicator.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Default"/>.  This property is used when <see cref="ShowProgressIndicator"/> is <c>true</c>.
@@ -201,7 +201,7 @@ namespace MudBlazor
         public Color ProgressIndicatorColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// Gets or sets a function used to search for items.
+        /// The function used to search for items.
         /// </summary>
         /// <remarks>
         /// This function searches for items containing the specified <c>string</c> value, and returns items which match up to the <see cref="MaxItems"/> property.  You can use the provided <see cref="CancellationToken"/> which is marked as canceled when the user changes the search text or selects a value from the list.
@@ -211,7 +211,7 @@ namespace MudBlazor
         public Func<string, CancellationToken, Task<IEnumerable<T>>> SearchFunc { get; set; }
 
         /// <summary>
-        /// Gets or sets the maximum number of items to display.
+        /// The maximum number of items to display.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>10</c>.  A value of <c>null</c> will display all items.
@@ -221,7 +221,7 @@ namespace MudBlazor
         public int? MaxItems { get; set; } = 10;
 
         /// <summary>
-        /// Gets or sets the minimum number of characters typed to initiate a search.
+        /// The minimum number of characters typed to initiate a search.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>0</c>.
@@ -231,7 +231,7 @@ namespace MudBlazor
         public int MinCharacters { get; set; } = 0;
 
         /// <summary>
-        /// Gets or sets whether to reset the selected value if the user deletes the text.
+        /// Reset the selected value if the user deletes the text.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -241,7 +241,7 @@ namespace MudBlazor
         public bool ResetValueOnEmptyText { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the text will be selected (highlighted) when the component is activated.
+        /// Highlights the text when the component receives focus.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -251,7 +251,7 @@ namespace MudBlazor
         public bool SelectOnActivation { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets whether other items can be selected without resetting the Value.
+        /// Selects items without resetting the <c>Value</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  When <c>true</c>, selecting an option will trigger a <see cref="SearchFunc"/> with the current Text.  Otherwise, an empty string is passed which can make it easier to view and select other options without resetting the Value. When <c>false</c>, <c>T</c> must either be a <c>record</c> or override the <c>GetHashCode</c> and <c>Equals</c> methods.
@@ -261,7 +261,7 @@ namespace MudBlazor
         public bool Strict { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets the debounce interval, in milliseconds.
+        /// The debounce interval, in milliseconds.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>100</c>.  A higher value can help reduce the number of calls to <see cref="SearchFunc"/>, which can improve responsiveness.
@@ -271,7 +271,7 @@ namespace MudBlazor
         public int DebounceInterval { get; set; } = 100;
 
         /// <summary>
-        /// Gets or sets the custom template used to display unselected items.
+        /// The custom template used to display unselected items.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="ItemSelectedTemplate"/> property to control the display of selected items.
@@ -281,7 +281,7 @@ namespace MudBlazor
         public RenderFragment<T> ItemTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template used to display selected items.
+        /// The custom template used to display selected items.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="ItemTemplate"/> property to control the display of unselected items.
@@ -291,7 +291,7 @@ namespace MudBlazor
         public RenderFragment<T> ItemSelectedTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template used to display disabled items.
+        /// The custom template used to display disabled items.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -301,7 +301,7 @@ namespace MudBlazor
         public RenderFragment<T> ItemDisabledTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template used when the number of items returned by <see cref="SearchFunc"/> is more than the value of the <see cref="MaxItems"/> property.
+        /// The custom template used when the number of items returned by <see cref="SearchFunc"/> is more than the value of the <see cref="MaxItems"/> property.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -311,7 +311,7 @@ namespace MudBlazor
         public RenderFragment MoreItemsTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template used when no items are returned by <see cref="SearchFunc"/>.
+        /// The custom template used when no items are returned by <see cref="SearchFunc"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -321,7 +321,7 @@ namespace MudBlazor
         public RenderFragment NoItemsTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template shown above the list of items, if <see cref="SearchFunc"/> returns items to display.  Otherwise, the fragment is hidden.
+        /// The custom template shown above the list of items, if <see cref="SearchFunc"/> returns items to display.  Otherwise, the fragment is hidden.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="AfterItemsTemplate"/> property to control content displayed below items.
@@ -331,7 +331,7 @@ namespace MudBlazor
         public RenderFragment BeforeItemsTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template shown below the list of items, if <see cref="SearchFunc"/> returns items to display.  Otherwise, the fragment is hidden.
+        /// The custom template shown below the list of items, if <see cref="SearchFunc"/> returns items to display.  Otherwise, the fragment is hidden.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="BeforeItemsTemplate"/> property to control content displayed above items.
@@ -341,7 +341,7 @@ namespace MudBlazor
         public RenderFragment AfterItemsTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template used for the progress indicator when <see cref="ShowProgressIndicator"/> is <c>true</c>.
+        /// The custom template used for the progress indicator when <see cref="ShowProgressIndicator"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="ProgressIndicatorInPopoverTemplate"/> property to control content displayed for the progress indicator inside the popover.
@@ -351,7 +351,7 @@ namespace MudBlazor
         public RenderFragment ProgressIndicatorTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom template used for the progress indicator inside the popover when <see cref="ShowProgressIndicator"/> is <c>true</c>.
+        /// The custom template used for the progress indicator inside the popover when <see cref="ShowProgressIndicator"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="ProgressIndicatorTemplate"/> property to control content displayed for the progress indicator.
@@ -361,7 +361,7 @@ namespace MudBlazor
         public RenderFragment ProgressIndicatorInPopoverTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the <c>Text</c> property is overridden when an item is selected.
+        /// Overrides the <c>Text</c> property when an item is selected.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  When <c>true</c>, selecting a value will update the Text property.  When <c>false</c>, incomplete values for Text are allowed.
@@ -371,7 +371,7 @@ namespace MudBlazor
         public bool CoerceText { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets whether the <c>Value</c> property is set even if no match is found by <see cref="SearchFunc"/>.
+        /// Sets the <c>Value</c> property even if no match is found by <see cref="SearchFunc"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the user input will be applied to the Value property which allows it to be validated and show an error message.
@@ -381,7 +381,7 @@ namespace MudBlazor
         public bool CoerceValue { get; set; }
 
         /// <summary>
-        /// Gets or sets the function used to determine if an item should be disabled.
+        /// The function used to determine if an item should be disabled.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -391,13 +391,13 @@ namespace MudBlazor
         public Func<T, bool> ItemDisabledFunc { get; set; }
 
         /// <summary>
-        /// Occurs when the <see cref="IsOpen"/> property has changed.
+        /// Occurs when the <see cref="Open"/> property has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<bool> IsOpenChanged { get; set; }
+        public EventCallback<bool> OpenChanged { get; set; }
 
         /// <summary>
-        /// Gets or sets whether pressing the <c>Tab</c> key updates the Value to the currently selected item.
+        /// Updates the Value to the currently selected item when pressing the <c>Tab</c> key.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -407,7 +407,7 @@ namespace MudBlazor
         public bool SelectValueOnTab { get; set; }
 
         /// <summary>
-        /// Gets or sets whether a Clear icon button is displayed.
+        /// Displays the Clear icon button.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <c>ClearIcon</c> property to control the Clear button icon.
@@ -435,29 +435,29 @@ namespace MudBlazor
         public EventCallback<int> ReturnedItemsCountChanged { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the search result drop-down is currently displayed.
+        /// Displays the search result drop-down.
         /// </summary>
         /// <remarks>
-        /// When this property changes, the <see cref="IsOpenChanged"/> event will occur.
+        /// When this property changes, the <see cref="OpenChanged"/> event will occur.
         /// </remarks>
-        public bool IsOpen
+        public bool Open
         {
-            get => _isOpen;
+            get => _open;
             // Note: the setter is protected because it was needed by a user who derived his own autocomplete from this class.
-            // Note: setting IsOpen will not open or close it. Use ToggleMenu() for that.
+            // Note: setting Open will not open or close it. Use ToggleMenu() for that.
             protected set
             {
-                if (_isOpen == value)
+                if (_open == value)
                     return;
-                _isOpen = value;
+                _open = value;
 
-                IsOpenChanged.InvokeAsync(_isOpen).AndForget();
+                OpenChanged.InvokeAsync(_open).CatchAndLog();
             }
         }
 
         private bool IsLoading => _currentSearchTask is { IsCompleted: false };
 
-        private string CurrentIcon => !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
+        private string CurrentIcon => !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _open ? CloseIcon : OpenIcon;
 
         public MudAutocomplete()
         {
@@ -485,7 +485,7 @@ namespace MudBlazor
                     await SetTextAsync(optionText, false);
 
                 _debounceTimer?.Dispose();
-                IsOpen = false;
+                Open = false;
 
                 await BeginValidateAsync();
 
@@ -588,12 +588,12 @@ namespace MudBlazor
         /// </remarks>
         public Task ToggleMenuAsync()
         {
-            if ((GetDisabledState() || GetReadOnlyState()) && !IsOpen)
+            if ((GetDisabledState() || GetReadOnlyState()) && !Open)
             {
                 return Task.CompletedTask;
             }
 
-            return IsOpen ? CloseMenuAsync() : OpenMenuAsync();
+            return Open ? CloseMenuAsync() : OpenMenuAsync();
         }
 
         /// <summary>
@@ -605,7 +605,7 @@ namespace MudBlazor
             _debounceTimer?.Dispose();
             await RestoreScrollPositionAsync();
             await CoerceTextToValue();
-            IsOpen = false;
+            Open = false;
             StateHasChanged();
         }
 
@@ -619,7 +619,7 @@ namespace MudBlazor
         {
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
             {
-                IsOpen = false;
+                Open = false;
                 StateHasChanged();
                 return;
             }
@@ -634,7 +634,7 @@ namespace MudBlazor
                 if (ProgressIndicatorInPopoverTemplate != null)
                 {
                     // Open before searching if a progress indicator is defined.
-                    IsOpen = true;
+                    Open = true;
                 }
 
                 // Search while selected if enabled and the Text is equivalent to the Value.
@@ -683,7 +683,7 @@ namespace MudBlazor
             if (_isFocused || !wasFocused)
             {
                 // Open after the search has finished if we're still focused (UI), or were never focused in the first place (programmatically).
-                IsOpen = true;
+                Open = true;
             }
 
             if (_items?.Length == 0)
@@ -710,7 +710,7 @@ namespace MudBlazor
             try
             {
                 _isCleared = true;
-                IsOpen = false;
+                Open = false;
 
                 await SetTextAsync(null, updateValue: false);
                 await CoerceValueToText();
@@ -747,16 +747,16 @@ namespace MudBlazor
             {
                 // We need to catch Tab here because a tab will move focus to the next element and thus we'd never get the tab key in OnInputKeyUp.
                 case "Tab":
-                    if (IsOpen)
+                    if (Open)
                     {
                         if (SelectValueOnTab)
                             await OnEnterKey();
                         else
-                            IsOpen = false;
+                            Open = false;
                     }
                     break;
                 case "ArrowDown":
-                    if (IsOpen)
+                    if (Open)
                     {
                         var increment = _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) + 1) - _selectedListItemIndex;
                         await SelectNextItem(increment < 0 ? 1 : increment);
@@ -771,7 +771,7 @@ namespace MudBlazor
                     {
                         await CloseMenuAsync();
                     }
-                    else if (!IsOpen)
+                    else if (!Open)
                     {
                         await ToggleMenuAsync();
                     }
@@ -792,7 +792,7 @@ namespace MudBlazor
             {
                 case "Enter":
                 case "NumpadEnter":
-                    if (IsOpen)
+                    if (Open)
                     {
                         await OnEnterKey();
                     }
@@ -853,7 +853,7 @@ namespace MudBlazor
 
         internal async Task OnEnterKey()
         {
-            if (!IsOpen)
+            if (!Open)
                 return;
 
             try
@@ -866,8 +866,8 @@ namespace MudBlazor
             }
             finally
             {
-                if (IsOpen)
-                    IsOpen = false;
+                if (Open)
+                    Open = false;
             }
         }
 
@@ -880,7 +880,7 @@ namespace MudBlazor
         {
             _isFocused = true;
 
-            if (_doNotOpenMenuOnNextFocus || IsOpen || GetDisabledState() || GetReadOnlyState())
+            if (_doNotOpenMenuOnNextFocus || Open || GetDisabledState() || GetReadOnlyState())
             {
                 _doNotOpenMenuOnNextFocus = false;
                 return;
@@ -911,6 +911,16 @@ namespace MudBlazor
             // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value,
             // resulting in a premature validation. thus, don't call base
             //base.OnBlurred(args);
+        }
+
+        private Task OnOverlayVisibleChangedAsync(bool willBeVisible)
+        {
+            if (!willBeVisible && Open)
+            {
+                return CloseMenuAsync();
+            }
+
+            return Task.CompletedTask;
         }
 
         private Task CoerceTextToValue()

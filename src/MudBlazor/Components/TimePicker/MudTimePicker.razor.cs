@@ -146,7 +146,7 @@ namespace MudBlazor
                 }
 
                 Touched = true;
-                SetTextAsync(Converter.Set(_value), false).AndForget();
+                SetTextAsync(Converter.Set(_value), false).CatchAndLog();
             }
         }
 
@@ -172,7 +172,7 @@ namespace MudBlazor
                 }
 
                 Touched = true;
-                SetTextAsync(Converter.Set(_value), false).AndForget();
+                SetTextAsync(Converter.Set(_value), false).CatchAndLog();
             }
         }
 
@@ -184,7 +184,7 @@ namespace MudBlazor
         public TimeSpan? Time
         {
             get => _value;
-            set => SetTimeAsync(value, true).AndForget();
+            set => SetTimeAsync(value, true).CatchAndLog();
         }
 
         protected async Task SetTimeAsync(TimeSpan? time, bool updateValue)
@@ -658,7 +658,7 @@ namespace MudBlazor
             switch (obj.Key)
             {
                 case "ArrowRight":
-                    if (IsOpen)
+                    if (Open)
                     {
                         if (obj.CtrlKey)
                         {
@@ -686,7 +686,7 @@ namespace MudBlazor
 
                     break;
                 case "ArrowLeft":
-                    if (IsOpen)
+                    if (Open)
                     {
                         if (obj.CtrlKey)
                         {
@@ -714,13 +714,13 @@ namespace MudBlazor
 
                     break;
                 case "ArrowUp":
-                    if (!IsOpen && !Editable)
+                    if (!Open && !Editable)
                     {
-                        IsOpen = true;
+                        Open = true;
                     }
                     else if (obj.AltKey)
                     {
-                        IsOpen = false;
+                        Open = false;
                     }
                     else if (obj.ShiftKey)
                     {
@@ -733,9 +733,9 @@ namespace MudBlazor
 
                     break;
                 case "ArrowDown":
-                    if (!IsOpen && !Editable)
+                    if (!Open && !Editable)
                     {
-                        IsOpen = true;
+                        Open = true;
                     }
                     else if (obj.ShiftKey)
                     {
@@ -752,7 +752,7 @@ namespace MudBlazor
                     break;
                 case "Enter":
                 case "NumpadEnter":
-                    if (!IsOpen)
+                    if (!Open)
                     {
                         await OpenAsync();
                     }
@@ -767,7 +767,7 @@ namespace MudBlazor
                 case " ":
                     if (!Editable)
                     {
-                        if (!IsOpen)
+                        if (!Open)
                         {
                             await OpenAsync();
                         }

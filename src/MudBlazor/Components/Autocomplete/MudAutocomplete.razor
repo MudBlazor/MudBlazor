@@ -10,6 +10,7 @@
                 <MudInput @ref="_elementReference" @key="_elementKey" InputType="InputType.Text"
                           Class="mud-select-input" Margin="@Margin"
                           Variant="@Variant"
+                          Typo="@Typo"
                           Label="@Label"
                           TextUpdateSuppression="@TextUpdateSuppression"
                           Value="@Text" Underline="@Underline"
@@ -42,7 +43,7 @@
                     }
                 }
 
-                <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
+                <MudPopover Open="@Open" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
                     @if (ProgressIndicatorInPopoverTemplate != null && IsLoading)
                     {
                         @ProgressIndicatorInPopoverTemplate
@@ -61,28 +62,23 @@
                                 var item = _items[index];
                                 bool isSelected = index == _selectedListItemIndex;
                                 bool isDisabled = !_enabledItemIndices.Contains(index);
+                                bool showSelectedTemplate = isSelected && ItemSelectedTemplate != null;
+                                bool showDisabledTemplate = isDisabled && ItemDisabledTemplate != null;
                                 var captureIndex = index;
                                 <MudListItem T="T" Value="@item" @key="@item" id="@GetListItemId(captureIndex)" Disabled="@(isDisabled)" OnClick="@(async () => await ListItemOnClick(item))" OnClickPreventDefault="true" Class="@GetListItemClassname(isSelected)">
-                                    @if (ItemTemplate == null)
-                                    {
-                                        @GetItemString(item)
-                                    }
-                                    else if (isDisabled && ItemDisabledTemplate != null)
-                                    {
-                                        @ItemDisabledTemplate(item)
-                                    }
-                                    else if (isSelected)
-                                    {
-                                        @if (ItemSelectedTemplate == null)
-                                            @ItemTemplate(item)
-                                        else
-                                            @ItemSelectedTemplate(item)
-
-                                    }
-                                    else
-                                    {
-                                        @ItemTemplate(item)
-                                    }
+                                     @if (showDisabledTemplate)
+                                     {
+                                         @ItemDisabledTemplate(item)
+                                     } else if (showSelectedTemplate)
+                                     {
+                                         @ItemSelectedTemplate(item)
+                                     } else if (ItemTemplate != null)
+                                     {
+                                         @ItemTemplate(item)
+                                     } else
+                                     {
+                                         @GetItemString(item)
+                                     }
                                 </MudListItem>
                             }
                             @if (MoreItemsTemplate != null && _returnedItemsCount > MaxItems)
@@ -111,4 +107,4 @@
     </div>
 </CascadingValue>
 
-<MudOverlay Visible="IsOpen" OnClick="CloseMenuAsync" @ontouchstart="CloseMenuAsync" LockScroll="false" />
+<MudOverlay AutoClose Visible="Open" VisibleChanged="OnOverlayVisibleChangedAsync" LockScroll="false" />

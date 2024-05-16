@@ -1,7 +1,7 @@
 ﻿@using System.Globalization
 @namespace MudBlazor.Docs.Examples
 
-<MudSlider T="decimal" Value="@_value" ValueLabel="true" Step="0.5m" ValueLabelCultureInfo="@_selectedCulture" ValueLabelStringFormat="@_selectedFormat" />
+<MudSlider T="decimal" Value="@_value" ValueLabel="true" Step="0.5m" Culture="@_selectedCulture" ValueLabelFormat="@_selectedFormat" />
 
 <MudSelect T="CultureInfo" @bind-Value="_selectedCulture">
     @foreach (var availableCulture in _availableCultures)

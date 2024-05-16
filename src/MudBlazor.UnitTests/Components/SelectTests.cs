@@ -518,7 +518,7 @@ namespace MudBlazor.UnitTests.Components
             items.Should().HaveCount(7);
             foreach (var item in items)
             {
-                item.Instance.IsSelected.Should().BeTrue();
+                item.Instance.Selected.Should().BeTrue();
                 item.FindComponent<MudListItem<string>>().Instance.Icon.Should().Be("<path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z\"/>");
             }
 
@@ -1036,7 +1036,7 @@ namespace MudBlazor.UnitTests.Components
             var select = comp.FindComponent<MudSelect<string>>();
             var mudSelectElement = comp.Find(".mud-select");
             comp.Find("div.mud-input-control").Click();
-            select.Instance._isOpen.Should().BeTrue();
+            select.Instance._open.Should().BeTrue();
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[0].Click();
             items[2].Click();

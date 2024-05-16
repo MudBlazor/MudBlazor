@@ -2,7 +2,7 @@
 @typeparam T
 
 <TemplateColumn T="T" Tag="@("select-column")" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderStyle="width:0%"
-                Filterable="false" IsEditable="false" FooterTemplate="@GetFooterTemplate()">
+                Filterable="false" Editable="false" FooterTemplate="@GetFooterTemplate()">
     <HeaderTemplate>
         @if (ShowInHeader)
         {
@@ -10,7 +10,7 @@
         }
     </HeaderTemplate>
     <CellTemplate>
-        <MudCheckBox T="bool" Size="@Size" Value="@context.IsSelected" ValueChanged="@context.Actions.SetSelectedItemAsync" />
+        <MudCheckBox T="bool" Size="@Size" Value="@context.Selected" ValueChanged="@context.Actions.SetSelectedItemAsync" />
     </CellTemplate>
 </TemplateColumn>
 

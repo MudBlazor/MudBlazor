@@ -27,6 +27,7 @@
                           Placeholder="@Placeholder"
                           Label="@Label"
                           Variant="@Variant"
+                          Typo="@Typo"
                           TextUpdateSuppression="false"
                           Value="@(Strict && !IsValueInList ? null : Text)"
                           Underline="@Underline"
@@ -50,7 +51,7 @@
                         @GetSelectedValuePresenter()
                     }
                 </MudInput>
-                <MudPopover Open=@(_isOpen)
+                <MudPopover Open=@(_open)
                             MaxHeight="@MaxHeight"
                             AnchorOrigin="@AnchorOrigin"
                             TransformOrigin="@TransformOrigin"
@@ -87,4 +88,4 @@
 
 </CascadingValue>
 <!-- mousedown instead of click needed to close the menu before OnLostFocus runs -->
-<MudOverlay Visible="_isOpen" @onmousedown="@(() => CloseMenu(false))" LockScroll="@LockScroll" />
+<MudOverlay Visible="_open" @onmousedown="@(() => CloseMenu(false))" LockScroll="@LockScroll" />

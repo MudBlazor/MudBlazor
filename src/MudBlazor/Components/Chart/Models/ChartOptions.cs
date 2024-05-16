@@ -11,7 +11,7 @@ namespace MudBlazor
     public class ChartOptions
     {
         /// <summary>
-        /// Gets or sets the spacing between vertical tick marks.
+        /// The spacing between vertical tick marks.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>20</c>.
@@ -19,7 +19,7 @@ namespace MudBlazor
         public int YAxisTicks { get; set; } = 20;
 
         /// <summary>
-        /// Gets or sets the maximum allowed number of vertical tick marks.
+        /// The maximum allowed number of vertical tick marks.
         /// </summary>
         /// <remarks>
         /// If the number of ticks calculated exceeds this value, the tick marks will automatically be thinned out.
@@ -27,7 +27,7 @@ namespace MudBlazor
         public int MaxNumYAxisTicks { get; set; } = 20;
 
         /// <summary>
-        /// Gets or sets the format applied to numbers on the vertical axis.
+        /// The format applied to numbers on the vertical axis.
         /// </summary>
         /// <remarks>
         /// Values in this property are standard .NET format strings, such as those passed into the <c>ToString()</c> method.  For a list of common formats, see: <see href="https://learn.microsoft.com/en-us/dotnet/standard/base-types/formatting-types" />
@@ -35,7 +35,7 @@ namespace MudBlazor
         public string YAxisFormat { get; set; }
 
         /// <summary>
-        /// Gets or sets whether vertical axis lines are shown.
+        /// Shows vertical axis lines.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -43,7 +43,7 @@ namespace MudBlazor
         public bool YAxisLines { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets whether horizontal axis lines are shown.
+        /// Shows horizontal axis lines.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -51,7 +51,7 @@ namespace MudBlazor
         public bool XAxisLines { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the legend is shown.
+        /// Shows the chart series legend.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -59,7 +59,7 @@ namespace MudBlazor
         public bool ShowLegend { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets a list of colors applied to series values.
+        /// The list of colors applied to series values.
         /// </summary>
         /// <remarks>
         /// Defaults to an array of <c>20</c> colors.
@@ -73,7 +73,7 @@ namespace MudBlazor
         };
 
         /// <summary>
-        /// Gets or sets the technique used to smooth lines.
+        /// The technique used to smooth lines.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="InterpolationOption.Straight"/>.  Only takes effect when the <see cref="MudChart"/> type is <see cref="ChartType.Line"/>.
@@ -81,7 +81,7 @@ namespace MudBlazor
         public InterpolationOption InterpolationOption { get; set; } = InterpolationOption.Straight;
 
         /// <summary>
-        /// Gets or sets the width of lines, in pixels.
+        /// The width of lines, in pixels.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>3</c> for three pixels.  Only takes effect when the <see cref="MudChart"/> type is <see cref="ChartType.Line"/>.

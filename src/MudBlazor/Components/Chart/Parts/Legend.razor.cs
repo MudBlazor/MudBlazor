@@ -10,13 +10,13 @@ namespace MudBlazor.Charts
     public partial class Legend : MudChartBase
     {
         /// <summary>
-        /// Gets or sets the chart, if any, containing this component.
+        /// The chart, if any, containing this component.
         /// </summary>
         [CascadingParameter]
         public MudChart MudChartParent { get; set; }
 
         /// <summary>
-        /// Gets or sets the data labels for this legend.
+        /// The data labels for this legend.
         /// </summary>
         [Parameter]
         public List<SvgLegend> Data { get; set; } = new List<SvgLegend>();

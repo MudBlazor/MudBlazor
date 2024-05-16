@@ -14,7 +14,7 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// Gets or sets the size of the drop shadow.
+        /// The size of the drop shadow.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>1</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
@@ -24,7 +24,7 @@ namespace MudBlazor
         public int Elevation { set; get; } = 1;
 
         /// <summary>
-        /// Gets or sets whether rounded corners are disabled.
+        /// Disables rounded corners.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -34,7 +34,7 @@ namespace MudBlazor
         public bool Square { get; set; }
 
         /// <summary>
-        /// Gets or sets whether an outline is displayed.
+        /// Displays an outline.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  This property is useful to differentiate cards which are the same color or use images.
@@ -44,7 +44,7 @@ namespace MudBlazor
         public bool Outlined { get; set; }
 
         /// <summary>
-        /// Gets or sets any content within this component.
+        /// The content within this component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Card.Behavior)]
