@@ -5,23 +5,24 @@
 // License: MIT
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor
 {
     public interface IDialogReference
     {
         Guid Id { get; }
-        RenderFragment RenderFragment { get; set; }
 
-        [Obsolete("This will always return true"), ExcludeFromCodeCoverage]
-        bool AreParametersRendered { get => true; set { } }
+        RenderFragment RenderFragment { get; set; }
 
         Task<DialogResult> Result { get; }
 
+        TaskCompletionSource<bool> RenderCompleteTaskCompletionSource { get; }
+
         void Close();
+
         void Close(DialogResult result);
 
         bool Dismiss(DialogResult result);

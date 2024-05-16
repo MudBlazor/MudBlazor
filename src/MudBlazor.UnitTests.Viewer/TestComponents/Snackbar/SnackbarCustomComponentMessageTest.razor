@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@inject ISnackbar SnackbarService
+
+<MudButton OnClick="@OnClick">Show the snackbar!</MudButton>
+
+@code {
+    public static string __description__ = "Click the button to fire a Snackbar built with a custom component.";
+
+    private void OnClick()
+    {
+        SnackbarService.Add<SnackbarCustomComponent>();
+    }
+}

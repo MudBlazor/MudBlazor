@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 
 namespace MudBlazor
 {
@@ -7,7 +8,7 @@ namespace MudBlazor
         [Description("flip-never")]
         FlipNever,
         [Description("flip-onopen")]
-        FilpOnOpen,
+        FlipOnOpen,
         [Description("flip-always")]
         FlipAlways,
     }

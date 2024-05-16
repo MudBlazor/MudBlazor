@@ -1,13 +1,13 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 <MudPopoverProvider></MudPopoverProvider>
-
-<MudDataGrid Items="@_items" Filterable="true">
+@*TODO: Needs work*@
+<MudDataGrid Items="@_items" Filterable>
     <Columns>
-        <Column T="IDictionary<string, object>" Field="Name" FieldType="typeof(string)" />
-        <Column T="IDictionary<string, object>" Field="Age" FieldType="typeof(int)" />
-        <Column T="IDictionary<string, object>" Field="Status" FieldType="typeof(Severity)" />
-        <Column T="IDictionary<string, object>" Field="Hired" FieldType="typeof(bool)" />
-        <Column T="IDictionary<string, object>" Field="HiredOn" FieldType="typeof(DateTime)" />
+        <PropertyColumn Property="@(x => x["Name"])" />
+        <PropertyColumn Property="@(x => x["Age"])" />
+        <PropertyColumn Property="@(x => x["Status"])" />
+        <PropertyColumn Property="@(x => x["Hired"])" />
+        <PropertyColumn Property="@(x => x["HiredOn"])" />
     </Columns>
 </MudDataGrid>
 

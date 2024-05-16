@@ -8,7 +8,7 @@
 <span>Name: @name</span>
 <span>Age: @age</span>
 <br><br>
-<MudButton Class="reset" OnClick="@ResetForm">Reset</MudButton>
+<MudButton Class="reset" OnClick="@ResetFormAsync">Reset</MudButton>
 
 @code
 {
@@ -18,9 +18,9 @@
     private int? age;
     private DateTime? date;
 
-    void ResetForm()
+    private async Task ResetFormAsync()
     {
-        form.Reset();
+        await form.ResetAsync();
         StateHasChanged();
     }
 }

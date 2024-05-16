@@ -43,8 +43,9 @@
                 "/consoleloggerparameters:NoSummary",
                 "/p:CollectCoverage=true",
                 "/p:CoverletOutputFormat=cobertura",
-                "/p:ExcludeByAttribute=\"ExcludeFromCodeCoverage\"",
-                "/p:Include=\"[MudBlazor]*\"",
+                "/p:ExcludeByAttribute='ExcludeFromCodeCoverageAttribute'",
+                "/p:ExcludeByFile='**/*.g.cs'", 
+                "/p:Include='[MudBlazor]*'",
                 "/p:SkipAutoProps=true",
                 "/p:CoverletOutput='./TestResults/'"
             ],

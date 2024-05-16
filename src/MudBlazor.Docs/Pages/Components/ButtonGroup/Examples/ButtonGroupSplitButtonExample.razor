@@ -2,7 +2,7 @@
 
 <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
     <MudButton>@_buttonText</MudButton>
-    <MudMenu Icon="@Icons.Material.Filled.ArrowDropDown">
+    <MudMenu Icon="@Icons.Material.Filled.ArrowDropDown" Style="align-self: auto;">
         <MudMenuItem OnClick="() => SetButtonText(0)">Reply</MudMenuItem>
         <MudMenuItem OnClick="() => SetButtonText(1)">Reply All</MudMenuItem>
         <MudMenuItem OnClick="() => SetButtonText(2)">Forward</MudMenuItem>

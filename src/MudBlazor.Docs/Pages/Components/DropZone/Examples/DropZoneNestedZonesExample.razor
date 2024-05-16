@@ -1,0 +1,51 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudDropContainer T="DropZoneItem" Items="_items" ItemsSelector="@((item, dropzone) => item.Zone == dropzone)" ItemDropped="ItemUpdated" Class="4 flex-grow-1">
+    <ChildContent>
+        <MudDropContainer T="DropZone" Items="_zones" ItemsSelector="@((item, dropzone) => true)" Class="5">
+            <ChildContent>
+                <MudDropZone T="DropZone" AllowReorder Class="6 rounded mud-background-gray px-4 py-1 ma-4" />
+             </ChildContent>
+             <ItemRenderer>
+                 <MudPaper Class="pa-4 my-4">
+                     <MudText Typo="Typo.h6">@context.Name</MudText>
+                     <MudDropZone T="DropZoneItem" Identifier="@context.Name" AllowReorder Class="rounded mud-background-gray px-4 py-1 ma-4" />
+                 </MudPaper>
+             </ItemRenderer>
+         </MudDropContainer>
+     </ChildContent>
+     <ItemRenderer>
+         <MudPaper Class="pa-4 my-4">
+             <MudText>@context.Name</MudText>
+         </MudPaper>
+     </ItemRenderer>
+ </MudDropContainer>
+
+ @code {
+
+    private void ItemUpdated(MudItemDropInfo<DropZoneItem> dropItem) => dropItem.Item.Zone = dropItem.DropzoneIdentifier;
+
+    private List<DropZone> _zones = new()
+    {
+        new() { Name = "Drop Zone 1" },
+        new() { Name = "Drop Zone 2" }
+    };
+
+    private List<DropZoneItem> _items = new()
+    {
+        new() { Zone = "Drop Zone 1", Name = "Item 1" },
+        new() { Zone = "Drop Zone 1", Name = "Item 2" },
+        new() { Zone = "Drop Zone 2", Name = "Item 3" },
+    };
+
+    private class DropZone
+    {
+        public string Name { get; init; }
+    }
+
+    private class DropZoneItem
+    {
+        public string Zone { get; set; }
+        public string Name { get; init; }
+    }
+}

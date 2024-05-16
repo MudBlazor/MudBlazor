@@ -1,28 +1,27 @@
-﻿@namespace MudBlazor
-@inherits MudComponentBase
+@namespace MudBlazor
 @typeparam T
 
-<Column T="T" Tag="@("select-column")" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderStyle="width:0%" FieldType="@typeof(object)"
-    Filterable="false">
+<TemplateColumn T="T" Tag="@("select-column")" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderStyle="width:0%"
+                Filterable="false" Editable="false" FooterTemplate="@GetFooterTemplate()">
     <HeaderTemplate>
         @if (ShowInHeader)
         {
-            <MudCheckBox T="bool" Size="@Size" Checked="@context.IsAllSelected" CheckedChanged="@context.Actions.SetSelectAll" />
+            <MudCheckBox T="bool?" Size="@Size" Value="@context.IsAllSelected" ValueChanged="@context.Actions.SetSelectAllAsync" />
         }
     </HeaderTemplate>
     <CellTemplate>
-        <MudCheckBox T="bool" Size="@Size" Checked="@context.IsSelected" CheckedChanged="@context.Actions.SetSelectedItem" />
+        <MudCheckBox T="bool" Size="@Size" Value="@context.Selected" ValueChanged="@context.Actions.SetSelectedItemAsync" />
     </CellTemplate>
-    <FooterTemplate>
-        @if (ShowInFooter)
-        {
-            <MudCheckBox T="bool" Size="@Size" Checked="@context.IsAllSelected" CheckedChanged="@context.Actions.SetSelectAll" />
-        }
-    </FooterTemplate>
-</Column>
+</TemplateColumn>
 
 @code {
-    [Parameter] public bool ShowInHeader { get; set; } = true;
-    [Parameter] public bool ShowInFooter { get; set; } = true;
-    [Parameter] public Size Size { get; set; } = Size.Medium;
+#nullable enable
+    private RenderFragment<FooterContext<T>>? GetFooterTemplate()
+        => ShowInFooter ? FooterTemplate : null;
+
+    private RenderFragment<FooterContext<T>> FooterTemplate => context =>
+        @<MudCheckBox T="bool?"
+                      Size="@Size"
+                      Value="@context.IsAllSelected"
+                      ValueChanged="@context.Actions.SetSelectAllAsync"/>;
 }

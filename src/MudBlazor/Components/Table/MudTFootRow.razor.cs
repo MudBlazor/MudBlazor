@@ -5,39 +5,49 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudTFootRow : MudComponentBase
     {
+        private bool? _checked = false;
+
         protected string Classname => new CssBuilder("mud-table-row")
-            .AddClass(Class).Build();
+            .AddClass(Class)
+            .Build();
 
-        [CascadingParameter] public TableContext Context { get; set; }
+        [CascadingParameter]
+        public TableContext? Context { get; set; }
 
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// Add a multi-select checkbox that will select/unselect every item in the table
         /// </summary>
-        [Parameter] public bool IsCheckable { get; set; }
+        [Parameter]
+        public bool Checkable { get; set; }
 
         /// <summary>
-        /// Specify behavior in case the table is multi-select mode. If set to <code>true</code>, it won't render an additional empty column.
+        /// Specify behavior in case the table is multi-select mode. If set to <c>true</c>, it won't render an additional empty column.
         /// </summary>
-        [Parameter] public bool IgnoreCheckbox { get; set; }
+        [Parameter]
+        public bool IgnoreCheckbox { get; set; }
 
         /// <summary>
-        /// Specify behavior in case the table is editable. If set to <code>true</code>, it won't render an additional empty column.
+        /// Specify behavior in case the table is editable. If set to <c>true</c>, it won't render an additional empty column.
         /// </summary>
-        [Parameter] public bool IgnoreEditable { get; set; }
+        [Parameter]
+        public bool IgnoreEditable { get; set; }
 
-        [Parameter] public bool IsExpandable { get; set; }
+        [Parameter]
+        public bool Expandable { get; set; }
 
         /// <summary>
         /// On click event
         /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnRowClick { get; set; }
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnRowClick { get; set; }
 
-        private bool _checked;
-        public bool IsChecked
+        public bool? Checked
         {
             get => _checked;
             set
@@ -45,8 +55,10 @@ namespace MudBlazor
                 if (value != _checked)
                 {
                     _checked = value;
-                    if (IsCheckable)
-                        Context.Table.OnHeaderCheckboxClicked(value);
+                    if (Checkable)
+                    {
+                        Context?.Table?.OnHeaderCheckboxClicked(_checked.HasValue && _checked.Value);
+                    }
                 }
             }
         }
@@ -62,15 +74,22 @@ namespace MudBlazor
             Context?.FooterRows.Remove(this);
         }
 
-        public void SetChecked(bool b, bool notify)
+        public void SetChecked(bool? checkedState, bool notify)
         {
-            if (notify)
-                IsChecked = b;
-            else
+            if (_checked != checkedState)
             {
-                _checked = b;
-                if (IsCheckable)
-                    InvokeAsync(StateHasChanged);
+                if (notify)
+                {
+                    Checked = checkedState;
+                }
+                else
+                {
+                    _checked = checkedState;
+                    if (Checkable)
+                    {
+                        InvokeAsync(StateHasChanged);
+                    }
+                }
             }
         }
     }

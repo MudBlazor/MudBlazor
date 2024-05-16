@@ -1,9 +1,10 @@
 ﻿@namespace MudBlazor.Docs.Examples
+@using MudBlazor.Interfaces
 
 <MudGrid Class="justify-space-between mb-3 mx-n3" Style="max-width: 800px;">
     <MudItem xs="12">
         <MudTextField Mask="@mask" Label="Credit Card Number" Style="max-width: 400px;"
-                  @bind-Value="@cardNumber" Variant="@Variant.Text" Clearable/>
+                  @bind-Value="cardNumber" Variant="@Variant.Text" Clearable/>
     </MudItem>
     <MudItem xs="12">
         Credit Card: <b>@cardNumber</b>
@@ -34,7 +35,7 @@
             cardType = o == null ? "Unknown" : o.Value.Id;
             UpdateClasses();
             // re-render only MudElement's children
-            element.Refresh();
+            (element as IMudStateHasChanged)?.StateHasChanged();
         };
         UpdateClasses();
     }

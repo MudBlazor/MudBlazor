@@ -4,11 +4,11 @@
 
 <MudDataGrid Items="@_items" Virtualize="true" FixedHeader="true" Height="350px">
     <Columns>
-        <Column T="Model" Field="Column1" />
-        <Column T="Model" Field="Column2" />
-        <Column T="Model" Field="Column3" />
-        <Column T="Model" Field="Column4" />
-        <Column T="Model" Field="Column5" />
+        <PropertyColumn Property="x => x.Column1" />
+        <PropertyColumn Property="x => x.Column2" />
+        <PropertyColumn Property="x => x.Column3" />
+        <PropertyColumn Property="x => x.Column4" />
+        <PropertyColumn Property="x => x.Column5" />
     </Columns>
 </MudDataGrid>
 

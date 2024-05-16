@@ -5,7 +5,7 @@
     {
         var local = i;
         <MudItem xs="6" md="6">
-            <MudCheckBox @bind-Checked="@values[local]" Color="Color.Tertiary">@amenities[local]</MudCheckBox>
+            <MudCheckBox @bind-Value="@values[local]" Color="Color.Tertiary">@amenities[local]</MudCheckBox>
         </MudItem>
     }
     <p>@selected</p>

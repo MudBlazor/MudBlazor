@@ -1,0 +1,22 @@
+﻿@using Microsoft.AspNetCore.Components.Rendering
+
+@namespace MudBlazor.UnitTests.TestComponents
+@inject ISnackbar SnackbarService
+
+<MudButton OnClick="@OnClick">Show the snackbar!</MudButton>
+
+@code {
+    public static string __description__ = "Click the button to fire a Snackbar built with a RenderFragment.";
+
+    private void OnClick()
+    {
+        SnackbarService.Add
+        (
+            @<ul>
+                <li>Here's a regular item</li>
+                <li>Here's a <strong>bold item</strong></li>
+                <li>Here's an <em>italicized item</em></li>
+            </ul>    
+        );
+    }
+}

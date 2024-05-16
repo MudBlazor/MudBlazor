@@ -3,7 +3,10 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Drawing;
 using System.Globalization;
+using System.Text.Json;
+using ColorCode.Compilation.Languages;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -12,6 +15,27 @@ namespace MudBlazor.UnitTests.Utilities
     [TestFixture]
     public class BindingConverterTests
     {
+
+        [Test]
+        public void GlobalConverterTests()
+        {
+            var c10 = new DefaultConverter<Point>();
+            DefaultConverter<Point>.GlobalGetFunc = x => $"[{x.X},{x.Y}]";
+            DefaultConverter<Point>.GlobalSetFunc = x => { var tmp = JsonSerializer.Deserialize<int[]>(x); return new Point(tmp[0], tmp[1]); };
+
+            c10.Set(new Point(1, 2)).Should().Be("[1,2]");
+            c10.Get("[1,2]").Should().Be(new Point(1, 2));
+        }
+        [Test]
+        public void GlobalConverterTestsErrorHandling()
+        {
+            var c10 = new DefaultConverter<Point>();
+            DefaultConverter<Point>.GlobalSetFunc = x => { var tmp = JsonSerializer.Deserialize<int[]>(x); return new Point(tmp[0], tmp[1]); };
+
+            c10.Get("[1,2").Should().Be(Point.Empty);
+            c10.GetErrorMessage.Should().Be("Not a valid Point");
+        }
+
         [Test]
         public void DefaultIntegerConverterTest()
         {
@@ -371,23 +395,27 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void ErrorCheckingTest()
         {
-            //format exception
+            // datetime format exception
             var dt1 = new DefaultConverter<DateTime>();
             dt1.Get("12/34/56").Should().Be(default);
             var dtn1 = new DefaultConverter<DateTime?>();
             dtn1.Get("12/34/56").Should().Be(null);
 
-            // format exception
+            // timespan format exception
             var tm1 = new DefaultConverter<TimeSpan>();
             tm1.Get("12:o1").Should().Be(default);
+            tm1.GetErrorMessage.Should().Be("Not a valid time span");
             var tmn1 = new DefaultConverter<TimeSpan?>();
             tmn1.Get("12:o1").Should().Be(null);
+            tmn1.GetErrorMessage.Should().Be("Not a valid time span");
 
-            // overflow
+            // timespan overflow exception
             var tm2 = new DefaultConverter<TimeSpan>();
             tm2.Get("25:00").Should().Be(default);
-            var tm2n = new DefaultConverter<TimeSpan?>();
-            tm2n.Get("25:00").Should().Be(null);
+            tm2.GetErrorMessage.Should().Be("Not a valid time span");
+            var tmn2 = new DefaultConverter<TimeSpan?>();
+            tmn2.Get("25:00").Should().Be(null);
+            tmn2.GetErrorMessage.Should().Be("Not a valid time span");
 
             // not a valid number
             var c1 = new DefaultConverter<sbyte>();

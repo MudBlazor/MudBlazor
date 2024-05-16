@@ -8,7 +8,7 @@
 <span>Phone: @phone</span>
 <br>
 <br>
-<MudButton Class="reset" OnClick="@ResetForm">Reset</MudButton>
+<MudButton Class="reset" OnClick="@ResetFormAsync">Reset</MudButton>
 
 @code
 { 
@@ -16,9 +16,9 @@
     private MudForm form;
     private string phone;
 
-    void ResetForm()
+    protected async Task ResetFormAsync()
     {
-        form.Reset();
+        await form.ResetAsync();
         StateHasChanged();
     }
 

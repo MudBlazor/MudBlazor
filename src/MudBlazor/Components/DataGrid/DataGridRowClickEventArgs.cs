@@ -7,11 +7,20 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
+#nullable enable
     public class DataGridRowClickEventArgs<T> : EventArgs
     {
-        public MouseEventArgs MouseEventArgs { get; set; }
-        public T Item { get; set; }
-        public int RowIndex { get; set; }
+        public MouseEventArgs MouseEventArgs { get; }
 
+        public T Item { get; }
+
+        public int RowIndex { get; }
+
+        public DataGridRowClickEventArgs(MouseEventArgs mouseEventArgs, T item, int rowIndex)
+        {
+            MouseEventArgs = mouseEventArgs;
+            Item = item;
+            RowIndex = rowIndex;
+        }
     }
 }

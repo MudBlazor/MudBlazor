@@ -19,7 +19,7 @@ namespace MudBlazor
             get => _debounceInterval;
             set
             {
-                if (NumericConverter<double>.AreEqual(_debounceInterval, value))
+                if (DoubleEpsilonEqualityComparer.Default.Equals(_debounceInterval, value))
                     return;
                 _debounceInterval = value;
                 if (_debounceInterval == 0)
@@ -47,6 +47,18 @@ namespace MudBlazor
             }
 
             return Task.CompletedTask;
+        }
+
+        protected override Task UpdateTextPropertyAsync(bool updateValue)
+        {
+            var suppressTextUpdate = !updateValue
+                                     && DebounceInterval > 0
+                                     && _timer is { Enabled: true }
+                                     && (!Value?.Equals(Converter.Get(Text)) ?? false);
+
+            return suppressTextUpdate
+                ? Task.CompletedTask
+                : base.UpdateTextPropertyAsync(updateValue);
         }
 
         protected override Task UpdateValuePropertyAsync(bool updateText)
@@ -91,7 +103,7 @@ namespace MudBlazor
 
         private void OnTimerTick(object sender, ElapsedEventArgs e)
         {
-            InvokeAsync(OnTimerTickGuiThread).AndForget();
+            InvokeAsync(OnTimerTickGuiThread).CatchAndLog();
         }
 
         private async Task OnTimerTickGuiThread()
@@ -110,7 +122,7 @@ namespace MudBlazor
             _timer.Dispose();
             _timer = null;
             if (wasEnabled && !suppressTick)
-                OnTimerTickGuiThread().AndForget();
+                OnTimerTickGuiThread().CatchAndLog();
         }
 
         protected override void Dispose(bool disposing)

@@ -7,7 +7,8 @@
 @inherits MudComponentBase
 
 @Css
-<div @attributes="UserAttributes" class="@SnackbarClass" style="@AnimationStyle" @onclick="@SnackbarClicked">
+<div @attributes="UserAttributes" class="@SnackbarClass" style="@AnimationStyle" @onclick="EventUtil.AsNonRenderingEventHandler(SnackbarClicked)"
+     @onmouseenter="InteractionStartHandler" @onmouseleave="InteractionEndHandler" @ontouchstart="InteractionStartHandler" @ontouchend="InteractionEndHandler" @ontouchcancel="InteractionEndHandler">
     @if (!HideIcon)
     {
         <div class="mud-snackbar-icon">
@@ -16,7 +17,10 @@
     }
 
     <div class="mud-snackbar-content-message">
-        @((MarkupString)Message)
+        @if (Message?.ComponentType != null)
+        {
+            <DynamicComponent Type="Message.ComponentType" Parameters="Message.ComponentParameters" />
+        }
     </div>
 
     @if (ShowCloseIcon || ShowActionButton)
@@ -25,15 +29,13 @@
 
             @if (ShowActionButton)
             {
-                <MudButton Variant="@ActionVariant" Color="@ActionColor" OnClick="ActionClicked" DisableElevation>@Action</MudButton>
+                <MudButton Class="mud-snackbar-action-button" Variant="@ActionVariant" Color="@ActionColor" OnClick="ActionClicked" DropShadow="false">@Action</MudButton>
             }
 
             @if (ShowCloseIcon)
             {
-                <MudIconButton Icon="@CloseIcon" Size="Size.Small" Class="ms-2" OnClick="CloseIconClicked" />
+                <MudIconButton Class="mud-snackbar-close-button ms-2" Icon="@CloseIcon" Size="Size.Small" OnClick="CloseIconClicked" />
             }
-
         </div>
     }
-
 </div>

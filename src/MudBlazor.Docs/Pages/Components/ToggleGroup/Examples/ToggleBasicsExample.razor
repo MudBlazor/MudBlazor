@@ -1,0 +1,70 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack>
+    <MudStack Row Class="flex-wrap">
+        <MudStack Spacing="16" AlignItems="@AlignItems.Start">
+            <MudToggleGroup T="string" Outlined="@_outlined" Delimiters="@_delimiters" Size="@_size" Rounded="@_rounded" CheckMark="@_checkMark" FixedContent="@_fixedContent" Disabled="@_disabled" Style="width: 30rem">
+                <MudToggleItem Value="@("One")" />
+                <MudToggleItem Value="@("Two")" />
+                <MudToggleItem Value="@("Three")" />
+            </MudToggleGroup>
+
+            <MudToggleGroup T="string" Outlined="@_outlined" Delimiters="@_delimiters" Size="@_size" Rounded="@_rounded" CheckMark="@_checkMark" FixedContent="@_fixedContent" Disabled="@_disabled">
+                <MudToggleItem Value="@("left")">
+                    <MudIcon Icon="@Icons.Material.Filled.FormatAlignLeft" />
+                </MudToggleItem>
+                <MudToggleItem Value="@("center")">
+                    <MudIcon Icon="@Icons.Material.Filled.FormatAlignCenter" />
+                </MudToggleItem>
+                <MudToggleItem Value="@("right")">
+                    <MudIcon Icon="@Icons.Material.Filled.FormatAlignRight" />
+                </MudToggleItem>
+                <MudToggleItem Value="@("justify")">
+                    <MudIcon Icon="@Icons.Material.Filled.FormatAlignJustify" />
+                </MudToggleItem>
+            </MudToggleGroup>
+        </MudStack>
+
+        <MudSpacer />
+
+        <MudToggleGroup T="string" Vertical Outlined="@_outlined" Delimiters="@_delimiters" Size="@_size" Rounded="@_rounded" CheckMark="@_checkMark" FixedContent="@_fixedContent" Disabled="@_disabled">
+            <MudToggleItem Value="@("left")">
+                <MudIcon Icon="@Icons.Material.Filled.FormatAlignLeft" />
+            </MudToggleItem>
+            <MudToggleItem Value="@("center")">
+                <MudIcon Icon="@Icons.Material.Filled.FormatAlignCenter" />
+            </MudToggleItem>
+            <MudToggleItem Value="@("right")">
+                <MudIcon Icon="@Icons.Material.Filled.FormatAlignRight" />
+            </MudToggleItem>
+            <MudToggleItem Value="@("justify")">
+                <MudIcon Icon="@Icons.Material.Filled.FormatAlignJustify" />
+            </MudToggleItem>
+        </MudToggleGroup>
+    </MudStack>
+
+    <MudStack Row Class="flex-wrap">
+        <MudRadioGroup @bind-Value="_size">
+            <MudRadio Value="Size.Small">Small</MudRadio>
+            <MudRadio Value="Size.Medium">Medium</MudRadio>
+            <MudRadio Value="Size.Large">Large</MudRadio>
+        </MudRadioGroup>
+
+        <MudCheckBox @bind-Value="_rounded" Label="Rounded" />
+        <MudCheckBox @bind-Value="_checkMark" Label="CheckMark" />
+        <MudCheckBox @bind-Value="_fixedContent" Label="FixedContent" />
+        <MudCheckBox @bind-Value="_outlined" Label="Outlined" />
+        <MudCheckBox @bind-Value="_delimiters" Label="Delimiters" />
+        <MudCheckBox @bind-Value="_disabled" Label="Disabled" />
+    </MudStack>
+</MudStack>
+
+@code {
+    Size _size = Size.Medium;
+    bool _rounded = false;
+    bool _checkMark = false;
+    bool _outlined = true;
+    bool _delimiters = true;
+    bool _fixedContent = false;
+    bool _disabled = false;
+}

@@ -2,16 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-class MudScrollManager {
-    //scrolls to an Id. Useful for navigation to fragments
-    scrollToFragment(elementId, behavior) {
-        let element = document.getElementById(elementId);
-
-        if (element) {
-            element.scrollIntoView({ behavior, block: 'center', inline: 'start' });
-        }
-    }
-
+class MudScrollManager { 
     //scrolls to year in MudDatePicker
     scrollToYear(elementId, offset) {
         let element = document.getElementById(elementId);
@@ -39,6 +30,13 @@ class MudScrollManager {
         element.scrollTo({ left, top, behavior });
     }
 
+    //scrolls the provided selector into view
+    scrollIntoView(selector, behavior) {
+        let element = document.querySelector(selector) || document.documentElement;
+        if (element)
+            element.scrollIntoView({ behavior, block: 'center', inline: 'start' });
+    }
+
     scrollToBottom(selector, behavior) {
         let element = document.querySelector(selector);
         if (element)
@@ -51,17 +49,25 @@ class MudScrollManager {
     lockScroll(selector, lockclass) {
         let element = document.querySelector(selector) || document.body;
 
-        //if the body doesn't have a scroll bar, don't add the lock class
+        //if the body doesn't have a scroll bar, don't add the lock class with padding
         let hasScrollBar = window.innerWidth > document.body.clientWidth;
+
         if (hasScrollBar) {
             element.classList.add(lockclass);
+        } else {
+            let lockClassNoPadding = lockclass + "-no-padding";
+            element.classList.add(lockClassNoPadding);
         }
+
     }
 
     //unlocks the scroll. Default is body
     unlockScroll(selector, lockclass) {
         let element = document.querySelector(selector) || document.body;
+
+        // remove both lock classes to be sure it's unlocked
         element.classList.remove(lockclass);
+        element.classList.remove(lockclass + "-no-padding");
     }
 };
 window.mudScrollManager = new MudScrollManager();

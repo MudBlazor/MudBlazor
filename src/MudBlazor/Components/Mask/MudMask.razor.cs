@@ -15,7 +15,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudMask : MudBaseInput<string>, IDisposable
+    public partial class MudMask : MudBaseInput<string>
     {
         public MudMask()
         {
@@ -25,13 +25,14 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-input")
                 .AddClass($"mud-input-{Variant.ToDescriptionString()}")
+                .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
                 .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
                 .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
-                .AddClass("mud-input-underline", when: () => DisableUnderLine == false && Variant != Variant.Outlined)
+                .AddClass("mud-input-underline", when: () => Underline && Variant != Variant.Outlined)
                 .AddClass("mud-shrink",
                     when: () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start ||
                                 !string.IsNullOrWhiteSpace(Placeholder))
-                .AddClass("mud-disabled", Disabled)
+                .AddClass("mud-disabled", GetDisabledState())
                 .AddClass("mud-input-error", HasErrors)
                 .AddClass("mud-ltr", GetInputType() == InputType.Email || GetInputType() == InputType.Telephone)
                 .AddClass(Class)
@@ -67,7 +68,7 @@ namespace MudBlazor
         private ElementReference _elementReference1;
         private IJsEvent _jsEvent;
         private IKeyInterceptor _keyInterceptor;
-        
+
         [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
 
         [Inject] private IJsEventFactory _jsEventFactory { get; set; }
@@ -134,7 +135,6 @@ namespace MudBlazor
 
         protected override async Task OnInitializedAsync()
         {
-            //Console.WriteLine($"OnInitialized Text:{Text}, Value:{Value}, Mask:{Mask}");
             if (Text != Mask.Text)
                 await SetTextAsync(Mask.Text, updateValue: false);
             await base.OnInitializedAsync();
@@ -150,7 +150,7 @@ namespace MudBlazor
                     new JsEventOptions
                     {
                         //EnableLogging = true,
-                        TargetClass = "mud-input-slot", 
+                        TargetClass = "mud-input-slot",
                         TagName = "INPUT"
                     });
                 _jsEvent.CaretPositionChanged += OnCaretPositionChanged;
@@ -181,8 +181,9 @@ namespace MudBlazor
                 });
                 _keyInterceptor.KeyDown += HandleKeyDownInternally;
             }
+
             if (_isFocused && Mask.Selection == null)
-                SetCaretPosition(Mask.CaretPos, _selection, render: false);
+                await SetCaretPositionAsync(Mask.CaretPos, _selection, render: false);
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -195,31 +196,30 @@ namespace MudBlazor
         {
             try
             {
-                if ((e.CtrlKey && e.Key != "Backspace") || e.AltKey || ReadOnly)
-                        return;
-                // Console.WriteLine($"HandleKeyDown: '{e.Key}'");
+                if ((e.CtrlKey && e.Key != "Backspace") || e.AltKey || GetReadOnlyState())
+                    return;
                 switch (e.Key)
                 {
                     case "Backspace":
                         if (e.CtrlKey)
                         {
                             Mask.Clear();
-                            await Update();
+                            await UpdateAsync();
                             return;
                         }
                         Mask.Backspace();
-                        await Update();
+                        await UpdateAsync();
                         return;
                     case "Delete":
                         Mask.Delete();
-                        await Update();
+                        await UpdateAsync();
                         return;
                 }
 
-                if (Regex.IsMatch(e.Key, @"^.$"))
+                if (ValidCharacterRegularExpression().IsMatch(e.Key))
                 {
                     Mask.Insert(e.Key);
-                    await Update();
+                    await UpdateAsync();
                 }
             }
             finally
@@ -231,7 +231,7 @@ namespace MudBlazor
 
         private bool _updating;
 
-        private async Task Update()
+        private async Task UpdateAsync()
         {
             var caret = Mask.CaretPos;
             var selection = Mask.Selection;
@@ -246,7 +246,7 @@ namespace MudBlazor
                 var v = Converter.Get(cleanText);
                 Value = v;
                 await ValueChanged.InvokeAsync(v);
-                SetCaretPosition(caret, selection);
+                await SetCaretPositionAsync(caret, selection);
             }
             finally
             {
@@ -254,10 +254,10 @@ namespace MudBlazor
             }
         }
 
-        internal async void HandleClearButton(MouseEventArgs e)
+        internal async Task HandleClearButtonAsync(MouseEventArgs e)
         {
             Mask.Clear();
-            await Update();
+            await UpdateAsync();
             await _elementReference.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
         }
@@ -275,8 +275,7 @@ namespace MudBlazor
             Mask.SetText(text);
             if (maskText == Mask.Text)
                 return; // no change, stop update loop
-            //Console.WriteLine("UpdateTextPropertyAsync: " + Mask);
-            await Update();
+            await UpdateAsync();
         }
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)
@@ -291,8 +290,7 @@ namespace MudBlazor
             Mask.SetText(text);
             if (maskText == Mask.Text)
                 return; // no change, stop update loop
-            //Console.WriteLine("UpdateValuePropertyAsync: " + Mask);
-            await Update();
+            await UpdateAsync();
         }
 
         internal override InputType GetInputType() => InputType;
@@ -310,7 +308,7 @@ namespace MudBlazor
         public Task Clear()
         {
             Mask.Clear();
-            return Update();
+            return UpdateAsync();
         }
 
         public override ValueTask FocusAsync()
@@ -330,46 +328,42 @@ namespace MudBlazor
 
         internal void OnCopy()
         {
-            //Console.WriteLine($"Copy: {text}");
             var text = Text;
             if (Mask.Selection != null)
             {
-                (_, text, _)=BaseMask.SplitSelection(text, Mask.Selection.Value);
+                (_, text, _) = BaseMask.SplitSelection(text, Mask.Selection.Value);
             }
             _jsApiService.CopyToClipboardAsync(text);
         }
 
         internal async void OnPaste(string text)
         {
-            //Console.WriteLine($"Paste: {text}");
-            if (text == null || ReadOnly)
+            if (text == null || GetReadOnlyState())
                 return;
             Mask.Insert(text);
-            await Update();
+            await UpdateAsync();
         }
 
         public void OnSelect(int start, int end)
         {
             Mask.Selection = _selection = (start, end);
-            //Console.WriteLine($"OnSelect: {Mask}");
         }
 
         internal void OnFocused(FocusEventArgs obj)
         {
             _isFocused = true;
-            //Console.WriteLine($"OnFocused: {Mask}");
         }
 
-        protected internal override void OnBlurred(FocusEventArgs obj)
+        protected internal override async Task OnBlurredAsync(FocusEventArgs obj)
         {
-            base.OnBlurred(obj);
+            await base.OnBlurredAsync(obj);
             _isFocused = false;
         }
 
         private int _caret;
         private (int, int)? _selection;
 
-        private void SetCaretPosition(int caret, (int, int)? selection = null, bool render = true)
+        private async Task SetCaretPositionAsync(int caret, (int, int)? selection = null, bool render = true)
         {
             if (!_isFocused)
                 return;
@@ -379,14 +373,12 @@ namespace MudBlazor
             _selection = selection;
             if (selection == null)
             {
-                //Console.WriteLine("#Setting Caret Position: " + caret);
-                _elementReference.MudSelectRangeAsync(caret, caret).AndForget();
+                await _elementReference.MudSelectRangeAsync(caret, caret);
             }
             else
             {
                 var sel = selection.Value;
-                //Console.WriteLine($"#Setting Selection: ({sel.Item1}..{sel.Item2})");
-                _elementReference.MudSelectRangeAsync(sel.Item1, sel.Item2).AndForget();
+                await _elementReference.MudSelectRangeAsync(sel.Item1, sel.Item2);
             }
         }
 
@@ -405,50 +397,60 @@ namespace MudBlazor
                 return;
             Mask.Selection = null;
             Mask.CaretPos = pos;
-            //Console.WriteLine($"OnCaretPositionChanged: '{Mask}' ({pos})");
         }
 
         private void SetMask(IMask other)
         {
-            if (_mask == null || other == null || _mask?.GetType() != other?.GetType())
+            if (other == null)
             {
-                _mask = other;
-                if (_mask == null)
-                    _mask = new PatternMask("null ********"); // warn the user that the mask parameter is missing
+                // warn the user that the mask parameter is missing
+                _mask = new PatternMask("null ********");
                 return;
             }
 
-            // set new mask properties without loosing state
-            _mask.UpdateFrom(other);
+            if (_mask.GetType() == other.GetType())
+            {
+                // update mask while retaining current state
+                _mask.UpdateFrom(other);
+                return;
+            }
+
+            // swap masks while retaining text
+            // note: this is required for `BaseMask` instances other than `PatternMask` to work as expected
+            other.SetText(Text);
+            _mask = other;
         }
 
         private async void OnCut(ClipboardEventArgs obj)
         {
-            if (ReadOnly)
+            if (GetReadOnlyState())
                 return;
-            
-            if (_selection!=null)
+
+            if (_selection != null)
                 Mask.Delete();
-            await Update();
-            //Console.WriteLine($"OnCut: '{Mask}'");
+            await UpdateAsync();
         }
 
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
 
-            if (disposing == true)
+            if (disposing)
             {
-                _jsEvent?.Dispose();
-
                 if (_keyInterceptor != null)
                 {
                     _keyInterceptor.KeyDown -= HandleKeyDownInternally;
-                    _keyInterceptor.Dispose();
                 }
 
-                _keyInterceptor?.Dispose();
+                if (IsJSRuntimeAvailable)
+                {
+                    _jsEvent?.Dispose();
+                    _keyInterceptor?.Dispose();
+                }
             }
         }
+
+        [GeneratedRegex(@"^.$")]
+        private static partial Regex ValidCharacterRegularExpression();
     }
 }

@@ -11,6 +11,7 @@ namespace MudBlazor
     /// Not supported by safari. Use Pattern to achieve special mobile keyboards in safari.
     /// https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/inputmode
     /// </summary>
+    [ExcludeFromCodeGenerator]
     public enum InputMode
     {
         [Description("No virtual keyboard. For when the page implements its own keyboard input control.")]

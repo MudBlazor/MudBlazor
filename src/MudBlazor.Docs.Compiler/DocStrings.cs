@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 namespace MudBlazor.Docs.Compiler
 {
-    public class DocStrings
+    public partial class DocStrings
     {
         private static string[] hiddenMethods = { "ToString", "GetType", "GetHashCode", "Equals", "SetParametersAsync", "ReferenceEquals" };
 
@@ -27,6 +27,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("namespace MudBlazor.Docs.Models");
                 cb.AddLine("{");
                 cb.IndentLevel++;
+                cb.AddLine("[System.CodeDom.Compiler.GeneratedCodeAttribute(\"MudBlazor.Docs.Compiler\", \"0.0.0.0\")]");
                 cb.AddLine("public static partial class DocStrings");
                 cb.AddLine("{");
                 cb.IndentLevel++;
@@ -38,15 +39,19 @@ namespace MudBlazor.Docs.Compiler
                     {
                         var doc = property.GetDocumentation() ?? "";
                         doc = convertSeeTags(doc);
-                        doc = Regex.Replace(doc, @"</?.+?>", "");  // remove all other XML tags
+                        doc = XmlTagRegularExpression().Replace(doc, "");  // remove all other XML tags
                         cb.AddLine($"public const string {GetSaveTypename(type)}_{property.Name} = @\"{EscapeDescription(doc).Trim()}\";\n");
                     }
 
                     // TableContext was causing conflicts due to the imperfect mapping from the name of class to the name of field in DocStrings
-                    if (type.IsSubclassOf(typeof(Attribute)) || GetSaveTypename(type) == "TypeInference" || type == typeof(Utilities.CssBuilder) || type == typeof(TableContext))
+                    if (type.IsSubclassOf(typeof(Attribute)) || GetSaveTypename(type) == "TypeInference"
+                            || type == typeof(Utilities.CssBuilder) || type == typeof(TableContext) || GetSaveTypename(type).StartsWith("EventUtil_"))
                         continue;
 
-                    foreach (var method in type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy))
+                    // Check if base class has same name as derived class and use only declared to prevent double generation of methods
+                    var declaredOnly = type.BaseType is not null && GetSaveTypename(type.BaseType) == GetSaveTypename(type);
+
+                    foreach (var method in type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy | (declaredOnly ? BindingFlags.DeclaredOnly : BindingFlags.Default)))
                     {
                         if (!hiddenMethods.Any(x => x.Contains(method.Name)) && !method.Name.StartsWith("get_") && !method.Name.StartsWith("set_"))
                         {
@@ -79,7 +84,7 @@ namespace MudBlazor.Docs.Compiler
             return success;
         }
 
-        private static string GetSaveTypename(Type t) => Regex.Replace(t.ConvertToCSharpSource(), @"[\.,<>]", "_").TrimEnd('_');
+        private static string GetSaveTypename(Type t) => SaveTypenameRegularExpression().Replace(t.ConvertToCSharpSource(), "_").TrimEnd('_');
 
         /* Methods can be overloaded so the method name doesn't identify it uniquely. Instead of method name we need the method signature.
          * Currently the return type of a method is also used, but probably it can be removed.
@@ -87,7 +92,7 @@ namespace MudBlazor.Docs.Compiler
          * Alternatively we could use the format similar to this used in XML documentation - it will be even better because I think it is
          * less likely to be changed in the future. See XmlDocumentation.cs for a method computing identifiers.
          */
-        private static string GetSaveMethodIdentifier(MethodInfo method) => Regex.Replace(method.ToString(), "[^A-Za-z0-9_]", "_");
+        private static string GetSaveMethodIdentifier(MethodInfo method) => AlphanumericUnderscoreRegularExpression().Replace(method.ToString(), "_");
 
         private static Type GetBaseDefinitionClass(MethodInfo m) => m.GetBaseDefinition().DeclaringType;
 
@@ -96,9 +101,10 @@ namespace MudBlazor.Docs.Compiler
          */
         private static string convertSeeTags(string doc)
         {
-            return Regex.Replace(doc, "<see cref=\"[TFPME]:(MudBlazor\\.)?([^>]+)\" */>", match => {
-                string result = match.Groups[2].Value;     // get the name of Type or type member (Field, Property, Method, or Event)
-                result = Regex.Replace(result, "`1", "");  // remove `1 from generic type name
+            return SeeCrefRegularExpression().Replace(doc, match =>
+            {
+                var result = match.Groups[2].Value;     // get the name of Type or type member (Field, Property, Method, or Event)
+                result = BacktickRegularExpression().Replace(result, "");  // remove `1 from generic type name
                 return result;
             });
         }
@@ -107,5 +113,20 @@ namespace MudBlazor.Docs.Compiler
         {
             return doc.Replace("\"", "\"\"");
         }
+
+        [GeneratedRegex(@"</?.+?>")]
+        private static partial Regex XmlTagRegularExpression();
+
+        [GeneratedRegex(@"[\.,<>]")]
+        private static partial Regex SaveTypenameRegularExpression();
+
+        [GeneratedRegex("[^A-Za-z0-9_]")]
+        private static partial Regex AlphanumericUnderscoreRegularExpression();
+
+        [GeneratedRegex("<see cref=\"[TFPME]:(MudBlazor\\.)?([^>]+)\" */>")]
+        private static partial Regex SeeCrefRegularExpression();
+
+        [GeneratedRegex("`1")]
+        private static partial Regex BacktickRegularExpression();
     }
 }

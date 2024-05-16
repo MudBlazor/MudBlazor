@@ -1,34 +1,48 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudRating : MudComponentBase
     {
+        private readonly ParameterState<int> _selectedValueState;
+        private int? _hoveredValue = null;
+
+        public MudRating()
+        {
+            using var registerScope = CreateRegisterScope();
+            _selectedValueState = registerScope.RegisterParameter<int>(nameof(SelectedValue))
+                .WithParameter(() => SelectedValue)
+                .WithEventCallback(() => SelectedValueChanged);
+        }
+
         /// <summary>
         /// Space separated class names
         /// </summary>
         protected string ClassName =>
-        new CssBuilder("")
-          .AddClass($"mud-rating-root")
-          .AddClass(Class)
-        .Build();
+            new CssBuilder("")
+                .AddClass("mud-rating-root")
+                .AddClass(Class)
+                .Build();
 
         /// <summary>
         /// User class names for RatingItems, separated by space
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
-        public string RatingItemsClass { get; set; }
+        public string? RatingItemsClass { get; set; }
 
         /// <summary>
         /// User styles for RatingItems.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
-        public string RatingItemsStyle { get; set; }
+        public string? RatingItemsStyle { get; set; }
 
         /// <summary>
         /// Input name. If not initialized, name will be random guid.
@@ -84,12 +98,14 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public Size Size { get; set; } = Size.Medium;
+
         /// <summary>
-        /// If true, disables ripple effect.
+        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
-        public bool DisableRipple { get; set; }
+        public bool Ripple { get; set; } = true;
+
         /// <summary>
         /// If true, the controls will be disabled.
         /// </summary>
@@ -106,103 +122,78 @@ namespace MudBlazor
         /// <summary>
         /// Fires when SelectedValue changes.
         /// </summary>
-        [Parameter] public EventCallback<int> SelectedValueChanged { get; set; }
+        [Parameter]
+        public EventCallback<int> SelectedValueChanged { get; set; }
 
         /// <summary>
         /// Selected value. This property is two-way bindable.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Rating.Data)]
-        public int SelectedValue
-        {
-            get => _selectedValue;
-            set
-            {
-                if (_selectedValue == value)
-                    return;
-
-                _selectedValue = value;
-
-                SelectedValueChanged.InvokeAsync(_selectedValue);
-            }
-        }
-
-        private int _selectedValue = 0;
+        public int SelectedValue { get; set; } = 0;
 
         /// <summary>
         /// Fires when hovered value change. Value will be null if no rating item is hovered.
         /// </summary>
-        [Parameter] public EventCallback<int?> HoveredValueChanged { get; set; }
+        [Parameter]
+        public EventCallback<int?> HoveredValueChanged { get; set; }
 
-        internal int? HoveredValue
+        internal int? HoveredValue => _hoveredValue;
+
+        internal Task SetHoveredValueAsync(int? hoveredValue)
         {
-            get => _hoveredValue;
-            set
+            if (_hoveredValue == hoveredValue)
             {
-                if (_hoveredValue == value)
-                    return;
-
-                _hoveredValue = value;
-                HoveredValueChanged.InvokeAsync(value);
+                return Task.CompletedTask;
             }
-        }
 
-        private int? _hoveredValue = null;
+            _hoveredValue = hoveredValue;
+            return HoveredValueChanged.InvokeAsync(hoveredValue);
+        }
 
         internal bool IsRatingHover => HoveredValue.HasValue;
 
-        private void HandleItemClicked(int itemValue)
+        private async Task HandleItemClickedAsync(int itemValue)
         {
-            SelectedValue = itemValue;
+            await _selectedValueState.SetValueAsync(itemValue);
 
             if (itemValue == 0)
             {
-                HoveredValue = null;
+                await SetHoveredValueAsync(null);
             }
         }
 
-        internal void HandleItemHovered(int? itemValue) => HoveredValue = itemValue;
+        internal Task HandleItemHoveredAsync(int? itemValue) => SetHoveredValueAsync(itemValue);
 
-        private void IncreaseValue(int val)
+        private async Task IncreaseValueAsync(int val)
         {
-            if ((SelectedValue == MaxValue && val > 0) || (SelectedValue == 0 && val < 0))
+            if ((_selectedValueState.Value != MaxValue || val <= 0) && (_selectedValueState.Value != 0 || val >= 0))
             {
-
-            }
-            else
-            {
-                SelectedValue += val;
+                var value = _selectedValueState.Value + val;
+                await _selectedValueState.SetValueAsync(value);
             }
         }
 
-        protected internal void HandleKeyDown(KeyboardEventArgs obj)
+        protected internal async Task HandleKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
         {
             if (Disabled || ReadOnly)
             {
                 return;
             }
 
-            switch (obj.Key)
+            switch (keyboardEventArgs.Key)
             {
+                case "ArrowRight" when keyboardEventArgs.ShiftKey:
+                    await IncreaseValueAsync(MaxValue - _selectedValueState.Value);
+                    break;
                 case "ArrowRight":
-                    if (obj.ShiftKey == true)
-                    {
-                        IncreaseValue(MaxValue - SelectedValue);
-                    }
-                    else
-                    {
-                        IncreaseValue(1);
-                    }
+                    await IncreaseValueAsync(1);
+                    break;
+                case "ArrowLeft" when keyboardEventArgs.ShiftKey:
+                    await IncreaseValueAsync(-_selectedValueState.Value);
                     break;
                 case "ArrowLeft":
-                    if (obj.ShiftKey == true)
-                    {
-                        IncreaseValue(-SelectedValue);
-                    }
-                    else
-                    {
-                        IncreaseValue(-1);
-                    }
+                    await IncreaseValueAsync(-1);
                     break;
             }
         }

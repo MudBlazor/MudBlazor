@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Outlined Class="border-dashed">
+    <MudStack StretchItems="@stretch" Row>
+        <MudPaper Class="pa-3 mud-theme-primary">Item 1</MudPaper>
+        <MudPaper Class="pa-3 mud-theme-primary">Item 2</MudPaper>
+        <MudPaper Class="pa-3 mud-theme-primary">Item 3</MudPaper>
+    </MudStack>
+</MudPaper>
+
+<MudChipSet @bind-SelectedValue="@stretch" Class="mt-12" >
+    <MudChip Value="StretchItems.None" Text="Do Not Stretch" SelectedColor="Color.Primary" />
+    <MudChip Value="StretchItems.Start" Text="Stretch First" SelectedColor="Color.Primary" Default="true" />
+    <MudChip Value="StretchItems.StartAndEnd" Text="Stretch First and Last" SelectedColor="Color.Primary" />
+    <MudChip Value="StretchItems.End" Text="Stretch Last" SelectedColor="Color.Primary" />
+    <MudChip Value="StretchItems.Middle" Text="Stretch Middle" SelectedColor="Color.Primary" />
+    <MudChip Value="StretchItems.All" Text="Stretch All" SelectedColor="Color.Primary" />
+</MudChipSet>
+
+@code {
+    StretchItems stretch = StretchItems.Start;
+}

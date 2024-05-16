@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -71,13 +72,13 @@ namespace MudBlazor
                 return _maskReference.SelectRangeAsync(pos1, pos2);
         }
 
-        protected override void ResetValue()
+        protected override async Task ResetValueAsync()
         {
             if (_mask == null)
-                InputReference.Reset();
+                await InputReference.ResetAsync();
             else
-                _maskReference.Reset();
-            base.ResetValue();
+                await _maskReference.ResetAsync();
+            await base.ResetValueAsync();
         }
 
         /// <summary>
@@ -109,7 +110,6 @@ namespace MudBlazor
             _maskReference.OnPaste(text);
         }
 
-
         private IMask _mask = null;
 
         /// <summary>
@@ -127,15 +127,16 @@ namespace MudBlazor
             }
         }
 
-        protected override Task SetValueAsync(T value, bool updateText = true)
+        protected override Task SetValueAsync(T value, bool updateText = true, bool force = false)
         {
             if (_mask != null)
             {
                 var textValue = Converter.Set(value);
                 _mask.SetText(textValue);
-                textValue=Mask.GetCleanText();
+                textValue = Mask.GetCleanText();
                 value = Converter.Get(textValue);
             }
+
             return base.SetValueAsync(value, updateText);
         }
 
@@ -153,8 +154,20 @@ namespace MudBlazor
         {
             await SetTextAsync(s);
         }
-    }
 
-    [Obsolete("MudTextFieldString is no longer available.", true)]
-    public class MudTextFieldString : MudTextField<string> { }
+        /// <summary>
+        /// If true the input element will grow automatically with the text.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.General.Behavior)]
+        public bool AutoGrow { get; set; }
+
+        /// <summary>
+        /// If AutoGrow is set to true, the input element will not grow bigger than MaxLines lines. If MaxLines is set to 0
+        /// or less, the property will be ignored.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.General.Behavior)]
+        public int MaxLines { get; set; }
+    }
 }

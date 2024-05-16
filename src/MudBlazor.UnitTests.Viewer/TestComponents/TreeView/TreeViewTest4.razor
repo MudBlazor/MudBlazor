@@ -1,0 +1,25 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTreeView @ref="_treeView" T="string" @bind-SelectedValue="selectedValue" SelectionMode="SelectionMode.ToggleSelection">
+    <MudTreeViewItem @ref="_item1" Value='"content"' />
+    <MudTreeViewItem @ref="_item2" Value='"src"' />
+</MudTreeView>
+
+@code {
+    MudTreeView<string> _treeView;
+    MudTreeViewItem<string> _item1;
+    MudTreeViewItem<string> _item2;
+
+    public string selectedValue;
+
+    public async Task ClickFirst()
+    {
+        await _treeView.OnItemClickAsync(_item1);
+    }
+
+    public async Task ClickSecond()
+    {
+        await _treeView.OnItemClickAsync(_item2);
+    }
+
+}

@@ -3,20 +3,28 @@
 @typeparam T
 @using Microsoft.AspNetCore.Components.Web.Virtualization 
 
-@if (IsEnabled)
+@if (Enabled)
 {
-    <Virtualize Items="@Items" Context="item" OverscanCount=@OverscanCount>
-        @if (@ChildContent != null)
-        {
-            @ChildContent(item);
-        }
+    <Virtualize Items="@Items" ItemsProvider="@ItemsProvider" Context="item" OverscanCount="@OverscanCount" ItemSize="@ItemSize" SpacerElement="@SpacerElement">
+        <ChildContent>
+            @if (ChildContent is not null)
+            {
+                @ChildContent(item)
+            }
+        </ChildContent>
+
+        <Placeholder>
+            @Placeholder
+        </Placeholder>
     </Virtualize>
 }
 else
 {
     @foreach (var item in Items ?? Array.Empty<T>())
     {
-        @ChildContent(item);
+        if (ChildContent is not null)
+        {
+            @ChildContent(item)
+        }
     }
 }
-

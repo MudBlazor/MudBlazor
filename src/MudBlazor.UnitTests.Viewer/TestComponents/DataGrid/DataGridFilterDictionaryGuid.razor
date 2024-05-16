@@ -1,6 +1,6 @@
 @namespace MudBlazor.UnitTests.TestComponents
 
-<MudGrid>
+@*<MudGrid>
     <MudItem xs="12">
         <MudDataGrid T="IDictionary<string, object>"
                      @ref="MudGridRef"
@@ -14,7 +14,7 @@
             </Columns>
         </MudDataGrid>
     </MudItem>
-</MudGrid>
+</MudGrid>*@
 
 @code {
     public MudDataGrid<IDictionary<string, object>> MudGridRef { get; private set; }

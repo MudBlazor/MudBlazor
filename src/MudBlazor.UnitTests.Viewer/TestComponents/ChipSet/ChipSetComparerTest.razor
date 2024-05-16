@@ -2,11 +2,11 @@
 
 <MudGrid>
     <MudItem xs="12">
-        <MudChipSet MultiSelection="true"  Filter="true" SelectedValues="Selected" SelectedValuesChanged="SelectedChanged" Comparer="Comparer"  @bind-SelectedChips="selectedChips">
-            <MudChip Text="Cappuccino" Value="@(new Coffee("cap","Cappuccino"))" />
-            <MudChip Text="Cafe Latte" Value="@(new Coffee("lat","Cafe Latte"))" />
-            <MudChip Text="Espresso" Value="@(new Coffee("esp","Espresso"))" />
-            <MudChip Text="Irish Coffee" Value="@(new Coffee("ire","Irish Coffee"))" />
+        <MudChipSet T="Coffee" SelectionMode="SelectionMode.MultiSelection" CheckMark SelectedValues="@Selected" SelectedValuesChanged="SelectedChanged" Comparer="@Comparer">
+            <MudChip T="Coffee" Text="Cappuccino" Value="@(new Coffee("cap","Cappuccino"))" />
+            <MudChip T="Coffee" Text="Cafe Latte" Value="@(new Coffee("lat","Cafe Latte"))" />
+            <MudChip T="Coffee" Text="Espresso" Value="@(new Coffee("esp","Espresso"))" />
+            <MudChip T="Coffee" Text="Irish Coffee" Value="@(new Coffee("ire","Irish Coffee"))" />
         </MudChipSet>
     </MudItem>
     <MudItem xs="12">
@@ -14,28 +14,24 @@
     </MudItem>
     <br />
     <p class="sel">
-        Selection: @(string.Join(", ", (selectedChips??new MudChip[0]).OrderBy(chip=> chip.Text).Select(chip=> chip.Text)))
+        Selection: @(string.Join(", ", Selected.Select(x => x.Name).OrderBy(x => x)))
     </p>
 </MudGrid>
 
 @code {
     public static string __description__ = "The comparer should be used to compare coffee objects in chipset";
-    MudChip[] selectedChips;
-    static CoffeeComparer Comparer { get; } = new();
+    private CoffeeComparer Comparer { get; } = new();
 
-    HashSet<object> Selected { get; } = new(Comparer);
+    IReadOnlyCollection<Coffee> Selected { get; set; } = Array.Empty<Coffee>();
 
-    void SelectedChanged(IEnumerable<object> newSelected)
+    void SelectedChanged(IEnumerable<Coffee> newSelected)
     {
-        Selected.Clear();
-        Selected.UnionWith(newSelected);
+        Selected = newSelected.ToHashSet();
     }
 
     void SetSelection()
     {
-        Selected.Clear();
-        Selected.Add(new Coffee("lat", "Selected Cafe Latte"));
-        Selected.Add(new Coffee("esp", "Selected Espresso"));
+        Selected = new[] { new Coffee("lat", "Cafe Latte!"), new Coffee("esp", "Espresso!") };
     }
 
     class Coffee
@@ -45,10 +41,10 @@
         public Coffee(string key, string name) { Key = key; Name = name; }
     }
 
-    class CoffeeComparer : IEqualityComparer<object>
+    class CoffeeComparer : IEqualityComparer<Coffee>
     {
-        public new bool Equals(object a, object b) => ((Coffee)a).Key == ((Coffee)b).Key;
-        public int GetHashCode(object x) => HashCode.Combine( ((Coffee)x).Key);
+        public bool Equals(Coffee a, Coffee b) => a?.Key == b?.Key;
+        public int GetHashCode(Coffee x) => HashCode.Combine(x.Key);
     }
 }
 

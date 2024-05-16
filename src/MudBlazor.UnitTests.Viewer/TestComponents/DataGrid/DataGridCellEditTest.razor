@@ -1,10 +1,9 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid T="Model" Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Cell"
-    CommittedItemChanges="@Changes">
+<MudDataGrid Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Cell">
     <Columns>
-        <Column T="Model" Field="@nameof(Model.Name)" />
-        <Column T="Model" Field="@nameof(Model.Age)" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
     </Columns>
 </MudDataGrid>
 
@@ -17,9 +16,4 @@
     };
 
     public record Model(string Name, int Age);
-
-    public void Changes(Model changes)
-    {
-        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(_items));
-    }
 }

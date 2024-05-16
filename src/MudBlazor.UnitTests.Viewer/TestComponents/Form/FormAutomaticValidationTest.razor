@@ -1,0 +1,33 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using FluentValidation
+
+<MudForm Model="@Model" Validation="@(ValidationRules.ValidateValue)">
+    <MudTextField @bind-Value="Model.String1" For="(() => Model.String1)" />
+    <MudTextField @bind-Value="Model.String2" />
+    <MudDatePicker @bind-Date="Model.DateTime1" For="(() => Model.DateTime1)" />
+    <MudDatePicker @bind-Date="Model.DateTime2" />
+</MudForm>
+
+@code {
+    TestClass Model = new();
+    TestClassValidator ValidationRules = new();
+
+    public class TestClass
+    {
+        public string String1 { get; set; }
+        public string String2 { get; set; }
+        public DateTime? DateTime1 { get; set; }
+        public DateTime? DateTime2 { get; set; }
+    }
+
+    public class TestClassValidator : AbstractValidator<TestClass>
+    {
+        public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
+            {
+                var result = await ValidateAsync(ValidationContext<TestClass>.CreateWithOptions((TestClass)model, x => x.IncludeProperties(propertyName)));
+                if (result.IsValid)
+                    return Array.Empty<string>();
+                return result.Errors.Select(e => e.ErrorMessage);
+            };
+    }
+}

@@ -16,8 +16,7 @@ namespace MudBlazor.Utilities
     {
         public static void UpdateOrder<T>(this IEnumerable<T> items, MudItemDropInfo<T> dropInfo, Expression<Func<T, int>> valueUpdater, int zoneOffset = 0)
         {
-            var memberSelectorExpression = valueUpdater.Body as MemberExpression;
-            if (memberSelectorExpression == null) { throw new InvalidOperationException(); }
+            if (valueUpdater.Body is not MemberExpression memberSelectorExpression) { throw new InvalidOperationException(); }
 
             var property = memberSelectorExpression.Member as PropertyInfo;
 
@@ -27,10 +26,10 @@ namespace MudBlazor.Utilities
 
             var item = dropInfo.Item;
 
-            int index = 0;
+            var index = 0;
             foreach (var _item in items.OrderBy(x => (int)property.GetValue(x)))
             {
-                if (_item.Equals(item) == true)
+                if (_item.Equals(item))
                 {
                     property.SetValue(item, newIndex);
                 }

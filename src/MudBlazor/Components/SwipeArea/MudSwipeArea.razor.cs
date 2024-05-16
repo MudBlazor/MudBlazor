@@ -2,35 +2,44 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudSwipeArea : MudComponentBase
     {
-        internal double? _xDown, _yDown;
-        internal ElementReference _componentRef;
         private static readonly string[] _preventDefaultEventNames = { "touchstart", "touchend", "touchcancel" };
-        internal int[] _listenerIds;
+
+        private double? _swipeDelta;
+        internal int[]? _listenerIds;
+        internal double? _xDown, _yDown;
+        private bool _preventDefaultChanged;
+        private ElementReference _componentRef;
 
         [Parameter]
         [Category(CategoryTypes.SwipeArea.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.SwipeArea.Behavior)]
-        public Action<SwipeDirection> OnSwipe { get; set; }
+        public EventCallback<SwipeEventArgs> OnSwipeEnd { get; set; }
+
+        /// <summary>
+        /// Swipe threshold in pixels. If SwipeDelta is below Sensitivity then OnSwipe is not called.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.SwipeArea.Behavior)]
+        public int Sensitivity { get; set; } = 100;
 
         /// <summary>
         /// Prevents default behavior of the browser when swiping.
-        /// Usable espacially when swiping up/down - this will prevent the whole page from scrolling up/down.
+        /// Usable especially when swiping up/down - this will prevent the whole page from scrolling up/down.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.SwipeArea.Behavior)]
         public bool PreventDefault { get; set; }
 
-        private bool _preventDefaultChanged;
-
+        /// <inheritdoc />
         public override async Task SetParametersAsync(ParameterView parameters)
         {
             var preventDefault = parameters.GetValueOrDefault<bool>(nameof(PreventDefault));
@@ -58,6 +67,7 @@ namespace MudBlazor
             }
         }
 
+        /// <inheritdoc />
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (_preventDefaultChanged)
@@ -67,49 +77,42 @@ namespace MudBlazor
             }
         }
 
-        private void OnTouchStart(TouchEventArgs arg)
+        internal void OnTouchStart(TouchEventArgs arg)
         {
             _xDown = arg.Touches[0].ClientX;
             _yDown = arg.Touches[0].ClientY;
         }
 
-        internal void OnTouchEnd(TouchEventArgs arg)
+        internal async Task OnTouchEnd(TouchEventArgs arg)
         {
-            if (_xDown == null || _yDown == null)
+            if (_xDown is null || _yDown is null)
+            {
                 return;
+            }
 
             var xDiff = _xDown.Value - arg.ChangedTouches[0].ClientX;
             var yDiff = _yDown.Value - arg.ChangedTouches[0].ClientY;
 
-            if (Math.Abs(xDiff) < 100 && Math.Abs(yDiff) < 100)
+            if (Math.Abs(xDiff) < Sensitivity && Math.Abs(yDiff) < Sensitivity)
             {
                 _xDown = _yDown = null;
                 return;
             }
 
+            var swipeDirection = Math.Abs(xDiff) > Math.Abs(yDiff) ?
+                xDiff > 0 ? SwipeDirection.RightToLeft : SwipeDirection.LeftToRight :
+                yDiff > 0 ? SwipeDirection.BottomToTop : SwipeDirection.TopToBottom;
+
             if (Math.Abs(xDiff) > Math.Abs(yDiff))
             {
-                if (xDiff > 0)
-                {
-                    InvokeAsync(() => OnSwipe(SwipeDirection.RightToLeft));
-                }
-                else
-                {
-                    InvokeAsync(() => OnSwipe(SwipeDirection.LeftToRight));
-                }
+                _swipeDelta = xDiff;
             }
             else
             {
-                if (yDiff > 0)
-                {
-                    InvokeAsync(() => OnSwipe(SwipeDirection.BottomToTop));
-                }
-                else
-                {
-                    InvokeAsync(() => OnSwipe(SwipeDirection.TopToBottom));
-                }
+                _swipeDelta = yDiff;
             }
 
+            await OnSwipeEnd.InvokeAsync(new SwipeEventArgs(arg, swipeDirection, _swipeDelta, this));
             _xDown = _yDown = null;
         }
 

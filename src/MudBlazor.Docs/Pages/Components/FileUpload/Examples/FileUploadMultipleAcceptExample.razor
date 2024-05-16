@@ -1,0 +1,63 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="UploadFiles">
+    <ActivatorContent>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload">
+            Multiple Files
+        </MudButton>
+    </ActivatorContent>
+</MudFileUpload>
+
+<MudFileUpload T="IBrowserFile" Accept=".pdf" FilesChanged="UploadFiles2" MaximumFileCount="100">
+    <ActivatorContent>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload">
+            Only .pdf files
+        </MudButton>
+    </ActivatorContent>
+</MudFileUpload>
+
+
+<MudFileUpload T="IBrowserFile" Accept=".png, .jpg" FilesChanged="UploadFiles2" MaximumFileCount="100">
+    <ActivatorContent>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload">
+            Only image files
+        </MudButton>
+    </ActivatorContent>
+</MudFileUpload>
+
+@if (files != null)
+{
+    <MudList T="string">
+        @foreach (var file in files)
+        {
+            <MudListItem Icon="@Icons.Material.Filled.AttachFile">
+                @file.Name <code>@file.Size bytes</code>
+            </MudListItem>
+        }
+    </MudList>
+}
+
+@code
+{
+    IList<IBrowserFile> files = new List<IBrowserFile>();
+    private void UploadFiles(IReadOnlyList<IBrowserFile> files)
+    {
+        foreach (var file in files)
+        {
+            this.files.Add(file);
+        }
+        //TODO upload the files to the server
+    }
+
+    private void UploadFiles2(IBrowserFile file)
+    {
+        files.Add(file);
+        //TODO upload the files to the server
+    }
+}

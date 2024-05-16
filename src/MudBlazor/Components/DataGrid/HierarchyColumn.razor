@@ -2,20 +2,21 @@
 @inherits MudComponentBase
 @typeparam T
 
-<Column T="T" Tag="@("hierarchy-column")" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderStyle="width:0%" FieldType="@typeof(object)"
-    Filterable="false">
+<TemplateColumn T="T" Tag="@("hierarchy-column")" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderStyle="width:0%"
+    Filterable="false" Editable="false">
     <CellTemplate>
-        <label class="ma-n3">
-            <MudIconButton
-            Icon="@(context.openHierarchies.Contains(context.Item) ?  OpenIcon : ClosedIcon)" 
-            OnClick="context.Actions.ToggleHierarchyVisibilityForItem"
-            Size="@IconSize"/>
-        </label>
+         <MudIconButton 
+            Class="ma-n3 pa-1"
+            Icon="@(context.OpenHierarchies.Contains(context.Item) ?  OpenIcon : ClosedIcon)" 
+            OnClick="context.Actions.ToggleHierarchyVisibilityForItemAsync"
+            Size="@IconSize"
+            Disabled="ButtonDisabledFunc.Invoke(context.Item)"/>
     </CellTemplate>
-</Column>
+</TemplateColumn>
 
 @code {
     [Parameter] public string ClosedIcon { get; set; } = Icons.Material.Filled.ChevronRight;
     [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ExpandMore;
     [Parameter] public Size IconSize { get; set; } = Size.Medium;
+    [Parameter] public Func<T, bool> ButtonDisabledFunc { get; set; } = x => false;
 }

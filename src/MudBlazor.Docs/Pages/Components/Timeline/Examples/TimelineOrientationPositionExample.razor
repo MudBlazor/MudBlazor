@@ -8,7 +8,7 @@
         </MudSelect>
     </MudItem>
     <MudItem xs="12" sm="5">
-        <MudSelect T="TimelinePosition" @bind-Value="@_position" Label="TimelinePosition" Dense="true" Variant="Variant.Outlined">
+        <MudSelect T="TimelinePosition" @bind-Value="_position" Label="TimelinePosition" Dense="true" Variant="Variant.Outlined">
             @if(_orientation == TimelineOrientation.Vertical)
             {
                 <MudSelectItem T="TimelinePosition" Value="TimelinePosition.Start">Start</MudSelectItem>
@@ -26,7 +26,7 @@
         </MudSelect>
     </MudItem>
     <MudItem xs="12" sm="2">
-        <MudSwitch Label="Reverse" @bind-Checked="@_reverse" Disabled="IsSwitchDisabled()" Color="Color.Primary" />
+        <MudSwitch Label="Reverse" @bind-Value="_reverse" Disabled="IsSwitchDisabled()" Color="Color.Primary" />
     </MudItem>
 </MudGrid>
 

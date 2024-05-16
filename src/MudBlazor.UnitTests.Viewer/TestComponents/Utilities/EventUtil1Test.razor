@@ -1,0 +1,72 @@
+﻿<h3>EventUtil1Test</h3>
+<p>
+    Inspired from https://learn.microsoft.com/en-us/aspnet/core/blazor/performance?view=aspnetcore-6.0#avoid-rerendering-after-handling-events-without-state-changes
+</p>
+<p id="clicks">
+    Clicks: @NumClicks1/@NumClicks2/@NumClicks3
+</p>
+
+<button id="btn1" @onclick="HandleClick1">
+    Select me (Rerenders)
+</button>
+
+<button id="btn2" @onclick="EventUtil.AsNonRenderingEventHandler(HandleClick2)">
+    Select me (Avoids Rerender)
+</button>
+
+<button id="btn3" @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(HandleClick3)">
+    Select me (Avoids Rerender and uses <code>MouseEventArgs</code>)
+</button>
+
+<button id="btn4" @onclick="EventUtil.AsNonRenderingEventHandler(HandleClick4)">
+    Select me (Avoids Rerender) with an async Func as Handler
+</button>
+
+<button id="btn5" @onclick="EventUtil.AsNonRenderingEventHandler(new Func<MouseEventArgs, Task>(HandleClick5))">
+    Select me (Avoids Rerender) with an async TValue Func as Handler
+</button>
+
+@code {
+    public int NumClicks1;
+    public int NumClicks2;
+    public int NumClicks3;
+    public int NumClicks4;
+    public int NumClicks5;
+
+    public double ScreenX;
+    public double ScreenY;
+
+    private void HandleClick1()
+    {
+        NumClicks1++;
+        //Logger.LogInformation("This event handler triggers a rerender.");
+    }
+
+    private void HandleClick2()
+    {
+        NumClicks2++;
+        //Logger.LogInformation("This event handler doesn't trigger a rerender.");
+    }
+
+    private void HandleClick3(MouseEventArgs args)
+    {
+        NumClicks3++;
+        ScreenX = args.ScreenX;
+        ScreenY = args.ScreenY;
+        //Logger.LogInformation("This event handler doesn't trigger a rerender. " +"Mouse coordinates: {ScreenX}:{ScreenY}", args.ScreenX, args.ScreenY);
+    }
+
+    private Task HandleClick4()
+    {
+        NumClicks4++;
+        return Task.CompletedTask;
+    }
+    
+    private Task HandleClick5(MouseEventArgs args)
+    {
+        NumClicks5++;
+        ScreenX = args.ScreenX;
+        ScreenY = args.ScreenY;
+        return Task.CompletedTask;
+    }
+}

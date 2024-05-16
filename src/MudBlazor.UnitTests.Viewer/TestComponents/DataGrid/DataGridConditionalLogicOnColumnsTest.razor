@@ -2,12 +2,12 @@
 
 <MudDataGrid @ref="grid" T="Model" Items="@_items">
     <Columns>
-        <Column T="Model" Field="@nameof(Model.Name)" />
-        <Column T="Model" Field="@nameof(Model.Age)" Hidden="@_hideAge" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" Hidden="@_hideAge" />
     </Columns>
 </MudDataGrid>
 
-<MudSwitch @bind-Checked="@_hideAge">Hide Age Column (Hidden Parameter)</MudSwitch>
+<MudSwitch @bind-Value="@_hideAge">Hide Age Column (Hidden Parameter)</MudSwitch>
 <MudButton OnClick="@ToggleColumn">@(_isColumnRemoved ? "Add" : "Remove")</MudButton>
 
 @code {
@@ -35,7 +35,7 @@
         else
         {
             // Remove the column
-            _column = grid.RenderedColumns.FirstOrDefault(x => x.Field == "Age");
+            _column = grid.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Age");
             grid.RenderedColumns.Remove(_column);
             _isColumnRemoved = true;
 

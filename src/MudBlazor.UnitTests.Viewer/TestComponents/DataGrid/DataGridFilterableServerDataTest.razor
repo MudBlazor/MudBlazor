@@ -3,7 +3,7 @@
 
 <MudDataGrid T="Item" Filterable="true" ServerData="this.ServerDataFunc">
     <Columns>
-        <Column T="Item" Field="@nameof(Item.Name)" Filterable="true" />
+        <PropertyColumn Property="x => x.Name" />
     </Columns>
 </MudDataGrid>
 
@@ -19,9 +19,10 @@
     private async Task<GridData<Item>> ServerDataFunc(GridState<Item> gridState)
     {
         await Task.CompletedTask;
+        var filterFunctions = gridState.FilterDefinitions.Select(x => x.GenerateFilterFunction());
         return new GridData<Item>
         {
-            Items = this._items,
+            Items = this._items.Where(x => filterFunctions.All(f => f(x))),
             TotalItems = this._items.Count()
         };
     }

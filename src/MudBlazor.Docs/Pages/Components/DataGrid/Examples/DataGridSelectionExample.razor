@@ -5,11 +5,11 @@
 
 <MudDataGrid Items="@Elements.Take(4)">
     <Columns>
-        <Column T="Element" Field="Number" Title="Nr" />
-        <Column T="Element" Field="Sign" />
-        <Column T="Element" Field="Name" />
-        <Column T="Element" Field="Position" />
-        <Column T="Element" Field="Molar" Title="Molar mass" />
+        <PropertyColumn Property="x => x.Number" Title="Nr" />
+        <PropertyColumn Property="x => x.Sign" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Position" />
+        <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
     </Columns>
 </MudDataGrid>
 

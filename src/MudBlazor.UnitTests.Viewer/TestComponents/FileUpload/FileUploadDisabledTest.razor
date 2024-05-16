@@ -1,0 +1,14 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudFileUpload T="IBrowserFile" Disabled="Disabled">
+    <ActivatorContent>
+        <MudButton>
+            Upload
+        </MudButton>
+    </ActivatorContent>
+</MudFileUpload>
+
+@code{
+    [Parameter]
+    public bool Disabled { get; set; }
+}

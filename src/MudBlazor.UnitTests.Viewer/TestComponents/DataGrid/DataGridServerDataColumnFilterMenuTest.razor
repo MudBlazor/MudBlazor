@@ -1,0 +1,39 @@
+@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudDataGrid T="Model" Filterable="true" ServerData="ServerDataFunc" FilterMode="DataGridFilterMode.ColumnFilterMenu">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" Filterable="false" />
+        <PropertyColumn Property="x => x.Status" Filterable="false"/>
+        <PropertyColumn Property="x => x.Hired" Filterable="false"/>
+        <PropertyColumn Property="x => x.HiredOn" Filterable="false"/>
+    </Columns>
+</MudDataGrid>
+<MudText>Server call count: @_serverCallCount</MudText>
+
+@code {
+    public record Model (string Name, int? Age, Severity? Status, bool? Hired, DateTime? HiredOn);
+    private int _serverCallCount;
+
+    private readonly IEnumerable<Model> _items = new List<Model>()
+    {
+        new Model("Sam", 56, Severity.Normal, false, null), 
+        new Model("Alicia", 54, Severity.Info, null, null), 
+        new Model("Ira", 27, Severity.Success, true, new DateTime(2011, 1, 2)),
+        new Model("John", 32, Severity.Warning, false, null)
+    };
+
+    private async Task<GridData<Model>> ServerDataFunc(GridState<Model> gridState)
+    {
+        _serverCallCount++;
+        StateHasChanged();
+        await Task.CompletedTask;
+        var filterFunctions = gridState.FilterDefinitions.Select(x => x.GenerateFilterFunction());
+        return new GridData<Model>
+        {
+            Items = _items.Where(p => filterFunctions.All(f => f(p))).ToList(),
+            TotalItems = _items.Count()
+        };
+    }
+}

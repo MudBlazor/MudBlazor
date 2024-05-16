@@ -1,39 +1,40 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudList Clickable="true" Color="Color" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue">
+<MudList T="string" Color="Color" @bind-SelectedValue="selectedValue">
     <MudListSubheader>
         Your drink:
         <MudChip Color="Color.Secondary">
-            @(selectedItem?.Text ?? "You are dry")
+            @(selectedValue ?? "You are dry")
         </MudChip>
     </MudListSubheader>
-    <MudListItem Text="Sparkling Water" Value="1"/>
+    <MudListItem Text="Sparkling Water" />
     <MudListItem Text="Teas">
         <NestedList>
-            <MudListItem Text="Earl Grey"  Value="2"/>
-            <MudListItem Text="Matcha"  Value="3"/>
-            <MudListItem Text="Pu'er"  Value="4"/>
+            <MudListItem Text="Earl Grey" />
+            <MudListItem Text="Matcha" />
+            <MudListItem Text="Pu'er" />
         </NestedList>
     </MudListItem>
     <MudListItem Text="Coffees">
         <NestedList>
-            <MudListItem Text="Irish Coffee"  Value="5"/>
-            <MudListItem Text="Double Espresso"  Value="6"/>
-            <MudListItem Text="Cafe Latte"  Value="7"/>
+            <MudListItem Text="Irish Coffee" />
+            <MudListItem Text="Double Espresso" />
+            <MudListItem Text="Cafe Latte" />
         </NestedList>
     </MudListItem>
 </MudList>
 
 @code
 {
-    [Parameter] public Color Color { get; set; } = Color.Primary;
     public static string __description__ = "Sparkling Water should be selected initially.";
-    MudListItem selectedItem;
-    object selectedValue=1;
+    private string selectedValue = "Sparkling Water";
 
-    public void SetSelecedValue(object value)
+    [Parameter]
+    public Color Color { get; set; } = Color.Primary;
+
+    public void SetSelectedValue(string value)
     {
-        selectedValue=value;
+        selectedValue = value;
         StateHasChanged();
     }
 }

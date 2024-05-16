@@ -1,51 +1,51 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     // note: the MudTable code is split. Everything that has nothing to do with the type parameter of MudTable<T> is here in MudTableBase
-
     public abstract class MudTableBase : MudComponentBase
     {
-        internal object _editingItem = null;
-        internal bool IsEditing => _editingItem != null;
-
         private int _currentPage = 0;
-        private int? _rowsPerPage;
         private bool _isFirstRendered = false;
+        internal int? _rowsPerPage;
+        internal object? _editingItem = null;
+        internal bool Editing => _editingItem != null;
 
         protected string Classname =>
-        new CssBuilder("mud-table")
-           .AddClass("mud-xs-table", Breakpoint == Breakpoint.Xs)
-           .AddClass("mud-sm-table", Breakpoint == Breakpoint.Sm)
-           .AddClass("mud-md-table", Breakpoint == Breakpoint.Md)
-           .AddClass("mud-lg-table", Breakpoint is Breakpoint.Lg or Breakpoint.Always)
-           .AddClass("mud-xl-table", Breakpoint is Breakpoint.Xl or Breakpoint.Always)
-           .AddClass("mud-xxl-table", Breakpoint is Breakpoint.Xxl or Breakpoint.Always)
-           .AddClass("mud-table-dense", Dense)
-           .AddClass("mud-table-hover", Hover)
-           .AddClass("mud-table-bordered", Bordered)
-           .AddClass("mud-table-striped", Striped)
-           .AddClass("mud-table-outlined", Outlined)
-           .AddClass("mud-table-square", Square)
-           .AddClass("mud-table-sticky-header", FixedHeader)
-           .AddClass("mud-table-sticky-footer", FixedFooter)
-           .AddClass($"mud-elevation-{Elevation}", !Outlined)
-          .AddClass(Class)
-        .Build();
+            new CssBuilder("mud-table")
+                .AddClass("mud-xs-table", Breakpoint == Breakpoint.Xs)
+                .AddClass("mud-sm-table", Breakpoint == Breakpoint.Sm)
+                .AddClass("mud-md-table", Breakpoint == Breakpoint.Md)
+                .AddClass("mud-lg-table", Breakpoint is Breakpoint.Lg or Breakpoint.Always)
+                .AddClass("mud-xl-table", Breakpoint is Breakpoint.Xl or Breakpoint.Always)
+                .AddClass("mud-xxl-table", Breakpoint is Breakpoint.Xxl or Breakpoint.Always)
+                .AddClass("mud-table-dense", Dense)
+                .AddClass("mud-table-hover", Hover)
+                .AddClass("mud-table-bordered", Bordered)
+                .AddClass("mud-table-striped", Striped)
+                .AddClass("mud-table-outlined", Outlined)
+                .AddClass("mud-table-square", Square)
+                .AddClass("mud-table-sticky-header", FixedHeader)
+                .AddClass("mud-table-sticky-footer", FixedFooter)
+                .AddClass($"mud-elevation-{Elevation}", !Outlined)
+                .AddClass(Class)
+                .Build();
 
         protected string HeadClassname => new CssBuilder("mud-table-head")
-            .AddClass(HeaderClass).Build();
+            .AddClass(HeaderClass)
+            .Build();
+
         protected string FootClassname => new CssBuilder("mud-table-foot")
-            .AddClass(FooterClass).Build();
+            .AddClass(FooterClass)
+            .Build();
 
         /// <summary>
-        /// When editing a row and this is true, the editing row must be saved/cancelled before a new row will be selected.
+        /// When editing a row and this is true, the editing row must be saved/canceled before a new row will be selected.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
@@ -127,14 +127,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Appearance)]
-        public string Height { get; set; }
+        public string? Height { get; set; }
 
         /// <summary>
         /// If table is in smalldevice mode and uses any kind of sorting the text applied here will be the sort selects label.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Sorting)]
-        public string SortLabel { get; set; }
+        public string? SortLabel { get; set; }
 
         /// <summary>
         /// If true allows table to be in an unsorted state through column clicks (i.e. first click sorts "Ascending", second "Descending", third "None").
@@ -156,14 +156,17 @@ namespace MudBlazor
             set
             {
                 if (_rowsPerPage is null || _rowsPerPage != value)
+                {
                     SetRowsPerPage(value);
+                }
             }
         }
 
         /// <summary>
         /// Rows Per Page two-way bindable parameter
         /// </summary>
-        [Parameter] public EventCallback<int> RowsPerPageChanged { get; set; }
+        [Parameter]
+        public EventCallback<int> RowsPerPageChanged { get; set; }
 
         /// <summary>
         /// The page index of the currently displayed page (Zero based). Usually called by MudTablePager.
@@ -177,11 +180,16 @@ namespace MudBlazor
             set
             {
                 if (_currentPage == value)
+                {
                     return;
+                }
+
                 _currentPage = value;
                 InvokeAsync(StateHasChanged);
                 if (_isFirstRendered)
+                {
                     InvokeServerLoadFunc();
+                }
             }
         }
 
@@ -193,11 +201,18 @@ namespace MudBlazor
         public bool MultiSelection { get; set; }
 
         /// <summary>
+        /// When <c>true</c>, a row-click also toggles the checkbox state.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Rows)]
+        public bool SelectOnRowClick { get; set; } = true;
+
+        /// <summary>
         /// Optional. Add any kind of toolbar to this render fragment.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Behavior)]
-        public RenderFragment ToolBarContent { get; set; }
+        public RenderFragment? ToolBarContent { get; set; }
 
         /// <summary>
         /// Show a loading animation, if true.
@@ -218,7 +233,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Header)]
-        public RenderFragment HeaderContent { get; set; }
+        public RenderFragment? HeaderContent { get; set; }
 
         /// <summary>
         /// Specify if the header has multiple rows. In that case, you need to provide the MudTHeadRow tags.
@@ -232,14 +247,28 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Header)]
-        public string HeaderClass { get; set; }
+        public string? HeaderClass { get; set; }
+
+        /// <summary>
+        /// Add a style to table container
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Appearance)]
+        public string? ContainerStyle { get; set; }
+
+        /// <summary>
+        /// Add a class to table container
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Appearance)]
+        public string? ContainerClass { get; set; }
 
         /// <summary>
         /// Add MudTd cells here to define the table footer. If<see cref="CustomFooter"/> is set, add one or more MudTFootRow instead.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Footer)]
-        public RenderFragment FooterContent { get; set; }
+        public RenderFragment? FooterContent { get; set; }
 
         /// <summary>
         /// Specify if the footer has multiple rows. In that case, you need to provide the MudTFootRow tags.
@@ -253,7 +282,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Footer)]
-        public string FooterClass { get; set; }
+        public string? FooterClass { get; set; }
 
         /// <summary>
         /// Specifies a group of one or more columns in a table for formatting.
@@ -269,17 +298,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Behavior)]
-        public RenderFragment ColGroup { get; set; }
-
-        //[Parameter] public RenderFragment<T> RowTemplate { get; set; } <-- see MudTable.razor
+        public RenderFragment? ColGroup { get; set; }
 
         /// <summary>
         /// Add MudTablePager here to enable breaking the rows in to multiple pages.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Pagination)]
-        public RenderFragment PagerContent { get; set; }
-
+        public RenderFragment? PagerContent { get; set; }
 
         /// <summary>
         /// Locks Inline Edit mode, if true.
@@ -291,45 +317,34 @@ namespace MudBlazor
         /// <summary>
         /// Button commit edit click event.
         /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnCommitEditClick { get; set; }
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnCommitEditClick { get; set; }
 
         /// <summary>
         /// Button cancel edit click event.
         /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnCancelEditClick { get; set; }
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnCancelEditClick { get; set; }
 
         /// <summary>
         /// Event is called before the item is modified in inline editing.
         /// </summary>
-        [Parameter] public EventCallback<object> OnPreviewEditClick { get; set; }
-
-        /// <summary>
-        /// Command executed when the user clicks on the CommitEdit Button.
-        /// </summary>
         [Parameter]
-        [Category(CategoryTypes.Table.Editing)]
-        public ICommand CommitEditCommand { get; set; }
-
-        /// <summary>
-        /// Command parameter for the CommitEdit Button. By default, will be the row level item model, if you won't set anything else.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Table.Editing)]
-        public object CommitEditCommandParameter { get; set; }
+        public EventCallback<object?> OnPreviewEditClick { get; set; }
 
         /// <summary>
         /// Tooltip for the CommitEdit Button.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
-        public string CommitEditTooltip { get; set; }
+        public string? CommitEditTooltip { get; set; }
 
         /// <summary>
         /// Tooltip for the CancelEdit Button.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
-        public string CancelEditTooltip { get; set; }
+        public string? CancelEditTooltip { get; set; }
 
         /// <summary>
         /// Sets the Icon of the CommitEdit Button.
@@ -353,33 +368,53 @@ namespace MudBlazor
         public bool CanCancelEdit { get; set; }
 
         /// <summary>
-        /// Set the positon of the CommitEdit and CancelEdit button, if <see cref="IsEditable"/> IsEditable is true. Defaults to the end of the row
+        /// Set the position of the CommitEdit and CancelEdit button, if <see cref="Editable"/> is true. Defaults to the end of the row
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
         public TableApplyButtonPosition ApplyButtonPosition { get; set; } = TableApplyButtonPosition.End;
 
+        /// <summary>
+        /// Set the position of the StartEdit button, if <see cref="Editable"/> is true. Defaults to the end of the row
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Editing)]
+        public TableEditButtonPosition EditButtonPosition { get; set; } = TableEditButtonPosition.End;
+
+        /// <summary>
+        /// Defines how a table row edit will be triggered
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Editing)]
+        public TableEditTrigger EditTrigger { get; set; } = TableEditTrigger.RowClick;
+
+        /// <summary>
+        /// Defines the edit button that will be rendered when EditTrigger.EditButton
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Editing)]
+        public RenderFragment<MudBlazorFix.EditButtonContext>? EditButtonContent { get; set; }
 
         /// <summary>
         /// The method is called before the item is modified in inline editing.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
-        public Action<object> RowEditPreview { get; set; }
+        public Action<object?>? RowEditPreview { get; set; }
 
         /// <summary>
         /// The method is called when the edition of the item has been committed in inline editing.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
-        public Action<object> RowEditCommit { get; set; }
+        public Action<object?>? RowEditCommit { get; set; }
 
         /// <summary>
         /// The method is called when the edition of the item has been canceled in inline editing.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
-        public Action<object> RowEditCancel { get; set; }
+        public Action<object?>? RowEditCancel { get; set; }
 
         /// <summary>
         /// Number of items. Used only with ServerData="true"
@@ -393,14 +428,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Rows)]
-        public string RowClass { get; set; }
+        public string? RowClass { get; set; }
 
         /// <summary>
         /// CSS styles for the table rows. Note, many CSS settings are overridden by MudTd though
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Rows)]
-        public string RowStyle { get; set; }
+        public string? RowStyle { get; set; }
 
         /// <summary>
         /// If true, the results are displayed in a Virtualize component, allowing a boost in rendering speed.
@@ -409,14 +444,22 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Behavior)]
         public bool Virtualize { get; set; }
 
-        #region --> Obsolete Forwarders for Backwards-Compatiblilty
         /// <summary>
-        /// Alignment of the table cell text when breakpoint is smaller than <see cref="Breakpoint" />
+        /// Gets or sets a value that determines how many additional items will be rendered
+        /// before and after the visible region. This help to reduce the frequency of rendering
+        /// during scrolling. However, higher values mean that more elements will be present
+        /// in the page.
         /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("This property is not needed anymore, the cells width/alignment is done automatically.", true)]
-        [Parameter] public bool RightAlignSmall { get; set; } = true;
-        #endregion
+        [Parameter]
+        [Category(CategoryTypes.Table.Behavior)]
+        public int OverscanCount { get; set; } = 3;
+
+        /// <summary>
+        /// Gets the size of each item in pixels. Defaults to 50px.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Behavior)]
+        public float ItemSize { get; set; } = 50f;
 
         public abstract TableContext TableContext { get; }
 
@@ -458,36 +501,34 @@ namespace MudBlazor
         public void SetRowsPerPage(int size)
         {
             if (_rowsPerPage == size)
+            {
                 return;
+            }
+
             _rowsPerPage = size;
             CurrentPage = 0;
             StateHasChanged();
             RowsPerPageChanged.InvokeAsync(_rowsPerPage.Value);
             if (_isFirstRendered)
+            {
                 InvokeServerLoadFunc();
+            }
         }
 
         protected abstract int NumPages { get; }
 
         public abstract int GetFilteredItemsCount();
 
-        public abstract void SetSelectedItem(object item);
+        public abstract void SetSelectedItem(object? item);
 
-        public abstract void SetEditingItem(object item);
+        public abstract void SetEditingItem(object? item);
 
-        internal async Task OnCommitEditHandler(MouseEventArgs ev, object item)
+        internal async Task OnCommitEditHandler(MouseEventArgs ev, object? item)
         {
             await OnCommitEditClick.InvokeAsync(ev);
-            if (CommitEditCommand?.CanExecute(CommitEditCommandParameter) ?? false)
-            {
-                var parameter = CommitEditCommandParameter;
-                if (parameter == null)
-                    parameter = item;
-                CommitEditCommand.Execute(parameter);
-            }
         }
 
-        internal Task OnPreviewEditHandler(object item)
+        internal Task OnPreviewEditHandler(object? item)
         {
             return OnPreviewEditClick.InvokeAsync(item);
         }
@@ -497,22 +538,36 @@ namespace MudBlazor
             return OnCancelEditClick.InvokeAsync(ev);
         }
 
-        protected string TableStyle
+        protected string TableContainerStyle
             => new StyleBuilder()
+                .AddStyle(ContainerStyle)
                 .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
+                .Build();
+
+        protected string TableContainerClass
+            => new CssBuilder(ContainerClass)
                 .Build();
 
         internal abstract bool HasServerData { get; }
 
         internal abstract Task InvokeServerLoadFunc();
 
-        internal abstract void FireRowClickEvent(MouseEventArgs args, MudTr mudTr, object item);
+        internal abstract Task FireRowClickEventAsync(MouseEventArgs args, MudTr mudTr, object? item);
 
-        internal abstract void OnHeaderCheckboxClicked(bool value);
+        internal abstract Task FireRowMouseEnterEventAsync(MouseEventArgs args, MudTr mudTr, object? item);
 
-        internal abstract bool IsEditable { get; }
+        internal abstract Task FireRowMouseLeaveEventAsync(MouseEventArgs args, MudTr mudTr, object? item);
 
-        public abstract bool ContainsItem(object item);
+        internal abstract void OnHeaderCheckboxClicked(bool checkedState);
+
+        internal abstract bool HasRowMouseEnterEventHandler { get; }
+
+        internal abstract bool HasRowMouseLeaveEventHandler { get; }
+
+        internal abstract bool Editable { get; }
+
+        public abstract bool ContainsItem(object? item);
+
         public abstract void UpdateSelection();
 
         public Interfaces.IForm Validator { get; set; } = new TableRowValidator();

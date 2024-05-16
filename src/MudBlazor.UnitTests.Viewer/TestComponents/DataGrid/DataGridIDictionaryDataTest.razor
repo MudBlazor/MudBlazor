@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid Items="@_items" Sortable="true" Filterable="true">
+@*<MudDataGrid Items="@_items" Sortable="true" Filterable="true">
     <Columns>
         <Column T="IDictionary<string, object>" Field="Name" />
         <Column T="IDictionary<string, object>" Field="Age" />
@@ -8,7 +8,7 @@
         <Column T="IDictionary<string, object>" Field="Hired" />
         <Column T="IDictionary<string, object>" Field="HiredOn" />
     </Columns>
-</MudDataGrid>
+</MudDataGrid>*@
 
 @code {
     private IEnumerable<IDictionary<string, object>> _items = new List<IDictionary<string, object>>

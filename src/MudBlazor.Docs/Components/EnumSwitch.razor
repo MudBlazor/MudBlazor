@@ -4,27 +4,9 @@
     <MudButtonGroup OverrideStyles="false">
         @foreach (int value in Enum.GetValues(Type))
         {
-            <MudButton Color="Color.Primary" Size="Size.Small" DisableElevation="true" Variant="@(value == Convert.ToInt32(Value) ? Variant.Filled : Variant.Outlined)" OnClick="() => Value = (T)Enum.ToObject(Type, value)">@Enum.GetName(Type, value)</MudButton>
+            <MudButton Color="Color.Primary" Size="Size.Small" DropShadow="false" Variant="@(value == Convert.ToInt32(Value) ? Variant.Filled : Variant.Outlined)" OnClick="@(() => Value = (T)Enum.ToObject(Type, value))">
+                @Enum.GetName(Type, value)
+            </MudButton>
         }
     </MudButtonGroup>
 </div>
-
-@code {
-    private T _value;
-
-    [Parameter]
-    public T Value
-    {
-        get => _value;
-        set
-        {
-            if (_value.Equals(value)) return;
-            _value = value;
-            ValueChanged.InvokeAsync(value);
-        }
-    }
-
-    [Parameter] public EventCallback<T> ValueChanged { get; set; }
-
-    private Type Type => typeof(T);
-}

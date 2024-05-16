@@ -5,28 +5,42 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MudBlazor
 {
+#nullable enable
     public class FooterContext<T>
     {
-        internal MudDataGrid<T> _dataGrid;
+        private readonly MudDataGrid<T> _dataGrid;
+
         public IEnumerable<T> Items
         {
             get
             {
-                return _dataGrid.Items;
+                return (_dataGrid.ServerData == null) ? _dataGrid.FilteredItems : _dataGrid.ServerItems;
             }
         }
-        public FooterActions Actions { get; internal set; }
-        public bool IsAllSelected
+
+        public FooterActions Actions { get; }
+
+        public bool? IsAllSelected
         {
             get
             {
-                
-                if (_dataGrid.Selection != null && Items != null)
+                if (_dataGrid.Selection is not null && (Items?.Any() ?? false))
                 {
-                    return _dataGrid.Selection.Count == Items.Count();
+                    if (_dataGrid.Selection.Count == Items.Count())
+                    {
+                        return true;
+                    }
+
+                    if (_dataGrid.Selection.Count == 0)
+                    {
+                        return false;
+                    }
+
+                    return null;
                 }
 
                 return false;
@@ -36,15 +50,15 @@ namespace MudBlazor
         public FooterContext(MudDataGrid<T> dataGrid)
         {
             _dataGrid = dataGrid;
-            Actions = new FooterContext<T>.FooterActions
+            Actions = new FooterActions
             {
-                SetSelectAll = async (x) => await _dataGrid.SetSelectAllAsync(x),
+                SetSelectAllAsync = x => _dataGrid.SetSelectAllAsync(x ?? false),
             };
         }
 
         public class FooterActions
         {
-            public Action<bool> SetSelectAll { get; internal set; }
+            public required Func<bool?, Task> SetSelectAllAsync { get; init; }
         }
     }
 }

@@ -1,0 +1,17 @@
+name: deploy-mudblazor-dev
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ dev ]
+
+jobs:
+  deploy-web-app:
+    name: Deploy web app to dev.mudblazor.com
+    if: ${{ github.repository_owner == 'MudBlazor' }}
+    uses: MudBlazor/Workflows/.github/workflows/template-deploy-web-app.yml@main
+    with:
+      web-app-name: mudblazor-dev
+      project-directory: './src/MudBlazor.Docs.WasmHost'
+    secrets:
+      publish-profile: ${{ secrets.PUBLISH_MUDBLAZOR_DEV }}

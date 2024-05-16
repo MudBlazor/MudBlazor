@@ -3,11 +3,11 @@
 
 <MudDataGrid Items="@_items" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterMenu">
     <Columns>
-        <Column T="Model" Field="@nameof(Model.Name)" />
-        <Column T="Model" Field="@nameof(Model.Age)" />
-        <Column T="Model" Field="@nameof(Model.Status)" />
-        <Column T="Model" Field="@nameof(Model.Hired)" />
-        <Column T="Model" Field="@nameof(Model.HiredOn)" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Status" />
+        <PropertyColumn Property="x => x.Hired" />
+        <PropertyColumn Property="x => x.HiredOn" />
     </Columns>
 </MudDataGrid>
 

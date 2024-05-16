@@ -1,0 +1,14 @@
+name: build-test-mudblazor
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+jobs:
+  build-test:
+    name: Build and test mudblazor projects
+    uses: MudBlazor/Workflows/.github/workflows/template-build-test.yml@main
+    with:
+      check-eslint: 'MudBlazor/TScripts'
+      publish-coverage: true

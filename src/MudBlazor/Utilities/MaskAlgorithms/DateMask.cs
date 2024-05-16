@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace MudBlazor;
 
-public class DateMask : PatternMask
+public partial class DateMask : PatternMask
 {
 
     public DateMask(string mask, char year = 'y', char month = 'M', char day = 'd') : base(mask)
@@ -169,7 +169,7 @@ public class DateMask : PatternMask
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error in ModifyFinalText: " +e.Message);
+            Console.WriteLine("Error in ModifyFinalText: " + e.Message);
             return text;
         }
         return text;
@@ -213,7 +213,7 @@ public class DateMask : PatternMask
         if (index < 0 || index >= alignedText.Length)
             return (null, -1);
         var subString = alignedText.Substring(index, Math.Min(maskPart.Length, alignedText.Length - index));
-        if (!Regex.IsMatch(subString, @"^\d+$"))
+        if (!ValidDigitRegularExpression().IsMatch(subString))
             return (null, -1);
         return (subString, index);
     }
@@ -221,12 +221,14 @@ public class DateMask : PatternMask
     public override void UpdateFrom(IMask other)
     {
         base.UpdateFrom(other);
-        var o = other as DateMask;
-        if (o == null)
+        if (other is not DateMask o)
             return;
         _y = o._y;
         _M = o._M;
         _d = o._d;
     }
+
+    [GeneratedRegex(@"^\d+$")]
+    private static partial Regex ValidDigitRegularExpression();
 }
 

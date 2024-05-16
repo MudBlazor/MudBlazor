@@ -1,0 +1,10 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSwitch T="bool" Label="Small" Size="Size.Small"/>
+<MudSwitch T="bool" Label="Medium"/>
+<MudSwitch T="bool" Label="Large" Size="Size.Large"/>
+<MudSwitch @bind-Value="Label_Switch" T="bool" Label="Switches from small to large" Size="@(Label_Switch ? Size.Small : Size.Large)" ThumbIcon="@Icons.Material.Filled.Favorite" ThumbIconColor="Color.Error" />
+
+@code{
+    public bool Label_Switch { get; set; } = false;
+}

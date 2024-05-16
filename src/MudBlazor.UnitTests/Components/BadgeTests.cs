@@ -19,7 +19,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task Badge_Renders_Using_Default_Values()
         {
             var comp = Context.RenderComponent<MudBadge>();
-            //Console.WriteLine(comp.Markup);
             comp.FindAll("span").Should().HaveCount(3, "Default behavior of badge is to render 3 spans");
 
             await comp.InvokeAsync(() => comp.Instance.HandleBadgeClick(new MouseEventArgs()));
@@ -30,7 +29,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudBadge>();
             comp.SetParam("Visible", true);
-            //Console.WriteLine(comp.Markup);
             comp.FindAll("span").Should().HaveCount(3, "Visible badge renders 3 spans");
         }
 
@@ -39,7 +37,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudBadge>();
             comp.SetParam("Visible", false);
-            //Console.WriteLine(comp.Markup);
             comp.FindAll("span").Should().HaveCount(1, "Hidden badge renders 1 span");
         }
 

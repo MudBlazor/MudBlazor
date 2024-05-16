@@ -1,0 +1,9 @@
+@namespace MudBlazor.UnitTests.TestComponents
+<MudFileUpload T="IReadOnlyList<IBrowserFile>" AppendMultipleFiles="AppendMultipleFiles" @bind-Files="Files" />
+
+@code
+{
+    [Parameter]
+    public bool AppendMultipleFiles { get; set; }
+    public IReadOnlyList<IBrowserFile> Files { get; set; }
+}

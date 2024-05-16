@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 
 namespace MudBlazor
@@ -37,6 +38,25 @@ namespace MudBlazor
         /// The short hint displayed in the end input before the user enters a value.
         /// </summary>
         [Parameter] public string PlaceholderEnd { get; set; }
+
+        protected bool IsClearable() => Clearable && Value != null;
+
+        protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
+        {
+            await SetTextAsync(string.Empty, updateValue: true);
+            await _elementReferenceStart.FocusAsync();
+            await OnClearButtonClick.InvokeAsync(e);
+        }
+
+        /// <summary>
+        /// Button click event for clear button. Called after text and value has been cleared.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
+
+        /// <summary>
+        /// Show clear button.
+        /// </summary>
+        [Parameter] public bool Clearable { get; set; }
 
         protected string InputTypeString => InputType.ToDescriptionString();
 
@@ -100,7 +120,7 @@ namespace MudBlazor
                 if (_textStart == value)
                     return;
                 _textStart = value;
-                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).AndForget();
+                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).CatchAndLog();
             }
         }
 
@@ -112,7 +132,7 @@ namespace MudBlazor
                 if (_textEnd == value)
                     return;
                 _textEnd = value;
-                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).AndForget();
+                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).CatchAndLog();
             }
         }
 

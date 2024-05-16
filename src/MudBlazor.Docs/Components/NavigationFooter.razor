@@ -1,10 +1,10 @@
-﻿<MudToolBar DisableGutters="true" Class="mb-16">
+﻿<MudToolBar Gutters="false" Class="mb-16">
     @if (Previous != null)
     {
         <MudButton Color="Color.Primary"
                    Style="text-transform:none;"
-                   StartIcon="@Icons.Filled.NavigateBefore"
-                   Link="@($"{Section.ToDescriptionString()}/{Previous.Link}")">
+                   StartIcon="@Icons.Material.Filled.NavigateBefore"
+                   Href="@($"{Section.ToDescriptionString()}/{Previous.Link}")">
             @Previous.Name
         </MudButton>
     }
@@ -13,8 +13,8 @@
     {
         <MudButton Color="Color.Primary"
                    Style="float:right;text-transform:none;"
-                   EndIcon="@Icons.Filled.NavigateNext"
-                   Link="@($"{Section.ToDescriptionString()}/{Next.Link}")">
+                   EndIcon="@Icons.Material.Filled.NavigateNext"
+                   Href="@($"{Section.ToDescriptionString()}/{Next.Link}")">
             @Next.Name
         </MudButton>
     }
@@ -23,7 +23,7 @@
 @code{
 
     [Parameter]
-    public NavigationSection? Section { get; set; }
+    public NavigationSection Section { get; set; }
 
     [Parameter]
     public NavigationFooterLink Previous { get; set; }

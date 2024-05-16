@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
     /// Primitive component which allows rendering any HTML element we want
     /// through the HtmlTag property
@@ -15,7 +17,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Element.Misc)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// The HTML element that will be rendered in the root by the component
@@ -23,6 +25,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Element.Misc)]
         public string HtmlTag { get; set; } = "span";
+
         /// <summary>
         /// The ElementReference to bind to.
         /// Use like @bind-Ref="myRef"
@@ -31,12 +34,16 @@ namespace MudBlazor
         [Category(CategoryTypes.Element.Misc)]
         public ElementReference? Ref { get; set; }
 
-        [Parameter] public EventCallback<ElementReference> RefChanged { get; set; }
+        [Parameter]
+        public EventCallback<ElementReference> RefChanged { get; set; }
 
-        /// <summary>
-        /// Calling StateHasChanged to refresh the component's state
-        /// </summary>
-        public void Refresh() => StateHasChanged();
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public bool ClickPropagation { get; set; } = true;
+
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public bool PreventDefault { get; set; }
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
@@ -48,7 +55,7 @@ namespace MudBlazor
             foreach (var attribute in UserAttributes)
             {
                 // checking if the value is null, we can get rid of null event handlers
-                // for example `@onmouseenter=@(IsOpen ? HandleEnter : null)`
+                // for example `@onmouseenter=@(Open ? HandleEnter : null)`
                 // this is a powerful feature that in normal HTML elements doesn't work, because
                 // Blazor adds always the attribute value and creates an EventCallback
                 if (attribute.Value != null)
@@ -59,15 +66,13 @@ namespace MudBlazor
             //Style
             builder.AddAttribute(3, "style", Style);
 
-            // StopPropagation
-            // the order matters. This has to be before content is added
-            if (HtmlTag == "button")
-                builder.AddEventStopPropagationAttribute(5, "onclick", true);
+            builder.AddEventStopPropagationAttribute(5, "onclick", !ClickPropagation);
+            builder.AddEventPreventDefaultAttribute(6, "onclick", PreventDefault);
 
             //Reference capture
             if (Ref != null)
             {
-                builder.AddElementReferenceCapture(6, async capturedRef =>
+                builder.AddElementReferenceCapture(7, async capturedRef =>
                 {
                     Ref = capturedRef;
                     await RefChanged.InvokeAsync(Ref.Value);

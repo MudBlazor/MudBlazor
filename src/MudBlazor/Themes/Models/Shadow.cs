@@ -1,8 +1,14 @@
-﻿
-namespace MudBlazor
+﻿namespace MudBlazor
 {
+#nullable enable
+    /// <summary>
+    /// Represents the typography settings for Shadow.
+    /// </summary>
     public class Shadow
     {
+        /// <summary>
+        /// Gets or sets the elevation levels for the shadow.
+        /// </summary>
         public string[] Elevation { get; set; } =
         {
             "none",

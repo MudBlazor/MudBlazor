@@ -97,8 +97,6 @@ namespace MudBlazor.UnitTests.Components
                     x.Add(y => y.Vertical, isVertical);
                 });
 
-            //Console.WriteLine(comp.Markup);
-
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");
 
@@ -112,7 +110,7 @@ namespace MudBlazor.UnitTests.Components
             barElement.ClassList.Should().Contain("mud-progress-linear-bar");
 
             barElement.GetAttribute("style").Should().Be(
-                isVertical == true ?
+                isVertical ?
                 $"transform: translateY(90%);" : $"transform: translateX(-90%);");
         }
 
@@ -127,8 +125,6 @@ namespace MudBlazor.UnitTests.Components
                 x.Add(y => y.Class, "my-custom-class");
                 x.Add(y => y.Indeterminate, true);
             });
-
-            //Console.WriteLine(comp.Markup);
 
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");
@@ -162,8 +158,6 @@ namespace MudBlazor.UnitTests.Components
                 x.Add(y => y.Vertical, isVertical);
             });
 
-            //Console.WriteLine(comp.Markup);
-
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");
 
@@ -181,14 +175,14 @@ namespace MudBlazor.UnitTests.Components
             secondBarElement.ClassList.Should().Contain("mud-progress-linear-bar");
 
             secondBarElement.GetAttribute("style").Should().Be(
-                isVertical == true ?
+                isVertical ?
                 $"transform: translateY(90%);" : $"transform: translateX(-90%);");
 
             var thirdBarElement = barContainer.Children[2];
             thirdBarElement.ClassList.Should().Contain("mud-progress-linear-bar", "last");
 
             thirdBarElement.GetAttribute("style").Should().Be(
-                isVertical == true ?
+                isVertical ?
                 $"transform: translateY(60%);" : $"transform: translateX(-60%);");
         }
 
@@ -204,8 +198,6 @@ namespace MudBlazor.UnitTests.Components
                 x.Add(y => y.Indeterminate, true);
                 x.Add(y => y.ChildContent, "<p>my content</p>");
             });
-
-            //Console.WriteLine(comp.Markup);
 
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");
@@ -238,7 +230,7 @@ namespace MudBlazor.UnitTests.Components
 
             var container = comp.Find(".mud-progress-linear");
 
-            if (rounded == true)
+            if (rounded)
             {
                 container.ClassList.Should().Contain("mud-progress-linear-rounded");
             }
@@ -257,7 +249,7 @@ namespace MudBlazor.UnitTests.Components
 
             var container = comp.Find(".mud-progress-linear");
 
-            if (striped == true)
+            if (striped)
             {
                 container.ClassList.Should().Contain("mud-progress-linear-striped");
             }
@@ -276,7 +268,7 @@ namespace MudBlazor.UnitTests.Components
 
             var container = comp.Find(".mud-progress-linear");
 
-            if (indeterminate == true)
+            if (indeterminate)
             {
                 container.ClassList.Should().Contain("mud-progress-indeterminate");
             }
@@ -302,7 +294,7 @@ namespace MudBlazor.UnitTests.Components
 
             var container = comp.Find(".mud-progress-linear");
 
-            if (buffer == true && indeterminate == false)
+            if (buffer && indeterminate == false)
             {
                 container.ClassList.Should().Contain("mud-progress-linear-buffer");
             }
@@ -313,7 +305,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(Size.Large,"large")]
+        [TestCase(Size.Large, "large")]
         [TestCase(Size.Medium, "medium")]
         [TestCase(Size.Small, "small")]
         public void TestClassesForSize(Size size, string expectedString)
@@ -321,7 +313,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(y => y.Size, size));
 
             var container = comp.Find(".mud-progress-linear");
-            
+
             container.ClassList.Should().Contain($"mud-progress-linear-{expectedString}");
         }
 
@@ -347,7 +339,7 @@ namespace MudBlazor.UnitTests.Components
 
             var container = comp.Find(".mud-progress-linear");
 
-            if (vertical == true)
+            if (vertical)
             {
                 container.ClassList.Should().Contain("vertical");
                 container.ClassList.Should().NotContain("horizontal");
@@ -379,8 +371,6 @@ namespace MudBlazor.UnitTests.Components
                 x.Add(y => y.Value, 75.3);
                 x.Add(y => y.Class, "my-custom-class");
             });
-
-            //Console.WriteLine(comp.Markup);
 
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");

@@ -5,13 +5,12 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudTimelineItem : MudComponentBase, IDisposable
-
     {
         protected string Classnames =>
             new CssBuilder("mud-timeline-item")
@@ -20,25 +19,26 @@ namespace MudBlazor
                 .Build();
 
         protected string DotClassnames =>
-        new CssBuilder("mud-timeline-item-dot")
-          .AddClass($"mud-timeline-dot-size-{Size.ToDescriptionString()}")
-          .AddClass($"mud-elevation-{Elevation.ToString()}")
-        .Build();
+            new CssBuilder("mud-timeline-item-dot")
+                .AddClass($"mud-timeline-dot-size-{Size.ToDescriptionString()}")
+                .AddClass($"mud-elevation-{Elevation}")
+                .Build();
 
         protected string DotInnerClassnames =>
-        new CssBuilder("mud-timeline-item-dot-inner")
-          .AddClass($"mud-timeline-dot-fill", Variant == Variant.Filled)
-          .AddClass($"mud-timeline-dot-{Color.ToDescriptionString()}")
-        .Build();
+            new CssBuilder("mud-timeline-item-dot-inner")
+                .AddClass($"mud-timeline-dot-fill", Variant == Variant.Filled)
+                .AddClass($"mud-timeline-dot-{Color.ToDescriptionString()}")
+                .Build();
 
-        [CascadingParameter] protected internal MudBaseItemsControl<MudTimelineItem> Parent { get; set; }
+        [CascadingParameter]
+        protected internal MudBaseItemsControl<MudTimelineItem>? Parent { get; set; }
 
         /// <summary>
         /// Dot Icon
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Timeline.Dot)]
-        public string Icon { get; set; }
+        public string? Icon { get; set; }
 
         /// <summary>
         /// Variant of the dot.
@@ -52,7 +52,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Timeline.Dot)]
-        public string DotStyle { get; set; }
+        public string? DotStyle { get; set; }
 
         /// <summary>
         /// Color of the dot.
@@ -94,32 +94,33 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Timeline.Behavior)]
-        public RenderFragment ItemOpposite { get; set; }
+        public RenderFragment? ItemOpposite { get; set; }
 
         /// <summary>
         /// If used renders child content of the ItemContent.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Timeline.Behavior)]
-        public RenderFragment ItemContent { get; set; }
+        public RenderFragment? ItemContent { get; set; }
 
         /// <summary>
         /// If used renders child content of the ItemDot.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Timeline.Dot)]
-        public RenderFragment ItemDot { get; set; }
+        public RenderFragment? ItemDot { get; set; }
 
         /// <summary>
         /// Optional child content if no other RenderFragments is used.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Timeline.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         protected override Task OnInitializedAsync()
         {
             Parent?.Items.Add(this);
+
             return Task.CompletedTask;
         }
 
@@ -133,7 +134,5 @@ namespace MudBlazor
         {
             Parent?.Items.Remove(this);
         }
-
-
     }
 }

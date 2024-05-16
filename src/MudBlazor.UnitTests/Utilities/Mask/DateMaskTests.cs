@@ -50,7 +50,7 @@ public class DateMaskTests
         mask.Insert("0000 02 3");
         mask.ToString().Should().Be("0000-02-03|");
         // try to paste invalid day
-        mask.Selection=(8,10);
+        mask.Selection = (8, 10);
         mask.ToString().Should().Be("0000-02-[03]");
         mask.Insert("44");
         mask.ToString().Should().Be("0000-02-04|");
@@ -217,7 +217,7 @@ public class DateMaskTests
     [Test]
     public void DateMask_WithPlaceholder()
     {
-        var mask = new DateMask("yyyy-MM-dd") { Placeholder = '_'};
+        var mask = new DateMask("yyyy-MM-dd") { Placeholder = '_' };
         // input invalid text
         mask.ToString().Should().Be("|");
         mask.Insert("?asdfqa vyczlausdhf!°§$\"%\"$\"&\"");

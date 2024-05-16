@@ -1,0 +1,11 @@
+﻿.mud-file-upload {
+  flex-grow: 0;
+
+  > .mud-input-control-input-container {
+    display: initial !important;
+  }
+
+  &.mud-input-control {
+    margin-top: 0;
+  }
+}

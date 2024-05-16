@@ -2,7 +2,7 @@
 
 <MudDataGrid Items="@_items" Groupable="true" Filterable="true" GroupExpanded="true">
     <Columns>
-        <Column T="Model" Field="@nameof(Model.Name)">
+        <TemplateColumn>
             <FooterTemplate>
                 @{ int index = 1, count = @context.Items.Count(); }
                 People: 
@@ -16,16 +16,16 @@
                     index++;
                 }
             </FooterTemplate>
-        </Column>
-        <Column T="Model" Field="@nameof(Model.Age)" AggregateDefinition="_ageAggregation" />
-        <Column T="Model" Field="@nameof(Model.Status)" Grouping="true"></Column>
-        <Column T="Model" Field="@nameof(Model.Salary)" AggregateDefinition="_salaryAggregation" />
-        <Column T="Model" Field="HireDate" Title="Hired">
+        </TemplateColumn>
+        <PropertyColumn Property="x => x.Age" AggregateDefinition="_ageAggregation" />
+        <PropertyColumn Property="x => x.Status" Grouping="true" />
+        <PropertyColumn Property="x => x.Salary" AggregateDefinition="_salaryAggregation" />
+        <PropertyColumn Property="x => x.HireDate" Title="Hired">
             <CellTemplate>
                 @context.Item.HireDate.ToString("d")
             </CellTemplate>
-        </Column>
-        <Column T="Model" Field="IsManager" Title="Manager" />
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.IsManager" Title="Manager" />
     </Columns>
 </MudDataGrid>
 

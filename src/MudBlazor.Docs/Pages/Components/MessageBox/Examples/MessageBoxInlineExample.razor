@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="OnButtonClicked" >Delete</MudButton>
-<MudChip>@state</MudChip>
+<MudChip T="string">@state</MudChip>
 
 <MudMessageBox @ref="mbox" Title="Warning" CancelText="Cancel">
     <MessageContent>
@@ -20,7 +20,7 @@
     private async void OnButtonClicked()
     {
         bool? result = await mbox.Show();
-        state= result==null ? "Cancelled" : "Deleted!";
+        state = result == null ? "Canceled" : "Deleted!";
         StateHasChanged();
     }
 }

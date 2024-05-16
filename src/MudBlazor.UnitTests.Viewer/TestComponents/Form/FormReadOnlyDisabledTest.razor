@@ -1,0 +1,51 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<div style="max-width: 400px;">
+    <MudCard>
+        <MudCardContent>
+            <MudForm ReadOnly="FormReadOnly" Disabled="FormDisabled">
+                <MudTextField T="string" ReadOnly="CompReadOnly" Disabled="CompDisabled" />
+                <MudTextField T="string" Mask="@(new DateMask(" yyyy-MM-dd"))" ReadOnly="CompReadOnly" Disabled="CompDisabled" />
+                <MudCheckBox T="bool" ReadOnly="CompReadOnly" Disabled="CompDisabled" />
+                <MudRadioGroup T="string" ReadOnly="CompReadOnly" Disabled="CompDisabled">
+                    <MudRadio Value="@("1")" />
+                    <MudRadio Value="@("2")" />
+                </MudRadioGroup>
+                <MudSelect T="string" ReadOnly="CompReadOnly" Disabled="CompDisabled"></MudSelect>
+                <MudSwitch T="bool" ReadOnly="CompReadOnly" Disabled="CompDisabled" />
+                <MudColorPicker ReadOnly="CompReadOnly" Disabled="CompDisabled" />
+                <MudDatePicker ReadOnly="CompReadOnly" Disabled="CompDisabled" />
+                <MudDateRangePicker ReadOnly="CompReadOnly" Disabled="CompDisabled" />
+                <MudTimePicker ReadOnly="CompReadOnly" Disabled="CompDisabled" />
+                <MudAutocomplete T="string" ReadOnly="CompReadOnly" Disabled="CompDisabled" />
+                <MudNumericField T="int" ReadOnly="CompReadOnly" Disabled="CompDisabled" />
+                <MudFileUpload T="IBrowserFile" Disabled="CompDisabled">
+                    <ActivatorContent>
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary">
+                            Disabled Button
+                        </MudButton>
+                    </ActivatorContent>
+                </MudFileUpload>
+            </MudForm>
+        </MudCardContent>
+        <MudCardActions>
+            <MudCheckBox @bind-Value="FormReadOnly">Form ReadOnly</MudCheckBox>
+            <MudCheckBox @bind-Value="CompReadOnly">Comp ReadOnly</MudCheckBox>
+            <MudCheckBox @bind-Value="FormDisabled">Form Disabled</MudCheckBox>
+            <MudCheckBox @bind-Value="CompDisabled">Comp Disabled</MudCheckBox>
+        </MudCardActions>
+    </MudCard>
+</div>
+@code
+{
+    public static string __description__ = "All child form fields should be disabled or readonly if the Form property is changed";
+    [Parameter]
+    public bool FormReadOnly { get; set; }
+    [Parameter]
+    public bool CompReadOnly { get; set; }
+    [Parameter]
+    public bool FormDisabled { get; set; }
+    [Parameter]
+    public bool CompDisabled { get; set; }
+}

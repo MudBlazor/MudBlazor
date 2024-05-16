@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<a @attributes="Attributes" class="@Classname" style="@Style">
+<a @attributes="Attributes" @onclick="OnClickHandler" class="@Classname" style="@Style">
     @ChildContent
 </a>
