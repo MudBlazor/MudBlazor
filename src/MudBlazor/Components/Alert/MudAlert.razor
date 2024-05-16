@@ -3,7 +3,7 @@
 @inherits MudComponentBase
 @inject InternalMudLocalizer Localizer
 
-<div @attributes="UserAttributes" role="alert" aria-live="assertive" class="@Classname" Style="@Style" @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)">
+<div role="alert" aria-live="assertive" @attributes="UserAttributes" class="@Classname" Style="@Style" @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)">
 <div class="@ClassPosition">
     @if (!NoIcon)
     {
