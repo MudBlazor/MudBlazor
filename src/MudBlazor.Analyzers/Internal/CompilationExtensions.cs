@@ -1,5 +1,5 @@
-﻿// Copyright (c) MudBlazor 2021
-// MudBlazor licenses this file to you under the MIT license.
+﻿// Copyright (c) Peter Thorpe 2024
+// This file is licenced to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
 #if ROSLYN_3_8
@@ -12,32 +12,7 @@ namespace MudBlazor.Analyzers.Internal;
 
 internal static class CompilationExtensions
 {
-#if ROSLYN_3_8
-    public static ImmutableArray<INamedTypeSymbol> GetTypesByMetadataName(this Compilation compilation, string typeMetadataName)
-    {
-        var result = ImmutableArray.CreateBuilder<INamedTypeSymbol>();
-        var symbol = compilation.Assembly.GetTypeByMetadataName(typeMetadataName);
-        if (symbol != null)
-        {
-            result.Add(symbol);
-        }
 
-        foreach (var reference in compilation.References)
-        {
-            var assemblySymbol = compilation.GetAssemblyOrModuleSymbol(reference) as IAssemblySymbol;
-            if (assemblySymbol == null)
-                continue;
-
-            symbol = assemblySymbol.GetTypeByMetadataName(typeMetadataName);
-            if (symbol != null)
-            {
-                result.Add(symbol);
-            }
-        }
-
-        return result.ToImmutable();
-    }
-#endif
 
     // Copy from https://github.com/dotnet/roslyn/blob/d2ff1d83e8fde6165531ad83f0e5b1ae95908289/src/Workspaces/SharedUtilitiesAndExtensions/Compiler/Core/Extensions/CompilationExtensions.cs#L11-L68
     /// <summary>

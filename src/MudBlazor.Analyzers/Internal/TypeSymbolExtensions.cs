@@ -1,5 +1,5 @@
-﻿// Copyright (c) MudBlazor 2021
-// MudBlazor licenses this file to you under the MIT license.
+﻿// Copyright (c) Peter Thorpe 2024
+// This file is licenced to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
 namespace MudBlazor.Analyzers.Internal;
@@ -8,10 +8,6 @@ namespace MudBlazor.Analyzers.Internal;
 // http://source.roslyn.io/#Microsoft.CodeAnalysis.Workspaces/Shared/Extensions/ITypeSymbolExtensions.cs,190b4ed0932458fd,references
 internal static class TypeSymbolExtensions
 {
-    private static readonly string[] Microsoft_VisualStudio_TestTools_UnitTesting = ["Microsoft", "VisualStudio", "TestTools", "UnitTesting"];
-    private static readonly string[] NUnit_Framework = ["NUnit", "Framework"];
-    private static readonly string[] Xunit = ["Xunit"];
-
     public static IList<INamedTypeSymbol> GetAllInterfacesIncludingThis(this ITypeSymbol type)
     {
         var allInterfaces = type.AllInterfaces;
@@ -35,6 +31,23 @@ internal static class TypeSymbolExtensions
         while (baseType is not null)
         {
             if (baseClassType.IsEqualTo(baseType))
+                return true;
+
+            baseType = baseType.BaseType;
+        }
+
+        return false;
+    }
+
+    public static bool InheritsFrom(this ITypeSymbol classSymbol, ITypeSymbol? baseClassType, IEqualityComparer<ISymbol?> comparer)
+    {
+        if (baseClassType is null)
+            return false;
+
+        var baseType = classSymbol.BaseType;
+        while (baseType is not null)
+        {
+            if (baseClassType.IsEqualTo(baseType, comparer))
                 return true;
 
             baseType = baseType.BaseType;
@@ -93,6 +106,14 @@ internal static class TypeSymbolExtensions
     public static bool HasAttribute(this ISymbol symbol, ITypeSymbol? attributeType, bool inherits = true)
     {
         return GetAttribute(symbol, attributeType, inherits) is not null;
+    }
+
+    public static bool IsOrInheritFrom(this ITypeSymbol symbol, ITypeSymbol? expectedType, IEqualityComparer<ISymbol?> comparer)
+    {
+        if (expectedType is null)
+            return false;
+
+        return symbol.IsEqualTo(expectedType, comparer) || symbol.InheritsFrom(expectedType, comparer);
     }
 
     public static bool IsOrInheritFrom(this ITypeSymbol symbol, ITypeSymbol? expectedType)
@@ -216,6 +237,7 @@ internal static class TypeSymbolExtensions
         if (symbol is null)
             return false;
 
+#pragma warning disable IDE0066 // Convert switch statement to expression
         switch (symbol.SpecialType)
         {
             case SpecialType.System_Int16:
@@ -234,29 +256,7 @@ internal static class TypeSymbolExtensions
             default:
                 return false;
         }
-    }
-
-    public static bool IsUnitTestClass(this ITypeSymbol typeSymbol)
-    {
-        var attributes = typeSymbol.GetAttributes();
-        foreach (var attribute in attributes)
-        {
-            var type = attribute.AttributeClass;
-            while (type is not null)
-            {
-                var ns = type.ContainingNamespace;
-                if (ns.IsNamespace(Microsoft_VisualStudio_TestTools_UnitTesting) ||
-                    ns.IsNamespace(NUnit_Framework) ||
-                    ns.IsNamespace(Xunit))
-                {
-                    return true;
-                }
-
-                type = type.BaseType;
-            }
-        }
-
-        return false;
+#pragma warning restore IDE0066 // Convert switch statement to expression
     }
 
     [return: NotNullIfNotNull(nameof(typeSymbol))]

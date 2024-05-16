@@ -29,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Examples.Data", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Docs.Server", "MudBlazor.Docs.Server\MudBlazor.Docs.Server.csproj", "{90B6D51A-133A-4744-A5FE-FF398F0D6BAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.Analyzers", "MudBlazor.Analyzers\MudBlazor.Analyzers.csproj", "{52E02A92-E257-44ED-8138-53CDBFCFAD18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Analyzers", "MudBlazor.Analyzers\MudBlazor.Analyzers.csproj", "{3B3527C8-84FA-4CFB-B8CF-405920D82A27}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,10 +77,10 @@ Global
 		{90B6D51A-133A-4744-A5FE-FF398F0D6BAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90B6D51A-133A-4744-A5FE-FF398F0D6BAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90B6D51A-133A-4744-A5FE-FF398F0D6BAA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{52E02A92-E257-44ED-8138-53CDBFCFAD18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{52E02A92-E257-44ED-8138-53CDBFCFAD18}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{52E02A92-E257-44ED-8138-53CDBFCFAD18}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{52E02A92-E257-44ED-8138-53CDBFCFAD18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B3527C8-84FA-4CFB-B8CF-405920D82A27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B3527C8-84FA-4CFB-B8CF-405920D82A27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B3527C8-84FA-4CFB-B8CF-405920D82A27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B3527C8-84FA-4CFB-B8CF-405920D82A27}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

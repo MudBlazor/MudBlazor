@@ -6,10 +6,22 @@
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
-  <!--Outside Visual Studio SolutionDir is not available-->  
+  <!--Outside Visual Studio SolutionDir is not available-->
   <PropertyGroup>
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)../</SolutionDir>
   </PropertyGroup>
+
+  <!--Analyzer Config-->
+  <PropertyGroup>
+    <MudAllowedAttributePattern>LowerCase</MudAllowedAttributePattern>
+    <MudIllegalParameters>V7IgnoreCase</MudIllegalParameters>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <CompilerVisibleProperty Include="MudDebugAnalyzer" />
+    <CompilerVisibleProperty Include="MudAllowedAttributePattern" />
+    <CompilerVisibleProperty Include="MudIllegalParameters" />
+  </ItemGroup>
 
   <!--Project path for code generator-->
   <PropertyGroup>
@@ -36,7 +48,7 @@
   </Target>
 
   <!--Add Content that is being generated as part of the build cycle-->
-  <!--We need to do this because the project is not yet aware of files that were generated after the build started-->  
+  <!--We need to do this because the project is not yet aware of files that were generated after the build started-->
   <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild" DependsOnTargets="CompileDocs;ReadFromFile">
     <ItemGroup>
       <!--Include without duplication-->
@@ -47,7 +59,7 @@
       <EmbeddedResource Include="@(NewExampleCodeToBuild)" Condition="@(NewExampleCodeToBuild-&gt;Count()) != 0" />
     </ItemGroup>
   </Target>
- 
+
   <!--Update ExampleCode-->
   <ItemGroup>
     <EmbeddedResource Include="Pages\**\*.html" />
@@ -89,8 +101,8 @@
   <ItemGroup>
     <ProjectReference Include="../MudBlazor/MudBlazor.csproj" />
     <ProjectReference Include="../MudBlazor.Examples.Data/MudBlazor.Examples.Data.csproj" />
-    <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" />
     <ProjectReference Include="..\MudBlazor.SourceCodeGenerator\MudBlazor.SourceCodeGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" SetTargetFramework="TargetFramework=netstandard2.0" />
   </ItemGroup>
 
   <PropertyGroup>

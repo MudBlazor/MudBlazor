@@ -17,14 +17,14 @@
     <RepositoryUrl>https://github.com/MudBlazor/MudBlazor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
-  
+
   <PropertyGroup>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
-  
+
   <PropertyGroup>
     <IsTrimmable>true</IsTrimmable>
     <TrimMode>link</TrimMode>
@@ -62,7 +62,7 @@
     </ItemGroup>
     <Delete Files="@(FilesToClean)" />
   </Target>
-  
+
   <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.17" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.17" />
@@ -88,6 +88,18 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" Pack="false">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <OutputItemType>Content</OutputItemType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(OutputPath)\net7.0\$(AssemblyName).Analyzers.dll" Pack="true" PackagePath="analyzers/dotnet/cs/" Visible="true" />
+  </ItemGroup>
+
   <!--Dont Include in build output-->
   <ItemGroup>
     <Content Remove="compilerconfig.json" />
@@ -104,13 +116,12 @@
     <!--We need to make internal types to be visible for mocking-->
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
-  
+
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\MudBlazor.SourceCodeGenerator\MudBlazor.SourceCodeGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
