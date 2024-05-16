@@ -1,11 +1,10 @@
-﻿
-using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -57,7 +56,7 @@ namespace MudBlazor.UnitTests.Components
             popoverContentNode.Children.Should().BeEmpty();
 
             //not visible by default
-            tooltipComp.Visible.Should().BeFalse();
+            tooltipComp.GetState(x => x.Visible).Should().BeFalse();
 
             //trigger pointerover
 
@@ -67,10 +66,10 @@ namespace MudBlazor.UnitTests.Components
             popoverContentNode.TextContent.Should().Be("my tooltip content text");
             popoverContentNode.ClassList.Should().Contain("d-flex");
 
-            tooltipComp.Visible.Should().BeTrue();
+            tooltipComp.GetState(x => x.Visible).Should().BeTrue();
 
             //trigger pointerleave
-            if (usingFocusout == false)
+            if (!usingFocusout)
             {
                 await button.ParentElement.TriggerEventAsync("onpointerleave", new PointerEventArgs());
             }
@@ -81,7 +80,7 @@ namespace MudBlazor.UnitTests.Components
             //no content should be visible
             popoverContentNode.Children.Should().BeEmpty();
 
-            tooltipComp.Visible.Should().BeFalse();
+            tooltipComp.GetState(x => x.Visible).Should().BeFalse();
         }
 
         [Test]
@@ -104,7 +103,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         [TestCase(false)]
         [TestCase(true)]
-        public async Task RenderTooltipFragement(bool usingFocusout)
+        public async Task RenderTooltipFragment(bool usingFocusout)
         {
             var comp = Context.RenderComponent<TooltipWithRenderFragmentContentTest>();
 
@@ -136,7 +135,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".my-customer-paper").Children[0].TextContent.Should().Be("My content");
 
             //trigger pointerleave
-            if (usingFocusout == false)
+            if (!usingFocusout)
             {
                 await button.ParentElement.TriggerEventAsync("onpointerleave", new PointerEventArgs());
             }
@@ -231,10 +230,6 @@ namespace MudBlazor.UnitTests.Components
             popoverContentNode.ClassList.Should().Contain(expectedClasses);
         }
 
-        // .AddClass($"mud-popover-{TransformOrigin.ToDescriptionString()}")
-        //  .AddClass($"mud-popover-anchor-{AnchorOrigin.ToDescriptionString()}")
-        //  .AddClass($"mud-tooltip-{ConvertPlacement().ToDescriptionString()}")
-
         [Test]
         [TestCase(Placement.Bottom, false, new[] { "mud-tooltip", "mud-tooltip-bottom-center", "mud-popover-anchor-bottom-center", "mud-popover-top-center" })]
         [TestCase(Placement.Bottom, true, new[] { "mud-tooltip", "mud-tooltip-bottom-center", "mud-popover-anchor-bottom-center", "mud-popover-top-center" })]
@@ -288,7 +283,7 @@ namespace MudBlazor.UnitTests.Components
             await button.ParentElement.TriggerEventAsync("onpointerup", new PointerEventArgs());
 
             var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement;
-            tooltipComp.Visible.Should().BeTrue();
+            tooltipComp.GetState(x => x.Visible).Should().BeTrue();
             popoverContentNode.Should().NotBeNull();
         }
 
@@ -308,7 +303,7 @@ namespace MudBlazor.UnitTests.Components
 
             var button = comp.Find("button");
 
-            if (usingFocusout == false)
+            if (!usingFocusout)
             {
                 await button.ParentElement.TriggerEventAsync("onpointerleave", new PointerEventArgs());
             }
