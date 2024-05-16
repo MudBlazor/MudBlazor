@@ -180,7 +180,7 @@ namespace MudBlazor
             return ShowOnFocus ? _visibleState.SetValueAsync(false) : Task.CompletedTask;
         }
 
-        private Task HandlePointerAsync()
+        private Task HandlePointerUpAsync()
         {
             return ShowOnClick ? _visibleState.SetValueAsync(!_visibleState.Value) : Task.CompletedTask;
         }
