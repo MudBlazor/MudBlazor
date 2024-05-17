@@ -392,15 +392,53 @@ namespace MudBlazor
 
         #region FooterCell Properties
 
-        [Parameter] public string FooterClass { get; set; }
-        [Parameter] public Func<IEnumerable<T>, string> FooterClassFunc { get; set; }
-        [Parameter] public string FooterStyle { get; set; }
-        [Parameter] public Func<IEnumerable<T>, string> FooterStyleFunc { get; set; }
-        [Parameter] public bool EnableFooterSelection { get; set; }
-        [Parameter] public AggregateDefinition<T> AggregateDefinition { get; set; }
+        /// <summary>
+        /// The CSS classes applied to this column's footer.
+        /// </summary>
+        /// <remarks>
+        /// Multiple classes must be separated by spaces.
+        /// </remarks>
+        [Parameter]
+        public string FooterClass { get; set; }
+
+        /// <summary>
+        /// The function which calculates CSS classes for this column's footer.
+        /// </summary>
+        /// <remarks>
+        /// Multiple classes must be separated by spaces.
+        /// </remarks>
+        [Parameter]
+        public Func<IEnumerable<T>, string> FooterClassFunc { get; set; }
+
+        /// <summary>
+        /// The CSS styles to apply to this column's footer.
+        /// </summary>
+        [Parameter]
+        public string FooterStyle { get; set; }
+
+        /// <summary>
+        /// The function which calculates CSS styles forthis column's footer.
+        /// </summary>
+        [Parameter]
+        public Func<IEnumerable<T>, string> FooterStyleFunc { get; set; }
+
+        /// <summary>
+        /// Allows the footer to be selected.
+        /// </summary>
+        [Parameter]
+        public bool EnableFooterSelection { get; set; }
+
+        /// <summary>
+        /// The function which calculates aggregates for this column.
+        /// </summary>
+        [Parameter]
+        public AggregateDefinition<T> AggregateDefinition { get; set; }
 
         #endregion
 
+        /// <summary>
+        /// Occurs when this column's state has changed.
+        /// </summary>
         public Action ColumnStateHasChanged { get; set; }
 
         internal string headerClassname =>
@@ -479,6 +517,9 @@ namespace MudBlazor
         private FilterContext<T> filterContext;
         internal FooterContext<T> footerContext;
 
+        /// <summary>
+        /// The context used for filtering values in this column.
+        /// </summary>
         public FilterContext<T> FilterContext
         {
             get
@@ -606,22 +647,34 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Hides this column.
+        /// </summary>
         public Task HideAsync()
         {
             return HiddenState.SetValueAsync(true);
         }
 
+        /// <summary>
+        /// Shows this column.
+        /// </summary>
         public Task ShowAsync()
         {
             return HiddenState.SetValueAsync(false);
         }
 
+        /// <summary>
+        /// Hides or shows this column.
+        /// </summary>
         public async Task ToggleAsync()
         {
             await HiddenState.SetValueAsync(!HiddenState.Value);
             ((IMudStateHasChanged)DataGrid).StateHasChanged();
         }
 
+        /// <summary>
+        /// Releases resources used by this column.
+        /// </summary>
         public virtual void Dispose()
         {
             if (DataGrid != null)
@@ -640,6 +693,9 @@ namespace MudBlazor
             return x => true;
         }
 
+        /// <summary>
+        /// The name of the property used for sorting this column's values.
+        /// </summary>
         public virtual string PropertyName { get; }
 
 #nullable enable
