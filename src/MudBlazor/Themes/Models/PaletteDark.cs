@@ -13,7 +13,7 @@ namespace MudBlazor
     public record PaletteDark : Palette
     {
         /// <inheritdoc />
-        public override MudColor Black { get; set; } = "#22272f";
+        public override MudColor Black { get; set; } = "#27272f";
 
         /// <inheritdoc />
         public override MudColor Primary { get; set; } = "#776be7";
@@ -79,7 +79,7 @@ namespace MudBlazor
         public override MudColor LinesDefault { get; set; } = "rgba(255,255,255, 0.12)";
 
         /// <inheritdoc />
-        public override MudColor LinesInputs { get; set; } = "rgba(225,255,255, 0.3)";
+        public override MudColor LinesInputs { get; set; } = "rgba(255,255,255, 0.3)";
 
         /// <inheritdoc />
         public override MudColor TableLines { get; set; } = "rgba(255,255,255, 0.12)";
