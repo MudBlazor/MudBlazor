@@ -10,7 +10,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents a palette of colors used throughout the application.
     /// </summary>
-    public abstract class Palette
+    public abstract record Palette
     {
         private MudColor? _primaryDarken;
         private MudColor? _primaryLighten;
