@@ -6,7 +6,7 @@
 @namespace MudBlazor
 @inherits MudComponentBase
 
-@Css
+@_css
 <div @attributes="UserAttributes" class="@SnackbarClass" style="@AnimationStyle" @onclick="EventUtil.AsNonRenderingEventHandler(SnackbarClicked)"
      @onmouseenter="InteractionStartHandler" @onmouseleave="InteractionEndHandler" @ontouchstart="InteractionStartHandler" @ontouchend="InteractionEndHandler" @ontouchcancel="InteractionEndHandler">
     @if (!HideIcon)
@@ -29,12 +29,12 @@
 
             @if (ShowActionButton)
             {
-                <MudButton Class="mud-snackbar-action-button" Variant="@ActionVariant" Color="@ActionColor" OnClick="ActionClicked" DropShadow="false">@Action</MudButton>
+                <MudButton Class="mud-snackbar-action-button" Variant="@ActionVariant" Color="@ActionColor" OnClick="ActionClicked">@Action</MudButton>
             }
 
             @if (ShowCloseIcon)
             {
-                <MudIconButton Class="mud-snackbar-close-button ms-2" Icon="@CloseIcon" Size="Size.Small" OnClick="CloseIconClicked" />
+                <MudIconButton Class="mud-snackbar-close-button ms-2" Icon="@CloseIcon" Size="Size.Small" OnClick="CloseIconClickedAsync" />
             }
         </div>
     }

@@ -78,7 +78,7 @@ namespace MudBlazor
 
                 var result = $"mud-snackbar {baseTypeClass} {Options.SnackbarTypeClass}";
 
-                if (Options.Onclick != null && !ShowActionButton)
+                if (Options.OnClick != null && !ShowActionButton)
                     result += " force-cursor";
 
                 return result;

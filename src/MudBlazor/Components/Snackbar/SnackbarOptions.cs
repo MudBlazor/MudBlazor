@@ -8,8 +8,22 @@ namespace MudBlazor
 {
     public class SnackbarOptions : CommonSnackbarOptions
     {
-        public Func<Snackbar, Task> Onclick { get; set; }
+        /// <summary>
+        /// The asynchronous delegate that is invoked when the Snackbar is clicked.
+        /// </summary>
+        public Func<Snackbar, Task> OnClick { get; set; }
 
+        /// <summary>
+        /// The asynchronous delegate that is invoked when the close button of the Snackbar is clicked.
+        /// </summary>
+        public Func<Snackbar, Task> OnCloseButtonClick { get; set; }
+
+        /// <summary>
+        /// The Label for the action button displayed on the <see cref="Snackbar"/>.
+        /// </summary>
+        /// <remarks>
+        /// Action button invokes <see cref="OnClick"/> task.
+        /// </remarks>
         public string Action { get; set; }
 
         public Variant? ActionVariant { get; set; }
