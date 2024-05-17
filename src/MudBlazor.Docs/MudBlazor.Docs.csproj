@@ -6,7 +6,7 @@
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
-  <!--Outside Visual Studio SolutionDir is not available-->  
+  <!--Outside Visual Studio SolutionDir is not available-->
   <PropertyGroup>
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)../</SolutionDir>
   </PropertyGroup>
@@ -36,7 +36,7 @@
   </Target>
 
   <!--Add Content that is being generated as part of the build cycle-->
-  <!--We need to do this because the project is not yet aware of files that were generated after the build started-->  
+  <!--We need to do this because the project is not yet aware of files that were generated after the build started-->
   <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild" DependsOnTargets="CompileDocs;ReadFromFile">
     <ItemGroup>
       <!--Include without duplication-->
@@ -47,7 +47,7 @@
       <EmbeddedResource Include="@(NewExampleCodeToBuild)" Condition="@(NewExampleCodeToBuild-&gt;Count()) != 0" />
     </ItemGroup>
   </Target>
- 
+
   <!--Update ExampleCode-->
   <ItemGroup>
     <EmbeddedResource Include="Pages\**\*.html" />
@@ -106,9 +106,6 @@
   <ItemGroup>
     <Content Remove="compilerconfig.json" />
     <Content Remove="sasscompiler.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\Generated\" />
   </ItemGroup>
 
 </Project>
