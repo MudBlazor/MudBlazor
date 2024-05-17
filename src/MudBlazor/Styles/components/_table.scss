@@ -104,9 +104,9 @@
   font-size: inherit;
   text-align: start;
   font-weight: inherit;
-  line-height: 1.43;
+  line-height: inherit;
   border-bottom: 1px solid var(--mud-palette-table-lines);
-  letter-spacing: 0.01071em;
+  letter-spacing: inherit;
   vertical-align: inherit;
 
   & .mud-checkbox {
@@ -444,8 +444,8 @@
     border: none;
     font-size: inherit;
     font-weight: inherit;
-    line-height: 1.43;
-    letter-spacing: .01071em;
+    line-height: inherit;
+    letter-spacing: inherit;
     color: var(--mud-theme-on-surface)
   }
 }
