@@ -59,7 +59,6 @@ namespace MudBlazor.UnitTests.Other
                 typeof(MudInputLabel),
                 typeof(MudRangeInput<>),
 
-                typeof(MudCollapse),
                 typeof(MudPageContentNavigation),
                 typeof(MudSnackbarElement),
                 typeof(MudBlazor.Charts.Legend),

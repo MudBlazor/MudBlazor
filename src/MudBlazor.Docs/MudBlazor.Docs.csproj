@@ -107,5 +107,8 @@
     <Content Remove="compilerconfig.json" />
     <Content Remove="sasscompiler.json" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\Generated\" />
+  </ItemGroup>
 
 </Project>
