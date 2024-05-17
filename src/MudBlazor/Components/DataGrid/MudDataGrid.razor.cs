@@ -356,7 +356,7 @@ namespace MudBlazor
         /// Sorts data in the grid.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="SortMode.Multiple"/>.  Can be overridden for indicual columns via <see cref="Column{T}.Sortable"/>.
+        /// Defaults to <see cref="SortMode.Multiple"/>.  Can be overridden for individual columns via <see cref="Column{T}.Sortable"/>.
         /// </remarks>
         [Parameter]
         public SortMode SortMode { get; set; } = SortMode.Multiple;
