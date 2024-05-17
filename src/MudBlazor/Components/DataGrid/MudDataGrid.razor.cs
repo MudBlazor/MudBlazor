@@ -16,6 +16,10 @@ using MudBlazor.Utilities.Clone;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Represents a sortable, filterable data grid with multiselection and pagination.
+    /// </summary>
+    /// <typeparam name="T">The kind of item managed by this grid.</typeparam>
     [CascadingTypeParameter(nameof(T))]
     public partial class MudDataGrid<T> : MudComponentBase
     {
@@ -174,7 +178,11 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// The columns currently being displayed.
+        /// </summary>
         public readonly List<Column<T>> RenderedColumns = new List<Column<T>>();
+
         internal T _editingItem;
 
         //internal int editingItemHash;
@@ -197,6 +205,10 @@ namespace MudBlazor
         internal Action<bool> SelectedAllItemsChangedEvent { get; set; }
         internal Action StartedEditingItemEvent { get; set; }
         internal Action EditingCanceledEvent { get; set; }
+
+        /// <summary>
+        /// Occurs when the pager state has changed.
+        /// </summary>
         public Action PagerStateHasChangedEvent { get; set; }
 
         #endregion
@@ -204,141 +216,231 @@ namespace MudBlazor
         #region EventCallbacks
 
         /// <summary>
-        /// Callback is called when a row has been clicked and returns the selected item.
+        /// Occurs when the <see cref="SelectedItem"/> has changed.
         /// </summary>
-        [Parameter] public EventCallback<T> SelectedItemChanged { get; set; }
+        /// <remarks>
+        /// This typically occurs when a row has been clicked.
+        /// </remarks>
+        [Parameter]
+        public EventCallback<T> SelectedItemChanged { get; set; }
 
         /// <summary>
-        /// Callback is called whenever items are selected or deselected in multi selection mode.
+        /// Occurs when the <see cref="SelectedItems"/> have changed.
         /// </summary>
-        [Parameter] public EventCallback<HashSet<T>> SelectedItemsChanged { get; set; }
+        /// <remarks>
+        /// This typically occurs when one or more rows have been clicked when <see cref="MultiSelection"/> is <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        public EventCallback<HashSet<T>> SelectedItemsChanged { get; set; }
 
         /// <summary>
-        /// Callback is called whenever a row is clicked.
+        /// Occurs when a row has been clicked.
         /// </summary>
-        [Parameter] public EventCallback<DataGridRowClickEventArgs<T>> RowClick { get; set; }
+        [Parameter]
+        public EventCallback<DataGridRowClickEventArgs<T>> RowClick { get; set; }
 
         /// <summary>
-        /// Callback is called whenever a row is right clicked.
+        /// Occurs when a row has been right-clicked.
         /// </summary>
-        [Parameter] public EventCallback<DataGridRowClickEventArgs<T>> RowContextMenuClick { get; set; }
+        [Parameter]
+        public EventCallback<DataGridRowClickEventArgs<T>> RowContextMenuClick { get; set; }
 
         /// <summary>
-        /// Callback is called when an item has begun to be edited. Returns the item being edited.
+        /// Occurs when edit mode begins for an item.
         /// </summary>
-        [Parameter] public EventCallback<T> StartedEditingItem { get; set; }
+        /// <remarks>
+        /// If changes are committed, the <see cref="CommittedItemChanges"/> event occurs.  If editing is canceled, the <see cref="CanceledEditingItem"/> occurs.
+        /// </remarks>
+        [Parameter]
+        public EventCallback<T> StartedEditingItem { get; set; }
 
         /// <summary>
-        /// Callback is called when the process of editing an item has been canceled. Returns the item which was previously in edit mode.
+        /// Occurs when editing of an item has been canceled.
         /// </summary>
-        [Parameter] public EventCallback<T> CanceledEditingItem { get; set; }
+        [Parameter]
+        public EventCallback<T> CanceledEditingItem { get; set; }
 
         /// <summary>
-        /// Callback is called when the process of editing an item has been canceled. Returns the item which was previously in edit mode.
-        /// NOTE: Obsolete, use CanceledEditingItem instead
+        /// (Obsolete) Occurs when editing of an item has been canceled.
         /// </summary>
+        /// <remarks>
+        /// This has been deprecated.  Use <see cref="CanceledEditingItem"/> instead.
+        /// </remarks>
         [Obsolete("Use CanceledEditingItem instead", false)]
-        [Parameter] public EventCallback<T> CancelledEditingItem { get => CanceledEditingItem; set => CanceledEditingItem = value; }
+        [Parameter]
+        public EventCallback<T> CancelledEditingItem { get => CanceledEditingItem; set => CanceledEditingItem = value; }
 
         /// <summary>
-        /// Callback is called when the changes to an item are committed. Returns the item whose changes were committed.
+        /// Occurs when the user saved changed to an item.
         /// </summary>
-        [Parameter] public EventCallback<T> CommittedItemChanges { get; set; }
+        [Parameter]
+        public EventCallback<T> CommittedItemChanges { get; set; }
 
         /// <summary>
-        /// Callback is called when a field changes in the dialog MudForm. Only works in EditMode.Form
+        /// Occurs when a field changes in the edit dialog.
         /// </summary>
-        [Parameter] public EventCallback<FormFieldChangedEventArgs> FormFieldChanged { get; set; }
+        /// <remarks>
+        /// This event only occurs when <see cref="EditMode"/> is <see cref="DataGridEditMode.Form"/>.
+        /// </remarks>
+        [Parameter]
+        public EventCallback<FormFieldChangedEventArgs> FormFieldChanged { get; set; }
 
         #endregion
 
         #region Parameters
+
         /// <summary>
-        /// If true, the columns in the DataGrid can be reordered via the columns panel.
+        /// Allows columns to be reordered via the columns panel.
         /// </summary>
-        [Parameter] public bool ColumnsPanelReordering { get; set; } = false;
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool ColumnsPanelReordering { get; set; } = false;
 
         /// <summary>
-        /// If true, the columns in the DataGrid can be reordered via drag and drop. This is overridable by each column.
+        /// Allows columns to be be reordered via drag-and-drop.
         /// </summary>
-        [Parameter] public bool DragDropColumnReordering { get; set; } = false;
+        /// <remarks>
+        /// Defaults to <c>false</c>.  Can be overridden for individual columns via <see cref="Column{T}.DragAndDropEnabled"/>.
+        /// </remarks>
+        [Parameter]
+        public bool DragDropColumnReordering { get; set; } = false;
 
         /// <summary>
-        /// Custom drag indicator icon in the header which shows up on mouse over. 
+        /// The icon displayed when hovering over a draggable column.
         /// </summary>
-        [Parameter] public string DragIndicatorIcon { get; set; } = Icons.Material.Filled.DragIndicator;
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.DragIndicator"/>.  Use the <see cref="DragIndicatorSize"/> property to control this icon's size.
+        /// </remarks>
+        [Parameter]
+        public string DragIndicatorIcon { get; set; } = Icons.Material.Filled.DragIndicator;
 
         /// <summary>
-        /// Size of the DragIndicatorIcon.
+        /// The size of the icon displayed when hovering over a draggable column.
         /// </summary>
-        [Parameter] public Size DragIndicatorSize { get; set; } = Size.Small;
+        /// <remarks>
+        /// Defaults to <see cref="Size.Small"/>.  Use the <see cref="DragIndicatorIcon"/> property to control which icon is displayed.
+        /// </remarks>
+        [Parameter]
+        public Size DragIndicatorSize { get; set; } = Size.Small;
 
         /// <summary>
-        /// Css class that is applied to column headers while dragging to indicate that the dragged column can be dropped on a column. 
+        /// The CSS class applied to columns where a dragged column can be dropped.
         /// </summary>
-        [Parameter] public string DropAllowedClass { get; set; } = "drop-allowed";
+        /// <remarks>
+        /// Defaults to <c>drop-allowed</c>.
+        /// </remarks>
+        [Parameter]
+        public string DropAllowedClass { get; set; } = "drop-allowed";
 
         /// <summary>
-        /// Css class that is applied to column headers while dragging to indicate that the dragged column can not be dropped on a column. 
+        /// The CSS class applied to columns where a dragged column cannot be dropped.
         /// </summary>
-        [Parameter] public string DropNotAllowedClass { get; set; } = "drop-not-allowed";
+        /// <remarks>
+        /// Defaults to <c>drop-not-allowed</c>.
+        /// </remarks>
+        [Parameter]
+        public string DropNotAllowedClass { get; set; } = "drop-not-allowed";
 
         /// <summary>
-        /// When false the drop classes are only applied when dragging a column over another column
-        /// When true the drop classes are applied to all column headers and does not require dragging a column over another column.
+        /// Shows drop locations for columns even when not currently dragging a column.
         /// </summary>
-        [Parameter] public bool ApplyDropClassesOnDragStarted { get; set; } = false;
-
-
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool ApplyDropClassesOnDragStarted { get; set; } = false;
 
         /// <summary>
-        /// Controls whether data in the DataGrid can be sorted. This is overridable by each column.
+        /// Sorts data in the grid.
         /// </summary>
-        [Parameter] public SortMode SortMode { get; set; } = SortMode.Multiple;
+        /// <remarks>
+        /// Defaults to <see cref="SortMode.Multiple"/>.  Can be overridden for indicual columns via <see cref="Column{T}.Sortable"/>.
+        /// </remarks>
+        [Parameter]
+        public SortMode SortMode { get; set; } = SortMode.Multiple;
 
         /// <summary>
-        /// Controls whether data in the DataGrid can be filtered. This is overridable by each column.
+        /// Allows filtering of data in this grid.
         /// </summary>
-        [Parameter] public bool Filterable { get; set; } = false;
+        /// <remarks>
+        /// Defaults to <c>false</c>.  Can be overridden for individual columns via <see cref="Column{T}.Filterable"/>.
+        /// </remarks>
+        [Parameter]
+        public bool Filterable { get; set; } = false;
 
         /// <summary>
-        /// Controls whether columns in the DataGrid can be hidden. This is overridable by each column.
+        /// Allows columns to be hidden.
         /// </summary>
-        [Parameter] public bool Hideable { get; set; } = false;
+        /// <remarks>
+        /// Defaults to <c>false</c>.  Can be overridden for individual columns via <see cref="Column{T}.Hideable"/>.
+        /// </remarks>
+        [Parameter]
+        public bool Hideable { get; set; } = false;
 
         /// <summary>
-        /// Controls whether to hide or show the column options. This is overridable by each column.
+        /// Shows options for columns.
         /// </summary>
-        [Parameter] public bool ShowColumnOptions { get; set; } = true;
+        /// <remarks>
+        /// Defaults to <c>true</c>.  Can be overridden for individual columns via <see cref="Column{T}.ShowColumnOptions"/>.
+        /// </remarks>
+        [Parameter]
+        public bool ShowColumnOptions { get; set; } = true;
 
         /// <summary>
-        /// At what breakpoint the table should switch to mobile layout. Takes None, Xs, Sm, Md, Lg and Xl the default behavior is breaking on Xs.
+        /// The breakpoint at which the grid switches to mobile layout.
         /// </summary>
-        [Parameter] public Breakpoint Breakpoint { get; set; } = Breakpoint.Xs;
+        /// <remarks>
+        /// Defaults to <see cref="Breakpoint.Xs"/>.  Supported values are <c>None</c>, <c>Xs</c>, <c>Sm</c>, <c>Md</c>, <c>Lg</c> and <c>Xl</c>.
+        /// </remarks>
+        [Parameter]
+        public Breakpoint Breakpoint { get; set; } = Breakpoint.Xs;
 
         /// <summary>
-        /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
+        /// The size of the drop shadow.
         /// </summary>
-        [Parameter] public int Elevation { set; get; } = 1;
+        /// <remarks>
+        /// Defaults to <c>1</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
+        /// </remarks>
+        [Parameter]
+        public int Elevation { set; get; } = 1;
 
         /// <summary>
-        /// Set true to disable rounded corners
+        /// Disables rounded corners.
         /// </summary>
-        [Parameter] public bool Square { get; set; }
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool Square { get; set; }
 
         /// <summary>
-        /// If true, table will be outlined.
+        /// Shows an outline around this grid.
         /// </summary>
-        [Parameter] public bool Outlined { get; set; }
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool Outlined { get; set; }
 
         /// <summary>
-        /// If true, table's cells will have left/right borders.
+        /// Shows left and right borders for each column.
         /// </summary>
-        [Parameter] public bool Bordered { get; set; }
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool Bordered { get; set; }
 
         /// <summary>
-        /// Specifies a group of one or more columns in a table for formatting.
-        /// Ex:
+        /// The content for any column groupings.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This property specifies a group of one or more columns in a table for formatting.  For example:
+        /// </para>
+        /// <para>
         /// table
         ///     colgroup
         ///        col span="2" style="background-color:red"
@@ -347,48 +449,96 @@ namespace MudBlazor
         ///      header
         ///      body
         /// table
-        /// </summary>
-        [Parameter] public RenderFragment ColGroup { get; set; }
+        /// </para>
+        /// </remarks>
+        [Parameter]
+        public RenderFragment ColGroup { get; set; }
 
         /// <summary>
-        /// Set true for rows with a narrow height
+        /// Uses compact padding.
         /// </summary>
-        [Parameter] public bool Dense { get; set; }
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool Dense { get; set; }
 
         /// <summary>
-        /// Set true to see rows hover on mouse-over.
+        /// Highlights rows when hovering over them.
         /// </summary>
-        [Parameter] public bool Hover { get; set; }
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool Hover { get; set; }
 
         /// <summary>
-        /// If true, striped table rows will be used.
+        /// Shows alternating row styles.
         /// </summary>
-        [Parameter] public bool Striped { get; set; }
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool Striped { get; set; }
 
         /// <summary>
-        /// When true, the header will stay in place when the table is scrolled. Note: set Height to make the table scrollable.
+        /// Fixes the header in place even as the grid is scrolled.
         /// </summary>
-        [Parameter] public bool FixedHeader { get; set; }
+        /// <remarks>
+        /// Set the <see cref="Height"/> property to make this grid scrollable.
+        /// </remarks>
+        [Parameter]
+        public bool FixedHeader { get; set; }
 
         /// <summary>
-        /// When true, the footer will be visible is not scrolled to the bottom. Note: set Height to make the table scrollable.
+        /// Fixes the footer in place even as the grid is scrolled.
         /// </summary>
-        [Parameter] public bool FixedFooter { get; set; }
+        /// <remarks>
+        /// Set the <see cref="Height"/> property to make this grid scrollable.
+        /// </remarks>
+        [Parameter]
+        public bool FixedFooter { get; set; }
 
-        [Parameter] public bool ShowFilterIcons { get; set; } = true;
+        /// <summary>
+        /// Shows icons for each column filter.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  Can be overridden for individual columns via <see cref="Column{T}.ShowFilterIcon"/>.
+        /// </remarks>
+        [Parameter]
+        public bool ShowFilterIcons { get; set; } = true;
 
-        [Parameter] public DataGridFilterMode FilterMode { get; set; }
+        /// <summary>
+        /// The way that this grid filters data.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="DataGridFilterMode.Simple"/>.
+        /// </remarks>
+        [Parameter] 
+        public DataGridFilterMode FilterMode { get; set; }
 
-        [Parameter] public DataGridFilterCaseSensitivity FilterCaseSensitivity { get; set; }
+        /// <summary>
+        /// The case sensitivity setting for columns with <c>string</c> values.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="DataGridFilterCaseSensitivity.Default"/>.
+        /// </remarks>
+        [Parameter] 
+        public DataGridFilterCaseSensitivity FilterCaseSensitivity { get; set; }
 
-        [Parameter] public RenderFragment<MudDataGrid<T>> FilterTemplate { get; set; }
+        /// <summary>
+        /// The template used to display each filter.
+        /// </summary>
+        [Parameter] 
+        public RenderFragment<MudDataGrid<T>> FilterTemplate { get; set; }
 
         /// <summary>
         /// The list of FilterDefinitions that have been added to the data grid. FilterDefinitions are managed by the data
         /// grid automatically when using the built in filter UI. You can also programmatically manage these definitions
         /// through this collection.
         /// </summary>
-        [Parameter] public List<IFilterDefinition<T>> FilterDefinitions { get; set; } = new List<IFilterDefinition<T>>();
+        [Parameter]
+        public List<IFilterDefinition<T>> FilterDefinitions { get; set; } = new List<IFilterDefinition<T>>();
 
         /// <summary>
         /// The list of SortDefinitions that have been added to the data grid. SortDefinitions are managed by the data
