@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace MudBlazor.Docs.Compiler;
 
@@ -15,16 +16,60 @@ namespace MudBlazor.Docs.Compiler;
 public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.Create(filePath))
 {
     /// <summary>
-    /// The current indentation level.
-    /// </summary>
-    public int IndentLevel { get; set; }
-
-    /// <summary>
     /// Creates a new instance with types and the default output path.
     /// </summary>
     public ApiDocumentationWriter() : this(Paths.ApiDocumentationFilePath)
     {
     }
+
+    /// <summary>
+    /// Any types to exclude from documentation.
+    /// </summary>
+    public static List<string> ExcludedTypes { get; private set; } =
+    [
+        "Enum"
+    ];
+
+    /// <summary>
+    /// Any methods to exclude from documentation.
+    /// </summary>
+    public static List<string> ExcludedMethods { get; private set; } =
+    [
+        // Object methods
+        "ToString",
+        "Equals",
+        "MemberwiseClone",
+        "GetHashCode",
+        "GetType",
+        // Constructors
+        "#ctor",
+        // Blazor component methods
+        "BuildRenderTree",
+        "InvokeAsync",
+        "OnAfterRender",
+        "OnAfterRenderAsync",
+        "OnInitialized",
+        "OnInitializedAsync",
+        "OnParametersSet",
+        "OnParametersSetAsync",
+        "StateHasChanged",
+        "ShouldRender",
+        // Dispose methods
+        "Dispose",
+        "DisposeAsync",
+        "Finalize",
+        // Internal MudBlazor methods
+        "SetParametersAsync",
+        "DispatchExceptionAsync",
+        "CreateRegisterScope",
+        "DetectIllegalRazorParametersV7",
+        "MudBlazor.Interfaces.IMudStateHasChanged.StateHasChanged"
+    ];
+
+    /// <summary>
+    /// The current indentation level.
+    /// </summary>
+    public int IndentLevel { get; set; }
 
     /// <summary>
     /// Writes the copyright boilerplate.
@@ -190,7 +235,7 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
     {
         if (!string.IsNullOrEmpty(remarks))
         {
-            WriteIndented($"Summary = \"{Escape(remarks)}\", ");
+            WriteLineIndented($"Summary = \"{Escape(remarks)}\", ");
         }
     }
 
@@ -226,7 +271,7 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
     {
         foreach (var type in types)
         {
-            WriteType(type);
+            WriteType(type.Value);
         }
     }
 
@@ -234,18 +279,19 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
     /// Serializes the specified type.
     /// </summary>
     /// <param name="type">The type to serialize.</param>
-    public void WriteType(KeyValuePair<string, DocumentedType> type)
+    public void WriteType(DocumentedType type)
     {
-        WriteIndented($"types.Add(\"{type.Value.Name}\", new()");
+        WriteIndented($"types.Add(\"{type.Name}\", new()");
         WriteLine(" {");
         Indent();
-        WriteLineIndented($"Name = \"{type.Value.Name}\", ");
-        WriteBaseTypeIndented(type.Value.BaseType);
-        WriteIsComponentIndented(type.Value.Type.IsSubclassOf(typeof(MudComponentBase)));
-        WriteSummaryIndented(type.Value.Summary);
-        WriteRemarksIndented(type.Value.Remarks);
-        WriteProperties(type.Value);
-        WriteFields(type.Value);
+        WriteLineIndented($"Name = \"{type.Name}\", ");
+        WriteBaseTypeIndented(type.BaseType);
+        WriteIsComponentIndented(type.Type.IsSubclassOf(typeof(MudComponentBase)));
+        WriteSummaryIndented(type.Summary);
+        WriteRemarksIndented(type.Remarks);
+        WriteProperties(type);
+        WriteFields(type);
+        WriteMethods(type);
         Outdent();
         WriteLineIndented("});");
     }
@@ -254,7 +300,6 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
     /// Serializes the specified properties.
     /// </summary>
     /// <param name="type">The type containing the properties.</param>
-    /// <param name="properties">The properties to serialize.</param>
     public void WriteProperties(DocumentedType type)
     {
         /* Example:
@@ -293,6 +338,11 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
     /// <param name="property">The property to serialize.</param>
     public void WriteProperty(DocumentedType type, DocumentedProperty property)
     {
+        if (ExcludedTypes.Contains(property.DeclaringTypeName))
+        {
+            return;
+        }
+
         /* Example:
          
         	{ "BrowserWindowSize", new() { Type = "BrowserWindowSize", Summary = "Gets the browser window size.",  } },
@@ -315,6 +365,76 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
     }
 
     /// <summary>
+    /// Serializes the specified methods.
+    /// </summary>
+    /// <param name="type">The type containing the methods.</param>
+    /// <param name="properties">The methods to serialize.</param>
+    public void WriteMethods(DocumentedType type)
+    {
+        /* Example:
+
+           Methods = { 
+               { "SetValue", new() { Type = "Guid", Summary = "Gets the ID of the JavaScript listener.",  } },
+               { "BrowserWindowSize", new() { Type = "BrowserWindowSize", Summary = "Gets the browser window size.",  } },
+               { "Breakpoint", new() { Type = "Breakpoint", Summary = "Gets the breakpoint associated with the browser size.",  } },
+               { "IsImmediate", new() { Type = "Boolean",  } },
+           },
+
+        */
+
+        // Get the non-excluded methods
+        var methods = type.Methods.Where(method => !ExcludedMethods.Contains(method.Value.Name) && !ExcludedTypes.Contains(method.Value.DeclaringTypeName)).ToList();
+
+        // Anything to do?
+        if (methods.Count == 0)
+        {
+            return;
+        }
+
+        WriteLineIndented("Methods = { ");
+        Indent();
+
+        foreach (var method in methods)
+        {
+            WriteMethod(type, method.Value);
+        }
+
+        Outdent();
+        WriteLineIndented("},");
+    }
+
+    /// <summary>
+    /// Serializes the specified method.
+    /// </summary>
+    /// <param name="type">The current type being serialized.</param>
+    /// <param name="method">The method to serialize.</param>
+    public void WriteMethod(DocumentedType type, DocumentedMethod method)
+    {
+        if (ExcludedMethods.Contains(method.Name) || ExcludedTypes.Contains(method.DeclaringTypeName) || method.Name.StartsWith('<'))
+        {
+            return;
+        }
+
+        /* Example:
+         
+        	{ "BrowserWindowSize", new() { Type = "BrowserWindowSize", Summary = "Gets the browser window size.",  } },
+		
+         */
+
+        WriteIndented("{ ");
+        Write($"\"{method.Name}\", new()");
+        Write(" { ");
+        Write($"Name = \"{method.Name}\", ");
+        WriteReturnType(type, method);
+        WriteDeclaringType(type, method);
+        WriteSummary(method.Summary);
+        WriteRemarks(method.Remarks);
+
+        Write(" }");
+        WriteLine(" },");
+    }
+
+    /// <summary>
     /// Writes whether the type inherits from <see cref="MudComponentBase"/>.
     /// </summary>
     /// <param name="isComponent"></param>
@@ -324,6 +444,20 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
         {
             WriteIndent();
             WriteLine($"IsComponent = true, ");
+        }
+    }
+
+    /// <summary>
+    /// Writes the type in which the property was declared, if it's another type.
+    /// </summary>
+    /// <param name="type">The type containing the property.</param>
+    /// <param name="method">The property being described.</param>
+    public void WriteReturnType(DocumentedType type, DocumentedMethod method)
+    {
+        // Is this property declared in another type (like a base class)?
+        if (!string.IsNullOrEmpty(method.DeclaringTypeName) && type.Name != method.DeclaringTypeName && method.ReturnTypeName != "Void")
+        {
+            Write($"ReturnType = \"{Escape(method.ReturnTypeName)}\", ");
         }
     }
 
@@ -362,6 +496,20 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
         if (!string.IsNullOrEmpty(property.DeclaringTypeName) && type.Name != property.DeclaringTypeName)
         {
             Write($"DeclaringType = \"{Escape(property.DeclaringTypeName)}\", ");
+        }
+    }
+
+    /// <summary>
+    /// Writes the type in which the property was declared, if it's another type.
+    /// </summary>
+    /// <param name="type">The type containing the property.</param>
+    /// <param name="method">The property being described.</param>
+    public void WriteDeclaringType(DocumentedType type, DocumentedMethod method)
+    {
+        // Is this property declared in another type (like a base class)?
+        if (!string.IsNullOrEmpty(method.DeclaringTypeName) && type.Name != method.DeclaringTypeName)
+        {
+            Write($"DeclaringType = \"{Escape(method.DeclaringTypeName)}\", ");
         }
     }
 

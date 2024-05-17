@@ -17,8 +17,4 @@ namespace MudBlazor.Docs.Pages.Api;
 /// </summary>
 public partial class Index
 {
-    /// <summary>
-    /// Gets the breadcrumb items.
-    /// </summary>
-    public List<BreadcrumbItem> Items => [new("Index", null, true)];
 }

@@ -5,43 +5,57 @@
 <DocsPage>
     @if (DocumentedType != null)
     {
+        <ApiBreadcrumbs Type="@DocumentedType" />
+
         <DocsPageHeader Title="@(@DocumentedType.Name + " API")" SubTitle="@DocumentedType.Summary" />
         <DocsPageContent>
-            <ApiBreadcrumbs Type="@DocumentedType" />
 
-            <DocsPageSection>
-                <SectionHeader Title="Examples" />
-                <MudGrid>
-                    <MudItem xs="6">
-                        <MudLink Href="@DocumentedType.ComponentUrl">@DocumentedType.ElementName</MudLink>
-                    </MudItem>
-                    <MudItem xs="6"></MudItem>
-                </MudGrid>
-            </DocsPageSection>
+            @if (DocumentedType.ComponentUrl != null)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Examples" />
+                    <MudGrid>
+                        <MudItem xs="6">
+                            <MudLink Href="@DocumentedType.ComponentUrl"><CodeInline>@DocumentedType.ElementName</CodeInline></MudLink>
+                        </MudItem>
+                        <MudItem xs="6"></MudItem>
+                    </MudGrid>
+                </DocsPageSection>
+            }
 
-            <DocsPageSection>
-                <SectionHeader Title="Inheritance" />
-                <MudGrid>
-                    <MudItem xs="5">
-                        <ApiTypeHierarchy Type="@DocumentedType" />
-                    </MudItem>
-                    <MudItem xs="7"></MudItem>
-                </MudGrid>
-            </DocsPageSection>
+            @*  <DocsPageSection>
+        <SectionHeader Title="Inheritance" />
+        <MudGrid>
+        <MudItem xs="5">
+        <ApiTypeHierarchy Type="@DocumentedType" />
+        </MudItem>
+        <MudItem xs="7"></MudItem>
+        </MudGrid>
+        </DocsPageSection> *@
 
             <DocsPageSection>
                 <SectionHeader Title="Properties" />
                 <SectionContent Outlined="true">
-                    @if (DocumentedType.Properties.Count > 0)
-                    {
-                        <ApiPropertyTable Type="@DocumentedType" />
-                    }
-                    else
-                    {
-                        <MudAlert Severity="Severity.Info">There are no public properties for this type.</MudAlert>
-                    }
+                    <ApiPropertyTable Type="@DocumentedType" />
                 </SectionContent>
             </DocsPageSection>
+
+            <DocsPageSection>
+                <SectionHeader Title="Methods" />
+                <SectionContent Outlined="true">
+                    <ApiMethodTable Type="@DocumentedType" />
+                </SectionContent>
+            </DocsPageSection>
+
+            @if (DocumentedType.Children.Count > 0)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Derived Classes" />
+                    <SectionContent Outlined="true">
+                        <ApiTypeTable BaseType="@DocumentedType" />
+                    </SectionContent>
+                </DocsPageSection>
+            }
         </DocsPageContent>
     }
     else
@@ -55,4 +69,4 @@
             </MudGrid>
         </DocsPageContent>
     }
-</DocsPage>
+    </DocsPage>

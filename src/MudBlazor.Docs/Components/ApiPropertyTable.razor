@@ -1,33 +1,14 @@
-﻿<MudTable T="DocumentedProperty" @ref="Table" ServerData="@GetData" 
-    Elevation="0" Class="ma-0 mud-width-full" Hover="true" Dense="true"
-    AllowUnsorted="false" GroupBy="@CurrentGroups">
-    <ToolBarContent>
-        <MudGrid Class="pa-0">
-            <MudItem xs="6">
-                <MudChipSet T="string" @bind-SelectedValues="SelectedCategories" SelectionMode="SelectionMode.MultiSelection" CheckMark="true">
-                    @foreach (var category in Type.PropertyCategories)
-                    {
-                        <MudChip T="string" Variant="Variant.Text" Size="Size.Small" Label="true" Text="@category" Default="true" OnClick="@(() => Table.ReloadServerData())"></MudChip>
-                    }
-                </MudChipSet>
-            </MudItem>
-            <MudItem xs="6">
-                <MudChipSet T="string" @bind-SelectedValues="SelectedViews" SelectionMode="SelectionMode.MultiSelection" CheckMark="true">
-                    <MudChip T="string" Variant="Variant.Text" Size="Size.Small" Label="true" Text="Properties" Default="true" OnClick="@(() => Table.ReloadServerData())"></MudChip>
-                    <MudChip T="string" Variant="Variant.Text" Size="Size.Small" Label="true" Text="Parameters" Default="true" OnClick="@(() => Table.ReloadServerData())"></MudChip>
-                    <MudChip T="string" Variant="Variant.Text" Size="Size.Small" Label="true" Text="Inherited" Default="false" OnClick="@(() => Table.ReloadServerData())"></MudChip>
-                </MudChipSet>
-            </MudItem>
-        </MudGrid>
-    </ToolBarContent>
+﻿<MudTable T="DocumentedProperty" @ref="Table" ServerData="@GetData"
+          Elevation="0" Class="ma-0 mud-width-full" Hover="true" Dense="true"
+          AllowUnsorted="false" GroupBy="@CurrentGroups">
     <GroupHeaderTemplate>
-        @if (CurrentGrouping == Grouping.Inheritance)
+        @if (CurrentGrouping == ApiMemberGrouping.Inheritance)
         {
             <MudTh colspan="4">
                 <MudText Typo="Typo.h6">@context.Key</MudText>
             </MudTh>
         }
-        else if (CurrentGrouping == Grouping.Categories)
+        else if (CurrentGrouping == ApiMemberGrouping.Categories)
         {
             <MudTh colspan="4">
                 <MudText Typo="Typo.h6">@(context.Key ?? "General")</MudText>
@@ -37,30 +18,23 @@
     <HeaderContent>
         <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="Name" InitialDirection="SortDirection.Ascending">Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="Type">Type</MudTableSortLabel></MudTh>
-        @if (IncludeInherited)
-        {
-            <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="DeclaringType">Declared In</MudTableSortLabel></MudTh>
-        }
+        <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="DeclaringType">Declared In</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="Description">Description</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd Class="docs-content-api-cell" Style="white-space: nowrap;" DataLabel="Name">           
+        <MudTd Class="docs-content-api-cell" Style="white-space: nowrap;" DataLabel="Name">
             <CodeInline>@context.Name</CodeInline>
         </MudTd>
         <MudTd Class="docs-content-api-cell" DataLabel="Type">
             <CodeInline>@context.TypeCSharp</CodeInline>
         </MudTd>
-        @if (IncludeInherited)
-        {
-            <MudTd Class="docs-content-api-cell" DataLabel="Declaring Type">
-                <MudLink OnClick="@(() => OnDeclaringTypeClicked(@context.DeclaringTypeApiLink))"><CodeInline>@context.DeclaringType</CodeInline></MudLink>
-            </MudTd>
-        }
+        <MudTd Class="docs-content-api-cell" DataLabel="Declaring Type">
+            <MudLink OnClick="@(() => OnDeclaringTypeClicked(@context.DeclaringTypeApiLink))"><CodeInline>@context.DeclaringType</CodeInline></MudLink>
+        </MudTd>
         <MudTd id="@context.Name" Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">
             @((MarkupString)(context.Summary + " " + context.Remarks))
         </MudTd>
     </RowTemplate>
-    <GroupFooterTemplate></GroupFooterTemplate>
     <NoRecordsContent>
         <MudAlert Severity="Severity.Info">No properties match the current filters.</MudAlert>
     </NoRecordsContent>

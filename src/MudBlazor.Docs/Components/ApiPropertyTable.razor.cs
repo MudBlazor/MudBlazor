@@ -17,7 +17,7 @@ namespace MudBlazor.Docs.Components;
 #nullable enable
 
 /// <summary>
-/// Represents a table which displays methods for a documented type.
+/// Represents a table which displays properties for a documented type.
 /// </summary>
 public partial class ApiPropertyTable
 {
@@ -33,34 +33,9 @@ public partial class ApiPropertyTable
     public DocumentedType? Type { get; set; }
 
     /// <summary>
-    /// The currently selected categories.
-    /// </summary>
-    public IReadOnlyCollection<string> SelectedCategories { get; set; } = [];
-
-    /// <summary>
-    /// The currently selected view.
-    /// </summary>
-    public IReadOnlyCollection<string> SelectedViews { get; set; } = [];
-
-    /// <summary>
-    /// Shows inherited properties.
-    /// </summary>
-    public bool IncludeInherited => SelectedViews.Contains("Inherited");
-
-    /// <summary>
-    /// Shows properties.
-    /// </summary>
-    public bool IncludeProperties => SelectedViews.Contains("Properties");
-
-    /// <summary>
-    /// Shows Blazor parameters.
-    /// </summary>
-    public bool IncludeParameters => SelectedViews.Contains("Parameters");
-
-    /// <summary>
     /// The currently selected grouping.
     /// </summary>
-    public Grouping CurrentGrouping { get; set; } = Grouping.Categories!;
+    public ApiMemberGrouping CurrentGrouping { get; set; } = ApiMemberGrouping.Categories!;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -84,29 +59,10 @@ public partial class ApiPropertyTable
         }
 
         // Get properties which are in the selected categories
-        var properties = Type.Properties.Values
-            .Where(property => SelectedCategories != null && property.Category != null && SelectedCategories.Contains(property.Category));
-
-        // Filter by property type
-        if (IncludeParameters && IncludeProperties)
-        {
-            // Everything
-        }
-        else if (IncludeProperties)
-        {
-            properties = properties.Where(property => !property.IsParameter);
-        }
-        else if (IncludeParameters)
-        {
-            properties = properties.Where(property => property.IsParameter);
-        }
-        else
-        {
-            return new TableData<DocumentedProperty> { };
-        }
+        var properties = Type.Properties.Values.AsQueryable();
 
         // What's the grouping?
-        if (this.CurrentGrouping == Grouping.Categories)
+        if (CurrentGrouping == ApiMemberGrouping.Categories)
         {
             // Sort by category
             var orderedProperties = properties.OrderBy(property => property.Category);
@@ -148,8 +104,8 @@ public partial class ApiPropertyTable
         {
             return CurrentGrouping switch
             {
-                Grouping.Categories => new() { Selector = (property) => property.Category ?? "" },
-                Grouping.Inheritance => new() { Selector = (property) => property.DeclaringType ?? "" },
+                ApiMemberGrouping.Categories => new() { Selector = (property) => property.Category ?? "" },
+                ApiMemberGrouping.Inheritance => new() { Selector = (property) => property.DeclaringType ?? "" },
                 _ => new() { Selector = (property) => property.Category ?? "" }
             };
         }
@@ -169,25 +125,3 @@ public partial class ApiPropertyTable
         Browser?.NavigateTo(url, false);
     }
 }
-
-/// <summary>
-/// Indicates the method that properties for a type are grouped.
-/// </summary>
-public enum Grouping
-{
-    /// <summary>
-    /// Properties are grouped by category.
-    /// </summary>
-    Categories,
-
-    /// <summary>
-    /// Properties are grouped by their declaring type.
-    /// </summary>
-    Inheritance,
-
-    /// <summary>
-    /// Properties are not grouped.
-    /// </summary>
-    None
-}
-

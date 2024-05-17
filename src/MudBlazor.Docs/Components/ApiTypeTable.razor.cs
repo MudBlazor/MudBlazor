@@ -27,14 +27,10 @@ public partial class ApiTypeTable
     public MudTable<DocumentedType>? Table { get; set; }
 
     /// <summary>
-    /// The currently selected categories.
+    /// The base type to filter types by.
     /// </summary>
-    public IReadOnlyCollection<string>? SelectedCategories { get; set; }
-
-    /// <summary>
-    /// Any search keyword to find.
-    /// </summary>
-    public string Keyword { get; set; } = "";
+    [Parameter]
+    public DocumentedType? BaseType { get; set; }
 
     /// <inheritdoc />
     protected override async Task OnParametersSetAsync()
@@ -56,29 +52,10 @@ public partial class ApiTypeTable
         // Get properties which are in the selected categories
         var types = ApiDocumentation.Types.Values.ToList().AsQueryable();
 
-        // Are we only viewing components?
-        if (SelectedCategories != null && !SelectedCategories.Contains("Types") && SelectedCategories.Contains("Components"))
+        // Are we filtering by base types?
+        if (BaseType != null)
         {
-            types = types.Where(type => type.IsComponent);
-        }
-        // Only viewing types?
-        else if (SelectedCategories != null && SelectedCategories.Contains("Types") && !SelectedCategories.Contains("Components"))
-        {
-            types = types.Where(type => !type.IsComponent);
-        }
-        else if (SelectedCategories == null || SelectedCategories.Count == 0)
-        {
-            return new() { Items = [] };
-        }
-
-        // Filter by any search keyword
-        if (!string.IsNullOrEmpty(Keyword))
-        {
-            types = types.Where(type =>
-                type.Name.Contains(Keyword, StringComparison.OrdinalIgnoreCase)
-                || (type.Summary != null && type.Summary.Contains(Keyword, StringComparison.OrdinalIgnoreCase))
-                || (type.Remarks != null && type.Remarks.Contains(Keyword, StringComparison.OrdinalIgnoreCase))
-            );
+            types = types.Where(type => type.BaseTypeName == BaseType.Name);
         }
 
         // ... then by sort column
@@ -98,19 +75,5 @@ public partial class ApiTypeTable
             Items = results,
             TotalItems = results.Count,
         });
-    }
-
-    /// <summary>
-    /// Occurs when the search keyword has changed.
-    /// </summary>
-    /// <param name="keyword"></param>
-    /// <returns></returns>
-    public async Task OnSearchAsync(string keyword)
-    {
-        Keyword = keyword;
-        if (Table != null)
-        {
-            await Table.ReloadServerData();
-        }
     }
 }

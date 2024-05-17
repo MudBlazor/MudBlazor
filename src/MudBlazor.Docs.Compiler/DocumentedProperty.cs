@@ -15,6 +15,7 @@ public sealed class DocumentedProperty
 {
     public string Name { get; set; }
     public string Key { get; set; }
+    public string XmlKey { get; set; }
     public string Summary { get; set; }
     public string Remarks { get; set; }
     public Type PropertyType { get; set; }

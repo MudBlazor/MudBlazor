@@ -30,13 +30,4 @@ public class DocumentedType
     public Dictionary<string, DocumentedMethod> Methods { get; set; } = [];
     public Dictionary<string, DocumentedField> Fields { get; set; } = [];
     public Dictionary<string, DocumentedEvent> Events { get; set; } = [];
-
-    /// <summary>
-    /// Gets the unique categories of properties for this type.
-    /// </summary>
-    public List<string> PropertyCategories => Properties.Values
-        .Select(property => property.Category ?? "General")
-        .Distinct()
-        .Order()
-        .ToList();
 }

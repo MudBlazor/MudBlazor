@@ -17,6 +17,7 @@ public class DocumentedType
 {
     public string Name { get; set; }
     public string Key { get; set; }
+    public string XmlKey { get; set; }
     public string Summary { get; set; }
     public string Remarks { get; set; }
     public bool IsPublic { get; set; }

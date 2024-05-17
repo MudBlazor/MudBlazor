@@ -16,11 +16,15 @@ public class DocumentedMethod
 {
     public string Name { get; set; }
     public string Key { get; set; }
+    public string XmlKey { get; set; }
     public Dictionary<string, DocumentedParameter> Parameters { get; set; } = [];
     public string Summary { get; set; }
     public string Remarks { get; set; }
     public bool IsPublic { get; set; }
     public bool IsProtected { get; set; }
+    public Type DeclaringType { get; set; }
+    public string DeclaringTypeName { get; set; }
+    public string DeclaringTypeFullName { get; set; }
     public Type ReturnType { get; set; }
     public string ReturnTypeName { get; set; }
     public string ReturnTypeFullName { get; set; }

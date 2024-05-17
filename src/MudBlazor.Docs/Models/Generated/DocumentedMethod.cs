@@ -8,20 +8,25 @@ using System.Diagnostics;
 
 namespace MudBlazor.Docs.Models;
 
+#nullable enable
+
 /// <summary>
 /// Represents documentation for a method.
 /// </summary>
 [DebuggerDisplay("({ReturnTypeName}) {Name}: {Summary}")]
 public class DocumentedMethod
 {
-    public string Name { get; set; }
-    public string Key { get; set; }
-    public Dictionary<string, DocumentedParameter> Parameters { get; set; } = [];
-    public string Summary { get; set; }
-    public string Remarks { get; set; }
+    public string ApiUrl => "/api/" + Name;
+    public string Category { get; set; } = "General";
+    public string? DeclaringType { get; set; }
+    public string? DeclaringTypeApiLink => $"/api/{DeclaringType}";
     public bool IsPublic { get; set; }
     public bool IsProtected { get; set; }
-    public Type ReturnType { get; set; }
-    public string ReturnTypeName { get; set; }
-    public string ReturnTypeFullName { get; set; }
+    public string? Name { get; set; } = "";
+    public int? Order { get; set; }
+    public string? Remarks { get; set; }
+    public string ReturnType { get; set; } = "";
+    public string ReturnTypeCSharp => ReturnType.Replace("Boolean", "bool").Replace("Int32", "int").Replace("Int64", "long").Replace("String", "string").Replace("Double", "double").Replace("Single", "float").Replace("Object", "object");
+    public string? Summary { get; set; }
+    public Dictionary<string, DocumentedParameter> Parameters { get; set; } = [];
 }

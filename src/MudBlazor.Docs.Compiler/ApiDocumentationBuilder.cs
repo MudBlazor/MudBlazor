@@ -30,12 +30,12 @@ public partial class ApiDocumentationBuilder()
     /// <summary>
     /// The assembly to document.
     /// </summary>
-    public Assembly Assembly { get; set; } = typeof(_Imports).Assembly;
+    public Assembly Assembly { get; private set; } = typeof(_Imports).Assembly;
 
     /// <summary>
     /// The types in the assembly.
     /// </summary>
-    public SortedDictionary<string, Type> PublicTypes { get; set; } = [];
+    public SortedDictionary<string, Type> PublicTypes { get; private set; } = [];
 
     /// <summary>
     /// The generated documentation for events.
@@ -68,7 +68,7 @@ public partial class ApiDocumentationBuilder()
     /// <remarks>
     /// When items exist in this list, the code may need to be improved to find the reflected type.
     /// </remarks>
-    public List<string> UnresolvedTypes { get; set; } = [];
+    public List<string> UnresolvedTypes { get; private set; } = [];
 
     /// <summary>
     /// The properties which have documentation but could not be linked to a reflected property.
@@ -76,7 +76,7 @@ public partial class ApiDocumentationBuilder()
     /// <remarks>
     /// When items exist in this list, the code may need to be improved to find the reflected property.
     /// </remarks>
-    public List<string> UnresolvedProperties { get; set; } = [];
+    public List<string> UnresolvedProperties { get; private set; } = [];
 
     /// <summary>
     /// The types which have documentation but could not be linked to a reflected field.
@@ -84,7 +84,7 @@ public partial class ApiDocumentationBuilder()
     /// <remarks>
     /// When items exist in this list, the code may need to be improved to find the reflected field.
     /// </remarks>
-    public List<string> UnresolvedFields { get; set; } = [];
+    public List<string> UnresolvedFields { get; private set; } = [];
 
     /// <summary>
     /// The types which have documentation but could not be linked to a reflected method.
@@ -92,7 +92,7 @@ public partial class ApiDocumentationBuilder()
     /// <remarks>
     /// When items exist in this list, the code may need to be improved to find the reflected method.
     /// </remarks>
-    public List<string> UnresolvedMethods { get; set; } = [];
+    public List<string> UnresolvedMethods { get; private set; } = [];
 
     /// <summary>
     /// The types which have documentation but could not be linked to a reflected event.
@@ -100,42 +100,12 @@ public partial class ApiDocumentationBuilder()
     /// <remarks>
     /// When items exist in this list, the code may need to be improved to find the reflected event.
     /// </remarks>
-    public List<string> UnresolvedEvents { get; set; } = [];
-
-    /// <summary>
-    /// Any methods to exclude from documentation.
-    /// </summary>
-    private static List<string> ExcludedMethods =
-    [
-        // Object methods
-        "ToString",
-        "Equals",
-        "MemberwiseClone",
-        // Blazor component methods
-        "OnInitialized",
-        "OnInitializedAsync",
-        "OnParametersSet",
-        "OnParametersSetAsync",
-        "OnAfterRender",
-        "OnAfterRenderAsync",
-        "StateHasChanged",
-        "ShouldRender",
-        "BuildRenderTree",
-        "InvokeAsync",
-        // Dispose methods
-        "Dispose",
-        "DisposeAsync",
-        "Finalize",
-        // Internal MudBlazor methods
-        "DispatchExceptionAsync",
-        "CreateRegisterScope",
-        "DetectIllegalRazorParameters"
-    ];
+    public List<string> UnresolvedEvents { get; private set; } = [];
 
     /// <summary>
     /// The XML documentation elements and their HTML equivalents.
     /// </summary>
-    private static Dictionary<string, string> XmlToHtmlElements = new()
+    public static Dictionary<string, string> XmlToHtmlElements { get; private set; } = new()
     {
         { "<c>", "<code class=\"docs-code docs-code-primary\">" },
         { "</c>", "</code>" },
@@ -189,6 +159,7 @@ public partial class ApiDocumentationBuilder()
                 IsPublic = type.IsPublic,
                 IsAbstract = type.IsNestedFamORAssem,
                 Key = type.FullName,
+                XmlKey = GetXmlKey(type.FullName),
                 Name = type.Name,
                 Type = type,
             };
@@ -198,6 +169,92 @@ public partial class ApiDocumentationBuilder()
         }
 
         return documentedType;
+    }
+
+    /// <summary>
+    /// Gets the XML member key for the specified type and member.
+    /// </summary>
+    /// <param name="typeFullName">The <see cref="Type.FullName"/> of the type containing the member.</param>
+    /// <param name="memberName">The fully qualified name of the member.</param>
+    /// <returns>The member key for looking up documentation.</returns>
+    public static string GetXmlKey(string typeFullName, string memberName = null)
+    {
+        // See: https://learn.microsoft.com/en-us/archive/msdn-magazine/2019/october/csharp-accessing-xml-documentation-via-reflection
+
+        // Get the key for the type
+        var key = TypeFullNameRegEx().Replace(typeFullName, string.Empty).Replace('+', '.');
+        return (memberName != null) ? key + "." + memberName : key;
+    }
+
+    /// <summary>
+    /// Gets the XML member key for the specified type and method.
+    /// </summary>
+    /// <param name="typeFullName">The <see cref="Type.FullName"/> of the type containing the member.</param>
+    /// <param name="memberName">The fully qualified name of the member.</param>
+    /// <returns>The member key for looking up documentation.</returns>
+    public static string GetXmlKey(string typeFullNameString, MethodInfo methodInfo)
+    {
+        if (methodInfo.Name == "GetOrAdd")
+        {
+            Debugger.Break();
+        }
+
+        var typeGenericMap = new Dictionary<string, int>();
+        var tempTypeGeneric = 0;
+        Array.ForEach(methodInfo.DeclaringType.GetGenericArguments(), x => typeGenericMap[x.Name] = tempTypeGeneric++);
+        var methodGenericMap = new Dictionary<string, int>();
+        var tempMethodGeneric = 0;
+        Array.ForEach(methodInfo.GetGenericArguments(), x => methodGenericMap.Add(x.Name, tempMethodGeneric++));
+        var parameterInfos = methodInfo.GetParameters().ToList();
+
+        var key = typeFullNameString + "." + methodInfo.Name;
+
+        if (parameterInfos.Count > 0)
+        {
+            key += "(";
+            for (var index = 0; index < parameterInfos.Count; index++)
+            {
+                var parameterInfo = parameterInfos[index];
+                if (index > 0)
+                {
+                    key += ",";
+                }
+                key += parameterInfo.ParameterType.FullName;
+
+                if (parameterInfo.ParameterType.HasElementType)
+                {
+                    //Debugger.Break();
+                    // The type is either an array, pointer, or reference
+                    if (parameterInfo.ParameterType.IsArray)
+                    {
+                        // Append the "[]" array brackets onto the element type
+                        key += "[]";
+                    }
+                    else if (parameterInfo.ParameterType.IsPointer)
+                    {
+                        // Append the "*" pointer symbol to the element type
+                    }
+                    else if (parameterInfo.ParameterType.IsByRef)
+                    {
+                        // Append the "@" symbol to the element type
+                    }
+                }
+                else if (parameterInfo.ParameterType.IsGenericParameter)
+                {
+                    // Look up the index of the generic from the
+                    // dictionaries in Figure 5, appending "`" if
+                    // the parameter is from a type or "``" if the
+                    // parameter is from a method
+                    //Debugger.Break();
+                }
+                else
+                {
+                    // Nothing fancy, just convert the type to a string
+                }
+            }
+            key += ")";
+        }
+        return key;
     }
 
     /// <summary>
@@ -217,7 +274,7 @@ public partial class ApiDocumentationBuilder()
         {
             var category = property.GetCustomAttribute<CategoryAttribute>();
             var blazorParameter = property.GetCustomAttribute<ParameterAttribute>();
-            var key = GetTypeFullName(property);
+            var key = GetPropertyFullName(property);
 
             // Has this property been documented before?
             if (!Properties.TryGetValue(key, out var documentedProperty))
@@ -237,7 +294,8 @@ public partial class ApiDocumentationBuilder()
                     Order = category?.Order,
                     PropertyType = property.PropertyType,
                     PropertyTypeName = property.PropertyType.Name,
-                    PropertyTypeFullName = property.PropertyType.FullName
+                    PropertyTypeFullName = property.PropertyType.FullName,
+                    XmlKey = GetXmlKey(GetTypeFullName(property.DeclaringType), property.Name),
                 };
                 Properties.Add(key, documentedProperty);
             }
@@ -325,9 +383,32 @@ public partial class ApiDocumentationBuilder()
     /// <summary>
     /// Gets the full name of the property's declaring type.
     /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public string GetTypeFullName(Type type)
+    {
+        // Is a full name already given?
+        if (type.FullName != null)
+        {
+            return $"{type.FullName}";
+        }
+        // Is there a type by name?
+        else if (PublicTypes.TryGetValue(type.Name, out var publicType))
+        {
+            return $"{publicType.FullName}";
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Gets the full name of the property's declaring type.
+    /// </summary>
     /// <param name="property"></param>
     /// <returns></returns>
-    public string GetTypeFullName(PropertyInfo property)
+    public string GetPropertyFullName(PropertyInfo property)
     {
         // Is a full name already given?
         if (property.DeclaringType.FullName != null)
@@ -346,19 +427,44 @@ public partial class ApiDocumentationBuilder()
     }
 
     /// <summary>
+    /// Gets the full name of the property's declaring type.
+    /// </summary>
+    /// <param name="method"></param>
+    /// <returns></returns>
+    public string GetMethodFullName(MethodInfo method)
+    {
+        // Is a full name already given?
+        if (method.DeclaringType.FullName != null)
+        {
+            return $"{method.DeclaringType.FullName}.{method.Name}";
+        }
+        // Is there a type by name?
+        else if (PublicTypes.TryGetValue(method.DeclaringType.Name, out var type))
+        {
+            return $"{type.FullName}.{method.Name}";
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
     /// Adds methods the specified documented type.
     /// </summary>
     /// <param name="type">The type to find methods for.</param>
     /// <param name="documentedType">The documentation for the type.</param>
     public void AddMethodsToDocument(Type type, DocumentedType documentedType)
     {
+
         // Look for public methods
-        var methods = type.GetMethods(BindingFlags.Public).ToList();
+        var methods = type.GetMethods().ToList();
         // Add protected methods
-        methods.AddRange(type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).Where(method => method.IsFamily));
+        methods.AddRange(type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic));
         methods = methods
             // Remove duplicates
             .DistinctBy(method => method.Name)
+            .OrderBy(method => method.Name)
             .Where(method =>
                 // Exclude getter and setter methods
                 !method.Name.StartsWith("get_")
@@ -366,16 +472,17 @@ public partial class ApiDocumentationBuilder()
                 // Exclude inherited .NET methods
                 && !method.Name.StartsWith("Microsoft")
                 && !method.Name.StartsWith("System")
-                // Exclude internal MudBlazor interfaces
-                && !method.Name.StartsWith("MudBlazor.Interfaces")
-                && !method.Name.StartsWith("MudBlazor.State")
-                // Exclude common .NET and Blazor methods
-                && !ExcludedMethods.Contains(method.Name))
-                .ToList();
+            ).ToList();
         // Look for methods and add related types
         foreach (var method in methods)
         {
-            var key = $"{method.ReflectedType.FullName}.{method.Name}";
+            //if (method.Name.Contains("ToDescriptionString"))
+            //{
+            //    Debugger.Break();
+            //}
+
+            // Get the key for this method
+            var key = GetMethodFullName(method);
 
             // Has this been documented before?
             if (!Methods.TryGetValue(key, out var documentedMethod))
@@ -383,13 +490,17 @@ public partial class ApiDocumentationBuilder()
                 // No.
                 documentedMethod = new DocumentedMethod()
                 {
-                    Key = key,
-                    Name = method.Name,
+                    DeclaringType = method.DeclaringType,
+                    DeclaringTypeName = method.DeclaringType.Name,
+                    DeclaringTypeFullName = method.DeclaringType.FullName,
                     IsPublic = method.IsPublic,
                     IsProtected = method.IsFamily,
+                    Key = key,
+                    Name = method.Name,
                     ReturnType = method.ReturnType,
                     ReturnTypeName = method.ReturnType.Name,
                     ReturnTypeFullName = method.ReturnType.FullName,
+                    XmlKey = GetXmlKey(GetTypeFullName(method.DeclaringType), method)
                 };
                 // Reach out and document types mentioned in these methods
                 foreach (var parameter in method.GetParameters())
@@ -406,12 +517,8 @@ public partial class ApiDocumentationBuilder()
                 // Add to the list
                 Methods.Add(key, documentedMethod);
             }
-            else
-            {
-                Debugger.Break();
-            }
             // Add the method to the type
-            documentedType.Methods.Add(key, documentedMethod);
+            documentedType.Methods.Add(documentedMethod.Key, documentedMethod);
         }
     }
 
@@ -466,10 +573,11 @@ public partial class ApiDocumentationBuilder()
     /// <param name="xmlContent">The raw XML documentation for the member.</param>
     public void DocumentType(string memberFullName, string xmlContent)
     {
-        if (Types.TryGetValue(memberFullName, out var type))
+        var type = Types.FirstOrDefault(type => type.Value.XmlKey == memberFullName);
+        if (type.Value != null)
         {
-            type.Remarks = GetRemarks(xmlContent);
-            type.Summary = GetSummary(xmlContent);
+            type.Value.Remarks = GetRemarks(xmlContent);
+            type.Value.Summary = GetSummary(xmlContent);
         }
         else
         {
@@ -484,11 +592,11 @@ public partial class ApiDocumentationBuilder()
     /// <param name="xmlContent">The raw XML documentation for the member.</param>
     public void DocumentProperty(string memberFullName, string xmlContent)
     {
-        // Get the documented type and property
-        if (Properties.TryGetValue(memberFullName, out var property))
+        var property = Properties.FirstOrDefault(type => type.Value.XmlKey == memberFullName);
+        if (property.Value != null)
         {
-            property.Remarks = GetRemarks(xmlContent);
-            property.Summary = GetSummary(xmlContent);
+            property.Value.Remarks = GetRemarks(xmlContent);
+            property.Value.Summary = GetSummary(xmlContent);
         }
         else
         {
@@ -530,15 +638,46 @@ public partial class ApiDocumentationBuilder()
     /// <param name="xmlContent">The raw XML documentation for the member.</param>
     public void DocumentMethod(string memberFullName, string xmlContent)
     {
-        if (Methods.TryGetValue(memberFullName, out var documentedType))
+        var method = Methods.FirstOrDefault(method => method.Value.XmlKey == memberFullName);
+        if (method.Value != null)
         {
-            documentedType.Summary = GetSummary(xmlContent);
-            documentedType.Remarks = GetRemarks(xmlContent);
+            method.Value.Summary = GetSummary(xmlContent);
+            method.Value.Remarks = GetRemarks(xmlContent);
         }
         else
         {
+            // No.  It should be documented
             UnresolvedMethods.Add(memberFullName);
         }
+    }
+
+    /// <summary>
+    /// Gets the name of a method without its parameters.
+    /// </summary>
+    /// <param name="xmlMethodName"></param>
+    /// <returns></returns>
+    public static string GetMethodFullName(string xmlMethodName)
+    {
+        // Are there parenthesis?
+        var parenthesis = xmlMethodName.IndexOf("(");
+        if (parenthesis == -1)
+        {
+            return xmlMethodName;
+        }
+        else
+        {
+            return xmlMethodName.Substring(0, parenthesis);
+        }
+    }
+
+    /// <summary>
+    /// Gets the name of a method from the full name.
+    /// </summary>
+    /// <param name="xmlMethodName"></param>
+    /// <returns></returns>
+    public static string GetMethodName(string xmlMethodName)
+    {
+        return xmlMethodName.Substring(xmlMethodName.LastIndexOf(".") + 1);
     }
 
     /// <summary>
@@ -680,4 +819,11 @@ public partial class ApiDocumentationBuilder()
     /// </summary>
     [GeneratedRegex(@"<returns>\s*([ \S]*)\s*<\/returns>")]
     private static partial Regex ReturnsRegEx();
+
+    /// <summary>
+    /// The regular expression used to calculate the XML member key.
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"\[.*\]")]
+    private static partial Regex TypeFullNameRegEx();
 }

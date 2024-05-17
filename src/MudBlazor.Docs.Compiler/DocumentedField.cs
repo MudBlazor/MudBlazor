@@ -15,6 +15,7 @@ namespace MudBlazor.Docs.Compiler;
 public sealed class DocumentedField
 {
     public string Key { get; set; }
+    public string XmlKey { get; set; }
     public string Name { get; set; }
     public Type Type { get; set; }
     public string TypeFullName { get; set; }
