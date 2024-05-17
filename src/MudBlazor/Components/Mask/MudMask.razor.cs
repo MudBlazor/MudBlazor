@@ -181,8 +181,9 @@ namespace MudBlazor
                 });
                 _keyInterceptor.KeyDown += HandleKeyDownInternally;
             }
+
             if (_isFocused && Mask.Selection == null)
-                SetCaretPosition(Mask.CaretPos, _selection, render: false);
+                await SetCaretPositionAsync(Mask.CaretPos, _selection, render: false);
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -203,22 +204,22 @@ namespace MudBlazor
                         if (e.CtrlKey)
                         {
                             Mask.Clear();
-                            await Update();
+                            await UpdateAsync();
                             return;
                         }
                         Mask.Backspace();
-                        await Update();
+                        await UpdateAsync();
                         return;
                     case "Delete":
                         Mask.Delete();
-                        await Update();
+                        await UpdateAsync();
                         return;
                 }
 
                 if (ValidCharacterRegularExpression().IsMatch(e.Key))
                 {
                     Mask.Insert(e.Key);
-                    await Update();
+                    await UpdateAsync();
                 }
             }
             finally
@@ -230,7 +231,7 @@ namespace MudBlazor
 
         private bool _updating;
 
-        private async Task Update()
+        private async Task UpdateAsync()
         {
             var caret = Mask.CaretPos;
             var selection = Mask.Selection;
@@ -245,7 +246,7 @@ namespace MudBlazor
                 var v = Converter.Get(cleanText);
                 Value = v;
                 await ValueChanged.InvokeAsync(v);
-                SetCaretPosition(caret, selection);
+                await SetCaretPositionAsync(caret, selection);
             }
             finally
             {
@@ -256,7 +257,7 @@ namespace MudBlazor
         internal async Task HandleClearButtonAsync(MouseEventArgs e)
         {
             Mask.Clear();
-            await Update();
+            await UpdateAsync();
             await _elementReference.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
         }
@@ -274,7 +275,7 @@ namespace MudBlazor
             Mask.SetText(text);
             if (maskText == Mask.Text)
                 return; // no change, stop update loop
-            await Update();
+            await UpdateAsync();
         }
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)
@@ -289,7 +290,7 @@ namespace MudBlazor
             Mask.SetText(text);
             if (maskText == Mask.Text)
                 return; // no change, stop update loop
-            await Update();
+            await UpdateAsync();
         }
 
         internal override InputType GetInputType() => InputType;
@@ -307,7 +308,7 @@ namespace MudBlazor
         public Task Clear()
         {
             Mask.Clear();
-            return Update();
+            return UpdateAsync();
         }
 
         public override ValueTask FocusAsync()
@@ -340,7 +341,7 @@ namespace MudBlazor
             if (text == null || GetReadOnlyState())
                 return;
             Mask.Insert(text);
-            await Update();
+            await UpdateAsync();
         }
 
         public void OnSelect(int start, int end)
@@ -362,7 +363,7 @@ namespace MudBlazor
         private int _caret;
         private (int, int)? _selection;
 
-        private void SetCaretPosition(int caret, (int, int)? selection = null, bool render = true)
+        private async Task SetCaretPositionAsync(int caret, (int, int)? selection = null, bool render = true)
         {
             if (!_isFocused)
                 return;
@@ -372,12 +373,12 @@ namespace MudBlazor
             _selection = selection;
             if (selection == null)
             {
-                _elementReference.MudSelectRangeAsync(caret, caret).CatchAndLog();
+                await _elementReference.MudSelectRangeAsync(caret, caret);
             }
             else
             {
                 var sel = selection.Value;
-                _elementReference.MudSelectRangeAsync(sel.Item1, sel.Item2).CatchAndLog();
+                await _elementReference.MudSelectRangeAsync(sel.Item1, sel.Item2);
             }
         }
 
@@ -427,7 +428,7 @@ namespace MudBlazor
 
             if (_selection != null)
                 Mask.Delete();
-            await Update();
+            await UpdateAsync();
         }
 
         protected override void Dispose(bool disposing)
