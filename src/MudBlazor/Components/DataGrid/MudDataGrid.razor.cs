@@ -514,7 +514,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <see cref="DataGridFilterMode.Simple"/>.
         /// </remarks>
-        [Parameter] 
+        [Parameter]
         public DataGridFilterMode FilterMode { get; set; }
 
         /// <summary>
@@ -523,13 +523,13 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <see cref="DataGridFilterCaseSensitivity.Default"/>.
         /// </remarks>
-        [Parameter] 
+        [Parameter]
         public DataGridFilterCaseSensitivity FilterCaseSensitivity { get; set; }
 
         /// <summary>
         /// The template used to display each filter.
         /// </summary>
-        [Parameter] 
+        [Parameter]
         public RenderFragment<MudDataGrid<T>> FilterTemplate { get; set; }
 
         /// <summary>
