@@ -4,7 +4,7 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// Represents a palette of colors used in the application.
+    /// Represents a palette of colors used throughout the application.
     /// </summary>
     public abstract class Palette
     {
@@ -221,7 +221,8 @@ namespace MudBlazor
         public virtual MudColor DividerLight { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.8).ToString(MudColorOutputFormats.RGBA);
 
         /// <summary>
-        /// The darkened value of the primary color.
+        /// The darkened value of the primary color.<br/>
+        /// This is calculated using <see cref="MudColor.ColorRgbDarken"/> if not set.
         /// </summary>
         public virtual string PrimaryDarken
         {
@@ -230,7 +231,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The lightened value of the primary color.
+        /// The lightened value of the primary color.<br/>
+        /// This is calculated using <see cref="MudColor.ColorRgbLighten"/> if not set.
         /// </summary>
         public virtual string PrimaryLighten
         {
@@ -239,7 +241,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The darkened value of the secondary color.
+        /// The darkened value of the secondary color.<br/>
+        /// This is calculated using <see cref="MudColor.ColorRgbDarken"/> if not set.
         /// </summary>
         public virtual string SecondaryDarken
         {
@@ -248,7 +251,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The lightened value of the secondary color.
+        /// The lightened value of the secondary color.<br/>
+        /// This is calculated using <see cref="MudColor.ColorRgbLighten"/> if not set.
         /// </summary>
         public virtual string SecondaryLighten
         {
@@ -257,7 +261,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The darkened value of the tertiary color.
+        /// The darkened value of the tertiary color.<br/>
+        /// This is calculated using <see cref="MudColor.ColorRgbDarken"/> if not set.
         /// </summary>
         public virtual string TertiaryDarken
         {
@@ -266,7 +271,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The lightened value of the tertiary color.
+        /// The lightened value of the tertiary color.<br/>
+        /// This is calculated using <see cref="MudColor.ColorRgbLighten"/> if not set.
         /// </summary>
         public virtual string TertiaryLighten
         {
@@ -275,7 +281,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The darkened value of the info color.
+        /// The darkened value of the info color.<br/>
+        /// This is calculated using <see cref="MudColor.ColorRgbDarken"/> if not set.
         /// </summary>
         public virtual string InfoDarken
         {
@@ -284,7 +291,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The lightened value of the info color.
+        /// The lightened value of the info color.<br/>
+        /// This is calculated using <see cref="MudColor.ColorRgbLighten"/> if not set.
         /// </summary>
         public virtual string InfoLighten
         {
@@ -293,7 +301,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The darkened value of the success color.
+        /// The darkened value of the success color.<br/>
+        /// This is calculated using <see cref="MudColor.ColorRgbDarken"/> if not set.
         /// </summary>
         public virtual string SuccessDarken
         {
@@ -302,7 +311,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The lightened value of the success color.
+        /// The lightened value of the success color.<br/>
+        /// This is calculated using <see cref="MudColor.ColorRgbLighten"/> if not set.
         /// </summary>
         public virtual string SuccessLighten
         {
@@ -311,7 +321,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The darkened value of the warning color.
+        /// The darkened value of the warning color.<br/>
+        /// This is calculated using <see cref="MudColor.ColorRgbDarken"/> if not set.
         /// </summary>
         public virtual string WarningDarken
         {
@@ -320,7 +331,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The lightened value of the warning color.
+        /// The lightened value of the warning color.<br/>
+        /// This is calculated using <see cref="MudColor.ColorRgbLighten"/> if not set.
         /// </summary>
         public virtual string WarningLighten
         {
@@ -329,7 +341,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The darkened value of the error color.
+        /// The darkened value of the error color.<br/>
+        /// This is calculated using <see cref="MudColor.ColorRgbDarken"/> if not set.
         /// </summary>
         public virtual string ErrorDarken
         {
@@ -338,7 +351,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The lightened value of the error color.
+        /// The lightened value of the error color.<br/>
+        /// This is calculated using <see cref="MudColor.ColorRgbLighten"/> if not set.
         /// </summary>
         public virtual string ErrorLighten
         {
@@ -347,7 +361,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The darkened value of the dark color.
+        /// The darkened value of the dark color.<br/>
+        /// This is calculated using <see cref="MudColor.ColorRgbDarken"/> if not set.
         /// </summary>
         public virtual string DarkDarken
         {
@@ -356,7 +371,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The lightened value of the dark color.
+        /// The lightened value of the dark color.<br/>
+        /// This is calculated using <see cref="MudColor.ColorRgbLighten"/> if not set.
         /// </summary>
         public virtual string DarkLighten
         {
