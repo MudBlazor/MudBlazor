@@ -8,7 +8,7 @@ namespace MudBlazor;
 /// <summary>
 /// Represents a light color palette.
 /// </summary>
-public record PaletteLight : Palette
+public class PaletteLight : Palette
 {
     // everything is inherited from Palette so people will know about it.
 }

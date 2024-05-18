@@ -10,7 +10,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents a dark color palette.
     /// </summary>
-    public record PaletteDark : Palette
+    public class PaletteDark : Palette
     {
         /// <inheritdoc />
         public override MudColor Black { get; set; } = "#27272f";
