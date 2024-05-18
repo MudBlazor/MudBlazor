@@ -2,14 +2,14 @@
 @using MudBlazor.Utilities
 @inherits MudComponentBase
 
-<svg @attributes="UserAttributes"
-     class="@Class"
+<svg class="@Class"
      style="@Style"
      stroke-linecap="round"
      display="block"
      stroke-width="@StrokeWidth"
      viewBox="0 0 300 75"
-     role="img">
+     role="img"
+     @attributes="UserAttributes">
     @if (Title != null)
     {
         <title>@Title</title>
