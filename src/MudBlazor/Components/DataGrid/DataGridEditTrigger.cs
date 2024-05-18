@@ -10,12 +10,12 @@ namespace MudBlazor;
 public enum DataGridEditTrigger
 {
     /// <summary>
-    /// Clicking on the row will edit the cell.
+    /// Editing begins when the row is clicked.
     /// </summary>
     OnRowClick,
 
     /// <summary>
-    /// Clicking the edit button will edit the cell.
+    /// Editing begins when the edit button is clicked.
     /// </summary>
     Manual
 }
