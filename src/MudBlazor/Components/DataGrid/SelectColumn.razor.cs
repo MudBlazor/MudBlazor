@@ -18,7 +18,7 @@ public partial class SelectColumn<T>
     /// <remarks>
     /// When <c>true</c>, all rows can be checked by selecting this checkbox.
     /// </remarks>
-    [Parameter] 
+    [Parameter]
     public bool ShowInHeader { get; set; } = true;
 
     /// <summary>
