@@ -444,7 +444,7 @@ namespace MudBlazor
         {
             get => _open;
             // Note: the setter is protected because it was needed by a user who derived his own autocomplete from this class.
-            // Note: setting Open will not open or close it. Use ToggleMenu() for that.
+            // Note: setting Open will not open or close it. Use ToggleMenuAsync() for that.
             protected set
             {
                 if (_open == value)
@@ -469,7 +469,7 @@ namespace MudBlazor
         /// Changes the currently selected item to the specified value.
         /// </summary>
         /// <param name="value">The value to set.</param>
-        public async Task SelectOption(T value)
+        public async Task SelectOptionAsync(T value)
         {
             _isProcessingValue = true;
             try
@@ -520,10 +520,10 @@ namespace MudBlazor
         {
             if (_isClearing || _isProcessingValue)
             {
-                //When you select a value in the popover, SelectOption will be called.
+                //When you select a value in the popover, SelectOptionAsync will be called.
                 //When it reaches SetValueAsync, it will be awaited.
-                //Meanwhile, in parallel, the Clear method will be called, which sets isCleared to true.
-                //However, by the time SetValueAsync is released and SelectOption continues its execution, an OnAfterRender event might fire, setting isCleared back to false.
+                //Meanwhile, in parallel, the ClearAsync method will be called, which sets isCleared to true.
+                //However, by the time SetValueAsync is released and SelectOptionAsync continues its execution, an OnAfterRender event might fire, setting isCleared back to false.
                 //This can result in a race condition.
                 //https://github.com/MudBlazor/MudBlazor/pull/6701
                 base.OnAfterRender(firstRender);
@@ -539,7 +539,7 @@ namespace MudBlazor
         {
             _debounceTimer?.Dispose();
 
-            // This keeps the text from being set when clear() was called
+            // This keeps the text from being set when ClearAsync() was called
             if (_isCleared)
                 return Task.CompletedTask;
 
@@ -604,7 +604,7 @@ namespace MudBlazor
             CancelToken();
             _debounceTimer?.Dispose();
             await RestoreScrollPositionAsync();
-            await CoerceTextToValue();
+            await CoerceTextToValueAsync();
             Open = false;
             StateHasChanged();
         }
@@ -688,14 +688,14 @@ namespace MudBlazor
 
             if (_items?.Length == 0)
             {
-                await CoerceValueToText();
+                await CoerceValueToTextAsync();
                 StateHasChanged();
                 return;
             }
 
             if (!CoerceText && CoerceValue)
             {
-                await CoerceValueToText();
+                await CoerceValueToTextAsync();
             }
 
             StateHasChanged();
@@ -704,7 +704,7 @@ namespace MudBlazor
         /// <summary>
         /// Resets the Text and Value, and closes the drop-down if it is open.
         /// </summary>
-        public async Task Clear()
+        public async Task ClearAsync()
         {
             _isClearing = true;
             try
@@ -713,7 +713,7 @@ namespace MudBlazor
                 Open = false;
 
                 await SetTextAsync(null, updateValue: false);
-                await CoerceValueToText();
+                await CoerceValueToTextAsync();
 
                 if (_elementReference != null)
                     await _elementReference.SetText("");
@@ -727,7 +727,7 @@ namespace MudBlazor
             }
         }
 
-        protected override Task ResetValueAsync() => Clear();
+        protected override Task ResetValueAsync() => ClearAsync();
 
         private string GetItemString(T item)
         {
@@ -745,12 +745,12 @@ namespace MudBlazor
         {
             switch (args.Key)
             {
-                // We need to catch Tab here because a tab will move focus to the next element and thus we'd never get the tab key in OnInputKeyUp.
+                // We need to catch Tab here because a tab will move focus to the next element and thus we'd never get the tab key in OnInputKeyUpAsync.
                 case "Tab":
                     if (Open)
                     {
                         if (SelectValueOnTab)
-                            await OnEnterKey();
+                            await OnEnterKeyAsync();
                         else
                             Open = false;
                     }
@@ -759,7 +759,7 @@ namespace MudBlazor
                     if (Open)
                     {
                         var increment = _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) + 1) - _selectedListItemIndex;
-                        await SelectNextItem(increment < 0 ? 1 : increment);
+                        await SelectNextItemAsync(increment < 0 ? 1 : increment);
                     }
                     else
                     {
@@ -778,7 +778,7 @@ namespace MudBlazor
                     else
                     {
                         var decrement = _selectedListItemIndex - _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) - 1);
-                        await SelectNextItem(-(decrement < 0 ? 1 : decrement));
+                        await SelectNextItemAsync(-(decrement < 0 ? 1 : decrement));
                     }
                     break;
             }
@@ -794,7 +794,7 @@ namespace MudBlazor
                 case "NumpadEnter":
                     if (Open)
                     {
-                        await OnEnterKey();
+                        await OnEnterKeyAsync();
                     }
                     else
                     {
@@ -815,21 +815,21 @@ namespace MudBlazor
             await base.InvokeKeyUpAsync(args);
         }
 
-        private ValueTask SelectNextItem(int increment)
+        private ValueTask SelectNextItemAsync(int increment)
         {
             if (increment == 0 || _items == null || _items.Length == 0 || !_enabledItemIndices.Any())
                 return ValueTask.CompletedTask;
 
             // if we are at the end, or the beginning we just do an rollover
             _selectedListItemIndex = Math.Clamp(value: ((10 * _items.Length) + _selectedListItemIndex + increment) % _items.Length, min: 0, max: _items.Length - 1);
-            return ScrollToListItem(_selectedListItemIndex);
+            return ScrollToListItemAsync(_selectedListItemIndex);
         }
 
         /// <summary>
         /// Scrolls the list of items to the item at the specified index.
         /// </summary>
         /// <param name="index">The index of the item to scroll to.</param>
-        public ValueTask ScrollToListItem(int index)
+        public ValueTask ScrollToListItemAsync(int index)
         {
             var id = GetListItemId(index);
 
@@ -851,7 +851,7 @@ namespace MudBlazor
             return $"{_componentId}_item{index}";
         }
 
-        internal async Task OnEnterKey()
+        internal async Task OnEnterKeyAsync()
         {
             if (!Open)
                 return;
@@ -862,7 +862,7 @@ namespace MudBlazor
                     return;
 
                 if (_selectedListItemIndex >= 0 && _selectedListItemIndex < _items.Length)
-                    await SelectOption(_items[_selectedListItemIndex]);
+                    await SelectOptionAsync(_items[_selectedListItemIndex]);
             }
             finally
             {
@@ -871,12 +871,12 @@ namespace MudBlazor
             }
         }
 
-        private Task OnInputClicked()
+        private Task OnInputClickedAsync()
         {
-            return _isFocused ? OnInputFocused() : Task.CompletedTask;
+            return _isFocused ? OnInputFocusedAsync() : Task.CompletedTask;
         }
 
-        private async Task OnInputFocused()
+        private async Task OnInputFocusedAsync()
         {
             _isFocused = true;
 
@@ -895,14 +895,14 @@ namespace MudBlazor
             await OpenMenuAsync();
         }
 
-        private async Task AdornmentClickHandler()
+        private async Task AdornmentClickHandlerAsync()
         {
             await FocusAsync();
 
             await OnAdornmentClick.InvokeAsync();
         }
 
-        private Task OnInputBlurred(FocusEventArgs args)
+        private Task OnInputBlurredAsync(FocusEventArgs args)
         {
             _isFocused = false;
 
@@ -923,7 +923,7 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
-        private Task CoerceTextToValue()
+        private Task CoerceTextToValueAsync()
         {
             if (!CoerceText)
                 return Task.CompletedTask;
@@ -939,7 +939,7 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
-        private Task CoerceValueToText()
+        private Task CoerceValueToTextAsync()
         {
             if (!CoerceValue)
                 return Task.CompletedTask;
@@ -1001,7 +1001,7 @@ namespace MudBlazor
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
 
-        private async Task OnTextChanged(string text)
+        private async Task OnTextChangedAsync(string text)
         {
             await base.TextChanged.InvokeAsync(text);
 
@@ -1011,6 +1011,6 @@ namespace MudBlazor
             await SetTextAsync(text, true);
         }
 
-        private Task ListItemOnClick(T item) => SelectOption(item);
+        private Task ListItemOnClickAsync(T item) => SelectOptionAsync(item);
     }
 }

@@ -369,7 +369,7 @@ namespace MudBlazor.UnitTests.Components
             var autocomplete = autocompletecomp.Instance;
             await comp.InvokeAsync(() => autocomplete.DebounceInterval = 0);
             // Set invalid option
-            await comp.InvokeAsync(() => autocomplete.SelectOption("Quux"));
+            await comp.InvokeAsync(() => autocomplete.SelectOptionAsync("Quux"));
             // check initial state
             autocomplete.Value.Should().Be("Quux");
             autocomplete.Text.Should().Be("Quux");
@@ -388,7 +388,7 @@ namespace MudBlazor.UnitTests.Components
             var autocomplete = autocompletecomp.Instance;
             await comp.InvokeAsync(() => autocomplete.DebounceInterval = 0);
             // Set valid option
-            await comp.InvokeAsync(() => autocomplete.SelectOption("Qux"));
+            await comp.InvokeAsync(() => autocomplete.SelectOptionAsync("Qux"));
             // check initial state
             autocomplete.Value.Should().Be("Qux");
             autocomplete.Text.Should().Be("Qux");
@@ -524,7 +524,7 @@ namespace MudBlazor.UnitTests.Components
 
             // ToggleMenu to open menu and Clear to close it and check the text and value
             await comp.InvokeAsync(autocomplete.ToggleMenuAsync);
-            await comp.InvokeAsync(() => autocomplete.Clear().Wait());
+            await comp.InvokeAsync(() => autocomplete.ClearAsync().Wait());
             comp.Markup.Should().NotContain("mud-popover-open");
             autocomplete.Value.Should().Be(null);
             autocomplete.Text.Should().Be("");
@@ -537,7 +537,7 @@ namespace MudBlazor.UnitTests.Components
             items.First().Markup.Should().Contain("California");
 
             // Clearing it and check the close status text and value again
-            await comp.InvokeAsync(() => autocomplete.Clear().Wait());
+            await comp.InvokeAsync(() => autocomplete.ClearAsync().Wait());
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             autocomplete.Value.Should().Be(null);
             autocomplete.Text.Should().Be("");
@@ -562,7 +562,7 @@ namespace MudBlazor.UnitTests.Components
             var autocompleteComponent = component.FindComponent<MudAutocomplete<string>>();
 
             // Set the clear function on value changed
-            autocompleteComponent.SetCallback(x => x.ValueChanged, async x => await autocompleteComponent.Instance.Clear());
+            autocompleteComponent.SetCallback(x => x.ValueChanged, async x => await autocompleteComponent.Instance.ClearAsync());
 
             // get the instance
             var autocompleteInstance = autocompleteComponent.Instance;
@@ -795,7 +795,7 @@ namespace MudBlazor.UnitTests.Components
                 autocomplete.CoerceText = true;
                 await comp.InvokeAsync(() => autocompletecomp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
                 comp.WaitForAssertion(() => autocomplete.Open.Should().BeTrue());
-                await comp.InvokeAsync(() => autocomplete.OnEnterKey());
+                await comp.InvokeAsync(() => autocomplete.OnEnterKeyAsync());
                 autocompletecomp.Find("input").Input("abc");
                 await comp.InvokeAsync(async () => await autocomplete.SelectAsync());
                 await comp.InvokeAsync(async () => await autocomplete.SelectRangeAsync(0, 1));
@@ -803,7 +803,7 @@ namespace MudBlazor.UnitTests.Components
                 await comp.InvokeAsync(() => autocomplete.ToggleMenuAsync());
                 comp.WaitForAssertion(() => autocomplete.Open.Should().BeTrue());
 
-                await comp.InvokeAsync(() => autocomplete.OnEnterKey());
+                await comp.InvokeAsync(() => autocomplete.OnEnterKeyAsync());
                 comp.WaitForAssertion(() => autocomplete.Open.Should().BeFalse());
             });
         }
