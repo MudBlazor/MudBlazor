@@ -547,6 +547,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void Open_FixDay_CheckOpenTo()
+        {
+            var comp = OpenPicker(new[] { Parameter(nameof(MudDatePicker.FixDay), 1) });
+            comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
+        }
+
+        [Test]
+        public void Open_FixMonth_FixDay_CheckOpenTo()
+        {
+            var comp = OpenPicker(new[] { Parameter(nameof(MudDatePicker.FixMonth), 1), Parameter(nameof(MudDatePicker.FixDay), 1) });
+            comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
+        }
+
+        [Test]
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
             var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
