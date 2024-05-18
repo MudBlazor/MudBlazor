@@ -44,7 +44,7 @@ namespace MudBlazor.UnitTests.Mocks
         public Task SubscribeAsync(string elementId, KeyInterceptorOptions options, Action<KeyboardEventArgs> keyDown = null, Action<KeyboardEventArgs> keyUp = null) => Task.CompletedTask;
 
         public Task SubscribeAsync(string elementId, KeyInterceptorOptions options, Func<KeyboardEventArgs, Task> keyDown = null, Func<KeyboardEventArgs, Task> keyUp = null) => Task.CompletedTask;
-        
+
         public Task UpdateKeyAsync(string elementId, KeyOptions option) => Task.CompletedTask;
 
         public Task UnsubscribeAsync(IKeyInterceptorObserver observer) => Task.CompletedTask;
