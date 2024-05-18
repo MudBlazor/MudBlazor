@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MudBlazor.Services;
 
@@ -23,10 +24,30 @@ public class KeyInterceptorOptions
     /// <summary>
     /// Specifies whether resize events should be logged in the browser's console.
     /// </summary>
-    public bool EnableLogging { get; set; } = false;
+    public bool EnableLogging { get; set; }
 
     /// <summary>
     /// A list of key options that define the keys to intercept and their respective configurations.
     /// </summary>
     public List<KeyOptions> Keys { get; set; } = new();
+
+    /// <summary>
+    /// Creates a new instance of <see cref="KeyInterceptorOptions"/> with the specified parameters.
+    /// </summary>
+    /// <param name="targetClass">The CSS class of the target HTML element.</param>
+    /// <param name="enableLogging">Specifies whether to enable logging of resize events in the browser's console.</param>
+    /// <param name="keys">An array of <see cref="KeyOptions"/> defining the keys to intercept and their configurations.</param>
+    /// <returns>A new instance of <see cref="KeyInterceptorOptions"/>.</returns>
+    public static KeyInterceptorOptions Create(
+        string? targetClass = null,
+        bool enableLogging = false,
+        params KeyOptions[] keys)
+    {
+        return new KeyInterceptorOptions
+        {
+            TargetClass = targetClass,
+            EnableLogging = enableLogging,
+            Keys = keys.ToList()
+        };
+    }
 }

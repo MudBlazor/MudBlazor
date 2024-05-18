@@ -76,4 +76,24 @@ public class KeyOptions
     /// Configuration for stopPropagation() on key up events.
     /// </summary>
     public string StopUp { get; set; } = "none";
+
+    public static KeyOptions Of(string? key = null,
+        bool subscribeDown = false,
+        bool subscribeUp = false,
+        string preventDown = "none",
+        string preventUp = "none",
+        string stopDown = "none",
+        string stopUp = "none")
+    {
+        return new KeyOptions
+        {
+            Key = key,
+            PreventDown = preventDown,
+            PreventUp = preventUp,
+            SubscribeDown = subscribeDown,
+            SubscribeUp = subscribeUp,
+            StopDown = stopDown,
+            StopUp = stopUp
+        };
+    }
 }
