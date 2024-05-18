@@ -41,6 +41,13 @@ else
     public string Icon { get; set; }
 
     /// <summary>
+    /// Icon color placed before the text if set.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Tabs.Behavior)]
+    public Color? IconColor { get; set; }
+
+    /// <summary>
     /// If true, the tabpanel will be disabled.
     /// </summary>
     [Parameter]
