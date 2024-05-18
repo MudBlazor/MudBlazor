@@ -5,13 +5,17 @@
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
-namespace MudBlazor
-{
-    public partial class Row : MudComponentBase
-    {
-        [Parameter] public RenderFragment ChildContent { get; set; }
+namespace MudBlazor;
 
-        protected string Classname => new CssBuilder("mud-table-row")
-            .AddClass(Class).Build();
-    }
+/// <summary>
+/// Represents a row within a <see cref="MudDataGrid{T}"/>.
+/// </summary>
+public partial class Row : MudComponentBase
+{
+    // This class is only referenced by tests.  Can it be removed?
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    protected string Classname => new CssBuilder("mud-table-row")
+        .AddClass(Class).Build();
 }

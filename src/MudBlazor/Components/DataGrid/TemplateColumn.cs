@@ -7,12 +7,18 @@ using System;
 namespace MudBlazor
 {
 #nullable enable
-    /// <typeparam name="T">The type of data represented by each row in the data grid.</typeparam>
+    /// <summary>
+    /// Represents an additional column for a <see cref="MudDataGrid{T}"/> which isn't tied to data.
+    /// </summary>
+    /// <typeparam name="T">The type of data represented by this column.</typeparam>
     public partial class TemplateColumn<T> : Column<T>
     {
         protected internal override object? CellContent(T item)
             => null;
 
+        /// <summary>
+        /// The name of this column.
+        /// </summary>
         public override string PropertyName { get; } = Guid.NewGuid().ToString();
 
         protected internal override object? PropertyFunc(T item)

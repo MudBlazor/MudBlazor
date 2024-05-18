@@ -19,7 +19,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents a sortable, filterable data grid with multiselection and pagination.
     /// </summary>
-    /// <typeparam name="T">The kind of item managed by this grid.</typeparam>
+    /// <typeparam name="T">The type of data represented by each row in this grid.</typeparam>
     [CascadingTypeParameter(nameof(T))]
     public partial class MudDataGrid<T> : MudComponentBase
     {

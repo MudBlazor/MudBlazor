@@ -16,7 +16,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a vertical grouping of values. 
+    /// Represents a vertical set of values.
     /// </summary>
     /// <typeparam name="T">The kind of item for this column.</typeparam>
     public abstract partial class Column<T> : MudComponentBase, IDisposable
