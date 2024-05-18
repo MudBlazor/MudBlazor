@@ -417,7 +417,7 @@ namespace MudBlazor
         public string FooterStyle { get; set; }
 
         /// <summary>
-        /// The function which calculates CSS styles forthis column's footer.
+        /// The function which calculates CSS styles for this column's footer.
         /// </summary>
         [Parameter]
         public Func<IEnumerable<T>, string> FooterStyleFunc { get; set; }

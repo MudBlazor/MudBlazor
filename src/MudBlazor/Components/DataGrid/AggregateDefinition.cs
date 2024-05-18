@@ -13,7 +13,7 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// Represents a function which calculate aggregate values such as counts, sums, averages, and custom functions.
+    /// Represents a function which calculates aggregate values such as counts, sums, averages, and custom functions.
     /// </summary>
     /// <typeparam name="T">The type of object to aggregate.</typeparam>
     public class AggregateDefinition<T>
@@ -49,7 +49,7 @@ namespace MudBlazor
         /// </summary>
         /// <param name="propertyExpression">The expression which calculates the aggregate.</param>
         /// <param name="items">The items involved in the aggregate calculation.</param>
-        /// <returns>The calculate aggregate value formatted using <see cref="DisplayFormat"/>.</returns>
+        /// <returns>The calculated aggregate value formatted using <see cref="DisplayFormat"/>.</returns>
         public string GetValue(LambdaExpression? propertyExpression, IEnumerable<T>? items)
         {
             //avoid multiple enumeration

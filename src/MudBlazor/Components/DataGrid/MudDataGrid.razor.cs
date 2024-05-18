@@ -271,7 +271,7 @@ namespace MudBlazor
         public EventCallback<T> CancelledEditingItem { get => CanceledEditingItem; set => CanceledEditingItem = value; }
 
         /// <summary>
-        /// Occurs when the user saved changed to an item.
+        /// Occurs when the user saved changes to an item.
         /// </summary>
         [Parameter]
         public EventCallback<T> CommittedItemChanges { get; set; }

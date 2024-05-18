@@ -5,17 +5,17 @@
 namespace MudBlazor;
 
 /// <summary>
-/// Indicates how values are editing for <see cref="MudDataGrid{T}"/> cells.
+/// Indicates how values are edited for <see cref="MudDataGrid{T}"/> cells.
 /// </summary>
 public enum DataGridEditMode
 {
     /// <summary>
-    /// Values can be edited in place within cells.
+    /// Values are edited in the cell.
     /// </summary>
     Cell,
 
     /// <summary>
-    /// A dialog is shown to edit cell values.
+    /// A dialog is shown to edit values.
     /// </summary>
     Form
 }
