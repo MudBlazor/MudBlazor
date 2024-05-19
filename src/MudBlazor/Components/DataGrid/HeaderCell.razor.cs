@@ -28,8 +28,11 @@ namespace MudBlazor
         public MudDataGrid<T> DataGrid { get; set; }
 
         /// <summary>
-        /// Whether this header cell is the only one displayed.
+        /// Shows this cell only in the header area.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, the header cell display in the header area and will not display cells with data like a normal column.  This property is set automatically when adding a header to the grid manually.
+        /// </remarks>
         [CascadingParameter(Name = "IsOnlyHeader")]
         public bool IsOnlyHeader { get; set; } = false;
 

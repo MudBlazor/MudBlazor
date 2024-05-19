@@ -11,9 +11,9 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// Represents configuration information for the header of a <see cref="MudDataGrid{T}"/>.
+    /// Represents the current state of a header in a <see cref="MudDataGrid{T}"/>.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The kind of item being managed.</typeparam>
     public class HeaderContext<T>
     {
         private readonly MudDataGrid<T> _dataGrid;

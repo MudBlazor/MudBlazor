@@ -10,7 +10,7 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// Represents the configuration information for a <see cref="MudDataGrid{T}"/> filter.
+    /// Represents the current state of a filter in a <see cref="MudDataGrid{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of item managed by the <see cref="MudDataGrid{T}"/>.</typeparam>
     public class FilterContext<T>
@@ -53,7 +53,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Represents the apply and clear behaviors for a <see cref="MudDataGrid{T}"/>.
+        /// Represents the apply and clear behaviors for a filter of a<see cref="MudDataGrid{T}"/>.
         /// </summary>
         public class FilterActions
         {

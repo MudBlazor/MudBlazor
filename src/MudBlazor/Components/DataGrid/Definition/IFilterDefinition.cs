@@ -7,10 +7,11 @@ using System;
 namespace MudBlazor;
 
 #nullable enable
+
 /// <summary>
-/// Implements filter definition features for a column.
+/// Defines filter definition features for a column.
 /// </summary>
-/// <typeparam name="T"></typeparam>
+/// <typeparam name="T">The type of object being filtered.</typeparam>
 public interface IFilterDefinition<T>
 {
     /// <summary>

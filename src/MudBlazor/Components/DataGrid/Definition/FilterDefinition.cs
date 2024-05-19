@@ -10,7 +10,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents the logic of a filter applied to <see cref="MudGrid"/> data.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of object being filtered.</typeparam>
     public class FilterDefinition<T> : IFilterDefinition<T>
     {
         private int _cachedExpressionHashCode;
@@ -37,7 +37,7 @@ namespace MudBlazor
         public Func<T, bool>? FilterFunction { get; set; }
 
         /// <summary>
-        /// The capabilities of this field's type.
+        /// The type of column being filtered.
         /// </summary>
         public FieldType FieldType => FieldType.Identify(Column?.PropertyType);
 

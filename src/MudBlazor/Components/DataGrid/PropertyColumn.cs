@@ -15,7 +15,7 @@ namespace MudBlazor
     /// Represents a column in a <see cref="MudDataGrid{T}"/> associated with an object's property.
     /// </summary>
     /// <typeparam name="T">The type of object represented by each row in the data grid.</typeparam>
-    /// <typeparam name="TProperty">The property whose values are displayed in the column's cells.</typeparam>
+    /// <typeparam name="TProperty">The type of the property whose values are displayed in the column's cells.</typeparam>
     public partial class PropertyColumn<T, TProperty> : Column<T>
     {
         private readonly Guid _id = Guid.NewGuid();

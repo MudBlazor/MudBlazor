@@ -12,7 +12,7 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// Represents the configuration information for a footer in a <see cref="MudDataGrid{T}"/>.
+    /// Represents the current state of a footer in a <see cref="MudDataGrid{T}"/>.
     /// </summary>
     /// <typeparam name="T">The kind of item being managed.</typeparam>
     public class FooterContext<T>
