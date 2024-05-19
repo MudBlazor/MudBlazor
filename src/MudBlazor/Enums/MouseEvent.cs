@@ -4,6 +4,6 @@
     {
         LeftClick,
         RightClick,
-        PointerOver,
+        MouseOver
     }
 }

@@ -294,7 +294,7 @@ namespace MudBlazor
         {
             _isPointerOver = true;
 
-            if (ActivationEvent == PointerEvent.PointerOver)
+            if (ActivationEvent == PointerEvent.MouseOver)
             {
                 await OpenMenuAsync(args);
             }
@@ -306,7 +306,7 @@ namespace MudBlazor
 
             await Task.Delay(100);
 
-            if (ActivationEvent == PointerEvent.PointerOver && !_isPointerOver)
+            if (ActivationEvent == PointerEvent.MouseOver && !_isPointerOver)
             {
                 await CloseMenuAsync();
             }
