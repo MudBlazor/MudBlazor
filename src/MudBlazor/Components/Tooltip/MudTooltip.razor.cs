@@ -114,7 +114,9 @@ namespace MudBlazor
         [Category(CategoryTypes.Tooltip.Appearance)]
         public string? RootStyle { get; set; }
 
+        /// <summary>
         /// Classes applied directly to root component of the tooltip
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
         public string? RootClass { get; set; }
@@ -158,12 +160,12 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Disabled { get; set; }
 
-        private Task HandleMouseEnterAsync()
+        private Task HandlePointerEnterAsync()
         {
             return ShowOnHover ? _visibleState.SetValueAsync(true) : Task.CompletedTask;
         }
 
-        private Task HandleMouseLeaveAsync()
+        private Task HandlePointerLeaveAsync()
         {
             return ShowOnHover ? _visibleState.SetValueAsync(false) : Task.CompletedTask;
         }
@@ -178,7 +180,7 @@ namespace MudBlazor
             return ShowOnFocus ? _visibleState.SetValueAsync(false) : Task.CompletedTask;
         }
 
-        private Task HandleMouseUpAsync()
+        private Task HandlePointerUpAsync()
         {
             return ShowOnClick ? _visibleState.SetValueAsync(!_visibleState.Value) : Task.CompletedTask;
         }
@@ -201,7 +203,7 @@ namespace MudBlazor
                 return Origin.TopCenter;
             }
 
-            if (Placement == Placement.Left || Placement == Placement.Start && !RightToLeft || Placement == Placement.End && RightToLeft)
+            if (Placement == Placement.Left || (Placement == Placement.Start && !RightToLeft) || (Placement == Placement.End && RightToLeft))
             {
                 _anchorOrigin = Origin.CenterLeft;
                 _transformOrigin = Origin.CenterRight;
@@ -209,7 +211,7 @@ namespace MudBlazor
                 return Origin.CenterLeft;
             }
 
-            if (Placement == Placement.Right || Placement == Placement.End && !RightToLeft || Placement == Placement.Start && RightToLeft)
+            if (Placement == Placement.Right || (Placement == Placement.End && !RightToLeft) || (Placement == Placement.Start && RightToLeft))
             {
                 _anchorOrigin = Origin.CenterRight;
                 _transformOrigin = Origin.CenterLeft;

@@ -121,7 +121,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.MessageBox.Behavior)]
-        public bool visible
+        public bool Visible
         {
             get => _visible;
             set

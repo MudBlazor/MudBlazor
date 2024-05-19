@@ -87,5 +87,5 @@
     </CascadingValue>
 
 </CascadingValue>
-<!-- mousedown instead of click needed to close the menu before OnLostFocus runs -->
-<MudOverlay Visible="_open" @onmousedown="@(() => CloseMenu(false))" LockScroll="@LockScroll" />
+<!-- pointerdown instead of click needed to close the menu before OnLostFocus runs -->
+<MudOverlay Visible="_open" @onpointerdown="@(() => CloseMenu(false))" LockScroll="@LockScroll" />
