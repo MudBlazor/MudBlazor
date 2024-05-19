@@ -140,7 +140,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.Behavior)]
-        public PointerEvent ActivationEvent { get; set; } = PointerEvent.LeftClick;
+        public MouseEvent ActivationEvent { get; set; } = MouseEvent.LeftClick;
 
         /// <summary>
         /// Set the anchor origin point to determine where the popover will open from.
@@ -269,12 +269,12 @@ namespace MudBlazor
             // oncontextmenu turns a touch event into MouseEventArgs but with a button of -1.
             if (args is MouseEventArgs mouseEventArgs && mouseEventArgs.Button != -1)
             {
-                if (ActivationEvent == PointerEvent.LeftClick && mouseEventArgs.Button != 0 && !_open)
+                if (ActivationEvent == MouseEvent.LeftClick && mouseEventArgs.Button != 0 && !_open)
                 {
                     return;
                 }
 
-                if (ActivationEvent == PointerEvent.RightClick && mouseEventArgs.Button != 2 && !_open)
+                if (ActivationEvent == MouseEvent.RightClick && mouseEventArgs.Button != 2 && !_open)
                 {
                     return;
                 }
@@ -294,7 +294,7 @@ namespace MudBlazor
         {
             _isPointerOver = true;
 
-            if (ActivationEvent == PointerEvent.MouseOver)
+            if (ActivationEvent == MouseEvent.MouseOver)
             {
                 await OpenMenuAsync(args);
             }
@@ -306,7 +306,7 @@ namespace MudBlazor
 
             await Task.Delay(100);
 
-            if (ActivationEvent == PointerEvent.MouseOver && !_isPointerOver)
+            if (ActivationEvent == MouseEvent.MouseOver && !_isPointerOver)
             {
                 await CloseMenuAsync();
             }

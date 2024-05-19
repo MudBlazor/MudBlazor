@@ -1,6 +1,6 @@
 ﻿namespace MudBlazor
 {
-    public enum PointerEvent
+    public enum MouseEvent
     {
         LeftClick,
         RightClick,

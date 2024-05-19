@@ -5,8 +5,8 @@
 <div @attributes="UserAttributes" class="@Classname" style="@Style"
         @onpointerenter="@PointerEnterAsync"
         @onpointerleave="@PointerLeaveAsync"
-        @oncontextmenu="@(ActivationEvent == PointerEvent.RightClick ? ToggleMenuAsync : null)"
-        @oncontextmenu:preventDefault="@(ActivationEvent == PointerEvent.RightClick)">
+        @oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? ToggleMenuAsync : null)"
+        @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick)">
     @if (ActivatorContent != null)
     {
         <CascadingValue Value="@((IActivatable) this)" IsFixed="true">
@@ -45,5 +45,5 @@
             </MudList>
         </CascadingValue>
     </MudPopover>
-    <MudOverlay Visible="@(_open && ActivationEvent != PointerEvent.MouseOver)" OnClick="@ToggleMenuAsync" LockScroll="LockScroll" />
+    <MudOverlay Visible="@(_open && ActivationEvent != MouseEvent.MouseOver)" OnClick="@ToggleMenuAsync" LockScroll="LockScroll" />
 </div>
