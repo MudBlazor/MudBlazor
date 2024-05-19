@@ -28,7 +28,7 @@ public enum DataGridFilterCaseSensitivity
     CaseInsensitive,
 
     /// <summary>
-    /// Excludes any string comparison for text.
+    /// Excludes any <see cref="StringComparison" /> value for text comparisons.
     /// </summary>
     /// <remarks>
     /// This is typically used for Entity Framework expressions, which do not support string comparisons.
