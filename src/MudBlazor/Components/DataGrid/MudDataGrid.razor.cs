@@ -1610,7 +1610,7 @@ namespace MudBlazor
                 return _resizeService ??= new DataGridColumnResizeService<T>(this, EventListener);
             }
         }
-        
+
         internal async Task<bool> StartResizeColumn(HeaderCell<T> headerCell, double clientX)
             => await ResizeService.StartResizeColumn(headerCell, clientX, RenderedColumns, ColumnResizeMode);
 
