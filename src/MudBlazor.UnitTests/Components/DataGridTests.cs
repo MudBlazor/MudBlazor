@@ -221,7 +221,7 @@ namespace MudBlazor.UnitTests.Components
             // Since Sortable is now false, the click handler (and element holding it) should no longer exist.
             dataGrid.FindAll(".column-header .sortable-column-header").Should().BeEmpty();
         }
-        
+
         [Test]
         public async Task DataGridSortableHeaderRowTest()
         {
@@ -354,7 +354,7 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.Instance.Filterable = false;
         }
-        
+
         [Test]
         public async Task DataGridFilterableTest()
         {
@@ -632,7 +632,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".mud-table-body tr td input")[0].GetAttribute("value").Trim().Should().Be("Jonathan");
             dataGrid.FindAll(".mud-table-body tr td input")[1].GetAttribute("value").Trim().Should().Be("52");
         }
-        
+
         [Test]
         public async Task DataGridPaginationTest()
         {
