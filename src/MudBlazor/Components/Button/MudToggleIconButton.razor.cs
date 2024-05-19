@@ -48,6 +48,26 @@ namespace MudBlazor
         public string? ToggledTitle { get; set; }
 
         /// <summary>
+        /// The ARIA label for the button when it's not toggled.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public string? AriaLabel { get; set; }
+
+        /// <summary>
+        /// The ARIA label for the button in the toggled state.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public string? ToggledAriaLabel { get; set; }
+
+        /// <summary>
         /// The color of the icon in the untoggled state. It supports the theme colors.
         /// </summary>
         [Parameter]

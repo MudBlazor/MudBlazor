@@ -34,7 +34,6 @@ namespace MudBlazor.UnitTests.Other
                 typeof(FilterHeaderCell<>),
                 typeof(Column<>),
                 typeof(PropertyColumn<,>),
-                typeof(Row),
                 typeof(HeaderCell<>),
                 typeof(FooterCell<>),
                 typeof(Cell<>),
