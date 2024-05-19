@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.Web.Virtualization;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Clone;
 
@@ -29,6 +30,7 @@ namespace MudBlazor
         private IEnumerable<T> _items;
         private T _selectedItem;
         private MudForm _editForm;
+        private MudVirtualize<T> _mudVirtualize;
         internal Dictionary<object, bool> _groupExpansionsDict = new Dictionary<object, bool>();
         private List<GroupDefinition<T>> _currentPageGroups = new List<GroupDefinition<T>>();
         private List<GroupDefinition<T>> _allGroups = new List<GroupDefinition<T>>();
@@ -789,6 +791,12 @@ namespace MudBlazor
         private IEnumerable<T> _currentRenderFilteredItemsCache = null;
 
         /// <summary>
+        /// Defines the ItemsProviderDelegate property, which is necessary for implementing the ServerData methodology with Virtualization.
+        /// This property is used to populate items virtually from the server.
+        /// </summary>
+        internal ItemsProviderDelegate<T> VirtualItemsProvider { get; set; }
+
+        /// <summary>
         /// For unit testing the filtering cache mechanism.
         /// </summary>
         internal uint FilteringRunCount { get; private set; }
@@ -890,6 +898,7 @@ namespace MudBlazor
             var sortModeBefore = SortMode;
             await base.SetParametersAsync(parameters);
 
+            VirtualItemsProviderInitialize();
             if (parameters.TryGetValue(nameof(SortMode), out SortMode sortMode) && sortMode != sortModeBefore)
                 await ClearCurrentSortings();
         }
@@ -916,27 +925,38 @@ namespace MudBlazor
             if (ServerData == null)
                 return;
 
-            Loading = true;
-            StateHasChanged();
-
-            var state = new GridState<T>
+            if (Virtualize)
             {
-                Page = CurrentPage,
-                PageSize = RowsPerPage,
-                SortDefinitions = SortDefinitions.Values.OrderBy(sd => sd.Index).ToList(),
-                // Additional ToList() here to decouple clients from internal list avoiding runtime issues
-                FilterDefinitions = FilterDefinitions.ToList()
-            };
+                if (_mudVirtualize != null)
+                {
+                    await _mudVirtualize.RefreshDataAsync();
+                    StateHasChanged();
+                }
+            }
+            else
+            {
+                Loading = true;
+                StateHasChanged();
 
-            _server_data = await ServerData(state);
-            _currentRenderFilteredItemsCache = null;
+                var state = new GridState<T>
+                {
+                    Page = CurrentPage,
+                    PageSize = RowsPerPage,
+                    SortDefinitions = SortDefinitions.Values.OrderBy(sd => sd.Index).ToList(),
+                    // Additional ToList() here to decouple clients from internal list avoiding runtime issues
+                    FilterDefinitions = FilterDefinitions.ToList()
+                };
 
-            if (CurrentPage * RowsPerPage > _server_data.TotalItems)
-                CurrentPage = 0;
+                _server_data = await ServerData(state);
+                _currentRenderFilteredItemsCache = null;
 
-            Loading = false;
-            StateHasChanged();
-            PagerStateHasChangedEvent?.Invoke();
+                if (CurrentPage * RowsPerPage > _server_data.TotalItems)
+                    CurrentPage = 0;
+
+                Loading = false;
+                StateHasChanged();
+                PagerStateHasChangedEvent?.Invoke();
+            }
         }
 
         internal void AddColumn(Column<T> column)
@@ -1296,6 +1316,33 @@ namespace MudBlazor
                     StateHasChanged();
             }
         }
+        
+        private void VirtualItemsProviderInitialize()
+        {
+            if (ServerData == null || !Virtualize)
+            {
+                return;
+            }
+            
+            VirtualItemsProvider = async request =>
+            {
+                var state = new GridState<T>
+                {
+                    Page = request.Count > 0 ? request.StartIndex / request.Count : 0,
+                    PageSize = request.Count,
+                    SortDefinitions = SortDefinitions.Values.OrderBy(sd => sd.Index).ToList(),
+                    // Additional ToList() here to decouple clients from internal list avoiding runtime issues
+                    FilterDefinitions = FilterDefinitions.ToList()
+                };
+
+                _server_data = await ServerData(state);
+                _currentRenderFilteredItemsCache = null;
+                
+                return new ItemsProviderResult<T>(
+                    _server_data.Items,
+                    _server_data.TotalItems);
+            };
+        }
 
         /// <summary>
         /// Set the currently selected item in the data grid.
@@ -1563,7 +1610,7 @@ namespace MudBlazor
                 return _resizeService ??= new DataGridColumnResizeService<T>(this, EventListener);
             }
         }
-
+        
         internal async Task<bool> StartResizeColumn(HeaderCell<T> headerCell, double clientX)
             => await ResizeService.StartResizeColumn(headerCell, clientX, RenderedColumns, ColumnResizeMode);
 

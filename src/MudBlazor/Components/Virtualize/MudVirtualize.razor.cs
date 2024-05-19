@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 
@@ -61,5 +62,21 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public string SpacerElement { get; set; } = "div";
+
+        /// <summary>
+        /// Represents a virtualized container for rendering a large list of items efficiently.
+        /// </summary>
+        private Virtualize<T>? VirtualizeContainerReference { get; set; }
+
+        /// <summary>
+        /// Refreshes the data in the Virtualize component asynchronously.
+        /// </summary>
+        public async Task RefreshDataAsync()
+        {
+            if (VirtualizeContainerReference != null)
+            {
+                await VirtualizeContainerReference.RefreshDataAsync();
+            }
+        }
     }
 }
