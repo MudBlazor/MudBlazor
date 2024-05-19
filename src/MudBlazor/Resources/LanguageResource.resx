@@ -255,4 +255,10 @@
   <data name="MudNavGroup_ToggleExpand" xml:space="preserve">
     <value>Toggle {0}</value>
   </data>
+  <data name="MudAlert_Close" xml:space="preserve">
+    <value>Close alert</value>
+  </data>
+  <data name="MudChip_Close" xml:space="preserve">
+    <value>Close chip</value>
+  </data>
 </root>

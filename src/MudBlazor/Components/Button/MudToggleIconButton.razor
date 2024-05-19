@@ -1,14 +1,10 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-@{
-    var ariaPressedValue = Toggled ? "true" : "false";
-}
-
 <MudIconButton Icon="@(Toggled ? ToggledIcon : Icon)"
                Size="(Toggled ? ToggledSize : Size)"
                Color="(Toggled ? ToggledColor : Color)"
-               Title="@(Toggled && ToggledTitle != null ? ToggledTitle : Title)"
+               Title="@(Toggled ? ToggledTitle ?? Title : Title)"
                Variant="Variant"
                Disabled="Disabled"
                Edge="Edge"
@@ -18,5 +14,6 @@
                Style="@Style"
                DropShadow="@DropShadow"
                ClickPropagation="ClickPropagation"
-               aria-pressed="@ariaPressedValue"
+               aria-pressed="@((Toggled ? "true" : "false"))"
+               aria-label="@((Toggled ? ToggledAriaLabel ?? AriaLabel : AriaLabel))"
                @attributes="UserAttributes" />
