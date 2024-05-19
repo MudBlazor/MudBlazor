@@ -29,6 +29,15 @@ public class DateWrapperDateTimeTests
         result.Should().Be(expected);
     }
 
+    [Test]
+    [Theory]
+    [TestCaseSource(nameof(AreEqualTestData))]
+    public void AreEqual_ShouldReturnExpectedResult(DateTime? date, DateTime date2, bool expected)
+    {
+        var sut = new DateWrapper<DateTime>(new DateTimeConverter());
+        sut.AreEqual(date, date2).Should().Be(expected);
+    }
+
     private static object[] EndOfMonthTestData() =>
     [
         new object[]
@@ -61,5 +70,12 @@ public class DateWrapperDateTimeTests
             CultureInfo.GetCultureInfo("fa-IR"),
             new DateTime(2021, 2, 18)
         },
+    ];
+
+    private static object[] AreEqualTestData() =>
+    [
+        new object[] { new DateTime(2021, 2, 14), new DateTime(2021, 2, 14), true },
+        new object[] { new DateTime(2021, 2, 14), new DateTime(2021, 2, 15), false },
+        new object[] { null, new DateTime(2021, 2, 14), false },
     ];
 }

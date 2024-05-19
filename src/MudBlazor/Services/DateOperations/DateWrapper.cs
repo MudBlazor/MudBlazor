@@ -336,7 +336,7 @@ internal class DateWrapper<T> : IDateWrapper<T> where T : struct
 
     public bool DateEquals(T? date, T day)
     {
-        return _converter.ConvertTo(date)?.Date == _converter.ConvertTo(day);
+        return _converter.ConvertTo(date)?.Date == _converter.ConvertTo(day).Date;
     }
 
     public T SetYear(T? current, int year)

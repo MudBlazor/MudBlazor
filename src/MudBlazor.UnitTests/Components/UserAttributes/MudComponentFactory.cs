@@ -46,6 +46,9 @@ namespace MudBlazor.UnitTests.UserAttributes
                 .AddCascadingValue(testContext.RenderComponent<MudTabs>(attributes => attributes
                         .Add(x => x.KeepPanelsAlive, true))
                     .Instance));
+
+            RegisterCustomFactoryFor(typeof(MudDatePicker<>), testContext => testContext
+                .RenderComponent<MudDatePicker<DateTime>>(builder => ApplyAdditionalParameters(builder)));
         }
 
         public Dictionary<string, object> UserAttributes { get; set; } = null;
@@ -65,7 +68,15 @@ namespace MudBlazor.UnitTests.UserAttributes
         {
             // Use string as generic type parameter for generic components
             if (componentType.IsGenericType)
-                componentType = componentType.MakeGenericType(componentType.GetGenericArguments().Select(_ => typeof(string)).ToArray());
+                componentType = componentType.MakeGenericType(componentType.GetGenericArguments().Select(genericArgumentType =>
+                {
+                    if (genericArgumentType.GetGenericParameterConstraints().Any() &&
+                        genericArgumentType.GetGenericParameterConstraints()[0] == typeof(ValueType))
+                    {
+                        return typeof(ValueType);
+                    }
+                    return typeof(string);
+                }).ToArray());
 
             var defaultFactoryMethod = typeof(MudComponentFactory)
                 .GetMethod(nameof(DefaultFactory), BindingFlags.Instance | BindingFlags.NonPublic)
@@ -89,6 +100,9 @@ namespace MudBlazor.UnitTests.UserAttributes
             where TComponent : MudComponentBase
             => _customFactories.TryAdd(typeof(TComponent), testContext => testContext
                 .RenderComponent<TComponent>(builder => parameterBuilder(ApplyAdditionalParameters(builder), testContext)));
+
+        private void RegisterCustomFactoryFor(Type componentType, Func<TestContext, IRenderedFragment> factory)
+            => _customFactories.TryAdd(componentType, factory);
 
         private ComponentParameterCollectionBuilder<TComponent> ApplyAdditionalParameters<TComponent>(ComponentParameterCollectionBuilder<TComponent> builder)
             where TComponent : MudComponentBase
