@@ -25,7 +25,7 @@ else if (Column != null && !Column.HiddenState.Value)
         }
         @if (resizable)
         {
-            <div @onmousedown=OnResizerMouseDown @onmouseover=OnResizerMouseOver @onmouseleave=OnResizerMouseLeave
+            <div @onpointerdown=OnResizerPointerDown @onpointerover=OnResizerPointerOver @onpointerleave=OnResizerPointerLeave
                  class="@_resizerClass" style="@_resizerStyle" />
         }
     </th>
