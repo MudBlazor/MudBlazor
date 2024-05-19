@@ -1,8 +1,10 @@
 ﻿@namespace MudBlazor
+@using MudBlazor.Resources
 @typeparam T
 @inherits MudComponentBase
+@inject InternalMudLocalizer Localizer
 
-<div tabindex="0" @attributes="UserAttributes" class="@Classname" style="@Style" @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnClickAsync)">
+<div tabindex="0" role="@RoleAttribute" @attributes="UserAttributes" class="@Classname" style="@Style" @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnClickAsync)">
     @{
         if (AvatarContent is not null)
         {
@@ -33,7 +35,8 @@
         }
         @if (OnClose.HasDelegate || ChipSet?.AllClosable == true)
         {
-            <MudIconButton Class="mud-chip-close-button" Icon="@GetCloseIcon()" OnClick="OnCloseAsync" Size="MudBlazor.Size.Small" />
+            <MudIconButton Class="mud-chip-close-button" Icon="@GetCloseIcon()" OnClick="OnCloseAsync" Size="MudBlazor.Size.Small"
+                           aria-label="@Localizer[nameof(LanguageResource.MudChip_Close)]" />
         }
     </span>
 </div>
