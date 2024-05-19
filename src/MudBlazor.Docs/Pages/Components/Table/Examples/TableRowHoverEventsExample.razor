@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudTable T="Element" Items="@elements.Take(3)" Hover="true" OnRowMouseEnter="RowPointerEnterEvent" OnRowMouseLeave="RowPointerLeaveEvent" Breakpoint="Breakpoint.Sm">
+<MudTable T="Element" Items="@elements.Take(3)" Hover="true" OnRowMouseEnter="RowMouseEnterEvent" OnRowMouseLeave="RowMouseLeaveEvent" Breakpoint="Breakpoint.Sm">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -34,12 +34,12 @@
         elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
     }
 
-    private void RowPointerEnterEvent(TableRowHoverEventArgs<Element> eventArgs)
+    private void RowMouseEnterEvent(TableRowHoverEventArgs<Element> eventArgs)
     {
         currentlyHoveredElement = eventArgs.Item.Name;
     }
 
-    private void RowPointerLeaveEvent(TableRowHoverEventArgs<Element> eventArgs)
+    private void RowMouseLeaveEvent(TableRowHoverEventArgs<Element> eventArgs)
     {
         currentlyHoveredElement = "";
         lastHoveredElement = eventArgs.Item.Name;

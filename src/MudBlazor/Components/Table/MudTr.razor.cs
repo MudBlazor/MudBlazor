@@ -82,7 +82,7 @@ namespace MudBlazor
                 return;
             }
 
-            await table.FireRowPointerEnterEventAsync(args, this, Item);
+            await table.FireRowMouseEnterEventAsync(args, this, Item);
         }
 
         public async Task OnRowMouseLeaveAsync(PointerEventArgs args)
@@ -93,14 +93,14 @@ namespace MudBlazor
                 return;
             }
 
-            await table.FireRowPointerLeaveEventAsync(args, this, Item);
+            await table.FireRowMouseLeaveEventAsync(args, this, Item);
         }
 
-        private EventCallback<PointerEventArgs> RowPointerEnterEventCallback
+        private EventCallback<PointerEventArgs> RowMouseEnterEventCallback
         {
             get
             {
-                var hasEventHandler = Context?.Table?.HasRowPointerEnterEventHandler ?? false;
+                var hasEventHandler = Context?.Table?.HasRowMouseEnterEventHandler ?? false;
 
                 if (hasEventHandler)
                 {
@@ -111,11 +111,11 @@ namespace MudBlazor
             }
         }
 
-        private EventCallback<PointerEventArgs> RowPointerLeaveEventCallback
+        private EventCallback<PointerEventArgs> RowMouseLeaveEventCallback
         {
             get
             {
-                var hasEventHandler = Context?.Table?.HasRowPointerLeaveEventHandler ?? false;
+                var hasEventHandler = Context?.Table?.HasRowMouseLeaveEventHandler ?? false;
 
                 if (hasEventHandler)
                 {
