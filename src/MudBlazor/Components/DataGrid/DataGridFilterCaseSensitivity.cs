@@ -2,6 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+
 namespace MudBlazor;
 
 /// <summary>
@@ -10,17 +12,23 @@ namespace MudBlazor;
 public enum DataGridFilterCaseSensitivity
 {
     /// <summary>
-    /// The casing of text matters for comparisons.
+    /// Text is compared using <see cref="StringComparison.Ordinal"/>.
     /// </summary>
+    /// <remarks>
+    /// When using this value, casing of text matters.
+    /// </remarks>
     Default,
 
     /// <summary>
-    /// The casing of text does not matter for comparisons.
+    /// Text is compared using <see cref="StringComparison.OrdinalIgnoreCase"/>.
     /// </summary>
+    /// <remarks>
+    /// When using this value, casing of text does not matter.
+    /// </remarks>
     CaseInsensitive,
 
     /// <summary>
-    /// Excludes any string comparison for comparisons.
+    /// Excludes any string comparison for text.
     /// </summary>
     /// <remarks>
     /// This is typically used for Entity Framework expressions, which do not support string comparisons.
