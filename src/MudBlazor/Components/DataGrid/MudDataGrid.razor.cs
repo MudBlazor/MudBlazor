@@ -1316,14 +1316,14 @@ namespace MudBlazor
                     StateHasChanged();
             }
         }
-        
+
         private void VirtualItemsProviderInitialize()
         {
             if (ServerData == null || !Virtualize)
             {
                 return;
             }
-            
+
             VirtualItemsProvider = async request =>
             {
                 var state = new GridState<T>
@@ -1337,7 +1337,7 @@ namespace MudBlazor
 
                 _server_data = await ServerData(state);
                 _currentRenderFilteredItemsCache = null;
-                
+
                 return new ItemsProviderResult<T>(
                     _server_data.Items,
                     _server_data.TotalItems);
