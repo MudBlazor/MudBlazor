@@ -201,7 +201,7 @@
                         }
 
                         @{var resolvedPageItems = CurrentPageItems.ToList();}
-                        @if (resolvedPageItems is { Count: > 0 })
+                        @if (resolvedPageItems is { Count: > 0 } || VirtualItemsProvider != null)
                         {
                             if (GroupedColumn != null)
                             {
@@ -230,7 +230,7 @@
 
                                     @if (g.Expanded)
                                     {
-                                        <MudVirtualize Enabled="@Virtualize" Items="@g.Grouping.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
+                                        <MudVirtualize @ref="_mudVirtualize" ItemsProvider="@VirtualItemsProvider" Enabled="@Virtualize" Items="@g.Grouping.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
                                             @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
                                             @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
                                             @{ var tmpRowIndex = rowIndex; }
@@ -268,7 +268,7 @@
                             else
                             {
                                 var rowIndex = 0;
-                                <MudVirtualize Enabled="@Virtualize" Items="@resolvedPageItems" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
+                                <MudVirtualize @ref="_mudVirtualize" ItemsProvider="@VirtualItemsProvider" Enabled="@Virtualize" Items="@resolvedPageItems" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
                                     @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
                                     @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
                                     @{ var tmpRowIndex = rowIndex; }
