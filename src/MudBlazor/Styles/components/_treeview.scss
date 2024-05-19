@@ -10,6 +10,7 @@
     &.mud-treeview-selected-#{$color} {
       .mud-treeview-item-content.mud-treeview-item-selected {
         color: var(--mud-palette-#{$color});
+        --mud-ripple-color: var(--mud-palette-#{$color});
         background-color: var(--mud-palette-#{$color}-hover);
       }
     }
@@ -49,6 +50,12 @@
     .mud-icon-button {
       padding: 4px;
     }
+  }
+
+  &.mud-treeview-item-disabled {
+    color: var(--mud-palette-action-disabled) !important;
+    cursor: default !important;
+    pointer-events: none !important;
   }
 }
 

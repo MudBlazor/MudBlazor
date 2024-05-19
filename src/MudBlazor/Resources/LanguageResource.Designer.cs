@@ -61,6 +61,24 @@ namespace MudBlazor.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close alert.
+        /// </summary>
+        public static string MudAlert_Close {
+            get {
+                return ResourceManager.GetString("MudAlert_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close chip.
+        /// </summary>
+        public static string MudChip_Close {
+            get {
+                return ResourceManager.GetString("MudChip_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Filter.
         /// </summary>
         public static string MudDataGrid_AddFilter {
@@ -408,6 +426,15 @@ namespace MudBlazor.Resources {
         public static string MudDataGrid_Value {
             get {
                 return ResourceManager.GetString("MudDataGrid.Value", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle {0}.
+        /// </summary>
+        public static string MudNavGroup_ToggleExpand {
+            get {
+                return ResourceManager.GetString("MudNavGroup_ToggleExpand", resourceCulture);
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor.Docs.Examples
+@using MudBlazor.Interfaces
 
 <MudGrid Class="justify-space-between mb-3 mx-n3" Style="max-width: 800px;">
     <MudItem xs="12">
@@ -34,7 +35,7 @@
             cardType = o == null ? "Unknown" : o.Value.Id;
             UpdateClasses();
             // re-render only MudElement's children
-            element.Refresh();
+            (element as IMudStateHasChanged)?.StateHasChanged();
         };
         UpdateClasses();
     }

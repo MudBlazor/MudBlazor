@@ -64,11 +64,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SimpleTestWithHtmlInMessageString()
+        public async Task SimpleTestWithHtmlInMessageMarkupString()
+        {
+            await _provider.InvokeAsync(() => _service.Add(new MarkupString("Hello <span>World</span>")));
+            var messageText = _provider.Find("div.mud-snackbar-content-message").InnerHtml.Trim();
+            messageText.Should().Be("Hello <span>World</span>");
+        }
+
+        [Test]
+        public async Task HtmlInMessageStringShouldBeEncoded()
         {
             await _provider.InvokeAsync(() => _service.Add("Hello <span>World</span>"));
-            var messageText = HttpUtility.HtmlDecode(_provider.Find("div.mud-snackbar-content-message").InnerHtml.Trim());
-            messageText.Should().Be("Hello <span>World</span>");
+            var messageText = _provider.Find("div.mud-snackbar-content-message").InnerHtml.Trim();
+            messageText.Should().Be("Hello &lt;span&gt;World&lt;/span&gt;");
         }
 
         [Test]
@@ -114,6 +122,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void TestEmptyStringIsIgnored()
+        {
+            var bar = _service.Add("");
+            bar.Should().BeNull();
+            _service.ShownSnackbars.Count().Should().Be(0);
+        }
+
+        [Test]
+        public void TestEmptyMarkupStringIsIgnored()
+        {
+            var bar = _service.Add(new MarkupString(""));
+            bar.Should().BeNull();
+            _service.ShownSnackbars.Count().Should().Be(0);
+        }
+
+        [Test]
         public void TestStringMessageShouldAutofillKey()
         {
             var bar = _service.Add("Oh no!");
@@ -135,6 +159,9 @@ namespace MudBlazor.UnitTests.Components
             var key = "This is the key";
 
             _service.Add("A string message", key: key);
+            _service.Add(key); // Test leaving key default
+            _service.Add(new MarkupString("A <b>markupstring</b> message"), key: key);
+            _service.Add(new MarkupString(key)); // Test leaving key default
             _service.Add(new RenderFragment(builder =>
             {
                 builder.OpenElement(0, "span");
@@ -541,9 +568,9 @@ namespace MudBlazor.UnitTests.Components
             await _provider.InvokeAsync(() =>
                 primary = _service.Add("ah, ah, ah, ah, stayin' alive", Severity.Normal, c =>
                 {
-                    c.ShowTransitionDuration = 40;
-                    c.HideTransitionDuration = 40;
-                    c.VisibleStateDuration = 40;
+                    c.ShowTransitionDuration = int.MaxValue;
+                    c.VisibleStateDuration = 50;
+                    c.HideTransitionDuration = 100;
                 })
             );
 

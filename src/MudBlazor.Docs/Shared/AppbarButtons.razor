@@ -1,5 +1,5 @@
 ﻿@using MudBlazor.Docs.Enums
-<MudTooltip Duration="1000" Text="Notifications">
+<MudTooltip Delay="1000" Text="Notifications">
     <MudBadge Color="Color.Secondary" Dot="true" Overlap="true" Visible="_newNotificationsAvailable">
         <MudMenu Icon="@Icons.Material.Outlined.Notifications" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopCenter" PopoverClass="docs-layout-menu-shadow" ListClass="pa-2 docs-menu-list" LockScroll="true">
             <div class="d-flex justify-space-between align-center px-2">
@@ -27,12 +27,9 @@
         </MudMenu>
     </MudBadge>
 </MudTooltip>
-<MudTooltip Duration="1000" Text="@(LayoutService.IsRTL ? "Switch to left-to-right" : "Switch to right-to-left")">
+<MudTooltip Delay="1000" Text="@(LayoutService.IsRTL ? "Left-to-right" : "Right-to-left")">
     <MudIconButton Icon="@(LayoutService.IsRTL ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="@LayoutService.ToggleRightToLeft" Color="Color.Inherit" />
 </MudTooltip>
-<MudTooltip Duration="1000" Text="@(LayoutService.DarkModeToggle == DarkLightMode.System ? "Switch to Light mode" : LayoutService.DarkModeToggle == DarkLightMode.Dark ? "Switch to System mode" : "Switch to Dark mode")">
-    <MudIconButton Icon="@(LayoutService.DarkModeToggle == DarkLightMode.System ? @Icons.Material.Filled.AutoMode : LayoutService.DarkModeToggle == DarkLightMode.Dark ? @Icons.Material.Rounded.LightMode : @Icons.Material.Outlined.DarkMode)" Color="Color.Inherit" OnClick="@LayoutService.ToggleDarkMode" />
-</MudTooltip>
-<MudTooltip Duration="1000" Text="GitHub Repository">
-    <MudIconButton Href="https://github.com/MudBlazor/MudBlazor/" Target="_blank" Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" />
+<MudTooltip Delay="1000" Text="@(DarkLightModeButtonText)">
+    <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@LayoutService.CycleDarkLightModeAsync" />
 </MudTooltip>

@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using MudBlazor.Extensions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MudBlazor.Services;
 #nullable enable

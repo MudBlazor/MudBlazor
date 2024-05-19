@@ -3,30 +3,62 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudList : MudComponentBase, IDisposable
+    public partial class MudList<T> : MudComponentBase, IDisposable
     {
-        private object? _selectedValue;
-        private IParameterState<object?> _selectedValueState;
-        private IParameterState<MudListItem?> _selectedItemState;
-        private HashSet<MudListItem> _items = new();
-        private HashSet<MudList> _childLists = new();
+        public MudList()
+        {
+            TopLevelList = this;
+            using var registerScope = CreateRegisterScope();
+            _selectedValueState = registerScope.RegisterParameter<T?>(nameof(SelectedValue))
+                .WithParameter(() => SelectedValue)
+                .WithEventCallback(() => SelectedValueChanged)
+                .WithChangeHandler(OnSelectedValueParameterChangedAsync)
+                .WithComparer(() => Comparer);
+            _selectedValuesState = registerScope.RegisterParameter<IReadOnlyCollection<T>?>(nameof(SelectedValues))
+                .WithParameter(() => SelectedValues)
+                .WithEventCallback(() => SelectedValuesChanged)
+                .WithChangeHandler(OnSelectedValuesChangedAsync)
+                .WithComparer(() => Comparer, x => new CollectionComparer<T>(x));
+            registerScope.RegisterParameter<IEqualityComparer<T?>>(nameof(Comparer))
+                .WithParameter(() => Comparer)
+                .WithChangeHandler(OnComparerChangedAsync);
+            registerScope.RegisterParameter<SelectionMode>(nameof(SelectionMode))
+                .WithParameter(() => SelectionMode)
+                .WithChangeHandler(UpdateSelection);
+            registerScope.RegisterParameter<bool>(nameof(Dense))
+                .WithParameter(() => Dense)
+                .WithChangeHandler(Update);
+            registerScope.RegisterParameter<bool>(nameof(Disabled))
+                .WithParameter(() => Disabled)
+                .WithChangeHandler(Update);
+            registerScope.RegisterParameter<bool>(nameof(ReadOnly))
+                .WithParameter(() => ReadOnly)
+                .WithChangeHandler(Update);
+        }
 
-        internal event Action? ParametersChanged;
+        private ParameterState<T?> _selectedValueState;
+        private ParameterState<IReadOnlyCollection<T>?> _selectedValuesState;
+
+        private HashSet<MudListItem<T>> _items = new();
+        private HashSet<MudList<T>> _childLists = new();
+        private HashSet<T> _selection = new();
+        internal MudList<T> TopLevelList { get; private set; }
 
         protected string Classname =>
             new CssBuilder("mud-list")
-                .AddClass("mud-list-padding", !DisablePadding)
+                .AddClass("mud-list-padding", Padding)
                 .AddClass(Class)
                 .Build();
 
         [CascadingParameter]
-        protected MudList? ParentList { get; set; }
+        protected MudList<T>? ParentList { get; set; }
 
         /// <summary>
         /// The color of the selected List Item.
@@ -36,6 +68,13 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Primary;
 
         /// <summary>
+        /// Check box color if multiselection is used.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public Color CheckBoxColor { get; set; } = Color.Default;
+
+        /// <summary>
         /// Child content of component.
         /// </summary>
         [Parameter]
@@ -43,21 +82,21 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Set true to make the list items clickable. This is also the precondition for list selection to work.
+        /// If true, the list items will not be clickable and the selected item can not be changed by the user.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Selecting)]
-        public bool Clickable { get; set; }
+        public bool ReadOnly { get; set; }
 
         /// <summary>
-        /// If true, vertical padding will be removed from the list.
+        /// If true, vertical padding will be applied to the list.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public bool DisablePadding { get; set; }
+        public bool Padding { get; set; }
 
         /// <summary>
-        /// If true, compact vertical padding will be applied to all list items.
+        /// If true, list items will take up less vertical space.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
@@ -78,161 +117,236 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// The current selected list item.
-        /// Note: make the list Clickable for item selection to work.
+        /// The selection mode determines whether only a single item (SingleSelection or ToggleSelection) or multiple items
+        /// can be selected (MultiSelection). The difference between SingleSelection and ToggleSelection is whether the selected
+        /// item can be toggled off by clicking a second time.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.List.Selecting)]
-        public MudListItem? SelectedItem { get; set; }
-
-        /// <summary>
-        /// Called whenever the selection changed
-        /// </summary>
-        [Parameter]
-        public EventCallback<MudListItem?> SelectedItemChanged { get; set; }
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public SelectionMode SelectionMode { get; set; } = SelectionMode.SingleSelection;
 
         /// <summary>
         /// The current selected value.
-        /// Note: make the list Clickable for item selection to work.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Selecting)]
-        public object? SelectedValue { get; set; }
+        public T? SelectedValue { get; set; }
 
         /// <summary>
         /// Called whenever the selection changed
         /// </summary>
         [Parameter]
-        public EventCallback<object?> SelectedValueChanged { get; set; }
+        public EventCallback<T?> SelectedValueChanged { get; set; }
 
-        internal bool CanSelect { get; private set; }
+        /// <summary>
+        /// The current selected value.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Selecting)]
+        public IReadOnlyCollection<T>? SelectedValues { get; set; }
 
-        public MudList()
-        {
-            _selectedItemState = RegisterParameter(
-                nameof(SelectedItem),
-                () => SelectedItem,
-                () => SelectedItemChanged,
-                OnSelectedItemParameterChangedAsync);
-            _selectedValueState = RegisterParameter(
-                nameof(SelectedValue),
-                () => SelectedValue,
-                () => SelectedValueChanged,
-                OnSelectedValueParameterChangedAsync);
-        }
+        /// <summary>
+        /// Called whenever the selection changed
+        /// </summary>
+        [Parameter]
+        public EventCallback<IReadOnlyCollection<T>?> SelectedValuesChanged { get; set; }
 
-        private Task OnSelectedItemParameterChangedAsync(ParameterChangedEventArgs<MudListItem?> args)
-        {
-            return SetSelectedValueAsync(args.Value?.Value, force: true);
-        }
+        /// <summary>
+        /// Comparer is used to check if two tree items are equal
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public IEqualityComparer<T?> Comparer { get; set; } = EqualityComparer<T?>.Default;
 
-        private Task OnSelectedValueParameterChangedAsync(ParameterChangedEventArgs<object?> args)
-        {
-            return SetSelectedValueAsync(args.Value, force: true);
-        }
+        /// <summary>
+        /// Custom checked icon.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
+
+        /// <summary>
+        /// Custom unchecked icon.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
             if (ParentList is not null)
             {
+                TopLevelList = ParentList.TopLevelList;
                 ParentList.Register(this);
-                CanSelect = ParentList.CanSelect;
-            }
-            else
-            {
-                CanSelect = SelectedItemChanged.HasDelegate || SelectedValueChanged.HasDelegate || SelectedValue is not null;
             }
         }
 
-        protected override void OnParametersSet()
+        protected override void OnAfterRender(bool firstRender)
         {
-            base.OnParametersSet();
-            ParametersChanged?.Invoke();
+            base.OnAfterRender(firstRender);
+            if (firstRender && TopLevelList == this)
+            {
+                if (SelectionMode == SelectionMode.MultiSelection)
+                {
+                    UpdateSelectedItems(_selection);
+                }
+                else
+                {
+                    UpdateSelectedItem(_selectedValueState);
+                }
+            }
         }
 
-        internal async Task RegisterAsync(MudListItem item)
+        internal void Update()
+        {
+            foreach (var item in _items)
+                ((IMudStateHasChanged)item).StateHasChanged();
+            foreach (var list in _childLists)
+                list.Update();
+        }
+
+        /// <summary>
+        /// Called when the SelectedValue parameter was changed outside the component
+        /// </summary>
+        private Task OnSelectedValueParameterChangedAsync(ParameterChangedEventArgs<T?> args)
+        {
+            return SetSelectedValueAsync(args.Value);
+        }
+
+        /// <summary>
+        /// Called when the SelectedValues parameter was changed outside the component
+        /// </summary>
+        private void OnSelectedValuesChangedAsync(ParameterChangedEventArgs<IReadOnlyCollection<T>?> arg)
+        {
+            SetSelectedValues(arg.Value ?? Array.Empty<T>());
+        }
+
+        private void SetSelectedValues(IReadOnlyCollection<T> values)
+        {
+            _selection = new HashSet<T>(values, Comparer);
+            UpdateSelectedItems(_selection);
+        }
+
+        private async Task OnComparerChangedAsync(ParameterChangedEventArgs<IEqualityComparer<T?>> args)
+        {
+            if (SelectionMode == SelectionMode.MultiSelection)
+            {
+                SetSelectedValues(new HashSet<T>(_selection, args.Value));
+                await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: ToList is essential here!
+                return;
+            }
+            // single and toggle-selection
+            UpdateSelectedItem(_selectedValueState);
+        }
+
+        internal async Task RegisterAsync(MudListItem<T> item)
         {
             _items.Add(item);
-            if (CanSelect && SelectedValue is not null && Equals(item.Value, SelectedValue))
+            if (SelectedValue is not null && Equals(item.GetValue(), SelectedValue))
             {
                 item.SetSelected(true);
-                await _selectedItemState.SetValueAsync(item);
+                await _selectedValueState.SetValueAsync(item.GetValue());
             }
         }
 
-        internal void Unregister(MudListItem item)
+        internal void Unregister(MudListItem<T> item)
         {
             _items.Remove(item);
         }
 
-        internal void Register(MudList child)
+        internal void Register(MudList<T> child)
         {
             _childLists.Add(child);
         }
 
-        internal void Unregister(MudList child)
+        internal void Unregister(MudList<T> child)
         {
             _childLists.Remove(child);
         }
 
-        internal async Task SetSelectedValueAsync(object? value, bool force = false)
+        internal bool GetDisabled() => Disabled || (ParentList?.Disabled ?? false);
+
+        internal bool GetReadOnly() => ReadOnly || (ParentList?.ReadOnly ?? false);
+
+        internal async Task SetSelectedValueAsync(T? value)
         {
-            if ((!CanSelect || !Clickable) && !force)
-            {
-                return;
-            }
-
-            // We cannot use the _selectedValueState.Value here instead of _selectedValue
-            // The problem arises when the SelectedValue is preselected
-            // Then OnInitialized will set the _selectedValueState.Value = SelectedValue
-            // And this will early exit, while we need it to be null for this complicated logic to work like it was before
-            if (Equals(_selectedValue, value))
-            {
-                return;
-            }
-
-            _selectedValue = value;
-            await _selectedValueState.SetValueAsync(_selectedValue);
-
+            await _selectedValueState.SetValueAsync(value);
             // Find and update selected item based on value
-            var selectedItem = await UpdateSelectedItems(value);
+            UpdateSelectedItem(value);
+        }
 
-            await _selectedItemState.SetValueAsync(selectedItem);
-            if (ParentList is not null)
+        internal async Task SelectValueAsync(T? value)
+        {
+            if (SelectionMode != SelectionMode.MultiSelection || value is null)
             {
-                await ParentList.SetSelectedValueAsync(value);
+                return;
+            }
+            _selection.Add(value);
+            UpdateSelectedItems(_selection);
+            await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: ToList is essential here!
+        }
+
+        internal async Task DeselectValueAsync(T? value)
+        {
+            if (SelectionMode != SelectionMode.MultiSelection || value is null)
+            {
+                return;
+            }
+            _selection.Remove(value);
+            UpdateSelectedItems(_selection);
+            await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: ToList is essential here!
+        }
+
+        internal void UpdateSelection()
+        {
+            if (SelectionMode == SelectionMode.MultiSelection)
+            {
+                UpdateSelectedItems(new HashSet<T>(TopLevelList.SelectedValues ?? Array.Empty<T>(), Comparer));
+            }
+            else
+            {
+                UpdateSelectedItem(TopLevelList.SelectedValue);
+            }
+            foreach (var childList in _childLists.ToArray())
+                childList.UpdateSelection();
+        }
+
+        /// <summary>
+        /// Updates items and child lists with the current single selection
+        /// </summary>
+        private void UpdateSelectedItem(T? value)
+        {
+            foreach (var item in _items.ToArray())
+            {
+                var selected = value is not null && Comparer.Equals(value, item.GetValue());
+                item.SetSelected(selected);
+            }
+            foreach (var childList in _childLists.ToArray())
+            {
+                childList.UpdateSelectedItem(value);
             }
         }
 
-        private async Task<MudListItem?> UpdateSelectedItems(object? value)
+        /// <summary>
+        /// Updates items and child lists with the current multi selection
+        /// </summary>
+        internal void UpdateSelectedItems(HashSet<T> selection)
         {
-            MudListItem? selectedItem = null;
             foreach (var listItem in _items.ToArray())
             {
-                var isSelected = value is not null && Equals(value, listItem.Value);
-                listItem.SetSelected(isSelected);
-                if (isSelected)
-                {
-                    selectedItem = listItem;
-                }
+                var itemValue = listItem.GetValue();
+                var selected = itemValue is not null && selection.Contains(itemValue);
+                listItem.SetSelected(selected);
             }
-
             foreach (var childList in _childLists.ToArray())
             {
-                await childList.SetSelectedValueAsync(value);
-                if (childList._selectedItemState.Value is not null)
-                {
-                    selectedItem = childList._selectedItemState.Value;
-                }
+                childList.SetSelectedValues(selection);
             }
-
-            return selectedItem;
         }
 
         public void Dispose()
         {
-            ParametersChanged = null;
             ParentList?.Unregister(this);
         }
     }

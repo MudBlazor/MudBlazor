@@ -16,13 +16,13 @@
 </MudStack>
 
 <MudStack Row="true">
-    <MudChipSet T="string" Filter="true" Mandatory="true" Class="d-flex justify-center">
-        <MudChip T="string" Text="Justify Start" OnClick="@(() => _justify = Justify.FlexStart)" SelectedColor="Color.Primary" Variant="Variant.Text" Default="true" />
-        <MudChip T="string" Text="Justify End" OnClick="@(() => _justify = Justify.FlexEnd)" SelectedColor="Color.Primary" Variant="Variant.Text" />
+    <MudChipSet T="string" CheckMark Class="d-flex justify-center">
+        <MudChip Text="Justify Start" OnClick="@(() => _justify = Justify.FlexStart)" SelectedColor="Color.Primary" Variant="Variant.Text" Default="true" />
+        <MudChip Text="Justify End" OnClick="@(() => _justify = Justify.FlexEnd)" SelectedColor="Color.Primary" Variant="Variant.Text" />
     </MudChipSet>
-    <MudChipSet T="string" Filter="true" Mandatory="true" Class="d-flex justify-center">
-        <MudChip T="string" Text="Align Start" OnClick="@(() => _align = AlignItems.Start)" SelectedColor="Color.Secondary" Variant="Variant.Text" Default="true" />
-        <MudChip T="string" Text="Align End" OnClick="@(() => _align = AlignItems.End)" SelectedColor="Color.Secondary" Variant="Variant.Text" />
+    <MudChipSet T="string" CheckMark Class="d-flex justify-center">
+        <MudChip Text="Align Start" OnClick="@(() => _align = AlignItems.Start)" SelectedColor="Color.Secondary" Variant="Variant.Text" Default="true" />
+        <MudChip Text="Align End" OnClick="@(() => _align = AlignItems.End)" SelectedColor="Color.Secondary" Variant="Variant.Text" />
     </MudChipSet>
 </MudStack>
 

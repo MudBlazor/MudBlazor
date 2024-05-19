@@ -5,7 +5,6 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
@@ -61,7 +60,7 @@ namespace MudBlazor
 
         private string Position { get; set; }
         private string DialogMaxWidth { get; set; }
-        private bool DisableBackdropClick { get; set; }
+        private bool BackdropClick { get; set; } = true;
         private bool CloseOnEscapeKey { get; set; }
         private bool NoHeader { get; set; }
         private bool CloseButton { get; set; }
@@ -168,7 +167,7 @@ namespace MudBlazor
             CloseButton = SetCloseButton();
             FullWidth = SetFullWidth();
             FullScreen = SetFulScreen();
-            DisableBackdropClick = SetDisableBackdropClick();
+            BackdropClick = SetBackdropClick();
             CloseOnEscapeKey = SetCloseOnEscapeKey();
             Class = Classname;
             BackgroundClassname = new CssBuilder("mud-overlay-dialog").AddClass(Options.BackgroundClass).Build();
@@ -272,15 +271,15 @@ namespace MudBlazor
             return false;
         }
 
-        private bool SetDisableBackdropClick()
+        private bool SetBackdropClick()
         {
-            if (Options.DisableBackdropClick.HasValue)
-                return Options.DisableBackdropClick.Value;
+            if (Options.BackdropClick.HasValue)
+                return Options.BackdropClick.Value;
 
-            if (GlobalDialogOptions.DisableBackdropClick.HasValue)
-                return GlobalDialogOptions.DisableBackdropClick.Value;
+            if (GlobalDialogOptions.BackdropClick.HasValue)
+                return GlobalDialogOptions.BackdropClick.Value;
 
-            return false;
+            return true;
         }
 
         private bool SetCloseOnEscapeKey()
@@ -296,7 +295,7 @@ namespace MudBlazor
 
         private async Task HandleBackgroundClickAsync(MouseEventArgs args)
         {
-            if (DisableBackdropClick)
+            if (!BackdropClick)
                 return;
 
             if (_dialog is null || !_dialog.OnBackdropClick.HasDelegate)

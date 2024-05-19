@@ -1,14 +1,23 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Reflection;
 
 namespace MudBlazor
 {
-
     /// <summary>
     /// A universal T to string binding converter
     /// </summary>
     public class DefaultConverter<T> : Converter<T>
     {
+        /// <summary>
+        /// A static global delegate used if no converter is found. 
+        /// </summary>
+        public static Func<T, string> GlobalGetFunc;
+        /// <summary>
+        /// A static global delegate used if no converter is found.
+        /// </summary>
+        public static Func<string, T> GlobalSetFunc;
 
         public DefaultConverter()
         {
@@ -190,6 +199,17 @@ namespace MudBlazor
                         UpdateGetError("Not a valid time span");
                     }
                 }
+                else if (GlobalSetFunc != null)
+                {
+                    try
+                    {
+                        return GlobalSetFunc(value);
+                    }
+                    catch (Exception)
+                    {
+                        UpdateGetError($"Not a valid {typeof(T).Name}");
+                    }
+                }
                 else
                 {
                     UpdateGetError($"Conversion to type {typeof(T)} not implemented");
@@ -320,6 +340,10 @@ namespace MudBlazor
                 {
                     var value = (TimeSpan?)(object)arg;
                     return value.Value.ToString(Format ?? DefaultTimeSpanFormat, Culture);
+                }
+                else if (GlobalGetFunc != null)
+                {
+                    return GlobalGetFunc(arg);
                 }
                 return arg.ToString();
             }

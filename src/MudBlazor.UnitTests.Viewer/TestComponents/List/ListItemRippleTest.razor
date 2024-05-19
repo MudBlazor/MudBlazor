@@ -1,0 +1,15 @@
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudList T="string">
+    <MudListItem Text="Inbox" Icon="@Icons.Material.Filled.Inbox" Ripple="@Ripple"/>
+    <MudListItem Text="Sent" Icon="@Icons.Material.Filled.Send" Ripple="@Ripple"/>
+    <MudDivider/>
+    <MudListItem Text="Trash" Ripple="@Ripple"/>
+    <MudListItem Text="Spam" Ripple="@Ripple"/>
+</MudList>
+
+@code
+{
+    [Parameter]
+    public required bool Ripple { get; set; }
+}

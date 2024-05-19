@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -17,7 +18,7 @@ namespace MudBlazor
                 .AddClass($"mud-ripple mud-ripple-icon", Ripple)
                 .AddClass($"yellow-text.text-darken-3", Color == Color.Default)
                 .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default)
-                .AddClass($"mud-rating-item-active", IsActive)
+                .AddClass($"mud-rating-item-active", Active)
                 .AddClass($"mud-disabled", Disabled)
                 .AddClass($"mud-readonly", ReadOnly)
                 .AddClass(Class)
@@ -76,14 +77,15 @@ namespace MudBlazor
 
         internal string? ItemIcon { get; set; }
 
-        internal bool IsActive { get; set; }
+        internal bool Active { get; set; }
 
-        private bool IsChecked => ItemValue == Rating?.SelectedValue;
+        private bool Checked => ItemValue == Rating?.GetState<int>(nameof(Rating.SelectedValue));
 
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
             ItemIcon = SelectIcon();
+            Color = SelectIconColor();
         }
 
         internal string? SelectIcon()
@@ -99,7 +101,8 @@ namespace MudBlazor
                 return Rating.FullIcon;
             }
 
-            if (Rating.SelectedValue >= ItemValue)
+            var ratingSelectedValue = Rating.GetState<int>(nameof(Rating.SelectedValue));
+            if (ratingSelectedValue >= ItemValue)
             {
                 if (Rating.HoveredValue.HasValue && Rating.HoveredValue.Value < ItemValue)
                 {
@@ -115,39 +118,77 @@ namespace MudBlazor
             return Rating.EmptyIcon;
         }
 
+        internal Color SelectIconColor()
+        {
+            if (Rating is null)
+            {
+                return Color.Default;
+            }
+
+            if (Rating.FullIconColor is null || Rating.EmptyIconColor is null)
+            {
+                return Rating.Color;
+            }
+
+            if (Rating.HoveredValue.HasValue && Rating.HoveredValue.Value >= ItemValue)
+            {
+                // full icon color when @RatingItem hovered
+                return Rating.FullIconColor.Value;
+            }
+
+            var ratingSelectedValue = Rating.GetState<int>(nameof(Rating.SelectedValue));
+            if (ratingSelectedValue >= ItemValue)
+            {
+                if (Rating.HoveredValue.HasValue && Rating.HoveredValue.Value < ItemValue)
+                {
+                    // empty icon color when equal or higher RatingItem value clicked, but less value hovered 
+                    return Rating.EmptyIconColor.Value;
+                }
+
+                // full icon color when equal or higher RatingItem value clicked
+                return Rating.FullIconColor.Value;
+            }
+
+            // empty icon color when this or higher RatingItem is not clicked and not hovered
+            return Rating.EmptyIconColor.Value;
+        }
+
         // rating item lose hover
-        internal Task HandleMouseOut(MouseEventArgs e)
+        internal Task HandleMouseOutAsync(MouseEventArgs e)
         {
             if (Disabled || Rating is null)
             {
                 return Task.CompletedTask;
             }
 
-            IsActive = false;
+            Active = false;
 
             return ItemHovered.InvokeAsync(null);
         }
 
-        internal void HandleMouseOver(MouseEventArgs e)
+        internal Task HandleMouseOverAsync(MouseEventArgs e)
         {
             if (Disabled)
             {
-                return;
+                return Task.CompletedTask;
             }
 
-            IsActive = true;
-            ItemHovered.InvokeAsync(ItemValue);
+            Active = true;
+
+            return ItemHovered.InvokeAsync(ItemValue);
         }
 
-        private void HandleClick(MouseEventArgs e)
+        private Task HandleClickAsync(MouseEventArgs e)
         {
             if (Disabled)
             {
-                return;
+                return Task.CompletedTask;
             }
 
-            IsActive = false;
-            ItemClicked.InvokeAsync(Rating?.SelectedValue == ItemValue ? 0 : ItemValue);
+            Active = false;
+            var ratingSelectedValue = Rating?.GetState<int>(nameof(Rating.SelectedValue));
+
+            return ItemClicked.InvokeAsync(ratingSelectedValue == ItemValue ? 0 : ItemValue);
         }
     }
 }

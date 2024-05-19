@@ -20,14 +20,12 @@
                 <MudAutocomplete T="string" ReadOnly="CompReadOnly" Disabled="CompDisabled" />
                 <MudNumericField T="int" ReadOnly="CompReadOnly" Disabled="CompDisabled" />
                 <MudFileUpload T="IBrowserFile" Disabled="CompDisabled">
-                    <ButtonTemplate>
-                        <MudButton HtmlTag="label"
-                                   Variant="Variant.Filled"
-                                   Color="Color.Primary"
-                                   for="@context.Id">
+                    <ActivatorContent>
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary">
                             Disabled Button
                         </MudButton>
-                    </ButtonTemplate>
+                    </ActivatorContent>
                 </MudFileUpload>
             </MudForm>
         </MudCardContent>

@@ -26,6 +26,8 @@ namespace MudBlazor
         body1,
         [Description("body2")]
         body2,
+        [Description("input")]
+        input,
         [Description("button")]
         button,
         [Description("caption")]

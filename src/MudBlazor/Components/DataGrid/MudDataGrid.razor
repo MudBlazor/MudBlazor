@@ -87,7 +87,7 @@
                                         </MudStack>
 
                                         <MudDropContainer @ref="_columnsPanelDropContainer" T="Column<T>" Items="@RenderedColumns" ItemsSelector="(item, dropzone) => true" 
-                                            ItemIsDisabled="@((item) => !this.ColumnsPanelReordering)" ItemDropped="ColumnOrderUpdated">
+                                            ItemDisabled="@((item) => !this.ColumnsPanelReordering)" ItemDropped="ColumnOrderUpdated">
                                             <ChildContent>
                                                 <MudDropZone T="Column<T>" Class="flex-grow-1" AllowReorder=this.ColumnsPanelReordering />
                                             </ChildContent>
@@ -213,7 +213,7 @@
 
                                         <td class="mud-table-cell @groupClass" colspan="1000" style="background-color:var(--mud-palette-background-gray);@groupStyle">
                                             <MudIconButton Class="mud-table-row-expander"
-                                           Icon="@(g.IsExpanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)"
+                                           Icon="@(g.Expanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)"
                                            OnClick="@(() => ToggleGroupExpansion(g))" />
 
                                             @if (GroupedColumn.GroupTemplate == null)
@@ -228,9 +228,9 @@
                                     </tr>
                                     var rowIndex = 0;
 
-                                    @if (g.IsExpanded)
+                                    @if (g.Expanded)
                                     {
-                                        <MudVirtualize IsEnabled="@Virtualize" Items="@g.Grouping.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
+                                        <MudVirtualize Enabled="@Virtualize" Items="@g.Grouping.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
                                             @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
                                             @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
                                             @{ var tmpRowIndex = rowIndex; }
@@ -268,7 +268,7 @@
                             else
                             {
                                 var rowIndex = 0;
-                                <MudVirtualize IsEnabled="@Virtualize" Items="@resolvedPageItems" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
+                                <MudVirtualize Enabled="@Virtualize" Items="@resolvedPageItems" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
                                     @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
                                     @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
                                     @{ var tmpRowIndex = rowIndex; }
@@ -337,7 +337,7 @@
         }
     </div>
     <CascadingValue Value="true" IsFixed Name="IsNested">
-        <MudDialog Options="EditDialogOptions" @bind-IsVisible="isEditFormOpen">
+        <MudDialog Options="EditDialogOptions" @bind-Visible="isEditFormOpen">
             <DialogContent>
                 <MudForm @ref="_editForm" FieldChanged="FormFieldChanged">
                     @foreach (var column in RenderedColumns)
@@ -355,12 +355,12 @@
                             if (propertyType == typeof(string))
                             {
                                 <MudTextField T="string" Label="@column.Title" Value="@cell._valueString" ValueChanged="@cell.StringValueChangedAsync" Margin="@Margin.Dense"
-                                  Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
+                                  Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" />
                             }
                             else if (TypeIdentifier.IsNumber(propertyType))
                             {
                                 <MudNumericField T="double?" Label="@column.Title" Value="@cell._valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
-                                     Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
+                                     Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" />
                             }
                         }
                     }
@@ -416,7 +416,7 @@
                 var cell = new Cell<T>(this, column, item);
             }
             <td data-label="@column.Title" class="@cell.computedClass" style="@cell.computedStyle">
-                @if (column.IsEditable && !ReadOnly && EditMode == DataGridEditMode.Cell)
+                @if (column.Editable && !ReadOnly && EditMode == DataGridEditMode.Cell)
                 {
                     if (column.EditTemplate is not null)
                     {

@@ -50,7 +50,6 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddSingleton<IDateConverter<DateOnly>, DateOnlyConverter>();
             ctx.Services.AddSingleton<IDateConverter<DateTime>, DateTimeConverter>();
             ctx.Services.AddSingleton<IDateConverter<DateTimeOffset>, DateTimeOffsetConverter>();
-            ctx.Services.AddSingleton<IDateConverter<T>, TDateConverter>();
         }
 
         // This shows how to test a docs page with incremental rendering.
@@ -66,28 +65,5 @@ namespace MudBlazor.UnitTests.Components
 
         [TearDown]
         public void TearDown() => ctx.Dispose();
-    }
-
-    public class TDateConverter : IDateConverter<T>
-    {
-        public DateTimeOffset ConvertTo(T date)
-        {
-            return DateTimeOffset.UtcNow;
-        }
-
-        public DateTimeOffset? ConvertTo(T? date)
-        {
-            return DateTimeOffset.UtcNow;
-        }
-
-        public T ConvertFrom(DateTimeOffset date)
-        {
-            return new T();
-        }
-
-        public T? ConvertFrom(DateTimeOffset? date)
-        {
-            return new T();
-        }
     }
 }

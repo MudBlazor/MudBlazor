@@ -1,4 +1,4 @@
-﻿.mud-menu {
+.mud-menu {
   display: inline-flex;
   align-self: center;
   position: relative;
@@ -17,5 +17,6 @@
 
   & > div.mud-menu-activator {
     display: contents;
+    user-select: none;
   }
 }

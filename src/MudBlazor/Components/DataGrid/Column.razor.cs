@@ -18,8 +18,8 @@ namespace MudBlazor
     public abstract partial class Column<T> : MudComponentBase, IDisposable
     {
         private static readonly RenderFragment<CellContext<T>> EmptyChildContent = _ => builder => { };
-        internal IParameterState<bool> HiddenState { get; }
-        internal IParameterState<bool> GroupingState { get; }
+        internal ParameterState<bool> HiddenState { get; }
+        internal ParameterState<bool> GroupingState { get; }
 
         internal readonly Guid uid = Guid.NewGuid();
 
@@ -52,9 +52,9 @@ namespace MudBlazor
         #region HeaderCell Properties
 
         [Parameter] public string HeaderClass { get; set; }
-        [Parameter] public Func<T, string> HeaderClassFunc { get; set; }
+        [Parameter] public Func<IEnumerable<T>, string> HeaderClassFunc { get; set; }
         [Parameter] public string HeaderStyle { get; set; }
-        [Parameter] public Func<T, string> HeaderStyleFunc { get; set; }
+        [Parameter] public Func<IEnumerable<T>, string> HeaderStyleFunc { get; set; }
 
         /// <summary>
         /// Determines whether this columns data can be sorted. This overrides the SortMode parameter on the DataGrid.
@@ -155,7 +155,7 @@ namespace MudBlazor
         [Parameter] public Func<T, string> CellClassFunc { get; set; }
         [Parameter] public string CellStyle { get; set; }
         [Parameter] public Func<T, string> CellStyleFunc { get; set; }
-        [Parameter] public bool IsEditable { get; set; } = true;
+        [Parameter] public bool Editable { get; set; } = true;
         [Parameter] public RenderFragment<CellContext<T>> EditTemplate { get; set; }
 
         #endregion
@@ -163,9 +163,9 @@ namespace MudBlazor
         #region FooterCell Properties
 
         [Parameter] public string FooterClass { get; set; }
-        [Parameter] public Func<T, string> FooterClassFunc { get; set; }
+        [Parameter] public Func<IEnumerable<T>, string> FooterClassFunc { get; set; }
         [Parameter] public string FooterStyle { get; set; }
-        [Parameter] public Func<T, string> FooterStyleFunc { get; set; }
+        [Parameter] public Func<IEnumerable<T>, string> FooterStyleFunc { get; set; }
         [Parameter] public bool EnableFooterSelection { get; set; }
         [Parameter] public AggregateDefinition<T> AggregateDefinition { get; set; }
 
@@ -270,14 +270,25 @@ namespace MudBlazor
 
         protected Column()
         {
-            HiddenState = RegisterParameter(nameof(Hidden), () => Hidden, () => HiddenChanged);
-            GroupingState = RegisterParameter(nameof(Grouping), () => Grouping, () => GroupingChanged, GroupingParameterChangedAsync);
+            using var registerScope = CreateRegisterScope();
+            HiddenState = registerScope.RegisterParameter<bool>(nameof(Hidden))
+                .WithParameter(() => Hidden)
+                .WithEventCallback(() => HiddenChanged);
+            GroupingState = registerScope.RegisterParameter<bool>(nameof(Grouping))
+                .WithParameter(() => Grouping)
+                .WithEventCallback(() => GroupingChanged)
+                .WithChangeHandler(OnGroupingParameterChangedAsync);
         }
 
-        private async Task GroupingParameterChangedAsync()
+        private async Task OnGroupingParameterChangedAsync()
         {
             if (GroupingState.Value)
-                await DataGrid?.ChangedGrouping(this);
+            {
+                if (DataGrid is not null)
+                {
+                    await DataGrid.ChangedGrouping(this);
+                }
+            }
         }
 
         protected override void OnInitialized()

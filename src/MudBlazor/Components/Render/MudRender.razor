@@ -18,8 +18,5 @@
     public RenderFragment? ChildContent { get; set; }
 
     /// <inheritdoc />
-    public new void StateHasChanged()
-    {
-        base.StateHasChanged();
-    }
+    void IMudStateHasChanged.StateHasChanged() => StateHasChanged();
 }

@@ -48,6 +48,26 @@ namespace MudBlazor
         public string? ToggledTitle { get; set; }
 
         /// <summary>
+        /// The ARIA label for the button when it's not toggled.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public string? AriaLabel { get; set; }
+
+        /// <summary>
+        /// The ARIA label for the button in the toggled state.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public string? ToggledAriaLabel { get; set; }
+
+        /// <summary>
         /// The color of the icon in the untoggled state. It supports the theme colors.
         /// </summary>
         [Parameter]
@@ -83,7 +103,7 @@ namespace MudBlazor
         public Edge Edge { get; set; }
 
         /// <summary>
-        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
+        /// Whether to show a ripple effect when the user clicks the button. Default is true.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
@@ -104,11 +124,11 @@ namespace MudBlazor
         public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        /// If true, no drop-shadow will be used.
+        /// Determines whether the component has a drop-shadow. Default is true
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public bool DisableElevation { get; set; }
+        public bool DropShadow { get; set; } = true;
 
         /// <summary>
         /// If true, the click event bubbles up to the containing/parent component.

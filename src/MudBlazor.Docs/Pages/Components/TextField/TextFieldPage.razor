@@ -6,7 +6,7 @@
 <DocsPageContent>
 
 <DocsPageSection>
-    <SectionHeader Title="Basic Text Field's">
+    <SectionHeader Title="Basic Text Fields">
         <Description></Description>
     </SectionHeader>
     <SectionContent Code="@nameof(TextFieldBasicExample)" ShowCode="false">
@@ -21,8 +21,17 @@
     <SectionSubGroups>
 
         <DocsPageSection>
+            <SectionHeader Title="Typo">
+                <Description>With the <CodeInline>Typo</CodeInline> property you can control the typography of the text field.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldTypoExample)" ShowCode="false">
+                <TextFieldTypoExample/>
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Dense">
-                <Description>With the <CodeInline>margin</CodeInline> prop you can reduce the text field height.</Description>
+                <Description>With the <CodeInline>Margin</CodeInline> property you can reduce the text field height.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TextFieldDenseExample)" ShowCode="false">
                 <TextFieldDenseExample/>
@@ -147,7 +156,7 @@
 </DocsPageSection>
 
 <DocsPageSection>
-    <SectionHeader Title="Clear button">
+    <SectionHeader Title="Clear Button">
         <Description></Description>
     </SectionHeader>
     <SectionContent Code="@nameof(TextFieldClearableAndInputTypeExample)" ShowCode="false">
@@ -254,7 +263,7 @@
             jumps over delimiters so you don't have to type them. You can also try pasting the test credit card number <i>4543474002249996</i>.
         </Description>
     </SectionHeader>
-    <SectionContent FullWidth="true" Outlined="true" Code="PatternMaskExample" ShowCode="false">
+    <SectionContent FullWidth="true" Outlined="true" Code="@nameof(PatternMaskExample)" ShowCode="false">
         <PatternMaskExample />
     </SectionContent>          
 </DocsPageSection>

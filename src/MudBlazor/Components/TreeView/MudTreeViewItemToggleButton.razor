@@ -4,7 +4,7 @@
 <div class="mud-treeview-item-arrow">
     @if (Visible)
     {
-        <MudIconButton OnClick="@ToggleAsync" Icon="@(Loading ? LoadingIcon : ExpandedIcon)" Color="@(Loading ? LoadingIconColor : ExpandedIconColor)" Class="@Classname"></MudIconButton>
+        <MudIconButton Disabled="@Disabled" OnClick="@ToggleAsync" Icon="@(Loading ? LoadingIcon : ExpandedIcon)" Color="@(Loading ? LoadingIconColor : ExpandedIconColor)" Class="@Classname"></MudIconButton>
     }
 </div>
  
@@ -23,6 +23,13 @@
     [Parameter]
     [Category(CategoryTypes.TreeView.Behavior)]
     public bool Visible { get; set; }
+    
+    /// <summary>
+    /// Propagate disabled state to icon.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.TreeView.Behavior)]
+    public bool Disabled { get; set; }
 
     /// <summary>
     /// Determines when to flip the expanded icon.
