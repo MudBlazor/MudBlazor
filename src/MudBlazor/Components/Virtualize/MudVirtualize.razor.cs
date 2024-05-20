@@ -16,7 +16,7 @@ namespace MudBlazor
         /// Represents a virtualized container for rendering a large list of items efficiently.
         /// </summary>
         private Virtualize<T>? _virtualizeContainerReference;
-        
+
         /// <summary>
         /// Set false to turn off virtualization
         /// </summary>
