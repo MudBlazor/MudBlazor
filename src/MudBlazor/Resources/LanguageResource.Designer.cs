@@ -61,7 +61,7 @@ namespace MudBlazor.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Close alert.
+        ///   Looks up a localized string similar to Close Alert.
         /// </summary>
         public static string MudAlert_Close {
             get {
@@ -79,47 +79,11 @@ namespace MudBlazor.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Calendar Day.
-        /// </summary>
-        public static string MudBaseDatePicker_CalendarDay {
-            get {
-                return ResourceManager.GetString("MudBaseDatePicker_CalendarDay", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Calendar Day Button.
-        /// </summary>
-        public static string MudBaseDatePicker_CalendarDayButton {
-            get {
-                return ResourceManager.GetString("MudBaseDatePicker_CalendarDayButton", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Day Number.
-        /// </summary>
-        public static string MudBaseDatePicker_CalendarDayNumber {
-            get {
-                return ResourceManager.GetString("MudBaseDatePicker_CalendarDayNumber", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Calendar Header.
         /// </summary>
         public static string MudBaseDatePicker_CalendarHeader {
             get {
                 return ResourceManager.GetString("MudBaseDatePicker_CalendarHeader", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Clear.
-        /// </summary>
-        public static string MudBaseDatePicker_Clear {
-            get {
-                return ResourceManager.GetString("MudBaseDatePicker_Clear", resourceCulture);
             }
         }
         
@@ -196,47 +160,11 @@ namespace MudBlazor.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Selected Day.
-        /// </summary>
-        public static string MudBaseDatePicker_SelectedDay {
-            get {
-                return ResourceManager.GetString("MudBaseDatePicker_SelectedDay", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Today.
-        /// </summary>
-        public static string MudBaseDatePicker_Today {
-            get {
-                return ResourceManager.GetString("MudBaseDatePicker_Today", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Week.
         /// </summary>
         public static string MudBaseDatePicker_Week {
             get {
                 return ResourceManager.GetString("MudBaseDatePicker_Week", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Week Number.
-        /// </summary>
-        public static string MudBaseDatePicker_WeekNumber {
-            get {
-                return ResourceManager.GetString("MudBaseDatePicker_WeekNumber", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Select Year.
-        /// </summary>
-        public static string MudBaseDatePicker_Year {
-            get {
-                return ResourceManager.GetString("MudBaseDatePicker_Year", resourceCulture);
             }
         }
         
@@ -259,20 +187,11 @@ namespace MudBlazor.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Close chip.
+        ///   Looks up a localized string similar to Close Chip.
         /// </summary>
         public static string MudChip_Close {
             get {
                 return ResourceManager.GetString("MudChip_Close", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Set Alpha Value.
-        /// </summary>
-        public static string MudColorPicker_Alpha {
-            get {
-                return ResourceManager.GetString("MudColorPicker_Alpha", resourceCulture);
             }
         }
         
@@ -282,15 +201,6 @@ namespace MudBlazor.Resources {
         public static string MudColorPicker_AlphaSlider {
             get {
                 return ResourceManager.GetString("MudColorPicker_AlphaSlider", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Set Blue Value.
-        /// </summary>
-        public static string MudColorPicker_Blue {
-            get {
-                return ResourceManager.GetString("MudColorPicker_Blue", resourceCulture);
             }
         }
         
@@ -358,24 +268,6 @@ namespace MudBlazor.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Toggle Current Color.
-        /// </summary>
-        public static string MudColorPicker_CurrentColor {
-            get {
-                return ResourceManager.GetString("MudColorPicker_CurrentColor", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Set Green Value.
-        /// </summary>
-        public static string MudColorPicker_Green {
-            get {
-                return ResourceManager.GetString("MudColorPicker_Green", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Switch to Grid View.
         /// </summary>
         public static string MudColorPicker_GridView {
@@ -385,38 +277,11 @@ namespace MudBlazor.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Set Hex Value.
-        /// </summary>
-        public static string MudColorPicker_Hex {
-            get {
-                return ResourceManager.GetString("MudColorPicker_Hex", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Set Hue Value.
-        /// </summary>
-        public static string MudColorPicker_Hue {
-            get {
-                return ResourceManager.GetString("MudColorPicker_Hue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Adjust Hue Slider.
         /// </summary>
         public static string MudColorPicker_HueSlider {
             get {
                 return ResourceManager.GetString("MudColorPicker_HueSlider", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Set Lightness Value.
-        /// </summary>
-        public static string MudColorPicker_Lightness {
-            get {
-                return ResourceManager.GetString("MudColorPicker_Lightness", resourceCulture);
             }
         }
         
@@ -448,20 +313,74 @@ namespace MudBlazor.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Set Alpha Value.
+        /// </summary>
+        public static string MudColorPicker_SetAlpha {
+            get {
+                return ResourceManager.GetString("MudColorPicker_SetAlpha", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set Blue Value.
+        /// </summary>
+        public static string MudColorPicker_SetBlue {
+            get {
+                return ResourceManager.GetString("MudColorPicker_SetBlue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set Green Value.
+        /// </summary>
+        public static string MudColorPicker_SetGreen {
+            get {
+                return ResourceManager.GetString("MudColorPicker_SetGreen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set Hex Value.
+        /// </summary>
+        public static string MudColorPicker_SetHex {
+            get {
+                return ResourceManager.GetString("MudColorPicker_SetHex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set Hue Value.
+        /// </summary>
+        public static string MudColorPicker_SetHue {
+            get {
+                return ResourceManager.GetString("MudColorPicker_SetHue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set Lightness Value.
+        /// </summary>
+        public static string MudColorPicker_SetLightness {
+            get {
+                return ResourceManager.GetString("MudColorPicker_SetLightness", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Set Red Value.
         /// </summary>
-        public static string MudColorPicker_Red {
+        public static string MudColorPicker_SetRed {
             get {
-                return ResourceManager.GetString("MudColorPicker_Red", resourceCulture);
+                return ResourceManager.GetString("MudColorPicker_SetRed", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Set Saturation Value.
         /// </summary>
-        public static string MudColorPicker_Saturation {
+        public static string MudColorPicker_SetSaturation {
             get {
-                return ResourceManager.GetString("MudColorPicker_Saturation", resourceCulture);
+                return ResourceManager.GetString("MudColorPicker_SetSaturation", resourceCulture);
             }
         }
         
@@ -471,6 +390,15 @@ namespace MudBlazor.Resources {
         public static string MudColorPicker_SpectrumView {
             get {
                 return ResourceManager.GetString("MudColorPicker_SpectrumView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle Current Color.
+        /// </summary>
+        public static string MudColorPicker_ToggleCurrentColor {
+            get {
+                return ResourceManager.GetString("MudColorPicker_ToggleCurrentColor", resourceCulture);
             }
         }
         

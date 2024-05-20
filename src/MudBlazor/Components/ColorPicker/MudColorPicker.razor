@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
-@using System.Globalization;
+@using System.Globalization
 @using MudBlazor.Resources
-@using MudBlazor.Utilities;
+@using MudBlazor.Utilities
 @inherits MudPicker<MudColor>
 @inject InternalMudLocalizer Localizer
 
@@ -106,7 +106,7 @@
                                 {
                                     <div class="mud-picker-color-dot mud-picker-color-dot-current mud-ripple"
                                          @onclick="ToggleCollection"
-                                         aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_CurrentColor)]">
+                                         aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_ToggleCurrentColor)]">
                                         <div class="mud-picker-color-fill" style="@($"background: {_value.ToString(MudColorOutputFormats.RGBA)};")"></div>
                                     </div>
                                 }
@@ -170,7 +170,7 @@
                                                              Variant="Variant.Outlined"
                                                              HideSpinButtons="true"
                                                              Required="@Required"
-                                                             aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_Red)]" />
+                                                             aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_SetRed)]" />
                                             <MudNumericField T="int"
                                                              Value="_value.G"
                                                              ValueChanged="SetG"
@@ -181,7 +181,7 @@
                                                              Variant="Variant.Outlined"
                                                              HideSpinButtons="true"
                                                              Required="@Required"
-                                                             aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_Green)]" />
+                                                             aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_SetGreen)]" />
                                             <MudNumericField T="int"
                                                              Value="_value.B"
                                                              ValueChanged="SetB"
@@ -192,7 +192,7 @@
                                                              Variant="Variant.Outlined"
                                                              HideSpinButtons="true"
                                                              Required="@Required"
-                                                             aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_Blue)]" />
+                                                             aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_SetBlue)]" />
                                             break;
                                         case ColorPickerMode.HSL:
                                             <MudNumericField T="double"
@@ -206,7 +206,7 @@
                                                              Variant="Variant.Outlined"
                                                              HideSpinButtons="true"
                                                              Required="@Required"
-                                                             aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_Hue)]" />
+                                                             aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_SetHue)]" />
                                             <MudNumericField T="double"
                                                              Value="@_value.S"
                                                              ValueChanged="SetS"
@@ -218,7 +218,7 @@
                                                              Variant="Variant.Outlined"
                                                              HideSpinButtons="true"
                                                              Required="@Required"
-                                                             aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_Saturation)]" />
+                                                             aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_SetSaturation)]" />
                                             <MudNumericField T="double"
                                                              Value="@_value.L"
                                                              ValueChanged="SetL"
@@ -230,7 +230,7 @@
                                                              Variant="Variant.Outlined"
                                                              HideSpinButtons="true"
                                                              Required="@Required"
-                                                             aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_Lightness)]" />
+                                                             aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_SetLightness)]" />
                                             break;
                                         case ColorPickerMode.HEX:
                                             <MudTextField T="string"
@@ -241,7 +241,7 @@
                                                           MaxLength="@GetHexColorInputMaxLength()"
                                                           HelperText="HEX"
                                                           Required="@Required"
-                                                          aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_Hex)]" />
+                                                          aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_SetHex)]" />
                                             break;
                                         default:
                                             break;
@@ -260,7 +260,7 @@
                                                          Variant="Variant.Outlined"
                                                          HideSpinButtons="true"
                                                          Required="@Required"
-                                                         aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_Alpha)]" />
+                                                         aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_SetAlpha)]" />
                                     }
                                 </div>
                                 @if (ShowModeSwitch)

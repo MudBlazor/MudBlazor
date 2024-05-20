@@ -256,10 +256,10 @@
     <value>Toggle {0}</value>
   </data>
   <data name="MudAlert_Close" xml:space="preserve">
-    <value>Close alert</value>
+    <value>Close Alert</value>
   </data>
   <data name="MudChip_Close" xml:space="preserve">
-    <value>Close chip</value>
+    <value>Close Chip</value>
   </data>
   <data name="MudColorPicker_Close" xml:space="preserve">
     <value>Close Picker</value>
@@ -288,7 +288,7 @@
   <data name="MudColorPicker_Controls" xml:space="preserve">
     <value>Adjust Controls</value>
   </data>
-  <data name="MudColorPicker_CurrentColor" xml:space="preserve">
+  <data name="MudColorPicker_ToggleCurrentColor" xml:space="preserve">
     <value>Toggle Current Color</value>
   </data>
   <data name="MudColorPicker_HueSlider" xml:space="preserve">
@@ -303,28 +303,28 @@
   <data name="MudColorPicker_PaletteColor" xml:space="preserve">
     <value>Select Palette Color</value>
   </data>
-  <data name="MudColorPicker_Red" xml:space="preserve">
+  <data name="MudColorPicker_SetRed" xml:space="preserve">
     <value>Set Red Value</value>
   </data>
-  <data name="MudColorPicker_Green" xml:space="preserve">
+  <data name="MudColorPicker_SetGreen" xml:space="preserve">
     <value>Set Green Value</value>
   </data>
-  <data name="MudColorPicker_Blue" xml:space="preserve">
+  <data name="MudColorPicker_SetBlue" xml:space="preserve">
     <value>Set Blue Value</value>
   </data>
-  <data name="MudColorPicker_Hue" xml:space="preserve">
+  <data name="MudColorPicker_SetHue" xml:space="preserve">
     <value>Set Hue Value</value>
   </data>
-  <data name="MudColorPicker_Saturation" xml:space="preserve">
+  <data name="MudColorPicker_SetSaturation" xml:space="preserve">
     <value>Set Saturation Value</value>
   </data>
-  <data name="MudColorPicker_Lightness" xml:space="preserve">
+  <data name="MudColorPicker_SetLightness" xml:space="preserve">
     <value>Set Lightness Value</value>
   </data>
-  <data name="MudColorPicker_Hex" xml:space="preserve">
+  <data name="MudColorPicker_SetHex" xml:space="preserve">
     <value>Set Hex Value</value>
   </data>
-  <data name="MudColorPicker_Alpha" xml:space="preserve">
+  <data name="MudColorPicker_SetAlpha" xml:space="preserve">
     <value>Set Alpha Value</value>
   </data>
   <data name="MudColorPicker_ModeSwitch" xml:space="preserve">
@@ -429,32 +429,8 @@
   <data name="MudBaseDatePicker_NextMonth" xml:space="preserve">
     <value>Go to next month {0}</value>
   </data>
-  <data name="MudBaseDatePicker_SelectedDay" xml:space="preserve">
-    <value>Selected Day</value>
-  </data>
-  <data name="MudBaseDatePicker_CalendarDay" xml:space="preserve">
-    <value>Calendar Day</value>
-  </data>
-  <data name="MudBaseDatePicker_CalendarDayNumber" xml:space="preserve">
-    <value>Day Number</value>
-  </data>
-  <data name="MudBaseDatePicker_WeekNumber" xml:space="preserve">
-    <value>Week Number</value>
-  </data>
-  <data name="MudBaseDatePicker_CalendarDayButton" xml:space="preserve">
-    <value>Calendar Day Button</value>
-  </data>
   <data name="MudBaseDatePicker_Month" xml:space="preserve">
     <value>Select Month</value>
-  </data>
-  <data name="MudBaseDatePicker_Year" xml:space="preserve">
-    <value>Select Year</value>
-  </data>
-  <data name="MudBaseDatePicker_Today" xml:space="preserve">
-    <value>Today</value>
-  </data>
-  <data name="MudBaseDatePicker_Clear" xml:space="preserve">
-    <value>Clear</value>
   </data>
   <data name="MudBaseDatePicker_Close" xml:space="preserve">
     <value>Close Picker</value>
