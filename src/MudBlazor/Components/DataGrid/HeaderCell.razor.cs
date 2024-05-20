@@ -251,7 +251,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private async Task OnResizerMouseDown(MouseEventArgs args)
+        private async Task OnResizerPointerDown(PointerEventArgs args)
         {
             if (!resizable)
                 return;
@@ -265,13 +265,13 @@ namespace MudBlazor
             _isResizing = await DataGrid.StartResizeColumn(this, args.ClientX);
         }
 
-        private async Task OnResizerMouseOver()
+        private async Task OnResizerPointerOver()
         {
             if (!_isResizing)
                 _resizerHeight = await DataGrid?.GetActualHeight();
         }
 
-        private void OnResizerMouseLeave()
+        private void OnResizerPointerLeave()
         {
             if (!_isResizing)
                 _resizerHeight = null;

@@ -2,7 +2,7 @@
 @implements IDisposable
 @inherits MudComponentBase
 
-<tr class="@Classname" @onclick="@OnRowClickedAsync" @onmouseenter="@RowMouseEnterEventCallback" @onmouseleave="@RowMouseLeaveEventCallback" style="@Style" @attributes="@UserAttributes">
+<tr class="@Classname" @onclick="@OnRowClickedAsync" @onpointerenter="@RowMouseEnterEventCallback" @onpointerleave="@RowMouseLeaveEventCallback" style="@Style" @attributes="@UserAttributes">
     @if (Context?.Table?.Editable == true && ((Context?.Table.EditButtonPosition.DisplayEditButtonAtStart() == true && Context?.Table.EditTrigger == TableEditTrigger.EditButton) || Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtStart() == true))
     {
         @* Add datalabel as a placeholder to avoid jumps on small viewports *@
