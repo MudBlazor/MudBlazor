@@ -12,6 +12,7 @@
             target="@Target"
             PreventDefault="@GetPreventDefault()"
             ClickPropagation="@GetClickPropagation()">
+
     @if (AvatarContent is not null)
     {
         <div class="mud-list-item-avatar">
@@ -21,15 +22,30 @@
     else if (!string.IsNullOrWhiteSpace(Icon))
     {
         <div class="mud-list-item-icon">
-            <MudIcon Icon="@Icon" Disabled="@GetDisabled()" Color="@IconColor" Size="@IconSize" />
+            <MudIcon Icon="@Icon"
+                     Disabled="@GetDisabled()"
+                     Color="@IconColor"
+                     Size="@IconSize" />
         </div>
     }
-    @if (MultiSelection && NestedList is null) {
-        <MudCheckBox T="bool?" TriState ReadOnly="@ReadOnly" Class="mud-list-item-checkbox my-n2 ms-n2" Disabled="@GetDisabled()"
-                     CheckedIcon="@GetCheckedIcon()" UncheckedIcon="@GetUncheckedIcon()" IndeterminateIcon="@GetIndeterminateIcon()" Color="@GetCheckBoxColor()" UncheckedColor="@GetCheckBoxColor()"
-                    @bind-Value:get="GetCheckBoxState()" @bind-Value:set="@(x=>OnCheckboxChangedAsync())"/>
+
+    @if (MultiSelection && NestedList is null)
+    {
+        <MudCheckBox T="bool?"
+                     TriState
+                     ReadOnly="@ReadOnly"
+                     Class="mud-list-item-checkbox my-n2 ms-n2"
+                     Disabled="@GetDisabled()"
+                     CheckedIcon="@GetCheckedIcon()"
+                     UncheckedIcon="@GetUncheckedIcon()"
+                     IndeterminateIcon="@GetIndeterminateIcon()"
+                     Color="@GetCheckBoxColor()"
+                     UncheckedColor="@GetCheckBoxColor()"
+                     @bind-Value:get="GetCheckBoxState()"
+                     @bind-Value:set="@(x => OnCheckboxChangedAsync())" />
     }
-    <div class="mud-list-item-text @(Inset? "mud-list-item-text-inset" : "")">
+
+    <div class="mud-list-item-text @(Inset ? "mud-list-item-text-inset" : "")">
         <MudText Typo="@TextTypo">
             @if (ChildContent != null)
             {
@@ -41,20 +57,36 @@
                 @if (!string.IsNullOrEmpty(SecondaryText))
                 {
                     <br />
-                    <MudText Class="mud-list-item-secondary-text" Typo="Typo.subtitle2">@SecondaryText</MudText>
+                    <MudText Class="mud-list-item-secondary-text" Typo="Typo.subtitle2">
+                        @SecondaryText
+                    </MudText>
                 }
             }
         </MudText>
     </div>
-    @if (NestedList != null) {
-        <MudIcon Disabled="@GetDisabled()" Icon="@($"{(_expandedState.Value ? ExpandLessIcon : ExpandMoreIcon)}")" Size="@IconSize" Color="@ExpandIconColor" />
-    }
-    </MudElement>
+
     @if (NestedList != null)
+    {
+        <MudIcon Disabled="@GetDisabled()"
+                 Icon="@($"{(_expandedState.Value ? ExpandLessIcon : ExpandMoreIcon)}")"
+                 Size="@IconSize"
+                 Color="@ExpandIconColor" />
+    }
+
+</MudElement>
+
+@if (NestedList != null)
 {
     <MudCollapse Expanded="@_expandedState.Value">
-        <MudList T="T" Class="mud-nested-list" Comparer="@Comparer" SelectionMode="@SelectionMode" ReadOnly="@ReadOnly" Color="@(MudList?.Color ?? Color.Primary)"
-                 Padding="false" Disabled="@GetDisabled()" Dense="@GetDense()">
+        <MudList T="T"
+                 Class="mud-nested-list"
+                 Comparer="@Comparer"
+                 SelectionMode="@SelectionMode"
+                 ReadOnly="@ReadOnly"
+                 Color="@(MudList?.Color ?? Color.Primary)"
+                 Padding="false"
+                 Disabled="@GetDisabled()"
+                 Dense="@GetDense()">
             @NestedList
         </MudList>
     </MudCollapse>
