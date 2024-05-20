@@ -14,7 +14,7 @@
 }
 else
 {
-    @if (TryExtractMagicSyntax(Icon, out var syntax))
+    @if (MudIcon.TryExtractMagicSyntax(Icon, out var syntax))
     {
         <span @attributes="UserAttributes" class="@($"{Classname} {syntax.beforeBrackets}")" style="@Style" title="@Title">
             @syntax.insideBrackets

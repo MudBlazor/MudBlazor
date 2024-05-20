@@ -72,7 +72,7 @@ namespace MudBlazor
         [GeneratedRegex(@"^(.*)\[(.*?)\]$")]
         private static partial Regex BracketContentRegex();
 
-        private bool TryExtractMagicSyntax([NotNullWhen(true)] string? input, out (string beforeBrackets, string insideBrackets) syntax)
+        private static bool TryExtractMagicSyntax([NotNullWhen(true)] string? input, out (string beforeBrackets, string insideBrackets) syntax)
         {
             if (input is null)
             {
