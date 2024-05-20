@@ -71,12 +71,6 @@ namespace MudBlazor
 
         private Dictionary<Guid, (Type eventType, Func<object, Task> callback)> _callbackResolver = new();
 
-        internal static readonly JsonSerializerOptions s_defaultJsonSerializerOptions = new()
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            PropertyNameCaseInsensitive = true,
-        };
-
         [DynamicDependency(nameof(OnEventOccur))]
         public EventListener(IJSRuntime runtime)
         {
@@ -89,7 +83,16 @@ namespace MudBlazor
         {
             if (_callbackResolver.TryGetValue(key, out var element) && element.callback != null)
             {
-                var @event = JsonSerializer.Deserialize(eventData, element.eventType, new WebEventJsonContext(s_defaultJsonSerializerOptions));
+                // Do not move this as static field.
+                // Otherwise, you wil JsonSerializerOptions instances cannot be modified once encapsulated by a JsonSerializerContext exception when using STJ Source Generator.
+                // In net9 remove this and add [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase, PropertyNameCaseInsensitive = true)] instead.
+                // Alternative we could set TypeInfoResolver for JsonSerializerOptions, but the trimmer will complain that it's unsafe which is not true.
+                var jsonSerializerOptions = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    PropertyNameCaseInsensitive = true,
+                };
+                var @event = JsonSerializer.Deserialize(eventData, element.eventType, new WebEventJsonContext(jsonSerializerOptions));
                 await element.callback.Invoke(@event);
             }
         }

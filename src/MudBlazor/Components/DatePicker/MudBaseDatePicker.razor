@@ -129,7 +129,7 @@
                                                         @onclick="(async () => { var d = selectedDay; await OnDayClickedAsync(d); })"
                                                         @onclick:stopPropagation="true"
                                                         aria-label='@selectedDay.ToString("dddd, dd MMMM yyyy")'
-                                                        onmouseover="@(async () => await HandleMouseoverOnPickerCalendarDayButton(!firstMonthFirstYear ? tempId : tempId + 1))"
+                                                        onpointerover="@(async () => await HandleMouseoverOnPickerCalendarDayButton(!firstMonthFirstYear ? tempId : tempId + 1))"
                                                         disabled="@((selectedDay < MinDate) || (selectedDay > MaxDate) || IsDateDisabledFunc(selectedDay))">
                                                     <p class="mud-typography mud-typography-body2 mud-inherit-text">@GetCalendarDayOfMonth(selectedDay)</p>
                                                 </button>

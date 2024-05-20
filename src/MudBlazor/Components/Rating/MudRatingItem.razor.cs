@@ -1,4 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -85,6 +89,7 @@ namespace MudBlazor
         {
             base.OnParametersSet();
             ItemIcon = SelectIcon();
+            Color = SelectIconColor();
         }
 
         internal string? SelectIcon()
@@ -117,8 +122,43 @@ namespace MudBlazor
             return Rating.EmptyIcon;
         }
 
+        internal Color SelectIconColor()
+        {
+            if (Rating is null)
+            {
+                return Color.Default;
+            }
+
+            if (Rating.FullIconColor is null || Rating.EmptyIconColor is null)
+            {
+                return Rating.Color;
+            }
+
+            if (Rating.HoveredValue.HasValue && Rating.HoveredValue.Value >= ItemValue)
+            {
+                // full icon color when @RatingItem hovered
+                return Rating.FullIconColor.Value;
+            }
+
+            var ratingSelectedValue = Rating.GetState<int>(nameof(Rating.SelectedValue));
+            if (ratingSelectedValue >= ItemValue)
+            {
+                if (Rating.HoveredValue.HasValue && Rating.HoveredValue.Value < ItemValue)
+                {
+                    // empty icon color when equal or higher RatingItem value clicked, but less value hovered 
+                    return Rating.EmptyIconColor.Value;
+                }
+
+                // full icon color when equal or higher RatingItem value clicked
+                return Rating.FullIconColor.Value;
+            }
+
+            // empty icon color when this or higher RatingItem is not clicked and not hovered
+            return Rating.EmptyIconColor.Value;
+        }
+
         // rating item lose hover
-        internal Task HandleMouseOutAsync(MouseEventArgs e)
+        internal Task HandlePointerOutAsync(PointerEventArgs e)
         {
             if (Disabled || Rating is null)
             {
@@ -130,7 +170,7 @@ namespace MudBlazor
             return ItemHovered.InvokeAsync(null);
         }
 
-        internal Task HandleMouseOverAsync(MouseEventArgs e)
+        internal Task HandlePointerOverAsync(PointerEventArgs e)
         {
             if (Disabled)
             {
@@ -142,7 +182,7 @@ namespace MudBlazor
             return ItemHovered.InvokeAsync(ItemValue);
         }
 
-        private Task HandleClickAsync(MouseEventArgs e)
+        private Task HandleClickAsync()
         {
             if (Disabled)
             {

@@ -65,6 +65,8 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     private bool IsClickable => !ChipSet?.ReadOnly ?? (OnClick.HasDelegate || !string.IsNullOrEmpty(Href));
 
+    private string? RoleAttribute => IsClickable ? "button" : null;
+
     internal Variant GetVariant()
     {
         var chipSetVariant = ChipSet?.Variant ?? MudBlazor.Variant.Filled;
