@@ -7,7 +7,7 @@
 {
     if (ItemsProvider != null)
     {
-        <Virtualize @ref="@VirtualizeContainerReference" ItemsProvider="@ItemsProvider" Context="item" OverscanCount="@OverscanCount" ItemSize="@ItemSize" SpacerElement="@SpacerElement">
+        <Virtualize @ref="@_virtualizeContainerReference" ItemsProvider="@ItemsProvider" Context="item" OverscanCount="@OverscanCount" ItemSize="@ItemSize" SpacerElement="@SpacerElement">
             <ChildContent>
                 @if (ChildContent is not null)
                 {
@@ -22,7 +22,7 @@
     }
     else
     {
-        <Virtualize @ref="@VirtualizeContainerReference" Items="@Items" Context="item" OverscanCount="@OverscanCount" ItemSize="@ItemSize" SpacerElement="@SpacerElement">
+        <Virtualize @ref="@_virtualizeContainerReference" Items="@Items" Context="item" OverscanCount="@OverscanCount" ItemSize="@ItemSize" SpacerElement="@SpacerElement">
             <ChildContent>
                 @if (ChildContent is not null)
                 {

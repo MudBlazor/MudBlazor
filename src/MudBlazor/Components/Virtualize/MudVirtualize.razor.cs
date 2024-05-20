@@ -13,6 +13,11 @@ namespace MudBlazor
     public partial class MudVirtualize<T> : ComponentBase
     {
         /// <summary>
+        /// Represents a virtualized container for rendering a large list of items efficiently.
+        /// </summary>
+        private Virtualize<T>? _virtualizeContainerReference;
+        
+        /// <summary>
         /// Set false to turn off virtualization
         /// </summary>
         [Parameter]
@@ -64,18 +69,13 @@ namespace MudBlazor
         public string SpacerElement { get; set; } = "div";
 
         /// <summary>
-        /// Represents a virtualized container for rendering a large list of items efficiently.
-        /// </summary>
-        private Virtualize<T>? VirtualizeContainerReference { get; set; }
-
-        /// <summary>
         /// Refreshes the data in the Virtualize component asynchronously.
         /// </summary>
         public async Task RefreshDataAsync()
         {
-            if (VirtualizeContainerReference != null)
+            if (_virtualizeContainerReference != null)
             {
-                await VirtualizeContainerReference.RefreshDataAsync();
+                await _virtualizeContainerReference.RefreshDataAsync();
             }
         }
     }
