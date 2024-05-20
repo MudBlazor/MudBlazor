@@ -520,6 +520,20 @@ namespace MudBlazor.UnitTests.Components
             // navigate back to the first page programmatically
             await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
             dataGrid.Instance.CurrentPage.Should().Be(0);
+
+            // Test MudPagination int base NavigateTo
+            int pagecount = (int)Math.Ceiling((double)(dataGrid.Instance.Items.Count() / dataGrid.Instance.RowsPerPage));
+            // navigate to the last page programmatically
+            await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(pagecount - 1));
+            dataGrid.Instance.CurrentPage.Should().Be(4);
+
+            // navigate to the previous page programmatically
+            await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(dataGrid.Instance.CurrentPage - 1));
+            dataGrid.Instance.CurrentPage.Should().Be(3);
+
+            // navigate back to the first page programmatically
+            await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(0));
+            dataGrid.Instance.CurrentPage.Should().Be(0);
         }
 
 
