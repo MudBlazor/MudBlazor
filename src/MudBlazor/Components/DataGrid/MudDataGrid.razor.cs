@@ -1319,7 +1319,7 @@ namespace MudBlazor
 
         private void VirtualItemsProviderInitialize()
         {
-            if (ServerData == null || !Virtualize)
+            if (VirtualItemsProvider != null || ServerData == null || !Virtualize)
             {
                 return;
             }

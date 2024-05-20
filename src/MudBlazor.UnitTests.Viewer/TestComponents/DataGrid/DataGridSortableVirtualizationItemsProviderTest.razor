@@ -28,19 +28,33 @@ Note that the 'Misc' column is being sorted by length and not by the content its
     private async Task<GridData<Item>> ServerDataFunc(GridState<Item> gridState)
     {
         await Task.CompletedTask;
-        var result = _items.ToList();
-        foreach (var s in gridState.SortDefinitions.OrderBy(o => o.Index))
+        var result = _items.AsEnumerable();
+
+        var sortDefinitions = gridState.SortDefinitions
+            .OrderBy(o => o.Index)
+            .ToList();
+
+        // Check if there are sort definitions.
+        if (sortDefinitions.Count > 0) 
         {
-            result = s.Descending 
-                ? _items.OrderByDescending(s.SortFunc).ToList()
-                : _items.OrderBy(s.SortFunc).ToList();
+            var firstSort = sortDefinitions.First();
+            result = firstSort.Descending 
+                ? result.OrderByDescending(firstSort.SortFunc) 
+                : result.OrderBy(firstSort.SortFunc);
+
+            foreach (var s in sortDefinitions.Skip(1))
+            {
+                result = s.Descending 
+                    ? ((IOrderedEnumerable<Item>)result).ThenByDescending(s.SortFunc) 
+                    : ((IOrderedEnumerable<Item>)result).ThenBy(s.SortFunc);
+            }
         }
 
         result = result
             .Skip(gridState.Page * gridState.PageSize)
             .Take(gridState.PageSize)
             .ToList();
-        
+
         return new GridData<Item>
         {
             Items = result,
