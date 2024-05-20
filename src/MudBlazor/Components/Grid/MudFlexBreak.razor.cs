@@ -10,7 +10,7 @@ namespace MudBlazor;
 public partial class MudFlexBreak : MudComponentBase
 {
     /// <summary>
-    /// Space separated class names
+    /// Class names separated by spaces.
     /// </summary>
     protected string Classname =>
         new CssBuilder("mud-flex-break")
