@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -63,5 +65,35 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Icon.Behavior)]
         public RenderFragment? ChildContent { get; set; }
+
+        [MemberNotNullWhen(true, nameof(Icon))]
+        private bool IsAngleBracket => !string.IsNullOrEmpty(Icon) && Icon.Trim().StartsWith('<');
+
+        [GeneratedRegex(@"^(.*)\[(.*?)\]$")]
+        private static partial Regex BracketContentRegex();
+
+        private bool TryExtractMagicSyntax([NotNullWhen(true)] string? input, out (string beforeBrackets, string insideBrackets) syntax)
+        {
+            if (input is null)
+            {
+                syntax = (string.Empty, string.Empty);
+
+                return false;
+            }
+
+            var match = BracketContentRegex().Match(input);
+            if (match.Success)
+            {
+                var beforeBrackets = match.Groups[1].Value;
+                var insideBrackets = match.Groups[2].Value;
+                syntax = (beforeBrackets, insideBrackets);
+
+                return true;
+            }
+
+            syntax = (string.Empty, string.Empty);
+
+            return false;
+        }
     }
 }
