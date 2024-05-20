@@ -3,7 +3,7 @@
 
 @if (IsAngleBracket)
 {
-    <svg @attributes="UserAttributes" class="@Classname" style="@Style" focusable="false" viewBox="@ViewBox" aria-hidden="true" role="img">
+    <svg class="@Classname" style="@Style" focusable="false" viewBox="@ViewBox" aria-hidden="true" role="img" @attributes="UserAttributes">
         @if (Title is not null)
         {
             <title>@Title</title>
@@ -16,13 +16,13 @@ else
 {
     @if (MudIcon.TryExtractMagicSyntax(Icon, out var syntax))
     {
-        <span @attributes="UserAttributes" class="@($"{Classname} {syntax.beforeBrackets}")" style="@Style" title="@Title">
+        <span class="@($"{Classname} {syntax.beforeBrackets}")" style="@Style" title="@Title" aria-hidden="true" role="img" @attributes="UserAttributes">
             @syntax.insideBrackets
         </span>
     }
     else
     {
-        <span @attributes="UserAttributes" class="@($"{Classname} {Icon}")" style="@Style" title="@Title">
+        <span class="@($"{Classname} {Icon}")" style="@Style" title="@Title" aria-hidden="true" role="img" @attributes="UserAttributes">
             @ChildContent
         </span>
     }
