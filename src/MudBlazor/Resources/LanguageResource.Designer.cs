@@ -70,11 +70,407 @@ namespace MudBlazor.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Calendar.
+        /// </summary>
+        public static string MudBaseDatePicker_Calendar {
+            get {
+                return ResourceManager.GetString("MudBaseDatePicker_Calendar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Calendar Day.
+        /// </summary>
+        public static string MudBaseDatePicker_CalendarDay {
+            get {
+                return ResourceManager.GetString("MudBaseDatePicker_CalendarDay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Calendar Day Button.
+        /// </summary>
+        public static string MudBaseDatePicker_CalendarDayButton {
+            get {
+                return ResourceManager.GetString("MudBaseDatePicker_CalendarDayButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Day Number.
+        /// </summary>
+        public static string MudBaseDatePicker_CalendarDayNumber {
+            get {
+                return ResourceManager.GetString("MudBaseDatePicker_CalendarDayNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Calendar Header.
+        /// </summary>
+        public static string MudBaseDatePicker_CalendarHeader {
+            get {
+                return ResourceManager.GetString("MudBaseDatePicker_CalendarHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear.
+        /// </summary>
+        public static string MudBaseDatePicker_Clear {
+            get {
+                return ResourceManager.GetString("MudBaseDatePicker_Clear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close Picker.
+        /// </summary>
+        public static string MudBaseDatePicker_Close {
+            get {
+                return ResourceManager.GetString("MudBaseDatePicker_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Date.
+        /// </summary>
+        public static string MudBaseDatePicker_DateClick {
+            get {
+                return ResourceManager.GetString("MudBaseDatePicker_DateClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Month.
+        /// </summary>
+        public static string MudBaseDatePicker_Month {
+            get {
+                return ResourceManager.GetString("MudBaseDatePicker_Month", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Month Container.
+        /// </summary>
+        public static string MudBaseDatePicker_MonthContainer {
+            get {
+                return ResourceManager.GetString("MudBaseDatePicker_MonthContainer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go to next month {0}.
+        /// </summary>
+        public static string MudBaseDatePicker_NextMonth {
+            get {
+                return ResourceManager.GetString("MudBaseDatePicker_NextMonth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go to next year {0}.
+        /// </summary>
+        public static string MudBaseDatePicker_NextYear {
+            get {
+                return ResourceManager.GetString("MudBaseDatePicker_NextYear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go to previous month {0}.
+        /// </summary>
+        public static string MudBaseDatePicker_PrevMonth {
+            get {
+                return ResourceManager.GetString("MudBaseDatePicker_PrevMonth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go to previous year {0}.
+        /// </summary>
+        public static string MudBaseDatePicker_PrevYear {
+            get {
+                return ResourceManager.GetString("MudBaseDatePicker_PrevYear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Selected Day.
+        /// </summary>
+        public static string MudBaseDatePicker_SelectedDay {
+            get {
+                return ResourceManager.GetString("MudBaseDatePicker_SelectedDay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Today.
+        /// </summary>
+        public static string MudBaseDatePicker_Today {
+            get {
+                return ResourceManager.GetString("MudBaseDatePicker_Today", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Week.
+        /// </summary>
+        public static string MudBaseDatePicker_Week {
+            get {
+                return ResourceManager.GetString("MudBaseDatePicker_Week", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Week Number.
+        /// </summary>
+        public static string MudBaseDatePicker_WeekNumber {
+            get {
+                return ResourceManager.GetString("MudBaseDatePicker_WeekNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Year.
+        /// </summary>
+        public static string MudBaseDatePicker_Year {
+            get {
+                return ResourceManager.GetString("MudBaseDatePicker_Year", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Year.
+        /// </summary>
+        public static string MudBaseDatePicker_YearClick {
+            get {
+                return ResourceManager.GetString("MudBaseDatePicker_YearClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Year Container.
+        /// </summary>
+        public static string MudBaseDatePicker_YearContainer {
+            get {
+                return ResourceManager.GetString("MudBaseDatePicker_YearContainer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close chip.
         /// </summary>
         public static string MudChip_Close {
             get {
                 return ResourceManager.GetString("MudChip_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set Alpha Value.
+        /// </summary>
+        public static string MudColorPicker_Alpha {
+            get {
+                return ResourceManager.GetString("MudColorPicker_Alpha", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjust Alpha Slider.
+        /// </summary>
+        public static string MudColorPicker_AlphaSlider {
+            get {
+                return ResourceManager.GetString("MudColorPicker_AlphaSlider", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set Blue Value.
+        /// </summary>
+        public static string MudColorPicker_Blue {
+            get {
+                return ResourceManager.GetString("MudColorPicker_Blue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close Picker.
+        /// </summary>
+        public static string MudColorPicker_Close {
+            get {
+                return ResourceManager.GetString("MudColorPicker_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Color from Collection.
+        /// </summary>
+        public static string MudColorPicker_ColorCollection {
+            get {
+                return ResourceManager.GetString("MudColorPicker_ColorCollection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Color Dot.
+        /// </summary>
+        public static string MudColorPicker_ColorDot {
+            get {
+                return ResourceManager.GetString("MudColorPicker_ColorDot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Color from Grid.
+        /// </summary>
+        public static string MudColorPicker_ColorGrid {
+            get {
+                return ResourceManager.GetString("MudColorPicker_ColorGrid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjust Color Overlay.
+        /// </summary>
+        public static string MudColorPicker_ColorOverlay {
+            get {
+                return ResourceManager.GetString("MudColorPicker_ColorOverlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Color Selector.
+        /// </summary>
+        public static string MudColorPicker_ColorSelector {
+            get {
+                return ResourceManager.GetString("MudColorPicker_ColorSelector", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjust Controls.
+        /// </summary>
+        public static string MudColorPicker_Controls {
+            get {
+                return ResourceManager.GetString("MudColorPicker_Controls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle Current Color.
+        /// </summary>
+        public static string MudColorPicker_CurrentColor {
+            get {
+                return ResourceManager.GetString("MudColorPicker_CurrentColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set Green Value.
+        /// </summary>
+        public static string MudColorPicker_Green {
+            get {
+                return ResourceManager.GetString("MudColorPicker_Green", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Switch to Grid View.
+        /// </summary>
+        public static string MudColorPicker_GridView {
+            get {
+                return ResourceManager.GetString("MudColorPicker_GridView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set Hex Value.
+        /// </summary>
+        public static string MudColorPicker_Hex {
+            get {
+                return ResourceManager.GetString("MudColorPicker_Hex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set Hue Value.
+        /// </summary>
+        public static string MudColorPicker_Hue {
+            get {
+                return ResourceManager.GetString("MudColorPicker_Hue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjust Hue Slider.
+        /// </summary>
+        public static string MudColorPicker_HueSlider {
+            get {
+                return ResourceManager.GetString("MudColorPicker_HueSlider", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set Lightness Value.
+        /// </summary>
+        public static string MudColorPicker_Lightness {
+            get {
+                return ResourceManager.GetString("MudColorPicker_Lightness", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Switch Mode.
+        /// </summary>
+        public static string MudColorPicker_ModeSwitch {
+            get {
+                return ResourceManager.GetString("MudColorPicker_ModeSwitch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Palette Color.
+        /// </summary>
+        public static string MudColorPicker_PaletteColor {
+            get {
+                return ResourceManager.GetString("MudColorPicker_PaletteColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Switch to Palette View.
+        /// </summary>
+        public static string MudColorPicker_PaletteView {
+            get {
+                return ResourceManager.GetString("MudColorPicker_PaletteView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set Red Value.
+        /// </summary>
+        public static string MudColorPicker_Red {
+            get {
+                return ResourceManager.GetString("MudColorPicker_Red", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set Saturation Value.
+        /// </summary>
+        public static string MudColorPicker_Saturation {
+            get {
+                return ResourceManager.GetString("MudColorPicker_Saturation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Switch to Spectrum View.
+        /// </summary>
+        public static string MudColorPicker_SpectrumView {
+            get {
+                return ResourceManager.GetString("MudColorPicker_SpectrumView", resourceCulture);
             }
         }
         
@@ -435,6 +831,204 @@ namespace MudBlazor.Resources {
         public static string MudNavGroup_ToggleExpand {
             get {
                 return ResourceManager.GetString("MudNavGroup_ToggleExpand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select AM.
+        /// </summary>
+        public static string MudTimePicker_AmClick {
+            get {
+                return ResourceManager.GetString("MudTimePicker_AmClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clock.
+        /// </summary>
+        public static string MudTimePicker_Clock {
+            get {
+                return ResourceManager.GetString("MudTimePicker_Clock", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clock Menu.
+        /// </summary>
+        public static string MudTimePicker_ClockMenu {
+            get {
+                return ResourceManager.GetString("MudTimePicker_ClockMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clock Number.
+        /// </summary>
+        public static string MudTimePicker_ClockNumber {
+            get {
+                return ResourceManager.GetString("MudTimePicker_ClockNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clock Pin.
+        /// </summary>
+        public static string MudTimePicker_ClockPin {
+            get {
+                return ResourceManager.GetString("MudTimePicker_ClockPin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clock Pointer.
+        /// </summary>
+        public static string MudTimePicker_ClockPointer {
+            get {
+                return ResourceManager.GetString("MudTimePicker_ClockPointer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clock Stick.
+        /// </summary>
+        public static string MudTimePicker_ClockStick {
+            get {
+                return ResourceManager.GetString("MudTimePicker_ClockStick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close Picker.
+        /// </summary>
+        public static string MudTimePicker_Close {
+            get {
+                return ResourceManager.GetString("MudTimePicker_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Container.
+        /// </summary>
+        public static string MudTimePicker_Container {
+            get {
+                return ResourceManager.GetString("MudTimePicker_Container", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Hour.
+        /// </summary>
+        public static string MudTimePicker_HourClick {
+            get {
+                return ResourceManager.GetString("MudTimePicker_HourClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hour Dial.
+        /// </summary>
+        public static string MudTimePicker_HourDial {
+            get {
+                return ResourceManager.GetString("MudTimePicker_HourDial", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rotate Hour.
+        /// </summary>
+        public static string MudTimePicker_HourRotation {
+            get {
+                return ResourceManager.GetString("MudTimePicker_HourRotation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Minute.
+        /// </summary>
+        public static string MudTimePicker_MinuteClick {
+            get {
+                return ResourceManager.GetString("MudTimePicker_MinuteClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minute Dial.
+        /// </summary>
+        public static string MudTimePicker_MinuteDial {
+            get {
+                return ResourceManager.GetString("MudTimePicker_MinuteDial", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rotate Minute.
+        /// </summary>
+        public static string MudTimePicker_MinuteRotation {
+            get {
+                return ResourceManager.GetString("MudTimePicker_MinuteRotation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Picker Content.
+        /// </summary>
+        public static string MudTimePicker_PickerContent {
+            get {
+                return ResourceManager.GetString("MudTimePicker_PickerContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select PM.
+        /// </summary>
+        public static string MudTimePicker_PmClick {
+            get {
+                return ResourceManager.GetString("MudTimePicker_PmClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time Separator.
+        /// </summary>
+        public static string MudTimePicker_TimeSeparator {
+            get {
+                return ResourceManager.GetString("MudTimePicker_TimeSeparator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle AM/PM.
+        /// </summary>
+        public static string MudTimePicker_ToggleAmPm {
+            get {
+                return ResourceManager.GetString("MudTimePicker_ToggleAmPm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toolbar.
+        /// </summary>
+        public static string MudTimePicker_Toolbar {
+            get {
+                return ResourceManager.GetString("MudTimePicker_Toolbar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toolbar AM/PM.
+        /// </summary>
+        public static string MudTimePicker_ToolbarAmPm {
+            get {
+                return ResourceManager.GetString("MudTimePicker_ToolbarAmPm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toolbar Hour Minute.
+        /// </summary>
+        public static string MudTimePicker_ToolbarHourMinute {
+            get {
+                return ResourceManager.GetString("MudTimePicker_ToolbarHourMinute", resourceCulture);
             }
         }
     }
