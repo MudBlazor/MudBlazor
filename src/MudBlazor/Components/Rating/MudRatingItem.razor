@@ -9,7 +9,7 @@
 }
 else
 {
-    <span class="@ClassName" style="@Style" @onmouseover="HandleMouseOverAsync" @onclick="HandleClickAsync" @onmouseout="HandleMouseOutAsync ">
+    <span class="@ClassName" style="@Style" @onpointerover="HandlePointerOverAsync" @onclick="HandleClickAsync" @onpointerout="HandlePointerOutAsync">
         <input class="mud-rating-input" type="radio" tabindex="-1" value="@ItemValue" name="@Rating?.Name" disabled="@Disabled" checked="@(Checked)" @attributes="UserAttributes" />
         <MudIcon Icon="@ItemIcon" Color="@Color" Size="@Size"></MudIcon>
     </span>

@@ -398,7 +398,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task OnClickClosesWithMouseOver()
+        public async Task OnClickClosesWithPointerOver()
         {
             // Set up the snackbar.
             await _provider.InvokeAsync(() =>
@@ -412,17 +412,17 @@ namespace MudBlazor.UnitTests.Components
             );
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
 
-            // Test that clicking the snackbar will trigger onclick to close despite mouse over and touch start pausing it.
+            // Test that clicking the snackbar will trigger onclick to close despite pointer over and touch start pausing it.
 
             _provider.Find(".mud-snackbar").TouchStart();
-            _provider.Find(".mud-snackbar").TriggerEvent("onmouseenter", new MouseEventArgs());
+            _provider.Find(".mud-snackbar").TriggerEvent("onpointerenter", new PointerEventArgs());
             _provider.Find(".mud-snackbar").Click();
 
             _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
         }
 
         [Test]
-        public async Task CloseButtonClosesWithMouseOver()
+        public async Task CloseButtonClosesWithPointerOver()
         {
             // Set up the snackbar.
             await _provider.InvokeAsync(() =>
@@ -436,16 +436,16 @@ namespace MudBlazor.UnitTests.Components
 
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
 
-            // Test that clicking the close button will actually close the snackbar even with the mouse over.
+            // Test that clicking the close button will actually close the snackbar even with the pointer over.
 
-            _provider.Find(".mud-snackbar").TriggerEvent("onmouseenter", new MouseEventArgs());
+            _provider.Find(".mud-snackbar").TriggerEvent("onpointerenter", new PointerEventArgs());
             _provider.FindAll(".mud-snackbar-close-button").Single().Click();
 
             _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
         }
 
         [Test]
-        public async Task ActionButtonClosesWithMouseOver()
+        public async Task ActionButtonClosesWithPointerOver()
         {
             // Set up the snackbar.
             await _provider.InvokeAsync(() =>
@@ -461,9 +461,9 @@ namespace MudBlazor.UnitTests.Components
 
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
 
-            // Test that clicking the action button will actually close the snackbar even with the mouse over.
+            // Test that clicking the action button will actually close the snackbar even with the pointer over.
 
-            _provider.Find(".mud-snackbar").TriggerEvent("onmouseenter", new MouseEventArgs());
+            _provider.Find(".mud-snackbar").TriggerEvent("onpointerenter", new PointerEventArgs());
             _provider.Find(".mud-snackbar-action-button").Click();
 
             _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
@@ -488,13 +488,13 @@ namespace MudBlazor.UnitTests.Components
 
             _provider.Find(".mud-snackbar-close-button").Click();
             _provider.Find(".mud-snackbar").TouchStart();
-            _provider.Find(".mud-snackbar").TriggerEvent("onmouseenter", new MouseEventArgs());
+            _provider.Find(".mud-snackbar").TriggerEvent("onpointerenter", new PointerEventArgs());
 
             _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
         }
 
         [Test]
-        public async Task StayVisibleWithMouse()
+        public async Task StayVisibleWithPointer()
         {
             // Set up the snackbar.
 
@@ -514,13 +514,13 @@ namespace MudBlazor.UnitTests.Components
 
             // Test that the snackbar will stay visible.
 
-            _provider.Find(".mud-snackbar").TriggerEvent("onmouseenter", new MouseEventArgs());
+            _provider.Find(".mud-snackbar").TriggerEvent("onpointerenter", new PointerEventArgs());
 
             await Task.Delay(primary.State.Options.VisibleStateDuration * 2);
 
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
 
-            _provider.Find(".mud-snackbar").TriggerEvent("onmouseleave", new MouseEventArgs());
+            _provider.Find(".mud-snackbar").TriggerEvent("onpointerleave", new PointerEventArgs());
 
             _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
         }
@@ -580,30 +580,30 @@ namespace MudBlazor.UnitTests.Components
             // Interrupting show transition should instantly go to visible state.
 
             primary.State.SnackbarState.Should().Be(SnackbarState.Showing);
-            _provider.Find(".mud-snackbar").TriggerEvent("onmouseenter", new MouseEventArgs());
+            _provider.Find(".mud-snackbar").TriggerEvent("onpointerenter", new PointerEventArgs());
             primary.State.SnackbarState.Should().Be(SnackbarState.Visible);
 
-            // Mouse is still over and the state should still be visible.
+            // Pointer is still over and the state should still be visible.
             await Task.Delay(primary.State.Options.VisibleStateDuration * 2);
             primary.State.SnackbarState.Should().Be(SnackbarState.Visible);
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
 
-            // Leave mouse and let the hide transition that's been pending start.
-            _provider.Find(".mud-snackbar").TriggerEvent("onmouseleave", new MouseEventArgs());
+            // Leave pointer and let the hide transition that's been pending start.
+            _provider.Find(".mud-snackbar").TriggerEvent("onpointerleave", new PointerEventArgs());
             await Task.Delay(primary.State.Options.HideTransitionDuration / 2);
             primary.State.SnackbarState.Should().Be(SnackbarState.Hiding);
 
             // Re-enter halfway through hide transition.
-            _provider.Find(".mud-snackbar").TriggerEvent("onmouseenter", new MouseEventArgs());
+            _provider.Find(".mud-snackbar").TriggerEvent("onpointerenter", new PointerEventArgs());
             primary.State.SnackbarState.Should().Be(SnackbarState.Visible);
 
-            // Finally make the mouse leave and let it hide.
-            _provider.Find(".mud-snackbar").TriggerEvent("onmouseleave", new MouseEventArgs());
+            // Finally make the pointer leave and let it hide.
+            _provider.Find(".mud-snackbar").TriggerEvent("onpointerleave", new PointerEventArgs());
             _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
         }
 
         [Test]
-        public async Task MouseOverDoesNotTriggerHideTransition()
+        public async Task PointerOverDoesNotTriggerHideTransition()
         {
             // Set up the snackbar.
 
@@ -624,12 +624,12 @@ namespace MudBlazor.UnitTests.Components
             // Force it out of the show transition.
 
             primary.State.SnackbarState.Should().Be(SnackbarState.Showing);
-            _provider.Find(".mud-snackbar").TriggerEvent("onmouseenter", new MouseEventArgs());
+            _provider.Find(".mud-snackbar").TriggerEvent("onpointerenter", new PointerEventArgs());
             primary.State.SnackbarState.Should().Be(SnackbarState.Visible);
 
-            // Ensure that leaving with the mouse does not trigger a hide transition by itself, like if the timer was not properly utilized.
+            // Ensure that leaving with the pointer does not trigger a hide transition by itself, like if the timer was not properly utilized.
 
-            _provider.Find(".mud-snackbar").TriggerEvent("onmouseleave", new MouseEventArgs());
+            _provider.Find(".mud-snackbar").TriggerEvent("onpointerleave", new PointerEventArgs());
             await Task.Delay(primary.State.Options.VisibleStateDuration / 2);
             primary.State.SnackbarState.Should().Be(SnackbarState.Visible);
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
@@ -640,7 +640,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MouseOverDoesNotRestartVisibleDuration()
+        public async Task PointerOverDoesNotRestartVisibleDuration()
         {
             // Set up the snackbar.
             await _provider.InvokeAsync(() =>
@@ -654,11 +654,11 @@ namespace MudBlazor.UnitTests.Components
 
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
 
-            // Prove that the mouse entering the snackbar does not restart the duration from zero.
+            // Prove that the pointer entering the snackbar does not restart the duration from zero.
 
             await Task.Delay(20); // 2/3 through the visible duration.
-            _provider.Find(".mud-snackbar").TriggerEvent("onmouseenter", new MouseEventArgs());
-            _provider.Find(".mud-snackbar").TriggerEvent("onmouseleave", new MouseEventArgs());
+            _provider.Find(".mud-snackbar").TriggerEvent("onpointerenter", new PointerEventArgs());
+            _provider.Find(".mud-snackbar").TriggerEvent("onpointerleave", new PointerEventArgs());
             _provider.Find(".mud-snackbar").TouchStart();
             _provider.Find(".mud-snackbar").TouchEnd();
 

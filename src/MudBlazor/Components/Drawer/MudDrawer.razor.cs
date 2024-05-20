@@ -22,7 +22,7 @@ namespace MudBlazor
         private readonly ParameterState<Breakpoint> _breakpointState;
         private readonly ParameterState<DrawerClipMode> _clipModeState;
         private ElementReference _contentRef;
-        private bool _closeOnMouseLeave = false;
+        private bool _closeOnPointerLeave = false;
         private bool _isRendered;
         private bool _initial = true;
         private bool _keepInitialState;
@@ -155,7 +155,7 @@ namespace MudBlazor
         public bool Overlay { get; set; } = true;
 
         /// <summary>
-        /// For mini drawers, opens this drawer when the mouse hovers over it.
+        /// For mini drawers, opens this drawer when the pointer hovers over it.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  Applies when <see cref="Variant" /> is set to <see cref="DrawerVariant.Mini" />.
@@ -400,20 +400,20 @@ namespace MudBlazor
 
         internal bool IsFixed => Fixed && DrawerContainer is MudLayout;
 
-        private async Task OnMouseEnterAsync()
+        private async Task OnPointerEnterAsync()
         {
             if (Variant == DrawerVariant.Mini && !_openState.Value && OpenMiniOnHover)
             {
-                _closeOnMouseLeave = true;
+                _closeOnPointerLeave = true;
                 await _openState.SetValueAsync(true);
             }
         }
 
-        private async Task OnMouseLeaveAsync()
+        private async Task OnPointerLeaveAsync()
         {
-            if (Variant == DrawerVariant.Mini && _openState.Value && _closeOnMouseLeave)
+            if (Variant == DrawerVariant.Mini && _openState.Value && _closeOnPointerLeave)
             {
-                _closeOnMouseLeave = false;
+                _closeOnPointerLeave = false;
                 await _openState.SetValueAsync(false);
             }
         }

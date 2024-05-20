@@ -3,8 +3,8 @@
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style"
-        @onmouseenter="@MouseEnterAsync"
-        @onmouseleave="@MouseLeaveAsync"
+        @onpointerenter="@PointerEnterAsync"
+        @onpointerleave="@PointerLeaveAsync"
         @oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? ToggleMenuAsync : null)"
         @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick)">
     @if (ActivatorContent != null)
@@ -39,8 +39,8 @@
                 DropShadow="@DropShadow">
         <CascadingValue Value="@this">
             <MudList T="object" Class="@ListClass" Dense="@Dense"
-                @onmouseenter="@MouseEnterAsync"
-                @onmouseleave="@MouseLeaveAsync">
+                @onpointerenter="@PointerEnterAsync"
+                @onpointerleave="@PointerLeaveAsync">
                 @ChildContent
             </MudList>
         </CascadingValue>
