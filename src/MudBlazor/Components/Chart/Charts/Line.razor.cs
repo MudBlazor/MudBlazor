@@ -41,7 +41,11 @@ namespace MudBlazor.Charts
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
+            RebuildChart();
+        }
 
+        private void RebuildChart()
+        {
             if (MudChartParent != null)
                 _series = MudChartParent.ChartSeries;
 
@@ -235,7 +239,7 @@ namespace MudBlazor.Charts
             if (series != null)
             {
                 series.Visible = legend.Visible;
-                OnParametersSet();
+                RebuildChart();
             }
         }
     }

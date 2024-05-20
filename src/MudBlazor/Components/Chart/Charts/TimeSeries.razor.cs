@@ -36,6 +36,11 @@ namespace MudBlazor.Charts
         {
             base.OnParametersSet();
 
+            RebuildChart();
+        }
+
+        private void RebuildChart()
+        {
             if (MudChartParent != null)
                 _series = MudChartParent.ChartSeries;
 
@@ -306,7 +311,7 @@ namespace MudBlazor.Charts
             if (series != null)
             {
                 series.IsVisible = legend.Visible;
-                OnParametersSet();
+                RebuildChart();
             }
         }
     }
