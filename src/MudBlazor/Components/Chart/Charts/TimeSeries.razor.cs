@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts.SVG.Models;
-using System.Text;
 using MudBlazor.Components.Chart.Models;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace MudBlazor.Charts
 {
@@ -17,7 +17,7 @@ namespace MudBlazor.Charts
         private const double VerticalStartSpace = 25.0;
         private const double VerticalEndSpace = 25.0;
 
-        [CascadingParameter] 
+        [CascadingParameter]
         public MudTimeSeriesChartBase MudChartParent { get; set; }
 
         private List<SvgPath> _horizontalLines = new();
