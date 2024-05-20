@@ -88,6 +88,17 @@ public class InMemoryNotificationService : INotificationService
     public void Preload()
     {
         _messages.Add(new NotificationMessage(
+            typeof(Announcement_v7).Name,
+            "Get ready for v7!",
+            "Learn about the new major version",
+            "Announcement",
+            new DateTime(2024, 05, 20),
+            "https://github.com/MudBlazor/MudBlazor/blob/f979c2c84e3ddd5f01a20ebc1102838d32a4b01b/content/Nuget.png",
+            [
+                new NotificationAuthor("The MudBlazor Team", "https://mudblazor.com/_content/MudBlazor.Docs/images/logo.png")
+            ], typeof(Announcement_v7)));
+
+        _messages.Add(new NotificationMessage(
             "mudblazor-here-to-stay",
             "MudBlazor is here to stay",
             "We are paving the way for the future of Blazor",
