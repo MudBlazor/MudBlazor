@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Charts.SVG.Models;
-using MudBlazor.Components.Chart.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.AspNetCore.Components;
+using MudBlazor.Charts.SVG.Models;
+using MudBlazor.Components.Chart.Models;
 
 namespace MudBlazor.Charts
 {
