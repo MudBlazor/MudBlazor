@@ -88,7 +88,7 @@ namespace MudBlazor.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://github.com/peterthorpe81/PT.MudBlazor.Extensions.Analyzers.
+        ///   Looks up a localized string similar to https://mudblazor.com/features/analyzers.
         /// </summary>
         internal static string MUD0001Url {
             get {

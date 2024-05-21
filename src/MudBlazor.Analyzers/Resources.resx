@@ -127,7 +127,7 @@
     <value>Unknown MudBlazor attribute/parameter</value>
   </data>
   <data name="MUD0001Url" xml:space="preserve">
-    <value>https://github.com/peterthorpe81/PT.MudBlazor.Extensions.Analyzers</value>
+    <value>https://mudblazor.com/features/analyzers</value>
   </data>
   <data name="MUD0002MessageFormat" xml:space="preserve">
     <value>Illegal Attribute '{0}' detected on component '{1}' using pattern '{2}'</value>
