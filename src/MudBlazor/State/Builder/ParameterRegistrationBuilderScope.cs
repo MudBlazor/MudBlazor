@@ -67,10 +67,7 @@ internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilder
         }
     }
 
-    /// <summary>
-    /// Sets the owner of the parameter states reader.
-    /// </summary>
-    /// <param name="owner">The owner to be set.</param>
+    /// <inheritdoc />
     public void SetOwner(IParameterStatesReaderOwner owner) => _owner = owner;
 
     /// <inheritdoc />

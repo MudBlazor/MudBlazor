@@ -14,10 +14,20 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.State;
 
+/// <summary>
+/// Represents a collection of multiple <see cref="ParameterSet"/> instances combined into a union.
+/// </summary>
+/// <remarks>
+/// This class allows combining multiple <see cref="ParameterSet"/> instances into a single union, enabling the management of parameters across different sets.
+/// </remarks>
 internal class ParameterSetUnion : IEnumerable<ParameterSet>
 {
     private readonly List<ParameterSet> _parameterSets = new();
 
+    /// <summary>
+    /// Adds a <see cref="ParameterSet"/> instance to the union.
+    /// </summary>
+    /// <param name="parameterSet">The <see cref="ParameterSet"/> instance to add to the union.</param>
     public void Add(ParameterSet parameterSet) => _parameterSets.Add(parameterSet);
 
     /// <summary>
@@ -42,6 +52,11 @@ internal class ParameterSetUnion : IEnumerable<ParameterSet>
         }
     }
 
+    /// <summary>
+    /// Determines which <see cref="ParameterState{T}"/> have been changed and calls their respective change handler.
+    /// </summary>
+    /// <param name="baseSetParametersAsync">A func to call the base class' <see cref="ComponentBase.SetParametersAsync"/>.</param>
+    /// <param name="parameters">The ParameterView coming from Blazor's  <see cref="ComponentBase.SetParametersAsync"/>.</param>
     public async Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
     {
         if (_parameterSets.Count == 0)
@@ -50,14 +65,12 @@ internal class ParameterSetUnion : IEnumerable<ParameterSet>
             return;
         }
 
-        var parametersUnion = _parameterSets.Select(x => x.GetParameters());
-
 #if NET8_0_OR_GREATER
-        var parametersHandlerShouldFire = parametersUnion.SelectMany(parameter => parameter.Values)
+        var parametersHandlerShouldFire = _parameterSets.SelectMany(parameter => parameter)
             .Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters))
             .ToFrozenSet(ParameterHandlerUniquenessComparer.Default);
 #else
-        var parametersHandlerShouldFire = parametersUnion.SelectMany(parameter => parameter.Values)
+        var parametersHandlerShouldFire = _parameterSets.SelectMany(parameter => parameter)
             .Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters))
             .ToHashSet(ParameterHandlerUniquenessComparer.Default);
 #endif

@@ -154,10 +154,8 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>, IParame
         return _parameters.Value.TryGetValue(parameterName, out parameterComponentLifeCycle);
     }
 
-    public IReadOnlyDictionary<string, IParameterComponentLifeCycle> GetParameters() => _parameters.Value;
-
     /// <inheritdoc/>
-    public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => ((IDictionary<string, IParameterComponentLifeCycle>)_parameters.Value).Values.GetEnumerator();
+    public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => ((IReadOnlyDictionary<string, IParameterComponentLifeCycle>)_parameters.Value).Values.GetEnumerator();
 
     /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -167,7 +165,6 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>, IParame
     /// </summary>
     private class ParameterSetReadonlyEnumerable : IParameterStatesReader
     {
-        private IParameterStatesReaderOwner? _owner;
         private readonly IEnumerable<IParameterComponentLifeCycle> _parameters;
 
         /// <summary>
@@ -176,7 +173,8 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>, IParame
         /// <param name="parameters">The parameters to be read.</param>
         public ParameterSetReadonlyEnumerable(IEnumerable<IParameterComponentLifeCycle> parameters) => _parameters = parameters;
 
-        public void SetOwner(IParameterStatesReaderOwner owner) => _owner = owner;
+        /// <inheritdoc />
+        public void SetOwner(IParameterStatesReaderOwner owner) { /*Noop*/ }
 
         /// <inheritdoc />
         public IEnumerable<IParameterComponentLifeCycle> ReadParameters() => _parameters;
