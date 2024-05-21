@@ -1,8 +1,4 @@
-﻿// Copyright (c) Peter Thorpe 2024
-// This file is licenced to you under the MIT license.
-// See the LICENSE file in the project root for more information.
-
-#if ROSLYN_3_8
+﻿#if ROSLYN_3_8
 using System.Collections.Immutable;
 #endif
 using System.Diagnostics;

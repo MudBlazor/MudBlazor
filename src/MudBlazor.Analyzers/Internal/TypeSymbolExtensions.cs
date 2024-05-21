@@ -1,9 +1,4 @@
-﻿// Copyright (c) Peter Thorpe 2024
-// This file is licenced to you under the MIT license.
-// See the LICENSE file in the project root for more information.
-
-namespace MudBlazor.Analyzers.Internal;
-
+﻿namespace MudBlazor.Analyzers.Internal;
 
 // http://source.roslyn.io/#Microsoft.CodeAnalysis.Workspaces/Shared/Extensions/ITypeSymbolExtensions.cs,190b4ed0932458fd,references
 internal static class TypeSymbolExtensions

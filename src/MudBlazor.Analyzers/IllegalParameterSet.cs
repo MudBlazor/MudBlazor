@@ -1,23 +1,17 @@
-﻿// Copyright (c) Peter Thorpe 2024
-// This file is licenced to you under the MIT license.
-// See the LICENSE file in the project root for more information.
+﻿using Microsoft.CodeAnalysis;
 
 namespace MudBlazor.Analyzers
 {
     internal class IllegalParameterSet
     {
-#pragma warning disable RS1024, RS1008
         internal Dictionary<INamedTypeSymbol, string[]> Parameters { get; set; }
-#pragma warning restore RS1024, RS1008
 
         internal StringComparer Comparer { get; set; }
         internal IllegalParameters IllegalParameters { get; set; }
 
         private Compilation _compilation;
 
-#pragma warning disable MA0051 // Method is too long
         internal IllegalParameterSet(Compilation compilation, IllegalParameters illegalParameters)
-#pragma warning restore MA0051 // Method is too long
         {
             _compilation = compilation;
             Parameters = [];
@@ -94,9 +88,6 @@ namespace MudBlazor.Analyzers
                     Parameters.Add(symbol, parameterSet);
             }
         }
-
-#pragma warning restore RS1024 // Symbols should be compared for equality
-
     }
 
 

@@ -1,8 +1,4 @@
-﻿// Copyright (c) Peter Thorpe 2024
-// This file is licenced to you under the MIT license.
-// See the LICENSE file in the project root for more information.
-
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Diagnostics;
 
@@ -20,20 +16,18 @@ namespace MudBlazor.Analyzers
 
         // You can change these strings in the Resources.resx file. If you do not want your analyzer to be localize-able, you can use regular strings for Title and MessageFormat.
         // See https://github.com/dotnet/roslyn/blob/main/docs/analyzers/Localizing%20Analyzers.md for more on localization
-        private static readonly LocalizableString s_title = new LocalizableResourceString(nameof(Resources.MUD0001Title), Resources.ResourceManager, typeof(Resources));
-        private static readonly LocalizableString s_parameterMessageFormat = new LocalizableResourceString(nameof(Resources.MUD0001MessageFormat), Resources.ResourceManager, typeof(Resources));
-        private static readonly LocalizableString s_attributeMessageFormat = new LocalizableResourceString(nameof(Resources.MUD0002MessageFormat), Resources.ResourceManager, typeof(Resources));
-        private static readonly LocalizableString s_description = new LocalizableResourceString(nameof(Resources.MUD0001Description), Resources.ResourceManager, typeof(Resources));
-        private static readonly LocalizableResourceString s_url = new LocalizableResourceString(nameof(Resources.MUD0001Url), Resources.ResourceManager, typeof(Resources));
+        private static readonly LocalizableString _title = new LocalizableResourceString(nameof(Resources.MUD0001Title), Resources.ResourceManager, typeof(Resources));
+        private static readonly LocalizableString _parameterMessageFormat = new LocalizableResourceString(nameof(Resources.MUD0001MessageFormat), Resources.ResourceManager, typeof(Resources));
+        private static readonly LocalizableString _attributeMessageFormat = new LocalizableResourceString(nameof(Resources.MUD0002MessageFormat), Resources.ResourceManager, typeof(Resources));
+        private static readonly LocalizableString _description = new LocalizableResourceString(nameof(Resources.MUD0001Description), Resources.ResourceManager, typeof(Resources));
+        private static readonly LocalizableResourceString _url = new(nameof(Resources.MUD0001Url), Resources.ResourceManager, typeof(Resources));
 
         private const string Category = "Attributes/Parameters";
 
-#pragma warning disable MA0011 // IFormatProvider is missing
-        private static readonly DiagnosticDescriptor s_parameterRule = new(DiagnosticId1, s_title, s_parameterMessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: s_description, helpLinkUri: s_url.ToString());
-        private static readonly DiagnosticDescriptor s_attributeRule = new(DiagnosticId2, s_title, s_attributeMessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: s_description, helpLinkUri: s_url.ToString());
-#pragma warning restore MA0011 // IFormatProvider is missing
+        private static readonly DiagnosticDescriptor _parameterRule = new(DiagnosticId1, _title, _parameterMessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: _description, helpLinkUri: _url.ToString());
+        private static readonly DiagnosticDescriptor _attributeRule = new(DiagnosticId2, _title, _attributeMessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: _description, helpLinkUri: _url.ToString());
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get => [s_parameterRule, s_attributeRule]; }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get => [_parameterRule, _attributeRule]; }
 
         public override void Initialize(AnalysisContext context)
         {
@@ -161,7 +155,7 @@ namespace MudBlazor.Analyzers
                         {
                             if (componentType.IsOrInheritFrom(illegalParam.Key, _symbolComparer) && illegalParam.Value.Contains(parameterName, illegalParameterSet.Comparer))
                             {
-                                ReportDiagnosticRazorMapped(razorHelper, s_parameterRule, context, invocation, parameterName, componentDescriptor, illegalParameterSet.IllegalParameters.ToString());
+                                ReportDiagnosticRazorMapped(razorHelper, _parameterRule, context, invocation, parameterName, componentDescriptor, illegalParameterSet.IllegalParameters.ToString());
                                 return;
                             }
                         }
@@ -176,7 +170,7 @@ namespace MudBlazor.Analyzers
                         case AllowedAttributePattern.Any:
                             return;
                         default:
-                            ReportDiagnosticRazorMapped(razorHelper, s_attributeRule, context, invocation, parameterName, componentDescriptor, allowedAttributePattern.ToString());
+                            ReportDiagnosticRazorMapped(razorHelper, _attributeRule, context, invocation, parameterName, componentDescriptor, allowedAttributePattern.ToString());
                             return;
                     }
 
