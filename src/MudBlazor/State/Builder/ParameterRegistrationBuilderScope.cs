@@ -47,7 +47,7 @@ internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilder
 
         return builder;
     }
-    
+
     /// <summary>
     /// Sets the scope option for the current instance.
     /// </summary>
