@@ -69,8 +69,8 @@ namespace MudBlazor
         [MemberNotNullWhen(true, nameof(Icon))]
         private bool IsAngleBracket => !string.IsNullOrEmpty(Icon) && Icon.Trim().StartsWith('<');
 
-        [GeneratedRegex(@"^(.*)\[(.*?)\]$")]
-        private static partial Regex BracketContentRegex();
+        [GeneratedRegex(@"^(.*?)/(.*)$")]
+        private static partial Regex SlashContentRegex();
 
         private static bool TryExtractMagicSyntax([NotNullWhen(true)] string? input, out (string beforeBrackets, string insideBrackets) syntax)
         {
@@ -81,7 +81,7 @@ namespace MudBlazor
                 return false;
             }
 
-            var match = BracketContentRegex().Match(input);
+            var match = SlashContentRegex().Match(input);
             if (match.Success)
             {
                 var beforeBrackets = match.Groups[1].Value;

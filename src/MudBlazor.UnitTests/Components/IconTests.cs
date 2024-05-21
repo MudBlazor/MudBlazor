@@ -53,7 +53,7 @@ namespace MudBlazor.UnitTests.Components
         public void ShouldParseCorrectSyntax()
         {
             var comp = Context.RenderComponent<MudIcon>(parameters =>
-                parameters.Add(parameter => parameter.Icon, "material-symbols-outlined[database]"));
+                parameters.Add(parameter => parameter.Icon, "material-symbols-outlined/database"));
 
             comp.Markup.Should().Be("<span class=\"mud-icon-root mud-icon-size-medium material-symbols-outlined\" aria-hidden=\"true\" role=\"img\">database</span>");
         }
