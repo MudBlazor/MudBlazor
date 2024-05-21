@@ -32,11 +32,11 @@
             }
         </MudPickerToolbar>
         <MudPickerContent>
-            <div class="mud-picker-time-container" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_Container)]">
-                <div class="mud-picker-time-clock" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_Clock)]">
-                    <div role="menu" tabindex="-1" class="mud-picker-time-clock-mask" @onpointerdown="OnPointerDown" @onpointerup="OnPointerUpAsync" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_ClockMenu)]">
-                        <div class="@GetClockPinColor()" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_ClockPin)]"></div>
-                        <div class="@GetClockPointerColor()" style="height: @GetPointerHeight(); transform: @GetPointerRotation()" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_ClockPointer)]">
+            <div class="mud-picker-time-container">
+                <div class="mud-picker-time-clock">
+                    <div role="menu" tabindex="-1" class="mud-picker-time-clock-mask" @onpointerdown="OnPointerDown" @onpointerup="OnPointerUpAsync">
+                        <div class="@GetClockPinColor()"></div>
+                        <div class="@GetClockPointerColor()" style="height: @GetPointerHeight(); transform: @GetPointerRotation()">
                             <div class="@GetClockPointerThumbColor()"></div>
                         </div>
                         <div class="@HourDialClassname" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_HourDial)]">
@@ -47,12 +47,12 @@
                                 {
                                     var _i = i;
                                     var angle = (6 - _i) * 30;
-                                    <MudText Class="@GetNumberColor(_i)" Style="@GetTransform(angle, 109, 0, 5)" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_ClockNumber)]">@_i</MudText>
+                                    <MudText Class="@GetNumberColor(_i)" Style="@GetTransform(angle, 109, 0, 5)">@_i</MudText>
                                 }
                                 for (int i = 1; i <= 12; ++i)
                                 {
                                     var _i = i;
-                                    <div class="mud-picker-stick mud-hour" style="@($"transform: rotateZ({_i * 30}deg);")" @onclick="(async () => await OnClickHourAsync(_i))" @onpointerover="(async () => await OnPointerOverHourAsync(_i))" @onclick:stopPropagation="true" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_HourRotation)]"></div>
+                                    <div class="mud-picker-stick mud-hour" style="@($"transform: rotateZ({_i * 30}deg);")" @onclick="(async () => await OnClickHourAsync(_i))" @onpointerover="(async () => await OnPointerOverHourAsync(_i))" @onclick:stopPropagation="true" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_HourRotation), $"{_i}"]"></div>
                                 }
                             }
                             else
@@ -75,8 +75,8 @@
                                 {
                                     var _i = i;
                                     <div class="mud-picker-stick" style="@($"transform: rotateZ({_i * 30}deg);")">
-                                        <div class="mud-picker-stick-inner mud-hour" @onclick="(async () => await OnClickHourAsync(_i))" @onpointerover="(async () => await OnPointerOverHourAsync(_i))" @onclick:stopPropagation="true" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_HourRotation)]"></div>
-                                        <div class="mud-picker-stick-outer mud-hour" @onclick="(async () => await OnClickHourAsync((_i + 12) % 24))" @onpointerover="(async () => await OnPointerOverHourAsync((_i + 12) % 24))" @onclick:stopPropagation="true" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_HourRotation)]"></div>
+                                        <div class="mud-picker-stick-inner mud-hour" @onclick="(async () => await OnClickHourAsync(_i))" @onpointerover="(async () => await OnPointerOverHourAsync(_i))" @onclick:stopPropagation="true"></div>
+                                        <div class="mud-picker-stick-outer mud-hour" @onclick="(async () => await OnClickHourAsync((_i + 12) % 24))" @onpointerover="(async () => await OnPointerOverHourAsync((_i + 12) % 24))" @onclick:stopPropagation="true"></div>
                                     </div>
                                 }
                             }
@@ -92,7 +92,7 @@
                             @for (int i = 0; i < 60; ++i)
                             {
                                 var _i = i;
-                                <div class="mud-picker-stick mud-minute" style="@($"transform: rotateZ({_i * 6}deg);")" @onclick="(async () => await OnClickMinuteAsync(_i))" @onpointerover="(async () => await OnPointerOverMinuteAsync(_i))" @onclick:stopPropagation="true" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_MinuteRotation)]"></div>
+                                <div class="mud-picker-stick mud-minute" style="@($"transform: rotateZ({_i * 6}deg);")" @onclick="(async () => await OnClickMinuteAsync(_i))" @onpointerover="(async () => await OnPointerOverMinuteAsync(_i))" @onclick:stopPropagation="true" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_MinuteRotation), $"{_i}"]"></div>
                             }
                         </div>
                     </div>

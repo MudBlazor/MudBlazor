@@ -346,19 +346,10 @@
     <value>Select PM</value>
   </data>
   <data name="MudTimePicker_HourRotation" xml:space="preserve">
-    <value>Rotate Hour</value>
+    <value>Rotate Hour {0}</value>
   </data>
   <data name="MudTimePicker_MinuteRotation" xml:space="preserve">
-    <value>Rotate Minute</value>
-  </data>
-  <data name="MudTimePicker_ClockMenu" xml:space="preserve">
-    <value>Clock Menu</value>
-  </data>
-  <data name="MudTimePicker_ClockPin" xml:space="preserve">
-    <value>Clock Pin</value>
-  </data>
-  <data name="MudTimePicker_ClockPointer" xml:space="preserve">
-    <value>Clock Pointer</value>
+    <value>Rotate Minute {0}</value>
   </data>
   <data name="MudTimePicker_ClockNumber" xml:space="preserve">
     <value>Clock Number</value>
@@ -377,12 +368,6 @@
   </data>
   <data name="MudTimePicker_ToggleAmPm" xml:space="preserve">
     <value>Toggle AM/PM</value>
-  </data>
-  <data name="MudTimePicker_Clock" xml:space="preserve">
-    <value>Clock</value>
-  </data>
-  <data name="MudTimePicker_Container" xml:space="preserve">
-    <value>Container</value>
   </data>
   <data name="MudTimePicker_PickerContent" xml:space="preserve">
     <value>Picker Content</value>

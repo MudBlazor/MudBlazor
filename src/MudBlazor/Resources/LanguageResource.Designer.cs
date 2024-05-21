@@ -772,47 +772,11 @@ namespace MudBlazor.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Clock.
-        /// </summary>
-        public static string MudTimePicker_Clock {
-            get {
-                return ResourceManager.GetString("MudTimePicker_Clock", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Clock Menu.
-        /// </summary>
-        public static string MudTimePicker_ClockMenu {
-            get {
-                return ResourceManager.GetString("MudTimePicker_ClockMenu", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Clock Number.
         /// </summary>
         public static string MudTimePicker_ClockNumber {
             get {
                 return ResourceManager.GetString("MudTimePicker_ClockNumber", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Clock Pin.
-        /// </summary>
-        public static string MudTimePicker_ClockPin {
-            get {
-                return ResourceManager.GetString("MudTimePicker_ClockPin", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Clock Pointer.
-        /// </summary>
-        public static string MudTimePicker_ClockPointer {
-            get {
-                return ResourceManager.GetString("MudTimePicker_ClockPointer", resourceCulture);
             }
         }
         
@@ -835,15 +799,6 @@ namespace MudBlazor.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Container.
-        /// </summary>
-        public static string MudTimePicker_Container {
-            get {
-                return ResourceManager.GetString("MudTimePicker_Container", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Select Hour.
         /// </summary>
         public static string MudTimePicker_HourClick {
@@ -862,7 +817,7 @@ namespace MudBlazor.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rotate Hour.
+        ///   Looks up a localized string similar to Rotate Hour {0}.
         /// </summary>
         public static string MudTimePicker_HourRotation {
             get {
@@ -889,7 +844,7 @@ namespace MudBlazor.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rotate Minute.
+        ///   Looks up a localized string similar to Rotate Minute {0}.
         /// </summary>
         public static string MudTimePicker_MinuteRotation {
             get {
