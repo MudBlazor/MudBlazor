@@ -3,7 +3,7 @@
 
 @if(AvatarGroup == null || AvatarGroup.MaxGroupReached(this))
 {
-    <div @attributes="UserAttributes" class="@Classname" style="@Stylesname">
+    <div role="img" @attributes="UserAttributes" class="@Classname" style="@Stylesname">
         @ChildContent
     </div>
 }

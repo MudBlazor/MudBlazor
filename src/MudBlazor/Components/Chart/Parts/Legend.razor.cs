@@ -13,7 +13,7 @@ namespace MudBlazor.Charts
         /// The chart, if any, containing this component.
         /// </summary>
         [CascadingParameter]
-        public MudChart MudChartParent { get; set; }
+        public MudChartBase MudChartParent { get; set; }
 
         /// <summary>
         /// The data labels for this legend.
