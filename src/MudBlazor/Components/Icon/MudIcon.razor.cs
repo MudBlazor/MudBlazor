@@ -81,13 +81,11 @@ namespace MudBlazor
                 IconName = iconName;
             }
 
-            public static readonly IconSyntax Empty = new(string.Empty, string.Empty);
-
-            public static bool TryParseFontIconSyntax([NotNullWhen(true)] string? input, out IconSyntax syntax)
+            public static bool TryParseFontIconSyntax([NotNullWhen(true)] string? input, [MaybeNullWhen(false)] out IconSyntax syntax)
             {
                 if (input is null)
                 {
-                    syntax = Empty;
+                    syntax = null;
 
                     return false;
                 }
@@ -102,7 +100,7 @@ namespace MudBlazor
                     return true;
                 }
 
-                syntax = Empty;
+                syntax = null;
 
                 return false;
             }
