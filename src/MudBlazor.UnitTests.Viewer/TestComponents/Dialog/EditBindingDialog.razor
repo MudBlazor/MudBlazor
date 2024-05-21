@@ -16,6 +16,7 @@
     [CascadingParameter]
     public MudDialogInstance MudDialog { get; set; }
 
+#pragma warning disable BL0007
     [Parameter]
     public EditBindingDialogData Data
     {
@@ -26,6 +27,7 @@
             UncommittedValue = value.Value;
         }
     }
+#pragma warning restore CS0618
 
     public string UncommittedValue { get; set; }
 
