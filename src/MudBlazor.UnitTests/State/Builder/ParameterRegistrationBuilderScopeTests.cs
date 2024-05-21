@@ -43,6 +43,31 @@ public class ParameterRegistrationBuilderScopeTests
     }
 
     [Test]
+    public void KeepUnlocked_ShouldNotLock_WhenScopeIsEnded()
+    {
+        // Arrange
+        var scope = new ParameterRegistrationBuilderScope();
+
+        // Act
+        using (scope.SetScopeOption(ScopeOption.KeepUnlocked))
+        {
+            // Do nothing
+        }
+
+        // Assert
+        scope.IsLocked.Should().BeFalse();
+
+        // Act
+        using (scope.SetScopeOption(ScopeOption.Lock))
+        {
+            // Do nothing
+        }
+
+        // Assert
+        scope.IsLocked.Should().BeTrue();
+    }
+
+    [Test]
     public void Dispose_LocksScopeAndWritesParameters_WhenScopeNotEnded()
     {
         // Arrange

@@ -50,14 +50,21 @@ public class ComponentBaseWithState : ComponentBase
     /// Creates a scope for registering parameters.
     /// </summary>
     /// <returns>A <see cref="ParameterRegistrationBuilderScope"/> instance for registering parameters.</returns>
-    protected IParameterRegistrationBuilderScope CreateRegisterScope()
+    protected IParameterRegistrationBuilderScope CreateRegisterScope() => CreateRegisterScope(ScopeOption.Lock);
+
+    /// <summary>
+    /// Creates a scope for registering parameters with the specified locking behavior.
+    /// </summary>
+    /// <param name="scopeOption">The locking behavior for the scope.</param>
+    /// <returns>A <see cref="ParameterRegistrationBuilderScope"/> instance for registering parameters.</returns>
+    internal IParameterRegistrationBuilderScope CreateRegisterScope(ScopeOption scopeOption)
     {
         if (_scope.IsLocked)
         {
             throw new InvalidOperationException($"You are not allowed to create more than one {nameof(CreateRegisterScope)} after the scope has ended!");
         }
 
-        return _scope;
+        return _scope.SetScopeOption(scopeOption);
     }
 
     private void OnScopeEndedAction() => Parameters.ForceParametersAttachment();

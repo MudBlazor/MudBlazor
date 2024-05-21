@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
+using MudBlazor.State.Builder;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -35,7 +36,7 @@ namespace MudBlazor
         protected MudBaseInput()
             : base(new DefaultConverter<T>())
         {
-            using var registerScope = CreateRegisterScope();
+            using var registerScope = CreateRegisterScope(ScopeOption.KeepUnlocked);
             InputIdState = registerScope.RegisterParameter<string?>(nameof(InputId))
                 .WithParameter(() => InputId)
                 .WithChangeHandler(UpdateInputIdStateAsync);

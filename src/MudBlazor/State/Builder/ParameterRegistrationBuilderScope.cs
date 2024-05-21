@@ -14,6 +14,7 @@ namespace MudBlazor.State.Builder;
 /// </summary>
 internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilderScope, IParameterStatesReader
 {
+    private ScopeOption _scopeOption;
     private readonly Action? _onScopeEndedAction;
     private readonly List<IParameterBuilderAttach> _builders;
 
@@ -47,6 +48,13 @@ internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilder
         return builder;
     }
 
+    public ParameterRegistrationBuilderScope SetScopeOption(ScopeOption scopeOption)
+    {
+        _scopeOption = scopeOption;
+
+        return this;
+    }
+
     /// <summary>
     /// Clears the list of parameter builders.
     /// </summary>
@@ -61,8 +69,11 @@ internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilder
     {
         if (!IsLocked)
         {
-            IsLocked = true;
-            _onScopeEndedAction?.Invoke();
+            if (_scopeOption == ScopeOption.Lock)
+            {
+                IsLocked = true;
+                _onScopeEndedAction?.Invoke();
+            }
         }
     }
 
@@ -70,5 +81,9 @@ internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilder
     IEnumerable<IParameterComponentLifeCycle> IParameterStatesReader.ReadParameters() => _builders.Select(parameter => parameter.Attach());
 
     /// <inheritdoc />
-    void IParameterStatesReader.Complete() => CleanUp();
+    void IParameterStatesReader.Complete()
+    {
+        IsLocked = true;
+        CleanUp();
+    }
 }
