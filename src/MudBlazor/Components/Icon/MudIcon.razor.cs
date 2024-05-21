@@ -69,31 +69,46 @@ namespace MudBlazor
         [MemberNotNullWhen(true, nameof(Icon))]
         private bool IsAngleBracket => !string.IsNullOrEmpty(Icon) && Icon.Trim().StartsWith('<');
 
-        [GeneratedRegex(@"^(.+?)/(.+)$")]
-        private static partial Regex SlashContentRegex();
-
-        private static bool TryParseFontIconSyntax([NotNullWhen(true)] string? input, out (string fontIconClass, string iconName) syntax)
+        private partial class IconSyntax
         {
-            if (input is null)
+            public string FontIconClass { get; }
+
+            public string IconName { get; }
+
+            public IconSyntax(string fontIconClass, string iconName)
             {
-                syntax = (string.Empty, string.Empty);
+                FontIconClass = fontIconClass;
+                IconName = iconName;
+            }
+
+            public static readonly IconSyntax Empty = new(string.Empty, string.Empty);
+
+            public static bool TryParseFontIconSyntax([NotNullWhen(true)] string? input, out IconSyntax syntax)
+            {
+                if (input is null)
+                {
+                    syntax = Empty;
+
+                    return false;
+                }
+
+                var match = SlashContentRegex().Match(input);
+                if (match.Success)
+                {
+                    var fontIconClass = match.Groups[1].Value;
+                    var iconName = match.Groups[2].Value;
+                    syntax = new IconSyntax(fontIconClass, iconName);
+
+                    return true;
+                }
+
+                syntax = Empty;
 
                 return false;
             }
 
-            var match = SlashContentRegex().Match(input);
-            if (match.Success)
-            {
-                var fontIconClass = match.Groups[1].Value;
-                var iconName = match.Groups[2].Value;
-                syntax = (fontIconClass, iconName);
-
-                return true;
-            }
-
-            syntax = (string.Empty, string.Empty);
-
-            return false;
+            [GeneratedRegex(@"^(.+?)/(.+)$")]
+            private static partial Regex SlashContentRegex();
         }
     }
 }
