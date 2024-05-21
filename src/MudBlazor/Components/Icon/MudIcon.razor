@@ -14,10 +14,10 @@
 }
 else
 {
-    @if (TryExtractMagicSyntax(Icon, out var syntax))
+    @if (TryParseFontIconSyntax(Icon, out var syntax))
     {
-        <span class="@($"{Classname} {syntax.beforeBrackets}")" style="@Style" title="@Title" aria-hidden="true" role="img" @attributes="UserAttributes">
-            @syntax.insideBrackets
+        <span class="@($"{Classname} {syntax.fontIconClass}")" style="@Style" title="@Title" aria-hidden="true" role="img" @attributes="UserAttributes">
+            @syntax.iconName
         </span>
     }
     else

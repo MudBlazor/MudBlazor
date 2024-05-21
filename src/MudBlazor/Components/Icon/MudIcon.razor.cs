@@ -69,10 +69,10 @@ namespace MudBlazor
         [MemberNotNullWhen(true, nameof(Icon))]
         private bool IsAngleBracket => !string.IsNullOrEmpty(Icon) && Icon.Trim().StartsWith('<');
 
-        [GeneratedRegex(@"^(.*?)/(.*)$")]
+        [GeneratedRegex(@"^(.+?)/(.+)$")]
         private static partial Regex SlashContentRegex();
 
-        private static bool TryExtractMagicSyntax([NotNullWhen(true)] string? input, out (string beforeBrackets, string insideBrackets) syntax)
+        private static bool TryParseFontIconSyntax([NotNullWhen(true)] string? input, out (string fontIconClass, string iconName) syntax)
         {
             if (input is null)
             {
@@ -84,9 +84,9 @@ namespace MudBlazor
             var match = SlashContentRegex().Match(input);
             if (match.Success)
             {
-                var beforeBrackets = match.Groups[1].Value;
-                var insideBrackets = match.Groups[2].Value;
-                syntax = (beforeBrackets, insideBrackets);
+                var fontIconClass = match.Groups[1].Value;
+                var iconName = match.Groups[2].Value;
+                syntax = (fontIconClass, iconName);
 
                 return true;
             }
