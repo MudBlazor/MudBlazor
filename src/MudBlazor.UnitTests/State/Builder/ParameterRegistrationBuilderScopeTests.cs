@@ -77,6 +77,7 @@ public class ParameterRegistrationBuilderScopeTests
 
         scope.RegisterParameter<double>();
         scope.RegisterParameter<float>();
+
         // Act
         ((IDisposable)scope).Dispose();
 

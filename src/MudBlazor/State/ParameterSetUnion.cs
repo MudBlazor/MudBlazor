@@ -25,6 +25,11 @@ internal class ParameterSetUnion : IEnumerable<ParameterSet>
     private readonly List<ParameterSet> _parameterSets = new();
 
     /// <summary>
+    /// Gets the number of <see cref="ParameterSet"/> instances in the union.
+    /// </summary>
+    public int Count => _parameterSets.Count;
+
+    /// <summary>
     /// Adds a <see cref="ParameterSet"/> instance to the union.
     /// </summary>
     /// <param name="parameterSet">The <see cref="ParameterSet"/> instance to add to the union.</param>
@@ -59,7 +64,7 @@ internal class ParameterSetUnion : IEnumerable<ParameterSet>
     /// <param name="parameters">The ParameterView coming from Blazor's  <see cref="ComponentBase.SetParametersAsync"/>.</param>
     public async Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
     {
-        if (_parameterSets.Count == 0)
+        if (Count == 0)
         {
             await baseSetParametersAsync(parameters);
             return;

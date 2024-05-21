@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
@@ -18,11 +17,19 @@ namespace MudBlazor.UnitTests.State;
 public class ParameterStateUsageTests : BunitTest
 {
     [Test]
-    public void DoesThrowExceptionWhenScopeCreatedTwice()
+    public void DoesThrowExceptionWhenScopeCreatedMultipleTimes()
     {
-        var createComp = () => Context.RenderComponent<ParameterStateScopeExceptionTestComp>();
+        var createComp = () => Context.RenderComponent<ParameterStateMultipleScopeTestComp>();
 
-        createComp.Should().NotThrow<TargetInvocationException>();
+        createComp.Should().NotThrow<Exception>();
+    }
+
+    [Test]
+    public void ShouldHaveTwoScopes()
+    {
+        var comp = Context.RenderComponent<ParameterStateMultipleScopeTestComp>();
+
+        comp.Instance.ParameterSetUnion.Count.Should().Be(2);
     }
 
     [Test]
