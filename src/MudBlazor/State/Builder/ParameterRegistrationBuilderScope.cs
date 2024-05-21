@@ -47,7 +47,12 @@ internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilder
 
         return builder;
     }
-
+    
+    /// <summary>
+    /// Sets the scope option for the current instance.
+    /// </summary>
+    /// <param name="scopeOption">The scope option to be set.</param>
+    /// <returns>The current instance with the updated scope option.</returns>
     public ParameterRegistrationBuilderScope SetScopeOption(ScopeOption scopeOption)
     {
         _scopeOption = scopeOption;
