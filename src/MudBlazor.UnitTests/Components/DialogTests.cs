@@ -962,6 +962,85 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("div.mud-dialog-title").GetAttribute("class").Should().Be(expectedClassname);
         }
+
+        /// <summary>
+        /// Opening a dialog, editing the binding, then confirming it changed after
+        /// </summary>
+        [Test]
+        public void EditBindingTest()
+        {
+            var data = new EditBindingDialog.EditBindingDialogData() { Value = "initial value" };
+            var comp = Context.RenderComponent<EditBindingDialogLauncher>(c => c.Add(p => p.Data, data));
+
+            // Confirm binding was set up correctly.
+            comp.Instance.Data.Value.Should().Be("initial value");
+
+            // Open the dialog via link.
+            comp.Find(".mud-link").Click();
+
+            // Find the dialog.
+            var dialog = comp.FindComponent<EditBindingDialog>();
+
+            // Change the binding.
+            dialog.Instance.Data.Value.Should().Be("initial value");
+            dialog.Instance.UncommittedValue.Should().Be("initial value");
+            dialog.Find("input").Input("new value");
+            dialog.Instance.UncommittedValue.Should().Be("new value");
+
+            // Submit the data and close the dialog.
+            comp.Find(".submit-button").Click();
+
+            // The new data should be immediately available.
+            data.Value.Should().Be("new value");
+        }
+
+        /// <summary>
+        /// Opening a dialog, editing the binding, then confirming it changed after
+        /// </summary>
+        [Test]
+        public void EditBindingTest_OpenTwice()
+        {
+            var data = new EditBindingDialog.EditBindingDialogData() { Value = "initial value" };
+            var comp = Context.RenderComponent<EditBindingDialogLauncher>(c => c.Add(p => p.Data, data));
+
+            // Confirm binding was set up correctly.
+            comp.Instance.Data.Value.Should().Be("initial value");
+
+            // Open the dialog via link.
+            comp.Find(".mud-link").Click();
+
+            // Find the dialog.
+            var dialog = comp.FindComponent<EditBindingDialog>();
+
+            // Change the binding.
+            dialog.Instance.Data.Value.Should().Be("initial value");
+            dialog.Instance.UncommittedValue.Should().Be("initial value");
+            dialog.Find("input").Input("new value");
+            dialog.Instance.UncommittedValue.Should().Be("new value");
+
+            // Submit the data and close the dialog.
+            comp.Find(".submit-button").Click();
+
+            // The new data should be immediately available.
+            data.Value.Should().Be("new value");
+
+            // Open the dialog again via link.
+            comp.Find(".mud-link").Click();
+
+            // Find the dialog.
+            dialog = comp.FindComponent<EditBindingDialog>();
+
+            // Change the binding.
+            dialog.Instance.UncommittedValue.Should().Be("new value");
+            dialog.Find("input").Input("second new value");
+            dialog.Instance.UncommittedValue.Should().Be("second new value");
+
+            // Submit the data and close the dialog.
+            comp.Find(".submit-button").Click();
+
+            // The new data should be immediately available.
+            data.Value.Should().Be("second new value");
+        }
     }
 
     internal class CustomDialogService : DialogService

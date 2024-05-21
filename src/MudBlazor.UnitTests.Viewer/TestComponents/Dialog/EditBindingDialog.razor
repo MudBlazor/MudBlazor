@@ -1,0 +1,42 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDialog Class="binding-dialog">
+    <DialogContent>
+        <MudTextField Class="binding-text-field" T="string" @bind-Text="UncommittedValue" Immediate />
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton Class="submit-button" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private EditBindingDialogData _data;
+
+    [CascadingParameter]
+    public MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public EditBindingDialogData Data
+    {
+        get => _data;
+        set
+        {
+            _data = value;
+            UncommittedValue = value.Value;
+        }
+    }
+
+    public string UncommittedValue { get; set; }
+
+    private void Submit()
+    {
+        Data.Value = UncommittedValue;
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    public record EditBindingDialogData
+    {
+        public string Value { get; set; }
+    }
+}
