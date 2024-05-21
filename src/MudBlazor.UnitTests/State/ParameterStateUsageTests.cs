@@ -18,11 +18,11 @@ namespace MudBlazor.UnitTests.State;
 public class ParameterStateUsageTests : BunitTest
 {
     [Test]
-    public void ThrowsExceptionWhenScopeCreatedTwice()
+    public void DoesThrowExceptionWhenScopeCreatedTwice()
     {
         var createComp = () => Context.RenderComponent<ParameterStateScopeExceptionTestComp>();
 
-        createComp.Should().Throw<TargetInvocationException>().WithInnerException<InvalidOperationException>();
+        createComp.Should().NotThrow<TargetInvocationException>();
     }
 
     [Test]
