@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,7 +79,7 @@ public class ParameterSetTests
     }
 
     [Test]
-    public void Add_IgnoreSameRegistration()
+    public void Add_ThrowsExceptionIfParameterAlreadyRegistered()
     {
         // Arrange
         const int Parameter = 1;
@@ -89,10 +90,11 @@ public class ParameterSetTests
             .Attach();
 
         // Act
-        var parameterSet = new ParameterSet(parameterState);
+        var parameterSet = new ParameterSet(parameterState, parameterState);
+        var count = ()=> parameterSet.Count();
 
         // Assert
-        parameterSet.Count().Should().Be(1);
+        count.Should().Throw<ArgumentException>();
     }
 
     [Test]
