@@ -91,7 +91,7 @@ public class ParameterSetTests
 
         // Act
         var parameterSet = new ParameterSet(parameterState, parameterState);
-        var count = ()=> parameterSet.Count();
+        var count = () => parameterSet.Count();
 
         // Assert
         count.Should().Throw<ArgumentException>();
