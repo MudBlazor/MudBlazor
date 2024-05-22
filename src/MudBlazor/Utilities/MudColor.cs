@@ -47,9 +47,15 @@ namespace MudBlazor.Utilities
         private const double Epsilon = 0.000000000000001;
         private readonly byte[] _valuesAsByte;
 
+        /// <summary>
+        /// Gets the hexadecimal representation of the color.
+        /// </summary>
         [JsonIgnore]
         public string Value => $"#{R:x2}{G:x2}{B:x2}{A:x2}";
 
+        /// <summary>
+        /// Gets the 32-bit unsigned integer representation of the color.
+        /// </summary>
         [JsonIgnore]
         public uint UInt32 => (uint)(R << 24 | G << 16 | B << 8 | A);
 
