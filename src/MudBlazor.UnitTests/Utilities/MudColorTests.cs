@@ -749,13 +749,6 @@ namespace MudBlazor.UnitTests.Utilities
             mudColor.Value.Should().BeEquivalentTo("#" + rgba.ToString("X8"));
             ((uint)mudColor).Should().Be(rgba);
             (mudColor.UInt32).Should().Be(rgba);
-            mudColor = new()
-            {
-                UInt32 = rgba
-            };
-            mudColor.Value.Should().BeEquivalentTo("#" + rgba.ToString("X8"));
-            ((uint)mudColor).Should().Be(rgba);
-            (mudColor.UInt32).Should().Be(rgba);
         }
     }
 }

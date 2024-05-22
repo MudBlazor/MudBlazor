@@ -51,17 +51,7 @@ namespace MudBlazor.Utilities
         public string Value => $"#{R:x2}{G:x2}{B:x2}{A:x2}";
 
         [JsonIgnore]
-        public uint UInt32
-        {
-            get => (uint)(R << 24 | G << 16 | B << 8 | A);
-            set
-            {
-                _valuesAsByte[0] = (byte)(value >> 24);
-                _valuesAsByte[1] = (byte)(value >> 16);
-                _valuesAsByte[2] = (byte)(value >> 8);
-                _valuesAsByte[3] = (byte)value;
-            }
-        }
+        public uint UInt32 => (uint)(R << 24 | G << 16 | B << 8 | A);
 
         public static explicit operator uint(MudColor mudColor) => mudColor.UInt32;
 
