@@ -12,11 +12,16 @@
   </PropertyGroup>
 
   <!--Analyzer Config-->
-  <PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <MudAllowedAttributePattern>LowerCase</MudAllowedAttributePattern>
     <MudIllegalParameters>V7IgnoreCase</MudIllegalParameters>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <MudAllowedAttributePattern>LowerCase</MudAllowedAttributePattern>
+    <MudIllegalParameters>V7IgnoreCase</MudIllegalParameters>
+  </PropertyGroup>
+  
   <ItemGroup>
     <CompilerVisibleProperty Include="MudDebugAnalyzer" />
     <CompilerVisibleProperty Include="MudAllowedAttributePattern" />

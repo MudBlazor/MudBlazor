@@ -57,6 +57,9 @@ namespace MudBlazor.Analyzers
                     illegalParameters = IllegalParameters.V7IgnoreCase;
                 }
 
+                if (illegalParameters == IllegalParameters.None && allowedAttributePattern == AllowedAttributePattern.Any)
+                    return;
+
                 var illegalParameterSet = new IllegalParameterSet(ctx.Compilation, illegalParameters);
 
                 var analyzerContext = new AnalyzerContext(ctx.Compilation, illegalParameterSet, allowedAttributePattern);
