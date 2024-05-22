@@ -88,6 +88,7 @@ namespace MudBlazor.Docs.Models
                 [typeof(StackedBar)] = "stackedbarchart",
                 [typeof(Donut)] = "donutchart",
                 [typeof(Line)] = "linechart",
+                [typeof(TimeSeries)] = "timeserieschart",
                 [typeof(Pie)] = "piechart",
                 [typeof(MudChip<T>)] = "chips",
                 [typeof(ChartOptions)] = "options"

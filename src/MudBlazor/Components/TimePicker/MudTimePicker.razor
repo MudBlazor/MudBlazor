@@ -1,20 +1,22 @@
 ﻿@using MudBlazor.Internal
+@using MudBlazor.Resources
 @namespace MudBlazor
 @inherits MudPicker<TimeSpan?>
+@inject InternalMudLocalizer Localizer
 
 @Render
 
-@code{
+@code {
 
-    protected override RenderFragment PickerContent=> 
+    protected override RenderFragment PickerContent => 
     @<CascadingValue Value="@this" IsFixed="true">
         <MudPickerToolbar Class="@ToolbarClassname" Style="@Style" ShowToolbar="@ShowToolbar" Orientation="@Orientation" PickerVariant="@PickerVariant" Color="@Color">
             <div class="mud-timepicker-hourminute mud-ltr">
                 @if (TimeEditMode == TimeEditMode.Normal)
                 {
-                <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@HoursButtonClassname" OnClick="@OnHourClickAsync">@GetHourString()</MudButton>
-                <MudText Typo="@Typo.h2" Class="mud-timepicker-separator">:</MudText>
-                <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@MinuteButtonClassname" OnClick="@OnMinutesClick">@GetMinuteString()</MudButton>
+                    <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@HoursButtonClassname" OnClick="@OnHourClickAsync" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_HourClick)]">@GetHourString()</MudButton>
+                    <MudText Typo="@Typo.h2" Class="mud-timepicker-separator" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_TimeSeparator)]">:</MudText>
+                    <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@MinuteButtonClassname" OnClick="@OnMinutesClick" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_MinuteClick)]">@GetMinuteString()</MudButton>
                 }
                 else
                 {
@@ -23,9 +25,9 @@
             </div>
             @if (AmPm)
             {
-                <div class="mud-timepicker-ampm">
-                <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@AmButtonClassname" OnClick="@OnAmClickedAsync">AM</MudButton>
-                <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@PmButtonClassname" OnClick="@OnPmClickedAsync">PM</MudButton>
+                <div class="mud-timepicker-ampm" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_ToggleAmPm)]">
+                    <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@AmButtonClassname" OnClick="@OnAmClickedAsync" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_AmClick)]">AM</MudButton>
+                    <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@PmButtonClassname" OnClick="@OnPmClickedAsync" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_PmClick)]">PM</MudButton>
                 </div>
             }
         </MudPickerToolbar>
@@ -37,39 +39,39 @@
                         <div class="@GetClockPointerColor()" style="height: @GetPointerHeight(); transform: @GetPointerRotation()">
                             <div class="@GetClockPointerThumbColor()"></div>
                         </div>
-                        <div class="@HourDialClassname">
+                        <div class="@HourDialClassname" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_HourDial)]">
                             @if (AmPm)
                             {
                                 @*Hours from 1 to 12*@
-                                for(int i = 1; i <= 12; ++i)
+                                for (int i = 1; i <= 12; ++i)
                                 {
                                     var _i = i;
-                                    var angle =  (6 - _i) * 30;
+                                    var angle = (6 - _i) * 30;
                                     <MudText Class="@GetNumberColor(_i)" Style="@GetTransform(angle, 109, 0, 5)">@_i</MudText>
                                 }
-                                for(int i = 1; i <= 12; ++i)
+                                for (int i = 1; i <= 12; ++i)
                                 {
                                     var _i = i;
-                                    <div class="mud-picker-stick mud-hour" style="@($"transform: rotateZ({_i * 30}deg);")" @onclick="(async () => await OnClickHourAsync(_i))" @onpointerover="(async () => await OnPointerOverHourAsync(_i))" @onclick:stopPropagation="true"></div>
+                                    <div class="mud-picker-stick mud-hour" style="@($"transform: rotateZ({_i * 30}deg);")" @onclick="(async () => await OnClickHourAsync(_i))" @onpointerover="(async () => await OnPointerOverHourAsync(_i))" @onclick:stopPropagation="true" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_HourRotation), $"{_i}"]"></div>
                                 }
                             }
                             else
                             {
                                 @*Hours from 13 to 24 (00)*@
-                                for(int i = 1; i <= 12; ++i)
+                                for (int i = 1; i <= 12; ++i)
                                 {
                                     var _i = i;
-                                    var angle =  (6 - _i) * 30;
-                                    <MudText Class="@GetNumberColor((_i + 12) % 24)" Style="@GetTransform(angle, 109, 0, 5)">@(((_i + 12) % 24).ToString("D2"))</MudText>
+                                    var angle = (6 - _i) * 30;
+                                    <MudText Class="@GetNumberColor((_i + 12) % 24)" Style="@GetTransform(angle, 109, 0, 5)" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_ClockNumber)]">@(((_i + 12) % 24).ToString("D2"))</MudText>
                                 }
                                 @*Hours from 1 to 12*@
-                                for(int i = 1; i <= 12; ++i)
+                                for (int i = 1; i <= 12; ++i)
                                 {
                                     var _i = i;
-                                    var angle =  (6 - _i) * 30;
-                                    <MudText Class="@GetNumberColor(_i)" Typo="Typo.body2" Style="@GetTransform(angle, 74, 0, 40)">@(_i.ToString("D2"))</MudText>
+                                    var angle = (6 - _i) * 30;
+                                    <MudText Class="@GetNumberColor(_i)" Typo="Typo.body2" Style="@GetTransform(angle, 74, 0, 40)" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_ClockNumber)]">@(_i.ToString("D2"))</MudText>
                                 }
-                                for(int i = 1; i <= 12; ++i)
+                                for (int i = 1; i <= 12; ++i)
                                 {
                                     var _i = i;
                                     <div class="mud-picker-stick" style="@($"transform: rotateZ({_i * 30}deg);")">
@@ -79,18 +81,18 @@
                                 }
                             }
                         </div>
-                        <div class="@MinuteDialClassname">   
+                        <div class="@MinuteDialClassname" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_MinuteDial)]">   
                             @*Minutes from 05 to 60 (00) - step 5*@                     
                             @for (int i = 0; i < 12; ++i)
                             {
                                 var _i = i;
-                                var angle =  (6 - _i) * 30;
-                                <MudText Class="@GetNumberColor(_i * 5)" Style="@GetTransform(angle, 109, 0, 5)">@((_i * 5).ToString("D2"))</MudText>
+                                var angle = (6 - _i) * 30;
+                                <MudText Class="@GetNumberColor(_i * 5)" Style="@GetTransform(angle, 109, 0, 5)" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_ClockNumber)]">@((_i * 5).ToString("D2"))</MudText>
                             }
                             @for (int i = 0; i < 60; ++i)
                             {
                                 var _i = i;
-                                <div class="mud-picker-stick mud-minute" style="@($"transform: rotateZ({_i * 6}deg);")" @onclick="(async () => await OnClickMinuteAsync(_i))" @onpointerover="(async () => await OnPointerOverMinuteAsync(_i))" @onclick:stopPropagation="true"></div>
+                                <div class="mud-picker-stick mud-minute" style="@($"transform: rotateZ({_i * 6}deg);")" @onclick="(async () => await OnClickMinuteAsync(_i))" @onpointerover="(async () => await OnPointerOverMinuteAsync(_i))" @onclick:stopPropagation="true" aria-label="@Localizer[nameof(LanguageResource.MudTimePicker_MinuteRotation), $"{_i}"]"></div>
                             }
                         </div>
                     </div>
@@ -98,5 +100,5 @@
             </div>
         </MudPickerContent>
     </CascadingValue>;
-    
+
 }
