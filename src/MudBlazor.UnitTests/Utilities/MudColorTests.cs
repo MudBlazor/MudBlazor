@@ -737,5 +737,25 @@ namespace MudBlazor.UnitTests.Utilities
 
             palette.Should().NotBeNull();
         }
+
+        [Test]
+        [TestCase(0x000000FFu)]//Black
+        [TestCase(0xFF0000FFu)]//Red
+        [TestCase(0x00FF00FFu)]//Green
+        [TestCase(0x0000FFFFu)]//Blue
+        public void UInt32(uint rgba)
+        {
+            MudColor mudColor = new(rgba);
+            mudColor.Value.Should().BeEquivalentTo("#" + rgba.ToString("X8"));
+            ((uint)mudColor).Should().Be(rgba);
+            (mudColor.UInt32).Should().Be(rgba);
+            mudColor = new()
+            {
+                UInt32 = rgba
+            };
+            mudColor.Value.Should().BeEquivalentTo("#" + rgba.ToString("X8"));
+            ((uint)mudColor).Should().Be(rgba);
+            (mudColor.UInt32).Should().Be(rgba);
+        }
     }
 }
