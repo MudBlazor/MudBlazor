@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.State;
 
+#nullable enable
 /// <summary>
 /// Represents a collection of multiple <see cref="ParameterSet"/> instances combined into a union.
 /// </summary>

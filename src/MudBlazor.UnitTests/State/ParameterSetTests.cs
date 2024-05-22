@@ -704,11 +704,14 @@ public class ParameterSetTests
         // Act
         var actualParameters = new List<IParameterComponentLifeCycle>();
         var enumerator = ((IEnumerable)parameters).GetEnumerator();
-        while (enumerator.MoveNext())
+        using (enumerator as IDisposable)
         {
-            if (enumerator.Current is IParameterComponentLifeCycle parameter)
+            while (enumerator.MoveNext())
             {
-                actualParameters.Add(parameter);
+                if (enumerator.Current is IParameterComponentLifeCycle parameter)
+                {
+                    actualParameters.Add(parameter);
+                }
             }
         }
 

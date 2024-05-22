@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.State;
 
@@ -6,6 +7,7 @@ namespace MudBlazor.State;
 /// <summary>
 /// Represents information about a parameter.
 /// </summary>
+[DebuggerDisplay("ParameterName = {ParameterName}")]
 internal class ParameterMetadata
 {
     /// <summary>
@@ -56,4 +58,6 @@ internal class ParameterMetadata
         : this(parameterName, null)
     {
     }
+
+    public override string ToString() => ParameterName;
 }
