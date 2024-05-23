@@ -25,7 +25,15 @@ public static partial class ApiDocumentation
     /// <param name="name">The name of the type to find.</param>
     public static DocumentedType GetType(string name)
     {
-        // Was the type found with the literal name?
-        return Types.TryGetValue(name, out var type) ? type : null;
+        // First, try an exact match
+        if (Types.TryGetValue(name, out var match))
+        {
+            return match;
+        }
+        if (Types.TryGetValue("MudBlazor." + name, out match))
+        {
+            return match;
+        }
+        return null;
     }
 }

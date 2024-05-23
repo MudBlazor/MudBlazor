@@ -17,9 +17,9 @@ namespace MudBlazor.Docs.Components;
 #nullable enable
 
 /// <summary>
-/// Represents a table which displays properties for a documented type.
+/// Represents a table which displays global settings for a documented type.
 /// </summary>
-public partial class ApiPropertyTable
+public partial class ApiGlobalSettingTable
 {
     /// <summary>
     /// This table.
@@ -37,6 +37,7 @@ public partial class ApiPropertyTable
     /// </summary>
     public ApiMemberGrouping CurrentGrouping { get; set; } = ApiMemberGrouping.Categories!;
 
+    /// <inheritdoc />
     protected override async Task OnParametersSetAsync()
     {
         if (Table != null)
@@ -59,7 +60,7 @@ public partial class ApiPropertyTable
         }
 
         // Get properties which are in the selected categories
-        var properties = Type.Properties.Values.AsQueryable();
+        var properties = Type.GlobalSettings.Values.AsQueryable();
 
         // What's the grouping?
         if (CurrentGrouping == ApiMemberGrouping.Categories)
@@ -78,7 +79,7 @@ public partial class ApiPropertyTable
 
             properties = orderedProperties;
         }
-     
+
         // Make the final results
         var results = properties.ToList();
 

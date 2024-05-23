@@ -28,4 +28,6 @@ public class DocumentedType
     public Dictionary<string, DocumentedMethod> Methods { get; set; } = [];
     public Dictionary<string, DocumentedEvent> Events { get; set; } = [];
     public Dictionary<string, DocumentedField> Fields { get; set; } = [];
+    public Dictionary<string, DocumentedType> NestedTypes { get; set; } = [];
+    public Dictionary<string, DocumentedProperty> GlobalSettings { get; set; } = [];
 }

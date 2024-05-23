@@ -1,0 +1,41 @@
+﻿<MudTable T="DocumentedProperty" @ref="Table" ServerData="@GetData"
+          Elevation="0" Class="ma-0 mud-width-full" Hover="true" Dense="true"
+          AllowUnsorted="false" GroupBy="@CurrentGroups">
+    <GroupHeaderTemplate>
+        @if (CurrentGrouping == ApiMemberGrouping.Inheritance)
+        {
+            <MudTh colspan="4">
+                <MudText Typo="Typo.h6">@context.Key</MudText>
+            </MudTh>
+        }
+        else if (CurrentGrouping == ApiMemberGrouping.Categories)
+        {
+            <MudTh colspan="4">
+                <MudText Typo="Typo.h6">@(context.Key ?? "General")</MudText>
+            </MudTh>
+        }
+    </GroupHeaderTemplate>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="Name" InitialDirection="SortDirection.Ascending">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="Type">Type</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="DeclaringType">Declared In</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="Description">Description</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd Class="docs-content-api-cell" Style="white-space: nowrap;" DataLabel="Name">
+            <CodeInline>@context.Name</CodeInline>
+        </MudTd>
+        <MudTd Class="docs-content-api-cell" DataLabel="Type">
+            <CodeInline>@context.TypeCSharp</CodeInline>
+        </MudTd>
+        <MudTd Class="docs-content-api-cell" DataLabel="Declaring Type">
+            <MudLink OnClick="@(() => OnDeclaringTypeClicked(@context.DeclaringTypeApiLink))"><CodeInline>@context.DeclaringType</CodeInline></MudLink>
+        </MudTd>
+        <MudTd id="@context.Name" Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">
+            @((MarkupString)(context.Summary + " " + context.Remarks))
+        </MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudAlert Severity="Severity.Info">No properties match the current filters.</MudAlert>
+    </NoRecordsContent>
+</MudTable>

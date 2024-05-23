@@ -119,6 +119,7 @@ public partial class ApiDocumentationBuilder()
     public bool Execute()
     {
         AddTypesToDocument();
+        AddGlobalsToDocument();
         MergeXmlDocumentation();
         ExportApiDocumentation();
         CalculateDocumentationCoverage();
@@ -132,14 +133,9 @@ public partial class ApiDocumentationBuilder()
     {
         // Get all public types as a sorted dictionary
         PublicTypes = new(Assembly.GetTypes().Where(type => type.IsPublic).ToDictionary(r => r.Name, v => v));
-
         foreach (var type in PublicTypes)
         {
-            var documentedType = AddTypeToDocument(type.Value);
-            AddPropertiesToDocument(type.Value, documentedType);
-            AddMethodsToDocument(type.Value, documentedType);
-            AddFieldsToDocument(type.Value, documentedType);
-            AddEventsToDocument(type.Value, documentedType);
+            AddTypeToDocument(type.Value);
         }
     }
 
@@ -164,8 +160,20 @@ public partial class ApiDocumentationBuilder()
                 Type = type,
             };
 
-            // Add the populated type
+            // Add the root-level type
             Types.Add(type.FullName, documentedType);
+
+            // Record properties, methods, fields, and events            
+            AddPropertiesToDocument(type, documentedType);
+            AddMethodsToDocument(type, documentedType);
+            AddFieldsToDocument(type, documentedType);
+            AddEventsToDocument(type, documentedType);
+
+            // Also add nested types            
+            foreach (var nestedType in type.GetNestedTypes(BindingFlags.Public))
+            {
+                AddTypeToDocument(nestedType);
+            }
         }
 
         return documentedType;
@@ -456,7 +464,6 @@ public partial class ApiDocumentationBuilder()
     /// <param name="documentedType">The documentation for the type.</param>
     public void AddMethodsToDocument(Type type, DocumentedType documentedType)
     {
-
         // Look for public methods
         var methods = type.GetMethods().ToList();
         // Add protected methods
@@ -464,7 +471,6 @@ public partial class ApiDocumentationBuilder()
         methods = methods
             // Remove duplicates
             .DistinctBy(method => method.Name)
-            .OrderBy(method => method.Name)
             .Where(method =>
                 // Exclude getter and setter methods
                 !method.Name.StartsWith("get_")
@@ -472,7 +478,9 @@ public partial class ApiDocumentationBuilder()
                 // Exclude inherited .NET methods
                 && !method.Name.StartsWith("Microsoft")
                 && !method.Name.StartsWith("System")
-            ).ToList();
+            )
+            .OrderBy(method => method.Name)
+            .ToList();
         // Look for methods and add related types
         foreach (var method in methods)
         {
@@ -528,7 +536,7 @@ public partial class ApiDocumentationBuilder()
     /// <exception cref="FileNotFoundException"></exception>
     public void MergeXmlDocumentation()
     {
-        // Load the XML documentation file
+        // Open the XML documentation file
         var path = Assembly.Location.Replace(".dll", ".xml", StringComparison.OrdinalIgnoreCase);
         using var reader = new XmlTextReader(path);
         reader.WhitespaceHandling = WhitespaceHandling.None;
@@ -595,8 +603,8 @@ public partial class ApiDocumentationBuilder()
         var property = Properties.FirstOrDefault(type => type.Value.XmlKey == memberFullName);
         if (property.Value != null)
         {
-            property.Value.Remarks = GetRemarks(xmlContent);
             property.Value.Summary = GetSummary(xmlContent);
+            property.Value.Remarks = GetRemarks(xmlContent);
         }
         else
         {
@@ -801,6 +809,35 @@ public partial class ApiDocumentationBuilder()
             Console.WriteLine($"API Builder: WARNING: {UnresolvedFields.Count} fields have XML documentation which couldn't be matched to a type's property.");
         }
     }
+
+    /// <summary>
+    /// Finds <see cref="MudGlobal"/> settings related to all types.
+    /// </summary>
+    public void AddGlobalsToDocument()
+    {
+        // Find all of the "MudGlobal" properties
+        var globalProperties = Properties.Where(property => property.Value.Key.StartsWith("MudBlazor.MudGlobal")).ToList();
+        foreach (var globalProperty in globalProperties)
+        {
+            // TODO: Make a more explicit way of doing this without string parsing, like an attribute
+            // or making each global a static property in the component it affects.
+
+            // Calculate the class this property links to
+            var relatedTypeName = "MudBlazor.Mud" + GlobalComponentNameRegEx().Match(globalProperty.Key).Groups[1].Value;
+
+            // Look up the related type
+            if (Types.TryGetValue(relatedTypeName, out var type))
+            {
+                type.GlobalSettings.Add(globalProperty.Key, globalProperty.Value);
+            }
+        }
+    }
+
+    /// <summary>
+    /// The regular expression used to extract XML documentation summaries.
+    /// </summary>
+    [GeneratedRegex(@"MudBlazor\.MudGlobal\+([ \S]*)Defaults\.")]
+    private static partial Regex GlobalComponentNameRegEx();
 
     /// <summary>
     /// The regular expression used to extract XML documentation summaries.

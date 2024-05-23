@@ -23,6 +23,14 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
     }
 
     /// <summary>
+    /// Indents generated code to be more readable.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>true</c>.  When <c>false</c>, no code will be indented, which saves space but is less readable.
+    /// </remarks>
+    public bool EnableIndentation { get; set; } = true;
+
+    /// <summary>
     /// Any types to exclude from documentation.
     /// </summary>
     public static List<string> ExcludedTypes { get; private set; } =
@@ -122,6 +130,11 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
     /// </summary>
     public void WriteIndent()
     {
+        if (!EnableIndentation)
+        {
+            return;
+        }
+
         for (var index = 0; index < IndentLevel; index++)
         {
             Write("\t");
@@ -281,7 +294,7 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
     /// <param name="type">The type to serialize.</param>
     public void WriteType(DocumentedType type)
     {
-        WriteIndented($"types.Add(\"{type.Name}\", new()");
+        WriteIndented($"types.Add(\"{type.Key}\", new()");
         WriteLine(" {");
         Indent();
         WriteLineIndented($"Name = \"{type.Name}\", ");
@@ -290,6 +303,7 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
         WriteSummaryIndented(type.Summary);
         WriteRemarksIndented(type.Remarks);
         WriteProperties(type);
+        WriteGlobalSettings(type);
         WriteFields(type);
         WriteMethods(type);
         Outdent();
@@ -323,6 +337,41 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
         Indent();
 
         foreach (var property in type.Properties)
+        {
+            WriteProperty(type, property.Value);
+        }
+
+        Outdent();
+        WriteLineIndented("},");
+    }
+
+    /// <summary>
+    /// Serializes the specified MudGlobal settings.
+    /// </summary>
+    /// <param name="type">The type containing the settings.</param>
+    public void WriteGlobalSettings(DocumentedType type)
+    {
+        /* Example:
+         
+            GlobalSettings = { 
+				{ "JavaScriptListenerId", new() { Type = "Guid", Summary = "Gets the ID of the JavaScript listener.",  } },
+				{ "BrowserWindowSize", new() { Type = "BrowserWindowSize", Summary = "Gets the browser window size.",  } },
+				{ "Breakpoint", new() { Type = "Breakpoint", Summary = "Gets the breakpoint associated with the browser size.",  } },
+				{ "IsImmediate", new() { Type = "Boolean",  } },
+            },
+          
+         */
+
+        // Anything to do?
+        if (type.GlobalSettings.Count == 0)
+        {
+            return;
+        }
+
+        WriteLineIndented("GlobalSettings = { ");
+        Indent();
+
+        foreach (var property in type.GlobalSettings)
         {
             WriteProperty(type, property.Value);
         }

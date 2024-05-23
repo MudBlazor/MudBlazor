@@ -23,15 +23,16 @@
                 </DocsPageSection>
             }
 
-            @*  <DocsPageSection>
-        <SectionHeader Title="Inheritance" />
-        <MudGrid>
-        <MudItem xs="5">
-        <ApiTypeHierarchy Type="@DocumentedType" />
-        </MudItem>
-        <MudItem xs="7"></MudItem>
-        </MudGrid>
-        </DocsPageSection> *@
+            @*  
+            <DocsPageSection>
+                <SectionHeader Title="Inheritance" />
+                <MudGrid>
+                    <MudItem xs="5">
+                        <ApiTypeHierarchy Type="@DocumentedType" />
+                    </MudItem>
+                    <MudItem xs="7"></MudItem>
+                </MudGrid>
+            </DocsPageSection> *@
 
             <DocsPageSection>
                 <SectionHeader Title="Properties" />
@@ -53,6 +54,16 @@
                     <SectionHeader Title="Derived Classes" />
                     <SectionContent Outlined="true">
                         <ApiTypeTable BaseType="@DocumentedType" />
+                    </SectionContent>
+                </DocsPageSection>
+            }
+
+            @if(DocumentedType.GlobalSettings.Count > 0)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Global Settings" />
+                    <SectionContent Outlined="true">
+                        <ApiGlobalSettingTable Type="@DocumentedType" />
                     </SectionContent>
                 </DocsPageSection>
             }
