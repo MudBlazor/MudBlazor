@@ -16,7 +16,7 @@ namespace MudBlazor
 
         private Range<T> OnGet(string value)
         {
-            if (!Split(value, out string valueStart, out string valueEnd))
+            if (!Split(value, out var valueStart, out var valueEnd))
                 return null;
 
             return new Range<T>(_converter.Get(valueStart), _converter.Get(valueEnd));
@@ -42,11 +42,20 @@ namespace MudBlazor
         {
             valueStart = valueEnd = string.Empty;
 
-            if (string.IsNullOrEmpty(value) || value[0] != '[' || value.Last() != ']' || !value.Contains(';'))
+            if (string.IsNullOrEmpty(value) || value[0] != '[' || value[^1] != ']')
+            {
                 return false;
+            }
 
-            valueStart = value.Split(';')[0][1..];
-            valueEnd = value.Split(';')[1][..^1];
+            var idx = value.IndexOf(';');
+
+            if (idx < 1)
+            {
+                return false;
+            }
+
+            valueStart = value[1..idx];
+            valueEnd = value[(idx + 1)..^1];
 
             return true;
         }

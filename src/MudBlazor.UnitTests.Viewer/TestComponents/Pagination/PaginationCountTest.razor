@@ -1,0 +1,24 @@
+﻿<MudPagination ShowPreviousButton="false" ShowNextButton="false" @bind-Selected="@_selected" @bind-Count="@Count" @bind-MiddleCount="@_middleCount" @bind-BoundaryCount="@_boundaryCount"/>
+
+<MudTextField Class="mud-pagination-test-count" @bind-Value="@Count" Label="Count"/>
+<MudTextField Class="mud-pagination-test-boundary-count" @bind-Value="@_boundaryCount" Label="BoundaryCount"/>
+<MudTextField Class="mud-pagination-test-middle-count" @bind-Value="@_middleCount" Label="MiddleCount"/>
+
+@code {
+    public static string __description__ = "The number of total items, boundary items and middle items should change when altering the textfields.";
+    private int _selected = 6;
+
+    private int _count = 11;
+
+    private int Count {
+        get => _count;
+        set {
+            _count = value;
+            _selected = _count / 2;
+            _selected = _selected % 2 == 0 ? _selected + 1 : _selected;
+        }
+    }
+
+    private int _boundaryCount = 2;
+    private int _middleCount = 3;
+}

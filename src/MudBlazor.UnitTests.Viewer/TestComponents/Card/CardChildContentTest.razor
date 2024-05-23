@@ -1,0 +1,21 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudCard>
+    <MudCardHeader>
+        <ChildContent>
+            <MudNumericField @bind-Value="_value" />
+            <MudButton OnClick="TestClick">Click</MudButton>
+        </ChildContent>
+    </MudCardHeader>
+</MudCard>
+
+
+@code
+{
+    public static string __description__ = "Badge test";
+    private int _value = 0;
+    private void TestClick()
+    {
+        _value = 1;
+    }
+}

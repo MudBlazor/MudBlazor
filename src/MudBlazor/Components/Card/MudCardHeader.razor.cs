@@ -1,34 +1,44 @@
-﻿using System;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
+    /// <summary>
+    /// Represents the top portion of a <see cref="MudCard"/>.
+    /// </summary>
     public partial class MudCardHeader : MudComponentBase
     {
-        protected string Classname =>
-        new CssBuilder("mud-card-header")
-          .AddClass(Class)
-        .Build();
+        protected string Classname => new CssBuilder("mud-card-header")
+            .AddClass(Class)
+            .Build();
 
         /// <summary>
-        /// If used renders child content of the CardHeaderAvatar.
+        /// The avatar to display within this header.
         /// </summary>
-        [Parameter] public RenderFragment CardHeaderAvatar { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Card.Behavior)]
+        public RenderFragment? CardHeaderAvatar { get; set; }
 
         /// <summary>
-        /// If used renders child content of the CardHeaderContent.
+        /// The main content of this header.
         /// </summary>
-        [Parameter] public RenderFragment CardHeaderContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Card.Behavior)]
+        public RenderFragment? CardHeaderContent { get; set; }
 
         /// <summary>
-        /// If used renders child content of the CardHeaderActions.
+        /// The actions displayed within this header.
         /// </summary>
-        [Parameter] public RenderFragment CardHeaderActions { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Card.Behavior)]
+        public RenderFragment? CardHeaderActions { get; set; }
 
         /// <summary>
-        /// Optional child content
+        /// The custom content within this header.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Card.Behavior)]
+        public RenderFragment? ChildContent { get; set; }
     }
 }

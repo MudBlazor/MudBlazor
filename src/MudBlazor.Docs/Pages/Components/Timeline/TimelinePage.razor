@@ -1,0 +1,80 @@
+﻿@page "/components/timeline"
+
+<DocsPage>
+    <DocsPageHeader Title="Timeline" SubTitle="The timeline displays items in chronological order." />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Basic">
+                <Description>Basic timeline, displaying its <CodeInline>TimelineItem</CodeInline> vertically.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TimelineBasicExample)" Block="true" FullWidth="true">
+                <TimelineBasicExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Item Dots">
+                <Description>The dot of each <CodeInline>TimelineItem</CodeInline> can be changed individually. And can contain conent, like icons and avatars.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TimelineDotsExample)" ShowCode="false"  Block="true" FullWidth="true">
+                <TimelineDotsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Dot style">
+                <Description>The style of each <CodeInline>TimelineItem</CodeInline> dot can be set individually using the <CodeInline>DotStyle</CodeInline> attribute.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TimelineDotsStyleExample)" ShowCode="false"  Block="true" FullWidth="true">
+                <TimelineDotsStyleExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Orientation and Position">
+                <Description><CodeInline>TimelineOrientation</CodeInline> can determine which direction the timeline should go, and <CodeInline>TimelinePosition</CodeInline> sets the lines position.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TimelineOrientationPositionExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TimelineOrientationPositionExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Opposite">
+                <Description>Using <CodeInline>ItemOpposite</CodeInline> renderfragment allows for content to be displayed on both sides. Note that opposite content only is displayed in alternate mode for both vertical and horizontal timelines.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TimelineOppositeExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TimelineOppositeExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Item Modifiers">
+                <Description>Timeline items have item modifiers that append to its content. Modifiers can be turned off with <CodeInline>Modifiers="false"</CodeInline>.<br />If you place a <CodeInline>MudCard</CodeInline> inside the <CodeInline>TimelineItem</CodeInline> a caret will be added to the side of the card.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TimelineItemModifiersExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TimelineItemModifiersExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Item Align">
+                <Description>By setting the <CodeInline>TimelineAlign</CodeInline> on individual <CodeInline>TimelineItems</CodeInline> you can specify what side the item should be on when <CodeInline>Alternate</CodeInline> position is being used.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TimelineItemAlignExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TimelineItemAlignExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Timeline Align">
+                <Description>You can set from which direction the dots should start from by changing the <CodeInline>TimelineAlign</CodeInline> on the <CodeInline>Timeline</CodeInline> component itself.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TimelineAlignExample)" ShowCode="false" Block="true">
+                <TimelineAlignExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

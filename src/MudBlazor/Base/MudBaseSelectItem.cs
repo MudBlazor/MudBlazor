@@ -1,44 +1,65 @@
 ﻿using System.Threading.Tasks;
-using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
+#nullable enable
+    /// <summary>
+    /// Represents a base class for designing selection items.
+    /// </summary>
     public abstract class MudBaseSelectItem : MudComponentBase
     {
-        /// <summary>
-        /// If true, the input element will be disabled.
-        /// </summary>
-        [Parameter] public bool Disabled { get; set; }
+        [Inject]
+        private NavigationManager UriHelper { get; set; } = null!;
 
         /// <summary>
-        /// If true, disables ripple effect.
+        /// Prevents the user from interacting with this item.
         /// </summary>
-        [Parameter] public bool DisableRipple { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.General.Behavior)]
+        public bool Disabled { get; set; }
 
         /// <summary>
-        /// Link to a URL when clicked.
+        /// Shows a ripple effect when the user clicks the button.
         /// </summary>
-        [Parameter] public string Href { get; set; }
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.General.Appearance)]
+        public bool Ripple { get; set; } = true;
 
         /// <summary>
-        /// Child content of component.
+        /// The URL to navigate to when this item is clicked.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.General.ClickAction)]
+        public string? Href { get; set; }
 
         /// <summary>
-        /// Command parameter.
+        /// Performs a full page load during navigation.
         /// </summary>
-        [Parameter] public object CommandParameter { get; set; }
+        /// <remarks>
+        /// Defaults to <c>false</c>. When <c>true</c>, client-side routing is bypassed and the browser is forced to load the new page from the server.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.General.ClickAction)]
+        public bool ForceLoad { get; set; }
 
         /// <summary>
-        /// Command executed when the user clicks on an element.
+        /// The content within this item.
         /// </summary>
-        [Parameter] public ICommand Command { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.General.Behavior)]
+        public RenderFragment? ChildContent { get; set; }
 
-        [Inject] private NavigationManager UriHelper { get; set; }
-
+        /// <summary>
+        /// Occurs when the item has been clicked.
+        /// </summary>
+        /// <remarks>
+        /// This event only occurs when the <see cref="Href"/> property is not set.
+        /// </remarks>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
@@ -48,15 +69,11 @@ namespace MudBlazor
                 return;
             if (Href != null)
             {
-                UriHelper.NavigateTo(Href);
+                UriHelper.NavigateTo(Href, ForceLoad);
             }
             else
             {
                 await OnClick.InvokeAsync(ev);
-                if (Command?.CanExecute(CommandParameter) ?? false)
-                {
-                    Command.Execute(CommandParameter);
-                }
             }
         }
     }

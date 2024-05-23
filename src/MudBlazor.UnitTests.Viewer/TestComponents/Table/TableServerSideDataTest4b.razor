@@ -1,0 +1,55 @@
+@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
+
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudTable ServerData="ServerReload" SortLabel="Sort by">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortLabel="a" T="TestModel">a</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="b" T="TestModel">b</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="a">@context.a</MudTd>
+        <MudTd DataLabel="b">@context.b</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+#pragma warning disable CS1998 // async without await
+    public static string __description__ = "The server-side loaded table should reload data on mobile sort.";
+
+    public class TestModel
+    {
+        public int a { get; set; }
+        public int b { get; set; }
+    }
+    private int totalItems;
+
+    /// <summary>
+    /// Here we simulate getting the paged, filtered and ordered data from the server
+    /// </summary>
+    private async Task<TableData<TestModel>> ServerReload(TableState state, CancellationToken token)
+    {
+        // This creates an in-memory IQueryable variation of our IEnumerable test
+        IQueryable<TestModel> data = new List<TestModel>() { new TestModel() { a=1, b=3 },
+                                            new TestModel() { a=2, b=2 },
+                                            new TestModel() { a=3, b=1 } }.AsQueryable();
+        totalItems = 3;
+        switch (state.SortLabel)
+        {
+            case "a":
+                data = data.OrderByDirection(state.SortDirection, x => x.a);
+                break;
+            case "b":
+                data = data.OrderByDirection(state.SortDirection, x => x.b);
+                break;
+            default:
+                break;
+        }
+        return new TableData<TestModel>() { TotalItems = totalItems, Items = data };
+    }
+
+}

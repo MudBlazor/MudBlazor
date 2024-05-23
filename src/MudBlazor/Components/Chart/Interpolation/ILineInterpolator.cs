@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MudBlazor.Components.Chart.Interpolation
 {
@@ -12,7 +8,5 @@ namespace MudBlazor.Components.Chart.Interpolation
         public double[] GivenXs { get; set; }
         public double[] InterpolatedXs { get; set; }
         public double[] InterpolatedYs { get; set; }
-        public bool InterpolationRequired { get; set; }
-
     }
 }

@@ -1,0 +1,61 @@
+﻿@using MudBlazor.Services
+@namespace MudBlazor.Docs.Examples
+@implements IBrowserViewportObserver
+@implements IAsyncDisposable
+
+<MudCard Class="pa-5">
+    <MudText>Size started with @_start</MudText>
+    @if (_breakpointHistory.Count > 0)
+    {
+        <MudText>And continued with: </MudText>
+        <MudList T="string" Dense="_breakpointHistory.Count > 10">
+            @foreach (var item in _breakpointHistory)
+            {
+                <MudListItem Text="@item.ToString()"></MudListItem>
+            }
+        </MudList>
+    }
+</MudCard>
+
+@code
+{
+    [Inject]
+    private IBrowserViewportService BrowserViewportService { get; set; }
+
+    private List<Breakpoint> _breakpointHistory = new();
+    private Breakpoint _start;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    public async ValueTask DisposeAsync() => await BrowserViewportService.UnsubscribeAsync(this);
+
+    Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();
+
+    ResizeOptions IBrowserViewportObserver.ResizeOptions { get; } = new()
+    {
+        ReportRate = 250,
+        NotifyOnBreakpointOnly = true
+    };
+
+    Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
+    {
+        if (browserViewportEventArgs.IsImmediate)
+        {
+            _start = browserViewportEventArgs.Breakpoint;
+        }
+        else
+        {
+            _breakpointHistory.Add(browserViewportEventArgs.Breakpoint);
+        }
+
+        return InvokeAsync(StateHasChanged);
+    }
+}

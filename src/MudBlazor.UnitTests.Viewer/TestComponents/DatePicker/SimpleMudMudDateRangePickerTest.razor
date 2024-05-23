@@ -1,0 +1,38 @@
+﻿@using System.Globalization;
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPopoverProvider></MudPopoverProvider>
+
+@if (IsDateDisabledFunc != null)
+{
+    <MudDateRangePicker @ref="_picker"
+                        @bind-DateRange="@DateRange"
+                        IsDateDisabledFunc="IsDateDisabledFunc"
+                        @bind-PickerMonth="PickerMonth"
+                        OpenTo="@OpenTo"
+                        StartMonth="@StartMonth"
+                        AdditionalDateClassesFunc="@AdditionalDateClassesFunc" />
+}
+else
+{
+    <MudDateRangePicker @ref="_picker"
+                        @bind-DateRange="@DateRange"
+                        @bind-PickerMonth="PickerMonth"
+                        OpenTo="@OpenTo"
+                        StartMonth="@StartMonth"
+                        AdditionalDateClassesFunc="@AdditionalDateClassesFunc" />
+}
+@code {
+    private MudDateRangePicker _picker;
+
+    [Parameter] public DateRange DateRange { get; set; }
+    [Parameter] public Func<DateTime, bool> IsDateDisabledFunc { get; set; }
+    [Parameter] public DateTime? PickerMonth { get; set; }
+    [Parameter] public OpenTo OpenTo { get; set; } = OpenTo.Date;
+    [Parameter] public DateTime? StartMonth { get; set; }
+    [Parameter] public Func<DateTime, string> AdditionalDateClassesFunc { get; set; }
+
+    public async Task Open() => await InvokeAsync(() => _picker.OpenAsync());
+    public async Task Close() => await InvokeAsync(() => _picker.CloseAsync());
+
+}

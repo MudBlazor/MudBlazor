@@ -1,0 +1,32 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Elevation="0">
+    <MudList T="string">
+        <MudListSubheader>
+            <MudTextField @bind-Value="searchTerm" AdornmentIcon="@Icons.Material.Filled.People"
+                          Adornment="Adornment.End" Immediate="true" Variant="Variant.Outlined"
+                          Label="Names to search"/>
+        </MudListSubheader>
+
+        @{
+            string[] searchTerms = searchTerm.Split(split);
+            for (int i = 0; i < searchTerms.Length; i++)
+                searchTerms[i] = searchTerms[i].Trim();
+        }
+        @foreach (var name in names)
+        {
+            <MudListItem @key="name" Icon="@Icons.Material.Filled.Person">
+                <MudHighlighter Text="@name" HighlightedTexts="@searchTerms" />
+            </MudListItem>
+        }
+    </MudList>
+</MudPaper>
+
+@code {
+    string searchTerm = "William Jordan, Oliver";
+    IEnumerable<string> names = new List<string>
+    {
+        "William Jordan", "Oliver Jones", "William Johnson", "Daniel Williams", "Oliver Simpson"
+    };
+    static readonly char[] split = new char[] { ';', ',', '.' };
+}

@@ -1,0 +1,28 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudButton OnClick="ChangeMax" Variant="Variant.Filled" Class="mb-4">ChangeMax</MudButton><MudText>Max: @max</MudText>
+<MudAvatarGroup Max="@max" MaxColor="Color.Primary">
+    <MudAvatar Color="Color.Primary">AA</MudAvatar>
+    <MudAvatar Color="Color.Secondary">BB</MudAvatar>
+    <MudAvatar Color="Color.Tertiary">CC</MudAvatar>
+    <MudAvatar Color="Color.Info">DD</MudAvatar>
+    <MudAvatar Color="Color.Secondary">FF</MudAvatar>
+    <MudAvatar Color="Color.Warning">GG</MudAvatar>
+    <MudAvatar Color="Color.Error">HH</MudAvatar>
+</MudAvatarGroup>
+
+@code {
+    public static string __description__ = "Clicking the button should change the max numbers of avatars.";
+    public int max = 3;
+
+    void ChangeMax()
+    {
+        if(max == 7)
+        {
+            max = 0;
+        }else
+        {
+            max++;
+        }
+    }
+}

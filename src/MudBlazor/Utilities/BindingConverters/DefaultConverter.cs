@@ -1,24 +1,33 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Reflection;
 
 namespace MudBlazor
 {
-
     /// <summary>
     /// A universal T to string binding converter
     /// </summary>
     public class DefaultConverter<T> : Converter<T>
     {
+        /// <summary>
+        /// A static global delegate used if no converter is found. 
+        /// </summary>
+        public static Func<T, string> GlobalGetFunc;
+        /// <summary>
+        /// A static global delegate used if no converter is found.
+        /// </summary>
+        public static Func<string, T> GlobalSetFunc;
 
         public DefaultConverter()
         {
-            SetFunc = OnSet;
-            GetFunc = OnGet;
+            SetFunc = ConvertToString;
+            GetFunc = ConvertFromString;
         }
 
         public string DefaultTimeSpanFormat { get; set; } = "c";
 
-        private T OnGet(string value)
+        protected virtual T ConvertFromString(string value)
         {
             try
             {
@@ -38,65 +47,65 @@ namespace MudBlazor
                 else if (typeof(T) == typeof(bool) || typeof(T) == typeof(bool?))
                 {
                     var lowerValue = value.ToLowerInvariant();
-                    if (lowerValue == "true" || lowerValue == "on")
+                    if (lowerValue is "true" or "on")
                         return (T)(object)true;
-                    if (lowerValue == "false" || lowerValue == "off")
+                    if (lowerValue is "false" or "off")
                         return (T)(object)false;
                     UpdateGetError("Not a valid boolean");
                 }
                 // sbyte
                 else if (typeof(T) == typeof(sbyte) || typeof(T) == typeof(sbyte?))
                 {
-                    if (sbyte.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
+                    if (sbyte.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
                     UpdateGetError("Not a valid number");
                 }
                 // byte
                 else if (typeof(T) == typeof(byte) || typeof(T) == typeof(byte?))
                 {
-                    if (byte.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
+                    if (byte.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
                     UpdateGetError("Not a valid number");
                 }
                 // short
                 else if (typeof(T) == typeof(short) || typeof(T) == typeof(short?))
                 {
-                    if (short.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
+                    if (short.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
                     UpdateGetError("Not a valid number");
                 }
                 // ushort
                 else if (typeof(T) == typeof(ushort) || typeof(T) == typeof(ushort?))
                 {
-                    if (ushort.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
+                    if (ushort.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
                     UpdateGetError("Not a valid number");
                 }
                 // int
                 else if (typeof(T) == typeof(int) || typeof(T) == typeof(int?))
                 {
-                    if (int.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
+                    if (int.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
                     UpdateGetError("Not a valid number");
                 }
                 // uint
                 else if (typeof(T) == typeof(uint) || typeof(T) == typeof(uint?))
                 {
-                    if (uint.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
+                    if (uint.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
                     UpdateGetError("Not a valid number");
                 }
                 // long
                 else if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
                 {
-                    if (long.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
+                    if (long.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
                     UpdateGetError("Not a valid number");
                 }
                 // ulong
                 else if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
                 {
-                    if (ulong.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
+                    if (ulong.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
                     UpdateGetError("Not a valid number");
                 }
@@ -161,9 +170,20 @@ namespace MudBlazor
                     {
                         return (T)(object)TimeSpan.ParseExact(value, Format ?? DefaultTimeSpanFormat, Culture);
                     }
-                    catch (FormatException)
+                    catch (Exception e) when (e is FormatException or OverflowException)
                     {
                         UpdateGetError("Not a valid time span");
+                    }
+                }
+                else if (GlobalSetFunc != null)
+                {
+                    try
+                    {
+                        return GlobalSetFunc(value);
+                    }
+                    catch (Exception)
+                    {
+                        UpdateGetError($"Not a valid {typeof(T).Name}");
                     }
                 }
                 else
@@ -179,7 +199,7 @@ namespace MudBlazor
             return default(T);
         }
 
-        private string OnSet(T arg)
+        protected virtual string ConvertToString(T arg)
         {
             if (arg == null)
                 return null; // <-- this catches all nullable values which are null. no nullchecks necessary below!
@@ -296,6 +316,10 @@ namespace MudBlazor
                 {
                     var value = (TimeSpan?)(object)arg;
                     return value.Value.ToString(Format ?? DefaultTimeSpanFormat, Culture);
+                }
+                else if (GlobalGetFunc != null)
+                {
+                    return GlobalGetFunc(arg);
                 }
                 return arg.ToString();
             }

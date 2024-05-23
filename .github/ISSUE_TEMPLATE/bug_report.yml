@@ -1,0 +1,126 @@
+name: Bug Report
+description: File a bug report
+labels: [triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report for [MudBlazor](https://mudblazor.com). Note: this template is only for bug reports; Please use [GitHub Discussions](https://github.com/MudBlazor/MudBlazor/discussions) or [Discord](https://discord.gg/mudblazor) for any questions.
+  - type: dropdown
+    id: bug-type
+    attributes:
+      label: Bug type
+      multiple: true
+      options:
+        - Component
+        - Docs (mudblazor.com)
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: component-name
+    attributes:
+      label: Component name
+      description: If this issue is about a component, please provide the name.
+      placeholder: MudComponent
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Please describe the issue briefly. You can use code-snippets, screenshots, or videos to further explain your problem. Please post code-snippets surrounded in backticks and not as screenshots.
+      placeholder: Describe your issue!
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: Please provide a clear and concise description of what you expected to happen.
+      placeholder: Describe the expected behavior!
+    validations:
+      required: true
+  - type: input
+    id: repro-link
+    attributes:
+      label: Reproduction link
+      description: Please reproduce the issue on [try.mudblazor.com](https://try.mudblazor.com) if possible. Otherwise provide a link to a GitHub repository with a minimal reproduction (no complete applications).
+      placeholder: https://try.mudblazor.com/snippet/XXXXXXXXXXXXXXXX
+    validations:
+      required: true
+  - type: textarea
+    id: repro-steps
+    attributes:
+      label: Reproduction steps
+      description: How do you trigger this bug? Please walk us through it step by step.
+      value: |
+        1.
+        2.
+        3.
+        ...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: shell
+  - type: input
+    id: bug-version
+    attributes:
+      label: Version (bug)
+      description: With which version are you experiencing the issue?
+      placeholder: 6.x.x
+    validations:
+      required: true
+  - type: input
+    id: working-version
+    attributes:
+      label: Version (working)
+      description: Did it work on a previous version? If so, which version?
+      placeholder: 6.x.x
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: What browsers are you seeing the problem on?
+      description: You don't have to test it on every browser.
+      multiple: true
+      options:
+        - Firefox
+        - Chrome
+        - Edge
+        - Safari
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: On which operating systems are you experiencing the issue?
+      description: You don't have to test it on every OS.
+      multiple: true
+      options:
+        - Windows
+        - macOS
+        - Linux
+        - iOS
+        - Android
+        - Other
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: pr
+    attributes:
+      label: Pull Request
+      description: If you need this fixed soon, consider submitting a Pull Request! Our team has limited resources so we rely on community contributions. We greatly appreciate all contributions and will review them as soon as possible for inclusion in the next version!
+      options:
+        - label: I would like to do a Pull Request
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/MudBlazor/MudBlazor/blob/dev/CODE_OF_CONDUCT.md).
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

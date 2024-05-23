@@ -1,0 +1,17 @@
+﻿@using System.Globalization;
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudForm @bind-IsValid="fIsValid">
+    <MudDatePicker id="datePickerLabelTest" Label="Cheese it" Required="true" RequiredError="Please provide a date" @bind-Date="@(theDate)" />
+</MudForm>
+
+Valid: @fIsValid
+Date: @theDate
+
+@code
+{
+    public static string __description__ = "The form should be valid after text has been set and a date has been picked.";
+
+    private bool fIsValid;
+    private DateTime? theDate;
+}

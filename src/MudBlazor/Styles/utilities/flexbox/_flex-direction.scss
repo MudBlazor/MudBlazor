@@ -1,0 +1,21 @@
+﻿@import '../../abstracts/variables';
+
+@mixin flex-direction ($breakpoint) {
+  .flex-#{$breakpoint}row {
+    flex-direction: row !important;
+  }
+
+  .flex-#{$breakpoint}row-reverse {
+    flex-direction: row-reverse !important;
+  }
+
+  .flex-#{$breakpoint}column {
+    flex-direction: column !important;
+  }
+
+  .flex-#{$breakpoint}column-reverse {
+    flex-direction: column-reverse !important;
+  }
+}
+
+@include flex-direction("");

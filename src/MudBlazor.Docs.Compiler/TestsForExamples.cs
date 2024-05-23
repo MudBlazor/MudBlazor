@@ -32,6 +32,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("{");
                 cb.IndentLevel++;
                 cb.AddLine("// These tests just check if all the examples from the doc page render without errors");
+                cb.AddLine("[System.CodeDom.Compiler.GeneratedCodeAttribute(\"MudBlazor.Docs.Compiler\", \"0.0.0.0\")]");
                 cb.AddLine("public partial class ExampleDocsTests");
                 cb.AddLine("{");
                 cb.IndentLevel++;
@@ -44,6 +45,9 @@ namespace MudBlazor.Docs.Compiler
                     var filename = Path.GetFileName(entry);
                     var componentName = Path.GetFileNameWithoutExtension(filename);
                     if (!filename.Contains(Paths.ExampleDiscriminator))
+                        continue;
+                    // skip over table/data grid virutalization since it takes too long.
+                    if (filename == "TableVirtualizationExample.razor" || filename == "DataGridVirtualizationExample.razor")
                         continue;
                     cb.AddLine("[Test]");
                     cb.AddLine($"public void {componentName}_Test()");

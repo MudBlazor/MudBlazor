@@ -1,0 +1,80 @@
+﻿@namespace MudBlazor
+@implements IDisposable
+@inherits MudComponentBase
+@typeparam T
+
+@*HEADER:*@
+@if (HeaderTemplate != null && GroupDefinition != null)
+{
+<tr class="@HeaderClassname" @onclick="@OnRowClick" style="@HeaderStyle" @attributes="@UserAttributes">        
+    @if ((GroupDefinition?.IsThisOrParentExpandable ?? false) || (Context?.Table?.MultiSelection ?? false))
+    {
+        <MudTd>
+            <div class="d-flex">
+                @if (GroupDefinition?.Expandable ?? false)
+                {
+                    <MudIconButton Class="mud-table-row-expander" Icon="@(Expanded ? ExpandIcon : CollapseIcon)" OnClick="@(() => Expanded = !Expanded)"/>
+                }
+                else
+                {
+                    if (GroupDefinition?.IsParentExpandable ?? false)
+                    {
+                        <div style="@ActionsStylename"></div>
+                    }
+                }
+                @if (Checkable)
+                {
+                    <MudCheckBox T="bool?" @bind-Value="Checked" Class="mud-table-cell-checkbox"/>
+                }
+            </div>
+        </MudTd>
+    }
+    @HeaderTemplate(new TableGroupData<object, T>(GroupDefinition?.GroupName, Items?.Key, Items?.ToList() ?? new List<T>()))
+    @if ((Context?.Table?.Editable ?? false))
+    {
+        <MudTd />
+    }
+</tr>
+}
+else
+{
+<MudText @attributes="@UserAttributes">@("There aren't any group definition to use with this component.")</MudText>
+}
+
+@if (Expanded)
+{
+    Context?.UpdateRowCheckBoxes();
+
+    @*CHILDREN:*@
+    @if (_innerGroupItems != null && GroupDefinition != null)
+    {
+        @foreach (var group in _innerGroupItems)
+        {
+            <MudTableGroupRow GroupDefinition="GroupDefinition.InnerGroup" Items="@group" Checkable="@Checkable"
+                              HeaderClass="@HeaderClass" HeaderStyle="@HeaderStyle"
+                              FooterClass="@FooterClass" FooterStyle="@FooterStyle"
+                              HeaderTemplate="@HeaderTemplate" FooterTemplate="@FooterTemplate" T="T" @attributes="@UserAttributes" />
+        }
+    }
+    else
+    {
+        @Table?.RenderRows(Items, (GroupDefinition?.Indentation ?? false) ? $"mud-table-row-group-indented-{GroupDefinition?.Level - 1}" : null, GroupDefinition?.IsThisOrParentExpandable ?? false)
+    }
+
+    @*FOOTER:*@
+    @if (FooterTemplate != null && GroupDefinition != null)
+    {
+        <tr class="@FooterClassname" @onclick="@OnRowClick" style="@FooterStyle" @attributes="@UserAttributes">
+            @if ((GroupDefinition?.IsThisOrParentExpandable ?? false) || (Context?.Table?.MultiSelection ?? false))
+            {
+                <MudTd/>
+            }
+            @FooterTemplate(new TableGroupData<object, T>(GroupDefinition.GroupName, Items.Key, Items.ToList()))
+            @if ((Context?.Table.Editable ?? false))
+            {
+                <MudTd />
+            }
+
+        </tr>
+    }
+}

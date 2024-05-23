@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using System.Globalization
+
+<MudNumericField Immediate="false" Label="de-DE" Format="N2" Culture="@_de" T="double?" @bind-Value="_valueDe" HelperText="@_valueDe.ToString()"/>
+<MudNumericField Immediate="false" Label="en-US" Format="N2" Culture="@_en" T="double?" @bind-Value="_valueEn" HelperText="@_valueEn.ToString()"/>
+
+@code {
+    public CultureInfo _de = CultureInfo.GetCultureInfo("de-DE");
+    public CultureInfo _en = CultureInfo.GetCultureInfo("en-US");
+
+    public double? _valueDe = 1234.56;
+    public double? _valueEn = 1234.56;
+}

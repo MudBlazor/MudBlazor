@@ -6,28 +6,23 @@
     <DocsPageContent>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Simple Form Validation</Title>
+            <SectionHeader Title="Simple Form Validation">
                 <Description>
                     <CodeInline>MudForm</CodeInline> is designed to be easy and simple. You just pass your own validation functions directly into the <CodeInline>Validation</CodeInline> parameter of your input controls.
-                    But if you want to make use of the handy data annotation attributes provided by Microsoft, you can pass them into <CodeInline>Validation</CodeInline> also. You can even use FluentValidation as is shown in another example below. <br />
+                    But if you want to make use of the handy data annotation attributes provided by Microsoft, you can pass them into <CodeInline>Validation</CodeInline>, as well. You can even use FluentValidation as shown in one of the examples below. <br />
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: for MudForm, do NOT use a button with <CodeInline>ButtonType="ButtonType.Submit"</CodeInline></MudAlert>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true">
-                <MudContainer>
-                    <MudFormExample />
-                </MudContainer>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(MudFormExample)">
+                <MudFormExample />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="MudFormExample" GitHubFolderName="Form" />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>EditForm Support</Title>
+            <SectionHeader Title="EditForm Support">
                 <Description>
-                    In Blazor form validation is usually done with EditForm in conjunction with a form model class that is decorated with <MudLink Href="https://docs.microsoft.com/en-us/aspnet/core/mvc/models/validation?view=aspnetcore-3.1">data annotations</MudLink>. MudBlazor's input components support
-                    Blazor's form validation if you put them into a <CodeInline>&lt;EditForm&gt;</CodeInline>. The following example shows a very simple use case. If you want to learn more please check out
+                    In Blazor, form validation is usually done with EditForm in conjunction with a form model class that is decorated with <MudLink Href="https://docs.microsoft.com/en-us/aspnet/core/mvc/models/validation?view=aspnetcore-3.1">data annotations</MudLink>. MudBlazor's input components support
+                    Blazor's form validation if you put them into a <CodeInline>&lt;EditForm&gt;</CodeInline>. The following example shows a very simple use case. If you want to learn more, please check out
                     <MudLink Href="https://docs.microsoft.com/en-us/aspnet/core/blazor/forms-validation?view=aspnetcore-3.1">ASP.NET Core Blazor forms and validation</MudLink> on the official Blazor documentation.
                     <br /><br />
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
@@ -35,29 +30,82 @@
                     </MudAlert>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true">
-                <MudContainer>
-                    <EditFormExample />
-                </MudContainer>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(EditFormExample)">
+                <EditFormExample />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="EditFormExample" GitHubFolderName="Form" />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Using Fluent Validation</Title>
+            <SectionHeader Title="Using Simple Fluent Validation">
                 <Description>
-                    This example shows how to make use of the powerful <MudLink Href="https://docs.fluentvalidation.net/en/latest/index.html">FluentValidation</MudLink> validators with MudForm. Basically, we call the validator in our 
-                    validation func and simply return the error messages.
+                    This example shows how to make use of the powerful <MudLink Href="https://docs.fluentvalidation.net/en/latest/index.html">FluentValidation</MudLink> validators with MudForm. Basically, we call the validator in our
+                    validation function and simply return the error messages.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true">
-                <MudContainer>
-                    <FluentValidationExample />
-                </MudContainer>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FluentValidationExample)">
+                <FluentValidationExample />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="FluentValidationExample" GitHubFolderName="Form" />
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Using Fluent Validation">
+                <Description>
+                    This example shows how to make use of the powerful <MudLink Href="https://docs.fluentvalidation.net/en/latest/index.html">FluentValidation</MudLink> validators with MudForm. This approach utilizes a standard AbstractValidator which can be shared with the <MudLink Href="https://docs.fluentvalidation.net/en/latest/aspnet.html">ASP.NET API Controllers</MudLink>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FluentValidationComplexExample)">
+                <FluentValidationComplexExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Validate only on user interaction">
+                <Description>
+                    Normally input fields are validated when leaving the input field. This behavior can be changed with the flag <CodeInline>OnlyValidateIfDirty</CodeInline> If this flag is set to <CodeInline>true</CodeInline>, the input field will only be validated if the user has changed the initial value.
+                    <br /><br />
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                        Note: The <CodeInline>OnlyValidateIfDirty</CodeInline> setting should not be changed dynamically
+                    </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(ValidateIfDirtyExample)">
+                <ValidateIfDirtyExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Automatically set Labels">
+                <Description>
+                    A form field <CodeInline>Label</CodeInline> can be set automatically by adding a <CodeInline>[Label]</CodeInline> attribute to the relevant property on the model class. The <CodeInline>For</CodeInline> property must also be set. An automatic label can be overridden by setting the <CodeInline>Label</CodeInline> property manually on the component.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(LabelAttributeExample)">
+                <LabelAttributeExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="ReadOnly and Disabled Forms">
+                <Description>
+                    Setting <CodeInline>ReadOnly</CodeInline> or <CodeInline>Disabled</CodeInline> to true on a MudForm will automatically set all child inputs as ReadOnly or Disabled. The state will also be applied to child MudForms.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FormReadonlyDisabledExample)">
+                <FormReadonlyDisabledExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Customization">
+                <Description>
+                    You can control the gap between items with <CodeInline>Spacing</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FormCustomizationExample)">
+                <FormCustomizationExample />
+            </SectionContent>
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>
 

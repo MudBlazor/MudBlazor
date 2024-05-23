@@ -1,0 +1,34 @@
+﻿@page "/mud/announcements/{Id}"
+
+<DocsPage DisplayFooter="true">
+    <MudContainer Class="announcement-container" MaxWidth="MaxWidth.Medium">
+        @if (_message == null)
+        {
+            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+        }
+        else
+        {
+            <DocsPageHeader Title="@_message.Title" SubTitle="@_message.Except">
+                <SpecialHeaderContent>
+                    <MudText Typo="Typo.h2" Class="docs-title">@_message.Title&nbsp;</MudText>
+                    <MudText Typo="Typo.subtitle1" Class="docs-title-description">@_message.Except</MudText>
+                    <MudToolBar Gutters="false">
+                        @foreach (var author in _message.Authors)
+                        {
+                            <div class="d-flex justify-start align-center mx-1">
+                                <MudAvatar Style="background: transparent">
+                                    <MudImage Src="@author.AvatarUrl" Alt="Avatar" />
+                                </MudAvatar>
+                                <MudText Typo="Typo.subtitle2" Class="mx-2">@author.DisplayName</MudText>
+                            </div>
+                        }
+                    </MudToolBar>
+                    <MudText Typo="Typo.subtitle2" Class="mud-text-secondary">@_message.PublishDate.ToString("MMM dd, yyyy")</MudText>
+                </SpecialHeaderContent>
+            </DocsPageHeader>
+            <DocsPageContent>
+                <DynamicComponent Type="@_message.ContentComponent" />
+            </DocsPageContent>
+        }
+    </MudContainer>
+</DocsPage>

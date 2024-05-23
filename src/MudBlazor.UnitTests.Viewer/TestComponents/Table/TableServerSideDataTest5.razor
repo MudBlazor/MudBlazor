@@ -1,0 +1,42 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
+
+<span id="counter">@reloadCounter</span>
+<button id="reseter" @onclick="() => reloadCounter = 0">Reset</button>
+
+<MudTable ServerData="ServerReload">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortLabel="No." InitialDirection="SortDirection.Descending" T="int">Nr</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+#pragma warning disable CS1998 // async without await
+    public static string __description__ = "The server-side load callback should be called only once per operations.";
+
+    private int totalItems;
+    private int reloadCounter;
+
+    /// <summary>
+    /// Here we simulate getting the paged, filtered and ordered data from the server
+    /// </summary>
+    private async Task<TableData<int>> ServerReload(TableState state, CancellationToken token)
+    {
+
+        ++reloadCounter;
+        StateHasChanged();
+
+        var p = state.Page*3;
+        IEnumerable<int> data = new List<int>() { 1 + p, 2 + p, 3 + p };
+        totalItems = 99;
+        var sortedData = state.SortDirection == SortDirection.Descending ? data.Reverse() : data;
+        return new TableData<int>() { TotalItems = totalItems, Items = sortedData };
+    }
+
+}

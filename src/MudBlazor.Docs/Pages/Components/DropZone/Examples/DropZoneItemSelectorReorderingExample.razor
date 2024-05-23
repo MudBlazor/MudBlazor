@@ -1,0 +1,41 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudDropContainer T="DropItem" Items="_items" ItemsSelector="@((item,dropzone) => item.Selector == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-grow-1">
+    <ChildContent>
+        @for (int i = 1; i < 4; i++) 
+         {
+             var dropzone = i.ToString();
+             <MudPaper Class="ma-4 flex-grow-1">
+                <MudList T="string" Class="d-flex flex-column mud-height-full">
+                     <MudListSubheader>Drop Zone @dropzone</MudListSubheader>
+                     <MudDropZone T="DropItem" Identifier="@dropzone" Class="flex-grow-1" AllowReorder="true" />
+                 </MudList>
+             </MudPaper>
+         }
+    </ChildContent>
+    <ItemRenderer>
+        <MudListItem T="string" Text="@context.Name" />
+    </ItemRenderer>
+</MudDropContainer>
+
+@code {
+    private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
+    {
+        dropItem.Item.Selector = dropItem.DropzoneIdentifier;
+    }
+
+    private List<DropItem> _items = new()
+    {
+        new DropItem(){ Name = "Item 1", Selector = "1" },
+        new DropItem(){ Name = "Item 2", Selector = "1" },
+        new DropItem(){ Name = "Item 3", Selector = "1" },
+        new DropItem(){ Name = "Item 4", Selector = "2" },
+        new DropItem(){ Name = "Item 5", Selector = "2" },
+    };
+    
+    public class DropItem
+    {
+        public string Name { get; init; }
+        public string Selector { get; set; }
+    }
+}

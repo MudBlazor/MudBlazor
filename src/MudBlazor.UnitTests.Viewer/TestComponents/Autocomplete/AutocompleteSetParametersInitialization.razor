@@ -1,7 +1,11 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
 
  @* Based on this try https://try.mudblazor.com/snippet/GacPunvDUyjdUJAh
-  and this issue https://github.com/Garderoben/MudBlazor/issues/1235*@
+  and this issue https://github.com/MudBlazor/MudBlazor/issues/1235*@
+
+<MudPopoverProvider></MudPopoverProvider>
+
 
 <MudAutocomplete T="ExternalList" SearchFunc="@Search2" @bind-Value="SelectedValue" ToStringFunc="@(e => e == null ? null : $"{e.Name}")" />
 
@@ -12,11 +16,7 @@
 
     public string ToString(ExternalList el)
     {
-        if (el == null)
-        {
-            return null;
-        }
-        return el.Name;
+        return el?.Name;
     }
 
     protected override async Task OnInitializedAsync()
@@ -51,9 +51,9 @@
         };
     }
 
-    private async Task<IEnumerable<ExternalList>> Search2(string value)
+    private async Task<IEnumerable<ExternalList>> Search2(string value, CancellationToken token)
     {
-        await Task.Delay(0);
+        await Task.Delay(0, token);
         if (string.IsNullOrEmpty(value))
             return _externalList;
 

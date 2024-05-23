@@ -1,25 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-
-
-<MudGrid>
-    <MudItem xs="12">
-        <MudTextField @ref="multilineReference" T="string" Label="Manual focus" Variant="Variant.Filled" Text="@sampleText" Lines="3" />
-    </MudItem>
-    <MudItem xs="12" Class="d-flex justify-end">
-        <MudButton @onclick="() => multilineReference.FocusAsync()">
-            Focus
-        </MudButton>
-    </MudItem>
-    <MudItem xs="12">
-        <MudTextField @ref="singleLineReference" T="string" Label="Manual focus" Variant="Variant.Filled" Text="@sampleText" />
-    </MudItem>
-    <MudItem xs="12" Class="d-flex justify-end">
-        <MudButton @onclick="() => singleLineReference.FocusAsync()">
-            Focus
-        </MudButton>
-    </MudItem>
-</MudGrid>
+<MudTextField @ref="multilineReference" T="string" Label="Manual focus" Variant="Variant.Filled" Text="@sampleText" Lines="3" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.CenterFocusWeak" OnAdornmentClick="@(() => multilineReference.FocusAsync())"  />
+<MudTextField @ref="singleLineReference" T="string" Label="Manual focus" Variant="Variant.Filled" Text="@sampleText" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.CenterFocusWeak" OnAdornmentClick="@(() => singleLineReference.FocusAsync())" />
 
 @code
 {

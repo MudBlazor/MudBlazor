@@ -1,0 +1,20 @@
+﻿<h3>FieldIssue2150</h3>
+
+@* https://try.mudblazor.com/snippet/mOQFuVFdBsmHTdZU *@
+@* https://github.com/MudBlazor/MudBlazor/issues/2150 *@
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudField Label="Standard" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Api"></MudField>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudField Label="Filled" Variant="Variant.Filled" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Api"></MudField>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudField id="fieldLabelTest" Label="Outlined" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Api"></MudField>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public static string __description__ = "Issue 2150, testing that the Adornment is not overlapping the label";
+}

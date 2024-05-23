@@ -1,19 +1,21 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" class="@ContainerClass">
+<div @attributes="UserAttributes" class="@ContainerClass" style="@RootStyle" @onpointerenter="@HandlePointerEnterAsync" @onpointerleave="@HandlePointerLeaveAsync" @onpointerup="@HandlePointerUpAsync" @onfocusin="@HandleFocusInAsync" @onfocusout="@HandleFocusOutAsync">
     @ChildContent
-    @if (!String.IsNullOrEmpty(Text) || TooltipContent != null)
+    @if (!Disabled && (TooltipContent is not null || !string.IsNullOrEmpty(Text)))
     {
-        <div class="@Classname" style="@GetTimeDelay()">
-            @if (TooltipContent != null)
+        <MudPopover Open="@_visibleState.Value" Duration="@Duration" Delay="@Delay" AnchorOrigin="@_anchorOrigin" TransformOrigin="@_transformOrigin" Class="@Classname" Style="@Style" Paper="false">
+            @if (TooltipContent is not null)
             {
-                @TooltipContent
+                <div class="d-block">
+                    @TooltipContent
+                </div>
             }
-            else
+            else if (!string.IsNullOrEmpty(Text))
             {
                 @Text
             }
-        </div>
+        </MudPopover>
     }
 </div>

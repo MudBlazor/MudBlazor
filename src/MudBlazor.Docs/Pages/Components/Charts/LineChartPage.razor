@@ -1,38 +1,54 @@
 ﻿@page "/components/linechart"
+@page "/components/chart-types/linechart"
 
 <DocsPage>
     <DocsPageHeader Title="Line Chart" SubTitle="">
     </DocsPageHeader>
     <DocsPageContent>
+
         <DocsPageSection>
-            <SectionHeader>
-                <Title></Title>
-                <Description></Description>
+            <SectionHeader Title="Basic Usage">
+                <Description>
+                    To get a Line Chart use <CodeInline>ChartType="ChartType.Line"</CodeInline> to render the configured <CodeInline>ChartSeries</CodeInline> as line graphs.
+                    Like in the other chart types, the Series in the chart are clickable. You can bind <CodeInline>SelectedIndex</CodeInline> to make your chart interactive.  
+                    Using the <CodeInline>ChartOptions</CodeInline> you can change the thickness of the lines by setting the parameter <CodeInline>LineStrokeWidth</CodeInline>. 
+                </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent ShowCode="false" Code="@nameof(LineExample1)">
                 <LineExample1 />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="LineExample1" GitHubFolderName="Charts" />
         </DocsPageSection>
+
         <DocsPageSection>
-            <SectionHeader>
-                <Title></Title>
-                <Description></Description>
+            <SectionHeader Title="Y-Axis Ticks">
+                <Description>Using the <CodeInline>ChartOptions</CodeInline> you can also change tick interval of the Y-axis by setting parameter <CodeInline>YAxisTicks</CodeInline>. </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
-                <LineExample2 />
+            <SectionContent ShowCode="false" Code="@nameof(LineExampleYAxisTicks)">
+                <LineExampleYAxisTicks />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="LineExample2" GitHubFolderName="Charts" />
         </DocsPageSection>
+
         <DocsPageSection>
-            <SectionHeader>
-                <Title></Title>
-                <Description></Description>
+            <SectionHeader Title="Interpolation">
+                <Description>The <CodeInline>ChartOptions</CodeInline> parameter <CodeInline>InterpolationOption</CodeInline> lets you control the smoothness of
+                    the lines via different interpolation algorithms.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
-                <LineExample3 />
+            <SectionContent ShowCode="false" Code="@nameof(LineExampleInterpolation)">
+                <LineExampleInterpolation />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="LineExample3" GitHubFolderName="Charts" />
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Hide Chart Series">
+                <Description>
+                    If you set the parameter <CodeInline>CanHideSeries</CodeInline> then the legend will show check boxes 
+                    that allow the user to toggle the visibility of certain chart series. 
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(LineExampleHideLines)">
+                <LineExampleHideLines />
+            </SectionContent>
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

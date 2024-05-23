@@ -1,0 +1,119 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="3">
+        <MudText Typo="Typo.h6">Anchor Origin</MudText>
+        <MudRadioGroup T="Origin" @bind-Value="AnchorOrigin" Class="d-flex flex-column">
+            <MudRadio Color="Color.Primary" Dense="true" Value="Origin.TopLeft">Top-Left</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Value="Origin.TopCenter">Top-Center</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Value="Origin.TopRight">Top-Right</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Value="Origin.CenterLeft">Center-Left</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Value="Origin.CenterCenter">Center-Center</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Value="Origin.CenterRight">Center-Right</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Value="Origin.BottomLeft">Bottom-Left</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Value="Origin.BottomCenter">Bottom-Center</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Value="Origin.BottomRight">Bottom-Right</MudRadio>
+        </MudRadioGroup>
+    </MudItem>
+    <MudItem xs="6" Class="d-flex justify-center align-center">
+        <MudBadge Origin="@AnchorOrigin" Color="Color.Primary" Icon="@GetIcon()" Overlap="true" Elevation="4">
+            <MudMenu Label="Advanced Placement" Variant="Variant.Filled" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Color="Color.Default" Size="Size.Large">
+                <MudMenuItem>Enlist</MudMenuItem>
+                <MudMenuItem>Barracks</MudMenuItem>
+                <MudMenuItem>Armory</MudMenuItem>
+            </MudMenu>
+        </MudBadge>
+    </MudItem>
+    <MudItem xs="3">
+        <MudText Typo="Typo.h6">Transform Origin</MudText>
+        <MudRadioGroup T="Origin" @bind-Value="TransformOrigin" Class="d-flex flex-column">
+            <MudRadio Color="Color.Secondary" Dense="true" Value="Origin.TopLeft">Top-Left</MudRadio>
+            <MudRadio Color="Color.Secondary" Dense="true" Value="Origin.TopCenter">Top-Center</MudRadio>
+            <MudRadio Color="Color.Secondary" Dense="true" Value="Origin.TopRight">Top-Right</MudRadio>
+            <MudRadio Color="Color.Secondary" Dense="true" Value="Origin.CenterLeft">Center-Left</MudRadio>
+            <MudRadio Color="Color.Secondary" Dense="true" Value="Origin.CenterCenter">Center-Center</MudRadio>
+            <MudRadio Color="Color.Secondary" Dense="true" Value="Origin.CenterRight">Center-Right</MudRadio>
+            <MudRadio Color="Color.Secondary" Dense="true" Value="Origin.BottomLeft">Bottom-Left</MudRadio>
+            <MudRadio Color="Color.Secondary" Dense="true" Value="Origin.BottomCenter">Bottom-Center</MudRadio>
+            <MudRadio Color="Color.Secondary" Dense="true" Value="Origin.BottomRight">Bottom-Right</MudRadio>
+        </MudRadioGroup>
+    </MudItem>
+</MudGrid>
+
+@code{ 
+    
+    public Origin TransformOrigin { get; set; } = Origin.TopLeft;
+    public Origin AnchorOrigin { get; set; } = Origin.BottomLeft;
+
+    public string GetIcon()
+    {
+        string icon = "";
+
+        switch (TransformOrigin)
+        {
+            case Origin.TopLeft:
+                icon = Icons.Material.Filled.SouthEast;
+                break;
+            case Origin.TopCenter:
+                icon = Icons.Material.Filled.South;
+                break;
+            case Origin.TopRight:
+                icon = Icons.Material.Filled.SouthWest;
+                break;
+            case Origin.CenterLeft:
+                icon = Icons.Material.Filled.East;
+                break;
+            case Origin.CenterCenter:
+                icon = Icons.Material.Filled.ZoomOutMap;
+                break;
+            case Origin.CenterRight:
+                icon = Icons.Material.Filled.West;
+                break;
+            case Origin.BottomLeft:
+                icon = Icons.Material.Filled.NorthEast;
+                break;
+            case Origin.BottomCenter:
+                icon = Icons.Material.Filled.North;
+                break;
+            case Origin.BottomRight:
+                icon = Icons.Material.Filled.NorthWest;
+                break;
+        }
+        return icon;
+    }
+
+    public string GetLocation()
+    {
+        string align = "";
+        string justify = "";
+        string[] pos = TransformOrigin.ToDescriptionString().Split("-");
+
+        if (pos[0] == "center")
+        {
+            align = "align-center";
+        }
+        else if (pos[0] == "top")
+        {
+            align = "align-start";
+        }
+        else if (pos[0] == "bottom")
+        {
+            align = "align-end";
+        }
+        if (pos[1] == "left")
+        {
+            justify = "justify-start";
+        }
+        else if (pos[1] == "right")
+        {
+            justify = "justify-end";
+        }
+        else if (pos[1] == "center")
+        {
+            justify = "justify-center";
+        }
+
+        return $"absolute mud-height-full mud-width-full d-flex ma-n3 {align} {justify}";
+    }
+    
+}

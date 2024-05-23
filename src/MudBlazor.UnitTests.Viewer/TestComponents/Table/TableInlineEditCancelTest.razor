@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudTable @ref="_table" T="Element" Items="items" @bind-SelectedItem="selectedItem" 
+<MudTable @ref="Table" T="Element" Items="items" @bind-SelectedItem="selectedItem" 
  RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" CanCancelEdit="true">
     <HeaderContent>
         <MudTh>Value</MudTh>
@@ -17,7 +17,6 @@
 
 @code {
     private Element elementBeforeEdition = new();
-    MudTable<Element> _table;
     private Element selectedItem = null;
     List<Element> items = new List<Element> 
     { 
@@ -26,7 +25,7 @@
         new Element { Value = "C", Id = "Id3" }, 
     };
 
-    public MudTable<Element> Table => _table;
+    public MudTable<Element> Table { get; private set; }
 
     private void BackupItem(object element)
     {

@@ -1,0 +1,10 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div class="d-flex flex-column align-center">
+    <MudPagination BoundaryCount="1" MiddleCount="1" Count="22" @bind-Selected="@_selected" />
+    <MudPagination BoundaryCount="2" MiddleCount="5" Count="22" @bind-Selected="@_selected" Class="mt-4" />
+</div>
+
+@code {
+    private int _selected = 11;
+}

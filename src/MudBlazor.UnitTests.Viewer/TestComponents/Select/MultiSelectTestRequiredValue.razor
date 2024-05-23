@@ -1,0 +1,42 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudSelect @bind-Value="value" Label="String Binding" MultiSelection="true" IsPreRendered="true" Required="true" Clearable="true">
+    <MudSelectItem Value="@("1")">1</MudSelectItem>
+    <MudSelectItem Value="@("2")">2</MudSelectItem>
+    <MudSelectItem Value="@("3")">3</MudSelectItem>
+</MudSelect>
+
+<MudSelect T=TestClass Label="Object Binding" MultiSelection="true" Required="true" @bind-SelectedValues="SelectedRoles" Clearable="true">
+    @foreach(var role in Roles)
+    {
+        <MudSelectItem T="TestClass" Value=@role/>
+    }
+</MudSelect>
+
+@code {
+
+	public static string __description__ = "Multi-Select Required Should Recognize Values";
+
+    string value=null;
+
+    public class TestClass
+    {
+        public string Name { get; set; }
+        public string NameTranslated { get; set; }
+        public override string ToString() => Name;
+    }
+
+
+    public List<TestClass> Roles {get; set; } = new();
+    public IEnumerable<TestClass> SelectedRoles = new List<TestClass>();
+
+    Func<TestClass, string> converter = p => p?.NameTranslated;
+    
+	protected override void OnInitialized()
+    {
+        Roles.Add(new TestClass() { Name ="Admin", NameTranslated="Administrator"});
+        Roles.Add(new TestClass() { Name ="Customer", NameTranslated="Kunde"});
+    }
+
+}

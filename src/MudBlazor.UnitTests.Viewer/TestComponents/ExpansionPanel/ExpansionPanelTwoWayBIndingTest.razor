@@ -1,0 +1,46 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudExpansionPanels>
+    <MudExpansionPanel @bind-Expanded="Expansion[0]" Text="Panel One" MaxHeight="150">
+        Panel One Content
+    </MudExpansionPanel>
+    <MudExpansionPanel @bind-Expanded="Expansion[1]" Text="Panel Two" MaxHeight="500">
+        Panel Two Content
+    </MudExpansionPanel>
+    <MudExpansionPanel @bind-Expanded="Expansion[2]" Text="Panel Three" MaxHeight="1000">
+        Panel Three Content
+    </MudExpansionPanel>
+    <MudExpansionPanel @bind-Expanded="Expansion[3]" Text="Panel Four">
+        Panel Four Content
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@code {
+    public bool[] Expansion = [true, false, false, false];
+
+    public void ToggleExpansion1()
+    {
+        // Simulating MudSwitch toggle, we need StateHasChanged.
+        // Usually it would be updated from an EventCallback (or bind syntax) that updates the UI automatically but we doing it directly.
+        Expansion[0] = !Expansion[0];
+        StateHasChanged();
+    }
+
+    public void ToggleExpansion2()
+    {
+        Expansion[1] = !Expansion[1];
+        StateHasChanged();
+    }
+
+    public void ToggleExpansion3()
+    {
+        Expansion[2] = !Expansion[2];
+        StateHasChanged();
+    }
+
+    public void ToggleExpansion4()
+    {
+        Expansion[3] = !Expansion[3];
+        StateHasChanged();
+    }
+}

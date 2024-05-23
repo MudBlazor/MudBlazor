@@ -1,61 +1,97 @@
-﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudIconButton : MudBaseButton
+#nullable enable
+    /// <summary>
+    /// Represents a button consisting of an icon.
+    /// </summary>
+    public partial class MudIconButton : MudBaseButton, IHandleEvent
     {
-        protected string Classname =>
-        new CssBuilder("mud-button-root mud-icon-button")
-          .AddClass("mud-button", when: AsButton)
-          .AddClass($"mud-icon-button-color-{Color.ToDescriptionString()}", !AsButton && Color != Color.Default)
-          .AddClass($"mud-button-{Variant.ToDescriptionString()}", AsButton)
-          .AddClass($"mud-button-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}", AsButton)
-          .AddClass($"mud-button-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}", AsButton)
-          .AddClass($"mud-ripple", !DisableRipple)
-          .AddClass($"mud-ripple-icon", !DisableRipple && !AsButton)
-          .AddClass($"mud-icon-button-size-{Size.ToDescriptionString()}", when: () => Size != Size.Medium)
-          .AddClass($"mud-icon-button-edge-{Edge.ToDescriptionString()}", when: () => Edge != Edge.False)
-          .AddClass(Class)
-        .Build();
+        protected string Classname => new CssBuilder("mud-button-root mud-icon-button")
+            .AddClass("mud-button", when: AsButton)
+            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !AsButton && Color != Color.Default)
+            .AddClass($"mud-button-{Variant.ToDescriptionString()}", AsButton)
+            .AddClass($"mud-button-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}", AsButton)
+            .AddClass($"mud-button-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}", AsButton)
+            .AddClass($"mud-ripple", Ripple)
+            .AddClass($"mud-ripple-icon", Ripple && !AsButton)
+            .AddClass($"mud-icon-button-size-{Size.ToDescriptionString()}", when: () => Size != Size.Medium)
+            .AddClass($"mud-icon-button-edge-{Edge.ToDescriptionString()}", when: () => Edge != Edge.False)
+            .AddClass($"mud-button-disable-elevation", !DropShadow)
+            .AddClass(Class)
+            .Build();
 
         protected bool AsButton => Variant != Variant.Text;
 
         /// <summary>
-        /// The Icon that will be used in the component.
+        /// The icon to display.
         /// </summary>
-        [Parameter] public string Icon { get; set; }
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public string? Icon { get; set; }
 
         /// <summary>
-        /// Title of the icon used for accessibility.
+        /// The color of the button.
         /// </summary>
-        [Parameter] public string Title { get; set; }
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// The color of the component. It supports the theme colors.
+        /// The size of the button.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        /// <remarks>
+        /// Defaults to <see cref="Size.Medium"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
-        /// The Size of the component.
+        /// The amount of negative margin applied.
         /// </summary>
-        [Parameter] public Size Size { get; set; } = Size.Medium;
+        /// <remarks>
+        /// Defaults to <see cref="Edge.False"/>.  Other values are <see cref="Edge.Start"/> and <see cref="Edge.End"/>
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public Edge Edge { get; set; }
 
         /// <summary>
-        /// If set uses a negative margin.
+        /// The variation to use.
         /// </summary>
-        [Parameter] public Edge Edge { get; set; }
+        /// <remarks>
+        /// Defaults to <see cref="Variant.Text"/>.  Other values include <see cref="Variant.Filled"/> and <see cref="Variant.Outlined"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        /// Child content of component, only shows if Icon is null or Empty.
+        /// The custom content within this button.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Only displays if <see cref="Icon"/> is not set.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public RenderFragment? ChildContent { get; set; }
 
-        /// <summary>
-        /// The variant to use.
-        /// </summary>
-        [Parameter] public Variant Variant { get; set; } = Variant.Text;
-
+        /// <inheritdoc/>
+        /// <remarks>
+        /// See: https://github.com/MudBlazor/MudBlazor/issues/8365
+        /// <para/>
+        /// Since <see cref="MudIconButton"/> implements only single <see cref="EventCallback"/> <see cref="MudBaseButton.OnClick"/> this is safe to disable globally within the component.
+        /// </remarks>
+        Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg) => callback.InvokeAsync(arg);
     }
 }

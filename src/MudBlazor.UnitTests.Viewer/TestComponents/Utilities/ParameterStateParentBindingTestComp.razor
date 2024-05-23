@@ -1,0 +1,49 @@
+﻿@inherits MudComponentBase
+@namespace MudBlazor.UnitTests
+
+<ParameterStateChildBindingTestComp Id="1" @ref="Child1Instance" @bind-Expanded="ExpandedChild1BindSyntax" />
+<ParameterStateChildBindingTestComp Id="2" @ref="Child2Instance" Expanded="ExpandedChild2VariableAndCallback" ExpandedChanged="ExpandedChangedChild2" />
+<ParameterStateChildBindingTestComp Id="3" @ref="Child3Instance" ExpandedChanged="ExpandedChangedChild3" />
+<ParameterStateChildBindingTestComp Id="4" @ref="Child4Instance" Expanded="ExpandedChild4OneWay" />
+
+<MudButton id="parentBtn1" OnClick="ToggleAsync1">@(ExpandedChild1BindSyntax ? "Show" : "Hide")</MudButton>
+<MudButton id="parentBtn2" OnClick="ToggleAsync2">@(ExpandedChild2VariableAndCallback ? "Show" : "Hide")</MudButton>
+<MudButton id="parentBtn4" OnClick="ToggleAsync4">@(ExpandedChild4OneWay ? "Show" : "Hide")</MudButton>
+
+@code {
+#nullable enable
+    public ParameterStateChildBindingTestComp Child1Instance = null!;
+    public ParameterStateChildBindingTestComp Child2Instance = null!;
+    public ParameterStateChildBindingTestComp Child3Instance = null!;
+    public ParameterStateChildBindingTestComp Child4Instance = null!;
+
+    public bool ExpandedChild1BindSyntax { get; set; }
+
+    public bool ExpandedChild2VariableAndCallback { get; set; }
+
+    public bool ExpandedChild4OneWay { get; set; }
+
+    private void ExpandedChangedChild2(bool newValue)
+    {
+        ExpandedChild2VariableAndCallback = newValue;
+    }
+
+    private void ExpandedChangedChild3(bool newValue)
+    {
+    }
+
+    private void ToggleAsync1()
+    {
+        ExpandedChild1BindSyntax = !ExpandedChild1BindSyntax;
+    }
+
+    private void ToggleAsync2()
+    {
+        ExpandedChild2VariableAndCallback = !ExpandedChild2VariableAndCallback;
+    }
+
+    private void ToggleAsync4()
+    {
+        ExpandedChild4OneWay = !ExpandedChild4OneWay;
+    }
+}

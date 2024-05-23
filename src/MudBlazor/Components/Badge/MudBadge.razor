@@ -3,19 +3,22 @@
 
 <span @attributes="UserAttributes" class="@Classname" style="@Style">
     @ChildContent
-    <span class="mud-badge-wrapper">
-        <span class="@BadgeClass">
-            @if (!Dot)
-            {
-                @if (!String.IsNullOrEmpty(Icon))
+    @if (Visible)
+    {
+        <span class="@WrapperClass">
+            <span role="status" aria-live="polite" aria-label="@BadgeAriaLabel" class="@BadgeClassname" @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(HandleBadgeClick)">
+                @if (!Dot)
                 {
-                    <MudIcon Icon="@Icon" Class="mud-icon-badge" />
+                    @if (!string.IsNullOrEmpty(Icon))
+                    {
+                        <MudIcon Icon="@Icon" Class="mud-icon-badge" />
+                    }
+                    else
+                    {
+                        @_content
+                    }
                 }
-                else
-                {
-                    @_content
-                }
-            }
+            </span>
         </span>
-    </span>
+    }
 </span>

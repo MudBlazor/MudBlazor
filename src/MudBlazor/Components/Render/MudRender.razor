@@ -1,0 +1,22 @@
+﻿@using MudBlazor.Interfaces;
+@namespace MudBlazor
+@implements IMudStateHasChanged
+
+@* MudRender is a container component that only renders its content, so it really doesn't do anything other than giving you the ability to force a re-render of its content
+    This is especially useful if you don't want to render the whole tree for some reason. All you need to force a renderupdate of its content is to call ForceRender() on an 
+    ElementReference to MudRender
+*@
+
+@ChildContent
+
+@code {
+#nullable enable
+    /// <summary>
+    /// The content to render
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <inheritdoc />
+    void IMudStateHasChanged.StateHasChanged() => StateHasChanged();
+}

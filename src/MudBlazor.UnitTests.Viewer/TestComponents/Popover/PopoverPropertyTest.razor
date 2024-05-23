@@ -1,0 +1,35 @@
+﻿<MudPopoverProvider></MudPopoverProvider>
+
+<div class="popoverparent">
+    <p>Some Text</p>
+    <MudPopover Open="true" Style="my-custom-style:3px"
+                MaxHeight="MaxHeight"
+                Paper="Paper"
+                DropShadow="DropShadow"
+                Elevation="Elevation"
+                Square="Square"
+                Fixed="Fixed"
+                Class="my-custom-class"
+                AnchorOrigin="AnchorOrigin"
+                RelativeWidth="RelativeWidth"
+                TransformOrigin="TransformOrigin"
+                OverflowBehavior="OverflowBehavior"
+                Duration="Duration">
+        <MudText Class="test-popover-content">Popover content</MudText>
+    </MudPopover>
+</div>
+
+
+@code {
+    [Parameter] public int? MaxHeight { get; set; } = null;
+    [Parameter] public bool Paper { get; set; } = true;
+    [Parameter] public int Elevation { set; get; } = 8;
+    [Parameter] public bool Square { get; set; }
+    [Parameter] public bool Fixed { get; set; }
+    [Parameter] public Origin AnchorOrigin { get; set; } = Origin.TopLeft;
+    [Parameter] public Origin TransformOrigin { get; set; } = Origin.TopLeft;
+    [Parameter] public bool RelativeWidth { get; set; } = false;
+    [Parameter] public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipNever;
+    [Parameter] public double Duration { get; set; } = 251;
+    [Parameter] public bool DropShadow { get; set; } = true; // Default
+}

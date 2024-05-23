@@ -1,0 +1,43 @@
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid Items="@_items">
+    <Columns>
+        <PropertyColumn Property="x => x.Name">
+            <FooterTemplate>
+                Names: @(string.Join(", ", @context.Items.Select(x => x.Name)))
+            </FooterTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Age" AggregateDefinition="_ageAggregation" />
+        <PropertyColumn Property="x => x.Status" AggregateDefinition="AggregateDefinition<Model>.SimpleCount()" />
+        <PropertyColumn Property="x => x.Salary" AggregateDefinition="_salaryAggregation" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public record Model (string Name, int Age, Severity Status, decimal Salary);
+
+    IEnumerable<Model> _items = new List<Model>()
+    {
+        new Model("Sam", 56, Severity.Normal, 50_000.00M), 
+        new Model("Alicia", 54, Severity.Info, 75_000.00M), 
+        new Model("Ira", 27, Severity.Success, 102_000.00M),
+        new Model("John", 32, Severity.Warning, 132_000.00M)
+    };
+
+    AggregateDefinition<Model> _ageAggregation = new AggregateDefinition<Model>
+    {
+        Type = AggregateType.Avg,
+        DisplayFormat = "Average age is {value}"
+    };
+
+    AggregateDefinition<Model> _salaryAggregation = new AggregateDefinition<Model>
+    {
+        Type = AggregateType.Custom,
+        CustomAggregate = x =>
+        {
+            var highestSalary = x.Max(z => z.Salary);
+            var countOver100Grand = x.Count(z => z.Salary > 100_000);
+            return $"Highest: {highestSalary.ToString("C0")} | {countOver100Grand} Over {100000:C0}";
+        }
+    };
+}

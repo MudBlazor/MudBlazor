@@ -1,0 +1,23 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudChart ChartType="ChartType.Bar" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px">
+	<CustomGraphics>
+		<style>
+			.heavy { font: bold 30px Helvetica; }
+			.Rrrrr { font: italic 40px Helvetica; fill: rgb(62,44,221); }
+		</style>
+		<text x="80" y="35" class="heavy">I Love</text>
+		<text x="105" y="70" class="Rrrrr">MudBlazor!</text>
+	</CustomGraphics>
+</MudChart>
+
+
+@code {
+    public List<ChartSeries> Series = new List<ChartSeries>()
+    {
+        new ChartSeries() { Name = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
+        new ChartSeries() { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, 13, 16, 31 } },
+        new ChartSeries() { Name = "Sweden", Data = new double[] { 8, 6, 11, 13, 4, 16, 10, 16, 18 } },
+    };
+    public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+}

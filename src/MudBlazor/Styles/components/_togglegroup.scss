@@ -1,0 +1,113 @@
+@import '../abstracts/variables';
+
+.mud-toggle-group {
+  display: grid;
+  overflow: hidden;
+  border-radius: var(--mud-default-borderradius);
+
+  &.mud-toggle-group-size-small {
+    font-size: 100% !important;
+  }
+
+  &.mud-toggle-group-size-medium {
+    font-size: 125% !important;
+  }
+
+  &.mud-toggle-group-size-large {
+    font-size: 150% !important;
+  }
+
+  &.mud-disabled {
+    cursor: default;
+    pointer-events: none;
+    color: var(--mud-palette-action-disabled) !important;
+    border-color: var(--mud-palette-action-disabled) !important;
+  }
+}
+
+.mud-toggle-group-horizontal {
+  &:not(.mud-toggle-group-rtl) {
+    > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
+      &.mud-toggle-item-delimiter {
+        border-left-width: 1px;
+      }
+
+      &.mud-toggle-delimiter-alternative {
+        border-left-color: var(--mud-palette-background-gray) !important;
+      }
+    }
+  }
+
+  &.mud-toggle-group-rtl {
+    > .mud-toggle-item:not(:last-child), > :not(:last-child) .mud-toggle-item {
+      &.mud-toggle-item-delimiter {
+        border-left-width: 1px;
+      }
+    }
+  }
+}
+
+.mud-toggle-group-vertical {
+  > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
+    &.mud-toggle-item-delimiter {
+      border-top-width: 1px;
+    }
+
+    &.mud-toggle-delimiter-alternative {
+      border-top-color: var(--mud-palette-background-gray) !important;
+    }
+  }
+}
+
+.mud-toggle-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 0.5em;
+  padding: 0.375em;
+  cursor: pointer;
+  user-select: none;
+
+  @each $color in $mud-palette-colors {
+    &.mud-toggle-item-#{$color} {
+      color: var(--mud-palette-#{$color});
+
+      @media(hover: hover) and (pointer: fine) {
+        &:hover:not(.mud-toggle-item-selected) {
+          background-color: var(--mud-palette-#{$color}-hover);
+        }
+      }
+
+      &:focus-visible:not(.mud-toggle-item-selected), &:active:not(.mud-toggle-item-selected) {
+        background-color: var(--mud-palette-#{$color}-hover);
+      }
+    }
+  }
+
+  &.mud-toggle-item-fixed {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+  }
+
+  &.mud-disabled {
+    cursor: default;
+    pointer-events: none;
+    color: var(--mud-palette-action-disabled) !important;
+    border-color: inherit !important;
+  }
+}
+
+.mud-toggle-item-text {
+  font-size: 0.875em !important;
+}
+
+.mud-toggle-item-check-icon {
+  font-size: 1.25em !important;
+  justify-self: end;
+}
+
+.mud-toggle-item-content {
+  /*Restore initial scaling for custom content*/
+  font-size: 1rem !important;
+  display: contents;
+}

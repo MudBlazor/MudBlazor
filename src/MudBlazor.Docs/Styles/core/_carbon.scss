@@ -1,0 +1,79 @@
+﻿#carbonads * {
+  margin: initial;
+  padding: initial;
+}
+
+#carbonads {
+  margin: 16px;
+  padding: 16px;
+  z-index: 100;
+  max-width: 176px;
+  margin-right: auto;
+  animation: mud-animation-fadein ease .15s;
+  border-radius: var(--mud-default-borderradius);
+  background-color: var(--mud-palette-background-gray);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+
+// hide doubled ad
+#carbonads_1 {
+  display: none;
+}
+
+#carbonads a {
+  color: inherit;
+  text-decoration: none;
+}
+
+#carbonads a:hover {
+  color: inherit;
+}
+
+#carbonads span {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+
+#carbonads .carbon-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+#carbonads .carbon-img {
+  display: block;
+  line-height: 1;
+  margin-bottom: .5rem;
+}
+
+#carbonads .carbon-img img {
+  display: block;
+  width: 100%;
+  max-width: 160px !important;
+  height: auto;
+  border-radius: var(--mud-default-borderradius);
+}
+
+#carbonads .carbon-text {
+  display: block;
+  flex: 1 1 0%;
+  font-size: .875rem;
+  line-height: 1.625;
+  margin: 0;
+  text-align: left;
+  width: 100%;
+}
+
+#carbonads .carbon-text:hover {
+  color: #000;
+}
+
+#carbonads .carbon-poweredby {
+  display: block;
+  font-size: .75rem;
+  line-height: 1rem;
+  margin-left: .5rem;
+  padding-top: .5rem;
+  text-align: right;
+}

@@ -1,0 +1,58 @@
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTable @ref="filteredTable" Items="states" Filter="new Func<string, bool>(FilterFunc)">
+     <ToolBarContent>
+        <MudText>Filtered Item Count: @FilteredItemCount</MudText>
+        <MudSpacer />
+        <MudTextField id="searchString" @bind-Value="searchString" Placeholder="Search"></MudTextField>
+    </ToolBarContent>
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate> 
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] {8, 16, 32}" />
+    </PagerContent>
+</MudTable>
+
+@code {
+    public static string __description__ = "paging for different PageSizeOptions than the default 10";
+
+    private string searchString;
+
+    private MudTable<string> filteredTable;
+
+    private string FilteredItemCount
+    {
+        get
+        {
+            return filteredTable.GetFilteredItemsCount().ToString();
+        }
+    }
+
+    private bool FilterFunc(string state)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (state.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    private string[] states =
+    {
+        "Alabama", "Alaska", "American Samoa", "Arizona",
+        "Arkansas", "California", "Colorado", "Connecticut",
+        "Delaware", "District of Columbia", "Federated States of Micronesia",
+        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
+        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+        "Louisiana", "Maine", "Marshall Islands", "Maryland",
+        "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+        "Missouri", "Montana", "Nebraska", "Nevada",
+        "New Hampshire", "New Jersey", "New Mexico", "New York",
+        "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
+        "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
+        "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
+        "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming",
+    };
+}

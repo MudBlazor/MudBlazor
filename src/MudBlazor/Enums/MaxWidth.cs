@@ -12,6 +12,8 @@ namespace MudBlazor
         Small,
         [Description("xl")]
         ExtraLarge,
+        [Description("xxl")]
+        ExtraExtraLarge,
         [Description("xs")]
         ExtraSmall,
         [Description("false")]

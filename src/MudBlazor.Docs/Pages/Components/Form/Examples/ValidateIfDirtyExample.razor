@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="6">
+        <MudPaper Class="pa-4">
+            <MudText><CodeInline>OnlyValidateIfDirty="false"</CodeInline> (default behavior)</MudText>
+            <MudForm >
+                <MudTextField T="string" Label="Username" Required="true" RequiredError="User name is required!"/>
+            </MudForm>
+        </MudPaper>
+    </MudItem>
+    
+    <MudItem xs="12" sm="6">
+        <MudPaper Class="pa-4">
+            <MudText><CodeInline>OnlyValidateIfDirty="true"</CodeInline></MudText>
+            <MudForm >
+                <MudTextField T="string" Label="Username" Required="true" RequiredError="User name is required!" OnlyValidateIfDirty="true"/>
+            </MudForm>
+        </MudPaper>
+    </MudItem>
+
+</MudGrid>

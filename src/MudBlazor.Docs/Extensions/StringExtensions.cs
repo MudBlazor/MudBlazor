@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
@@ -8,7 +7,7 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace MudBlazor.Docs.Extensions
 {
-    public static class StringExtensions
+    public static partial class StringExtensions
     {
         public static string ToKebabCase(this string source)
         {
@@ -25,25 +24,25 @@ namespace MudBlazor.Docs.Extensions
                 }
                 else if (i == 0) // if current char is the first char
                 {
-                    builder.Append(char.ToLower(source[i]));
+                    builder.Append(char.ToLowerInvariant(source[i]));
                 }
                 else if (char.IsLower(source[i - 1]) && char.IsLetter(source[i])) // if current char is upper and previous char is lower
                 {
                     builder.Append('-');
-                    builder.Append(char.ToLower(source[i]));
+                    builder.Append(char.ToLowerInvariant(source[i]));
                 }
                 else if (i + 1 == source.Length || char.IsUpper(source[i + 1])) // if current char is upper and next char doesn't exist or is upper
                 {
-                    builder.Append(char.ToLower(source[i]));
+                    builder.Append(char.ToLowerInvariant(source[i]));
                 }
                 else if (char.IsUpper(source[i]) && char.IsLetter(source[i + 1]) && char.IsLower(source[i + 1])) // if current char is upper and next char is lower
                 {
                     builder.Append('-');
-                    builder.Append(char.ToLower(source[i]));
+                    builder.Append(char.ToLowerInvariant(source[i]));
                 }
                 else
                 {
-                    builder.Append(char.ToLower(source[i]));
+                    builder.Append(char.ToLowerInvariant(source[i]));
                 }
             }
             return builder.ToString();
@@ -55,7 +54,7 @@ namespace MudBlazor.Docs.Extensions
                 return null;
             if (source.Length == 0)
                 return string.Empty;
-            var tokens = Regex.Split(source, @"[-_ ]");
+            var tokens = TokenRegularExpression().Split(source);
             return string.Join("", tokens.Select(x => x.Capitalize()));
         }
 
@@ -87,5 +86,8 @@ namespace MudBlazor.Docs.Extensions
                 return urlEncodedBase64compressedCode;
             }
         }
+
+        [GeneratedRegex(@"[-_ ]")]
+        private static partial Regex TokenRegularExpression();
     }
 }

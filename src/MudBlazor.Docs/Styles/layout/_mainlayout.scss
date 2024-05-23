@@ -1,0 +1,146 @@
+﻿.docs-title {
+  font-family: 'Public Sans', 'Roboto','Arial','sans-serif';
+  font-weight: 600;
+  font-size: 3.75rem;
+}
+
+.docs-title-description {
+  font-family: 'Public Sans', 'Roboto','Arial','sans-serif';
+  font-weight: 500;
+  line-height: 1.75;
+  font-size: 1.1rem;
+  margin: 0 4px;
+}
+
+@media (max-width:600px) {
+  .docs-title {
+    font-size: 2.5rem;
+  }
+
+  .docs-title-description {
+    font-size: .875rem;
+  }
+}
+
+.docs-sticky-info {
+  position: sticky;
+  top: 128px;
+
+  &.explore-text {
+    .mud-typography-h5 {
+      font-weight: 500;
+    }
+  }
+}
+
+.docs-appbar {
+  z-index: calc(var(--mud-zindex-appbar) + 1);
+}
+
+.docs-appbar-filter {
+  backdrop-filter: blur(12px);
+  z-index: calc(var(--mud-zindex-appbar) + 1);
+}
+
+.docs-appbar, .docs-menu-list {
+  .mud-autocomplete {
+    max-width: 360px;
+  }
+
+  .mud-button {
+    font-family: 'Public Sans', 'Roboto','Arial','sans-serif';
+    font-size: .875rem;
+    font-weight: 500;
+    line-height: 1.75;
+    letter-spacing: .02857em;
+    text-transform: none;
+  }
+}
+
+.mudblazor-docs, .mudblazor-landingpage {
+  .docs-single-link .mud-nav-link {
+    font-weight: 500 !important;
+  }
+}
+
+
+.landing-appbar {
+  position: absolute !important;
+}
+
+.docs-mudblazor-logo {
+  width: 40px;
+}
+
+.docs-brand-text {
+  letter-spacing: .2rem;
+  font-weight: 400;
+  font-family: 'Roboto';
+  margin-inline-start: 12px;
+  font-size: 24px;
+  user-select: none;
+}
+
+.docs-text-dec {
+  text-decoration: underline dotted var(--mud-palette-primary);
+}
+
+.docs-footer {
+  .mud-link {
+    margin: 8px 0;
+    cursor: pointer;
+    transition: color 200ms cubic-bezier(.4, 0, .2, 1) 0ms;
+  }
+}
+
+.docs-mobile-dialog-search {
+  height: 400px;
+}
+
+.docs-mobile-dialog-search-popover {
+  box-shadow: none !important;
+  margin-top: 8px;
+  background-color: var(--mud-palette-background-gray);
+
+  .mud-list {
+    background-color: var(--mud-palette-background-gray);
+
+    .mud-list-item {
+      background-color: var(--mud-palette-surface);
+      margin: 6px 0;
+      border-radius: 4px;
+
+      .mud-typography-body2 {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--mud-palette-text-secondary);
+      }
+
+      @media(hover: hover) and (pointer: fine) {
+        &:hover {
+          color: var(--mud-palette-primary-text);
+          background-color: var(--mud-palette-primary);
+
+          .mud-typography-body2 {
+            color: var(--mud-palette-primary-text);
+          }
+        }
+      }
+
+      &:active {
+        color: var(--mud-palette-primary-text);
+        background-color: var(--mud-palette-primary);
+
+        .mud-typography-body2 {
+          color: var(--mud-palette-primary-text);
+        }
+      }
+    }
+  }
+}
+
+@media (max-width:960px) {
+  :root {
+    --mud-drawer-width-left: 300px !important;
+  }
+}

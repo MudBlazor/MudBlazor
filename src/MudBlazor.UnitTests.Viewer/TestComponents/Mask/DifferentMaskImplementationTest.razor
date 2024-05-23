@@ -1,0 +1,47 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTextField Clearable
+              Mask="@_blockMask"
+              @bind-Value="@BlockMaskValue" />
+
+<MudTextField Clearable
+              Mask="@_blockMaskPrefix"
+              @bind-Value="@BlockMaskValue" />
+
+<MudTextField Clearable
+              Mask="@(new DateMask("dd/MM/yyyy"))"
+              @bind-Value="@DateMaskValue" />
+
+<MudTextField Clearable
+              Mask="@_multiMask"
+              @bind-Value="@MultiMaskValue" />
+
+<MudTextField Clearable
+              Mask="@_patternMask"
+              @bind-Value="@PatternMaskValue" />
+
+<MudTextField Clearable
+              Mask="@RegexMask.IPv4()"
+              @bind-Value="@RegexMaskValue" />
+
+@code {
+    [Parameter]
+    public string BlockMaskValue { get; set; } = "MUD 1337";
+    
+    [Parameter]
+    public string DateMaskValue { get; set; } = "20/07/2023";
+    
+    [Parameter]
+    public string MultiMaskValue { get; set; } = "1234 5678 9012 3456";
+    
+    [Parameter]
+    public string PatternMaskValue { get; set; } = "123";
+    
+    [Parameter]
+    public string RegexMaskValue { get; set; } = "127.000.000.001";
+    
+    private readonly BlockMask _blockMask = new(delimiters:" ", new Block('a', 1,3), new Block('0', 1,4));
+    private readonly BlockMask _blockMaskPrefix = new(delimiters: " ", new Block('a', 3, 3), new Block('0', 1, 4));
+    private readonly MultiMask _multiMask = new("0000 0000 0000 0000");
+    private readonly PatternMask _patternMask = new("000");
+}

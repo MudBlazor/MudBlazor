@@ -1,0 +1,66 @@
+name: Feature Request
+description: Suggest an idea for this project
+labels: [triage, enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this feature request for [MudBlazor](https://mudblazor.com). Note: this template is only for feature requests. Please use [Github Discussions](https://github.com/MudBlazor/MudBlazor/discussions) or [Discord](https://discord.gg/mudblazor) for any questions.
+  - type: dropdown
+    id: enhancement-type
+    attributes:
+      label: Feature request type
+      options:
+        - Enhance component
+        - New component
+        - Performance improvement
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: component-name
+    attributes:
+      label: Component name
+      description: If this feature request is about a component, please provide the name.
+      placeholder: MudComponent
+  - type: textarea
+    id: related-problem
+    attributes:
+      label: Is your feature request related to a problem?
+      description: Please provide a clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+      placeholder: Describe your problem!
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Describe the solution you'd like
+      description: Please provide a clear and concise description of what you want to happen.
+      placeholder: Describe your request!
+    validations:
+      required: true
+  - type: textarea
+    id: examples
+    attributes:
+      label: Have you seen this feature anywhere else?
+      description: Please provide links to the Material Design guidelines, other implementations, or screenshots or videos of the expected behavior if possible.
+      placeholder: Show us examples!
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Describe alternatives you've considered
+      description: Please provide a clear and concise description of any alternative solutions or features you've considered.
+      placeholder: Describe alternatives!
+  - type: checkboxes
+    id: pr
+    attributes:
+      label: Pull Request
+      description: If you want to see this feature soon, consider submitting a Pull Request! Our team has limited resources so we rely on community contributions. We greatly appreciate all contributions and will review them as soon as possible for inclusion in the next version!
+      options:
+        - label: I would like to do a Pull Request
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/MudBlazor/MudBlazor/blob/dev/CODE_OF_CONDUCT.md).
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

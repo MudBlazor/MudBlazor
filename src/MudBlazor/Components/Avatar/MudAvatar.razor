@@ -1,13 +1,9 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" class="@Classname" style="@Style">
-    @if (!String.IsNullOrEmpty(Image))
-    {
-        <img src="@Image" class="mud-avatar-img" />
-    }
-    else
-    {
+@if(AvatarGroup == null || AvatarGroup.MaxGroupReached(this))
+{
+    <div role="img" @attributes="UserAttributes" class="@Classname" style="@Stylesname">
         @ChildContent
-    }
-</div>
+    </div>
+}

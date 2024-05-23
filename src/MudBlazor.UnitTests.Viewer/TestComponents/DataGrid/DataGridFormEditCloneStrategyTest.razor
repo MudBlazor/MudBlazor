@@ -1,0 +1,120 @@
+﻿@using MudBlazor.Utilities.Clone
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDialogProvider />
+
+<MudDataGrid T="Movement" Items="@_movements" ReadOnly="false" EditMode="DataGridEditMode.Form" EditTrigger="@DataGridEditTrigger.OnRowClick" CloneStrategy="CloneStrategy">
+    <Columns>
+        <PropertyColumn Property="x => x.From.Name"/>
+        <PropertyColumn Property="x => x.To.Name"/>
+        <PropertyColumn Property="x => x.Quantity"/>
+        <PropertyColumn Property="x => x.Message"/>
+    </Columns>
+</MudDataGrid>
+
+@code {
+
+    [Parameter]
+    public ICloneStrategy<Movement> CloneStrategy { get; set; } = CloneableCloneStrategy<Movement>.Instance;
+
+    private readonly IEnumerable<Movement> _movements = new List<Movement>
+    {
+        new()
+        {
+            From = new ElementA
+            {
+                Id = 1,
+                Name = "James"
+            },
+            To = new ElementB
+            {
+                Id = 2,
+                Name = "Robert"
+            },
+            Quantity = 1,
+            Message = "first"
+        },
+        new()
+        {
+            From = new ElementA
+            {
+                Id = 3,
+                Name = "John"
+            },
+            To = new ElementA
+            {
+                Id = 4,
+                Name = "David"
+            },
+            Quantity = 2,
+            Message = "second"
+        },
+    };
+
+    public abstract class Element : ICloneable
+    {
+        public int Id { get; set; }
+
+        public string Name { get; set; }
+
+        public abstract object Clone();
+    }
+
+    public class ElementA : Element
+    {
+        public int MyPropertyA { get; set; }
+
+        public override object Clone()
+        {
+            var elementAClone = new ElementA
+            {
+                Id = Id,
+                Name = Name,
+                MyPropertyA = MyPropertyA
+            };
+
+            return elementAClone;
+        }
+    }
+
+    public class ElementB : Element
+    {
+        public int MyPropertyB { get; set; }
+
+        public override object Clone()
+        {
+            var elementBClone = new ElementB
+            {
+                Id = Id,
+                Name = Name,
+                MyPropertyB = MyPropertyB
+            };
+
+            return elementBClone;
+        }
+    }
+
+    public class Movement : ICloneable
+    {
+        public Element From { get; set; }
+
+        public Element To { get; set; }
+
+        public int Quantity { get; set; }
+
+        public string Message { get; set; }
+
+        public object Clone()
+        {
+            var movementClone = new Movement
+            {
+                From = (Element)From.Clone(),
+                To = (Element)To.Clone(),
+                Quantity = Quantity,
+                Message = Message
+            };
+
+            return movementClone;
+        }
+    }
+}

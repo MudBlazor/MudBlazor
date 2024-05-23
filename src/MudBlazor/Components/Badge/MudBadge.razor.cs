@@ -1,89 +1,171 @@
-﻿using System;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
+    /// <summary>
+    /// Represents an overlay added to an icon or button to add information such as a number of new items.
+    /// </summary>
     public partial class MudBadge : MudComponentBase
     {
-        protected string Classname =>
-        new CssBuilder("mud-badge")
-          .AddClass(Class)
-        .Build();
+        protected string Classname => new CssBuilder("mud-badge-root")
+            .AddClass(Class)
+            .Build();
 
-        protected string BadgeClass =>
-        new CssBuilder("mud-badge-badge")
+        protected string WrapperClass => new CssBuilder("mud-badge-wrapper")
+            .AddClass($"mud-badge-{Origin.ToDescriptionString().Replace("-", " ")}")
+            .Build();
+
+        protected string BadgeClassname => new CssBuilder("mud-badge")
             .AddClass("mud-badge-dot", Dot)
             .AddClass("mud-badge-bordered", Bordered)
             .AddClass("mud-badge-icon", !string.IsNullOrEmpty(Icon) && !Dot)
-            .AddClass("mud-theme-" + Color.ToDescriptionString())
-            .AddClass("mud-badge-top", !Bottom)
-            .AddClass("mud-badge-bottom", Bottom)
-            .AddClass("mud-badge-right", Start == RightToLeft)
-            .AddClass("mud-badge-left", Start != RightToLeft)
+            .AddClass($"mud-badge-{Origin.ToDescriptionString().Replace("-", " ")}")
+            .AddClass($"mud-elevation-{Elevation.ToString()}")
+            .AddClass("mud-theme-" + Color.ToDescriptionString(), Color != Color.Default)
+            .AddClass("mud-badge-default", Color == Color.Default)
             .AddClass("mud-badge-overlap", Overlap)
-        .Build();
+            .AddClass(BadgeClass)
+            .Build();
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
-        
+        /// <summary>
+        /// The location of the badge.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Origin.TopRight" />.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Badge.Appearance)]
+        public Origin Origin { get; set; } = Origin.TopRight;
+
+        /// <summary>
+        /// The size of the drop shadow.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>0</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Badge.Appearance)]
+        public int Elevation { set; get; } = 0;
+
+        /// <summary>
+        /// Displays this badge.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Badge.Behavior)]
+        public bool Visible { get; set; } = true;
+
         /// <summary>
         /// The color of the badge.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Badge.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// Aligns the badge to bottom.
+        /// Displays a dot instead of any content.
         /// </summary>
-        [Parameter] public bool Bottom { get; set; }
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Badge.Behavior)]
+        public bool Dot { get; set; }
 
         /// <summary>
-        /// Aligns the badge to left.
+        /// Displays <see cref="ChildContent"/> over the main badge content.
         /// </summary>
-        [ObsoleteAttribute("Left is obsolete. Use Start instead!", false)]
-        [Parameter] public bool Left { get => Start; set { Start = value; } }
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Badge.Appearance)]
+        public bool Overlap { get; set; }
 
         /// <summary>
-        /// Aligns the badge to the start (Left in LTR and right in RTL).
+        /// Displays a border around the badge.
         /// </summary>
-        [Parameter] public bool Start { get; set; }
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Badge.Appearance)]
+        public bool Bordered { get; set; }
 
         /// <summary>
-        /// Reduces the size of the badge and hide any of its content.
+        /// The icon to display in the badge.
         /// </summary>
-        [Parameter] public bool Dot { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Badge.Behavior)]
+        public string? Icon { get; set; }
 
         /// <summary>
-        /// Overlaps the childcontent on top of the content.
+        /// The maximum number allowed in the <see cref="Content"/> property.
         /// </summary>
-        [Parameter] public bool Overlap { get; set; }
+        /// <remarks>
+        /// Defaults to <c>99</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Badge.Behavior)]
+        public int Max { get; set; } = 99;
 
         /// <summary>
-        /// Applies a border around the badge.
+        /// The <c>string</c> or <c>int</c> value to display inside the badge.
         /// </summary>
-        [Parameter] public bool Bordered { get; set; }
+        /// <remarks>
+        /// Supported types are <c>string</c> and <c>int</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Badge.Behavior)]
+        public object? Content { get; set; }
 
         /// <summary>
-        /// Sets the Icon to use in the badge.
+        /// The CSS classes applied to the badge.
         /// </summary>
-        [Parameter] public string Icon { get; set; }
+        /// <remarks>
+        /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Badge.Appearance)]
+        public string? BadgeClass { get; set; }
 
         /// <summary>
-        /// Max value to show when content is integer type.
+        /// The ARIA label for the badge.
         /// </summary>
-        [Parameter] public int Max { get; set; } = 99;
+        [Parameter]
+        [Category(CategoryTypes.Badge.Behavior)]
+        public string? BadgeAriaLabel { get; set; }
 
         /// <summary>
-        /// Content you want inside the badge. Supported types are string and integer.
+        /// The content within this badge.
         /// </summary>
-        [Parameter] public object Content { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Badge.Behavior)]
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Child content of component, the content that the badge will apply to.
+        /// Occurs when the badge has been clicked.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
-        private string _content;
+        private string? _content;
+
+        internal Task HandleBadgeClick(MouseEventArgs e)
+        {
+            if (OnClick.HasDelegate)
+                return OnClick.InvokeAsync(e);
+
+            return Task.CompletedTask;
+        }
 
         protected override void OnParametersSet()
         {

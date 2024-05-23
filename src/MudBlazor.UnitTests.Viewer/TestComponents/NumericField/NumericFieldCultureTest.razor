@@ -1,0 +1,18 @@
+﻿@using System.Globalization
+
+<MudText>@FieldImmediate.Text</MudText>
+<MudText>@FieldNotImmediate.Text</MudText>
+
+<MudNumericField @ref="FieldImmediate" T="double?" @bind-Value="_value" Immediate Label="English Immediate" Format="N2" Culture="_english"/>
+<MudNumericField @ref="FieldNotImmediate" T="double?" @bind-Value="_value2" Label="German" Format="N2" Culture="_german"/>
+
+@code {
+    public CultureInfo _german = CultureInfo.GetCultureInfo("de-DE");
+    public CultureInfo _english = CultureInfo.GetCultureInfo("en-US");
+
+    public double? _value { get; set; }
+    public double? _value2 { get; set; }
+
+    public MudNumericField<double?> FieldImmediate { get; set; }
+    public MudNumericField<double?> FieldNotImmediate { get; set; }
+}

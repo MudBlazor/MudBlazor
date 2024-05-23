@@ -1,0 +1,50 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSelect T="TimelineAlign" @bind-Value="_timelineAlign" Label="Timeline Align" Dense="true" Variant="Variant.Outlined">
+    <MudSelectItem T="TimelineAlign" Value="TimelineAlign.Start">Start</MudSelectItem>
+    <MudSelectItem T="TimelineAlign" Value="TimelineAlign.Default">Default</MudSelectItem>
+    <MudSelectItem T="TimelineAlign" Value="TimelineAlign.End">End</MudSelectItem>
+</MudSelect>
+
+<MudTimeline TimelineAlign="_timelineAlign">
+    <MudTimelineItem Color="Color.Dark" Elevation="25">
+        <ItemOpposite>
+            <MudText Color="Color.Dark" Typo="Typo.h6">Aug 2020</MudText>
+        </ItemOpposite>
+        <ItemContent>
+            <MudPaper Elevation="0" Class="mt-n1">
+                <MudText Color="Color.Dark" Typo="Typo.h6" GutterBottom="true">MudBlazor Emerges</MudText>
+                <MudText Typo="Typo.body2">A repository pops up on GitHub named MudBlazor.</MudText>
+                <MudText Typo="Typo.body2">The development has already started and the most common components can be found already.</MudText>
+            </MudPaper>
+        </ItemContent>
+    </MudTimelineItem>
+    <MudTimelineItem Color="Color.Primary" Elevation="25" TimelineAlign="TimelineAlign.End">
+        <ItemOpposite>
+            <MudText Color="Color.Primary" Typo="Typo.h6">Oct 2020</MudText>
+        </ItemOpposite>
+        <ItemContent>
+            <MudPaper Elevation="0" Class="mt-n1">
+                <MudText Color="Color.Primary" Typo="Typo.h6" GutterBottom="true">MudBlazor Unleashed!</MudText>
+                <MudText Typo="Typo.body2">The first version is released and uploaded as v1.0.7.</MudText>
+            </MudPaper>
+        </ItemContent>
+    </MudTimelineItem>
+    <MudTimelineItem Color="Color.Secondary" Elevation="25">
+        <ItemOpposite>
+            <MudText Color="Color.Secondary" Typo="Typo.h6" GutterBottom="true">Nov 2020</MudText>
+        </ItemOpposite>
+        <ItemContent>
+            <MudPaper Elevation="0" Class="mt-n1">
+                <MudText Color="Color.Secondary" Typo="Typo.h6" GutterBottom="true">First Minor</MudText>
+                <MudText Typo="Typo.body2">MudBlazor gets its first minor with version 1.1.0.</MudText>
+                <MudText Typo="Typo.body2">TimerPicker, AutoComplete and Charts join the library as well as T versions of our inputs and selects.</MudText>
+            </MudPaper>
+        </ItemContent>
+    </MudTimelineItem>
+</MudTimeline>
+
+@code{
+    private TimelineAlign _timelineAlign { get; set; } = TimelineAlign.Start;
+  
+}

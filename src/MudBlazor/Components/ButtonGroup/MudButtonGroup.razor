@@ -4,3 +4,7 @@
 <MudElement HtmlTag="div" Class="@Classname" Style="@Style" Tag="@Tag" UserAttributes="@UserAttributes">
     @ChildContent
 </MudElement>
+
+@{
+    UserAttributes.TryAdd("role", "group");
+}

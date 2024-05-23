@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace MudBlazor
 {
-    public class DialogParameters : IEnumerable
+    public class DialogParameters : IEnumerable<KeyValuePair<string, object>>
     {
         internal Dictionary<string, object> _parameters;
 
@@ -40,10 +40,18 @@ namespace MudBlazor
             return default;
         }
 
+        public int Count =>
+            _parameters.Count;
+
         public object this[string parameterName]
         {
             get => Get<object>(parameterName);
             set => _parameters[parameterName] = value;
+        }
+
+        public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
+        {
+            return _parameters.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

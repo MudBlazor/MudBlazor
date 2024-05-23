@@ -1,93 +1,158 @@
 ﻿@page "/components/progress"
 
 <DocsPage>
-    <DocsPageHeader Title="Progress" SubTitle="Progress indicators that either shows the length of a process or unspecified wait time also known as indeterminate. The animations is done with SVG's and CSS.">
+    <DocsPageHeader Title="Progress" SubTitle="Progress indicators that either show the length of a process or unspecified wait time, also known as indeterminate state. The animation is done with SVGs and CSS.">
         <Description>
             <div class="mt-6">
-                Progress indicators inform users about the status of ongoing processes, such as loading an app, submitting a form, or saving updates. They communicate an app’s state and indicate available actions, such as whether users can navigate away from the current screen.
+                Progress indicators inform users about the status of ongoing processes, such as loading an app, submitting a form, or saving updates. They communicate an app's state and indicate available actions, such as whether users can navigate away from the current screen.
             </div>
         </Description>
     </DocsPageHeader>
-    <DocsPageContent>
-        <MudGrid>
-            <MudItem md="6">
-                <MudText Typo="Typo.h6" Color="Color.Primary">Determinate indicators</MudText>
-                <MudText>
-                    <b>Determinate</b> indicators display how long a process will take. They should be used when the process completion rate can be detected.
-                </MudText>
-            </MudItem>
-            <MudItem md="6">
-                <MudText Typo="Typo.h6" Color="Color.Secondary">Indeterminate indicators</MudText>
-                <MudText>
-                    <b>Indeterminate</b> indicators express an unspecified amount of wait time. They should be used when progress isn’t detectable, or if it’s not necessary to indicate how long an activity will take.
-                </MudText>
-            </MudItem>
-        </MudGrid>
-    </DocsPageContent>
+
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Circular</Title>
-                <SubTitle>Circular indeterminate</SubTitle>
-            </SectionHeader>
-            <SectionContent Outlined="true">
-                <ProgressCircularInterminateExample />
-            </SectionContent>
-            <SectionSource Code="ProgressCircularInterminateExample" GitHubFolderName="Progress"  />
-            <SectionHeader>
-                <SubTitle>Circular determinate</SubTitle>
-            </SectionHeader>
-            <SectionContent Outlined="true">
-                <ProgressCircularDeterminateExample />
-            </SectionContent>
-            <SectionSource Code="ProgressCircularDeterminateExample" GitHubFolderName="Progress"  />
-            <SectionHeader>
-                <SubTitle>Circular Sizes</SubTitle>
-                <Description>You can change the size with the pre defined <CodeInline>Size</CodeInline> prop or change the <CodeInline>Width</CodeInline> and <CodeInline>Height</CodeInline> in css.</Description>
-            </SectionHeader>
-            <SectionContent Outlined="true">
-                <ProgressCircularSizesExample />
-            </SectionContent>
-            <SectionSource Code="ProgressCircularSizesExample" GitHubFolderName="Progress" />
+            <MudGrid>
+                <MudItem md="6">
+                    <MudText Typo="Typo.h6" Color="Color.Primary">Determinate indicators</MudText>
+                    <MudText>
+                        <b>Determinate</b> indicators display how long a process will take. They should be used when the process completion rate can be estimated.
+                    </MudText>
+                </MudItem>
+                <MudItem md="6">
+                    <MudText Typo="Typo.h6" Color="Color.Secondary">Indeterminate indicators</MudText>
+                    <MudText>
+                        <b>Indeterminate</b> indicators express an unspecified amount of wait time. They should be used when progress isn't estimable, or when it's not necessary to indicate how long an activity will take.
+                    </MudText>
+                </MudItem>
+            </MudGrid>
         </DocsPageSection>
+
         <DocsPageSection>
-
-            <SectionHeader>
-                <Title>Linear</Title>
-                <SubTitle>Linear indeterminate</SubTitle>
+            <SectionHeader Title="Circular Progress">
+                
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
-                <ProgressLinearInterminateExample />
-            </SectionContent>
-            <SectionSource Code="ProgressLinearInterminateExample" GitHubFolderName="Progress" />
+            <SectionSubGroups>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Indeterminate">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ProgressCircularInterminateExample)">
+                        <ProgressCircularInterminateExample/>
+                    </SectionContent>
+                </DocsPageSection>
 
-            <SectionHeader>
-                <SubTitle>Linear determinate</SubTitle>
-            </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
-                <ProgressLinearDeterminateExample />
-            </SectionContent>
-            <SectionSource Code="ProgressLinearDeterminateExample" ShowCode="false" GitHubFolderName="Progress" />
+                <DocsPageSection>
+                    <SectionHeader Title="Determinate">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ProgressCircularDeterminateExample)" ShowCode="false">
+                        <ProgressCircularDeterminateExample/>
+                    </SectionContent>
+                </DocsPageSection>
 
-            <SectionHeader>
-                <SubTitle>Min and Max</SubTitle>
-                <Description>
-                    Per default, the value range is between 0 and 100. If you have a custom range set Min and Max accordingly.
-                </Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true" Class="demo-progress">
-                <ProgressLinearMinMaxExample />
-            </SectionContent>
-            <SectionSource Code="ProgressLinearMinMaxExample" ShowCode="false" GitHubFolderName="Progress" />
+                <DocsPageSection>
+                    <SectionHeader Title="Sizes">
+                        <Description>You can change the size with the pre-defined <CodeInline>Size</CodeInline> prop or change the <CodeInline>Width</CodeInline> and <CodeInline>Height</CodeInline> in css.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ProgressCircularSizesExample)">
+                        <ProgressCircularSizesExample />
+                    </SectionContent>
+                </DocsPageSection>
+                
+            </SectionSubGroups>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Linear Progress" />
+            <SectionSubGroups>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Indeterminate">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ProgressLinearInterminateExample)">
+                        <ProgressLinearInterminateExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Determinate">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ProgressLinearDeterminateExample)" ShowCode="false">
+                        <ProgressLinearDeterminateExample />
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Sizes">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ProgressLinearSizeExample)" ShowCode="false">
+                        <ProgressLinearSizeExample />
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Min Max">
+                        <Description>
+                            By default, the value range is between 0 and 100. If you have a custom range, set <CodeInline>Min</CodeInline> and <CodeInline>Max</CodeInline> accordingly.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ProgressLinearMinMaxExample)" ShowCode="false">
+                        <ProgressLinearMinMaxExample />
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Buffer">
+                        <Description>
+                            When setting <CodeInline>Buffer</CodeInline> to true you also have to give it a <CodeInline>BufferValue</CodeInline>. You can use any combination of buffer-value and value to achieve your design.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ProgressLinearBufferExample)" ShowCode="false">
+                        <ProgressLinearBufferExample />
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Rounded">
+                        <Description>Sets the border radius on the progress linear to the set theme value.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ProgressLinearRoundedExample)" ShowCode="false">
+                        <ProgressLinearRoundedExample />
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Striped">
+                        <Description>Applies a striped background over the progress bar.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ProgressLinearStripedExample)" ShowCode="false">
+                        <ProgressLinearStripedExample />
+                    </SectionContent>
+                </DocsPageSection>
+        
+                <DocsPageSection>
+                    <SectionHeader Title="Labels">
+                        <Description>While using the <CodeInline>ChildContent</CodeInline> of the component you can add a text to display current value.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ProgressLinearLabelsExample)" ShowCode="false">
+                        <ProgressLinearLabelsExample />
+                    </SectionContent>
+                </DocsPageSection>
+        
+                <DocsPageSection>
+                    <SectionHeader Title="Vertical">
+                        <Description>Vertical progress bars works exactly the same way as the default horizontal ones.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ProgressLinearVerticalExample)" ShowCode="false">
+                        <ProgressLinearVerticalExample />
+                    </SectionContent>
+                </DocsPageSection>
 
-            <SectionHeader>
-                <SubTitle>Linear buffer</SubTitle>
-            </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
-                <ProgressLinearBufferExample />
-            </SectionContent>
-            <SectionSource Code="ProgressLinearBufferExample" GitHubFolderName="Progress" />
-
+            </SectionSubGroups>
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

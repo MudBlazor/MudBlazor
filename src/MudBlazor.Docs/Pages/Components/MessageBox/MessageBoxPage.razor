@@ -2,37 +2,53 @@
 
 
 <DocsPage>
-    <DocsPageHeader Title="MessageBox" SubTitle="Message box is used for quick user confirmation actions" />
+    <DocsPageHeader Title="Message Box" SubTitle="Message box is used for quick user confirmation actions" />
     <DocsPageContent>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Message Box</Title>
+            <MudText Typo="Typo.h6" GutterBottom="true">Note</MudText>
+            <MudText>The MessageBox depends on <CodeInline Class="docs-code-tertiary">IDialogService</CodeInline> and <CodeInline>MudDialogProvider</CodeInline></MudText>
+            <MudText>Any global configuration done on the MudDialogProvider will affect all MessageBoxes in your application.</MudText>
+            <MudText>Check the Dialog <MudLink Href="/components/dialog#configuration">Configuration</MudLink> section for instructions on how to configure your dialogs globally.</MudText>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Message Box">
                 <Description>
                     The simplest way to show a message box is to use <CodeInline>IDialogService.ShowMessageBox</CodeInline>. It is a purely procedural way of showing a message box and awaiting the user's decision. 
                     The number of buttons (Yes, No, Cancel) and their text are simply controlled via providing a string or leaving them null. The result is a nullable <CodeInline>bool</CodeInline> which corresponds directly 
                     to the buttons: Yes => <CodeInline>true</CodeInline>, No => <CodeInline>false</CodeInline>, Cancel => <CodeInline>null</CodeInline>.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="@nameof(MessageBoxSimpleExample)">
                 <MessageBoxSimpleExample />
             </SectionContent>
-            <SectionSource Code="MessageBoxSimpleExample" GitHubFolderName="MessageBox"/>
         </DocsPageSection>
         
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Custom Message Box</Title>
+            <SectionHeader Title="Custom Message Box">
                 <Description>
-                    <CodeInline>MudMessageBox</CodeInline> can also be inlined in razor to be able to customize all its properties with render fragments. The following example shows how we customize the Yes button's color
+                    <CodeInline>MudMessageBox</CodeInline> can also be inlined in Razor to be able to customize all its properties with render fragments. The following example shows how we customize the Yes button's color
                     and icon. All visual elements of the message box can be customized. For <CodeInline>Title</CodeInline> there is <CodeInline>TitleContent</CodeInline>, for <CodeInline>Message</CodeInline> 
                     there is <CodeInline>MessageContent</CodeInline>, etc.<br />
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="@nameof(MessageBoxInlineExample)">
                 <MessageBoxInlineExample />
             </SectionContent>
-            <SectionSource Code="MessageBoxInlineExample" GitHubFolderName="MessageBox"/>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Multiline Message">
+                <Description>
+                    Instead of a string message you can also use MarkupString for the message box content. This is especially useful if you want to display multiline messages or do some basic styling, like highlighting a part of the message, without having to create a full-fledged custom dialog.
+                    <br />
+                    This example shows how a multiline MessageBox can still be a one-liner in code, thanks to MarkupString.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(MessageBoxMarkupContentExample)">
+                <MessageBoxMarkupContentExample />
+            </SectionContent>
         </DocsPageSection>
 
     </DocsPageContent>

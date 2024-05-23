@@ -1,123 +1,111 @@
 ﻿@page "/components/menu"
 
-
 <DocsPage>
     <DocsPageHeader Title="Menus" SubTitle="The component shows a menu at the position of the element used to activate it" />
     <DocsPageContent>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Simple Menu</Title>
+            <SectionHeader Title="Simple Menu">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="@nameof(MenuSimpleExample)">
                 <MenuSimpleExample />
             </SectionContent>
-            <SectionSource Code="MenuSimpleExample" GitHubFolderName="Menu"  />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Customization</Title>
+            <SectionHeader Title="Customization">
                 <Description>The menu button gives you all the options a regular button would do.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+            <SectionContent Code="@nameof(MenuCustomizationExample)" ShowCode="false">
                 <MenuCustomizationExample />
             </SectionContent>
-            <SectionSource Code="MenuCustomizationExample" ShowCode="false" GitHubFolderName="Menu"  />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Menu Width</Title>
-                <Description>The default width of the menu popover is determen by the contents width, you can override this with the <CodeInline>FullWidth</CodeInline> property to make it as wide as the parent.</Description>
+            <SectionHeader Title="Menu Item Customization">
+                <Description>Use the <CodeInline>Icon</CodeInline> property to show an Icon, the <CodeInline>IconSize</CodeInline> and <CodeInline>IconColor</CodeInline> can also be set.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+             <SectionContent Code="@nameof(MenuItemCustomizationExample)" ShowCode="false">
+                <MenuItemCustomizationExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Menu Width">
+                <Description>The default width of the menu popover is determined by the width of the content. You can override this with the <CodeInline>FullWidth</CodeInline> property to make it as wide as the parent.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(MenuWithExample)" ShowCode="false">
                 <MenuWithExample />
             </SectionContent>
-            <SectionSource Code="MenuWithExample" ShowCode="false" GitHubFolderName="Menu" />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Max Height Menu</Title>
-                <Description>If you have a long list you can use the <CodeInline>MaxHeight</CodeInline> property to set the maximum height and enable scroll instead.</Description>
+            <SectionHeader Title="Max Height Menu">
+                <Description>If you have a long list, you can use the <CodeInline>MaxHeight</CodeInline> property to set the maximum height and enable scrolling instead.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+            <SectionContent Code="@nameof(MenuMaxHeightExample)" ShowCode="false">
                 <MenuMaxHeightExample />
             </SectionContent>
-            <SectionSource Code="MenuMaxHeightExample" ShowCode="false" GitHubFolderName="Menu" />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Direction</Title>
-                <Description>Control where the menu should start from relative to the parent. Where Top-Left is the default.</Description>
+            <SectionHeader Title="Icon Buttons">
+                <Description>If an Icon is supplied through the <CodeInline>Icon</CodeInline> property, the menu button will display as an <CodeInline>IconButton</CodeInline>.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
-                <MenuDirectionExample />
-            </SectionContent>
-            <SectionSource Code="MenuDirectionExample" ShowCode="false" GitHubFolderName="Menu" />
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader>
-                <Title>Offset</Title>
-                <Description>Offset the menu to be located outside of the parent.</Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
-                <MenuOffsetExample />
-            </SectionContent>
-            <SectionSource Code="MenuOffsetExample" ShowCode="false" GitHubFolderName="Menu" />
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader>
-                <Title>Icon Buttons</Title>
-                <Description>If an Icon is supplied through the <CodeInline>Icon</CodeInline> property the menu button will display as an <CodeInline>IconButton</CodeInline></Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+            <SectionContent Code="@nameof(MenuIconButtonsExample)" ShowCode="false">
                 <MenuIconButtonsExample />
             </SectionContent>
-            <SectionSource Code="MenuIconButtonsExample" ShowCode="true" GitHubFolderName="Menu"  />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Usage</Title>
-                <Description>The menu items also acts like buttons, simply assign them a onclick event or a link.</Description>
+            <SectionHeader Title="Custom Activator">
+                <Description>Using <CodeInline>ActivatorContent</CodeInline>, you can use any user interface element to activate the menu on click. You can place a completely customized button or any other element there.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
-                <MenuUsageExample />
-            </SectionContent>
-            <SectionSource Code="MenuUsageExample" ShowCode="true" GitHubFolderName="Menu"  />
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader>
-                <Title>Custom Activator</Title>
-                <Description>Using <CodeInline>ActivatorContent</CodeInline> you can use any user interface element to activate the menu on click. You can place a completely customized button or any other elements there.</Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+            <SectionContent Code="@nameof(MenuActivatorExample1)" ShowCode="false">
                 <MenuActivatorExample1 />
             </SectionContent>
-            <SectionSource Code="MenuActivatorExample1" ShowCode="false" GitHubFolderName="Menu" />
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Mouse Events">
+                        <Description>With the property <CodeInline>ActivationEvent</CodeInline>, the menu can be opened on different mouse events.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(MenuActivatorExample2)" ShowCode="false">
+                        <MenuActivatorExample2/>
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Cursor Position">
+                        <Description>With the property <CodeInline>PositionAtCursor</CodeInline>, the menu will open at the location of the click.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(MenuActivatorOnMouseExample)" ShowCode="false">
+                        <MenuActivatorOnMouseExample/>
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
 
-            <SectionHeader>
-                <Description>With the property <CodeInline>ActivationEvent</CodeInline> the menu can be opened on different mouse events.</Description>
+        <DocsPageSection>
+            <SectionHeader Title="Placement">
+                <Description>
+                    The component uses <MudLink Href="/components/popover">MudPopover</MudLink> to place it's menu. It can be controlled with <CodeInline>AnchorOrigin</CodeInline> and <CodeInline>TransformOrigin</CodeInline><br />
+                    To learn and see all posibile examples of how you can position the popover check out <MudLink Color="Color.Secondary" Href="/components/popover">popover's documentation page.</MudLink>
+                </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
-                <MenuActivatorExample2 />
+             <SectionContent Code="@nameof(MenuAdvancedPopoverExample)" ShowCode="false">
+                <MenuAdvancedPopoverExample />
             </SectionContent>
-            <SectionSource Code="MenuActivatorExample2" ShowCode="false" GitHubFolderName="Menu" />
+        </DocsPageSection>
 
-            <SectionHeader>
-                <Description>With the property <CodeInline>PositionAtCurser</CodeInline> the menu will open in the location of the click.</Description>
+        <DocsPageSection>
+            <SectionHeader Title="Nested Menu">
+                <Description>
+                    Multiple menus can be nested. With the <CodeInline>ActivationEvent="MouseEvent.MouseOver"</CodeInline> property, a <CodeInline>MudMenu</CodeInline> component can be used inside of a <CodeInline>MudMenuItem</CodeInline> component to create a simple nested menu.
+                </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
-                <MenuActivatorOnMouseExample />
+            <SectionContent Code="@nameof(MenuWithNestingExample)" ShowCode="true">
+                <MenuWithNestingExample />
             </SectionContent>
-            <SectionSource Code="MenuActivatorOnMouseExample" ShowCode="true" GitHubFolderName="Menu" />
         </DocsPageSection>
 
     </DocsPageContent>

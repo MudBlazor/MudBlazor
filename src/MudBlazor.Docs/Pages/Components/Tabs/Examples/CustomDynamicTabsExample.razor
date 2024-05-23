@@ -1,0 +1,87 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTabs @bind-ActivePanelIndex="_index" Border="true" Outlined="true" PanelClass="px-4 py-6" ApplyEffectsToContainer="true">
+	<ChildContent>
+		@foreach (var item in _tabs)
+		{
+			 <MudTabPanel Text="@item.Name" Tag="@item.Id">@item.Content</MudTabPanel>
+		}
+	</ChildContent>
+	<Header>
+		<MudButtonGroup>
+			<MudTooltip Text="Prepend a tab">
+				<MudIconButton Icon="@Icons.Material.Filled.ChevronLeft" OnClick="@( () => AddTabCallback(false) )" />
+			</MudTooltip>
+			<MudTooltip Text="Append a tab">
+				<MudIconButton Icon="@Icons.Material.Filled.ChevronRight" OnClick="@( () => AddTabCallback(true) )"  />
+			</MudTooltip>
+		</MudButtonGroup>
+	</Header>
+	<TabPanelHeader>
+		@if(context.Text.StartsWith("Tab") == false)
+		{
+			<MudTooltip Text="only dynamic tabs can be closed">
+				<MudIconButton Class="ml-2 pa-1" Color="Color.Error" Icon="@Icons.Material.Filled.Remove" OnClick="(_) => RemoveTab(context)" />
+			</MudTooltip>
+		}
+  </TabPanelHeader>
+</MudTabs>
+
+@code {
+
+	private class TabView
+	{
+		public String Name { get; set; }
+		public String Content { get; set; }
+		public Guid Id { get; set; }
+	}
+
+	private List<TabView> _tabs = new();
+	private int _index = 0;
+	private int? _nextIndex = null;
+
+	private void RemoveTab(MudTabPanel tabPanel)
+	{
+		var tab = _tabs.FirstOrDefault(x => x.Id == (Guid)tabPanel.Tag);
+		if(tab != null)
+		{
+			_tabs.Remove(tab);
+		}
+	}
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+
+		_tabs.Add(new TabView { Content = "First tab content", Name = "Tab A", Id = Guid.NewGuid() });
+		_tabs.Add(new TabView { Content = "Second tab content", Name = "Tab B", Id = Guid.NewGuid() });
+		_tabs.Add(new TabView { Content = "Third tab content", Name = "Tab C", Id = Guid.NewGuid() });
+	}
+
+	private void AddTabCallback(Boolean append)
+	{
+		var tabView = new TabView { Name = "Dynamic content", Content = "A new tab", Id = Guid.NewGuid() };
+		
+		//the tab becomes available after it is rendered. Hence, we can't set the index here
+		if(append == true)
+		{
+			_tabs.Add(tabView);
+			_nextIndex = _tabs.Count - 1;
+		}
+		else
+		{
+			_tabs.Insert(0, tabView);
+			_nextIndex = 0;
+		}
+	}
+
+	protected override void OnAfterRender(bool firstRender)
+	{
+		if(_nextIndex.HasValue == true)
+		{
+			_index = _nextIndex.Value;
+			_nextIndex = null;
+			StateHasChanged();
+		}
+	}
+}

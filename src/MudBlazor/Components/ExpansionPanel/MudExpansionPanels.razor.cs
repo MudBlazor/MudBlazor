@@ -1,62 +1,83 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudExpansionPanels : MudComponentBase
     {
+        private List<MudExpansionPanel> _panels = new();
+
         protected string Classname =>
-        new CssBuilder("mud-expansion-panels")
-            .AddClass($"mud-expansion-panels-square", Square)
-            .AddClass(Class)
-        .Build();
+            new CssBuilder("mud-expansion-panels")
+                .AddClass("mud-expansion-panels-square", Square)
+                .AddClass(Class)
+                .Build();
 
         /// <summary>
         /// If true, border-radius is set to 0.
         /// </summary>
-        [Parameter] public bool Square { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Appearance)]
+        public bool Square { get; set; }
 
         /// <summary>
         /// If true, multiple panels can be expanded at the same time.
         /// </summary>
-        [Parameter] public bool MultiExpansion { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Behavior)]
+        public bool MultiExpansion { get; set; }
 
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
         /// </summary>
-        [Parameter] public int Elevation { set; get; } = 1;
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Appearance)]
+        public int Elevation { set; get; } = 1;
 
         /// <summary>
-        /// If true, removes vertical padding from all panels' childcontent.
+        /// If true, removes vertical padding from all panels' <see cref="ChildContent"/>.
         /// </summary>
-        [Parameter] public bool Dense { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Appearance)]
+        public bool Dense { get; set; }
 
         /// <summary>
-        /// If true, the left and right padding is removed from all panels' childcontent.
+        /// If true, left and right padding is added to all panels' <see cref="ChildContent"/>. Default is true
         /// </summary>
-        [Parameter] public bool DisableGutters { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Appearance)]
+        public bool Gutters { get; set; } = true;
 
         /// <summary>
-        /// If true, the borders around eatch panel will be removed.
+        /// Determines whether the borders around each panel are shown.
         /// </summary>
-        [Parameter] public bool DisableBorders { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Appearance)]
+        public bool Outlined { get; set; } = true;
 
         /// <summary>
         /// Child content of component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Behavior)]
+        public RenderFragment? ChildContent { get; set; }
 
-        private List<MudExpansionPanel> _panels = new List<MudExpansionPanel>();
-
-        internal void AddPanel(MudExpansionPanel panel)
+        internal async Task AddPanelAsync(MudExpansionPanel panel)
         {
+            if (!MultiExpansion && _panels.Any(p => p._expandedState.Value))
+            {
+                await panel.CollapseAsync();
+            }
+
             _panels.Add(panel);
-            StateHasChanged();
         }
 
-        public void RemovePanel(MudExpansionPanel panel)
+        internal void RemovePanel(MudExpansionPanel panel)
         {
             _panels.Remove(panel);
             try
@@ -66,29 +87,74 @@ namespace MudBlazor
             catch (InvalidOperationException) { /* this happens on page reload, probably a Blazor bug */ }
         }
 
-        public void UpdateAll()
+        internal async Task NotifyPanelsChanged(MudExpansionPanel panel)
         {
-            MudExpansionPanel last = null;
+            if (!MultiExpansion && panel._expandedState.Value)
+            {
+                await CollapseAllExceptAsync(panel);
+                return;
+            }
+
+            await UpdateAllAsync();
+        }
+
+        public Task UpdateAllAsync()
+        {
+            MudExpansionPanel? last = null;
             foreach (var panel in _panels)
             {
-                if (last != null)
-                    last.NextPanelExpanded = panel.IsExpanded;
+                if (last is not null)
+                {
+                    last.NextPanelExpanded = panel._expandedState.Value;
+                }
+
                 last = panel;
             }
             StateHasChanged();
+
+            return Task.CompletedTask;
         }
 
-        public void CloseAllExcept(MudExpansionPanel panel)
+        /// <summary>
+        /// Collapses all panels except the given one.
+        /// </summary>
+        /// <param name="panel">The panel not to collapse.</param>
+        public async Task CollapseAllExceptAsync(MudExpansionPanel panel)
         {
-            foreach (var p in _panels)
+            foreach (var expansionPanel in _panels)
             {
-                if (p == panel)
+                if (expansionPanel == panel)
+                {
                     continue;
-                p.Collapse(update_parent: false);
+                }
+
+                await expansionPanel.CollapseAsync();
             }
-            UpdateAll();
+            await InvokeAsync(UpdateAllAsync);
         }
 
+        /// <summary>
+        /// Collapses all panels.
+        /// </summary>
+        public async Task CollapseAllAsync()
+        {
+            foreach (var expansionPanel in _panels)
+            {
+                await expansionPanel.CollapseAsync();
+            }
+            await InvokeAsync(UpdateAllAsync);
+        }
 
+        /// <summary>
+        /// Expands all panels.
+        /// </summary>
+        public async Task ExpandAllAsync()
+        {
+            foreach (var expansionPanel in _panels)
+            {
+                await expansionPanel.ExpandAsync();
+            }
+            await InvokeAsync(UpdateAllAsync);
+        }
     }
 }

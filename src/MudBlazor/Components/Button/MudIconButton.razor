@@ -1,6 +1,5 @@
 ﻿@namespace MudBlazor
 @inherits MudBaseButton
-@using MudBlazor.Extensions
 
 <MudElement @bind-Ref="@_elementReference"
             HtmlTag="@HtmlTag"
@@ -9,14 +8,16 @@
             @attributes="UserAttributes" 
             @onclick="OnClickHandler"
             type="@ButtonType.ToDescriptionString()" 
-            href="@Link" 
+            href="@Href" 
             target="@Target"
-            rel="@(Target=="_blank"?"noopener":null)"
-            disabled="@Disabled">
-    @if (!String.IsNullOrEmpty(Icon))
+            rel="@GetRel()"
+            disabled="@GetDisabledState()"
+            title="@Title"
+            ClickPropagation="@GetClickPropagation()">
+    @if (!string.IsNullOrEmpty(Icon))
     {
         <span class="mud-icon-button-label">
-            <MudIcon Icon="@Icon" Size="@Size" Title="@Title" />
+            <MudIcon Disabled="@Disabled" Icon="@Icon" Size="@Size" />
         </span>
     }
     else

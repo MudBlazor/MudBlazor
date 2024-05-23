@@ -1,0 +1,35 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTable Items="items" CanCancelEdit="true">
+    <HeaderContent>
+        <MudTh>Id</MudTh>
+        <MudTh>Value</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Id</MudTd>
+        <MudTd>@context.Value</MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd>
+            <MudTextField @bind-Value="@context.Id"></MudTextField>
+        </MudTd>
+        <MudTd>
+            <MudTextField @bind-Value="@context.Value"></MudTextField>
+        </MudTd>
+    </RowEditingTemplate>
+</MudTable>
+
+@code {
+    List<Element> items = new List<Element>
+    {
+        new Element { Value = "A", Id = "Id1" },
+        new Element { Value = "B", Id = "Id2" },
+        new Element { Value = "C", Id = "Id3" },
+    };
+
+    public class Element
+    {
+        public string Id { get; set; }
+        public string Value { get; set; }
+    }
+}

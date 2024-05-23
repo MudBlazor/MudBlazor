@@ -42,5 +42,9 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public Margin Margin { get; set; } = Margin.None;
 
+        /// <summary>
+        ///  Will set the for attribute for WCAG accessiblility
+        /// </summary>
+        [Parameter] public string ForId { get; set; } = string.Empty;
     }
 }

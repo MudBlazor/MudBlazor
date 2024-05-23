@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDialog Class="test-class" ClassContent="content-class" Style="color: red;" ContentStyle="color: blue;">
+<MudDialog Class="test-class" ContentClass="content-class" Style="color: red;" ContentStyle="color: blue;">
     <DialogContent>
         <MudText>Wabalabadubdub!</MudText>
     </DialogContent>
@@ -11,8 +11,9 @@
 </MudDialog>
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter]
+    public MudDialogInstance MudDialog { get; set; }
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    void Cancel() => MudDialog.Cancel();
+    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    private void Cancel() => MudDialog.Cancel();
 }

@@ -1,19 +1,25 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudChipSet @bind-SelectedChips="SelectedChipArray" MultiSelection="true" Filter="true">
+<MudChipSet T="string" @bind-SelectedValues="_selectedValues" SelectionMode="SelectionMode.MultiSelection" CheckMark>
     @if (_extraItem)
     {
-        <MudChip Text="Extra Chip" Default="true"></MudChip>
-
+        <MudChip Value="@("Extra Chip")" Default="true" />
     }
-    <MudChip Text="Primary" Default="true"></MudChip>
+    <MudChip Value="@("Primary")" Default="true"/>
 </MudChipSet>
 Add chips <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="Enable">Enable</MudIconButton>
 
+<br />
+@if (_selectedValues is { Count: > 0 }) {
+    <MudText>@string.Join(", ", _selectedValues.OrderBy(x => x))</MudText>
+}
+else {
+    <MudText>Nothing selected</MudText>
+}
 
 @code
 { 
     bool _extraItem = false;
     public void Enable() => _extraItem = !_extraItem;
-    MudChip[] SelectedChipArray;
+    IReadOnlyCollection<string> _selectedValues;
 }

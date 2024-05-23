@@ -1,0 +1,87 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+
+<style>
+    .mud-table-cell-custom-group {
+        font-weight: 500;
+    }
+
+    .mud-table-cell-custom-group-footer {
+        padding-bottom: 50px;
+        text-align: right;
+    }
+</style>
+
+<MudTable Hover="true" Breakpoint="Breakpoint.Sm" Height="500px" FixedHeader="true"
+          Items="@Elements"
+          Virtualize="@_virtualize"
+          GroupBy="@_groupDefinition"
+          GroupHeaderStyle="background-color:var(--mud-palette-background-gray)"
+          GroupFooterClass="mb-4"
+          Dense="_dense"
+          MultiSelection="_multiSelect">
+    <ColGroup>
+        @if (_multiSelect)
+        {
+            <col style="width: 60px;" />
+        }
+        @if (_groupDefinition.Expandable)
+        {
+            <col style="width: 60px;" />
+        }
+        <col />
+        <col />
+        <col />
+        <col />
+        <col />
+    </ColGroup>
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Sign</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Position</MudTh>
+        <MudTh>Molar mass</MudTh>
+    </HeaderContent>
+    <GroupHeaderTemplate>
+        <MudTh Class="mud-table-cell-custom-group" colspan="5">@($"{context.GroupName}: {context.Key}")</MudTh>
+    </GroupHeaderTemplate>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">@context.Sign</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Position">@context.Position</MudTd>
+        <MudTd Style="text-align: right" DataLabel="Molar mass">@context.Molar"</MudTd>
+    </RowTemplate>
+    <GroupFooterTemplate>
+        <MudTh Class="mud-table-cell-custom-group mud-table-cell-custom-group-footer" colspan="5">Total Mass: @context.Items.Sum((e) => e.Molar)</MudTh>
+    </GroupFooterTemplate>
+</MudTable>
+
+<MudSwitch @bind-Value="_dense" Color="Color.Primary">Dense</MudSwitch>
+<MudSwitch @bind-Value="_multiSelect" Color="Color.Primary">MultiSelect</MudSwitch>
+<MudSwitch @bind-Value="_virtualize" Color="Color.Primary">Virtualize</MudSwitch>
+<MudSwitch @bind-Value="_groupDefinition.Indentation" Color="Color.Primary">Indentation</MudSwitch>
+<MudSwitch @bind-Value="_groupDefinition.Expandable" Color="Color.Primary">Expandable</MudSwitch>
+
+@code { 
+    private bool _dense = false;
+    private bool _multiSelect = true;
+    private bool _virtualize = false;    
+
+    private TableGroupDefinition<Element> _groupDefinition = new()
+    {
+        GroupName = "Group",
+        Indentation = false,
+        Expandable = false,
+        Selector = (e) => e.Group
+    };
+
+    private IEnumerable<Element> Elements = new List<Element>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+    }
+}

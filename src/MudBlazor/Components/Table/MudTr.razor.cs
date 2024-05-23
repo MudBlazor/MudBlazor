@@ -5,37 +5,45 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudTr : MudComponentBase
     {
-        private bool hasBeenCanceled;
-        private bool hasBeenCommitted;
-        private bool hasBeenClikedFirstTime;
-
-        internal object _itemCopy;
+        private bool _checked;
+        private bool _hasBeenCanceled;
+        private bool _hasBeenCommitted;
+        private bool _hasBeenClickedFirstTime;
 
         protected string Classname => new CssBuilder("mud-table-row")
-            .AddClass(Class).Build();
+            .AddClass(Class)
+            .Build();
 
-        [CascadingParameter] public TableContext Context { get; set; }
+        protected string ActionsStylename => new StyleBuilder()
+            .AddStyle("padding-left", "34px", Expandable)
+            .Build();
 
-        [Parameter] public RenderFragment ChildContent { get; set; }
-
-        [Parameter] public object Item { get; set; }
-
-        [Parameter] public bool IsCheckable { get; set; }
-
-        [Parameter] public bool IsEditable { get; set; }
-
-        [Parameter] public bool IsHeader { get; set; }
-
-        [Parameter] public bool IsFooter { get; set; }
+        [CascadingParameter]
+        public TableContext? Context { get; set; }
 
         [Parameter]
-        public EventCallback<bool> IsCheckedChanged { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
-        private bool _checked;
         [Parameter]
-        public bool IsChecked
+        public object? Item { get; set; }
+
+        [Parameter]
+        public bool Checkable { get; set; }
+
+        [Parameter]
+        public bool Editable { get; set; }
+
+        [Parameter]
+        public bool Expandable { get; set; }
+
+        [Parameter]
+        public EventCallback<bool> CheckedChanged { get; set; }
+
+        [Parameter]
+        public bool Checked
         {
             get => _checked;
             set
@@ -43,42 +51,121 @@ namespace MudBlazor
                 if (value != _checked)
                 {
                     _checked = value;
-                    IsCheckedChanged.InvokeAsync(value);
+                    CheckedChanged.InvokeAsync(value);
                 }
             }
         }
 
-        public void OnRowClicked(MouseEventArgs args)
+        public async Task OnRowClickedAsync(MouseEventArgs args)
         {
-            // Manage any previous edited row
-            Context.ManagePreviousEditedRow(this);
-
-            // Manage edition the first time the row is clicked and if the table is editable
-            if (!hasBeenClikedFirstTime && IsEditable)
+            var table = Context?.Table;
+            if (table is null)
             {
-                // Sets hasBeenClikedFirstTime to true
-                hasBeenClikedFirstTime = true;
-
-                // Set to false that the item has been committed
-                // Set to false that the item has been cancelled
-                hasBeenCanceled = false;
-                hasBeenCommitted = false;
-
-                // Trigger the row edit preview event
-                Context.Table.RowEditPreview?.Invoke(Item);
+                return;
             }
 
-            if (IsHeader || !(Context?.Table.Validator.IsValid ?? true))
+            table.SetSelectedItem(Item);
+            StartEditingItem(buttonClicked: false);
+            if (table is { MultiSelection: true, SelectOnRowClick: true, Editable: false })
+            {
+                Checked = !Checked;
+            }
+
+            await table.FireRowClickEventAsync(args, this, Item);
+        }
+
+        public async Task OnRowMouseEnterAsync(PointerEventArgs args)
+        {
+            var table = Context?.Table;
+            if (table is null)
+            {
+                return;
+            }
+
+            await table.FireRowMouseEnterEventAsync(args, this, Item);
+        }
+
+        public async Task OnRowMouseLeaveAsync(PointerEventArgs args)
+        {
+            var table = Context?.Table;
+            if (table is null)
+            {
+                return;
+            }
+
+            await table.FireRowMouseLeaveEventAsync(args, this, Item);
+        }
+
+        private EventCallback<PointerEventArgs> RowMouseEnterEventCallback
+        {
+            get
+            {
+                var hasEventHandler = Context?.Table?.HasRowMouseEnterEventHandler ?? false;
+
+                if (hasEventHandler)
+                {
+                    return EventCallback.Factory.Create<PointerEventArgs>(this, OnRowMouseEnterAsync);
+                }
+
+                return default;
+            }
+        }
+
+        private EventCallback<PointerEventArgs> RowMouseLeaveEventCallback
+        {
+            get
+            {
+                var hasEventHandler = Context?.Table?.HasRowMouseLeaveEventHandler ?? false;
+
+                if (hasEventHandler)
+                {
+                    return EventCallback.Factory.Create<PointerEventArgs>(this, OnRowMouseLeaveAsync);
+                }
+
+                return default;
+            }
+        }
+
+        private void StartEditingItem() => StartEditingItem(buttonClicked: true);
+
+        private void StartEditingItem(bool buttonClicked)
+        {
+            if (!Editable) return;
+
+            if (Context?.Table?.Editable == true && Context?.Table.Editing == true && Context?.Table.IsEditRowSwitchingBlocked == true) return;
+
+            if ((Context?.Table?.EditTrigger == TableEditTrigger.RowClick && buttonClicked) || (Context?.Table?.EditTrigger == TableEditTrigger.EditButton && !buttonClicked)) return;
+
+            // Manage any previous edited row
+            Context?.ManagePreviousEditedRow(this);
+
+            if (!(Context?.Table?.Validator.IsValid ?? true))
                 return;
 
-            Context?.Table.SetSelectedItem(Item);
-            Context?.Table.SetEditingItem(Item);
-
-            if (Context?.Table.MultiSelection == true && !IsHeader)
+            // Manage edition the first time the row is clicked and if the table is editable
+            if (!_hasBeenClickedFirstTime && Editable)
             {
-                IsChecked = !IsChecked;
+                // Sets hasBeenClickedFirstTime to true
+                _hasBeenClickedFirstTime = true;
+
+                // Set to false that the item has been committed
+                // Set to false that the item has been canceled
+                _hasBeenCanceled = false;
+                _hasBeenCommitted = false;
+
+                // Trigger the preview event
+                Context?.Table?.OnPreviewEditHandler(Item);
+
+                // Trigger the row edit preview event
+                Context?.Table?.RowEditPreview?.Invoke(Item);
+
+                Context?.Table?.SetEditingItem(Item);
+
+                if (Context?.Table is not null)
+                {
+                    Context.Table.Validator.Model = Item;
+                }
             }
-            Context?.Table.FireRowClickEvent(args, this, Item);
         }
 
         protected override Task OnInitializedAsync()
@@ -92,69 +179,87 @@ namespace MudBlazor
             Context?.Remove(this, Item);
         }
 
-        public void SetChecked(bool b, bool notify)
+        public void SetChecked(bool checkedState, bool notify)
         {
-            if (notify)
-                IsChecked = b;
-            else
+            if (_checked != checkedState)
             {
-                _checked = b;
-                InvokeAsync(StateHasChanged);
+                if (notify)
+                {
+                    Checked = checkedState;
+                }
+                else
+                {
+                    _checked = checkedState;
+                    if (Checkable)
+                    {
+                        InvokeAsync(StateHasChanged);
+                    }
+                }
             }
         }
 
         private void FinishEdit(MouseEventArgs ev)
         {
             // Check the validity of the item
-            if (!Context?.Table.Validator.IsValid ?? true) return;
+            if (!(Context?.Table?.Validator.IsValid ?? true)) return;
 
-            // Set item value and trigger the commit event
-            Context?.Table.SetEditingItem(null);
-            Context?.Table.OnCommitEditHandler(ev, Item);
+            // Set the item value to cancel edit mode
+            Context?.Table?.SetEditingItem(null);
+
+            // Trigger the commit event
+            Context?.Table?.OnCommitEditHandler(ev, Item);
 
             // Trigger the row edit commit event
-            Context.Table.RowEditCommit?.Invoke(Item);
+            Context?.Table?.RowEditCommit?.Invoke(Item);
 
             // Set to true that the item has been committed
-            // Set to false that the item has been cancelled
-            hasBeenCommitted = true;
-            hasBeenCanceled = false;
+            // Set to false that the item has been canceled
+            _hasBeenCommitted = true;
+            _hasBeenCanceled = false;
 
-            // Set hasBeenClikedFirstTime to false 
-            hasBeenClikedFirstTime = false;
+            // Set hasBeenClickedFirstTime to false 
+            _hasBeenClickedFirstTime = false;
         }
 
         private void CancelEdit(MouseEventArgs ev)
         {
-            // The edit mode is canceled
-            Context?.Table.SetEditingItem(null);
-            Context?.Table.OnCancelEditHandler(ev);
+            // Set the item value to cancel edit mode
+            Context?.Table?.SetEditingItem(null);
+
+            // Trigger the cancel event
+            Context?.Table?.OnCancelEditHandler(ev);
 
             // Trigger the row edit cancel event
-            Context.Table.RowEditCancel?.Invoke(Item);
+            Context?.Table?.RowEditCancel?.Invoke(Item);
 
             // Set to true that the item has been canceled
             // Set to false that the items has been committed
-            hasBeenCanceled = true;
-            hasBeenCommitted = false;
+            _hasBeenCanceled = true;
+            _hasBeenCommitted = false;
 
-            // Set hasBeenClikedFirstTime to false 
-            hasBeenClikedFirstTime = false;
+            // Set hasBeenClickedFirstTime to false 
+            _hasBeenClickedFirstTime = false;
         }
 
         public void ManagePreviousEdition()
         {
             // Reset the item to its original value if no cancellation and no commit has been done
-            if (!hasBeenCanceled && !hasBeenCommitted)
+            if (!_hasBeenCanceled && !_hasBeenCommitted)
             {
+                // Set the item value to cancel edit mode
+                Context?.Table?.SetEditingItem(null);
+
+                // Force/indicate a refresh on the component to remove the edition mode for the row
+                StateHasChanged();
+
                 // Trigger the row edit cancel event
-                Context.Table.RowEditCancel?.Invoke(Item);
+                Context?.Table?.RowEditCancel?.Invoke(Item);
             }
 
             // Reset the variables
-            hasBeenCanceled = false;
-            hasBeenCommitted = false;
-            hasBeenClikedFirstTime = false;
+            _hasBeenCanceled = false;
+            _hasBeenCommitted = false;
+            _hasBeenClickedFirstTime = false;
         }
     }
 }

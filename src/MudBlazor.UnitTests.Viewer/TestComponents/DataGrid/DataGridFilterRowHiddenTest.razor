@@ -1,0 +1,45 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPopoverProvider />
+
+@*<MudDataGrid ShowMenuIcon="true" Hideable="true" Items="@_items" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterRow">
+    <Columns>
+        @foreach(var columnProp in _columnProps)
+        {
+            <Column T="Model"
+                    Field="@columnProp.Field"
+                    @bind-Hidden="columnProp.IsHidden"
+                    Title="@columnProp.Label"/>
+        }
+    </Columns>
+</MudDataGrid>*@
+
+
+@code {
+    public record Model(string Name, int Age);
+    public class ColumnProps
+    {
+        public bool IsHidden{ get; set; }
+        public string Field{ get; set; }
+        public string Label{ get; set; }
+
+        public ColumnProps(bool isHidden, string field, string label)
+        {
+            IsHidden = isHidden;
+            Field = field;
+            Label = label;
+        }
+    }
+    private IEnumerable<Model> _items = new List<Model>()
+    {
+        new Model("John", 45), 
+        new Model("Johanna", 23), 
+        new Model("Steve", 32)
+    };
+
+    private IEnumerable<ColumnProps> _columnProps = new List<ColumnProps>()
+    {
+        new ColumnProps(false, nameof(Model.Name), "First Name"),
+        new ColumnProps(true, nameof(Model.Age), "Age"),
+    };
+}

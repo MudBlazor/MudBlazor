@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudGrid Class="justify-space-between" Style="max-width: 800px;">
+    <MudItem xs="12" sm="6">
+        <MudTextField Mask="@ipv4Mask" Label="IPv4 Address"  HelperText="@ipv4Mask.Mask"
+                      @bind-Value="ip"  Variant="@Variant.Text" Clearable />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudTextField Mask="@ipv4PortMask" Label="IPv4 Address with Port"  HelperText="@ipv4PortMask.Mask"
+                      @bind-Value="ipPort"  Variant="@Variant.Text" Clearable />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        IPv4: <b>@ip</b>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        IPv4 w/Port: <b>@ipPort</b>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public string ip;
+    public string ipPort;
+    public IMask ipv4Mask = RegexMask.IPv4();
+    public IMask ipv4PortMask = RegexMask.IPv4(true);
+}

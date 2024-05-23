@@ -17,33 +17,33 @@
         <tr>
             <td><CodeInline>Free decimal places (default)</CodeInline></td>
             <td>
-                <MudTextField @bind-Value="@decimal_value_free" Class="mt-n1" Immediate="true" />
+                <MudTextField @bind-Value="decimal_value_free" Class="mt-n1" Immediate="true" />
             </td>
-            <td><MudText Inline="true">@ToS(decimal_value_free) </MudText></td>
+            <td><MudText HtmlTag="span">@ToS(decimal_value_free) </MudText></td>
         </tr>
         <tr>
             <td><CodeInline>No decimal places (what about int value?)</CodeInline></td>
             <td>
                 <MudTextField Converter="@(new DefaultConverter<decimal>() { GetFunc = (e) => Math.Round(decimal.Parse(e), 0), SetFunc = (e) => e.ToString("#0")})" 
-                              @bind-Value="@decimal_value_0d" Class="mt-n1" Immediate="false" />
+                              @bind-Value="decimal_value_0d" Class="mt-n1" Immediate="false" />
             </td>
-            <td><MudText Inline="true">@ToS(decimal_value_0d) </MudText></td>
+            <td><MudText HtmlTag="span">@ToS(decimal_value_0d) </MudText></td>
         </tr>
         <tr>
             <td><CodeInline>Two decimal places</CodeInline></td>
             <td>
                 <MudTextField Converter="@(new DefaultConverter<decimal>() { GetFunc = (e) => Math.Round(decimal.Parse(e), 2),  SetFunc = (e) => e.ToString("0.00")})" 
-                              @bind-Value="@decimal_value_2d" Class="mt-n1" Immediate="false" />
+                              @bind-Value="decimal_value_2d" Class="mt-n1" Immediate="false" />
             </td>
-            <td><MudText Inline="true">@ToS(decimal_value_2d) </MudText></td>
+            <td><MudText HtmlTag="span">@ToS(decimal_value_2d) </MudText></td>
         </tr>
         <tr>
             <td><CodeInline>Three decimal places</CodeInline></td>
             <td>
                 <MudTextField Converter="@(new DefaultConverter<decimal>() { GetFunc = (e) => Math.Round(decimal.Parse(e), 3), SetFunc = (e) => e.ToString("0.000")})"
-                              @bind-Value="@decimal_value_3d" Class="mt-n1" Immediate="false" />
+                              @bind-Value="decimal_value_3d" Class="mt-n1" Immediate="false" />
             </td>
-            <td><MudText Inline="true">@ToS(decimal_value_3d) </MudText></td>
+            <td><MudText HtmlTag="span">@ToS(decimal_value_3d) </MudText></td>
         </tr>
     </tbody>
 </MudSimpleTable>

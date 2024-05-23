@@ -1,0 +1,15 @@
+﻿<MudSimpleTable Class="docs-class-table utility-table" Dense="true" Elevation="0" FixedHeader="true">
+    <thead>
+        <tr>
+            <th>Class</th>
+            <th>Properties</th>
+        </tr>
+    </thead>
+    <tbody>
+        @ChildContent
+    </tbody>
+</MudSimpleTable>
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}

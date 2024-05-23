@@ -1,14 +1,18 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-@if (Visible)
+@if (_visibleState.Value)
 {
-    <div @attributes="UserAttributes" class="@Classname" style="@Styles" @onclick="OnClickHandler" @onclick:stopPropagation="true">
-        <div class="@ScrimClassname">
-
-        </div>
-        <div class="mud-overlay-content">
-            @ChildContent
-        </div>
+    <div @attributes="UserAttributes" class="@Classname" style="@Styles" @onclick="OnClickHandlerAsync" @onclick:stopPropagation="true">
+        @if(LightBackground || DarkBackground)
+        {
+            <div class="@ScrimClassname"></div>
+        }
+        @if(ChildContent is not null)
+        {
+            <div class="mud-overlay-content">
+                @ChildContent
+            </div>
+        }
     </div>
 }

@@ -1,0 +1,8 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudCheckBox @bind-Value="Dense_CheckBox" Dense="true" Color="Color.Success"></MudCheckBox>
+<MudCheckBox @bind-Value="Dense_CheckBox" Dense="false" Color="Color.Primary"></MudCheckBox>
+
+@code {
+    public bool Dense_CheckBox { get; set; } = true;
+}

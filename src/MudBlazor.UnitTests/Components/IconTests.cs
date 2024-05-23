@@ -1,27 +1,12 @@
-﻿#pragma warning disable CS1998 // async without await
-#pragma warning disable IDE1006 // leading underscore
-
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class IconTests
+    public class IconTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         /// <summary>
         /// MudIcon renders first an svg and then a span, both with style
         /// </summary>
@@ -29,11 +14,11 @@ namespace MudBlazor.UnitTests.Components
         public void ShouldRenderIconWithStyle()
         {
             var colorStyle = "color: greenyellow;";
-            var icon = Parameter(nameof(MudIcon.Icon), Icons.Filled.Add);
+            var icon = Parameter(nameof(MudIcon.Icon), Icons.Material.Filled.Add);
             var style = Parameter(nameof(MudIcon.Style), colorStyle);
-            var comp = ctx.RenderComponent<MudIcon>(icon, style);
+            var comp = Context.RenderComponent<MudIcon>(icon, style);
             comp.Markup.Trim().Should().StartWith("<svg")
-                .And.Contain(Icons.Filled.Add)
+                .And.Contain(Icons.Material.Filled.Add)
                 .And.Contain($"style=\"{colorStyle}\"");
 
             icon = Parameter(nameof(MudIcon.Icon), "customicon");
@@ -51,9 +36,9 @@ namespace MudBlazor.UnitTests.Components
         {
             var title = "Title and tooltip";
             //svg
-            var icon = Parameter(nameof(MudIcon.Icon), Icons.Filled.Add);
+            var icon = Parameter(nameof(MudIcon.Icon), Icons.Material.Filled.Add);
             var titleParam = Parameter(nameof(MudIcon.Title), title);
-            var comp = ctx.RenderComponent<MudIcon>(icon, titleParam);
+            var comp = Context.RenderComponent<MudIcon>(icon, titleParam);
             comp.Find("svg Title").TextContent.Should().Be(title);
 
             //class
@@ -62,6 +47,54 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Trim().Should().StartWith("<span")
                 .And.Contain("customicon")
                 .And.Contain($"title=\"{title}\"");
+        }
+
+        [Test]
+        public void ShouldParseCorrectSyntax()
+        {
+            var comp = Context.RenderComponent<MudIcon>(parameters =>
+                parameters.Add(parameter => parameter.Icon, "material-symbols-outlined/database"));
+
+            comp.Markup.Should().Be("<span class=\"mud-icon-root mud-icon-size-medium material-symbols-outlined\" aria-hidden=\"true\" role=\"img\">database</span>");
+        }
+
+        [Test]
+        public void ShouldNotParseWhenWrongSyntax()
+        {
+            var comp = Context.RenderComponent<MudIcon>(parameters =>
+                parameters.Add(parameter => parameter.Icon, "material-symbols-outlined(database)"));
+
+            comp.Markup.Should().Be("<span class=\"mud-icon-root mud-icon-size-medium material-symbols-outlined(database)\" aria-hidden=\"true\" role=\"img\"></span>");
+        }
+
+        [Test]
+        public void ShouldNotParseWhenEmpty()
+        {
+            var comp = Context.RenderComponent<MudIcon>(parameters =>
+                parameters.Add(parameter => parameter.Icon, string.Empty));
+
+            comp.Markup.Should().Be("<span class=\"mud-icon-root mud-icon-size-medium \" aria-hidden=\"true\" role=\"img\"></span>");
+        }
+
+        [Test]
+        public void ShouldUseChildContentWhenAssigned()
+        {
+            var comp = Context.RenderComponent<MudIcon>(parameters =>
+                parameters
+                    .Add(parameter => parameter.Icon, "material-symbols-outlined")
+                    .AddChildContent("database"));
+
+            comp.Markup.Should().Be("<span class=\"mud-icon-root mud-icon-size-medium material-symbols-outlined\" aria-hidden=\"true\" role=\"img\">database</span>");
+        }
+
+        [Test]
+        public void ShouldBeEmptyChildContent()
+        {
+            var comp = Context.RenderComponent<MudIcon>(parameters =>
+                parameters
+                    .Add(parameter => parameter.Icon, "material-symbols-outlined"));
+
+            comp.Markup.Should().Be("<span class=\"mud-icon-root mud-icon-size-medium material-symbols-outlined\" aria-hidden=\"true\" role=\"img\"></span>");
         }
     }
 }

@@ -1,4 +1,8 @@
-﻿class MudResizeObserverFactory {
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+class MudResizeObserverFactory {
     constructor() {
         this._maps = {};
     }
@@ -49,7 +53,7 @@ class MudResizeObserver {
         var observervedElements = [];
         this._observervedElements = observervedElements;
 
-        this.logger('[MudBlazor | ResizeObserver] Observer initilized');
+        this.logger('[MudBlazor | ResizeObserver] Observer initialized');
 
         this._resizeObserver = new ResizeObserver(entries => {
             var changes = [];
@@ -60,12 +64,12 @@ class MudResizeObserver {
                 if (affectedObservedElement) {
 
                     var size = entry.target.getBoundingClientRect();
-                    if (affectedObservedElement.isInitilized == true) {
+                    if (affectedObservedElement.isInitialized == true) {
 
                         changes.push({ id: affectedObservedElement.id, size: size });
                     }
                     else {
-                        affectedObservedElement.isInitilized = true;
+                        affectedObservedElement.isInitialized = true;
                     }
                 }
             }
@@ -98,7 +102,7 @@ class MudResizeObserver {
             var newEntry = {
                 element: elements[i],
                 id: ids[i],
-                isInitilized: false,
+                isInitialized: false,
             };
 
             this.logger("[MudBlazor | ResizeObserver] Start observing element:", { newEntry });

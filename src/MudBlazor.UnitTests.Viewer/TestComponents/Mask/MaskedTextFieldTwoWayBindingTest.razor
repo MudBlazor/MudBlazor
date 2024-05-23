@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTextField Mask="@(new PatternMask("000-000"))"@bind-Value="text" Variant="@Variant.Outlined" Clearable />
+
+<MudTextField Mask="@(new PatternMask("00/00/00"))" @bind-Value="text"  Variant="@Variant.Outlined" Clearable />
+
+
+
+
+@code {
+	public static string __description__ = "The two textfields should always stay in sync!";
+    public string text { get; set; }
+}

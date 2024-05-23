@@ -1,0 +1,68 @@
+﻿@page "/mud/announcements"
+
+<DocsPage DisplayFooter="true">
+    <DocsPageHeader Title="Announcements" SubTitle="Discover articles from MudBlazor team.">
+        <SpecialHeaderContent>
+            <MudText Typo="Typo.h2" Class="docs-title">Announcements&nbsp;</MudText>
+            <MudText Typo="Typo.subtitle1" Class="docs-title-description">Discover articles from MudBlazor team.</MudText>
+        </SpecialHeaderContent>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <MudGrid Spacing="0" Class="my-16">
+                <MudItem xs="12" md="6">
+                    
+                </MudItem>
+            </MudGrid>
+        </DocsPageSection>
+        <DocsPageSection>
+
+        </DocsPageSection>
+        @if (_messages == null)
+        {
+            <MudProgressCircular Color="Color.Default" Indeterminate="true"/>
+        }
+        else
+        {
+            <MudGrid>
+                @foreach (var (message, isRead) in _messages)
+                {
+                    <MudItem xs="12" sm="6" md="4">
+                        <a href="@($"/mud/announcements/{message.Id}")">
+                            <MudCard Class="announcement-card rounded-lg">
+                                <MudCardMedia Image="@message.ImgUrl" Height="175"/>
+                                <MudCardContent Class="pa-4">
+                                    <MudText Typo="Typo.subtitle2" Class="mud-text-secondary">@message.Category</MudText>
+                                    <MudText Typo="Typo.h6" GutterBottom="true">@message.Title</MudText>
+                                    <MudText Typo="Typo.body2">@message.Except</MudText>
+                                </MudCardContent>
+                                <MudCardActions Class="pa-4">
+                                    <MudAvatarGroup Max="6" Spacing="3" MaxColor="Color.Primary">
+                                        @foreach (var author in message.Authors)
+                                        {
+                                            <MudAvatar>
+                                                <MudImage Src="@author.AvatarUrl" />
+                                            </MudAvatar>
+                                        }
+                                    </MudAvatarGroup>
+                                    <div class="mx-4 d-flex flex-column">
+                                        @if (message.Authors.Count() > 1)
+                                        {
+                                            <MudText Typo="Typo.subtitle2">Multiple Authors</MudText>
+                                            <MudText Typo="Typo.subtitle2" Class="mud-text-secondary">@message.PublishDate.ToString("MMM dd, yyyy")</MudText>
+                                        }
+                                        else
+                                        {
+                                            <MudText Typo="Typo.subtitle2">@message.Authors.FirstOrDefault().DisplayName</MudText>
+                                            <MudText Typo="Typo.subtitle2" Class="mud-text-secondary">@message.PublishDate.ToString("MMM dd, yyyy")</MudText>
+                                        }
+                                    </div>
+                                </MudCardActions>
+                            </MudCard>
+                        </a>
+                    </MudItem>
+                }
+            </MudGrid>
+        }
+    </DocsPageContent>
+</DocsPage>

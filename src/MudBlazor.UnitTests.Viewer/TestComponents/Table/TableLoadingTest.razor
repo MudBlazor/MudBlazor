@@ -1,6 +1,11 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudTable Items="@Elements" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading">
+<MudTable Items="@Elements" Hover="true" Breakpoint="Breakpoint.Sm"
+          Loading="@isLoading" Filter="new Func<Element, bool>(FilterFunc)" Striped
+          MultiSelection="@isMultiSelectionEnabled">
+    <ToolBarContent>
+        <MudTextField id="searchString" @bind-Value="searchString" Placeholder="Search"></MudTextField>
+    </ToolBarContent>
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -15,13 +20,31 @@
         <MudTd DataLabel="Position">@context.Position</MudTd>
         <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
     </RowTemplate>
+     <RowEditingTemplate>
+         <MudTd DataLabel="Nr">@context.Number</MudTd>
+         <MudTd DataLabel="Sign">@context.Sign</MudTd>
+         <MudTd DataLabel="Name">@context.Name</MudTd>
+         <MudTd DataLabel="Position">@context.Position</MudTd>
+         <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+     </RowEditingTemplate>
+    <NoRecordsContent>No matching records found</NoRecordsContent>
+    <LoadingContent>Loading...</LoadingContent>
 </MudTable>
 
-<MudSwitch id="switch" @bind-Checked="_loading">Show Loading</MudSwitch>
+<MudSwitch id="switch" @bind-Value="isLoading">Show Loading</MudSwitch>
+<MudSwitch id="multi-selection" @bind-Value="isMultiSelectionEnabled">Enable Multi-selection</MudSwitch>
 
-@code {
-    private bool _loading = false;
+ @code {
+    public static string __description__ = @"
+        When loading is set to true, a progress bar should appear in the table header,
+        which would not affect the striped table.
+        Dynamically added columns should not affect number of cells in the loader row.
+        ";
+
+    private bool isLoading = false;
+    private bool isMultiSelectionEnabled = false;
     private IEnumerable<Element> Elements = new List<Element>();
+    private string searchString;
 
     protected override void OnInitialized()
     {
@@ -30,6 +53,23 @@
             new Element() { Molar = "A", Sign = "A", Name = "A", Number = "A", Position = "A"},
             new Element() { Molar = "B", Sign = "B", Name = "B", Number = "B", Position = "B"},
         };
+    }
+
+    private bool FilterFunc(Element element)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Number.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Sign.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Position.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Molar.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
     }
 
     public class Element

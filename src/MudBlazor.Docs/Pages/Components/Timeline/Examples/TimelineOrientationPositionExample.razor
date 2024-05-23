@@ -1,0 +1,90 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="5">
+        <MudSelect T="TimelineOrientation" ValueChanged="OnOrientationChange" Label="TimelineOrientation" Dense="true" Variant="Variant.Outlined">
+            <MudSelectItem T="TimelineOrientation" Value="TimelineOrientation.Vertical">Vertical</MudSelectItem>
+            <MudSelectItem T="TimelineOrientation" Value="TimelineOrientation.Horizontal">Horizontal</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="5">
+        <MudSelect T="TimelinePosition" @bind-Value="_position" Label="TimelinePosition" Dense="true" Variant="Variant.Outlined">
+            @if(_orientation == TimelineOrientation.Vertical)
+            {
+                <MudSelectItem T="TimelinePosition" Value="TimelinePosition.Start">Start</MudSelectItem>
+                <MudSelectItem T="TimelinePosition" Value="TimelinePosition.Left">Left</MudSelectItem>
+                <MudSelectItem T="TimelinePosition" Value="TimelinePosition.Alternate">Alternate</MudSelectItem>
+                <MudSelectItem T="TimelinePosition" Value="TimelinePosition.Right">Right</MudSelectItem>
+                <MudSelectItem T="TimelinePosition" Value="TimelinePosition.End">End</MudSelectItem>
+            }
+            else if(_orientation == TimelineOrientation.Horizontal)
+            {
+                <MudSelectItem T="TimelinePosition" Value="TimelinePosition.Top">Top</MudSelectItem>
+                <MudSelectItem T="TimelinePosition" Value="TimelinePosition.Alternate">Alternate</MudSelectItem>
+                <MudSelectItem T="TimelinePosition" Value="TimelinePosition.Bottom">Bottom</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="2">
+        <MudSwitch Label="Reverse" @bind-Value="_reverse" Disabled="IsSwitchDisabled()" Color="Color.Primary" />
+    </MudItem>
+</MudGrid>
+
+<MudTimeline TimelineOrientation="_orientation" TimelinePosition="_position" Reverse="_reverse">
+    <MudTimelineItem Color="Color.Success" Variant="Variant.Filled">
+        <ItemContent>
+            <MudAlert Severity="Severity.Success">The reactor is running at optimum temperature</MudAlert>
+        </ItemContent>
+        <ItemOpposite>
+            <MudText Color="Color.Success">13:37</MudText>
+        </ItemOpposite>
+    </MudTimelineItem>
+    <MudTimelineItem Color="Color.Warning" Variant="Variant.Filled">
+        <ItemContent>
+            <MudAlert Severity="Severity.Warning">The reactor temperature exceeds the optimal range</MudAlert>
+        </ItemContent>
+        <ItemOpposite>
+            <MudText Color="Color.Warning">14:08</MudText>
+        </ItemOpposite>
+    </MudTimelineItem>
+    <MudTimelineItem Color="Color.Error" Variant="Variant.Filled">
+        <ItemContent>
+            <MudAlert Severity="Severity.Error">Meltdown is imminent</MudAlert>
+        </ItemContent>
+        <ItemOpposite>
+            <MudText Color="Color.Error">15:00</MudText>
+        </ItemOpposite>
+    </MudTimelineItem>
+</MudTimeline>
+
+
+@code {
+    private TimelinePosition _position { get; set; } = TimelinePosition.Start;
+    private TimelineOrientation _orientation { get; set; } = TimelineOrientation.Vertical;
+    private bool _reverse { get; set; }
+
+    private void OnOrientationChange(TimelineOrientation value)
+    {
+        _orientation = value;
+        switch (value)
+        {
+            case TimelineOrientation.Vertical:
+                if (_position is TimelinePosition.Top or TimelinePosition.Bottom)
+                    _position = TimelinePosition.Start;
+                break;
+            case TimelineOrientation.Horizontal:
+                if (_position is TimelinePosition.Start or TimelinePosition.Left or TimelinePosition.Right or TimelinePosition.End)
+                    _position = TimelinePosition.Top;
+                break;
+        }
+    }
+
+    bool IsSwitchDisabled()
+    {
+        if (_position == TimelinePosition.Alternate)
+            return false;
+        else
+            _reverse = false;
+        return true;
+    }
+}

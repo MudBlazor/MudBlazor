@@ -1,86 +1,141 @@
-﻿@using System
+@using System
 @using System.Linq
 @using Microsoft.AspNetCore.Components
 @using MudBlazor
 @using MudBlazor.Docs.Models
-@using Toolbelt.Blazor.HeadElement
 @using MudBlazor.Docs.Extensions
 @using System.Collections.Generic
 @using System.Text.RegularExpressions
 
 @*html head (for server prerendering)*@
-<Title>@(GetTitle())</Title>
-<Meta Name="keywords" Content="@GetKeywords()" />
-<Meta Property="og:title" Content="@GetTitle()" />
-<Meta Name="twitter:title" Content="@GetTitle()" />
-@if (!string.IsNullOrEmpty(SubTitle))
+<PageTitle>@(GetTitle())</PageTitle>
+<HeadContent>
+    <meta Name="keywords" Content="@GetKeywords()" />
+    <meta Property="og:title" Content="@GetTitle()" />
+    <meta Name="twitter:title" Content="@GetTitle()" />
+    @if (!string.IsNullOrEmpty(SubTitle))
+    {
+        <meta Name="description" Content="@(SubTitle)" />
+        <meta Property="og:description" Content="@SubTitle" />
+        <meta Name="twitter:description" Content="@SubTitle" />
+    }
+    <link rel="canonical" href="@GetCanonicalUri()" />
+</HeadContent>
+
+@if (SpecialHeaderContent != null)
 {
-    <Meta Name="description" Content="@(SubTitle)" />
-    <Meta Property="og:description" Content="@SubTitle" />
-    <Meta Name="twitter:description" Content="@SubTitle" />
+    <div class="docs-page-header my-16">
+        @SpecialHeaderContent
+        <DocsRenderBenchmark/>
+    </div>
 }
-@if (IsApiPage && !string.IsNullOrEmpty(ComponentLink))
+else
 {
-    <Link Rel="canonical" Href="@($"https://mudblazor.com{@ComponentLink}")" />
+    <div class="docs-page-header mt-6 mb-12">
+        <MudText Typo="@Typo.h3">@Title</MudText>
+        <MudText>@GetSubTitle() @Description</MudText>
+        <DocsRenderBenchmark/>
+    </div>
 }
 
-<div class="docs-page-header">
-    <MudText Typo="@Typo.h3">@Title</MudText>
-    <MudText>@GetSubTitle() @Description</MudText>
-    @if (!IsApiPage && GetComponentTypeName() != null)
-    {
-        <MudText Typo="@Typo.body2" Class="my-3">See <MudLink Href="@GetApiLink()">@Title API</MudLink> for parameter documentation.</MudText>
-    }
-    @if (IsApiPage && !string.IsNullOrEmpty(ComponentLink))
-    {
-        <MudText Typo="@Typo.body2">Check out the <MudLink Href="@ComponentLink">Examples</MudLink> for this component.</MudText>
-    }
-</div>
+@if (!_isApiPage && _componentTypeName != null && !DisableApiHeader)
+{
+    <DocsPageSection api-link-section>
+        <SectionHeader Title="API" />
+        <div class="docs-page-apilinks">
+            <ul class="my-2">
+                <li>
+                    <MudLink Href="@_apiLink">
+                        <CodeInline>@($"<{_componentTypeName}>")</CodeInline>
+                    </MudLink>
+                </li>
+                @if (_component.ChildTypes != null)
+                {
+                    @foreach (var childType in _component.ChildTypes)
+                    {
+                        <li>
+                            <MudLink Href="@($"api/{childType.Name.Replace("`1", "").ToLowerInvariant().Replace("mud","")}")" Class="ms-1">
+                                - <CodeInline>@($"<{childType.Name.Replace("`1", "")}>")</CodeInline>
+                            </MudLink>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+    </DocsPageSection>
+}
+@if (_isApiPage && !string.IsNullOrEmpty(ComponentLink))
+{
+    <DocsPageSection api-link-section>
+        <SectionHeader Title="Pages" />
+        <div class="docs-page-apilinks">
+            <ul class="my-2">
+                <li>
+                    <MudLink Href="@GetComponentLink()">
+                        <CodeInline>@($"{_componentPage}")</CodeInline>
+                    </MudLink>
+                </li>
+            </ul>
+        </div>
+    </DocsPageSection>
+}
 
 @code {
 
-
     [Inject] public NavigationManager NavigationManager { get; set; }
+    [Inject] IMenuService MenuService { get; set; }
 
     [Parameter] public string Title { get; set; }
     [Parameter] public string SubTitle { get; set; }
     [Parameter] public string Keywords { get; set; }
+    [Parameter] public bool DisableApiHeader { get; set; }
     [Parameter] public RenderFragment Description { get; set; }
+    [Parameter] public RenderFragment SpecialHeaderContent { get; set; }
     [Parameter] public string ComponentLink { get; set; }
+    public Type _componentType;
+    public MudComponent _parentComponent;
+    public MudComponent _component;
+    public string _componentName;
+    private string _componentPage;
+    private bool _isApiPage;
+    private string _apiLink;
+    private string _componentTypeName;
 
-
-    private string GetApiLink() => $"api/{GetComponentName()}";
-
-    private string GetComponentName()
+    protected override void OnParametersSet()
     {
-        return NavigationManager.Uri.ToString().Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+        base.OnParametersSet();
+        _isApiPage = NavigationManager.Uri.ToString().Contains("/api/");
+        _componentName = NavigationManager.GetComponentLink();
+        _componentType = ApiLink.GetTypeFromComponentLink(_componentName);
+        _component = MenuService.GetComponent(_componentType);
+        _parentComponent = MenuService.GetParent(_componentType);
+        _componentTypeName = _componentType?.Name.Replace("`1", "");
+        _apiLink = $"api/{_componentName}";
+        _componentPage = (_component?.Type == null) ? _parentComponent?.Name : _component?.Name;
+    }   
+
+    private string GetComponentLink()
+    {
+        if (_component?.Type != null)
+            return $"components/{_component?.Link}";
+        return $"components/{_parentComponent?.Link}";
     }
 
-    private bool IsApiPage
-    {
-        get
-        {
-            return NavigationManager.Uri.ToString().Contains("/api/");
-        }
-    }
+    private string GetTitle() => $"{Title} - MudBlazor";
 
-    private string GetComponentTypeName() => ApiLink.GetTypeFromComponentLink(GetComponentName())?.Name.Replace("`1", "");
-
-    string GetTitle() => $"{Title} - MudBlazor";
-
-    string GetSubTitle()
+    private string GetSubTitle()
     {
         if (string.IsNullOrEmpty(SubTitle))
             return "";
         return SubTitle.TrimEnd('.') + ".";
     }
 
-    string GetKeywords()
+    private string GetKeywords()
     {
-        var keywords = new HashSet<string>(Regex.Split(Keywords??"", @",\s"));
+        var keywords = new HashSet<string>(Regex.Split(Keywords ?? "", @",\s"));
         keywords.Add(Title);
-        keywords.Add(GetComponentTypeName());
-        keywords.Add(GetComponentTypeName()?.Replace("Mud", ""));
+        keywords.Add(_componentTypeName);
+        keywords.Add(_componentTypeName?.Replace("Mud", ""));
         keywords.Add("mudblazor");
         keywords.Add("blazor");
         keywords.Add("component");
@@ -88,5 +143,10 @@
         keywords.Remove("");
         keywords.Remove(null);
         return string.Join(", ", keywords);
+    }
+
+    private string GetCanonicalUri()
+    {
+        return NavigationManager.Uri.Replace(NavigationManager.BaseUri, "https://mudblazor.com/");
     }
 }

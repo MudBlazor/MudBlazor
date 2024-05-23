@@ -5,14 +5,14 @@ namespace MudBlazor.UnitTests.Mocks
 {
     public class MockDocsMessageHandler : MockHttpMessageHandler
     {
-        public MockDocsMessageHandler() : base()
+        public MockDocsMessageHandler()
         {
             // Periodic table api
             this.When("https://localhost/webapi/periodictable")
                 .Respond("application/json",
                 Encoding.UTF8.GetString(Encoding.Default.GetBytes(SampleElementsJson)));
             // DialogScrollableExample
-            this.When("https://raw.githubusercontent.com/Garderoben/MudBlazor/master/LICENSE")
+            this.When("https://raw.githubusercontent.com/MudBlazor/MudBlazor/master/LICENSE")
                 .Respond("text/plain", "Dummy License");
         }
 

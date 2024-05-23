@@ -1,0 +1,19 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudVirtualize Items="list" Enabled="true">
+    <div class="d-flex mud-width-full">
+        @foreach (var s in list)
+        {
+            <MudText>@s</MudText>
+        }
+    </div>
+</MudVirtualize>
+
+@code {
+    List<string> list = new List<string>();
+
+    protected override void OnInitialized()
+    {
+        list.Add("a");
+    }
+}

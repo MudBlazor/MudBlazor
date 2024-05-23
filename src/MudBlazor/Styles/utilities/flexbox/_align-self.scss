@@ -1,0 +1,25 @@
+﻿@import '../../abstracts/variables';
+
+@mixin align-self ($breakpoint) {
+  .align-self-#{$breakpoint}auto {
+    align-self: auto !important;
+  }
+
+  .align-self-#{$breakpoint}start {
+    align-self: flex-start !important;
+  }
+
+  .align-self-#{$breakpoint}end {
+    align-self: flex-end !important;
+  }
+
+  .align-self-#{$breakpoint}center {
+    align-self: center !important;
+  }
+
+  .align-self-#{$breakpoint}stretch {
+    align-self: stretch !important;
+  }
+}
+
+@include align-self("");

@@ -1,73 +1,142 @@
 ﻿@page "/getting-started/installation"
 
-<DocsPage MaxWidth="MaxWidth.Large">
-    <DocsPageHeader Title="Installation" SubTitle="Getting started with MudBlazor for faster and easier web development.">
-    </DocsPageHeader>
+<DocsPage DisplayFooter="true">
+    <DocsPageHeader Title="Installation" SubTitle="Getting started with MudBlazor for faster and easier web development." />
+    
     <DocsPageContent>
+        
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Templates</Title>
+            <SectionHeader Title="Online playground">
                 <Description>
-                    <MudAlert Severity="Severity.Info">
-                        <MudText>We provide ready to run blazor style templates that come pre-configured with everything you need to get going faster.</MudText>
-                     </MudAlert>
-                    <MudText Class="pa-2">You will find them in the <MudLink Href="https://github.com/Garderoben/MudBlazor.Templates">Github repository</MudLink> called <CodeInline>MudBlazor.Templates</CodeInline> and each template comes with both WASM and Server versions.</MudText>
+                    You can play with MudBlazor online directly in your browser with TryMudBlazor, no installation required.
+                </Description>
+            </SectionHeader>
+            <MudButton DropShadow="false" EndIcon="@Icons.Material.Rounded.OpenInNew" Variant="Variant.Filled" Color="Color.Primary" Class="docs-no-text-transform" Href="https://try.mudblazor.com/" Target="_blank">Play on TryMudBlazor</MudButton>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Prerequisites">
+                <Description>
+                    <div class="d-flex flex-column px-2">
+                        <MudBadge Color="Color.Primary" Dot="true" Origin="Origin.CenterLeft">
+                            <div class="pl-4 docs-line-height-normal">
+                                A system that can compile and run the .NET Framework
+                            </div>
+                        </MudBadge>
+                        <MudBadge Color="Color.Primary" Dot="true" Origin="Origin.CenterLeft">
+                            <div class="pl-4 my-2 docs-line-height-normal">
+                                <MudLink Href="https://dotnet.microsoft.com/en-us/" Target="_blank"><b>.NET SDK</b></MudLink> - We recommend the main version MudBlazor is using, generally its the latest LTS version.
+                            </div>
+                        </MudBadge>
+                        <MudBadge Color="Color.Primary" Dot="true" Origin="Origin.CenterLeft">
+                            <div class="pl-4 docs-line-height-normal">
+                                A code editor, we recommend <MudLink Href="https://www.jetbrains.com/rider/" Target="_blank"><b>Jet Brains Rider</b></MudLink>, <MudLink Href="https://visualstudio.microsoft.com/"><b>Visual Studio</b></MudLink> or <MudLink Href="https://code.visualstudio.com/"><b>VS Code</b></MudLink>
+                            </div>
+                        </MudBadge>
+                    </div>
                 </Description>
             </SectionHeader>
         </DocsPageSection>
+        
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Manual Install</Title>
-                <SubTitle>1. Install the package</SubTitle>
-                <Description>Find the package through NuGet Package Manager or install it with following command.</Description>
+            <SectionHeader Title="Using our dotnet templates">
+                <Description>
+                    To get started quickly, you can use our <MudLink Href="https://github.com/MudBlazor/Templates" Target="_blank"><b>dotnet templates</b></MudLink> they are pre-configured with MudBlazor.<br/>
+                    Open a terminal and install them with this command.
+                </Description>
             </SectionHeader>
-            <MarkdownInstallPackage />
-        </DocsPageSection>
-        <DocsPageSection>
-            <SectionHeader>
-                <SubTitle>2. Add Imports</SubTitle>
-                <Description>After the package is added, you need to add the following in your <CodeInline>_Imports.razor</CodeInline></Description>
+            <SectionContent Code="@nameof(InstallationTemplateInstallExample)" />
+            <SectionHeader Class="mt-6">
+                <Description>
+                    Navigate to a folder where you want your project and run the following command to create a new project. You can run <CodeInline>dotnet new mudblazor --help</CodeInline> to see all available options.
+                </Description>
             </SectionHeader>
-            <MarkdownAddImports />
+            <SectionContent Codes="@(new[] {
+                new CodeFile("Auto", nameof(InstallationTemplateUsageExampleAuto)),
+                new CodeFile("WebAssembly", nameof(InstallationTemplateUsageExampleWasm)),
+                new CodeFile("Server", nameof(InstallationTemplateUsageExampleServer))
+            })" />
         </DocsPageSection>
+        
         <DocsPageSection>
-            <SectionHeader>
-                <SubTitle>3. Add CSS & Font references</SubTitle>
-                <Description> Add the following to your HTML head section, it's either <CodeInline>index.html</CodeInline> or <CodeInline>_Host.cshtml</CodeInline> depending on whether you're running WebAssembly or Server.</Description>
+            <SectionHeader Title="Manual Install">
+                <Description>If you already have a project and want to add MudBlazor to it, either from a default template or a working application.</Description>
             </SectionHeader>
-            <MarkdownAddReferences />
-            <MudText GutterBottom="true" Class="mt-4">
-                <b class="mud-secondary-text">Note:</b> If you're installing on a fresh Blazor template make sure to remove everything in your <CodeInline SecondaryColor="true">site.css</CodeInline> and remove the <CodeInline SecondaryColor="true">bootstrap.min.css</CodeInline> completely from either <CodeInline>index.html</CodeInline> or <CodeInline>_Host.cshtml</CodeInline>.
-            </MudText>
-            <MudText GutterBottom="true" Class="mt-4">
-                In the HTML body section of either <CodeInline>index.html</CodeInline> or <CodeInline>_Host.cshtml</CodeInline> add this:
-            </MudText>
-            <MarkdownAddJsReference />
+            <SectionSubGroups>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Install the package">
+                        <Description>Find the package through NuGet Package Manager or install it with following command.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(InstallationManualPackageExample)" />
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Add Imports">
+                        <Description>After the package is added, you need to add the following in your <CodeInline>_Imports.razor</CodeInline></Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(InstallationManualImportsExample)"/>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Add font and style references">
+                        <Description>Add the following to your HTML head section, it's either <CodeInline>index.html</CodeInline> or <CodeInline>_Layout.cshtml</CodeInline>/<CodeInline>_Host.cshtml</CodeInline>/<CodeInline>App.razor</CodeInline> depending on whether you're running WebAssembly or Server.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(InstallationManualCssFontsExample)"/>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Add script reference">
+                        <Description>In the same file but located in the end of it add the MudBlazor js file, it should be in the same location as the default blazor script.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(InstallScriptManual)"/>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Removing references">
+                        <Description>
+                            In the same file as above, the default blazor template load's bootstrap, this is no longer needed and can be removed. Delete the bootstrap and open-iconic folder as well if you decide to get rid of bootstrap from your project.
+                            The <CodeInline>site.css</CodeInline> file you can either remove or keep but make sure you clear it out of any content.
+                        </Description>
+                    </SectionHeader>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Register Services">
+                        <Description>Add the following in <CodeInline>Program.cs</CodeInline>:</Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(InstallServicesNET6Manual)"/>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Add Components">
+                        <Description>Add the following components to your <CodeInline>MainLayout.razor</CodeInline> note that the <CodeInline>ThemeProvider</CodeInline> is essential for MudBlazor but the rest is optional.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(InstallationManualComponentsExample)"/>
+                </DocsPageSection>
+
+            </SectionSubGroups>
         </DocsPageSection>
+        
         <DocsPageSection>
-            <SectionHeader>
-                <SubTitle>4. Register Services</SubTitle>
+            <SectionHeader Title="Ready for More?">
+                <Description>Now you know how to install MudBlazor, but a common pitfall is to jump straight into different components. We recommend that you read our Layout page to learn about basic project structure and different ways to use our main layout components.</Description>
             </SectionHeader>
-            <MudText GutterBottom="true">
-                <b>For Blazor WebAssembly</b> add the following to your <CodeInline>Program.Main</CodeInline>
-            </MudText>
-            <MarkdownRegisterServicesWebAssembly />
-            <MudText GutterBottom="true" Class="mt-6">
-                <b>For Blazor Server</b> add the following in your <CodeInline>Startup.cs</CodeInline> under <CodeInline>ConfigureServices</CodeInline>
-            </MudText>
-            <MarkdownRegisterServicesServer />
+            <div class="d-flex flex-row flex-wrap mud-width-full">
+                <MudList T="string" Class="flex-grow-1 flex-shrink-0 mud-paper-outlined rounded py-0 mr-2">
+                    <MudListItem Icon="@Icons.Material.Filled.AutoAwesomeMosaic" IconColor="Color.Primary" Class="pl-6" Href="/getting-started/layouts">
+                        <MudText Typo="Typo.body1">Layouts</MudText>
+                        <MudText Typo="Typo.body2">Understand the structure</MudText>
+                    </MudListItem>
+                </MudList>
+                <MudList T="string" Class="flex-grow-1 flex-shrink-0 mud-paper-outlined rounded py-0 ml-2">
+                    <MudListItem Icon="@Icons.Material.Filled.FilterFrames" IconColor="Color.Secondary" Class="pl-6" Href="/getting-started/wireframes">
+                        <MudText Typo="Typo.body1">Wireframes</MudText>
+                        <MudText Typo="Typo.body2">Copy, paste layouts</MudText>
+                    </MudListItem>
+                </MudList>
+            </div>
         </DocsPageSection>
-        <DocsPageSection>
-            <SectionHeader>
-                <SubTitle>5. Add Components</SubTitle>
-                <Description>Add the following components to your <CodeInline>MainLayout.razor</CodeInline> or <CodeInline>App.razor</CodeInline> note that the <CodeInline>ThemeProvider</CodeInline> is essential for MudBlazor but the rest is optional.</Description>
-            </SectionHeader>
-            <MarkdownAddComponents />
-        </DocsPageSection>
-        <DocsPageSection>
-            <MudText Class="mt-16" Align="Align.Center" Typo="Typo.h6" GutterBottom="true">Now build and run your project, if you didn't get any errors, you're good to go.</MudText>
-            <MudText Class="mb-16" Align="Align.Center" Typo="Typo.h6">Jump over to the <MudLink Typo="Typo.h6" Href="/getting-started/usage">usage</MudLink> guide to get started.</MudText>
-        </DocsPageSection>
+        
     </DocsPageContent>
 </DocsPage>
-<Footer />

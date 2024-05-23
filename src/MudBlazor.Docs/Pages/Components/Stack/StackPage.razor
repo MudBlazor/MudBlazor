@@ -1,0 +1,129 @@
+﻿@page "/components/stack"
+
+<DocsPage>
+    <DocsPageHeader Title="Stack" SubTitle="Manages layout of its child items along the vertical or horizontal axis.">
+    </DocsPageHeader>
+
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage">
+                <Description>The default <CodeInline>@nameof(MudStack)</CodeInline> displays its items vertically in a column.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(StackBasicExample)">
+                <StackBasicExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Direction">
+                <Description>With the <CodeInline>@nameof(MudStack.Row)</CodeInline> property set to true the items will be displayed horizontally in a row.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(StackDirectionExample)">
+                <StackDirectionExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Spacing">
+                <Description>The default spacing can be changed by setting any number between 0 and 16 with the <CodeInline>@nameof(MudStack.Spacing)</CodeInline> property.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(StackSpacingExample)" ShowCode="false">
+                <StackSpacingExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Wrapping">
+                <Description>
+                    The default wrap behavior can be changed by setting the <CodeInline>@nameof(MudStack.Wrap)</CodeInline> property.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(StackWrappingExample)" ShowCode="false">
+                <StackWrappingExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Line Break">
+                <Description>You can force items onto the next line by adding a <CodeInline>MudFlexBreak</CodeInline>.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(StackBreakExample)" ShowCode="false">
+                <StackBreakExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Usage Examples">
+                <Description>Here are two simple examples to demonstrate what <CodeInline>@nameof(MudStack)</CodeInline> can be used for.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(StackUsageFormExample)" ShowCode="false">
+                <StackUsageFormExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionContent DarkenBackground="true" Code="@nameof(StackLayoutExample)" ShowCode="false" Class="mt-5">
+                <StackLayoutExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Item Placement" />
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Justify">
+                        <Description>With the <CodeInline>@nameof(MudStack.Justify)</CodeInline> property you can define how the space between and around items along the main axis of the <CodeInline>@nameof(MudStack)</CodeInline></Description>
+                    </SectionHeader>
+                    <SectionContent FullWidth="true" Block="true" DarkenBackground="true" Code="@nameof(StackJustifyExample)" ShowCode="false">
+                        <StackJustifyExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Align">
+                        <Description>With the <CodeInline>@nameof(MudStack.AlignItems)</CodeInline> property you can control the alignment of items on the cross axis of the <CodeInline>@nameof(MudStack)</CodeInline></Description>
+                    </SectionHeader>
+                    <SectionContent Block="true" Code="@nameof(StackAlignExample)" ShowCode="false" DarkenBackground="true">
+                        <StackAlignExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Combined">
+                        <Description>
+                            If <CodeInline>@nameof(MudStack)</CodeInline> is in <CodeInline>@nameof(MudStack.Row)</CodeInline> mode or not, the behavior of <CodeInline>@nameof(MudStack.Justify)</CodeInline> and <CodeInline>@nameof(MudStack.AlignItems)</CodeInline> can almost be described as they switched as the axis they control are changed.<br />
+                            In the example bellow swap between column and row and see how <CodeInline>@nameof(MudStack.Justify)</CodeInline> and <CodeInline>@nameof(MudStack.AlignItems)</CodeInline> behaves differently.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Block="true" Code="@nameof(StackCombinedExample)" ShowCode="false" DarkenBackground="true">
+                        <StackCombinedExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+            </SectionSubGroups>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Stretch Items">
+                <Description>
+                    The <CodeInline>@nameof(MudStack.StretchItems)</CodeInline> property allows for control over how child components are sized along the main axis within a <CodeInline>@nameof(MudStack)</CodeInline>.
+                    This feature provides the flexibility to specify which children should expand to fill additional space.
+                </Description>
+            </SectionHeader>
+            <SectionContent Block FullWidth Code="@nameof(StackStretchItemsExample)" ShowCode="false" DarkenBackground>
+                <StackStretchItemsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Interactive">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Block="true" FullWidth="true" DarkenBackground="true" Code="@nameof(StackInteractiveExample)" ShowCode="false">
+                <StackInteractiveExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

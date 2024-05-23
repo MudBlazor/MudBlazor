@@ -1,0 +1,103 @@
+﻿@page "/components/pagination"
+
+<DocsPage>
+    <DocsPageHeader Title="Pagination" SubTitle="">
+        <Description>
+            This component allows the user to select a specific page from a range of pages.
+        </Description>
+    </DocsPageHeader>
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Usage">
+                <Description>
+                    Pagination displays the number of pages based on the <CodeInline>Count</CodeInline> prop, with prev and next buttons surrounding it.<br /> The selected index can be binded with <CodeInline>Selected</CodeInline> prop.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(PaginationSimpleExample)" Block="true">
+                <PaginationSimpleExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Variants">
+                <Description>
+                    The default variant is <CodeInline>Text</CodeInline> but can be changed to both <CodeInline>Filled</CodeInline> and <CodeInline>Outlined</CodeInline>
+                </Description>
+            </SectionHeader>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Filled" />
+                    <SectionContent Code="@nameof(PaginationVariantsFilledExample)">
+                        <PaginationVariantsFilledExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Outlined" />
+                    <SectionContent Code="@nameof(PaginationVariantsOutlinedExample)">
+                        <PaginationVariantsOutlinedExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Disabled">
+                <Description>
+                    Pagination can be disabled with the <CodeInline>Disabled</CodeInline> prop.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(PaginationDisabledExample)">
+                <PaginationDisabledExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Rectangular" />
+            <SectionContent Code="@nameof(PaginationRectangularExample)">
+                <PaginationRectangularExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Sizes" />
+            <SectionContent Code="@nameof(PaginationSizesExample)">
+                <PaginationSizesExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Control buttons">
+                <Description>
+                    You can show/hide the <CodeInline>first</CodeInline>, <CodeInline>last</CodeInline>, <CodeInline>next</CodeInline> and <CodeInline>previous</CodeInline> buttons.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(PaginationControlButtonsExample)">
+                <PaginationControlButtonsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Item count">
+                <Description>
+                    The parameter <CodeInline>BoundaryCount</CodeInline> and <CodeInline>MiddleCount</CodeInline> specify the number of items displayed before, between and after the ellipsis.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(PaginationItemCountExample)">
+                <PaginationItemCountExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Table pagination">
+                <Description>
+                    The <CodeInline>SelectedChanged</CodeInline> event callback can be used to control a different component. This example shows how to navigate through the pages of a <MudLink Href="/components/table">MudTable</MudLink>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(PaginationTableExample)" ShowCode="false">
+                <PaginationTableExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

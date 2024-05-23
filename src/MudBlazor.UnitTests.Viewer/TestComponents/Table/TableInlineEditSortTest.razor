@@ -1,0 +1,48 @@
+@namespace MudBlazor.UnitTests.TestComponents
+
+
+<MudTable @ref="MudTableRef" Items="items" T="Element" @bind-SelectedItem="selectedItem"
+ RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" CanCancelEdit="true">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Value)">#</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Value</MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd>
+            <MudTextField T="string" id="@context.Id" @bind-Value="@context.Value"></MudTextField>
+        </MudTd>
+    </RowEditingTemplate>
+</MudTable>
+
+@code {
+    public static string __description__ = "editing a sorted column should not shift position while open";
+    
+    private Element elementBeforeEditing = new();
+    private Element selectedItem = null;
+    public MudTable<Element> MudTableRef { get; private set; }
+
+    IEnumerable<Element> items = new List<Element> 
+    { 
+        new Element { Value = "B", Id = "Id1" }, 
+        new Element { Value = "A", Id = "Id2" }, 
+        new Element { Value = "C", Id = "Id3" }, 
+    };
+    
+    private void BackupItem(object element)
+    {
+        elementBeforeEditing.Value = ((Element)element).Value;
+    }
+
+    private void ResetItemToOriginalValues(object element)
+    {
+        ((Element)element).Value = elementBeforeEditing.Value;
+    }
+    
+    public class Element
+    {
+        public string Id { get; set; }
+        public string Value { get; set; }
+    }
+}

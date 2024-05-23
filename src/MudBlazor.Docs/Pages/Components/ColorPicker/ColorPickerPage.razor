@@ -1,0 +1,127 @@
+﻿@page "/components/colorpicker"
+
+<DocsPage>
+    <DocsPageHeader Title="Color Picker" SubTitle="A sophisticated and customizable pop-up for choosing a color." />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ColorPickerBasicExample)">
+                <ColorPickerBasicExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Parts">
+                <Description>All parts of the color picker can be removed individually if you just want certain functionality.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(ColorPickerPlaygroundExample)" ShowCode="false">
+                <ColorPickerPlaygroundExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Color Picker View">
+                <Description>The default view can be changed with <CodeInline>ColorPickerView</CodeInline> and can be useful when you want a minimalistic color picker or force the use of certain colors.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ColorPickerViewModeExample)">
+                <ColorPickerViewModeExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Color Picker Mode">
+                <Description>You can set the default mode of the colorpicker with the <CodeInline>ColorPickerMode</CodeInline> prop. This can be useful combined with <CodeInline>ShowModeSwitch="false"</CodeInline> to force the usage of a specific color mode.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ColorPickerColorModeExample)">
+                <ColorPickerColorModeExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Custom Palette">
+                <Description>The default palette can be changed with <CodeInline>Palette</CodeInline> property. The first five colors show up in the quick view when clicking the color preview dot.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ColorPickerPaletteExample)" ShowCode="false">
+                <ColorPickerPaletteExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Alpha">
+                <Description>You can disable the alpha slider and its textfield counterpart by setting <CodeInline>ShowAlpha="false"</CodeInline>. Doing so will remove any transparency from the color and output RGB, HSL, HEX instead of RGBA, HSLA and HEXA.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ColorPickerAlphaExample)">
+                <ColorPickerAlphaExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Switch Mode">
+                <Description>Switch Mode lets the user switch betwen RGB, HSL and HEX the button can be disabled with <CodeInline>ShowModeSwitch="false"</CodeInline>, this can be useful if you want to control what type of input/output should be used.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ColorPickerSwitchModeExample)">
+                <ColorPickerSwitchModeExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Dialog Mode">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ColorPickerDialogExample)">
+                <ColorPickerDialogExample />
+            </SectionContent>
+        </DocsPageSection>
+
+		 <DocsPageSection>
+            <SectionHeader Title="Inline Mode">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ColorPickerInlineExample)">
+                <ColorPickerInlineExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Static Mode">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(ColorPickerStaticExample)">
+                <ColorPickerStaticExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Elevation">
+                <Description>You can change the elevation with the <CodeInline>Elevation</CodeInline> parameter. The default value is 0 for static and 8 for inline.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Class="demo-datetime-margin" Code="@nameof(ColorPickerElevationExample)">
+                <ColorPickerElevationExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Example Usage">
+            </SectionHeader>
+            <SectionContent Class="px-0 pt-0" Code="@nameof(ColorPickerExampleUsageExample)" ShowCode="false">
+                <ColorPickerExampleUsageExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Drag Interaction">
+                <Description>
+                    The <CodeInline>ThrottleInterval</CodeInline> property controls how long to wait until the color is updated while dragging the pointer in the spectrum view.
+                    If the <CodeInline>DragEffect</CodeInline> property is set to false, the color selector (circle) will no longer follow the pointer.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(ColorPickerDragExample)">
+                <ColorPickerDragExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

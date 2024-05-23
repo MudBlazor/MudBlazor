@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" class="@Class" style="@Style" 
+<div @ref="_componentRef" @attributes="UserAttributes" class="@Class" style="@Style" 
      @ontouchstart="OnTouchStart" @ontouchstart:stopPropagation="true"
      @ontouchend="OnTouchEnd" @ontouchend:stopPropagation="true"
      @ontouchcancel="OnTouchCancel" @ontouchcancel:stopPropagation="true">

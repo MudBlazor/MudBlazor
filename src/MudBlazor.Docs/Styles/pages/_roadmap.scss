@@ -1,0 +1,47 @@
+﻿.docs-roadmap-2022 {
+  max-width: 740px;
+  margin-left: auto;
+  margin-right: auto;
+
+  img {
+    max-width: 770px;
+    width: 100%;
+    height: auto;
+  }
+}
+
+.docs-roadmap-container {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+
+  .roadmap-world {
+    perspective: 661px;
+    transform-style: preserve-3d;
+    perspective-origin: top;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 64vh;
+
+    .roadmap-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      grid-template-rows: repeat(10, 100px);
+      border: 1px solid var(--mud-palette-secondary);
+      transform: rotateX(100deg);
+      max-width: 1280px;
+      margin-left: auto;
+      margin-right: auto;
+
+      .roadmap-grid-item {
+        height: 100%;
+        width: 100%;
+        border: 1px solid var(--mud-palette-secondary);
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+﻿@inject IDialogService DialogService
+
+
+<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
+    Open Simple Dialog
+</MudButton>
+<p>
+Search Text:  @_searchText
+</p>
+<span>
+Clicked: @(_clicked ? "Yes" : "No")
+</span>
+
+@code {
+    private string _searchText;
+    private bool _clicked;
+
+    private Task OpenDialog()
+    {
+        return DialogService.ShowAsync<DialogWithEventCallback>("Simple Dialog", 
+            new DialogParameters
+            {
+                {"OnSearch",  new EventCallbackFactory().Create(this, new Action<string>(OnSearch)) },
+                {"OnClick",  new EventCallbackFactory().Create(this, OnClickAsync) },
+            });
+    }
+
+    private void OnSearch(string text)
+    {
+        _searchText = text;
+        StateHasChanged();
+    }
+    
+    private Task OnClickAsync()
+    {
+        _clicked = true;
+        StateHasChanged();
+
+        return Task.CompletedTask;
+    }
+}

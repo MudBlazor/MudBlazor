@@ -1,0 +1,15 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudHidden Invert="@Invert" Breakpoint="@Breakpoint" HiddenChanged="@( x => HiddenChangedHistory.Add(x) )" >
+	<MudText>MudHidden content</MudText>
+</MudHidden>
+
+@code {
+	[Parameter]
+	public bool Invert { get; set; }
+
+	[Parameter]
+	public Breakpoint Breakpoint { get; set; }
+
+	public List<bool> HiddenChangedHistory { get; set; } = new();
+}

@@ -1,0 +1,101 @@
+@import '../../abstracts/variables';
+
+$spacing-values: ( "0": 0, "1": 4px, "2": 8px, "3": 12px, "4": 16px, "5": 20px, "6": 24px, "7": 28px, "8": 32px, "9": 36px, "10": 40px, "11": 44px, "12": 48px, "13": 52px, "14": 56px, "15": 60px, "16": 64px, "17": 68px, "18": 72px, "19": 76px, "20": 80px, "auto": auto );
+$spacing-negative-values: ( "n1": -4px, "n2": -8px, "n3": -12px, "n4": -16px, "n5": -20px, "n6": -24px, "n7": -28px, "n8": -32px, "n9": -36px, "n10": -40px, "n11": -44px, "n12": -48px, "n13": -52px, "n14": -56px, "n15": -60px, "n16": -64px, "n17": -68px, "n18": -72px, "n19": -76px, "n20": -80px );
+
+@mixin spacing-positive-negative ($breakpoint) {
+  @each $prop, $abbrev in (margin: m, padding: p) {
+    @each $name, $value in $spacing-values {
+      .#{$abbrev}t-#{$breakpoint}#{$name},
+      .#{$abbrev}y-#{$breakpoint}#{$name} {
+        #{$prop}-top: $value !important;
+      }
+
+      .#{$abbrev}r-#{$breakpoint}#{$name},
+      .#{$abbrev}x-#{$breakpoint}#{$name} {
+        #{$prop}-right: $value !important;
+      }
+
+      .#{$abbrev}l-#{$breakpoint}#{$name},
+      .#{$abbrev}x-#{$breakpoint}#{$name} {
+        #{$prop}-left: $value !important;
+      }
+
+      .#{$abbrev}b-#{$breakpoint}#{$name},
+      .#{$abbrev}y-#{$breakpoint}#{$name} {
+        #{$prop}-bottom: $value !important;
+      }
+
+      .#{$abbrev}s-#{$breakpoint}#{$name} {
+        #{$prop}-inline-start: $value !important;
+      }
+
+      .#{$abbrev}e-#{$breakpoint}#{$name} {
+        #{$prop}-inline-end: $value !important;
+      }
+
+      .#{$abbrev}a-#{$breakpoint}#{$name} {
+        #{$prop}: $value !important;
+      }
+    }
+  }
+
+  @each $prop, $abbrev in (margin: m) {
+    @each $name, $value in $spacing-negative-values {
+      .#{$abbrev}t-#{$breakpoint}#{$name},
+      .#{$abbrev}y-#{$breakpoint}#{$name} {
+        #{$prop}-top: $value !important;
+      }
+
+      .#{$abbrev}r-#{$breakpoint}#{$name},
+      .#{$abbrev}x-#{$breakpoint}#{$name} {
+        #{$prop}-right: $value !important;
+      }
+
+      .#{$abbrev}l-#{$breakpoint}#{$name},
+      .#{$abbrev}x-#{$breakpoint}#{$name} {
+        #{$prop}-left: $value !important;
+      }
+
+      .#{$abbrev}b-#{$breakpoint}#{$name},
+      .#{$abbrev}y-#{$breakpoint}#{$name} {
+        #{$prop}-bottom: $value !important;
+      }
+
+      .#{$abbrev}s-#{$breakpoint}#{$name} {
+        #{$prop}-inline-start: $value !important;
+      }
+
+      .#{$abbrev}e-#{$breakpoint}#{$name} {
+        #{$prop}-inline-end: $value !important;
+      }
+
+      .#{$abbrev}a-#{$breakpoint}#{$name} {
+        #{$prop}: $value !important;
+      }
+    }
+  }
+}
+
+// XS >
+@include spacing-positive-negative("");
+
+@media screen and (min-width:$breakpoint-sm) {
+  @include spacing-positive-negative("sm-");
+}
+
+@media screen and (min-width:$breakpoint-md) {
+  @include spacing-positive-negative("md-");
+}
+
+@media screen and (min-width:$breakpoint-lg) {
+  @include spacing-positive-negative("lg-");
+}
+
+@media screen and (min-width:$breakpoint-xl) {
+  @include spacing-positive-negative("xl-");
+}
+
+@media screen and (min-width:$breakpoint-xxl) {
+  @include spacing-positive-negative("xxl-");
+}

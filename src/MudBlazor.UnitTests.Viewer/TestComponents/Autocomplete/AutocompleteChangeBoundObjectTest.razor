@@ -1,0 +1,69 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
+
+<MudGrid>
+    <MudItem xs="12" sm="4">
+        <MudAutocomplete T="string" Label="US States" @bind-Value="@ActiveStringHolder.StringValue" SearchFunc="@Search1"
+                         ResetValueOnEmptyText="@resetValueOnEmptyText"
+                         CoerceText="@coerceText" CoerceValue="@coerceValue" />
+    </MudItem>
+    <MudItem xs="12" sm="4">
+        <MudButton Class="toggle-value-button" OnClick="@(()=>ToggleValue())" Variant="Variant.Outlined">Toggle Value</MudButton>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public static string __description__ = "Change Bound Object Value of Autocomplete. Should display value of new/updated bound value";
+    private bool resetValueOnEmptyText = false;
+    private bool coerceText = true;
+    private bool coerceValue = true;
+
+    private StringHolder StringHolder1 = new StringHolder() { StringValue = "Florida" };
+    private StringHolder StringHolder2 = new StringHolder() { StringValue = "Georgia" };
+    private StringHolder ActiveStringHolder = null;
+    private string[] states =
+    {
+        "Alabama", "Alaska", "American Samoa", "Arizona",
+        "Arkansas", "California", "Colorado", "Connecticut",
+        "Delaware", "District of Columbia", "Federated States of Micronesia",
+        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
+        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+        "Louisiana", "Maine", "Marshall Islands", "Maryland",
+        "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+        "Missouri", "Montana", "Nebraska", "Nevada",
+        "New Hampshire", "New Jersey", "New Mexico", "New York",
+        "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
+        "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
+        "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
+        "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming",
+    };
+
+    private sealed class StringHolder
+    {
+        public string StringValue { get; set; }
+    }
+
+    private void ToggleValue()
+    {
+        ActiveStringHolder = ActiveStringHolder.Equals(StringHolder1) ? StringHolder2 : StringHolder1;
+        
+        StateHasChanged();
+    }
+
+    private async Task<IEnumerable<string>> Search1(string value, CancellationToken token)
+    {
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(5, token);
+
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return states;
+        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    protected override void OnInitialized()
+    {
+        ActiveStringHolder = StringHolder1;
+    }
+}

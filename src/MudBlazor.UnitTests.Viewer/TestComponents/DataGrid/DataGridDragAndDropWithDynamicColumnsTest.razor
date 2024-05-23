@@ -1,0 +1,36 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Linq.Expressions;
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudDataGrid Items="@_items" DragDropColumnReordering="true" DragIndicatorIcon="@Icons.Material.Filled.DragIndicator">
+    <Columns>
+        @foreach (var propertyColumn in _columnInfos)
+        {
+            <PropertyColumn Property="@propertyColumn.Property" Title="@propertyColumn.Title" DragAndDropEnabled="true" />
+        }
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private readonly IEnumerable<Model> _items = new List<Model>()
+    {
+        new("Sam", 56, Severity.Normal, false, null), 
+        new("Alicia", 54, Severity.Info, null, null), 
+        new("Ira", 27, Severity.Success, true, new DateTime(2011, 1, 2)),
+        new("John", 32, Severity.Warning, false, null)
+    };
+
+    private readonly List<ColumnInfo> _columnInfos = new();
+
+    protected override void OnInitialized()
+    {       
+        var modelType = typeof(Model);
+        foreach (var propertyInfo in modelType.GetProperties())
+        {
+            _columnInfos.Add(new ColumnInfo(x => propertyInfo.GetValue(x), propertyInfo.Name));
+        }        
+    }
+
+    public record Model (string Name, int? Age, Severity? Status, bool? Hired, DateTime? HiredOn);
+    public record ColumnInfo(Expression<Func<Model, object>> Property, string Title);
+}

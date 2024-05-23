@@ -14,6 +14,8 @@ namespace MudBlazor
         lg,
         [Description("xl")]
         xl,
+        [Description("xxl")]
+        xxl,
         [Description("false")]
         False,
     }

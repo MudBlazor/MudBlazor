@@ -1,0 +1,676 @@
+﻿@page "/docs"
+@page "/docs/overview"
+
+<DocsPage DisplayFooter="true">
+    <DocsPageHeader Title="Explore MudBlazor">
+        <SpecialHeaderContent>
+            <MudText Typo="Typo.h2" Class="docs-title d-inline">Explore&nbsp;</MudText>
+            <MudText Typo="Typo.h2" Class="docs-title d-inline" Color="Color.Primary">MudBlazor</MudText>
+            <br>
+            <MudText Typo="Typo.subtitle1" Class="docs-title-description">Discover our library and all its components to power your next project.</MudText>
+        </SpecialHeaderContent>
+    </DocsPageHeader>
+    <DocsPageContent>
+    <DocsPageSection>
+            <MudGrid>
+                <MudItem xs="12" md="3" Class="mt-16">
+                    <div class="docs-sticky-info explore-text">
+                        <MudText Typo="Typo.h5">Foundation</MudText>
+                        <MudText Typo="Typo.subtitle1">Theming, Colors, Typography…</MudText>
+                    </div>
+                </MudItem>
+                <MudItem xs="12" md="9" Class="mt-16">
+                    <div class="explore-mudblazor-items">
+                        <DocsExploreCard Title="Colors" Link="/features/colors">
+                            <MudPaper Height="24px" Width="24px" Class="relative mb-n6 ml-n8">
+                                <MudPaper Elevation="25" Height="68px" Width="24px" Class="mud-theme-dark absolute" Style="bottom:0;left: 0; transform: rotate(0deg);transform-origin: bottom center;"/>
+                                <MudPaper Elevation="25" Height="68px" Width="24px" Class="mud-theme-tertiary absolute" Style="bottom:0;left: 0; transform: rotate(30deg);transform-origin: bottom center;"/>
+                                <MudPaper Elevation="25" Height="68px" Width="24px" Class="mud-theme-secondary absolute" Style="bottom:0;left: 0; transform: rotate(60deg);transform-origin: bottom center;"/>
+                                <MudPaper Elevation="25" Height="68px" Width="24px" Class="mud-theme-primary d-flex justify-center align-end absolute" Style="bottom:0;left: 0; transform: rotate(90deg);transform-origin: bottom center;">
+                                    <MudPaper Elevation="0" Height="8px" Width="8px" Class="rounded-circle ma-2"/>
+                                </MudPaper>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Typography" Link="/components/typography">
+                            <MudIcon Icon="@Icons.Material.Filled.TextFields" Color="Color.Primary" Style="font-size:64px;"/>
+                        </DocsExploreCard>
+                        
+                        <DocsExploreCard Title="Shadows" Link="/features/elevation">
+                            <MudPaper Elevation="25" Height="68px" Width="68px" Class="rounded-lg "/>
+                        </DocsExploreCard>
+                        
+                        <DocsExploreCard Title="Icons" Link="/features/icons">
+                            <MudPaper Elevation="25" Class="d-flex justify-center align-center rounded-circle pa-4">
+                                <MudIcon Icon="@Icons.Custom.Brands.MudBlazor" Color="Color.Primary" Size="Size.Large" />
+                            </MudPaper>
+                        </DocsExploreCard>
+                    </div>
+                </MudItem>
+                
+                <MudItem xs="12" md="3" Class="mt-16">
+                    <div class="docs-sticky-info explore-text">
+                        <MudText Typo="Typo.h5">Layout</MudText>
+                        <MudText Typo="Typo.subtitle1">Container, Grid, Surfaces…</MudText>
+                    </div>
+                </MudItem>
+                <MudItem xs="12" md="9" Class="mt-16">
+                    <div class="explore-mudblazor-items">
+                        <DocsExploreCard Title="App Bar">
+                            <MudPaper Elevation="25" Width="100%" Height="68px">
+                                <MudPaper Elevation="0" Width="100%" Height="12px" Square="true" Class="mud-theme-primary rounded-t"/>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Container">
+                            <MudPaper Elevation="25" Width="100%" Height="68px" Class="px-3">
+                                <MudPaper Elevation="0" Width="100%" Height="100%" Square="true" Class="mud-theme-primary"/>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Drawer">
+                            <MudPaper Elevation="25" Width="100%" Height="68px">
+                                <MudPaper Elevation="0" Width="24px" Height="100%" Square="true" Class="mud-theme-primary rounded-l"/>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Grid">
+                            <div class="d-block">
+                                <MudPaper Elevation="25" Class="pa-4 mx-1 flex-grow-1"/>
+                                <MudPaper Elevation="25" Class="pa-4 mx-1 mt-2 flex-grow-1"/>
+                            </div>
+                            <div class="d-block">
+                                <MudPaper Elevation="25" Class="pa-4 mx-1 flex-grow-1 mud-theme-primary"/>
+                                <MudPaper Elevation="25" Class="pa-4 mx-1 mt-2 flex-grow-1"/>
+                            </div>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Hidden"/>
+                        <DocsExploreCard Title="Paper">
+                            <MudPaper Height="80%" Width="80%" Elevation="25" />
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Divider">
+                            <MudPaper Width="100%" Height="1px" Elevation="25" Class="flex-grow-1 mud-theme-primary"/>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Stack">
+                            <MudStack>
+                                <MudPaper Elevation="25" Class="py-2 px-4"/>
+                                <MudPaper Elevation="25" Class="py-2 px-4"/>
+                                <MudPaper Elevation="25" Class="py-2 px-4"/>
+                            </MudStack>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="ToolBar">
+                            <MudPaper Elevation="25" Width="100%" Class="px-2 py-1 d-flex align-center">
+                                <MudPaper Elevation="0" Width="8px" Height="8px" Square="true" Class="mud-theme-primary"/>
+                            </MudPaper>
+                        </DocsExploreCard>
+                    </div>
+                </MudItem>
+                
+                <MudItem xs="12" md="3" Class="mt-16">
+                    <div class="docs-sticky-info explore-text">
+                        <MudText Typo="Typo.h5">Buttons</MudText>
+                        <MudText Typo="Typo.subtitle1">Regular, Icon, FAB…</MudText>
+                    </div>
+                </MudItem>
+                <MudItem xs="12" md="9" Class="mt-16">
+                    <div class="explore-mudblazor-items">
+                        <DocsExploreCard Title="Button">
+                            <MudPaper Elevation="25" Class="px-5 py-2 flex-grow-1 rounded-lg mud-theme-primary">
+                                <MudPaper Elevation="0" Class="px-2 py-1" Style="border-radius: 2px;" />
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Button Group">
+                            <MudPaper Elevation="25" Class="pa-2 flex-grow-1 mud-theme-primary d-flex">
+                                <MudPaper Elevation="0" Class="px-2 py-1 flex-grow-1" Style="border-radius: 2px;" />
+                                <MudPaper Elevation="0" Class="px-2 py-1 mx-3 flex-grow-1" Style="border-radius: 2px;" />
+                                <MudPaper Elevation="0" Class="px-2 py-1 flex-grow-1" Style="border-radius: 2px;" />
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Button FAB">
+                            <MudPaper Elevation="25" Class="d-flex justify-center align-center rounded-circle pa-2 mud-theme-primary">
+                                <MudIcon Icon="@Icons.Material.Filled.Add" Color="Color.Inherit" Size="Size.Small" />
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Icon Button">
+                            <MudIcon Icon="@Icons.Material.Filled.Delete" Color="Color.Primary" Size="Size.Small" />
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Toggle Icon Button">
+                            <MudIcon Icon="@Icons.Material.Outlined.DarkMode" Color="Color.Dark" Size="Size.Small" />
+                            <MudIcon Icon="@Icons.Material.Rounded.ArrowRightAlt" Color="Color.Dark" Size="Size.Small" Class="mx-1" />
+                            <MudIcon Icon="@Icons.Material.Outlined.LightMode" Color="Color.Warning" Size="Size.Medium" />
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Scroll To Top">
+                            <MudPaper Elevation="25" Class="d-flex justify-center align-center rounded-circle pa-2 mud-theme-primary">
+                                <MudIcon Icon="@Icons.Material.Rounded.KeyboardArrowUp" Color="Color.Inherit" Size="Size.Small" />
+                            </MudPaper>
+                        </DocsExploreCard>
+                    </div>
+                </MudItem>
+                
+                <MudItem xs="12" md="3" Class="mt-16">
+                    <div class="docs-sticky-info explore-text">
+                        <MudText Typo="Typo.h5">Inputs</MudText>
+                        <MudText Typo="Typo.subtitle1">Forms, Fields, Pickers…</MudText>
+                    </div>
+                </MudItem>
+                <MudItem xs="12" md="9" Class="mt-16">
+                    <div class="explore-mudblazor-items">
+                        <DocsExploreCard Title="Autocomplete">
+                            <div class="d-flex flex-column flex-grow-1">
+                                <MudPaper Elevation="25" Width="100%" Class="px-2 py-1 d-flex align-center">
+                                    <MudIcon Icon="@Icons.Material.Rounded.Search" Color="Color.Primary" Style="font-size:12px;"/>
+                                    <MudPaper Elevation="0" Width="100%" Height="8px" Class="ml-1 docs-gray-bg"/>
+                                </MudPaper>
+                                <MudPaper Elevation="25" Width="100%" Class="pa-2 d-flex flex-column align-start mt-2">
+                                    <MudPaper Elevation="0" Width="80%" Height="8px" Class="docs-gray-bg"/>
+                                    <MudPaper Elevation="0" Width="100%" Height="8px" Class="docs-gray-bg mt-2"/>
+                                </MudPaper>
+                            </div>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Check Box">
+                            <MudPaper Elevation="25" Class="pa-2 rounded-lg d-flex justify-center align-center">
+                                <MudIcon Icon="@Icons.Material.Rounded.Check" Color="Color.Primary" Size="Size.Large" />
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Color Picker">
+                            <MudPaper Elevation="25" Width="100%" Class="pa-2 rounded-lg d-flex align-center">
+                                <MudPaper Elevation="0" Width="100%" Height="12px" Class="mr-1 docs-gray-bg"/>
+                                <MudIcon Icon="@Icons.Material.Outlined.Palette" Color="Color.Primary" Class="my-n2 mr-n1" Size="Size.Small"/>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Date Picker">
+                            <MudPaper Elevation="25" Width="100%" Class="pa-2 rounded-lg d-flex align-center">
+                                <MudPaper Elevation="0" Width="100%" Height="12px" Class="mr-1 docs-gray-bg"/>
+                                <MudIcon Icon="@Icons.Material.Filled.Event" Color="Color.Primary" Class="my-n2 mr-n1" Size="Size.Small"/>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Field">
+                            <MudPaper Elevation="25" Width="100%" Class="pa-2 rounded-lg d-flex align-center">
+                                <MudPaper Elevation="0" Width="100%" Height="12px" Class="docs-gray-bg"/>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="File Upload">
+                            <MudPaper Elevation="25" Width="100%" Class="pa-2 rounded-lg d-flex align-center">
+                                <MudPaper Elevation="0" Width="100%" Height="12px" Class="mr-1 docs-gray-bg"/>
+                                <MudIcon Icon="@Icons.Material.Filled.FileUpload" Color="Color.Primary" Class="my-n2 mr-n1" Size="Size.Small"/>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Form">
+                            <MudPaper Elevation="25" Width="100%" Class="pa-2 d-flex flex-column align-start">
+                                <MudPaper Elevation="0" Width="100%" Height="8px" Class="docs-gray-bg"/>
+                                <MudPaper Elevation="0" Width="100%" Height="8px" Class="docs-gray-bg mt-2"/>
+                                <MudPaper Elevation="0" Width="100%" Height="8px" Class="docs-gray-bg mt-2"/>
+                                <MudPaper Elevation="0" Width="50%" Height="8px" Class="docs-gray-bg mt-2"/>
+                                <MudPaper Elevation="0" Width="30%" Height="8px" Class="mud-theme-primary ml-auto mt-2"/>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Focus Trap">
+                            <MudPaper Elevation="25" Width="100%" Class="pa-2 d-flex flex-column">
+                                <MudPaper Elevation="0" Width="100%" Height="12px" Class="docs-gray-bg"/>
+                                <MudPaper Outlined="true" Elevation="0" Width="100%" Height="12px" Class="docs-gray-bg my-2" Style="border-color:var(--mud-palette-primary);"/>
+                                <MudPaper Elevation="0" Width="100%" Height="12px" Class="docs-gray-bg"/>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Highlighter">
+                            <MudPaper Elevation="25" Width="100%" Class="pa-2 d-flex flex-column align-start">
+                                <MudPaper Elevation="0" Width="80%" Height="8px" Class="docs-gray-bg"/>
+                                <div class="d-flex mud-width-full mt-2">
+                                    <MudPaper Elevation="0" Width="20%" Height="8px" Class="docs-gray-bg mr-1"/>
+                                    <MudPaper Elevation="0" Width="30%" Height="8px" Class="mud-theme-warning mr-1"/>
+                                    <MudPaper Elevation="0" Width="40%" Height="8px" Class="docs-gray-bg"/>
+                                </div>
+                                <MudPaper Elevation="0" Width="100%" Height="8px" Class="docs-gray-bg mt-2"/>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Numeric Field">
+                            <MudPaper Elevation="25" Width="100%" Class="pa-2 rounded-lg d-flex align-center">
+                                <MudPaper Elevation="0" Width="100%" Height="12px" Class="docs-gray-bg"/>
+                                <MudIcon Icon="@Icons.Material.Rounded.UnfoldMore" Color="Color.Primary" Class="my-n2 mr-n1" Size="Size.Small"/>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Radio">
+                            <MudPaper Elevation="25" Class="d-flex justify-center align-center rounded-circle pa-1 mud-theme-primary">
+                                <MudPaper Elevation="0" Class="d-flex justify-center align-center rounded-circle docs-gray-bg pa-1">
+                                    <MudPaper Elevation="25" Class="rounded-circle pa-2 mud-theme-primary" />
+                                </MudPaper>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Rating">
+                            <MudIcon Icon="@Icons.Material.Rounded.Star" Color="Color.Warning" Size="Size.Small" />
+                            <MudIcon Icon="@Icons.Material.Rounded.Star" Color="Color.Warning" Size="Size.Small" />
+                            <MudIcon Icon="@Icons.Material.Rounded.StarHalf" Color="Color.Warning" Size="Size.Small" />
+                            <MudIcon Icon="@Icons.Material.Rounded.StarOutline" Color="Color.Warning" Size="Size.Small" />
+                            <MudIcon Icon="@Icons.Material.Rounded.StarOutline" Color="Color.Warning" Size="Size.Small" />
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Select">
+                            <div class="d-flex flex-column flex-grow-1">
+                                <MudPaper Elevation="25" Width="100%" Class="px-2 py-1 d-flex align-center">
+                                    <MudPaper Elevation="0" Width="100%" Height="8px" Class="docs-gray-bg"/>
+                                    <MudIcon Icon="@Icons.Material.Rounded.ArrowDropDown" Color="Color.Primary" Class="my-n2 mr-n1" Size="Size.Small"/>
+                                </MudPaper>
+                                <MudPaper Elevation="25" Width="100%" Class="pa-2 d-flex flex-column align-start mt-2">
+                                    <MudPaper Elevation="0" Width="100%" Height="8px" Class="docs-gray-bg"/>
+                                    <MudPaper Elevation="0" Width="100%" Height="8px" Class="docs-gray-bg mt-2"/>
+                                </MudPaper>
+                            </div>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Slider">
+                            <MudPaper Elevation="25" Width="100%" Height="4px" Class="rounded-lg">
+                                <MudPaper Elevation="25" Width="50%" Height="100%" Class="rounded-lg d-flex align-center justify-end mud-theme-primary relative">
+                                    <MudPaper Elevation="25" Class="pa-2 my-n4 rounded-circle mud-theme-primary"/>
+                                </MudPaper>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Switch">
+                            <MudPaper Elevation="25" Width="100%" Class="pa-1 mx-2 rounded-lg d-flex align-center justify-end rounded-pill">
+                                <MudPaper Elevation="25" Class="pa-3 ma-n1 rounded-circle mud-theme-primary"/>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Text Field">
+                            <MudPaper Elevation="25" Width="100%" Class="pa-2 rounded-lg d-flex align-center">
+                                <MudPaper Elevation="0" Width="100%" Height="12px" Class="docs-gray-bg"/>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Time Picker">
+                            <MudPaper Elevation="25" Width="100%" Class="pa-2 rounded-lg d-flex align-center">
+                                <MudPaper Elevation="0" Width="100%" Height="12px" Class="mr-1 docs-gray-bg"/>
+                                <MudIcon Icon="@Icons.Material.Rounded.Schedule" Color="Color.Primary" Class="my-n2 mr-n1" Size="Size.Small"/>
+                            </MudPaper>
+                        </DocsExploreCard>
+                    </div>
+                </MudItem>
+                
+                <MudItem xs="12" md="3" Class="mt-16">
+                    <div class="docs-sticky-info explore-text">
+                        <MudText Typo="Typo.h5">Data Display</MudText>
+                        <MudText Typo="Typo.subtitle1">Lists, Tables, Tabs…</MudText>
+                    </div>
+                </MudItem>
+                <MudItem xs="12" md="9" Class="mt-16">
+                    <div class="explore-mudblazor-items">
+                        <DocsExploreCard Title="Avatar">
+                            <MudAvatar Elevation="25" Color="Color.Primary">
+                                <MudIcon Icon="@Icons.Material.Rounded.Person"/>
+                            </MudAvatar>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Card">
+                            <MudPaper Elevation="25" Width="100%" Class="d-flex flex-column align-start">
+                                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.False" Width="100%" Height="42px" Class="rounded-t" />
+                                <div class="px-2 mud-width-full">
+                                    <MudPaper Elevation="0" Width="80%" Height="4px" Class="docs-gray-bg mt-2"/>
+                                    <MudPaper Elevation="0" Width="100%" Height="4px" Class="docs-gray-bg mt-2"/>
+                                </div>
+                                <div class="px-2 pb-2 d-flex mt-2 mud-width-full">
+                                    <MudPaper Elevation="0" Width="20%" Height="6px" Class="mud-theme-primary mr-1"/>
+                                    <MudPaper Elevation="0" Width="30%" Height="6px" Class="mud-theme-primary"/>
+                                </div>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Carousel">
+                            <MudPaper Elevation="25" Width="100%" Class="d-flex flex-column align-start flex-grow-1">
+                                <div class="d-flex justify-space-between align-center mud-height-full mud-width-full py-5">
+                                    <MudIcon Icon="@Icons.Material.Rounded.KeyboardArrowLeft" Color="Color.Primary" Size="Size.Small"/>
+                                    <MudIcon Icon="@Icons.Material.Rounded.KeyboardArrowRight" Color="Color.Primary" Size="Size.Small"/>
+                                </div>
+                                <div class="d-flex justify-center mud-width-full pb-1">
+                                    <MudPaper Elevation="25" Class="rounded-circle mud-theme-primary pa-1" />
+                                    <MudPaper Elevation="25" Class="rounded-circle docs-gray-bg pa-1 mx-2" />
+                                    <MudPaper Elevation="25" Class="rounded-circle docs-gray-bg pa-1" />
+                                </div>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Chips">
+                            <MudPaper Elevation="25" Class="px-2 py-1 d-flex rounded-pill">
+                                <MudPaper Elevation="0" Width="100%" Class="docs-gray-bg px-4 py-1 rounded-pill mr-1" />
+                                <MudPaper Elevation="25" Class="rounded-circle pa-1 mud-theme-primary mr-n1" />
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Chip Set">
+                            <MudPaper Elevation="25" Class="px-1 py-1 d-flex rounded-pill">
+                                <MudIcon Icon="@Icons.Material.Rounded.Check" Color="Color.Primary" Style="font-size:10px;"/>
+                                <MudPaper Elevation="0" Width="100%" Class="docs-gray-bg px-4 py-1 rounded-pill ml-1"/>
+                            </MudPaper>
+                        </DocsExploreCard>
+                    <DocsExploreCard Title="Data Grid">
+                        <MudPaper Elevation="25" Width="100%" Class="px-2 pb-2 pt-3 rounded-lg">
+                            <div class="d-flex">
+                                <MudPaper Elevation="0" Width="100%" Height="12px" Class="mud-theme-primary"/>
+                                <MudPaper Elevation="0" Width="100%" Height="12px" Class="mud-theme-primary mx-1"/>
+                                <MudPaper Elevation="0" Width="100%" Height="12px" Class="docs-gray-bg"/>
+                            </div>
+                            <div class="d-flex my-1">
+                                <MudPaper Elevation="0" Width="100%" Height="12px" Class="mud-theme-primary"/>
+                                <MudPaper Elevation="0" Width="100%" Height="12px" Class="docs-gray-bg mx-1"/>
+                                <MudPaper Elevation="0" Width="100%" Height="12px" Class="docs-gray-bg"/>
+                            </div>
+                            <div class="d-flex">
+                                <MudPaper Elevation="0" Width="100%" Height="12px" Class="docs-gray-bg"/>
+                                <MudPaper Elevation="0" Width="100%" Height="12px" Class="docs-gray-bg mx-1"/>
+                                <MudPaper Elevation="0" Width="100%" Height="12px" Class="docs-gray-bg"/>
+                            </div>
+                        </MudPaper>
+                    </DocsExploreCard>
+                    <DocsExploreCard Title="Drop Zone">
+                        <MudPaper Elevation="25" Class="d-flex flex-wrap pa-1 rounded-lg relative">
+                            <MudPaper Elevation="0" Width="34px" Height="34px" Class="border-2 border-dashed mud-border-primary ma-1"/>
+                            <MudPaper Elevation="0" Width="34px" Height="34px" Class="border-2 border-dashed mud-border-lines-default ma-1"/>
+                            <MudPaper Elevation="0" Width="34px" Height="34px" Class="border-2 border-dashed mud-border-lines-default ma-1"/>
+                            <MudPaper Elevation="0" Width="34px" Height="34px" Class="border-2 border-dashed mud-border-lines-default ma-1"/>
+                            <div class="absolute mud-width-full mud-height-full d-flex justify-center align-center">
+                                <MudPaper Elevation="25" Width="34px" Height="34px" Class="ml-n6 mt-n6 d-flex justify-center align-center">
+                                    <MudIcon Icon="@Icons.Material.Outlined.Image" Class="mud-text-secondary"/>
+                                </MudPaper>
+                            </div>
+                        </MudPaper>
+                    </DocsExploreCard>
+                    <DocsExploreCard Title="Expansion Panels">
+                        <div class="d-flex flex-column flex-grow-1">
+                            <MudPaper Elevation="25" Width="100%" Class="px-2 py-1 d-flex align-center">
+                                <MudPaper Elevation="0" Width="30%" Height="8px" Class="docs-gray-bg mr-auto"/>
+                                <MudIcon Icon="@Icons.Material.Rounded.ArrowDropDown" Class="my-n2 mr-n1" Size="Size.Small"/>
+                            </MudPaper>
+                            <MudPaper Elevation="25" Width="100%" Class="px-2 py-1 d-flex flex-column mt-2">
+                                <div class="d-flex flex-grow-1">
+                                    <MudPaper Elevation="0" Width="40%" Height="8px" Class="docs-gray-bg mr-auto"/>
+                                    <MudIcon Icon="@Icons.Material.Rounded.ArrowDropUp" Color="Color.Primary" Class="my-n2 mr-n1" Size="Size.Small"/>
+                                </div>
+                                <MudPaper Elevation="0" Width="80%" Height="8px" Class="docs-gray-bg mr-auto mt-2"/>
+                            </MudPaper>
+                        </div>
+                    </DocsExploreCard>
+                    <DocsExploreCard Title="Image">
+                        <MudPaper Elevation="25" Width="100%" Class="px-2 py-9 rounded-lg overflow-hidden relative">
+                            <MudPaper Elevation="25" Class="rounded-circle absolute mud-theme-warning" Width="12px" Height="12px" Style=" left: 8px;top: 8px;"/>
+                            <MudPaper Elevation="25" Class="rounded-lg absolute z-10" Width="52px" Height="52px" Style="background-color: var(--mud-palette-primary-lighten); transform: rotate(45deg); left: 0;bottom: -32px;"/>
+                            <MudPaper Elevation="25" Class="rounded-lg absolute z-0 mud-theme-primary" Width="72px" Height="72px" Style="transform: rotate(45deg); right: 0;bottom: -42px;"/>
+                        </MudPaper>
+                    </DocsExploreCard>
+                        <DocsExploreCard Title="List">
+                            <div class="d-flex flex-column justify-center align-center">
+                                <div class="d-flex flex-grow-1">
+                                    <MudPaper Elevation="25" Class="rounded-circle pa-1 mud-theme-primary"/>
+                                    <MudPaper Elevation="25" Class="py-1 px-8 ml-1 rounded-pill"/>
+                                </div>
+                                <div class="d-flex flex-grow-1 my-2">
+                                    <MudPaper Elevation="25" Class="rounded-circle pa-1 mud-theme-primary"/>
+                                    <MudPaper Elevation="25" Class="py-1 px-8 ml-1 rounded-pill"/>
+                                </div>
+                                <div class="d-flex flex-grow-1">
+                                    <MudPaper Elevation="25" Class="rounded-circle pa-1 mud-theme-primary"/>
+                                    <MudPaper Elevation="25" Class="py-1 px-8 ml-1 rounded-pill"/>
+                                </div>
+                            </div>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Pagination">
+                            <MudPaper Elevation="25" Class="rounded-circle pa-2 mr-1" />
+                            <MudPaper Elevation="25" Class="rounded-circle pa-2 mud-theme-primary mr-1" />
+                            <MudPaper Elevation="25" Class="rounded-circle pa-2 mr-1" />
+                            <MudPaper Elevation="25" Class="rounded-circle pa-2" />
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Popover">
+                            <div class="d-flex flex-column">
+                                <MudPaper Elevation="25" Class="mx-4 px-3 py-1 flex-grow-0">
+                                    <MudPaper Elevation="0" Class="px-2 py-1 docs-gray-bg"/>
+                                </MudPaper>
+                                <MudPaper Elevation="25" Width="100%" Class="px-10 py-5 d-flex flex-column mt-2 mud-theme-primary"/>
+                            </div>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Simple Table">
+                            <MudPaper Elevation="25" Width="100%" Class="px-2 pb-2 pt-3 rounded-lg">
+                                <div class="d-flex">
+                                    <MudPaper Elevation="0" Width="40%" Height="12px" Class="docs-gray-bg"/>
+                                    <MudPaper Elevation="0" Width="100%" Height="12px" Class="docs-gray-bg ml-1"/>
+                                </div>
+                                <div class="d-flex my-1">
+                                    <MudPaper Elevation="0" Width="40%" Height="12px" Class="docs-gray-bg"/>
+                                    <MudPaper Elevation="0" Width="100%" Height="12px" Class="docs-gray-bg ml-1"/>
+                                </div>
+                                <div class="d-flex">
+                                    <MudPaper Elevation="0" Width="40%" Height="12px" Class="docs-gray-bg"/>
+                                    <MudPaper Elevation="0" Width="100%" Height="12px" Class="docs-gray-bg ml-1"/>
+                                </div>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Table">
+                            <MudPaper Elevation="25" Width="100%" Class="px-2 pb-2 pt-3 rounded-lg">
+                                <div class="d-flex">
+                                    <MudPaper Elevation="0" Width="40%" Height="12px" Class="docs-gray-bg"/>
+                                    <MudPaper Elevation="0" Width="100%" Height="12px" Class="mud-theme-primary ml-1"/>
+                                </div>
+                                <div class="d-flex my-1">
+                                    <MudPaper Elevation="0" Width="40%" Height="12px" Class="docs-gray-bg"/>
+                                    <MudPaper Elevation="0" Width="100%" Height="12px" Class="mud-theme-primary ml-1"/>
+                                </div>
+                                <div class="d-flex">
+                                    <MudPaper Elevation="0" Width="40%" Height="12px" Class="docs-gray-bg"/>
+                                    <MudPaper Elevation="0" Width="100%" Height="12px" Class="docs-gray-bg ml-1"/>
+                                </div>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Tabs">
+                            <div class="d-flex flex-column flex-grow-1">
+                                <MudPaper Elevation="25" Width="100%" Class="px-2 py-1 d-flex">
+                                    <MudPaper Elevation="0" Width="30%" Height="12px" Class="docs-gray-bg mr-1"/>
+                                    <MudPaper Elevation="0" Width="30%" Height="12px" Class="mud-theme-primary mr-1"/>
+                                    <MudPaper Elevation="0" Width="30%" Height="12px" Class="docs-gray-bg mr-1"/>
+                                    <MudPaper Elevation="0" Width="30%" Height="12px" Class="docs-gray-bg"/>
+                                </MudPaper>
+                                <MudPaper Elevation="25" Width="100%" Class="px-2 py-1 d-flex flex-column mt-1">
+                                    <MudPaper Elevation="0" Width="80%" Height="4px" Class="docs-gray-bg mr-auto"/>
+                                    <MudPaper Elevation="0" Width="100%" Height="4px" Class="docs-gray-bg mr-auto mt-2"/>
+                                    <MudPaper Elevation="0" Width="60%" Height="4px" Class="docs-gray-bg mr-auto mt-2"/>
+                                </MudPaper>
+                            </div>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Timeline">
+                            <div class="d-flex flex-column justify-center align-center">
+                                <div class="d-flex">
+                                    <MudPaper Elevation="25" Class="py-1 px-4 rounded-pill"/>
+                                    <MudPaper Elevation="25" Class="rounded-circle pa-1 mx-1"/>
+                                    <MudPaper Elevation="0" Class="pa-1 px-4 mud-transparent"/>
+                                </div>
+                                <div class="d-flex mt-2">
+                                    <MudPaper Elevation="0" Class="pa-1 px-4 mud-transparent"/>
+                                    <MudPaper Elevation="25" Class="rounded-circle pa-1 mx-1 mud-theme-primary"/>
+                                    <MudPaper Elevation="25" Class="py-1 px-4 rounded-pill"/>
+                                </div>
+                                <div class="d-flex mt-2">
+                                    <MudPaper Elevation="25" Class="py-1 px-4 rounded-pill"/>
+                                    <MudPaper Elevation="25" Class="rounded-circle pa-1 mx-1"/>
+                                    <MudPaper Elevation="0" Class="pa-1 px-4 mud-transparent"/>
+                                </div>
+                            </div>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Tooltip">
+                            <div class="d-flex flex-column align-center flex-grow-1 px-3">
+                                <MudPaper Elevation="25" Class="d-flex justify-center align-center rounded-circle pa-1">
+                                    <MudIcon Icon="@Icons.Material.Filled.Add" Color="Color.Inherit" Size="Size.Medium" Style="font-size:14px;"/>
+                                </MudPaper>
+                                <MudPaper Elevation="0" Width="100%" Class="pa-2 d-flex flex-column align-start mt-3 mud-theme-primary z-20">
+                                    <MudPaper Elevation="0" Width="100%" Height="4px" Class="docs-gray-bg"/>
+                                </MudPaper>
+                                <MudPaper Elevation="0" Width="18px" Height="18px" Class="mud-theme-primary rounded-0 mt-n6 z-10" Style="transform:rotate(45deg);"/>
+                            </div>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Tree View">
+                            <div class="d-flex flex-column flex-grow-1">
+                                <MudPaper Elevation="25" Width="100%" Class="px-2 py-1 d-flex align-center">
+                                    <MudIcon Icon="@Icons.Material.Rounded.KeyboardArrowDown" Color="Color.Primary" Class="my-n2 ml-n2" Size="Size.Small"/>
+                                    <MudPaper Elevation="0" Width="100%" Height="8px" Class="docs-gray-bg"/>
+                                </MudPaper>
+                                <MudPaper Elevation="25" Width="80%" Class="px-2 py-1 d-flex align-center ml-auto mt-2">
+                                    <MudIcon Icon="@Icons.Material.Rounded.KeyboardArrowRight" Color="Color.Default" Class="my-n2 ml-n2" Size="Size.Small"/>
+                                    <MudPaper Elevation="0" Width="100%" Height="8px" Class="docs-gray-bg"/>
+                                </MudPaper>
+                                <MudPaper Elevation="25" Width="80%" Class="px-2 py-1 d-flex align-center ml-auto mt-2">
+                                    <MudIcon Icon="@Icons.Material.Rounded.KeyboardArrowRight" Color="Color.Default" Class="my-n2 ml-n2" Size="Size.Small"/>
+                                    <MudPaper Elevation="0" Width="100%" Height="8px" Class="docs-gray-bg"/>
+                                </MudPaper>
+                            </div>
+                        </DocsExploreCard>
+                    </div>
+                </MudItem>
+                
+                <MudItem xs="12" md="3" Class="mt-16">
+                    <div class="docs-sticky-info explore-text">
+                        <MudText Typo="Typo.h5">Navigation</MudText>
+                        <MudText Typo="Typo.subtitle1">Links, Menus, Navigation</MudText>
+                    </div>
+                </MudItem>
+                <MudItem xs="12" md="9" Class="mt-16">
+                    <div class="explore-mudblazor-items">
+                        <DocsExploreCard Title="Breadcrumbs">
+                            <div class="d-flex align-center">
+                                <MudPaper Elevation="25" Width="24px" Height="24px" Class="mud-theme-primary z-20"></MudPaper>
+                                <MudPaper Elevation="25" Width="18px" Height="18px" Class="mud-theme-primary ml-n3 z-10" Style="transform:rotate(45deg);"></MudPaper>
+                            </div>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Link">
+                            <MudIcon Icon="@Icons.Material.Filled.Link" Size="Size.Large" Color="Color.Primary" />
+
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Menu">
+                            <div class="d-flex flex-column">
+                                <MudPaper Elevation="25" Class="mx-4 px-3 py-1 flex-grow-0 mud-theme-primary">
+                                    <MudPaper Elevation="0" Height="4px" Class="px-2 docs-gray-bg"/>
+                                </MudPaper>
+                                <MudPaper Elevation="25" Width="100%" Class="pa-2 d-flex flex-column align-start mt-2">
+                                    <MudPaper Elevation="0" Width="80%" Height="8px" Class="docs-gray-bg"/>
+                                    <MudPaper Elevation="0" Width="100%" Height="8px" Class="docs-gray-bg mt-2"/>
+                                </MudPaper>
+                            </div>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Nav Menu">
+                            <MudPaper Elevation="25" Width="100%" Class="pa-2 d-flex flex-column align-start">
+                                <div class="d-flex align-center  mud-width-full">
+                                    <MudPaper Elevation="0" Width="100%" Height="8px" Class="docs-gray-bg"/>
+                                    <MudIcon Icon="@Icons.Material.Rounded.ArrowDropDown" Class="my-n2 mr-n2" Size="Size.Small"/>
+                                </div>
+                                <div class="d-flex align-center mud-width-full mt-3">
+                                    <MudPaper Elevation="0" Width="100%" Height="8px" Class="docs-gray-bg"/>
+                                    <MudIcon Icon="@Icons.Material.Rounded.ArrowDropUp" Color="Color.Primary" Class="my-n2 mr-n2" Size="Size.Small"/>
+                                </div>
+                                <MudPaper Elevation="0" Height="8px" Class="mud-theme-primary mt-3 ml-auto mr-3 px-6"/>
+                                <MudPaper Elevation="0" Height="8px" Class="docs-gray-bg mt-3 ml-auto mr-3 px-6"/>
+                            </MudPaper>
+                        </DocsExploreCard>
+                    </div>
+                </MudItem>
+
+                <MudItem xs="12" md="3" Class="mt-16">
+                    <div class="docs-sticky-info explore-text">
+                        <MudText Typo="Typo.h5">Feedback</MudText>
+                        <MudText Typo="Typo.subtitle1">Alerts, Progress, Information</MudText>
+                    </div>
+                </MudItem>
+                <MudItem xs="12" md="9" Class="mt-16">
+                    <div class="explore-mudblazor-items">
+                        <DocsExploreCard Title="Alert">
+                            <MudPaper Elevation="25" Class="pa-2 d-flex">
+                                <MudIcon Icon="@Icons.Material.Rounded.WarningAmber" Color="Color.Warning" Class="ml-n1 my-n1" Size="Size.Small"/>
+                                <MudPaper Elevation="0" Width="100%" Class="docs-gray-bg px-8 py-1 ml-1"/>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Badge">
+                            <MudPaper Elevation="25" Class="px-3 py-1 flex-grow-0 d-flex">
+                                <MudPaper Elevation="0" Class="px-4 py-1 docs-gray-bg"/>
+                            </MudPaper>
+                            <MudPaper Elevation="25" Height="12px" Width="12px" Class="rounded-circle ml-n2 mt-n3 mud-theme-primary"/>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Dialog">
+                            <MudPaper Elevation="25" Width="100%" Class="d-flex flex-column align-start">
+                                <div class="px-2 mud-width-full">
+                                    <MudPaper Elevation="0" Width="60%" Height="4px" Class="docs-gray-bg mt-2"/>
+                                    <MudPaper Elevation="0" Width="100%" Height="4px" Class="docs-gray-bg mt-2"/>
+                                    <MudPaper Elevation="0" Width="80%" Height="4px" Class="docs-gray-bg mt-2"/>
+                                    <MudPaper Elevation="0" Width="40%" Height="4px" Class="docs-gray-bg mt-2"/>
+                                </div>
+                                <div class="px-2 pb-2 d-flex justify-end mt-4 mud-width-full">
+                                    <MudPaper Elevation="0" Width="20%" Height="6px" Class="docs-gray-bg mr-1"/>
+                                    <MudPaper Elevation="0" Width="20%" Height="6px" Class="mud-theme-primary"/>
+                                </div>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Message Box">
+                            <MudPaper Elevation="25" Width="100%" Class="d-flex flex-column align-start">
+                                <div class="px-2 mud-width-full">
+                                    <MudPaper Elevation="0" Width="60%" Height="4px" Class="docs-gray-bg mt-2"/>
+                                    <MudPaper Elevation="0" Width="100%" Height="4px" Class="docs-gray-bg mt-2"/>
+                                </div>
+                                <div class="px-2 pb-2 d-flex justify-end mt-2 mud-width-full">
+                                    <MudPaper Elevation="0" Width="20%" Height="6px" Class="docs-gray-bg mr-1"/>
+                                    <MudPaper Elevation="0" Width="20%" Height="6px" Class="mud-theme-primary"/>
+                                </div>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Progress">
+                            <MudPaper Elevation="25" Width="100%" Class="pr-6 rounded-pill">
+                                <MudPaper Elevation="0" Class="px-3 py-1 mud-theme-primary rounded-pill"/>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Skeleton">
+                            <MudPaper Elevation="25" Width="100%" Class="pa-2 d-flex flex-column align-start">
+                                <MudPaper Elevation="0" Width="60%" Height="8px" Class="docs-gray-bg"/>
+                                <MudPaper Elevation="0" Width="14px" Height="14px" Class="docs-gray-bg rounded-circle mt-1"/>
+                                <MudPaper Elevation="0" Width="100%" Height="30px" Class="docs-gray-bg mt-1"/>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Snackbar">
+                            <div class="d-flex justify-end align-start mud-height-full mud-width-full">
+                                <MudPaper Elevation="25" Class="pa-1 d-flex mt-n6 align-center mr-n6">
+                                    <MudIcon Icon="@Icons.Material.Rounded.EventNote" Color="Color.Primary" Style="font-size:14px;"/>
+                                    <MudPaper Elevation="0" Width="100%" Class="docs-gray-bg px-6 pt-2 mx-1"/>
+                                    <MudIcon Icon="@Icons.Material.Rounded.Close" Style="font-size:14px;"/>
+                                </MudPaper>
+                            </div>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Overlay">
+                            <MudPaper Elevation="25" Width="100%" Class="d-flex flex-column align-start relative">
+                                <div class="px-2 mud-width-full">
+                                    <MudPaper Elevation="0" Width="60%" Height="4px" Class="docs-gray-bg mt-2"/>
+                                    <MudPaper Elevation="0" Width="100%" Height="4px" Class="docs-gray-bg mt-2"/>
+                                    <MudPaper Elevation="0" Width="80%" Height="4px" Class="docs-gray-bg mt-2"/>
+                                    <MudPaper Elevation="0" Width="40%" Height="4px" Class="docs-gray-bg mt-2"/>
+                                </div>
+                                <div class="px-2 pb-2 d-flex justify-end mt-4 mud-width-full">
+                                    <MudPaper Elevation="0" Width="20%" Height="6px" Class="docs-gray-bg mr-1"/>
+                                    <MudPaper Elevation="0" Width="20%" Height="6px" Class="mud-theme-primary"/>
+                                </div>
+                                <MudOverlay Visible="true" DarkBackground="true" Absolute="true" />
+                            </MudPaper>
+                        </DocsExploreCard>
+                    </div>
+                </MudItem>
+                
+                <MudItem xs="12" md="3" Class="mt-16">
+                    <div class="docs-sticky-info explore-text">
+                        <MudText Typo="Typo.h5">Utilities</MudText>
+                        <MudText Typo="Typo.subtitle1">CSS Class Utilities</MudText>
+                    </div>
+                </MudItem>
+                <MudItem xs="12" md="9" Class="mt-16">
+                    <div class="explore-mudblazor-items">
+                        <DocsExploreCard Title="Border Radius" Link="/utilities/border-radius">
+                            <MudPaper Elevation="25" Height="68px" Width="68px" Class="rounded-tr-xl rounded-bl-xl rounded-tl-lg rounded-br-lg"/>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Display" Link="/utilities/display">
+                            <div>
+                                <MudPaper Elevation="25" Height="32px" Width="32px"/>
+                                <MudPaper Elevation="25" Height="32px" Width="32px" Class="mt-2"/>
+                            </div>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Flex" Link="/utilities/flex">
+                            <MudPaper Elevation="25" Height="32px" Width="32px"/>
+                            <MudPaper Elevation="25" Height="32px" Width="32px" Class="ml-2"/>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="Spacing" Link="/utilities/spacing">
+                            <MudPaper Elevation="25" Class="pa-2 ma-2"/>
+                            <MudPaper Elevation="25" Class="pa-3 ma-2"/>
+                            <MudPaper Elevation="25" Class="pa-4 ma-2"/>
+                        </DocsExploreCard>
+                    </div>
+                </MudItem>
+            </MudGrid>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
+
+@code {
+    [Inject] IMenuService MenuService { get; set; } 
+}

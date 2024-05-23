@@ -1,0 +1,33 @@
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudList T="string" Dense="Dense">
+    <MudListSubheader>
+        Drinks
+    </MudListSubheader>
+    <MudListItem Text="Sparkling Water" />
+    <MudListItem Text="Teas" Expanded="true">
+        <NestedList>
+            <MudListItem Text="Earl Grey" />
+            <MudListItem Text="Matcha" />
+            <MudListItem Text="Pu'er" />
+        </NestedList>
+    </MudListItem>
+    <MudListItem Text="Coffees" Dense="InnerListDense">
+        <NestedList>
+            <MudListItem Text="Irish Coffee" />
+            <MudListItem Text="Double Espresso" />
+            <MudListItem Text="Cafe Latte" />
+        </NestedList>
+    </MudListItem>
+</MudList>
+
+@code
+{
+    [Parameter] 
+    public bool Dense { get; set; }
+
+    [Parameter] 
+    public bool? InnerListDense { get; set; }
+
+    public static string __description__ = "The child lists are dense when the parent list is dense.";
+}

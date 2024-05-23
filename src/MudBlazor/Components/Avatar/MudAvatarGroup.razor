@@ -1,0 +1,21 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+<div role="group" @attributes="UserAttributes" class="@Classname" style="@Style">
+    <CascadingValue Value="this" IsFixed="true">
+        @ChildContent
+    </CascadingValue>
+    @if(_avatars.Count > Max)
+    {
+        @if (MaxAvatarsTemplate != null)
+        {
+            @MaxAvatarsTemplate.Invoke(_avatars.Count - Max)
+        }
+        else
+        {
+           <MudAvatar Class="@MaxAvatarClassname" Color="@MaxColor" Size="@MaxSize" Variant="@MaxVariant" Rounded="@MaxRounded" Square="@MaxSquare" Elevation="@MaxElevation">
+                @($"+{_avatars.Count - Max}")
+           </MudAvatar>
+        }
+    }
+</div>

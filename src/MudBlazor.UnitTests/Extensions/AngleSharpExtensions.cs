@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AngleSharp.Dom;
+﻿using AngleSharp.Dom;
 
 namespace MudBlazor.UnitTests
 {

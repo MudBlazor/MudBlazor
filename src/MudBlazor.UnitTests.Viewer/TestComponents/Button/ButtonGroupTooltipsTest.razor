@@ -1,0 +1,25 @@
+﻿<MudRTLProvider RightToLeft=@_rightToLeft>
+	<div class="d-flex mb-3">
+		<MudButtonGroup Color="Color.Dark" Variant="Variant.Filled">
+			<MudTooltip Text="Open 1"><MudButton>1</MudButton></MudTooltip>
+			<MudTooltip Text="Open 2"><MudButton>2</MudButton></MudTooltip>
+			<MudTooltip Text="Open 3"><MudButton>3</MudButton></MudTooltip>
+		</MudButtonGroup>
+	</div>
+
+	<div class="d-flex mr-3">
+		<MudButtonGroup Color="Color.Dark" Variant="Variant.Filled" Vertical="true" Style="margin-right: 4px">
+			<MudTooltip Text="Open 1"><MudButton>1</MudButton></MudTooltip>
+			<MudTooltip Text="Open 2"><MudButton>2</MudButton></MudTooltip>
+			<MudTooltip Text="Open 3"><MudButton>3</MudButton></MudTooltip>
+		</MudButtonGroup>
+	</div>
+</MudRTLProvider>
+
+<MudSwitch @bind-Value="@_rightToLeft" Label="Toggle Right to Left" Color="Color.Primary" />
+
+@code
+{
+	private bool _rightToLeft = false;
+	public static string __description__ = "The button group rounded corners and dividers should still work when using tooltips.";
+}

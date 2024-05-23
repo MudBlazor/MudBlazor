@@ -1,0 +1,32 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid Items="@_items" Filterable="true" SortMode=SortMode.None>
+    <Header>
+        <tr>
+            <HeaderCell T="Model">test</HeaderCell>
+        </tr>
+        
+    </Header>
+    <Columns>
+        <PropertyColumn Property="x => x.Name">
+            <HeaderTemplate>
+                <MudIcon Icon="@Icons.Material.Filled.Headphones"></MudIcon>
+                <span>Name</span>
+            </HeaderTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Status" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private IEnumerable<Model> _items = new List<Model>()
+    {
+        new Model("Sam", 56, Severity.Normal), 
+        new Model("Alicia", 54, Severity.Info), 
+        new Model("Ira", 27, Severity.Success),
+        new Model("John", 32, Severity.Warning)
+    };
+
+    public record Model (string Name, int Age, Severity Status);
+}

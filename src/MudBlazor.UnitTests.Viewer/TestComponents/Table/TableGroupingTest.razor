@@ -1,0 +1,61 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+
+<MudTable Items="@Cars" Hover="true" @ref="tableInstance"
+          GroupHeaderStyle="background-color:var(--mud-palette-background-gray)"
+          GroupFooterStyle="background-color:var(--mud-palette-background-gray)"
+          MultiSelection="true">
+    <HeaderContent>
+        <MudTh>Model:</MudTh>
+    </HeaderContent>
+    <GroupHeaderTemplate>
+        <MudTh Style="font-weight: 500;" colspan="5">@($"{context.GroupName}: {context.Key}")</MudTh>
+    </GroupHeaderTemplate>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.ToString()</MudTd>
+    </RowTemplate>
+    <GroupFooterTemplate>
+        <MudTh Style="font-weight: 500;text-align: right;">Count: @context.Items.Count()</MudTh>
+    </GroupFooterTemplate>
+</MudTable>
+
+@code {
+    public MudTable<RacingCar> tableInstance;
+    private IEnumerable<RacingCar> Cars;
+
+    protected override Task OnInitializedAsync()
+    {
+        Cars = new List<RacingCar>()
+    {
+            new("919 Hybrid", "Porsche", "LMP1"),
+            new("911 RSR", "Porsche", "GTE"),
+            new("911 RS", "Porsche", "GT3"),
+            new("R18 e-tron quattor", "Audi", "LMP1"),
+            new("R8 LMS", "Audi", "GT3"),
+            new ("F488", "Ferrari", "GTE"),
+            new ("SF-1000", "Ferrari", "Formula 1"),
+            new ("Vantage", "Aston Martin", "GTE"),
+            new ("AMR21", "Aston Martin", "Formula 1"),
+        };
+        return base.OnInitializedAsync();
+    }
+
+    public class RacingCar
+    {
+        public RacingCar(string name, string brand, string category)
+        {
+            Name = name;
+            Brand = brand;
+            Category = category;
+        }
+
+        public string Name { get; set; }
+        public string Brand { get; set; }
+        public string Category { get; set; }
+
+        public override string ToString()
+        {
+            return $"({Category}) {Brand} {Name}";
+        }
+    }
+}

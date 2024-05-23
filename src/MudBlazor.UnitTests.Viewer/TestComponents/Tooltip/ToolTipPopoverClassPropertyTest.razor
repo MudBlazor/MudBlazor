@@ -1,0 +1,21 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudTooltip Color="@Color" Arrow="@Arrow">
+	<ChildContent>
+		<MudButton>My Buttion</MudButton>
+	</ChildContent>
+	<TooltipContent>
+		<div id="my-tooltip-content">
+			<p>Some Text</p>
+		</div>
+	</TooltipContent>
+</MudTooltip>
+
+@code {
+	[Parameter] public Color Color { get; set; } = Color.Default;
+	[Parameter] public bool Arrow { get; set; } = false;
+
+
+}

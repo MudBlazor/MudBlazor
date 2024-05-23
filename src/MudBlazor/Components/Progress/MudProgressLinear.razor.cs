@@ -1,104 +1,135 @@
 ﻿using System;
-using System.Globalization;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudProgressLinear : MudComponentBase
     {
+        private readonly ParameterState<double> _minState;
+        private readonly ParameterState<double> _maxState;
+        private readonly ParameterState<double> _valueState;
+        private readonly ParameterState<double> _bufferValueState;
+
         protected string DivClassname =>
             new CssBuilder("mud-progress-linear")
-                .AddClass($"mud-progress-linear-color-{Color.ToDescriptionString()}", !Buffer)
+                .AddClass("mud-progress-linear-rounded", Rounded)
+                .AddClass($"mud-progress-linear-striped", Striped)
+                .AddClass($"mud-progress-indeterminate", Indeterminate)
+                .AddClass($"mud-progress-linear-buffer", Buffer && !Indeterminate)
+                .AddClass($"mud-progress-linear-{Size.ToDescriptionString()}")
+                .AddClass($"mud-progress-linear-color-{Color.ToDescriptionString()}")
+                .AddClass("horizontal", !Vertical)
+                .AddClass("vertical", Vertical)
                 .AddClass("mud-flip-x-rtl")
                 .AddClass(Class)
                 .Build();
 
-        protected string LinearClassname =>
-            new CssBuilder("mud-progress-linear-bar")
-                .AddClass($"mud-{Color.ToDescriptionString()}")
-                .AddClass($"mud-progress-indeterminate", Indeterminate)
-                .AddClass($"mud-progress-linear-bar-1-determinate", !Indeterminate)
-                .Build();
-
-        protected string BufferClassname =>
-            new CssBuilder("mud-progress-linear-dashed")
-                .AddClass($"mud-progress-linear-dashed-color-{Color.ToDescriptionString()}")
-                .Build();
-
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// The color of the component. It supports the theme colors.
+        /// The size of the component.
         /// </summary>
-        [Parameter] public Size Size { get; set; } = Size.Medium;
-        [Parameter] public bool Indeterminate { get; set; }
-        [Parameter] public bool Buffer { get; set; }
-        [Parameter] public bool Static { get; set; }
-        [Parameter] public int StrokeWidth { get; set; } = 3;
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Appearance)]
+        public Size Size { get; set; } = Size.Small;
 
         /// <summary>
-        /// The minimum allowed value of the slider. Should not be equal to max.
+        /// Constantly animates, does not follow any value.
         /// </summary>
         [Parameter]
-        public double Min
-        {
-            get => _min;
-            set
-            {
-                _min = value;
-                UpdatePercentages();
-            }
-        }
-
-        private double _min = 0.0;
-        private double _max = 100.0;
+        [Category(CategoryTypes.ProgressLinear.Behavior)]
+        public bool Indeterminate { get; set; } = false;
 
         /// <summary>
-        /// The maximum allowed value of the slider. Should not be equal to min.
+        /// If true, the buffer value will be used.
         /// </summary>
-        /// 
         [Parameter]
-        public double Max
+        [Category(CategoryTypes.ProgressLinear.Behavior)]
+        public bool Buffer { get; set; } = false;
+
+        /// <summary>
+        /// If true, border-radius is set to the themes default value.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Appearance)]
+        public bool Rounded { get; set; } = false;
+
+        /// <summary>
+        /// Adds stripes to the filled part of the linear progress.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Appearance)]
+        public bool Striped { get; set; } = false;
+
+        /// <summary>
+        /// If true, the progress bar  will be displayed vertically.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Appearance)]
+        public bool Vertical { get; set; } = false;
+
+        /// <summary>
+        /// Child content of component.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Behavior)]
+        public RenderFragment? ChildContent { get; set; }
+
+        /// <summary>
+        /// The minimum allowed value of the linear progress. Should not be equal to max.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Behavior)]
+        public double Min { get; set; } = 0.0;
+
+        /// <summary>
+        /// The maximum allowed value of the linear progress. Should not be equal to min.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Behavior)]
+        public double Max { get; set; } = 100.0;
+
+        /// <summary>
+        /// The current value of the linear progress. Should be between min and max.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Behavior)]
+        public double Value { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Behavior)]
+        public double BufferValue { get; set; }
+
+        public MudProgressLinear()
         {
-            get => _max;
-            set
-            {
-                _max = value;
-                UpdatePercentages();
-            }
+            using var registerScope = CreateRegisterScope();
+            _valueState = registerScope.RegisterParameter<double>(nameof(Value))
+                .WithParameter(() => Value)
+                .WithChangeHandler(OnParameterChangedShared)
+                .WithComparer(DoubleEpsilonEqualityComparer.Default);
+            _minState = registerScope.RegisterParameter<double>(nameof(Min))
+                .WithParameter(() => Min)
+                .WithChangeHandler(OnParameterChangedShared);
+            _maxState = registerScope.RegisterParameter<double>(nameof(Max))
+                .WithParameter(() => Max)
+                .WithChangeHandler(OnParameterChangedShared);
+            _bufferValueState = registerScope.RegisterParameter<double>(nameof(BufferValue))
+                .WithParameter(() => BufferValue)
+                .WithChangeHandler(OnParameterChangedShared);
         }
 
-        private double _value;
-        private double _bufferValue;
-
-        [Parameter]
-        public double Value
-        {
-            get => _value;
-            set
-            {
-                _value = value;
-                UpdatePercentages();
-            }
-        }
-
-        [Parameter]
-        public double BufferValue
-        {
-            get => _bufferValue;
-            set
-            {
-                _bufferValue = value;
-                UpdatePercentages();
-            }
-        }
+        private void OnParameterChangedShared() => UpdatePercentages();
 
         protected double ValuePercent { get; set; }
+
         protected double BufferPercent { get; set; }
 
         protected void UpdatePercentages()
@@ -108,30 +139,29 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        public double GetValuePercent()
+        private double GetPercentage(double input)
         {
-            var total = Math.Abs(_max - _min);
-            if (NumericConverter<double>.AreEqual(0, total)) // numeric instability!
-                return 0;
-            var value = Math.Max(0, Math.Min(total, _value - _min));
+            var total = Math.Abs(_maxState.Value - _minState.Value);
+            if (DoubleEpsilonEqualityComparer.Default.Equals(0, total))
+            {
+                // numeric instability!
+                return 0.0;
+            }
+
+            var value = Math.Max(0, Math.Min(total, input - _minState.Value));
+
             return value / total * 100.0;
         }
 
-        public double GetBufferPercent()
-        {
-            var total = Math.Abs(_max - _min);
-            if (NumericConverter<double>.AreEqual(0, total)) // numeric instability!
-                return 0;
-            var value = Math.Max(0, Math.Min(total, _bufferValue - _min));
-            return value / total * 100.0;
-        }
+        public double GetValuePercent() => GetPercentage(_valueState.Value);
 
-        #region --> Obsolete Forwarders for Backwards-Compatiblilty
+        public double GetBufferPercent() => GetPercentage(_bufferValueState.Value);
 
-        [Obsolete("This property is obsolete. Use Min instead.")] [Parameter] public double Minimum { get => Min; set => Min = value; }
+        private string GetStyleBarTransform(double input) =>
+            Vertical ? $"transform: translateY({(int)Math.Round(100 - input)}%);" : $"transform: translateX(-{(int)Math.Round(100 - input)}%);";
 
-        [Obsolete("This property is obsolete. Use Max instead.")] [Parameter] public double Maximum { get => Max; set => Max = value; }
+        public string GetStyledBar1Transform() => GetStyleBarTransform(ValuePercent);
 
-        #endregion
+        public string GetStyledBar2Transform() => GetStyleBarTransform(BufferPercent);
     }
 }

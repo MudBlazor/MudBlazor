@@ -3,45 +3,42 @@
 <DocsPage>
     <DocsPageHeader Title="Divider" SubTitle="A divider is a thin line that groups content in lists and layouts."/>
     <DocsPageContent>
+
         <DocsPageSection>
-            <SectionHeader>
-                <Title>List Dividers</Title>
+            <SectionHeader Title="List Dividers">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(DividerListExample)">
                 <DividerListExample />
             </SectionContent>
-            <SectionSource Code="DividerListExample" GitHubFolderName="Divider"  />
         </DocsPageSection>
+
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Insert Dividers</Title>
+            <SectionHeader Title="Inset Dividers">
                 <Description>Adds a margin to the left side of the divider.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(DividerInsertExample)">
                 <DividerInsertExample />
             </SectionContent>
-            <SectionSource Code="DividerInsertExample" GitHubFolderName="Divider"  />
         </DocsPageSection>
+
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Middle Dividers</Title>
+            <SectionHeader Title="Middle Dividers">
                 <Description>Middle dividers have margin on both left and right side.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(DividerMiddleExample)" ShowCode="false">
                 <DividerMiddleExample />
             </SectionContent>
-            <SectionSource Code="DividerMiddleExample" GitHubFolderName="Divider"  />
         </DocsPageSection>
+
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Vertical Dividers</Title>
-                <Description>Vertical dividers can be used inside parents with a set height, if the parent dosent have a set height but is displayed with flex use the <CodeInline>Flexitem</CodeInline> property.</Description>
+            <SectionHeader Title="Vertical Dividers">
+                <Description>Vertical dividers can be used inside parents with a set height. If the parent doesn't have a set height but is displayed with flex, use the <CodeInline>Flexitem</CodeInline> property.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(DividerVerticalExample)">
                 <DividerVerticalExample />
             </SectionContent>
-            <SectionSource Code="DividerVerticalExample" GitHubFolderName="Divider"  />
         </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

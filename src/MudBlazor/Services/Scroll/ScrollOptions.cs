@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.Services.Scroll
 {
@@ -15,7 +10,7 @@ namespace MudBlazor.Services.Scroll
         public ElementReference Element { get; set; }
 
         /// <summary>
-        ///the ammount of milliseconds that the event is throttled 
+        ///the amount of milliseconds that the event is throttled 
         /// </summary>        
         public int ReportRate { get; set; } = 300;
 

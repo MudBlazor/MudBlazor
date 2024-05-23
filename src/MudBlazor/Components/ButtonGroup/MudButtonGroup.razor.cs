@@ -1,60 +1,105 @@
 ﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
+    /// <summary>
+    /// Represents a group of connected <see cref="MudButton"/> components.
+    /// </summary>
     public partial class MudButtonGroup : MudComponentBase
     {
-        protected string Classname =>
-        new CssBuilder("mud-button-group-root")
-          .AddClass($"mud-button-group-override-styles", OverrideStyles)
-          .AddClass($"mud-button-group-{Variant.ToDescriptionString()}")
-          .AddClass($"mud-button-group-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
-          .AddClass($"mud-button-group-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}")
-          .AddClass($"mud-button-group-vertical", VerticalAlign)
-          .AddClass($"mud-button-group-horizontal", !VerticalAlign)
-          .AddClass($"mud-button-group-disable-elevation", DisableElevation)
-          .AddClass($"mud-button-group-rtl", RightToLeft)
-          .AddClass(Class)
-        .Build();
+        protected string Classname => new CssBuilder("mud-button-group-root")
+            .AddClass($"mud-button-group-override-styles", OverrideStyles)
+            .AddClass($"mud-button-group-{Variant.ToDescriptionString()}")
+            .AddClass($"mud-button-group-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
+            .AddClass($"mud-button-group-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}")
+            .AddClass("mud-button-group-vertical", Vertical)
+            .AddClass("mud-button-group-horizontal", !Vertical)
+            .AddClass("mud-button-group-disable-elevation", !DropShadow)
+            .AddClass("mud-button-group-rtl", RightToLeft)
+            .AddClass("mud-width-full", FullWidth)
+            .AddClass(Class)
+            .Build();
 
-
-        [CascadingParameter] public bool RightToLeft { get; set; }
-
-        /// <summary>
-        /// If true, the button group will override the styles of the individual buttons.
-        /// </summary>
-        [Parameter] public bool OverrideStyles { get; set; } = true;
+        [CascadingParameter(Name = "RightToLeft")]
+        public bool RightToLeft { get; set; }
 
         /// <summary>
-        /// Child content of component.
+        /// Overrides individual button styles with this group's style.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        /// <remarks>
+        /// Defaults to <c>true</c>.  When <c>true</c>, the button styles are defined by this group.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.ButtonGroup.Appearance)]
+        public bool OverrideStyles { get; set; } = true;
 
         /// <summary>
-        /// If true, the button group will be displayed vertically.
+        /// The custom content within this group.
         /// </summary>
-        [Parameter] public bool VerticalAlign { get; set; } = false;
+        /// <remarks>
+        /// This property allows for custom content to displayed inside of the group, but it is not required.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.ButtonGroup.Behavior)]
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// If true, no drop-shadow will be used.
+        /// Displays buttons vertically.
         /// </summary>
-        [Parameter] public bool DisableElevation { get; set; } = false;
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, buttons will be displayed vertically, otherwise horizontally.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.ButtonGroup.Appearance)]
+        public bool Vertical { get; set; }
 
         /// <summary>
-        /// The color of the component. It supports the theme colors.
+        /// Displays a shadow.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.ButtonGroup.Appearance)]
+        public bool DropShadow { get; set; } = true;
 
         /// <summary>
-        /// The size of the component.
+        /// The color of all buttons in this group.
         /// </summary>
-        [Parameter] public Size Size { get; set; } = Size.Medium;
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default" />.  Theme colors are supported.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.ButtonGroup.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// The variant to use.
+        /// The size of all buttons in the group.
         /// </summary>
-        [Parameter] public Variant Variant { get; set; } = Variant.Text;
+        /// <remarks>
+        /// Defaults to <see cref="Size.Medium"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.ButtonGroup.Appearance)]
+        public Size Size { get; set; } = Size.Medium;
+
+        /// <summary>
+        /// The display variant of all buttons in the group.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Variant.Text"/>.  Other supported values are <see cref="Variant.Outlined"/> and <see cref="Variant.Filled"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.ButtonGroup.Appearance)]
+        public Variant Variant { get; set; } = Variant.Text;
+
+        /// <summary>
+        /// If true, the button group will take up 100% of available width.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ButtonGroup.Appearance)]
+        public bool FullWidth { get; set; }
     }
 }

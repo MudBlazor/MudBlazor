@@ -1,0 +1,50 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" md="8" Class="d-flex justify-center align-center" Style="height:500px;">
+        <MudImage ObjectFit="ImageFit" Height="@(SetHeight ? ImageHeight : null)" Width="@(SetWidth ? ImageWidth : null)" Src="@($"images/{Image}")" Alt="Mony the dog" Elevation="25" Class="rounded-lg"/>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudPaper Class="pa-4 mt-6 mt-lg-16" Elevation="0">
+            <MudText Typo="Typo.h6">Options</MudText>
+            <MudSelect Label="Image" AnchorOrigin="Origin.BottomCenter" Dense="true" Margin="Margin.Dense" @bind-Value="Image" Class="mt-4">
+                <MudSelectItem T="string" Value="@("tractor.jpg")">Tractor</MudSelectItem>
+                <MudSelectItem T="string" Value="@("door.jpg")">Door</MudSelectItem>
+                <MudSelectItem T="string" Value="@("castle.jpg")">Castle</MudSelectItem>
+                <MudSelectItem T="string" Value="@("iceland.jpg")">Iceland</MudSelectItem>
+                <MudSelectItem T="string" Value="@("pilars.jpg")">Pilars</MudSelectItem>
+                <MudSelectItem T="string" Value="@("sweden.jpg")">Sweden</MudSelectItem>
+            </MudSelect>
+            <MudSelect Label="Image Fit" AnchorOrigin="Origin.BottomCenter" Dense="true" Margin="Margin.Dense" @bind-Value="ImageFit" Class="mt-4">
+                <MudSelectItem T="ObjectFit" Value="ObjectFit.None">None</MudSelectItem>
+                <MudSelectItem T="ObjectFit" Value="ObjectFit.Cover">Cover</MudSelectItem>
+                <MudSelectItem T="ObjectFit" Value="ObjectFit.Contain">Contain</MudSelectItem>
+                <MudSelectItem T="ObjectFit" Value="ObjectFit.Fill">Fill</MudSelectItem>
+                <MudSelectItem T="ObjectFit" Value="ObjectFit.ScaleDown">ScaleDown</MudSelectItem>
+            </MudSelect>
+            <div class="d-flex justify-space-between align-center mt-4">
+                <MudText>Width: @(SetWidth ? $"{ImageWidth}px" : "Auto")</MudText>
+                <MudSwitch @bind-Value="SetWidth" Color="Color.Primary" Class="mr-0" />
+            </div>
+            <MudSlider @bind-Value="ImageWidth" Disabled="@(!SetWidth)" Max="400" Color="Color.Primary"/>
+            <div class="d-flex justify-space-between align-center mt-4">
+                <MudText>Height: @(SetHeight ? $"{ImageHeight}px" : "Auto")</MudText>
+                <MudSwitch @bind-Value="SetHeight" Color="Color.Secondary" Class="mr-0" />
+            </div>
+            <MudSlider @bind-Value="ImageHeight" Disabled="@(!SetHeight)" Max="350" Color="Color.Secondary"/>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public string Image { get; set; } = "tractor.jpg";
+    
+    public bool SetHeight { get; set; } = false;
+    public bool SetWidth { get; set; } = true;
+    
+    public int ImageHeight { get; set; } = 300;
+    public int ImageWidth { get; set; } = 300;
+
+    public ObjectFit ImageFit { get; set; } = ObjectFit.Cover;
+
+}

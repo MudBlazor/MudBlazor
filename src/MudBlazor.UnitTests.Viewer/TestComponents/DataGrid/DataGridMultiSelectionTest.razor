@@ -1,0 +1,40 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid Items="@_items" MultiSelection @bind-SelectedItems="_selectedItems" Filterable Bordered>
+    <Columns>
+        <SelectColumn ShowInFooter="@ShowInFooter" />
+        <PropertyColumn Property="x => x.Name" />
+    </Columns>
+</MudDataGrid>
+
+<div>
+    @string.Join(",", _selectedItems.Select(x => x.Name))
+</div>
+
+@code {
+    [Parameter]
+    public bool ShowInFooter { get; set; } = true;
+
+    private readonly List<Item> _items = new List<Item>();
+
+    private HashSet<Item> _selectedItems = new();
+
+    protected override void OnInitialized()
+    {
+        var letters = "ABBC";
+        foreach (var c in letters)
+        {
+            _items.Add(new Item(c.ToString()));
+        }
+    }
+
+    public class Item
+    {
+        public string Name { get; set; }
+
+        public Item(string name)
+        {
+            Name = name;
+        }
+    }
+}

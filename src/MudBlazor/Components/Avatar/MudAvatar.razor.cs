@@ -1,54 +1,118 @@
-﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
+﻿using System;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    partial class MudAvatar : MudComponentBase
+#nullable enable
+    /// <summary>
+    /// Represents a component which displays circular user profile pictures, icons or text.
+    /// </summary>
+    partial class MudAvatar : MudComponentBase, IDisposable
     {
-        protected string Classname =>
-        new CssBuilder("mud-avatar")
-          .AddClass($"mud-avatar-{Size.ToDescriptionString()}")
-          .AddClass($"mud-avatar-rounded", Rounded)
-          .AddClass($"mud-avatar-square", Square)
-          .AddClass($"mud-avatar-{Variant.ToDescriptionString()}")
-          .AddClass($"mud-avatar-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
-          .AddClass(Class)
-        .Build();
+        [CascadingParameter]
+        protected MudAvatarGroup? AvatarGroup { get; set; }
+
+        protected string Classname => new CssBuilder("mud-avatar")
+            .AddClass($"mud-avatar-{Size.ToDescriptionString()}")
+            .AddClass($"mud-avatar-rounded", Rounded)
+            .AddClass($"mud-avatar-square", Square)
+            .AddClass($"mud-avatar-{Variant.ToDescriptionString()}")
+            .AddClass($"mud-avatar-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
+            .AddClass($"mud-elevation-{Elevation.ToString()}")
+            .AddClass(AvatarGroup?.GetAvatarSpacing() ?? new CssBuilder(), AvatarGroup != null)
+            .AddClass(Class)
+            .Build();
+
+        protected string Stylesname => new StyleBuilder()
+            .AddStyle(AvatarGroup?.GetAvatarZindex(this) ?? new StyleBuilder(), AvatarGroup != null)
+            .AddStyle(Style)
+            .Build();
 
         /// <summary>
-        /// If true, border-radius is set to 0.
+        /// The size of the drop shadow.
         /// </summary>
-        [Parameter] public bool Square { get; set; }
+        /// <remarks>
+        /// Defaults to <c>0</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Avatar.Appearance)]
+        public int Elevation { set; get; } = 0;
 
         /// <summary>
-        /// If true, border-radius is set to the themes default value.
+        /// Disables rounded corners.
         /// </summary>
-        [Parameter] public bool Rounded { get; set; }
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Avatar.Appearance)]
+        public bool Square { get; set; }
 
         /// <summary>
-        /// Link to image, if set a image will be displayed instead of text.
+        /// Shows rounded corners.
         /// </summary>
-        [Parameter] public string Image { get; set; }
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Avatar.Appearance)]
+        public bool Rounded { get; set; }
 
         /// <summary>
-        /// The color of the component. It supports the theme colors.
+        /// The color of the avatar.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Avatar.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// The Size of the MudAvatar.
+        /// The size of the avatar.
         /// </summary>
-        [Parameter] public Size Size { get; set; } = Size.Medium;
+        /// <remarks>
+        /// Defaults to <see cref="Size.Medium"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Avatar.Appearance)]
+        public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
-        /// The variant to use.
+        /// The display variant to use.
         /// </summary>
-        [Parameter] public Variant Variant { get; set; } = Variant.Filled;
+        /// <remarks>
+        /// Defaults to <see cref="Variant.Filled" />. The variant changes the appearance of the avatar, such as <c>Text</c>, <c>Outlined</c>, or <c>Filled</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Avatar.Appearance)]
+        public Variant Variant { get; set; } = Variant.Filled;
 
         /// <summary>
-        /// Child content of the component.
+        /// The content within the avatar.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        /// <remarks>
+        /// This property allows for custom content to displayed inside of the avatar, but it is not required.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Avatar.Behavior)]
+        public RenderFragment? ChildContent { get; set; }
+
+        /// <inheritdoc />
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            AvatarGroup?.AddAvatar(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by this component.
+        /// </summary>
+        public void Dispose()
+        {
+            AvatarGroup?.RemoveAvatar(this);
+        }
     }
 }

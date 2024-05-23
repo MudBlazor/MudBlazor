@@ -8,9 +8,9 @@ namespace MudBlazor
     /// </summary>
     public class NullableDateConverter : Converter<DateTime?>
     {
-        public string DateFormat { get; set; } = "yyyy-MM-dd";
+        public string DateFormat { get; set; }
 
-        public NullableDateConverter(string format)
+        public NullableDateConverter(string format = "yyyy-MM-dd")
         {
             DateFormat = format;
             SetFunc = OnSet;

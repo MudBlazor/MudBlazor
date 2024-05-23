@@ -2,58 +2,99 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
+    /// <summary>
+    /// Represents a set of slides which transition after a delay.
+    /// </summary>
+    /// <typeparam name="TData">The kind of item to display.</typeparam>
     public partial class MudCarousel<TData> : MudBaseBindableItemsControl<MudCarouselItem, TData>, IAsyncDisposable
     {
-        protected string Classname =>
-                    new CssBuilder("mud-carousel")
-                         .AddClass($"mud-carousel-{_currentColor.ToDescriptionString()}")
-                                 .AddClass(Class)
-                                 .Build();
-
-        protected string NavigationButtonsClassName =>
-                    new CssBuilder()
-                        .AddClass("align-self-center", !(NavigationButtonsClass ?? "").Contains("align-self-"))
-                        .AddClass("mud-carousel-elements-rtl", RightToLeft)
-                        .AddClass(NavigationButtonsClass)
-                        .Build();
-
-        protected string DelimitersButtonsClassName =>
-                    new CssBuilder()
-                        .AddClass("align-self-center", !(DelimitersClass ?? "").Contains("align-self-"))
-                        .AddClass(DelimitersClass)
-                        .Build();
-
-        private Timer _timer;
+        private Timer? _timer;
         private bool _autoCycle = true;
         private Color _currentColor = Color.Inherit;
         private TimeSpan _cycleTimeout = TimeSpan.FromSeconds(5);
-        private void _timerElapsed(object stateInfo) => InvokeAsync(async () => await TimerTickAsync());
 
+        protected string Classname => new CssBuilder("mud-carousel")
+            .AddClass($"mud-carousel-{(BulletsColor ?? _currentColor).ToDescriptionString()}")
+            .AddClass(Class)
+            .Build();
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        protected string NavigationButtonsClassName => new CssBuilder()
+            .AddClass($"align-self-{ConvertPosition(ArrowsPosition).ToDescriptionString()}", !(NavigationButtonsClass ?? "").Contains("align-self-"))
+            .AddClass("mud-carousel-elements-rtl", RightToLeft)
+            .AddClass(NavigationButtonsClass)
+            .Build();
 
+        protected string BulletsButtonsClassName => new CssBuilder()
+            .AddClass(BulletsClass)
+            .Build();
+
+        [CascadingParameter(Name = "RightToLeft")]
+        public bool RightToLeft { get; set; }
 
         /// <summary>
-        /// Gets or Sets if 'Next' and 'Previous' arrows must be visible
+        /// Displays "Next" and "Previous" arrows.
         /// </summary>
-        [Parameter] public bool ShowArrows { get; set; } = true;
-
-
-        /// <summary>
-        /// Gets or Sets if bottom bar with Delimiters musb be visible
-        /// </summary>
-        [Parameter] public bool ShowDelimiters { get; set; } = true;
-        
+        /// <reamrks>
+        /// Defaults to <c>true</c>.  
+        /// </reamrks>
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Behavior)]
+        public bool ShowArrows { get; set; } = true;
 
         /// <summary>
-        /// Gets or Sets automatic cycle on item collection
+        /// The position where the arrows are displayed, if <see cref="ShowArrows"/> is <c>true</c>.
         /// </summary>
-        [Parameter] public bool AutoCycle
+        /// <remarks>
+        /// Defaults to <see cref="Position.Center"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public Position ArrowsPosition { get; set; } = Position.Center;
+
+        /// <summary>
+        /// Displays a bullet for each <see cref="MudCarouselItem"/>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Behavior)]
+        public bool ShowBullets { get; set; } = true;
+
+        /// <summary>
+        /// The location of the bullets when <see cref="ShowBullets"/> is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Position.Bottom"/>.  
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public Position BulletsPosition { get; set; } = Position.Bottom;
+
+        /// <summary>
+        /// The color of bullets when <see cref="ShowBullets"/> is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When <c>null</c> the <see cref="MudCarouselItem.Color"/> property is used.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public Color? BulletsColor { get; set; }
+
+        /// <summary>
+        /// Automatically cycles items based on <see cref="AutoCycleTime"/>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, the <see cref="MudCarouselItem"/> items will be rotated after the delay specified in <see cref="AutoCycleTime" />.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Behavior)]
+        public bool AutoCycle
         {
             get => _autoCycle;
             set
@@ -61,112 +102,215 @@ namespace MudBlazor
                 _autoCycle = value;
 
                 if (_autoCycle)
-                    InvokeAsync(async () => await StartTimerAsync());
-
+                {
+                    InvokeAsync(async () => await ResetTimerAsync());
+                }
                 else
+                {
                     InvokeAsync(async () => await StopTimerAsync());
+                }
             }
         }
-                
 
         /// <summary>
-        /// Gets or Sets the Auto Cycle time
+        /// The delay before displaying the next <see cref="MudCarouselItem"/> when <see cref="AutoCycle"/> is <c>true</c>.
         /// </summary>
-        [Parameter] public TimeSpan AutoCycleTime
+        /// <remarks>
+        /// Defaults to <see cref="TimeSpan.Zero"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Behavior)]
+        public TimeSpan AutoCycleTime
         {
             get => _cycleTimeout;
             set
             {
                 _cycleTimeout = value;
 
-                if (_autoCycle == true)
+                if (_autoCycle)
+                {
                     InvokeAsync(async () => await ResetTimerAsync());
-
+                }
                 else
+                {
                     InvokeAsync(async () => await StopTimerAsync());
+                }
             }
         }
 
+        /// <summary>
+        /// The custom CSS classes for the "Next" and "Previous" icons when <see cref="ShowArrows"/> is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Separate each CSS class with spaces.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public string? NavigationButtonsClass { get; set; }
 
         /// <summary>
-        /// Gets or Sets custom class(es) for 'Next' and 'Previous' arrows
+        /// The custom CSS classes for bullets when <see cref="ShowBullets"/> is <c>true</c>.
         /// </summary>
-        [Parameter] public string NavigationButtonsClass { get; set; }
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Separate each CSS class with spaces.
+        /// </remarks>
+        [Category(CategoryTypes.Carousel.Appearance)]
+        [Parameter]
+        public string? BulletsClass { get; set; }
 
         /// <summary>
-        /// Gets or Sets custom class(es) for Delimiters buttons
+        /// The "Previous" button icon when <see cref="ShowBullets" /> is <c>true</c> and no <see cref="PreviousButtonTemplate"/> is set.
         /// </summary>
-        [Parameter] public string DelimitersClass { get; set; }
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.NavigateBefore" />.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public string PreviousIcon { get; set; } = Icons.Material.Filled.NavigateBefore;
 
         /// <summary>
-        /// Gets or Sets the Template for the Left Arrow
+        /// The icon displayed for the current <see cref="MudCarouselItem"/> when no <see cref="BulletTemplate"/> is set.
         /// </summary>
-        [Parameter] public RenderFragment NextButtonTemplate { get; set; }
-
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public string CheckedIcon { get; set; } = Icons.Material.Filled.RadioButtonChecked;
 
         /// <summary>
-        /// Gets or Sets the Template for the Right Arrow
+        /// The icon displayed for unselected <see cref="MudCarouselItem"/>s when no <see cref="BulletTemplate"/> is set.
         /// </summary>
-        [Parameter] public RenderFragment PreviousButtonTemplate { get; set; }
-
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public string UncheckedIcon { get; set; } = Icons.Material.Filled.RadioButtonUnchecked;
 
         /// <summary>
-        /// Gets or Sets the Template for Delimiters
+        /// The "Next" button icon when <see cref="ShowBullets" /> is <c>true</c> and no <see cref="NextButtonTemplate"/> is set.
         /// </summary>
-        [Parameter]  public RenderFragment<bool> DelimiterTemplate { get; set; }
-
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.NavigateNext" />.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public string NextIcon { get; set; } = Icons.Material.Filled.NavigateNext;
 
         /// <summary>
-        /// Fires when selected Index changed on base class
+        /// The custom template for the "Next" button.
         /// </summary>
-        private void SelectionChanged()
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public RenderFragment? NextButtonTemplate { get; set; }
+
+        /// <summary>
+        /// The custom template for the "Previous" button.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public RenderFragment? PreviousButtonTemplate { get; set; }
+
+        /// <summary>
+        /// The custom template for bullets.
+        /// </summary>
+        /// <remarks>
+        /// When set, the template will be used and the <see cref="CheckedIcon"/> and <see cref="UncheckedIcon"/> properties will be ignored.
+        /// </remarks>
+        [Category(CategoryTypes.Carousel.Appearance)]
+        [Parameter]
+        public RenderFragment<bool>? BulletTemplate { get; set; }
+
+        /// <summary>
+        /// Allows swipe gestures for touch devices.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  When <c>true</c>, swipe gestures on touch devices can be used to change the current <see cref="MudCarouselItem"/>.
+        /// </remarks>
+        [Category(CategoryTypes.Carousel.Behavior)]
+        [Parameter]
+        public bool EnableSwipeGesture { get; set; } = true;
+
+        /// <summary>
+        /// Occurs when the <c>SelectedIndex</c> has changed.
+        /// </summary>
+        protected override void SelectionChanged()
         {
             InvokeAsync(async () => await ResetTimerAsync());
 
-            _currentColor = SelectedContainer != null ? SelectedContainer.Color : Color.Inherit;
+            _currentColor = SelectedContainer?.Color ?? Color.Inherit;
         }
 
+        /// <inheritdoc />
+        public override void AddItem(MudCarouselItem item)
+        {
+            Items.Add(item);
+            if (Items.Count - 1 == SelectedIndex)
+            {
+                _currentColor = item.Color;
+                StateHasChanged();
+            }
+        }
+
+        private void TimerElapsed(object? stateInfo) => InvokeAsync(async () => await TimerTickAsync());
+
+        private static Position ConvertPosition(Position position)
+        {
+            return position switch
+            {
+                Position.Top => Position.Start,
+                Position.Start => Position.Start,
+                Position.Bottom => Position.End,
+                Position.End => Position.End,
+                _ => position
+            };
+        }
 
         /// <summary>
-        /// Provides Selection changes by horizontal swipe gesture
+        /// Occurs when a horizontal swipe gesture has completed.
         /// </summary>
-        private void OnSwipe(SwipeDirection direction)
+        /// <param name="e">A <see cref="SwipeEventArgs"/> describing the swipe direction.</param>
+        private void OnSwipeEnd(SwipeEventArgs e)
         {
-            switch (direction)
+            if (!EnableSwipeGesture)
+            {
+                return;
+            }
+
+            switch (e.SwipeDirection)
             {
                 case SwipeDirection.LeftToRight:
-                    Previous();
+                    if (RightToLeft) Next();
+                    else Previous();
                     break;
 
                 case SwipeDirection.RightToLeft:
-                    Next();
+                    if (RightToLeft) Previous();
+                    else Next();
                     break;
             }
         }
 
         /// <summary>
-        /// Immediately starts the AutoCycle timer
+        /// Starts the auto-cycle timer if <see cref="AutoCycle"/> is <c>true</c>.
         /// </summary>
-        private async ValueTask StartTimerAsync()
+        private ValueTask StartTimerAsync()
         {
-            await Task.CompletedTask;
+            if (AutoCycle)
+            {
+                _timer?.Change(AutoCycleTime, TimeSpan.Zero);
+            }
 
-            if (null != _timer && AutoCycle)
-                _timer.Change(AutoCycleTime, TimeSpan.Zero);
+            return ValueTask.CompletedTask;
         }
 
         /// <summary>
-        /// Immediately stops the AutoCycle timer
+        /// Stops the auto-cycle timer.
         /// </summary>
-        private async ValueTask StopTimerAsync()
+        private ValueTask StopTimerAsync()
         {
-            await Task.CompletedTask;
+            _timer?.Change(Timeout.Infinite, Timeout.Infinite);
 
-            _timer?.Change(Timeout.Infinite, 0);
+            return ValueTask.CompletedTask;
         }
 
         /// <summary>
-        /// Stops and restart the AutoCycle timer
+        /// Stops and restarts the auto-cycle timer.
         /// </summary>
         private async ValueTask ResetTimerAsync()
         {
@@ -174,40 +318,47 @@ namespace MudBlazor
             await StartTimerAsync();
         }
 
-
         /// <summary>
-        /// Changes the SelectedIndex to a next one (or restart on 0)
+        /// Changes the selected <see cref="MudCarouselItem"/> to the next one, or restarts at <c>0</c>.
         /// </summary>
         private async ValueTask TimerTickAsync()
         {
             await InvokeAsync(Next);
         }
 
-
+        /// <inheritdoc />
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            await Task.CompletedTask;
+            await base.OnAfterRenderAsync(firstRender);
 
             if (firstRender)
             {
-                SelectedIndexChanged = new EventCallback<int>(this, (Action) SelectionChanged);
-
-                _timer = new Timer(_timerElapsed, null, TimeSpan.Zero, AutoCycleTime);
+                _timer = new Timer(TimerElapsed, null, AutoCycle ? AutoCycleTime : Timeout.InfiniteTimeSpan, AutoCycleTime);
             }
         }
 
-
+        /// <summary>
+        /// Releases resources used by this component.
+        /// </summary>
         public async ValueTask DisposeAsync()
         {
             await DisposeAsync(true);
             GC.SuppressFinalize(this);
         }
 
-
         protected virtual async ValueTask DisposeAsync(bool disposing)
         {
             if (disposing)
+            {
                 await StopTimerAsync();
+
+                var timer = _timer;
+                if (timer != null)
+                {
+                    _timer = null;
+                    await timer.DisposeAsync();
+                }
+            }
         }
     }
 }

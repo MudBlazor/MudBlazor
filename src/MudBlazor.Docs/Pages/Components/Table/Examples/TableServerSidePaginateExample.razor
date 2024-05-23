@@ -1,15 +1,15 @@
 @using System.Net.Http.Json
 @using MudBlazor.Examples.Data.Models
+@using System.Threading
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudTable ServerData="@(new Func<TableState, Task<TableData<Element>>>(ServerReload))"  
-                        Dense="true" Hover="true" @ref="table">
+<MudTable ServerData="ServerReload" Dense="true" Hover="true" @ref="table">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
         <MudSpacer />
-        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start" 
-                        AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
         <MudTh><MudTableSortLabel SortLabel="nr_field" T="Element">Nr</MudTableSortLabel></MudTh>
@@ -25,6 +25,12 @@
         <MudTd DataLabel="Position">@context.Position</MudTd>
         <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
     </RowTemplate>
+    <NoRecordsContent>
+        <MudText>No matching records found</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>Loading...</MudText>
+    </LoadingContent>
     <PagerContent>
         <MudTablePager />
     </PagerContent>
@@ -40,9 +46,10 @@
     /// <summary>
     /// Here we simulate getting the paged, filtered and ordered data from the server
     /// </summary>
-    private async Task<TableData<Element>> ServerReload(TableState state)
+    private async Task<TableData<Element>> ServerReload(TableState state, CancellationToken token)
     {
-        IEnumerable<Element> data = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+        IEnumerable<Element> data = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable", token);
+        await Task.Delay(300, token);
         data = data.Where(element =>
         {
             if (string.IsNullOrWhiteSpace(searchString))

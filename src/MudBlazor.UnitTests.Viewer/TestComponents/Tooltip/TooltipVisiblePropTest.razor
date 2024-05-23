@@ -1,0 +1,12 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudTooltip Text="Visible Property" @bind-Visible="TooltipVisible">
+	<MudButton Variant="Variant.Filled" Color="Color.Secondary">My Button</MudButton>
+</MudTooltip>
+
+@code {
+    [Parameter]
+    public bool TooltipVisible { get; set; } = true;
+}

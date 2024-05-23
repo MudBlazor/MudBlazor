@@ -10,7 +10,11 @@
         <button type="submit" disabled style="display: none" aria-hidden="true"></button>
     }
     <CascadingValue Value="this" IsFixed="true">
-        @ChildContent
+        <CascadingValue Value="GetDisabledState()" Name="ParentDisabled">
+            <CascadingValue Value="GetReadOnlyState()" Name="ParentReadOnly">
+                @ChildContent
+            </CascadingValue>
+        </CascadingValue>
     </CascadingValue>
 </form>
 

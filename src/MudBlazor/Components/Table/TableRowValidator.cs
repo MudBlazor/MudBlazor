@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
+#nullable enable
     public class TableRowValidator : IForm
     {
         public bool IsValid
@@ -16,11 +16,16 @@ namespace MudBlazor
             }
         }
 
-        public string[] Errors
+        public string[] Errors => _errors.ToArray();
+
+        public object? Model { get; set; }
+
+        protected HashSet<string> _errors = new();
+
+        void IForm.FieldChanged(IFormComponent formControl, object? newValue)
         {
-            get => _errors.ToArray();
+            //implement in future for table
         }
-        protected HashSet<string> _errors = new HashSet<string>();
 
         void IForm.Add(IFormComponent formControl)
         {
@@ -37,7 +42,7 @@ namespace MudBlazor
             //Validate(formControl);
         }
 
-        protected HashSet<IFormComponent> _formControls = new HashSet<IFormComponent>();
+        protected HashSet<IFormComponent> _formControls = new();
 
         public void Validate()
         {

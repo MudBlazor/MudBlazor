@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudExpansionPanels>
+    <MudExpansionPanel @bind-Expanded="Panel1Expanded" Class="panel-one" Text="Panel One">
+        Panel One Content
+    </MudExpansionPanel>
+    <MudExpansionPanel @bind-Expanded="Panel2Expanded" Class="panel-two" Text="Panel Two">
+        Panel Two Content
+    </MudExpansionPanel>
+    <MudExpansionPanel @bind-Expanded="Panel3Expanded" Class="panel-three" Text="Panel Three">
+        Panel Three Content
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@code
+{
+    public bool Panel1Expanded { get; set; }
+
+    public bool Panel2Expanded { get; set; } = true;
+
+    public bool Panel3Expanded { get; set; }
+}

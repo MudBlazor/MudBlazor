@@ -1,0 +1,36 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div @oncontextmenu="ClickForDrawer" @oncontextmenu:preventDefault class="d-flex align-center justify-center" style="height: calc(100vh - 64px); background: linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%);">
+    <MudDrawer @bind-Open="@drawerOpen" Anchor="@Anchor.Right" Elevation="1" Variant="@DrawerVariant.Temporary" Overlay="false">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h6">My Drawer</MudText>
+        </MudDrawerHeader>
+        <MudCard>
+            <MudCardContent>
+                <MudButton Color="Color.Primary" Variant="Variant.Outlined">New Record</MudButton>
+            </MudCardContent>
+        </MudCard>
+        <MudList T="string">
+            <MudListSubheader>List</MudListSubheader>
+            <MudListItem Text="Item 1"></MudListItem>
+        </MudList>
+    </MudDrawer>
+
+    <MudText Class="white-text" Typo="Typo.h6">Right Click To Somewhere!</MudText>
+</div>
+
+@code{
+    bool drawerOpen;
+
+    private void ClickForDrawer(MouseEventArgs arg)
+    {
+        if (drawerOpen == false)
+        {
+            drawerOpen = true;
+        }
+        else
+        {
+            drawerOpen = false;
+        }
+    }
+}

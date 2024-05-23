@@ -1,0 +1,52 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudSelect T="Coffee" Label="Coffee"
+                   MultiSelection="true"
+                   SelectedValues="Selected" SelectedValuesChanged="SelectedChanged"
+                   Comparer="Comparer"
+                   ToStringFunc="@(x => x.Name)">
+            <MudSelectItem Value="@(new Coffee("cap","Cappuccino"))" />
+            <MudSelectItem Value="@(new Coffee("lat","Cafe Latte"))" />
+            <MudSelectItem Value="@(new Coffee("esp","Espresso"))" />
+            <MudSelectItem Value="@(new Coffee("ire","Irish Coffee"))" />
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12">
+        <MudButton OnClick="SetSelection">Set Selection</MudButton>
+    </MudItem>
+</MudGrid>
+
+@code {
+    static CoffeeComparer Comparer { get; } = new();
+
+    HashSet<Coffee> Selected { get; } = new(Comparer);
+
+    void SelectedChanged(IEnumerable<Coffee> newSelected)
+    {
+        Selected.Clear();
+        Selected.UnionWith(newSelected);
+    }
+
+    void SetSelection()
+    {
+        Selected.Clear();
+        Selected.Add(new("lat", "Selected Cafe Latte"));
+        Selected.Add(new("esp", "Selected Espresso"));
+    }
+
+    class Coffee
+    {
+        public string Key { get; set; }
+        public string Name { get; set; }
+        public Coffee(string key, string name) { Key = key; Name = name; }
+    }
+
+    class CoffeeComparer : IEqualityComparer<Coffee>
+    {
+        public bool Equals(Coffee a, Coffee b) => a.Key == b.Key;
+        public int GetHashCode(Coffee x) => HashCode.Combine(x.Key);
+    }
+}

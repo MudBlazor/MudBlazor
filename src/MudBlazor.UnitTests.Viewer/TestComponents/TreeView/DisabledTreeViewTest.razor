@@ -1,0 +1,27 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTreeView T="string" @bind-SelectedValue="SelectedValue" Disabled="@Disabled" SelectionMode="SelectionMode.ToggleSelection">
+    <MudTreeViewItem Value='"content"'>
+        <MudTreeViewItem Value='"logo.png"' />
+        <MudTreeViewItem Value='"MudBlazor.svg"' />
+        <MudTreeViewItem Value='"Nuget.png"' />
+    </MudTreeViewItem>
+    <MudTreeViewItem Value='"src"'>
+        <MudTreeViewItem Value='"MudBlazor"' />
+        <MudTreeViewItem Value='"MudBlazor.Docs"'>
+            <MudTreeViewItem Value='"wwwroot"'>
+                <MudTreeViewItem Value='"MudAppbarCorner.svg"' />
+                <MudTreeViewItem Value='"MudBlazorDocs.min.css"' />
+            </MudTreeViewItem>
+        </MudTreeViewItem>
+    </MudTreeViewItem>
+</MudTreeView>
+
+<p class="selected-value">
+    @SelectedValue
+</p>
+
+@code {
+    [Parameter] public string SelectedValue { get; set; }
+    [Parameter] public bool Disabled { get; set; }
+}

@@ -1,0 +1,58 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+
+<MudTable Items="@Cars" Hover="true" @ref="tableInstance" GroupBy="@groups"
+          GroupHeaderStyle="background-color:var(--mud-palette-background-gray)"
+          GroupFooterStyle="background-color:var(--mud-palette-background-gray)"
+          MultiSelection="true">
+    <HeaderContent>
+        <MudTh>Model:</MudTh>
+    </HeaderContent>
+    <GroupHeaderTemplate>
+        <MudTh Style="font-weight: 500;" colspan="5">@($"{context.GroupName}: {context.Key}")</MudTh>
+    </GroupHeaderTemplate>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.ToString()</MudTd>
+    </RowTemplate>
+    <GroupFooterTemplate>
+        <MudTh Style="font-weight: 500;text-align: right;">Count: @context.Items.Count()</MudTh>
+    </GroupFooterTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+    public MudTable<TableGroupingTest.RacingCar> tableInstance;
+    private IEnumerable<TableGroupingTest.RacingCar> Cars;
+
+    protected override Task OnInitializedAsync()
+    {
+        Cars = new List<TableGroupingTest.RacingCar>()
+    {
+            new("919 Hybrid", "Porsche", "LMP1"),
+            new("911 RSR", "Porsche", "GTE"),
+            new("911 RS", "Porsche", "GT3"),
+            new("R18 e-tron quattor", "Audi", "LMP1"),
+            new("R8 LMS", "Audi", "GT3"),
+            new ("F488", "Ferrari", "GTE"),
+            new ("SF-1000", "Ferrari", "Formula 1"),
+            new ("MCL35M", "McLaren", "Formula 1"),
+            new ("720s", "McLaren", "GT3"),
+            new ("Vantage", "Aston Martin", "GTE"),
+            new ("AMR21", "Aston Martin", "Formula 1"),
+        };
+        return base.OnInitializedAsync();
+    }
+
+    TableGroupDefinition<TableGroupingTest.RacingCar> groups = new()
+    {
+        GroupName = "Category",
+        Selector = rc => rc.Category,
+        InnerGroup = new TableGroupDefinition<TableGroupingTest.RacingCar>()
+        {
+            GroupName = "Brand",
+            Selector = rc => rc.Brand
+        }
+    };
+}

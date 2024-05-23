@@ -2,83 +2,106 @@
 
 namespace MudBlazor
 {
-
+#nullable enable
     /// <summary>
     /// A universal T to bool? binding converter
     /// </summary>
-    public class BoolConverter<T> : Converter<T, bool?>
+    public class BoolConverter<T> : Converter<T?, bool?>
     {
-
         public BoolConverter()
         {
             SetFunc = OnSet;
             GetFunc = OnGet;
         }
 
-        private T OnGet(bool? value)
+        private T? OnGet(bool? value)
         {
             try
             {
-                if (typeof(T) == typeof(bool))
-                    return (T)(object)(value == true);
-                else if (typeof(T) == typeof(bool?))
-                    return (T)(object)value;
-                else if (typeof(T) == typeof(string))
-                    return (T)(object)(value == true ? "on" : (value == false ? "off" : null));
-                else if (typeof(T) == typeof(int))
-                    return (T)(object)(value == true ? 1 : 0);
-                else if (typeof(T) == typeof(int?))
-                    return (T)(object)(value == true ? 1 : (value == false ? (int?)0 : null));
-                else
+                var type = typeof(T);
+                if (type == typeof(bool))
                 {
-                    UpdateGetError($"Conversion to type {typeof(T)} not implemented");
+                    object result = value == true;
+                    return (T)result;
                 }
-            }
-            catch (Exception e)
-            {
-                UpdateGetError("Conversion error: " + e.Message);
+
+                if (type == typeof(bool?))
+                {
+                    object? result = value;
+                    return (T?)result;
+                }
+
+                if (type == typeof(string))
+                {
+                    object? result = value switch
+                    {
+                        true => "on",
+                        false => "off",
+                        _ => null
+                    };
+                    return (T?)result;
+                }
+
+                if (type == typeof(int))
+                {
+                    object result = value == true ? 1 : 0;
+                    return (T)result;
+                }
+
+                if (type == typeof(int?))
+                {
+                    object? result = value switch
+                    {
+                        true => 1,
+                        false => 0,
+                        _ => null
+                    };
+                    return (T?)result;
+                }
+
+                UpdateGetError($"Conversion to type {typeof(T)} not implemented");
                 return default(T);
             }
-            return default(T);
+            catch (Exception exception)
+            {
+                UpdateGetError($"Conversion error: {exception.Message}");
+                return default(T);
+            }
         }
 
-        private bool? OnSet(T arg)
+        private bool? OnSet(T? arg)
         {
-            if (arg == null)
-                return null; // <-- this catches all nullable values which are null. no nullchecks necessary below!
+            // This catches all nullable values which are null. No further null checks are needed below.!
+            if (arg is null)
+                return null;
             try
             {
-                if (arg is bool)
-                    return (bool)(object)arg;
-                else if (arg is bool?)
-                    return (bool?)(object)arg;
-                else if (arg is int)
-                    return ((int)(object)arg) > 0;
-                else if (arg is string)
+                switch (arg)
                 {
-                    var s = (string)(object)arg;
-                    if (string.IsNullOrWhiteSpace(s))
+                    case bool boolValue:
+                        return boolValue;
+                    case int intValue:
+                        return intValue > 0;
+                    case string stringValue when string.IsNullOrWhiteSpace(stringValue):
                         return null;
-                    if (bool.TryParse(s, out var b))
-                        return b;
-                    if (s.ToLowerInvariant() == "on")
+                    case string stringValue when bool.TryParse(stringValue, out var flag):
+                        return flag;
+                    case string stringValue when stringValue.ToLowerInvariant() == "on":
                         return true;
-                    if (s.ToLowerInvariant() == "off")
+                    case string stringValue when stringValue.ToLowerInvariant() == "off":
                         return false;
-                    return null;
-                }
-                else
-                {
-                    UpdateSetError("Unable to convert to bool? from type " + typeof(T).Name);
-                    return null;
+                    case string:
+                        return null;
+                    default:
+                        UpdateSetError($"Unable to convert to bool? from type {typeof(T).Name}");
+                        return null;
                 }
             }
-            catch (FormatException e)
+            catch (FormatException exception)
             {
-                UpdateSetError("Conversion error: " + e.Message);
+                UpdateSetError($"Conversion error: {exception.Message}");
                 return null;
             }
         }
-
     }
 }

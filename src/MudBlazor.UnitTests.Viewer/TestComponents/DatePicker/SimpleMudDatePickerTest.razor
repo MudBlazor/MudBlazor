@@ -1,0 +1,63 @@
+﻿﻿@using System.Globalization;
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPopoverProvider></MudPopoverProvider>
+
+@if (IsDateDisabledFunc != null)
+{
+    <MudDatePicker @ref="_picker"
+                   Date="@Date"
+                   DateChanged="HandleDateChanged"
+                   ReadOnly="Readonly"
+                   @bind-PickerMonth="PickerMonth"
+                   IsDateDisabledFunc="IsDateDisabledFunc"
+                   OpenTo="@OpenTo"
+                   FixDay="@FixDay"
+                   FixMonth="@FixMonth"
+                   FixYear="@FixYear"
+                   MinDate="@MinDate"
+                   MaxDate="@MaxDate"
+                   AdditionalDateClassesFunc="@AdditionalDateClassesFunc" />
+}
+else
+{
+    <MudDatePicker @ref="_picker"
+                   Date="@Date"
+                   DateChanged="HandleDateChanged"
+                   ReadOnly="Readonly"
+                   @bind-PickerMonth="PickerMonth"
+                   OpenTo="@OpenTo"
+                   FixDay="@FixDay"
+                   FixMonth="@FixMonth"
+                   FixYear="@FixYear"
+                   MinDate="@MinDate"
+                   MaxDate="@MaxDate"
+                   AdditionalDateClassesFunc="@AdditionalDateClassesFunc" />
+}
+
+@code {
+    private MudDatePicker _picker;
+
+    public DateTime? Date { get; set; }
+
+    private async Task HandleDateChanged(DateTime? input)
+    {
+        Date = input;
+        await DateChanged.InvokeAsync(input);
+    }
+
+    [Parameter] public DateTime? PickerMonth { get; set; }
+    [Parameter] public EventCallback<DateTime?> DateChanged { get; set; }
+    [Parameter] public bool Readonly { get; set; } = false;
+    [Parameter] public Func<DateTime, bool> IsDateDisabledFunc { get; set; }
+    [Parameter] public OpenTo OpenTo { get; set; } = OpenTo.Date;
+    [Parameter] public int? FixDay { get; set; }
+    [Parameter] public int? FixMonth { get; set; }
+    [Parameter] public int? FixYear { get; set; }
+    [Parameter] public DateTime? MinDate { get; set; }
+    [Parameter] public DateTime? MaxDate { get; set; }
+    [Parameter] public Func<DateTime, string> AdditionalDateClassesFunc { get; set; }
+
+    public async Task Open() => await InvokeAsync(() => _picker.OpenAsync());
+    public async Task Close() => await InvokeAsync(() => _picker.CloseAsync());
+}

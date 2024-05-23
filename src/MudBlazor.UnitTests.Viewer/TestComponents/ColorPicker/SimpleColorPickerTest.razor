@@ -1,0 +1,65 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+@using MudBlazor.Utilities
+
+<MudPopoverProvider>
+
+</MudPopoverProvider>
+
+<MudColorPicker @ref="_picker"
+                @bind-Value="ColorValue"
+                TextChanged="@((x) => { TextValue = x; ValueChangeCallbackCounter++;  })"
+                Palette="@Palette"
+                ShowToolbar="@ShowToolbar"
+                ShowColorField="@ShowColorField"
+                ShowPreview="@ShowPreview"
+                ShowSliders="@ShowSliders"
+                ShowInputs="@(!DisableInput)"
+                ShowModeSwitch="@ShowModeSwitch"
+                ShowAlpha="@ShowAlpha"
+                DragEffect="@DragEffect"
+                ColorPickerView="@ViewMode"
+                ColorPickerMode="@ColorPickerMode"
+                PickerVariant="@Variant"
+                Required="@Required" />
+
+@code {
+    private MudColorPicker _picker;
+
+    public Int32 ValueChangeCallbackCounter { get; private set; } = 0;
+
+    [Parameter] public MudColor ColorValue { get; set; } = "#594ae2";
+    [Parameter] public string TextValue { get; set; } = "#594ae2";
+
+    [Parameter] public IEnumerable<MudColor> Palette { get; set; } = new MudColor[] { "#ff4081ff", "#2196f3ff", "#00c853ff", "#ff9800ff", "#f44336ff" };
+
+    [Parameter] public ColorPickerMode ColorPickerMode { get; set; } = ColorPickerMode.RGB;
+    [Parameter] public bool ShowToolbar { get; set; } = false;
+    [Parameter] public bool ShowColorField { get; set; } = true;
+    [Parameter] public bool ShowPreview { get; set; } = true;
+    [Parameter] public bool ShowSliders { get; set; } = true;
+    [Parameter] public bool DisableInput { get; set; } = false;
+    [Parameter] public bool ShowModeSwitch { get; set; } = true;
+    [Parameter] public bool ShowAlpha { get; set; } = true;
+    [Parameter] public bool DragEffect { get; set; } = true;
+    [Parameter] public ColorPickerView ViewMode { get; set; } = ColorPickerView.Spectrum;
+    [Parameter] public PickerVariant Variant { get; set; } = PickerVariant.Static;
+    [Parameter] public bool Required { get; set; }
+
+    public async Task OpenPicker()
+    {
+        await InvokeAsync(() =>
+        {
+            _picker.OpenAsync();
+        });
+    }
+
+    public async Task ClosePicker()
+    {
+        await InvokeAsync(async () =>
+        {
+            await _picker.CloseAsync();
+        });
+    }
+}
+

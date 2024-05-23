@@ -1,0 +1,25 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using System.Linq
+
+
+<MudSelect T="string" MultiSelection="true" SelectAll="true" SelectAllText="Select all felines" HelperText="@value" @bind-Value="value" @bind-SelectedValues="options" MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))" Label="Felines" AdornmentIcon="@Icons.Material.Filled.Search">
+    @foreach (var feline in felines)
+    {
+        <MudSelectItem T="string" Value="@feline">@feline</MudSelectItem>
+    }
+</MudSelect>
+
+@code { 
+    private string value { get; set; } = "Nothing selected";
+    private IEnumerable<string> options { get; set; } = new HashSet<string>() { "Lion" };
+
+    private string[] felines =
+    {
+        "Jaguar", "Leopard", "Lion", "Lynx", "Panther", "Puma", "Tiger"
+    };
+
+    private string GetMultiSelectionText(List<string> selectedValues)
+    {
+        return $"{selectedValues.Count} feline{(selectedValues.Count > 1 ? "s have" : " has")} been selected";
+    }
+}

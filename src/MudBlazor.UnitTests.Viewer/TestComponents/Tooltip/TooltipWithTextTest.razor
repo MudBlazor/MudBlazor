@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudTooltip Text="@TooltipTextContent" Touch="@EnableTouch" Placement="Placement.Start">
+	<MudButton>My Buttion</MudButton>
+</MudTooltip>
+
+@code {
+	[Parameter] public string TooltipTextContent { get; set; }
+	[Parameter] public bool EnableTouch { get; set; } = false;
+}
+

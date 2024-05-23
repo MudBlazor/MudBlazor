@@ -1,0 +1,39 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+
+<MudGrid>
+    <MudItem md="8" Class="d-flex justify-center">
+        <MudColorPicker ShowToolbar="ShowToolbar" ShowAlpha="ShowAlpha" ShowColorField="ShowColorField" ShowPreview="ShowPreview" ShowSliders="ShowSliders" ShowInputs="ShowInputs" ShowModeSwitch="ShowModeSwitch" 
+                ColorPickerMode="ColorPickerMode" PickerVariant="PickerVariant.Static" />
+    </MudItem>
+    <MudItem md="4">
+        <MudPaper Height="400px" Class="px-4 pt-2 pb-4">
+            <MudText Typo="Typo.h6">Options</MudText>
+            <MudCheckBox @bind-Value="ShowToolbar" Label="Show Toolbar" Color="Color.Primary" Dense="true" />
+            <MudCheckBox @bind-Value="ShowAlpha" Label="Show Alpha" Color="Color.Primary" Dense="true" />
+            <MudCheckBox @bind-Value="ShowColorField" Label="Show Color Field" Color="Color.Primary" Dense="true" />
+            <MudCheckBox @bind-Value="ShowPreview" Label="Show Preview" Color="Color.Primary" Dense="true" />
+            <MudCheckBox @bind-Value="ShowSliders" Label="Show Sliders" Color="Color.Primary" Dense="true" />
+            <MudCheckBox @bind-Value="ShowInputs" Label="Show Inputs" Color="Color.Primary" Dense="true" />
+            <MudCheckBox @bind-Value="ShowModeSwitch" Label="Show Mode Switch" Color="Color.Primary" Dense="true" />
+            <MudSelect Label="Color Picker Mode" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" @bind-Value="ColorPickerMode" Class="mt-4">
+                <MudSelectItem T="ColorPickerMode" Value="ColorPickerMode.RGB">RGB</MudSelectItem>
+                <MudSelectItem T="ColorPickerMode" Value="ColorPickerMode.HSL">HSL</MudSelectItem>
+                <MudSelectItem T="ColorPickerMode" Value="ColorPickerMode.HEX">HEX</MudSelectItem>
+            </MudSelect>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public bool ShowToolbar { get; set; } = true;
+    public bool ShowAlpha { get; set; } = true;
+    public bool ShowColorField { get; set; } = true;
+    public bool ShowPreview { get; set; } = true;
+    public bool ShowSliders { get; set; } = true;
+    public bool ShowInputs { get; set; } = true;
+    public bool ShowModeSwitch { get; set; } = true;
+
+    public ColorPickerMode ColorPickerMode { get; set; }
+}

@@ -3,7 +3,6 @@
 
 using System;
 using System.Threading.Tasks;
-using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
@@ -26,27 +25,49 @@ namespace MudBlazor
         public bool HideIcon { get; set; }
 
         public string Icon { get; set; }
+        public Color IconColor { get; set; } = Color.Inherit;
+        public Size IconSize { get; set; } = Size.Medium;
+
+        public SnackbarDuplicatesBehavior DuplicatesBehavior { get; set; } = SnackbarDuplicatesBehavior.GlobalDefault;
+
+        /// <summary>
+        /// Custom normal icon.
+        /// </summary>
+        public string NormalIcon { get; set; } = Icons.Material.Outlined.EventNote;
+
+        /// <summary>
+        /// Custom info icon.
+        /// </summary>
+        public string InfoIcon { get; set; } = Icons.Material.Outlined.Info;
+
+        /// <summary>
+        /// Custom success icon.
+        /// </summary>
+        public string SuccessIcon { get; set; } = Icons.Custom.Uncategorized.AlertSuccess;
+
+        /// <summary>
+        /// Custom warning icon.
+        /// </summary>
+        public string WarningIcon { get; set; } = Icons.Material.Outlined.ReportProblem;
+
+        /// <summary>
+        /// Custom error icon.
+        /// </summary>
+        public string ErrorIcon { get; set; } = Icons.Material.Filled.ErrorOutline;
 
         public SnackbarOptions(Severity severity, CommonSnackbarOptions options) : base(options)
         {
             Severity = severity;
 
-            SnackbarTypeClass = $"mud-alert-{SnackbarVariant.ToDescriptionString()}-{severity.ToDescriptionString()}";
-
-            if (SnackbarVariant != Variant.Filled)
-            {
-                SnackbarTypeClass += BackgroundBlurred ? " mud-snackbar-blurred" : " mud-snackbar-surface";
-            }
-
             if (string.IsNullOrEmpty(Icon))
             {
                 Icon = Severity switch
                 {
-                    Severity.Normal => Icons.Material.Outlined.EventNote,
-                    Severity.Info => Icons.Material.Outlined.Info,
-                    Severity.Success => Icons.Custom.Uncategorized.AlertSuccess,
-                    Severity.Warning => Icons.Material.Outlined.ReportProblem,
-                    Severity.Error => Icons.Material.Filled.ErrorOutline,
+                    Severity.Normal => NormalIcon,
+                    Severity.Info => InfoIcon,
+                    Severity.Success => SuccessIcon,
+                    Severity.Warning => WarningIcon,
+                    Severity.Error => ErrorIcon,
                     _ => throw new ArgumentOutOfRangeException(nameof(Severity)),
                 };
             }

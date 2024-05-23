@@ -1,0 +1,31 @@
+﻿<MudDialog>
+    <DialogContent>
+        Dialog Content
+        <MudTextField T="string" Immediate TextChanged="@OnTextChangedAsync" />
+        <div @onclick="OnClick">
+            Click here!
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnSearch { get; set; }
+
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private Task OnTextChangedAsync(string text) => OnSearch.InvokeAsync(text);
+}

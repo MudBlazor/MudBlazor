@@ -1,0 +1,96 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@namespace MudBlazor.Docs.Server.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width">
+    <title>MudBlazor - Blazor Component Library</title>
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="description" content="Blazor Component Library based on Material Design. MudBlazor is easy to use and extend, especially for .NET devs because it uses almost no Javascript.">
+    <meta name="keywords" content="mudblazor, blazor, blazor components, blazor material, material design, material design components, matblazor alternative, blazor table, blazor data grid, blazor material design components, .net,.net core, components, webassembly">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="MudBlazor - Blazor Component Library">
+    <meta property="og:url" content="https://mudblazor.com/">
+    <meta property="og:site_name" content="MudBlazor" />
+    <meta property="og:description" content="Blazor Component Library based on Material Design. MudBlazor is easy to use and extend, especially for .NET devs because it uses almost no Javascript.">
+    <meta property="og:image" content="https://mudblazor.com/_content/MudBlazor.Docs/images/logo.png">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="MudBlazor - Blazor Component Library">
+    <meta name="twitter:description" content="Blazor Component Library based on Material Design. MudBlazor is easy to use and extend, especially for .NET devs because it uses almost no Javascript.">
+    <meta name="twitter:image" content="https://mudblazor.com/_content/MudBlazor.Docs/images/logo.png">
+    <meta name="docsearch:language" content="en">
+    <meta name="docsearch:version" content="master">
+    <meta http-equiv="Content-Security-Policy"
+          content="base-uri 'self';
+                   default-src 'self';
+                   img-src data: https:;
+                   object-src 'none';
+                   script-src 'self'
+                              'sha256-v8v3RKRPmN4odZ1CWM5gw80QKPCCWMcpNeOmimNL2AA=' 
+                              https://www.googletagmanager.com
+                              https://*.carbonads.com
+                              https://*.carbonads.net
+                              https://use.fontawesome.com
+                              https://kit.fontawesome.com
+                              'unsafe-eval';
+                   style-src 'self'
+                              https://fonts.googleapis.com
+                              https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css
+                              *.fontawesome.com
+                              'unsafe-inline';
+                   font-src 'self'
+                             *.fontawesome.com
+                             https://fonts.gstatic.com;
+                   connect-src 'self'
+                               https://*.carbonads.net
+                               https://api.github.com
+                               https://azuresearch-usnc.nuget.org
+                               https://discord.com
+                               https://raw.githubusercontent.com/MudBlazor/MudBlazor/master/LICENSE
+                               https://raw.githubusercontent.com/MudBlazor/MudBlazor/dev/ROADMAP.md
+                               https://*.google-analytics.com
+                               http://localhost:*
+                               wss://localhost:*
+                               ws://localhost:*;
+                   upgrade-insecure-requests;">
+    <base href="/" />
+    <link rel="apple-touch-icon" sizes="180x180" href="_content/MudBlazor.Docs/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="_content/MudBlazor.Docs/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="_content/MudBlazor.Docs/favicon-16x16.png">
+    <link rel="mask-icon" href="_content/MudBlazor.Docs/safari-pinned-tab.svg" color="#7e6fff">
+    <meta name="msapplication-TileColor" content="#110e2d">
+    <meta name="theme-color" content="#ffffff">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link href="_content/MudBlazor/MudBlazor.min.css?v=#{CACHE_TOKEN}#" rel="stylesheet" />
+    <link href="_content/MudBlazor.Docs/MudBlazorDocs.min.css?v=#{CACHE_TOKEN}#" rel="stylesheet" />
+    <link rel="stylesheet" href="_content/BytexDigital.Blazor.Components.CookieConsent/styles.min.css?v=#{CACHE_TOKEN}#" />
+    <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
+</head>
+
+<body>
+    @RenderBody()
+
+    <div id="blazor-error-ui">
+        <environment include="Staging,Production">
+            An error has occurred. This application may no longer respond until reloaded.
+        </environment>
+        <environment include="Development">
+            An unhandled exception has occurred. See browser dev tools for details.
+        </environment>
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <script src="_content/MudBlazor/MudBlazor.min.js?v=#{CACHE_TOKEN}#"></script>
+    <script src="_content/MudBlazor.Docs/JS/docs.js?v=#{CACHE_TOKEN}#"></script>
+    <script src="_framework/blazor.server.js"></script>
+    <script src="_content/Blazor-Analytics/blazor-analytics.js" data-consent-category="google"></script>
+</body>
+</html>

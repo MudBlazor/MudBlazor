@@ -1,0 +1,30 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudMenu Class="" Label="A menu with tooltip" Variant="Variant.Filled" Color="Color.Primary">
+    <div class="d-flex align-center">
+        <MudText Class="ml-4">1</MudText>
+        <MudTooltip Text="1 is good option">
+            <MudIconButton Class="mx-2" Icon="@Icons.Material.Outlined.Info" />
+        </MudTooltip>
+    </div>
+    <div class="d-flex align-center">
+        <MudText Class="ml-4">2</MudText>
+        <MudMenu Icon="@Icons.Material.Outlined.Mouse" ActivationEvent="@MouseEvent.MouseOver" Class="mx-2">
+            <ChildContent>
+                <MudMenuItem>Profile</MudMenuItem>
+                <MudMenuItem>Theme</MudMenuItem>
+                <MudMenuItem>Usage</MudMenuItem>
+                <MudMenuItem>Sign Out</MudMenuItem>
+            </ChildContent>
+        </MudMenu>
+        <MudTooltip Text="2 can be a better option">
+            <MudIconButton Class="mx-2" Icon="@Icons.Material.Outlined.Info" />
+        </MudTooltip>
+    </div>
+    <div class="d-flex align-center">
+        <MudText Class="ml-4">3</MudText>
+        <MudTooltip Text="3 is one more than 2">
+            <MudIconButton Class="mx-2" Icon="@Icons.Material.Outlined.Info" />
+        </MudTooltip>
+    </div>
+</MudMenu>

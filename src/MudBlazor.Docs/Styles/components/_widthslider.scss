@@ -1,0 +1,64 @@
+﻿@mixin slider-track {
+  &::-webkit-slider-runnable-track {
+    @content
+  }
+  // Firefox
+  &::-moz-range-track {
+    @content
+  }
+}
+
+@mixin slider-thumb {
+  &::-webkit-slider-thumb {
+    @content
+  }
+  // Firefox
+  &::-moz-range-thumb {
+    @content
+  }
+}
+
+
+input.docs-width-slider {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  position: relative;
+  display: block;
+  width: 100%;
+  background-color: transparent;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+  }
+
+  @include slider-track {
+    width: 100%;
+    height: 0;
+  }
+
+  @include slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    border-radius: 2px;
+    height: 64px;
+    width: 10px;
+    transition: box-shadow 0.2s;
+    box-shadow: var(--mud-elevation-25);
+  }
+
+  @include slider-track {
+    background-color: rgba(0,0,0,0);
+  }
+
+  @include slider-thumb {
+    background-color: var(--mud-palette-surface);
+  }
+
+  @include slider-thumb {
+    &:hover {
+      cursor: col-resize;
+    }
+  }
+}

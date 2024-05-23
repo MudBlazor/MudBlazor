@@ -12,51 +12,131 @@
     <DocsPageContent>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Usage</Title>
+            <SectionHeader Title="Usage">
                 <Description>
-                    How you write the search function determines whether or not the Autocomplete shows a full list initially. By setting <CodeInline>ResetValueOnEmptyText="true"</CodeInline>
-                    the <CodeInline>Value</CodeInline> will be reset when the user clears the input text. With <CodeInline>CoerceText="true"</CodeInline> upon selection of an entry from the list, 
+                    How you write the search function determines whether or not the Autocomplete shows a full list initially. By setting <CodeInline>ResetValueOnEmptyText="true"</CodeInline>,
+                    the <CodeInline>Value</CodeInline> will be reset when the user clears the input text. With <CodeInline>CoerceText="true"</CodeInline> upon selection of an entry from the list,
                     the <CodeInline>Text</CodeInline> is always updated. When the user types something that is not on the list and <CodeInline>CoerceValue</CodeInline> is true,
                     the <CodeInline>Value</CodeInline> will be overwritten with the user input which allows it to be passed to the validation function.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+            <SectionContent ShowCode="false" Code="@nameof(AutocompleteUsageExample)">
                 <AutocompleteUsageExample />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="AutocompleteUsageExample" GitHubFolderName="Autocomplete" />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Presentation</Title>
+            <SectionHeader Title="Margin And Dense">
+                <Description>While the margin property affects the input element, the dense property affects the dropdown element.</Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(AutocompleteMarginDenseExample)">
+                <AutocompleteMarginDenseExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Presentation">
                 <Description>
                     When you use objects, Autocomplete uses <CodeInline>ToString()</CodeInline> to convert the object into text form. You can set a custom <CodeInline>ToStringFunc</CodeInline>
-                    to override how the list items are stringified. This string representation is also what you'll get as input to the search function.<br /> 
-                    If that is not enough, you can define an <CodeInline Tag="true">ItemTemplate</CodeInline> and even an <CodeInline Tag="true">ItemSelectedTemplate</CodeInline>
+                    to override how the list items are stringified. This string representation is also what you'll get as input to the search function.<br />
+                    If that is not enough, you can define the following templates <CodeInline Tag="true">ItemTemplate</CodeInline>, <CodeInline Tag="true">ItemSelectedTemplate</CodeInline>, and <CodeInline Tag="true">ItemDisabledTemplate</CodeInline>
                     to create highly sophisticated list item presentations.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+            <SectionContent ShowCode="false" Code="@nameof(AutocompleteClrObjectsExample)">
                 <AutocompleteClrObjectsExample />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="AutocompleteClrObjectsExample" GitHubFolderName="Autocomplete" />
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Presentation Extras">
+                <Description>
+                    You can also define a <CodeInline Tag="true">MoreItemsTemplate</CodeInline> to handle the case where the search returns more
+                    items than the list is configured to show and a <CodeInline Tag="true">NoItemsTemplate</CodeInline> that presents some default content
+                    if the search returns no results. For your own custom content that always shows at the top or the bottom of the list define the
+                    <CodeInline Tag="true">BeforeItemsTemplate</CodeInline> and the <CodeInline Tag="true">AfterItemsTemplate</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(AutocompletePresentationExtrasExample)">
+                <AutocompletePresentationExtrasExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Validation">
+                <Description>
+                    Below there are different examples of validation with the MudAutocomplete control. The validation uses an EditForm or a MudForm. The result and display will vary if the
+                    <CodeInline Tag="true">CoerceValue</CodeInline> option is set to <CodeInline Tag="true">true</CodeInline>. But also if characters are typed into the control instead of a selection from the dropdown list.<br />
+                    For more info on form validation, check out <MudLink Href="/components/form">Form</MudLink>.
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(AutocompleteValidationExample)">
+                <AutocompleteValidationExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Keyboard Navigation">
+                <Description>
+                    <MudText>MudAutocomplete accepts keys to keyboard navigation.</MudText>
+                    <br />
+                    <MudText><CodeInline>Escape</CodeInline> or <CodeInline>Alt+ArrowUp</CodeInline> keys to close dropdown</MudText>
+                    <MudText><CodeInline>Enter</CodeInline> or <CodeInline>NumpadEnter</CodeInline> or <CodeInline>ArrowDown</CodeInline> or <CodeInline>ArrowUp</CodeInline> keys to open dropdown</MudText>
+                    <MudText><CodeInline>ArrowUp</CodeInline> key to select/navigate previous item</MudText>
+                    <MudText><CodeInline>ArrowDown</CodeInline> key to select/navigate next item</MudText>
+                    <MudText><CodeInline>Enter</CodeInline> or <CodeInline>NumpadEnter</CodeInline> keys to select item</MudText>
+                    <br />
+                    <MudText>*If search func didn't return any value, keys can't open the dropdown.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(AutocompleteUsageExample)">
+                <AutocompleteUsageExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Progress">
+                <Description>
+                    <MudText>When fetching data from a remote datasource MudAutocomplete can visually indicate that it is awaiting results. Following settings are available:</MudText>
+                    <br />
+                    <MudText><CodeInline>ShowProgressIndicator</CodeInline>: show circular progress indicator.</MudText>
+                    <MudText><CodeInline>ProgressIndicatorTemplate</CodeInline>: replace the default circular progress indicator with a custom one.</MudText>
+                    <MudText><CodeInline>ProgressIndicatorInPopoverTemplate</CodeInline>: show a progress indicator inside the popover.</MudText>
+                    <MudText><CodeInline>ProgressIndicatorColor</CodeInline>: customize the color of the circular progress indicator.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(AutocompleteProgressExample)">
+                <AutocompleteProgressExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Strict Mode">
+                <Description>
+                    <MudText>
+                        After selecting an option from a MudAutocomplete, it may be desired to change the selection. By default, clicking a MudAutocomplete while a value is selected will pass the <CodeInline>Text</CodeInline> string to the <CodeInline>SearchFunc</CodeInline>.
+                        Setting the <CodeInline>Strict</CodeInline> option to false modifies this behavior and passes an empty string to the <CodeInline>SearchFunc</CodeInline> instead.
+                    </MudText>
+                    <MudAlert Severity="Severity.Info" Class="mt-2">
+                        You must either use records or define <CodeInline>GetHashCode</CodeInline> and <CodeInline>Equals</CodeInline> for <CodeInline>T</CodeInline>.
+                    </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(AutocompleteStrictFalseExample)">
+                <AutocompleteStrictFalseExample />
+            </SectionContent>
         </DocsPageSection>
 
 		<DocsPageSection>
-            <SectionHeader>
-                <Title>Validation</Title>
-                <Description>
-                    Below there are different examples of validation with the MudAutocomplete control. The validation uses an EditForm or a MudForm. The result and display will vary if the 
-                    <CodeInline Tag="true">CoerceValue</CodeInline> option is set to <CodeInline Tag="true">true</CodeInline>. But also if characters are typed into the control instead of a selection from the dropdown list.<br/>
-                    For more info on form validation check out <MudLink Href="/components/form">Form</MudLink>.
-                </Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
-                <AutocompleteValidationExample />
-            </SectionContent>
-            <SectionSource ShowCode="false" Code="AutocompleteValidationExample" GitHubFolderName="Autocomplete" />
-        </DocsPageSection>
+			<SectionHeader Title="Cancellation Token">
+				<Description>
+					<MudText>Autocomplete can cancel request if the user types new input</MudText>
+				</Description>
+			</SectionHeader>
+			<SectionContent ShowCode="false" Code="@nameof(AutocompleteCancellationTokenExample)">
+				<AutocompleteCancellationTokenExample />
+			</SectionContent>
+		</DocsPageSection>
 
     </DocsPageContent>
 </DocsPage>

@@ -1,0 +1,49 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Height="360px" Class="d-flex justify-space-around mud-width-full" Elevation="0">
+    <MudProgressLinear Vertical="true" Color="Color.Primary" Size="Size.Small" Indeterminate="true" />
+    <MudProgressLinear Vertical="true" Color="Color.Primary" Size="Size.Medium" Value="@Value" />
+    <MudProgressLinear Vertical="true" Color="Color.Primary" Size="Size.Medium" Value="25">
+        <MudText Typo="Typo.subtitle1" Color="Color.Dark"><b>25</b></MudText>
+    </MudProgressLinear>
+    <MudProgressLinear Vertical="true" Color="Color.Primary" Size="Size.Small" Buffer="true" Value="@Value" BufferValue="@BufferValue" />
+    <MudProgressLinear Vertical="true" Color="Color.Primary" Striped="true" Size="Size.Large" Value="@Value" />
+</MudPaper>
+
+@code {
+    private bool _disposed;
+
+    public int Value { get; set; }
+
+    public int BufferValue { get; set; }
+
+    public async Task SimulateProgressAsync()
+    {
+        Value = 5;
+        BufferValue = 10;
+
+        do
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            Value += 4;
+            BufferValue += 5;
+            StateHasChanged();
+            await Task.Delay(500);
+
+        } while (Value < 100);
+
+        await SimulateProgressAsync();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await SimulateProgressAsync();
+    }
+
+    public void Dispose() => _disposed = true;
+}

@@ -1,4 +1,9 @@
-﻿class MudWindow {
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+class MudWindow {
+
     copyToClipboard (text) {
         navigator.clipboard.writeText(text);
     }
@@ -7,6 +12,13 @@
         var element = document.getElementById(id);
         if (element) {
             element.className = css;
+        }
+    }
+
+    updateStyleProperty (elementId, propertyName, value) {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.style.setProperty(propertyName, value);
         }
     }
 
@@ -19,6 +31,11 @@
         window.open(args);
     }
 
-   
+    click (id) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.click();
+        }
+    }
 };
 window.mudWindow = new MudWindow();

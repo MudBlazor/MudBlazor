@@ -1,67 +1,116 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
-    /// Primitive component which allows rendering any HTML element we want
-    /// through the HtmlTag property
+    /// A primitive component that allows rendering any HTML element specified through the <see cref="HtmlTag"/> property.
     /// </summary>
+    /// <remarks>
+    /// Useful for creating custom elements with dynamic tag names.
+    /// </remarks>
     public class MudElement : MudComponentBase
     {
         /// <summary>
-        /// Child content
+        /// The content to be rendered inside the element.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Element.Misc)]
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// The HTML element that will be rendered in the root by the component
+        /// Defines the HTML tag that will be rendered at the root of this component.
         /// </summary>
-        [Parameter] public string HtmlTag { get; set; }
+        /// <remarks>
+        /// Default is <c>span</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Element.Misc)]
+        public string HtmlTag { get; set; } = "span";
+
         /// <summary>
-        /// The ElementReference to bind to.
-        /// Use like @bind-Ref="myRef"
+        /// The <see cref="ElementReference"/> to bind to.
         /// </summary>
-        [Parameter] public ElementReference? Ref { get; set; }
+        /// <remarks>
+        /// Use like <c>@bind-Ref="myRef"</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Element.Misc)]
+        public ElementReference? Ref { get; set; }
 
-        [Parameter] public EventCallback<ElementReference> RefChanged { get; set; }
+        /// <summary>
+        /// Callback invoked when the element reference changes.
+        /// </summary>
+        [Parameter]
+        public EventCallback<ElementReference> RefChanged { get; set; }
 
+        /// <summary>
+        /// Propagates click events beyond this element.
+        /// </summary>
+        /// <remarks>
+        /// Default is <c>true</c>, allowing propagation.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public bool ClickPropagation { get; set; } = true;
+
+        /// <summary>
+        /// Prevents the default action for the <c>onclick</c> event.
+        /// </summary>
+        /// <remarks>
+        /// Default is <c>false</c>, allowing default actions.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public bool PreventDefault { get; set; }
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
             base.BuildRenderTree(builder);
-            //Open
-            builder.OpenElement(0, HtmlTag);
 
-            //splatted attributes
-            builder.AddMultipleAttributes(1, UserAttributes);
-            //Class
-            builder.AddAttribute(2, "class", Class);
-            //Style
-            builder.AddAttribute(3, "style", Style);
+            // Initialize the sequence number.
+            // https://learn.microsoft.com/en-us/aspnet/core/blazor/advanced-scenarios.
+            var seq = 0;
 
-            // StopPropagation
-            //the order matters. This has to be before content is added
-            if (HtmlTag == "button")
-                builder.AddEventStopPropagationAttribute(5, "onclick", true);
+            // Open element.
+            builder.OpenElement(seq++, HtmlTag);
 
-            //Reference capture
+            // Splatted attributes.
+            foreach (var attribute in UserAttributes)
+            {
+                // Check if the attribute value is not null before adding it to the builder.
+                // This avoids adding null event handlers, such as `@onmouseenter=@(Open ? HandleEnter : null)`.
+                // This is useful because Blazor always adds the attribute value and creates an EventCallback in normal HTML elements.
+                if (attribute.Value is not null)
+                {
+                    builder.AddAttribute(seq++, attribute.Key, attribute.Value);
+                }
+            }
+
+            // Add class and style attributes.
+            builder.AddAttribute(seq++, "class", Class);
+            builder.AddAttribute(seq++, "style", Style);
+
+            // Add event attributes.
+            builder.AddEventStopPropagationAttribute(seq++, "onclick", !ClickPropagation);
+            builder.AddEventPreventDefaultAttribute(seq++, "onclick", PreventDefault);
+
+            // Capture the element reference if specified.
             if (Ref != null)
             {
-                builder.AddElementReferenceCapture(6, async capturedRef =>
+                builder.AddElementReferenceCapture(seq++, async capturedRef =>
                 {
                     Ref = capturedRef;
                     await RefChanged.InvokeAsync(Ref.Value);
                 });
             }
 
-            //Content
-            builder.AddContent(10, ChildContent);
+            // Add child content.
+            builder.AddContent(seq++, ChildContent);
 
-            //Close
+            // Close element.
             builder.CloseElement();
         }
     }

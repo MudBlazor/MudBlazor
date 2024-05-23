@@ -1,73 +1,121 @@
 ﻿@page "/components/checkbox"
 
 <DocsPage>
-    <DocsPageHeader Title="Checkbox" SubTitle="Checkboxes is a great way to allow the user to make a selection of choices from things like a list.">
+    <DocsPageHeader Title="Check Box" SubTitle="Checkboxes are a great way to allow the user to make a selection of choices from things like a list.">
         <Description>
             If you want to let the user turn a setting on or off on demand, a Switch component is recommended instead.
         </Description>
     </DocsPageHeader>
     <DocsPageContent>
+
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Basic checkboxes</Title>
+            <SectionHeader Title="Basic Checkboxes">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="@nameof(CheckboxBasicExample)">
                 <CheckboxBasicExample />
             </SectionContent>
-            <SectionSource Code="CheckboxBasicExample" GitHubFolderName="Checkbox" ></SectionSource>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Checkbox with label</Title>
+            <SectionHeader Title="Color">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="@nameof(CheckboxColorExample)">
+                <CheckboxColorExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Labels">
+                <Description>
+                    Text can be added using the <CodeInline>Label</CodeInline> property and its
+                    position can be specified using the <CodeInline>LabelPosition</CodeInline> property
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(CheckboxLabelExample)">
                 <CheckboxLabelExample />
             </SectionContent>
-            <SectionSource Code="CheckboxLabelExample" GitHubFolderName="Checkbox" ></SectionSource>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Indeterminate state</Title>
-                <Description>
-				When you use <CodeInline>T="bool?"</CodeInline> or bind the checkbox against a nullable bool it can have an indeterminate state when the value is <CodeInline>null</CodeInline>.
-				<p></p>
-				In addition, the different states when the checkbox is clicked are the following (with a starting <CodeInline>null</CodeInline> value):
-				<p></p>
-				Indeterminate, True, False, True, False...
-				<p></p>
-				It is not possible to obtain the Indeterminate state again. Except by resetting the value to <CodeInline>Null</CodeInline>. Or, by setting <CodeInline>TriState="true"</CodeInline>, you can get the Indeterminate state after the False state.
-			</Description>
-            </SectionHeader>
-            <SectionContent Outlined="true">
-                <CheckboxIndeterminateExample />
-            </SectionContent>
-            <SectionSource Code="CheckboxIndeterminateExample" GitHubFolderName="Checkbox"></SectionSource>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader>
-                <Title>Binding checkbox against different data types</Title>
+            <SectionHeader Title="Icons">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
-                <CheckboxConversionExample />
+            <SectionContent Code="@nameof(CheckboxIconExample)">
+                <CheckboxIconExample />
             </SectionContent>
-            <SectionSource Code="CheckboxConversionExample" GitHubFolderName="Switch" />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>ReadOnly mode</Title>
-                <Description>Set <CodeInline>ReadOnly="true"</CodeInline> will make the checkbox control stop listening to user inputs.</Description>
+            <SectionHeader Title="Dense">
+                <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
-                <CheckboxReadOnlyExample/>
+            <SectionContent Code="@nameof(CheckboxDenseExample)">
+                <CheckboxDenseExample />
             </SectionContent>
-            <SectionSource Code="CheckboxReadOnlyExample" GitHubFolderName="Checkbox" />
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Sizes">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(CheckboxSizeExample)">
+                <CheckboxSizeExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Indeterminate State">
+                <Description>
+                    When you use <CodeInline>T="bool?"</CodeInline> or bind the checkbox against a nullable bool it can have an indeterminate state when the value is <CodeInline>null</CodeInline>.
+                    <br />
+                    In addition, the different states when the checkbox is clicked are the following (with a starting <CodeInline>null</CodeInline> value):
+                    <br />
+                    Indeterminate, True, False, True, False...
+                    <br />
+                    It is not possible to obtain the Indeterminate state again. Except by resetting the value to <CodeInline>Null</CodeInline>. Or, by setting <CodeInline>TriState="true"</CodeInline>, you can get the Indeterminate state after the False state.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(CheckboxIndeterminateExample)">
+                <CheckboxIndeterminateExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Binding Checkbox Against Different Data Types">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent  Code="CheckboxConversionExample" ShowCode="false">
+                <CheckboxConversionExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="ReadOnly Mode">
+                <Description>Setting <CodeInline>ReadOnly="true"</CodeInline> will make the checkbox control stop listening to user input.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(CheckboxReadOnlyExample)" ShowCode="false" Block="true">
+                <CheckboxReadOnlyExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Keyboard Navigation">
+                <Description>
+                    <MudText>MudCheckBox accepts keys to keyboard navigation.</MudText>
+                    <br />
+                    <MudText><CodeInline>Space</CodeInline> key to toggle state true/false/(if TriState is true) indeterminate</MudText>
+                    <MudText><CodeInline>Delete</CodeInline> key to set UnChecked</MudText>
+                    <MudText><CodeInline>Enter</CodeInline> or <CodeInline>NumpadEnter</CodeInline> keys to set Checked</MudText>
+                    <MudText><CodeInline>Backspace</CodeInline> key to set indeterminate (only TriState is true)</MudText>
+                    <MudText>*Disabled or ReadOnly checkboxes cannot be changed by keys.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(CheckboxKeyboardNavigationExample)" ShowCode="false">
+                <CheckboxKeyboardNavigationExample />
+            </SectionContent>
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

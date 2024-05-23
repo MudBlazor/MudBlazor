@@ -1,0 +1,15 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTimePicker Label="12 hours" AmPm="true" @bind-Time="_time" />
+<MudTimePicker Label="24 hours" @bind-Time="_time" />
+<MudTimePicker Label="With action buttons">
+    <PickerActions>
+        <MudButton Class="mr-auto align-self-start" OnClick="@(() => context.ClearAsync())">Clear</MudButton>
+        <MudButton OnClick="@(() => context.CloseAsync(false))">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="@(() => context.CloseAsync())">Ok</MudButton>
+    </PickerActions>
+</MudTimePicker>
+
+@code{
+    private TimeSpan? _time = new TimeSpan(00, 45, 00);
+}

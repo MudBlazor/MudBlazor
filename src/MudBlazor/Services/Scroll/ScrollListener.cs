@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
-using MudBlazor.Services.Scroll;
 
 namespace MudBlazor
 {
-    public interface IScrollListener
+
+
+    public interface IScrollListener : IDisposable
     {
         /// <summary>
         /// The CSS selector to which the scroll event will be attached
@@ -19,7 +18,7 @@ namespace MudBlazor
         event EventHandler<ScrollEventArgs> OnScroll;
     }
 
-    internal class ScrollListener : IScrollListener, IDisposable
+    internal class ScrollListener : IScrollListener
     {
         private readonly IJSRuntime _js;
         private DotNetObjectReference<ScrollListener> _dotNetRef;
@@ -29,9 +28,16 @@ namespace MudBlazor
         /// </summary>
         public string Selector { get; set; } = null;
 
-        public ScrollListener(IJSRuntime js)
+        [DynamicDependency(nameof(RaiseOnScroll))]
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ScrollEventArgs))]
+        public ScrollListener(IJSRuntime js) : this(string.Empty, js)
+        {
+        }
+
+        public ScrollListener(string selector, IJSRuntime js)
         {
             _js = js;
+            Selector = selector;
         }
 
         private EventHandler<ScrollEventArgs> _onScroll;
@@ -46,11 +52,11 @@ namespace MudBlazor
         }
 
 
-        private void Subscribe(EventHandler<ScrollEventArgs> value)
+        private async void Subscribe(EventHandler<ScrollEventArgs> value)
         {
             if (_onScroll == null)
             {
-                Task.Run(async () => await Start());
+                await Start();
             }
             _onScroll += value;
         }
@@ -77,17 +83,17 @@ namespace MudBlazor
         /// <summary>
         /// Subscribe to scroll event in JS
         /// </summary>        
-        private async ValueTask Start()
+        private ValueTask<bool> Start()
         {
             _dotNetRef = DotNetObjectReference.Create(this);
-            await _js.InvokeVoidAsync
+            return _js.InvokeVoidAsyncWithErrorHandling
                 ("mudScrollListener.listenForScroll",
                            _dotNetRef,
                            Selector);
         }
 
         /// <summary>
-        /// Unsuscribe to scroll event in 
+        /// Unsubscribe to scroll event in 
         /// </summary>
         private async ValueTask Cancel()
         {

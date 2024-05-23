@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.Docs.Extensions
@@ -33,7 +29,7 @@ namespace MudBlazor.Docs.Extensions
             // get the absolute path with out the base path
             var currentUri = navMan.Uri.Remove(0, navMan.BaseUri.Length - 1);
             var secondElement = currentUri
-                .Split("/", StringSplitOptions.RemoveEmptyEntries)
+                .Split(new char[] { '/', '?' }, StringSplitOptions.RemoveEmptyEntries)
                 .ElementAtOrDefault(1);
             return secondElement;
         }

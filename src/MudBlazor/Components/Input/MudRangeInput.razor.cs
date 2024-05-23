@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 
 namespace MudBlazor
@@ -17,6 +18,13 @@ namespace MudBlazor
         protected string Classname => MudInputCssHelper.GetClassname(this,
             () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(PlaceholderStart) || !string.IsNullOrWhiteSpace(PlaceholderEnd));
 
+        /// <summary>
+        /// Type of the input element. It should be a valid HTML5 input type.
+        /// </summary>
+        [Parameter] public InputType InputType { get; set; } = InputType.Text;
+
+        internal override InputType GetInputType() => InputType;
+
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
 
         protected string AdornmentClassname => MudInputCssHelper.GetAdornmentClassname(this);
@@ -31,6 +39,25 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string PlaceholderEnd { get; set; }
 
+        protected bool IsClearable() => Clearable && Value != null;
+
+        protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
+        {
+            await SetTextAsync(string.Empty, updateValue: true);
+            await _elementReferenceStart.FocusAsync();
+            await OnClearButtonClick.InvokeAsync(e);
+        }
+
+        /// <summary>
+        /// Button click event for clear button. Called after text and value has been cleared.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
+
+        /// <summary>
+        /// Show clear button.
+        /// </summary>
+        [Parameter] public bool Clearable { get; set; }
+
         protected string InputTypeString => InputType.ToDescriptionString();
 
         /// <summary>
@@ -39,6 +66,11 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         private ElementReference _elementReferenceStart, _elementReferenceEnd;
+
+        /// <summary>
+        /// Custom separator icon, leave null for default.
+        /// </summary>
+        [Parameter] public string SeparatorIcon { get; set; } = Icons.Material.Filled.ArrowRightAlt;
 
         /// <summary>
         /// Focuses the start input of MudRangeInput
@@ -88,7 +120,7 @@ namespace MudBlazor
                 if (_textStart == value)
                     return;
                 _textStart = value;
-                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).AndForget();
+                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).CatchAndLog();
             }
         }
 
@@ -100,7 +132,7 @@ namespace MudBlazor
                 if (_textEnd == value)
                     return;
                 _textEnd = value;
-                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).AndForget();
+                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).CatchAndLog();
             }
         }
 

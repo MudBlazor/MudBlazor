@@ -6,11 +6,17 @@ namespace MudBlazor
     {
         [Description("bottom")]
         Bottom,
+        [Description("center")]
+        Center,
         [Description("top")]
         Top,
         [Description("left")]
         Left,
         [Description("right")]
-        Right
+        Right,
+        [Description("start")]
+        Start,
+        [Description("end")]
+        End
     }
 }

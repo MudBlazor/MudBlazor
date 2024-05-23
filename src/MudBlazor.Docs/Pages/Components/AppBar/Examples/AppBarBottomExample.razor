@@ -1,0 +1,35 @@
+﻿@layout IframeLayout
+@namespace MudBlazor.Docs.Examples
+@page "/iframe/docs/examples/appbar/bottom"
+
+<MudLayout>
+    <MudMainContent Class="pt-0">
+        <MudList T="string">
+            <MudListItem Text="App Bookmark Item 1" Icon="@Icons.Material.Filled.Bookmark" />
+            <MudListItem Text="App Bookmark Item 2" Icon="@Icons.Material.Filled.Bookmark" IconColor="Color.Primary" />
+            <MudListItem Text="App Bookmark Item 3" Icon="@Icons.Material.Filled.Bookmark" IconColor="Color.Secondary" />
+            <MudListItem Text="App Bookmark Item 4" Icon="@Icons.Material.Filled.Bookmark" IconColor="Color.Tertiary" />
+            <MudListItem Text="App Bookmark Item 5" Icon="@Icons.Material.Filled.Bookmark" IconColor="Color.Info" />
+            <MudListItem Text="App Bookmark Item 6" Icon="@Icons.Material.Filled.Bookmark" IconColor="Color.Success" />
+            <MudListItem Text="App Bookmark Item 7" Icon="@Icons.Material.Filled.Bookmark" IconColor="Color.Warning" />
+            <MudListItem Text="App Bookmark Item 8" Icon="@Icons.Material.Filled.Bookmark" IconColor="Color.Error" />
+            <MudListItem Text="App Bookmark Item 9" Icon="@Icons.Material.Filled.Bookmark" IconColor="Color.Dark" />
+        </MudList>
+    </MudMainContent>
+    <MudAppBar Bottom="true" Fixed="true" Color="Color.Primary" Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Material.Filled.FavoriteBorder" Color="Color.Inherit" Edge="Edge.End" />
+        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+    </MudAppBar>
+</MudLayout>
+
+
+@code{
+    bool open = false;
+
+    void ToggleDrawer()
+    {
+        open = !open;
+    }
+}

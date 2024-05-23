@@ -1,30 +1,20 @@
 ﻿#pragma warning disable BL0005 // Set parameter outside component
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
-using MudBlazor.UnitTests.TestComponents;
-using NUnit.Framework;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.UnitTests.TestComponents;
+using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class CarouselTests
+    public class CarouselTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         /// <summary>
         /// Default Carousel, with three pages.
         /// Testing if selection is sync with move commands.
@@ -32,14 +22,13 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task CarouselTest1()
         {
-            var comp = ctx.RenderComponent<CarouselTest>();
+            var comp = Context.RenderComponent<CarouselTest>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
             //// select elements needed for the test
             var carousel = comp.FindComponent<MudCarousel<object>>().Instance;
             //// validating some renders
             carousel.Should().NotBeNull();
-            comp.WaitForAssertion(()=>comp.FindAll("div.mud-carousel-item").Count.Should().Be(1));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-carousel-item").Count.Should().Be(1));
             comp.FindAll("div.fake-class-item1").Count.Should().Be(1);
             comp.FindAll("div.fake-class-item2").Count.Should().Be(0);
             comp.FindAll("div.fake-class-item3").Count.Should().Be(0);
@@ -154,9 +143,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CarouselTest_RenderingOptions()
         {
-            var comp = ctx.RenderComponent<MudCarousel<object>>();
+            var comp = Context.RenderComponent<MudCarousel<object>>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(2); //left + right
             // adding some pages
             comp.Instance.Items.Add(new());
@@ -167,18 +155,18 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-icon-button").Count.Should().Be(5); //left + right + 3 items
             comp.SetParam(p => p.ShowArrows, false);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(3);
-            comp.SetParam(p => p.ShowDelimiters, false);
+            comp.SetParam(p => p.ShowBullets, false);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(0);
             comp.SetParam(p => p.ShowArrows, true);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(2);
-            comp.SetParam(p => p.ShowDelimiters, true);
+            comp.SetParam(p => p.ShowBullets, true);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(5);
             // Custom classes for navigation elements
-            comp.SetParam(p => p.DelimitersClass, "fake-delimiter-class");
+            comp.SetParam(p => p.BulletsClass, "fake-delimiter-class");
             comp.SetParam(p => p.NavigationButtonsClass, "fake-navigation-class");
             comp.FindAll("button.fake-delimiter-class").Count.Should().Be(3);
             comp.FindAll("button.fake-navigation-class").Count.Should().Be(2);
-            comp.SetParam(p => p.DelimitersClass, null);
+            comp.SetParam(p => p.BulletsClass, null);
             comp.SetParam(p => p.NavigationButtonsClass, null);
             comp.FindAll("button.fake-delimiter-class").Count.Should().Be(0);
             comp.FindAll("button.fake-navigation-class").Count.Should().Be(0);
@@ -187,46 +175,133 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Testing autoCycle
         /// </summary>
-        [Ignore("This test will not reliably run on the build server")]
         [Test]
         public async Task CarouselTest_AutoCycle()
         {
-            int interval = 250;
-            var comp = ctx.RenderComponent<MudCarousel<object>>();
+            var comp = Context.RenderComponent<MudCarousel<object>>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
-            /// adding some pages
+            // adding some pages
             comp.Instance.Items.Add(new());
             comp.Instance.Items.Add(new());
             comp.Instance.Items.Add(new());
-            comp.SetParam(p => p.AutoCycleTime, TimeSpan.FromMilliseconds(interval));
+
             comp.SetParam(p => p.AutoCycle, true);
             await comp.InvokeAsync(() => comp.Instance.MoveTo(0));
             comp.Render();
             //// playing with autoCycle
-            await Task.Delay(interval + 50); // 15ms just to ensure that transition runs before of Task.Delay() ends
-            comp.Instance.SelectedIndex.Should().Be(1);
-            comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[1]);
-            await Task.Delay(interval + 50);
-            comp.Instance.SelectedIndex.Should().Be(2);
-            comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[2]);
-            await Task.Delay(interval + 50);
-            comp.Instance.SelectedIndex.Should().Be(0);
-            comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[0]);
-            ///changing internal
-            interval = 150;
-            comp.SetParam(p => p.AutoCycleTime, TimeSpan.FromMilliseconds(interval));
-            await Task.Delay(interval + 50);
-            comp.Instance.SelectedIndex.Should().Be(1);
-            comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[1]);
-            await Task.Delay(interval + 40);
-            comp.Instance.SelectedIndex.Should().Be(2);
-            comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[2]);
-            await Task.Delay(interval + 40);
-            comp.Instance.SelectedIndex.Should().Be(0);
-            comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[0]);
+            for (var interval = 150; interval <= 300; interval += 150)
+            {
+                comp.SetParam(p => p.AutoCycleTime, TimeSpan.FromMilliseconds(interval));
+                await Task.Delay(interval);
+                comp.WaitForAssertion(() => comp.Instance.SelectedIndex.Should().Be(1), TimeSpan.FromMilliseconds(3000));
+                comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[1]);
+                await Task.Delay(interval);
+                comp.WaitForAssertion(() => comp.Instance.SelectedIndex.Should().Be(2), TimeSpan.FromMilliseconds(3000));
+                comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[2]);
+                await Task.Delay(interval);
+                comp.WaitForAssertion(() => comp.Instance.SelectedIndex.Should().Be(0), TimeSpan.FromMilliseconds(3000));
+                comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[0]);
+            }
         }
 
+        /// <summary>
+        /// Testing Transition With SelectedIndex
+        /// </summary>
+        [Test]
+        public void CarouselTest_SelectedIndexTransition()
+        {
+            var comp = Context.RenderComponent<CarouselTest>();
+
+            // No change
+            comp.Instance.SelectedIndex = 0;
+            comp.Render();
+            comp.Find(".mud-carousel-transition-slide-next-enter.fake-class-item1");
+            comp.FindAll(".mud-carousel-item").Should().HaveCount(1);
+
+            // Slide next
+            comp.Instance.SelectedIndex = 2;
+            comp.Render();
+            comp.Find(".mud-carousel-transition-slide-next-exit.fake-class-item1");
+            comp.Find(".mud-carousel-transition-slide-next-enter.fake-class-item3");
+
+            // Slide prev
+            comp.Instance.SelectedIndex = 0;
+            comp.Render();
+            comp.Find(".mud-carousel-transition-slide-prev-exit.fake-class-item3");
+            comp.Find(".mud-carousel-transition-slide-prev-enter.fake-class-item1");
+
+        }
+
+        /// <summary>
+        /// Testing when DisableSwipeGesture
+        /// </summary>
+        [Test]
+        public async Task CarouselTest_DisableSwipeGesture()
+        {
+            var comp = Context.RenderComponent<MudCarousel<object>>();
+
+            //Add some pages
+            comp.Instance.Items.Add(new());
+            comp.Instance.Items.Add(new());
+            comp.Instance.Items.Add(new());
+
+            //Move the SelectedIndex from -1 to 0
+            await comp.InvokeAsync(() => comp.Instance.MoveTo(0));
+
+            var mudSwipeArea = comp.FindComponent<MudSwipeArea>().Instance;
+
+            var initialTouchPoints = new TouchPoint[]
+            {
+                new() {ClientX = 200, ClientY = 0},
+            };
+            var touchPoints = new TouchPoint[]
+            {
+                new() {ClientX = 100, ClientY = 0},
+            };
+
+            comp.Instance.EnableSwipeGesture = false;
+            await comp.InvokeAsync(() => mudSwipeArea.OnTouchStart(new TouchEventArgs() { Touches = initialTouchPoints }));
+            await comp.InvokeAsync(async () => await mudSwipeArea.OnTouchEnd(new TouchEventArgs() { ChangedTouches = touchPoints }));
+            comp.Instance.SelectedIndex.Should().Be(0);
+
+            comp.Instance.EnableSwipeGesture = true;
+            await comp.InvokeAsync(() => mudSwipeArea.OnTouchStart(new TouchEventArgs() { Touches = initialTouchPoints }));
+            await comp.InvokeAsync(async () => await mudSwipeArea.OnTouchEnd(new TouchEventArgs() { ChangedTouches = touchPoints }));
+            comp.Instance.SelectedIndex.Should().Be(1);
+        }
+
+        /// <summary>
+        /// Testing DataBinding with Add and Remove from data source (MVVM, MVC and another patterns)
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public void CarouselTest_DataBinding()
+        {
+            var comp = Context.RenderComponent<CarouselBindingTest>();
+            // print the generated html
+            //// select elements needed for the test
+            var carousel = comp.FindComponent<MudCarousel<string>>().Instance;
+            //// validating some renders
+            carousel.Should().NotBeNull();
+            carousel.MoveTo(0);
+            //// working with ItemsSource
+            var source = carousel.ItemsSource;
+            source.Count().Should().Be(5);
+            carousel.Items.Count.Should().Be(5);
+            carousel.SelectedIndex.Should().Be(0);
+            //// adding item
+            ((IList<string>)source).Add("Item added by hand");
+            source.Count().Should().Be(6);
+            carousel.Items.Count.Should().Be(5); // should call StateHasChanged() or Task.Delay(1)
+            comp.Render();
+            carousel.Items.Count.Should().Be(6);
+            //// removing item
+            ((IList<string>)source).RemoveAt(source.Count() - 1);
+            source.Count().Should().Be(5);
+            carousel.Items.Count.Should().Be(6); // should call StateHasChanged() or Task.Delay(1)
+            comp.Render();
+            carousel.Items.Count.Should().Be(5);
+        }
 
     }
 }

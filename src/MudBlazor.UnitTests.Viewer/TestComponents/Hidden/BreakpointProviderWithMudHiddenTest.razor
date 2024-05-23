@@ -1,0 +1,24 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudBreakpointProvider OnBreakpointChanged="@( (x) => BreakpointChangedHistory.Add(x))">
+    <MudHidden Breakpoint="@Breakpoint">
+        <MudText>MudHidden content 1</MudText>
+    </MudHidden>
+    <MudHidden Breakpoint="@Breakpoint">
+        <MudText>MudHidden content 2</MudText>
+    </MudHidden>
+    <MudHidden Breakpoint="@Breakpoint">
+        <MudText>MudHidden content 3</MudText>
+    </MudHidden>
+    <MudHidden Breakpoint="@Breakpoint">
+        <MudText>MudHidden content 4</MudText>
+    </MudHidden>
+</MudBreakpointProvider>
+
+@code {
+
+    [Parameter]
+    public Breakpoint Breakpoint { get; set; }
+
+    public List<Breakpoint> BreakpointChangedHistory { get; set; } = new();
+}

@@ -2,33 +2,33 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudNavLink : MudBaseSelectItem
     {
         protected string Classname =>
-        new CssBuilder("mud-nav-item")
-          .AddClass($"mud-ripple", !DisableRipple && !Disabled)
-          .AddClass(Class)
-          .Build();
+            new CssBuilder("mud-nav-item")
+                .AddClass(Class)
+                .Build();
 
         protected string LinkClassname =>
-        new CssBuilder("mud-nav-link")
-          .AddClass($"mud-nav-link-disabled", Disabled)
-          .Build();
+            new CssBuilder("mud-nav-link")
+                .AddClass($"mud-nav-link-disabled", Disabled)
+                .AddClass($"mud-ripple", Ripple && !Disabled)
+                .Build();
 
         protected string IconClassname =>
-        new CssBuilder("mud-nav-link-icon")
-          .AddClass($"mud-nav-link-icon-default", IconColor == Color.Default)
-          .Build();
+            new CssBuilder("mud-nav-link-icon")
+                .AddClass($"mud-nav-link-icon-default", IconColor == Color.Default)
+                .Build();
 
-        private Dictionary<string, object> Attributes
+        protected Dictionary<string, object?> Attributes
         {
-            get => Disabled ? null : new Dictionary<string, object>()
+            get => Disabled ? new Dictionary<string, object?>() : new Dictionary<string, object?>
             {
                 { "href", Href },
                 { "target", Target },
@@ -36,37 +36,48 @@ namespace MudBlazor
             };
         }
 
+        protected int TabIndex => Disabled || NavigationContext is { Disabled: true } or { Expanded: false } ? -1 : 0;
+
+        [CascadingParameter]
+        private INavigationEventReceiver? NavigationEventReceiver { get; set; }
+
+        [CascadingParameter]
+        private NavigationContext? NavigationContext { get; set; }
+
         /// <summary>
         /// Icon to use if set.
         /// </summary>
-        [Parameter] public string Icon { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.Behavior)]
+        public string? Icon { get; set; }
 
         /// <summary>
         /// The color of the icon. It supports the theme colors, default value uses the themes drawer icon color.
         /// </summary>
-        [Parameter] public Color IconColor { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.Appearance)]
+        public Color IconColor { get; set; } = Color.Default;
 
-        [Parameter] public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.Behavior)]
+        public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
 
-        [Parameter] public string Target { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.ClickAction)]
+        public string? Target { get; set; }
 
-        [CascadingParameter] INavigationEventReceiver NavigationEventReceiver { get; set; }
+        /// <summary>
+        /// User class names when active, separated by space.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ComponentBase.Common)]
+        public string ActiveClass { get; set; } = "active";
 
-        private Task HandleNavigation()
+        protected Task HandleNavigation()
         {
             if (!Disabled && NavigationEventReceiver != null)
             {
                 return NavigationEventReceiver.OnNavigation();
-            }
-
-            return Task.CompletedTask;
-        }
-
-        private Task HandleClick(MouseEventArgs args)
-        {
-            if (!Disabled)
-            {
-                return OnClick.InvokeAsync(args);
             }
 
             return Task.CompletedTask;

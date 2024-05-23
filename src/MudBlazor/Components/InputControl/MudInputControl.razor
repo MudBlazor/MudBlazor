@@ -1,34 +1,43 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-
-
-
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
     <div class="mud-input-control-input-container">
         @InputContent
-        @if (!String.IsNullOrEmpty(Label))
+        @if (!string.IsNullOrEmpty(Label))
         {
-            <MudInputLabel Class="mud-input-label-inputcontrol" Variant="@Variant" Disabled=@Disabled Error="@Error" Margin="@Margin">
+            <MudInputLabel Class="mud-input-label-inputcontrol" Variant="@Variant" Disabled=@Disabled Error="@Error" 
+                           Margin="@Margin" ForId="@ForId">
                 @Label
             </MudInputLabel>
         }
     </div>
-    @if (Error || !String.IsNullOrEmpty(HelperText))
+    @if (Error || !string.IsNullOrEmpty(HelperText) || !string.IsNullOrEmpty(CounterText))
     {
-        <div class="mud-input-control-helper-container">
-            <p class="@HelperClass">
-                @if (Error)
-                {
-                    @ErrorText
-                }
-                else if (!String.IsNullOrEmpty(HelperText))
-                {
-                    @HelperText
-                }
-            </p>
+        <div class="@HelperContainer">
+            <span class="@HelperClass">
+                <div class="d-flex">
+                    @if (Error)
+                    {
+                        <div class="me-auto" id="@ErrorId">
+                            @ErrorText
+                        </div>
+                    }
+                    else if (!string.IsNullOrEmpty(HelperText))
+                    {
+                        <div class="me-auto">
+                            @HelperText
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(CounterText))
+                    {
+                        <div class="ms-auto">
+                            @CounterText
+                        </div>            
+                    }
+                </div>
+            </span>
         </div>
     }
     @ChildContent
 </div>
-

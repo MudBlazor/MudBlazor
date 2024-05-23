@@ -1,0 +1,22 @@
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudMenu AriaLabel="@AriaLabel"
+         Icon="@Icon"
+         Label="@Label" />
+
+<MudPopoverProvider />
+
+@code {
+    #nullable enable
+
+    public static string __description__ = "Covers various accessibility tests for MudMenu.";
+
+    [Parameter]
+    public string? AriaLabel { get; set; }
+
+    [Parameter]
+    public string? Icon { get; set; }
+
+    [Parameter]
+    public string? Label { get; set; }
+}

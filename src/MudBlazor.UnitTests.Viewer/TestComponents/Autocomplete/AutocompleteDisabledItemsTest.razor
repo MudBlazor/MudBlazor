@@ -1,0 +1,45 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
+
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudAutocomplete @bind-Value="value" SearchFunc="@Search" ItemDisabledFunc="@(s => s?.ToLower().Contains("o") == true)" Label="DisabledItemsTest" MaxItems="25">
+    <ItemTemplate>
+        @context
+    </ItemTemplate>
+    <ItemDisabledTemplate>
+        @context
+        <MudText Typo="Typo.subtitle2">Disabled as the state contains the letter 'o'</MudText>
+    </ItemDisabledTemplate>
+</MudAutocomplete>
+
+@code
+{
+    public static string __description__ = "The Autocomplete should show states containing 'o' as disabled. They should not be selectable.";
+
+    string value = null;
+
+    private string[] states =
+    {
+        "Alabama", "Alaska", "American Samoa", "Arizona",
+        "Arkansas", "California", "Colorado", "Connecticut",
+        "Delaware", "District of Columbia", "Federated States of Micronesia",
+        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
+        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+        "Louisiana", "Maine", "Marshall Islands", "Maryland",
+        "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+        "Missouri", "Montana", "Nebraska", "Nevada",
+        "New Hampshire", "New Jersey", "New Mexico", "New York",
+        "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
+        "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
+        "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
+        "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming",
+    };
+
+    private Task<IEnumerable<string>> Search(string value, CancellationToken token)
+    {
+        var result = string.IsNullOrEmpty(value) ? states : states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        return Task.FromResult(result);
+    }
+}

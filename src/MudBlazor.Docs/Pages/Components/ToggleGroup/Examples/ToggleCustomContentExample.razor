@@ -1,0 +1,39 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudToggleGroup  Class="mud-width-full" T="string" SelectedClass="black white-text">
+    <MudToggleItem Value="@("Basic Edition")">
+        <div class="mud-width-full mud-height-full">
+            <div class="d-flex align-center justify-space-between flex-wrap">
+                <MudText Class="ellipsis">Indie Developer</MudText>
+                <MudChip Color="@(context ? Color.Success : Color.Primary)" Icon="@(context ? Icons.Material.Filled.Check : "")">Basic</MudChip>
+            </div>
+            <MudText Typo="Typo.subtitle2">Perfect for lone wolves</MudText>
+        </div>
+    </MudToggleItem>
+    <MudToggleItem Value="@("Pro Edition")">
+        <div class="mud-width-full mud-height-full">
+            <div class="d-flex align-center justify-space-between flex-wrap">
+                <MudText Class="ellipsis">Small Team</MudText>
+                <MudChip Color="@(context ? Color.Success : Color.Primary)" Icon="@(context ? Icons.Material.Filled.Check : "")">Pro</MudChip>
+            </div>
+            <MudText Typo="Typo.subtitle2">Up to five devs and two interns</MudText>
+        </div>
+    </MudToggleItem>
+    <MudToggleItem Value="@("Enterprise Edition")">
+        <div class="mud-width-full mud-height-full">
+            <div class="d-flex align-center justify-space-between flex-wrap">
+                <MudText Class="ellipsis">Corporation</MudText>
+                <MudChip Color="@(context ? Color.Success : Color.Primary)" Icon="@(context ? Icons.Material.Filled.Check : "")">Enterprise</MudChip>
+            </div>
+            <MudText Typo="Typo.subtitle2">Unlimited edition</MudText>
+        </div>
+    </MudToggleItem>
+</MudToggleGroup>
+
+<style>
+    .ellipsis {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis
+    }
+</style>

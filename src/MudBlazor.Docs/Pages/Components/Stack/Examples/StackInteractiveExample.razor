@@ -1,0 +1,53 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Outlined="true" Class="border-dashed">
+    <MudStack Justify="@justify" AlignItems="@align" StretchItems="@stretch" Row="@row" Reverse="@reverse" Spacing="@spacing" Style="height:300px;">
+        <MudPaper Class="py-1 px-3 mud-theme-primary">Item 1</MudPaper>
+        <MudPaper Class="py-3 px-3 mud-theme-primary">Item 2</MudPaper>
+        <MudPaper Class="py-5 px-3 mud-theme-primary">Item 3</MudPaper>
+    </MudStack>
+</MudPaper>
+
+<MudStack Row="true" AlignItems="AlignItems.Center">
+    <MudSwitch @bind-Value="row" Label="Row" Color="Color.Primary" />
+    <MudSwitch @bind-Value="reverse" Label="Reverse" Color="Color.Primary" />
+    <MudText>Spacing:</MudText>
+    <MudSlider @bind-Value="spacing" Min="0" Max="16"/>
+</MudStack>
+
+<MudStack>
+    <MudChipSet @bind-SelectedValue="@justify" CheckMark>
+        <MudChip Value="Justify.FlexStart" Text="Justify Start" SelectedColor="Color.Primary" Variant="Variant.Text" />
+        <MudChip Value="Justify.Center" Text="Justify Center" SelectedColor="Color.Primary" Variant="Variant.Text" Default="true" />
+        <MudChip Value="Justify.FlexEnd" Text="Justify End" SelectedColor="Color.Primary" Variant="Variant.Text" />
+        <MudChip Value="Justify.SpaceAround" Text="Justify Space Around" SelectedColor="Color.Primary" Variant="Variant.Text" />
+        <MudChip Value="Justify.SpaceBetween" Text="Justify Space Between" SelectedColor="Color.Primary" Variant="Variant.Text" />
+        <MudChip Value="Justify.SpaceEvenly" Text="Justify Space Evenly" SelectedColor="Color.Primary" Variant="Variant.Text" />
+    </MudChipSet>
+
+    <MudChipSet @bind-SelectedValue="@align" CheckMark>
+        <MudChip Value="AlignItems.Start" Text="Align Start" SelectedColor="Color.Secondary" Variant="Variant.Text" />
+        <MudChip Value="AlignItems.Center" Text="Align Center" SelectedColor="Color.Secondary" Variant="Variant.Text" Default="true" />
+        <MudChip Value="AlignItems.End" Text="Align End" SelectedColor="Color.Secondary" Variant="Variant.Text" />
+        <MudChip Value="AlignItems.Stretch" Text="Align Stretch" SelectedColor="Color.Secondary" Variant="Variant.Text" />
+        <MudChip Value="AlignItems.Baseline" Text="Align Baseline" SelectedColor="Color.Secondary" Variant="Variant.Text" />
+    </MudChipSet>
+
+    <MudChipSet @bind-SelectedValue="@stretch" CheckMark>
+        <MudChip Value="StretchItems.None" Text="Do Not Stretch" SelectedColor="Color.Tertiary" Variant="Variant.Text" Default="true" />
+        <MudChip Value="StretchItems.Start" Text="Stretch First" SelectedColor="Color.Tertiary" Variant="Variant.Text" />
+        <MudChip Value="StretchItems.End" Text="Stretch Last" SelectedColor="Color.Tertiary" Variant="Variant.Text" />
+        <MudChip Value="StretchItems.StartAndEnd" Text="Stretch First and Last" SelectedColor="Color.Tertiary" Variant="Variant.Text" />
+        <MudChip Value="StretchItems.Middle" Text="Stretch Middle" SelectedColor="Color.Tertiary" Variant="Variant.Text" />
+        <MudChip Value="StretchItems.All" Text="Stretch All" SelectedColor="Color.Tertiary" Variant="Variant.Text" />
+    </MudChipSet>
+</MudStack>
+
+@code {
+    Justify justify = Justify.Center;
+    AlignItems align = AlignItems.Center;
+    StretchItems stretch = StretchItems.None;
+    bool row = false;
+    bool reverse = false;
+    int spacing = 3;
+}

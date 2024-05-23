@@ -1,28 +1,11 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudGrid>
-	<MudItem xs="12" sm="6" md="4">
-		<MudNumericField @bind-Value="Amount" Label="Amount" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" HideSpinButtons="true" />
-	</MudItem>
-	<MudItem xs="12" sm="6" md="4">
-		<MudNumericField @bind-Value="Amount" Label="Amount" Variant="Variant.Filled" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" HideSpinButtons="true" />
-	</MudItem>
-	<MudItem xs="12" sm="6" md="4">
-		<MudNumericField @bind-Value="Amount" Label="Amount" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" HideSpinButtons="true" />
-	</MudItem>
-	<MudItem xs="12" sm="6" md="4">
-		<MudNumericField @bind-Value="Weight" HelperText="Weight" Variant="Variant.Text" Adornment="Adornment.End" AdornmentText="Kg" HideSpinButtons="true" />
-	</MudItem>
-	<MudItem xs="12" sm="6" md="4">
-		<MudNumericField @bind-Value="Weight" HelperText="Weight" Variant="Variant.Filled" Adornment="Adornment.End" AdornmentText="Kg" HideSpinButtons="true" />
-	</MudItem>
-	<MudItem xs="12" sm="6" md="4">
-		<MudNumericField @bind-Value="Weight" HelperText="Weight" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentText="Kg" HideSpinButtons="true" />
-	</MudItem>
-</MudGrid>
-
+<MudNumericField HideSpinButtons="true" @bind-Value="IntValue" Label="Standard" Variant="Variant.Text" Min="0" Max="10" />
+<MudNumericField HideSpinButtons="true" @bind-Value="DoubleValue" Label="Filled" Variant="Variant.Filled" Min="0.0" />
+<MudNumericField HideSpinButtons="true" @bind-Value="DecimalValue" Label="Outlined" Variant="Variant.Outlined" Step=".2M" />
 
 @code {
-	public decimal? Amount { get; set; }
-	public float? Weight { get; set; }
+    public int IntValue { get; set; }
+    public double DoubleValue { get; set; }
+    public decimal DecimalValue { get; set; }
 }

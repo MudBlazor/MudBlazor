@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
+<MudPopoverProvider></MudPopoverProvider>
+
+<div class="popoverparent">
+    <p>Some Text</p>
+    <MudPopover @ref="_popover" Open="_open">
+        <MudText>Popover content</MudText>
+    </MudPopover>
+</div>
+
+@code {
+    public static string __description__ = "Duplicate MudPopoverProviders should throw";
+    private MudPopover _popover;
+
+    private bool _open;
+
+    public async Task Open()
+    {
+        _open = true;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public async Task Close()
+    {
+        _open = false;
+        await InvokeAsync(StateHasChanged);
+    }
+}

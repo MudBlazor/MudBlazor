@@ -3,6 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
@@ -14,13 +16,15 @@ namespace MudBlazor
 
         event Action OnSnackbarsUpdated;
 
-        Snackbar Add(string message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null);
-
-        [Obsolete]
-        Snackbar AddNew(Severity severity, string message, Action<SnackbarOptions> configure);
+        Snackbar Add(string message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null, string key = "");
+        Snackbar Add(MarkupString message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null, string key = "");
+        Snackbar Add(RenderFragment message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null, string key = "");
+        Snackbar Add<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(Dictionary<string, object> componentParameters = null, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null, string key = "") where T : IComponent;
 
         void Clear();
 
         void Remove(Snackbar snackbar);
+
+        void RemoveByKey(string key);
     }
 }

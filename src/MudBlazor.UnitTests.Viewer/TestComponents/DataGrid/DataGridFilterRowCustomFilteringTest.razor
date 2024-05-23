@@ -1,0 +1,45 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+@*<MudDataGrid Items="@_items" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" Bordered="true">
+    <Columns>
+        <Column T="Model" Field="@nameof(Model.Name)" />
+        <Column T="Model" Field="@nameof(Model.Age)" />
+        <Column T="Model" Field="@nameof(Model.Status)" />
+        <Column T="Model" Field="@nameof(Model.Hired)">
+            <FilterTemplate>
+                <MudSwitch T="bool" Color="@Color.Primary" Value="@_filterHired" ValueChanged="@((value) => ApplyFilter(value, context))"></MudSwitch>
+            </FilterTemplate>
+        </Column>
+        <Column T="Model" Field="@nameof(Model.HiredOn)" />
+    </Columns>
+</MudDataGrid>*@
+
+@code {
+    public record Model (string Name, int? Age, Severity? Status, bool? Hired, DateTime? HiredOn);
+
+    private IEnumerable<Model> _items = new List<Model>()
+    {
+        new Model("Sam", 56, Severity.Normal, false, null), 
+        new Model("Alicia", 54, Severity.Info, null, null), 
+        new Model("Ira", 27, Severity.Success, true, new DateTime(2011, 1, 2)),
+        new Model("John", 32, Severity.Warning, false, null)
+    };
+
+    bool _filterHired;
+    FilterDefinition<Model> _filterDefinition = new FilterDefinition<Model>
+    {
+        //Field = nameof(Model.Hired),
+        Operator = FilterOperator.Boolean.Is,
+        Value = true
+    };
+
+    private async Task ApplyFilterAsync(bool value, FilterContext<Model> context)
+    {
+        _filterHired = value;
+
+        if (_filterHired)
+            await context.Actions.ApplyFilterAsync(_filterDefinition);
+        else
+            await context.Actions.ClearFilterAsync(_filterDefinition);
+    }
+}

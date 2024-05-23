@@ -1,6 +1,7 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
 
-<MudTable ServerData="@(new Func<TableState, Task<TableData<int>>>(ServerReload))">
+<MudTable ServerData="ServerReload">
     <HeaderContent>
         <MudTh><MudTableSortLabel SortLabel="No." T="int">Nr</MudTableSortLabel></MudTh>
     </HeaderContent>
@@ -20,7 +21,7 @@
     /// <summary>
     /// Here we simulate getting the paged, filtered and ordered data from the server
     /// </summary>
-    private async Task<TableData<int>> ServerReload(TableState state)
+    private async Task<TableData<int>> ServerReload(TableState state, CancellationToken token)
     {
         IEnumerable<int> data = new List<int>() { 1,2,3 };
         totalItems = data.Count();

@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
@@ -7,75 +6,138 @@ using static System.String;
 
 namespace MudBlazor
 {
+#nullable enable
+    /// <summary>
+    /// Represents a base class for designing button components.
+    /// </summary>
     public abstract class MudBaseButton : MudComponentBase
     {
         /// <summary>
-        /// Potential activation target for this button. This enables RenderFragments with user-defined
-        /// buttons which will automatically activate the intended functionality. 
+        /// The custom activation behavior.
         /// </summary>
-        [CascadingParameter] protected IActivatable Activateable { get; set; }
+        /// <remarks>
+        /// Default to <c>null</c>.  This property is used to implement a custom behavior beyond a basic button click.  The activation will occur during the <see cref="OnClick"/> event.
+        /// </remarks>
+        [CascadingParameter]
+        protected IActivatable? Activatable { get; set; }
+
+        [CascadingParameter(Name = "ParentDisabled")]
+        private bool ParentDisabled { get; set; }
 
         /// <summary>
-        /// The HTML element that will be rendered in the root by the component
-        /// By default, is a button
+        /// The HTML tag rendered for this component.
         /// </summary>
-        [Parameter] public string HtmlTag { get; set; } = "button";
+        /// <remarks>
+        /// Defaults to <c>button</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.ClickAction)]
+        public string HtmlTag { get; set; } = "button";
 
         /// <summary>
-        /// The button Type (Button, Submit, Refresh)
+        /// The type of button.
         /// </summary>
-        [Parameter] public ButtonType ButtonType { get; set; }
+        /// <remarks>
+        /// Defaults to <c>Button</c>. Other values are <c>Submit</c> to submit a form, and <c>Reset</c> to clear a form.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.ClickAction)]
+        public ButtonType ButtonType { get; set; }
 
         /// <summary>
-        /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where
+        /// The URL to navigate to when the button is clicked.
         /// </summary>
-        [Parameter] public string Link { get; set; }
+        /// <remarks>
+        /// Defaults to <c>null</c>. When clicked, the browser will navigate to this URL.  Use the <see cref="Target"/> property to target a specific tab.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.ClickAction)]
+        public string? Href { get; set; }
 
         /// <summary>
-        /// The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
+        /// The browser tab/window opened when a click occurs and <see cref="Href"/> is set.
         /// </summary>
-        [Parameter] public string Target { get; set; }
+        /// <remarks>
+        /// Defaults to <c>null</c>. This property allows navigation to open a new tab/window or to reuse a specific tab.  Possible values are <c>_blank</c>, <c>_self</c>, <c>_parent</c>, <c>_top</c>, <c>noopener</c>, or the name of an <c>iframe</c> element.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.ClickAction)]
+        public string? Target { get; set; }
 
         /// <summary>
-        /// If true, the button will be disabled.
+        /// The relationship between the current document and the linked document when <see cref="Href"/> is set.
         /// </summary>
-        [Parameter] public bool Disabled { get; set; }
+        /// <remarks>
+        /// This property is typically used by web crawlers to get more information about a link.  Common values can be found here: <see href="https://www.w3schools.com/tags/att_a_rel.asp" />
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.ClickAction)]
+        public string? Rel { get; set; }
 
         /// <summary>
-        /// If true, no drop-shadow will be used.
+        /// Allows the user to interact with this button.
         /// </summary>
-        [Parameter] public bool DisableElevation { get; set; }
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public bool Disabled { get; set; }
 
         /// <summary>
-        /// If true, disables ripple effect.
+        /// The title of this button.
         /// </summary>
-        [Parameter] public bool DisableRipple { get; set; }
+        /// <remarks>
+        /// Defaults to <c>null</c>.  This property is typically used to improve accessibility.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public string? Title { get; set; }
 
         /// <summary>
-        /// Command executed when the user clicks on an element.
+        /// Allows the click event to bubble up to the parent component.
         /// </summary>
-        [Parameter] public ICommand Command { get; set; }
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public bool ClickPropagation { get; set; }
 
         /// <summary>
-        /// Command parameter.
+        /// Displays a shadow.
         /// </summary>
-        [Parameter] public object CommandParameter { get; set; }
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public bool DropShadow { get; set; } = true;
 
         /// <summary>
-        /// Button click event.
+        /// Shows a ripple effect when the user clicks the button.
         /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public bool Ripple { get; set; } = true;
 
-        protected async Task OnClickHandler(MouseEventArgs ev)
+        /// <summary>
+        /// Occurs when this button has been clicked.
+        /// </summary>
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+        protected bool GetDisabledState() => Disabled || ParentDisabled;
+
+        protected virtual async Task OnClickHandler(MouseEventArgs ev)
         {
-            if (Disabled)
+            if (GetDisabledState())
                 return;
             await OnClick.InvokeAsync(ev);
-            if (Command?.CanExecute(CommandParameter) ?? false)
-            {
-                Command.Execute(CommandParameter);
-            }
-            Activateable?.Activate(this, ev);
+            Activatable?.Activate(this, ev);
         }
 
         protected override void OnInitialized()
@@ -89,19 +151,19 @@ namespace MudBlazor
             SetDefaultValues();
         }
 
-        //Set the default value for HtmlTag, Link and Target 
+        //Set the default value for HtmlTag, Href and Target
         private void SetDefaultValues()
         {
-            if (Disabled)
+            if (GetDisabledState())
             {
                 HtmlTag = "button";
-                Link = null;
+                Href = null;
                 Target = null;
                 return;
             }
 
-            // Render an anchor element if Link property is set and is not disabled
-            if (!IsNullOrWhiteSpace(Link))
+            // Render an anchor element if Href property is set and is not disabled
+            if (!IsNullOrWhiteSpace(Href))
             {
                 HtmlTag = "a";
             }
@@ -109,6 +171,21 @@ namespace MudBlazor
 
         protected ElementReference _elementReference;
 
+        protected bool GetClickPropagation() => HtmlTag != "button" || ClickPropagation;
+
+        /// <summary>
+        /// Obtains focus for this button.
+        /// </summary>
         public ValueTask FocusAsync() => _elementReference.FocusAsync();
+
+        protected string? GetRel()
+        {
+            if (Rel is null && Target == "_blank")
+            {
+                return "noopener";
+            }
+
+            return Rel;
+        }
     }
 }

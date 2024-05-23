@@ -1,0 +1,30 @@
+﻿<ErrorBoundary @ref="errorBoundary">
+    <ChildContent>
+        <MudButton OnClick="HandleClickAsync">
+            <MudText>MudButton</MudText>
+        </MudButton>
+        <MudFab OnClick="HandleClickAsync" StartIcon="@Icons.Material.Filled.Add">
+            <MudText>MudFab</MudText>
+        </MudFab>
+        <MudIconButton OnClick="HandleClickAsync" Icon="@Icons.Material.Filled.Delete">
+            <MudText>MudFab</MudText>
+        </MudIconButton>
+    </ChildContent>
+    <ErrorContent>
+        <MudAlert Severity="Severity.Error">Oh my! We caught an error and handled it!</MudAlert>
+    </ErrorContent>
+</ErrorBoundary>
+
+
+@code {
+#nullable enable
+    private ErrorBoundary? errorBoundary;
+
+    public async Task HandleClickAsync()
+    {
+        await Task.Delay(100);
+        throw new Exception("Something went wrong...");
+    }
+
+    public void Recover() => errorBoundary?.Recover();
+}

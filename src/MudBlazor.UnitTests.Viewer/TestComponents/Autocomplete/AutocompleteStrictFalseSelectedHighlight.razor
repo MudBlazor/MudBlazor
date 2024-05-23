@@ -1,0 +1,38 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
+
+<MudPopoverProvider />
+
+<MudAutocomplete T="string" SearchFunc="@Search" ItemDisabledFunc="@ItemDisabledFunc" @bind-Value="@Fruit" Strict="false" />
+
+@code {
+	public string Fruit { get; set; }
+
+	public string[] Fruits = new string[]
+	{
+		"apple",
+		"banana",
+		"pear",
+		"carrot",
+		"cherry",
+		"raspberry",
+		"peach"
+	};
+
+	public Func<string, bool> ItemDisabledFunc = (string text) =>
+	{
+		return text.Equals("carrot", StringComparison.InvariantCulture);
+	};
+
+    public async Task<IEnumerable<string>> Search(string text, CancellationToken token)
+    {
+		await Task.Delay(100, token);
+
+		if (string.IsNullOrWhiteSpace(text))
+		{
+			return Fruits;
+		}
+
+		return Fruits.Where(x => x.Contains(text, StringComparison.InvariantCulture));
+	}
+}

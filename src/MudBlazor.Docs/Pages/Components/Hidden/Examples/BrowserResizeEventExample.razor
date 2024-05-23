@@ -1,50 +1,48 @@
 ﻿@using MudBlazor.Services
 @namespace MudBlazor.Docs.Examples
-@implements IDisposable
+@implements IBrowserViewportObserver
+@implements IAsyncDisposable
 
 <MudCard Class="pa-5">
     <MudText>
         Resize the window and see width and height change:<br />
-        Browser window is @(width)x@(height)px
+        Browser window is @(_width)x@(_height)px
     </MudText>
 </MudCard>
 
 @code
 {
-    [Inject] IResizeListenerService ResizeListener { get; set; }
+    [Inject]
+    private IBrowserViewportService BrowserViewportService { get; set; }
 
-    int width = 0;
-    int height = 0;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-    }
+    private int _width = 0;
+    private int _height = 0;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            ResizeListener.OnResized += OnResized;
-
-            var size = await ResizeListener.GetBrowserWindowSize();
-            height = size.Height;
-            width = size.Width;
-            StateHasChanged();
+            await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
         }
 
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private void OnResized(object sender, BrowserWindowSize size)
-    {
-        width = size.Width;
-        height = size.Height;
-        InvokeAsync(StateHasChanged);
-    }
+    public async ValueTask DisposeAsync() => await BrowserViewportService.UnsubscribeAsync(this);
 
-    public void Dispose()
+    Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();
+
+    ResizeOptions IBrowserViewportObserver.ResizeOptions { get; } = new()
     {
-        ResizeListener.OnResized -= OnResized;
+        ReportRate = 50,
+        NotifyOnBreakpointOnly = false
+    };
+
+    Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
+    {
+        _width = browserViewportEventArgs.BrowserWindowSize.Width;
+        _height = browserViewportEventArgs.BrowserWindowSize.Height;
+
+        return InvokeAsync(StateHasChanged);
     }
 }

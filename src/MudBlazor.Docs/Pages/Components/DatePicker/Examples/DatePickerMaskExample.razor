@@ -1,0 +1,11 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudDatePicker Label="dd.MM.yyyy" Editable="true" @bind-Date="_date1" Mask="@(new DateMask("dd.MM.yyyy"))" DateFormat="dd.MM.yyyy" Placeholder="de-AT Date" />
+<MudDatePicker Label="MM/dd/yyyy" Editable="true" @bind-Date="_date2" Mask="@(new DateMask("MM/dd/yyyy"))" DateFormat="MM/dd/yyyy" Placeholder="en-US Date" />
+<MudDatePicker Label="yyyy-MM-dd" Editable="true" @bind-Date="_date3" Mask="@(new DateMask("0000-00-00"))" DateFormat="yyyy-MM-dd" Placeholder="ISO Date" />
+
+@code {
+    private DateTime? _date1 = null;
+    private DateTime? _date2 = DateTime.Today;
+    private DateTime? _date3 = null;
+}

@@ -1,0 +1,37 @@
+﻿.explore-mudblazor-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.explore-card {
+  transition: all .2s ease-in;
+
+  @media(hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: var(--mud-palette-primary-hover);
+      cursor: pointer;
+    }
+  }
+
+  &:active {
+    background-color: var(--mud-palette-primary-hover);
+    cursor: pointer;
+  }
+}
+
+.explore-card {
+  height: 157px;
+  width: 157px;
+}
+
+@media (max-width:600px) {
+  .explore-card {
+    height: 138px;
+    width: 138px;
+  }
+
+  .explore-mudblazor-items {
+    justify-content: center;
+  }
+}

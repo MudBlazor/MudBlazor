@@ -1,22 +1,10 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudGrid>
-    <MudItem xs="12" sm="6">
-        <MudNumericField @bind-Value="intValue" Label="Enter an int" />
-    </MudItem>
-    <MudItem xs="12" sm="6">
-        <MudNumericField @bind-Value="doubleValue" Label="Enter a double" Format="F1" />
-    </MudItem>
-</MudGrid>
-<MudGrid>
-    <MudItem xs="12" sm="6">
-        <MudNumericField @bind-Value="nullableInt" HelperText="Enter an int" />
-    </MudItem>
-    <MudItem xs="12" sm="6">
-        <MudNumericField @bind-Value="nullableDouble" HelperText="Enter a double" Format="F1" />
-    </MudItem>
-</MudGrid>
 
+<MudNumericField @bind-Value="intValue" Label="Enter an int" Variant="Variant.Outlined" />
+<MudNumericField @bind-Value="doubleValue" Label="Enter a double" Format="F1" Variant="Variant.Outlined" />
+<MudNumericField @bind-Value="nullableInt" Label="Enter an int" Variant="Variant.Outlined" />
+<MudNumericField @bind-Value="nullableDouble" Label="Enter a double" Format="F1" Variant="Variant.Outlined" />
 
 @code { 
     int intValue;

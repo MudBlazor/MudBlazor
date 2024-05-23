@@ -1,0 +1,37 @@
+﻿@page "/components/breakpointProvider"
+
+<DocsPage>
+    <DocsPageHeader Title="Breakpoint Provider" SubTitle="Exposing the current breakpoint to multiple components" />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="How it works">
+                <Description>
+					<MudText>
+						The breakpoint provider offers a cascading parameter that exposes the window's current breakpoint (xs,sm,md,lg,xl). 
+						These features improve the performance if your layout heavily relies on such features or if you don't want to use the BreakpointListenerService directly in your own components.
+					</MudText>
+					<MudText>
+						If a <strong>MudHidden</strong> is used within a <strong>MudBreakpointProvider</strong>, it will use the provided value instead of relying on the IBreakpointListenerService. 
+						That would reduce the number of render cycles if a change of the browser size occurred. 
+					</MudText>
+				</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(BreakpointProviderPageHiddenExample)" ShowCode="false">
+                <BreakpointProviderPageHiddenExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Listening to browser window breakpoint changes">
+                <Description>
+                    <MudText>The <strong> IBrowserViewportService</strong> is the service that powers the MudBreakpoint Provider. It can be used in own components </MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(BreakpointListenerExample)">
+                <BreakpointListenerExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

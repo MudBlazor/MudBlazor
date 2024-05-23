@@ -1,0 +1,73 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid Items="@_items">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" CellStyleFunc="@_cellStyleFunc" HeaderStyleFunc="@_headerStyleFunc" HeaderClassFunc="@_headerClassFunc" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private IEnumerable<Item> _items = new List<Item>()
+    {
+        new Item("A"), 
+        new Item("B"), 
+        new Item("C")
+    };
+
+    // style the cells according to the element's physical classification and the molar mass.
+    private Func<Item, string> _cellStyleFunc => x =>
+    {
+        if (x.Name == "B")
+            return "background-color:#E5BDE5";
+
+        if (x.Name == "C")
+            return "font-weight:bold";
+
+        return "";
+    };
+    
+    // style the header according to the presence of elements.
+    private Func<IEnumerable<Item>, string> _headerStyleFunc => x =>
+    {
+        var style = "";
+        
+        foreach (var item in x)
+        {
+            switch (item.Name)
+            {
+                case "A":
+                    style += "background-color:#E5BDE5;";
+                    break;
+                case "B":
+                    style += "font-weight:bold;";
+                    break;
+            }
+        }
+
+        return style;
+    };
+    
+    // add classes to the header according to the presence of elements.
+    private Func<IEnumerable<Item>, string> _headerClassFunc => x =>
+    {
+        var classes = "";
+        
+        foreach (var item in x)
+        {
+            classes += "class-" + item.Name + " ";
+        }
+
+        return classes.ToLower().Trim();
+    };
+
+    public class Item
+    {
+        public string Name { get; set; }
+
+        public Item(string name)
+        {
+            Name = name;
+        }
+    }
+
+}

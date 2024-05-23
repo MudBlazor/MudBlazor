@@ -4,26 +4,32 @@
     <DocsPageHeader Title="Link">
     </DocsPageHeader>
     <DocsPageContent>
+
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Simple Links</Title>
+            <SectionHeader Title="Simple Links">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="@nameof(LinkSimpleExample)">
                 <LinkSimpleExample />
             </SectionContent>
-            <SectionSource Code="LinkSimpleExample" GitHubFolderName="Link"  />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Underlines</Title>
+            <SectionHeader Title="Underlines">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="@nameof(LinkUnderlineExample)">
                 <LinkUnderlineExample />
             </SectionContent>
-            <SectionSource Code="LinkUnderlineExample" GitHubFolderName="Link"  />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="OnClick">
+                <Description><CodeInline>OnClick</CodeInline> property provides a way to invoke an action instead of (or in conjunction with) <CodeInline>Href</CodeInline> navigation.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(LinkOnClickExample)">
+                <LinkOnClickExample />
+            </SectionContent>
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

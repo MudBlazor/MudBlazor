@@ -1,0 +1,27 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject ISnackbar Snackbar
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@Show">
+    Open Snackbar
+</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="@Hide">
+    Hide snackbar
+</MudButton>
+
+@code {
+    private Snackbar _snackbar;
+
+    void Show()
+    {
+        _snackbar = Snackbar.Add("Now click hide snackbar", Severity.Normal, config =>
+        {
+            config.VisibleStateDuration = int.MaxValue;
+        });
+    }
+
+	void Hide() {
+        if (_snackbar is null) return;
+        Snackbar.Remove(_snackbar);
+	}
+}

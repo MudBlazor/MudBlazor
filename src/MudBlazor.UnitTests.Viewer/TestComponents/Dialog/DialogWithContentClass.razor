@@ -1,0 +1,17 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDialog ContentClass="@ContentClass" Gutters="@Gutters">
+    <DialogContent>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public string ContentClass { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool Gutters { get; set; } = true;
+}

@@ -1,0 +1,34 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+<div @attributes="UserAttributes" class="@Classnames" style="@Style" @onclick="Select">
+    <div class="mud-timeline-item-content">
+        @if (ChildContent is not null)
+        {
+            @ChildContent
+        }
+        else if (ItemContent != null)
+        {
+            @ItemContent
+        }
+    </div>
+    <div class="mud-timeline-item-divider">
+        @if(!HideDot)
+        {
+            <div class="@DotClassnames">
+                <div class="@DotInnerClassnames" style="@DotStyle">
+                    @if (ItemDot is not null)
+                    {
+                        @ItemDot
+                    }
+                </div>
+            </div>
+        }
+    </div>
+    @if (ItemOpposite is not null)
+    {
+        <div class="mud-timeline-item-opposite">
+            @ItemOpposite
+        </div>
+    }
+</div>

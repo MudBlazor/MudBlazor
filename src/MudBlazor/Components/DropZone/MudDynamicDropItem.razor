@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@typeparam T
+
+<div class="@Classname" style="@($"{Style};touch-action:none;transform: translate3d(0px, 0px, 0px);")"
+     id="@($"mud-drop-item-{_id}")"
+     index="@Index"
+     @attributes="UserAttributes"
+     draggable="@(!Disabled ? "true" : "false")"
+     @ondragstart="DragStartedAsync"
+     @ontouchstart="TouchStartedAsync"
+     @ontouchend="TouchEndedAsync"
+     @ontouchmove="TouchMovedAsync"
+     @ondragend="DragEndedAsync"
+     @ondragenter="HandleDragEnter"
+     @ondragleave="HandleDragLeave">
+
+    @if (!HideContent)
+    {
+        @ChildContent
+    }
+</div>

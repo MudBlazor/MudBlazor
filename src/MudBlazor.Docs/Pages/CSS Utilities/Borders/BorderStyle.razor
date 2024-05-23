@@ -1,0 +1,34 @@
+﻿@page "/utilities/border-style"
+
+<DocsPage>
+    <DocsPageHeader Title="Border Style" SubTitle="Utilities for controlling the style of an element's borders." />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Class Reference" HideTitle="true" />
+            <DocsAutoGen_Borders_BorderStyle/>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage">
+                <Description>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(BorderStyleExample)" HighLight="border-solid,border-dashed,border-dotted,border-double">
+                <BorderStyleExample/>
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="None & Hidden">
+                <Description>
+                    Use <CodeInline>border-none</CodeInline> or <CodeInline>border-hidden</CodeInline> to remove or hide the border style from an element.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(BorderStyleNoneHiddenExample)" HighLight="border-none,border-hidden">
+                <BorderStyleNoneHiddenExample/>
+            </SectionContent>
+        </DocsPageSection>
+        
+    </DocsPageContent>
+</DocsPage>

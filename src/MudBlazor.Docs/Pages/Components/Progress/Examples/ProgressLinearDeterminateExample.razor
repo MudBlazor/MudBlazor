@@ -3,29 +3,35 @@
 <MudProgressLinear Color="Color.Primary" Value="@Value" Class="my-7" />
 <MudProgressLinear Color="Color.Secondary" Value="@Value" Class="my-7" />
 
-@code { public int Value { get; set; }
+@code {
+    private bool _disposed;
 
-    public async void StartTimerAsync()
+    public int Value { get; set; }
+
+    public async Task SimulateProgressAsync()
     {
-        if (disposed)
-            return;
-        Value = 100;
-        while (Value > 0)
+        Value = 0;
+        do
         {
-            Value = Value - 4;
+            if (_disposed)
+            {
+                return;
+            }
+
+            Value += 4;
             StateHasChanged();
             await Task.Delay(500);
-            if (disposed)
-                return;
-        }
-        Value = 100;
-        StartTimerAsync();
-    }
-    protected override void OnInitialized()
-        => StartTimerAsync();
 
-    bool disposed;
-    public void Dispose()
+        } while (Value < 100);
+
+        await SimulateProgressAsync();
+    }
+
+    protected override async Task OnInitializedAsync()
     {
-        disposed = true;
-    } }
+        await base.OnInitializedAsync();
+        await SimulateProgressAsync();
+    }
+
+    public void Dispose() => _disposed = true;
+}

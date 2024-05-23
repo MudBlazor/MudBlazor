@@ -1,0 +1,41 @@
+﻿.docs-github-releases {
+  .mud-grid-item-md-4:first-child + .mud-grid-item-md-8 {
+    h5:first-child {
+      border-top: none !important;
+    }
+  }
+
+  .docs-github-release-body {
+    padding-bottom: 24px;
+
+    &.old-releases {
+      font-size: var(--mud-typography-body1-size);
+      font-weight: var(--mud-typography-body1-weight);
+
+      h6 {
+        margin-top: 24px;
+      }
+    }
+
+    h5 {
+      &:first-child {
+        padding: 12px 0;
+        margin-bottom: 24px;
+        border-top: var(--mud-palette-lines-default) 1px solid;
+        border-bottom: var(--mud-palette-lines-default) 1px solid;
+        font-size: var(--mud-typography-h5-size);
+        font-weight: var(--mud-typography-h5-weight);
+      }
+    }
+
+    ul {
+      list-style: disc;
+      font-size: var(--mud-typography-body1-size);
+    }
+
+    .github-user {
+      font-weight: 700;
+      color: var(--mud-palette-text-primary);
+    }
+  }
+}

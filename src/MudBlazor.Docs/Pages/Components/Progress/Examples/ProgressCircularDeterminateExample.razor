@@ -2,7 +2,7 @@
 @using System;
 @using System.Threading;
 
-@implements IDisposable;
+@implements IDisposable
 
 <MudProgressCircular Color="Color.Default" Value="@Value" />
 <MudProgressCircular Color="Color.Primary" Value="@Value" />
@@ -11,31 +11,34 @@
 <MudProgressCircular Color="Color.Info" Value="@Value" />
 
 @code {
+    private bool _disposed;
+
     public int Value { get; set; }
 
-    public async void StartTimerAsync()
+    public async Task SimulateProgressAsync()
     {
-        if (disposed)
-            return;
         Value = 0;
-        while (Value < 100)
+        do
         {
-            Value = Value + 4;
+            if (_disposed)
+            {
+                return;
+            }
+
+            Value += 4;
             StateHasChanged();
             await Task.Delay(500);
-            if (disposed)
-                return;
-        }
-        Value = 0;
-        StartTimerAsync();
-    }
-    protected override void OnInitialized()
-        => StartTimerAsync();
 
-    bool disposed;
-    public void Dispose()
+        } while (Value < 100);
+
+        await SimulateProgressAsync();
+    }
+
+    protected override async Task OnInitializedAsync()
     {
-        disposed = true;
+        await base.OnInitializedAsync();
+        await SimulateProgressAsync();
     }
 
+    public void Dispose() => _disposed = true;
 }

@@ -1,13 +1,13 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudCarousel Style="height:200px;" AutoCycle="false" TData="object">
-    <DelimiterTemplate Context="selected">
+<MudCarousel Class="mud-width-full" Style="height:200px;" AutoCycle="false" TData="object">
+    <BulletTemplate Context="selected">
         <div Class="mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon">
             <span class="mud-icon-button-label">
                 <MudIcon Icon="@(selected ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Circle)" Color="@Color.Inherit" />
             </span>
         </div>
-    </DelimiterTemplate>
+    </BulletTemplate>
     <PreviousButtonTemplate>
         <div Class="mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon">
             <span class="mud-icon-button-label">

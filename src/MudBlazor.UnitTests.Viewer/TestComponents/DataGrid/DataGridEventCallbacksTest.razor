@@ -1,0 +1,71 @@
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid T="Item" Items="@_items" EditMode="@DataGridEditMode.Cell"
+    RowClick="@OnRowClick"
+    RowContextMenuClick="@OnRowContextMenuClick"
+    SelectedItemChanged="@OnSelectedItemChanged"
+    CommittedItemChanges="@OnCommittedItemChanges" 
+    StartedEditingItem="@OnStartedEditingItem" 
+    CanceledEditingItem="@OnCanceledEditingItem"
+    ReadOnly="false">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private IEnumerable<Item> _items = new List<Item>()
+    {
+        new Item("A"), 
+        new Item("B"), 
+        new Item("C")
+    };
+
+    public bool RowClicked { get; set; }
+    public bool RowContextMenuClicked { get; set; }
+    public bool SelectedItemChanged { get; set; }
+    public bool CommittedItemChanges { get; set; }
+    public bool StartedEditingItem { get; set; }
+    public bool CanceledEditingItem { get; set; }
+
+    private void OnRowClick(DataGridRowClickEventArgs<Item> args)
+    {
+        RowClicked = true;
+    }
+    
+    private void OnRowContextMenuClick(DataGridRowClickEventArgs<Item> args)
+    {
+        RowContextMenuClicked = true;
+    }
+
+    private void OnSelectedItemChanged(Item item)
+    {
+        SelectedItemChanged = true;
+    }
+
+    private void OnCommittedItemChanges(Item item)
+    {
+        CommittedItemChanges = true;
+    }
+
+    private void OnStartedEditingItem(Item item)
+    {
+        StartedEditingItem = true;
+    }
+
+    private void OnCanceledEditingItem(Item item)
+    {
+        CanceledEditingItem = true;
+    }
+
+    public class Item
+    {
+        public string Name { get; set; }
+
+        public Item(string name)
+        {
+            Name = name;
+        }
+    }
+
+}

@@ -1,43 +1,49 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <ResolveStaticWebAssetsInputsDependsOn>
-      IncludeGeneratedStaticFiles;
-      $(ResolveStaticWebAssetsInputsDependsOn)
-    </ResolveStaticWebAssetsInputsDependsOn>
+    <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <Title>MudBlazor</Title>
-    <PackageId>MudBlazor</PackageId>
-    <Version>5.0.14</Version>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>Nuget.png</PackageIcon>
     <Company>MudBlazor</Company>
     <Authors>Garderoben, Henon and Contributors</Authors>
-    <Copyright>Copyright 2020-2021 Jonny Larsson</Copyright>
+    <Copyright>Copyright 2024 MudBlazor</Copyright>
     <PackageTags>Blazor, MudBlazor, Material, Material Design, Components, Blazor Components, Blazor Library</PackageTags>
-    <Description>MudBlazor is an ambitious Material Design component framework for Blazor with an emphasis on ease of use and clear structure. It is perfect for .NET developers who want to rapidly build web applications without having to struggle with CSS and Javascript. MudBlazor, being written entirely in C#, empowers them to adapt, fix or extend the framework and the multitude of examples in the documentation makes learning MudBlazor very easy.</Description>
-    <PackageProjectUrl>http://mudblazor.com/</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/Garderoben/MudBlazor</RepositoryUrl>
+    <Description>A Blazor Component Library based on Material Design principles, focusing on ease of use. Written mainly in C# with minimal JavaScript, it allows .NET developers to easily understand and debug the code when needed.</Description>
+    <PackageProjectUrl>https://mudblazor.com/</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/MudBlazor/MudBlazor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <IsTrimmable>true</IsTrimmable>
+    <TrimMode>link</TrimMode>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
   </PropertyGroup>
 
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+
+    <!-- https://github.com/dotnet/runtime/issues/95134 -->
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="..\..\LICENSE" Pack="true" Visible="false" PackagePath="" />
+    <None Include="..\..\README.md" Pack="true" Visible="false" PackagePath="" />
     <None Include="..\..\content\Nuget.png" Pack="true" Visible="false" PackagePath="" />
-    <None Include="Components\Carousel\MudCarousel.razor" />
-    <None Include="Components\Carousel\MudCarouselItem.razor" />
   </ItemGroup>
 
   <!--Is this a rebuild - Dont clean generated files as this breaks rebuild behaviour-->
@@ -52,61 +58,74 @@
       <FilesToClean Include="./TScripts/combined/MudBlazor.js" />
       <FilesToClean Include="./wwwroot/MudBlazor.min.js" />
       <FilesToClean Include="./wwwroot/MudBlazor.min.css" />
+      <FilesToClean Include="./wwwroot/MudBlazor.css" />
     </ItemGroup>
     <Delete Files="@(FilesToClean)" />
   </Target>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.7" />
+  
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.19" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.19" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.19" />
   </ItemGroup>
 
-  <Target Name="ToolRestore">
-    <Exec Command="dotnet tool restore" StandardOutputImportance="high" />
-  </Target>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.5" />
+  </ItemGroup>
 
-  <!--combine js files-->
-  <Target Name="CombineJS">
-    <CreateItem Include="./TScripts/*.js">
-      <Output TaskParameter="Include" ItemName="jsFilesToCombine" />
-    </CreateItem>
-    <ReadLinesFromFile File="%(jsFilesToCombine.FullPath)">
-      <Output TaskParameter="Lines" ItemName="jsLines" />
-    </ReadLinesFromFile>
-    <WriteLinesToFile File="./TScripts/combined/MudBlazor.js" Lines="@(jsLines)" Overwrite="true" />
-  </Target>
+  <PropertyGroup>
+    <SassCompilerEnableWatcher>false</SassCompilerEnableWatcher>
+  </PropertyGroup>
 
-  <Target Name="WebCompiler" DependsOnTargets="ToolRestore;CombineJS">
-    <!--compile and minify scss-->
-    <Exec Command="dotnet webcompiler ./Styles/MudBlazor.scss -c excubowebcompiler.json" StandardOutputImportance="high" StandardErrorImportance="high" />
-    <!--minify js-->
-    <Exec Command="dotnet webcompiler ./TScripts/combined/MudBlazor.js -c excubowebcompiler.json" StandardOutputImportance="high" StandardErrorImportance="high" />
-  </Target>
-
-  <Target Name="IncludeGeneratedStaticFiles" DependsOnTargets="WebCompiler">
-    <Error Condition="!Exists('wwwroot/MudBlazor.min.css')" Text="Missing MudBlazor.min.css in wwwroot" />
-    <Error Condition="!Exists('wwwroot/MudBlazor.min.js')" Text="Missing MudBlazor.min.js in wwwroot" />
-    <ItemGroup>
-      <Content Include="wwwroot/MudBlazor.min.css" Condition="!Exists('wwwroot/MudBlazor.min.css')" />
-      <Content Include="wwwroot/MudBlazor.min.js" Condition="!Exists('wwwroot/MudBlazor.min.js')" />
-    </ItemGroup>
-  </Target>
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.SassCompiler" Version="1.72.0">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="MudBlazor.JSCompiler" Version="1.0.15">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
 
   <!--Dont Include in build output-->
   <ItemGroup>
     <Content Remove="compilerconfig.json" />
-    <Content Remove="excubowebcompiler.json" />
-    <Content Remove="**/*/DoNotRemove.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="TScripts\combined\" />
-    <Folder Include="wwwroot\" />
+    <Content Remove="sasscompiler.json" />
+    <Content Remove="wwwroot/DoNotRemove.txt" />
+    <!--macOS hidden file (causes problems with dotnet pack)-->
+    <Content Remove="**/*/.DS_Store" />
   </ItemGroup>
 
   <ItemGroup>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-      <_Parameter1>MudBlazor.UnitTests</_Parameter1>
-    </AssemblyAttribute>
+    <InternalsVisibleTo Include="MudBlazor.Docs" />
+    <InternalsVisibleTo Include="MudBlazor.UnitTests" />
+    <InternalsVisibleTo Include="MudBlazor.UnitTests.Viewer" />
+    <!--We need to make internal types to be visible for mocking-->
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+  
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MudBlazor.SourceCodeGenerator\MudBlazor.SourceCodeGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\LanguageResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>LanguageResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\LanguageResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>LanguageResource.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

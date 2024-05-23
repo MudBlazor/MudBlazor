@@ -10,7 +10,8 @@ namespace MudBlazor
 
         #region --> Date converters
         public static Converter<DateTime> IsoDate
-            => new Converter<DateTime> { SetFunc = SetIsoDate, GetFunc = GetIsoDate };
+            => new()
+            { SetFunc = SetIsoDate, GetFunc = GetIsoDate };
 
         private static DateTime GetIsoDate(string value)
         {
@@ -25,7 +26,8 @@ namespace MudBlazor
         }
 
         public static Converter<DateTime?> NullableIsoDate
-            => new Converter<DateTime?> { SetFunc = SetNullableIsoDate, GetFunc = GetNullableIsoDate };
+            => new()
+            { SetFunc = SetNullableIsoDate, GetFunc = GetNullableIsoDate };
 
         private static DateTime? GetNullableIsoDate(string value)
         {
@@ -41,8 +43,7 @@ namespace MudBlazor
 
         public static DateConverter DateFormat(string format)
         {
-            if (format == null)
-                format = "yyyy-MM-dd";
+            format ??= "yyyy-MM-dd";
             return new DateConverter(format);
         }
 

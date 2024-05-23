@@ -1,0 +1,35 @@
+﻿@using MudBlazor.Docs.Enums
+<MudTooltip Delay="1000" Text="Notifications">
+    <MudBadge Color="Color.Secondary" Dot="true" Overlap="true" Visible="_newNotificationsAvailable">
+        <MudMenu Icon="@Icons.Material.Outlined.Notifications" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopCenter" PopoverClass="docs-layout-menu-shadow" ListClass="pa-2 docs-menu-list" LockScroll="true">
+            <div class="d-flex justify-space-between align-center px-2">
+                <MudText Typo="Typo.subtitle2">Notifications</MudText>
+                <MudButton Disabled="@(_newNotificationsAvailable == false)" OnClick="MarkNotificationAsRead" StartIcon="@Icons.Material.Filled.DoneAll" Variant="Variant.Text" Color="Color.Primary" Class="ml-16 mr-n2">Mark as read</MudButton>
+            </div>
+            @if (_messages != null)
+            {
+                @foreach (var (message, isRead) in _messages.Take(5))
+                {
+                    <MudMenuItem Class="px-2 py-0 rounded" Href="@($"/mud/announcements/{message.Id}")">
+                        <MudText Typo="Typo.subtitle2">@message.Title</MudText>
+                        <MudText Typo="Typo.body2">@($"{message.Authors.FirstOrDefault()?.DisplayName} • {message.PublishDate.ToString("MM/dd/yyyy")}")</MudText>
+                    </MudMenuItem>
+                    <MudDivider Class="my-2" />
+                }
+            }
+            else
+            {
+                <div class="d-flex justify-center align-center px-2 py-8 relative">
+                    <MudText Class="mud-text-secondary my-12">Nothing new :(</MudText>
+                    <MudBlazorLogo Class="docs-logo-filter mx-16 absolute" />
+                </div>
+            }
+        </MudMenu>
+    </MudBadge>
+</MudTooltip>
+<MudTooltip Delay="1000" Text="@(LayoutService.IsRTL ? "Left-to-right" : "Right-to-left")">
+    <MudIconButton Icon="@(LayoutService.IsRTL ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="@LayoutService.ToggleRightToLeft" Color="Color.Inherit" />
+</MudTooltip>
+<MudTooltip Delay="1000" Text="@(DarkLightModeButtonText)">
+    <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@LayoutService.CycleDarkLightModeAsync" />
+</MudTooltip>

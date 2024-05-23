@@ -8,6 +8,7 @@ namespace MudBlazor
         ValueTask CopyToClipboardAsync(string text);
         ValueTask OpenInNewTabAsync(string url);
         ValueTask Open(string link, string target);
+        internal ValueTask UpdateStyleProperty(string elementId, string propertyName, object value);
     }
 
     public class JsApiService : IJsApiService
@@ -32,5 +33,10 @@ namespace MudBlazor
 
         public ValueTask OpenInNewTabAsync(string url) =>
             _jsRuntime.InvokeVoidAsync("mudWindow.open", url, "_blank");
+
+        ValueTask IJsApiService.UpdateStyleProperty(string elementId, string propertyName, object value)
+        {
+            return _jsRuntime.InvokeVoidAsync("mudWindow.updateStyleProperty", elementId, propertyName, value);
+        }
     }
 }

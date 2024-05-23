@@ -3,49 +3,93 @@
 <DocsPage>
     <DocsPageHeader Title="Switch" SubTitle="Similar to a checkbox but visually different, the switch lets the user switch between two values with the tap of a button." />
     <DocsPageContent>
+
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Basic switches</Title>
+            <SectionHeader Title="Basic switches">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="@nameof(SwitchBasicExample)">
                 <SwitchBasicExample />
             </SectionContent>
-            <SectionSource Code="SwitchBasicExample" GitHubFolderName="Switch"  />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Switch with label</Title>
+            <SectionHeader Title="Color">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="@nameof(SwitchColorExample)">
+                <SwitchColorExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Switch with label">
+                <Description>
+                    Text can be added using the <CodeInline>Label</CodeInline> property and its
+                    position can be specified using the <CodeInline>LabelPosition</CodeInline> property
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SwitchWithLabelExample)">
                 <SwitchWithLabelExample />
             </SectionContent>
-            <SectionSource Code="SwitchWithLabelExample" GitHubFolderName="Switch"  />
-        </DocsPageSection>
-        
-        <DocsPageSection>
-            <SectionHeader>
-                <Title>Binding switch against different data types</Title>
-                <Description></Description>
-            </SectionHeader>
-            <SectionContent Outlined="true">
-                <SwitchConversionExample />
-            </SectionContent>
-            <SectionSource Code="SwitchConversionExample" GitHubFolderName="Switch"  />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>ReadOnly mode</Title>
-                <Description>Set <CodeInline>ReadOnly="true"</CodeInline> will make the switch control stop listening to user inputs.</Description>
+            <SectionHeader Title="Thumb Icon">
+                <Description>
+                    An icon can be determined with <CodeInline>ThumbIcon</CodeInline> parameter.
+                </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
-                <SwitchReadOnlyExample/>
+            <SectionContent Code="@nameof(SwitchWithIconExample)" ShowCode="false">
+                <SwitchWithIconExample />
             </SectionContent>
-            <SectionSource Code="SwitchReadOnlyExample" GitHubFolderName="Switch" />
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Different data types">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SwitchConversionExample)" ShowCode="false">
+                <SwitchConversionExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="ReadOnly mode">
+                <Description>Setting <CodeInline>ReadOnly="true"</CodeInline> will make the switch control stop listening to user inputs.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SwitchReadOnlyExample)" Block="true">
+                <SwitchReadOnlyExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Keyboard Navigation">
+                <Description>
+                    <MudText>MudSwitch accepts keys to keyboard navigation.</MudText>
+                    <br />
+                    <MudText><CodeInline>Space</CodeInline> key to toggle state true/false</MudText>
+                    <MudText><CodeInline>Delete</CodeInline> or <CodeInline>ArrowLeft</CodeInline> keys to set UnChecked</MudText>
+                    <MudText><CodeInline>Enter</CodeInline> or <CodeInline>NumpadEnter</CodeInline> or <CodeInline>ArrowRight</CodeInline> keys to set Checked</MudText>
+                    <MudText>*Disabled or ReadOnly switches cannot be changed by keys.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SwitchKeyboardNavigationExample)" ShowCode="false">
+                <SwitchKeyboardNavigationExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Size">
+                <Description>
+                    <MudText>MudSwitch size can be changed with the <CodeInline>Size</CodeInline> parameter.</MudText>          
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SwitchSizeExample)" ShowCode="false">
+                <SwitchSizeExample />
+            </SectionContent>
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>
 

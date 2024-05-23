@@ -1,0 +1,40 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid Items="@_items">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Hired">
+            <CellTemplate>
+                @if (context.Item.Hired)
+                {
+                    <MudIcon Icon="@Icons.Material.Filled.Check" />
+                }
+            </CellTemplate>
+        </PropertyColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private IEnumerable<Model> _items = new List<Model>()
+    {
+        new Model("John", 45, false), 
+        new Model("Johanna", 23, true), 
+        new Model("Steve", 32, false)
+    };
+
+    public class Model
+    {
+        public string Name { get; set; }
+        public int Age { get; set; }
+        public bool Hired { get; set; }
+
+        public Model(string name, int age, bool hired)
+        {
+            this.Name = name;
+            this.Age = age;
+            this.Hired = hired;
+        }
+
+    }
+}

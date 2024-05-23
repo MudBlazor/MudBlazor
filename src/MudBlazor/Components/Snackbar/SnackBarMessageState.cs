@@ -2,6 +2,7 @@
 //Changes and improvements Copyright (c) The MudBlazor Team.
 
 using System;
+using System.Diagnostics;
 using static System.String;
 
 namespace MudBlazor
@@ -12,7 +13,7 @@ namespace MudBlazor
         public bool UserHasInteracted { get; set; }
         public SnackbarOptions Options { get; }
         public SnackbarState SnackbarState { get; set; }
-        public DateTime TransitionStartTime { get; set; }
+        public Stopwatch Stopwatch { get; } = new Stopwatch();
 
         public SnackBarMessageState(SnackbarOptions options)
         {
@@ -27,6 +28,8 @@ namespace MudBlazor
 
         public bool HideIcon => Options.HideIcon;
         public string Icon => Options.Icon;
+        public Color IconColor => Options.IconColor;
+        public Size IconSize => Options.IconSize;
 
         public string ProgressBarStyle
         {
@@ -66,7 +69,14 @@ namespace MudBlazor
         {
             get
             {
-                var result = $"mud-snackbar {Options.SnackbarTypeClass}";
+                var baseTypeClass = $"mud-alert-{Options.SnackbarVariant.ToDescriptionString()}-{Options.Severity.ToDescriptionString()}";
+
+                if (Options.SnackbarVariant != Variant.Filled)
+                {
+                    baseTypeClass += Options.BackgroundBlurred ? " mud-snackbar-blurred" : " mud-snackbar-surface";
+                }
+
+                var result = $"mud-snackbar {baseTypeClass} {Options.SnackbarTypeClass}";
 
                 if (Options.Onclick != null && !ShowActionButton)
                     result += " force-cursor";
@@ -93,7 +103,8 @@ namespace MudBlazor
 
         private int RemainingTransitionMilliseconds(int transitionDuration)
         {
-            var duration = transitionDuration - (TransitionStartTime - DateTime.Now).Milliseconds;
+            var duration = transitionDuration - (int)Stopwatch.ElapsedMilliseconds;
+
             return duration >= 0 ? duration : 0;
         }
     }

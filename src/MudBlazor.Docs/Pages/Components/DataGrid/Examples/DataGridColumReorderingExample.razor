@@ -1,0 +1,40 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+
+<MudDataGrid T="Element" Items="@_elements" DragDropColumnReordering="@_reorderingEnabled" ApplyDropClassesOnDragStarted="@_applyDropClassesOnDragStarted" 
+                    DragIndicatorIcon="@_dragIndicatorIcon" Dense ColumnResizeMode="ResizeMode.Container">
+    <Columns>
+        <SelectColumn T="Element"/>
+        <PropertyColumn Property="x => x.Number" Title="Nr (fixed)" DragAndDropEnabled="false"/>
+        <PropertyColumn Property="x => x.Sign"/>
+        <PropertyColumn Property="x => x.Name" Title="Name (fixed)" DragAndDropEnabled="false" />
+        <PropertyColumn Property="x => x.Position" />
+        <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
+        <PropertyColumn Property="x => x.Group" Title="Category" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Element" />
+    </PagerContent>
+</MudDataGrid>
+
+<div class="d-flex flex-column mt-4">
+    <MudSwitch @bind-Value="_reorderingEnabled" Color="Color.Primary">DragDropColumnReordering</MudSwitch>
+    <MudSwitch @bind-Value="_applyDropClassesOnDragStarted" Color="Color.Primary">ApplyDropClassesOnDragStarted</MudSwitch>
+</div>
+
+@code {
+    IEnumerable<Element> _elements = new List<Element>();
+    bool _applyDropClassesOnDragStarted = false;
+
+    string _dragIndicatorIcon = Icons.Material.Filled.DragIndicator;
+
+    bool _reorderingEnabled = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+    }
+
+}

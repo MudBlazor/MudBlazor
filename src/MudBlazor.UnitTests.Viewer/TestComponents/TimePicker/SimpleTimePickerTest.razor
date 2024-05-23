@@ -1,0 +1,23 @@
+﻿
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudTimePicker @ref="_picker"
+			   @bind-Time="@Time"
+			   OpenTo="@OpenTo"
+			   AmPm="AmPm"
+			   TimeEditMode="TimeEditMode"
+			   MinuteSelectionStep="MinuteSelectionStep" />
+
+@code {
+	private MudTimePicker _picker;
+
+	[Parameter] public OpenTo OpenTo { get; set; } = OpenTo.Hours;
+	[Parameter] public TimeEditMode TimeEditMode { get; set; } = TimeEditMode.Normal;
+	[Parameter] public TimeSpan? Time { get; set; }
+	[Parameter] public Boolean AmPm { get; set; }
+	[Parameter] public int MinuteSelectionStep { get; set; } = 1;
+
+
+    public async Task Open() => await InvokeAsync(() => _picker.OpenAsync());
+    public async Task Close() => await InvokeAsync(() => _picker.CloseAsync());
+}
