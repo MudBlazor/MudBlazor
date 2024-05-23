@@ -71,7 +71,9 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     /// <returns></returns>
     public async Task<bool> GetSystemPreference()
     {
-        return await JsRuntime.InvokeAsync<bool>("darkModeChange");
+        var (_, value) = await JsRuntime.InvokeAsyncWithErrorHandling(false, "darkModeChange");
+
+        return value;
     }
 
     public Task WatchSystemPreference(Func<bool, Task> functionOnChange)

@@ -112,7 +112,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MenuMouseLeave_CheckClosed()
+        public async Task MenuPointerLeave_CheckClosed()
         {
             var comp = Context.RenderComponent<MenuTestMouseOver>();
             var pop = comp.FindComponent<MudPopover>();
@@ -120,15 +120,15 @@ namespace MudBlazor.UnitTests.Components
 
             IElement List() => comp.FindAll("div.mud-list")[0];
 
-            await List().TriggerEventAsync("onmouseenter", new MouseEventArgs());
+            await List().TriggerEventAsync("onpointerenter", new PointerEventArgs());
             comp.WaitForAssertion(() => pop.Instance.Open.Should().BeTrue());
 
-            await List().TriggerEventAsync("onmouseleave", new MouseEventArgs());
+            await List().TriggerEventAsync("onpointerleave", new PointerEventArgs());
             comp.WaitForAssertion(() => pop.Instance.Open.Should().BeFalse());
         }
 
         [Test]
-        public async Task MenuMouseLeave_MenuMouseEnter_CheckOpen()
+        public async Task MenuPointerLeave_MenuPointerEnter_CheckOpen()
         {
             var comp = Context.RenderComponent<MenuTestMouseOver>();
             IRenderedComponent<MudPopover> Popover() => comp.FindComponent<MudPopover>();
@@ -137,16 +137,16 @@ namespace MudBlazor.UnitTests.Components
 
             comp.WaitForAssertion(() => Popover().Instance.Open.Should().BeFalse());
 
-            // Mouse over to menu to open popover
-            await Menu().TriggerEventAsync("onmouseenter", new MouseEventArgs());
+            // Pointer over to menu to open popover
+            await Menu().TriggerEventAsync("onpointerenter", new PointerEventArgs());
             comp.WaitForAssertion(() => Popover().Instance.Open.Should().BeTrue());
 
-            // Popover open, captures mouse
-            await Menu().TriggerEventAsync("onmouseleave", new MouseEventArgs());
+            // Popover open, captures pointer
+            await Menu().TriggerEventAsync("onpointerleave", new PointerEventArgs());
             comp.WaitForAssertion(() => Popover().Instance.Open.Should().BeFalse());
 
-            // Mouse moves to menu, still need to open
-            await Menu().TriggerEventAsync("onmouseenter", new MouseEventArgs());
+            // Pointer moves to menu, still need to open
+            await Menu().TriggerEventAsync("onpointerenter", new PointerEventArgs());
             comp.WaitForAssertion(() => Popover().Instance.Open.Should().BeTrue());
         }
 

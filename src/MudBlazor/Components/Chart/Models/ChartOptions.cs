@@ -49,6 +49,7 @@ namespace MudBlazor
         /// Defaults to <c>false</c>.
         /// </remarks>
         public bool XAxisLines { get; set; }
+        public bool YAxisRequireZeroPoint { get; set; }
 
         /// <summary>
         /// Shows the chart series legend.

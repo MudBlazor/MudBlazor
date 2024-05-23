@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -8,9 +10,22 @@ namespace MudBlazor
 #nullable enable
     public partial class MudMessageBox : MudComponentBase
     {
-        private bool _visible;
+        private readonly ParameterState<bool> _visibleState;
         private IDialogReference? _reference;
         private ActivatableCallback? _yesCallback, _cancelCallback, _noCallback;
+
+        protected string Classname =>
+            new CssBuilder("mud-message-box")
+                .Build();
+
+        public MudMessageBox()
+        {
+            using var registerScope = CreateRegisterScope();
+            _visibleState = registerScope.RegisterParameter<bool>(nameof(Visible))
+                .WithParameter(() => Visible)
+                .WithEventCallback(() => VisibleChanged)
+                .WithChangeHandler(OnVisibleChangedAsync);
+        }
 
         [Inject]
         private IDialogService DialogService { get; set; } = null!;
@@ -121,32 +136,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.MessageBox.Behavior)]
-        public bool Visible
-        {
-            get => _visible;
-            set
-            {
-                if (_visible == value)
-                {
-                    return;
-                }
-
-                _visible = value;
-                if (IsInline)
-                {
-                    if (_visible)
-                    {
-                        _ = Show();
-                    }
-                    else
-                    {
-                        Close();
-                    }
-                }
-
-                VisibleChanged.InvokeAsync(value);
-            }
-        }
+        public bool Visible { get; set; }
 
         /// <summary>
         /// Raised when the inline dialog's display status changes.
@@ -154,13 +144,10 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<bool> VisibleChanged { get; set; }
 
-        private bool IsInline => DialogInstance == null;
+        [MemberNotNullWhen(false, nameof(DialogInstance))]
+        private bool IsInline => DialogInstance is null;
 
-        protected string Classname =>
-            new CssBuilder("mud-message-box")
-            .Build();
-
-        public async Task<bool?> Show(DialogOptions? options = null)
+        public async Task<bool?> ShowAsync(DialogOptions? options = null)
         {
             var parameters = new DialogParameters
             {
@@ -186,20 +173,40 @@ namespace MudBlazor
             return data;
         }
 
-        public void Close()
-        {
-            _reference?.Close();
-        }
+        public void Close() => _reference?.Close();
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
             if (YesButton is not null)
-                _yesCallback = new ActivatableCallback() { ActivateCallback = OnYesActivated };
+            {
+                _yesCallback = new ActivatableCallback { ActivateCallback = OnYesActivated };
+            }
+
             if (NoButton is not null)
-                _noCallback = new ActivatableCallback() { ActivateCallback = OnNoActivated };
+            {
+                _noCallback = new ActivatableCallback { ActivateCallback = OnNoActivated };
+            }
+
             if (CancelButton is not null)
-                _cancelCallback = new ActivatableCallback() { ActivateCallback = OnCancelActivated };
+            {
+                _cancelCallback = new ActivatableCallback { ActivateCallback = OnCancelActivated };
+            }
+        }
+
+        private async Task OnVisibleChangedAsync(ParameterChangedEventArgs<bool> arg)
+        {
+            if (IsInline)
+            {
+                if (arg.Value)
+                {
+                    await ShowAsync();
+                }
+                else
+                {
+                    Close();
+                }
+            }
         }
 
         private void OnYesActivated(object arg1, MouseEventArgs arg2) => OnYesClicked();

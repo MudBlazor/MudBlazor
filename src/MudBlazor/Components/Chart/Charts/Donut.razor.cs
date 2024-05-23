@@ -8,7 +8,7 @@ namespace MudBlazor.Charts
     /// <summary>
     /// Represents a chart which displays values as ring shape.
     /// </summary>
-    partial class Donut : MudChartBase
+    partial class Donut : MudCategoryChartBase
     {
         /// <summary>
         /// The chart, if any, containing this component.

@@ -729,7 +729,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task OnMouseOver_ShouldCallJavaScriptFunction()
+        public async Task OnPointerOver_ShouldCallJavaScriptFunction()
         {
             var comp = OpenPicker();
 
@@ -737,7 +737,7 @@ namespace MudBlazor.UnitTests.Components
                 .FindAll(".mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-picker-calendar-day.mud-day")
                 .Single(x => x.GetAttribute("style") == "--day-id: 5;");
 
-            await button.MouseOverAsync(new());
+            await button.PointerOverAsync(new());
 
             Context.JSInterop.VerifyInvoke("mudWindow.updateStyleProperty", 1);
             Context.JSInterop.Invocations["mudWindow.updateStyleProperty"].Single()

@@ -13,18 +13,50 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Represents a cell displayed at the top of a <see cref="MudDataGrid{T}"/> column.
+    /// </summary>
+    /// <typeparam name="T">The kind of item managed by the grid.</typeparam>
     public partial class HeaderCell<T> : MudComponentBase, IDisposable
     {
         private Guid _id = Guid.NewGuid();
-        [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
-        [CascadingParameter(Name = "IsOnlyHeader")] public bool IsOnlyHeader { get; set; } = false;
 
-        [Parameter] public Column<T> Column { get; set; }
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        /// <summary>
+        /// The <see cref="MudDataGrid{T}"/> which contains this header cell.
+        /// </summary>
+        [CascadingParameter]
+        public MudDataGrid<T> DataGrid { get; set; }
+
+        /// <summary>
+        /// Shows this cell only in the header area.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, the header cell display in the header area and will not display cells with data like a normal column.  This property is set automatically when adding a header to the grid manually.
+        /// </remarks>
+        [CascadingParameter(Name = "IsOnlyHeader")]
+        public bool IsOnlyHeader { get; set; } = false;
+
+        /// <summary>
+        /// The column associated with this header cell.
+        /// </summary>
+        [Parameter]
+        public Column<T> Column { get; set; }
+
+        /// <summary>
+        /// The content within this header cell.
+        /// </summary>
+        [Parameter]
+        public RenderFragment ChildContent { get; set; }
 
         private SortDirection _initialDirection;
         private bool _selected;
 
+        /// <summary>
+        /// The direction to sort values in this column.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="SortDirection.None"/>.
+        /// </remarks>
         [Parameter]
         public SortDirection SortDirection
         {
@@ -76,7 +108,12 @@ namespace MudBlazor
 
         private ElementReference _headerElement;
 
-
+        /// <summary>
+        /// The width for this header cell, in pixels.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         public double? Width { get; internal set; }
 
         private double? _resizerHeight;
@@ -251,7 +288,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private async Task OnResizerMouseDown(MouseEventArgs args)
+        private async Task OnResizerPointerDown(PointerEventArgs args)
         {
             if (!resizable)
                 return;
@@ -265,13 +302,13 @@ namespace MudBlazor
             _isResizing = await DataGrid.StartResizeColumn(this, args.ClientX);
         }
 
-        private async Task OnResizerMouseOver()
+        private async Task OnResizerPointerOver()
         {
             if (!_isResizing)
                 _resizerHeight = await DataGrid?.GetActualHeight();
         }
 
-        private void OnResizerMouseLeave()
+        private void OnResizerPointerLeave()
         {
             if (!_isResizing)
                 _resizerHeight = null;
@@ -448,6 +485,9 @@ namespace MudBlazor
 
         #endregion
 
+        /// <summary>
+        /// Releases resources used by this header cell.
+        /// </summary>
         public void Dispose()
         {
             if (DataGrid != null)

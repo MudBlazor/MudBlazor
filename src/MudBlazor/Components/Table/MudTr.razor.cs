@@ -74,7 +74,7 @@ namespace MudBlazor
             await table.FireRowClickEventAsync(args, this, Item);
         }
 
-        public async Task OnRowMouseEnterAsync(MouseEventArgs args)
+        public async Task OnRowMouseEnterAsync(PointerEventArgs args)
         {
             var table = Context?.Table;
             if (table is null)
@@ -85,7 +85,7 @@ namespace MudBlazor
             await table.FireRowMouseEnterEventAsync(args, this, Item);
         }
 
-        public async Task OnRowMouseLeaveAsync(MouseEventArgs args)
+        public async Task OnRowMouseLeaveAsync(PointerEventArgs args)
         {
             var table = Context?.Table;
             if (table is null)
@@ -96,7 +96,7 @@ namespace MudBlazor
             await table.FireRowMouseLeaveEventAsync(args, this, Item);
         }
 
-        private EventCallback<MouseEventArgs> RowMouseEnterEventCallback
+        private EventCallback<PointerEventArgs> RowMouseEnterEventCallback
         {
             get
             {
@@ -104,14 +104,14 @@ namespace MudBlazor
 
                 if (hasEventHandler)
                 {
-                    return EventCallback.Factory.Create<MouseEventArgs>(this, OnRowMouseEnterAsync);
+                    return EventCallback.Factory.Create<PointerEventArgs>(this, OnRowMouseEnterAsync);
                 }
 
                 return default;
             }
         }
 
-        private EventCallback<MouseEventArgs> RowMouseLeaveEventCallback
+        private EventCallback<PointerEventArgs> RowMouseLeaveEventCallback
         {
             get
             {
@@ -119,7 +119,7 @@ namespace MudBlazor
 
                 if (hasEventHandler)
                 {
-                    return EventCallback.Factory.Create<MouseEventArgs>(this, OnRowMouseLeaveAsync);
+                    return EventCallback.Factory.Create<PointerEventArgs>(this, OnRowMouseLeaveAsync);
                 }
 
                 return default;

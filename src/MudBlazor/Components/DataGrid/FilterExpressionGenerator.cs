@@ -7,8 +7,19 @@ using System.Linq.Expressions;
 namespace MudBlazor;
 
 #nullable enable
+
+/// <summary>
+/// Represents a service which generates C# functions from text-based filter operations.
+/// </summary>
 public static class FilterExpressionGenerator
 {
+    /// <summary>
+    /// Creates a C# expression for the specified filter and options.
+    /// </summary>
+    /// <typeparam name="T">The kind of object to filter.</typeparam>
+    /// <param name="filter">The filter definition used to generate the expression.</param>
+    /// <param name="filterOptions">Any options to apply such as case sensitivity.</param>
+    /// <returns>An expression which can be executed to perform a filter.</returns>
     public static Expression<Func<T, bool>> GenerateExpression<T>(IFilterDefinition<T> filter, FilterOptions? filterOptions)
     {
         filterOptions ??= FilterOptions.Default; //Default if null
