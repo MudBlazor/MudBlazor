@@ -207,11 +207,11 @@ namespace MudBlazor
         /// The amount of vertical spacing for this input.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Margin.None"/>.
+        /// Defaults to <see cref="Margin.Default"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Margin Margin { get; set; } = Margin.None;
+        public Margin Margin { get; set; } = Margin.Default;
 
         /// <summary>
         /// Typography for the input text.

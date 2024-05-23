@@ -11,7 +11,7 @@ namespace MudBlazor
          .AddClass("mud-input-label")
          .AddClass("mud-input-label-animated")
          .AddClass($"mud-input-label-{Variant.ToDescriptionString()}")
-         .AddClass($"mud-input-label-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
+         .AddClass($"mud-input-label-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.Default)
          .AddClass($"mud-disabled", Disabled)
          .AddClass("mud-input-error", Error)
          .AddClass(Class)
@@ -40,7 +40,7 @@ namespace MudBlazor
         /// <summary>
         ///  Will adjust vertical spacing. 
         /// </summary>
-        [Parameter] public Margin Margin { get; set; } = Margin.None;
+        [Parameter] public Margin Margin { get; set; } = Margin.Default;
 
         /// <summary>
         ///  Will set the for attribute for WCAG accessiblility

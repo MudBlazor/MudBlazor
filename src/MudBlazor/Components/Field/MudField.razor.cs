@@ -13,7 +13,7 @@ namespace MudBlazor
                 .AddClass($"mud-input-{Variant.ToDescriptionString()}")
                 .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
                 .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
-                .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
+                .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.Default)
                 .AddClass("mud-input-underline", when: () => Underline && Variant != Variant.Outlined)
                 .AddClass("mud-shrink", when: () => !string.IsNullOrWhiteSpace(ChildContent?.ToString()) || Adornment == Adornment.Start)
                 .AddClass("mud-disabled", Disabled)
@@ -26,7 +26,7 @@ namespace MudBlazor
                 .AddClass("mud-input-slot-nopadding", when: () => InnerPadding == false)
                 .AddClass($"mud-input-root-{Variant.ToDescriptionString()}")
                 .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
-                .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
+                .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.Default)
                 .Build();
 
         protected string AdornmentClassname =>
@@ -53,7 +53,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Field.Appearance)]
-        public Margin Margin { get; set; } = Margin.None;
+        public Margin Margin { get; set; } = Margin.Default;
 
         /// <summary>
         /// If true, the label will be displayed in an error state.
