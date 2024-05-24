@@ -23,7 +23,7 @@ namespace MudBlazor.State;
 /// <remarks>
 /// For details and usage please read CONTRIBUTING.md
 /// </remarks>
-internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
+internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>, IParameterStatesReaderOwner
 {
     private readonly IParameterStatesReader _parameterStatesReader;
 
@@ -66,6 +66,7 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     public ParameterSet(IParameterStatesReader parameterStatesReader)
     {
         _parameterStatesReader = parameterStatesReader;
+        _parameterStatesReader.SetOwner(this);
 #if NET8_0_OR_GREATER
         _parameters = new Lazy<FrozenDictionary<string, IParameterComponentLifeCycle>>(ParametersFactory);
 #else
@@ -94,13 +95,7 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     }
 #endif
 
-    /// <summary>
-    /// Forces the attachment of the collection of <seealso cref="IParameterComponentLifeCycle"/> immediately and initializes the inner dictionary.
-    /// </summary>
-    /// <remarks>
-    /// This method is designed for performance optimization. By calling this method, the dictionary initialization is done immediately instead of waiting for the Blazor lifecycle to access the values. 
-    /// This helps avoid potential slowdowns in rendering speed that could occur if the dictionary were initialized during the Blazor lifecycle.
-    /// </remarks>
+    /// <inheritdoc/>
     public void ForceParametersAttachment() => _ = _parameters.Value;
 
     /// <summary>
@@ -160,7 +155,7 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     }
 
     /// <inheritdoc/>
-    public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => ((IDictionary<string, IParameterComponentLifeCycle>)_parameters.Value).Values.GetEnumerator();
+    public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => ((IReadOnlyDictionary<string, IParameterComponentLifeCycle>)_parameters.Value).Values.GetEnumerator();
 
     /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -177,6 +172,9 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
         /// </summary>
         /// <param name="parameters">The parameters to be read.</param>
         public ParameterSetReadonlyEnumerable(IEnumerable<IParameterComponentLifeCycle> parameters) => _parameters = parameters;
+
+        /// <inheritdoc />
+        public void SetOwner(IParameterStatesReaderOwner owner) { /*Noop*/ }
 
         /// <inheritdoc />
         public IEnumerable<IParameterComponentLifeCycle> ReadParameters() => _parameters;

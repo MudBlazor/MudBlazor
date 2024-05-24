@@ -1,0 +1,37 @@
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid T="Item" ServerData="ServerDataFunc" Virtualize="true" ReadOnly="false" EditMode="@DataGridEditMode.Cell">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = @"Test editing values in cells of the DataGrid.";
+    
+    private readonly IEnumerable<Item> _items = new List<Item>()
+    {
+        new Item("John", 45), 
+        new Item("Johanna", 23), 
+        new Item("Steve", 32)
+    };
+
+    public record Item(string Name, int Age);
+    
+    private async Task<GridData<Item>> ServerDataFunc(GridState<Item> gridState)
+    {
+        await Task.CompletedTask;
+
+        var result = _items
+            .Skip(gridState.Page * gridState.PageSize)
+            .Take(gridState.PageSize)
+            .ToList();
+        
+        return new GridData<Item>
+        {
+            Items = result,
+            TotalItems = _items.Count()
+        };
+    }
+}

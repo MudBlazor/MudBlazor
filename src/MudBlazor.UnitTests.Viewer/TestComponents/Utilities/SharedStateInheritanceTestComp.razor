@@ -1,0 +1,14 @@
+﻿@inherits AnotherComponentBase
+@namespace MudBlazor.UnitTests
+
+<h3>SharedStateInheritanceTestComp</h3>
+
+<p>ABC handler count: <span class="abc">@AbcHandlerCallCount</span></p>
+<p>OP handler count: <span class="op">@OpHandlerCallCount</span></p>
+<p>XYZ handler count: <span class="xyz">@XyzHandlerCallCount</span></p>
+
+@code
+{
+    public static string __description__ = "Tests ParameterState framework with inheritance and multiple scopes " +
+                                           $"All handlers should be invoked correctly similar to {nameof(SharedStateHandlerTestComp)}";
+}

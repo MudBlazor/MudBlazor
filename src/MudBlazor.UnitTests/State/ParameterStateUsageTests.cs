@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
@@ -18,17 +17,50 @@ namespace MudBlazor.UnitTests.State;
 public class ParameterStateUsageTests : BunitTest
 {
     [Test]
-    public void ThrowsExceptionWhenScopeCreatedTwice()
+    public void DoesThrowExceptionWhenScopeCreatedMultipleTimes()
     {
-        var createComp = () => Context.RenderComponent<ParameterStateScopeExceptionTestComp>();
+        var createComp = () => Context.RenderComponent<ParameterStateMultipleScopeTestComp>();
 
-        createComp.Should().Throw<TargetInvocationException>().WithInnerException<InvalidOperationException>();
+        createComp.Should().NotThrow<Exception>();
+    }
+
+    [Test]
+    public void ShouldHaveTwoScopes()
+    {
+        var comp = Context.RenderComponent<ParameterStateMultipleScopeTestComp>();
+
+        comp.Instance.ParameterSetUnion.Count.Should().Be(2);
     }
 
     [Test]
     public void SharedHandlerIntegrationTest()
     {
         var comp = Context.RenderComponent<ParameterStateSharedHandlerTestComp>();
+
+        // note: the handler for abc and the one for xyz are each called once per click
+        // the handlers for o and p are lambdas which are excluded from this optimization, so they
+        // are each called per click resulting in an increment of 2 per click for op 
+        comp.Find("span.abc").InnerHtml.Trimmed().Should().Be("1");
+        comp.Find("span.op").InnerHtml.Trimmed().Should().Be("2");
+        comp.Find("span.xyz").InnerHtml.Trimmed().Should().Be("1");
+        comp.Find("button.abc").Click();
+        comp.Find("span.abc").InnerHtml.Trimmed().Should().Be("2");
+        comp.Find("span.op").InnerHtml.Trimmed().Should().Be("2");
+        comp.Find("span.xyz").InnerHtml.Trimmed().Should().Be("1");
+        comp.Find("button.xyz").Click();
+        comp.Find("span.abc").InnerHtml.Trimmed().Should().Be("2");
+        comp.Find("span.op").InnerHtml.Trimmed().Should().Be("2");
+        comp.Find("span.xyz").InnerHtml.Trimmed().Should().Be("2");
+        comp.Find("button.op").Click();
+        comp.Find("span.abc").InnerHtml.Trimmed().Should().Be("2");
+        comp.Find("span.op").InnerHtml.Trimmed().Should().Be("4");
+        comp.Find("span.xyz").InnerHtml.Trimmed().Should().Be("2");
+    }
+
+    [Test]
+    public void InheritanceIntegrationTest()
+    {
+        var comp = Context.RenderComponent<ParameterStateSharedInheritanceHandlerTestComp>();
 
         // note: the handler for abc and the one for xyz are each called once per click
         // the handlers for o and p are lambdas which are excluded from this optimization, so they
