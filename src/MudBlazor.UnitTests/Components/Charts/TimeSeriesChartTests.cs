@@ -49,7 +49,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.TimeLabelSpacing, TimeSpan.FromDays(1))
                 .Add(p => p.TimeLabelFormat, format));
 
-            for(var i = -1; i < 2; i++)
+            for (var i = -1; i < 2; i++)
             {
                 var expectedTimeString = time.AddDays(i).ToString(format);
                 comp.Markup.Should().Contain(expectedTimeString);
