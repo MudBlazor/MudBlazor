@@ -29,7 +29,7 @@ public class ParameterStateUsageTests : BunitTest
     {
         var comp = Context.RenderComponent<ParameterStateMultipleScopeTestComp>();
 
-        comp.Instance.ParameterSetUnion.Count.Should().Be(2);
+        comp.Instance.ParameterContainer.Count.Should().Be(2);
     }
 
     [Test]

@@ -45,14 +45,11 @@ public static class ComponentBaseWithStateExtensions
     /// <exception cref="KeyNotFoundException">Thrown when the parameter state with <paramref name="propertyName"/> is not found.</exception>
     public static T? GetState<T>(this ComponentBaseWithState component, string propertyName)
     {
-        foreach (var parameterSets in component.ParameterSetUnion)
+        if (component.ParameterContainer.TryGetValue(propertyName, out var lifeCycle))
         {
-            if (parameterSets.TryGetValue(propertyName, out var lifeCycle))
+            if (lifeCycle is ParameterStateInternal<T> parameterState)
             {
-                if (lifeCycle is ParameterStateInternal<T> parameterState)
-                {
-                    return parameterState.Value;
-                }
+                return parameterState.Value;
             }
         }
 

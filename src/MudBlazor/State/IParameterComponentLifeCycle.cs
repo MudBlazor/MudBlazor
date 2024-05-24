@@ -34,7 +34,7 @@ internal interface IParameterComponentLifeCycle
     /// Called by the <see cref="ParameterState{T}"/> framework when <see cref="IParameterChangedHandler{T}"/> is supplied.
     /// </summary>
     /// <remarks>
-    /// This method is intended for internal use and is controlled by the <see cref="MudComponentBase"/> and <see cref="ParameterSet"/>.
+    /// This method is intended for internal use and is controlled by the <see cref="MudComponentBase"/> and <see cref="ParameterScopeContainer"/>.
     /// It should only be invoked after <see cref="HasParameterChanged"/> has been called.
     /// Direct invocation of this method by external code is discouraged.
     /// </remarks>
@@ -45,7 +45,7 @@ internal interface IParameterComponentLifeCycle
     /// Invoked when <see cref="ComponentBase.OnInitialized"/> is called, used to set the initial parameter value.
     /// </summary>
     /// <remarks>
-    /// This method is intended for internal use and is controlled by the <see cref="MudComponentBase"/> and <see cref="ParameterSet"/>.
+    /// This method is intended for internal use and is controlled by the <see cref="MudComponentBase"/> and <see cref="ParameterScopeContainer"/>.
     /// Direct invocation of this method by external code is discouraged.
     /// </remarks>
     void OnInitialized();
@@ -54,7 +54,7 @@ internal interface IParameterComponentLifeCycle
     /// Invoked when <see cref="ComponentBase.OnParametersSet"/> is called, used to synchronize the parameter value when Blazor updates the parameters.
     /// </summary>
     /// <remarks>
-    /// This method is intended for internal use and is controlled by the <see cref="MudComponentBase"/> and <see cref="ParameterSet"/>.
+    /// This method is intended for internal use and is controlled by the <see cref="MudComponentBase"/> and <see cref="ParameterScopeContainer"/>.
     /// Direct invocation of this method by external code is discouraged.
     /// </remarks>
     void OnParametersSet();

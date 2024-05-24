@@ -23,8 +23,9 @@ namespace MudBlazor.State;
 /// <remarks>
 /// For details and usage please read CONTRIBUTING.md
 /// </remarks>
-internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>, IParameterStatesReaderOwner
+internal class ParameterScopeContainer : IParameterContainer, IParameterStatesReaderOwner
 {
+    private readonly IParameterContainer _primaryParameterContainer;
     private readonly IParameterStatesReader _parameterStatesReader;
 
 #if NET8_0_OR_GREATER
@@ -42,29 +43,60 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>, IParame
     public bool IsInitialized => _parameters.IsValueCreated;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ParameterSet"/> class with the specified parameters.
+    /// Initializes a new instance of the <see cref="ParameterScopeContainer"/> class with the specified parameters.
     /// </summary>
     /// <param name="parameters">An optional array of parameters to initialize the set.</param>
-    public ParameterSet(params IParameterComponentLifeCycle[] parameters)
-        : this(new ParameterSetReadonlyEnumerable(parameters))
+    public ParameterScopeContainer(params IParameterComponentLifeCycle[] parameters)
+        : this(new ParameterScopeContainerReadonlyEnumerable(parameters))
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ParameterSet"/> class with the specified parameters.
+    /// Initializes a new instance of the <see cref="ParameterScopeContainer"/> class with the specified parameters.
+    /// </summary>
+    /// <param name="primaryParameterContainer"></param>
+    /// <param name="parameters">An optional array of parameters to initialize the set.</param>
+    public ParameterScopeContainer(IParameterContainer primaryParameterContainer, params IParameterComponentLifeCycle[] parameters)
+        : this(primaryParameterContainer, new ParameterScopeContainerReadonlyEnumerable(parameters))
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParameterScopeContainer"/> class with the specified parameters.
     /// </summary>
     /// <param name="parameters">An enumerable collection of parameters to initialize the set.</param>
-    public ParameterSet(IEnumerable<IParameterComponentLifeCycle> parameters)
-        : this(new ParameterSetReadonlyEnumerable(parameters))
+    public ParameterScopeContainer(IEnumerable<IParameterComponentLifeCycle> parameters)
+        : this(new ParameterScopeContainerReadonlyEnumerable(parameters))
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ParameterSet"/> class with the specified parameter states factory.
+    /// Initializes a new instance of the <see cref="ParameterScopeContainer"/> class with the specified parameters.
+    /// </summary>
+    /// <param name="primaryParameterContainer"></param>
+    /// <param name="parameters">An enumerable collection of parameters to initialize the set.</param>
+    public ParameterScopeContainer(IParameterContainer primaryParameterContainer, IEnumerable<IParameterComponentLifeCycle> parameters)
+        : this(primaryParameterContainer, new ParameterScopeContainerReadonlyEnumerable(parameters))
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParameterScopeContainer"/> class with the specified parameter states factory.
     /// </summary>
     /// <param name="parameterStatesReader">The factory used to read an enumerable collection of parameters to initialize the set.</param>
-    public ParameterSet(IParameterStatesReader parameterStatesReader)
+    public ParameterScopeContainer(IParameterStatesReader parameterStatesReader) 
+        :this(ParameterContainer.Empty, parameterStatesReader)
     {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParameterScopeContainer"/> class with the specified parameter states factory.
+    /// </summary>
+    /// <param name="primaryParameterContainer"></param>
+    /// <param name="parameterStatesReader">The factory used to read an enumerable collection of parameters to initialize the set.</param>
+    public ParameterScopeContainer(IParameterContainer primaryParameterContainer, IParameterStatesReader parameterStatesReader)
+    {
+        _primaryParameterContainer = primaryParameterContainer;
         _parameterStatesReader = parameterStatesReader;
         _parameterStatesReader.SetOwner(this);
 #if NET8_0_OR_GREATER
@@ -163,15 +195,15 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>, IParame
     /// <summary>
     /// Represents an enumerable reader for parameter states.
     /// </summary>
-    private class ParameterSetReadonlyEnumerable : IParameterStatesReader
+    private class ParameterScopeContainerReadonlyEnumerable : IParameterStatesReader
     {
         private readonly IEnumerable<IParameterComponentLifeCycle> _parameters;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ParameterSetReadonlyEnumerable"/> class with the specified parameters.
+        /// Initializes a new instance of the <see cref="ParameterScopeContainerReadonlyEnumerable"/> class with the specified parameters.
         /// </summary>
         /// <param name="parameters">The parameters to be read.</param>
-        public ParameterSetReadonlyEnumerable(IEnumerable<IParameterComponentLifeCycle> parameters) => _parameters = parameters;
+        public ParameterScopeContainerReadonlyEnumerable(IEnumerable<IParameterComponentLifeCycle> parameters) => _parameters = parameters;
 
         /// <inheritdoc />
         public void SetOwner(IParameterStatesReaderOwner owner) { /*Noop*/ }

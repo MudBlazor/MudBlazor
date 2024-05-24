@@ -20,6 +20,23 @@ namespace MudBlazor.UnitTests.State;
 public class ParameterSetUnionTests
 {
     [Test]
+    public async Task Test1()
+    {
+        const int Parameter1 = 1;
+        const string Parameter1Name = nameof(Parameter1);
+        var parameter1State = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(Parameter1Name))
+            .WithGetParameterValueFunc(() => Parameter1)
+            .Attach();
+        var parameterSetUnion = new ParameterContainer();
+        parameterSetUnion.Add(new ParameterScopeContainer(parameterSetUnion, parameter1State));
+        parameterSetUnion.Add(new ParameterScopeContainer(parameterSetUnion, parameter1State));
+
+        await parameterSetUnion.SetParametersAsync(_ => Task.CompletedTask, ParameterView.Empty);
+    }
+
+    [Test]
     public async Task SetParametersAsync_ActionHandlerShouldFire_WhenDefinedInDifferentSets()
     {
         // Arrange
@@ -50,7 +67,7 @@ public class ParameterSetUnionTests
             .WithGetParameterValueFunc(() => Parameter2)
             .WithParameterChangedHandler(OnParameter2Change)
             .Attach();
-        var parameterSetUnion = new ParameterSetUnion { new(parameter1State), new(parameter2State) };
+        var parameterSetUnion = new ParameterContainer { new(parameter1State), new(parameter2State) };
         void OnParameter1Change()
         {
             handler1FireCount++;
@@ -95,21 +112,21 @@ public class ParameterSetUnionTests
             .WithMetadata(new ParameterMetadata(nameof(Parameter3)))
             .WithGetParameterValueFunc(() => Parameter3)
             .Attach();
-        var parameterSetUnion = new ParameterSetUnion();
-        var expectedParameters = new List<ParameterSet> { new(parameterState1), new(parameterState2), new(parameterState3) };
+        var parameterSetUnion = new ParameterContainer();
+        var expectedParameters = new List<ParameterScopeContainer> { new(parameterState1), new(parameterState2), new(parameterState3) };
         foreach (var expectedParameter in expectedParameters)
         {
             parameterSetUnion.Add(expectedParameter);
         }
 
         // Act
-        var actualParameters = new List<ParameterSet>();
+        var actualParameters = new List<ParameterScopeContainer>();
         var enumerator = ((IEnumerable)parameterSetUnion).GetEnumerator();
         using (enumerator as IDisposable)
         {
             while (enumerator.MoveNext())
             {
-                if (enumerator.Current is ParameterSet parameterSet)
+                if (enumerator.Current is ParameterScopeContainer parameterSet)
                 {
                     actualParameters.Add(parameterSet);
                 }
@@ -117,7 +134,7 @@ public class ParameterSetUnionTests
         }
 
         // Assert
-        parameterSetUnion.Count().Should().Be(3);
+        parameterSetUnion.Count.Should().Be(3);
         actualParameters.Should().BeEquivalentTo(expectedParameters);
     }
 
@@ -143,8 +160,8 @@ public class ParameterSetUnionTests
             .WithMetadata(new ParameterMetadata(nameof(Parameter3)))
             .WithGetParameterValueFunc(() => Parameter3)
             .Attach();
-        var parameterSetUnion = new ParameterSetUnion();
-        var expectedParameters = new List<ParameterSet> { new(parameterState1), new(parameterState2), new(parameterState3) };
+        var parameterSetUnion = new ParameterContainer();
+        var expectedParameters = new List<ParameterScopeContainer> { new(parameterState1), new(parameterState2), new(parameterState3) };
         foreach (var expectedParameter in expectedParameters)
         {
             parameterSetUnion.Add(expectedParameter);
@@ -154,7 +171,7 @@ public class ParameterSetUnionTests
         var actualParameters = parameterSetUnion.ToList();
 
         // Assert
-        parameterSetUnion.Count().Should().Be(3);
+        parameterSetUnion.Count.Should().Be(3);
         actualParameters.Should().BeEquivalentTo(expectedParameters);
     }
 }
