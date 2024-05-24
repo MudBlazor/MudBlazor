@@ -1,4 +1,4 @@
-// Copyright (c) MudBlazor 2021
+﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -8,6 +8,7 @@ using System.Linq;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.Charts;
+using MudBlazor.Components.Chart.Models;
 using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
 
@@ -40,7 +41,7 @@ namespace MudBlazor.UnitTests.Charts
                     {
                         Index = 0,
                         Name = "Series 1",
-                        Data = Enumerable.Range(-5, 5).Select(x => new TimeSeriesChartSeries.TimeValue(now.AddDays(x), _random.Next(6000, 15000))).ToList(),
+                        Data = Enumerable.Range(-5, 5).Select(x => new TimeSeriesChartSeries.TimeValue(time.AddDays(x), 1000)).ToList(),
                         IsVisible = true,
                         Type = TimeSeriesDiplayType.Line
                     }
