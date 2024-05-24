@@ -17,10 +17,10 @@ public enum Origin
     TopLeft,
 
     /// <summary>
-    /// The component's top-left corner is at the container's top-left corner.
+    /// The component is centered on the container's top center.
     /// </summary>
     /// <remarks>
-    /// For transform origins, the component displays down and in the middle of the anchor origin.
+    /// For transform origins, the component displays below the anchor origin.
     /// </remarks>
     [Description("top-center")]
     TopCenter,
@@ -71,10 +71,10 @@ public enum Origin
     BottomLeft,
 
     /// <summary>
-    /// The component's top-left corner is at the container's bottom-center corner.
+    /// The component is centered on the container's bottom center.
     /// </summary>
     /// <remarks>
-    /// For transform origins, the component displays above the anchor origin.
+    /// For transform origins, the component is centered above the anchor origin.
     /// </remarks>
     [Description("bottom-center")]
     BottomCenter,

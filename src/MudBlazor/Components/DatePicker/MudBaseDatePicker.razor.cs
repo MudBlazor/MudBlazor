@@ -186,7 +186,7 @@ namespace MudBlazor
         /// The format of the selected date in the title.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>ddd, ddd MMM</c>.  Supported date formats can be found here: <see href="https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings"/>.
+        /// Defaults to <c>ddd, dd MMM</c>.  Supported date formats can be found here: <see href="https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -231,7 +231,7 @@ namespace MudBlazor
         public Func<DateTime, string> AdditionalDateClassesFunc { get; set; }
 
         /// <summary>
-        /// The icon for button which navigates to the previous month or year.
+        /// The icon for the button that navigates to the previous month or year.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.ChevronLeft"/>.
@@ -241,7 +241,7 @@ namespace MudBlazor
         public string PreviousIcon { get; set; } = Icons.Material.Filled.ChevronLeft;
 
         /// <summary>
-        /// The icon for button which navigates to the next month or year.
+        /// The icon for the button which navigates to the next month or year.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.ChevronRight"/>.
