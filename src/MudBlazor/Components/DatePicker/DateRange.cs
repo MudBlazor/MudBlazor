@@ -25,7 +25,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Formats this range as an ISO 8601 string.
+        /// Formats this range as a string.
         /// </summary>
         /// <param name="converter">The converter used to convert to a <c>string</c>.</param>
         /// <returns>The formatted string.</returns>
