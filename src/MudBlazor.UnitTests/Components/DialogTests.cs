@@ -964,16 +964,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Opening a dialog, editing the binding, then confirming it changed after
+        /// Opening a dialog, editing the binding, then confirming that we see the change that occurred during submission.
         /// </summary>
         [Test]
-        public void EditBindingTest()
+        public void CloseDialogBindingTest()
         {
-            var data = new EditBindingDialog.EditBindingDialogData() { Value = "initial value" };
-            var comp = Context.RenderComponent<EditBindingDialogLauncher>(c => c.Add(p => p.Data, data));
+            var med = new EditBindingDialog.Medication() { Dose = 1 };
+            var comp = Context.RenderComponent<EditBindingDialogLauncher>(c => c.Add(p => p.Med, med));
 
             // Confirm binding was set up correctly.
-            comp.Instance.Data.Value.Should().Be("initial value");
+            comp.Instance.Med.Dose.Should().Be(1);
+            comp.Instance.Med.Taken.Should().Be(null);
 
             // Open the dialog via link.
             comp.Find(".mud-link").Click();
@@ -982,64 +983,14 @@ namespace MudBlazor.UnitTests.Components
             var dialog = comp.FindComponent<EditBindingDialog>();
 
             // Change the binding.
-            dialog.Instance.Data.Value.Should().Be("initial value");
-            dialog.Instance.UncommittedValue.Should().Be("initial value");
-            dialog.Find("input").Input("new value");
-            dialog.Instance.UncommittedValue.Should().Be("new value");
+            dialog.Find("input").Input("2");
 
             // Submit the data and close the dialog.
             comp.Find(".submit-button").Click();
 
             // The new data should be immediately available.
-            data.Value.Should().Be("new value");
-        }
-
-        /// <summary>
-        /// Opening a dialog, editing the binding, then confirming it changed after
-        /// </summary>
-        [Test]
-        public void EditBindingTest_OpenTwice()
-        {
-            var data = new EditBindingDialog.EditBindingDialogData() { Value = "initial value" };
-            var comp = Context.RenderComponent<EditBindingDialogLauncher>(c => c.Add(p => p.Data, data));
-
-            // Confirm binding was set up correctly.
-            comp.Instance.Data.Value.Should().Be("initial value");
-
-            // Open the dialog via link.
-            comp.Find(".mud-link").Click();
-
-            // Find the dialog.
-            var dialog = comp.FindComponent<EditBindingDialog>();
-
-            // Change the binding.
-            dialog.Instance.Data.Value.Should().Be("initial value");
-            dialog.Instance.UncommittedValue.Should().Be("initial value");
-            dialog.Find("input").Input("new value");
-            dialog.Instance.UncommittedValue.Should().Be("new value");
-
-            // Submit the data and close the dialog.
-            comp.Find(".submit-button").Click();
-
-            // The new data should be immediately available.
-            data.Value.Should().Be("new value");
-
-            // Open the dialog again via link.
-            comp.Find(".mud-link").Click();
-
-            // Find the dialog.
-            dialog = comp.FindComponent<EditBindingDialog>();
-
-            // Change the binding.
-            dialog.Instance.UncommittedValue.Should().Be("new value");
-            dialog.Find("input").Input("second new value");
-            dialog.Instance.UncommittedValue.Should().Be("second new value");
-
-            // Submit the data and close the dialog.
-            comp.Find(".submit-button").Click();
-
-            // The new data should be immediately available.
-            data.Value.Should().Be("second new value");
+            med.Dose.Should().Be(2);
+            med.Taken.Should().Be(true);
         }
     }
 

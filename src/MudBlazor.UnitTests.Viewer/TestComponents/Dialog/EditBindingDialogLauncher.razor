@@ -9,11 +9,11 @@
 
 @code {
     [Parameter]
-    public EditBindingDialog.EditBindingDialogData Data { get; set; }
+    public EditBindingDialog.Medication Med { get; set; }
 
     public async Task OpenDialogAsync()
     {
-        var parameters = new DialogParameters<EditBindingDialog> { { x => x.Data, Data } };
+        var parameters = new DialogParameters<EditBindingDialog> { { x => x.Med, Med } };
         await DialogService.Show<EditBindingDialog>(string.Empty, parameters).Result;
     }
 }

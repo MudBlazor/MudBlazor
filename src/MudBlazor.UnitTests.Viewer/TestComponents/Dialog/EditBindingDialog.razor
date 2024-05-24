@@ -2,7 +2,7 @@
 
 <MudDialog Class="binding-dialog">
     <DialogContent>
-        <MudTextField Class="binding-text-field" T="string" @bind-Text="UncommittedValue" Immediate />
+        <MudNumericField T="decimal?" @bind-Value="UncommittedDose" Immediate />
     </DialogContent>
 
     <DialogActions>
@@ -11,34 +11,36 @@
 </MudDialog>
 
 @code {
-    private EditBindingDialogData _data;
+    private Medication _med;
 
     [CascadingParameter]
     public MudDialogInstance MudDialog { get; set; }
 
 #pragma warning disable BL0007
     [Parameter]
-    public EditBindingDialogData Data
+    public Medication Med
     {
-        get => _data;
+        get => _med;
         set
         {
-            _data = value;
-            UncommittedValue = value.Value;
+            _med = value;
+            UncommittedDose = value.Dose;
         }
     }
 #pragma warning restore CS0618
 
-    public string UncommittedValue { get; set; }
+    public decimal? UncommittedDose { get; set; }
 
     private void Submit()
     {
-        Data.Value = UncommittedValue;
+        Med.Dose = UncommittedDose;
+        Med.Taken = UncommittedDose != null && UncommittedDose != decimal.Zero;
         MudDialog.Close(DialogResult.Ok(true));
     }
 
-    public record EditBindingDialogData
+    public record Medication
     {
-        public string Value { get; set; }
+        public decimal? Dose { get; set; }
+        public bool? Taken { get; set; }
     }
 }
