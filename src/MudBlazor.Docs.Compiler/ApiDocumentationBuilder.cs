@@ -103,17 +103,6 @@ public partial class ApiDocumentationBuilder()
     public List<string> UnresolvedEvents { get; private set; } = [];
 
     /// <summary>
-    /// The XML documentation elements and their HTML equivalents.
-    /// </summary>
-    public static Dictionary<string, string> XmlToHtmlElements { get; private set; } = new()
-    {
-        { "<c>", "<code class=\"docs-code docs-code-primary\">" },
-        { "</c>", "</code>" },
-        { "<para>", "<p>" },
-        { "</para>", "</p>" }
-    };
-
-    /// <summary>
     /// Generates documentation for all types.
     /// </summary>
     public bool Execute()
@@ -714,8 +703,7 @@ public partial class ApiDocumentationBuilder()
     public static string GetSummary(string xml)
     {
         var summary = SummaryRegEx().Match(xml).Groups.GetValueOrDefault("1");
-        var content = summary?.Value;
-        return ToHtml(content);
+        return summary?.Value;
     }
 
     /// <summary>
@@ -726,25 +714,7 @@ public partial class ApiDocumentationBuilder()
     public static string GetRemarks(string xml)
     {
         var remarks = RemarksRegEx().Match(xml).Groups.GetValueOrDefault("1");
-        var content = remarks?.Value;
-        return ToHtml(content);
-    }
-
-    /// <summary>
-    /// Gets the specified XML documentation string as HTML.
-    /// </summary>
-    /// <param name="xml">The XML content to convert.</param>
-    /// <returns></returns>
-    public static string ToHtml(string xml)
-    {
-        // Anything to do?
-        if (string.IsNullOrEmpty(xml)) { return null; }
-        // Convert common XML documentation elements to HTML
-        foreach (var pair in XmlToHtmlElements)
-        {
-            xml = xml.Replace(pair.Key, pair.Value, StringComparison.OrdinalIgnoreCase);
-        }
-        return xml;
+        return remarks?.Value;
     }
 
     /// <summary>
@@ -756,6 +726,10 @@ public partial class ApiDocumentationBuilder()
         writer.WriteHeader();
         writer.WriteClassStart();
         writer.WriteConstructorStart(Types.Count);
+        writer.WriteProperties(Properties);
+        writer.WriteMethods(Methods);
+        // writer.WriteFields(Fields);
+        // writer.WriteEvents(Events);
         writer.WriteTypes(Types);
         writer.WriteConstructorEnd();
         writer.WriteClassEnd();

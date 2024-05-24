@@ -13,20 +13,22 @@ namespace MudBlazor.Docs.Models;
 /// <summary>
 /// Represents documentation for a method.
 /// </summary>
-[DebuggerDisplay("({ReturnTypeName}) {Name}: {Summary}")]
+[DebuggerDisplay("({ReturnType}) {Name}: {Summary}")]
 public class DocumentedMethod
 {
     public string ApiUrl => "/api/" + Name;
     public string Category { get; set; } = "General";
-    public string? DeclaringType { get; set; }
-    public string? DeclaringTypeApiLink => $"/api/{DeclaringType}";
+    public string? DeclaringTypeFriendlyName { get; set; }
+    public string? DeclaringTypeName { get; set; }
+    public DocumentedType? DeclaringType => string.IsNullOrEmpty(DeclaringTypeName) ? null : ApiDocumentation.Types[DeclaringTypeName];
+    public string? DeclaringTypeApiLink => $"/api/{DeclaringTypeName}";
     public bool IsPublic { get; set; }
     public bool IsProtected { get; set; }
     public string? Name { get; set; } = "";
     public int? Order { get; set; }
     public string? Remarks { get; set; }
+    public string ReturnTypeFriendlyName { get; set; } = "";
     public string ReturnType { get; set; } = "";
-    public string ReturnTypeCSharp => ReturnType.Replace("Boolean", "bool").Replace("Int32", "int").Replace("Int64", "long").Replace("String", "string").Replace("Double", "double").Replace("Single", "float").Replace("Object", "object");
     public string? Summary { get; set; }
     public Dictionary<string, DocumentedParameter> Parameters { get; set; } = [];
 }

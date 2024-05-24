@@ -7,13 +7,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace MudBlazor.Docs.Compiler;
 
 /// <summary>
 /// Represents a writer for generated API documentation.
 /// </summary>
-public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.Create(filePath))
+public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File.Create(filePath))
 {
     /// <summary>
     /// Creates a new instance with types and the default output path.
@@ -35,7 +36,39 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
     /// </summary>
     public static List<string> ExcludedTypes { get; private set; } =
     [
-        "Enum"
+        "MudBlazor.Colors",
+        "MudBlazor.Colors+Amber",
+        "MudBlazor.Colors+Blue",
+        "MudBlazor.Colors+BlueGray",
+        "MudBlazor.Colors+Brown",
+        "MudBlazor.Colors+Cyan",
+        "MudBlazor.Colors+DeepOrange",
+        "MudBlazor.Colors+DeepPurple",
+        "MudBlazor.Colors+Gray",
+        "MudBlazor.Colors+Green",
+        "MudBlazor.Colors+Indigo",
+        "MudBlazor.Colors+LightBlue",
+        "MudBlazor.Colors+LightGreen",
+        "MudBlazor.Colors+Lime",
+        "MudBlazor.Colors+Orange",
+        "MudBlazor.Colors+Pink",
+        "MudBlazor.Colors+Purple",
+        "MudBlazor.Colors+Red",
+        "MudBlazor.Colors+Shades",
+        "MudBlazor.Colors+Teal",
+        "MudBlazor.Colors+Yellow",
+        "MudBlazor.Resources.LanguageResource",
+        "MudBlazor.Icons",
+        "MudBlazor.Icons+Custom",
+        "MudBlazor.Icons+Custom+Brands",
+        "MudBlazor.Icons+Custom+FileFormats",
+        "MudBlazor.Icons+Custom+Uncategorized",
+        "MudBlazor.Icons+Material",
+        "MudBlazor.Icons+Material+Filled",
+        "MudBlazor.Icons+Material+Outlined",
+        "MudBlazor.Icons+Material+Rounded",
+        "MudBlazor.Icons+Material+Sharp",
+        "MudBlazor.Icons+Material+TwoTone",
     ];
 
     /// <summary>
@@ -49,6 +82,11 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
         "MemberwiseClone",
         "GetHashCode",
         "GetType",
+        // Operators
+        "op_Equality",
+        "op_Inequality",
+        "op_Implicit",
+        "op_Explicit",
         // Constructors
         "#ctor",
         // Blazor component methods
@@ -149,8 +187,6 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
         WriteLineIndented("static ApiDocumentation()");
         WriteLineIndented("{");
         Indent();
-        WriteLineIndented("// Build all of the documented types");
-        WriteLineIndented($"var types = new Dictionary<string, DocumentedType>({typeCount});");
     }
 
     /// <summary>
@@ -178,8 +214,6 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
     /// </summary>
     public void WriteConstructorEnd()
     {
-        WriteLine();
-        WriteLineIndented($"Types = types.ToFrozenDictionary();");
         Outdent();
         WriteLine("}");
     }
@@ -279,13 +313,18 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
     /// <summary>
     /// Serializes all of the specified types.
     /// </summary>
-    /// <param name="types"></param>
+    /// <param name="types">The types to serialize.</param>
     public void WriteTypes(IDictionary<string, DocumentedType> types)
     {
+        WriteLineIndented("// Build all of the documented types");
+        WriteLineIndented($"Types = new Dictionary<string, DocumentedType>();");
+
         foreach (var type in types)
         {
             WriteType(type.Value);
         }
+
+        WriteLine();
     }
 
     /// <summary>
@@ -294,10 +333,16 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
     /// <param name="type">The type to serialize.</param>
     public void WriteType(DocumentedType type)
     {
-        WriteIndented($"types.Add(\"{type.Key}\", new()");
+        if (ExcludedTypes.Contains(type.Key))
+        {
+            return;
+        }
+
+        WriteIndented($"Types.Add(\"{type.Key}\", new()");
         WriteLine(" {");
         Indent();
         WriteLineIndented($"Name = \"{type.Name}\", ");
+        WriteLineIndented($"NameFriendly = \"{GetFriendlyTypeName(type.Type)}\", ");
         WriteBaseTypeIndented(type.BaseType);
         WriteIsComponentIndented(type.Type.IsSubclassOf(typeof(MudComponentBase)));
         WriteSummaryIndented(type.Summary);
@@ -311,6 +356,54 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
     }
 
     /// <summary>
+    /// Serializes all documented properties.
+    /// </summary>
+    /// <param name="properties">the properties to write.</param>
+    public void WriteProperties(IDictionary<string, DocumentedProperty> properties)
+    {
+        WriteLineIndented("// Build all of the documented properties");
+        WriteLineIndented($"Properties = new Dictionary<string, DocumentedProperty>();");
+
+        foreach (var property in properties)
+        {
+            WriteProperty(property.Value);
+        }
+
+        WriteLine();
+    }
+
+    /// <summary>
+    /// Serializes a documented property.
+    /// </summary>
+    /// <param name="property">the property to serialize.</param>
+    public void WriteProperty(DocumentedProperty property)
+    {
+        // Skip excluded types
+        if (property.DeclaringTypeFullName != null && ExcludedTypes.Contains(property.DeclaringTypeFullName))
+        {
+            return;
+        }
+        // Skip System properties
+        if (property.DeclaringTypeFullName != null && property.DeclaringTypeFullName.StartsWith("System."))
+        {
+            return;
+        }
+
+        WriteIndented($"Properties.Add(\"{property.Key}\", new()");
+        Write(" { ");
+        Write($"Name = \"{property.Name}\", ");
+        Write($"Type = \"{property.PropertyTypeFullName}\", ");
+        Write($"TypeFriendlyName = \"{GetFriendlyTypeName(property.PropertyType)}\", ");
+        WriteDeclaringType(property);
+        WriteCategory(property.Category);
+        WriteIsParameter(property.IsParameter);
+        WriteSummary(property.Summary);
+        WriteRemarks(property.Remarks);
+        Write(" }");
+        WriteLine(");");
+    }
+
+    /// <summary>
     /// Serializes the specified properties.
     /// </summary>
     /// <param name="type">The type containing the properties.</param>
@@ -319,10 +412,10 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
         /* Example:
          
             Properties = { 
-				{ "JavaScriptListenerId", new() { Type = "Guid", Summary = "Gets the ID of the JavaScript listener.",  } },
-				{ "BrowserWindowSize", new() { Type = "BrowserWindowSize", Summary = "Gets the browser window size.",  } },
-				{ "Breakpoint", new() { Type = "Breakpoint", Summary = "Gets the breakpoint associated with the browser size.",  } },
-				{ "IsImmediate", new() { Type = "Boolean",  } },
+				{ "Type.JavaScriptListenerId", Properties["Type.JavaScriptListenerId"], } },
+				{ "Type.BrowserWindowSize", Properties["Type.BrowserWindowSize"], } },
+				{ "Type.Breakpoint", Properties["Type.Breakpoint"],  } },
+				{ "Type.IsImmediate", Properties["Type.IsImmediate"],  } },
             },
           
          */
@@ -387,30 +480,39 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
     /// <param name="property">The property to serialize.</param>
     public void WriteProperty(DocumentedType type, DocumentedProperty property)
     {
-        if (ExcludedTypes.Contains(property.DeclaringTypeName))
+        // Skip excluded types
+        if (property.DeclaringTypeFullName != null && ExcludedTypes.Contains(property.DeclaringTypeFullName))
+        {
+            return;
+        }
+        // Skip System properties
+        if (property.DeclaringTypeFullName != null && property.DeclaringTypeFullName.StartsWith("System."))
         {
             return;
         }
 
-        /* Example:
-         
-        	{ "BrowserWindowSize", new() { Type = "BrowserWindowSize", Summary = "Gets the browser window size.",  } },
-		
-         */
+        // Example:  { "BrowserWindowSize", Properties["Type.BrowserWindowSize"], },
 
         WriteIndented("{ ");
-        Write($"\"{property.Name}\", new()");
-        Write(" { ");
-        Write($"Name = \"{property.Name}\", ");
-        Write($"Type = \"{property.PropertyTypeName}\", ");
-        WriteDeclaringType(type, property);
-        WriteCategory(property.Category);
-        WriteIsParameter(property.IsParameter);
-        WriteSummary(property.Summary);
-        WriteRemarks(property.Remarks);
-
-        Write(" }");
+        Write($"\"{property.Name}\", Properties[\"{property.Key}\"]");
         WriteLine(" },");
+    }
+
+    /// <summary>
+    /// Serializes the specified methods.
+    /// </summary>
+    /// <param name="methods">The methods to serialize.</param>
+    public void WriteMethods(IDictionary<string, DocumentedMethod> methods)
+    {
+        WriteLineIndented("// Build all of the documented methods");
+        WriteLineIndented($"Methods = new Dictionary<string, DocumentedMethod>();");
+
+        foreach (var method in methods)
+        {
+            WriteMethod(method.Value);
+        }
+
+        WriteLine();
     }
 
     /// <summary>
@@ -452,6 +554,36 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
         WriteLineIndented("},");
     }
 
+    public void WriteMethod(DocumentedMethod method)
+    {
+        // Skip excluded methods and types
+        if (ExcludedMethods.Contains(method.Name) || ExcludedTypes.Contains(method.DeclaringTypeName) || method.Name.StartsWith('<'))
+        {
+            return;
+        }
+        // Skip System properties
+        if (method.DeclaringTypeFullName != null && method.DeclaringTypeFullName.StartsWith("System."))
+        {
+            return;
+        }
+
+        /* Example:
+         
+        	methods.Add("BrowserWindowSize", new() { Type = "BrowserWindowSize", ReturnType = "Void", Summary = "Gets the browser window size.", });
+		
+         */
+
+        WriteIndented($"Methods.Add(\"{method.Key}\", new()");
+        Write(" { ");
+        Write($"Name = \"{method.Name}\", ");
+        WriteReturnType(method);
+        WriteDeclaringType(method);
+        WriteSummary(method.Summary);
+        WriteRemarks(method.Remarks);
+        Write(" }");
+        WriteLine(");");
+    }
+
     /// <summary>
     /// Serializes the specified method.
     /// </summary>
@@ -459,27 +591,21 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
     /// <param name="method">The method to serialize.</param>
     public void WriteMethod(DocumentedType type, DocumentedMethod method)
     {
+        // Skip excluded methods and types
         if (ExcludedMethods.Contains(method.Name) || ExcludedTypes.Contains(method.DeclaringTypeName) || method.Name.StartsWith('<'))
         {
             return;
         }
+        // Skip System properties
+        if (method.DeclaringTypeFullName != null && method.DeclaringTypeFullName.StartsWith("System."))
+        {
+            return;
+        }
 
-        /* Example:
-         
-        	{ "BrowserWindowSize", new() { Type = "BrowserWindowSize", Summary = "Gets the browser window size.",  } },
-		
-         */
+        // Example:  { "GetWindowSize", Methods["Type.GetWindowSize"], },
 
         WriteIndented("{ ");
-        Write($"\"{method.Name}\", new()");
-        Write(" { ");
-        Write($"Name = \"{method.Name}\", ");
-        WriteReturnType(type, method);
-        WriteDeclaringType(type, method);
-        WriteSummary(method.Summary);
-        WriteRemarks(method.Remarks);
-
-        Write(" }");
+        Write($"\"{method.Name}\", Methods[\"{method.Key}\"]");
         WriteLine(" },");
     }
 
@@ -501,13 +627,10 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
     /// </summary>
     /// <param name="type">The type containing the property.</param>
     /// <param name="method">The property being described.</param>
-    public void WriteReturnType(DocumentedType type, DocumentedMethod method)
+    public void WriteReturnType(DocumentedMethod method)
     {
-        // Is this property declared in another type (like a base class)?
-        if (!string.IsNullOrEmpty(method.DeclaringTypeName) && type.Name != method.DeclaringTypeName && method.ReturnTypeName != "Void")
-        {
-            Write($"ReturnType = \"{Escape(method.ReturnTypeName)}\", ");
-        }
+        Write($"ReturnType = \"{Escape(method.ReturnTypeName)}\", ");
+        Write($"ReturnTypeFriendlyName = \"{GetFriendlyTypeName(method.ReturnType)}\", ");
     }
 
     /// <summary>
@@ -535,17 +658,13 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
     }
 
     /// <summary>
-    /// Writes the type in which the property was declared, if it's another type.
+    /// Writes the declaring type of a property.
     /// </summary>
-    /// <param name="type">The type containing the property.</param>
-    /// <param name="property">The property being described.</param>
-    public void WriteDeclaringType(DocumentedType type, DocumentedProperty property)
+    /// <param name="property">The property to serialize.</param>
+    public void WriteDeclaringType(DocumentedProperty property)
     {
-        // Is this property declared in another type (like a base class)?
-        if (!string.IsNullOrEmpty(property.DeclaringTypeName) && type.Name != property.DeclaringTypeName)
-        {
-            Write($"DeclaringType = \"{Escape(property.DeclaringTypeName)}\", ");
-        }
+        Write($"DeclaringTypeName = \"{Escape(property.DeclaringTypeFullName)}\", ");
+        Write($"DeclaringTypeFriendlyName = \"{Escape(GetFriendlyTypeName(property.DeclaringType))}\", ");
     }
 
     /// <summary>
@@ -553,13 +672,10 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
     /// </summary>
     /// <param name="type">The type containing the property.</param>
     /// <param name="method">The property being described.</param>
-    public void WriteDeclaringType(DocumentedType type, DocumentedMethod method)
+    public void WriteDeclaringType(DocumentedMethod method)
     {
-        // Is this property declared in another type (like a base class)?
-        if (!string.IsNullOrEmpty(method.DeclaringTypeName) && type.Name != method.DeclaringTypeName)
-        {
-            Write($"DeclaringType = \"{Escape(method.DeclaringTypeName)}\", ");
-        }
+        Write($"DeclaringTypeName = \"{Escape(method.DeclaringTypeFullName)}\", ");
+        Write($"DeclaringTypeFriendlyName = \"{Escape(GetFriendlyTypeName(method.DeclaringType))}\", ");
     }
 
     /// <summary>
@@ -598,4 +714,58 @@ public sealed class ApiDocumentationWriter(string filePath) : StreamWriter(File.
         Write(" }");
         WriteLine(" },");
     }
+
+    /// <summary>
+    /// Gets the C# equivalent of the specified XML type.
+    /// </summary>
+    /// <param name="fullName">The type name to convert.</param>
+    /// <returns></returns>
+    public static string GetFriendlyTypeName(Type type)
+    {
+        // Replace value types
+        var name = type.Name
+            .Replace("Boolean", "bool")
+            .Replace("Int32", "int")
+            .Replace("Int64", "long")
+            .Replace("String", "string")
+            .Replace("Double", "double")
+            .Replace("Single", "float")
+            .Replace("Object", "object")
+            .Replace("Void", "");
+
+        // Replace generics
+        if (type.IsGenericType)
+        {
+            // Get the parameters
+            var parameters = type.GetGenericArguments();
+            // Shave off the `1
+            name = string.Concat(name.AsSpan(0, name.Length - 2), "<");
+            // Simplify all generic parameter
+            for (var index = 0; index < parameters.Length; index++)
+            {
+                if (index > 0)
+                {
+                    name += ", ";
+                }
+
+                name += GetFriendlyTypeName(parameters[index]);
+            }
+            name += ">";
+        }
+
+        // Simplify Nullable<T> to T?
+        foreach (var match in NullableRegEx().Matches(name).Cast<Match>())
+        {
+            name = name.Replace(match.Groups[0].Value, match.Groups[1].Value + "?");
+        }
+
+        return name;
+    }
+
+    /// <summary>
+    /// The regular expression for Nullable<T>
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex("Nullable<([\\S]*)>")]
+    private static partial Regex NullableRegEx();
 }

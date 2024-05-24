@@ -15,9 +15,29 @@ namespace MudBlazor.Docs.Models;
 public static partial class ApiDocumentation
 {
     /// <summary>
-    /// The types which have documentation.
+    /// The generated documentation for events.
     /// </summary>
-    public static FrozenDictionary<string, DocumentedType> Types { get; private set; }
+    public static Dictionary<string, DocumentedEvent> Events { get; private set; }
+
+    /// <summary>
+    /// The generated documentation for fields.
+    /// </summary>
+    public static Dictionary<string, DocumentedField> Fields { get; private set; }
+
+    /// <summary>
+    /// The generated documentation for types.
+    /// </summary>
+    public static Dictionary<string, DocumentedType> Types { get; private set; }
+
+    /// <summary>
+    /// The generated documentation for properties.
+    /// </summary>
+    public static Dictionary<string, DocumentedProperty> Properties { get; private set; }
+
+    /// <summary>
+    /// The generated documentation for methods.
+    /// </summary>
+    public static Dictionary<string, DocumentedMethod> Methods { get; private set; }
 
     /// <summary>
     /// Gets a documented type by its name.
@@ -25,11 +45,17 @@ public static partial class ApiDocumentation
     /// <param name="name">The name of the type to find.</param>
     public static DocumentedType GetType(string name)
     {
+        // Anything to do?
+        if (string.IsNullOrEmpty(name))
+        {
+            return null;
+        }
         // First, try an exact match
         if (Types.TryGetValue(name, out var match))
         {
             return match;
         }
+        // Prepend the MudBlazor namespace
         if (Types.TryGetValue("MudBlazor." + name, out match))
         {
             return match;

@@ -24,6 +24,11 @@ public partial class Api
     public string TypeName { get; set; }
 
     /// <summary>
+    /// Shows the inheritance hierarchy.
+    /// </summary>
+    public bool ShowInheritance => false;
+
+    /// <summary>
     /// The type being displayed.
     /// </summary>
     public DocumentedType DocumentedType { get; set; }

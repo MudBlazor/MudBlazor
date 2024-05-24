@@ -18,21 +18,26 @@
     <HeaderContent>
         <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="Name" InitialDirection="SortDirection.Ascending">Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="Type">Type</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="DeclaringType">Declared In</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="Description">Description</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd Class="docs-content-api-cell" Style="white-space: nowrap;" DataLabel="Name">
-            <CodeInline>@context.Name</CodeInline>
+            @if (context.DeclaringType != null && context.DeclaringType.Name != Type.Name)
+            {
+                <MudTooltip Text="@("From " + context.DeclaringType.Name)">
+                    <CodeInline>@context.Name</CodeInline>
+                </MudTooltip>
+            }
+            else
+            {
+                <CodeInline>@context.Name</CodeInline>
+            }
         </MudTd>
         <MudTd Class="docs-content-api-cell" DataLabel="Type">
-            <CodeInline>@context.TypeCSharp</CodeInline>
-        </MudTd>
-        <MudTd Class="docs-content-api-cell" DataLabel="Declaring Type">
-            <MudLink OnClick="@(() => OnDeclaringTypeClicked(@context.DeclaringTypeApiLink))"><CodeInline>@context.DeclaringType</CodeInline></MudLink>
+            <CodeInline>@context.TypeFriendlyName</CodeInline>
         </MudTd>
         <MudTd id="@context.Name" Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">
-            @((MarkupString)(context.Summary + " " + context.Remarks))
+            <ApiText Type="@Type" Text="@(context.Summary + " " + context.Remarks)" />
         </MudTd>
     </RowTemplate>
     <NoRecordsContent>

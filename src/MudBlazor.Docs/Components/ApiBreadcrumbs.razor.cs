@@ -37,15 +37,19 @@ public partial class ApiBreadcrumbs
     {
         Items = [new("Index", "/api")];
 
-        if (Type != null)
+        if (Type == null)
         {
-            Items.Add(new(Type.Name, Type.ApiUrl));
-            var parent = Type.BaseType;
-            while (parent != null)
-            {
-                Items.Insert(1, new(parent.Name, parent.ApiUrl));
-                parent = parent.BaseType;
-            }
+            return;
+        }
+
+        // Add the type breadcrumb
+        Items.Add(new(Type.NameFriendly, Type.ApiUrl));
+        var parent = Type.BaseType;
+        // Walk up the hierarchy and add base type breadcrumbs
+        while (parent != null)
+        {
+            Items.Insert(1, new(parent.NameFriendly, parent.ApiUrl));
+            parent = parent.BaseType;
         }
     }
 

@@ -9,21 +9,24 @@ using System.Linq;
 
 namespace MudBlazor.Docs.Models;
 
+#nullable enable
+
 /// <summary>
 /// Represents documentation for a type.
 /// </summary>
 [DebuggerDisplay("{Name}: Summary={Summary}")]
 public class DocumentedType
 {
-    public string Name { get; set; }
+    public string Name { get; set; } = "";
+    public string NameFriendly { get; set; } = "";
     public string LegacyApiUrl => "/api/" + (IsComponent ? Name.Replace("Mud", "") : Name);
     public string ApiUrl => "/api/" + Name;
-    public string ElementName => (IsComponent ? $"<{Name}>" : null);
-    public string ComponentUrl => (IsComponent ? "/components/" + Name.Replace("Mud", "") : null);
+    public string? ElementName => (IsComponent ? $"<{NameFriendly}>" : null);
+    public string? ComponentUrl => (IsComponent ? "/components/" + Name.Replace("Mud", "") : null);
     public bool IsComponent { get; set; }
-    public string Summary { get; set; }
-    public string Remarks { get; set; }
-    public string BaseTypeName { get; set; }
+    public string? Summary { get; set; }
+    public string? Remarks { get; set; }
+    public string? BaseTypeName { get; set; }
     public DocumentedType BaseType => ApiDocumentation.GetType(BaseTypeName);
     public List<DocumentedType> Children => ApiDocumentation.Types.Values.Where(type => type.BaseTypeName == Name).ToList();
     public Dictionary<string, DocumentedProperty> Properties { get; set; } = [];

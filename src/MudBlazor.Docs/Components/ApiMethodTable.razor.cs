@@ -101,7 +101,7 @@ public partial class ApiMethodTable
             return CurrentGrouping switch
             {
                 ApiMemberGrouping.Categories => new() { Selector = (property) => property.Category ?? "" },
-                ApiMemberGrouping.Inheritance => new() { Selector = (property) => property.DeclaringType ?? "" },
+                ApiMemberGrouping.Inheritance => new() { Selector = (property) => property.DeclaringType?.Name ?? "" },
                 _ => new() { Selector = (property) => property.Category ?? "" }
             };
         }

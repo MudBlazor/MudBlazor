@@ -45,7 +45,7 @@ public partial class ApiTypeHierarchy
             {
                 ApiUrl = Type.ApiUrl,
                 Expanded = false,
-                Name = Type.Name,
+                Name = Type.NameFriendly,
             };
             Root = [SelectedType];
             // Walk up the hierarchy to build the tree
@@ -57,7 +57,7 @@ public partial class ApiTypeHierarchy
                     ApiUrl = parent.ApiUrl,
                     Children = [Root[0]],
                     Expanded = true,
-                    Name = parent.Name
+                    Name = parent.NameFriendly
                 };
                 if (parent.BaseType != null)
                 {
@@ -81,7 +81,7 @@ public partial class ApiTypeHierarchy
                 SelectedType.Children.Add(new()
                 {
                     ApiUrl = descendant.ApiUrl,
-                    Name = descendant.Name,
+                    Name = descendant.NameFriendly,
                 });
             }
             // Finally, flag the root

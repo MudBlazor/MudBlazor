@@ -12,19 +12,20 @@ namespace MudBlazor.Docs.Models;
 /// <summary>
 /// Represents documentation for a property.
 /// </summary>
-[DebuggerDisplay("({PropertyTypeName}) {Name}: {Summary}")]
+[DebuggerDisplay("({Type}) {Name}: {Summary}")]
 public sealed class DocumentedProperty
 {
-    public string ApiUrl => "/api/" + Name;
     public string Category { get; set; } = "General";
-    public string? DeclaringType { get; set; }
-    public string? DeclaringTypeApiLink => $"/api/{DeclaringType}";
+    public string? DeclaringTypeName { get; set; }
+    public string? DeclaringTypeFriendlyName { get; set; }
+    public DocumentedType? DeclaringType => string.IsNullOrEmpty(DeclaringTypeName) ? null : ApiDocumentation.Types[DeclaringTypeName];
+    public string? DeclaringTypeApiUrl => $"/api/{DeclaringTypeName}";
     public string Name { get; set; } = "";
     public int? Order { get; set; }
     public string? Remarks { get; set; }
     public string? Summary { get; set; }
     public string Type { get; set; } = "";
-    public string TypeCSharp => Type.Replace("Boolean", "bool").Replace("Int32", "int").Replace("Int64", "long").Replace("String", "string").Replace("Double", "double").Replace("Single", "float").Replace("Object", "object");
+    public string? TypeFriendlyName { get; set; }
     public bool IsPublic { get; set; }
     public bool IsProtected { get; set; }
     public bool IsParameter { get; set; }

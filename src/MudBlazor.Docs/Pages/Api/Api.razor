@@ -7,8 +7,13 @@
     {
         <ApiBreadcrumbs Type="@DocumentedType" />
 
-        <DocsPageHeader Title="@(@DocumentedType.Name + " API")" SubTitle="@DocumentedType.Summary" />
+        <DocsPageHeader Title="@(@DocumentedType.NameFriendly + " API")" />
         <DocsPageContent>
+
+            @if (DocumentedType.Summary != null)
+            {
+                <ApiText Type="@DocumentedType" Text="@DocumentedType.Summary" />
+            }
 
             @if (DocumentedType.ComponentUrl != null)
             {
@@ -23,30 +28,39 @@
                 </DocsPageSection>
             }
 
-            @*  
-            <DocsPageSection>
-                <SectionHeader Title="Inheritance" />
-                <MudGrid>
-                    <MudItem xs="5">
-                        <ApiTypeHierarchy Type="@DocumentedType" />
-                    </MudItem>
-                    <MudItem xs="7"></MudItem>
-                </MudGrid>
-            </DocsPageSection> *@
+            @if (ShowInheritance)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Inheritance" />
+                    <MudGrid>
+                        <MudItem xs="5">
+                            <ApiTypeHierarchy Type="@DocumentedType" />
+                        </MudItem>
+                        <MudItem xs="7"></MudItem>
+                    </MudGrid>
+                </DocsPageSection>
+            }
 
-            <DocsPageSection>
-                <SectionHeader Title="Properties" />
-                <SectionContent Outlined="true">
-                    <ApiPropertyTable Type="@DocumentedType" />
-                </SectionContent>
-            </DocsPageSection>
+            @if (DocumentedType.Properties.Count > 0)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Properties" />
+                    <SectionContent Outlined="true">
+                        <ApiPropertyTable Type="@DocumentedType" />
+                    </SectionContent>
+                </DocsPageSection>
+            }
 
-            <DocsPageSection>
-                <SectionHeader Title="Methods" />
-                <SectionContent Outlined="true">
-                    <ApiMethodTable Type="@DocumentedType" />
-                </SectionContent>
-            </DocsPageSection>
+
+            @if (DocumentedType.Methods.Count > 0)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Methods" />
+                    <SectionContent Outlined="true">
+                        <ApiMethodTable Type="@DocumentedType" />
+                    </SectionContent>
+                </DocsPageSection>
+            }
 
             @if (DocumentedType.Children.Count > 0)
             {
@@ -58,7 +72,7 @@
                 </DocsPageSection>
             }
 
-            @if(DocumentedType.GlobalSettings.Count > 0)
+            @if (DocumentedType.GlobalSettings.Count > 0)
             {
                 <DocsPageSection>
                     <SectionHeader Title="Global Settings" />
