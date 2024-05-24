@@ -22,9 +22,6 @@ namespace MudBlazor
         /// <summary>
         /// The currently selected date.
         /// </summary>
-        /// <remarks>
-        /// Canbe bound via <c>@bind-Date</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
         public DateTime? Date
