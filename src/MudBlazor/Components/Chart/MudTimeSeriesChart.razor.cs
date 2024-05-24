@@ -29,6 +29,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
-        public TimeSpan TimeLabelFormat { get; set; } = "HH:mm";
+        public string TimeLabelFormat { get; set; } = "HH:mm";
     }
 }
