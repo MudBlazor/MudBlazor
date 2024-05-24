@@ -228,7 +228,7 @@ namespace MudBlazor
         /// Prevents the input from being changed by the user.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, the user can copy text in the control, but cannot change the <see cref="Value" />.
+        /// Defaults to <c>false</c>.  When <c>true</c>, the user can copy text in the control, but cannot change the value.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
