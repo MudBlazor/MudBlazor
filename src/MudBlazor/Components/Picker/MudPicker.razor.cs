@@ -471,7 +471,6 @@ namespace MudBlazor
         /// <summary>
         /// Displays this picker.
         /// </summary>
-        /// <returns></returns>
         public Task OpenAsync()
         {
             Open = true;
@@ -488,7 +487,6 @@ namespace MudBlazor
         /// Hides this picker.
         /// </summary>
         /// <param name="close">When <c>true</c>, the picker will be closed if <see cref="PickerVariant"/> is not <see cref="PickerVariant.Static"/>.</param>
-        /// <returns></returns>
         public virtual async Task ClearAsync(bool close = true)
         {
             if (close && PickerVariant != PickerVariant.Static)
@@ -521,7 +519,6 @@ namespace MudBlazor
         /// <summary>
         /// Selects the input content.
         /// </summary>
-        /// <returns></returns>
         public virtual ValueTask SelectAsync() => _inputReference?.SelectAsync() ?? ValueTask.CompletedTask;
 
         /// <summary>

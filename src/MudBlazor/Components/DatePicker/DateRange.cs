@@ -55,7 +55,7 @@ namespace MudBlazor
         /// <param name="value">A string with both the start and end dates.</param>
         /// <param name="converter">The converter for parsing string values.</param>
         /// <param name="date">The result of the parse.</param>
-        /// <returns><c>True</c> if the string was successfully interpreted as a date.</returns>
+        /// <returns><c>true</c> if the string was successfully interpreted as a date.</returns>
         public static bool TryParse(string value, Converter<DateTime?, string> converter, out DateRange date)
         {
             date = null;
@@ -73,7 +73,7 @@ namespace MudBlazor
         /// <param name="end">The maximum date to parse.</param>
         /// <param name="converter">The converter for parsing string values.</param>
         /// <param name="date">The result of the parse.</param>
-        /// <returns><c>True</c> if the string was successfully interpreted as a date.</returns>
+        /// <returns><c>true</c> if the string was successfully interpreted as a date.</returns>
         public static bool TryParse(string start, string end, Converter<DateTime?, string> converter, out DateRange date)
         {
             date = null;

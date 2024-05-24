@@ -312,7 +312,6 @@ namespace MudBlazor
         /// <summary>
         /// Get the first of the month to display
         /// </summary>
-        /// <returns></returns>
         protected DateTime GetMonthStart(int month)
         {
             var monthStartDate = _picker_month ?? DateTime.Today.StartOfMonth(Culture);
@@ -327,7 +326,6 @@ namespace MudBlazor
         /// <summary>
         /// Get the last of the month to display
         /// </summary>
-        /// <returns></returns>
         protected DateTime GetMonthEnd(int month)
         {
             var monthStartDate = _picker_month ?? DateTime.Today.StartOfMonth(Culture);
@@ -346,7 +344,6 @@ namespace MudBlazor
         /// </summary>
         /// <param name="month">offset from _picker_month</param>
         /// <param name="index">between 0 and 4</param>
-        /// <returns></returns>
         protected IEnumerable<DateTime> GetWeek(int month, int index)
         {
             if (index is < 0 or > 5)
@@ -473,7 +470,6 @@ namespace MudBlazor
         /// <summary>
         /// return Mo, Tu, We, Th, Fr, Sa, Su in the right culture
         /// </summary>
-        /// <returns></returns>
         protected IEnumerable<string> GetAbbreviatedDayNames()
         {
             var dayNamesNormal = Culture.DateTimeFormat.AbbreviatedDayNames;
