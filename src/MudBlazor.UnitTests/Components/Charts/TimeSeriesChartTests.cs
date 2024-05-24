@@ -41,14 +41,14 @@ namespace MudBlazor.UnitTests.Charts
                     {
                         Index = 0,
                         Name = "Series 1",
-                        Data = Enumerable.Range(-5, 5).Select(x => new TimeSeriesChartSeries.TimeValue(time.AddDays(x), 1000)).ToList(),
+                        Data = Enumerable.Range(-5, 10).Select(x => new TimeSeriesChartSeries.TimeValue(time.AddDays(x), 1000)).ToList(),
                         IsVisible = true,
                         Type = TimeSeriesDiplayType.Line
                     }
                 })
                 .Add(p => p.TimeLabelSpacing, TimeSpan.FromDays(1))
                 .Add(p => p.TimeLabelFormat, format));
-            
+
             for(var i = -5; i < 5; i++) {
                 var expectedTimeString = time.AddDays(i).ToString(format);
                 comp.Markup.Should().Contain(expectedTimeString);
