@@ -1,0 +1,46 @@
+﻿@namespace MudBlazor.UnitTests
+
+<h3>ParameterStateSharedInheritanceHandlerTestComp</h3>
+<SharedStateInheritanceTestComp A="@_a" B="@_b" C="@_c" O="@_o" P="@_p" X="@_x" Y="@_y" Z="@_z" />
+
+<MudButton Class="abc" OnClick="IncrementAbcClick">Increment A, B and C</MudButton>
+<MudButton Class="op" OnClick="IncrementOpClick">Increment O and P</MudButton>
+<MudButton Class="xyz" OnClick="IncrementXyzClick">Increment X, Y and Z</MudButton>
+
+@code
+{
+    public static string __description__ = "Tests ParameterState framework with inheritance and multiple scopes " +
+                                           $"All handlers should be invoked correctly similar to {nameof(ParameterStateSharedHandlerTestComp)}";
+
+    private int _a = 1;
+    private int _b = 2;
+    private int _c = 3;
+    private int _o = -1;
+    private int _p = -2;
+    private int _x = 4;
+    private int _y = 5;
+    private int _z = 6;
+
+    // this will cause only one invocation of the AbcHandler
+    private void IncrementAbcClick()
+    {
+        _a++;
+        _b++;
+        _c++;
+    }
+
+    // this will cause two invocations of the lambda handlers for O and P
+    private void IncrementOpClick()
+    {
+        _o++;
+        _p++;
+    }
+
+    // this will cause only one invocation of the XyzHandler
+    private void IncrementXyzClick()
+    {
+        _x++;
+        _y++;
+        _z++;
+    }
+}

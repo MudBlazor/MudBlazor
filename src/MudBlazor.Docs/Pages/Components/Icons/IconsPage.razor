@@ -50,15 +50,43 @@
 
         <DocsPageSection>
             <SectionHeader Title="Font Icons">
-                <Description>The MudIcon component will display any icon font that supports ligatures.<br />For example, you can use <MudLink Color="Color.Secondary" Href="https://fontawesome.com/">Font Awesome</MudLink>.</Description>
+                <Description>
+                    MudIcon also supports icon fonts. It supports class-based font icons such as <MudLink Color="Color.Secondary" Href="https://fontawesome.com/">Font Awesome</MudLink>
+                    and text-based icon fonts such as <MudLink Color="Color.Secondary" Href="https://fonts.google.com/icons">Material Symbols</MudLink>. <CodeInline Tag>MudIcon</CodeInline> uses different syntax to 
+                    distinguish them as explained below. If you don't know the type of your font icon library just try out which syntax works.
+                    <br />
+                    <MudAlert Class="mt-3" Severity="Severity.Info">
+                    Note: you can use font icons also in other components such as <CodeInline Tag>MudIconButton</CodeInline>, <CodeInline Tag>MudButton</CodeInline> and many more.
+                    </MudAlert>
+                </Description>
             </SectionHeader>
-            <SectionContent Code="@nameof(IconsFontAwesomeExample)">
-                <IconsFontAwesomeExample />
-            </SectionContent>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="CSS Class-Based Font Icons">
+                        <Description>Most font icon libraries such as <MudLink Color="Color.Secondary" Href="https://fontawesome.com/">Font Awesome</MudLink> use two CSS classes for each icon. Pass these to the 
+                            <CodeInline>Icon</CodeInline> parameter using the syntax <CodeInline>icon-font-class icon-class</CodeInline>.</Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(IconsFontAwesomeExample)">
+                        <IconsFontAwesomeExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Text-Based Font Icons">
+                        <Description>
+                            Some icon libraries such as <MudLink Color="Color.Secondary" Href="https://fonts.google.com/icons">Material Symbols</MudLink> use the inner text of an HTML element to determine which icon to display. 
+                            <CodeInline>MudIcon</CodeInline> supports these also via the syntax <CodeInline>icon-font-class/icon-name</CodeInline> 
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(IconsFontMaterialSymbolsSyntaxExample)">
+                        <IconsFontMaterialSymbolsSyntaxExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Custom Icons">
+            <SectionHeader Title="Custom SVG Icons">
                 <Description>
                     The icon parameter of <CodeInline Tag="true">MudIcon</CodeInline>, <CodeInline Tag="true">MudButton</CodeInline> and other components are just SVG strings. 
                     So changing an icon programmatically is as easy as assigning a new string.<br />
