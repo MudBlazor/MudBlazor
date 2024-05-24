@@ -7,18 +7,24 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Represents a picker for dates.
+    /// </summary>
     public class MudDatePicker : MudBaseDatePicker
     {
         private DateTime? _selectedDate;
 
         /// <summary>
-        /// Fired when the DateFormat changes.
+        /// Occurs when the <see cref="Date"/> has changed.
         /// </summary>
         [Parameter] public EventCallback<DateTime?> DateChanged { get; set; }
 
         /// <summary>
-        /// The currently selected date (two-way bindable). If null, then nothing was selected.
+        /// The currently selected date.
         /// </summary>
+        /// <remarks>
+        /// Canbe bound via <c>@bind-Date</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
         public DateTime? Date
@@ -190,6 +196,7 @@ namespace MudBlazor
             _selectedDate = null;
         }
 
+        /// <inheritdoc />
         public override async Task ClearAsync(bool close = true)
         {
             _selectedDate = null;
