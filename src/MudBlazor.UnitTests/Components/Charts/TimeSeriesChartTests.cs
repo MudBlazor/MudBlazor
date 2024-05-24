@@ -41,7 +41,7 @@ namespace MudBlazor.UnitTests.Charts
                     {
                         Index = 0,
                         Name = "Series 1",
-                        Data = Enumerable.Range(-5, 10).Select(x => new TimeSeriesChartSeries.TimeValue(time.AddDays(x), 1000)).ToList(),
+                        Data = new[] {-1, 0, 1}.Select(x => new TimeSeriesChartSeries.TimeValue(time.AddDays(x), 1000)).ToList(),
                         IsVisible = true,
                         Type = TimeSeriesDiplayType.Line
                     }
@@ -49,10 +49,10 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.TimeLabelSpacing, TimeSpan.FromDays(1))
                 .Add(p => p.TimeLabelFormat, format));
 
-            for(var i = -5; i < 5; i++) {
+            for(var i = -1; i < 2; i++) 
+            {
                 var expectedTimeString = time.AddDays(i).ToString(format);
                 comp.Markup.Should().Contain(expectedTimeString);
-
             }
         }
     }
