@@ -23,9 +23,8 @@ namespace MudBlazor.State;
 /// <remarks>
 /// For details and usage please read CONTRIBUTING.md
 /// </remarks>
-internal class ParameterScopeContainer : IParameterContainer, IParameterStatesReaderOwner
+internal class ParameterScopeContainer : IParameterScopeContainer
 {
-    private readonly IParameterContainer _primaryParameterContainer;
     private readonly IParameterStatesReader _parameterStatesReader;
 
 #if NET8_0_OR_GREATER
@@ -33,6 +32,8 @@ internal class ParameterScopeContainer : IParameterContainer, IParameterStatesRe
 #else
     private readonly Lazy<Dictionary<string, IParameterComponentLifeCycle>> _parameters;
 #endif
+
+    public bool IsLocked { get; private set; }
 
     /// <summary>
     /// Gets a value indicating whether the parameter set has been initialized.
@@ -54,16 +55,6 @@ internal class ParameterScopeContainer : IParameterContainer, IParameterStatesRe
     /// <summary>
     /// Initializes a new instance of the <see cref="ParameterScopeContainer"/> class with the specified parameters.
     /// </summary>
-    /// <param name="primaryParameterContainer"></param>
-    /// <param name="parameters">An optional array of parameters to initialize the set.</param>
-    public ParameterScopeContainer(IParameterContainer primaryParameterContainer, params IParameterComponentLifeCycle[] parameters)
-        : this(primaryParameterContainer, new ParameterScopeContainerReadonlyEnumerable(parameters))
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ParameterScopeContainer"/> class with the specified parameters.
-    /// </summary>
     /// <param name="parameters">An enumerable collection of parameters to initialize the set.</param>
     public ParameterScopeContainer(IEnumerable<IParameterComponentLifeCycle> parameters)
         : this(new ParameterScopeContainerReadonlyEnumerable(parameters))
@@ -71,41 +62,18 @@ internal class ParameterScopeContainer : IParameterContainer, IParameterStatesRe
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ParameterScopeContainer"/> class with the specified parameters.
-    /// </summary>
-    /// <param name="primaryParameterContainer"></param>
-    /// <param name="parameters">An enumerable collection of parameters to initialize the set.</param>
-    public ParameterScopeContainer(IParameterContainer primaryParameterContainer, IEnumerable<IParameterComponentLifeCycle> parameters)
-        : this(primaryParameterContainer, new ParameterScopeContainerReadonlyEnumerable(parameters))
-    {
-    }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="ParameterScopeContainer"/> class with the specified parameter states factory.
     /// </summary>
     /// <param name="parameterStatesReader">The factory used to read an enumerable collection of parameters to initialize the set.</param>
-    public ParameterScopeContainer(IParameterStatesReader parameterStatesReader) 
-        :this(ParameterContainer.Empty, parameterStatesReader)
+    public ParameterScopeContainer(IParameterStatesReader parameterStatesReader)
     {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ParameterScopeContainer"/> class with the specified parameter states factory.
-    /// </summary>
-    /// <param name="primaryParameterContainer"></param>
-    /// <param name="parameterStatesReader">The factory used to read an enumerable collection of parameters to initialize the set.</param>
-    public ParameterScopeContainer(IParameterContainer primaryParameterContainer, IParameterStatesReader parameterStatesReader)
-    {
-        _primaryParameterContainer = primaryParameterContainer;
         _parameterStatesReader = parameterStatesReader;
-        _parameterStatesReader.SetOwner(this);
 #if NET8_0_OR_GREATER
         _parameters = new Lazy<FrozenDictionary<string, IParameterComponentLifeCycle>>(ParametersFactory);
 #else
         _parameters = new Lazy<Dictionary<string, IParameterComponentLifeCycle>>(ParametersFactory);
 #endif
     }
-
 
 #if NET8_0_OR_GREATER
     private FrozenDictionary<string, IParameterComponentLifeCycle> ParametersFactory()
@@ -127,7 +95,13 @@ internal class ParameterScopeContainer : IParameterContainer, IParameterStatesRe
     }
 #endif
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Forces the attachment of the collection of <seealso cref="IParameterComponentLifeCycle"/> immediately and initializes the inner dictionary.
+    /// </summary>
+    /// <remarks>
+    /// This method is designed for performance optimization. By calling this method, the dictionary initialization is done immediately instead of waiting for the Blazor lifecycle to access the values. 
+    /// This helps avoid potential slowdowns in rendering speed that could occur if the dictionary were initialized during the Blazor lifecycle.
+    /// </remarks>
     public void ForceParametersAttachment() => _ = _parameters.Value;
 
     /// <summary>
@@ -156,7 +130,7 @@ internal class ParameterScopeContainer : IParameterContainer, IParameterStatesRe
     /// Determines which <see cref="ParameterState{T}"/> have been changed and calls their respective change handler.
     /// </summary>
     /// <param name="baseSetParametersAsync">A func to call the base class' <see cref="ComponentBase.SetParametersAsync"/>.</param>
-    /// <param name="parameters">The ParameterView coming from Blazor's  <see cref="ComponentBase.SetParametersAsync"/>.</param>
+    /// <param name="parameters">The ParameterView coming from Blazor's <see cref="ComponentBase.SetParametersAsync"/>.</param>
     public async Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
     {
 #if NET8_0_OR_GREATER
@@ -186,6 +160,15 @@ internal class ParameterScopeContainer : IParameterContainer, IParameterStatesRe
         return _parameters.Value.TryGetValue(parameterName, out parameterComponentLifeCycle);
     }
 
+    public void Dispose()
+    {
+        if (!IsLocked)
+        {
+            IsLocked = true;
+            ForceParametersAttachment();
+        }
+    }
+
     /// <inheritdoc/>
     public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => ((IReadOnlyDictionary<string, IParameterComponentLifeCycle>)_parameters.Value).Values.GetEnumerator();
 
@@ -204,9 +187,6 @@ internal class ParameterScopeContainer : IParameterContainer, IParameterStatesRe
         /// </summary>
         /// <param name="parameters">The parameters to be read.</param>
         public ParameterScopeContainerReadonlyEnumerable(IEnumerable<IParameterComponentLifeCycle> parameters) => _parameters = parameters;
-
-        /// <inheritdoc />
-        public void SetOwner(IParameterStatesReaderOwner owner) { /*Noop*/ }
 
         /// <inheritdoc />
         public IEnumerable<IParameterComponentLifeCycle> ReadParameters() => _parameters;

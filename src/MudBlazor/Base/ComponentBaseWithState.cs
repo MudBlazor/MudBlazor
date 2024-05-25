@@ -43,12 +43,11 @@ public class ComponentBaseWithState : ComponentBase
     /// <returns>A <see cref="ParameterRegistrationBuilderScope"/> instance for registering parameters.</returns>
     protected IParameterRegistrationBuilderScope CreateRegisterScope()
     {
-        var parameterRegistrationBuilderScope = new ParameterRegistrationBuilderScope(OnScopeEndedAction);
-        var parameterScopeContainer = new ParameterScopeContainer(ParameterContainer, parameterRegistrationBuilderScope);
+        var processor = new ParameterRegistrationBuilderScope.ParameterStatesProcessor();
+        var parameterScopeContainer = new ParameterScopeContainer(processor);
+        var parameterRegistrationBuilderScope = new ParameterRegistrationBuilderScope(parameterScopeContainer, processor);
         ParameterContainer.Add(parameterScopeContainer);
 
         return parameterRegistrationBuilderScope;
-
-        static void OnScopeEndedAction(IParameterStatesReaderOwner? owner) => owner?.ForceParametersAttachment();
     }
 }

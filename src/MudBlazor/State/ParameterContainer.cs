@@ -119,7 +119,7 @@ internal class ParameterContainer : IParameterContainer
         }
     }
 
-    public static readonly IParameterContainer Empty = new ParameterContainerEmpty();
+    //public static readonly IParameterContainer Empty = new ParameterContainerEmpty();
 
     /// <inheritdoc/>
     public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => _parameterScopeContainers.SelectMany(scopeContainer => scopeContainer).GetEnumerator();
@@ -127,29 +127,29 @@ internal class ParameterContainer : IParameterContainer
     /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    private class ParameterContainerEmpty : IParameterContainer
-    {
-        /// <inheritdoc/>
-        public void OnInitialized() { /*Noop*/ }
+    //private class ParameterContainerEmpty : IParameterContainer
+    //{
+    //    /// <inheritdoc/>
+    //    public void OnInitialized() { /*Noop*/ }
 
-        /// <inheritdoc/>
-        public void OnParametersSet() { /*Noop*/ }
+    //    /// <inheritdoc/>
+    //    public void OnParametersSet() { /*Noop*/ }
 
-        /// <inheritdoc/>
-        public Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters) => baseSetParametersAsync(parameters);
+    //    /// <inheritdoc/>
+    //    public Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters) => baseSetParametersAsync(parameters);
 
-        /// <inheritdoc/>
-        public bool TryGetValue(string parameterName, [MaybeNullWhen(false)] out IParameterComponentLifeCycle parameterComponentLifeCycle)
-        {
-            parameterComponentLifeCycle = null;
+    //    /// <inheritdoc/>
+    //    public bool TryGetValue(string parameterName, [MaybeNullWhen(false)] out IParameterComponentLifeCycle parameterComponentLifeCycle)
+    //    {
+    //        parameterComponentLifeCycle = null;
 
-            return false;
-        }
+    //        return false;
+    //    }
 
-        /// <inheritdoc/>
-        public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => Enumerable.Empty<IParameterComponentLifeCycle>().GetEnumerator();
+    //    /// <inheritdoc/>
+    //    public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => Enumerable.Empty<IParameterComponentLifeCycle>().GetEnumerator();
 
-        /// <inheritdoc/>
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    }
+    //    /// <inheritdoc/>
+    //    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    //}
 }
