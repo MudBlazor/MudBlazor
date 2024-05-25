@@ -14,7 +14,7 @@ namespace MudBlazor
 {
     public class DialogReference : IDialogReference
     {
-        private readonly TaskCompletionSource<DialogResult> _resultCompletion = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly TaskCompletionSource<DialogResult> _resultCompletion = new();
 
         private readonly IDialogService _dialogService;
 
@@ -46,7 +46,7 @@ namespace MudBlazor
 
         public Task<DialogResult> Result => _resultCompletion.Task;
 
-        TaskCompletionSource<bool> IDialogReference.RenderCompleteTaskCompletionSource { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<bool> IDialogReference.RenderCompleteTaskCompletionSource { get; } = new();
 
         public void InjectDialog(object inst)
         {
@@ -71,6 +71,5 @@ namespace MudBlazor
                 return default;
             }
         }
-
     }
 }
