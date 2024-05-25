@@ -2,12 +2,12 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-namespace MudBlazor.SourceCodeGenerator;
+namespace MudBlazor.SourceGenerator;
 
 [Generator]
 public sealed class FastEnumDescriptionGenerator : IIncrementalGenerator
 {
-    private const string ExtensionClassName = "MudEnumExtensions";
+    private const string ExtensionClassName = "SourceGeneratorEnumExtensions";
     private const string DescriptionAttribute = "System.ComponentModel.DescriptionAttribute";
     private const string ExcludeFromCodeGeneratorAttribute = "MudBlazor.ExcludeFromCodeGeneratorAttribute";
 
@@ -40,29 +40,30 @@ public sealed class FastEnumDescriptionGenerator : IIncrementalGenerator
         if (enumData.HasValue)
         {
             var data = enumData.Value;
-            var sourceCode = SourceCodeBuilder.Build(ref data);
+            var sourceCode = SourceCodeBuilder.Build(in data);
             context.AddSource($"{data.Classname}.g.cs", SourceText.From(sourceCode, Encoding.UTF8));
         }
     }
 
     private static EnumData? GetEnumDataFromSymbol(INamespaceOrTypeSymbol enumSymbol)
     {
-        var classname = $"{enumSymbol.Name}{ExtensionClassName}";
-        var @namespace = enumSymbol.ContainingNamespace.ToString();
-        var name = enumSymbol.ToString();
         var accessModifier = GetAccessModifier(enumSymbol);
-        if (accessModifier == null)
+        if (accessModifier is null)
         {
             return null;
         }
 
-        return new EnumData(classname, name, @namespace, accessModifier, GetMembers(enumSymbol));
+        var classname = $"{enumSymbol.Name}{ExtensionClassName}";
+        var @namespace = enumSymbol.ContainingNamespace.ToString();
+        var name = enumSymbol.ToString();
+        var members = GetMembers(enumSymbol).ToArray();
+        return members.Length > 0 ? new EnumData(classname, name, @namespace, accessModifier, members) : null;
     }
 
     private static string? GetAccessModifier(ISymbol enumSymbol)
     {
         var accessibility = enumSymbol.DeclaredAccessibility;
-        if (enumSymbol.ContainingType != null && accessibility > enumSymbol.ContainingType.DeclaredAccessibility)
+        if (enumSymbol.ContainingType is not null && accessibility > enumSymbol.ContainingType.DeclaredAccessibility)
         {
             accessibility = enumSymbol.ContainingType.DeclaredAccessibility;
         }
@@ -79,16 +80,17 @@ public sealed class FastEnumDescriptionGenerator : IIncrementalGenerator
     {
         foreach (var enumMember in symbol.GetMembers())
         {
-            if (enumMember is IFieldSymbol)
+            if (enumMember is not IFieldSymbol) continue;
+
+            foreach (var attribute in enumMember.GetAttributes())
             {
-                foreach (var attribute in enumMember.GetAttributes())
+                if (attribute.AttributeClass?.ToDisplayString() == DescriptionAttribute &&
+                    attribute.ConstructorArguments.Length > 0 &&
+                    attribute.ConstructorArguments[0].Value is not null)
                 {
-                    if (attribute.AttributeClass?.ToDisplayString() == DescriptionAttribute && attribute.ConstructorArguments[0].Value != null)
-                    {
-                        var description = attribute.ConstructorArguments[0].Value!.ToString();
-                        var member = new EnumMember(enumMember.Name, description);
-                        yield return member;
-                    }
+                    var description = attribute.ConstructorArguments[0].Value!.ToString();
+                    var member = new EnumMember(enumMember.Name, description);
+                    yield return member;
                 }
             }
         }
