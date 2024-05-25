@@ -15,12 +15,12 @@
                           TextUpdateSuppression="@TextUpdateSuppression"
                           Value="@Text" Underline="@Underline"
                           Disabled="@GetDisabledState()" ReadOnly="@GetReadOnlyState()" Error="@Error"
-                          OnAdornmentClick="@AdornmentClickHandler" AdornmentIcon="@CurrentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
+                          OnAdornmentClick="@AdornmentClickHandlerAsync" AdornmentIcon="@CurrentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
                           Clearable="@(!GetReadOnlyState() && Clearable)" OnClearButtonClick="@OnClearButtonClick"
                           @attributes="UserAttributes"
-                          TextChanged="OnTextChanged"
-                          @onclick="@OnInputClicked"
-                          @onfocus="@OnInputFocused" OnBlur="OnInputBlurred"
+                          TextChanged="OnTextChangedAsync"
+                          @onclick="@OnInputClickedAsync"
+                          @onfocus="@OnInputFocusedAsync" OnBlur="OnInputBlurredAsync"
                           OnKeyDown="@OnInputKeyDownAsync"
                           OnKeyUp="@OnInputKeyUpAsync" autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"
                           Placeholder="@Placeholder" Immediate="true"
@@ -65,7 +65,7 @@
                                 bool showSelectedTemplate = isSelected && ItemSelectedTemplate != null;
                                 bool showDisabledTemplate = isDisabled && ItemDisabledTemplate != null;
                                 var captureIndex = index;
-                                <MudListItem T="T" Value="@item" @key="@item" id="@GetListItemId(captureIndex)" Disabled="@(isDisabled)" OnClick="@(async () => await ListItemOnClick(item))" OnClickPreventDefault="true" Class="@GetListItemClassname(isSelected)">
+                                <MudListItem T="T" Value="@item" @key="@item" id="@GetListItemId(captureIndex)" Disabled="@(isDisabled)" OnClick="@(async () => await ListItemOnClickAsync(item))" OnClickPreventDefault="true" Class="@GetListItemClassname(isSelected)">
                                      @if (showDisabledTemplate)
                                      {
                                          @ItemDisabledTemplate(item)

@@ -120,6 +120,7 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Pie Chart", typeof(Pie))
                 .AddItem("Bar Chart", typeof(Bar))
                 .AddItem("Stacked Bar Chart", typeof(StackedBar))
+                .AddItem("Time Series Chart", typeof(TimeSeries))
             )
             // this must be last!
             .GetComponentsSortedByName();

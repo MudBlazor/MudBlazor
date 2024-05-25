@@ -184,7 +184,7 @@ namespace MudBlazor
 
         internal override bool HasRowMouseEnterEventHandler => OnRowMouseEnter.HasDelegate;
 
-        internal override async Task FireRowMouseEnterEventAsync(MouseEventArgs args, MudTr row, object? o)
+        internal override async Task FireRowMouseEnterEventAsync(PointerEventArgs args, MudTr row, object? o)
         {
             var item = default(T);
             try
@@ -203,7 +203,7 @@ namespace MudBlazor
 
         internal override bool HasRowMouseLeaveEventHandler => OnRowMouseLeave.HasDelegate;
 
-        internal override async Task FireRowMouseLeaveEventAsync(MouseEventArgs args, MudTr row, object? o)
+        internal override async Task FireRowMouseLeaveEventAsync(PointerEventArgs args, MudTr row, object? o)
         {
             var item = default(T);
             try
