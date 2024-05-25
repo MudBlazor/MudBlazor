@@ -5,7 +5,7 @@
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
-namespace MudBlazor.Components;
+namespace MudBlazor;
 
 #nullable enable
 public partial class MudToolBar : MudComponentBase
