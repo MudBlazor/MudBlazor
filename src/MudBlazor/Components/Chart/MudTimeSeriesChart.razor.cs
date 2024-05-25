@@ -23,5 +23,12 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
         public TimeSpan TimeLabelSpacing { get; set; } = TimeSpan.FromMinutes(5);
+
+        /// <summary>
+        /// A way to specify datetime formats for timestamp labels, default of HH:mm.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Chart.Behavior)]
+        public string TimeLabelFormat { get; set; } = "HH:mm";
     }
 }
