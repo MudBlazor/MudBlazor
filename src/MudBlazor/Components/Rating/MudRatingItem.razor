@@ -4,7 +4,7 @@
 @if (ReadOnly)
 {
     <span role="radio"
-          aria-checked="@Checked"
+          aria-checked="@(Checked.ToString().ToLower())"
           class="@ClassName"
           style="@Style">
 

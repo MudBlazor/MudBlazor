@@ -3,7 +3,7 @@
 @inherits MudComponentBase
 @inject InternalMudLocalizer Localizer
 
-<span tabindex="@(Disabled ? -1 : 0)" role="radiogroup" aria-readonly="@ReadOnly"
+<span tabindex="@(Disabled ? -1 : 0)" role="radiogroup" aria-readonly="@(ReadOnly.ToString().ToLower())"
       @onkeydown="HandleKeyDownAsync" @attributes="UserAttributes" class="@ClassName" style="@Style">
     <CascadingValue Value="this">
         @for (int i = 1; i <= MaxValue; i++)
