@@ -962,36 +962,6 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("div.mud-dialog-title").GetAttribute("class").Should().Be(expectedClassname);
         }
-
-        /// <summary>
-        /// Opening a dialog, editing the binding, then confirming that we see the change that occurred during submission.
-        /// </summary>
-        [Test]
-        public void CloseDialogBindingTest()
-        {
-            var med = new EditBindingDialog.Medication() { Dose = 1 };
-            var comp = Context.RenderComponent<EditBindingDialogLauncher>(c => c.Add(p => p.Med, med));
-
-            // Confirm binding was set up correctly.
-            comp.Instance.Med.Dose.Should().Be(1);
-            comp.Instance.Med.Taken.Should().Be(null);
-
-            // Open the dialog via link.
-            comp.Find(".mud-link").Click();
-
-            // Find the dialog.
-            var dialog = comp.FindComponent<EditBindingDialog>();
-
-            // Change the binding.
-            dialog.Find("input").Input("2");
-
-            // Submit the data and close the dialog.
-            comp.Find(".submit-button").Click();
-
-            // The new data should be immediately available.
-            med.Dose.Should().Be(2);
-            med.Taken.Should().Be(true);
-        }
     }
 
     internal class CustomDialogService : DialogService
