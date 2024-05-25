@@ -4,4 +4,4 @@
 
 namespace MudBlazor.SourceGenerator.Models;
 
-internal record struct EnumData(string Classname, string Name, string Namespace, string AccessModifier, EnumMember[] Members);
+internal record struct EnumData(string Classname, string Name, string Namespace, string AccessModifier, EnumMember[] Members, bool InconsistentDescriptionAttributeUsage = false);

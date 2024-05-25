@@ -29,7 +29,7 @@
                   @onfocus="OnFocused"
                   @oncut="OnCut"
                   @oncopy="OnCopy"
-                  inputmode="@InputMode.ToString()"
+                  inputmode="@InputMode.ToDescriptionString()"
                   required="@Required"
                   aria-required="@Required.ToString().ToLowerInvariant()">
             @Text
@@ -50,7 +50,7 @@
                @onfocus="OnFocused"
                @oncut="OnCut"
                @oncopy="OnCopy"
-               inputmode="@InputMode.ToString()"
+               inputmode="@InputMode.ToDescriptionString()"
                required="@Required"
                aria-required="@Required.ToString().ToLowerInvariant()">
     }

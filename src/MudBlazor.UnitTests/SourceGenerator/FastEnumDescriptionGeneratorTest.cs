@@ -15,14 +15,14 @@ namespace MudBlazor.UnitTests.SourceGenerator;
 [TestFixture]
 public class FastEnumDescriptionGeneratorTest
 {
-    private GeneratorDriver _driver;
-
     [SetUp]
     public void Setup()
     {
         var generator = new FastEnumDescriptionGenerator();
         _driver = CSharpGeneratorDriver.Create(generator);
     }
+
+    private GeneratorDriver _driver;
 
     private static CSharpCompilation CreateCompilation(string source)
     {
@@ -73,6 +73,44 @@ public class FastEnumDescriptionGeneratorTest
         // Assert
         outputCompilation.SyntaxTrees.Should().HaveCount(2);
         diagnostics.Should().HaveCount(0);
+    }
+
+    [Test]
+    public void Generator_ShouldGenerateDiagnosticWarning_WhenDescriptionAttributeUsageIsInconsistent()
+    {
+        // Arrange
+        const string SourceCodeToTest = """
+                                        using System.ComponentModel;
+
+                                        namespace MudBlazor;
+
+                                        public enum Priority
+                                        {
+                                            Lowest,
+                                        
+                                            [Description("Low")]
+                                            Low,
+                                        
+                                            [Description("Medium")]
+                                            Medium,
+                                        
+                                            [Description("High")]
+                                            High,
+                                        
+                                            [Description("Highest")]
+                                            Highest
+                                        }
+                                        """;
+
+        var compiledSourceCode = CreateCompilation(SourceCodeToTest);
+
+        // Act
+        _driver.RunGeneratorsAndUpdateCompilation(compiledSourceCode, out var outputCompilation, out var diagnostics);
+
+        // Assert
+        outputCompilation.SyntaxTrees.Should().HaveCount(2);
+        diagnostics.Should().HaveCount(1);
+        diagnostics.First().Id.Should().Be("MUD0101");
     }
 
     [Test]
@@ -130,6 +168,32 @@ public class FastEnumDescriptionGeneratorTest
 
         // Assert
         outputCompilation.SyntaxTrees.Should().HaveCount(1);
+    }
+
+    [Test]
+    public void Generator_ShouldEscapeReservedKeywords_WhenKeywordIsUsedInEnumMember()
+    {
+        // Arrange
+        const string SourceCodeToTest = """
+                                        using System.ComponentModel;
+
+                                        namespace MudBlazor;
+
+                                        public enum Priority
+                                        {
+                                            [Description("byte")]
+                                            @byte
+                                        }
+                                        """;
+        var compiledSourceCode = CreateCompilation(SourceCodeToTest);
+
+        // Act
+        _driver.RunGeneratorsAndUpdateCompilation(compiledSourceCode, out var outputCompilation, out _);
+
+        // Assert
+        outputCompilation.SyntaxTrees.Should().HaveCount(2);
+        var generatedSourceCode = outputCompilation.SyntaxTrees.Last().ToString();
+        generatedSourceCode.Should().Contain("@byte => \"byte\"");
     }
 
     [Test]

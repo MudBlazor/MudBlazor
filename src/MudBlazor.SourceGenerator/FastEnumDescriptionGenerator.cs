@@ -9,7 +9,6 @@ public sealed class FastEnumDescriptionGenerator : IIncrementalGenerator
 {
     private const string ExtensionClassName = "SourceGeneratorEnumExtensions";
     private const string DescriptionAttribute = "System.ComponentModel.DescriptionAttribute";
-    private const string ExcludeFromCodeGeneratorAttribute = "MudBlazor.ExcludeFromCodeGeneratorAttribute";
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -26,22 +25,24 @@ public sealed class FastEnumDescriptionGenerator : IIncrementalGenerator
         cancellationToken.ThrowIfCancellationRequested();
         var enumDeclarationSyntax = (EnumDeclarationSyntax)generatorSyntaxContext.Node;
         var semanticModel = generatorSyntaxContext.SemanticModel.Compilation.GetSemanticModel(enumDeclarationSyntax.SyntaxTree);
-        if (semanticModel.GetDeclaredSymbol(enumDeclarationSyntax) is not INamedTypeSymbol enumSymbol)
-        {
-            return null;
-        }
-
-        return HasExcludeFromCodeGeneratorAttribute(enumSymbol) ? null : GetEnumDataFromSymbol(enumSymbol);
+        var declaredSymbol = semanticModel.GetDeclaredSymbol(enumDeclarationSyntax);
+        return declaredSymbol is null ? null : GetEnumDataFromSymbol(declaredSymbol);
     }
 
     private static void Build(SourceProductionContext context, EnumData? enumData)
     {
         context.CancellationToken.ThrowIfCancellationRequested();
-        if (enumData.HasValue)
+        if (!enumData.HasValue) return;
+
+        var data = enumData.Value;
+        var sourceCode = SourceCodeBuilder.Build(in data);
+        context.AddSource($"{data.Classname}.g.cs", SourceText.From(sourceCode, Encoding.UTF8));
+
+        // Report a warning if the enum has inconsistent usage of DescriptionAttribute
+        if (data.InconsistentDescriptionAttributeUsage)
         {
-            var data = enumData.Value;
-            var sourceCode = SourceCodeBuilder.Build(in data);
-            context.AddSource($"{data.Classname}.g.cs", SourceText.From(sourceCode, Encoding.UTF8));
+            var diagnostic = DiagnosticHelper.CreateDescriptionWarning(data.Name);
+            context.ReportDiagnostic(diagnostic);
         }
     }
 
@@ -56,8 +57,9 @@ public sealed class FastEnumDescriptionGenerator : IIncrementalGenerator
         var classname = $"{enumSymbol.Name}{ExtensionClassName}";
         var @namespace = enumSymbol.ContainingNamespace.ToString();
         var name = enumSymbol.ToString();
-        var members = GetMembers(enumSymbol).ToArray();
-        return members.Length > 0 ? new EnumData(classname, name, @namespace, accessModifier, members) : null;
+        var fieldSymbols = enumSymbol.GetMembers().OfType<IFieldSymbol>().ToArray();
+        var enumMembers = GetMembers(fieldSymbols).ToArray();
+        return enumMembers.Length > 0 ? new EnumData(classname, name, @namespace, accessModifier, enumMembers, enumMembers.Length != fieldSymbols.Length) : null;
     }
 
     private static string? GetAccessModifier(ISymbol enumSymbol)
@@ -67,6 +69,7 @@ public sealed class FastEnumDescriptionGenerator : IIncrementalGenerator
         {
             accessibility = enumSymbol.ContainingType.DeclaredAccessibility;
         }
+
         return accessibility switch
 
         {
@@ -76,12 +79,10 @@ public sealed class FastEnumDescriptionGenerator : IIncrementalGenerator
         };
     }
 
-    private static IEnumerable<EnumMember> GetMembers(INamespaceOrTypeSymbol symbol)
+    private static IEnumerable<EnumMember> GetMembers(IFieldSymbol[] symbols)
     {
-        foreach (var enumMember in symbol.GetMembers())
+        foreach (var enumMember in symbols)
         {
-            if (enumMember is not IFieldSymbol) continue;
-
             foreach (var attribute in enumMember.GetAttributes())
             {
                 if (attribute.AttributeClass?.ToDisplayString() == DescriptionAttribute &&
@@ -89,23 +90,12 @@ public sealed class FastEnumDescriptionGenerator : IIncrementalGenerator
                     attribute.ConstructorArguments[0].Value is not null)
                 {
                     var description = attribute.ConstructorArguments[0].Value!.ToString();
-                    var member = new EnumMember(enumMember.Name, description);
+                    var isKeyword = SyntaxFacts.GetKeywordKind(enumMember.Name) != SyntaxKind.None;
+                    var memberName = isKeyword ? $"@{enumMember.Name}" : enumMember.Name;
+                    var member = new EnumMember(memberName, description);
                     yield return member;
                 }
             }
         }
-    }
-
-    private static bool HasExcludeFromCodeGeneratorAttribute(ISymbol symbol)
-    {
-        foreach (var attribute in symbol.GetAttributes())
-        {
-            if (attribute.AttributeClass?.ToDisplayString() == ExcludeFromCodeGeneratorAttribute)
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

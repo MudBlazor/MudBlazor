@@ -28,7 +28,7 @@
                 placeholder="@Placeholder"
                 disabled=@GetDisabledState()
                 readonly="@GetReadOnlyState()"
-                inputmode="@InputMode.ToString()"
+                inputmode="@InputMode.ToDescriptionString()"
                 @oninput="OnInput"
                 @onchange="OnChange"
                 @onblur="@OnBlurredAsync"
@@ -64,7 +64,7 @@
                 disabled=@GetDisabledState()
                 readonly="@GetReadOnlyState()"
                 @onblur="@OnBlurredAsync"
-                inputmode="@InputMode.ToString()"
+                inputmode="@InputMode.ToDescriptionString()"
                 pattern="@Pattern"
                 @onkeydown="@InvokeKeyDownAsync"
                 @onkeyup="@InvokeKeyUpAsync"
