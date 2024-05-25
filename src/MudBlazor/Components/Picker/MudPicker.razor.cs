@@ -7,11 +7,21 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Represents a common form component for selecting date, time, and color values.
+    /// </summary>
+    /// <typeparam name="T">The type of value being chosen.</typeparam>
+    /// <seealso cref="MudPickerContent" />
+    /// <seealso cref="MudPickerToolbar" />
     public partial class MudPicker<T> : MudFormComponent<T, string>
     {
         protected IKeyInterceptor _keyInterceptor;
 
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
         public MudPicker() : base(new Converter<T, string>()) { }
+
         protected MudPicker(Converter<T, string> converter) : base(converter) { }
 
         [Inject]
@@ -69,97 +79,137 @@ namespace MudBlazor
                 .Build();
 
         /// <summary>
-        /// The color of the adornment if used. It supports the theme colors.
+        /// The color of the <see cref="AdornmentIcon"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Color AdornmentColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// Sets the icon of the input text field
+        /// The icon shown next to the text input.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.Event"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string AdornmentIcon { get; set; } = Icons.Material.Filled.Event;
 
         /// <summary>
-        /// Sets the aria-label of the input text field icon
+        /// The ARIA label of the adornment.
         /// </summary>
+        /// <remarks>
+        /// Defaults to an empty string.<br />
+        /// This property controls the value set for the <c>aria-label</c> attribute, which improves accessibility.  For more on these labels, see <see href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public string AdornmentAriaLabel { get; set; } = string.Empty;
 
         /// <summary>
-        /// The short hint displayed in the input before the user enters a value.
+        /// The text displayed in the input if no value is specified.
         /// </summary>
+        /// <remarks>
+        /// This property is typically used to give the user a hint as to what kind of input is expected.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string Placeholder { get; set; }
 
         /// <summary>
-        /// Fired when the dropdown / dialog opens
+        /// Occurs when this picker has opened.
         /// </summary>
         [Parameter]
         public EventCallback PickerOpened { get; set; }
 
         /// <summary>
-        /// Fired when the dropdown / dialog closes
+        /// Occurs when this picker has closed.
         /// </summary>
         [Parameter]
         public EventCallback PickerClosed { get; set; }
 
         /// <summary>
-        /// The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.
+        /// The size of the drop shadow.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>8</c>.<br />
+        /// A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
         public int Elevation { set; get; } = 8;
 
         /// <summary>
-        /// If true, border-radius is set to 0 this is set to true automatically in static mode but can be overridden with Rounded bool.
+        /// Disables rounded corners.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
         public bool Square { get; set; }
 
         /// <summary>
-        /// If true, border-radius is set to theme default when in Static Mode.
+        /// Shows rounded corners.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.<br />
+        /// When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
         public bool Rounded { get; set; }
 
         /// <summary>
-        /// If string has value, HelperText will be applied.
+        /// The text displayed below the text field.
         /// </summary>
+        /// <remarks>
+        /// This property is typically used to help the user understand what kind of input is allowed.  The <see cref="HelperTextOnFocus"/> property controls when this text is visible.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string HelperText { get; set; }
 
         /// <summary>
-        /// If true, the helper text will only be visible on focus.
+        /// Displays the <see cref="HelperText"/> only when this input has focus.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool HelperTextOnFocus { get; set; }
 
         /// <summary>
-        /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
+        /// The label for this input.
         /// </summary>
+        /// <remarks>
+        /// If no value is specified, the label will be displayed in the input.  Otherwise, it will be scaled down to the top of the input.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string Label { get; set; }
 
         /// <summary>
-        /// Show clear button.
+        /// Displays the Clear icon button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.<br />
+        /// When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <c>ClearIcon</c> property to control the Clear button icon.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Clearable { get; set; } = false;
 
         /// <summary>
-        /// If true, the picker will be disabled.
+        /// Prevents the user from interacting with this button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Disabled { get; set; }
@@ -169,15 +219,22 @@ namespace MudBlazor
         protected bool GetDisabledState() => Disabled || ParentDisabled;
 
         /// <summary>
-        /// Determines whether the input has an underline. Default is true
+        /// Shows an underline under the input text.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public bool Underline { get; set; } = true;
 
         /// <summary>
-        /// If true, no date or time can be defined.
+        /// Prevents the input from being changed by the user.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.<br />
+        /// When <c>true</c>, the user can copy text in the control, but cannot change the value.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool ReadOnly { get; set; }
@@ -187,90 +244,118 @@ namespace MudBlazor
         protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
         /// <summary>
-        /// If true, the picker will be editable.
+        /// Allows the value to be edited.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Editable { get; set; } = false;
 
         /// <summary>
-        /// If true, show toolbar. If false, show only date/time views.
+        /// Shows the toolbar.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
         public bool ShowToolbar { get; set; } = true;
 
         /// <summary>
-        /// User class names for picker's Toolbar, separated by space
+        /// The CSS classes for the toolbar when <see cref="ShowToolbar"/> is <c>true</c>.
         /// </summary>
+        /// <remarks>
+        /// Multiple classes must be separated by spaces.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
         public string ToolbarClass { get; set; }
 
         /// <summary>
-        /// Picker container option
+        /// The display variant for this picker.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="PickerVariant.Inline"/>.<br />
+        /// Other values are <see cref="PickerVariant.Dialog"/> and <see cref="PickerVariant.Static"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public PickerVariant PickerVariant { get; set; } = PickerVariant.Inline;
 
         /// <summary>
-        /// Variant of the text input
+        /// The display variant of the text input.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        /// Sets if the icon will be att start or end, set to None to disable.
+        /// The location of the <see cref="AdornmentIcon"/> for the input.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Adornment.End"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public Adornment Adornment { get; set; } = Adornment.End;
 
         /// <summary>
-        /// What orientation to render in when in PickerVariant Static Mode.
+        /// The orientation of the picker when <see cref="PickerVariant"/> is <see cref="PickerVariant.Static"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Orientation.Portrait"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
         public Orientation Orientation { get; set; } = Orientation.Portrait;
 
         /// <summary>
-        /// Sets the Icon Size.
+        /// The size of the icon in the input field.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Size.Medium"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
-        /// The color of the toolbar, selected and active. It supports the theme colors.
+        /// The color of the toolbar, selected, and active values.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Primary"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
         public Color Color { get; set; } = Color.Primary;
 
         /// <summary>
-        /// Fired when the text changes.
+        /// Occurs when <see cref="Text"/> has changed.
         /// </summary>
         [Parameter]
         public EventCallback<string> TextChanged { get; set; }
 
         /// <summary>
-        /// If true and Editable is true, update Text immediately on typing.
-        /// If false, Text is updated only on Enter or loss of focus.
+        /// Updates <see cref="Text"/> immediately upon typing when <see cref="Editable"/> is <c>true</c>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.<br />
+        /// When <c>false</c>, <see cref="Text"/> is only updated when pressing <c>Enter</c> or upon loss of focus.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool ImmediateText { get; set; }
 
         /// <summary>
-        /// Fired when the text input is clicked.
+        /// Occurs when the text input has been clicked.
         /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
         /// <summary>
-        /// The currently selected string value (two-way bindable)
+        /// The currently selected value, as a string.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
@@ -283,28 +368,29 @@ namespace MudBlazor
         private string _text;
 
         /// <summary>
-        /// CSS class that will be applied to the action buttons container
+        /// The CSS classes applied to the action buttons container.
         /// </summary>
+        /// <remarks>Multiple classes must be separated by a space.</remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
         public string ActionsClass { get; set; }
 
         /// <summary>
-        /// Define the action buttons here
+        /// The custom action buttons to display.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public RenderFragment<MudPicker<T>> PickerActions { get; set; }
 
         /// <summary>
-        ///  Will adjust vertical spacing.
+        /// Applies vertical spacing.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Margin Margin { get; set; } = Margin.None;
 
         /// <summary>
-        /// A mask for structured input of the date (requires Editable to be true).
+        /// The mask to apply to input values when <see cref="Editable"/> is <c>true</c>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
@@ -315,15 +401,21 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets or sets the origin of the popover's anchor. Defaults to <see cref="Origin.TopLeft"/>
+        /// The location the popover opens, relative to its container.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Origin.TopLeft"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
         public Origin AnchorOrigin { get; set; } = Origin.TopLeft;
 
         /// <summary>
-        /// Gets or sets the origin of the popover's transform. Defaults to <see cref="Origin.TopLeft"/>
+        /// The direction the popover opens, relative to its container.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Origin.TopLeft"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
         public Origin TransformOrigin { get; set; } = Origin.TopLeft;
@@ -342,7 +434,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Value change hook for descendants.
+        /// Occurs when the string value has changed.
         /// </summary>
         protected virtual Task StringValueChangedAsync(string value)
         {
@@ -351,6 +443,9 @@ namespace MudBlazor
 
         protected bool Open { get; set; }
 
+        /// <summary>
+        /// Opens or closes this picker.
+        /// </summary>
         public Task ToggleOpenAsync()
         {
             if (Open)
@@ -363,6 +458,10 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Closes this picker.
+        /// </summary>
+        /// <param name="submit">When <c>true</c>, the value is committed.</param>
         public async Task CloseAsync(bool submit = true)
         {
             Open = false;
@@ -376,6 +475,9 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        /// <summary>
+        /// Displays this picker.
+        /// </summary>
         public Task OpenAsync()
         {
             Open = true;
@@ -388,6 +490,10 @@ namespace MudBlazor
 
         protected internal virtual Task SubmitAsync() => Task.CompletedTask;
 
+        /// <summary>
+        /// Hides this picker.
+        /// </summary>
+        /// <param name="close">When <c>true</c>, the picker will be closed if <see cref="PickerVariant"/> is not <see cref="PickerVariant.Static"/>.</param>
         public virtual async Task ClearAsync(bool close = true)
         {
             if (close && PickerVariant != PickerVariant.Static)
@@ -407,12 +513,26 @@ namespace MudBlazor
 
         protected internal MudTextField<string> _inputReference;
 
+        /// <summary>
+        /// Focuses the input.
+        /// </summary>
         public virtual ValueTask FocusAsync() => _inputReference?.FocusAsync() ?? ValueTask.CompletedTask;
 
+        /// <summary>
+        /// Releases focus for the input.
+        /// </summary>
         public virtual ValueTask BlurAsync() => _inputReference?.BlurAsync() ?? ValueTask.CompletedTask;
 
+        /// <summary>
+        /// Selects the input content.
+        /// </summary>
         public virtual ValueTask SelectAsync() => _inputReference?.SelectAsync() ?? ValueTask.CompletedTask;
 
+        /// <summary>
+        /// Selects a portion of the input content.
+        /// </summary>
+        /// <param name="pos1">The index of the first character to select.</param>
+        /// <param name="pos2">The index of the last character to select.</param>
         public virtual ValueTask SelectRangeAsync(int pos1, int pos2) =>
             _inputReference?.SelectRangeAsync(pos1, pos2) ?? ValueTask.CompletedTask;
 
