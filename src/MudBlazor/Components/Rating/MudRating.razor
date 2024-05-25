@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<span tabindex="@(Disabled ? -1 : 0)" role="radiogroup"
+<span tabindex="@(Disabled ? -1 : 0)" role="radiogroup" aria-readonly="@ReadOnly"
       @onkeydown="HandleKeyDownAsync" @attributes="UserAttributes" class="@ClassName" style="@Style">
     <CascadingValue Value="this">
         @for (int i = 1; i <= MaxValue; i++)
