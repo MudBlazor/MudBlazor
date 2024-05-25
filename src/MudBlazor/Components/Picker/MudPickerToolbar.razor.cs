@@ -45,9 +45,6 @@ public partial class MudPickerToolbar : MudComponentBase
     /// <summary>
     /// The color of the toolbar, selected, and active values.
     /// </summary>
-    /// <remarks>
-    /// Theme colors are supported.
-    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Picker.Appearance)]
     public Color Color { get; set; }

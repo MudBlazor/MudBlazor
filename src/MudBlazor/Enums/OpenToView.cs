@@ -34,5 +34,5 @@ public enum OpenTo
     /// <summary>
     /// The minutes picker is displayed.
     /// </summary>
-    Minutes
+    Minutes,
 }

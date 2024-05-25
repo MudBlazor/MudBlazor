@@ -23,5 +23,5 @@ public enum Size
     /// The largest size.
     /// </summary>
     [Description("large")]
-    Large
+    Large,
 }

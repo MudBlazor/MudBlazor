@@ -41,7 +41,6 @@ namespace MudBlazor.Extensions
         /// </summary>
         /// <param name="self">The date to use for calculation.</param>
         /// <param name="culture">The culture to use for formatting the date.</param>
-        /// <returns></returns>
         public static DateTime StartOfMonth(this DateTime self, CultureInfo culture)
         {
             var month = culture.Calendar.GetMonth(self);
@@ -55,7 +54,6 @@ namespace MudBlazor.Extensions
         /// </summary>
         /// <param name="self">The date to use for calculation.</param>
         /// <param name="culture">The culture to use for formatting the date.</param>
-        /// <returns></returns>
         public static DateTime EndOfMonth(this DateTime self, CultureInfo culture)
         {
             var month = culture.Calendar.GetMonth(self);
@@ -70,7 +68,6 @@ namespace MudBlazor.Extensions
         /// </summary>
         /// <param name="self">The date to use for calculation.</param>
         /// <param name="firstDayOfWeek">The day representing the first day of the week.</param>
-        /// <returns></returns>
         public static DateTime StartOfWeek(this DateTime self, DayOfWeek firstDayOfWeek)
         {
             var diff = (7 + (self.DayOfWeek - firstDayOfWeek)) % 7;

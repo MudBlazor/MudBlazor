@@ -23,5 +23,5 @@ public enum Margin
     /// Normal spacing is applied.
     /// </summary>
     [Description("normal")]
-    Normal
+    Normal,
 }

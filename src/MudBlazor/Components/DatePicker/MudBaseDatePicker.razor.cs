@@ -110,7 +110,8 @@ namespace MudBlazor
         /// The current month shown in the date picker.
         /// </summary>
         /// <remarks>
-        /// Defaults to the current month.  When bound via <c>@bind-PickerMonth</c>, controls the initial month displayed.  This value is always the first day of a month.
+        /// Defaults to the current month.<br />
+        /// When bound via <c>@bind-PickerMonth</c>, controls the initial month displayed.  This value is always the first day of a month.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -139,7 +140,8 @@ namespace MudBlazor
         /// The delay, in milliseconds, before closing the picker after a value is selected.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>100</c>.  This delay helps the user see that a date has been selected before the popover disappears.
+        /// Defaults to <c>100</c>.<br />
+        /// This delay helps the user see that a date has been selected before the popover disappears.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -159,7 +161,8 @@ namespace MudBlazor
         /// The maximum number of months allowed in one row.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  When <c>null</c>, the <see cref="DisplayMonths"/> is used.
+        /// Defaults to <c>null</c>.<br />
+        /// When <c>null</c>, the <see cref="DisplayMonths"/> is used.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
@@ -186,7 +189,8 @@ namespace MudBlazor
         /// The format of the selected date in the title.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>ddd, dd MMM</c>.  Supported date formats can be found here: <see href="https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings"/>.
+        /// Defaults to <c>ddd, dd MMM</c>.<br />
+        /// Supported date formats can be found here: <see href="https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -206,7 +210,8 @@ namespace MudBlazor
         /// The function used to disable one or more dates.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  When set, a date will be disabled if the function returns <c>true</c>.
+        /// Defaults to <c>null</c>.<br />
+        /// When set, a date will be disabled if the function returns <c>true</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]

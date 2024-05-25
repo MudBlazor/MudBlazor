@@ -17,5 +17,5 @@ public enum Orientation
     /// The picker is wider than it is tall, with a title on the left.
     /// </summary>
     [Description("landscape")]
-    Landscape
+    Landscape,
 }

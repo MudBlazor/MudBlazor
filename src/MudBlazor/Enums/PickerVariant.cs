@@ -23,5 +23,5 @@ public enum PickerVariant
     /// The picker is always visible.
     /// </summary>
     [Description("static")]
-    Static
+    Static,
 }

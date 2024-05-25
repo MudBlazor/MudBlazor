@@ -82,7 +82,7 @@ namespace MudBlazor
         /// The color of the <see cref="AdornmentIcon"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
+        /// Defaults to <see cref="Color.Default"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
@@ -102,7 +102,8 @@ namespace MudBlazor
         /// The ARIA label of the adornment.
         /// </summary>
         /// <remarks>
-        /// Defaults to an empty string.  This property controls the value set for the <c>aria-label</c> attribute, which improves accessibility.  For more on these labels, see <see href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label"/>.
+        /// Defaults to an empty string.<br />
+        /// This property controls the value set for the <c>aria-label</c> attribute, which improves accessibility.  For more on these labels, see <see href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
@@ -134,7 +135,8 @@ namespace MudBlazor
         /// The size of the drop shadow.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>8</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
+        /// Defaults to <c>8</c>.<br />
+        /// A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
@@ -154,7 +156,8 @@ namespace MudBlazor
         /// Shows rounded corners.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
+        /// Defaults to <c>false</c>.<br />
+        /// When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
@@ -194,7 +197,8 @@ namespace MudBlazor
         /// Displays the Clear icon button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <c>ClearIcon</c> property to control the Clear button icon.
+        /// Defaults to <c>false</c>.<br />
+        /// When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <c>ClearIcon</c> property to control the Clear button icon.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
@@ -228,7 +232,8 @@ namespace MudBlazor
         /// Prevents the input from being changed by the user.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, the user can copy text in the control, but cannot change the value.
+        /// Defaults to <c>false</c>.<br />
+        /// When <c>true</c>, the user can copy text in the control, but cannot change the value.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
@@ -272,7 +277,8 @@ namespace MudBlazor
         /// The display variant for this picker.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="PickerVariant.Inline"/>.  Other values are <see cref="PickerVariant.Dialog"/> and <see cref="PickerVariant.Static"/>.
+        /// Defaults to <see cref="PickerVariant.Inline"/>.<br />
+        /// Other values are <see cref="PickerVariant.Dialog"/> and <see cref="PickerVariant.Static"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
@@ -319,7 +325,7 @@ namespace MudBlazor
         /// The color of the toolbar, selected, and active values.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Primary"/>.  Theme colors are supported.
+        /// Defaults to <see cref="Color.Primary"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
@@ -335,7 +341,8 @@ namespace MudBlazor
         /// Updates <see cref="Text"/> immediately upon typing when <see cref="Editable"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>false</c>, <see cref="Text"/> is only updated when pressing <c>Enter</c> or upon loss of focus.
+        /// Defaults to <c>false</c>.<br />
+        /// When <c>false</c>, <see cref="Text"/> is only updated when pressing <c>Enter</c> or upon loss of focus.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
