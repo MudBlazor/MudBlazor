@@ -1,5 +1,7 @@
 ﻿@namespace MudBlazor
+@using MudBlazor.Resources
 @inherits MudComponentBase
+@inject InternalMudLocalizer Localizer
 
 <span tabindex="@(Disabled ? -1 : 0)" role="radiogroup" aria-readonly="@ReadOnly"
       @onkeydown="HandleKeyDownAsync" @attributes="UserAttributes" class="@ClassName" style="@Style">
@@ -16,7 +18,8 @@
                            Color="Color"
                            Size="Size"
                            ItemClicked="HandleItemClickedAsync"
-                           ItemHovered="HandleItemHoveredAsync" />
+                           ItemHovered="HandleItemHoveredAsync"
+                           aria-label="@Localizer[nameof(LanguageResource.MudRatingItem_Label), $"{(i + 1)}"]"/>
         }
     </CascadingValue>
 </span>
