@@ -11,7 +11,6 @@ namespace MudBlazor.Docs.Compiler
             var stopWatch = Stopwatch.StartNew();
             var success =
                 new CodeSnippets().Execute()
-                && new DocStrings().Execute()
                 && new ApiDocumentationBuilder().Execute()
                 && new ExamplesMarkup().Execute()
                 && new TestsForExamples().Execute()

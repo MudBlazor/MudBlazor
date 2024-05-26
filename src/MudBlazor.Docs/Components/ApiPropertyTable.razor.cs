@@ -78,7 +78,7 @@ public partial class ApiPropertyTable
 
             properties = orderedProperties;
         }
-     
+
         // Make the final results
         var results = properties.ToList();
 

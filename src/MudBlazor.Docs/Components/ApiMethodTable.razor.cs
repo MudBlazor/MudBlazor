@@ -79,7 +79,7 @@ public partial class ApiMethodTable
 
             methods = orderedProperties;
         }
-      
+
         // Make the final results
         var results = methods.ToList();
 

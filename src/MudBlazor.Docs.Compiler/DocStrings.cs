@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 namespace MudBlazor.Docs.Compiler
 {
+    [Obsolete("This generator has been replaced by the ApiDocumentationBuilder class.")]
     public partial class DocStrings
     {
         private static string[] hiddenMethods = { "ToString", "GetType", "GetHashCode", "Equals", "SetParametersAsync", "ReferenceEquals" };
