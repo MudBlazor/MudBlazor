@@ -420,4 +420,7 @@
   <data name="MudBaseDatePicker_Close" xml:space="preserve">
     <value>Close Picker</value>
   </data>
+  <data name="MudRatingItem_Label" xml:space="preserve">
+    <value>{0} Rating</value>
+  </data>
 </root>
