@@ -763,6 +763,60 @@ namespace MudBlazor.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Current page {0}.
+        /// </summary>
+        public static string MudPagination_CurrentPage {
+            get {
+                return ResourceManager.GetString("MudPagination_CurrentPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to First page.
+        /// </summary>
+        public static string MudPagination_FirstPage {
+            get {
+                return ResourceManager.GetString("MudPagination_FirstPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Last page.
+        /// </summary>
+        public static string MudPagination_LastPage {
+            get {
+                return ResourceManager.GetString("MudPagination_LastPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Next page.
+        /// </summary>
+        public static string MudPagination_NextPage {
+            get {
+                return ResourceManager.GetString("MudPagination_NextPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Page {0}.
+        /// </summary>
+        public static string MudPagination_PageIndex {
+            get {
+                return ResourceManager.GetString("MudPagination_PageIndex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Previous page.
+        /// </summary>
+        public static string MudPagination_PreviousPage {
+            get {
+                return ResourceManager.GetString("MudPagination_PreviousPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select AM.
         /// </summary>
         public static string MudTimePicker_AmClick {
