@@ -438,4 +438,7 @@
   <data name="MudPagination_PreviousPage" xml:space="preserve">
     <value>Previous page</value>
   </data>
+  <data name="MudRatingItem_Label" xml:space="preserve">
+    <value>{0} Rating</value>
+  </data>
 </root>

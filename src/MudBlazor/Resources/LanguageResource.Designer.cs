@@ -817,6 +817,15 @@ namespace MudBlazor.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} Rating.
+        /// </summary>
+        public static string MudRatingItem_Label {
+            get {
+                return ResourceManager.GetString("MudRatingItem_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select AM.
         /// </summary>
         public static string MudTimePicker_AmClick {
