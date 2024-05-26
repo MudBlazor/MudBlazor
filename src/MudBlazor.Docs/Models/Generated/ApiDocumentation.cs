@@ -55,11 +55,13 @@ public static partial class ApiDocumentation
         {
             return match;
         }
-        // Prepend the MudBlazor namespace
+        // Next, try with the MudBlazor namespace
         if (Types.TryGetValue("MudBlazor." + name, out match))
         {
             return match;
         }
-        return null;
+        // Find a match by name
+        var byName = Types.SingleOrDefault(type => type.Value.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        return byName.Value;
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 
@@ -10,6 +11,14 @@ namespace MudBlazor.Docs.Compiler
 #nullable enable
     public partial class TestsForApiPages
     {
+        /// <summary>
+        /// The types excluded from tests.
+        /// </summary>
+        /// <remarks>
+        /// This should be a short list; types which are covered by other site documentation pages.
+        /// </remarks>
+        public List<string> ExcludedTypes = ["_Imports", "Color", "Colors", "Icons", "Input", "LanguageResource"];
+
         /// <summary>
         /// Ensures that an API page is available for each MudBlazor component.
         /// </summary>
@@ -29,17 +38,17 @@ namespace MudBlazor.Docs.Compiler
                 var cb = new CodeBuilder();
 
                 cb.AddHeader();
+                cb.AddLine("using System.Linq;");
+                cb.AddLine("using System.Threading.Tasks;");
+                cb.AddLine("using Bunit;");
+                cb.AddLine("using FluentAssertions;");
                 cb.AddLine("using Microsoft.AspNetCore.Components;");
                 cb.AddLine("using Microsoft.Extensions.DependencyInjection;");
-                cb.AddLine("using MudBlazor.Charts;");
-                cb.AddLine("using MudBlazor.Docs.Components;");
                 cb.AddLine("using MudBlazor.Docs.Pages.Api;");
-                cb.AddLine("using MudBlazor.Internal;");
+                cb.AddLine("using MudBlazor.Docs.Services;");
                 cb.AddLine("using MudBlazor.UnitTests.Mocks;");
                 cb.AddLine("using NUnit.Framework;");
-                cb.AddLine("using ComponentParameter = Bunit.ComponentParameter;");
                 cb.AddLine();
-
                 cb.AddLine("namespace MudBlazor.UnitTests.Components");
                 cb.AddLine("{");
                 cb.IndentLevel++;
@@ -48,23 +57,32 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("public partial class ApiDocsTests");
                 cb.AddLine("{");
                 cb.IndentLevel++;
-                var mudBlazorComponents = typeof(MudAlert).Assembly.GetTypes().OrderBy(t => t.FullName).Where(t => t.IsSubclassOf(typeof(ComponentBase)));
+                var mudBlazorComponents = typeof(_Imports).Assembly.GetTypes().Where(type => type.IsPublic);
                 foreach (var type in mudBlazorComponents)
                 {
-                    if (type.IsAbstract)
+                    // Exclude some types
+                    if (ExcludedTypes.Contains(type.Name) || ApiDocumentationWriter.ExcludedTypes.Contains(type.Name))
+                    {
                         continue;
-                    if (type.Name.Contains("Base"))
-                        continue;
-                    if (type.Namespace is not null && type.Namespace.Contains("InternalComponents"))
-                        continue;
-                    if (IsObsolete(type))
-                        continue;
+                    }
+
                     cb.AddLine("[Test]");
-                    cb.AddLine($"public void {SafeTypeName(type, removeT: true)}_API_Test()");
+                    cb.AddLine($"public async Task {type.Name.Replace("`", "")}_API_TestAsync()");
                     cb.AddLine("{");
                     cb.IndentLevel++;
-                    cb.AddLine(@$"ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager(""https://localhost:2112/"", ""https://localhost:2112/api/{SafeTypeName(type)}""));");
-                    cb.AddLine(@$"ctx.RenderComponent<Api>(ComponentParameter.CreateParameter(""TypeName"", ""{SafeTypeName(type)}""));");
+                    // Create Api.razor with a type
+                    cb.AddLine(@$"ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager(""https://localhost:2112/"", ""https://localhost:2112/components/{type.Name}""));");
+                    cb.AddLine(@$"var comp = ctx.RenderComponent<Api>(ComponentParameter.CreateParameter(""TypeName"", ""{type.Name}""));");
+                    cb.AddLine(@$"await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();");
+                    // Make sure docs for the type were actually found
+                    cb.AddLine(@$"comp.Markup.Should().NotContain(""Sorry, the type"").And.NotContain(""could not be found"");");
+                    // Is this a component?
+                    if (type.IsSubclassOf(typeof(MudComponentBase)))
+                    {
+                        // Yes.  Check for the example link
+                        cb.AddLine(@$"var exampleLink = comp.FindComponents<MudLink>().FirstOrDefault(link => link.Instance.Href.StartsWith(""/component""));");
+                        cb.AddLine(@$"exampleLink.Should().NotBeNull();");
+                    }
                     cb.IndentLevel--;
                     cb.AddLine("}");
                 }
