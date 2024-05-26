@@ -10,6 +10,9 @@ namespace MudBlazor.Docs.Compiler
 #nullable enable
     public partial class TestsForApiPages
     {
+        /// <summary>
+        /// Ensures that an API page is available for each MudBlazor component.
+        /// </summary>
         public bool Execute()
         {
             var success = true;
@@ -30,6 +33,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("using Microsoft.Extensions.DependencyInjection;");
                 cb.AddLine("using MudBlazor.Charts;");
                 cb.AddLine("using MudBlazor.Docs.Components;");
+                cb.AddLine("using MudBlazor.Docs.Pages.Api;");
                 cb.AddLine("using MudBlazor.Internal;");
                 cb.AddLine("using MudBlazor.UnitTests.Mocks;");
                 cb.AddLine("using NUnit.Framework;");
@@ -60,7 +64,7 @@ namespace MudBlazor.Docs.Compiler
                     cb.AddLine("{");
                     cb.IndentLevel++;
                     cb.AddLine(@$"ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager(""https://localhost:2112/"", ""https://localhost:2112/api/{SafeTypeName(type)}""));");
-                    cb.AddLine(@$"ctx.RenderComponent<DocsApi>(ComponentParameter.CreateParameter(""Type"", typeof({SafeTypeName(type)})));");
+                    cb.AddLine(@$"ctx.RenderComponent<Api>(ComponentParameter.CreateParameter(""TypeName"", ""{SafeTypeName(type)}""));");
                     cb.IndentLevel--;
                     cb.AddLine("}");
                 }

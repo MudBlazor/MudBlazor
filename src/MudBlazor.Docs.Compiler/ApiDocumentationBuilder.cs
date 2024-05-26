@@ -116,12 +116,20 @@ public partial class ApiDocumentationBuilder()
     }
 
     /// <summary>
-    /// Adds an empty documented type for each MudBlazor component and related public type.
+    /// Adds an empty documented type for each public type.
     /// </summary>
     public void AddTypesToDocument()
     {
-        // Get all public types as a sorted dictionary
-        PublicTypes = new(Assembly.GetTypes().Where(type => type.IsPublic).ToDictionary(r => r.Name, v => v));
+        // Get all MudBlazor components (which inherit from ComponentBase)
+        PublicTypes = new(typeof(MudAlert).Assembly.GetTypes().OrderBy(t => t.FullName).Where(t => t.IsSubclassOf(typeof(ComponentBase))).ToDictionary(r => r.Name, v => v));  // new(Assembly.GetTypes().Where(type => type.IsPublic).ToDictionary(r => r.Name, v => v));
+
+        /* Use the line below if you want to document ALL public types
+         
+            PublicTypes = new(Assembly.GetTypes().Where(type => type.IsPublic).ToDictionary(r => r.Name, v => v));
+
+           NOTE: If you use this, also change the 
+        */
+
         foreach (var type in PublicTypes)
         {
             AddTypeToDocument(type.Value);

@@ -20,7 +20,27 @@ public class DocumentedMethod
     public string Category { get; set; } = "General";
     public string? DeclaringTypeFriendlyName { get; set; }
     public string? DeclaringTypeName { get; set; }
-    public DocumentedType? DeclaringType => string.IsNullOrEmpty(DeclaringTypeName) ? null : ApiDocumentation.Types[DeclaringTypeName];
+    public DocumentedType? DeclaringType
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(DeclaringTypeName))
+            {
+                return null;
+            }
+            var key = DeclaringTypeName;
+            var genericsStart = DeclaringTypeName.IndexOf('[');
+            if (genericsStart != -1)
+            {
+                key = DeclaringTypeName.Substring(0, genericsStart);
+            }
+            if (ApiDocumentation.Types.TryGetValue(key, out var type))
+            {
+                return type;
+            }
+            return null;
+        }
+    }
     public string? DeclaringTypeApiLink => $"/api/{DeclaringTypeName}";
     public bool IsPublic { get; set; }
     public bool IsProtected { get; set; }
