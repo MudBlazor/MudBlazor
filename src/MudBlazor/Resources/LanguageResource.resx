@@ -360,4 +360,7 @@
   <data name="MudTablePager_PreviousPage" xml:space="preserve">
     <value>Previous page</value>
   </data>
+  <data name="MudSnackbar_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
 </root>

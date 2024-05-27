@@ -700,6 +700,15 @@ namespace MudBlazor.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string MudSnackbar_Close {
+            get {
+                return ResourceManager.GetString("MudSnackbar_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to First page.
         /// </summary>
         public static string MudTablePager_FirstPage {
