@@ -22,16 +22,16 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Space separated class names
+        /// Space separated class names.
         /// </summary>
         protected string ClassName =>
-            new CssBuilder("")
-                .AddClass("mud-rating-root")
+            new CssBuilder("mud-rating-root")
+                .AddClass("mud-disabled", Disabled)
                 .AddClass(Class)
                 .Build();
 
         /// <summary>
-        /// User class names for RatingItems, separated by space
+        /// User class names for RatingItems, separated by space.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
@@ -45,42 +45,42 @@ namespace MudBlazor
         public string? RatingItemsStyle { get; set; }
 
         /// <summary>
-        /// Input name. If not initialized, name will be random guid.
+        /// Input name. If not initialized, name will be a random GUID.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Rating.Behavior)]
         public string Name { get; set; } = Guid.NewGuid().ToString();
 
         /// <summary>
-        /// Max value and how many elements to click will be generated. Default: 5
+        /// Max value and how many elements to click will be generated. Default: 5.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Rating.Behavior)]
         public int MaxValue { get; set; } = 5;
 
         /// <summary>
-        /// Selected or hovered icon. Default @Icons.Material.Star
+        /// Selected or hovered icon. Default @Icons.Material.Star.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public string FullIcon { get; set; } = Icons.Material.Filled.Star;
 
         /// <summary>
-        /// Non selected item icon. Default @Icons.Material.StarBorder
+        /// Non-selected item icon. Default @Icons.Material.StarBorder.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public string EmptyIcon { get; set; } = Icons.Material.Filled.StarBorder;
 
         /// <summary>
-        /// Selected or hovered icon color. Default @Color.Default
+        /// Selected or hovered icon color.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public Color? FullIconColor { get; set; }
 
         /// <summary>
-        /// Non selected item icon color. Default @Color.Dark;
+        /// Non-selected item icon color.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
@@ -92,8 +92,9 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public Color Color { get; set; } = Color.Default;
+
         /// <summary>
-        /// The Size of the icons.
+        /// The size of the icons.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
@@ -112,6 +113,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Rating.Behavior)]
         public bool Disabled { get; set; }
+
         /// <summary>
         /// If true, the ratings will show without interactions.
         /// </summary>
@@ -133,7 +135,7 @@ namespace MudBlazor
         public int SelectedValue { get; set; } = 0;
 
         /// <summary>
-        /// Fires when hovered value change. Value will be null if no rating item is hovered.
+        /// Fires when hovered value changes. Value will be null if no rating item is hovered.
         /// </summary>
         [Parameter]
         public EventCallback<int?> HoveredValueChanged { get; set; }

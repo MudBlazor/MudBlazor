@@ -3,14 +3,32 @@
 
 @if (ReadOnly)
 {
-    <span class="@ClassName" style="@Style">
-        <MudIcon Icon="@ItemIcon" Color="@Color" Size="@Size"></MudIcon>
+    <span role="radio"
+          aria-checked="@(Checked.ToString().ToLower())"
+          class="@ClassName"
+          style="@Style">
+
+        <MudIcon Icon="@ItemIcon" Color="@ItemColor" Size="@Size" />
     </span>
 }
 else
 {
-    <span class="@ClassName" style="@Style" @onpointerover="HandlePointerOverAsync" @onclick="HandleClickAsync" @onpointerout="HandlePointerOutAsync">
-        <input class="mud-rating-input" type="radio" tabindex="-1" value="@ItemValue" name="@Rating?.Name" disabled="@Disabled" checked="@(Checked)" @attributes="UserAttributes" />
-        <MudIcon Icon="@ItemIcon" Color="@Color" Size="@Size"></MudIcon>
+    <span role="radio"
+          class="@ClassName"
+          style="@Style"
+          @onpointerover="HandlePointerOverAsync"
+          @onpointerout="HandlePointerOutAsync"
+          @onclick="HandleClickAsync">
+
+        <input class="mud-rating-input"
+               type="radio"
+               tabindex="-1"
+               value="@ItemValue"
+               name="@Rating?.Name"
+               disabled="@Disabled"
+               checked="@Checked"
+               @attributes="UserAttributes" />
+
+        <MudIcon Icon="@ItemIcon" Color="@ItemColor" Size="@Size" />
     </span>
 }

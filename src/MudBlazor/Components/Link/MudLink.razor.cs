@@ -17,17 +17,39 @@ namespace MudBlazor
                 // When Href is empty, link's hover cursor is text "I beam" even when OnClick has a delegate.
                 // To change this for more expected look change hover cursor to a pointer:
                 .AddClass("cursor-pointer", Href == default && OnClick.HasDelegate && !Disabled)
-                .AddClass($"mud-link-disabled", Disabled)
+                .AddClass("mud-link-disabled", Disabled)
                 .AddClass(Class)
                 .Build();
 
         private Dictionary<string, object?> Attributes
         {
-            get => Disabled ? UserAttributes : new Dictionary<string, object?>(UserAttributes)
+            get
             {
-                { "href", Href },
-                { "target", Target }
-            };
+                var attributes = new Dictionary<string, object?>();
+
+                if (Disabled)
+                {
+                    attributes["aria-disabled"] = "true";
+                }
+                else
+                {
+                    attributes["href"] = Href;
+                    attributes["target"] = Target;
+                }
+
+                if (OnClick.HasDelegate)
+                {
+                    attributes["role"] = "button";
+                }
+
+                // Apply user attributes last so they take precedence.
+                foreach (var attribute in UserAttributes)
+                {
+                    attributes[attribute.Key] = attribute.Value;
+                }
+
+                return attributes;
+            }
         }
 
         /// <summary>
@@ -59,7 +81,8 @@ namespace MudBlazor
         public string? Href { get; set; }
 
         /// <summary>
-        /// The target attribute specifies where to open the link, if Href is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
+        /// The target attribute specifies where to open the link, if Href is specified.
+        /// Possible values: _blank | _self | _parent | _top | <i>framename</i>
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Link.Behavior)]
