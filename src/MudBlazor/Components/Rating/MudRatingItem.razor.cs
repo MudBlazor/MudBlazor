@@ -78,6 +78,8 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<int?> ItemHovered { get; set; }
 
+        internal Color ItemColor { get; set; }
+
         internal string? ItemIcon { get; set; }
 
         internal bool Active { get; set; }
@@ -88,7 +90,7 @@ namespace MudBlazor
         {
             base.OnParametersSet();
             ItemIcon = SelectIcon();
-            Color = SelectIconColor();
+            ItemColor = SelectIconColor();
         }
 
         internal string? SelectIcon()
@@ -125,12 +127,12 @@ namespace MudBlazor
         {
             if (Rating is null)
             {
-                return Color.Default;
+                return Color.Inherit;
             }
 
             if (Rating.FullIconColor is null || Rating.EmptyIconColor is null)
             {
-                return Rating.Color;
+                return Color.Inherit;
             }
 
             if (Rating.HoveredValue.HasValue && Rating.HoveredValue.Value >= ItemValue)
