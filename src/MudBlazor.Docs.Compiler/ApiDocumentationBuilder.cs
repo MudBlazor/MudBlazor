@@ -281,17 +281,12 @@ public partial class ApiDocumentationBuilder()
                 {
                     Category = category?.Name,
                     DeclaringType = property.DeclaringType,
-                    DeclaringTypeName = property.DeclaringType.Name,
-                    DeclaringTypeFullName = property.DeclaringType.FullName,
-                    IsPublic = property.GetMethod.IsPublic,
                     IsProtected = property.GetMethod.IsFamily,
                     IsParameter = blazorParameter != null,
                     Key = key,
                     Name = property.Name,
                     Order = category?.Order,
-                    PropertyType = property.PropertyType,
-                    PropertyTypeName = property.PropertyType.Name,
-                    PropertyTypeFullName = property.PropertyType.FullName,
+                    Type = property.PropertyType,
                     XmlKey = GetXmlKey(GetTypeFullName(property.DeclaringType), property.Name),
                 };
                 Properties.Add(key, documentedProperty);
@@ -331,8 +326,6 @@ public partial class ApiDocumentationBuilder()
                     Key = key,
                     Name = field.Name,
                     Type = field.FieldType,
-                    TypeName = field.FieldType.Name,
-                    TypeFullName = field.FieldType.FullName,
                 };
                 Fields.Add(key, documentedField);
             }
@@ -488,15 +481,10 @@ public partial class ApiDocumentationBuilder()
                 documentedMethod = new DocumentedMethod()
                 {
                     DeclaringType = method.DeclaringType,
-                    DeclaringTypeName = method.DeclaringType.Name,
-                    DeclaringTypeFullName = method.DeclaringType.FullName,
-                    IsPublic = method.IsPublic,
                     IsProtected = method.IsFamily,
                     Key = key,
                     Name = method.Name,
-                    ReturnType = method.ReturnType,
-                    ReturnTypeName = method.ReturnType.Name,
-                    ReturnTypeFullName = method.ReturnType.FullName,
+                    Type = method.ReturnType,
                     XmlKey = GetXmlKey(GetTypeFullName(method.DeclaringType), method)
                 };
                 // Reach out and document types mentioned in these methods

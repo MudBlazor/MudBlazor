@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -379,12 +378,12 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     public void WriteProperty(DocumentedProperty property)
     {
         // Skip excluded types
-        if (property.DeclaringTypeFullName != null && ExcludedTypes.Contains(property.DeclaringTypeFullName))
+        if (property.DeclaringType.FullName != null && ExcludedTypes.Contains(property.DeclaringType.FullName))
         {
             return;
         }
         // Skip System properties
-        if (property.DeclaringTypeFullName != null && property.DeclaringTypeFullName.StartsWith("System."))
+        if (property.DeclaringType.FullName != null && property.DeclaringType.FullName.StartsWith("System."))
         {
             return;
         }
@@ -392,8 +391,8 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         WriteIndented($"Properties.Add(\"{property.Key}\", new()");
         Write(" { ");
         Write($"Name = \"{property.Name}\", ");
-        Write($"Type = \"{property.PropertyTypeFullName}\", ");
-        Write($"TypeFriendlyName = \"{GetFriendlyTypeName(property.PropertyType)}\", ");
+        Write($"Type = \"{property.Type.FullName}\", ");
+        Write($"TypeFriendlyName = \"{GetFriendlyTypeName(property.Type)}\", ");
         WriteDeclaringType(property);
         WriteCategory(property.Category);
         WriteIsParameter(property.IsParameter);
@@ -481,12 +480,12 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     public void WriteProperty(DocumentedType type, DocumentedProperty property)
     {
         // Skip excluded types
-        if (property.DeclaringTypeFullName != null && ExcludedTypes.Contains(property.DeclaringTypeFullName))
+        if (property.DeclaringType.FullName != null && ExcludedTypes.Contains(property.DeclaringType.FullName))
         {
             return;
         }
         // Skip System properties
-        if (property.DeclaringTypeFullName != null && property.DeclaringTypeFullName.StartsWith("System."))
+        if (property.DeclaringType.FullName != null && property.DeclaringType.FullName.StartsWith("System."))
         {
             return;
         }
@@ -534,7 +533,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         */
 
         // Get the non-excluded methods
-        var methods = type.Methods.Where(method => !ExcludedMethods.Contains(method.Value.Name) && !ExcludedTypes.Contains(method.Value.DeclaringTypeName)).ToList();
+        var methods = type.Methods.Where(method => !ExcludedMethods.Contains(method.Value.Name) && !ExcludedTypes.Contains(method.Value.DeclaringType.Name)).ToList();
 
         // Anything to do?
         if (methods.Count == 0)
@@ -557,12 +556,12 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     public void WriteMethod(DocumentedMethod method)
     {
         // Skip excluded methods and types
-        if (ExcludedMethods.Contains(method.Name) || ExcludedTypes.Contains(method.DeclaringTypeName) || method.Name.StartsWith('<'))
+        if (ExcludedMethods.Contains(method.Name) || ExcludedTypes.Contains(method.DeclaringType.Name) || method.Name.StartsWith('<'))
         {
             return;
         }
         // Skip System properties
-        if (method.DeclaringTypeFullName != null && method.DeclaringTypeFullName.StartsWith("System."))
+        if (method.DeclaringType.FullName != null && method.DeclaringType.FullName.StartsWith("System."))
         {
             return;
         }
@@ -592,12 +591,12 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     public void WriteMethod(DocumentedType type, DocumentedMethod method)
     {
         // Skip excluded methods and types
-        if (ExcludedMethods.Contains(method.Name) || ExcludedTypes.Contains(method.DeclaringTypeName) || method.Name.StartsWith('<'))
+        if (ExcludedMethods.Contains(method.Name) || ExcludedTypes.Contains(method.DeclaringType.Name) || method.Name.StartsWith('<'))
         {
             return;
         }
         // Skip System properties
-        if (method.DeclaringTypeFullName != null && method.DeclaringTypeFullName.StartsWith("System."))
+        if (method.DeclaringType.FullName != null && method.DeclaringType.FullName.StartsWith("System."))
         {
             return;
         }
@@ -629,8 +628,8 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <param name="method">The property being described.</param>
     public void WriteReturnType(DocumentedMethod method)
     {
-        Write($"ReturnType = \"{Escape(method.ReturnTypeName)}\", ");
-        Write($"ReturnTypeFriendlyName = \"{GetFriendlyTypeName(method.ReturnType)}\", ");
+        Write($"Type = \"{Escape(method.Type.Name)}\", ");
+        Write($"TypeFriendlyName = \"{GetFriendlyTypeName(method.Type)}\", ");
     }
 
     /// <summary>
@@ -663,7 +662,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <param name="property">The property to serialize.</param>
     public void WriteDeclaringType(DocumentedProperty property)
     {
-        Write($"DeclaringTypeName = \"{Escape(property.DeclaringTypeFullName)}\", ");
+        Write($"DeclaringTypeName = \"{Escape(property.DeclaringType.FullName)}\", ");
         Write($"DeclaringTypeFriendlyName = \"{Escape(GetFriendlyTypeName(property.DeclaringType))}\", ");
     }
 
@@ -674,7 +673,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <param name="method">The property being described.</param>
     public void WriteDeclaringType(DocumentedMethod method)
     {
-        Write($"DeclaringTypeName = \"{Escape(method.DeclaringTypeFullName)}\", ");
+        Write($"DeclaringTypeName = \"{Escape(method.DeclaringType.FullName)}\", ");
         Write($"DeclaringTypeFriendlyName = \"{Escape(GetFriendlyTypeName(method.DeclaringType))}\", ");
     }
 

@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace MudBlazor.Docs.Models;
 
-public class DocumentedEvent
+/// <summary>
+/// Represents a documented event.
+/// </summary>
+public class DocumentedEvent : DocumentedMember
 {
 }

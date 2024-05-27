@@ -39,9 +39,11 @@ public partial class ApiPropertyTable
 
     protected override async Task OnParametersSetAsync()
     {
+        await base.OnParametersSetAsync();
         if (Table != null)
         {
             await Table.ReloadServerData();
+            StateHasChanged();
         }
     }
 

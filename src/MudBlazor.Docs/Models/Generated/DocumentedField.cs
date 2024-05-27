@@ -8,15 +8,9 @@ using System.Diagnostics;
 namespace MudBlazor.Docs.Models;
 
 /// <summary>
-/// Represents a documented parameter for a method.
+/// Represents a documented field.
 /// </summary>
 [DebuggerDisplay("({TypeName}) {Name}: {Summary}")]
-public sealed class DocumentedField
+public sealed class DocumentedField : DocumentedMember
 {
-    public string Key { get; set; }
-    public string Name { get; set; }
-    public Type Type { get; set; }
-    public string TypeFullName { get; set; }
-    public string TypeName { get; set; }
-    public string Summary { get; set; }
 }

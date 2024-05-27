@@ -112,7 +112,9 @@ public partial class ApiText
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
+        base.OnParametersSet();
         Html = ToHtml(Text);
+        StateHasChanged();
     }
 
     /// <summary>

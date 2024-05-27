@@ -6,11 +6,7 @@ using System;
 
 namespace MudBlazor.Docs.Compiler;
 
-public class DocumentedEvent
+public class DocumentedEvent : DocumentedMember
 {
-    public string Key { get; set; }
-    public string Name { get; set; }
-    public Type Type { get; set; }
-    public string Summary { get; set; }
-    public string Remarks { get; set; }
+  
 }

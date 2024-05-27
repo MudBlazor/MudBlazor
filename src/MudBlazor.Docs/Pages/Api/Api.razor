@@ -19,12 +19,14 @@
             {
                 <DocsPageSection>
                     <SectionHeader Title="Examples" />
-                    <MudGrid>
-                        <MudItem xs="6">
-                            <MudLink Href="@DocumentedType.ComponentUrl"><CodeInline>@DocumentedType.ElementName</CodeInline></MudLink>
-                        </MudItem>
-                        <MudItem xs="6"></MudItem>
-                    </MudGrid>
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <MudGrid>
+                            <MudItem xs="6">
+                                <MudLink Href="@DocumentedType.ComponentUrl"><CodeInline>@DocumentedType.NameFriendly</CodeInline></MudLink>
+                            </MudItem>
+                            <MudItem xs="6"></MudItem>
+                        </MudGrid>
+                    </SectionContent>
                 </DocsPageSection>
             }
 
@@ -32,12 +34,14 @@
             {
                 <DocsPageSection>
                     <SectionHeader Title="Inheritance" />
-                    <MudGrid>
-                        <MudItem xs="5">
-                            <ApiTypeHierarchy Type="@DocumentedType" />
-                        </MudItem>
-                        <MudItem xs="7"></MudItem>
-                    </MudGrid>
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <MudGrid Class="pa-0">
+                            <MudItem xs="5">
+                                <ApiTypeHierarchy Type="@DocumentedType" />
+                            </MudItem>
+                            <MudItem xs="7"></MudItem>
+                        </MudGrid>
+                    </SectionContent>
                 </DocsPageSection>
             }
 
@@ -45,19 +49,26 @@
             {
                 <DocsPageSection>
                     <SectionHeader Title="Properties" />
-                    <SectionContent Outlined="true">
-                        <ApiPropertyTable Type="@DocumentedType" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <MudGrid Class="pa-0">
+                            <MudItem xs="12">
+                                <ApiPropertyTable Type="@DocumentedType" />
+                            </MudItem>
+                        </MudGrid>
                     </SectionContent>
                 </DocsPageSection>
             }
-
 
             @if (DocumentedType.Methods.Count > 0)
             {
                 <DocsPageSection>
                     <SectionHeader Title="Methods" />
-                    <SectionContent Outlined="true">
-                        <ApiMethodTable Type="@DocumentedType" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <MudGrid Class="pa-0">
+                            <MudItem xs="12">
+                                <ApiMethodTable Type="@DocumentedType" />
+                            </MudItem>
+                        </MudGrid>
                     </SectionContent>
                 </DocsPageSection>
             }
@@ -66,8 +77,12 @@
             {
                 <DocsPageSection>
                     <SectionHeader Title="Derived Classes" />
-                    <SectionContent Outlined="true">
-                        <ApiTypeTable BaseType="@DocumentedType" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <MudGrid Class="pa-0">
+                            <MudItem xs="12">
+                                <ApiTypeTable BaseType="@DocumentedType" />
+                            </MudItem>
+                        </MudGrid>
                     </SectionContent>
                 </DocsPageSection>
             }
@@ -76,8 +91,12 @@
             {
                 <DocsPageSection>
                     <SectionHeader Title="Global Settings" />
-                    <SectionContent Outlined="true">
-                        <ApiGlobalSettingTable Type="@DocumentedType" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <MudGrid Class="pa-0">
+                            <MudItem xs="12">
+                                <ApiGlobalSettingTable Type="@DocumentedType" />
+                            </MudItem>
+                        </MudGrid>
                     </SectionContent>
                 </DocsPageSection>
             }

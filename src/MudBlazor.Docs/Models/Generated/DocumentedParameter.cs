@@ -14,7 +14,6 @@ namespace MudBlazor.Docs.Models;
 /// <summary>
 /// Represents a documented parameter for a method.
 /// </summary>
-[DebuggerDisplay("({TypeName}) {Name}: {Summary}")]
 public sealed class DocumentedParameter
 {
     public string Name { get; set; }

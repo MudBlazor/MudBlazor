@@ -40,6 +40,7 @@ public partial class ApiGlobalSettingTable
     /// <inheritdoc />
     protected override async Task OnParametersSetAsync()
     {
+        await base.OnParametersSetAsync();
         if (Table != null)
         {
             await Table.ReloadServerData();

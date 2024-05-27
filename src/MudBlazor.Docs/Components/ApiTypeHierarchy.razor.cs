@@ -39,55 +39,58 @@ public partial class ApiTypeHierarchy
 
     protected override void OnParametersSet()
     {
-        if (Type != null)
+        base.OnParametersSet();
+        if (Type == null)
         {
-            SelectedType = new DocumentedTypeTreeItem()
+            return;
+        }
+
+        SelectedType = new DocumentedTypeTreeItem()
+        {
+            ApiUrl = Type.ApiUrl,
+            Expanded = false,
+            Name = Type.NameFriendly,
+        };
+        Root = [SelectedType];
+        // Walk up the hierarchy to build the tree
+        var parent = Type.BaseType;
+        while (parent != null)
+        {
+            Root[0] = new DocumentedTypeTreeItem()
             {
-                ApiUrl = Type.ApiUrl,
-                Expanded = false,
-                Name = Type.NameFriendly,
+                ApiUrl = parent.ApiUrl,
+                Children = [Root[0]],
+                Expanded = true,
+                Name = parent.NameFriendly
             };
-            Root = [SelectedType];
-            // Walk up the hierarchy to build the tree
-            var parent = Type.BaseType;
-            while (parent != null)
+            if (parent.BaseType != null)
+            {
+                parent = parent.BaseType;
+            }
+            else
             {
                 Root[0] = new DocumentedTypeTreeItem()
                 {
-                    ApiUrl = parent.ApiUrl,
+                    ApiUrl = null,
                     Children = [Root[0]],
                     Expanded = true,
-                    Name = parent.NameFriendly
+                    Name = parent.BaseTypeName
                 };
-                if (parent.BaseType != null)
-                {
-                    parent = parent.BaseType;
-                }
-                else
-                {
-                    Root[0] = new DocumentedTypeTreeItem()
-                    {
-                        ApiUrl = null,
-                        Children = [Root[0]],
-                        Expanded = true,
-                        Name = parent.BaseTypeName
-                    };
-                    break;
-                }
+                break;
             }
-            // Now check for types inheriting from this type
-            foreach (var descendant in ApiDocumentation.Types.Values.OrderBy(type => type.Name).Where(type => type.BaseTypeName == Type.Name))
-            {
-                SelectedType.Children.Add(new()
-                {
-                    ApiUrl = descendant.ApiUrl,
-                    Name = descendant.NameFriendly,
-                });
-            }
-            // Finally, flag the root
-            Root[0].IsRoot = true;
-            StateHasChanged();
         }
+        // Now check for types inheriting from this type
+        foreach (var descendant in ApiDocumentation.Types.Values.OrderBy(type => type.Name).Where(type => type.BaseTypeName == Type.Name))
+        {
+            SelectedType.Children.Add(new()
+            {
+                ApiUrl = descendant.ApiUrl,
+                Name = descendant.NameFriendly,
+            });
+        }
+        // Finally, flag the root
+        Root[0].IsRoot = true;
+        StateHasChanged();
     }
 
     [Inject]

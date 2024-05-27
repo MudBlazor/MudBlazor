@@ -40,9 +40,11 @@ public partial class ApiMethodTable
     /// <inheritdoc />
     protected override async Task OnParametersSetAsync()
     {
+        await base.OnParametersSetAsync();
         if (Table != null)
         {
             await Table.ReloadServerData();
+            StateHasChanged();
         }
     }
 
@@ -72,7 +74,7 @@ public partial class ApiMethodTable
             orderedProperties = state.SortLabel switch
             {
                 "Name" => state.SortDirection == SortDirection.Ascending ? orderedProperties.ThenBy(property => property.Name) : orderedProperties.ThenByDescending(property => property.Name),
-                "Return Type" => state.SortDirection == SortDirection.Ascending ? orderedProperties.ThenBy(property => property.ReturnType) : orderedProperties.ThenByDescending(property => property.ReturnType),
+                "Return Type" => state.SortDirection == SortDirection.Ascending ? orderedProperties.ThenBy(property => property.Type) : orderedProperties.ThenByDescending(property => property.Type),
                 "Description" => state.SortDirection == SortDirection.Ascending ? orderedProperties.ThenBy(property => property.Summary) : orderedProperties.ThenByDescending(property => property.Summary),
                 _ => state.SortDirection == SortDirection.Ascending ? orderedProperties.ThenBy(property => property.Name) : orderedProperties.ThenByDescending(property => property.Name),
             };
