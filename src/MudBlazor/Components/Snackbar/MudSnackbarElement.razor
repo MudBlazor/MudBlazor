@@ -7,8 +7,18 @@
 @inherits MudComponentBase
 
 @Css
-<div @attributes="UserAttributes" class="@SnackbarClass" style="@AnimationStyle" @onclick="EventUtil.AsNonRenderingEventHandler(SnackbarClicked)"
-     @onpointerenter="InteractionStartHandler" @onpointerleave="InteractionEndHandler" @ontouchstart="InteractionStartHandler" @ontouchend="InteractionEndHandler" @ontouchcancel="InteractionEndHandler">
+<div role="alert"
+     aria-live="polite"
+     class="@SnackbarClass"
+     style="@AnimationStyle"
+     @onclick="EventUtil.AsNonRenderingEventHandler(SnackbarClicked)"
+     @onpointerenter="InteractionStartHandler"
+     @onpointerleave="InteractionEndHandler"
+     @ontouchstart="InteractionStartHandler"
+     @ontouchend="InteractionEndHandler"
+     @ontouchcancel="InteractionEndHandler"
+     @attributes="UserAttributes">
+
     @if (!HideIcon)
     {
         <div class="mud-snackbar-icon">
@@ -26,10 +36,11 @@
     @if (ShowCloseIcon || ShowActionButton)
     {
         <div class="mud-snackbar-content-action">
-
             @if (ShowActionButton)
             {
-                <MudButton Class="mud-snackbar-action-button" Variant="@ActionVariant" Color="@ActionColor" OnClick="ActionClicked" DropShadow="false">@Action</MudButton>
+                <MudButton Class="mud-snackbar-action-button" Variant="@ActionVariant" Color="@ActionColor" OnClick="ActionClicked" DropShadow="false">
+                    @Action
+                </MudButton>
             }
 
             @if (ShowCloseIcon)

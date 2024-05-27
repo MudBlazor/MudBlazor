@@ -420,6 +420,24 @@
   <data name="MudBaseDatePicker_Close" xml:space="preserve">
     <value>Close Picker</value>
   </data>
+  <data name="MudPagination_CurrentPage" xml:space="preserve">
+    <value>Current page {0}</value>
+  </data>
+  <data name="MudPagination_FirstPage" xml:space="preserve">
+    <value>First page</value>
+  </data>
+  <data name="MudPagination_LastPage" xml:space="preserve">
+    <value>Last page</value>
+  </data>
+  <data name="MudPagination_NextPage" xml:space="preserve">
+    <value>Next page</value>
+  </data>
+  <data name="MudPagination_PageIndex" xml:space="preserve">
+    <value>Page {0}</value>
+  </data>
+  <data name="MudPagination_PreviousPage" xml:space="preserve">
+    <value>Previous page</value>
+  </data>
   <data name="MudRatingItem_Label" xml:space="preserve">
     <value>{0} Rating</value>
   </data>
