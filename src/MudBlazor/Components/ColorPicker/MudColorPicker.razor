@@ -86,7 +86,6 @@
                                 <div class="@GetColorDotClass(item)"
                                      style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")"
                                      @onclick="@GetSelectPaletteColorCallback(item)"
-                                     role="button"
                                      aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_ColorDot)]"></div>
                             }
                         </div>
@@ -105,7 +104,6 @@
                                 {
                                     <div class="mud-picker-color-dot mud-picker-color-dot-current mud-ripple"
                                          @onclick="ToggleCollection"
-                                         role="button"
                                          aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_ToggleCurrentColor)]">
                                         <div class="mud-picker-color-fill" style="@($"background: {_value.ToString(MudColorOutputFormats.RGBA)};")"></div>
                                     </div>

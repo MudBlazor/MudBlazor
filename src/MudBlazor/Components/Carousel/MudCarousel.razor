@@ -38,7 +38,7 @@
                 }
                 else
                 {
-                    <div @onclick="Previous" tabindex="1" role="button" aria-label="@Localizer[nameof(LanguageResource.MudCarousel_Previous)]" class="@NavigationButtonsClassName" style="z-index:3">
+                    <div @onclick="Previous" tabindex="1" aria-label="@Localizer[nameof(LanguageResource.MudCarousel_Previous)]" class="@NavigationButtonsClassName" style="z-index:3">
                     @PreviousButtonTemplate
                 </div>
                 }
@@ -58,7 +58,7 @@
                             }
                             else
                             {
-                                <div @onclick="() => MoveTo(current)" role="button" class="@BulletsButtonsClassName" style="z-index:3">
+                                <div @onclick="() => MoveTo(current)" class="@BulletsButtonsClassName" style="z-index:3">
                                     @BulletTemplate(current == SelectedIndex)
                                 </div>
                             }
@@ -76,7 +76,7 @@
                 }
                 else
                 {
-                    <div @onclick="Next" tabindex="2" role="button" aria-label="@Localizer[nameof(LanguageResource.MudCarousel_Next)]" class="@NavigationButtonsClassName" style="z-index:3">
+                    <div @onclick="Next" tabindex="2" aria-label="@Localizer[nameof(LanguageResource.MudCarousel_Next)]" class="@NavigationButtonsClassName" style="z-index:3">
                         @NextButtonTemplate
                     </div>
                 }
