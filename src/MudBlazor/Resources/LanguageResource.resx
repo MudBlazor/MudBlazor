@@ -198,24 +198,6 @@
   <data name="MudDataGrid.is not empty" xml:space="preserve">
     <value>is not empty</value>
   </data>
-  <data name="MudDataGrid.=" xml:space="preserve">
-    <value>=</value>
-  </data>
-  <data name="MudDataGrid.!=" xml:space="preserve">
-    <value>!=</value>
-  </data>
-  <data name="MudDataGrid.&gt;" xml:space="preserve">
-    <value>&gt;</value>
-  </data>
-  <data name="MudDataGrid.&gt;=" xml:space="preserve">
-    <value>&gt;=</value>
-  </data>
-  <data name="MudDataGrid.&lt;" xml:space="preserve">
-    <value>&lt;</value>
-  </data>
-  <data name="MudDataGrid.&lt;=" xml:space="preserve">
-    <value>&lt;=</value>
-  </data>
   <data name="MudDataGrid.is" xml:space="preserve">
     <value>is</value>
   </data>
@@ -361,6 +343,6 @@
     <value>Previous page</value>
   </data>
   <data name="MudSnackbar_Close" xml:space="preserve">
-    <value>Close</value>
+    <value>Close snackbar</value>
   </data>
 </root>

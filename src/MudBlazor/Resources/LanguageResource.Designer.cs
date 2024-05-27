@@ -700,7 +700,7 @@ namespace MudBlazor.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Close.
+        ///   Looks up a localized string similar to Close snackbar.
         /// </summary>
         public static string MudSnackbar_Close {
             get {
