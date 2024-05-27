@@ -1,14 +1,25 @@
 ﻿@namespace MudBlazor
+@using MudBlazor.Resources
 @inherits MudComponentBase
+@inject InternalMudLocalizer Localizer
 
-<span tabindex="@(Disabled?-1:0)" @onkeydown="HandleKeyDownAsync" @attributes="UserAttributes" class="@ClassName" style="@Style" >
-    <CascadingValue Value="this" >
+<span tabindex="@(Disabled ? -1 : 0)" role="radiogroup" aria-readonly="@(ReadOnly.ToString().ToLower())"
+      @onkeydown="HandleKeyDownAsync" @attributes="UserAttributes" class="@ClassName" style="@Style">
+    <CascadingValue Value="this">
         @for (int i = 1; i <= MaxValue; i++)
         {
             var currentValue = i;
-            <MudRatingItem Class="@RatingItemsClass" Style="@RatingItemsStyle" ItemValue="@currentValue"
-                           Ripple="@Ripple" Disabled="Disabled" ReadOnly="ReadOnly" Color="Color"
-                           Size="Size" ItemClicked="HandleItemClickedAsync" ItemHovered="HandleItemHoveredAsync" />
+            <MudRatingItem Class="@RatingItemsClass"
+                           Style="@RatingItemsStyle"
+                           ItemValue="@currentValue"
+                           Ripple="@Ripple"
+                           Disabled="Disabled"
+                           ReadOnly="ReadOnly"
+                           Color="Color"
+                           Size="Size"
+                           ItemClicked="HandleItemClickedAsync"
+                           ItemHovered="HandleItemHoveredAsync"
+                           aria-label="@Localizer[nameof(LanguageResource.MudRatingItem_Label), $"{i}"]"/>
         }
     </CascadingValue>
 </span>
