@@ -6,7 +6,9 @@ using System;
 
 namespace MudBlazor.Docs.Compiler;
 
+#nullable enable
+
 public class DocumentedEvent : DocumentedMember
 {
-  
+
 }
