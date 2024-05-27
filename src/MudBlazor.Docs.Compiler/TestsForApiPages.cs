@@ -20,6 +20,128 @@ namespace MudBlazor.Docs.Compiler
         public List<string> ExcludedTypes = ["_Imports", "Color", "Colors", "Icons", "Input", "LanguageResource"];
 
         /// <summary>
+        /// The current production links to API documentation.
+        /// </summary>
+        public string[] LegacyApiAddresses = {
+            // available from the main menu in "API" group
+            "api/alert",
+            "api/appbar",
+            "api/autocomplete",
+            "api/avatar",
+            "api/badge",
+            "api/barchart",
+            "api/breadcrumbs",
+            "api/breakpointprovider",
+            "api/button",
+            "api/buttonfab",
+            "api/buttongroup",
+            "api/card",
+            "api/carousel",
+            "api/checkbox",
+            "api/chips",
+            "api/chipset",
+            "api/colorpicker",
+            "api/container",
+            "api/datagrid",
+            "api/datepicker",
+            "api/dialog",
+            "api/divider",
+            "api/donutchart",
+            "api/drawer",
+            "api/element",
+            "api/expansionpanels",
+            "api/field",
+            "api/fileuploader",
+            "api/focustrap",
+            "api/form",
+            "api/grid",
+            "api/hidden",
+            "api/highlighter",
+            "api/iconbutton",
+            "api/icons",
+            "api/linechart",
+            "api/link",
+            "api/list",
+            "api/menu",
+            "api/messagebox",
+            "api/navmenu",
+            "api/numericfield",
+            "api/overlay",
+            "api/pagination",
+            "api/paper",
+            "api/piechart",
+            "api/popover",
+            "api/progress",
+            "api/radio",
+            "api/rating",
+            "api/scrolltotop",
+            "api/select",
+            "api/simpletable",
+            "api/skeleton",
+            "api/slider",
+            "api/snackbar",
+            "api/swipearea",
+            "api/switch",
+            "api/table",
+            "api/tabs",
+            "api/textfield",
+            "api/timepicker",
+            "api/timeline",
+            "api/toggleiconbutton",
+            "api/toolbar",
+            "api/tooltip",
+            "api/treeview",
+            "api/typography",
+
+            // subelements - available from components/* pages
+            "api/drawerheader",
+            "api/drawercontainer",
+            "api/navlink",
+            "api/navgroup",
+            "api/item",
+            "api/dynamictabs",
+            "api/expansionpanel",
+            "api/timelineitem",
+            "api/cardactions",
+            "api/cardcontent",
+            "api/cardheader",
+            "api/cardmedia",
+            "api/treeviewitem",
+            "api/treeviewitemtogglebutton",
+            "api/listitem",
+            "api/listsubheader",
+            "api/carouselitem",
+            "api/dialoginstance",
+            "api/dialogprovider",
+            "api/avatargroup",
+            "api/menuitem",
+            "api/radiogroup",
+            "api/selectitem",
+            "api/ratingitem",
+
+            // API pages not linked from the documentation web site, but still available through the URL
+            "api/THeadRow",
+            "api/TFootRow",
+            "api/Tr",
+            "api/Th",
+            "api/Td",
+            "api/TableGroupRow",
+            "api/TableSortLabel",
+            "api/TablePager",
+            "api/InputLabel",
+            "api/InputControl",
+            "api/Input",
+            "api/RangeInput",
+            "api/MainContent",
+            "api/DateRangePicker",
+            "api/Collapse",
+            "api/PageContentNavigation",
+            "api/RTLProvider",
+            "api/SnackbarElement",
+            "api/SparkLine",
+        };
+
+        /// <summary>
         /// Ensures that an API page is available for each MudBlazor component.
         /// </summary>
         public bool Execute()
@@ -57,35 +179,9 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("public partial class ApiDocsTests");
                 cb.AddLine("{");
                 cb.IndentLevel++;
-                var mudBlazorComponents = typeof(_Imports).Assembly.GetTypes().Where(type => type.IsPublic);
-                foreach (var type in mudBlazorComponents)
-                {
-                    // Exclude some types
-                    if (ExcludedTypes.Contains(type.Name) || ApiDocumentationWriter.ExcludedTypes.Contains(type.Name))
-                    {
-                        continue;
-                    }
 
-                    cb.AddLine("[Test]");
-                    cb.AddLine($"public async Task {type.Name.Replace("`", "")}_API_TestAsync()");
-                    cb.AddLine("{");
-                    cb.IndentLevel++;
-                    // Create Api.razor with a type
-                    cb.AddLine(@$"ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager(""https://localhost:2112/"", ""https://localhost:2112/components/{type.Name}""));");
-                    cb.AddLine(@$"var comp = ctx.RenderComponent<Api>(ComponentParameter.CreateParameter(""TypeName"", ""{type.Name}""));");
-                    cb.AddLine(@$"await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();");
-                    // Make sure docs for the type were actually found
-                    cb.AddLine(@$"comp.Markup.Should().NotContain(""Sorry, the type"").And.NotContain(""could not be found"");");
-                    // Is this a component?
-                    if (type.IsSubclassOf(typeof(MudComponentBase)))
-                    {
-                        // Yes.  Check for the example link
-                        cb.AddLine(@$"var exampleLink = comp.FindComponents<MudLink>().FirstOrDefault(link => link.Instance.Href.StartsWith(""/component""));");
-                        cb.AddLine(@$"exampleLink.Should().NotBeNull();");
-                    }
-                    cb.IndentLevel--;
-                    cb.AddLine("}");
-                }
+                WritePublicTypeTests(cb);
+                WriteLegacyApiLinkTests(cb);
 
                 cb.IndentLevel--;
                 cb.AddLine("}");
@@ -104,6 +200,69 @@ namespace MudBlazor.Docs.Compiler
             }
 
             return success;
+        }
+
+        /// <summary>
+        /// Creates tests for all public MudBlazor types.
+        /// </summary>
+        public void WritePublicTypeTests(CodeBuilder cb)
+        {
+            var mudBlazorComponents = typeof(_Imports).Assembly.GetTypes().Where(type => type.IsPublic);
+            foreach (var type in mudBlazorComponents)
+            {
+                // Exclude some types
+                if (ExcludedTypes.Contains(type.Name) || ApiDocumentationWriter.ExcludedTypes.Contains(type.Name))
+                {
+                    continue;
+                }
+
+                cb.AddLine("[Test]");
+                cb.AddLine($"public async Task {type.Name.Replace("`", "")}_API_TestAsync()");
+                cb.AddLine("{");
+                cb.IndentLevel++;
+                // Create Api.razor with a type
+                cb.AddLine(@$"ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager(""https://localhost:2112/"", ""https://localhost:2112/components/{type.Name}""));");
+                cb.AddLine(@$"var comp = ctx.RenderComponent<Api>(ComponentParameter.CreateParameter(""TypeName"", ""{type.Name}""));");
+                cb.AddLine(@$"await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();");
+                // Make sure docs for the type were actually found
+                cb.AddLine(@$"comp.Markup.Should().NotContain(""Sorry, the type {type} was not found"");");
+                // Is this a component?
+                if (type.IsSubclassOf(typeof(MudComponentBase)))
+                {
+                    // Yes.  Check for the example link
+                    cb.AddLine(@$"var exampleLink = comp.FindComponents<MudLink>().FirstOrDefault(link => link.Instance.Href.StartsWith(""/component""));");
+                    cb.AddLine(@$"exampleLink.Should().NotBeNull();");
+                }
+                cb.IndentLevel--;
+                cb.AddLine("}");
+            }
+        }
+
+        /// <summary>
+        /// Creates tests for existing API links (for backwards compatibility).
+        /// </summary>
+        public void WriteLegacyApiLinkTests(CodeBuilder cb)
+        {
+            foreach (var url in LegacyApiAddresses)
+            {
+                var component = url.Replace("api/", "");
+
+                cb.AddLine("[Test]");
+                cb.AddLine($"public async Task {component.Replace("/", "_")}_Legacy_API_TestAsync()");
+                cb.AddLine("{");
+                cb.IndentLevel++;
+                // Create Api.razor with a type
+                cb.AddLine(@$"ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager(""https://localhost:2112/"", ""https://localhost:2112/components/{url}""));");
+                cb.AddLine(@$"var comp = ctx.RenderComponent<Api>(ComponentParameter.CreateParameter(""TypeName"", ""{component}""));");
+                cb.AddLine(@$"await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();");
+                // Make sure docs for the type were actually found
+                cb.AddLine(@$"comp.Markup.Should().NotContain(""Sorry, the type {component} was not found"");");
+                // Check for the example link
+                cb.AddLine(@$"var exampleLink = comp.FindComponents<MudLink>().FirstOrDefault(link => link.Instance.Href.StartsWith(""/component""));");
+                cb.AddLine(@$"exampleLink.Should().NotBeNull();");
+                cb.IndentLevel--;
+                cb.AddLine("}");
+            }
         }
 
         public static bool IsObsolete(Type type)
