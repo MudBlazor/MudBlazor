@@ -28,7 +28,6 @@ namespace MudBlazor
         private Column<T>? _nextColumn;
         private Guid _pointerMoveSubscriptionId;
         private Guid _pointerUpSubscriptionId;
-        // private  object? _dir;
 
         public DataGridColumnResizeService(MudDataGrid<T> dataGrid, IEventListener eventListener)
         {
@@ -66,10 +65,10 @@ namespace MudBlazor
 
             _pointerMoveSubscriptionId =
                 await _eventListener.SubscribeGlobal<PointerEventArgs>(EventPointerMove, 0,
-                    o => OnApplicationPointerMove(o, rightToLeft));
+                    eventArgs => OnApplicationPointerMove(eventArgs, rightToLeft));
             _pointerUpSubscriptionId =
                 await _eventListener.SubscribeGlobal<PointerEventArgs>(EventPointerUp, 0,
-                    o => OnApplicationPointerUp(o, rightToLeft));
+                    eventArgs => OnApplicationPointerUp(eventArgs, rightToLeft));
 
             _dataGrid.IsResizing = true;
             ((IMudStateHasChanged)_dataGrid).StateHasChanged();
