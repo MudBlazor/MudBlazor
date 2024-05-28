@@ -28,6 +28,7 @@ namespace MudBlazor
         private Column<T>? _nextColumn;
         private Guid _pointerMoveSubscriptionId;
         private Guid _pointerUpSubscriptionId;
+        // private  object? _dir;
 
         public DataGridColumnResizeService(MudDataGrid<T> dataGrid, IEventListener eventListener)
         {
@@ -35,9 +36,11 @@ namespace MudBlazor
             _eventListener = eventListener;
         }
 
-        internal async Task<bool> StartResizeColumn(HeaderCell<T> headerCell, double clientX, IList<Column<T>> columns, ResizeMode columnResizeMode)
+        internal async Task<bool> StartResizeColumn(HeaderCell<T> headerCell, double clientX, IList<Column<T>> columns,
+            ResizeMode columnResizeMode, bool rightToLeft)
         {
-            if ((headerCell.Column?.Resizable ?? false) || columnResizeMode == ResizeMode.None || _pointerMoveSubscriptionId != default || _pointerUpSubscriptionId != default)
+            if ((headerCell.Column?.Resizable ?? false) || columnResizeMode == ResizeMode.None ||
+                _pointerMoveSubscriptionId != default || _pointerUpSubscriptionId != default)
                 return false;
 
             _resizeMode = columnResizeMode;
@@ -51,7 +54,8 @@ namespace MudBlazor
                 // In case resize mode is column, we have to find any column right of the current one that can also be resized and is not hidden.
                 if (headerCell.Column is not null)
                 {
-                    var nextResizableColumn = columns.Skip(columns.IndexOf(headerCell.Column) + 1).FirstOrDefault(c => (c.Resizable ?? true) && !c.Hidden);
+                    var nextResizableColumn = columns.Skip(columns.IndexOf(headerCell.Column) + (rightToLeft ? -1 : 1))
+                        .FirstOrDefault(c => (c.Resizable ?? true) && !c.Hidden);
                     if (nextResizableColumn == null)
                         return false;
 
@@ -60,20 +64,24 @@ namespace MudBlazor
                 }
             }
 
-            _pointerMoveSubscriptionId = await _eventListener.SubscribeGlobal<PointerEventArgs>(EventPointerMove, 0, OnApplicationPointerMove);
-            _pointerUpSubscriptionId = await _eventListener.SubscribeGlobal<PointerEventArgs>(EventPointerUp, 0, OnApplicationPointerUp);
+            _pointerMoveSubscriptionId =
+                await _eventListener.SubscribeGlobal<PointerEventArgs>(EventPointerMove, 0,
+                    o => OnApplicationPointerMove(o, rightToLeft));
+            _pointerUpSubscriptionId =
+                await _eventListener.SubscribeGlobal<PointerEventArgs>(EventPointerUp, 0,
+                    o => OnApplicationPointerUp(o, rightToLeft));
 
             _dataGrid.IsResizing = true;
             ((IMudStateHasChanged)_dataGrid).StateHasChanged();
             return true;
         }
 
-        private async Task OnApplicationPointerMove(object eventArgs)
+        private async Task OnApplicationPointerMove(object eventArgs, bool isRtl)
         {
-            await ResizeColumn(eventArgs, false);
+            await ResizeColumn(eventArgs, false, isRtl);
         }
 
-        private async Task OnApplicationPointerUp(object eventArgs)
+        private async Task OnApplicationPointerUp(object eventArgs, bool isRtl)
         {
             var requiresUpdate = _pointerMoveSubscriptionId != default || _pointerUpSubscriptionId != default;
 
@@ -83,7 +91,7 @@ namespace MudBlazor
 
             if (requiresUpdate)
             {
-                await ResizeColumn(eventArgs, true);
+                await ResizeColumn(eventArgs, true, isRtl);
             }
         }
 
@@ -102,14 +110,23 @@ namespace MudBlazor
             }
         }
 
-        private async Task ResizeColumn(object eventArgs, bool finish)
+        private async Task ResizeColumn(object eventArgs, bool finish, bool isRtl)
         {
             if (eventArgs is PointerEventArgs pointerEventArgs)
             {
                 // Need to update height, because resizing of columns can lead to height changes in grid (due to line-breaks)
                 var gridHeight = await _dataGrid.GetActualHeight();
 
-                var deltaX = pointerEventArgs.ClientX - _currentX;
+                var deltaX = 0.0;
+                if (isRtl)
+                {
+                    deltaX = (_currentX - pointerEventArgs.ClientX);
+                }
+                else
+                {
+                    deltaX = (pointerEventArgs.ClientX - _currentX);
+                }
+
                 var targetWidth = _startWidth + deltaX;
 
                 // Easy case: ResizeMode is container, we simply update the width of the resized column
