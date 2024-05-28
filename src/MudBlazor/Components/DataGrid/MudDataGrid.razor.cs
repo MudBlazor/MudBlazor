@@ -299,7 +299,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public bool ColumnsPanelReordering { get; set; } = false;
-           
+
         [CascadingParameter(Name = "RightToLeft")]
         private bool RightToLeft { get; set; }
 
