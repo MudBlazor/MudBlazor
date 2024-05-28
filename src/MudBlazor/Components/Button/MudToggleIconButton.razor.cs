@@ -48,7 +48,7 @@ namespace MudBlazor
         public string? ToggledTitle { get; set; }
 
         /// <summary>
-        /// The ARIA label for the button when it's not toggled.
+        /// The <c>aria-label</c> for the button when it's not in the toggled state.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -58,7 +58,7 @@ namespace MudBlazor
         public string? AriaLabel { get; set; }
 
         /// <summary>
-        /// The ARIA label for the button in the toggled state.
+        /// The <c>aria-label</c> for the button when it's in the toggled state.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
