@@ -139,11 +139,11 @@
     @if (!HideSpinButtons)
     {
         <div class="mud-input-numeric-spin">
-            <MudButton Variant="Variant.Text" @onclick="OnIncrement" Disabled="@(GetDisabledState() || GetReadOnlyState())" tabindex="-1">
-                <MudIcon aria-label="@Localizer[nameof(LanguageResource.MudInput_Increment)]" Icon="@NumericUpIcon" Size="@GetButtonSize()" />
+            <MudButton Variant="Variant.Text" @onclick="OnIncrement" Disabled="@(GetDisabledState() || GetReadOnlyState())" tabindex="-1" aria-label="@Localizer[nameof(LanguageResource.MudInput_Increment)]">
+                <MudIcon Icon="@NumericUpIcon" Size="@GetButtonSize()" />
             </MudButton>
-            <MudButton Variant="Variant.Text" @onclick="OnDecrement" Disabled="@(GetDisabledState() || GetReadOnlyState())" tabindex="-1">
-                <MudIcon aria-label="@Localizer[nameof(LanguageResource.MudInput_Decrement)]" Icon="@NumericDownIcon" Size="@GetButtonSize()" />
+            <MudButton Variant="Variant.Text" @onclick="OnDecrement" Disabled="@(GetDisabledState() || GetReadOnlyState())" tabindex="-1" aria-label="@Localizer[nameof(LanguageResource.MudInput_Decrement)]">
+                <MudIcon Icon="@NumericDownIcon" Size="@GetButtonSize()" />
             </MudButton>
         </div>
     }
