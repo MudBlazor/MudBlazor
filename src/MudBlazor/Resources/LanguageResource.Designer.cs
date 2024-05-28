@@ -142,7 +142,7 @@ namespace MudBlazor.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Adjust Alpha Slider.
+        ///   Looks up a localized string similar to Alpha Slider.
         /// </summary>
         public static string MudColorPicker_AlphaSlider {
             get {
@@ -178,7 +178,7 @@ namespace MudBlazor.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Adjust Hue Slider.
+        ///   Looks up a localized string similar to Hue Slider.
         /// </summary>
         public static string MudColorPicker_HueSlider {
             get {

@@ -277,10 +277,10 @@
     <value>Toggle Current Color</value>
   </data>
   <data name="MudColorPicker_HueSlider" xml:space="preserve">
-    <value>Adjust Hue Slider</value>
+    <value>Hue Slider</value>
   </data>
   <data name="MudColorPicker_AlphaSlider" xml:space="preserve">
-    <value>Adjust Alpha Slider</value>
+    <value>Alpha Slider</value>
   </data>
   <data name="MudColorPicker_PaletteColor" xml:space="preserve">
     <value>Select Palette Color</value>
