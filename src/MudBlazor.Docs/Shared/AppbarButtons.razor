@@ -28,8 +28,8 @@
     </MudBadge>
 </MudTooltip>
 <MudTooltip Delay="1000" Text="@(LayoutService.IsRTL ? "Left-to-right" : "Right-to-left")">
-    <MudIconButton Icon="@(LayoutService.IsRTL ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="@LayoutService.ToggleRightToLeft" Color="Color.Inherit" />
+    <MudIconButton Icon="@(LayoutService.IsRTL ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="@LayoutService.ToggleRightToLeft" Color="Color.Inherit" aria-label="@(LayoutService.IsRTL ? "Left-to-right" : "Right-to-left")" />
 </MudTooltip>
 <MudTooltip Delay="1000" Text="@(DarkLightModeButtonText)">
-    <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@LayoutService.CycleDarkLightModeAsync" />
+    <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@LayoutService.CycleDarkLightModeAsync" aria-label="@(DarkLightModeButtonText)" />
 </MudTooltip>
