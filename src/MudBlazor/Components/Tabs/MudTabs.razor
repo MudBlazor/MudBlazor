@@ -89,11 +89,11 @@
             }
             else if (String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
             {
-                <MudIcon Icon="@panel.Icon" Color="@IconColor" />
+                <MudIcon Icon="@panel.Icon" Color="@GetPanelIconColor(panel)" />
             }
             else if (!String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
             {
-                <MudIcon Icon="@panel.Icon" Color="@IconColor" Class="mud-tab-icon-text" />
+                <MudIcon Icon="@panel.Icon" Color="@GetPanelIconColor(panel)" Class="mud-tab-icon-text" />
                 @panel.Text
             }
             @if (panel.BadgeData != null || panel.BadgeDot)
