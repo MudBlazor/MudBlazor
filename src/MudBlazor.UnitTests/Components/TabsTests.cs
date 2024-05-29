@@ -1092,10 +1092,21 @@ namespace MudBlazor.UnitTests.Components
         public async Task TabPanelIconColorOverridesTabIconColor()
         {
             var comp = Context.RenderComponent<TabPanelIconColorTest>();
-            comp.SetParametersAndRender(x => x.Add(y => y.MudTabPanelIconColor, Color.Error));
+            comp.SetParametersAndRender(x => x.Add(y => y.MudTabPanelIconColor, Color.Success));
 
             var iconRef = comp.Find(".mud-icon-root.mud-svg-icon");
             iconRef.ClassList.Should().Contain("mud-success-text");
+        }
+
+        [Test]
+        public async Task TabPanelIconColorOverridesTabIconColorExceptWhenDisabled()
+        {
+            var comp = Context.RenderComponent<TabPanelIconColorTest>();
+            comp.SetParam("DisableTab", true);
+            comp.SetParametersAndRender(x => x.Add(y => y.MudTabPanelIconColor, Color.Success));
+
+            var iconRef = comp.Find(".mud-icon-root.mud-svg-icon");
+            iconRef.ClassList.Should().NotContain("mud-success-text");
         }
 
         [Test]
