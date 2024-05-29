@@ -14,8 +14,9 @@ namespace MudBlazor.State.Builder;
 /// </summary>
 internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilderScope, IParameterStatesReader
 {
-    private readonly Action? _onScopeEndedAction;
+    private IParameterStatesReaderOwner? _owner;
     private readonly List<IParameterBuilderAttach> _builders;
+    private readonly Action<IParameterStatesReaderOwner?>? _onScopeEndedAction;
 
     /// <summary>
     /// Gets a value indicating whether the parameter registration builder scope is locked.
@@ -29,7 +30,7 @@ internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilder
     /// Initializes a new instance of the <see cref="ParameterRegistrationBuilderScope"/> class with the specified parameter set register.
     /// </summary>
     /// <param name="onScopeEndedAction">The action to be executed when the scope ends.</param>
-    public ParameterRegistrationBuilderScope(Action? onScopeEndedAction = null)
+    public ParameterRegistrationBuilderScope(Action<IParameterStatesReaderOwner?>? onScopeEndedAction = null)
     {
         _onScopeEndedAction = onScopeEndedAction;
         _builders = new List<IParameterBuilderAttach>();
@@ -62,13 +63,20 @@ internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilder
         if (!IsLocked)
         {
             IsLocked = true;
-            _onScopeEndedAction?.Invoke();
+            _onScopeEndedAction?.Invoke(_owner);
         }
     }
+
+    /// <inheritdoc />
+    public void SetOwner(IParameterStatesReaderOwner owner) => _owner = owner;
 
     /// <inheritdoc />
     IEnumerable<IParameterComponentLifeCycle> IParameterStatesReader.ReadParameters() => _builders.Select(parameter => parameter.Attach());
 
     /// <inheritdoc />
-    void IParameterStatesReader.Complete() => CleanUp();
+    void IParameterStatesReader.Complete()
+    {
+        IsLocked = true;
+        CleanUp();
+    }
 }

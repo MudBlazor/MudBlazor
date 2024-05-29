@@ -12,6 +12,7 @@ public partial class MudText : MudComponentBase
             .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default && Color != Color.Inherit)
             .AddClass("mud-typography-gutterbottom", GutterBottom)
             .AddClass($"mud-typography-align-{ConvertAlign(Align).ToDescriptionString()}", Align != Align.Inherit)
+            .AddClass("d-inline", Inline)
             .AddClass(Class)
             .Build();
 
@@ -54,6 +55,13 @@ public partial class MudText : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Text.Appearance)]
     public bool GutterBottom { get; set; }
+
+    /// <summary>
+    /// If true, text will continue after previous text instead of placing in a new line.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Text.Appearance)]
+    public bool Inline { get; set; }
 
     /// <summary>
     /// The child content to display.

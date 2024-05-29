@@ -5,7 +5,7 @@
 <CascadingValue Value="@this" IsFixed="true">
     <CascadingValue Value="@((MudChartBase)this)" IsFixed="true">
         <div @attributes="UserAttributes" class="@Classname" style="@Style" dir="ltr">
-            <TimeSeries ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" TimeLabelSpacing="@TimeLabelSpacing"></TimeSeries>
+            <TimeSeries ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" TimeLabelSpacing="@TimeLabelSpacing" TimeLabelFormat="@TimeLabelFormat"></TimeSeries>
         </div>
     </CascadingValue>
 </CascadingValue>
