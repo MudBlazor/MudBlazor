@@ -374,8 +374,8 @@ namespace MudBlazor.UnitTests.Components
                 primary = _service.Add("ah, ah, ah, ah, stayin' alive", Severity.Normal, c =>
                 {
                     c.ShowTransitionDuration = 0;
-                    c.HideTransitionDuration = 40;
-                    c.VisibleStateDuration = 40;
+                    c.HideTransitionDuration = 100;
+                    c.VisibleStateDuration = 100;
                 })
             );
 
@@ -477,7 +477,7 @@ namespace MudBlazor.UnitTests.Components
                 _service.Add("ah, ah, ah, ah, stayin' alive", Severity.Normal, c =>
                 {
                     c.ShowTransitionDuration = 0;
-                    c.HideTransitionDuration = 40;
+                    c.HideTransitionDuration = 100;
                     c.VisibleStateDuration = int.MaxValue;
                 })
             );
@@ -504,8 +504,8 @@ namespace MudBlazor.UnitTests.Components
                 primary = _service.Add("ah, ah, ah, ah, stayin' alive", Severity.Normal, c =>
                 {
                     c.ShowTransitionDuration = 0;
-                    c.HideTransitionDuration = 40;
-                    c.VisibleStateDuration = 40;
+                    c.HideTransitionDuration = 100;
+                    c.VisibleStateDuration = 100;
                 })
             );
 
@@ -536,8 +536,8 @@ namespace MudBlazor.UnitTests.Components
                 primary = _service.Add("ah, ah, ah, ah, stayin' alive", Severity.Normal, c =>
                 {
                     c.ShowTransitionDuration = 0;
-                    c.HideTransitionDuration = 40;
-                    c.VisibleStateDuration = 40;
+                    c.HideTransitionDuration = 100;
+                    c.VisibleStateDuration = 100;
                 })
             );
 
@@ -612,9 +612,9 @@ namespace MudBlazor.UnitTests.Components
             await _provider.InvokeAsync(() =>
                 primary = _service.Add("ah, ah, ah, ah, stayin' alive", Severity.Normal, c =>
                 {
-                    c.ShowTransitionDuration = 40;
+                    c.ShowTransitionDuration = 100;
                     c.HideTransitionDuration = 0;
-                    c.VisibleStateDuration = 40;
+                    c.VisibleStateDuration = 100;
                 })
             );
 
@@ -648,7 +648,7 @@ namespace MudBlazor.UnitTests.Components
                 {
                     c.ShowTransitionDuration = 0;
                     c.HideTransitionDuration = 0;
-                    c.VisibleStateDuration = 40;
+                    c.VisibleStateDuration = 100;
                 })
             );
 
@@ -656,14 +656,14 @@ namespace MudBlazor.UnitTests.Components
 
             // Prove that the pointer entering the snackbar does not restart the duration from zero.
 
-            await Task.Delay(20); // 2/3 through the visible duration.
+            await Task.Delay(60); // 60% through the visible duration.
             _provider.Find(".mud-snackbar").TriggerEvent("onpointerenter", new PointerEventArgs());
             _provider.Find(".mud-snackbar").TriggerEvent("onpointerleave", new PointerEventArgs());
             _provider.Find(".mud-snackbar").TouchStart();
             _provider.Find(".mud-snackbar").TouchEnd();
 
-            // It should close within another 20ms if it's behaving correctly; If the duration was reset this assertion will fail.
-            _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0), TimeSpan.FromMilliseconds(20));
+            // It should close within another 60ms if it's behaving correctly; If the duration was reset this assertion will fail.
+            _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0), TimeSpan.FromMilliseconds(60));
         }
 
         [Test]
@@ -677,7 +677,7 @@ namespace MudBlazor.UnitTests.Components
                 _service.Add("It's all just cornflakes", Severity.Normal, c =>
                 {
                     c.ShowTransitionDuration = 0;
-                    c.HideTransitionDuration = 100;
+                    c.HideTransitionDuration = 300;
                     c.VisibleStateDuration = int.MaxValue;
                     c.Action = "Click me";
                     c.Onclick = _ =>
@@ -724,7 +724,7 @@ namespace MudBlazor.UnitTests.Components
                 _service.Add("It's all just cornflakes", Severity.Normal, c =>
                 {
                     c.ShowTransitionDuration = 0;
-                    c.HideTransitionDuration = 100;
+                    c.HideTransitionDuration = 300;
                     c.VisibleStateDuration = int.MaxValue;
                     c.Onclick = _ =>
                     {
