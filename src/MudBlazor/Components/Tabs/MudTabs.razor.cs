@@ -586,12 +586,7 @@ namespace MudBlazor
 
         private Color GetPanelIconColor(MudTabPanel panel)
         {
-            var iconColor =
-                panel.Disabled ? 
-                    Color.Inherit : 
-                    panel.IconColor != default ? 
-                        panel.IconColor : 
-                        IconColor;
+            var iconColor = panel.Disabled ? Color.Inherit : panel.IconColor != default ? panel.IconColor : IconColor;
 
             return iconColor;
         }
