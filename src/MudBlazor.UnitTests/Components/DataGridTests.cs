@@ -419,7 +419,7 @@ namespace MudBlazor.UnitTests.Components
             );
             exception.Message.Should().Be("Do not supply both 'ServerData' and 'QuickFilter'.");
         }
-        
+
         [Test]
         public async Task DataGrid_SetParameters_VirtualizeServerData_QuickFilter_Throw()
         {
@@ -433,7 +433,7 @@ namespace MudBlazor.UnitTests.Components
             );
             exception.Message.Should().Be("Do not supply both 'VirtualizeServerData' and 'QuickFilter'.");
         }
-        
+
         [Test]
         public async Task DataGrid_SetParameters_ServerData_VirtualizeServerData_Throw()
         {
@@ -447,14 +447,14 @@ namespace MudBlazor.UnitTests.Components
                     Parameter(nameof(MudDataGrid<TestModel1>.VirtualizeServerData), virtualizeServerDataFunc)
                 )
             );
-            
+
             exception.Message.Should().Be(
                 """
                 MudBlazor.MudDataGrid`1[MudBlazor.UnitTests.Components.TestModel1] can only accept one item source from its parameters. Do not supply both 'VirtualizeServerData' and 'ServerData'.
                 """
             );
         }
-        
+
         [Test]
         public async Task DataGrid_SetParameters_Items_VirtualizeServerData_Throw()
         {
@@ -466,7 +466,7 @@ namespace MudBlazor.UnitTests.Components
                     Parameter(nameof(MudDataGrid<TestModel1>.VirtualizeServerData), virtualizeServerDataFunc)
                 )
             );
-            
+
             exception.Message.Should().Be(
                 """
                 MudBlazor.MudDataGrid`1[MudBlazor.UnitTests.Components.TestModel1] can only accept one item source from its parameters. Do not supply both 'Items' and 'VirtualizeServerData'.
