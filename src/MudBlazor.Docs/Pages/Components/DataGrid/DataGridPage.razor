@@ -256,6 +256,22 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Virtualize server data">
+                <Description>
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> supports virtualization of data fetched from a server, enhancing the grid's performance for large datasets. 
+                    For this feature to work, the <CodeInline>Virtualize</CodeInline> property must be set to <CodeInline>true</CodeInline>, 
+                    the <CodeInline>VirtualizeServerData</CodeInline> parameter should be used to facilitate data retrieval and streaming from the server, 
+                    and the <CodeInline>ItemSize</CodeInline> should be specified to optimize virtualization. 
+
+                    Please make sure to constrain the grid's height, as virtualization relies on this dimension.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridVirtualizeServerDataExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridVirtualizeServerDataExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Observability">
                 <Description>
                     When loading the <CodeInline>&lt;MudDataGrid></CodeInline> with a collection that implements <CodeInline>INotifyCollectionChanged</CodeInline>, changes to the 

@@ -95,6 +95,48 @@ namespace MudBlazor
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
+            if (Items != null)
+            {
+                if (ServerData != null)
+                {
+                    throw new InvalidOperationException(
+                        $"{GetType()} can only accept one item source from its parameters. " +
+                        $"Do not supply both '{nameof(Items)}' and '{nameof(ServerData)}'."
+                    );
+                }
+                if (VirtualizeServerData != null)
+                {
+                    throw new InvalidOperationException(
+                        $"{GetType()} can only accept one item source from its parameters. " +
+                        $"Do not supply both '{nameof(Items)}' and '{nameof(VirtualizeServerData)}'."
+                    );
+                }
+            }
+
+            if (VirtualizeServerData != null)
+            {
+                if (Items != null)
+                {
+                    throw new InvalidOperationException(
+                        $"{GetType()} can only accept one item source from its parameters. " +
+                        $"Do not supply both '{nameof(VirtualizeServerData)}' and '{nameof(Items)}'."
+                    );
+                }
+                if (ServerData != null)
+                {
+                    throw new InvalidOperationException(
+                        $"{GetType()} can only accept one item source from its parameters. " +
+                        $"Do not supply both '{nameof(VirtualizeServerData)}' and '{nameof(ServerData)}'."
+                    );
+                }
+                if (QuickFilter != null)
+                {
+                    throw new InvalidOperationException(
+                        $"Do not supply both '{nameof(VirtualizeServerData)}' and '{nameof(QuickFilter)}'."
+                    );
+                }
+            }
+
             if (ServerData != null)
             {
                 if (Items != null)
@@ -104,7 +146,13 @@ namespace MudBlazor
                         $"Do not supply both '{nameof(Items)}' and '{nameof(ServerData)}'."
                     );
                 }
-
+                if (VirtualizeServerData != null)
+                {
+                    throw new InvalidOperationException(
+                        $"{GetType()} can only accept one item source from its parameters. " +
+                        $"Do not supply both '{nameof(VirtualizeServerData)}' and '{nameof(ServerData)}'."
+                    );
+                }
                 if (QuickFilter != null)
                 {
                     throw new InvalidOperationException(
@@ -139,7 +187,7 @@ namespace MudBlazor
         {
             get
             {
-                if (ServerData != null)
+                if (ServerData != null || VirtualizeServerData != null)
                     return (int)Math.Ceiling(_server_data.TotalItems / (double)RowsPerPage);
 
                 return (int)Math.Ceiling(FilteredItems.Count() / (double)RowsPerPage);
@@ -565,6 +613,14 @@ namespace MudBlazor
         public bool Virtualize { get; set; }
 
         /// <summary>
+        /// A RenderFragment that will be used as a placeholder when the Virtualize component is asynchronously loading data.
+        /// This placeholder is displayed for each item in the data source that is yet to be loaded. Useful for presenting a loading indicator 
+        /// in a list or table row while the actual data is being fetched from the server.
+        /// </summary>
+        [Parameter]
+        public RenderFragment VirtualizePlaceholder { get; set; }
+
+        /// <summary>
         /// The number of additional items rendered outside of the visible region when <see cref="Virtualize"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
@@ -847,7 +903,19 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public Func<GridState<T>, Task<GridData<T>>> ServerData { get; set; }
-
+        
+        /// <summary>
+        /// The function which gets data for this grid. 
+        /// </summary>
+        /// <remarks>
+        /// The function accepts a <see cref="GridStateVirtualize{T}"/> with current sorting, filtering, and pagination parameters.
+        /// Then, return a <see cref="GridData{T}"/> with a list of values, and the total (unpaginated) items count in <see cref="GridData{T}.TotalItems"/>.
+        /// This property is used when you need to display a list without a paginator, 
+        /// but with loading data from the server as the scroll position changes.
+        /// </remarks>
+        [Parameter]
+        public Func<GridStateVirtualize<T>, Task<GridData<T>>> VirtualizeServerData { get; set; }
+        
         /// <summary>
         /// The number of rows displayed for each page.
         /// </summary>
@@ -1051,11 +1119,12 @@ namespace MudBlazor
         {
             get
             {
-                if (@PagerContent == null)
+                if (PagerContent == null)
                 {
                     return FilteredItems; // we have no pagination
                 }
-                if (ServerData == null)
+                
+                if (ServerData == null && VirtualizeServerData == null)
                 {
                     var filteredItemCount = GetFilteredItemsCount();
                     int lastPageNo;
@@ -1087,7 +1156,7 @@ namespace MudBlazor
 
         private GridData<T> _server_data = new GridData<T>() { TotalItems = 0, Items = Array.Empty<T>() };
         private IEnumerable<T> _currentRenderFilteredItemsCache = null;
-
+        
         /// <summary>
         /// Defines the ItemsProviderDelegate property, which is necessary for implementing the ServerData methodology with Virtualization.
         /// This property is used to populate items virtually from the server.
@@ -1108,7 +1177,7 @@ namespace MudBlazor
             get
             {
                 if (_currentRenderFilteredItemsCache != null) return _currentRenderFilteredItemsCache;
-                var items = ServerData != null
+                var items = ServerData != null || VirtualizeServerData != null
                     ? _server_data.Items
                     : Items;
 
@@ -1118,7 +1187,7 @@ namespace MudBlazor
                     items = items.Where(QuickFilter);
                 }
 
-                if (ServerData is null)
+                if (ServerData is null && VirtualizeServerData is null)
                 {
                     foreach (var filterDefinition in FilterDefinitions)
                     {
@@ -1185,7 +1254,7 @@ namespace MudBlazor
             if (firstRender)
             {
                 await InvokeServerLoadFunc();
-                if (ServerData == null)
+                if (ServerData is null && VirtualizeServerData is null)
                     StateHasChanged();
                 _isFirstRendered = true;
             }
@@ -1214,11 +1283,9 @@ namespace MudBlazor
             if (page < 0 || pageSize <= 0)
                 return Array.Empty<T>();
 
-            if (ServerData != null)
+            if (ServerData != null || VirtualizeServerData != null)
             {
-                return QuickFilter != null
-                    ? _server_data.Items.Where(QuickFilter)
-                    : _server_data.Items;
+                return _server_data.Items;
             }
 
             return FilteredItems.Skip(page * pageSize).Take(pageSize);
@@ -1226,14 +1293,34 @@ namespace MudBlazor
 
         internal async Task InvokeServerLoadFunc()
         {
-            if (ServerData == null)
+            if (ServerData == null && VirtualizeServerData == null)
                 return;
 
-            if (Virtualize)
+            if (VirtualizeServerData != null)
             {
                 if (_mudVirtualize != null)
                 {
                     await _mudVirtualize.RefreshDataAsync();
+                    StateHasChanged();
+                }
+                else
+                {
+                    Loading = true;
+                    StateHasChanged();
+
+                    var state = new GridStateVirtualize<T>
+                    {
+                        StartIndex = 0,
+                        Count = 1,
+                        SortDefinitions = SortDefinitions.Values.OrderBy(sd => sd.Index).ToList(),
+                        // Additional ToList() here to decouple clients from internal list avoiding runtime issues
+                        FilterDefinitions = FilterDefinitions.ToList()
+                    };
+
+                    _server_data = await VirtualizeServerData(state);
+                    _currentRenderFilteredItemsCache = null;
+
+                    Loading = false;
                     StateHasChanged();
                 }
             }
@@ -1386,7 +1473,7 @@ namespace MudBlazor
 
         internal async Task SetSelectAllAsync(bool value)
         {
-            var items = ServerData != null
+            var items = ServerData != null || VirtualizeServerData != null
                     ? ServerItems
                     : FilteredItems;
 
@@ -1495,7 +1582,7 @@ namespace MudBlazor
         /// </returns>
         public int GetFilteredItemsCount()
         {
-            if (ServerData != null)
+            if (ServerData != null || VirtualizeServerData != null)
                 return _server_data.TotalItems;
             return FilteredItems.Count();
         }
@@ -1642,30 +1729,31 @@ namespace MudBlazor
             if (_isFirstRendered)
             {
                 await InvokeServerLoadFunc();
-                if (ServerData == null)
+                if (ServerData is null && VirtualizeServerData is null)
                     StateHasChanged();
             }
         }
 
         private void VirtualItemsProviderInitialize()
         {
-            if (VirtualItemsProvider != null || ServerData == null || !Virtualize)
+            if (VirtualItemsProvider != null || VirtualizeServerData == null)
             {
                 return;
             }
 
             VirtualItemsProvider = async request =>
             {
-                var state = new GridState<T>
+                var state = new GridStateVirtualize<T>
                 {
-                    Page = request.Count > 0 ? request.StartIndex / request.Count : 0,
-                    PageSize = request.Count,
+                    StartIndex = request.StartIndex,
+                    Count = request.Count,
                     SortDefinitions = SortDefinitions.Values.OrderBy(sd => sd.Index).ToList(),
                     // Additional ToList() here to decouple clients from internal list avoiding runtime issues
-                    FilterDefinitions = FilterDefinitions.ToList()
+                    FilterDefinitions = FilterDefinitions.ToList(),
+                    CancellationToken = request.CancellationToken
                 };
 
-                _server_data = await ServerData(state);
+                _server_data = await VirtualizeServerData(state);
                 _currentRenderFilteredItemsCache = null;
 
                 return new ItemsProviderResult<T>(
@@ -1873,7 +1961,7 @@ namespace MudBlazor
             _allGroups = allGroupings.Select(x => new GroupDefinition<T>(x,
                 _groupExpansionsDict[x.Key])).ToList();
 
-            if ((_isFirstRendered || ServerData != null) && !noStateChange)
+            if ((_isFirstRendered || ServerData != null || VirtualizeServerData != null) && !noStateChange)
                 StateHasChanged();
         }
 

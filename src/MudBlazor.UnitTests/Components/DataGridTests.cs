@@ -126,10 +126,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridSortableVirtualizationItemsProviderTest()
+        public async Task DataGridSortableVirtualizeServerDataTest()
         {
-            var comp = Context.RenderComponent<DataGridSortableVirtualizationItemsProviderTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableVirtualizationItemsProviderTest.Item>>();
+            var comp = Context.RenderComponent<DataGridSortableVirtualizeServerDataTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableVirtualizeServerDataTest.Item>>();
 
             // Count the number of rows including header.
             var rows = dataGrid.FindAll("tr");
@@ -183,7 +183,7 @@ namespace MudBlazor.UnitTests.Components
             cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
             cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
-            var column = dataGrid.FindComponent<Column<DataGridSortableVirtualizationItemsProviderTest.Item>>();
+            var column = dataGrid.FindComponent<Column<DataGridSortableVirtualizeServerDataTest.Item>>();
             await comp.InvokeAsync(() => column.Instance.SortBy = x => { return x.Name; });
 
             // Check the values of rows - should not be sorted and should be in the original order.
@@ -208,7 +208,7 @@ namespace MudBlazor.UnitTests.Components
             cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
             // test other sort methods
-            var headerCell = dataGrid.FindComponent<HeaderCell<DataGridSortableVirtualizationItemsProviderTest.Item>>();
+            var headerCell = dataGrid.FindComponent<HeaderCell<DataGridSortableVirtualizeServerDataTest.Item>>();
             await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs()));
             //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
             await comp.InvokeAsync(() => headerCell.Instance.RemoveSortAsync());
@@ -323,13 +323,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridFilterableVirtualizationTest()
+        public async Task DataGridFilterableVirtualizeServerDataTest()
         {
-            var comp = Context.RenderComponent<DataGridFilterableVirtualizationTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterableVirtualizationTest.Item>>();
+            var comp = Context.RenderComponent<DataGridFilterableVirtualizeServerDataTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterableVirtualizeServerDataTest.Item>>();
 
             // Count the number of rows including header.
-            dataGrid.FindAll("tr").Count.Should().Be(6); // header row + four rows + footer row
+            dataGrid.FindAll("tr").Count.Should().Be(6, because: "header row + four rows + footer row");
 
             // Check the values of rows
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("B");
@@ -340,7 +340,7 @@ namespace MudBlazor.UnitTests.Components
             // Add a FilterDefinition to filter where the Name = "C".
             await comp.InvokeAsync(() =>
             {
-                return dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterableVirtualizationTest.Item>
+                return dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterableVirtualizeServerDataTest.Item>
                 {
                     Column = dataGrid.Instance.RenderedColumns.First(),
                     Operator = FilterOperator.String.Equal,
@@ -616,10 +616,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridInlineEditVirtualizationTest()
+        public async Task DataGridInlineEditVirtualizeServerDataTest()
         {
-            var comp = Context.RenderComponent<DataGridCellEditVirtualizationTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellEditVirtualizationTest.Item>>();
+            var comp = Context.RenderComponent<DataGridCellEditVirtualizeServerDataTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellEditVirtualizeServerDataTest.Item>>();
 
             dataGrid.FindAll("td input")[0].GetAttribute("value").Trim().Should().Be("John");
             dataGrid.FindAll("td input")[1].GetAttribute("value").Trim().Should().Be("45");
