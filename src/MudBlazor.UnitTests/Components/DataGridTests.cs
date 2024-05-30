@@ -419,6 +419,60 @@ namespace MudBlazor.UnitTests.Components
             );
             exception.Message.Should().Be("Do not supply both 'ServerData' and 'QuickFilter'.");
         }
+        
+        [Test]
+        public async Task DataGrid_SetParameters_VirtualizeServerData_QuickFilter_Throw()
+        {
+            var virtualizeServerDataFunc =
+                new Func<GridStateVirtualize<TestModel1>, Task<GridData<TestModel1>>>((x) => throw new NotImplementedException());
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+                Context.RenderComponent<MudDataGrid<TestModel1>>(
+                    Parameter(nameof(MudDataGrid<TestModel1>.VirtualizeServerData), virtualizeServerDataFunc),
+                    Parameter(nameof(MudDataGrid<TestModel1>.QuickFilter), (TestModel1 x) => true)
+                )
+            );
+            exception.Message.Should().Be("Do not supply both 'VirtualizeServerData' and 'QuickFilter'.");
+        }
+        
+        [Test]
+        public async Task DataGrid_SetParameters_ServerData_VirtualizeServerData_Throw()
+        {
+            var serverDataFunc =
+                new Func<GridState<TestModel1>, Task<GridData<TestModel1>>>((x) => throw new NotImplementedException());
+            var virtualizeServerDataFunc =
+                new Func<GridStateVirtualize<TestModel1>, Task<GridData<TestModel1>>>((x) => throw new NotImplementedException());
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+                Context.RenderComponent<MudDataGrid<TestModel1>>(
+                    Parameter(nameof(MudDataGrid<TestModel1>.ServerData), serverDataFunc),
+                    Parameter(nameof(MudDataGrid<TestModel1>.VirtualizeServerData), virtualizeServerDataFunc)
+                )
+            );
+            
+            exception.Message.Should().Be(
+                """
+                MudBlazor.MudDataGrid`1[MudBlazor.UnitTests.Components.TestModel1] can only accept one item source from its parameters. Do not supply both 'VirtualizeServerData' and 'ServerData'.
+                """
+            );
+        }
+        
+        [Test]
+        public async Task DataGrid_SetParameters_Items_VirtualizeServerData_Throw()
+        {
+            var virtualizeServerDataFunc =
+                new Func<GridStateVirtualize<TestModel1>, Task<GridData<TestModel1>>>((x) => throw new NotImplementedException());
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+                Context.RenderComponent<MudDataGrid<TestModel1>>(
+                    Parameter(nameof(MudDataGrid<TestModel1>.Items), Array.Empty<TestModel1>()),
+                    Parameter(nameof(MudDataGrid<TestModel1>.VirtualizeServerData), virtualizeServerDataFunc)
+                )
+            );
+            
+            exception.Message.Should().Be(
+                """
+                MudBlazor.MudDataGrid`1[MudBlazor.UnitTests.Components.TestModel1] can only accept one item source from its parameters. Do not supply both 'Items' and 'VirtualizeServerData'.
+                """
+            );
+        }
 
         [Test]
         public async Task DataGridFilterableServerDataTest()
