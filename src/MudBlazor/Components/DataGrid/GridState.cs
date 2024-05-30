@@ -35,7 +35,7 @@ namespace MudBlazor
         /// </summary>
         public ICollection<IFilterDefinition<T>> FilterDefinitions { get; set; } = new List<IFilterDefinition<T>>();
     }
-    
+
     public class GridStateVirtualize<T>
     {
         /// <summary>

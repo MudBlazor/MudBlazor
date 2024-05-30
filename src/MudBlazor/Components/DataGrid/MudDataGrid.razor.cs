@@ -903,9 +903,9 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public Func<GridState<T>, Task<GridData<T>>> ServerData { get; set; }
-        
+
         /// <summary>
-        /// The function which gets data for this grid. 
+        /// The function which gets data for this grid.
         /// </summary>
         /// <remarks>
         /// The function accepts a <see cref="GridStateVirtualize{T}"/> with current sorting, filtering, and pagination parameters.
@@ -915,7 +915,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public Func<GridStateVirtualize<T>, Task<GridData<T>>> VirtualizeServerData { get; set; }
-        
+
         /// <summary>
         /// The number of rows displayed for each page.
         /// </summary>
@@ -1123,7 +1123,7 @@ namespace MudBlazor
                 {
                     return FilteredItems; // we have no pagination
                 }
-                
+
                 if (ServerData == null && VirtualizeServerData == null)
                 {
                     var filteredItemCount = GetFilteredItemsCount();
@@ -1156,7 +1156,7 @@ namespace MudBlazor
 
         private GridData<T> _server_data = new GridData<T>() { TotalItems = 0, Items = Array.Empty<T>() };
         private IEnumerable<T> _currentRenderFilteredItemsCache = null;
-        
+
         /// <summary>
         /// Defines the ItemsProviderDelegate property, which is necessary for implementing the ServerData methodology with Virtualization.
         /// This property is used to populate items virtually from the server.
