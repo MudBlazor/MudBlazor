@@ -101,64 +101,37 @@ namespace MudBlazor
                 {
                     throw new InvalidOperationException(
                         $"{GetType()} can only accept one item source from its parameters. " +
-                        $"Do not supply both '{nameof(Items)}' and '{nameof(ServerData)}'."
-                    );
+                        $"Do not supply both '{nameof(Items)}' and '{nameof(ServerData)}'.");
                 }
                 if (VirtualizeServerData != null)
                 {
                     throw new InvalidOperationException(
                         $"{GetType()} can only accept one item source from its parameters. " +
-                        $"Do not supply both '{nameof(Items)}' and '{nameof(VirtualizeServerData)}'."
-                    );
+                        $"Do not supply both '{nameof(Items)}' and '{nameof(VirtualizeServerData)}'.");
                 }
+                return;
             }
 
             if (VirtualizeServerData != null)
             {
-                if (Items != null)
-                {
-                    throw new InvalidOperationException(
-                        $"{GetType()} can only accept one item source from its parameters. " +
-                        $"Do not supply both '{nameof(VirtualizeServerData)}' and '{nameof(Items)}'."
-                    );
-                }
                 if (ServerData != null)
                 {
                     throw new InvalidOperationException(
                         $"{GetType()} can only accept one item source from its parameters. " +
-                        $"Do not supply both '{nameof(VirtualizeServerData)}' and '{nameof(ServerData)}'."
-                    );
+                        $"Do not supply both '{nameof(VirtualizeServerData)}' and '{nameof(ServerData)}'.");
                 }
                 if (QuickFilter != null)
                 {
                     throw new InvalidOperationException(
-                        $"Do not supply both '{nameof(VirtualizeServerData)}' and '{nameof(QuickFilter)}'."
-                    );
+                        $"Do not supply both '{nameof(VirtualizeServerData)}' and '{nameof(QuickFilter)}'.");
                 }
+                return;
             }
 
-            if (ServerData != null)
+            if (ServerData != null && QuickFilter != null)
             {
-                if (Items != null)
-                {
-                    throw new InvalidOperationException(
-                        $"{GetType()} can only accept one item source from its parameters. " +
-                        $"Do not supply both '{nameof(Items)}' and '{nameof(ServerData)}'."
-                    );
-                }
-                if (VirtualizeServerData != null)
-                {
-                    throw new InvalidOperationException(
-                        $"{GetType()} can only accept one item source from its parameters. " +
-                        $"Do not supply both '{nameof(VirtualizeServerData)}' and '{nameof(ServerData)}'."
-                    );
-                }
-                if (QuickFilter != null)
-                {
-                    throw new InvalidOperationException(
-                        $"Do not supply both '{nameof(ServerData)}' and '{nameof(QuickFilter)}'."
-                    );
-                }
+                throw new InvalidOperationException(
+                    $"Do not supply both '{nameof(ServerData)}' and '{nameof(QuickFilter)}'.");
             }
         }
 
