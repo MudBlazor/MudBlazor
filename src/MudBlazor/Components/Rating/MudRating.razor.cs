@@ -73,14 +73,14 @@ namespace MudBlazor
         public string EmptyIcon { get; set; } = Icons.Material.Filled.StarBorder;
 
         /// <summary>
-        /// Selected or hovered icon color. Default @Color.Default.
+        /// Selected or hovered icon color.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public Color? FullIconColor { get; set; }
 
         /// <summary>
-        /// Non-selected item icon color. Default @Color.Dark.
+        /// Non-selected item icon color.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]

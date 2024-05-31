@@ -1089,6 +1089,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task TabPanelIconColorOverridesTabIconColor()
+        {
+            var comp = Context.RenderComponent<TabPanelIconColorTest>();
+            comp.SetParametersAndRender(x => x.Add(y => y.MudTabPanelIconColor, Color.Success));
+
+            var iconRef = comp.Find(".mud-icon-root.mud-svg-icon");
+            iconRef.ClassList.Should().Contain("mud-success-text");
+        }
+
+        [Test]
+        public async Task TabPanelIconColorOverridesTabIconColorExceptWhenDisabled()
+        {
+            var comp = Context.RenderComponent<TabPanelIconColorTest>();
+            comp.SetParam("DisableTab", true);
+            comp.SetParametersAndRender(x => x.Add(y => y.MudTabPanelIconColor, Color.Success));
+
+            var iconRef = comp.Find(".mud-icon-root.mud-svg-icon");
+            iconRef.ClassList.Should().NotContain("mud-success-text");
+        }
+
+        [Test]
         public async Task HtmlTextTabs()
         {
             // get the tab panels, we must have 2 tabs, one with html text and one without

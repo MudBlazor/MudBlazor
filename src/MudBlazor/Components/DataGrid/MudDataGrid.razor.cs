@@ -300,6 +300,9 @@ namespace MudBlazor
         [Parameter]
         public bool ColumnsPanelReordering { get; set; } = false;
 
+        [CascadingParameter(Name = "RightToLeft")]
+        private bool RightToLeft { get; set; }
+
         /// <summary>
         /// Allows columns to be be reordered via drag-and-drop.
         /// </summary>
@@ -1958,7 +1961,7 @@ namespace MudBlazor
         }
 
         internal async Task<bool> StartResizeColumn(HeaderCell<T> headerCell, double clientX)
-            => await ResizeService.StartResizeColumn(headerCell, clientX, RenderedColumns, ColumnResizeMode);
+            => await ResizeService.StartResizeColumn(headerCell, clientX, RenderedColumns, ColumnResizeMode, RightToLeft);
 
         internal async Task<double> GetActualHeight()
         {

@@ -112,7 +112,6 @@ namespace MudBlazor.Docs.Services
             RegisterPage("Expander", subtitle: "Go to Collapse", componentType: typeof(MudCollapse));
             RegisterPage("Harmonica", subtitle: "Go to Expansion Panels", componentType: typeof(MudExpansionPanels));
             RegisterPage("Horizontal Line", subtitle: "Go to Divider", componentType: typeof(MudDivider));
-            RegisterPage("Hiliter", subtitle: "Go to Highlighter", componentType: typeof(MudHighlighter));
             RegisterPage("Notification", subtitle: "Go to Snackbar", componentType: typeof(MudSnackbarProvider));
             RegisterPage("Popup", subtitle: "Go to Popover", componentType: typeof(MudPopover));
             RegisterPage("Side Panel", subtitle: "Go to Drawer", componentType: typeof(MudDrawer));
