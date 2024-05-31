@@ -4,59 +4,85 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace MudBlazor
+namespace MudBlazor;
+
+/// <summary>
+/// Represents a set of parameters passed into a <see cref="MudDialog"/> instance.
+/// </summary>
+public class DialogParameters : IEnumerable<KeyValuePair<string, object>>
 {
-    public class DialogParameters : IEnumerable<KeyValuePair<string, object>>
+    internal Dictionary<string, object> _parameters = new();
+
+    /// <summary>
+    /// Adds or updates a parameter.
+    /// </summary>
+    /// <param name="parameterName">The name of the parameter.</param>
+    /// <param name="value">The value to add or update.</param>
+    public void Add(string parameterName, object value)
     {
-        internal Dictionary<string, object> _parameters;
+        _parameters[parameterName] = value;
+    }
 
-        public DialogParameters()
+    /// <summary>
+    /// Gets an existing parameter.
+    /// </summary>
+    /// <typeparam name="T">The type of value to return.</typeparam>
+    /// <param name="parameterName">The name of the parameter to find.</param>
+    /// <returns>The parameter value, if it exists.</returns>
+    /// <exception cref="KeyNotFoundException" />
+    public T Get<T>(string parameterName)
+    {
+        if (_parameters.TryGetValue(parameterName, out var value))
         {
-            _parameters = new Dictionary<string, object>();
+            return (T)value;
         }
 
-        public void Add(string parameterName, object value)
+        throw new KeyNotFoundException($"{parameterName} does not exist in Dialog parameters");
+    }
+
+    /// <summary>
+    /// Gets an existing parameter or a default value of nothing was found.
+    /// </summary>
+    /// <typeparam name="T">The type of value to return.</typeparam>
+    /// <param name="parameterName">The name of the parameter to find.</param>
+    /// <returns>The parameter value, if it exists.</returns>
+    public T TryGet<T>(string parameterName)
+    {
+        if (_parameters.TryGetValue(parameterName, out var value))
         {
-            _parameters[parameterName] = value;
+            return (T)value;
         }
 
-        public T Get<T>(string parameterName)
-        {
-            if (_parameters.TryGetValue(parameterName, out var value))
-            {
-                return (T)value;
-            }
+        return default;
+    }
 
-            throw new KeyNotFoundException($"{parameterName} does not exist in Dialog parameters");
-        }
+    /// <summary>
+    /// The number of parameters.
+    /// </summary>
+    public int Count => _parameters.Count;
 
-        public T TryGet<T>(string parameterName)
-        {
-            if (_parameters.TryGetValue(parameterName, out var value))
-            {
-                return (T)value;
-            }
+    /// <summary>
+    /// Gets or sets a parameter.
+    /// </summary>
+    /// <param name="parameterName">The name of the parameter to find.</param>
+    /// <returns>The parameter value.</returns>
+    public object this[string parameterName]
+    {
+        get => Get<object>(parameterName);
+        set => _parameters[parameterName] = value;
+    }
 
-            return default;
-        }
+    /// <summary>
+    /// Gets an enumerator for all parameters.
+    /// </summary>
+    /// <returns>An enumerator of <see cref="KeyValuePair{TKey, TValue}"/> values.</returns>
+    public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
+    {
+        return _parameters.GetEnumerator();
+    }
 
-        public int Count =>
-            _parameters.Count;
-
-        public object this[string parameterName]
-        {
-            get => Get<object>(parameterName);
-            set => _parameters[parameterName] = value;
-        }
-
-        public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
-        {
-            return _parameters.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return _parameters.GetEnumerator();
-        }
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return _parameters.GetEnumerator();
     }
 }

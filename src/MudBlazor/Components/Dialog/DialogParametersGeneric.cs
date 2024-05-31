@@ -7,8 +7,19 @@ using System.Linq.Expressions;
 namespace MudBlazor;
 
 #nullable enable
+
+/// <summary>
+/// Represents a set of parameters passed into a <see cref="MudDialog"/> instance.
+/// </summary>
 public class DialogParameters<T> : DialogParameters
 {
+    /// <summary>
+    /// Adds a parameter using a member expression.
+    /// </summary>
+    /// <typeparam name="TParam">The type of parameter to add.</typeparam>
+    /// <param name="propertyExpression">The property to add as a parameter.</param>
+    /// <param name="value">The parameter value.</param>
+    /// <exception cref="ArgumentException"></exception>
     public void Add<TParam>(Expression<Func<T, TParam>> propertyExpression, TParam value)
     {
         ArgumentNullException.ThrowIfNull(propertyExpression);
@@ -20,6 +31,13 @@ public class DialogParameters<T> : DialogParameters
         Add(memberExpression.Member.Name, value);
     }
 
+    /// <summary>
+    /// Gets a parameter using a property expression.
+    /// </summary>
+    /// <typeparam name="TParam">The type of parameter to add.</typeparam>
+    /// <param name="propertyExpression">The property to add as a parameter.</param>
+    /// <returns>The parameter value.</returns>
+    /// <exception cref="ArgumentException"></exception>
     public TParam Get<TParam>(Expression<Func<T, TParam>> propertyExpression)
     {
         ArgumentNullException.ThrowIfNull(propertyExpression);
@@ -31,6 +49,13 @@ public class DialogParameters<T> : DialogParameters
         return Get<TParam>(memberExpression.Member.Name);
     }
 
+    /// <summary>
+    /// Gets a parameter using a property expression or a default value if no parameter was found.
+    /// </summary>
+    /// <typeparam name="TParam">The type of parameter to add.</typeparam>
+    /// <param name="propertyExpression">The property to add as a parameter.</param>
+    /// <returns>The parameter value.</returns>
+    /// <exception cref="ArgumentException"></exception>
     public TParam? TryGet<TParam>(Expression<Func<T, TParam>> propertyExpression)
     {
         ArgumentNullException.ThrowIfNull(propertyExpression);
