@@ -41,28 +41,28 @@ namespace MudBlazor
         /// <summary>
         /// The zero-based index of the first item to be supplied.
         /// </summary>
-        public int StartIndex { get; set; }
+        public int StartIndex { get; init; }
 
         /// <summary>
         /// The requested number of items to be provided. The actual number of provided items does not need to match
         /// this value.
         /// </summary>
-        public int Count { get; set; }
+        public int Count { get; init; }
 
         /// <summary>
         /// The current sorting applied to grid values.
         /// </summary>
-        public ICollection<SortDefinition<T>> SortDefinitions { get; set; } = new List<SortDefinition<T>>();
+        public IReadOnlyCollection<SortDefinition<T>> SortDefinitions { get; set; } = new List<SortDefinition<T>>();
 
         /// <summary>
         /// The current filters applied to grid values.
         /// </summary>
-        public ICollection<IFilterDefinition<T>> FilterDefinitions { get; set; } = new List<IFilterDefinition<T>>();
+        public IReadOnlyCollection<IFilterDefinition<T>> FilterDefinitions { get; set; } = new List<IFilterDefinition<T>>();
 
         /// <summary>
         /// Represents a cancellation token that can be used to cancel an operation.
         /// </summary>
-        public CancellationToken CancellationToken { get; set; }
+        public CancellationToken CancellationToken { get; init; }
     }
 
     /// <summary>
