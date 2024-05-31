@@ -13,7 +13,7 @@ namespace MudBlazor
         private readonly ParameterState<double> _valueState;
         private readonly ParameterState<double> _bufferValueState;
 
-        protected string DivClassname =>
+        protected string Classname =>
             new CssBuilder("mud-progress-linear")
                 .AddClass("mud-progress-linear-rounded", Rounded)
                 .AddClass($"mud-progress-linear-striped", Striped)

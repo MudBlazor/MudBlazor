@@ -1,14 +1,27 @@
 ﻿using System.ComponentModel;
 
-namespace MudBlazor
+namespace MudBlazor;
+
+/// <summary>
+/// Indicates the size of a component.
+/// </summary>
+public enum Size
 {
-    public enum Size
-    {
-        [Description("small")]
-        Small,
-        [Description("medium")]
-        Medium,
-        [Description("large")]
-        Large
-    }
+    /// <summary>
+    /// The smallest size.
+    /// </summary>
+    [Description("small")]
+    Small,
+
+    /// <summary>
+    /// A medium size.
+    /// </summary>
+    [Description("medium")]
+    Medium,
+
+    /// <summary>
+    /// The largest size.
+    /// </summary>
+    [Description("large")]
+    Large,
 }

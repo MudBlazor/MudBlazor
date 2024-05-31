@@ -1,47 +1,6 @@
 ﻿@namespace MudBlazor
-@using MudBlazor.Utilities
-@using MudBlazor.Extensions
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" class="@Classname" style="@Style">
+<div role="toolbar" @attributes="UserAttributes" class="@Classname" style="@Style">
     @ChildContent
 </div>
-
-@code {
-#nullable enable
-    protected string Classname =>
-        new CssBuilder("mud-toolbar")
-            .AddClass("mud-toolbar-dense", Dense)
-            .AddClass("mud-toolbar-gutters", Gutters)
-            .AddClass("mud-toolbar-wrap-content", WrapContent)
-            .AddClass(Class)
-            .Build();
-
-    /// <summary>
-    /// If true, compact padding will be used.
-    /// </summary>
-    [Parameter]
-    [Category(CategoryTypes.ToolBar.Appearance)]
-    public bool Dense { get; set; }
-
-    /// <summary>
-    /// If true, left and right padding is added. Default is true
-    /// </summary>
-    [Parameter]
-    [Category(CategoryTypes.ToolBar.Appearance)]
-    public bool Gutters { get; set; } = true;
-
-    /// <summary>
-    /// Child content of component.
-    /// </summary>
-    [Parameter]
-    [Category(CategoryTypes.ToolBar.Behavior)]
-    public RenderFragment? ChildContent { get; set; }
-    
-    /// <summary>
-    /// If true, ToolBar is allowed to wrap.
-    /// </summary>
-    [Parameter]
-    [Category(CategoryTypes.ToolBar.Behavior)]
-    public bool WrapContent { get; set; }
-}

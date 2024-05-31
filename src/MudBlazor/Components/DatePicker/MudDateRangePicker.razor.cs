@@ -7,6 +7,9 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Represents a picker for a range of dates.
+    /// </summary>
     public partial class MudDateRangePicker : MudBaseDatePicker
     {
         private DateTime? _firstDate = null, _secondDate;
@@ -15,6 +18,9 @@ namespace MudBlazor
 
         protected override bool IsRange => true;
 
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
         public MudDateRangePicker()
         {
             DisplayMonths = 2;
@@ -22,33 +28,42 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The short hint displayed in the start input before the user enters a value.
+        /// The text displayed in the start input if no date is specified.
         /// </summary>
+        /// <remarks>
+        /// This property is typically used to give the user a hint as to what kind of input is expected.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string PlaceholderStart { get; set; }
 
         /// <summary>
-        /// The short hint displayed in the end input before the user enters a value.
+        /// The text displayed in the end input if no date is specified.
         /// </summary>
+        /// <remarks>
+        /// This property is typically used to give the user a hint as to what kind of input is expected.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string PlaceholderEnd { get; set; }
 
         /// <summary>
-        /// Custom separator icon, leave null for default.
+        /// The icon displayed between start and end dates.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ArrowRightAlt"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public string SeparatorIcon { get; set; } = Icons.Material.Filled.ArrowRightAlt;
 
         /// <summary>
-        /// Fired when the DateFormat changes.
+        /// Occurs when <see cref="DateRange"/> has changed.
         /// </summary>
         [Parameter] public EventCallback<DateRange> DateRangeChanged { get; set; }
 
         /// <summary>
-        /// The currently selected range (two-way bindable). If null, then nothing was selected.
+        /// The currently selected date range.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
@@ -120,43 +135,37 @@ namespace MudBlazor
         private MudRangeInput<string> _rangeInput;
 
         /// <summary>
-        /// Focuses the start date of MudDateRangePicker
+        /// Focuses the start input.
         /// </summary>
-        /// <returns></returns>
         public ValueTask FocusStartAsync() => _rangeInput.FocusStartAsync();
 
         /// <summary>
-        /// Selects the start date of MudDateRangePicker
+        /// Selects the start input text.
         /// </summary>
-        /// <returns></returns>
         public ValueTask SelectStartAsync() => _rangeInput.SelectStartAsync();
 
         /// <summary>
-        /// Selects the specified range of the start date text
+        /// Selects a portion of the start input text.
         /// </summary>
-        /// <param name="pos1">Start position of the selection</param>
-        /// <param name="pos2">End position of the selection</param>
-        /// <returns></returns>
+        /// <param name="pos1">The index of the first character to select.</param>
+        /// <param name="pos2">The index of the last character to select.</param>
         public ValueTask SelectRangeStartAsync(int pos1, int pos2) => _rangeInput.SelectRangeStartAsync(pos1, pos2);
 
         /// <summary>
-        /// Focuses the end date of MudDateRangePicker
+        /// Focuses the end input.
         /// </summary>
-        /// <returns></returns>
         public ValueTask FocusEndAsync() => _rangeInput.FocusEndAsync();
 
         /// <summary>
-        /// Selects the end date of MudDateRangePicker
+        /// Selects the end input text.
         /// </summary>
-        /// <returns></returns>
         public ValueTask SelectEndAsync() => _rangeInput.SelectEndAsync();
 
         /// <summary>
-        /// Selects the specified range of the end date text
+        /// Selects a portion of the end input text.
         /// </summary>
-        /// <param name="pos1">Start position of the selection</param>
-        /// <param name="pos2">End position of the selection</param>
-        /// <returns></returns>
+        /// <param name="pos1">The index of the first character to select.</param>
+        /// <param name="pos2">The index of the last character to select.</param>
         public ValueTask SelectRangeEndAsync(int pos1, int pos2) => _rangeInput.SelectRangeEndAsync(pos1, pos2);
 
         protected override Task DateFormatChangedAsync(string newFormat)

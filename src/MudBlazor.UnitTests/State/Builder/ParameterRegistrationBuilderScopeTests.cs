@@ -4,6 +4,7 @@
 
 using System;
 using FluentAssertions;
+using MudBlazor.State;
 using MudBlazor.State.Builder;
 using NUnit.Framework;
 
@@ -47,7 +48,7 @@ public class ParameterRegistrationBuilderScopeTests
     {
         // Arrange
         var scopeEndedCount = 0;
-        void OnScopeEndedAction() => scopeEndedCount++;
+        void OnScopeEndedAction(IParameterStatesReaderOwner? owner) => scopeEndedCount++;
         using var scope = new ParameterRegistrationBuilderScope(OnScopeEndedAction);
 
         scope.RegisterParameter<int>();
@@ -66,7 +67,7 @@ public class ParameterRegistrationBuilderScopeTests
     {
         // Arrange
         var scopeEndedCount = 0;
-        void OnScopeEndedAction() => scopeEndedCount++;
+        void OnScopeEndedAction(IParameterStatesReaderOwner? owner) => scopeEndedCount++;
         var scope = new ParameterRegistrationBuilderScope(OnScopeEndedAction);
         using (scope)
         {
@@ -76,6 +77,7 @@ public class ParameterRegistrationBuilderScopeTests
 
         scope.RegisterParameter<double>();
         scope.RegisterParameter<float>();
+
         // Act
         ((IDisposable)scope).Dispose();
 

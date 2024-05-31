@@ -155,7 +155,7 @@ namespace MudBlazor.Charts
                 {
                     X = x,
                     Y = BoundHeight - 2,
-                    Value = xLabels.ToString("HH:mm"),
+                    Value = xLabels.ToString(TimeLabelFormat),
                 };
                 _verticalValues.Add(lineValue);
             }

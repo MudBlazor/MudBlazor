@@ -584,6 +584,13 @@ namespace MudBlazor
             return tabStyle;
         }
 
+        private Color GetPanelIconColor(MudTabPanel panel)
+        {
+            var iconColor = panel.Disabled ? Color.Inherit : panel.IconColor != default ? panel.IconColor : IconColor;
+
+            return iconColor;
+        }
+
         #endregion
 
         #region Rendering and placement

@@ -8,9 +8,9 @@ using MudBlazor.State;
 namespace MudBlazor.UnitTests;
 
 #nullable enable
-public partial class ParameterStateScopeExceptionTestComp : MudComponentBase
+public partial class ParameterStateMultipleScopeTestComp : MudComponentBase
 {
-    public ParameterStateScopeExceptionTestComp()
+    public ParameterStateMultipleScopeTestComp()
     {
         using (var registerScope1 = CreateRegisterScope())
         {
