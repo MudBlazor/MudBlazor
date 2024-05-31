@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
@@ -424,7 +425,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task DataGrid_SetParameters_VirtualizeServerData_QuickFilter_Throw()
         {
             var virtualizeServerDataFunc =
-                new Func<GridStateVirtualize<TestModel1>, Task<GridData<TestModel1>>>((x) => throw new NotImplementedException());
+                new Func<GridStateVirtualize<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
             var exception = Assert.Throws<InvalidOperationException>(() =>
                 Context.RenderComponent<MudDataGrid<TestModel1>>(
                     Parameter(nameof(MudDataGrid<TestModel1>.VirtualizeServerData), virtualizeServerDataFunc),
@@ -440,7 +441,7 @@ namespace MudBlazor.UnitTests.Components
             var serverDataFunc =
                 new Func<GridState<TestModel1>, Task<GridData<TestModel1>>>((x) => throw new NotImplementedException());
             var virtualizeServerDataFunc =
-                new Func<GridStateVirtualize<TestModel1>, Task<GridData<TestModel1>>>((x) => throw new NotImplementedException());
+                new Func<GridStateVirtualize<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
             var exception = Assert.Throws<InvalidOperationException>(() =>
                 Context.RenderComponent<MudDataGrid<TestModel1>>(
                     Parameter(nameof(MudDataGrid<TestModel1>.ServerData), serverDataFunc),
@@ -459,7 +460,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task DataGrid_SetParameters_Items_VirtualizeServerData_Throw()
         {
             var virtualizeServerDataFunc =
-                new Func<GridStateVirtualize<TestModel1>, Task<GridData<TestModel1>>>((x) => throw new NotImplementedException());
+                new Func<GridStateVirtualize<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
             var exception = Assert.Throws<InvalidOperationException>(() =>
                 Context.RenderComponent<MudDataGrid<TestModel1>>(
                     Parameter(nameof(MudDataGrid<TestModel1>.Items), Array.Empty<TestModel1>()),
@@ -685,6 +686,57 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".mud-table-body tr td input")[1].Change(52d);
             dataGrid.FindAll(".mud-table-body tr td input")[0].GetAttribute("value").Trim().Should().Be("Jonathan");
             dataGrid.FindAll(".mud-table-body tr td input")[1].GetAttribute("value").Trim().Should().Be("52");
+        }
+        
+        /// <summary>
+        /// Ensures that multiple calls to reload the data grid data properly flag the CancellationToken.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> object.</returns>
+        [Test]
+        public async Task DataGridVirtualizeServerDataLoadingTestWithCancel()
+        {
+            var comp = Context.RenderComponent<DataGridVirtualizeServerDataLoadingTestWithCancel>();
+            var dataGrid = comp.FindComponent<MudDataGrid<int>>();
+
+            // Make a cancellation token we can monitor
+            CancellationToken? cancelToken = null;
+            // Make a task completion source
+            var first = new TaskCompletionSource<GridData<int>>();
+            // Set the ServerData function
+            dataGrid.SetParam(p =>
+                p.VirtualizeServerData,
+                new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((s, cancellationToken) =>
+                {
+                    // Remember the cancellation token
+                    cancelToken = cancellationToken;
+                    // Return a task that never completes
+                    return first.Task;
+                }));
+
+            await Task.Delay(20);
+
+            // Test
+
+            // Make sure this first request was not canceled
+            comp.WaitForAssertion(() => cancelToken?.IsCancellationRequested.Should().BeFalse());
+
+            // Arrange a server data refresh
+            var second = new TaskCompletionSource<GridData<int>>();
+            // Set the VirtualizeServerData function to a new method...
+            dataGrid.SetParam(p =>
+                p.VirtualizeServerData,
+                new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((s, cancellationToken) =>
+                {
+                    // ... which returns the second task.
+                    return second.Task;
+                }));
+
+            await Task.Delay(20);
+
+            // Test
+
+            // Make sure this second request DID cancel the first request's token
+            comp.WaitForAssertion(() => cancelToken?.IsCancellationRequested.Should().BeTrue());
         }
 
         [Test]

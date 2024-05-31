@@ -8,6 +8,7 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -22,7 +23,7 @@ namespace MudBlazor
     /// </summary>
     /// <typeparam name="T">The type of data represented by each row in this grid.</typeparam>
     [CascadingTypeParameter(nameof(T))]
-    public partial class MudDataGrid<T> : MudComponentBase
+    public partial class MudDataGrid<T> : MudComponentBase, IDisposable
     {
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
         private int _currentPage = 0;
@@ -42,6 +43,7 @@ namespace MudBlazor
         private PropertyInfo[] _properties = typeof(T).GetProperties();
         private MudDropContainer<Column<T>> _dropContainer;
         private MudDropContainer<Column<T>> _columnsPanelDropContainer;
+        private CancellationTokenSource _serverDataCancellationTokenSource;
         protected string _classname =>
             new CssBuilder("mud-table")
                .AddClass("mud-data-grid")
@@ -160,7 +162,7 @@ namespace MudBlazor
         {
             get
             {
-                if (ServerData != null || VirtualizeServerData != null)
+                if (HasServerData)
                     return (int)Math.Ceiling(_server_data.TotalItems / (double)RowsPerPage);
 
                 return (int)Math.Ceiling(FilteredItems.Count() / (double)RowsPerPage);
@@ -588,10 +590,10 @@ namespace MudBlazor
         /// <summary>
         /// A RenderFragment that will be used as a placeholder when the Virtualize component is asynchronously loading data.
         /// This placeholder is displayed for each item in the data source that is yet to be loaded. Useful for presenting a loading indicator 
-        /// in a list or table row while the actual data is being fetched from the server.
+        /// in a data grid row while the actual data is being fetched from the server.
         /// </summary>
         [Parameter]
-        public RenderFragment VirtualizePlaceholder { get; set; }
+        public RenderFragment RowLoadingContent { get; set; }
 
         /// <summary>
         /// The number of additional items rendered outside of the visible region when <see cref="Virtualize"/> is <c>true</c>.
@@ -887,7 +889,7 @@ namespace MudBlazor
         /// but with loading data from the server as the scroll position changes.
         /// </remarks>
         [Parameter]
-        public Func<GridStateVirtualize<T>, Task<GridData<T>>> VirtualizeServerData { get; set; }
+        public Func<GridStateVirtualize<T>, CancellationToken, Task<GridData<T>>> VirtualizeServerData { get; set; }
 
         /// <summary>
         /// The number of rows displayed for each page.
@@ -1097,7 +1099,7 @@ namespace MudBlazor
                     return FilteredItems; // we have no pagination
                 }
 
-                if (ServerData == null && VirtualizeServerData == null)
+                if (!HasServerData)
                 {
                     var filteredItemCount = GetFilteredItemsCount();
                     int lastPageNo;
@@ -1150,7 +1152,7 @@ namespace MudBlazor
             get
             {
                 if (_currentRenderFilteredItemsCache != null) return _currentRenderFilteredItemsCache;
-                var items = ServerData != null || VirtualizeServerData != null
+                var items = HasServerData
                     ? _server_data.Items
                     : Items;
 
@@ -1160,7 +1162,7 @@ namespace MudBlazor
                     items = items.Where(QuickFilter);
                 }
 
-                if (ServerData is null && VirtualizeServerData is null)
+                if (!HasServerData)
                 {
                     foreach (var filterDefinition in FilterDefinitions)
                     {
@@ -1220,6 +1222,11 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// This property is determined by checking if the <see cref="ServerData"/> or <see cref="VirtualizeServerData"/> property is not null.
+        /// </summary>
+        internal bool HasServerData => ServerData != null || VirtualizeServerData != null;
+
         #endregion
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -1227,7 +1234,7 @@ namespace MudBlazor
             if (firstRender)
             {
                 await InvokeServerLoadFunc();
-                if (ServerData is null && VirtualizeServerData is null)
+                if (HasServerData)
                     StateHasChanged();
                 _isFirstRendered = true;
             }
@@ -1256,7 +1263,7 @@ namespace MudBlazor
             if (page < 0 || pageSize <= 0)
                 return Array.Empty<T>();
 
-            if (ServerData != null || VirtualizeServerData != null)
+            if (HasServerData)
             {
                 return _server_data.Items;
             }
@@ -1266,7 +1273,7 @@ namespace MudBlazor
 
         internal async Task InvokeServerLoadFunc()
         {
-            if (ServerData == null && VirtualizeServerData == null)
+            if (!HasServerData)
                 return;
 
             if (VirtualizeServerData != null)
@@ -1290,7 +1297,10 @@ namespace MudBlazor
                         FilterDefinitions = FilterDefinitions.ToList()
                     };
 
-                    _server_data = await VirtualizeServerData(state);
+                    // Cancel any prior request
+                    CancelServerDataToken();
+
+                    _server_data = await VirtualizeServerData(state, _serverDataCancellationTokenSource.Token);
                     _currentRenderFilteredItemsCache = null;
 
                     Loading = false;
@@ -1347,6 +1357,19 @@ namespace MudBlazor
             }
         }
 
+        internal void CancelServerDataToken()
+        {
+            try
+            {
+                _serverDataCancellationTokenSource?.Cancel();
+            }
+            catch { /*ignored*/ }
+            finally
+            {
+                _serverDataCancellationTokenSource = new CancellationTokenSource();
+            }
+        }
+        
         internal void RemoveColumn(Column<T> column)
         {
             RenderedColumns.Remove(column);
@@ -1413,7 +1436,7 @@ namespace MudBlazor
             FilterDefinitions.Add(definition);
             _filtersMenuVisible = true;
             await InvokeServerLoadFunc();
-            if (ServerData is null) StateHasChanged();
+            if (!HasServerData) StateHasChanged();
         }
 
         internal async Task RemoveFilterAsync(Guid id)
@@ -1446,7 +1469,7 @@ namespace MudBlazor
 
         internal async Task SetSelectAllAsync(bool value)
         {
-            var items = ServerData != null || VirtualizeServerData != null
+            var items = HasServerData
                     ? ServerItems
                     : FilteredItems;
 
@@ -1555,7 +1578,7 @@ namespace MudBlazor
         /// </returns>
         public int GetFilteredItemsCount()
         {
-            if (ServerData != null || VirtualizeServerData != null)
+            if (HasServerData)
                 return _server_data.TotalItems;
             return FilteredItems.Count();
         }
@@ -1702,7 +1725,7 @@ namespace MudBlazor
             if (_isFirstRendered)
             {
                 await InvokeServerLoadFunc();
-                if (ServerData is null && VirtualizeServerData is null)
+                if (!HasServerData)
                     StateHasChanged();
             }
         }
@@ -1722,11 +1745,10 @@ namespace MudBlazor
                     Count = request.Count,
                     SortDefinitions = SortDefinitions.Values.OrderBy(sd => sd.Index).ToList(),
                     // Additional ToList() here to decouple clients from internal list avoiding runtime issues
-                    FilterDefinitions = FilterDefinitions.ToList(),
-                    CancellationToken = request.CancellationToken
+                    FilterDefinitions = FilterDefinitions.ToList()
                 };
 
-                _server_data = await VirtualizeServerData(state);
+                _server_data = await VirtualizeServerData(state, request.CancellationToken);
                 _currentRenderFilteredItemsCache = null;
 
                 return new ItemsProviderResult<T>(
@@ -1934,7 +1956,7 @@ namespace MudBlazor
             _allGroups = allGroupings.Select(x => new GroupDefinition<T>(x,
                 _groupExpansionsDict[x.Key])).ToList();
 
-            if ((_isFirstRendered || ServerData != null || VirtualizeServerData != null) && !noStateChange)
+            if ((_isFirstRendered || HasServerData) && !noStateChange)
                 StateHasChanged();
         }
 
@@ -2032,5 +2054,19 @@ namespace MudBlazor
         }
 
         #endregion
+
+        /// <summary>
+        /// Releases resources used by this data grid.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            _serverDataCancellationTokenSource?.Dispose();
+        }
     }
 }

@@ -1,28 +1,29 @@
+@using System.Threading
 @namespace MudBlazor.Docs.Examples
 
 <MudDataGrid T="int" VirtualizeServerData="ServerDataFunc" Virtualize="true" Filterable FixedHeader Height="400px" ItemSize="52.68f">
     <Columns>
         <PropertyColumn Property="x => x" Title="Number" />
     </Columns>
-    <VirtualizePlaceholder>
+    <RowLoadingContent>
         <tr class="mud-table-row">
             <td class="mud-table-cell" colspan="1000">
                 Loading...
             </td>
         </tr>
-    </VirtualizePlaceholder>
+    </RowLoadingContent>
 </MudDataGrid>
 
 @code {
     private readonly List<int> _items = Enumerable.Range(0, 51).ToList();
     
-    private async Task<GridData<int>> ServerDataFunc(GridStateVirtualize<int> gridState)
+    private async Task<GridData<int>> ServerDataFunc(GridStateVirtualize<int> gridState, CancellationToken token)
     {
         try
         {
             var result = _items.ToList();
 
-            await Task.Delay(1000);
+            await Task.Delay(1000, token);
 
             if (gridState.SortDefinitions.Count > 0) 
             {

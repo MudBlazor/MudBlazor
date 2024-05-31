@@ -159,7 +159,7 @@ namespace MudBlazor
         {
             if (DataGrid.FilterDefinitions.All(x => x.Id != filterDefinition.Id))
                 DataGrid.FilterDefinitions.Add(filterDefinition);
-            if (DataGrid.ServerData != null || DataGrid.VirtualizeServerData != null)
+            if (DataGrid.HasServerData)
                 await DataGrid.ReloadServerData();
 
             DataGrid.GroupItems();

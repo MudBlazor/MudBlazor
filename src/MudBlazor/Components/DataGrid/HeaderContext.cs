@@ -25,9 +25,9 @@ namespace MudBlazor
         {
             get
             {
-                return _dataGrid.ServerData == null && _dataGrid.VirtualizeServerData == null
-                    ? _dataGrid.FilteredItems
-                    : _dataGrid.ServerItems;
+                return _dataGrid.HasServerData
+                    ? _dataGrid.ServerItems
+                    : _dataGrid.FilteredItems;
             }
         }
 

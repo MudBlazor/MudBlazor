@@ -1,3 +1,4 @@
+@using System.Threading
 @namespace MudBlazor.UnitTests.TestComponents
 
 <MudDataGrid T="Item" VirtualizeServerData="ServerDataFunc" Virtualize="true" ReadOnly="false" EditMode="@DataGridEditMode.Cell">
@@ -19,7 +20,7 @@
 
     public record Item(string Name, int Age);
 
-    private async Task<GridData<Item>> ServerDataFunc(GridStateVirtualize<Item> gridState)
+    private async Task<GridData<Item>> ServerDataFunc(GridStateVirtualize<Item> gridState, CancellationToken token)
     {
         await Task.CompletedTask;
 

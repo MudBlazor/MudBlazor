@@ -401,7 +401,7 @@ namespace MudBlazor
         internal async Task ApplyFilterAsync()
         {
             DataGrid.FilterDefinitions.Add(Column.FilterContext.FilterDefinition);
-            if (DataGrid.ServerData != null || DataGrid.VirtualizeServerData != null)
+            if (DataGrid.HasServerData)
             {
                 await DataGrid.ReloadServerData();
             }
@@ -416,7 +416,7 @@ namespace MudBlazor
         internal async Task ApplyFilterAsync(IFilterDefinition<T> filterDefinition)
         {
             DataGrid.FilterDefinitions.Add(filterDefinition);
-            if (DataGrid.ServerData != null || DataGrid.VirtualizeServerData != null)
+            if (DataGrid.HasServerData)
             {
                 await DataGrid.ReloadServerData();
             }
@@ -431,7 +431,7 @@ namespace MudBlazor
         internal async Task ApplyFiltersAsync(IEnumerable<IFilterDefinition<T>> filterDefinitions)
         {
             DataGrid.FilterDefinitions.AddRange(filterDefinitions);
-            if (DataGrid.ServerData != null || DataGrid.VirtualizeServerData != null)
+            if (DataGrid.HasServerData)
             {
                 await DataGrid.ReloadServerData();
             }
@@ -447,7 +447,7 @@ namespace MudBlazor
         {
             Column.FilterContext.FilterDefinition.Value = null;
             await DataGrid.RemoveFilterAsync(Column.FilterContext.FilterDefinition.Id);
-            if (DataGrid.ServerData is null && DataGrid.VirtualizeServerData is null)
+            if (!DataGrid.HasServerData)
                 ((IMudStateHasChanged)DataGrid).StateHasChanged();
             _filtersMenuVisible = false;
             DataGrid.DropContainerHasChanged();
@@ -456,7 +456,7 @@ namespace MudBlazor
         internal async Task ClearFilterAsync(IFilterDefinition<T> filterDefinition)
         {
             await DataGrid.RemoveFilterAsync(filterDefinition.Id);
-            if (DataGrid.ServerData is null && DataGrid.VirtualizeServerData is null)
+            if (!DataGrid.HasServerData)
                 ((IMudStateHasChanged)DataGrid).StateHasChanged();
             _filtersMenuVisible = false;
             DataGrid.DropContainerHasChanged();
@@ -465,7 +465,7 @@ namespace MudBlazor
         internal async Task ClearFiltersAsync(IEnumerable<IFilterDefinition<T>> filterDefinitions)
         {
             DataGrid.FilterDefinitions.RemoveAll(x => filterDefinitions.Any(y => y.Id == x.Id));
-            if (DataGrid.ServerData != null || DataGrid.VirtualizeServerData != null)
+            if (DataGrid.HasServerData)
             {
                 await DataGrid.ReloadServerData();
             }

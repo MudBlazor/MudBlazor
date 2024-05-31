@@ -58,11 +58,6 @@ namespace MudBlazor
         /// The current filters applied to grid values.
         /// </summary>
         public IReadOnlyCollection<IFilterDefinition<T>> FilterDefinitions { get; set; } = new List<IFilterDefinition<T>>();
-
-        /// <summary>
-        /// Represents a cancellation token that can be used to cancel an operation.
-        /// </summary>
-        public CancellationToken CancellationToken { get; init; }
     }
 
     /// <summary>
