@@ -1369,7 +1369,7 @@ namespace MudBlazor
                 _serverDataCancellationTokenSource = new CancellationTokenSource();
             }
         }
-        
+
         internal void RemoveColumn(Column<T> column)
         {
             RenderedColumns.Remove(column);

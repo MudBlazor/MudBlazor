@@ -687,7 +687,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".mud-table-body tr td input")[0].GetAttribute("value").Trim().Should().Be("Jonathan");
             dataGrid.FindAll(".mud-table-body tr td input")[1].GetAttribute("value").Trim().Should().Be("52");
         }
-        
+
         /// <summary>
         /// Ensures that multiple calls to reload the data grid data properly flag the CancellationToken.
         /// </summary>
