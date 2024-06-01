@@ -15,6 +15,9 @@ namespace MudBlazor
     /// <summary>
     /// Represents a service for managing <see cref="MudDialog"/> components.
     /// </summary>
+    /// <remarks>
+    /// This service requires a <see cref="MudDialogProvider"/> in your layout page.
+    /// </remarks>
     /// <seealso cref="MudDialog"/>
     /// <seealso cref="MudDialogInstance"/>
     /// <seealso cref="MudDialogProvider"/>

@@ -73,7 +73,7 @@ namespace MudBlazor
         public RenderFragment DialogContent { get; set; }
 
         /// <summary>
-        /// the custom actions for this dialog.
+        /// The custom actions for this dialog.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
@@ -151,7 +151,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.<br />
-        /// This can be bound via <c>@bind-Visible</c> show and hide inlined dialogs.  For regular dialogs, use the <see cref="DialogService.ShowAsync(Type)"/> and <see cref="MudDialogInstance.Close()"/> methods.
+        /// This can be bound via <c>@bind-Visible</c> to show or hide inline dialogs.  For regular dialogs, use the <see cref="DialogService.ShowAsync(Type)"/> and <see cref="MudDialogInstance.Close()"/> methods.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]

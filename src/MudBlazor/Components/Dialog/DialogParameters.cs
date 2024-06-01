@@ -3,88 +3,87 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
-namespace MudBlazor;
-
-/// <summary>
-/// Represents a set of parameters passed into a <see cref="MudDialog"/> instance.
-/// </summary>
-[ExcludeFromCodeCoverage]
-public class DialogParameters : IEnumerable<KeyValuePair<string, object>>
+namespace MudBlazor
 {
-    internal Dictionary<string, object> _parameters = new();
-
     /// <summary>
-    /// Adds or updates a parameter.
+    /// Represents a set of parameters passed into a <see cref="MudDialog"/> instance.
     /// </summary>
-    /// <param name="parameterName">The name of the parameter.</param>
-    /// <param name="value">The value to add or update.</param>
-    public void Add(string parameterName, object value)
+    public class DialogParameters : IEnumerable<KeyValuePair<string, object>>
     {
-        _parameters[parameterName] = value;
-    }
+        internal Dictionary<string, object> _parameters = new();
 
-    /// <summary>
-    /// Gets an existing parameter.
-    /// </summary>
-    /// <typeparam name="T">The type of value to return.</typeparam>
-    /// <param name="parameterName">The name of the parameter to find.</param>
-    /// <returns>The parameter value, if it exists.</returns>
-    /// <exception cref="KeyNotFoundException" />
-    public T Get<T>(string parameterName)
-    {
-        if (_parameters.TryGetValue(parameterName, out var value))
+        /// <summary>
+        /// Adds or updates a parameter.
+        /// </summary>
+        /// <param name="parameterName">The name of the parameter.</param>
+        /// <param name="value">The value to add or update.</param>
+        public void Add(string parameterName, object value)
         {
-            return (T)value;
+            _parameters[parameterName] = value;
         }
 
-        throw new KeyNotFoundException($"{parameterName} does not exist in Dialog parameters");
-    }
-
-    /// <summary>
-    /// Gets an existing parameter or a default value of nothing was found.
-    /// </summary>
-    /// <typeparam name="T">The type of value to return.</typeparam>
-    /// <param name="parameterName">The name of the parameter to find.</param>
-    /// <returns>The parameter value, if it exists.</returns>
-    public T TryGet<T>(string parameterName)
-    {
-        if (_parameters.TryGetValue(parameterName, out var value))
+        /// <summary>
+        /// Gets an existing parameter.
+        /// </summary>
+        /// <typeparam name="T">The type of value to return.</typeparam>
+        /// <param name="parameterName">The name of the parameter to find.</param>
+        /// <returns>The parameter value, if it exists.</returns>
+        /// <exception cref="KeyNotFoundException" />
+        public T Get<T>(string parameterName)
         {
-            return (T)value;
+            if (_parameters.TryGetValue(parameterName, out var value))
+            {
+                return (T)value;
+            }
+
+            throw new KeyNotFoundException($"{parameterName} does not exist in Dialog parameters");
         }
 
-        return default;
-    }
+        /// <summary>
+        /// Gets an existing parameter or a default value of nothing was found.
+        /// </summary>
+        /// <typeparam name="T">The type of value to return.</typeparam>
+        /// <param name="parameterName">The name of the parameter to find.</param>
+        /// <returns>The parameter value, if it exists.</returns>
+        public T TryGet<T>(string parameterName)
+        {
+            if (_parameters.TryGetValue(parameterName, out var value))
+            {
+                return (T)value;
+            }
 
-    /// <summary>
-    /// The number of parameters.
-    /// </summary>
-    public int Count => _parameters.Count;
+            return default;
+        }
 
-    /// <summary>
-    /// Gets or sets a parameter.
-    /// </summary>
-    /// <param name="parameterName">The name of the parameter to find.</param>
-    /// <returns>The parameter value.</returns>
-    public object this[string parameterName]
-    {
-        get => Get<object>(parameterName);
-        set => _parameters[parameterName] = value;
-    }
+        /// <summary>
+        /// The number of parameters.
+        /// </summary>
+        public int Count => _parameters.Count;
 
-    /// <summary>
-    /// Gets an enumerator for all parameters.
-    /// </summary>
-    /// <returns>An enumerator of <see cref="KeyValuePair{TKey, TValue}"/> values.</returns>
-    public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
-    {
-        return _parameters.GetEnumerator();
-    }
+        /// <summary>
+        /// Gets or sets a parameter.
+        /// </summary>
+        /// <param name="parameterName">The name of the parameter to find.</param>
+        /// <returns>The parameter value.</returns>
+        public object this[string parameterName]
+        {
+            get => Get<object>(parameterName);
+            set => _parameters[parameterName] = value;
+        }
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return _parameters.GetEnumerator();
+        /// <summary>
+        /// Gets an enumerator for all parameters.
+        /// </summary>
+        /// <returns>An enumerator of <see cref="KeyValuePair{TKey, TValue}"/> values.</returns>
+        public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
+        {
+            return _parameters.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return _parameters.GetEnumerator();
+        }
     }
 }
