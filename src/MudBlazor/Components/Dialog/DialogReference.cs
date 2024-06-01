@@ -15,6 +15,11 @@ namespace MudBlazor;
 /// <summary>
 /// Represents an instance of an existing <see cref="MudDialog"/>.
 /// </summary>
+/// <seealso cref="MudDialog"/>
+/// <seealso cref="MudDialogInstance"/>
+/// <seealso cref="MudDialogProvider"/>
+/// <seealso cref="DialogOptions"/>
+/// <seealso cref="DialogParameters"/>
 public class DialogReference : IDialogReference
 {
     private readonly TaskCompletionSource<DialogResult> _resultCompletion = new();
