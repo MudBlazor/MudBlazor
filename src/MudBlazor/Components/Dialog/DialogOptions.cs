@@ -18,6 +18,7 @@ namespace MudBlazor;
 /// <seealso cref="MudDialog"/>
 /// <seealso cref="DialogParameters{T}"/>
 /// <seealso cref="DialogReference"/>
+/// <seealso cref="DialogService"/>
 public class DialogOptions
 {
     /// <summary>

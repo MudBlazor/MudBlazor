@@ -3,12 +3,14 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor;
 
 /// <summary>
 /// Represents a set of parameters passed into a <see cref="MudDialog"/> instance.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public class DialogParameters : IEnumerable<KeyValuePair<string, object>>
 {
     internal Dictionary<string, object> _parameters = new();

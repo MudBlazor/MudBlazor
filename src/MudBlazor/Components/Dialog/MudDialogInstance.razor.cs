@@ -21,6 +21,7 @@ namespace MudBlazor
     /// <seealso cref="DialogOptions"/>
     /// <seealso cref="DialogParameters{T}"/>
     /// <seealso cref="DialogReference"/>
+    /// <seealso cref="DialogService"/>
     public partial class MudDialogInstance : MudComponentBase, IDisposable
     {
         private DialogOptions _options = new();
