@@ -35,6 +35,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// </summary>
     public static List<string> ExcludedTypes { get; private set; } =
     [
+        "MudBlazor._Imports",
         "MudBlazor.Colors",
         "MudBlazor.Colors+Amber",
         "MudBlazor.Colors+Blue",
