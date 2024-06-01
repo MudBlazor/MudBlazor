@@ -112,4 +112,28 @@ public sealed class DialogParametersTests
         var dialogParameters = new DialogParameters<DialogWithParameters>();
         Assert.Throws<ArgumentException>(() => dialogParameters.TryGet(x => 1));
     }
+
+    [Test]
+    public void DialogParameters_Count_ShouldBeCorrect()
+    {
+        var dialogParameters = new DialogParameters();
+        dialogParameters.Count.Should().Be(0);
+        for (var index = 1; index <= 50; index++)
+        {
+            dialogParameters.Add($"TestValue{index}", "Test");
+            dialogParameters.Count.Should().Be(index);
+        }
+    }
+
+    [Test]
+    public void DialogParametersGeneric_Count_ShouldBeCorrect()
+    {
+        var dialogParameters = new DialogParameters<DialogWithParameters>();
+        dialogParameters.Count.Should().Be(0);
+        for (var index = 1; index <= 50; index++)
+        {
+            dialogParameters.Add($"TestValue{index}", "Test");
+            dialogParameters.Count.Should().Be(index);
+        }
+    }
 }
