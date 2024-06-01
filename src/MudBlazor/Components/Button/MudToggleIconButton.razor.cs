@@ -112,7 +112,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter(CaptureUnmatchedValues = true)]
         [Category(CategoryTypes.ComponentBase.Common)]
-        public Dictionary<string, object?> ToggledUserAttributes { get; set; } = [];
+        public Dictionary<string, object?> ToggledUserAttributes { get; set; } = new();
 
         public Task Toggle()
         {
