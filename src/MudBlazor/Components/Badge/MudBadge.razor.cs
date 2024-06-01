@@ -139,8 +139,11 @@ namespace MudBlazor
         public string? BadgeClass { get; set; }
 
         /// <summary>
-        /// The ARIA label for the badge.
+        /// The <c>aria-label</c> for the badge.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Badge.Behavior)]
         public string? BadgeAriaLabel { get; set; }

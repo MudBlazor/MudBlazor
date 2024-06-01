@@ -1,7 +1,9 @@
 ﻿@namespace MudBlazor
+@using MudBlazor.Internal
+@using MudBlazor.Resources
 @typeparam T
 @inherits MudBaseInput<Range<T>>
-@using MudBlazor.Internal
+@inject InternalMudLocalizer Localizer
 
 <div class="@Classname" style="@Style">
     @if (Adornment == Adornment.Start)
@@ -57,7 +59,7 @@
                        Icon="@Icons.Material.Filled.Clear"
                        Size="@Size.Small"
                        OnClick="@ClearButtonClickHandlerAsync"
-                       aria-label="Clear"
+                       aria-label="@Localizer[nameof(LanguageResource.MudInput_Clear)]"
                        tabindex="-1" />
     }
 
