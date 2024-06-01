@@ -171,11 +171,10 @@ namespace MudBlazor.UnitTests.Components
         public void LabelShouldShrinkWhenPlaceholderIsSet()
         {
             //Arrange
-            using var ctx = new Bunit.TestContext();
             var label = Parameter(nameof(MudTextField<string>.Label), "label");
             var placeholder = Parameter(nameof(MudTextField<string>.Placeholder), "placeholder");
             //with no placeholder, label is not shrinked
-            var comp = ctx.RenderComponent<MudTextField<string>>(label);
+            var comp = Context.RenderComponent<MudTextField<string>>(label);
             comp.Markup.Should().NotContain("shrink");
             //with placeholder label is shrinked
             comp.SetParametersAndRender(placeholder);

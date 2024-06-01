@@ -828,7 +828,7 @@ namespace MudBlazor.UnitTests.Components
             //open edit dialog
             dataGrid.FindAll("tbody tr")[1].Click();
             //No close button
-            comp.FindAll("button[aria-label=\"close\"]").Should().BeEmpty();
+            comp.FindAll("button[aria-label=\"Close dialog\"]").Should().BeEmpty();
             //edit data
             comp.FindAll("div input")[0].Change("Galadriel");
             comp.FindAll("div input")[1].Change(1);
@@ -867,7 +867,7 @@ namespace MudBlazor.UnitTests.Components
             //open edit dialog
             dataGrid.FindAll("tbody tr")[1].Click();
             //No close button
-            comp.FindAll("button[aria-label=\"close\"]").Should().BeEmpty();
+            comp.FindAll("button[aria-label=\"Close dialog\"]").Should().BeEmpty();
             //edit data
             comp.FindAll("div input")[0].Change("Galadriel");
             comp.FindAll("div input")[1].Change("Steve");
@@ -3772,10 +3772,10 @@ namespace MudBlazor.UnitTests.Components
             //check if dialog is open
             comp.FindAll("div.mud-dialog-container").Should().NotBeEmpty();
             //find button with arialabel close in dialog
-            var closeButton = comp.Find("button[aria-label=\"close\"]");
+            var closeButton = comp.Find("button[aria-label=\"Close dialog\"]");
             closeButton.Should().NotBeNull();
             //click close button
-            comp.Find("button[aria-label=\"close\"]").Click();
+            comp.Find("button[aria-label=\"Close dialog\"]").Click();
             //check if dialog is closed
             comp.FindAll("div.mud-dialog-container").Should().BeEmpty();
         }

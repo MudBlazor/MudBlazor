@@ -4,7 +4,9 @@
 *@
 
 @namespace MudBlazor
+@using MudBlazor.Resources
 @inherits MudComponentBase
+@inject InternalMudLocalizer Localizer
 
 @Css
 <div role="alert"
@@ -45,7 +47,8 @@
 
             @if (ShowCloseIcon)
             {
-                <MudIconButton Class="mud-snackbar-close-button ms-2" Icon="@CloseIcon" Size="Size.Small" OnClick="CloseIconClicked" />
+                <MudIconButton Class="mud-snackbar-close-button ms-2" Icon="@CloseIcon" Size="Size.Small" OnClick="CloseIconClicked"
+                               aria-label="@Localizer[nameof(LanguageResource.MudSnackbar_Close)]" />
             }
         </div>
     }

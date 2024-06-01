@@ -85,10 +85,10 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// The title of this button.
+        /// Text for the <c>title</c> attribute which provides a basic tooltip.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  This property is typically used to improve accessibility.
+        /// Defaults to <c>null</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
