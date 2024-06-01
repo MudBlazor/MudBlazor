@@ -18,7 +18,7 @@ namespace MudBlazor
     /// <seealso cref="MudDialogInstance"/>
     /// <seealso cref="MudDialogProvider"/>
     /// <seealso cref="DialogOptions"/>
-    /// <seealso cref="DialogParameters"/>
+    /// <seealso cref="DialogParameters{T}"/>
     /// <seealso cref="DialogReference"/>
     public partial class MudDialog : MudComponentBase
     {

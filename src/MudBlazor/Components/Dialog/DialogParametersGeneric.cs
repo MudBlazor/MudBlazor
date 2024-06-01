@@ -11,6 +11,11 @@ namespace MudBlazor;
 /// <summary>
 /// Represents a set of parameters passed into a <see cref="MudDialog"/> instance.
 /// </summary>
+/// <seealso cref="MudDialogInstance"/>
+/// <seealso cref="MudDialogProvider"/>
+/// <seealso cref="MudDialog"/>
+/// <seealso cref="DialogOptions"/>
+/// <seealso cref="DialogReference"/>
 public class DialogParameters<T> : DialogParameters
 {
     /// <summary>

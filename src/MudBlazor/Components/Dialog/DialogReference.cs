@@ -19,7 +19,7 @@ namespace MudBlazor;
 /// <seealso cref="MudDialogInstance"/>
 /// <seealso cref="MudDialogProvider"/>
 /// <seealso cref="DialogOptions"/>
-/// <seealso cref="DialogParameters"/>
+/// <seealso cref="DialogParameters{T}"/>
 public class DialogReference : IDialogReference
 {
     private readonly TaskCompletionSource<DialogResult> _resultCompletion = new();
