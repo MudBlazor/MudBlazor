@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
@@ -32,40 +33,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public string? ToggledIcon { get; set; }
-
-        /// <summary>
-        /// Text for the <c>title</c> attribute which provides a basic tooltip.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
-        public string? Title { get; set; }
-
-        /// <summary>
-        /// Used as an alternative for <see cref="Title"/> when in the toggled state if this property is specified.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
-        public string? ToggledTitle { get; set; }
-
-        /// <summary>
-        /// The <c>aria-label</c> for the button when it's not in the toggled state.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
-        public string? AriaLabel { get; set; }
-
-        /// <summary>
-        /// The <c>aria-label</c> for the button when it's in the toggled state.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
-        public string? ToggledAriaLabel { get; set; }
 
         /// <summary>
         /// The color of the icon in the untoggled state. It supports the theme colors.
@@ -136,6 +103,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public bool ClickPropagation { get; set; }
+
+        /// <summary>
+        /// The additional HTML attributes to apply to this component when in the toggled state.
+        /// </summary>
+        /// <remarks>
+        /// This property is typically used to provide additional HTML attributes during rendering such as ARIA accessibility tags or a custom ID.
+        /// </remarks>
+        [Parameter(CaptureUnmatchedValues = true)]
+        [Category(CategoryTypes.ComponentBase.Common)]
+        public Dictionary<string, object?> ToggledUserAttributes { get; set; } = [];
 
         public Task Toggle()
         {

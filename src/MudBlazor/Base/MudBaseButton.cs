@@ -85,16 +85,6 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// Text for the <c>title</c> attribute which provides a basic tooltip.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
-        public string? Title { get; set; }
-
-        /// <summary>
         /// Allows the click event to bubble up to the parent component.
         /// </summary>
         /// <remarks>
