@@ -8,6 +8,7 @@
 <MudInputControl Class="@Classname" Style="@Style" Error="HasErrors" ErrorText="@GetErrorText()" Required="@Required">
     <InputContent>
         <InputFile OnChange="OnChangeAsync"
+                   @key="@_inputKey"
                    id="@_id"
                    class="@InputClass"
                    style="@InputStyle"

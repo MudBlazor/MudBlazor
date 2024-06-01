@@ -1023,7 +1023,6 @@ namespace MudBlazor.UnitTests.Components
             var form = comp.FindComponent<MudForm>().Instance;
             var fileUploadComp = comp.FindComponent<MudFileUpload<IBrowserFile>>();
             var fileUploadInstance = comp.FindComponent<MudFileUpload<IBrowserFile>>().Instance;
-            var input = fileUploadComp.FindComponent<InputFile>();
 
             // check initial state: form should not be valid because form is untouched
             form.IsValid.Should().BeFalse();
@@ -1045,12 +1044,16 @@ namespace MudBlazor.UnitTests.Components
             fileUploadInstance.ErrorText.Should().Be("Required");
 
             // re-add a file, form should now be valid and touched
-            input.UploadFiles(fileToUpload);
+            Input().UploadFiles(fileToUpload);
             form.IsValid.Should().BeTrue();
             form.IsTouched.Should().BeTrue();
             form.Errors.Length.Should().Be(0);
             fileUploadInstance.Error.Should().BeFalse();
             fileUploadInstance.Files.Name.Should().Be(fileName);
+            return;
+
+            IRenderedComponent<InputFile> Input()
+                => fileUploadComp.FindComponent<InputFile>();
         }
 
         /// <summary>
@@ -1065,7 +1068,6 @@ namespace MudBlazor.UnitTests.Components
             var form = comp.FindComponent<MudForm>().Instance;
             var fileUploadComp = comp.FindComponent<MudFileUpload<IBrowserFile>>();
             var fileUploadInstance = comp.FindComponent<MudFileUpload<IBrowserFile>>().Instance;
-            var input = fileUploadComp.FindComponent<InputFile>();
 
             // check initial state: form should not be valid because form is untouched
             form.IsValid.Should().BeFalse();
@@ -1087,12 +1089,16 @@ namespace MudBlazor.UnitTests.Components
             fileUploadInstance.ErrorText.Should().Be("Required");
 
             // re-add a file, form should now be valid and touched
-            input.UploadFiles(fileToUpload);
+            Input().UploadFiles(fileToUpload);
             form.IsValid.Should().BeTrue();
             form.IsTouched.Should().BeTrue();
             form.Errors.Length.Should().Be(0);
             fileUploadInstance.Error.Should().BeFalse();
             fileUploadInstance.Files.Name.Should().Be(fileName);
+            return;
+
+            IRenderedComponent<InputFile> Input()
+                => fileUploadComp.FindComponent<InputFile>();
         }
 
         /// <summary>

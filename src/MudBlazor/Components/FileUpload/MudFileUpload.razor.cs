@@ -25,6 +25,7 @@ namespace MudBlazor
         public MudFileUpload() : base(new DefaultConverter<T>()) { }
 
         private readonly string _id = $"mud_fileupload_{Guid.NewGuid()}";
+        private string _inputKey = $"mud_fileupload_key_{Guid.NewGuid()}";
 
         protected string Classname =>
             new CssBuilder("mud-file-upload")
@@ -148,6 +149,7 @@ namespace MudBlazor
         public Task ClearAsync()
         {
             _value = default;
+            _inputKey = $"mud_fileupload_key_{Guid.NewGuid()}";
             return NotifyValueChangedAsync();
         }
 
