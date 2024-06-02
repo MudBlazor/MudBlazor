@@ -24,7 +24,8 @@ namespace MudBlazor
                 .WithChangeHandler(UpdateNavigationContext);
             _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
                 .WithParameter(() => Expanded)
-                .WithEventCallback(() => ExpandedChanged);
+                .WithEventCallback(() => ExpandedChanged)
+                .WithChangeHandler(UpdateNavigationContext);
         }
 
         protected override void OnInitialized()
