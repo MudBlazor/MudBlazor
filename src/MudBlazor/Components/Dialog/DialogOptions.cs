@@ -46,7 +46,7 @@ namespace MudBlazor
         public bool? BackdropClick { get; set; }
 
         /// <summary>
-        /// Allows closing the dialog by pressing the <c>Escape</c> key.
+        /// Allows closing the dialog by pressing the Escape key.
         /// </summary>
         public bool? CloseOnEscapeKey { get; set; }
 

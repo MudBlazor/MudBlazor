@@ -68,7 +68,7 @@ namespace MudBlazor
         public bool? BackdropClick { get; set; }
 
         /// <summary>
-        /// Allows dialogs to be closed by pressing the <c>Escape</c> key by default.
+        /// Allows dialogs to be closed by pressing the Escape key by default.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
