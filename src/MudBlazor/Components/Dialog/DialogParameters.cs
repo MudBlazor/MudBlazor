@@ -40,7 +40,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets an existing parameter or a default value of nothing was found.
+        /// Gets an existing parameter or a default value if nothing was found.
         /// </summary>
         /// <typeparam name="T">The type of value to return.</typeparam>
         /// <param name="parameterName">The name of the parameter to find.</param>

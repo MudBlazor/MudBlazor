@@ -49,7 +49,7 @@ namespace MudBlazor
         /// Notifies that this dialog has been dismissed.
         /// </summary>
         /// <param name="result">The result of closing the dialog.</param>
-        /// <returns><c>True</c> if the result was set successfully.</returns>
+        /// <returns>Returns <c>true</c> if the result was set successfully.</returns>
         bool Dismiss(DialogResult result);
 
         /// <summary>

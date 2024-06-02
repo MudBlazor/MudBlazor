@@ -60,11 +60,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The text displayed at the top of this dialog.
+        /// The text displayed at the top of this dialog if <see cref="TitleContent" /> is not set.
         /// </summary>
-        /// <remarks>
-        /// This title will display so long as <see cref="TitleContent"/> is not set.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
         public string Title { get; set; }
@@ -92,15 +89,12 @@ namespace MudBlazor
         /// <summary>
         /// The unique ID for this instance.
         /// </summary>
-        /// <remarks>
-        /// This value is set automatically.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
         public Guid Id { get; set; }
 
         /// <summary>
-        /// The custom icon displayed in the upper-right corner.
+        /// The custom icon displayed in the upper-right corner for closing this dialog.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.Close"/>.
@@ -118,13 +112,11 @@ namespace MudBlazor
         private bool FullScreen { get; set; }
         private bool FullWidth { get; set; }
 
-        /// <inheritdoc />
         protected override void OnInitialized()
         {
             ConfigureInstance();
         }
 
-        /// <inheritdoc />
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -188,7 +180,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Closes this dialog with a result of <see cref="DialogResult.Ok{T}(T)"/>.
+        /// Closes this dialog with a result of <c>DialogResult.Ok</c>.
         /// </summary>
         public void Close()
         {
@@ -216,11 +208,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Closes this dialog with a cancellation result.
+        /// Closes this dialog with a result of <c>DialogResult.Cancel</c>.
         /// </summary>
-        /// <remarks>
-        /// The dialog will be closed with a result of <see cref="DialogResult.Cancel"/>.
-        /// </remarks>
         public void Cancel()
         {
             Close(DialogResult.Cancel());
@@ -395,7 +384,6 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        /// <inheritdoc />
         public new void StateHasChanged() => base.StateHasChanged();
 
         /// <summary>

@@ -63,7 +63,7 @@ namespace MudBlazor
         public event Action<IDialogReference> OnDialogInstanceAdded;
 
         /// <summary>
-        /// Occurs when a request is made to close a request.
+        /// Occurs when a request is made to close a dialog.
         /// </summary>
         public event Action<IDialogReference, DialogResult> OnDialogCloseRequested;
 

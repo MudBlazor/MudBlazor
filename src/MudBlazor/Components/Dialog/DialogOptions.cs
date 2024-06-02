@@ -30,7 +30,7 @@ namespace MudBlazor
         public DialogPosition? Position { get; set; }
 
         /// <summary>
-        /// The maximum allowed with of the dialog.
+        /// The maximum allowed width of the dialog.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.

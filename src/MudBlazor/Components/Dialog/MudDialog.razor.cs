@@ -90,7 +90,7 @@ namespace MudBlazor
         public DialogOptions Options { get; set; }
 
         /// <summary>
-        /// Occurs when the area outside the dialog has been clicked, when <see cref="DialogOptions.BackdropClick"/> is <c>true</c>.
+        /// Occurs when the area outside the dialog has been clicked if <see cref="DialogOptions.BackdropClick"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
         /// When set, this event will be called instead of the default backdrop click behavior of closing the dialog.
@@ -100,7 +100,7 @@ namespace MudBlazor
         public EventCallback<MouseEventArgs> OnBackdropClick { get; set; }
 
         /// <summary>
-        /// Shows padding on the sides of this dialog.
+        /// Adds padding to the sides of this dialog.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.

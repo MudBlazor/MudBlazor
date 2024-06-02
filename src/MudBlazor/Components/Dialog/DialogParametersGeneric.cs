@@ -39,8 +39,8 @@ public class DialogParameters<T> : DialogParameters
     /// <summary>
     /// Gets a parameter using a property expression.
     /// </summary>
-    /// <typeparam name="TParam">The type of parameter to add.</typeparam>
-    /// <param name="propertyExpression">The property to add as a parameter.</param>
+    /// <typeparam name="TParam">The type of parameter to get.</typeparam>
+    /// <param name="propertyExpression">The property to get as a parameter.</param>
     /// <returns>The parameter value.</returns>
     public TParam Get<TParam>(Expression<Func<T, TParam>> propertyExpression)
     {
@@ -56,8 +56,8 @@ public class DialogParameters<T> : DialogParameters
     /// <summary>
     /// Gets a parameter using a property expression or a default value if no parameter was found.
     /// </summary>
-    /// <typeparam name="TParam">The type of parameter to add.</typeparam>
-    /// <param name="propertyExpression">The property to add as a parameter.</param>
+    /// <typeparam name="TParam">The type of parameter to get.</typeparam>
+    /// <param name="propertyExpression">The property to get as a parameter.</param>
     /// <returns>The parameter value.</returns>
     public TParam? TryGet<TParam>(Expression<Func<T, TParam>> propertyExpression)
     {

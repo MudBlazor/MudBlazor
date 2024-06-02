@@ -16,10 +16,10 @@ namespace MudBlazor
     public class DialogResult
     {
         /// <summary>
-        /// The data includes with the result.
+        /// The data included with the result.
         /// </summary>
         /// <remarks>
-        /// This value is typically a custom object related to the dialog, such as the object which will be affect by the user's response.
+        /// This value is typically a custom object related to the dialog, such as the object which will be affected by the user's response.
         /// </remarks>
         public object Data { get; }
 

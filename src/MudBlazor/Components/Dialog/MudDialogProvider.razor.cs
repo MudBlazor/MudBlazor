@@ -38,7 +38,7 @@ namespace MudBlazor
         private NavigationManager NavigationManager { get; set; } = null!;
 
         /// <summary>
-        /// Hides headers for all dialogs, by default.
+        /// Hides headers for all dialogs by default.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -48,7 +48,7 @@ namespace MudBlazor
         public bool? NoHeader { get; set; }
 
         /// <summary>
-        /// Shows a close button in the top-right corner for all dialogs, by default.
+        /// Shows a close button in the top-right corner for all dialogs by default.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -58,7 +58,7 @@ namespace MudBlazor
         public bool? CloseButton { get; set; }
 
         /// <summary>
-        /// Allows dialogs to be closed by clicking outside of them, by default.
+        /// Allows dialogs to be closed by clicking outside of them by default.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -68,14 +68,14 @@ namespace MudBlazor
         public bool? BackdropClick { get; set; }
 
         /// <summary>
-        /// Allows dialogs to be closed by pressing the <c>Escape</c> key, by default.
+        /// Allows dialogs to be closed by pressing the <c>Escape</c> key by default.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
         public bool? CloseOnEscapeKey { get; set; }
 
         /// <summary>
-        /// Sets the width of dialogs to the width of the screen, by default.
+        /// Sets the width of dialogs to the width of the screen by default.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -85,7 +85,7 @@ namespace MudBlazor
         public bool? FullWidth { get; set; }
 
         /// <summary>
-        /// The location of dialogs, by default.
+        /// The location of dialogs by default.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -105,7 +105,7 @@ namespace MudBlazor
         public MaxWidth? MaxWidth { get; set; }
 
         /// <summary>
-        /// The custom CSS classes to apply to dialogs, by default.
+        /// The custom CSS classes to apply to dialogs by default.
         /// </summary>
         /// <remarks>
         /// Multiple classes must be separated by spaces.
@@ -117,7 +117,6 @@ namespace MudBlazor
         private readonly Collection<IDialogReference> _dialogs = new();
         private readonly DialogOptions _globalDialogOptions = new();
 
-        /// <inheritdoc />
         protected override void OnInitialized()
         {
             DialogService.OnDialogInstanceAdded += AddInstance;
@@ -134,7 +133,6 @@ namespace MudBlazor
             _globalDialogOptions.BackgroundClass = BackgroundClass;
         }
 
-        /// <inheritdoc />
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
             if (!firstRender)
