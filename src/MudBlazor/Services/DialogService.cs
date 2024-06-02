@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a service for managing <see cref="MudDialog"/> components.
+    /// A service for managing <see cref="MudDialog"/> components.
     /// </summary>
     /// <remarks>
     /// This service requires a <see cref="MudDialogProvider"/> in your layout page.
@@ -58,7 +58,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Occurs when a new dialog instance is created..
+        /// Occurs when a new dialog instance is created.
         /// </summary>
         public event Action<IDialogReference> OnDialogInstanceAdded;
 
@@ -320,26 +320,26 @@ namespace MudBlazor
         public MarkupString MarkupMessage { get; set; }
 
         /// <summary>
-        /// The default label of the <c>Yes</c> button.
+        /// The default label of the Yes button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>OK</c>.
+        /// Defaults to <c>OK</c>.  When <c>null</c>, this button will be hidden.
         /// </remarks>
         public string YesText { get; set; } = "OK";
 
         /// <summary>
-        /// The default label of the <c>No</c> button.
+        /// The default label of the No button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.
+        /// Defaults to <c>null</c>.  When <c>null</c>, this button will be hidden.
         /// </remarks>
         public string NoText { get; set; }
 
         /// <summary>
-        /// The default label of the <c>Cancel</c> button.
+        /// The default label of the cancel button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.
+        /// Defaults to <c>null</c>.  When <c>null</c>, this button will be hidden.
         /// </remarks>
         public string CancelText { get; set; }
     }

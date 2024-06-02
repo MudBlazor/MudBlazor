@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a set of parameters passed into a <see cref="MudDialog"/> instance.
+    /// The parameters passed into a <see cref="MudDialog"/> instance.
     /// </summary>
     public class DialogParameters : IEnumerable<KeyValuePair<string, object>>
     {
@@ -29,7 +29,6 @@ namespace MudBlazor
         /// <typeparam name="T">The type of value to return.</typeparam>
         /// <param name="parameterName">The name of the parameter to find.</param>
         /// <returns>The parameter value, if it exists.</returns>
-        /// <exception cref="KeyNotFoundException" />
         public T Get<T>(string parameterName)
         {
             if (_parameters.TryGetValue(parameterName, out var value))

@@ -11,7 +11,7 @@
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents the customization options for a <see cref="MudDialog"/>.
+    /// The customization options for a <see cref="MudDialog"/>.
     /// </summary>
     /// <seealso cref="MudDialogInstance"/>
     /// <seealso cref="MudDialogProvider"/>

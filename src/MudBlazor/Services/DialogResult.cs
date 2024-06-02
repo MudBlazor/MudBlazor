@@ -11,7 +11,7 @@ using System;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents the result of a user's interaction with a <see cref="MudDialog"/>.
+    /// The result of a user's interaction with a <see cref="MudDialog"/>.
     /// </summary>
     public class DialogResult
     {
@@ -29,7 +29,7 @@ namespace MudBlazor
         public Type DataType { get; }
 
         /// <summary>
-        /// Indicates whether the user clicked a <c>Cancel</c> button.
+        /// Indicates whether the user clicked a cancel button.
         /// </summary>
         public bool Canceled { get; }
 
@@ -41,7 +41,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The result when the user clicks the <c>Ok</c> button.
+        /// The result when the user clicks the Ok button.
         /// </summary>
         /// <typeparam name="T">The type of result included.</typeparam>
         /// <param name="result">The value included.</param>
@@ -49,7 +49,7 @@ namespace MudBlazor
         public static DialogResult Ok<T>(T result) => Ok(result, default);
 
         /// <summary>
-        /// The result when the user clicks the <c>Ok</c> button.
+        /// The result when the user clicks the Ok button.
         /// </summary>
         /// <typeparam name="T">The type of result included.</typeparam>
         /// <param name="result">The value included.</param>
@@ -58,7 +58,7 @@ namespace MudBlazor
         public static DialogResult Ok<T>(T result, Type dialogType) => new(result, dialogType, false);
 
         /// <summary>
-        /// The result when the user clicks the <c>Cancel</c> button.
+        /// The result when the user clicks the cancel button.
         /// </summary>
         /// <returns>The dialog result.</returns>
         public static DialogResult Cancel() => new(default, typeof(object), true);

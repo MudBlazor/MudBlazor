@@ -18,7 +18,7 @@ using Microsoft.AspNetCore.Components.Routing;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a manager for <see cref="MudDialog"/> instances.
+    /// A manager for <see cref="MudDialog"/> instances.
     /// </summary>
     /// <remarks>
     /// Add this component to your layout page if your application needs to display dialogs.

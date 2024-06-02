@@ -11,7 +11,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents an instance of a <see cref="MudDialog"/>.
+    /// An instance of a <see cref="MudDialog"/>.
     /// </summary>
     /// <remarks>
     /// When a <see cref="MudDialog"/> is shown, a new instance is created.  This instance can then be used to perform actions such as hiding the dialog programmatically.

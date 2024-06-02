@@ -13,7 +13,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents an overlay providing the user with information, a choice, or other input.
+    /// An overlay providing the user with information, a choice, or other input.
     /// </summary>
     /// <seealso cref="MudDialogInstance"/>
     /// <seealso cref="MudDialogProvider"/>

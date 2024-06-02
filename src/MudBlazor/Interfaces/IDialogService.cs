@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a service for managing <see cref="MudDialog"/> components.
+    /// A service for managing <see cref="MudDialog"/> components.
     /// </summary>
     /// <remarks>
     /// This service requires a <see cref="MudDialogProvider"/> in your layout page.

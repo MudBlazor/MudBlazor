@@ -12,8 +12,9 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor
 {
     /// <summary>
-    /// Implements reference features for a <see cref="MudDialog"/>.
+    /// An instance of a <see cref="MudDialog"/>.
     /// </summary>
+    /// <seealso cref="DialogReference" />
     public interface IDialogReference
     {
         /// <summary>

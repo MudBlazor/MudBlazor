@@ -9,7 +9,7 @@ namespace MudBlazor;
 #nullable enable
 
 /// <summary>
-/// Represents a set of parameters passed into a <see cref="MudDialog"/> instance.
+/// The parameters passed into a <see cref="MudDialog"/> instance.
 /// </summary>
 /// <seealso cref="MudDialogInstance"/>
 /// <seealso cref="MudDialogProvider"/>
@@ -25,7 +25,6 @@ public class DialogParameters<T> : DialogParameters
     /// <typeparam name="TParam">The type of parameter to add.</typeparam>
     /// <param name="propertyExpression">The property to add as a parameter.</param>
     /// <param name="value">The parameter value.</param>
-    /// <exception cref="ArgumentException"></exception>
     public void Add<TParam>(Expression<Func<T, TParam>> propertyExpression, TParam value)
     {
         ArgumentNullException.ThrowIfNull(propertyExpression);
@@ -43,7 +42,6 @@ public class DialogParameters<T> : DialogParameters
     /// <typeparam name="TParam">The type of parameter to add.</typeparam>
     /// <param name="propertyExpression">The property to add as a parameter.</param>
     /// <returns>The parameter value.</returns>
-    /// <exception cref="ArgumentException"></exception>
     public TParam Get<TParam>(Expression<Func<T, TParam>> propertyExpression)
     {
         ArgumentNullException.ThrowIfNull(propertyExpression);
@@ -61,7 +59,6 @@ public class DialogParameters<T> : DialogParameters
     /// <typeparam name="TParam">The type of parameter to add.</typeparam>
     /// <param name="propertyExpression">The property to add as a parameter.</param>
     /// <returns>The parameter value.</returns>
-    /// <exception cref="ArgumentException"></exception>
     public TParam? TryGet<TParam>(Expression<Func<T, TParam>> propertyExpression)
     {
         ArgumentNullException.ThrowIfNull(propertyExpression);

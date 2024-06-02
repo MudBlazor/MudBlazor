@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents an instance of an existing <see cref="MudDialog"/>.
+    /// An instance of a <see cref="MudDialog"/>.
     /// </summary>
     /// <seealso cref="MudDialog"/>
     /// <seealso cref="MudDialogInstance"/>
