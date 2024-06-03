@@ -5,6 +5,13 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// Represents a button consisting of an icon that can be toggled between two distinct states.
+    /// </summary>
+    /// Creates a <c>button</c> element.<br/>
+    /// You can add attributes like `title`, `aria-label`, and others.
+    /// Find more at <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button"/>.
+    /// </remarks>
     public partial class MudToggleIconButton : MudComponentBase
     {
         /// <summary>
@@ -15,7 +22,7 @@ namespace MudBlazor
         public bool Toggled { get; set; }
 
         /// <summary>
-        /// Fires whenever toggled is changed. 
+        /// Fires whenever toggled is changed.
         /// </summary>
         [Parameter]
         public EventCallback<bool> ToggledChanged { get; set; }

@@ -8,6 +8,10 @@ namespace MudBlazor
     /// <summary>
     /// Represents a button consisting of an icon.
     /// </summary>
+    /// Creates a <c>button</c> element (unless <c>Href</c> is set).<br/>
+    /// You can add attributes like `title`, `aria-label`, and others.
+    /// Find more at <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button"/>.
+    /// </remarks>
     public partial class MudIconButton : MudBaseButton, IHandleEvent
     {
         protected string Classname => new CssBuilder("mud-button-root mud-icon-button")
