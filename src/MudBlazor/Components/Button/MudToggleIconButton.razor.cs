@@ -8,6 +8,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents a button consisting of an icon that can be toggled between two distinct states.
     /// </summary>
+    /// <remarks>
     /// Creates a <c>button</c> element.<br/>
     /// You can add attributes like `title`, `aria-label`, and others.
     /// Find more at <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button"/>.
@@ -112,11 +113,8 @@ namespace MudBlazor
         public bool ClickPropagation { get; set; }
 
         /// <summary>
-        /// The additional HTML attributes to apply to this component when in the toggled state.
+        /// Used instead of <see cref="MudComponentBase.UserAttributes"/> when the button is in the toggled state.
         /// </summary>
-        /// <remarks>
-        /// This property is typically used to provide additional HTML attributes during rendering such as ARIA accessibility tags or a custom ID.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ComponentBase.Common)]
         public Dictionary<string, object?> ToggledUserAttributes { get; set; } = new();

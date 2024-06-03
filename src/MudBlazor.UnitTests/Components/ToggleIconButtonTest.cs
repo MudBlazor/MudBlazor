@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
@@ -49,6 +50,39 @@ namespace MudBlazor.UnitTests.Components
             // make sure both buttons state changed
             comp1.Instance.Toggled.Should().BeTrue();
             comp2.Instance.Toggled.Should().BeTrue();
+        }
+
+        [Test]
+        public void ToggleButton_ShouldToggleUserAttributes()
+        {
+            // Arrange
+            var userAttributes = new Dictionary<string, object>
+            {
+                { "title", "Untoggled Button" },
+                { "aria-label", "untoggled" }
+            };
+
+            var toggledUserAttributes = new Dictionary<string, object>
+            {
+                { "title", "Toggled Button" },
+                { "aria-label", "toggled" }
+            };
+
+            var component = Context.RenderComponent<MudToggleIconButton>(parameters => parameters
+                .Add(p => p.Toggled, false)
+                .Add(p => p.UserAttributes, userAttributes)
+                .Add(p => p.ToggledUserAttributes, toggledUserAttributes)
+            );
+
+            // Assert untoggled.
+            component.Find("button").GetAttribute("title").Should().Be("Untoggled Button");
+            component.Find("button").GetAttribute("aria-label").Should().Be("untoggled");
+
+            component.Find("button").Click();
+
+            // Assert toggled.
+            component.Find("button").GetAttribute("title").Should().Be("Toggled Button");
+            component.Find("button").GetAttribute("aria-label").Should().Be("toggled");
         }
     }
 }
