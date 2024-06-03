@@ -110,7 +110,7 @@ namespace MudBlazor
         /// <remarks>
         /// This property is typically used to provide additional HTML attributes during rendering such as ARIA accessibility tags or a custom ID.
         /// </remarks>
-        [Parameter(CaptureUnmatchedValues = true)]
+        [Parameter]
         [Category(CategoryTypes.ComponentBase.Common)]
         public Dictionary<string, object?> ToggledUserAttributes { get; set; } = new();
 
