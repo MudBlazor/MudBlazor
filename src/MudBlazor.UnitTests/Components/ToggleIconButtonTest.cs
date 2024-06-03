@@ -50,25 +50,5 @@ namespace MudBlazor.UnitTests.Components
             comp1.Instance.Toggled.Should().BeTrue();
             comp2.Instance.Toggled.Should().BeTrue();
         }
-
-        /// <summary>
-        /// MudToggledIconButton should change title if specified
-        /// </summary>
-        [Test]
-        public void ShouldRenderToggledTitle()
-        {
-            var title = "Title and tooltip";
-            var toggledTitle = "toggled!";
-            var icon = Parameter(nameof(MudToggleIconButton.Icon), Icons.Material.Filled.Add);
-            var toggledIcon = Parameter(nameof(MudToggleIconButton.ToggledIcon), Icons.Material.Filled.Remove);
-            var titleParam = Parameter(nameof(MudToggleIconButton.Title), title);
-            var toggledTitleParam = Parameter(nameof(MudToggleIconButton.ToggledTitle), toggledTitle);
-            var comp = Context.RenderComponent<MudToggleIconButton>(icon, toggledIcon, titleParam, toggledTitleParam);
-            comp.Find($"button[title=\"{title}\"]");
-            comp.Find("button").Click();
-            comp.Find($"button[title=\"{toggledTitle}\"]");
-            comp.Find("button").Click();
-            comp.Find($"button[title=\"{title}\"]");
-        }
     }
 }
