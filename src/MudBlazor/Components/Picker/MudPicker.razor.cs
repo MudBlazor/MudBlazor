@@ -99,15 +99,14 @@ namespace MudBlazor
         public string AdornmentIcon { get; set; } = Icons.Material.Filled.Event;
 
         /// <summary>
-        /// The ARIA label of the adornment.
+        /// The <c>aria-label</c> for the adornment.
         /// </summary>
         /// <remarks>
-        /// Defaults to an empty string.<br />
-        /// This property controls the value set for the <c>aria-label</c> attribute, which improves accessibility.  For more on these labels, see <see href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label"/>.
+        /// Defaults to <c>null</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public string AdornmentAriaLabel { get; set; } = string.Empty;
+        public string AdornmentAriaLabel { get; set; }
 
         /// <summary>
         /// The text displayed in the input if no value is specified.

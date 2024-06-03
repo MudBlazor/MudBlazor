@@ -1,6 +1,8 @@
 ﻿@namespace MudBlazor
-@inherits MudBaseInput<string>
 @using MudBlazor.Internal
+@using MudBlazor.Resources
+@inherits MudBaseInput<string>
+@inject InternalMudLocalizer Localizer
 
 <div id="@_elementId" class="@Classname" style="@Style">
     @if (Adornment == Adornment.Start)
@@ -29,7 +31,7 @@
                   @onfocus="OnFocused"
                   @oncut="OnCut"
                   @oncopy="OnCopy"
-                  inputmode="@InputMode.ToString()"
+                  inputmode="@InputMode.ToDescriptionString()"
                   required="@Required"
                   aria-required="@Required.ToString().ToLowerInvariant()">
             @Text
@@ -50,7 +52,7 @@
                @onfocus="OnFocused"
                @oncut="OnCut"
                @oncopy="OnCopy"
-               inputmode="@InputMode.ToString()"
+               inputmode="@InputMode.ToDescriptionString()"
                required="@Required"
                aria-required="@Required.ToString().ToLowerInvariant()">
     }
@@ -84,7 +86,8 @@
                        Color="@Color.Default"
                        Icon="@ClearIcon"
                        Size="@Size.Small"
-                       OnClick="@HandleClearButtonAsync"/>
+                       OnClick="@HandleClearButtonAsync"
+                       aria-label="@Localizer[nameof(LanguageResource.MudInput_Clear)]" />
     }
 
     @if (Adornment == Adornment.End)

@@ -25,7 +25,7 @@ namespace MudBlazor
         public string? Icon { get; set; }
 
         /// <summary>
-        /// Title of the icon used for accessibility.
+        /// Text for the <c>title</c> attribute which provides a basic tooltip.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Icon.Behavior)]
