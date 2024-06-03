@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudNavGroup Icon="@Icons.Material.Filled.ManageAccounts"
+             Title="Users"
+             Expanded="@_expanded">
+    <MudNavLink Href="profile"
+                Match="NavLinkMatch.Prefix"
+                Icon="@Icons.Material.Filled.Person">
+        Profile
+    </MudNavLink>
+</MudNavGroup>
+
+<MudSwitch T="bool"
+           id="navgroup-switch"
+           @bind-Value="@_expanded"
+           Label="Expand navigation group" />
+
+@code {
+    private bool _expanded;
+}
