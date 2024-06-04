@@ -55,6 +55,8 @@ namespace MudBlazor.Services
             var counter = 0;
             foreach (var item in result)
             {
+                //Console.WriteLine($"[Observe] {filteredElements.ElementAt(counter).Id} Left={item.AbsoluteLeft} Top={item.AbsoluteTop} Width={item.Width} Height={item.Height}");
+                // ElementAt is used due to tests that use own GUIDs
                 _cachedValues.Add(filteredElements.ElementAt(counter), item);
                 counter++;
             }
@@ -74,6 +76,15 @@ namespace MudBlazor.Services
             _cachedValues.Remove(element);
         }
 
+        public async Task UpdateChildren(ElementReference parentElement)
+        {
+            var result = await _jsRuntime.InvokeAsync<IEnumerable<SizeChangeUpdateInfo>>($"mudResizeObserver.updateChildren", _id, parentElement);
+            if (result is null)
+                return;
+
+            OnSizeChanged(result);
+        }
+
         public bool IsElementObserved(ElementReference reference) => _cachedValues.ContainsKey(reference);
 
         public record SizeChangeUpdateInfo(Guid Id, BoundingClientRect Size);
@@ -86,6 +97,7 @@ namespace MudBlazor.Services
             {
                 if (_cachedValueIds.TryGetValue(item.Id, out var elementRef))
                 {
+                    //Console.WriteLine($"[Changed] {elementRef.Id} Left={item.Size.AbsoluteLeft} Top={item.Size.AbsoluteTop} Width={item.Size.Width} Height={item.Size.Height}");
                     _cachedValues[elementRef] = item.Size;
                     parsedChanges.Add(elementRef, item.Size);
                 }

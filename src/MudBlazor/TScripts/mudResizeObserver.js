@@ -27,6 +27,14 @@ class MudResizeObserverFactory {
         }
     }
 
+    updateChildren(id, parentElement) {
+        var existingEntry = this._maps[id];
+        if (existingEntry) {
+            var result = existingEntry.updateChildren(parentElement);
+            return result;
+        }
+    }
+
     cancelListener(id) {
         //cancelListener is called during dispose of .net instance
         //in rare cases it could be possible, that no object has been connect so far
@@ -63,7 +71,7 @@ class MudResizeObserver {
                 var affectedObservedElement = observervedElements.find((x) => x.element == target);
                 if (affectedObservedElement) {
 
-                    var size = entry.target.getBoundingClientRect();
+                    var size = window.mudElementRef.getBoundingClientRect(entry.target);
                     if (affectedObservedElement.isInitialized == true) {
 
                         changes.push({ id: affectedObservedElement.id, size: size });
@@ -129,6 +137,21 @@ class MudResizeObserver {
             var index = this._observervedElements.indexOf(affectedObservedElement);
             this._observervedElements.splice(index, 1);
         }
+    }
+
+    updateChildren(parentElement) {
+        var result = [];
+        this.logger('[MudBlazor | ResizeObserver] Updating children...', { parentElement });
+
+        for (var i = 0; i < this._observervedElements.length; i++) {
+            var entry = this._observervedElements[i];
+            if (entry.element == parentElement)
+                continue;
+
+            result.push({ id: entry.id, size: window.mudElementRef.getBoundingClientRect(entry.element) });
+        }
+
+        return result;
     }
 
     cancelListener() {
