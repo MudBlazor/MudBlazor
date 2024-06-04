@@ -1,4 +1,6 @@
-﻿<MudNavMenu>
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudNavMenu>
     <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Templates</MudText>
     <MudNavLink Href="/" Icon="@Icons.Material.Outlined.SelectAll">Select Template</MudNavLink>
     <MudNavLink Href="/Admin/Upload" Icon="@Icons.Material.Outlined.Upload">Upload Template</MudNavLink>
@@ -12,5 +14,5 @@
 <MudCheckBox @bind-Value="@IsGroupDisabled">Disable Group</MudCheckBox>
 
 @code {
-	public bool IsGroupDisabled {get;set;} = false;
+    public bool IsGroupDisabled { get; set; }
 }

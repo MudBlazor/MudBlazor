@@ -12,15 +12,13 @@
 
     <div class="fixed pointer-events-none"
          tabindex="@TrapTabIndex"
-         @onfocus="OnTopFocusAsync"
-         aria-hidden="true">
+         @onfocus="OnTopFocusAsync">
     </div>
 
     <div @ref="_firstBumper"
          class="fixed pointer-events-none"
          tabindex="@TrapTabIndex"
-         @onfocus="OnBumperFocusAsync"
-         aria-hidden="true">
+         @onfocus="OnBumperFocusAsync">
     </div>
 
     <div @ref="_fallback"
@@ -37,14 +35,11 @@
     <div @ref="_lastBumper"
          class="fixed pointer-events-none"
          tabindex="@TrapTabIndex"
-         @onfocus="OnBumperFocusAsync"
-         aria-hidden="true">
+         @onfocus="OnBumperFocusAsync">
     </div>
 
     <div class="fixed pointer-events-none"
          tabindex="@TrapTabIndex"
-         @onfocus="OnBottomFocusAsync"
-         aria-hidden="true">
+         @onfocus="OnBottomFocusAsync">
     </div>
-
 </div>
