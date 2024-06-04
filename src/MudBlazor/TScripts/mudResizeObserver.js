@@ -30,8 +30,7 @@ class MudResizeObserverFactory {
     updateChildren(id, parentElement) {
         var existingEntry = this._maps[id];
         if (existingEntry) {
-            var result = existingEntry.updateChildren(parentElement);
-            return result;
+            existingEntry.updateChildren(parentElement);
         }
     }
 
@@ -151,7 +150,7 @@ class MudResizeObserver {
             result.push({ id: entry.id, size: window.mudElementRef.getBoundingClientRect(entry.element) });
         }
 
-        return result;
+        this.resizeHandler.bind(this, result);
     }
 
     cancelListener() {
