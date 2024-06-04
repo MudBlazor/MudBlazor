@@ -101,7 +101,7 @@ namespace MudBlazor
         public bool AlwaysShowScrollButtons { get; set; }
 
         /// <summary>
-        /// If true, allow tabs is wrap instead of scroll.
+        /// If true, allow tabs to wrap instead of scroll.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
