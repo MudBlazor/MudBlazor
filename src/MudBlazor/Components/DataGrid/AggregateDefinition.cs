@@ -28,11 +28,25 @@ namespace MudBlazor
         /// Defaults to <see cref="AggregateType.Count"/>.  When <see cref="AggregateType.Custom"/>, the function defined in <see cref="CustomAggregate"/> is used.
         /// </remarks>
         public AggregateType Type { get; set; } = AggregateType.Count;
+
+        /// <summary>
+        /// A numeric format string.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to null.
+        /// </remarks>
         public string? NumberFormat { get; set; } = null;
+
+        /// <summary>
+        /// An object that supplies culture-specific formatting information.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to standard IFormatprovider.
+        /// </remarks>
         public IFormatProvider? NumberFormatProvider { get; set; } = default;
 
         /// <summary>
-        /// The format used to display aggregate values.
+        /// The format used to display aggregate values with prepended or appended text.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>{value}</c>.
