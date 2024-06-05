@@ -218,7 +218,6 @@ namespace MudBlazor
         /// <summary>
         /// Gets whether a drag-and-drop is in progress.
         /// </summary>
-        /// <returns></returns>
         public bool TransactionInProgress() => _transaction is not null;
 
         /// <summary>

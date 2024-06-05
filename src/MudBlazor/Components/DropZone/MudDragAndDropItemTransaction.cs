@@ -71,7 +71,6 @@ public class MudDragAndDropItemTransaction<T>
     /// <summary>
     /// Commits this transaction.
     /// </summary>
-    /// <returns></returns>
     public Task Commit() => _commitCallback.Invoke();
 
     internal bool UpdateIndex(int index)
