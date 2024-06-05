@@ -1274,7 +1274,9 @@ namespace MudBlazor.UnitTests.Components
 
             var containerComponent = comp.FindComponent<MudDropContainer<TestComponents.DropzoneBasicTest.SimpleDropItem>>();
             containerComponent.Instance.IsOrigin(0, "Column 1").Should().Be(true);
+#pragma warning disable CS0618 // Type or member is obsolete
             containerComponent.Instance.IsOrign(0, "Column 1").Should().Be(true);
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         [Test]
@@ -1294,8 +1296,10 @@ namespace MudBlazor.UnitTests.Components
             await firstDropItem.DragStartAsync(new DragEventArgs());
 
             var containerComponent = comp.FindComponent<MudDropContainer<TestComponents.DropzoneBasicTest.SimpleDropItem>>();
-            containerComponent.Instance.GetTransactionOrignZoneIdentiifer().Should().Be("Column 1");
             containerComponent.Instance.GetTransactionOrignZoneIdentifier().Should().Be("Column 1");
+#pragma warning disable CS0618 // Type or member is obsolete
+            containerComponent.Instance.GetTransactionOrignZoneIdentiifer().Should().Be("Column 1");
+#pragma warning restore CS0618 // Type or member is obsolete
         }
     }
 }

@@ -222,12 +222,13 @@ namespace MudBlazor
         public bool TransactionInProgress() => _transaction is not null;
 
         /// <summary>
-        /// (Obsolete) Gets the unique ID of the zone where the drag-and-drop started.
+        /// Gets the unique ID of the zone where the drag-and-drop started.
         /// </summary>
         /// <remarks>
         /// Use the <see cref="GetTransactionOrignZoneIdentifier()"/> method instead.
         /// </remarks>
         /// <returns>The unique ID of the zone.</returns>
+        [Obsolete("Use the GetTransactionOrignZoneIdentifier method instead.  This will be removed in a future release.")]
         public string GetTransactionOrignZoneIdentiifer() => GetTransactionOrignZoneIdentifier();
 
         /// <summary>
@@ -282,7 +283,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// (Obsolete) Gets whether the specified zone is where the drag-and-drop transaction started.
+        /// Gets whether the specified zone is where the drag-and-drop transaction started.
         /// </summary>
         /// <param name="index">The index of the zone to find.</param>
         /// <param name="identifier">The unique ID of the zone to fine.</param>
@@ -290,6 +291,7 @@ namespace MudBlazor
         /// Use the <see cref="IsOrigin(int, string)"/> method instead.
         /// </remarks>
         /// <returns>When <c>true</c>, the zone is where the drag-and-drop transaction started.</returns>
+        [Obsolete("Use the IsOrigin method instead.  This will be removed in a future release.")]
         public bool IsOrign(int index, string identifier) => IsOrigin(index, identifier);
 
         /// <summary>

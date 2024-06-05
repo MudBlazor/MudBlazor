@@ -20,7 +20,7 @@ public enum DividerType
     Inset,
 
     /// <summary>
-    /// the divider has a margin on the left and right sides.
+    /// The divider has a margin on the left and right sides.
     /// </summary>
     [Description("middle")]
     Middle
