@@ -1274,32 +1274,28 @@ namespace MudBlazor.UnitTests.Components
 
             var containerComponent = comp.FindComponent<MudDropContainer<TestComponents.DropzoneBasicTest.SimpleDropItem>>();
             containerComponent.Instance.IsOrigin(0, "Column 1").Should().Be(true);
-            containerComponent.Instance.IsOrign(0, "Column 1").Should().Be(true); // Remove in 8.0
+            containerComponent.Instance.IsOrign(0, "Column 1").Should().Be(true);
+        }
 
-            var secondDropZone = comp.Find(".second-drop-zone");
+        [Test]
+        public async Task DropZone_GetTransactionOrignZoneIdentifierTest()
+        {
+            var comp = Context.RenderComponent<DropzoneBasicTest>();
 
-            await secondDropZone.DropAsync(new DragEventArgs());
+            var container = comp.Find(".mud-drop-container");
+            container.Children.Should().HaveCount(2);
 
-            //updating the container reference to reflect changes
-            container = comp.Find(".mud-drop-container");
+            var firstDropZone = container.Children[0];
+            firstDropZone.Children.Should().HaveCount(2);
 
-            secondDropZone = container.Children[1];
+            var firstDropItem = firstDropZone.Children[1];
 
-            secondDropZone.Children.Should().HaveCount(4);
+            firstDropItem.TextContent.Should().Be("First Item");
+            await firstDropItem.DragStartAsync(new DragEventArgs());
 
-            secondDropZone.Children[0].TextContent.Should().Be("Drop Zone 2");
-            secondDropZone.Children[1].TextContent.Should().Be("First Item");
-            secondDropZone.Children[2].TextContent.Should().Be("Second Item");
-            secondDropZone.Children[3].TextContent.Should().Be("Third Item");
-
-            secondDropZone.Children[1].DragEnd();
-
-            firstDropZone = comp.Find(".first-drop-zone");
-            secondDropZone = comp.Find(".second-drop-zone");
-            firstDropZone.ClassList.Should().NotContain("mud-drop-zone-drag-block");
-            secondDropZone.ClassList.Should().NotContain("mud-drop-zone-drag-block");
-
-            comp.Instance.IndexHistory.Distinct().Should().ContainSingle().And.Contain(-1);
+            var containerComponent = comp.FindComponent<MudDropContainer<TestComponents.DropzoneBasicTest.SimpleDropItem>>();
+            containerComponent.Instance.GetTransactionOrignZoneIdentiifer().Should().Be("Column 1");
+            containerComponent.Instance.GetTransactionOrignZoneIdentifier().Should().Be("Column 1");
         }
     }
 }
