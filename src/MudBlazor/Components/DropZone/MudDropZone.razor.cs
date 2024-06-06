@@ -121,7 +121,7 @@ namespace MudBlazor
         public Func<T, bool>? ItemDisabled { get; set; }
 
         /// <summary>
-        /// The CSS classes applied if an item cannot be dragged.
+        /// The CSS classes applied to disabled drop items.
         /// </summary>
         /// <remarks>
         /// This class is applied when <see cref="ItemDisabled"/> returns <c>true</c> for an item.  Multiple classes must be separated by spaces.  When set, overrides <see cref="MudDropContainer{T}.DisabledClass"/>.
