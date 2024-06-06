@@ -75,9 +75,9 @@ namespace MudBlazor.Services
             _cachedValues.Remove(element);
         }
 
-        public async Task UpdateChildren(ElementReference parentElement)
+        public async Task Resync()
         {
-            await _jsRuntime.InvokeVoidAsync($"mudResizeObserver.updateChildren", _id, parentElement);
+            await _jsRuntime.InvokeVoidAsync($"mudResizeObserver.resync", _id);
         }
 
         public bool IsElementObserved(ElementReference reference) => _cachedValues.ContainsKey(reference);

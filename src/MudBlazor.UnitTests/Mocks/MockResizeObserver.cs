@@ -154,7 +154,7 @@ namespace MudBlazor.UnitTests.Mocks
             return Task.CompletedTask;
         }
 
-        public Task UpdateChildren(ElementReference parentElement)
+        public Task Resync()
         {
             return Task.CompletedTask;
         }

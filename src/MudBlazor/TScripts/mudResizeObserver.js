@@ -27,10 +27,10 @@ class MudResizeObserverFactory {
         }
     }
 
-    updateChildren(id, parentElement) {
+    resync(id) {
         var existingEntry = this._maps[id];
         if (existingEntry) {
-            existingEntry.updateChildren(parentElement);
+            existingEntry.resync();
         }
     }
 
@@ -114,7 +114,7 @@ class MudResizeObserver {
 
             this.logger("[MudBlazor | ResizeObserver] Start observing element:", { newEntry });
 
-            result.push(elements[i].getBoundingClientRect());
+            result.push(window.mudElementRef.getBoundingClientRect(elements[i]));
 
             this._observervedElements.push(newEntry);
             this._resizeObserver.observe(elements[i]);
@@ -138,19 +138,16 @@ class MudResizeObserver {
         }
     }
 
-    updateChildren(parentElement) {
+    resync() {
         var result = [];
-        this.logger('[MudBlazor | ResizeObserver] Updating children...', { parentElement });
+        this.logger('[MudBlazor | ResizeObserver] Resyncing...');
 
         for (var i = 0; i < this._observervedElements.length; i++) {
             var entry = this._observervedElements[i];
-            if (entry.element == parentElement)
-                continue;
-
             result.push({ id: entry.id, size: window.mudElementRef.getBoundingClientRect(entry.element) });
         }
 
-        this.resizeHandler.bind(this, result);
+        this.resizeHandler.call(this, result);
     }
 
     cancelListener() {
