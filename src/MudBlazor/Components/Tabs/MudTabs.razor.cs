@@ -101,11 +101,11 @@ namespace MudBlazor
         public bool AlwaysShowScrollButtons { get; set; }
 
         /// <summary>
-        /// If true, allow tabs to wrap instead of scroll.
+        /// If true, tab headers will wrap instead of scroll.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public bool TabHeadersInline { get; set; }
+        public bool WrapHeaders { get; set; }
 
         /// <summary>
         /// Sets the maxheight the component can have.
@@ -513,7 +513,7 @@ namespace MudBlazor
             new CssBuilder("mud-tabs-tabbar-wrapper")
             .AddClass($"mud-tabs-centered", Centered)
             .AddClass($"mud-tabs-vertical", IsVerticalTabs())
-            .AddClass($"mud-tabs-inline", TabHeadersInline)
+            .AddClass($"mud-tabs-inline", WrapHeaders)
             .Build();
 
         protected string WrapperScrollStyle =>
@@ -723,7 +723,7 @@ namespace MudBlazor
 
         private void SetScrollButtonVisibility()
         {
-            if (TabHeadersInline)
+            if (WrapHeaders)
                 return;
 
             _showScrollButtons = AlwaysShowScrollButtons || _allTabsSize > _tabBarContentSize || _scrollIndex != 0;
@@ -798,7 +798,7 @@ namespace MudBlazor
 
         private void CenterScrollPositionAroundSelectedItem()
         {
-            if (TabHeadersInline)
+            if (WrapHeaders)
                 return;
 
             if (_showScrollButtons && ActivePanelIndex + 1 == _panels.Count)

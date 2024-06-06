@@ -33,7 +33,7 @@ namespace MudBlazor.UnitTests.Mocks
 
         public bool IsVertical { get; set; } = false;
 
-        public bool TabHeadersInline { get; set; } = false;
+        public bool WrapHeaders { get; set; } = false;
 
         public event SizeChanged OnResized;
 
@@ -128,7 +128,7 @@ namespace MudBlazor.UnitTests.Mocks
                             Top = rowIndex * 48,
                         };
 
-                        if (TabHeadersInline && rect.Left + rect.Width > PanelTotalSize)
+                        if (WrapHeaders && rect.Left + rect.Width > PanelTotalSize)
                         {
                             rect.Left = 0;
                             rect.Top += 48;

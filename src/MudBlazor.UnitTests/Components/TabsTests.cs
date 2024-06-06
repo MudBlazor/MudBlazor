@@ -1300,13 +1300,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TabHeadersInline()
+        public async Task WrapHeaders()
         {
             var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
                 PanelTotalSize = 300,
-                TabHeadersInline = true,
+                WrapHeaders = true,
             };
 
             var factory = new MockResizeObserverFactory(observer);
@@ -1314,7 +1314,7 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.RenderComponent<ScrollableTabsTest>(p =>
             {
-                p.Add(x => x.TabHeadersInline, true);
+                p.Add(x => x.WrapHeaders, true);
                 p.Add(x => x.AlwaysShowScrollButtons, false);
             });
 
