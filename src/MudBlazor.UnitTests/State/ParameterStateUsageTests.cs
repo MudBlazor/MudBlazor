@@ -17,7 +17,7 @@ namespace MudBlazor.UnitTests.State;
 public class ParameterStateUsageTests : BunitTest
 {
     [Test]
-    public void DoesThrowExceptionWhenScopeCreatedMultipleTimes()
+    public void DoesNotThrowExceptionWhenScopeCreatedMultipleTimes()
     {
         var createComp = () => Context.RenderComponent<ParameterStateMultipleScopeTestComp>();
 
