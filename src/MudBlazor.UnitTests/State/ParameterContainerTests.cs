@@ -20,8 +20,41 @@ namespace MudBlazor.UnitTests.State;
 public class ParameterContainerTests
 {
     [Test]
-    public async Task SetParametersAsync_ActionHandlerShouldFireOnce_ForSameParameterInDifferentScopes()
+    public void Verify_NotThrowOnUnique()
     {
+        // Arrange
+        const int Parameter1 = 1;
+        const int Parameter2 = 2;
+        const string Parameter1Name = nameof(Parameter1);
+        const string Parameter2Name = nameof(Parameter2);
+        var parameter1State = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(Parameter1Name))
+            .WithGetParameterValueFunc(() => Parameter1)
+            .Attach();
+        var parameter2State = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(Parameter2Name))
+            .WithGetParameterValueFunc(() => Parameter2)
+            .Attach();
+        var parameterContainer = new ParameterContainer
+        {
+            AutoVerify = false
+        };
+        parameterContainer.Add(new ParameterScopeContainer(parameter1State));
+        parameterContainer.Add(new ParameterScopeContainer(parameter2State));
+
+        // Act
+       var actVerify = () => parameterContainer.Verify();
+
+        // Assert
+        actVerify.Should().NotThrow<InvalidOperationException>();
+    }
+
+    [Test]
+    public void Verify_ThrowOnDuplicate()
+    {
+        // Arrange
         const int Parameter1 = 1;
         const string Parameter1Name = nameof(Parameter1);
         var parameter1State = ParameterAttachBuilder
@@ -31,10 +64,78 @@ public class ParameterContainerTests
             .Attach();
         var parameterContainer = new ParameterContainer
         {
-            new ParameterScopeContainer(parameter1State), new ParameterScopeContainer(parameter1State)
+            AutoVerify = false
         };
+        parameterContainer.Add(new ParameterScopeContainer(parameter1State));
+        parameterContainer.Add(new ParameterScopeContainer(parameter1State));
 
-        await parameterContainer.SetParametersAsync(_ => Task.CompletedTask, ParameterView.Empty);
+        // Act
+        var actVerify = () => parameterContainer.Verify();
+
+        // Assert
+        actVerify.Should().Throw<InvalidOperationException>();
+    }
+
+    [Test]
+    public void AutoVerify_ThrowOnDuplicate()
+    {
+        // Arrange
+        const int Parameter1 = 1;
+        const string Parameter1Name = nameof(Parameter1);
+        var parameter1State = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(Parameter1Name))
+            .WithGetParameterValueFunc(() => Parameter1)
+            .Attach();
+        var parameterContainer = new ParameterContainer
+        {
+            AutoVerify = true
+        };
+        parameterContainer.Add(new ParameterScopeContainer(parameter1State));
+        parameterContainer.Add(new ParameterScopeContainer(parameter1State));
+
+        // Act
+        var actOnInitialized = () => parameterContainer.OnInitialized();
+
+        // Assert
+        actOnInitialized.Should().Throw<InvalidOperationException>();
+    }
+
+    [Test]
+    public async Task SetParametersAsync_ActionHandlerShouldFireOnce_ForSameParameterInDifferentScopes()
+    {
+        // Arrange
+        var handler1FireCount = 0;
+        const int Parameter1 = 1;
+        const string Parameter1Name = nameof(Parameter1);
+        const int Parameter1NewValue = 2;
+        var parameter1State = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(Parameter1Name))
+            .WithGetParameterValueFunc(() => Parameter1)
+            .WithParameterChangedHandler(OnParameter1Change)
+            .Attach();
+        void OnParameter1Change()
+        {
+            handler1FireCount++;
+        }
+        var parametersDictionary = new Dictionary<string, object?>
+        {
+            { Parameter1Name, Parameter1NewValue },
+        };
+        var parameterView = ParameterView.FromDictionary(parametersDictionary);
+        var parameterContainer = new ParameterContainer
+        {
+            AutoVerify = false,
+        };
+        parameterContainer.Add(new ParameterScopeContainer(parameter1State));
+        parameterContainer.Add(new ParameterScopeContainer(parameter1State));
+
+        // Act
+        await parameterContainer.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+
+        // Assert
+        handler1FireCount.Should().Be(1);
     }
 
     [Test]
