@@ -45,7 +45,7 @@ public class ParameterContainerTests
         parameterContainer.Add(new ParameterScopeContainer(parameter2State));
 
         // Act
-       var actVerify = () => parameterContainer.Verify();
+        var actVerify = () => parameterContainer.Verify();
 
         // Assert
         actVerify.Should().NotThrow<InvalidOperationException>();
