@@ -25,7 +25,6 @@ namespace MudBlazor
         public MudFileUpload() : base(new DefaultConverter<T>()) { }
 
         private readonly string _id = $"mud_fileupload_{Guid.NewGuid()}";
-        private string _inputKey = $"mud_fileupload_key_{Guid.NewGuid()}";
 
         protected string Classname =>
             new CssBuilder("mud-file-upload")
@@ -146,11 +145,11 @@ namespace MudBlazor
 
         protected bool GetDisabledState() => Disabled || ParentDisabled || ParentReadOnly;
 
-        public Task ClearAsync()
+        public async Task ClearAsync()
         {
             _value = default;
-            _inputKey = $"mud_fileupload_key_{Guid.NewGuid()}";
-            return NotifyValueChangedAsync();
+            await NotifyValueChangedAsync();
+            await JsRuntime.InvokeVoidAsync("mudInput.resetValue", _id);
         }
 
         public async Task OpenFilePickerAsync()
