@@ -33,6 +33,7 @@ internal class ParameterScopeContainer : IParameterScopeContainer
     private readonly Lazy<Dictionary<string, IParameterComponentLifeCycle>> _parameters;
 #endif
 
+    /// <inheritdoc/>
     public bool IsLocked { get; private set; }
 
     /// <summary>
@@ -78,6 +79,7 @@ internal class ParameterScopeContainer : IParameterScopeContainer
 #if NET8_0_OR_GREATER
     private FrozenDictionary<string, IParameterComponentLifeCycle> ParametersFactory()
     {
+        IsLocked = true;
         var parameters = _parameterStatesReader.ReadParameters();
         var dictionary = parameters.ToFrozenDictionary(parameter => parameter.Metadata.ParameterName, parameter => parameter);
         _parameterStatesReader.Complete();
@@ -87,6 +89,7 @@ internal class ParameterScopeContainer : IParameterScopeContainer
 #else
     private Dictionary<string, IParameterComponentLifeCycle> ParametersFactory()
     {
+        IsLocked = true;
         var parameters = _parameterStatesReader.ReadParameters();
         var dictionary = parameters.ToDictionary(parameter => parameter.Metadata.ParameterName, parameter => parameter);
         _parameterStatesReader.Complete();
@@ -151,20 +154,17 @@ internal class ParameterScopeContainer : IParameterScopeContainer
         }
     }
 
-    /// <summary>Searches the set for a given value and returns the equal value it finds, if any.</summary>
-    /// <param name="parameterName">The value to search for.</param>
-    /// <param name="parameterComponentLifeCycle">The value from the set that the search found, or the default value when the search yielded no match.</param>
-    /// <returns>A value indicating whether the search was successful.</returns>
+    /// <inheritdoc/>
     public bool TryGetValue(string parameterName, [MaybeNullWhen(false)] out IParameterComponentLifeCycle parameterComponentLifeCycle)
     {
         return _parameters.Value.TryGetValue(parameterName, out parameterComponentLifeCycle);
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
         if (!IsLocked)
         {
-            IsLocked = true;
             ForceParametersAttachment();
         }
     }

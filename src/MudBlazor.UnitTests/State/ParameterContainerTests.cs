@@ -17,10 +17,10 @@ namespace MudBlazor.UnitTests.State;
 
 #nullable enable
 [TestFixture]
-public class ParameterSetUnionTests
+public class ParameterContainerTests
 {
     [Test]
-    public async Task Test1()
+    public async Task SetParametersAsync_ActionHandlerShouldFireOnce_ForSameParameterInDifferentScopes()
     {
         const int Parameter1 = 1;
         const string Parameter1Name = nameof(Parameter1);
@@ -29,11 +29,12 @@ public class ParameterSetUnionTests
             .WithMetadata(new ParameterMetadata(Parameter1Name))
             .WithGetParameterValueFunc(() => Parameter1)
             .Attach();
-        var parameterSetUnion = new ParameterContainer();
-        parameterSetUnion.Add(new ParameterScopeContainer(parameterSetUnion, parameter1State));
-        parameterSetUnion.Add(new ParameterScopeContainer(parameterSetUnion, parameter1State));
+        var parameterContainer = new ParameterContainer
+        {
+            new ParameterScopeContainer(parameter1State), new ParameterScopeContainer(parameter1State)
+        };
 
-        await parameterSetUnion.SetParametersAsync(_ => Task.CompletedTask, ParameterView.Empty);
+        await parameterContainer.SetParametersAsync(_ => Task.CompletedTask, ParameterView.Empty);
     }
 
     [Test]
@@ -67,7 +68,7 @@ public class ParameterSetUnionTests
             .WithGetParameterValueFunc(() => Parameter2)
             .WithParameterChangedHandler(OnParameter2Change)
             .Attach();
-        var parameterSetUnion = new ParameterContainer { new(parameter1State), new(parameter2State) };
+        var parameterContainer = new ParameterContainer { new ParameterScopeContainer(parameter1State), new ParameterScopeContainer(parameter2State) };
         void OnParameter1Change()
         {
             handler1FireCount++;
@@ -79,7 +80,7 @@ public class ParameterSetUnionTests
         }
 
         // Act
-        await parameterSetUnion.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+        await parameterContainer.SetParametersAsync(_ => Task.CompletedTask, parameterView);
 
         // Assert
         handler1FireCount.Should().Be(1);
@@ -112,30 +113,30 @@ public class ParameterSetUnionTests
             .WithMetadata(new ParameterMetadata(nameof(Parameter3)))
             .WithGetParameterValueFunc(() => Parameter3)
             .Attach();
-        var parameterSetUnion = new ParameterContainer();
+        var parameterContainer = new ParameterContainer();
         var expectedParameters = new List<ParameterScopeContainer> { new(parameterState1), new(parameterState2), new(parameterState3) };
         foreach (var expectedParameter in expectedParameters)
         {
-            parameterSetUnion.Add(expectedParameter);
+            parameterContainer.Add(expectedParameter);
         }
 
         // Act
-        var actualParameters = new List<ParameterScopeContainer>();
-        var enumerator = ((IEnumerable)parameterSetUnion).GetEnumerator();
+        var actualParameters = new List<IParameterComponentLifeCycle>();
+        var enumerator = ((IEnumerable)parameterContainer).GetEnumerator();
         using (enumerator as IDisposable)
         {
             while (enumerator.MoveNext())
             {
-                if (enumerator.Current is ParameterScopeContainer parameterSet)
+                if (enumerator.Current is IParameterComponentLifeCycle parameter)
                 {
-                    actualParameters.Add(parameterSet);
+                    actualParameters.Add(parameter);
                 }
             }
         }
 
         // Assert
-        parameterSetUnion.Count.Should().Be(3);
-        actualParameters.Should().BeEquivalentTo(expectedParameters);
+        parameterContainer.Count.Should().Be(3);
+        actualParameters.Should().BeEquivalentTo(parameterContainer);
     }
 
     [Test]
@@ -160,18 +161,18 @@ public class ParameterSetUnionTests
             .WithMetadata(new ParameterMetadata(nameof(Parameter3)))
             .WithGetParameterValueFunc(() => Parameter3)
             .Attach();
-        var parameterSetUnion = new ParameterContainer();
-        var expectedParameters = new List<ParameterScopeContainer> { new(parameterState1), new(parameterState2), new(parameterState3) };
-        foreach (var expectedParameter in expectedParameters)
+        var parameterContainer = new ParameterContainer();
+        var expectedParameterScopeContainers = new List<ParameterScopeContainer> { new(parameterState1), new(parameterState2), new(parameterState3) };
+        foreach (var expectedParameterScopeContainer in expectedParameterScopeContainers)
         {
-            parameterSetUnion.Add(expectedParameter);
+            parameterContainer.Add(expectedParameterScopeContainer);
         }
 
         // Act
-        var actualParameters = parameterSetUnion.ToList();
+        var actualParameters = parameterContainer.Select(lifeCycle => lifeCycle).ToList();
 
         // Assert
-        parameterSetUnion.Count.Should().Be(3);
-        actualParameters.Should().BeEquivalentTo(expectedParameters);
+        parameterContainer.Count.Should().Be(3);
+        actualParameters.Should().BeEquivalentTo(parameterContainer);
     }
 }

@@ -15,7 +15,7 @@ namespace MudBlazor;
 /// </summary>
 public class ComponentBaseWithState : ComponentBase
 {
-    internal readonly ParameterContainer ParameterContainer = new();
+    internal readonly ParameterContainer ParameterContainer = new() { AutoVerify = false };
 
     /// <inheritdoc />
     protected override void OnInitialized()

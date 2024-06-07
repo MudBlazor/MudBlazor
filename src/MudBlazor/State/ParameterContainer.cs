@@ -24,7 +24,13 @@ namespace MudBlazor.State;
 /// </remarks>
 internal class ParameterContainer : IParameterContainer
 {
-    private readonly List<ParameterScopeContainer> _parameterScopeContainers = new();
+    private readonly Lazy<bool> _lazyVerify;
+    private readonly List<IParameterScopeContainer> _parameterScopeContainers = new();
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the container should automatically verify for duplicates.
+    /// </summary>
+    public bool AutoVerify { get; init; } = true;
 
     /// <summary>
     /// Gets the number of <see cref="ParameterScopeContainer"/> instances in the union.
@@ -35,13 +41,23 @@ internal class ParameterContainer : IParameterContainer
     /// Adds a <see cref="ParameterScopeContainer"/> instance to the union container.
     /// </summary>
     /// <param name="parameterScopeContainer">The <see cref="ParameterScopeContainer"/> instance to add to the union.</param>
-    public void Add(ParameterScopeContainer parameterScopeContainer) => _parameterScopeContainers.Add(parameterScopeContainer);
+    public void Add(IParameterScopeContainer parameterScopeContainer) => _parameterScopeContainers.Add(parameterScopeContainer);
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParameterContainer"/> class.
+    /// </summary>
+    public ParameterContainer()
+    {
+        _lazyVerify = new Lazy<bool>(VerifyInternal);
+    }
 
     /// <summary>
     /// Executes <see cref="ParameterScopeContainer.OnInitialized"/> for all registered <see cref="ParameterScopeContainer"/>.
     /// </summary>
     public void OnInitialized()
     {
+        VerifyOnAuto();
+
         foreach (var parameterSet in _parameterScopeContainers)
         {
             parameterSet.OnInitialized();
@@ -53,6 +69,8 @@ internal class ParameterContainer : IParameterContainer
     /// </summary>
     public void OnParametersSet()
     {
+        VerifyOnAuto();
+
         foreach (var parameterSet in _parameterScopeContainers)
         {
             parameterSet.OnParametersSet();
@@ -72,6 +90,8 @@ internal class ParameterContainer : IParameterContainer
             return;
         }
 
+        VerifyOnAuto();
+
 #if NET8_0_OR_GREATER
         var parametersHandlerShouldFire = _parameterScopeContainers.SelectMany(parameter => parameter)
             .Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters))
@@ -90,8 +110,11 @@ internal class ParameterContainer : IParameterContainer
         }
     }
 
+    /// <inheritdoc/>
     public bool TryGetValue(string parameterName, [MaybeNullWhen(false)] out IParameterComponentLifeCycle parameterComponentLifeCycle)
     {
+        VerifyOnAuto();
+
         foreach (var parameterSet in _parameterScopeContainers)
         {
             if (parameterSet.TryGetValue(parameterName, out parameterComponentLifeCycle))
@@ -105,51 +128,49 @@ internal class ParameterContainer : IParameterContainer
         return false;
     }
 
+    /// <summary>
+    /// Verifies the container for any duplicate parameters.
+    /// </summary>
+    public void Verify() => _ = _lazyVerify.Value;
+
+    /// <summary>
+    /// Throws an exception if <see cref="AutoVerify"/> is enabled and duplicates are found.
+    /// </summary>
+    private void VerifyOnAuto()
+    {
+        if (AutoVerify)
+        {
+            Verify();
+        }
+    }
+
+    private bool VerifyInternal()
+    {
+        ThrowOnDuplicates();
+
+        return true;
+    }
+
+    /// <summary>
+    /// Throws an exception if duplicates are found among the parameter scope containers.
+    /// </summary>
     private void ThrowOnDuplicates()
     {
-        var hashSet = new HashSet<IParameterComponentLifeCycle>();
+        var hashSet = new HashSet<IParameterComponentLifeCycle>(ParameterNameUniquenessComparer.Default);
         var parameters = _parameterScopeContainers.SelectMany(scopeContainers => scopeContainers);
 
         foreach (var parameter in parameters)
         {
             if (!hashSet.Add(parameter))
             {
-                throw new InvalidOperationException("");
+                throw new InvalidOperationException($"Parameter {parameter.Metadata.ParameterName} is already registered!");
             }
         }
     }
-
-    //public static readonly IParameterContainer Empty = new ParameterContainerEmpty();
 
     /// <inheritdoc/>
     public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => _parameterScopeContainers.SelectMany(scopeContainer => scopeContainer).GetEnumerator();
 
     /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    //private class ParameterContainerEmpty : IParameterContainer
-    //{
-    //    /// <inheritdoc/>
-    //    public void OnInitialized() { /*Noop*/ }
-
-    //    /// <inheritdoc/>
-    //    public void OnParametersSet() { /*Noop*/ }
-
-    //    /// <inheritdoc/>
-    //    public Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters) => baseSetParametersAsync(parameters);
-
-    //    /// <inheritdoc/>
-    //    public bool TryGetValue(string parameterName, [MaybeNullWhen(false)] out IParameterComponentLifeCycle parameterComponentLifeCycle)
-    //    {
-    //        parameterComponentLifeCycle = null;
-
-    //        return false;
-    //    }
-
-    //    /// <inheritdoc/>
-    //    public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => Enumerable.Empty<IParameterComponentLifeCycle>().GetEnumerator();
-
-    //    /// <inheritdoc/>
-    //    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    //}
 }

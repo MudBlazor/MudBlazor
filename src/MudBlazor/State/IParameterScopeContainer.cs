@@ -12,7 +12,7 @@ internal interface IParameterScopeContainer : IParameterContainer, IDisposable
     /// Gets a value indicating whether the parameter registration builder scope is locked.
     /// </summary>
     /// <remarks>
-    /// The scope becomes locked when it has ended (Disposed), indicating that no more parameter states will be registered.
+    /// The scope becomes locked when it has been read or ended (<see cref="IDisposable.Dispose"/>), indicating that no more parameter states will be registered.
     /// </remarks>
     bool IsLocked { get; }
 }
