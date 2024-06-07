@@ -9,7 +9,7 @@
     <MudDrawer Open="@_drawerOpen" OpenChanged="OnDrawerOpenChanged" ClipMode="DrawerClipMode.Docked" Elevation="0" Breakpoint="Breakpoint.Md" aria-label="Navigation Drawer">
         <div class="d-block d-md-none">
             <MudToolBar Dense="true" Gutters="false" Class="docs-gray-bg">
-                <MudIconButton Icon="@Icons.Material.Rounded.Close" Color="Color.Inherit" OnClick="ToggleDrawer" />
+                <MudIconButton Icon="@Icons.Material.Rounded.Close" Color="Color.Inherit" OnClick="ToggleDrawer" aria-label="Toggle drawer" />
                 <MudSpacer />
                 <AppbarButtons />
             </MudToolBar>

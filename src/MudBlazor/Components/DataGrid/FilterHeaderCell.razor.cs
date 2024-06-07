@@ -157,9 +157,10 @@ namespace MudBlazor
 
         internal async Task ApplyFilterAsync(IFilterDefinition<T> filterDefinition)
         {
-            if (!DataGrid.FilterDefinitions.Any(x => x.Id == filterDefinition.Id))
+            if (DataGrid.FilterDefinitions.All(x => x.Id != filterDefinition.Id))
                 DataGrid.FilterDefinitions.Add(filterDefinition);
-            if (DataGrid.ServerData is not null) await DataGrid.ReloadServerData();
+            if (DataGrid.HasServerData)
+                await DataGrid.ReloadServerData();
 
             DataGrid.GroupItems();
             ((IMudStateHasChanged)DataGrid).StateHasChanged();

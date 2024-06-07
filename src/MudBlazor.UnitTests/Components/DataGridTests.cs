@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
@@ -126,10 +127,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridSortableVirtualizationItemsProviderTest()
+        public async Task DataGridSortableVirtualizeServerDataTest()
         {
-            var comp = Context.RenderComponent<DataGridSortableVirtualizationItemsProviderTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableVirtualizationItemsProviderTest.Item>>();
+            var comp = Context.RenderComponent<DataGridSortableVirtualizeServerDataTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableVirtualizeServerDataTest.Item>>();
 
             // Count the number of rows including header.
             var rows = dataGrid.FindAll("tr");
@@ -183,7 +184,7 @@ namespace MudBlazor.UnitTests.Components
             cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
             cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
-            var column = dataGrid.FindComponent<Column<DataGridSortableVirtualizationItemsProviderTest.Item>>();
+            var column = dataGrid.FindComponent<Column<DataGridSortableVirtualizeServerDataTest.Item>>();
             await comp.InvokeAsync(() => column.Instance.SortBy = x => { return x.Name; });
 
             // Check the values of rows - should not be sorted and should be in the original order.
@@ -208,7 +209,7 @@ namespace MudBlazor.UnitTests.Components
             cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
             // test other sort methods
-            var headerCell = dataGrid.FindComponent<HeaderCell<DataGridSortableVirtualizationItemsProviderTest.Item>>();
+            var headerCell = dataGrid.FindComponent<HeaderCell<DataGridSortableVirtualizeServerDataTest.Item>>();
             await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs()));
             //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
             await comp.InvokeAsync(() => headerCell.Instance.RemoveSortAsync());
@@ -323,13 +324,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridFilterableVirtualizationTest()
+        public async Task DataGridFilterableVirtualizeServerDataTest()
         {
-            var comp = Context.RenderComponent<DataGridFilterableVirtualizationTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterableVirtualizationTest.Item>>();
+            var comp = Context.RenderComponent<DataGridFilterableVirtualizeServerDataTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterableVirtualizeServerDataTest.Item>>();
 
             // Count the number of rows including header.
-            dataGrid.FindAll("tr").Count.Should().Be(6); // header row + four rows + footer row
+            dataGrid.FindAll("tr").Count.Should().Be(6, because: "header row + four rows + footer row");
 
             // Check the values of rows
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("B");
@@ -340,7 +341,7 @@ namespace MudBlazor.UnitTests.Components
             // Add a FilterDefinition to filter where the Name = "C".
             await comp.InvokeAsync(() =>
             {
-                return dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterableVirtualizationTest.Item>
+                return dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterableVirtualizeServerDataTest.Item>
                 {
                     Column = dataGrid.Instance.RenderedColumns.First(),
                     Operator = FilterOperator.String.Equal,
@@ -418,6 +419,60 @@ namespace MudBlazor.UnitTests.Components
                 )
             );
             exception.Message.Should().Be("Do not supply both 'ServerData' and 'QuickFilter'.");
+        }
+
+        [Test]
+        public async Task DataGrid_SetParameters_VirtualizeServerData_QuickFilter_Throw()
+        {
+            var virtualizeServerDataFunc =
+                new Func<GridStateVirtualize<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+                Context.RenderComponent<MudDataGrid<TestModel1>>(
+                    Parameter(nameof(MudDataGrid<TestModel1>.VirtualizeServerData), virtualizeServerDataFunc),
+                    Parameter(nameof(MudDataGrid<TestModel1>.QuickFilter), (TestModel1 x) => true)
+                )
+            );
+            exception.Message.Should().Be("Do not supply both 'VirtualizeServerData' and 'QuickFilter'.");
+        }
+
+        [Test]
+        public async Task DataGrid_SetParameters_ServerData_VirtualizeServerData_Throw()
+        {
+            var serverDataFunc =
+                new Func<GridState<TestModel1>, Task<GridData<TestModel1>>>((x) => throw new NotImplementedException());
+            var virtualizeServerDataFunc =
+                new Func<GridStateVirtualize<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+                Context.RenderComponent<MudDataGrid<TestModel1>>(
+                    Parameter(nameof(MudDataGrid<TestModel1>.ServerData), serverDataFunc),
+                    Parameter(nameof(MudDataGrid<TestModel1>.VirtualizeServerData), virtualizeServerDataFunc)
+                )
+            );
+
+            exception.Message.Should().Be(
+                """
+                MudBlazor.MudDataGrid`1[MudBlazor.UnitTests.Components.TestModel1] can only accept one item source from its parameters. Do not supply both 'VirtualizeServerData' and 'ServerData'.
+                """
+            );
+        }
+
+        [Test]
+        public async Task DataGrid_SetParameters_Items_VirtualizeServerData_Throw()
+        {
+            var virtualizeServerDataFunc =
+                new Func<GridStateVirtualize<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+                Context.RenderComponent<MudDataGrid<TestModel1>>(
+                    Parameter(nameof(MudDataGrid<TestModel1>.Items), Array.Empty<TestModel1>()),
+                    Parameter(nameof(MudDataGrid<TestModel1>.VirtualizeServerData), virtualizeServerDataFunc)
+                )
+            );
+
+            exception.Message.Should().Be(
+                """
+                MudBlazor.MudDataGrid`1[MudBlazor.UnitTests.Components.TestModel1] can only accept one item source from its parameters. Do not supply both 'Items' and 'VirtualizeServerData'.
+                """
+            );
         }
 
         [Test]
@@ -616,10 +671,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridInlineEditVirtualizationTest()
+        public async Task DataGridInlineEditVirtualizeServerDataTest()
         {
-            var comp = Context.RenderComponent<DataGridCellEditVirtualizationTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellEditVirtualizationTest.Item>>();
+            var comp = Context.RenderComponent<DataGridCellEditVirtualizeServerDataTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellEditVirtualizeServerDataTest.Item>>();
 
             dataGrid.FindAll("td input")[0].GetAttribute("value").Trim().Should().Be("John");
             dataGrid.FindAll("td input")[1].GetAttribute("value").Trim().Should().Be("45");
@@ -631,6 +686,57 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".mud-table-body tr td input")[1].Change(52d);
             dataGrid.FindAll(".mud-table-body tr td input")[0].GetAttribute("value").Trim().Should().Be("Jonathan");
             dataGrid.FindAll(".mud-table-body tr td input")[1].GetAttribute("value").Trim().Should().Be("52");
+        }
+
+        /// <summary>
+        /// Ensures that multiple calls to reload the data grid data properly flag the CancellationToken.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> object.</returns>
+        [Test]
+        public async Task DataGridVirtualizeServerDataLoadingTestWithCancel()
+        {
+            var comp = Context.RenderComponent<DataGridVirtualizeServerDataLoadingTestWithCancel>();
+            var dataGrid = comp.FindComponent<MudDataGrid<int>>();
+
+            // Make a cancellation token we can monitor
+            CancellationToken? cancelToken = null;
+            // Make a task completion source
+            var first = new TaskCompletionSource<GridData<int>>();
+            // Set the ServerData function
+            dataGrid.SetParam(p =>
+                p.VirtualizeServerData,
+                new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((s, cancellationToken) =>
+                {
+                    // Remember the cancellation token
+                    cancelToken = cancellationToken;
+                    // Return a task that never completes
+                    return first.Task;
+                }));
+
+            await Task.Delay(20);
+
+            // Test
+
+            // Make sure this first request was not canceled
+            comp.WaitForAssertion(() => cancelToken?.IsCancellationRequested.Should().BeFalse());
+
+            // Arrange a server data refresh
+            var second = new TaskCompletionSource<GridData<int>>();
+            // Set the VirtualizeServerData function to a new method...
+            dataGrid.SetParam(p =>
+                p.VirtualizeServerData,
+                new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((s, cancellationToken) =>
+                {
+                    // ... which returns the second task.
+                    return second.Task;
+                }));
+
+            await Task.Delay(20);
+
+            // Test
+
+            // Make sure this second request DID cancel the first request's token
+            comp.WaitForAssertion(() => cancelToken?.IsCancellationRequested.Should().BeTrue());
         }
 
         [Test]
@@ -828,7 +934,7 @@ namespace MudBlazor.UnitTests.Components
             //open edit dialog
             dataGrid.FindAll("tbody tr")[1].Click();
             //No close button
-            comp.FindAll("button[aria-label=\"close\"]").Should().BeEmpty();
+            comp.FindAll("button[aria-label=\"Close dialog\"]").Should().BeEmpty();
             //edit data
             comp.FindAll("div input")[0].Change("Galadriel");
             comp.FindAll("div input")[1].Change(1);
@@ -867,7 +973,7 @@ namespace MudBlazor.UnitTests.Components
             //open edit dialog
             dataGrid.FindAll("tbody tr")[1].Click();
             //No close button
-            comp.FindAll("button[aria-label=\"close\"]").Should().BeEmpty();
+            comp.FindAll("button[aria-label=\"Close dialog\"]").Should().BeEmpty();
             //edit data
             comp.FindAll("div input")[0].Change("Galadriel");
             comp.FindAll("div input")[1].Change("Steve");
@@ -3772,10 +3878,10 @@ namespace MudBlazor.UnitTests.Components
             //check if dialog is open
             comp.FindAll("div.mud-dialog-container").Should().NotBeEmpty();
             //find button with arialabel close in dialog
-            var closeButton = comp.Find("button[aria-label=\"close\"]");
+            var closeButton = comp.Find("button[aria-label=\"Close dialog\"]");
             closeButton.Should().NotBeNull();
             //click close button
-            comp.Find("button[aria-label=\"close\"]").Click();
+            comp.Find("button[aria-label=\"Close dialog\"]").Click();
             //check if dialog is closed
             comp.FindAll("div.mud-dialog-container").Should().BeEmpty();
         }
