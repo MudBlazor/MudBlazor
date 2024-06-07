@@ -14,6 +14,7 @@ namespace MudBlazor.Services
         Task<BoundingClientRect> Observe(ElementReference element);
         Task<IEnumerable<BoundingClientRect>> Observe(IEnumerable<ElementReference> elements);
         Task Unobserve(ElementReference element);
+        Task Resync();
 
         double GetWidth(ElementReference reference);
         double GetHeight(ElementReference reference);
