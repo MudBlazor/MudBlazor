@@ -6,8 +6,7 @@ class MudInput {
     resetValue(id) {
         let input = document.getElementById(id);
         if (input) {
-            input.value = null;
-            console.log("yup, cleared.")
+            input.value = '';
         }
     }
 }
