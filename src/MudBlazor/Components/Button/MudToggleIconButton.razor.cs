@@ -112,13 +112,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Button.Behavior)]
         public bool ClickPropagation { get; set; }
 
-        /// <summary>
-        /// Used instead of <see cref="MudComponentBase.UserAttributes"/> when the button is in the toggled state.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.ComponentBase.Common)]
-        public Dictionary<string, object?> ToggledUserAttributes { get; set; } = new();
-
         public Task Toggle()
         {
             return SetToggledAsync(!Toggled);
