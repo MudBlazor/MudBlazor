@@ -28,7 +28,7 @@ namespace MudBlazor
         protected internal override void SetProperty(object item, object value)
         {
         }
-        
+
         /// <summary>
         /// Allows filters to be used on this column.
         /// </summary>
