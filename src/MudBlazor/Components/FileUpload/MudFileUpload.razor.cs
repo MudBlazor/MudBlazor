@@ -149,7 +149,7 @@ namespace MudBlazor
         {
             _value = default;
             await NotifyValueChangedAsync();
-            await JsRuntime.InvokeVoidAsync("mudInput.resetValue", _id);
+            await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInput.resetValue", _id);
         }
 
         public async Task OpenFilePickerAsync()
