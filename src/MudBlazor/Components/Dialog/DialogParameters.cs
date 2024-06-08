@@ -11,6 +11,12 @@ namespace MudBlazor
     /// </summary>
     public class DialogParameters : IEnumerable<KeyValuePair<string, object>>
     {
+        /// <summary>
+        /// The default dialog parameters.
+        /// This field is only intended for parameters that do not differ from their default values.
+        /// </summary>
+        internal static readonly DialogParameters Default = new();
+
         internal Dictionary<string, object> _parameters = new();
 
         /// <summary>

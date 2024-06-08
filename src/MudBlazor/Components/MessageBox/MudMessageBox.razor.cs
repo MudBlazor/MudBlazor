@@ -5,9 +5,10 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
+#nullable enable
+
 namespace MudBlazor
 {
-#nullable enable
     public partial class MudMessageBox : MudComponentBase
     {
         private readonly ParameterState<bool> _visibleState;
