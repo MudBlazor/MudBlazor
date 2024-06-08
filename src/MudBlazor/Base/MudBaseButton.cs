@@ -28,7 +28,8 @@ namespace MudBlazor
         /// The HTML tag rendered for this component.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>button</c>; or <c>a</c> if <see cref="Href"/> is set.
+        /// Defaults to <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Button"><c>button</c></see>,
+        /// or <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a"><c>a</c></see> if <see cref="Href"/> is set.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]

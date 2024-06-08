@@ -9,9 +9,9 @@ namespace MudBlazor
     /// Represents a button for actions, links, and commands.
     /// </summary>
     /// <remarks>
-    /// Creates a <c>button</c> element (unless <c>Href</c> is set).<br/>
-    /// You can add attributes like `title`, `aria-label`, and others.
-    /// Find more at <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button"/>.
+    /// Creates a <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Button">button</see> element,
+    /// or <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a">anchor</see> if <c>Href</c> is set.<br/>
+    /// You can directly add attributes like <c>title</c> or <c>aria-label</c>.
     /// </remarks>
     public partial class MudButton : MudBaseButton, IHandleEvent
     {
