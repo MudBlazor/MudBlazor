@@ -1995,7 +1995,7 @@ namespace MudBlazor
                 group.Expanded = true;
                 _groupExpansionsDict[group.Grouping.Key] = true;
             }
-            await InvokeAsync(()=>GroupItems());
+            await InvokeAsync(() => GroupItems());
         }
 
         /// <summary>
@@ -2011,7 +2011,7 @@ namespace MudBlazor
                 group.Expanded = false;
                 _groupExpansionsDict[group.Grouping.Key] = false;
             }
-            await InvokeAsync(()=>GroupItems());
+            await InvokeAsync(() => GroupItems());
         }
 
         #endregion
