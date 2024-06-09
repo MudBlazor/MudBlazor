@@ -20,8 +20,6 @@
 
     public class TreeItemData : TreeItemData<string>
     {
-        public HashSet<TreeItemData> TreeItems { get; set; } = new();
-
         public TreeItemData(string text, string icon) : base(text)
         {
             Text = text;
