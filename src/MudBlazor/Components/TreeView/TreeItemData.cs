@@ -4,13 +4,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MudBlazor;
-#nullable enable
 
+#nullable enable
 public class TreeItemData<T> : IEquatable<TreeItemData<T>>
 {
     public TreeItemData(T? value)
@@ -44,30 +41,19 @@ public class TreeItemData<T> : IEquatable<TreeItemData<T>>
         {
             return true;
         }
+
         return EqualityComparer<T>.Default.Equals(Value, other.Value);
     }
 
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(null, obj))
-        {
-            return false;
-        }
-        if (ReferenceEquals(this, obj))
-        {
-            return true;
-        }
-        if (obj.GetType() != this.GetType())
-        {
-            return false;
-        }
-        return Equals((TreeItemData<T>)obj);
-    }
+    public override bool Equals(object? obj) => obj is TreeItemData<T> treeItemData && Equals(treeItemData);
 
     public override int GetHashCode()
     {
         if (Value is null)
+        {
             return 0;
+        }
+
         return EqualityComparer<T>.Default.GetHashCode(Value);
     }
 }
