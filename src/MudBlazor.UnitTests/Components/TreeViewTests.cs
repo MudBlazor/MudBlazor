@@ -499,6 +499,13 @@ namespace MudBlazor.UnitTests.Components
             Equals(new TreeItemData<int>(17), new TreeItemData<int>(17)).Should().Be(true);
             Equals(new TreeItemData<int>(17), new TreeItemData<int>(18)).Should().Be(false);
             Equals(new TreeItemData<int>(17), null).Should().Be(false);
+            var x = new TreeItemData<int>(17);
+            Equals(x, x).Should().Be(true);
+            x.Equals(x).Should().Be(true);
+            x.Equals(null).Should().Be(false);
+            new TreeItemData<string>(null).GetHashCode().Should().Be(0);
+            new TreeItemData<string>(null).Equals(new TreeItemData<string>(null)).Should().Be(true);
+            new TreeItemData<int>().Value.Should().Be(default);
         }
 
         [Test]

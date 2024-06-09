@@ -10,6 +10,8 @@ namespace MudBlazor;
 #nullable enable
 public class TreeItemData<T> : IEquatable<TreeItemData<T>>
 {
+    public TreeItemData() : this(default) { }
+
     public TreeItemData(T? value)
     {
         Value = value;
