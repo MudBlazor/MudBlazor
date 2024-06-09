@@ -465,6 +465,43 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void TreeViewTreeItemDataTest()
+        {
+            // test default values
+            new TreeItemData<int>(69).Expanded.Should().Be(false);
+            new TreeItemData<int>(69).Selected.Should().Be(false);
+            new TreeItemData<int>(69).Expandable.Should().Be(true);
+            new TreeItemData<int>(69).Value.Should().Be(69);
+            new TreeItemData<int>(69).Text.Should().Be(null);
+            new TreeItemData<int>(69).Icon.Should().Be(null);
+            new TreeItemData<int>(69).HasChildren.Should().Be(false);
+            new TreeItemData<int>(69).Children.Should().BeNull();
+            var data = new TreeItemData<string>("val")
+            {
+                Icon = "i",
+                Text = "t",
+                Expandable = false,
+                Expanded = true,
+                Selected = true,
+                Children = [new TreeItemData<string>("x")]
+            };
+            data.Value.Should().Be("val");
+            data.Icon.Should().Be("i");
+            data.Text.Should().Be("t");
+            data.Expandable.Should().Be(false);
+            data.Expanded.Should().Be(true);
+            data.Selected.Should().Be(true);
+            data.HasChildren.Should().Be(true);
+            data.Children.Count.Should().Be(1);
+            new TreeItemData<int>(17).Should().Be(new TreeItemData<int>(17));
+            new TreeItemData<int>(17).Should().NotBe(new TreeItemData<int>(77));
+            new TreeItemData<int>(17).GetHashCode().Should().Be(17.GetHashCode());
+            Equals(new TreeItemData<int>(17), new TreeItemData<int>(17)).Should().Be(true);
+            Equals(new TreeItemData<int>(17), new TreeItemData<int>(18)).Should().Be(false);
+            Equals(new TreeItemData<int>(17), null).Should().Be(false);
+        }
+
+        [Test]
         public void TreeViewItem_DoubleClick_CheckExpanded()
         {
             var comp = Context.RenderComponent<TreeViewTest3>();
