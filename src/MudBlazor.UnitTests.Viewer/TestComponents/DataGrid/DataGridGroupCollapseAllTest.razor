@@ -22,8 +22,8 @@
 </MudDataGrid>
 
 <div class="d-flex flex-wrap mt-4">
-	<MudButton Class="expand-all" OnClick="@ExpandAllGroups" Color="@Color.Primary">Expand All</MudButton>
-	<MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary">Collapse All</MudButton>
+	<MudButton Class="expand-all" OnClick="@ExpandAllGroupsAsync" Color="@Color.Primary">Expand All</MudButton>
+	<MudButton OnClick="@CollapseAllGroupsAsync" Color="@Color.Primary">Collapse All</MudButton>
 	<MudButton OnClick="@RefreshList" Color="@Color.Primary">Refresh</MudButton>
 </div>
 
@@ -57,13 +57,13 @@
 		Fruits = Fruits.Select(x => new TestObject(x.Name, x.Category)).ToList();
 	}
 
-	public void ExpandAllGroups()
+	public async Task ExpandAllGroupsAsync()
 	{
-		dataGrid?.ExpandAllGroups();
+        await dataGrid?.ExpandAllGroupsAsync();
 	}
 
-	public void CollapseAllGroups()
+	public async Task CollapseAllGroupsAsync()
 	{
-		dataGrid?.CollapseAllGroups();
+        await dataGrid?.CollapseAllGroupsAsync();
 	}
 }

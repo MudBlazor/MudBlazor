@@ -36,8 +36,8 @@
 <div class="d-flex flex-wrap mt-4">
     <MudSwitch T="bool" @bind-Value="_customizeGroupTemplate" Color="@Color.Primary">Customize Group Template</MudSwitch>
     <MudSwitch T="bool" Value="@_customizeGroupBy" Color="@Color.Primary" ValueChanged="@CustomizeByGroupChanged">Customize Group By</MudSwitch>
-    <MudButton OnClick="@ExpandAllGroups" Color="@Color.Primary">Expand All</MudButton>
-    <MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary">Collapse All</MudButton>
+    <MudButton OnClick="@ExpandAllGroupsAsync" Color="@Color.Primary">Expand All</MudButton>
+    <MudButton OnClick="@CollapseAllGroupsAsync" Color="@Color.Primary">Collapse All</MudButton>
 </div>
 
 @code {
@@ -65,14 +65,14 @@
         Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
     }
 
-    void ExpandAllGroups()
+    async Task ExpandAllGroupsAsync()
     {
-        dataGrid?.ExpandAllGroups();
+        await dataGrid?.ExpandAllGroupsAsync();
     }
 
-    void CollapseAllGroups()
+    async Task CollapseAllGroupsAsync()
     {
-        dataGrid?.CollapseAllGroups();
+        await dataGrid?.CollapseAllGroupsAsync();
     }
 
     void CustomizeByGroupChanged(bool isChecked)

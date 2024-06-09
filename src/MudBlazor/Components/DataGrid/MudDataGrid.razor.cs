@@ -1988,7 +1988,7 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="Groupable"/> is <c>true</c>.
         /// </remarks>
-        public async void ExpandAllGroups()
+        public async Task ExpandAllGroupsAsync()
         {
             foreach (var group in _allGroups)
             {
@@ -2004,7 +2004,7 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="Groupable"/> is <c>true</c>.
         /// </remarks>
-        public async void CollapseAllGroups()
+        public async Task CollapseAllGroupsAsync()
         {
             foreach (var group in _allGroups)
             {

@@ -3601,7 +3601,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedTest.Fruit>>();
 
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(7);
-            comp.Instance.CollapseAllGroups();
+            await comp.Instance.CollapseAllGroupsAsync();
             dataGrid.Render();
             // after all groups are collapsed
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
@@ -3619,7 +3619,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedAsyncTest.Fruit>>();
 
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
-            comp.Instance.CollapseAllGroups();
+            await comp.Instance.CollapseAllGroupsAsync();
             dataGrid.Render();
             // after all groups are collapsed
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
@@ -3637,7 +3637,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedServerDataTest.Fruit>>();
 
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
-            comp.Instance.CollapseAllGroups();
+            await comp.Instance.CollapseAllGroupsAsync();
             dataGrid.Render();
             // after all groups are collapsed
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
@@ -3654,7 +3654,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseTest.Fruit>>();
 
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
-            comp.Instance.ExpandAllGroups();
+            await comp.Instance.ExpandAllGroupsAsync();
             dataGrid.Render();
             // after all groups are expanded
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(7);
@@ -3672,7 +3672,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseAsyncTest.Fruit>>();
 
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
-            dataGrid.Instance.ExpandAllGroups();
+            await dataGrid.Instance.ExpandAllGroupsAsync();
             dataGrid.Render();
             // after all groups are expanded
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
@@ -3690,7 +3690,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseServerDataTest.Fruit>>();
 
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
-            dataGrid.Instance.ExpandAllGroups();
+            await dataGrid.Instance.ExpandAllGroupsAsync();
             dataGrid.Render();
             // after all groups are expanded
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
@@ -3707,10 +3707,10 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupCollapseAllTest.TestObject>>();
 
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
-            comp.Instance.ExpandAllGroups();
+            await comp.Instance.ExpandAllGroupsAsync();
             comp.Render();
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(15);
-            comp.Instance.CollapseAllGroups();
+            await comp.Instance.CollapseAllGroupsAsync();
             comp.Render();
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
             comp.Instance.RefreshList();
@@ -3726,13 +3726,13 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandAllCollapseAllTest.Element>>();
 
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
-            comp.Instance.ExpandAllGroups();
+            await comp.Instance.ExpandAllGroupsAsync();
             comp.Render();
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(14);
             await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
             await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.Next));
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(18);
-            comp.Instance.CollapseAllGroups();
+            await comp.Instance.CollapseAllGroupsAsync();
             await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
             comp.Instance.RefreshList();
@@ -4130,7 +4130,7 @@ namespace MudBlazor.UnitTests.Components
             rows.Count.Should().Be(12, because: "1 header row + 10 data rows + 1 footer row");
             var cells = dataGrid.FindAll("td");
             cells.Count.Should().Be(10, because: "We have 10 data rows with one group collapsed");
-            dataGrid.Instance.ExpandAllGroups();
+            await dataGrid.Instance.ExpandAllGroupsAsync();
             rows = dataGrid.FindAll("tr");
             rows.Count.Should().Be(32, because: "1 header row + 10 data rows + 1 footer row + 10 group rows + 10 footer group rows");
             cells = dataGrid.FindAll("td");
@@ -4161,7 +4161,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () => await dataGrid.Instance.ReloadServerData());
             cells = dataGrid.FindAll("td");
             cells.Count.Should().Be(10, because: "We have 10 data rows with one group collapsed from next page");
-            dataGrid.Instance.ExpandAllGroups();
+            await dataGrid.Instance.ExpandAllGroupsAsync();
             cells = dataGrid.FindAll("td");
             cells.Count.Should().Be(30, because: "We have next 10 data rows with one group + 10*2 cells inside groups");
             //cells should have data from next page
