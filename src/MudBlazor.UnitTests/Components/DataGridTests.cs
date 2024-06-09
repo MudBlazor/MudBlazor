@@ -4121,5 +4121,71 @@ namespace MudBlazor.UnitTests.Components
             statusHeaderCell.Instance.hasFilter.Should().BeFalse();
         }
 
+        [Test]
+        public async Task DataGridGroupedWithServerDataPaginationTest()
+        {
+            var comp = Context.RenderComponent<DataGridGroupableServerDataTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupableServerDataTest.Item>>();
+            var rows = dataGrid.FindAll("tr");
+            rows.Count.Should().Be(12, because: "1 header row + 10 data rows + 1 footer row");
+            var cells = dataGrid.FindAll("td");
+            cells.Count.Should().Be(10, because: "We have 10 data rows with one group collapsed");
+            dataGrid.Instance.ExpandAllGroups();
+            rows = dataGrid.FindAll("tr");
+            rows.Count.Should().Be(32, because: "1 header row + 10 data rows + 1 footer row + 10 group rows + 10 footer group rows");
+            cells = dataGrid.FindAll("td");
+            cells.Count.Should().Be(30, because: "We have 10 data rows with one group + 10*2 cells inside groups");
+            //check cells
+            cells[0].TextContent.Should().Be("Number: 1"); 
+            cells[1].TextContent.Should().Be("Hydrogen"); cells[2].TextContent.Should().Be("1");
+            cells[3].TextContent.Should().Be("Number: 2"); 
+            cells[4].TextContent.Should().Be("Helium"); cells[5].TextContent.Should().Be("2");
+            cells[6].TextContent.Should().Be("Number: 3"); 
+            cells[7].TextContent.Should().Be("Lithium"); cells[8].TextContent.Should().Be("3");
+            cells[9].TextContent.Should().Be("Number: 4"); 
+            cells[10].TextContent.Should().Be("Beryllium"); cells[11].TextContent.Should().Be("4");
+            cells[12].TextContent.Should().Be("Number: 5"); 
+            cells[13].TextContent.Should().Be("Boron"); cells[14].TextContent.Should().Be("5");
+            cells[15].TextContent.Should().Be("Number: 6"); 
+            cells[16].TextContent.Should().Be("Carbon"); cells[17].TextContent.Should().Be("6");
+            cells[18].TextContent.Should().Be("Number: 7"); 
+            cells[19].TextContent.Should().Be("Nitrogen"); cells[20].TextContent.Should().Be("7");
+            cells[21].TextContent.Should().Be("Number: 8"); 
+            cells[22].TextContent.Should().Be("Oxygen"); cells[23].TextContent.Should().Be("8");
+            cells[24].TextContent.Should().Be("Number: 9"); 
+            cells[25].TextContent.Should().Be("Fluorine"); cells[26].TextContent.Should().Be("9");
+            cells[27].TextContent.Should().Be("Number: 10"); 
+            cells[28].TextContent.Should().Be("Neon"); cells[29].TextContent.Should().Be("10");
+            //get next page
+            dataGrid.Instance.CurrentPage = 1;
+            await comp.InvokeAsync(async ()=>await dataGrid.Instance.ReloadServerData());
+            cells = dataGrid.FindAll("td");
+            cells.Count.Should().Be(10, because: "We have 10 data rows with one group collapsed from next page");
+            dataGrid.Instance.ExpandAllGroups();
+            cells = dataGrid.FindAll("td");
+            cells.Count.Should().Be(30, because: "We have next 10 data rows with one group + 10*2 cells inside groups");
+            //cells should have data from next page
+            cells[0].TextContent.Should().Be("Number: 11"); 
+            cells[1].TextContent.Should().Be("Sodium"); cells[2].TextContent.Should().Be("11");
+            cells[3].TextContent.Should().Be("Number: 12"); 
+            cells[4].TextContent.Should().Be("Magnesium"); cells[5].TextContent.Should().Be("12");
+            cells[6].TextContent.Should().Be("Number: 13"); 
+            cells[7].TextContent.Should().Be("Aluminium"); cells[8].TextContent.Should().Be("13");
+            cells[9].TextContent.Should().Be("Number: 14"); 
+            cells[10].TextContent.Should().Be("Silicon"); cells[11].TextContent.Should().Be("14");
+            cells[12].TextContent.Should().Be("Number: 15"); 
+            cells[13].TextContent.Should().Be("Phosphorus"); cells[14].TextContent.Should().Be("15");
+            cells[15].TextContent.Should().Be("Number: 16"); 
+            cells[16].TextContent.Should().Be("Sulfur"); cells[17].TextContent.Should().Be("16");
+            cells[18].TextContent.Should().Be("Number: 17"); 
+            cells[19].TextContent.Should().Be("Chlorine"); cells[20].TextContent.Should().Be("17");
+            cells[21].TextContent.Should().Be("Number: 18"); 
+            cells[22].TextContent.Should().Be("Argon"); cells[23].TextContent.Should().Be("18");
+            cells[24].TextContent.Should().Be("Number: 19"); 
+            cells[25].TextContent.Should().Be("Potassium"); cells[26].TextContent.Should().Be("19");
+            cells[27].TextContent.Should().Be("Number: 20"); 
+            cells[28].TextContent.Should().Be("Calcium"); cells[29].TextContent.Should().Be("20");
+        }
+
     }
 }

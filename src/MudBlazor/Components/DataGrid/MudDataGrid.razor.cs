@@ -1988,13 +1988,14 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="Groupable"/> is <c>true</c>.
         /// </remarks>
-        public void ExpandAllGroups()
+        public async void ExpandAllGroups()
         {
             foreach (var group in _allGroups)
             {
                 group.Expanded = true;
                 _groupExpansionsDict[group.Grouping.Key] = true;
             }
+            await InvokeAsync(()=>GroupItems());
         }
 
         /// <summary>
@@ -2003,13 +2004,14 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="Groupable"/> is <c>true</c>.
         /// </remarks>
-        public void CollapseAllGroups()
+        public async void CollapseAllGroups()
         {
             foreach (var group in _allGroups)
             {
                 group.Expanded = false;
                 _groupExpansionsDict[group.Grouping.Key] = false;
             }
+            await InvokeAsync(()=>GroupItems());
         }
 
         #endregion
