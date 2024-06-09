@@ -24,8 +24,9 @@
     public class TreeItemData : TreeItemData<string>
     {
         public TreeItemData(string value) : base(value)
-        {            
-            Text = value;        }
+        {
+            Text = value;
+        }
     }
 
     protected override async Task OnInitializedAsync()
@@ -37,28 +38,31 @@
     {
         if (parentValue == null) {
             if (SimulateUpdateRoot == false) {
-                return Task.FromResult((IReadOnlyCollection<TreeItemData<string>>)[
+                return Task.FromResult((IReadOnlyCollection<TreeItemData<string>>) [
                     new TreeItemData("This is item one"),
                     new TreeItemData("This is item two"),
                     new TreeItemData("This is item three"),
-                    new TreeItemData("This is item six")]);
+                    new TreeItemData("This is item six")
+                ]);
             }
-            return Task.FromResult((IReadOnlyCollection<TreeItemData<string>>)[
+            return Task.FromResult((IReadOnlyCollection<TreeItemData<string>>) [
                 new TreeItemData("This is item one"),
                 new TreeItemData("This is item 2"),
                 new TreeItemData("This is item three"),
-                new TreeItemData("This is item six")]);
+                new TreeItemData("This is item six")
+            ]);
         }
         if (parentValue == "This is item three") {
-            if (SimulateUpdate3 == false)
-            {
-                return Task.FromResult((IReadOnlyCollection<TreeItemData<string>>)[
+            if (SimulateUpdate3 == false) {
+                return Task.FromResult((IReadOnlyCollection<TreeItemData<string>>) [
                     new TreeItemData("This is item four"),
-                    new TreeItemData("This is item five")]);
+                    new TreeItemData("This is item five")
+                ]);
             }
-            return Task.FromResult((IReadOnlyCollection<TreeItemData<string>>)[
+            return Task.FromResult((IReadOnlyCollection<TreeItemData<string>>) [
                 new TreeItemData("This is item 4"),
-                new TreeItemData("This is item 5")]);
+                new TreeItemData("This is item 5")
+            ]);
         }
         return Task.FromResult((IReadOnlyCollection<TreeItemData<string>>)[]);
     }

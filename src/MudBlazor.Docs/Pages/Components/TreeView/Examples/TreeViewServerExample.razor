@@ -16,8 +16,9 @@
     public class ExampleTreeItemData : TreeItemData<string>
     {
         public ExampleTreeItemData(string value) : base(value)
-        {            
-            Text = value;        }
+        {
+            Text = value;
+        }
 
         public int? Number { get; set; }
     }
@@ -30,11 +31,11 @@
                 Icon = Icons.Material.Filled.Label,
                 Expanded = true,
                 Children = [
-                    new ExampleTreeItemData("Social") { Icon = Icons.Material.Filled.Group, Number = 90 },
-                    new ExampleTreeItemData("Updates") { Icon = Icons.Material.Filled.Info, Number = 2294 },
-                    new ExampleTreeItemData("Forums") { Icon = Icons.Material.Filled.QuestionAnswer, Number = 3566 },
-                    new ExampleTreeItemData("Promotions") { Icon = Icons.Material.Filled.LocalOffer, Number = 733 }
-                ]
+                        new ExampleTreeItemData("Social") { Icon = Icons.Material.Filled.Group, Number = 90 },
+                        new ExampleTreeItemData("Updates") { Icon = Icons.Material.Filled.Info, Number = 2294 },
+                        new ExampleTreeItemData("Forums") { Icon = Icons.Material.Filled.QuestionAnswer, Number = 3566 },
+                        new ExampleTreeItemData("Promotions") { Icon = Icons.Material.Filled.LocalOffer, Number = 733 }
+                    ]
             });
         TreeItems.Add(new ExampleTreeItemData("History") { Icon = Icons.Material.Filled.Label, Expandable = false });
     }
