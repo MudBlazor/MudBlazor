@@ -1331,6 +1331,7 @@ namespace MudBlazor
                 StateHasChanged();
                 PagerStateHasChangedEvent?.Invoke();
             }
+            GroupItems();
         }
 
         internal void AddColumn(Column<T> column)
