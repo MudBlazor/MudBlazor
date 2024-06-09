@@ -11,7 +11,7 @@
                     You can play with MudBlazor online directly in your browser with TryMudBlazor, no installation required.
                 </Description>
             </SectionHeader>
-            <MudButton DisableElevation="true" EndIcon="@Icons.Material.Rounded.OpenInNew" Variant="Variant.Filled" Color="Color.Primary" Class="docs-no-text-transform" Link="https://try.mudblazor.com/" Target="_blank">Play on TryMudBlazor</MudButton>
+            <MudButton DropShadow="false" EndIcon="@Icons.Material.Rounded.OpenInNew" Variant="Variant.Filled" Color="Color.Primary" Class="docs-no-text-transform" Href="https://try.mudblazor.com/" Target="_blank">Play on TryMudBlazor</MudButton>
         </DocsPageSection>
         
         <DocsPageSection>
@@ -45,13 +45,17 @@
                     Open a terminal and install them with this command.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="InstallationTemplateInstallExample" />
+            <SectionContent Code="@nameof(InstallationTemplateInstallExample)" />
             <SectionHeader Class="mt-6">
                 <Description>
                     Navigate to a folder where you want your project and run the following command to create a new project. You can run <CodeInline>dotnet new mudblazor --help</CodeInline> to see all available options.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="InstallationTemplateUsageExample" />
+            <SectionContent Codes="@(new[] {
+                new CodeFile("Auto", nameof(InstallationTemplateUsageExampleAuto)),
+                new CodeFile("WebAssembly", nameof(InstallationTemplateUsageExampleWasm)),
+                new CodeFile("Server", nameof(InstallationTemplateUsageExampleServer))
+            })" />
         </DocsPageSection>
         
         <DocsPageSection>
@@ -64,28 +68,28 @@
                     <SectionHeader Title="Install the package">
                         <Description>Find the package through NuGet Package Manager or install it with following command.</Description>
                     </SectionHeader>
-                    <SectionContent Code="InstallationManualPackageExample" />
+                    <SectionContent Code="@nameof(InstallationManualPackageExample)" />
                 </DocsPageSection>
 
                 <DocsPageSection>
                     <SectionHeader Title="Add Imports">
                         <Description>After the package is added, you need to add the following in your <CodeInline>_Imports.razor</CodeInline></Description>
                     </SectionHeader>
-                    <SectionContent Code="InstallationManualImportsExample"/>
+                    <SectionContent Code="@nameof(InstallationManualImportsExample)"/>
                 </DocsPageSection>
 
                 <DocsPageSection>
                     <SectionHeader Title="Add font and style references">
-                        <Description>Add the following to your HTML head section, it's either <CodeInline>index.html</CodeInline> or <CodeInline>_Layout.cshtml</CodeInline>/<CodeInline>_Host.cshtml</CodeInline> depending on whether you're running WebAssembly or Server.</Description>
+                        <Description>Add the following to your HTML head section, it's either <CodeInline>index.html</CodeInline> or <CodeInline>_Layout.cshtml</CodeInline>/<CodeInline>_Host.cshtml</CodeInline>/<CodeInline>App.razor</CodeInline> depending on whether you're running WebAssembly or Server.</Description>
                     </SectionHeader>
-                    <SectionContent Code="InstallationManualCssFontsExample"/>
+                    <SectionContent Code="@nameof(InstallationManualCssFontsExample)"/>
                 </DocsPageSection>
 
                 <DocsPageSection>
                     <SectionHeader Title="Add script reference">
                         <Description>In the same file but located in the end of it add the MudBlazor js file, it should be in the same location as the default blazor script.</Description>
                     </SectionHeader>
-                    <SectionContent Code="InstallScriptManual"/>
+                    <SectionContent Code="@nameof(InstallScriptManual)"/>
                 </DocsPageSection>
                 
                 <DocsPageSection>
@@ -99,16 +103,16 @@
 
                 <DocsPageSection>
                     <SectionHeader Title="Register Services">
-                        <Description>Add the following in <CodeInline>Program.cs</CodeInline></Description>
+                        <Description>Add the following in <CodeInline>Program.cs</CodeInline>:</Description>
                     </SectionHeader>
-                    <SectionContent Codes="@(new[] {new CodeFile(".NET 6", "InstallServicesNET6Manual"), new CodeFile(".NET 5 Wasm", "InstallServicesNET5WasmManual"), new CodeFile(".NET 5 Server", "InstallServicesNET5ServerManual")})"/>
+                    <SectionContent Code="@nameof(InstallServicesNET6Manual)"/>
                 </DocsPageSection>
                 
                 <DocsPageSection>
                     <SectionHeader Title="Add Components">
                         <Description>Add the following components to your <CodeInline>MainLayout.razor</CodeInline> note that the <CodeInline>ThemeProvider</CodeInline> is essential for MudBlazor but the rest is optional.</Description>
                     </SectionHeader>
-                    <SectionContent Code="InstallationManualComponentsExample"/>
+                    <SectionContent Code="@nameof(InstallationManualComponentsExample)"/>
                 </DocsPageSection>
 
             </SectionSubGroups>
@@ -119,13 +123,13 @@
                 <Description>Now you know how to install MudBlazor, but a common pitfall is to jump straight into different components. We recommend that you read our Layout page to learn about basic project structure and different ways to use our main layout components.</Description>
             </SectionHeader>
             <div class="d-flex flex-row flex-wrap mud-width-full">
-                <MudList Clickable="true" Class="flex-grow-1 flex-shrink-0 mud-paper-outlined rounded py-0 mr-2">
+                <MudList T="string" Class="flex-grow-1 flex-shrink-0 mud-paper-outlined rounded py-0 mr-2">
                     <MudListItem Icon="@Icons.Material.Filled.AutoAwesomeMosaic" IconColor="Color.Primary" Class="pl-6" Href="/getting-started/layouts">
                         <MudText Typo="Typo.body1">Layouts</MudText>
                         <MudText Typo="Typo.body2">Understand the structure</MudText>
                     </MudListItem>
                 </MudList>
-                <MudList Clickable="true" Class="flex-grow-1 flex-shrink-0 mud-paper-outlined rounded py-0 ml-2">
+                <MudList T="string" Class="flex-grow-1 flex-shrink-0 mud-paper-outlined rounded py-0 ml-2">
                     <MudListItem Icon="@Icons.Material.Filled.FilterFrames" IconColor="Color.Secondary" Class="pl-6" Href="/getting-started/wireframes">
                         <MudText Typo="Typo.body1">Wireframes</MudText>
                         <MudText Typo="Typo.body2">Copy, paste layouts</MudText>

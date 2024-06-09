@@ -1,41 +1,73 @@
 ﻿@namespace MudBlazor
-@using System.Globalization;
+@using System.Globalization
+@using MudBlazor.Resources
 @using MudBlazor.Utilities
 @inherits MudPicker<MudColor>
+@inject InternalMudLocalizer Localizer
 
 @Render
 
 @code {
 
-    protected override RenderFragment PickerContent=> 
+    protected override RenderFragment PickerContent =>
     @<CascadingValue Value="@this" IsFixed="true">
-         <MudPickerToolbar DisableToolbar="@DisableToolbar" Class="mud-picker-color-toolbar">
-             @if(PickerVariant != PickerVariant.Static)
-             { 
-                <MudIconButton Class="pa-1 mud-close-picker-button" Size="Size.Small" Color="Color.Inherit" Icon="@CloseIcon" OnClick="@GetEventCallback()" />
-             }
-             <MudSpacer />
-             <MudIconButton Class="pa-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Spectrum)" Icon="@SpectrumIcon" OnClick="(() => ChangeView(ColorPickerView.Spectrum))" />
-             <MudIconButton Class="pa-1 mx-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Grid)" Icon="@GridIcon" OnClick="(() => ChangeView(ColorPickerView.Grid))" />
-             <MudIconButton Class="pa-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Palette)" Icon="@PaletteIcon" OnClick="(() => ChangeView(ColorPickerView.Palette))" />
-         </MudPickerToolbar>
+        <MudPickerToolbar ShowToolbar="@ShowToolbar" Class="mud-picker-color-toolbar">
+            @if (PickerVariant != PickerVariant.Static)
+            {
+                <MudIconButton Class="pa-1 mud-close-picker-button"
+                               Size="Size.Small"
+                               Color="Color.Inherit"
+                               Icon="@CloseIcon"
+                               OnClick="@GetEventCallback()"
+                               aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_Close)]" />
+            }
+            <MudSpacer />
+            <MudIconButton Class="pa-1"
+                           Size="Size.Small"
+                           Color="GetButtonColor(ColorPickerView.Spectrum)"
+                           Icon="@SpectrumIcon"
+                           OnClick="(() => ChangeView(ColorPickerView.Spectrum))"
+                           aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_SpectrumView)]" />
+            <MudIconButton Class="pa-1 mx-1"
+                           Size="Size.Small"
+                           Color="GetButtonColor(ColorPickerView.Grid)"
+                           Icon="@GridIcon"
+                           OnClick="(() => ChangeView(ColorPickerView.Grid))"
+                           aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_GridView)]" />
+            <MudIconButton Class="pa-1"
+                           Size="Size.Small"
+                           Color="GetButtonColor(ColorPickerView.Palette)"
+                           Icon="@PaletteIcon"
+                           OnClick="(() => ChangeView(ColorPickerView.Palette))"
+                           aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_PaletteView)]" />
+        </MudPickerToolbar>
         <MudPickerContent Class="mud-picker-color-content">
-            @if(!DisableColorField)
+            @if (ShowColorField)
             {
                 <div class="mud-picker-color-picker">
-					@if (_activeColorPickerView == ColorPickerView.Spectrum)
-					{
+                    @if (_activeColorPickerView == ColorPickerView.Spectrum)
+                    {
                         <div class="mud-picker-color-overlay" style="@($"background-color: {_baseColor.ToString(MudColorOutputFormats.RGB)}")">
                             <div class="mud-picker-color-overlay mud-picker-color-overlay-white">
                                 <div class="mud-picker-color-overlay mud-picker-color-overlay-black">
-                                    <div class="mud-picker-color-overlay" id="@_id" @onclick="OnColorOverlayClick">
-                                        <svg class="mud-picker-color-selector" height="26" width="26" style="transform: @GetSelectorLocation()" @onclick="OnSelectorClicked" @onclick:stopPropagation="true">
+                                    <div class="mud-picker-color-overlay"
+                                         id="@_id"
+                                         @onpointerdown="OnColorOverlayClick"
+                                         @onpointerup="OnColorOverlayClick"
+                                         @onpointermove="OnPointerMoveAsync">
+                                        <svg class="mud-picker-color-selector"
+                                             height="26"
+                                             width="26"
+                                             style="transform: @GetSelectorLocation()">
                                             <defs>
                                                 <filter id="mud-picker-color-selector-shadow" x="-50%" y="-50%" width="200%" height="200%">
                                                     <feGaussianBlur in="SourceAlpha" stdDeviation="1" />
                                                     <feOffset dx="0" dy="5" result="offsetblur" />
                                                     <feOffset dx="0" dy="-5" result="offsetblur" />
-                                                    <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
+                                                    <feMerge>
+                                                        <feMergeNode />
+                                                        <feMergeNode in="SourceGraphic" />
+                                                    </feMerge>
                                                 </filter>
                                             </defs>
                                             <circle r="10" cx="13" cy="13" stroke="white" stroke-width="1" fill="transparent" style="filter: url(#mud-picker-color-selector-shadow)" />
@@ -46,12 +78,15 @@
                             </div>
                         </div>
                     }
-                    @if(_activeColorPickerView is ColorPickerView.Grid or ColorPickerView.GridCompact)
+                    @if (_activeColorPickerView is ColorPickerView.Grid or ColorPickerView.GridCompact)
                     {
                         <div class="mud-picker-color-grid">
                             @foreach (var item in _gridList)
                             {
-                                <div class="@GetColorDotClass(item)" style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")" @onclick="@GetSelectPaletteColorCallback(item)"></div>
+                                <div class="@GetColorDotClass(item)"
+                                     style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")"
+                                     @onclick="@GetSelectPaletteColorCallback(item)"
+                                     aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_ColorDot)]"></div>
                             }
                         </div>
                     }
@@ -59,28 +94,46 @@
             }
             @if (_activeColorPickerView != ColorPickerView.GridCompact)
             {
-                @if (!DisableSliders || !DisableInputs || !DisablePreview)
+                @if (ShowSliders || ShowInputs || ShowPreview)
                 {
                     <div class="mud-picker-color-controls">
-                        @if (!DisableSliders || !DisablePreview)
+                        @if (ShowSliders || ShowPreview)
                         {
                             <div class="mud-picker-color-controls-row">
-                                @if (!DisablePreview)
+                                @if (ShowPreview)
                                 {
-                                    <div class="mud-picker-color-dot mud-picker-color-dot-current mud-ripple" @onclick="ToggleCollection">
+                                    <div class="mud-picker-color-dot mud-picker-color-dot-current mud-ripple"
+                                         @onclick="ToggleCollection"
+                                         aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_ToggleCurrentColor)]">
                                         <div class="mud-picker-color-fill" style="@($"background: {_value.ToString(MudColorOutputFormats.RGBA)};")"></div>
                                     </div>
                                 }
-                                @if (!DisableSliders && !_collectionOpen)
+                                @if (ShowSliders && !_collectionOpen)
                                 {
                                     <div class="mud-picker-color-sliders">
-										@if (_activeColorPickerView != ColorPickerView.Grid)
-										{
-                                            <MudSlider Class="mud-picker-color-slider hue" dir="ltr" T="int" Value="(int)_value.H" ValueChanged="UpdateBaseColorSlider" Step="1" Min="0" Max="360" />
-                                        }
-                                        @if (!DisableAlpha)
+                                        @if (_activeColorPickerView != ColorPickerView.Grid)
                                         {
-                                            <MudSlider Class="mud-picker-color-slider alpha" Value="_value.A" ValueChanged="SetAlpha" T="int"  Min="0" Max="255" Step="1" Style="@AlphaSliderStyle"  />
+                                            <MudSlider Class="mud-picker-color-slider hue"
+                                                       dir="ltr"
+                                                       T="int"
+                                                       Value="(int)_value.H"
+                                                       ValueChanged="UpdateBaseColorSlider"
+                                                       Step="1"
+                                                       Min="0"
+                                                       Max="360"
+                                                       aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_HueSlider)]" />
+                                        }
+                                        @if (ShowAlpha)
+                                        {
+                                            <MudSlider Class="mud-picker-color-slider alpha"
+                                                       Value="_value.A"
+                                                       ValueChanged="SetAlpha"
+                                                       T="int"
+                                                       Min="0"
+                                                       Max="255"
+                                                       Step="1"
+                                                       Style="@AlphaSliderStyle"
+                                                       aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_AlphaSlider)]" />
                                         }
                                     </div>
                                 }
@@ -89,57 +142,140 @@
                                     <div class="mud-picker-color-collection">
                                         @foreach (var item in Palette.Take(5))
                                         {
-                                            <div class="@GetColorDotClass(item)" style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")" @onclick="@GetSelectPaletteColorCallback(item)"></div>
+                                            <div class="@GetColorDotClass(item)"
+                                                 style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")"
+                                                 @onclick="@GetSelectPaletteColorCallback(item)"
+                                                 aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_PaletteColor)]"></div>
                                         }
                                     </div>
                                 }
                             </div>
                         }
-                        @if (!DisableInputs)
+                        @if (ShowInputs)
                         {
                             <div class="mud-picker-color-controls-row">
                                 <div class="mud-picker-color-inputs">
                                     @switch (ColorPickerMode)
                                     {
                                         case ColorPickerMode.RGB:
-                                            <MudNumericField Value="_value.R" T="int" ValueChanged="SetR" Class="mud-picker-color-inputfield" HelperText="R" Min="0" Max="255" Variant="Variant.Outlined" HideSpinButtons="true" />
-                                            <MudNumericField Value="_value.G" T="int" ValueChanged="SetG" Class="mud-picker-color-inputfield" HelperText="G" Min="0" Max="255" Variant="Variant.Outlined" HideSpinButtons="true" />
-                                            <MudNumericField Value="_value.B" T="int" ValueChanged="SetB" Class="mud-picker-color-inputfield" HelperText="B" Min="0" Max="255" Variant="Variant.Outlined" HideSpinButtons="true" />
+                                            <MudNumericField T="int"
+                                                             Value="_value.R"
+                                                             ValueChanged="SetR"
+                                                             Class="mud-picker-color-inputfield"
+                                                             HelperText="R"
+                                                             Min="0"
+                                                             Max="255"
+                                                             Variant="Variant.Outlined"
+                                                             HideSpinButtons="true"
+                                                             Required="@Required" />
+                                            <MudNumericField T="int"
+                                                             Value="_value.G"
+                                                             ValueChanged="SetG"
+                                                             Class="mud-picker-color-inputfield"
+                                                             HelperText="G"
+                                                             Min="0"
+                                                             Max="255"
+                                                             Variant="Variant.Outlined"
+                                                             HideSpinButtons="true"
+                                                             Required="@Required" />
+                                            <MudNumericField T="int"
+                                                             Value="_value.B"
+                                                             ValueChanged="SetB"
+                                                             Class="mud-picker-color-inputfield"
+                                                             HelperText="B"
+                                                             Min="0"
+                                                             Max="255"
+                                                             Variant="Variant.Outlined"
+                                                             HideSpinButtons="true"
+                                                             Required="@Required" />
                                             break;
                                         case ColorPickerMode.HSL:
-                                            <MudNumericField Value="@_value.H" T="double" ValueChanged="SetH" Class="mud-picker-color-inputfield" HelperText="H" Step="1" Min="0" Max="360" Variant="Variant.Outlined" HideSpinButtons="true" />
-                                            <MudNumericField Value="@_value.S" T="double" ValueChanged="SetS" Class="mud-picker-color-inputfield" HelperText="S" Step="0.01" Min="0" Max="100" Variant="Variant.Outlined" HideSpinButtons="true" />
-                                            <MudNumericField Value="@_value.L" T="double"  ValueChanged="SetL" Class="mud-picker-color-inputfield" HelperText="L"Step="0.01"  Min="0" Max="100" Variant="Variant.Outlined" HideSpinButtons="true" />
+                                            <MudNumericField T="double"
+                                                             Value="@_value.H"
+                                                             ValueChanged="SetH"
+                                                             Class="mud-picker-color-inputfield"
+                                                             HelperText="H"
+                                                             Step="1"
+                                                             Min="0"
+                                                             Max="360"
+                                                             Variant="Variant.Outlined"
+                                                             HideSpinButtons="true"
+                                                             Required="@Required" />
+                                            <MudNumericField T="double"
+                                                             Value="@_value.S"
+                                                             ValueChanged="SetS"
+                                                             Class="mud-picker-color-inputfield"
+                                                             HelperText="S"
+                                                             Step="0.01"
+                                                             Min="0"
+                                                             Max="100"
+                                                             Variant="Variant.Outlined"
+                                                             HideSpinButtons="true"
+                                                             Required="@Required" />
+                                            <MudNumericField T="double"
+                                                             Value="@_value.L"
+                                                             ValueChanged="SetL"
+                                                             Class="mud-picker-color-inputfield"
+                                                             HelperText="L"
+                                                             Step="0.01"
+                                                             Min="0"
+                                                             Max="100"
+                                                             Variant="Variant.Outlined"
+                                                             HideSpinButtons="true"
+                                                             Required="@Required" />
                                             break;
                                         case ColorPickerMode.HEX:
-                                            <MudTextField Value="@GetColorTextValue()" ValueChanged="SetInputString" T="string" Class="mud-picker-color-inputfield" Variant="Variant.Outlined" MaxLength="@GetHexColorInputMaxLength()" HelperText="HEX" />
+                                            <MudTextField T="string"
+                                                          Value="@GetColorTextValue()"
+                                                          ValueChanged="SetInputString"
+                                                          Class="mud-picker-color-inputfield"
+                                                          Variant="Variant.Outlined"
+                                                          MaxLength="@GetHexColorInputMaxLength()"
+                                                          HelperText="HEX"
+                                                          Required="@Required" />
                                             break;
                                         default:
                                             break;
                                     }
-                        
-                                    @if (!DisableAlpha && ColorPickerMode != ColorPickerMode.HEX)
+
+                                    @if (ShowAlpha && ColorPickerMode != ColorPickerMode.HEX)
                                     {
-                                        <MudNumericField Value="@(  Math.Round(_value.A / 255.0, 2))" T="double" ValueChanged="SetAlpha" Class="mud-picker-color-inputfield input-field-alpha" HelperText="A" Min="0" Max="1" Step="0.01" Variant="Variant.Outlined" HideSpinButtons="true" />
+                                        <MudNumericField T="double"
+                                                         Value="@(Math.Round(_value.A / 255.0, 2))"
+                                                         ValueChanged="SetAlpha"
+                                                         Class="mud-picker-color-inputfield input-field-alpha"
+                                                         HelperText="A"
+                                                         Min="0"
+                                                         Max="1"
+                                                         Step="0.01"
+                                                         Variant="Variant.Outlined"
+                                                         HideSpinButtons="true"
+                                                         Required="@Required" />
                                     }
                                 </div>
-                                @if (!DisableModeSwitch)
+                                @if (ShowModeSwitch)
                                 {
                                     <div class="mud-picker-control-switch">
-                                        <MudIconButton OnClick="ChangeMode" Icon="@ImportExportIcon" Class="pa-1 me-n1"></MudIconButton>
+                                        <MudIconButton OnClick="ChangeMode"
+                                                       Icon="@ImportExportIcon"
+                                                       Class="pa-1 me-n1"
+                                                       aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_ModeSwitch)]"></MudIconButton>
                                     </div>
                                 }
                             </div>
                         }
                     </div>
                 }
-				@if (_activeColorPickerView == ColorPickerView.Palette)
-				{
+                @if (_activeColorPickerView == ColorPickerView.Palette)
+                {
                     <div class="mud-picker-color-view">
                         <div class="mud-picker-color-view-collection">
                             @foreach (var item in Palette)
                             {
-                                <div class="@GetColorDotClass(item)" style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")" @onclick="@GetSelectPaletteColorCallback(item)"></div>
+                                <div class="@GetColorDotClass(item)"
+                                     style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")"
+                                     @onclick="@GetSelectPaletteColorCallback(item)"
+                                     aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_PaletteColor)]"></div>
                             }
                         </div>
                     </div>
@@ -147,5 +283,4 @@
             }
         </MudPickerContent>
     </CascadingValue>;
-    
 }

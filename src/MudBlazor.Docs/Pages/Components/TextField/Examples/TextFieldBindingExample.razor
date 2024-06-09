@@ -1,9 +1,9 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudTextField @bind-Value="@element.Name" Label="Name" Variant="Variant.Outlined" Margin="Margin.Dense"/>
-<MudTextField @bind-Value="@element.Mass" Label="Mass" Variant="Variant.Outlined" Margin="Margin.Dense"/>
-<MudTextField @bind-Value="@element.Electrons" Label="Electrons" Variant="Variant.Outlined" Margin="Margin.Dense"/>
-<MudTextField @bind-Value="@element.Changed" Format="yyyy/MM/dd" Label="Last Update" Variant="Variant.Outlined" Margin="Margin.Dense"/>
+<MudTextField @bind-Value="element.Name" Label="Name" Variant="Variant.Outlined" Margin="Margin.Dense"/>
+<MudTextField @bind-Value="element.Mass" Label="Mass" Variant="Variant.Outlined" Margin="Margin.Dense"/>
+<MudTextField @bind-Value="element.Electrons" Label="Electrons" Variant="Variant.Outlined" Margin="Margin.Dense"/>
+<MudTextField @bind-Value="element.Changed" Format="yyyy/MM/dd" Label="Last Update" Variant="Variant.Outlined" Margin="Margin.Dense"/>
 
 <div class="d-flex align-end justify-space-between mud-width-full">
     <div class="d-flex flex-column">
@@ -12,7 +12,7 @@
         <MudText><b>Electrons:</b> @element.Electrons</MudText>
         <MudText><b>Last Update:</b> @element.Changed.ToShortDateString()</MudText>
     </div>
-    <MudButton Variant="Variant.Filled" DisableElevation="true" OnClick="Reset">Reset Model</MudButton>
+    <MudButton Variant="Variant.Filled" DropShadow="false" OnClick="Reset">Reset Model</MudButton>
 </div>
 
 @code {

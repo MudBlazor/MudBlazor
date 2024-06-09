@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -8,12 +8,12 @@ namespace MudBlazor
 #nullable enable
     public partial class MudProgressLinear : MudComponentBase
     {
-        private double _min = 0.0;
-        private double _max = 100.0;
-        private double _value;
-        private double _bufferValue;
+        private readonly ParameterState<double> _minState;
+        private readonly ParameterState<double> _maxState;
+        private readonly ParameterState<double> _valueState;
+        private readonly ParameterState<double> _bufferValueState;
 
-        protected string DivClassname =>
+        protected string Classname =>
             new CssBuilder("mud-progress-linear")
                 .AddClass("mud-progress-linear-rounded", Rounded)
                 .AddClass($"mud-progress-linear-striped", Striped)
@@ -88,59 +88,48 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
-        public double Min
-        {
-            get => _min;
-            set
-            {
-                _min = value;
-                UpdatePercentages();
-            }
-        }
+        public double Min { get; set; } = 0.0;
 
         /// <summary>
         /// The maximum allowed value of the linear progress. Should not be equal to min.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
-        public double Max
-        {
-            get => _max;
-            set
-            {
-                _max = value;
-                UpdatePercentages();
-            }
-        }
+        public double Max { get; set; } = 100.0;
 
         /// <summary>
-        /// The maximum allowed value of the linear progress. Should not be equal to min.
+        /// The current value of the linear progress. Should be between min and max.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
-        public double Value
-        {
-            get => _value;
-            set
-            {
-                _value = value;
-                UpdatePercentages();
-            }
-        }
+        public double Value { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
-        public double BufferValue
+        public double BufferValue { get; set; }
+
+        public MudProgressLinear()
         {
-            get => _bufferValue;
-            set
-            {
-                _bufferValue = value;
-                UpdatePercentages();
-            }
+            using var registerScope = CreateRegisterScope();
+            _valueState = registerScope.RegisterParameter<double>(nameof(Value))
+                .WithParameter(() => Value)
+                .WithChangeHandler(OnParameterChangedShared)
+                .WithComparer(DoubleEpsilonEqualityComparer.Default);
+            _minState = registerScope.RegisterParameter<double>(nameof(Min))
+                .WithParameter(() => Min)
+                .WithChangeHandler(OnParameterChangedShared);
+            _maxState = registerScope.RegisterParameter<double>(nameof(Max))
+                .WithParameter(() => Max)
+                .WithChangeHandler(OnParameterChangedShared);
+            _bufferValueState = registerScope.RegisterParameter<double>(nameof(BufferValue))
+                .WithParameter(() => BufferValue)
+                .WithChangeHandler(OnParameterChangedShared);
         }
+
+        private void OnParameterChangedShared() => UpdatePercentages();
 
         protected double ValuePercent { get; set; }
+
         protected double BufferPercent { get; set; }
 
         protected void UpdatePercentages()
@@ -152,34 +141,27 @@ namespace MudBlazor
 
         private double GetPercentage(double input)
         {
-            var total = Math.Abs(_max - _min);
-            if (NumericConverter<double>.AreEqual(0, total))
-            {  // numeric instability!
+            var total = Math.Abs(_maxState.Value - _minState.Value);
+            if (DoubleEpsilonEqualityComparer.Default.Equals(0, total))
+            {
+                // numeric instability!
                 return 0.0;
             }
-            var value = Math.Max(0, Math.Min(total, input - _min));
+
+            var value = Math.Max(0, Math.Min(total, input - _minState.Value));
+
             return value / total * 100.0;
         }
 
-        public double GetValuePercent() => GetPercentage(_value);
-        public double GetBufferPercent() => GetPercentage(_bufferValue);
+        public double GetValuePercent() => GetPercentage(_valueState.Value);
+
+        public double GetBufferPercent() => GetPercentage(_bufferValueState.Value);
 
         private string GetStyleBarTransform(double input) =>
             Vertical ? $"transform: translateY({(int)Math.Round(100 - input)}%);" : $"transform: translateX(-{(int)Math.Round(100 - input)}%);";
 
         public string GetStyledBar1Transform() => GetStyleBarTransform(ValuePercent);
+
         public string GetStyledBar2Transform() => GetStyleBarTransform(BufferPercent);
-
-        #region --> Obsolete Forwarders for Backwards-Compatiblilty
-
-        [Obsolete("Use Min instead.", true)]
-        [ExcludeFromCodeCoverage]
-        [Parameter] public double Minimum { get => Min; set => Min = value; }
-
-        [Obsolete("Use Max instead.", true)]
-        [ExcludeFromCodeCoverage]
-        [Parameter] public double Maximum { get => Max; set => Max = value; }
-
-        #endregion
     }
 }

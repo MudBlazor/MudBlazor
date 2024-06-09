@@ -1,127 +1,128 @@
 .mud-input-label {
-    display: block;
-    transform-origin: top left;
+  display: block;
+  transform-origin: top left;
 }
 
 .mud-input-label-inputcontrol {
-    top: 0;
-    left: 0;
-    position: absolute;
-    transform: translate(0, 24px) scale(1);
+  top: 0;
+  left: 0;
+  position: absolute;
+  transform: translate(0, 24px) scale(1);
 }
 
 .mud-input-label-margindense {
-    transform: translate(0, 21px) scale(1);
+  transform: translate(0, 21px) scale(1);
 }
 
 .mud-input-label-shrink {
-    transform: translate(0, 1.5px) scale(0.75);
-    transform-origin: top left;
+  transform: translate(0, 1.5px) scale(0.75);
+  transform-origin: top left;
 }
 
 .mud-input-label-animated {
-    transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
 }
 
 .mud-input-label-filled {
-    z-index: 1;
-    transform: translate(12px, 20px) scale(1);
-    pointer-events: none;
+  z-index: 1;
+  transform: translate(12px, 20px) scale(1);
+  pointer-events: none;
 
-    &.mud-input-label-margin-dense {
-        transform: translate(12px, 17px) scale(1);
-    }
+  &.mud-input-label-margin-dense {
+    transform: translate(12px, 17px) scale(1);
+  }
 }
 
 
 .mud-input-label-outlined {
-    transform: translate(14px, 20px) scale(1);
-    pointer-events: none;
-    background-color: var(--mud-palette-surface);
-    padding: 0px 5px !important;
+  transform: translate(14px, 20px) scale(1);
+  pointer-events: none;
+  background-color: var(--mud-palette-surface);
+  padding: 0px 5px !important;
 
 
-    &.mud-input-label-margin-dense {
-        transform: translate(14px, 12px) scale(1);
-    }
+  &.mud-input-label-margin-dense {
+    transform: translate(14px, 12px) scale(1);
+  }
 }
 
 label.mud-input-label.mud-input-label-inputcontrol {
-    .mud-shrink ~ & {
-        color: var(--mud-palette-text-primary);
+  .mud-shrink ~ & {
+    color: var(--mud-palette-text-primary);
+  }
+
+  .mud-input:focus-within ~ & {
+    color: var(--mud-palette-primary);
+  }
+
+  .mud-shrink ~ &,
+  .mud-input:focus-within ~ & {
+    transform: translate(0, 1.5px) scale(0.75);
+    transform-origin: top left;
+
+    &.mud-input-label-filled {
+      transform: translate(12px, 10px) scale(0.75);
+
+      &.mud-input-label-margin-dense {
+        transform: translate(12px, 7px) scale(0.75);
+      }
     }
 
-    .mud-input:focus-within ~ & {
-        color: var(--mud-palette-primary);
+    &.mud-input-label-outlined {
+      transform: translate(14px, -6px) scale(0.75);
     }
+  }
 
-    .mud-shrink ~ &,
-    .mud-input:focus-within ~ & {
-        transform: translate(0, 1.5px) scale(0.75);
-        transform-origin: top left;
-
-        &.mud-input-label-filled {
-            transform: translate(12px, 10px) scale(0.75);
-
-            &.mud-input-label-margin-dense {
-                transform: translate(12px, 7px) scale(0.75);
-            }
-        }
-
-        &.mud-input-label-outlined {
-            transform: translate(14px, -6px) scale(0.75);
-        }
-    }
-
-    .mud-input:focus-within ~ &.mud-input-error {
-        color: var(--mud-palette-error);
-    }
+  .mud-input:focus-within ~ &.mud-input-error {
+    color: var(--mud-palette-error);
+  }
 }
+
 .mud-application-layout-rtl {
-    .mud-input-label {
-        transform-origin: top right;
-    }
+  .mud-input-label {
+    transform-origin: top right;
+  }
 
-    .mud-input-label-inputcontrol {
-        left: unset;
-        right: 0;
-    }
+  .mud-input-label-inputcontrol {
+    left: unset;
+    right: 0;
+  }
 
-    .mud-input-label-shrink {
-        transform-origin: top right;
-    }
+  .mud-input-label-shrink {
+    transform-origin: top right;
+  }
 
-    .mud-input-label-filled {
-        transform: translate(-12px, 20px) scale(1);
+  .mud-input-label-filled {
+    transform: translate(-12px, 20px) scale(1);
+
+    &.mud-input-label-margin-dense {
+      transform: translate(-12px, 17px) scale(1);
+    }
+  }
+
+  .mud-input-label-outlined {
+    transform: translate(-14px, 20px) scale(1);
+
+    &.mud-input-label-margin-dense {
+      transform: translate(-14px, 12px) scale(1);
+    }
+  }
+
+  .mud-shrink, .mud-input:focus-within {
+    ~ label.mud-input-label.mud-input-label-inputcontrol {
+      transform-origin: top right;
+
+      &.mud-input-label-filled {
+        transform: translate(-12px, 10px) scale(0.75);
 
         &.mud-input-label-margin-dense {
-            transform: translate(-12px, 17px) scale(1);
+          transform: translate(-12px, 7px) scale(0.75);
         }
+      }
+
+      &.mud-input-label-outlined {
+        transform: translate(-14px, -6px) scale(0.75);
+      }
     }
-
-    .mud-input-label-outlined {
-        transform: translate(-14px, 20px) scale(1);
-
-        &.mud-input-label-margin-dense {
-            transform: translate(-14px, 12px) scale(1);
-        }
-    }
-
-    .mud-shrink, .mud-input:focus-within {
-        ~ label.mud-input-label.mud-input-label-inputcontrol {
-            transform-origin: top right;
-
-            &.mud-input-label-filled {
-                transform: translate(-12px, 10px) scale(0.75);
-
-                &.mud-input-label-margin-dense {
-                    transform: translate(-12px, 7px) scale(0.75);
-                }
-            }
-
-            &.mud-input-label-outlined {
-                transform: translate(-14px, -6px) scale(0.75);
-            }
-        }
-    }
+  }
 }

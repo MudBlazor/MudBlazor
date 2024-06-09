@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudExpansionPanels>
-    <MudExpansionPanel Text="Panel with async loaded contents" MaxHeight="1000" IsExpandedChanged="ExpandedChanged">
+    <MudExpansionPanel Text="Panel with async loaded contents" MaxHeight="1000" ExpandedChanged="OnExpandedChanged">
         @_panelContent
     </MudExpansionPanel>
 </MudExpansionPanels>
@@ -9,7 +9,7 @@
 @code {
     private RenderFragment _panelContent;
 
-    private async Task ExpandedChanged(bool newVal)
+    private async Task OnExpandedChanged(bool newVal)
     {
         if (newVal)
         {
@@ -19,7 +19,7 @@
         else
         {
             // Reset after a while to prevent sudden collapse.
-            Task.Delay(350).ContinueWith(t => _panelContent = null).AndForget(); 
+            Task.Delay(350).ContinueWith(t => _panelContent = null).CatchAndLog(); 
         }
     }
 
@@ -27,7 +27,7 @@
     {
         <div>The expansion of the</div>
         <div>inner panel is done after</div>
-        <div>IsExpandedChanged</div>
+        <div>ExpandedChanged</div>
         <div>has completed to allow for</div>
         <div>smooth opening of async data</div>
         <div>of initially unknown height.</div>

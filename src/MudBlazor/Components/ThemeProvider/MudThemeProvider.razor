@@ -1,5 +1,17 @@
-@namespace MudBlazor
-@inherits MudThemingProvider
+﻿@namespace MudBlazor
+@inherits ComponentBaseWithState
 
-<MudThemingProvider Theme="Theme" DefaultScrollbar="DefaultScrollbar" IsDarkMode="IsDarkMode" IsDarkModeChanged="IsDarkModeChanged"/>
-<MudPopoverProvider/>
+@if(!DefaultScrollbar)
+{
+    @((MarkupString)BuildMudBlazorScrollbar())
+}
+
+@*Needed for charts, maybe put in bool, IncludeCharts="true"??*@
+<style>
+    .mud-chart-serie:hover {
+        filter: url(#lighten);
+    }
+</style>
+
+@((MarkupString)BuildTheme())
+

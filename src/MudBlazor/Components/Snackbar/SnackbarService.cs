@@ -15,7 +15,7 @@ using MudBlazor.Components.Snackbar.InternalComponents;
 namespace MudBlazor
 {
     /// <inheritdoc />
-    public class SnackbarService : ISnackbar, IDisposable
+    public class SnackbarService : ISnackbar
     {
         public SnackbarConfiguration Configuration { get; }
         public event Action OnSnackbarsUpdated;
@@ -109,12 +109,31 @@ namespace MudBlazor
                 { "Message", message as object }
             };
 
-            return Add
+            return Add<SnackbarMessageRenderFragment>
             (
-                new SnackbarMessage(typeof(SnackbarMessageRenderFragment), componentParams, key),
+                componentParams,
                 severity,
-                configure
+                configure,
+                key
             );
+        }
+
+        /// <summary>
+        /// Displays a snackbar containing the text/HTML.
+        /// </summary>
+        /// <param name="message">Specifies the content of the snackbar.</param>
+        /// <param name="severity">The severity of the snackbar. Dictates the color and default icon of the notification.</param>
+        /// <param name="configure">Additional configuration for the snackbar.</param>
+        /// <param name="key">If no key is passed, defaults to the content of the message. This message will not be shown while any other message with the same key is being shown.</param>
+        /// <returns>The snackbar created by the parameters.</returns>
+        public Snackbar Add(MarkupString message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null, string key = "")
+        {
+            if (message.ToString().IsEmpty()) return null;
+
+            var componentParams = new Dictionary<string, object>() { { "Message", message } };
+            var keyToUse = string.IsNullOrEmpty(key) ? message.ToString() : key;
+
+            return Add<SnackbarMessageMarkupString>(componentParams, severity, configure, keyToUse);
         }
 
         /// <summary>
@@ -130,21 +149,9 @@ namespace MudBlazor
             if (message.IsEmpty()) return null;
             message = message.Trimmed();
 
-            var componentParams = new Dictionary<string, object>() { { "Message", new MarkupString(message) } };
+            var componentParams = new Dictionary<string, object>() { { "Message", message } };
 
-            return Add
-            (
-                new SnackbarMessage(typeof(SnackbarMessageText), componentParams, string.IsNullOrEmpty(key) ? message : key) { Text = message },
-                severity,
-                configure
-            );
-        }
-
-        [Obsolete("Use Add instead.", true)]
-        [ExcludeFromCodeCoverage]
-        public Snackbar AddNew(Severity severity, string message, Action<SnackbarOptions> configure)
-        {
-            return Add(message, severity, configure);
+            return AddCore<SnackbarMessageText>(message, componentParams, severity, configure, string.IsNullOrEmpty(key) ? message : key);
         }
 
         public void Clear()
@@ -201,6 +208,14 @@ namespace MudBlazor
             }
 
             OnSnackbarsUpdated?.Invoke();
+        }
+
+        private Snackbar AddCore<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(string text, Dictionary<string, object> componentParameters = null, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null, string key = "") where T : IComponent
+        {
+            var type = typeof(T);
+            var message = new SnackbarMessage(type, componentParameters, key) { Text = text };
+
+            return Add(message, severity, configure);
         }
 
         private bool ResolvePreventDuplicates(SnackbarOptions options)

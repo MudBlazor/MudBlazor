@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -20,11 +19,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.SwipeArea.Behavior)]
         public RenderFragment? ChildContent { get; set; }
-
-        [Obsolete("Use OnSwipeEnd instead.")]
-        [Parameter]
-        [Category(CategoryTypes.SwipeArea.Behavior)]
-        public Action<SwipeDirection>? OnSwipe { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.SwipeArea.Behavior)]
@@ -119,21 +113,8 @@ namespace MudBlazor
             }
 
             await OnSwipeEnd.InvokeAsync(new SwipeEventArgs(arg, swipeDirection, _swipeDelta, this));
-#pragma warning disable CS0618
-            if (OnSwipe != null)
-            {
-                await InvokeAsync(() => OnSwipe(swipeDirection));
-            }
-#pragma warning restore CS0618
             _xDown = _yDown = null;
         }
-
-        /// <summary>
-        /// The last successful swipe difference in pixels since the last OnSwipe invocation
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use OnSwipeEnd to get SwipeDelta")]
-        public double? GetSwipeDelta() => _swipeDelta;
 
         internal void OnTouchCancel(TouchEventArgs arg)
         {

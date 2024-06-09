@@ -23,7 +23,7 @@ class MudResizeListener {
         this.options = options;
         this.dotnet = dotnetRef;
         this.logger = options.enableLogging ? console.log : (message) => { };
-        this.logger(`[MudBlazor] Reporting resize events at rate of: ${(this.options || {}).reportRate || 100}ms`);
+        this.logger(`[MudBlazor] Reporting resize events at rate of: ${this.options.reportRate}ms`);
         window.addEventListener("resize", this.handleResize, false);
         if (!this.options.suppressInitEvent) {
             this.resizeHandler();
@@ -33,7 +33,10 @@ class MudResizeListener {
 
     throttleResizeHandler() {
         clearTimeout(this.throttleResizeHandlerId);
-        this.throttleResizeHandlerId = window.setTimeout(this.resizeHandler.bind(this), ((this.options || {}).reportRate || 100));
+        this.throttleResizeHandlerId = window.setTimeout(
+            this.resizeHandler.bind(this),
+            this.options.reportRate
+        );
     }
 
     resizeHandler() {
@@ -131,6 +134,13 @@ window.mudResizeListenerFactory = {
     cancelListeners: (ids) => {
         for (let i = 0; i < ids.length; i++) {
             window.mudResizeListenerFactory.cancelListener(ids[i]);
+        }
+    },
+
+    dispose() {
+        var map = window.mudResizeListenerFactory.mapping;
+        for (var id in map) {
+            window.mudResizeListenerFactory.cancelListener(id);
         }
     }
 }

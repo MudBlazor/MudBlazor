@@ -1,8 +1,11 @@
-﻿using System;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using MudBlazor.Interop;
 
 namespace MudBlazor.Services
 {
@@ -18,35 +21,6 @@ namespace MudBlazor.Services
         public static IServiceCollection AddMudBlazorDialog(this IServiceCollection services)
         {
             services.TryAddScoped<IDialogService, DialogService>();
-
-            return services;
-        }
-
-        /// <summary>
-        /// Adds a Snackbar Service as a Scoped instance.
-        /// </summary>
-        /// <param name="services">IServiceCollection</param>
-        /// <param name="options">Defines SnackbarConfiguration for this instance.</param>
-        /// <returns>Continues the IServiceCollection chain.</returns>
-        [Obsolete("Use overload with Action<SnackbarConfiguration>. This will be removed in v7.")]
-        public static IServiceCollection AddMudBlazorSnackbar(this IServiceCollection services, SnackbarConfiguration options)
-        {
-            services.AddMudBlazorSnackbar(snackBarConfiguration =>
-            {
-                snackBarConfiguration.ClearAfterNavigation = options.ClearAfterNavigation;
-                snackBarConfiguration.MaxDisplayedSnackbars = options.MaxDisplayedSnackbars;
-                snackBarConfiguration.NewestOnTop = options.NewestOnTop;
-                snackBarConfiguration.PositionClass = options.PositionClass;
-                snackBarConfiguration.PreventDuplicates = options.PreventDuplicates;
-                snackBarConfiguration.MaximumOpacity = options.MaximumOpacity;
-                snackBarConfiguration.ShowTransitionDuration = options.ShowTransitionDuration;
-                snackBarConfiguration.VisibleStateDuration = options.VisibleStateDuration;
-                snackBarConfiguration.HideTransitionDuration = options.HideTransitionDuration;
-                snackBarConfiguration.ShowCloseIcon = options.ShowCloseIcon;
-                snackBarConfiguration.RequireInteraction = options.RequireInteraction;
-                snackBarConfiguration.BackgroundBlurred = options.BackgroundBlurred;
-                snackBarConfiguration.SnackbarVariant = options.SnackbarVariant;
-            });
 
             return services;
         }
@@ -81,36 +55,9 @@ namespace MudBlazor.Services
         /// Adds a ResizeListener as a Scoped instance.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
-        /// <param name="options">Defines ResizeOptions for this instance</param>
-        /// <returns>Continues the IServiceCollection chain.</returns>
-        [Obsolete("Use overload with Action<ResizeOptions>. This will be removed in v7.")]
-        public static IServiceCollection AddMudBlazorResizeListener(this IServiceCollection services, ResizeOptions options)
-        {
-            services.AddMudBlazorResizeListener(resizeOptions =>
-            {
-                resizeOptions.BreakpointDefinitions = options.BreakpointDefinitions;
-                resizeOptions.EnableLogging = options.EnableLogging;
-                resizeOptions.NotifyOnBreakpointOnly = options.NotifyOnBreakpointOnly;
-                resizeOptions.ReportRate = options.ReportRate;
-                resizeOptions.SuppressInitEvent = options.SuppressInitEvent;
-            });
-
-            return services;
-        }
-
-        /// <summary>
-        /// Adds a ResizeListener as a Scoped instance.
-        /// </summary>
-        /// <param name="services">IServiceCollection</param>
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudBlazorResizeListener(this IServiceCollection services)
         {
-#pragma warning disable CS0618
-            services.TryAddScoped<IResizeListenerService, ResizeListenerService>();
-            services.TryAddScoped<IResizeService, ResizeService>();
-            services.TryAddScoped<IBreakpointService, BreakpointService>();
-            services.TryAddScoped<IBrowserWindowSizeProvider, BrowserWindowSizeProvider>();
-#pragma warning restore CS0618
             services.TryAddScoped<IBrowserViewportService, BrowserViewportService>();
 
             return services;
@@ -157,24 +104,6 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
-        /// Adds a IResizeObserver as a Transient instance.
-        /// </summary>
-        /// <param name="services">IServiceCollection</param>
-        /// <param name="options">Defines ResizeObserverOptions for this instance</param>
-        /// <returns>Continues the IServiceCollection chain.</returns>
-        [Obsolete("Use overload with Action<ResizeObserverOptions>. This will be removed in v7.")]
-        public static IServiceCollection AddMudBlazorResizeObserver(this IServiceCollection services, ResizeObserverOptions options)
-        {
-            services.AddMudBlazorResizeObserver(observerOptions =>
-            {
-                observerOptions.EnableLogging = options.EnableLogging;
-                observerOptions.ReportRate = options.ReportRate;
-            });
-
-            return services;
-        }
-
-        /// <summary>
         /// Adds a IResizeObserverFactory as a scoped dependency.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
@@ -196,24 +125,6 @@ namespace MudBlazor.Services
         {
             services.AddMudBlazorResizeObserverFactory();
             services.Configure(options);
-
-            return services;
-        }
-
-        /// <summary>
-        /// Adds a IResizeObserverFactory as a scoped dependency.
-        /// </summary>
-        /// <param name="services">IServiceCollection</param>
-        /// <param name="options">Defines ResizeObserverOptions for this instance</param>
-        /// <returns>Continues the IServiceCollection chain.</returns>
-        [Obsolete("Use overload with Action<ResizeObserverOptions>. This will be removed in v7.")]
-        public static IServiceCollection AddMudBlazorResizeObserverFactory(this IServiceCollection services, ResizeObserverOptions options)
-        {
-            services.AddMudBlazorResizeObserverFactory(observerOptions =>
-            {
-                observerOptions.EnableLogging = options.EnableLogging;
-                observerOptions.ReportRate = options.ReportRate;
-            });
 
             return services;
         }
@@ -284,26 +195,6 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
-        /// Adds ScrollManager as a transient instance.
-        /// </summary>
-        /// <param name="services">IServiceCollection</param>
-        /// <param name="options">Defines PopoverOptions for the application/user</param>
-        [Obsolete("Use overload with Action<PopoverOptions>. This will be removed in v7.")]
-        public static IServiceCollection AddMudPopoverService(this IServiceCollection services, PopoverOptions options)
-        {
-            services.AddMudPopoverService(popoverOptions =>
-            {
-                popoverOptions.ContainerClass = options.ContainerClass;
-                popoverOptions.FlipMargin = options.FlipMargin;
-                popoverOptions.QueueDelay = options.QueueDelay;
-                popoverOptions.ThrowOnDuplicateProvider = options.ThrowOnDuplicateProvider;
-                popoverOptions.Mode = options.Mode;
-            });
-
-            return services;
-        }
-
-        /// <summary>
         /// Adds ScrollListener as a transient instance.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
@@ -356,35 +247,37 @@ namespace MudBlazor.Services
         /// <param name="services">IServiceCollection</param>
         public static IServiceCollection AddMudLocalization(this IServiceCollection services)
         {
+            services.TryAddTransient<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
             services.TryAddTransient<InternalMudLocalizer>();
 
             return services;
         }
 
         /// <summary>
-        /// Adds common services required by MudBlazor components
+        /// Replaces the default <see cref="ILocalizationInterceptor"/> with custom implementation.
         /// </summary>
+        /// <typeparam name="TInterceptor">Custom <see cref="ILocalizationInterceptor"/> implentation.</typeparam>
         /// <param name="services">IServiceCollection</param>
-        /// <param name="configuration">Defines options for all MudBlazor services.</param>
         /// <returns>Continues the IServiceCollection chain.</returns>
-        [Obsolete("Use overload with Action<MudServicesConfiguration>. This will be removed in v7.")]
-        public static IServiceCollection AddMudServices(this IServiceCollection services, MudServicesConfiguration configuration)
+        public static IServiceCollection AddLocalizationInterceptor<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TInterceptor>(this IServiceCollection services) where TInterceptor : class, ILocalizationInterceptor
         {
-            return services
-                .AddMudBlazorDialog()
-                .AddMudBlazorSnackbar(configuration.SnackbarConfiguration)
-                .AddMudBlazorResizeListener(configuration.ResizeOptions)
-                .AddMudBlazorResizeObserver(configuration.ResizeObserverOptions)
-                .AddMudBlazorResizeObserverFactory()
-                .AddMudBlazorKeyInterceptor()
-                .AddMudBlazorJsEvent()
-                .AddMudBlazorScrollManager()
-                .AddMudBlazorScrollListener()
-                .AddMudBlazorJsApi()
-                .AddMudBlazorScrollSpy()
-                .AddMudPopoverService(configuration.PopoverOptions)
-                .AddMudEventManager()
-                .AddMudLocalization();
+            services.Replace(ServiceDescriptor.Transient<ILocalizationInterceptor, TInterceptor>());
+
+            return services;
+        }
+
+        /// <summary>
+        /// Replaces the default <see cref="ILocalizationInterceptor"/> with custom implementation.
+        /// </summary>
+        /// <typeparam name="TInterceptor">Custom <see cref="ILocalizationInterceptor"/> implentation.</typeparam>
+        /// <param name="services">IServiceCollection</param>
+        /// <param name="implementationFactory">A factory to create new instances of the <see cref="ILocalizationInterceptor"/> implementation.</param>
+        /// <returns>Continues the IServiceCollection chain.</returns>
+        public static IServiceCollection AddLocalizationInterceptor<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TInterceptor>(this IServiceCollection services, Func<IServiceProvider, TInterceptor> implementationFactory) where TInterceptor : class, ILocalizationInterceptor
+        {
+            services.Replace(ServiceDescriptor.Transient<ILocalizationInterceptor>(implementationFactory));
+
+            return services;
         }
 
         /// <summary>
@@ -472,6 +365,8 @@ namespace MudBlazor.Services
                     popoverOptions.QueueDelay = options.PopoverOptions.QueueDelay;
                     popoverOptions.ThrowOnDuplicateProvider = options.PopoverOptions.ThrowOnDuplicateProvider;
                     popoverOptions.Mode = options.PopoverOptions.Mode;
+                    popoverOptions.PoolSize = options.PopoverOptions.PoolSize;
+                    popoverOptions.PoolInitialFill = options.PopoverOptions.PoolInitialFill;
                 })
                 .AddMudBlazorScrollSpy()
                 .AddMudEventManager()

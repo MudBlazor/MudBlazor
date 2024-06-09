@@ -6,13 +6,16 @@ $count: 0;
   .order-#{$breakpoint}first {
     order: -9999 !important;
   }
+
   .order-#{$breakpoint}last {
     order: 9999 !important;
   }
+
   @while $count < 13 {
     .order-#{$breakpoint}#{$count} {
       order: $count !important;
     }
+
     $count: $count + 1;
   }
 }

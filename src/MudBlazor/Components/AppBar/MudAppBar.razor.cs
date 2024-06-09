@@ -3,6 +3,12 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Represents a bar used to display actions, branding, navigation and screen titles.
+    /// </summary>
+    /// <remarks>
+    /// This component is often used to keep important information persistent while browsing different pages to ease navigation and access to actions for users.
+    /// </remarks>
     public partial class MudAppBar : MudComponentBase
     {
 #nullable enable
@@ -22,63 +28,84 @@ namespace MudBlazor
                 .Build();
 
         /// <summary>
-        /// If true, Appbar will be placed at the bottom of the screen.
+        /// Places the appbar at the bottom of the screen instead of the top.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AppBar.Behavior)]
         public bool Bottom { get; set; }
 
         /// <summary>
-        /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
+        /// The size of the drop shadow.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>4</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.AppBar.Appearance)]
         public int Elevation { set; get; } = 4;
 
         /// <summary>
-        /// If true, compact padding will be used.
+        /// Uses compact padding.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.AppBar.Appearance)]
         public bool Dense { get; set; }
 
         /// <summary>
-        /// If true, the left and right padding is removed from from the appbar.
+        /// Adds left and right padding to this appbar.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.AppBar.Appearance)]
-        public bool DisableGutters { get; set; }
+        public bool Gutters { get; set; } = true;
 
         /// <summary>
-        /// The color of the component. It supports the theme colors.
+        /// The color of this appbar.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.AppBar.Appearance)]
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// If true, appbar will be Fixed.
+        /// Fixes this appbar in place as the page is scrolled.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  When <c>false</c>, the appbar will scroll with other page content.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.AppBar.Behavior)]
         public bool Fixed { get; set; } = true;
-        
+
         /// <summary>
-        /// If true, AppBar is allowed to wrap.
+        /// Allows appbar content to wrap.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.AppBar.Behavior)]
         public bool WrapContent { get; set; } = false;
 
         /// <summary>
-        /// User class names, separated by spaces for the nested toolbar.
+        /// The CSS classes applied to the nested toolbar.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.AppBar.Appearance)]
         public string? ToolBarClass { get; set; }
 
         /// <summary>
-        /// Child content of the component.
+        /// The content within this component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AppBar.Behavior)]

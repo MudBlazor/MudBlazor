@@ -1,0 +1,9 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudSlider T="double" @bind-Value="Value" @bind-NullableValue="NullableValue" Max="100.0" Min="0.0" Step="0.5" />
+
+@code {
+    public double? NullableValue { get; set; }
+
+    public double Value { get; set; }
+}

@@ -4,9 +4,12 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
+using Bunit.Rendering;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Button;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -375,23 +378,6 @@ namespace MudBlazor.UnitTests.Components
                 .BeFalse();
         }
 
-        /// <summary>
-        /// MudIconButton should have a title tag/attribute if specified
-        /// </summary>
-        [Test]
-        public void ShouldRenderTitle()
-        {
-            var title = "Title and tooltip";
-            var icon = Parameter(nameof(MudIconButton.Icon), Icons.Material.Filled.Add);
-            var titleParam = Parameter(nameof(MudIconButton.Title), title);
-            var comp = Context.RenderComponent<MudIconButton>(icon, titleParam);
-            comp.Find($"button[title=\"{title}\"]");
-
-            icon = Parameter(nameof(MudIconButton.Icon), "customicon");
-            comp.SetParametersAndRender(icon, titleParam);
-            comp.Find($"button[title=\"{title}\"]");
-        }
-
         [Test]
         public async Task MudToggleIconTest()
         {
@@ -462,6 +448,36 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponent<MudButton>().Find("button").HasAttribute("disabled").Should().BeTrue();
             comp.FindComponent<MudFab>().Find("button").HasAttribute("disabled").Should().BeTrue();
             comp.FindComponent<MudIconButton>().Find("button").HasAttribute("disabled").Should().BeTrue();
+        }
+
+        [Test]
+        public async Task ButtonsOnClickErrorContentCaughtException()
+        {
+            var comp = Context.RenderComponent<ButtonErrorContenCaughtException>();
+            var alertTextFunc = () => MudAlert().Find("div.mud-alert-message");
+            IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
+            IRefreshableElementCollection<IElement> Buttons() => comp.FindAll("button.mud-button-root");
+            IElement MudButton() => Buttons()[0];
+            IElement MudFab() => Buttons()[1];
+            IElement MudIconButton() => Buttons()[2];
+
+            // MudButton
+            await MudButton().ClickAsync(new MouseEventArgs());
+            alertTextFunc().InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+            await comp.InvokeAsync(comp.Instance.Recover);
+            alertTextFunc.Should().Throw<ComponentNotFoundException>();
+
+            // MudFab
+            await MudFab().ClickAsync(new MouseEventArgs());
+            alertTextFunc().InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+            await comp.InvokeAsync(comp.Instance.Recover);
+            alertTextFunc.Should().Throw<ComponentNotFoundException>();
+
+            // MudIconButton
+            await MudIconButton().ClickAsync(new MouseEventArgs());
+            alertTextFunc().InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+            await comp.InvokeAsync(comp.Instance.Recover);
+            alertTextFunc.Should().Throw<ComponentNotFoundException>();
         }
     }
 }

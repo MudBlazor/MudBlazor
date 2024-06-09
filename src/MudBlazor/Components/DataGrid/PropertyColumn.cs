@@ -11,8 +11,11 @@ using MudBlazor.Utilities.Expressions;
 namespace MudBlazor
 {
 #nullable enable
-    /// <typeparam name="T">The type of data represented by each row in the data grid.</typeparam>
-    /// <typeparam name="TProperty">The type of the value being displayed in the column's cells.</typeparam>
+    /// <summary>
+    /// Represents a column in a <see cref="MudDataGrid{T}"/> associated with an object's property.
+    /// </summary>
+    /// <typeparam name="T">The type of object represented by each row in the data grid.</typeparam>
+    /// <typeparam name="TProperty">The type of the property whose values are displayed in the column's cells.</typeparam>
     public partial class PropertyColumn<T, TProperty> : Column<T>
     {
         private readonly Guid _id = Guid.NewGuid();
@@ -23,15 +26,26 @@ namespace MudBlazor
         private Expression<Func<T, TProperty>>? _lastAssignedProperty;
         private Expression<Func<T, TProperty>>? _compiledPropertyFuncFor;
 
+        /// <summary>
+        /// The property whose values are displayed in the column.
+        /// </summary>
         [Parameter]
         [EditorRequired]
         public Expression<Func<T, TProperty>> Property { get; set; } = Expression.Lambda<Func<T, TProperty>>(Expression.Default(typeof(TProperty)), Expression.Parameter(typeof(T)));
 
+        /// <summary>
+        /// The format applied to property values.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         public string? Format { get; set; }
 
+        /// <inheritdoc />
         protected override void OnParametersSet()
         {
+            base.OnParametersSet();
             // We have to do a bit of pre-processing on the lambda expression. Only do that if it's new or changed.
             if (_lastAssignedProperty != Property)
             {
@@ -59,6 +73,9 @@ namespace MudBlazor
         protected internal override LambdaExpression? PropertyExpression
             => Property;
 
+        /// <summary>
+        /// The name of the property.
+        /// </summary>
         public override string? PropertyName
             => _propertyName;
 
@@ -82,12 +99,41 @@ namespace MudBlazor
         protected internal override Type PropertyType
             => typeof(TProperty);
 
-        protected internal override void SetProperty(object item, object value)
+        /// <summary>
+        /// If the Property expression looks like 'x => x.y.z', to set the value of 'z' we need to find the value of 'y', we can dig recursively until we find it.
+        /// </summary>
+        /// <exception cref="NullReferenceException"></exception>
+        private object RecursiveGetSubProperties(MemberExpression memberExpression, object item)
         {
-            if (Property.Body is MemberExpression { Member: PropertyInfo propertyInfo })
+            if (memberExpression.Expression is MemberExpression { Member: PropertyInfo propertyInfo } subMemberExpress)
             {
-                var actualType = Nullable.GetUnderlyingType(propertyInfo.PropertyType) ?? PropertyType;
-                propertyInfo.SetValue(item, Convert.ChangeType(value, actualType), null);
+                var subObject = RecursiveGetSubProperties(subMemberExpress, item);
+
+                return propertyInfo.GetValue(subObject) ?? throw new NullReferenceException($"Unable to get property value, value of '{propertyInfo.Name}' is null in '{Property}'");
+            }
+
+            return item;
+        }
+
+        protected internal override void SetProperty(object item, object? value)
+        {
+            var expression = Property.Body;
+
+            // Only MemberExpression is supported, MemberExpression access members like 'x.y' is accessing the member 'y'
+            if (expression is MemberExpression memberExpression)
+            {
+                item = RecursiveGetSubProperties(memberExpression, item);
+
+                if (memberExpression.Member is PropertyInfo propertyInfo)
+                {
+                    if (value == null) // We can't use the normal execution path for null values, because we can't use Convert.ChangeType with null for types such as int?, double?, etc
+                        propertyInfo.SetValue(item, null);
+                    else
+                    {
+                        var actualType = Nullable.GetUnderlyingType(propertyInfo.PropertyType) ?? PropertyType;
+                        propertyInfo.SetValue(item, Convert.ChangeType(value, actualType), null);
+                    }
+                }
             }
         }
     }

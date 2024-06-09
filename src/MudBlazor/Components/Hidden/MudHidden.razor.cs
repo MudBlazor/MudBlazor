@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Services;
+using MudBlazor.State;
 
 namespace MudBlazor
 {
 #nullable enable
     public partial class MudHidden : MudComponentBase, IBrowserViewportObserver, IAsyncDisposable
     {
-        private bool _isHidden = true;
+        private readonly ParameterState<bool> _hiddenState;
         private bool _serviceIsReady = false;
         private Breakpoint _currentBreakpoint = Breakpoint.None;
-
-        [Inject]
-        [Obsolete]
-        public IBreakpointService BreakpointService { get; set; } = null!;
 
         [Inject]
         protected IBrowserViewportService BrowserViewportService { get; set; } = null!;
@@ -37,28 +33,17 @@ namespace MudBlazor
         public bool Invert { get; set; }
 
         /// <summary>
-        /// True if the component is not visible (two-way bindable)
+        /// True if the component is hidden (two-way bindable)
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Hidden.Behavior)]
-        public bool IsHidden
-        {
-            get => _isHidden;
-            set
-            {
-                if (_isHidden != value)
-                {
-                    _isHidden = value;
-                    IsHiddenChanged.InvokeAsync(_isHidden);
-                }
-            }
-        }
+        public bool Hidden { get; set; } = true;
 
         /// <summary>
         /// Fires when the breakpoint changes visibility of the component
         /// </summary>
         [Parameter]
-        public EventCallback<bool> IsHiddenChanged { get; set; }
+        public EventCallback<bool> HiddenChanged { get; set; }
 
         /// <summary>
         /// Child content of component.
@@ -66,6 +51,14 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Hidden.Behavior)]
         public RenderFragment? ChildContent { get; set; }
+
+        public MudHidden()
+        {
+            using var registerScope = CreateRegisterScope();
+            _hiddenState = registerScope.RegisterParameter<bool>(nameof(Hidden))
+                .WithParameter(() => Hidden)
+                .WithEventCallback(() => HiddenChanged);
+        }
 
         protected override async Task OnParametersSetAsync()
         {
@@ -134,7 +127,7 @@ namespace MudBlazor
                 hidden = !hidden;
             }
 
-            IsHidden = hidden;
+            await _hiddenState.SetValueAsync(hidden);
         }
     }
 }

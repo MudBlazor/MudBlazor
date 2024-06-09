@@ -1,8 +1,9 @@
 @namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
 
 <MudPopoverProvider></MudPopoverProvider>
 
-<MudTable ServerData="@(new Func<TableState, Task<TableData<TestModel>>>(ServerReload))" SortLabel="Sort by">
+<MudTable ServerData="ServerReload" SortLabel="Sort by">
     <HeaderContent>
         <MudTh><MudTableSortLabel SortLabel="a" T="TestModel">a</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortLabel="b" T="TestModel">b</MudTableSortLabel></MudTh>
@@ -30,7 +31,7 @@
     /// <summary>
     /// Here we simulate getting the paged, filtered and ordered data from the server
     /// </summary>
-    private async Task<TableData<TestModel>> ServerReload(TableState state)
+    private async Task<TableData<TestModel>> ServerReload(TableState state, CancellationToken token)
     {
         // This creates an in-memory IQueryable variation of our IEnumerable test
         IQueryable<TestModel> data = new List<TestModel>() { new TestModel() { a=1, b=3 },

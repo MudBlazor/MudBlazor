@@ -3,14 +3,13 @@
 
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Moq;
-using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -51,22 +50,22 @@ namespace MudBlazor.UnitTests.Components
 
             var trs = comp.FindAll("tr");
 
-            trs[0].TriggerEvent("onmouseenter", new MouseEventArgs());
+            trs[0].TriggerEvent("onpointerenter", new PointerEventArgs());
             comp.Find("p").TextContent.Trim().Should().Be("Current: 'A', last: ''");
 
-            trs[0].TriggerEvent("onmouseleave", new MouseEventArgs());
+            trs[0].TriggerEvent("onpointerleave", new PointerEventArgs());
             comp.Find("p").TextContent.Trim().Should().Be("Current: '', last: 'A'");
 
-            trs[1].TriggerEvent("onmouseenter", new MouseEventArgs());
+            trs[1].TriggerEvent("onpointerenter", new PointerEventArgs());
             comp.Find("p").TextContent.Trim().Should().Be("Current: 'B', last: 'A'");
 
-            trs[1].TriggerEvent("onmouseleave", new MouseEventArgs());
+            trs[1].TriggerEvent("onpointerleave", new PointerEventArgs());
             comp.Find("p").TextContent.Trim().Should().Be("Current: '', last: 'B'");
 
-            trs[0].TriggerEvent("onmouseenter", new MouseEventArgs());
+            trs[0].TriggerEvent("onpointerenter", new PointerEventArgs());
             comp.Find("p").TextContent.Trim().Should().Be("Current: 'A', last: 'B'");
 
-            trs[0].TriggerEvent("onmouseleave", new MouseEventArgs());
+            trs[0].TriggerEvent("onpointerleave", new PointerEventArgs());
             comp.Find("p").TextContent.Trim().Should().Be("Current: '', last: 'A'");
         }
 
@@ -375,9 +374,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[1].IsDisabled().Should().Be(true);
             comp.FindAll("button")[2].IsDisabled().Should().Be(false);
             comp.FindAll("button")[3].IsDisabled().Should().Be(false);
-            var pagingButtons = comp.FindAll("button");
+            IRefreshableElementCollection<IElement> PagingButtons() => comp.FindAll("button");
             // click next page
-            pagingButtons[2].Click();
+            PagingButtons()[2].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("11-20 of 59");
             comp.FindAll("button")[0].IsDisabled().Should().Be(false);
@@ -385,7 +384,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[2].IsDisabled().Should().Be(false);
             comp.FindAll("button")[3].IsDisabled().Should().Be(false);
             // last page
-            pagingButtons[3].Click();
+            PagingButtons()[3].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(9);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("51-59 of 59");
             comp.FindAll("button")[0].IsDisabled().Should().Be(false);
@@ -393,7 +392,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[2].IsDisabled().Should().Be(true);
             comp.FindAll("button")[3].IsDisabled().Should().Be(true);
             // previous page
-            pagingButtons[1].Click();
+            PagingButtons()[1].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("41-50 of 59");
             comp.FindAll("button")[0].IsDisabled().Should().Be(false);
@@ -401,7 +400,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[2].IsDisabled().Should().Be(false);
             comp.FindAll("button")[3].IsDisabled().Should().Be(false);
             // first page
-            pagingButtons[0].Click();
+            PagingButtons()[0].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
             comp.FindAll("button")[0].IsDisabled().Should().Be(true);
@@ -577,10 +576,10 @@ namespace MudBlazor.UnitTests.Components
             // after initial load
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
-            var pagingButtons = comp.FindAll("button");
+            IRefreshableElementCollection<IElement> PagingButtons() => comp.FindAll("button");
             // goto page 3
-            pagingButtons[2].Click();
-            pagingButtons[2].Click();
+            PagingButtons()[2].Click();
+            PagingButtons()[2].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("21-30 of 59");
             // should return 3 items and 
@@ -648,16 +647,16 @@ namespace MudBlazor.UnitTests.Components
             var mudTable = comp.Instance.MudTable;
 
             // All row checkbox states must be false.
-            mudTable.Context.Rows.Count(r => r.Value.IsChecked).Should().Be(0);
+            mudTable.Context.Rows.Count(r => r.Value.Checked).Should().Be(0);
 
             // All grouprow checkbox states must be false.
-            mudTable.Context.GroupRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(14);
+            mudTable.Context.GroupRows.Count(r => r.Checked.HasValue && !r.Checked.Value).Should().Be(14);
 
             // The headerrow checkbox state must be false.
-            mudTable.Context.HeaderRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(1);
+            mudTable.Context.HeaderRows.Count(r => r.Checked.HasValue && !r.Checked.Value).Should().Be(1);
 
             // The footerrow checkbox state must be false.
-            mudTable.Context.FooterRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(0);
+            mudTable.Context.FooterRows.Count(r => r.Checked.HasValue && !r.Checked.Value).Should().Be(0);
         }
 
         /// <summary>
@@ -955,6 +954,150 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Changing page should retain the selected items using ServerData
+        /// </summary>
+        [Test]
+        public void TableMultiSelectionServerDataTest()
+        {
+            var comp = Context.RenderComponent<TableMultiSelectionServerDataTest>();
+            // select elements needed for the test
+            var table = comp.FindComponent<MudTable<TableMultiSelectionServerDataTest.ComplexObject>>().Instance;
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+
+            // click header checkbox and verify selection text
+            var inputs = comp.Find("input");
+            inputs.Change(true);
+            table.SelectedItems.Count.Should().Be(10);
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
+            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(10);
+
+            // click next page button
+            var buttons = comp.FindAll("button[aria-label=\"Next page\"]");
+            buttons[0].Click();
+
+            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+
+            // verify table markup
+            var tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(11); // <-- one header, ten rows
+            var td = comp.FindAll("td").ToArray();
+            td.Length.Should().Be(10 * 6); // six td per row for multi selection
+            var inputs2 = comp.FindAll("input").ToArray();
+            inputs2.Length.Should().Be(11); // one checkbox per row + one for the header
+
+            // verify selection - All items should remain selected
+            table.SelectedItems.Count.Should().Be(10);
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
+            // No item from current page should be checked
+            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(0);
+
+            // Click the checkbox of the row with id 12
+            inputs2[2].Change(true);
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12 }");
+            // One checkbox of the current page should be checked
+            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(1);
+        }
+
+        /// <summary>
+        /// Changing page should retain the selected items using Items (not ServerData)
+        /// </summary>
+        [Test]
+        public void TableMultiSelectionItemsTest1_PageChange()
+        {
+            var comp = Context.RenderComponent<TableMultiSelectionItemsTest1>();
+            // select elements needed for the test
+            var table = comp.FindComponent<MudTable<TableMultiSelectionItemsTest1.ComplexObject>>().Instance;
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+
+            // Skip first two inputs (date filters)
+            var inputs = comp.FindAll("input").Skip(3);
+            foreach (var input in inputs)
+            {
+                input.Change(true);
+            }
+            table.SelectedItems.Count.Should().Be(10);
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
+            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(10);
+
+            // click next page button
+            var buttons = comp.FindAll("button[aria-label=\"Next page\"]");
+            buttons[0].Click();
+
+            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+
+            // verify table markup
+            var tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(11); // <-- one header, ten rows
+            var td = comp.FindAll("td").ToArray();
+            td.Length.Should().Be(10 * 6); // six td per row for multi selection
+            // Find checkboxes, and skip date filter and table header checkbox
+            var inputs2 = comp.FindAll("input").Skip(3);
+            inputs2.Count().Should().Be(10); // one checkbox per row + one for the header + two date filters
+
+            // verify selection - All items should remain selected
+            table.SelectedItems.Count.Should().Be(10);
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
+            // No item from current page should be checked
+            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(0);
+
+            // Click the checkbox of the row with id 12
+            inputs2.ElementAt(1).Change(true);
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12 }");
+            // One checkbox of the current page should be checked
+            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(1);
+        }
+
+        /// <summary>
+        /// Changing filters should retain the selected items using Items (not ServerData)
+        /// </summary>
+        [Test]
+        public void TableMultiSelectionItemsTest1_FilterChange()
+        {
+            var comp = Context.RenderComponent<TableMultiSelectionItemsTest1>();
+            // select elements needed for the test
+            var table = comp.FindComponent<MudTable<TableMultiSelectionItemsTest1.ComplexObject>>().Instance;
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+
+            // Skip first two inputs (date filters)
+            var inputs = comp.FindAll("input").Skip(3);
+            foreach (var input in inputs)
+            {
+                input.Change(true);
+            }
+            table.SelectedItems.Count.Should().Be(10);
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
+            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(10);
+
+            // Change filter
+            comp.Instance.StartDate = DateTime.Parse("2024-04-07 00:00:00");
+            comp.Instance.EndDate = DateTime.Parse("2024-04-13 00:00:00");
+            comp.Render();
+
+            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+
+            // Find checkboxes, and skip date filter and table header checkbox
+            inputs = comp.FindAll("input").Skip(3);
+            inputs.Count().Should().Be(5); // one checkbox per row + one for the header + two date filters
+            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(2);
+            // Selection should remain intact
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
+
+            // Clear filters
+            comp.Instance.StartDate = null;
+            comp.Instance.EndDate = null;
+            comp.Render();
+
+            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+
+            // Find checkboxes, and skip date filter and table header checkbox
+            inputs = comp.FindAll("input").Skip(3);
+            inputs.Count().Should().Be(10); // one checkbox per row + one for the header + two date filters
+            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(10);
+            // Selection should remain intact
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
+        }
+
+        /// <summary>
         /// Checkbox click must not bubble up.
         /// </summary>
         [Test]
@@ -1180,6 +1323,55 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Ensures that multiple calls to reload the table properly flag the CancellationToken.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> object.</returns>
+        [Test]
+        public async Task TableServerDataLoadingTestWithCancel()
+        {
+            // Render the server-side data (with cancellation) test
+            var comp = Context.RenderComponent<TableServerDataLoadingTestWithCancel>();
+            // Get the MudTable<int> component
+            var table = comp.FindComponent<MudTable<int>>();
+
+            // Make a cancellation token we can monitor
+            CancellationToken? cancelToken = null;
+            // Make a task completion source
+            var first = new TaskCompletionSource<TableData<int>>();
+            // Set the ServerData function 
+            table.SetParam(p => p.ServerData, new Func<TableState, CancellationToken, Task<TableData<int>>>((s, cancellationToken) =>
+            {
+                // Remember the cancellation token
+                cancelToken = cancellationToken;
+                // Return a task that never completes
+                return first.Task;
+            }));
+
+            await Task.Delay(20);
+
+            // Test
+
+            // Make sure this first request was not canceled
+            comp.WaitForAssertion(() => cancelToken?.IsCancellationRequested.Should().BeFalse());
+
+            // Arrange a table refresh
+            var second = new TaskCompletionSource<TableData<int>>();
+            // Set the ServerData function to a new method...
+            table.SetParam(p => p.ServerData, new Func<TableState, CancellationToken, Task<TableData<int>>>((s, cancellationToken) =>
+            {
+                // ... which returns the second task.
+                return second.Task;
+            }));
+
+            await Task.Delay(20);
+
+            // Test
+
+            // Make sure this second request DID cancel the first request's token
+            comp.WaitForAssertion(() => cancelToken?.IsCancellationRequested.Should().BeTrue());
+        }
+
+        /// <summary>
         /// The table should render the classes and style to the tr using the RowStyleFunc and RowClassFunc parameters
         /// </summary>
         [Test]
@@ -1242,7 +1434,7 @@ namespace MudBlazor.UnitTests.Components
             validator.ControlCount.Should().Be(1);
             for (var i = 0; i < 10; ++i)
             {
-                trs[i % 3 + 1].Click();
+                trs[(i % 3) + 1].Click();
             }
             validator.ControlCount.Should().Be(1);
         }
@@ -1374,7 +1566,7 @@ namespace MudBlazor.UnitTests.Components
             trs[2].Click();
 
             // Change row two data
-            var input = comp.Find(("#Id1"));
+            var input = comp.Find("#Id1");
             input.Change("D");
 
             // Check row two is still in position 2 of the data rows
@@ -1643,6 +1835,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Row item data should be passed to EditButtonContext 
+        /// </summary>
+        [Test]
+        public async Task TableCustomEditButtonItemContext()
+        {
+            var comp = Context.RenderComponent<TableCustomEditButtonItemContextRenderTest>();
+
+            var buttons = comp.FindAll("button");
+            buttons[0].Click();
+            comp.Instance.LatestButtonClickItem.Should().Be("A");
+
+            buttons[1].Click();
+            comp.Instance.LatestButtonClickItem.Should().Be("B");
+
+            buttons[2].Click();
+            comp.Instance.LatestButtonClickItem.Should().Be("C");
+        }
+
+        /// <summary>
         /// Ensures clicking a different button does not switch the row
         /// </summary>
         [Test]
@@ -1705,13 +1916,15 @@ namespace MudBlazor.UnitTests.Components
             table.Context.GroupRows.Count.Should().Be(0);
             table.Context.Rows.Count.Should().Be(9);
 
+            IRefreshableElementCollection<IElement> Inputs() => comp.FindAll("input");
+            IRefreshableElementCollection<IElement> Buttons() => comp.FindAll("button");
+
             // now, with multi selection:
             table.MultiSelection = true;
-            var inputs = comp.FindAll("input").ToArray();
-            inputs.Length.Should().Be(10);
-            inputs[0].Change(true);
+            Inputs().Count.Should().Be(10);
+            Inputs()[0].Change(true);
             table.SelectedItems.Count.Should().Be(9);
-            inputs[0].Change(false);
+            Inputs()[0].Change(false);
             table.SelectedItems.Count.Should().Be(0);
 
             //group by Racing Category:
@@ -1725,21 +1938,20 @@ namespace MudBlazor.UnitTests.Components
 
             // multi selection:
             table.MultiSelection = true;
-            inputs = comp.FindAll("input").ToArray();
 
-            inputs[1].Change(true); // selecting only LMP1 category
+            Inputs()[1].Change(true); // selecting only LMP1 category
             table.SelectedItems.Count.Should().Be(2); // only one porsche and one audi
-            inputs[1].Change(false);
+            Inputs()[1].Change(false);
             table.SelectedItems.Count.Should().Be(0);
 
-            inputs[4].Change(true); // selecting only GTE category
+            Inputs()[4].Change(true); // selecting only GTE category
             table.SelectedItems.Count.Should().Be(3);
-            inputs[4].Change(false);
+            Inputs()[4].Change(false);
             table.SelectedItems.Count.Should().Be(0);
 
-            inputs[0].Change(true); // all
+            Inputs()[0].Change(true); // all
             table.SelectedItems.Count.Should().Be(9);
-            inputs[0].Change(false);
+            Inputs()[0].Change(false);
             table.SelectedItems.Count.Should().Be(0);
 
             //group by Racing Category and Brand:
@@ -1762,13 +1974,12 @@ namespace MudBlazor.UnitTests.Components
 
             // multi selection:
             table.MultiSelection = true;
-            inputs = comp.FindAll("input").ToArray();
-            inputs[0].Change(true); // all
+            Inputs()[0].Change(true); // all
             table.SelectedItems.Count.Should().Be(9);
-            inputs[0].Change(false);
+            Inputs()[0].Change(false);
             table.SelectedItems.Count.Should().Be(0);
 
-            inputs[1].Change(true); // selecting only LMP1 category
+            Inputs()[1].Change(true); // selecting only LMP1 category
             table.SelectedItems.Count.Should().Be(2);
 
             // indentation:
@@ -1785,23 +1996,22 @@ namespace MudBlazor.UnitTests.Components
             table.GroupBy.InnerGroup.Expandable = true;
             comp.Render();
 
-            var buttons = comp.FindAll("button").ToArray();
-            buttons.Length.Should().Be(13);// 4 categories and 9 cars (can repeat on different categories)
+            Buttons().Count.Should().Be(13);// 4 categories and 9 cars (can repeat on different categories)
             tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(36); // 1 table header + 8 category group rows (h + f)  + 18 brands group rows (see line 915) + 9 car rows
 
             // collapsing category LMP1:
-            buttons[0].Click();
+            Buttons()[0].Click();
             tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(29); // 1 table header + 8 category group rows (h + f) - LMP1 footer + 18 brands group rows (see line 915) - 2 brands LMP2 Header - 2 brands LMP1 footer + 9 car rows - 2 LMP1 car rows
-            buttons[0].Click();
+            Buttons()[0].Click();
             tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(36);
 
 
             //verify the collapse and expand selection on UI and items
 
-            inputs[1].Change(false); // LMP1 
+            Inputs()[1].Change(false); // LMP1 
 
             table.GroupBy.Indentation = true;
             table.GroupBy.Expandable = true;
@@ -1814,28 +2024,24 @@ namespace MudBlazor.UnitTests.Components
             comp.Render();
 
             table.SelectedItems.Count.Should().Be(0);
-            inputs.Where(x => x.IsChecked()).Count().Should().Be(0);
+            Inputs().Where(x => x.IsChecked()).Count().Should().Be(0);
 
-            inputs[1].Change(true); // LMP1            
+            Inputs()[1].Change(true); // LMP1            
             table.SelectedItems.Count.Should().Be(2);
 
-            buttons = comp.FindAll("button").ToArray();
-            inputs = comp.FindAll("input").ToArray();
-            inputs.Where(x => x.IsChecked()).Count().Should().Be(5);
+            Inputs().Where(x => x.IsChecked()).Count().Should().Be(5);
 
-            buttons[0].Click(); //collapse            
-            buttons[0].Click(); //expand            
+            Buttons()[0].Click(); //collapse            
+            Buttons()[0].Click(); //expand            
             //selected item should persist
             table.SelectedItems.Count.Should().Be(2);
 
-            inputs = comp.FindAll("input").ToArray();
-            inputs.Where(x => x.IsChecked()).Count().Should().Be(5);
+            Inputs().Where(x => x.IsChecked()).Count().Should().Be(5);
 
-            inputs[1].Change(false);
+            Inputs()[1].Change(false);
             table.SelectedItems.Count.Should().Be(0);
 
-            inputs = comp.FindAll("input").ToArray();
-            inputs.Where(x => x.IsChecked()).Count().Should().Be(0);
+            Inputs().Where(x => x.IsChecked()).Count().Should().Be(0);
 
         }
 
@@ -2002,8 +2208,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task RowsPerPageParameterTwoWayBinding()
         {
-            int rowsPerPage = 5;
-            int newRowsPerPage = 25;
+            var rowsPerPage = 5;
+            var newRowsPerPage = 25;
             var comp = Context.RenderComponent<TableRowsPerPageTwoWayBindingTest>(parameters => parameters
                 .Add(p => p.RowsPerPage, rowsPerPage)
                 .Add(p => p.RowsPerPageChanged, (s) =>
@@ -2048,6 +2254,59 @@ namespace MudBlazor.UnitTests.Components
 
             // Make sure number of items has updated
             tableInstance.GetFilteredItemsCount().Should().Be(1);
+        }
+
+        /// <summary>
+        /// Tests that AllowEditItem is respected when clicking a row
+        /// </summary>
+        [Test]
+        [TestCase(TableEditTrigger.RowClick)]
+        [TestCase(TableEditTrigger.EditButton)]
+        public void AllowEditRowPreventsEdit(TableEditTrigger trigger)
+        {
+            var comp = Context.RenderComponent<TableNotEditableRowTest>(parameters => parameters.Add(x => x.EditTrigger, trigger));
+
+            // Get table instance
+            var tableInstance = comp.FindComponent<MudTable<int>>().Instance;
+
+            // Check number of filtered items
+            tableInstance.GetFilteredItemsCount().Should().Be(3);
+
+            var trs = comp.FindAll("tr");
+
+            if (trigger == TableEditTrigger.RowClick)
+            {
+                trs[0].InnerHtml.Contains("input").Should().BeFalse();
+                trs[1].InnerHtml.Contains("input").Should().BeFalse();
+
+                trs[0].Click();
+                tableInstance.SelectedItem.Should().Be(5);
+                tableInstance.Editing.Should().BeFalse();
+
+                trs[1].Click();
+                tableInstance.Editing.Should().BeTrue();
+                tableInstance.SelectedItem.Should().Be(10);
+
+
+                var trs2 = comp.FindAll("tr");
+                trs2[0].InnerHtml.Contains("input").Should().BeFalse();
+                trs2[1].InnerHtml.Contains("input").Should().BeTrue();
+            }
+            else
+            {
+                trs[0].InnerHtml.Contains("button").Should().BeFalse();
+                trs[1].InnerHtml.Contains("button").Should().BeTrue();
+                trs[2].InnerHtml.Contains("button").Should().BeTrue();
+                trs[1].InnerHtml.Contains("input").Should().BeFalse();
+
+                var buttons = comp.FindAll("button");
+                buttons[0].Click();
+
+                var trs2 = comp.FindAll("tr");
+                trs2[0].InnerHtml.Contains("input").Should().BeFalse();
+                trs2[1].InnerHtml.Contains("input").Should().BeTrue();
+                trs2[2].InnerHtml.Contains("input").Should().BeFalse();
+            }
         }
 
         /// Issue #3033
@@ -2096,7 +2355,7 @@ namespace MudBlazor.UnitTests.Components
             trs[2].Click();
 
             // Change row two data
-            var input = comp.Find(("#Id2"));
+            var input = comp.Find("#Id2");
             input.Change("Change");
 
             table.SelectedItems.Count.Should().Be(3);
@@ -2164,6 +2423,18 @@ namespace MudBlazor.UnitTests.Components
                 table.Instance.Items.ToList().GetRange(0, 100));
             comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell")[1].TextContent.Should().Be("Value_0");
             comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell .mud-checkbox-input")[0].IsChecked().Should().Be(true);
+        }
+
+        /// <summary>
+        /// Selecting the 'Select All' checkbox should trigger the 'SelectedItemsChanged' event only once
+        /// </summary>
+        [Test]
+        public async Task TestSelectedItemsChanedWithMultiSelection()
+        {
+            var comp = Context.RenderComponent<TableMultiSelectionSelectedItemsChangedTest>();
+            var selectAllCheckbox = comp.Find("input");
+            selectAllCheckbox.Change(true);
+            comp.Find("#counter").TextContent.Should().Be("1");
         }
     }
 }

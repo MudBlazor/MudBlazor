@@ -3,15 +3,7 @@
 
 @if(AvatarGroup == null || AvatarGroup.MaxGroupReached(this))
 {
-    <div @attributes="UserAttributes" class="@Classname" style="@Stylesname">
-        @{
-#pragma warning disable CS0618
-            if (!String.IsNullOrEmpty(Image))
-            {
-                <MudImage Src="@Image" Alt="@Alt"/>
-            }
-#pragma warning restore CS0618
-        }
+    <div role="img" @attributes="UserAttributes" class="@Classname" style="@Stylesname">
         @ChildContent
     </div>
 }

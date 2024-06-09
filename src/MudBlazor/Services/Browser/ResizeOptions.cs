@@ -5,7 +5,7 @@ namespace MudBlazor.Services
 {
 #nullable enable
     /// <summary>
-    /// Represents options for <see cref="IBreakpointService"/>.
+    /// Represents options for <see cref="IBrowserViewportService"/>.
     /// </summary>
     public class ResizeOptions : IEquatable<ResizeOptions>
     {
@@ -14,6 +14,9 @@ namespace MudBlazor.Services
         /// Setting this value too low can cause poor application performance.
         /// Default value is <c>100</c>.
         /// </summary>
+        /// <remarks>
+        /// If set to <c>0</c>, the resize event will report instantaneously.
+        /// </remarks>
         public int ReportRate { get; set; } = 100;
 
         /// <summary>

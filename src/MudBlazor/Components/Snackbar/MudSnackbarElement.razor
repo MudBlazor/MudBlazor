@@ -4,10 +4,23 @@
 *@
 
 @namespace MudBlazor
+@using MudBlazor.Resources
 @inherits MudComponentBase
+@inject InternalMudLocalizer Localizer
 
 @Css
-<div @attributes="UserAttributes" class="@SnackbarClass" style="@AnimationStyle" @onclick="@SnackbarClicked">
+<div role="alert"
+     aria-live="polite"
+     class="@SnackbarClass"
+     style="@AnimationStyle"
+     @onclick="EventUtil.AsNonRenderingEventHandler(SnackbarClicked)"
+     @onpointerenter="InteractionStartHandler"
+     @onpointerleave="InteractionEndHandler"
+     @ontouchstart="InteractionStartHandler"
+     @ontouchend="InteractionEndHandler"
+     @ontouchcancel="InteractionEndHandler"
+     @attributes="UserAttributes">
+
     @if (!HideIcon)
     {
         <div class="mud-snackbar-icon">
@@ -25,15 +38,17 @@
     @if (ShowCloseIcon || ShowActionButton)
     {
         <div class="mud-snackbar-content-action">
-
             @if (ShowActionButton)
             {
-                <MudButton Variant="@ActionVariant" Color="@ActionColor" OnClick="ActionClicked" DisableElevation>@Action</MudButton>
+                <MudButton Class="mud-snackbar-action-button" Variant="@ActionVariant" Color="@ActionColor" OnClick="ActionClicked" DropShadow="false">
+                    @Action
+                </MudButton>
             }
 
             @if (ShowCloseIcon)
             {
-                <MudIconButton Icon="@CloseIcon" Size="Size.Small" Class="ms-2" OnClick="CloseIconClicked" />
+                <MudIconButton Class="mud-snackbar-close-button ms-2" Icon="@CloseIcon" Size="Size.Small" OnClick="CloseIconClicked"
+                               aria-label="@Localizer[nameof(LanguageResource.MudSnackbar_Close)]" />
             }
         </div>
     }

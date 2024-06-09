@@ -5,10 +5,11 @@ $value: 0;
   .z-#{$value} {
     z-index: $value;
   }
+
   $count: $count + 1;
   $value: $value + 10;
 }
 
-.z-auto{
-  z-index:auto;
+.z-auto {
+  z-index: auto;
 }

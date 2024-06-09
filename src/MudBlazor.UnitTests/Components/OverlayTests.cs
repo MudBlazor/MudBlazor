@@ -1,7 +1,9 @@
 ﻿using System.Threading.Tasks;
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -43,7 +45,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.AutoClose, true)
             );
 
-            await comp.Find("div.mud-overlay").ClickAsync(null);
+            await comp.Find("div.mud-overlay").ClickAsync(new MouseEventArgs());
             comp.Markup.Should().BeEmpty();
         }
 
@@ -57,11 +59,11 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Visible, true)
             );
 
-            await comp.Find("div.mud-overlay").ClickAsync(null);
+            await comp.Find("div.mud-overlay").ClickAsync(new MouseEventArgs());
             comp.Markup.Should().NotBeEmpty();
 
             comp.SetParam(nameof(MudOverlay.AutoClose), false);
-            await comp.Find("div.mud-overlay").ClickAsync(null);
+            await comp.Find("div.mud-overlay").ClickAsync(new MouseEventArgs());
             comp.Markup.Should().NotBeEmpty();
         }
 
@@ -79,9 +81,22 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.OnClick, OnClickHandler)
             );
 
-            await comp.Find("div.mud-overlay").ClickAsync(null);
+            await comp.Find("div.mud-overlay").ClickAsync(new MouseEventArgs());
             comp.Markup.Trim().Should().NotBeEmpty();
             counter.Should().Be(1);
+        }
+
+        [Test]
+        public async Task VisibleBindingWithAutoCloseTest()
+        {
+            var comp = Context.RenderComponent<OverlayVisibleBindingWithAutoCloseTest>();
+            IElement Button() => comp.Find("#showBtn");
+
+            comp.Instance.Visible.Should().BeFalse();
+            await Button().ClickAsync(new MouseEventArgs());
+            comp.Instance.Visible.Should().BeTrue();
+            await comp.Find("div.mud-overlay").ClickAsync(new MouseEventArgs());
+            comp.Instance.Visible.Should().BeFalse();
         }
     }
 }

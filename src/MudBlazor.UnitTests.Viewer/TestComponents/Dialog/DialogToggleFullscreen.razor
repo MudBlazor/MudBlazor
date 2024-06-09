@@ -9,11 +9,12 @@
     </DialogActions>
 </MudDialog>
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
 
-    void Close() => MudDialog.Close(DialogResult.Ok(true));
+    private void Close() => MudDialog.Close(DialogResult.Ok(true));
 
-    void ToggleFullscreen()
+    private void ToggleFullscreen()
     {
         MudDialog.Options.FullScreen = !(MudDialog.Options.FullScreen ?? false);
         MudDialog.SetOptions(MudDialog.Options);

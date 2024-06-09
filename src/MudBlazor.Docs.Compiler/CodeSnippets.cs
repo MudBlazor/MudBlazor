@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace MudBlazor.Docs.Compiler
 {
-    public class CodeSnippets
+    public partial class CodeSnippets
     {
         public bool Execute()
         {
@@ -25,6 +25,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("namespace MudBlazor.Docs.Models");
                 cb.AddLine("{");
                 cb.IndentLevel++;
+                cb.AddLine("[System.CodeDom.Compiler.GeneratedCodeAttribute(\"MudBlazor.Docs.Compiler\", \"0.0.0.0\")]");
                 cb.AddLine("public static partial class Snippets");
                 cb.AddLine("{");
                 cb.IndentLevel++;
@@ -61,8 +62,11 @@ namespace MudBlazor.Docs.Compiler
         private static string EscapeComponentSource(string path)
         {
             var source = File.ReadAllText(path, Encoding.UTF8);
-            source = Regex.Replace(source, "@(namespace|layout|page) .+?\n", string.Empty);
+            source = NamespaceLayoutOrPageRegularExpression().Replace(source, string.Empty);
             return source.Replace("\"", "\"\"").Trim();
         }
+
+        [GeneratedRegex("@(namespace|layout|page) .+?\n")]
+        private static partial Regex NamespaceLayoutOrPageRegularExpression();
     }
 }

@@ -20,7 +20,7 @@ namespace MudBlazor
         private IKeyInterceptor _keyInterceptor;
         private Comparer _comparer = new(CultureInfo.InvariantCulture);
 
-        public MudNumericField() : base()
+        public MudNumericField()
         {
             Validation = new Func<T, Task<bool>>(ValidateInput);
             #region parameters default depending on T
@@ -181,19 +181,19 @@ namespace MudBlazor
         {
             try
             {
-                var nextValue = GetNextValue(factor);
+                var nextValue = GetNextValue(factor) ?? Num.To<T>(0);
 
                 // validate that the data type is a value type before we compare them
-                if (typeof(T).IsValueType)
+                if (typeof(T).IsValueType && Value is not null)
                 {
                     if (factor > 0 && _comparer.Compare(nextValue, Value) < 0)
                         nextValue = Max;
-                    else if (factor < 0 && (_comparer.Compare(nextValue, Value) > 0 || nextValue is null))
+                    else if (factor < 0 && _comparer.Compare(nextValue, Value) > 0)
                         nextValue = Min;
                 }
 
                 await SetValueAsync(ConstrainBoundaries(nextValue).value);
-                _elementReference.SetText(Text).AndForget();
+                await _elementReference.SetText(Text);
             }
             catch (OverflowException)
             {
@@ -205,12 +205,12 @@ namespace MudBlazor
         private T GetNextValue(double factor)
         {
             if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
-                return (T)(object)Convert.ToDecimal(FromDecimal(Value) + FromDecimal(Step) * (decimal)factor);
+                return (T)(object)Convert.ToDecimal(FromDecimal(Value) + (FromDecimal(Step) * (decimal)factor));
             if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
-                return (T)(object)Convert.ToInt64(FromInt64(Value) + FromInt64(Step) * factor);
+                return (T)(object)Convert.ToInt64(FromInt64(Value) + (FromInt64(Step) * factor));
             if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
-                return (T)(object)Convert.ToUInt64(FromUInt64(Value) + FromUInt64(Step) * factor);
-            return Num.To<T>(Num.From(Value) + Num.From(Step) * factor);
+                return (T)(object)Convert.ToUInt64(FromUInt64(Value) + (FromUInt64(Step) * factor));
+            return Num.To<T>(Num.From(Value) + (Num.From(Step) * factor));
         }
 
         /// <summary>
@@ -281,15 +281,14 @@ namespace MudBlazor
                     await Decrement();
                     break;
             }
-            OnKeyDown.InvokeAsync(obj).AndForget();
+            await OnKeyDown.InvokeAsync(obj);
         }
 
         protected Task HandleKeyUp(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return Task.CompletedTask;
-            OnKeyUp.InvokeAsync(obj).AndForget();
-            return Task.CompletedTask;
+            return OnKeyUp.InvokeAsync(obj);
         }
 
         protected async Task OnMouseWheel(WheelEventArgs obj)
@@ -393,11 +392,12 @@ namespace MudBlazor
         public override InputMode InputMode { get; set; } = InputMode.numeric;
 
         /// <summary>
+        /// <para>
         /// The pattern attribute, when specified, is a regular expression which the input's value must match in order for the value to pass constraint validation. It must be a valid JavaScript regular expression
         /// Defaults to [0-9,.\-]
         /// To get a numerical keyboard on safari, use the pattern. The default pattern should achieve numerical keyboard.
-        ///
-        /// Note: this pattern is also used to prevent all input except numbers and allowed characters. So for instance to allow only numbers, no signs and no commas you might change it to to [0-9.]
+        /// </para>
+        /// <para>Note: this pattern is also used to prevent all input except numbers and allowed characters. So for instance to allow only numbers, no signs and no commas you might change it to [0-9.]</para>
         /// </summary>
         [Parameter]
         public override string Pattern { get; set; } = @"[0-9,.\-]";
@@ -432,7 +432,7 @@ namespace MudBlazor
         {
             base.Dispose(disposing);
 
-            if (disposing == true)
+            if (disposing)
             {
                 _keyInterceptor?.Dispose();
             }

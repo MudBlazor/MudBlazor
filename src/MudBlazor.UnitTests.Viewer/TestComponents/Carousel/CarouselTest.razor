@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudCarousel @bind-SelectedIndex="SelectedIndex" Style="height:200px;" ShowArrows="true" ArrowsPosition="Position.Top" BulletsPosition="Position.Start" ShowDelimiters="true" AutoCycle="false" AutoCycleTime="TimeSpan.FromMilliseconds(500)" TData="object">
+<MudCarousel @bind-SelectedIndex="SelectedIndex" Style="height:200px;" ShowArrows ArrowsPosition="Position.Top" BulletsPosition="Position.Start" ShowBullets AutoCycle="false" AutoCycleTime="TimeSpan.FromMilliseconds(500)" TData="object">
     <MudCarouselItem Class="fake-class-item1" Transition="Transition.Slide">
         <div class="d-flex" style="background-color:#594AE2; height:100%">
             <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />

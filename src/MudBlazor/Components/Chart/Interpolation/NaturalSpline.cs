@@ -28,15 +28,15 @@ namespace MudBlazor.Components.Chart.Interpolation
         }
         public void CalcParameters()
         {
-            for (int i = 0; i < n; i++)
+            for (var i = 0; i < n; i++)
                 a[i] = GivenYs[i];
 
-            for (int i = 0; i < n - 1; i++)
+            for (var i = 0; i < n - 1; i++)
                 h[i] = GivenXs[i + 1] - GivenXs[i];
 
-            for (int i = 0; i < n - 2; i++)
+            for (var i = 0; i < n - 2; i++)
             {
-                for (int k = 0; k < n - 2; k++)
+                for (var k = 0; k < n - 2; k++)
                 {
                     m.a[i, k] = 0.0;
                     m.y[i] = 0.0;
@@ -44,7 +44,7 @@ namespace MudBlazor.Components.Chart.Interpolation
                 }
             }
 
-            for (int i = 0; i < n - 2; i++)
+            for (var i = 0; i < n - 2; i++)
             {
                 if (i == 0)
                 {
@@ -60,7 +60,7 @@ namespace MudBlazor.Components.Chart.Interpolation
                 }
 
                 if ((h[i] != 0.0) && (h[i + 1] != 0.0))
-                    m.y[i] = ((a[i + 2] - a[i + 1]) / h[i + 1] - (a[i + 1] - a[i]) / h[i]) * 3.0;
+                    m.y[i] = (((a[i + 2] - a[i + 1]) / h[i + 1]) - ((a[i + 1] - a[i]) / h[i])) * 3.0;
                 else
                     m.y[i] = 0.0;
             }
@@ -73,15 +73,15 @@ namespace MudBlazor.Components.Chart.Interpolation
             c[0] = 0.0;
             c[n - 1] = 0.0;
 
-            for (int i = 1; i < n - 1; i++)
+            for (var i = 1; i < n - 1; i++)
                 c[i] = m.x[i - 1];
 
-            for (int i = 0; i < n - 1; i++)
+            for (var i = 0; i < n - 1; i++)
             {
                 if (h[i] != 0.0)
                 {
                     d[i] = 1.0 / 3.0 / h[i] * (c[i + 1] - c[i]);
-                    b[i] = 1.0 / h[i] * (a[i + 1] - a[i]) - h[i] / 3.0 * (c[i + 1] + 2 * c[i]);
+                    b[i] = (1.0 / h[i] * (a[i + 1] - a[i])) - (h[i] / 3.0 * (c[i + 1] + (2 * c[i])));
                 }
             }
         }

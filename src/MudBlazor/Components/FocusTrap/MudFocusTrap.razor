@@ -1,7 +1,14 @@
 ﻿@namespace MudBlazor
-@inherits MudComponentBase;
+@inherits MudComponentBase
 
-<div @ref="_root" @attributes="UserAttributes" class="@Classname" style="@Style" @onkeydown="OnRootKeyDown" @onkeyup="OnRootKeyUp" @onfocus="OnRootFocusAsync" tabindex="-1">
+<div @ref="_root"
+     @attributes="UserAttributes"
+     class="@Classname"
+     style="@Style"
+     @onkeydown="OnRootKeyDown"
+     @onkeyup="OnRootKeyUp"
+     @onfocus="OnRootFocusAsync"
+     tabindex="-1">
 
     <div class="fixed pointer-events-none"
          tabindex="@TrapTabIndex"
@@ -16,10 +23,12 @@
 
     <div @ref="_fallback"
          class="fixed pointer-events-none"
-         tabindex="-1">
+         tabindex="-1"
+         aria-hidden="true">
     </div>
 
-    <div tabindex="-1">
+    <div class="mud-focus-trap-child-container outline-none"
+         tabindex="-1">
         @ChildContent
     </div>
 
@@ -33,5 +42,4 @@
          tabindex="@TrapTabIndex"
          @onfocus="OnBottomFocusAsync">
     </div>
-
 </div>

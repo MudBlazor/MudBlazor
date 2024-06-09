@@ -1,0 +1,37 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Width="300px" Elevation="0">
+    <MudTreeView T="string" ReadOnly="@ReadOnly" Hover="@Hover" Dense="@Dense" Disabled="@Disabled"
+                 ExpandOnClick="ExpandOnClick" ExpandOnDoubleClick="ExpandOnDoubleClick">
+        <MudTreeViewItem Text="Applications" Expanded>
+            <MudTreeViewItem Text="Terminal" />
+        </MudTreeViewItem>
+        <MudTreeViewItem Text="Documents" Expanded>
+            <MudTreeViewItem Text="MudBlazor" Expanded>
+                <MudTreeViewItem Text="API" />
+                <MudTreeViewItem Text="Components" />
+                <MudTreeViewItem Text="Features" />
+            </MudTreeViewItem>
+        </MudTreeViewItem>
+    </MudTreeView>
+</MudPaper>
+
+<MudStack Row Wrap="Wrap.Wrap" Justify="Justify.Center">
+    <MudSwitch @bind-Value="ReadOnly" Color="Color.Primary">ReadOnly</MudSwitch>
+    <MudSwitch @bind-Value="Hover" Color="Color.Primary">Hover</MudSwitch>
+    <MudSwitch @bind-Value="Ripple" Color="Color.Primary">Ripple</MudSwitch>
+    <MudSwitch @bind-Value="Dense" Color="Color.Primary">Dense</MudSwitch>
+    <MudSwitch @bind-Value="Disabled" Color="Color.Primary">Disabled</MudSwitch>
+    <MudSwitch @bind-Value="ExpandOnClick" Color="Color.Primary">ExpandOnClick</MudSwitch>
+    <MudSwitch @bind-Value="ExpandOnDoubleClick" Color="Color.Primary">ExpandOnDoubleClick</MudSwitch>
+</MudStack>
+
+@code {
+    public bool ReadOnly = true;
+    public bool Hover = true;
+    public bool Ripple;
+    public bool Dense;
+    public bool Disabled;
+    public bool ExpandOnClick = true;
+    public bool ExpandOnDoubleClick;
+}

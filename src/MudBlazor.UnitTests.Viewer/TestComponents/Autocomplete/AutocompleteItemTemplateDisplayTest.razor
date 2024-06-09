@@ -1,0 +1,46 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
+<MudPopoverProvider/>
+
+<MudAutocomplete T="string" Label="US States" @bind-Value="value1"
+                 ItemDisabledFunc="@((string state) => (state.Contains('l')))" SearchFunc="@Search">
+               <ItemDisabledTemplate>
+                 <MudText>@context Disabled State</MudText>
+               </ItemDisabledTemplate>
+               <ItemSelectedTemplate>
+                 <MudText>@context Selected State</MudText>
+               </ItemSelectedTemplate>
+               </MudAutocomplete>
+
+@code {
+
+  private string value1;
+  private string[] states =
+  {
+        "Alabama", "Alaska", "American Samoa", "Arizona",
+        "Arkansas", "California", "Colorado", "Connecticut",
+        "Delaware", "District of Columbia", "Federated States of Micronesia",
+        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
+        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+        "Louisiana", "Maine", "Marshall Islands", "Maryland",
+        "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+        "Missouri", "Montana", "Nebraska", "Nevada",
+        "New Hampshire", "New Jersey", "New Mexico", "New York",
+        "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
+        "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
+        "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
+        "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming",
+  };
+
+  private async Task<IEnumerable<string>> Search(string value, CancellationToken token)
+  {
+    // In real life use an asynchronous function for fetching data from an api.
+    await Task.Delay(5);
+
+    // if text is null or empty, show complete list
+    if (string.IsNullOrEmpty(value))
+      return states;
+    return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+  }
+}

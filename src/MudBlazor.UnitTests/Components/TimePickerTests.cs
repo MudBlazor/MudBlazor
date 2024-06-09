@@ -1,6 +1,7 @@
 ﻿#pragma warning disable BL0005 // Set parameter outside component
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -17,7 +18,7 @@ namespace MudBlazor.UnitTests.Components
     {
         public IRenderedComponent<SimpleTimePickerTest> OpenPicker(ComponentParameter parameter)
         {
-            return OpenPicker(new ComponentParameter[] { parameter });
+            return OpenPicker([parameter]);
         }
 
         public IRenderedComponent<SimpleTimePickerTest> OpenPicker(ComponentParameter[] parameters = null)
@@ -48,7 +49,6 @@ namespace MudBlazor.UnitTests.Components
             var openButton = comp.Find(".mud-input-adornment button");
             openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open Time Picker");
         }
-
 
         [Test]
         public void TimePicker_Should_Clear()
@@ -156,7 +156,7 @@ namespace MudBlazor.UnitTests.Components
             underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(21);
 
             // open picker
-            await comp.InvokeAsync(() => picker.Open());
+            await comp.InvokeAsync(picker.Open);
 
             // click 10 hours
             comp.FindAll("div.mud-picker-stick-inner.mud-hour")[9].Click();
@@ -268,7 +268,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MinuteSelectionStep_0_SelectTime_UsingClicks_CheckTime()
         {
-            var comp = Context.RenderComponent<MudTimePicker>(new ComponentParameter[] { Parameter(nameof(MudTimePicker.MinuteSelectionStep), 0), Parameter("TimeEditMode", TimeEditMode.OnlyMinutes), Parameter("PickerVariant", PickerVariant.Static), Parameter("OpenTo", OpenTo.Minutes) });
+            var comp = Context.RenderComponent<MudTimePicker>([Parameter(nameof(MudTimePicker.MinuteSelectionStep), 0), Parameter("TimeEditMode", TimeEditMode.OnlyMinutes), Parameter("PickerVariant", PickerVariant.Static), Parameter("OpenTo", OpenTo.Minutes)]);
             var picker = comp.Instance;
 
             // Any minutes displayed
@@ -306,7 +306,6 @@ namespace MudBlazor.UnitTests.Components
             // Are hours displayed
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
-
 
         [Test]
         public void OpenToMinutes_CheckHoursHidden()
@@ -346,7 +345,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TimeEditModeHours_CheckSelection()
         {
-            var comp = Context.RenderComponent<SimpleTimePickerTest>((Parameter("TimeEditMode", TimeEditMode.OnlyHours)));
+            var comp = Context.RenderComponent<SimpleTimePickerTest>(Parameter("TimeEditMode", TimeEditMode.OnlyHours));
             var underlyingPicker = comp.FindComponent<MudTimePicker>().Instance;
 
             // click to to open picker
@@ -378,7 +377,6 @@ namespace MudBlazor.UnitTests.Components
 
             // should be 14 hours
             underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(14);
-
         }
 
         [Test]
@@ -391,21 +389,20 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
-
         [Test]
-        public void DragMouse_SelectHour_CheckMinutesAppear()
+        public void DragPointer_SelectHour_CheckMinutesAppear()
         {
             var comp = OpenPicker();
             var picker = comp.Instance;
             var underlyingPicker = comp.FindComponent<MudTimePicker>().Instance;
 
             // click on the minutes input
-            comp.Find("div.mud-time-picker-hour").MouseDown();
-            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[3].MouseOver();
+            comp.Find("div.mud-time-picker-hour").PointerDown();
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[3].PointerOver();
             underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(16);
             underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(0);
-            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[5].MouseOver();
-            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[5].MouseUp();
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[5].PointerOver();
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[5].PointerUp();
             underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(18);
             underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(0);
             // Are minutes displayed
@@ -413,7 +410,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DragMouse_SelectMinutes()
+        public void DragPointer_SelectMinutes()
         {
             // Use bare component
             var comp = OpenPicker(Parameter("OpenTo", OpenTo.Minutes));
@@ -423,13 +420,13 @@ namespace MudBlazor.UnitTests.Components
             // Any hours displayed
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
             // click and drag
-            comp.Find("div.mud-time-picker-minute").MouseDown();
-            comp.FindAll("div.mud-minute")[3].MouseOver();
+            comp.Find("div.mud-time-picker-minute").PointerDown();
+            comp.FindAll("div.mud-minute")[3].PointerOver();
             underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(3);
-            comp.FindAll("div.mud-minute")[31].MouseOver();
+            comp.FindAll("div.mud-minute")[31].PointerOver();
             underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(31);
-            comp.FindAll("div.mud-minute")[5].MouseOver();
-            comp.FindAll("div.mud-minute")[5].MouseUp();
+            comp.FindAll("div.mud-minute")[5].PointerOver();
+            comp.FindAll("div.mud-minute")[5].PointerUp();
             underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(5);
         }
 
@@ -483,10 +480,10 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 12; i++)
             {
                 var expected = i == 11 ? 0 : i + 1;
-                comp.Find("div.mud-time-picker-hour").MouseDown();
-                comp.FindAll("div.mud-hour")[i].MouseOver();
+                comp.Find("div.mud-time-picker-hour").PointerDown();
+                comp.FindAll("div.mud-hour")[i].PointerOver();
                 comp.WaitForAssertion(() => underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(expected));
-                comp.FindAll("div.mud-hour")[i].MouseUp();
+                comp.FindAll("div.mud-hour")[i].PointerUp();
                 comp.WaitForAssertion(() => underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(expected));
                 comp.FindAll("div.mud-hour")[i].Click();
                 comp.WaitForAssertion(() => underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(expected));
@@ -509,10 +506,10 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 12; i++)
             {
                 var expected = i == 11 ? 12 : i + 13;
-                comp.Find("div.mud-time-picker-hour").MouseDown();
-                comp.FindAll("div.mud-hour")[i].MouseOver();
+                comp.Find("div.mud-time-picker-hour").PointerDown();
+                comp.FindAll("div.mud-hour")[i].PointerOver();
                 comp.WaitForAssertion(() => underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(expected));
-                comp.FindAll("div.mud-hour")[i].MouseUp();
+                comp.FindAll("div.mud-hour")[i].PointerUp();
                 comp.WaitForAssertion(() => underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(expected));
                 comp.FindAll("div.mud-hour")[i].Click();
                 comp.WaitForAssertion(() => underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(expected));
@@ -532,10 +529,10 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 12; i++)
             {
                 var expected = i + 13 == 24 ? 0 : i + 13;
-                comp.Find("div.mud-time-picker-hour").MouseDown();
-                comp.FindAll("div.mud-picker-stick-outer.mud-hour")[i].MouseOver();
+                comp.Find("div.mud-time-picker-hour").PointerDown();
+                comp.FindAll("div.mud-picker-stick-outer.mud-hour")[i].PointerOver();
                 comp.WaitForAssertion(() => underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(expected));
-                comp.FindAll("div.mud-picker-stick-outer.mud-hour")[i].MouseUp();
+                comp.FindAll("div.mud-picker-stick-outer.mud-hour")[i].PointerUp();
                 comp.WaitForAssertion(() => underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(expected));
                 comp.FindAll("div.mud-picker-stick-outer.mud-hour")[i].Click();
                 comp.WaitForAssertion(() => underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(expected));
@@ -544,10 +541,10 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 12; i++)
             {
                 var expected = i + 1;
-                comp.Find("div.mud-time-picker-hour").MouseDown();
-                comp.FindAll("div.mud-picker-stick-inner.mud-hour")[i].MouseOver();
+                comp.Find("div.mud-time-picker-hour").PointerDown();
+                comp.FindAll("div.mud-picker-stick-inner.mud-hour")[i].PointerOver();
                 comp.WaitForAssertion(() => underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(expected));
-                comp.FindAll("div.mud-picker-stick-inner.mud-hour")[i].MouseUp();
+                comp.FindAll("div.mud-picker-stick-inner.mud-hour")[i].PointerUp();
                 comp.WaitForAssertion(() => underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(expected));
                 comp.FindAll("div.mud-picker-stick-inner.mud-hour")[i].Click();
                 comp.WaitForAssertion(() => underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(expected));
@@ -555,10 +552,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// drag and mouseup on minutes for test coverage
+        /// drag and pointerup on minutes for test coverage
         /// </summary>
         [Test]
-        public void DragAndMouseUp_AllMinutes()
+        public void DragAndPointerUp_AllMinutes()
         {
             var comp = OpenPicker(Parameter("TimeEditMode", TimeEditMode.OnlyMinutes));
             var picker = comp.Instance;
@@ -567,16 +564,16 @@ namespace MudBlazor.UnitTests.Components
             // Any minutes displayed
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
 
-            // click and drag (hold mouse down)
-            comp.Find("div.mud-time-picker-minute").MouseDown();
+            // click and drag (hold pointer down)
+            comp.Find("div.mud-time-picker-minute").PointerDown();
             for (var i = 0; i < 60; i++)
             {
-                comp.FindAll("div.mud-minute")[i].MouseOver();
+                comp.FindAll("div.mud-minute")[i].PointerOver();
                 underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(i);
 
                 if (i == 59)
                 {
-                    comp.FindAll("div.mud-minute")[i].MouseUp();
+                    comp.FindAll("div.mud-minute")[i].PointerUp();
                     underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(i);
                 }
             }
@@ -591,7 +588,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Click_AllMinutes_Static()
         {
-            var comp = Context.RenderComponent<MudTimePicker>(new ComponentParameter[] { Parameter("TimeEditMode", TimeEditMode.OnlyMinutes), Parameter("PickerVariant", PickerVariant.Static), Parameter("OpenTo", OpenTo.Minutes) });
+            var comp = Context.RenderComponent<MudTimePicker>([Parameter("TimeEditMode", TimeEditMode.OnlyMinutes), Parameter("PickerVariant", PickerVariant.Static), Parameter("OpenTo", OpenTo.Minutes)]);
             var picker = comp.Instance;
 
             // Any minutes displayed
@@ -606,7 +603,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// drag and mouseup in every view
+        /// drag and pointerup in every view
         /// </summary>
         [Test]
         public void SelectTime_UsingDrag_DefaultMode_CheckCloseWhenFinished()
@@ -619,22 +616,22 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-time-picker-hour").Count.Should().Be(1);
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
 
-            // drag to 13 and mouse up
-            comp.Find("div.mud-time-picker-hour").MouseDown();
-            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[0].MouseOver();
+            // drag to 13 and pointer up
+            comp.Find("div.mud-time-picker-hour").PointerDown();
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[0].PointerOver();
             underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(13);
-            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[0].MouseUp();
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[0].PointerUp();
             underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(13);
 
             // check if the view changed to minutes
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
             comp.FindAll("div.mud-time-picker-minute").Count.Should().Be(1);
 
-            // drag to 37 minutes and mouse up
-            comp.Find("div.mud-time-picker-minute").MouseDown();
-            comp.FindAll("div.mud-minute")[37].MouseOver();
+            // drag to 37 minutes and pointer up
+            comp.Find("div.mud-time-picker-minute").PointerDown();
+            comp.FindAll("div.mud-minute")[37].PointerOver();
             underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(37);
-            comp.FindAll("div.mud-minute")[37].MouseUp();
+            comp.FindAll("div.mud-minute")[37].PointerUp();
             underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(37);
 
             // check if closed
@@ -728,7 +725,7 @@ namespace MudBlazor.UnitTests.Components
             var timePicker = comp.FindComponent<MudTimePicker>();
 
             // Open the timepicker
-            await comp.InvokeAsync(() => timePicker.Instance.Open());
+            await comp.InvokeAsync(timePicker.Instance.OpenAsync);
             var picker = timePicker.Instance;
 
             // Select 16 hours
@@ -746,17 +743,17 @@ namespace MudBlazor.UnitTests.Components
             // and there are actions which are defined
             picker.Time.Should().Be(new TimeSpan(00, 45, 00));
 
-            await comp.InvokeAsync(() => timePicker.Instance.Open());
+            await comp.InvokeAsync(timePicker.Instance.OpenAsync);
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
 
-            await comp.InvokeAsync(() => timePicker.Instance.Clear());
+            await comp.InvokeAsync(() => timePicker.Instance.ClearAsync());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
-            await comp.InvokeAsync(() => timePicker.Instance.Close(false));
+            await comp.InvokeAsync(() => timePicker.Instance.CloseAsync(false));
             // Change the value of autoclose
             timePicker.Instance.AutoClose = true;
 
             // Open the timepicker
-            await comp.InvokeAsync(() => timePicker.Instance.Open());
+            await comp.InvokeAsync(timePicker.Instance.OpenAsync);
             picker = timePicker.Instance;
 
             // Select 16 hours
@@ -773,10 +770,10 @@ namespace MudBlazor.UnitTests.Components
             // Check that the time should be equal to the selection this time!
             picker.Time.Should().Be(new TimeSpan(16, 30, 00));
 
-            await comp.InvokeAsync(() => timePicker.Instance.Open());
+            await comp.InvokeAsync(timePicker.Instance.OpenAsync);
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
 
-            await comp.InvokeAsync(() => timePicker.Instance.Clear());
+            await comp.InvokeAsync(() => timePicker.Instance.ClearAsync());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
         }
@@ -789,7 +786,7 @@ namespace MudBlazor.UnitTests.Components
             var picker = comp.FindComponent<MudTimePicker>().Instance;
             comp.WaitForAssertion(() => picker.Time.Should().Be(null));
             // Open the timepicker
-            await comp.InvokeAsync(() => picker.Open());
+            await comp.InvokeAsync(picker.OpenAsync);
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
 
             // Select 16 hours
@@ -810,7 +807,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => picker.ReadOnly = true);
 
             // Open the timepicker
-            await comp.InvokeAsync(() => picker.Open());
+            await comp.InvokeAsync(picker.OpenAsync);
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
 
             // Select 17 hours
@@ -835,102 +832,101 @@ namespace MudBlazor.UnitTests.Components
             var timePicker = comp.FindComponent<MudTimePicker>().Instance;
             var overlay = comp.FindComponent<MudOverlay>();
 
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
 
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
 
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
 
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
 
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
 
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
 
             comp.SetParam("Time", new TimeSpan(02, 00, 00));
             comp.WaitForAssertion(() => comp.Instance.Time.Should().Be(new TimeSpan(02, 00, 00)));
 
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", }));
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
             comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(01, 00, 00)));
 
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", }));
             comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 00, 00)));
 
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
             comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(01, 59, 00)));
             //Enter keys submit, so time should only change with enter
             comp.WaitForAssertion(() => timePicker.Time.Should().Be(new TimeSpan(02, 00, 00)));
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => timePicker.Time.Should().Be(new TimeSpan(01, 59, 00)));
-            //If IsOpen is false, arrowkeys should now change TimeIntermediate
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
+            //If Open is false, arrowkeys should now change TimeIntermediate
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
             comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(01, 59, 00)));
 
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
             comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 00, 00)));
             //Escape key should turn last submitted time
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(01, 59, 00)));
             comp.WaitForAssertion(() => timePicker.Time.Should().Be(new TimeSpan(01, 59, 00)));
             //Space key should also submit
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
             comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 00, 00)));
             comp.WaitForAssertion(() => timePicker.Time.Should().Be(new TimeSpan(02, 00, 00)));
 
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = " ", CtrlKey = true, Type = "keydown", }));
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", CtrlKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = " ", CtrlKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", CtrlKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(03, 00, 00)));
 
             comp.SetParam("Time", new TimeSpan(03, 56, 00));
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(04, 01, 00)));
 
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(03, 56, 00)));
 
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", CtrlKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", CtrlKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 56, 00)));
 
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 51, 00)));
 
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 56, 00)));
 
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(07, 56, 00)));
 
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown", ShiftKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 56, 00)));
 
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace", CtrlKey = true, ShiftKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Backspace", CtrlKey = true, ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(null));
             comp.WaitForAssertion(() => timePicker.Time.Should().Be(null));
 
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             //When its disabled, keys should not work
             timePicker.Disabled = true;
-            timePicker.FocusAsync().AndForget();
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
-            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            await timePicker.FocusAsync();
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
 
             await comp.InvokeAsync(() => timePicker.TimeFormat = "hhmm");
             await comp.InvokeAsync(() => timePicker.TimeFormat = "hhmm");
 
             timePicker.ReadOnly = true;
-            await comp.InvokeAsync(() => timePicker.Submit());
-
+            await comp.InvokeAsync(timePicker.SubmitAsync);
         }
 
         [Test]
@@ -941,7 +937,7 @@ namespace MudBlazor.UnitTests.Components
             var picker = comp.FindComponent<MudTimePicker>().Instance;
             comp.WaitForAssertion(() => picker.Time.Should().Be(null));
             // Open the timepicker
-            await comp.InvokeAsync(() => picker.Open());
+            await comp.InvokeAsync(picker.OpenAsync);
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
 
             var count = 0;
@@ -951,11 +947,11 @@ namespace MudBlazor.UnitTests.Components
             });
 
             // Select 16 hours
-            await comp.InvokeAsync(() => comp.FindAll("div.mud-picker-stick-outer.mud-hour")[3].Click(new MouseEventArgs()));
+            await comp.InvokeAsync(() => comp.FindAll("div.mud-picker-stick-outer.mud-hour")[3].Click(new PointerEventArgs()));
             picker.TimeIntermediate.Value.Hours.Should().Be(16);
 
             // Select 30 minutes
-            await comp.InvokeAsync(() => comp.FindAll("div.mud-minute")[30].Click(new MouseEventArgs()));
+            await comp.InvokeAsync(() => comp.FindAll("div.mud-minute")[30].Click(new PointerEventArgs()));
             picker.TimeIntermediate.Value.Minutes.Should().Be(30);
 
             count.Should().Be(1);
@@ -964,7 +960,6 @@ namespace MudBlazor.UnitTests.Components
 
             // Check that the time have been changed
             comp.WaitForAssertion(() => picker.Time.Should().Be(new TimeSpan(16, 30, 00)));
-
         }
 
         // See #7483 for details
@@ -984,7 +979,7 @@ namespace MudBlazor.UnitTests.Components
             // click on the hour input
             comp.FindAll("button.mud-timepicker-button")[0].Click();
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
-            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[nextHourIndex].MouseUp();
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[nextHourIndex].PointerUp();
             comp.FindAll("div.mud-picker-stick-outer.mud-hour")[nextHourIndex].Click();
             comp.FindAll("div.mud-timepicker-hourminute button.mud-timepicker-button span.mud-button-label")[0].TextContent.Should().Be(nextHour.ToString());
             underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(nextHour);
@@ -996,12 +991,46 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-timepicker-button")[0].Click();
             // are hours displayed
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
-            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[finalHourIndex].MouseUp();
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[finalHourIndex].PointerUp();
             comp.FindAll("div.mud-picker-stick-outer.mud-hour")[finalHourIndex].Click();
             // ensure displayed hour text is has updated
             comp.FindAll("div.mud-timepicker-hourminute button.mud-timepicker-button span.mud-button-label")[0].TextContent.Should().Be(finalHour.ToString());
             underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(finalHour);
             underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(0);
+        }
+
+        /// <summary>
+        /// A time picker with a label should auto-generate an id and use that id on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void DatePickerWithLabel_Should_GenerateIdForInputAndAccompanyingLabel()
+        {
+            var comp = Context.RenderComponent<MudTimePicker>(parameters
+                => parameters.Add(p => p.Label, "Test Label"));
+
+            comp.Find("input").Id.Should().NotBeNullOrEmpty();
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(comp.Find("input").Id);
+        }
+
+        /// <summary>
+        /// A time picker with a label and UserAttributesId should use the UserAttributesId on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void DatePickerWithLabelAndUserAttributesId_Should_UseUserAttributesIdForInputAndAccompanyingLabel()
+        {
+            var expectedId = "test-id";
+            var comp = Context.RenderComponent<MudTimePicker>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        { "Id", expectedId }
+                    }));
+
+            comp.Find("input").Id.Should().Be(expectedId);
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
         }
     }
 }

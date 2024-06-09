@@ -6,7 +6,7 @@
         <MudText>Hi There, I'm a regular dialog!</MudText>
         <MudButton Variant="Variant.Filled" Color="Color.Tertiary" OnClick="OpenNested">Open Nested</MudButton>
         @*Nested dialog*@
-        <MudDialog @bind-IsVisible="nestedVisible">
+        <MudDialog @bind-Visible="_nestedVisible">
             <DialogContent>
                 <MudText Class="nested">Nested inline dialog!</MudText>
             </DialogContent>
@@ -20,11 +20,13 @@
     </DialogActions>
 </MudDialog>
 
-
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    private bool _nestedVisible;
 
-    private bool nestedVisible;
-    private void OpenNested() => nestedVisible = true;
-    private void CloseNested() => nestedVisible = false;
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    private void OpenNested() => _nestedVisible = true;
+
+    private void CloseNested() => _nestedVisible = false;
 }

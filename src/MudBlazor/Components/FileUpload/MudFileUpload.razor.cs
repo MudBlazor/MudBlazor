@@ -4,19 +4,24 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging;
+using Microsoft.JSInterop;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudFileUpload<T> : MudFormComponent<T, string>
+#nullable enable
+    public partial class MudFileUpload<T> : MudFormComponent<T, string>, IActivatable
     {
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; } = null!;
+
         public MudFileUpload() : base(new DefaultConverter<T>()) { }
 
         private readonly string _id = $"mud_fileupload_{Guid.NewGuid()}";
@@ -33,7 +38,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
-        public T Files
+        public T? Files
         {
             get => _value;
             set
@@ -49,7 +54,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
-        public EventCallback<T> FilesChanged { get; set; }
+        public EventCallback<T?> FilesChanged { get; set; }
 
         /// <summary>
         /// Called when the internal files are changed
@@ -66,18 +71,18 @@ namespace MudBlazor
         public bool AppendMultipleFiles { get; set; }
 
         /// <summary>
-        /// Renders the button that triggers the input. Required for functioning.
+        /// Any clicks on the activator will open the file picker.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.FileUpload.Appearance)]
-        public RenderFragment<FileUploadButtonTemplateContext<T>> ButtonTemplate { get; set; }
+        [Category(CategoryTypes.FileUpload.Behavior)]
+        public RenderFragment? ActivatorContent { get; set; }
 
         /// <summary>
         /// Renders the selected files, if desired.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Appearance)]
-        public RenderFragment<T> SelectedTemplate { get; set; }
+        public RenderFragment<T?>? SelectedTemplate { get; set; }
 
         /// <summary>
         /// If true, OnFilesChanged will not trigger if validation fails
@@ -91,7 +96,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
-        public string Accept { get; set; }
+        public string? Accept { get; set; }
 
         /// <summary>
         /// If false, the inner FileInput will be visible
@@ -105,14 +110,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Appearance)]
-        public string InputClass { get; set; }
+        public string? InputClass { get; set; }
 
         /// <summary>
         /// Style to apply to the internal InputFile
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Appearance)]
-        public string InputStyle { get; set; }
+        public string? InputStyle { get; set; }
 
         /// <summary>
         /// Represents the maximum number of files that can retrieved from the internal call to
@@ -140,15 +145,25 @@ namespace MudBlazor
 
         protected bool GetDisabledState() => Disabled || ParentDisabled || ParentReadOnly;
 
-        public async Task ClearAsync()
+        public Task ClearAsync()
         {
             _value = default;
-            await NotifyValueChangedAsync();
+            return NotifyValueChangedAsync();
         }
 
-        private async Task OnChange(InputFileChangeEventArgs args)
+        public async Task OpenFilePickerAsync()
+            => await JsRuntime.InvokeVoidAsync("mudWindow.click", _id);
+
+        public void Activate(object activator, MouseEventArgs args)
+            => _ = OpenFilePickerAsync();
+
+        private async Task OnChangeAsync(InputFileChangeEventArgs args)
         {
-            if (GetDisabledState()) return;
+            if (GetDisabledState())
+            {
+                return;
+            }
+
             if (typeof(T) == typeof(IReadOnlyList<IBrowserFile>))
             {
                 var newFiles = args.GetMultipleFiles(MaximumFileCount);
@@ -166,20 +181,25 @@ namespace MudBlazor
             {
                 _value = args.FileCount == 1 ? (T)args.File : default;
             }
-            else return;
+            else
+            {
+                return;
+            }
 
             await NotifyValueChangedAsync();
 
-            if (!Error
-                || !SuppressOnChangeWhenInvalid) // only trigger FilesChanged if validation passes or SuppressOnChangeWhenInvalid is false
+            if (!Error || !SuppressOnChangeWhenInvalid) // only trigger FilesChanged if validation passes or SuppressOnChangeWhenInvalid is false
+            {
                 await OnFilesChanged.InvokeAsync(args);
+            }
         }
 
         protected override void OnInitialized()
         {
             if (!(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) || typeof(T) == typeof(IBrowserFile)))
-                Logger.LogWarning("T must be of type {type1} or {type2}", typeof(IReadOnlyList<IBrowserFile>),
-                    typeof(IBrowserFile));
+            {
+                Logger.LogWarning("T must be of type {type1} or {type2}", typeof(IReadOnlyList<IBrowserFile>), typeof(IBrowserFile));
+            }
 
             base.OnInitialized();
         }
