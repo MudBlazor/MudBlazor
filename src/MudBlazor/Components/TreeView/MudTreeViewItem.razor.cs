@@ -148,11 +148,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
-        public RenderFragment<MudTreeViewItem<T>>? BodyContent { get; set; }
+        public RenderFragment<MudTreeViewItem<T?>>? BodyContent { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public IReadOnlyCollection<T>? Items { get; set; }
+        public IReadOnlyCollection<TreeItemData<T?>>? Items { get; set; }
 
         /// <summary>
         /// Expand or collapse TreeView item when it has children. Two-way bindable. Note: if you directly set this to
@@ -450,7 +450,7 @@ namespace MudBlazor
         {
             if (Items is not null)
             {
-                Items = Array.Empty<T>();
+                Items = Array.Empty<TreeItemData<T?>>();
             }
             await TryInvokeServerLoadFunc();
 

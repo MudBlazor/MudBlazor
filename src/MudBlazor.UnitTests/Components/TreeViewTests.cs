@@ -519,8 +519,8 @@ namespace MudBlazor.UnitTests.Components
         public async Task TreeViewItem_BodyContent()
         {
             var comp = Context.RenderComponent<TreeViewTest5>();
-            var treeView = comp.FindComponent<MudTreeView<TreeViewTest5.TreeItemData>>();
-            var treeViewItem = comp.FindComponents<MudTreeViewItem<TreeViewTest5.TreeItemData>>()[2];
+            var treeView = comp.FindComponent<MudTreeView<string>>();
+            var treeViewItem = comp.FindComponents<MudTreeViewItem<string>>()[2];
 
             comp.FindAll("ul.mud-treeview").Count.Should().Be(5);
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
@@ -920,6 +920,7 @@ namespace MudBlazor.UnitTests.Components
             isExpanded("images").Should().Be(false);
             isExpanded("logo.png").Should().Be(false);
         }
+
         [Test]
         public void TreeViewItem_SetParameters_ValueIsSetNull_WhenTextUnset_RootServerdataIsSet_Throw()
         {
