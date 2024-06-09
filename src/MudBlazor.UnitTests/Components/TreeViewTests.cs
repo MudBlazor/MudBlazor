@@ -468,22 +468,23 @@ namespace MudBlazor.UnitTests.Components
         public void TreeViewTreeItemDataTest()
         {
             // test default values
-            new TreeItemData<int>(69).Expanded.Should().Be(false);
-            new TreeItemData<int>(69).Selected.Should().Be(false);
-            new TreeItemData<int>(69).Expandable.Should().Be(true);
-            new TreeItemData<int>(69).Value.Should().Be(69);
-            new TreeItemData<int>(69).Text.Should().Be(null);
-            new TreeItemData<int>(69).Icon.Should().Be(null);
-            new TreeItemData<int>(69).HasChildren.Should().Be(false);
-            new TreeItemData<int>(69).Children.Should().BeNull();
-            var data = new TreeItemData<string>("val")
+            new TreeItemData<int>().Expanded.Should().Be(false);
+            new TreeItemData<int>().Selected.Should().Be(false);
+            new TreeItemData<int>().Expandable.Should().Be(true);
+            new TreeItemData<int>().Text.Should().Be(null);
+            new TreeItemData<int>().Icon.Should().Be(null);
+            new TreeItemData<int>().HasChildren.Should().Be(false);
+            new TreeItemData<int>().Children.Should().BeNull();
+
+            var data = new TreeItemData<string>()
             {
+                Value = "val",
                 Icon = "i",
                 Text = "t",
                 Expandable = false,
                 Expanded = true,
                 Selected = true,
-                Children = [new TreeItemData<string>("x")]
+                Children = [new TreeItemData<string>()]
             };
             data.Value.Should().Be("val");
             data.Icon.Should().Be("i");
@@ -493,18 +494,18 @@ namespace MudBlazor.UnitTests.Components
             data.Selected.Should().Be(true);
             data.HasChildren.Should().Be(true);
             data.Children.Count.Should().Be(1);
-            new TreeItemData<int>(17).Should().Be(new TreeItemData<int>(17));
-            new TreeItemData<int>(17).Should().NotBe(new TreeItemData<int>(77));
-            new TreeItemData<int>(17).GetHashCode().Should().Be(17.GetHashCode());
-            Equals(new TreeItemData<int>(17), new TreeItemData<int>(17)).Should().Be(true);
-            Equals(new TreeItemData<int>(17), new TreeItemData<int>(18)).Should().Be(false);
-            Equals(new TreeItemData<int>(17), null).Should().Be(false);
-            var x = new TreeItemData<int>(17);
+            new TreeItemData<int> { Value = 17 }.Should().Be(new TreeItemData<int> { Value = 17 });
+            new TreeItemData<int> { Value = 17 }.Should().NotBe(new TreeItemData<int> { Value = 77 });
+            new TreeItemData<int> { Value = 17 }.GetHashCode().Should().Be(17.GetHashCode());
+            Equals(new TreeItemData<int> { Value = 17 }, new TreeItemData<int> { Value = 17 }).Should().Be(true);
+            Equals(new TreeItemData<int> { Value = 17 }, new TreeItemData<int> { Value = 18 }).Should().Be(false);
+            Equals(new TreeItemData<int> { Value = 17 }, null).Should().Be(false);
+            var x = new TreeItemData<int> { Value = 17 };
             Equals(x, x).Should().Be(true);
             x.Equals(x).Should().Be(true);
             x.Equals(null).Should().Be(false);
-            new TreeItemData<string>(null).GetHashCode().Should().Be(0);
-            new TreeItemData<string>(null).Equals(new TreeItemData<string>(null)).Should().Be(true);
+            new TreeItemData<string>().GetHashCode().Should().Be(0);
+            new TreeItemData<string>().Equals(new TreeItemData<string>()).Should().Be(true);
             new TreeItemData<int>().Value.Should().Be(default);
         }
 
