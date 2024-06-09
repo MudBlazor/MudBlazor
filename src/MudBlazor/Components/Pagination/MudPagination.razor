@@ -6,13 +6,13 @@
 <MudElement HtmlTag="ul" Class="@Classname" Style="@Style" Tag="@Tag" UserAttributes="@UserAttributes">
     @if (ShowFirstButton)
     {
-        <li class="@ItemClassname">
+        <li class="@ItemClassname @(Selected == 1 || Disabled ? "cursor-not-allowed"  : "")">
             <MudIconButton Icon="@FirstIcon" Size="@Size" Variant="@Variant" Disabled="@(Selected == 1 || Disabled)" OnClick="@(() => OnClickControlButton(Page.First))" aria-label="@Localizer[nameof(LanguageResource.MudPagination_FirstPage)]"></MudIconButton>
         </li>
     }
     @if (ShowPreviousButton)
     {
-        <li class="@ItemClassname">
+        <li class="@ItemClassname @(Selected == 1 || Disabled ? "cursor-not-allowed"  : "")">
             <MudIconButton Icon="@BeforeIcon" Size="@Size" Variant="@Variant" Disabled="@(Selected == 1 || Disabled)" OnClick="@(() => OnClickControlButton(Page.Previous))" aria-label="@Localizer[nameof(LanguageResource.MudPagination_PreviousPage)]"></MudIconButton>
         </li>
     }
@@ -40,13 +40,13 @@
     }
     @if (ShowNextButton)
     {
-        <li class="@ItemClassname">
+        <li class="@ItemClassname @(Selected == Count || Disabled ? "cursor-not-allowed"  : "")">
             <MudIconButton Icon="@NextIcon" Variant="@Variant" Size="@Size" Disabled="@(Selected == Count || Disabled)" OnClick="@(() => OnClickControlButton(Page.Next))" aria-label="@Localizer[nameof(LanguageResource.MudPagination_NextPage)]"></MudIconButton>
         </li>
     }
     @if (ShowLastButton)
     {
-        <li class="@ItemClassname">
+        <li class="@ItemClassname @(Selected == Count || Disabled ? "cursor-not-allowed"  : "")">
             <MudIconButton Icon="@LastIcon" Variant="@Variant" Size="@Size" Disabled="@(Selected == Count || Disabled)" OnClick="@(() => OnClickControlButton(Page.Last))" aria-label="@Localizer[nameof(LanguageResource.MudPagination_LastPage)]"></MudIconButton>
         </li>
     }
