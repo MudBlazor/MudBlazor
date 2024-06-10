@@ -173,35 +173,36 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.FullIconColor, Color.Primary));
 
             // Select elements needed for the test
+            IRefreshableElementCollection<IElement> SvgColors() => comp.FindAll("svg.mud-icon-root");
             IRefreshableElementCollection<IElement> RatingItemsSpans() => comp.FindAll("span.mud-rating-item");
 
             // Check initial state
-            RatingItemsSpans()[0].ClassName.Should().Contain("mud-primary-text");
-            RatingItemsSpans()[1].ClassName.Should().Contain("mud-primary-text");
-            RatingItemsSpans()[2].ClassName.Should().Contain("mud-tertiary-text");
-            RatingItemsSpans()[3].ClassName.Should().Contain("mud-tertiary-text");
-            RatingItemsSpans()[4].ClassName.Should().Contain("mud-tertiary-text");
+            SvgColors()[0].ClassName.Should().Contain("mud-primary-text");
+            SvgColors()[1].ClassName.Should().Contain("mud-primary-text");
+            SvgColors()[2].ClassName.Should().Contain("mud-tertiary-text");
+            SvgColors()[3].ClassName.Should().Contain("mud-tertiary-text");
+            SvgColors()[4].ClassName.Should().Contain("mud-tertiary-text");
 
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(2);
             RatingItemsSpans()[0].Click();
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(1);
 
-            RatingItemsSpans()[0].ClassName.Should().Contain("mud-primary-text");
-            RatingItemsSpans()[1].ClassName.Should().Contain("mud-tertiary-text");
-            RatingItemsSpans()[2].ClassName.Should().Contain("mud-tertiary-text");
-            RatingItemsSpans()[3].ClassName.Should().Contain("mud-tertiary-text");
-            RatingItemsSpans()[4].ClassName.Should().Contain("mud-tertiary-text");
+            SvgColors()[0].ClassName.Should().Contain("mud-primary-text");
+            SvgColors()[1].ClassName.Should().Contain("mud-tertiary-text");
+            SvgColors()[2].ClassName.Should().Contain("mud-tertiary-text");
+            SvgColors()[3].ClassName.Should().Contain("mud-tertiary-text");
+            SvgColors()[4].ClassName.Should().Contain("mud-tertiary-text");
 
             RatingItemsSpans()[2].PointerOver();
             comp.Instance.HoveredValue.Should().Be(3);
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(1);
             comp.Instance.IsRatingHover.Should().Be(true);
 
-            RatingItemsSpans()[0].ClassName.Should().Contain("mud-primary-text");
-            RatingItemsSpans()[1].ClassName.Should().Contain("mud-primary-text");
-            RatingItemsSpans()[2].ClassName.Should().Contain("mud-primary-text");
-            RatingItemsSpans()[3].ClassName.Should().Contain("mud-tertiary-text");
-            RatingItemsSpans()[4].ClassName.Should().Contain("mud-tertiary-text");
+            SvgColors()[0].ClassName.Should().Contain("mud-primary-text");
+            SvgColors()[1].ClassName.Should().Contain("mud-primary-text");
+            SvgColors()[2].ClassName.Should().Contain("mud-primary-text");
+            SvgColors()[3].ClassName.Should().Contain("mud-tertiary-text");
+            SvgColors()[4].ClassName.Should().Contain("mud-tertiary-text");
             RatingItemsSpans()[2].ClassName.Should().Contain("mud-rating-item-active");
 
             RatingItemsSpans()[2].PointerOut();
@@ -212,11 +213,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetState(x => x.SelectedValue).Should().Be(5);
             comp.Instance.IsRatingHover.Should().Be(true);
 
-            RatingItemsSpans()[0].ClassName.Should().Contain("mud-primary-text");
-            RatingItemsSpans()[1].ClassName.Should().Contain("mud-primary-text");
-            RatingItemsSpans()[2].ClassName.Should().Contain("mud-tertiary-text");
-            RatingItemsSpans()[3].ClassName.Should().Contain("mud-tertiary-text");
-            RatingItemsSpans()[4].ClassName.Should().Contain("mud-tertiary-text");
+            SvgColors()[0].ClassName.Should().Contain("mud-primary-text");
+            SvgColors()[1].ClassName.Should().Contain("mud-primary-text");
+            SvgColors()[2].ClassName.Should().Contain("mud-tertiary-text");
+            SvgColors()[3].ClassName.Should().Contain("mud-tertiary-text");
+            SvgColors()[4].ClassName.Should().Contain("mud-tertiary-text");
             RatingItemsSpans()[1].ClassName.Should().Contain("mud-rating-item-active");
 
             RatingItemsSpans()[1].PointerOut();

@@ -4,6 +4,14 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// Represents a button consisting of an icon that can be toggled between two distinct states.
+    /// </summary>
+    /// <remarks>
+    /// Creates a <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Button">button</see> element,
+    /// or <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a">anchor</see> if <c>Href</c> is set.<br/>
+    /// You can directly add attributes like <c>title</c> or <c>aria-label</c>.
+    /// </remarks>
     public partial class MudToggleIconButton : MudComponentBase
     {
         /// <summary>
@@ -14,7 +22,7 @@ namespace MudBlazor
         public bool Toggled { get; set; }
 
         /// <summary>
-        /// Fires whenever toggled is changed. 
+        /// Fires whenever toggled is changed.
         /// </summary>
         [Parameter]
         public EventCallback<bool> ToggledChanged { get; set; }
@@ -32,40 +40,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public string? ToggledIcon { get; set; }
-
-        /// <summary>
-        /// Title of the icon used for accessibility.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
-        public string? Title { get; set; }
-
-        /// <summary>
-        /// Title used in toggled state, if different.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
-        public string? ToggledTitle { get; set; }
-
-        /// <summary>
-        /// The ARIA label for the button when it's not toggled.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
-        public string? AriaLabel { get; set; }
-
-        /// <summary>
-        /// The ARIA label for the button in the toggled state.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
-        public string? ToggledAriaLabel { get; set; }
 
         /// <summary>
         /// The color of the icon in the untoggled state. It supports the theme colors.

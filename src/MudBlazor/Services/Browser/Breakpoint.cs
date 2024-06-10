@@ -1,4 +1,6 @@
-﻿namespace MudBlazor;
+﻿using System.ComponentModel;
+
+namespace MudBlazor;
 
 #nullable enable
 /// <summary>
@@ -15,6 +17,7 @@ public enum Breakpoint
     /// <remarks>
     /// <c>600</c> pixels wide or less.
     /// </remarks>
+    [Description("xs")]
     Xs,
 
     /// <summary>
@@ -23,6 +26,7 @@ public enum Breakpoint
     /// <remarks>
     /// Between <c>600</c> and <c>960</c> pixels wide.
     /// </remarks>
+    [Description("sm")]
     Sm,
 
     /// <summary>
@@ -31,6 +35,7 @@ public enum Breakpoint
     /// <remarks>
     /// Between <c>960</c> and <c>1280</c> pixels wide.
     /// </remarks>
+    [Description("md")]
     Md,
 
     /// <summary>
@@ -39,6 +44,7 @@ public enum Breakpoint
     /// <remarks>
     /// Between <c>1280</c> and <c>1920</c> pixels wide.
     /// </remarks>
+    [Description("lg")]
     Lg,
 
     /// <summary>
@@ -47,6 +53,7 @@ public enum Breakpoint
     /// <remarks>
     /// Between <c>1920</c> and <c>2560</c> pixels wide.
     /// </remarks>
+    [Description("xl")]
     Xl,
 
     /// <summary>
@@ -55,6 +62,7 @@ public enum Breakpoint
     /// <remarks>
     /// <c>2560</c> or more pixels wide.
     /// </remarks>
+    [Description("xxl")]
     Xxl,
 
     /// <summary>
@@ -63,6 +71,7 @@ public enum Breakpoint
     /// <remarks>
     /// <c>960</c> pixels wide, or less.
     /// </remarks>
+    [Description("smanddown")]
     SmAndDown,
 
     /// <summary>
@@ -71,6 +80,7 @@ public enum Breakpoint
     /// <remarks>
     /// <c>1280</c> pixels wide, or less.
     /// </remarks>
+    [Description("mdanddown")]
     MdAndDown,
 
     /// <summary>
@@ -79,6 +89,7 @@ public enum Breakpoint
     /// <remarks>
     /// <c>1920</c> pixels wide, or less.
     /// </remarks>
+    [Description("lganddown")]
     LgAndDown,
 
     /// <summary>
@@ -87,6 +98,7 @@ public enum Breakpoint
     /// <remarks>
     /// <c>2560</c> pixels wide, or less.
     /// </remarks>
+    [Description("xlanddown")]
     XlAndDown,
 
     /// <summary>
@@ -95,6 +107,7 @@ public enum Breakpoint
     /// <remarks>
     /// <c>600</c> pixels wide, or more.
     /// </remarks>
+    [Description("smandup")]
     SmAndUp,
 
     /// <summary>
@@ -103,6 +116,7 @@ public enum Breakpoint
     /// <remarks>
     /// <c>960</c> pixels wide, or more.
     /// </remarks>
+    [Description("mdandup")]
     MdAndUp,
 
     /// <summary>
@@ -111,6 +125,7 @@ public enum Breakpoint
     /// <remarks>
     /// <c>1280</c> pixels wide, or more.
     /// </remarks>
+    [Description("lgandup")]
     LgAndUp,
 
     /// <summary>
@@ -119,15 +134,18 @@ public enum Breakpoint
     /// <remarks>
     /// <c>1920</c> pixels wide, or more.
     /// </remarks>
+    [Description("xlandup")]
     XlAndUp,
 
     /// <summary>
     /// No breakpoint applies.
     /// </summary>
+    [Description("none")]
     None,
 
     /// <summary>
     /// Content will always be visible.
     /// </summary>
+    [Description("always")]
     Always
 }

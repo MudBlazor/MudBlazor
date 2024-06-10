@@ -28,7 +28,8 @@ namespace MudBlazor
         /// The HTML tag rendered for this component.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>button</c>.
+        /// Defaults to <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Button"><c>button</c></see>,
+        /// or <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a"><c>a</c></see> if <see cref="Href"/> is set.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]
@@ -83,16 +84,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public bool Disabled { get; set; }
-
-        /// <summary>
-        /// The title of this button.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.  This property is typically used to improve accessibility.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
-        public string? Title { get; set; }
 
         /// <summary>
         /// Allows the click event to bubble up to the parent component.
