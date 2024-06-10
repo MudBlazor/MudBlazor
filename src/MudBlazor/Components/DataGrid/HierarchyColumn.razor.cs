@@ -42,4 +42,13 @@ public partial class HierarchyColumn<T> : MudComponentBase
     /// </summary>
     [Parameter]
     public Func<T, bool> ButtonDisabledFunc { get; set; } = x => false;
+
+    /// <summary>
+    /// Allows this column to be reordered via drag-and-drop operations.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>. When set, this overrides the <see cref="MudDataGrid{T}.DragDropColumnReordering"/> property.
+    /// </remarks>
+    [Parameter]
+    public bool? DragAndDropEnabled { get; set; } = false;
 }

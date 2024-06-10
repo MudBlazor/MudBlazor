@@ -1,6 +1,7 @@
+@using System.Threading
 @namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid T="Item" ServerData="ServerDataFunc" Virtualize="true" Sortable="true">
+<MudDataGrid T="Item" VirtualizeServerData="ServerDataFunc" Virtualize="true" Sortable="true">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Value" />
@@ -25,7 +26,7 @@ Note that the 'Misc' column is being sorted by length and not by the content its
 
     public record Item(string Name, int Value, string Misc);
 
-    private async Task<GridData<Item>> ServerDataFunc(GridState<Item> gridState)
+    private async Task<GridData<Item>> ServerDataFunc(GridStateVirtualize<Item> gridState, CancellationToken token)
     {
         await Task.CompletedTask;
         var result = _items.AsEnumerable();
@@ -51,8 +52,8 @@ Note that the 'Misc' column is being sorted by length and not by the content its
         }
 
         result = result
-            .Skip(gridState.Page * gridState.PageSize)
-            .Take(gridState.PageSize)
+            .Skip(gridState.StartIndex)
+            .Take(gridState.Count)
             .ToList();
 
         return new GridData<Item>

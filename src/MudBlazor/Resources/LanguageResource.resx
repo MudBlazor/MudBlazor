@@ -129,6 +129,9 @@
   <data name="MudDataGrid.Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="MudDataGrid.Loading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
   <data name="MudDataGrid.Save" xml:space="preserve">
     <value>Save</value>
   </data>

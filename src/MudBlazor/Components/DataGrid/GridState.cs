@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace MudBlazor
 {
@@ -33,6 +34,30 @@ namespace MudBlazor
         /// The current filters applied to grid values.
         /// </summary>
         public ICollection<IFilterDefinition<T>> FilterDefinitions { get; set; } = new List<IFilterDefinition<T>>();
+    }
+
+    public class GridStateVirtualize<T>
+    {
+        /// <summary>
+        /// The zero-based index of the first item to be supplied.
+        /// </summary>
+        public int StartIndex { get; init; }
+
+        /// <summary>
+        /// The requested number of items to be provided. The actual number of provided items does not need to match
+        /// this value.
+        /// </summary>
+        public int Count { get; init; }
+
+        /// <summary>
+        /// The current sorting applied to grid values.
+        /// </summary>
+        public IReadOnlyCollection<SortDefinition<T>> SortDefinitions { get; set; } = new List<SortDefinition<T>>();
+
+        /// <summary>
+        /// The current filters applied to grid values.
+        /// </summary>
+        public IReadOnlyCollection<IFilterDefinition<T>> FilterDefinitions { get; set; } = new List<IFilterDefinition<T>>();
     }
 
     /// <summary>

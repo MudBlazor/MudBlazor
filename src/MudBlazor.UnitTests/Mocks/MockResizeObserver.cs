@@ -33,19 +33,21 @@ namespace MudBlazor.UnitTests.Mocks
 
         public bool IsVertical { get; set; } = false;
 
+        public bool WrapHeaders { get; set; } = false;
+
         public event SizeChanged OnResized;
 
         public void UpdateTotalPanelSize(double newSize)
         {
             var entry = _cachedValues.Last();
 
-            if (IsVertical == false)
+            if (IsVertical)
             {
-                entry.Value.Width = newSize;
+                entry.Value.Height = newSize;
             }
             else
             {
-                entry.Value.Height = newSize;
+                entry.Value.Width = newSize;
             }
 
             OnResized?.Invoke(new Dictionary<ElementReference, BoundingClientRect> {
@@ -56,14 +58,25 @@ namespace MudBlazor.UnitTests.Mocks
         public void UpdatePanelSize(int index, double newSize)
         {
             var entry = _cachedValues.ElementAt(index);
+            double original;
 
-            if (IsVertical == false)
+            if (IsVertical)
             {
-                entry.Value.Width = newSize;
+                original = entry.Value.Height;
+                entry.Value.Height = newSize;
             }
             else
             {
-                entry.Value.Height = newSize;
+                original = entry.Value.Width;
+                entry.Value.Width = newSize;
+            }
+
+            foreach (var otherEntry in _cachedValues.Skip(index + 1).SkipLast(1))
+            {
+                if (IsVertical)
+                    otherEntry.Value.Top += newSize - original;
+                else
+                    otherEntry.Value.Left += newSize - original;
             }
 
             OnResized?.Invoke(new Dictionary<ElementReference, BoundingClientRect> {
@@ -80,20 +93,53 @@ namespace MudBlazor.UnitTests.Mocks
 
         public Task<IEnumerable<BoundingClientRect>> Observe(IEnumerable<ElementReference> elements)
         {
+            var rowIndex = 0;
+            var columnIndex = 0;
+
             var result = new List<BoundingClientRect>();
             foreach (var item in elements)
             {
-                var size = PanelSize;
+                BoundingClientRect rect;
                 // last element is always TabsContentSize
                 if (item.Id == elements.Last().Id && _firstBatchProcessed == false)
                 {
-                    size = PanelTotalSize;
+                    if (IsVertical)
+                        rect = new BoundingClientRect { Width = PanelSize, Height = PanelTotalSize, };
+                    else
+                        rect = new BoundingClientRect { Width = PanelTotalSize, Height = 48, };
                 }
-                var rect = new BoundingClientRect { Width = size };
-                if (IsVertical)
+                else
                 {
-                    rect = new BoundingClientRect { Height = size };
+                    if (IsVertical)
+                        rect = new BoundingClientRect
+                        {
+                            Width = 160,
+                            Height = PanelSize,
+                            Left = 0,
+                            Top = columnIndex * PanelSize,
+                        };
+                    else
+                    {
+                        rect = new BoundingClientRect
+                        {
+                            Width = PanelSize,
+                            Height = 48,
+                            Left = columnIndex * PanelSize,
+                            Top = rowIndex * 48,
+                        };
+
+                        if (WrapHeaders && rect.Left + rect.Width > PanelTotalSize)
+                        {
+                            rect.Left = 0;
+                            rect.Top += 48;
+                            columnIndex = 0;
+                            rowIndex++;
+                        }
+                    }
+
+                    columnIndex++;
                 }
+
                 _cachedValues.Add(item, rect);
             }
 
@@ -105,6 +151,11 @@ namespace MudBlazor.UnitTests.Mocks
         public Task Unobserve(ElementReference element)
         {
             _cachedValues.Remove(element);
+            return Task.CompletedTask;
+        }
+
+        public Task Resync()
+        {
             return Task.CompletedTask;
         }
 

@@ -1,12 +1,8 @@
-﻿#pragma warning disable CS1998 // async without await
-
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
-using MudBlazor.UnitTests.TestComponents.NavMenu;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -18,7 +14,7 @@ namespace MudBlazor.UnitTests.Components
         /// Adding the mud-nav-group-disabled css tag to the group
         /// </summary>
         [Test]
-        public async Task Two_Way_Bindable_Disabled()
+        public void Two_Way_Bindable_Disabled()
         {
             var comp = Context.RenderComponent<NavMenuGroupDisabledTest>();
 
@@ -41,6 +37,27 @@ namespace MudBlazor.UnitTests.Components
                     parameters.Add(p => p.Title, expectedTitle));
 
             comp.FindAll("nav").Should().Contain(navNode => navNode.GetAttribute("aria-label") == expectedTitle);
+        }
+
+        /// <summary>
+        /// NavGroup should expand and collapse via Expanded binding.
+        /// </summary>
+        [Test]
+        public async Task NavGroup_Should_Expand_Via_Expanded_Binding()
+        {
+            var comp = Context.RenderComponent<NavGroupWithExpandedBindingTest>();
+            GetExpandedState().Should().BeFalse();
+
+            await comp.InvokeAsync(() => comp.Find("#navgroup-switch").Change(true));
+
+            GetExpandedState().Should().BeTrue();
+
+            await comp.InvokeAsync(() => comp.Find("#navgroup-switch").Change(false));
+
+            GetExpandedState().Should().BeFalse();
+            return;
+
+            bool GetExpandedState() => comp.FindComponent<MudCollapse>().Instance.Expanded;
         }
     }
 }

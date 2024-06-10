@@ -17,11 +17,11 @@
             <MudStack Row="true">
                 @if (fieldType.IsString && !(@operator ?? "").EndsWith("empty"))
                 {
-                    <MudTextField T="string" Value="@valueString" ValueChanged="@StringValueChangedAsync" FullWidth="true" Placeholder="@Localizer["MudDataGrid.FilterValue"]" Margin="@Margin.Dense" Immediate="true" DebounceInterval="@(DataGrid.ServerData is null ? 0 : 500.0)" />
+                    <MudTextField T="string" Value="@valueString" ValueChanged="@StringValueChangedAsync" FullWidth="true" Placeholder="@Localizer["MudDataGrid.FilterValue"]" Margin="@Margin.Dense" Immediate="true" DebounceInterval="@(!DataGrid.HasServerData ? 0 : 500.0)" />
                 }
                 else if (fieldType.IsNumber && !(@operator ?? "").EndsWith("empty"))
                 {
-                    <MudNumericField T="double?" Culture="@Column.Culture" Value="@valueNumber" ValueChanged="@NumberValueChangedAsync" FullWidth="true" Placeholder="@Localizer["MudDataGrid.FilterValue"]" Margin="@Margin.Dense" Immediate="true" DebounceInterval="@(DataGrid.ServerData is null ? 0 : 500.0)" />
+                    <MudNumericField T="double?" Culture="@Column.Culture" Value="@valueNumber" ValueChanged="@NumberValueChangedAsync" FullWidth="true" Placeholder="@Localizer["MudDataGrid.FilterValue"]" Margin="@Margin.Dense" Immediate="true" DebounceInterval="@(!DataGrid.HasServerData ? 0 : 500.0)" />
                 }
                 else if (fieldType.IsEnum)
                 {
