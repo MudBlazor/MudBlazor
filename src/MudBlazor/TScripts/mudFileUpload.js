@@ -18,7 +18,7 @@ class MudFileUpload {
 
             // more reliable than click() and works in Safari
             element.showPicker();
-        } catch {
+        } catch (error) {
             // fallback
             element.click();
         }
