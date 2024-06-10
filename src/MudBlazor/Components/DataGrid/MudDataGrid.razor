@@ -155,8 +155,8 @@
                                         <MudStack Row="true">
                                             @if (Groupable)
                                             {
-                                                <MudButton OnClick="@CollapseAllGroupsAsync" Color="@Color.Primary">@Localizer["MudDataGrid.CollapseAllGroups"]</MudButton>
-                                                <MudButton OnClick="@ExpandAllGroupsAsync" Color="@Color.Primary">@Localizer["MudDataGrid.ExpandAllGroups"]</MudButton>
+                                                <MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary">@Localizer["MudDataGrid.CollapseAllGroups"]</MudButton>
+                                                <MudButton OnClick="@ExpandAllGroups" Color="@Color.Primary">@Localizer["MudDataGrid.ExpandAllGroups"]</MudButton>
                                             }
                                             <MudSpacer />
 
@@ -416,8 +416,8 @@
             <MudMenuItem OnClick="@dataGrid.ShowColumnsPanel">@Localizer["MudDataGrid.Columns"]</MudMenuItem>
                 @if (dataGrid.Groupable)
                 {
-                    <MudMenuItem OnClick="@dataGrid.ExpandAllGroupsAsync">@Localizer["MudDataGrid.ExpandAllGroups"]</MudMenuItem>
-                    <MudMenuItem OnClick="@dataGrid.CollapseAllGroupsAsync">@Localizer["MudDataGrid.CollapseAllGroups"]</MudMenuItem>
+                    <MudMenuItem OnClick="@dataGrid.ExpandAllGroups">@Localizer["MudDataGrid.ExpandAllGroups"]</MudMenuItem>
+                    <MudMenuItem OnClick="@dataGrid.CollapseAllGroups">@Localizer["MudDataGrid.CollapseAllGroups"]</MudMenuItem>
                 }
                 @if (dataGrid.HasServerData)
                 {

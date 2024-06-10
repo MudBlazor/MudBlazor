@@ -21,8 +21,8 @@
     </PagerContent>
 </MudDataGrid>
 <div class="d-flex flex-wrap mt-4">
-    <MudButton OnClick="@ExpandAllGroupsAsync" Color="@Color.Primary">Expand All</MudButton>
-    <MudButton OnClick="@CollapseAllGroupsAsync" Color="@Color.Primary">Collapse All</MudButton>
+    <MudButton OnClick="@ExpandAllGroups" Color="@Color.Primary">Expand All</MudButton>
+    <MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary">Collapse All</MudButton>
 </div>
 
 @code {
@@ -139,13 +139,13 @@
         _elements = _elements.Select(x => new Element(x.Group, x.Position, x.Name)).ToList();
     }
 
-    public async Task ExpandAllGroupsAsync()
+    public void ExpandAllGroups()
     {
-        await _dataGrid?.ExpandAllGroupsAsync();
+        _dataGrid?.ExpandAllGroups();
     }
 
-    public async Task CollapseAllGroupsAsync()
+    public void CollapseAllGroups()
     {
-        await _dataGrid?.CollapseAllGroupsAsync();
+        _dataGrid?.CollapseAllGroups();
     }
 }
