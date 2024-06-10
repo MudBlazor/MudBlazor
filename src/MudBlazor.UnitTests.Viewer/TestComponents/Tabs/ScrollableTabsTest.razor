@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudTabs Elevation="1" @ref="_tabElement" AlwaysShowScrollButtons="AlwaysShowScrollButtons" Position="Position">
+<MudTabs Elevation="1" @ref="_tabElement" AlwaysShowScrollButtons="AlwaysShowScrollButtons" Position="Position" WrapHeaders="WrapHeaders">
 @foreach (var tab in _tabs)
 {
     <MudTabPanel @key="tab" Text="@tab">
@@ -20,6 +20,9 @@
 
     [Parameter]
     public bool AlwaysShowScrollButtons { get; set; } = true;
+
+    [Parameter]
+    public bool WrapHeaders { get; set; }
 
     private List<string> _tabs = new List<string> { "1", "2", "3", "4", "5", "6" };
 
