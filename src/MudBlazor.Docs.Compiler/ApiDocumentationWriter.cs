@@ -356,6 +356,53 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     }
 
     /// <summary>
+    /// Serializes all documented fields.
+    /// </summary>
+    /// <param name="fields">The fields to write.</param>
+    public void WriteFields(IDictionary<string, DocumentedField> fields)
+    {
+        WriteLineIndented("// Build all of the documented fields");
+        WriteLineIndented($"Fields = new Dictionary<string, DocumentedField>();");
+
+        foreach (var field in fields)
+        {
+            WriteField(field.Value);
+        }
+
+        WriteLine();
+    }
+
+    /// <summary>
+    /// Serializes a documented field.
+    /// </summary>
+    /// <param name="field">The field to serialize.</param>
+    public void WriteField(DocumentedField field)
+    {
+        // Skip excluded types
+        if (field.DeclaringType.FullName != null && ExcludedTypes.Contains(field.DeclaringType.FullName))
+        {
+            return;
+        }
+        // Skip System properties
+        if (field.DeclaringType.FullName != null && field.DeclaringType.FullName.StartsWith("System."))
+        {
+            return;
+        }
+
+        WriteIndented($"Fields.Add(\"{field.Key}\", new()");
+        Write(" { ");
+        Write($"Name = \"{field.Name}\", ");
+        Write($"Type = \"{field.Type.FullName}\", ");
+        Write($"TypeFriendlyName = \"{GetFriendlyTypeName(field.Type)}\", ");
+        WriteDeclaringType(field);
+        WriteCategory(field.Category);
+        WriteSummary(field.Summary);
+        WriteRemarks(field.Remarks);
+        Write(" }");
+        WriteLine(");");
+    }
+
+    /// <summary>
     /// Serializes all documented properties.
     /// </summary>
     /// <param name="properties">the properties to write.</param>
@@ -495,6 +542,31 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
 
         WriteIndented("{ ");
         Write($"\"{property.Name}\", Properties[\"{property.Key}\"]");
+        WriteLine(" },");
+    }
+
+    /// <summary>
+    /// Serializes the specified field.
+    /// </summary>
+    /// <param name="type">The current type being serialized.</param>
+    /// <param name="field">The property to serialize.</param>
+    public void WriteField(DocumentedType type, DocumentedField field)
+    {
+        // Skip excluded types
+        if (field.DeclaringType.FullName != null && ExcludedTypes.Contains(field.DeclaringType.FullName))
+        {
+            return;
+        }
+        // Skip System properties
+        if (field.DeclaringType.FullName != null && field.DeclaringType.FullName.StartsWith("System."))
+        {
+            return;
+        }
+
+        // Example:  { "BrowserWindowSize", Properties["Type.BrowserWindowSize"], },
+
+        WriteIndented("{ ");
+        Write($"\"{field.Name}\", Fields[\"{field.Key}\"]");
         WriteLine(" },");
     }
 
@@ -664,7 +736,15 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     public void WriteDeclaringType(DocumentedProperty property)
     {
         Write($"DeclaringTypeName = \"{Escape(property.DeclaringType.FullName)}\", ");
-        Write($"DeclaringTypeFriendlyName = \"{Escape(GetFriendlyTypeName(property.DeclaringType))}\", ");
+    }
+
+    /// <summary>
+    /// Writes the declaring type of a property.
+    /// </summary>
+    /// <param name="field">The property to serialize.</param>
+    public void WriteDeclaringType(DocumentedField field)
+    {
+        Write($"DeclaringTypeName = \"{Escape(field.DeclaringType.FullName)}\", ");
     }
 
     /// <summary>
@@ -675,7 +755,6 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     public void WriteDeclaringType(DocumentedMethod method)
     {
         Write($"DeclaringTypeName = \"{Escape(method.DeclaringType.FullName)}\", ");
-        Write($"DeclaringTypeFriendlyName = \"{Escape(GetFriendlyTypeName(method.DeclaringType))}\", ");
     }
 
     /// <summary>
@@ -694,25 +773,11 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
 
         foreach (var field in type.Fields)
         {
-            WriteField(field);
+            WriteField(type, field.Value);
         }
 
         Outdent();
         WriteLineIndented("},");
-    }
-
-    /// <summary>
-    /// Serializes the specified field.
-    /// </summary>
-    /// <param name="field">The field to document.</param>
-    public void WriteField(KeyValuePair<string, DocumentedField> field)
-    {
-        WriteIndented("{ ");
-        Write($"\"{field.Value.Name}\", new()");
-        Write(" { ");
-        WriteSummary(field.Value.Summary);
-        Write(" }");
-        WriteLine(" },");
     }
 
     /// <summary>

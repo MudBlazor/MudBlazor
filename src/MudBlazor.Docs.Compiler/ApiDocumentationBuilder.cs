@@ -307,7 +307,7 @@ public partial class ApiDocumentationBuilder()
         // Add protected methods
         fields.AddRange(type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic));
         // Remove private and backing fields
-        fields.RemoveAll(field => field.Name.Contains("k__BackingField") || field.Name == "value__");
+        fields.RemoveAll(field => field.Name.Contains("k__BackingField") || field.Name == "value__" || field.Name.StartsWith('_'));
         // Remove duplicates
         fields = fields.DistinctBy(property => property.Name).ToList();
         // Go through each property
@@ -315,7 +315,7 @@ public partial class ApiDocumentationBuilder()
         {
             var category = field.GetCustomAttribute<CategoryAttribute>();
             var blazorParameter = field.GetCustomAttribute<ParameterAttribute>();
-            var key = $"{type.FullName}.{field.Name}";
+            var key = GetFieldFullName(field);
 
             // Has this property been documented before?
             if (!Fields.TryGetValue(key, out var documentedField))
@@ -323,9 +323,14 @@ public partial class ApiDocumentationBuilder()
                 // No.
                 documentedField = new DocumentedField()
                 {
+                    Category = category?.Name,
+                    DeclaringType = field.DeclaringType,
+                    IsProtected = field.IsFamily,
                     Key = key,
                     Name = field.Name,
+                    Order = category?.Order,
                     Type = field.FieldType,
+                    XmlKey = GetXmlKey(GetTypeFullName(field.DeclaringType), field.Name),
                 };
                 Fields.Add(key, documentedField);
             }
@@ -409,6 +414,29 @@ public partial class ApiDocumentationBuilder()
         else if (PublicTypes.TryGetValue(property.DeclaringType.Name, out var type))
         {
             return $"{type.FullName}.{property.Name}";
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Gets the full name of the field's declaring type.
+    /// </summary>
+    /// <param name="field"></param>
+    /// <returns></returns>
+    public string GetFieldFullName(FieldInfo field)
+    {
+        // Is a full name already given?
+        if (field.DeclaringType.FullName != null)
+        {
+            return $"{field.DeclaringType.FullName}.{field.Name}";
+        }
+        // Is there a type by name?
+        else if (PublicTypes.TryGetValue(field.DeclaringType.Name, out var type))
+        {
+            return $"{type.FullName}.{field.Name}";
         }
         else
         {
@@ -596,23 +624,15 @@ public partial class ApiDocumentationBuilder()
     /// <param name="xmlContent">The raw XML documentation for the member.</param>
     public void DocumentField(string memberFullName, string xmlContent)
     {
-        if (Fields.TryGetValue(memberFullName, out var field))
+        var field = Fields.FirstOrDefault(type => type.Value.XmlKey == memberFullName);
+        if (field.Value != null)
         {
-            field.Summary = GetSummary(xmlContent);
+            field.Value.Summary = GetSummary(xmlContent);
+            field.Value.Remarks = GetRemarks(xmlContent);
         }
         else
         {
-            var enumPart = memberFullName.Substring(0, memberFullName.LastIndexOf("."));
-            var valuePart = memberFullName.Substring(enumPart.Length + 1);
-
-            if (Fields.TryGetValue(enumPart, out var enumerationItem))
-            {
-                enumerationItem.Summary = GetSummary(xmlContent);
-            }
-            else
-            {
-                UnresolvedFields.Add(memberFullName);
-            }
+            UnresolvedFields.Add(memberFullName);
         }
     }
 
@@ -644,7 +664,7 @@ public partial class ApiDocumentationBuilder()
     public static string GetMethodFullName(string xmlMethodName)
     {
         // Are there parenthesis?
-        var parenthesis = xmlMethodName.IndexOf("(");
+        var parenthesis = xmlMethodName.IndexOf('(');
         if (parenthesis == -1)
         {
             return xmlMethodName;
@@ -662,7 +682,7 @@ public partial class ApiDocumentationBuilder()
     /// <returns></returns>
     public static string GetMethodName(string xmlMethodName)
     {
-        return xmlMethodName.Substring(xmlMethodName.LastIndexOf(".") + 1);
+        return xmlMethodName.Substring(xmlMethodName.LastIndexOf('.') + 1);
     }
 
     /// <summary>
@@ -710,13 +730,14 @@ public partial class ApiDocumentationBuilder()
     /// </summary>
     public void ExportApiDocumentation()
     {
+        // Sort everything by category
         using var writer = new ApiDocumentationWriter(Paths.ApiDocumentationFilePath);
         writer.WriteHeader();
         writer.WriteClassStart();
         writer.WriteConstructorStart(Types.Count);
         writer.WriteProperties(Properties);
         writer.WriteMethods(Methods);
-        // writer.WriteFields(Fields);
+        writer.WriteFields(Fields);
         // writer.WriteEvents(Events);
         writer.WriteTypes(Types);
         writer.WriteConstructorEnd();
@@ -756,19 +777,19 @@ public partial class ApiDocumentationBuilder()
         }
         if (UnresolvedProperties.Count > 0)
         {
-            Console.WriteLine($"API Builder: WARNING: {UnresolvedProperties.Count} properties have XML documentation which couldn't be matched to a type's property.");
+            Console.WriteLine($"API Builder: WARNING: {UnresolvedProperties.Count} properties have XML documentation which couldn't be matched to a property.");
         }
         if (UnresolvedMethods.Count > 0)
         {
-            Console.WriteLine($"API Builder: WARNING: {UnresolvedMethods.Count} methods have XML documentation which couldn't be matched to a type's property.");
+            Console.WriteLine($"API Builder: WARNING: {UnresolvedMethods.Count} methods have XML documentation which couldn't be matched to a method.");
         }
         if (UnresolvedEvents.Count > 0)
         {
-            Console.WriteLine($"API Builder: WARNING: {UnresolvedEvents.Count} events have XML documentation which couldn't be matched to a type's property.");
+            Console.WriteLine($"API Builder: WARNING: {UnresolvedEvents.Count} events have XML documentation which couldn't be matched to an event.");
         }
         if (UnresolvedFields.Count > 0)
         {
-            Console.WriteLine($"API Builder: WARNING: {UnresolvedFields.Count} fields have XML documentation which couldn't be matched to a type's property.");
+            Console.WriteLine($"API Builder: WARNING: {UnresolvedFields.Count} fields have XML documentation which couldn't be matched to a field.");
         }
     }
 

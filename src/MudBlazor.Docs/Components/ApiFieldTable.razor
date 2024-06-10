@@ -1,30 +1,30 @@
-﻿<MudTable T="DocumentedProperty" @ref="Table" ServerData="@GetData"
+﻿<MudTable T="DocumentedField" @ref="Table" ServerData="@GetData"
           Elevation="0" Class="ma-0 mud-width-full" Hover="true" Dense="true"
           AllowUnsorted="false" GroupBy="@CurrentGroups">
     <GroupHeaderTemplate>
         @if (CurrentGrouping == ApiMemberGrouping.Inheritance)
         {
-            <MudTh Class="mud-table-cell-custom-group" colspan="3">
+            <MudTh Class="mud-table-cell-custom-group" colspan="3" aria-label="Grouped by inheritance">
                 <MudText Typo="Typo.h6">@context.Key</MudText>
             </MudTh>
         }
         else if (CurrentGrouping == ApiMemberGrouping.Categories)
         {
-            <MudTh Class="mud-table-cell-custom-group" colspan="3">
+            <MudTh Class="mud-table-cell-custom-group" colspan="3" aria-label="Grouped by property category">
                 <MudText Typo="Typo.h6">@(context.Key ?? "General")</MudText>
             </MudTh>
         }
     </GroupHeaderTemplate>
     <HeaderContent>
-        <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="Name" InitialDirection="SortDirection.Ascending">Name</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="Type">Type</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel T="DocumentedProperty" SortLabel="Description">Description</MudTableSortLabel></MudTh>
+        <MudTh Style="max-width:25%;"><MudTableSortLabel T="DocumentedField" SortLabel="Name" InitialDirection="SortDirection.Ascending">Name</MudTableSortLabel></MudTh>
+        <MudTh Style="max-width:25%;"><MudTableSortLabel T="DocumentedField" SortLabel="Type">Type</MudTableSortLabel></MudTh>
+        <MudTh Style="max-width:50%;"><MudTableSortLabel T="DocumentedField" SortLabel="Description">Description</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd Class="docs-content-api-cell" Style="white-space: nowrap;" DataLabel="Name">
+        <MudTd id="@context.Name" Class="docs-content-api-cell" Style="white-space: nowrap;" DataLabel="Name">
             @if (context.DeclaringType != null && context.DeclaringType.Name != Type.Name)
             {
-                <MudTooltip Text="@("From " + context.DeclaringType.Name)">
+                <MudTooltip Text="@("From " + context.DeclaringType.NameFriendly)">
                     <CodeInline>@context.Name</CodeInline>
                 </MudTooltip>
             }
@@ -34,13 +34,13 @@
             }
         </MudTd>
         <MudTd Class="docs-content-api-cell" DataLabel="Type">
-            <CodeInline>@context.DeclaringType.NameFriendly</CodeInline>
+            <CodeInline>@context.TypeFriendlyName</CodeInline>
         </MudTd>
-        <MudTd id="@context.Name" Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">
+        <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">
             <ApiText Type="@Type" Text="@(context.Summary + " " + context.Remarks)" />
         </MudTd>
     </RowTemplate>
     <NoRecordsContent>
-        <MudAlert Severity="Severity.Info">No properties match the current filters.</MudAlert>
+        <MudAlert Severity="Severity.Info">No fields match the current filters.</MudAlert>
     </NoRecordsContent>
 </MudTable>

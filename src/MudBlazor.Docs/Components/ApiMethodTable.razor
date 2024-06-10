@@ -16,15 +16,15 @@
         }
     </GroupHeaderTemplate>
     <HeaderContent>
-        <MudTh><MudTableSortLabel T="DocumentedMethod" SortLabel="Name" InitialDirection="SortDirection.Ascending">Name</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel T="DocumentedMethod" SortLabel="Return Type">Return Type</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel T="DocumentedMethod" SortLabel="Description">Description</MudTableSortLabel></MudTh>
+        <MudTh Style="max-width:25%;"><MudTableSortLabel T="DocumentedMethod" SortLabel="Name" InitialDirection="SortDirection.Ascending">Name</MudTableSortLabel></MudTh>
+        <MudTh Style="max-width:25%;"><MudTableSortLabel T="DocumentedMethod" SortLabel="Return Type">Return Type</MudTableSortLabel></MudTh>
+        <MudTh Style="max-width:50%;"><MudTableSortLabel T="DocumentedMethod" SortLabel="Description">Description</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd Class="docs-content-api-cell" Style="white-space: nowrap;" DataLabel="Name">
+        <MudTd id="@context.Name" Class="docs-content-api-cell" Style="white-space: nowrap;" DataLabel="Name">
             @if (context.DeclaringType != null && context.DeclaringType.Name != Type.Name)
             {
-                <MudTooltip Text="@("From " + context.DeclaringType.Name)">
+                <MudTooltip Text="@("From " + context.DeclaringType.NameFriendly)">
                     <CodeInline>@context.Name</CodeInline>
                 </MudTooltip>
             }

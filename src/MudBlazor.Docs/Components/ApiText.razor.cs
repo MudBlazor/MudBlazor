@@ -91,16 +91,28 @@ public partial class ApiText
             }
             else
             {
-                // Calculate the text to display (removes "MudBlazor." and the current type)
-                var friendlyName = match.Groups[1].Value.Substring(2)
-                    .Replace("MudBlazor.", "")                  // Remove the namespace
-                    .Replace(Type?.Name + ".", "")              // Exclude the type
-                    .Replace(Type?.BaseType?.Name + ".", "");   // Exclude the base type
-                // Property, Method, or Event  (no link)
-                xml = xml.Replace(match.Groups[0].Value, $"<code class=\"docs-code docs-code-primary\">{friendlyName}</code>");
+                // Try to find the member
+                var memberName = match.Groups[1].Value.Substring(2);
+                var existingMember = ApiDocumentation.GetMember(memberName);
+                if (existingMember == null)
+                {
+                    // Calculate the text to display (removes "MudBlazor." and the current type)
+                    var friendlyName = match.Groups[1].Value.Substring(2)
+                        .Replace("MudBlazor.", "")                  // Remove the namespace
+                        .Replace(Type?.Name + ".", "")              // Exclude the type
+                        .Replace(Type?.BaseType?.Name + ".", "");   // Exclude the base type
+
+                    // Property, Method, or Event  (no link)
+                    xml = xml.Replace(match.Groups[0].Value, $"<code class=\"docs-code docs-code-primary\">{friendlyName}</code>");
+                }
+                else
+                {
+                    xml = xml.Replace(match.Groups[0].Value, $"<a class=\"docs-code docs-code-primary\" href=\"{existingMember.DeclaringTypeApiUrl}#{existingMember.Name}\">{existingMember.Name}</a>");
+                }
             }
         }
-        // Replace "see href" with links
+
+        // Replace "see href" with links to a new browser tab
         foreach (var match in SeeHrefRegEx().Matches(xml).Cast<Match>())
         {
             xml = xml.Replace(match.Groups[0].Value, $"<a class=\"docs-link\" target=\"_external\" href=\"{match.Groups[1].Value}\"><code class=\"docs-code docs-code-primary\">{match.Groups[1].Value}</code></a>");

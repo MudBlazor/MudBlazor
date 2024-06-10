@@ -11,7 +11,7 @@ namespace MudBlazor.Docs.Models;
 /// <summary>
 /// Represents a documented member of a type.
 /// </summary>
-[DebuggerDisplay("({ReturnType}) {Name}: {Summary}")]
+[DebuggerDisplay("({DeclaringTypeFriendlyName}) {Name}: {Summary}")]
 public abstract class DocumentedMember
 {
     /// <summary>
@@ -26,11 +26,6 @@ public abstract class DocumentedMember
     /// The type which defines this member.
     /// </summary>
     public string? DeclaringTypeName { get; set; }
-
-    /// <summary>
-    /// The user-facing name of the declaring type.
-    /// </summary>
-    public string? DeclaringTypeFriendlyName { get; set; }
 
     /// <summary>
     /// The declaring type for this member.

@@ -59,6 +59,20 @@
                 </DocsPageSection>
             }
 
+            @if (DocumentedType.Fields.Count > 0)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Fields" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <MudGrid Class="pa-0">
+                            <MudItem xs="12">
+                                <ApiFieldTable Type="@DocumentedType" />
+                            </MudItem>
+                        </MudGrid>
+                    </SectionContent>
+                </DocsPageSection>
+            }
+
             @if (DocumentedType.Methods.Count > 0)
             {
                 <DocsPageSection>

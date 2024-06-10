@@ -16,15 +16,15 @@
         }
     </GroupHeaderTemplate>
     <HeaderContent>
-        <MudTh aria-label="Property name"><MudTableSortLabel T="DocumentedProperty" SortLabel="Name" InitialDirection="SortDirection.Ascending">Name</MudTableSortLabel></MudTh>
-        <MudTh aria-label="Property type"><MudTableSortLabel T="DocumentedProperty" SortLabel="Type">Type</MudTableSortLabel></MudTh>
-        <MudTh aria-label="Property description"><MudTableSortLabel T="DocumentedProperty" SortLabel="Description">Description</MudTableSortLabel></MudTh>
+        <MudTh Style="max-width:25%;"><MudTableSortLabel T="DocumentedProperty" SortLabel="Name" InitialDirection="SortDirection.Ascending">Name</MudTableSortLabel></MudTh>
+        <MudTh Style="max-width:25%;"><MudTableSortLabel T="DocumentedProperty" SortLabel="Type">Type</MudTableSortLabel></MudTh>
+        <MudTh Style="max-width:50%;"><MudTableSortLabel T="DocumentedProperty" SortLabel="Description">Description</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd Class="docs-content-api-cell" Style="white-space: nowrap;" DataLabel="Name">
+        <MudTd id="@context.Name" Class="docs-content-api-cell" Style="white-space: nowrap;" DataLabel="Name">
             @if (context.DeclaringType != null && context.DeclaringType.Name != Type.Name)
             {
-                <MudTooltip Text="@("From " + context.DeclaringType.Name)">
+                <MudTooltip Text="@("From " + context.DeclaringType.NameFriendly)">
                     <CodeInline>@context.Name</CodeInline>
                 </MudTooltip>
             }
@@ -36,7 +36,7 @@
         <MudTd Class="docs-content-api-cell" DataLabel="Type">
             <CodeInline>@context.TypeFriendlyName</CodeInline>
         </MudTd>
-        <MudTd id="@context.Name" Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">
+        <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">
             <ApiText Type="@Type" Text="@(context.Summary + " " + context.Remarks)" />
         </MudTd>
     </RowTemplate>
