@@ -7,6 +7,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// A set of panels which can be expanded to show more content.
+    /// </summary>
     public partial class MudExpansionPanel : MudComponentBase, IDisposable
     {
         internal readonly ParameterState<bool> _expandedState;
@@ -31,36 +35,51 @@ namespace MudBlazor
                 .Build();
 
         /// <summary>
-        /// Explicitly sets the height for the Collapse element to override the css default.
+        /// The maximum allowed height, in pixels.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
         public int? MaxHeight { get; set; }
 
         /// <summary>
-        /// RenderFragment to be displayed in the expansion panel which will override header text if defined.
+        /// The content within the title area.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When set, overrides the <see cref="Text"/> property.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
         public RenderFragment? TitleContent { get; set; }
 
         /// <summary>
-        /// The text to be displayed in the expansion panel.
+        /// The text displayed in this panel, if <see cref="TitleContent"/> is not set.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
         public string? Text { get; set; }
 
         /// <summary>
-        /// If true, expand icon will not show
+        /// Hides the expand icon.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
         public bool HideIcon { get; set; }
 
         /// <summary>
-        /// Custom hide icon.
+        /// The icon for expanding this panel.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ExpandMore"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
         public string Icon { get; set; } = Icons.Material.Filled.ExpandMore;
