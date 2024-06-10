@@ -12,13 +12,13 @@ namespace MudBlazor.UnitTests.State;
 
 #nullable enable
 [TestFixture]
-public class ParameterHandlerUniquenessComparerTests
+public class ParameterNameUniquenessComparerTests
 {
     [Test]
     public void Equals_NullInstances_ReturnsTrue()
     {
         // Arrange
-        var comparer = ParameterHandlerUniquenessComparer.Default;
+        var comparer = ParameterNameUniquenessComparer.Default;
         ParameterMetadata? parameterMetadata1 = null;
         ParameterMetadata? parameterMetadata2 = null;
         IParameterComponentLifeCycle? parameterComponentLifeCycle1 = null;
@@ -37,8 +37,8 @@ public class ParameterHandlerUniquenessComparerTests
     public void Equals_OneInstanceNull_ReturnsFalse()
     {
         // Arrange
-        var comparer = ParameterHandlerUniquenessComparer.Default;
-        var parameterMetadata = new ParameterMetadata("Parameter1", "Handler1");
+        var comparer = ParameterNameUniquenessComparer.Default;
+        var parameterMetadata = new ParameterMetadata("Parameter1");
         IParameterComponentLifeCycle parameterState = ParameterAttachBuilder
             .Create<int>()
             .WithMetadata(parameterMetadata)
@@ -59,12 +59,12 @@ public class ParameterHandlerUniquenessComparerTests
     }
 
     [Test]
-    public void Equals_SameHandlerNames_ReturnsTrue()
+    public void Equals_SameParameterNames_ReturnsTrue()
     {
         // Arrange
-        var comparer = ParameterHandlerUniquenessComparer.Default;
-        var handler1 = new ParameterMetadata("Parameter1", "Handler1");
-        var handler2 = new ParameterMetadata("Parameter2", "Handler1");
+        var comparer = ParameterNameUniquenessComparer.Default;
+        var handler1 = new ParameterMetadata("Parameter1");
+        var handler2 = new ParameterMetadata("Parameter1");
         IParameterComponentLifeCycle parameterState1 = ParameterAttachBuilder
             .Create<int>()
             .WithMetadata(handler1)
@@ -86,12 +86,12 @@ public class ParameterHandlerUniquenessComparerTests
     }
 
     [Test]
-    public void Equals_DifferentHandlerNames_ReturnsFalse()
+    public void Equals_DifferentParameterNames_ReturnsFalse()
     {
         // Arrange
-        var comparer = ParameterHandlerUniquenessComparer.Default;
-        var handler1 = new ParameterMetadata("Parameter1", "Handler1");
-        var handler2 = new ParameterMetadata("Parameter2", "Handler2");
+        var comparer = ParameterNameUniquenessComparer.Default;
+        var handler1 = new ParameterMetadata("Parameter1");
+        var handler2 = new ParameterMetadata("Parameter2");
         IParameterComponentLifeCycle parameterState1 = ParameterAttachBuilder
             .Create<int>()
             .WithMetadata(handler1)
@@ -113,39 +113,12 @@ public class ParameterHandlerUniquenessComparerTests
     }
 
     [Test]
-    public void Equals_NullHandlerNames_ReturnsFalse()
+    public void GetHashCode_SameParameterNames_ReturnsTrue()
     {
         // Arrange
-        var comparer = ParameterHandlerUniquenessComparer.Default;
-        var handler1 = new ParameterMetadata("Parameter1", null);
-        var handler2 = new ParameterMetadata("Parameter2", null);
-        IParameterComponentLifeCycle parameterState1 = ParameterAttachBuilder
-            .Create<int>()
-            .WithMetadata(handler1)
-            .WithGetParameterValueFunc(() => 0)
-            .Attach();
-        IParameterComponentLifeCycle parameterState2 = ParameterAttachBuilder
-            .Create<int>()
-            .WithMetadata(handler2)
-            .WithGetParameterValueFunc(() => 0)
-            .Attach();
-
-        // Act
-        var result1 = comparer.Equals(handler1, handler2);
-        var result2 = comparer.Equals(parameterState1, parameterState2);
-
-        // Assert
-        result1.Should().BeFalse("If there is no handler name we consider them to be unique.");
-        result2.Should().BeFalse("If there is no handler name we consider them to be unique.");
-    }
-
-    [Test]
-    public void GetHashCode_SameHandlerNames_ReturnsTrue()
-    {
-        // Arrange
-        var comparer = ParameterHandlerUniquenessComparer.Default;
-        var handler1 = new ParameterMetadata("Parameter1", "Handler1");
-        var handler2 = new ParameterMetadata("Parameter2", "Handler1");
+        var comparer = ParameterNameUniquenessComparer.Default;
+        var handler1 = new ParameterMetadata("Parameter1");
+        var handler2 = new ParameterMetadata("Parameter1");
         IParameterComponentLifeCycle parameterState1 = ParameterAttachBuilder
             .Create<int>()
             .WithMetadata(handler1)
@@ -174,9 +147,9 @@ public class ParameterHandlerUniquenessComparerTests
     public void GetHashCode_DifferentHandlerNames_ReturnsFalse()
     {
         // Arrange
-        var comparer = ParameterHandlerUniquenessComparer.Default;
-        var handler1 = new ParameterMetadata("Parameter1", "Handler1");
-        var handler2 = new ParameterMetadata("Parameter2", "Handler2");
+        var comparer = ParameterNameUniquenessComparer.Default;
+        var handler1 = new ParameterMetadata("Parameter1");
+        var handler2 = new ParameterMetadata("Parameter2");
         IParameterComponentLifeCycle parameterState1 = ParameterAttachBuilder
             .Create<int>()
             .WithMetadata(handler1)
@@ -199,36 +172,5 @@ public class ParameterHandlerUniquenessComparerTests
         // Assert
         result1.Should().BeFalse();
         result2.Should().BeFalse();
-    }
-
-    [Test]
-    public void GetHashCode_NullHandlerNames_ReturnsFalse()
-    {
-        // Arrange
-        var comparer = ParameterHandlerUniquenessComparer.Default;
-        var handler1 = new ParameterMetadata("Parameter1", null);
-        var handler2 = new ParameterMetadata("Parameter2", null);
-        IParameterComponentLifeCycle parameterState1 = ParameterAttachBuilder
-            .Create<int>()
-            .WithMetadata(handler1)
-            .WithGetParameterValueFunc(() => 0)
-            .Attach();
-        IParameterComponentLifeCycle parameterState2 = ParameterAttachBuilder
-            .Create<int>()
-            .WithMetadata(handler2)
-            .WithGetParameterValueFunc(() => 0)
-            .Attach();
-
-        // Act
-        var handler1HashCode = comparer.GetHashCode(handler1);
-        var handler2HashCode = comparer.GetHashCode(handler2);
-        var parameterState1HashCode = comparer.GetHashCode(parameterState1);
-        var parameterState2HashCode = comparer.GetHashCode(parameterState2);
-        var result1 = handler1HashCode == handler2HashCode;
-        var result2 = parameterState1HashCode == parameterState2HashCode;
-
-        // Assert
-        result1.Should().BeFalse("If there is no handler name we consider them to be unique.");
-        result2.Should().BeFalse("If there is no handler name we consider them to be unique.");
     }
 }

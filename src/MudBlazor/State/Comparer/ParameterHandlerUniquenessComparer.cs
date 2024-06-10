@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MudBlazor.State;
+namespace MudBlazor.State.Comparer;
 
 #nullable enable
 /// <summary>
