@@ -37,14 +37,16 @@
 <!-- TOC end -->
 
 # Information and Guidelines for Contributors
+
 Thank you for contributing to MudBlazor and making it even better. We are happy about every contribution! Issues, bug-fixes, new components...
 
 ## Code of Conduct
+
 Please make sure that you follow our [code of conduct](/CODE_OF_CONDUCT.md)
 
 ## Minimal Prerequisites to Compile from Source
 
-- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+-   [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 
 ## Pull Requests
 - Your Pull Request (PR) must only consist of one topic. It is better to split Pull Requests with more than one feature or bug fix in separate Pull Requests
@@ -61,7 +63,9 @@ Please make sure that you follow our [code of conduct](/CODE_OF_CONDUCT.md)
 ```
 <component name>: <short description of changes in imperative> (<linked issue>)
 ```
+
 For example:
+
 ```
  DateRangePicker: Fix initializing DateRange with null values (#1997)
 ```
@@ -74,11 +78,13 @@ For example:
 
 
 ### Pull Requests which introduce new components
-- MudBlazor supports RTL. It basically mirrors the ui horizontally for languages which are read right-to-left. See [RTL guide](https://rtlstyling.com/posts/rtl-styling)  for more information. Therefore every component should implement this functionality.
-If necessary include
+
+-   MudBlazor supports RTL. It basically mirrors the ui horizontally for languages which are read right-to-left. See [RTL guide](https://rtlstyling.com/posts/rtl-styling) for more information. Therefore every component should implement this functionality. If necessary include
+
 ```csharp
 [CascadingParameter] public bool RightToLeft {get; set;}
 ```
+
 in your component and apply styles at component level.
 - You must add tests if your component contains any logic (CSS styling requires no testing)
 - Use our `css variables` if possible. For instance, you should not hard code any colors etc.
@@ -96,32 +102,34 @@ MudBlazor is divided into different projects. The most important ones are:
 - [MudBlazor.UnitTests.Viewer](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.UnitTests.Viewer): a visual representation of the unit tests. When you launch the project, you can test whether the components look and behave correctly
 
 Most important files:
-- Component `.razor` and `.razor.cs` classes ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor/Components))
-- Component `.scss` style classes ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor/Styles/components))
-- Enums ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor/Enums))
-- Component doc pages ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.Docs/Pages/Components))
-- Component tests ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.UnitTests/Components))
-- Test components ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.UnitTests.Viewer/TestComponents))
+
+-   Component `.razor` and `.razor.cs` classes ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor/Components))
+-   Component `.scss` style classes ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor/Styles/components))
+-   Enums ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor/Enums))
+-   Component doc pages ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.Docs/Pages/Components))
+-   Component tests ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.UnitTests/Components))
+-   Test components ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.UnitTests.Viewer/TestComponents))
 
 ## Coding Dos and Don'ts
-- **No code in parameter getter/setter!** See section *Parameter Registration or Why we can't have Logic in Parameter Setters* below
-- **Don't overwrite parameters in components!** See section *Avoid overwriting parameters in Blazor Components* below
-- **No programmatic assignments to another component's parameters** See section *Blazor Component parameter should not be set outside of its component.* below
-- **Don't break stuff!** See section *Unit Testing and Continuous Integration* below
-- **Add a test to guard against others breaking your feature/fix!** See section *Unit Testing and Continuous Integration* below
+
+-   **No code in parameter getter/setter!** See section *Parameter Registration or Why we can't have Logic in Parameter Setters* below
+-   **Don't overwrite parameters in components!** See section *Avoid overwriting parameters in Blazor Components* below
+-   **No programmatic assignments to another component's parameters** See section *Blazor Component parameter should not be set outside of its component.* below
+-   **Don't break stuff!** See section *Unit Testing and Continuous Integration* below
+-   **Add a test to guard against others breaking your feature/fix!** See section *Unit Testing and Continuous Integration* below
 
 ## Parameter Registration or Why we can't have Logic in Parameter Setters
-MudBlazor parameters shall be auto-properties, meaning that there must not be logic in the property getter or setter. This rule prevents update-loops and other nasty bugs such as swallowed exceptions due to unobserved async discards. 
-"This is quite inconvenient" you may say, where do I call the EventCallback and how to react to parameter changes? Luckily the MudBlazor team has got your back. Thanks to our ParameterState framework you don't need to keep track of 
-old parameter values in fields and mess around with `SetParametersAsync`.
+
+MudBlazor parameters shall be auto-properties, meaning that there must not be logic in the property getter or setter. This rule prevents update-loops and other nasty bugs such as swallowed exceptions due to unobserved async discards. "This is quite inconvenient" you may say, where do I call the EventCallback and how to react to parameter changes? Luckily the MudBlazor team has got your back. Thanks to our ParameterState framework you don't need to keep track of old parameter values in fields and mess around with `SetParametersAsync`.
 
 **TLDR; Register parameters in the constructor with a change handler that contains all the code that needs to be executed when the parameter value changes.**
 
-**NB: Code in `[Parameter]` attributed property setters is no longer allowed in MudBlazor!** (No matter if async functions are called in them or not.)
+**NB: Code in** `[Parameter]` **attributed property setters is no longer allowed in MudBlazor!** (No matter if async functions are called in them or not.)
 
 ### Example of a bad Parameter definition
 
-Here is a real example of a parameter with additional logic in the setter, which is now forbidden. 
+Here is a real example of a parameter with additional logic in the setter, which is now forbidden.
+
 ```c#
 private bool _expanded;
 
@@ -154,12 +162,12 @@ functions are invoked and their return value `Task` is discarded. This not only 
 component from being able to catch any errors in the async functions. Any exceptions that happen in these asynchronous functions may or may not bubble up
 to the user. In some cases, Blazor just catches them and they are silently ignored, in other cases they may cause application crashes that can't be prevented with `try catch`. 
 
-The alternative would be to move the code from the setter into `SetParametersAsync` and depending on the component you would also need code in `OnInitializedAsync`. 
-This is cumbersome and error prone and requires you to keep track of the old parameter value in a field and write a series of `if` statements in `SetParametersAsync` if there are multiple parameters.
+The alternative would be to move the code from the setter into `SetParametersAsync` and depending on the component you would also need code in `OnInitializedAsync`. This is cumbersome and error prone and requires you to keep track of the old parameter value in a field and write a series of `if` statements in `SetParametersAsync` if there are multiple parameters.
 
 Using our new `ParameterState` pattern all this is not required.
 
 ### Example of a good Parameter definition
+
 ```c#
 private readonly ParameterState<bool> _expandedState;
 
@@ -221,10 +229,10 @@ We are slowly but surely refactoring all of those, you can help if you like.
 
 ## Avoid overwriting parameters in Blazor Components
 
-The `ParameterState` framework offers a solution to prevent parameter overwriting issues.
-For a detailed explanation of this problem, refer to the [article](https://learn.microsoft.com/en-us/aspnet/core/blazor/components/overwriting-parameters?view=aspnetcore-8.0#overwritten-parameters).
+The `ParameterState` framework offers a solution to prevent parameter overwriting issues. For a detailed explanation of this problem, refer to the [article](https://learn.microsoft.com/en-us/aspnet/core/blazor/components/overwriting-parameters?view=aspnetcore-8.0#overwritten-parameters).
 
 ### Example of a bad code
+
 ```c#
 [Parameter]
 public bool Expanded { get; set; }
@@ -241,6 +249,7 @@ private Task ToggleAsync()
 ```
 
 ### Example of a good code
+
 ```c#
 private readonly ParameterState<bool> _expandedState;
 
@@ -267,6 +276,7 @@ private Task ToggleAsync()
 ## Blazor Component parameter should not be set outside of its component.
 
 Consider a hypothetical `CalendarComponent`:
+
 ```c#
 public class CalendarComponent : ComponentBase
 {
@@ -276,6 +286,7 @@ public class CalendarComponent : ComponentBase
 ```
 
 ### Example of a bad code
+
 ```razor
 <CalendarComponent @ref="@_calendar" />
 <button @onclick="Update">
@@ -292,6 +303,7 @@ public class CalendarComponent : ComponentBase
     }
 }
 ```
+
 This code would result in a [BL0005](https://learn.microsoft.com/en-us/aspnet/core/diagnostics/bl0005?view=aspnetcore-8.0) warning.
 
 ### Example of a good code
@@ -314,8 +326,8 @@ Instead of using an imperative programming approach (`component.Parameter1 = v1`
     }
 }
 ```
-In the improved version, we pass `ShowOnlyOneCalendar` as a parameter to `CalendarComponent` directly in the markup, using a variable (`_showOnlyOne`) that can be manipulated within the component's code.
-This adheres to the recommended Blazor coding practices and avoids errors like `BL0005`.
+
+In the improved version, we pass `ShowOnlyOneCalendar` as a parameter to `CalendarComponent` directly in the markup, using a variable (`_showOnlyOne`) that can be manipulated within the component's code. This adheres to the recommended Blazor coding practices and avoids errors like `BL0005`.
 
 ## Unit Testing and Continuous Integration
 
@@ -325,8 +337,7 @@ require a bUnit test that checks its logic.
 
 ### How not to break stuff
 
-When you are making changes to any components and preparing a PR make
-sure you run the entire test suite to see if anything broke. 
+When you are making changes to any components and preparing a PR make sure you run the entire test suite to see if anything broke.
 
 Documentation changes should be reviewed by locally previewing with 
 MudBlazor.Docs.WasmHost as the startup project.
@@ -335,8 +346,7 @@ Once your PR is merged into the dev branch, it can be viewed at https://dev.mudb
 
 ### Make your code break-safe
 
-When you are writing non-trivial logic, please add a unit test for it. Basically, think of it like this: By adding 
-a test for everything you fear could break you make sure your work is not undone by accident by future additions. 
+When you are writing non-trivial logic, please add a unit test for it. Basically, think of it like this: By adding a test for everything you fear could break you make sure your work is not undone by accident by future additions.
 
 ### How to write a unit test?
 
@@ -348,8 +358,7 @@ Simply follow the example of some of the simpler tests like:
 
 Let's say we want to test whether a component's two-way bindable property works
 
-In MudBlazor.UnitTests.Viewer create a razor file that instantiates your component
-and binds it to a public field.
+In MudBlazor.UnitTests.Viewer create a razor file that instantiates your component and binds it to a public field.
 
 In MudBlazor.UnitTests create another test (i.e. by copying CheckBoxTests.cs and renaming it)
 In the Test make sure to instantiate the razor file you just prepared above.
@@ -377,6 +386,7 @@ In the Test make sure to instantiate the razor file you just prepared above.
 ```
 
 As soon as you interact with html elements they are potentially re-rendered, and your variable becomes stale.
+As soon as you interact with html elements they are potentially re-rendered, and your variable becomes stale.
 
 ```c#
    var comp = ctx.RenderComponent<MudTextField<string>>();
@@ -386,14 +396,12 @@ As soon as you interact with html elements they are potentially re-rendered, and
    comp.Find("input").Blur();
    comp.FindComponent<MudTextField<string>>().Instance.Value.NotBeNullOrEmpty();
 ```
-So never save html element references in a variable in a bUnit test. Note: you can save component references
-in variables just fine, so don't confuse that.
+
+So never save html element references in a variable in a bUnit test. Note: you can save component references in variables just fine, so don't confuse that.
 
 #### Always use InvokeAsync to set parameter values on a component
 
-The bUnit test logic is not running on the blazor UI-thread, so whenever directly interacting with a component's 
-parameters or methods you need to use `await comp.InvokeAsync(()=> ... )`. That way the following test logic happens only after the 
-interaction with the component has been concluded.
+The bUnit test logic is not running on the Blazor UI-thread, so whenever directly interacting with a component's parameters or methods you need to use `await comp.InvokeAsync(()=> ... )`. That way the following test logic happens only after the interaction with the component has been concluded.
 
 ```c#
    var comp = ctx.RenderComponent<MudTextField<string>>();
@@ -407,15 +415,14 @@ interaction with the component has been concluded.
 
 ### What does not need to be tested?
 
-We don't need to test the complete rendered HTML of a component, or the appearance
-of a component. Test the logic, not the HTML. When checking changes in the HTML
-do simple checks like "does the HTML element exist that depends on a state". 
+We don't need to test the complete rendered HTML of a component, or the appearance of a component. Test the logic, not the HTML. When checking changes in the HTML do simple checks like "does the HTML element exist that depends on a state".
 
 ### What is the MudBlazor.UnitTests.Viewer for?
 
-Two things. 
-- It holds all the test components which are required by the bUnit tests. 
-- You can run it and try your test components out if you need to debug them.
+Two things.
+
+-   It holds all the test components which are required by the bUnit tests.
+-   You can run it and try your test components out if you need to debug them.
 
 ### What are the auto-generated tests for?
 
