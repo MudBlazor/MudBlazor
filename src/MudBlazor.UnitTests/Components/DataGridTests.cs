@@ -4130,7 +4130,7 @@ namespace MudBlazor.UnitTests.Components
             rows.Count.Should().Be(12, because: "1 header row + 10 data rows + 1 footer row");
             var cells = dataGrid.FindAll("td");
             cells.Count.Should().Be(10, because: "We have 10 data rows with one group collapsed");
-            dataGrid.Instance.ExpandAllGroups();
+            await comp.InvokeAsync(async () => dataGrid.Instance.ExpandAllGroups());
             rows = dataGrid.FindAll("tr");
             rows.Count.Should().Be(32, because: "1 header row + 10 data rows + 1 footer row + 10 group rows + 10 footer group rows");
             cells = dataGrid.FindAll("td");
@@ -4161,7 +4161,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () => await dataGrid.Instance.ReloadServerData());
             cells = dataGrid.FindAll("td");
             cells.Count.Should().Be(10, because: "We have 10 data rows with one group collapsed from next page");
-            dataGrid.Instance.ExpandAllGroups();
+            await comp.InvokeAsync(async () => dataGrid.Instance.ExpandAllGroups());
             cells = dataGrid.FindAll("td");
             cells.Count.Should().Be(30, because: "We have next 10 data rows with one group + 10*2 cells inside groups");
             //cells should have data from next page
