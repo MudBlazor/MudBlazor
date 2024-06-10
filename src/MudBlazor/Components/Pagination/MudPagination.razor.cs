@@ -221,6 +221,20 @@ namespace MudBlazor
         [Category(CategoryTypes.Pagination.Appearance)]
         public string LastIcon { get; set; } = Icons.Material.Filled.LastPage;
 
+        /// <summary>
+        /// Default to null. Apply CSS styles to (PreviousIconButton,FirstIconButton).
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Pagination.Appearance)]
+        public string? BackButtonsStyle { get; set; }
+        
+        /// <summary>
+        /// Default to null. Apply CSS styles to (NextIconButton,LastIconButton).
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Pagination.Appearance)]
+        public string? ForwardButtonsStyle { get; set; }
+
         /*generates an array representing the pagination numbers, e.g. for Count==11, MiddleCount==3, BoundaryCount==1,
          Selected==6 the output will be the int array [1, 2, -1, 5, 6, 7, -1, 10, 11]
          -1 is displayed as "..." in the ui*/
