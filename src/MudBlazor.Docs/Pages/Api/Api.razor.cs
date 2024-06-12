@@ -35,6 +35,9 @@ public partial class Api
 
     protected override void OnParametersSet()
     {
-        DocumentedType = ApiDocumentation.GetType(TypeName);
+        if (DocumentedType == null || DocumentedType.Name != TypeName)
+        {
+            DocumentedType = ApiDocumentation.GetType(TypeName);
+        }
     }
 }

@@ -74,6 +74,11 @@ public static partial class ApiDocumentation
         {
             return match;
         }
+        // Look for legacy links
+        if (LegacyToModernTypeNames.TryGetValue(name, out var newTypeName) && Types.TryGetValue(newTypeName, out match))
+        {
+            return match;
+        }
         // Find a match by name
         var byName = Types.SingleOrDefault(type => type.Value.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         return byName.Value;
@@ -182,4 +187,124 @@ public static partial class ApiDocumentation
         var byName = Events.SingleOrDefault(type => type.Value.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         return byName.Value;
     }
+
+    /// <summary>
+    /// The converter used to handle legacy api links.
+    /// </summary>
+    /// <remarks>
+    /// This can be removed once it is decided that users are no longer using legacy API links.
+    /// </remarks>
+    public static Dictionary<string, string> LegacyToModernTypeNames = new()
+    {
+        { "alert", "MudBlazor.MudAlert" },
+        { "appbar", "MudBlazor.MudAppBar" },
+        { "avatar", "MudBlazor.MudAvatar" },
+        { "avatargroup", "MudBlazor.MudAvatarGroup" },
+        { "autocomplete", "MudBlazor.MudAutocomplete`1" },
+        { "badge", "MudBlazor.MudBadge" },
+        { "barchart", "MudBlazor.Charts.Bar" },
+        { "breadcrumbs", "MudBlazor.MudBreadcrumbs" },
+        { "breakpointprovider", "MudBlazor.MudBreakpointProvider" },
+        { "button", "MudBlazor.MudButton" },
+        { "buttonfab", "MudBlazor.MudFab" },
+        { "buttongroup", "MudBlazor.MudButtonGroup" },
+        { "card", "MudBlazor.MudCard" },
+        { "cardactions", "MudBlazor.MudCardActions" },
+        { "cardcontent", "MudBlazor.MudCardContent" },
+        { "cardheader", "MudBlazor.MudCardHeader" },
+        { "cardmedia", "MudBlazor.MudCardMedia" },
+        { "carousel", "MudBlazor.MudCarousel`1" },
+        { "carouselitem", "MudBlazor.MudCarouselItem" },
+        { "checkbox", "MudBlazor.MudCheckBox`1" },
+        { "chips", "MudBlazor.MudChip`1" },
+        { "chipset", "MudBlazor.MudChipSet`1" },
+        { "Collapse", "MudBlazor.MudCollapse" },
+        { "colorpicker", "MudBlazor.MudColorPicker" },
+        { "container", "MudBlazor.MudContainer" },
+        { "datagrid", "MudBlazor.MudDataGrid`1" },
+        { "datepicker", "MudBlazor.MudDatePicker" },
+        { "DateRangePicker", "MudBlazor.MudDateRangePicker" },
+        { "dialog", "MudBlazor.MudDialog" },
+        { "dialoginstance", "MudBlazor.MudDialogInstance" },
+        { "dialogprovider", "MudBlazor.MudDialogProvider" },
+        { "divider", "MudBlazor.MudDivider" },
+        { "donutchart", "MudBlazor.Charts.Donut" },
+        { "drawer", "MudBlazor.MudDrawer" },
+        { "drawercontainer", "MudBlazor.MudDrawerContainer" },
+        { "drawerheader", "MudBlazor.MudDrawerHeader" },
+        { "dynamictabs", "MudBlazor.MudDynamicTabs" },
+        { "element", "MudBlazor.MudElement" },
+        { "expansionpanel", "MudBlazor.MudExpansionPanel" },
+        { "expansionpanels", "MudBlazor.MudExpansionPanels" },
+        { "field", "MudBlazor.MudField" },
+        { "fileuploader", "MudBlazor.MudFileUpload`1" },
+        { "focustrap", "MudBlazor.MudFocusTrap" },
+        { "form", "MudBlazor.MudForm" },
+        { "grid", "MudBlazor.MudGrid" },
+        { "hidden", "MudBlazor.MudHidden" },
+        { "highlighter", "MudBlazor.MudHighlighter" },
+        { "iconbutton", "MudBlazor.MudIconButton" },
+        { "icons", "MudBlazor.MudIcon" },
+        { "Input", "MudBlazor.MudInput`1" },
+        { "InputControl", "MudBlazor.MudInputControl" },
+        { "InputLabel", "MudBlazor.MudInputLabel" },
+        { "item", "MudBlazor.MudItem" },
+        { "linechart", "MudBlazor.Charts.Line" },
+        { "link", "MudBlazor.MudLink" },
+        { "list", "MudBlazor.MudList" },
+        { "listitem", "MudBlazor.MudListItem`1" },
+        { "listsubheader", "MudBlazor.MudListSubheader" },
+        { "MainContent", "MudBlazor.MainContent" },
+        { "menu", "MudBlazor.MudMenu" },
+        { "menuitem", "MudBlazor.MudMenuItem" },
+        { "messagebox", "MudBlazor.MudMessageBox" },
+        { "navgroup", "MudBlazor.MudNavGroup" },
+        { "navlink", "MudBlazor.MudNavLink" },
+        { "numericfield", "MudBlazor.MudNumericField`1" },
+        { "overlay", "MudBlazor.MudOverlay" },
+        { "PageContentNavigation", "MudBlazor.MudPageContentNavigation" },
+        { "pagination", "MudBlazor.MudPagination" },
+        { "paper", "MudBlazor.MudPaper" },
+        { "piechart", "MudBlazor.Charts.Pie" },
+        { "popover", "MudBlazor.MudPopover" },
+        { "progress", "MudBlazor.MudProgressLinear" },
+        { "radio", "MudBlazor.MudRadio`1" },
+        { "radiogroup", "MudBlazor.MudRadioGroup`1" },
+        { "RangeInput", "MudBlazor.MudRangeInput`1" },
+        { "rating", "MudBlazor.MudRating" },
+        { "ratingitem", "MudBlazor.MudRatingItem" },
+        { "RTLProvider", "MudBlazor.MudRTLProvider" },
+        { "scrolltotop", "MudBlazor.MudScrollToTop" },
+        { "select", "MudBlazor.MudSelect`1" },
+        { "selectitem", "MudBlazor.MudSelectItem`1" },
+        { "simpletable", "MudBlazor.MudSimpleTable" },
+        { "skeleton", "MudBlazor.MudSkeleton" },
+        { "slider", "MudBlazor.MudSlider`1" },
+        { "snackbar", "MudBlazor.MudSnackbarProvider" },
+        { "SnackbarElement", "MudBlazor.MudSnackbarElement" },
+        { "SparkLine", "MudBlazor.Charts.Line" },
+        { "swipearea", "MudBlazor.MudSwipeArea" },
+        { "switch", "MudBlazor.MudSwitch`1" },
+        { "table", "MudBlazor.MudTable`1" },
+        { "TableGroupRow", "MudBlazor.MudTableGroupRow`1" },
+        { "TablePager", "MudBlazor.MudTablePager" },
+        { "TableSortLabel", "MudBlazor.MudTableSortLabel`1" },
+        { "tabs", "MudBlazor.MudTabs" },
+        { "Td", "MudBlazor.MudTd" },
+        { "textfield", "MudBlazor.MudTextField`1" },
+        { "TFootRow", "MudBlazor.MudTFootRow" },
+        { "Th", "MudBlazor.MudTh" },
+        { "THeadRow", "MudBlazor.MudTHeadRow" },
+        { "timeline", "MudBlazor.MudTimeline" },
+        { "timelineitem", "MudBlazor.MudTimelineItem" },
+        { "timepicker", "MudBlazor.MudTimePicker" },
+        { "toggleiconbutton", "MudBlazor.MudToggleIconButton" },
+        { "toolbar", "MudBlazor.MudToolbar" },
+        { "tooltip", "MudBlazor.MudTooltip" },
+        { "Tr", "MudBlazor.MudTr" },
+        { "treeview", "MudBlazor.MudTreeView`1" },
+        { "treeviewitem", "MudBlazor.MudTreeViewItem`1" },
+        { "treeviewitemtogglebutton", "MudBlazor.MudTreeViewItemToggleButton" },
+        { "typography", "MudBlazor.Typography" }
+    };
 }
