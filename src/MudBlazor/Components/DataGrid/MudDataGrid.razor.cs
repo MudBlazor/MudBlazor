@@ -1331,6 +1331,7 @@ namespace MudBlazor
                 StateHasChanged();
                 PagerStateHasChangedEvent?.Invoke();
             }
+            GroupItems();
         }
 
         internal void AddColumn(Column<T> column)
@@ -1994,6 +1995,7 @@ namespace MudBlazor
                 group.Expanded = true;
                 _groupExpansionsDict[group.Grouping.Key] = true;
             }
+            GroupItems();
         }
 
         /// <summary>
@@ -2009,6 +2011,7 @@ namespace MudBlazor
                 group.Expanded = false;
                 _groupExpansionsDict[group.Grouping.Key] = false;
             }
+            GroupItems();
         }
 
         #endregion
