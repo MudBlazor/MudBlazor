@@ -2,12 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Models;
 
@@ -30,7 +28,7 @@ public partial class ApiTypeHierarchy
     /// <summary>
     /// The root of the type hierarchy.
     /// </summary>
-    public List<DocumentedTypeTreeItem> Root { get; set; } = [];
+    public IReadOnlyCollection<DocumentedTypeTreeItem>? Root { get; set; }
 
     /// <summary>
     /// The selected type.
@@ -51,15 +49,15 @@ public partial class ApiTypeHierarchy
             Expanded = false,
             Name = Type.NameFriendly,
         };
-        Root = [SelectedType];
+        var root = new List<DocumentedTypeTreeItem>() { SelectedType };
         // Walk up the hierarchy to build the tree
         var parent = Type.BaseType;
         while (parent != null)
         {
-            Root[0] = new DocumentedTypeTreeItem()
+            root[0] = new DocumentedTypeTreeItem()
             {
                 ApiUrl = parent.ApiUrl,
-                Children = [Root[0]],
+                Children = [root[0]],
                 Expanded = true,
                 Name = parent.NameFriendly
             };
@@ -69,10 +67,10 @@ public partial class ApiTypeHierarchy
             }
             else
             {
-                Root[0] = new DocumentedTypeTreeItem()
+                root[0] = new DocumentedTypeTreeItem()
                 {
                     ApiUrl = null,
-                    Children = [Root[0]],
+                    Children = [root[0]],
                     Expanded = true,
                     Name = parent.BaseTypeName
                 };
@@ -89,7 +87,9 @@ public partial class ApiTypeHierarchy
             });
         }
         // Finally, flag the root
-        Root[0].IsRoot = true;
+        root[0].IsRoot = true;
+        // Set the items
+        Root = new ReadOnlyCollection<DocumentedTypeTreeItem>(root);
         StateHasChanged();
     }
 

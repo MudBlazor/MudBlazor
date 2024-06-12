@@ -256,7 +256,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine(@$"var comp = ctx.RenderComponent<Api>(ComponentParameter.CreateParameter(""TypeName"", ""{component}""));");
                 cb.AddLine(@$"await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();");
                 // Make sure docs for the type were actually found
-                cb.AddLine(@$"comp.Markup.Should().NotContain(""Sorry, the type {component} was not found"");");              
+                cb.AddLine(@$"comp.Markup.Should().NotContain(""Sorry, the type {component} was not found"");");
                 cb.IndentLevel--;
                 cb.AddLine("}");
             }
