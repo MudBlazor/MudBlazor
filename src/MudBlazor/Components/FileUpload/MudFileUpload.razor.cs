@@ -152,7 +152,7 @@ namespace MudBlazor
         }
 
         public async Task OpenFilePickerAsync()
-            => await JsRuntime.InvokeVoidAsync("mudWindow.click", _id);
+            => await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudFileUpload.openFilePicker", _id);
 
         public void Activate(object activator, MouseEventArgs args)
             => _ = OpenFilePickerAsync();

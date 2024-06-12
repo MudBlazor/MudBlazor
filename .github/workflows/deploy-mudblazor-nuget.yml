@@ -54,13 +54,8 @@ jobs:
         dotnet-version: |
           6.0.x
           7.0.x
-    - name: Assembly version
-      run: |
-        PACKAGE_VERSION="${{ needs.get-version.outputs.VERSION }}"
-        ASSEMBLY_VERSION=$(echo $PACKAGE_VERSION | sed 's/-preview//')
-        echo "ASSEMBLY_VERSION=$ASSEMBLY_VERSION" >> $GITHUB_ENV
     - name: Pack nuget package
-      run: dotnet pack -c Release --output nupkgs /p:PackageVersion=${{ needs.get-version.outputs.VERSION }} /p:AssemblyVersion=${{ env.ASSEMBLY_VERSION }} /p:Version=${{  env.ASSEMBLY_VERSION }}
+      run: dotnet pack -c Release --output nupkgs /p:Version=${{ needs.get-version.outputs.VERSION }}
       working-directory: ./src/MudBlazor
     - name: Publish nuget package
       run: dotnet nuget push nupkgs/*.nupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
