@@ -28,12 +28,12 @@ public partial class ApiTypeHierarchy
     /// <summary>
     /// The root of the type hierarchy.
     /// </summary>
-    public IReadOnlyCollection<DocumentedTypeTreeItem>? Root { get; set; }
+    public IReadOnlyCollection<TreeItemData<DocumentedType>>? Root { get; set; }
 
     /// <summary>
     /// The selected type.
     /// </summary>
-    public DocumentedTypeTreeItem? SelectedType { get; set; }
+    public DocumentedType? SelectedType { get; set; }
 
     protected override void OnParametersSet()
     {
@@ -43,23 +43,27 @@ public partial class ApiTypeHierarchy
             return;
         }
 
-        SelectedType = new DocumentedTypeTreeItem()
+        SelectedType = Type;
+        // Start with the current type
+        var primaryItem = new TreeItemData<DocumentedType>
         {
-            ApiUrl = Type.ApiUrl,
+            Text = Type.Name,
+            Selected = true,
             Expanded = false,
-            Name = Type.NameFriendly,
+            Value = Type,
+            Children = [],
         };
-        var root = new List<DocumentedTypeTreeItem>() { SelectedType };
+        var root = new List<TreeItemData<DocumentedType>>() { primaryItem };
         // Walk up the hierarchy to build the tree
         var parent = Type.BaseType;
         while (parent != null)
         {
-            root[0] = new DocumentedTypeTreeItem()
+            root[0] = new TreeItemData<DocumentedType>()
             {
-                ApiUrl = parent.ApiUrl,
                 Children = [root[0]],
                 Expanded = true,
-                Name = parent.NameFriendly
+                Text = parent.NameFriendly,
+                Value = parent
             };
             if (parent.BaseType != null)
             {
@@ -67,12 +71,12 @@ public partial class ApiTypeHierarchy
             }
             else
             {
-                root[0] = new DocumentedTypeTreeItem()
+                root[0] = new TreeItemData<DocumentedType>()
                 {
-                    ApiUrl = null,
                     Children = [root[0]],
                     Expanded = true,
-                    Name = parent.BaseTypeName
+                    Text = parent.BaseTypeName,
+                    Value = new DocumentedType() { Name = "Root" }
                 };
                 break;
             }
@@ -80,16 +84,15 @@ public partial class ApiTypeHierarchy
         // Now check for types inheriting from this type
         foreach (var descendant in ApiDocumentation.Types.Values.OrderBy(type => type.Name).Where(type => type.BaseTypeName == Type.Name))
         {
-            SelectedType.Children.Add(new()
+            primaryItem?.Children?.Add(new()
             {
-                ApiUrl = descendant.ApiUrl,
-                Name = descendant.NameFriendly,
+                Children = [],
+                Text = descendant.NameFriendly,
+                Value = descendant
             });
         }
-        // Finally, flag the root
-        root[0].IsRoot = true;
         // Set the items
-        Root = new ReadOnlyCollection<DocumentedTypeTreeItem>(root);
+        Root = new ReadOnlyCollection<TreeItemData<DocumentedType>>(root);
         StateHasChanged();
     }
 
@@ -100,35 +103,11 @@ public partial class ApiTypeHierarchy
     /// Occurs when a type has been clicked.
     /// </summary>
     /// <param name="item"></param>
-    public void OnTypeClicked(DocumentedTypeTreeItem item)
+    public void OnTypeClicked(TreeItemData<DocumentedType> item)
     {
-        if (!string.IsNullOrEmpty(item.ApiUrl))
+        if (item.Value != null && !string.IsNullOrEmpty(item.Value.ApiUrl))
         {
-            Browser?.NavigateTo(item.ApiUrl);
+            Browser?.NavigateTo(item.Value.ApiUrl);
         }
-    }
-
-    /// <summary>
-    /// Occurs when a node is expanded or collapsed.
-    /// </summary>
-    /// <param name="item"></param>
-    /// <param name="expanded"></param>
-    public void OnExpandedChanged(DocumentedTypeTreeItem item, bool expanded)
-    {
-        item.Expanded = expanded;
-        StateHasChanged();
-    }
-
-    /// <summary>
-    /// Represents a node in a documented type tree view.
-    /// </summary>
-    [DebuggerDisplay("{Name}={ApiUrl}, Children={Children.Count}")]
-    public class DocumentedTypeTreeItem
-    {
-        public bool IsRoot { get; set; }
-        public string? Name { get; set; }
-        public string? ApiUrl { get; set; }
-        public bool Expanded { get; set; }
-        public List<DocumentedTypeTreeItem> Children { get; set; } = [];
     }
 }
