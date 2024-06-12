@@ -2,7 +2,7 @@
 
 <MudDataGrid Items=@_items ReadOnly=false EditMode=DataGridEditMode.Cell Dense FixedHeader=true MultiSelection="true">
     <Columns>
-        <SelectColumn/>        
+        <SelectColumn ShowInFooter="true"/>        
         <PropertyColumn Property="x => x.Name" Editable=false/>
         <PropertyColumn Property="x => x.Value">
             <EditTemplate>
