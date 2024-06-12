@@ -4,7 +4,7 @@
 
 class MudInput {
     resetValue(id) {
-        let input = document.getElementById(id);
+        const input = document.getElementById(id);
         if (input) {
             input.value = '';
         }
