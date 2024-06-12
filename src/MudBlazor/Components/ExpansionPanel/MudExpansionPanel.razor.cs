@@ -85,48 +85,66 @@ namespace MudBlazor
         public string Icon { get; set; } = Icons.Material.Filled.ExpandMore;
 
         /// <summary>
-        /// If true, removes vertical padding from <see cref="ChildContent"/>.
+        /// Removes vertical padding from the panel.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
         public bool Dense { get; set; }
 
         /// <summary>
-        /// If true, left and right padding is added to the <see cref="ChildContent"/>. Default is true .
+        /// Adds left and right padding.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
         public bool Gutters { get; set; } = true;
 
         /// <summary>
-        /// Raised when <see cref="Expanded"/> changes.
+        /// Occurs when <see cref="Expanded"/> has changed.
         /// </summary>
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
 
         /// <summary>
-        /// Expansion state of the panel (two-way bindable)
+        /// Displays the panel content.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  Can be bound via <c>@bind-Expanded</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
         public bool Expanded { get; set; }
 
         /// <summary>
-        /// If true, the component will be disabled.
+        /// Disables user interaction with this panel.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// Child content of component.
+        /// The content within this panel.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
+        /// <summary>
+        /// Indicates whether the next panel is currently expanded.
+        /// </summary>
         public bool NextPanelExpanded { get; set; }
 
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
         public MudExpansionPanel()
         {
             using var registerScope = CreateRegisterScope();
@@ -146,6 +164,12 @@ namespace MudBlazor
             return Parent.NotifyPanelsChanged(this);
         }
 
+        /// <summary>
+        /// Shows or hides the content in this panel.
+        /// </summary>
+        /// <remarks>
+        /// If <see cref="Disabled"/> is <c>true</c>, this method has no affect.
+        /// </remarks>
         public async Task ToggleExpansionAsync()
         {
             if (Disabled)
@@ -160,6 +184,9 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Shows the content in this panel.
+        /// </summary>
         public async Task ExpandAsync()
         {
             await _expandedState.SetValueAsync(true);
@@ -169,6 +196,10 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Hides the content in this panel.
+        /// </summary>
+        /// <returns></returns>
         public async Task CollapseAsync()
         {
             await _expandedState.SetValueAsync(false);
@@ -190,6 +221,9 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Releases resources used by this panel.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
