@@ -2,31 +2,26 @@
 
 <MudTreeView ExpandOnClick="true" ServerData="LoadServerData" Items="TreeItems" Width="350px">
     <ItemTemplate>
-        <MudTreeViewItem Value="@context" Icon="@context.Icon" CanExpand="@context.CanExpand" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" />
+        <MudTreeViewItem Text="@context.Text" Value="@context.Value" Icon="@context.Icon" CanExpand="@context.Expandable"
+                EndText="@((context as TreeItemData).Number?.ToString())" EndTextTypo="@Typo.caption" />
     </ItemTemplate>
 </MudTreeView>
 
 @code{
     private List<TreeItemData> TreeItems { get; set; } = new();
 
-    public class TreeItemData
+    public class TreeItemData : TreeItemData<string>
     {
-        public string Title { get; set; }
-
-        public string Icon { get; set; }
-
         public int? Number { get; set; }
-
-        public bool CanExpand { get; set; }
 
         public List<TreeItemData> TreeItems { get; set; }
 
-        public TreeItemData(string title, string icon, int? number = null, bool canExpand = true)
+        public TreeItemData(string title, string icon, int? number = null, bool canExpand = true) : base(title)
         {
-            Title = title;
+            Text = title;
             Icon = icon;
             Number = number;
-            CanExpand = canExpand;
+            Expandable = canExpand;
         }
     }
 
@@ -36,7 +31,7 @@
         TreeItems.Add(new TreeItemData("Trash", Icons.Material.Filled.Delete));
         TreeItems.Add(new TreeItemData("Categories", Icons.Material.Filled.Label)
         {
-            TreeItems = new()
+            Children = new()
             {
                 new TreeItemData("Social", Icons.Material.Filled.Group, 90),
                 new TreeItemData("Updates", Icons.Material.Filled.Info, 2294),
@@ -47,8 +42,9 @@
         TreeItems.Add(new TreeItemData("History", Icons.Material.Filled.Label, null, false));
     }
 
-    public Task<IReadOnlyCollection<TreeItemData>> LoadServerData(TreeItemData parentNode)
+    public Task<IReadOnlyCollection<TreeItemData<string>>> LoadServerData(string parentValue)
     {
-        return Task.FromResult((IReadOnlyCollection<TreeItemData>)parentNode.TreeItems);
+        var children = TreeItems.FirstOrDefault(x => x.Value == parentValue)?.Children;
+        return Task.FromResult((IReadOnlyCollection<TreeItemData<string>>)children);
     }
 }
