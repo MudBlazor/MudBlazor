@@ -241,13 +241,13 @@ namespace MudBlazor
         /// Hides an existing dialog.
         /// </summary>
         /// <param name="dialog">The reference of the dialog to hide.</param>
-        void Close(DialogReference dialog);
+        void Close(IDialogReference dialog);
 
         /// <summary>
         /// Hides an existing dialog.
         /// </summary>
         /// <param name="dialog">The reference of the dialog to hide.</param>
         /// <param name="result">The result to include.</param>
-        void Close(DialogReference dialog, DialogResult result);
+        void Close(IDialogReference dialog, DialogResult result);
     }
 }

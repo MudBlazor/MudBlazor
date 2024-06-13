@@ -286,13 +286,13 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        public void Close(DialogReference dialog)
+        public void Close(IDialogReference dialog)
         {
             Close(dialog, DialogResult.Ok<object?>(null));
         }
 
         /// <inheritdoc />
-        public virtual void Close(DialogReference dialog, DialogResult result)
+        public virtual void Close(IDialogReference dialog, DialogResult result)
         {
             OnDialogCloseRequested?.Invoke(dialog, result);
         }
