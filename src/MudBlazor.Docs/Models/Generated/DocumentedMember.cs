@@ -3,6 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace MudBlazor.Docs.Models;
 
@@ -53,11 +55,6 @@ public abstract class DocumentedMember
     }
 
     /// <summary>
-    /// The link to the docs for the declaring type.
-    /// </summary>
-    public string? DeclaringTypeApiUrl => $"/api/{DeclaringTypeName}";
-
-    /// <summary>
     /// Whether this member is only visible to inheritors.
     /// </summary>
     public bool IsProtected { get; set; }
@@ -83,6 +80,11 @@ public abstract class DocumentedMember
     public string? Summary { get; set; }
 
     /// <summary>
+    /// The brief summary of this member as plain text.
+    /// </summary>
+    public string? SummaryPlain => Summary == null ? null : GetPlaintext(Summary);
+
+    /// <summary>
     /// The type of this member.
     /// </summary>
     public string Type { get; set; } = "";
@@ -91,4 +93,78 @@ public abstract class DocumentedMember
     /// The user-facing name of this member's type.
     /// </summary>
     public string? TypeFriendlyName { get; set; }
+
+    /// <summary>
+    /// Extracts a plaintext version of XML documentation text.
+    /// </summary>
+    /// <param name="text">The XML documentation to parse.</param>
+    /// <returns>The plaintext version of the specified XML documentation.</returns>
+    public static string GetPlaintext(string text)
+    {
+        var plaintext = "";
+        // Convert XML documentation text, links, and HTML to MudBlazor equivalents
+        var xml = XElement.Parse("<xml>" + text + "</xml>");
+        using var reader = xml.CreateReader();
+        while (reader.Read())
+        {
+            switch (reader.NodeType)
+            {
+                case XmlNodeType.Element:
+
+                    #region See Cref/Href Element
+
+                    switch (reader.Name)
+                    {
+                        case "see":
+                            reader.MoveToFirstAttribute();
+                            var link = reader.Value;
+                            switch (reader.Name)
+                            {
+                                case "cref":
+                                    // Get the link type
+                                    var linkType = link.Substring(0, 1);
+                                    var linkRef = link.Substring(2);
+                                    if (linkType == "T") // Type
+                                    {
+                                        // Add a link to the type
+                                        var type = ApiDocumentation.GetType(linkRef);
+                                        if (type != null)
+                                        {
+                                            plaintext += type.NameFriendly;
+                                        }
+                                        else
+                                        {
+                                            plaintext += linkRef;
+                                        }
+                                    }
+                                    else // Property, Method, Field, or Event
+                                    {
+                                        var member = ApiDocumentation.GetMember(linkRef);
+                                        if (member != null)
+                                        {
+                                            plaintext += member.Name;
+                                        }
+                                        else
+                                        {
+                                            plaintext += linkRef;
+                                        }
+                                    }
+                                    break;
+                                case "href":
+                                    plaintext += link;
+                                    break;
+                            }
+                            break;
+                    }
+
+                    #endregion
+
+                    break;
+                case XmlNodeType.Text:
+                    plaintext += reader.Value;
+                    break;
+            }
+        }
+        return plaintext;
+    }
 }

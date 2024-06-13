@@ -5,6 +5,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace MudBlazor.Docs.Models;
 
@@ -45,6 +46,11 @@ public class DocumentedType
     /// The detailed description for this member, and any related information.
     /// </summary>
     public string? Summary { get; set; }
+
+    /// <summary>
+    /// The brief summary of this member as plain text.
+    /// </summary>
+    public string? SummaryPlain => Summary == null ? null : DocumentedMember.GetPlaintext(Summary);
 
     /// <summary>
     /// The brief summary of this member.

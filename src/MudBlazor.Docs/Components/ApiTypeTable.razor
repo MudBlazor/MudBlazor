@@ -15,7 +15,7 @@
             <MudLink Href="@context.ApiUrl"><CodeInline>@context.NameFriendly</CodeInline></MudLink>
         </MudTd>
         <MudTd id="@context.Name" Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">
-            <ApiText Type="@context" Text="@(context.Summary + " " + context.Remarks)" />
+            <ApiText Text="@(context.Summary + " " + context.Remarks)" />
         </MudTd>
     </RowTemplate>
     <GroupFooterTemplate></GroupFooterTemplate>
