@@ -35,7 +35,7 @@ public partial class ApiText : ComponentBase
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
-       
+
     }
 
 
