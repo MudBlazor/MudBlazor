@@ -1,57 +1,50 @@
-﻿@namespace MudBlazor.Docs.Examples
+﻿@using System.Collections.ObjectModel
+@namespace MudBlazor.Docs.Examples
 
 <MudPaper Width="300px" Elevation="0">
     <MudTreeView ServerData="LoadServerData" Items="TreeItems">
         <ItemTemplate>
-            <MudTreeViewItem Value="@context" Icon="@context.Icon" LoadingIconColor="Color.Info" CanExpand="@context.CanExpand" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" />
+            <MudTreeViewItem Text="@context.Text" Value="@context.Value" Icon="@context.Icon" LoadingIconColor="Color.Info" CanExpand="@context.Expandable"
+                             EndText="@((context as ExampleTreeItemData).Number?.ToString())" EndTextTypo="@Typo.caption" />
         </ItemTemplate>
     </MudTreeView>
 </MudPaper>
 
+@code {
+    private List<ExampleTreeItemData> TreeItems { get; set; } = new();
 
-@code{
-    private HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
-
-    public class TreeItemData
+    public class ExampleTreeItemData : TreeItemData<string>
     {
-        public string Title { get; set; }
-
-        public string Icon { get; set; }
+        public ExampleTreeItemData(string value) : base(value)
+        {
+            Text = value;
+        }
 
         public int? Number { get; set; }
-        
-        public bool CanExpand { get; set; }
-
-        public HashSet<TreeItemData> TreeItems { get; set; }
-
-        public TreeItemData(string title, string icon, int? number = null, bool canExpand = true)
-        {
-            Title = title;
-            Icon = icon;
-            Number = number;
-            CanExpand = canExpand;
-        }
     }
 
     protected override void OnInitialized()
     {
-        TreeItems.Add(new TreeItemData("All Mail", Icons.Material.Filled.Email));
-        TreeItems.Add(new TreeItemData("Categories", Icons.Material.Filled.Label)
-        {
-            TreeItems = new HashSet<TreeItemData>()
-            {
-                new TreeItemData("Social", Icons.Material.Filled.Group, 90),
-                new TreeItemData("Updates", Icons.Material.Filled.Info, 2294),
-                new TreeItemData("Forums", Icons.Material.Filled.QuestionAnswer, 3566),
-                new TreeItemData("Promotions", Icons.Material.Filled.LocalOffer, 733)
-            }
-        });
-        TreeItems.Add(new TreeItemData("History", Icons.Material.Filled.Label, null, false));
+        TreeItems.Add(new ExampleTreeItemData("All Mail") { Icon = Icons.Material.Filled.Email });
+        TreeItems.Add(new ExampleTreeItemData("Trash") { Icon = Icons.Material.Filled.Delete });
+        TreeItems.Add(new ExampleTreeItemData("Categories") {
+                Icon = Icons.Material.Filled.Label,
+                Expanded = true,
+                Children = [
+                        new ExampleTreeItemData("Social") { Icon = Icons.Material.Filled.Group, Number = 90 },
+                        new ExampleTreeItemData("Updates") { Icon = Icons.Material.Filled.Info, Number = 2294 },
+                        new ExampleTreeItemData("Forums") { Icon = Icons.Material.Filled.QuestionAnswer, Number = 3566 },
+                        new ExampleTreeItemData("Promotions") { Icon = Icons.Material.Filled.LocalOffer, Number = 733 }
+                    ]
+            });
+        TreeItems.Add(new ExampleTreeItemData("History") { Icon = Icons.Material.Filled.Label, Expandable = false });
     }
 
-    public async Task<IReadOnlyCollection<TreeItemData>> LoadServerData(TreeItemData parentNode)
+    public async Task<IReadOnlyCollection<TreeItemData<string>>> LoadServerData(string parentValue)
     {
         await Task.Delay(500);
-        return parentNode.TreeItems;
+        var parentNode = TreeItems.FirstOrDefault(x => x.Value == parentValue);
+        return parentNode?.Children;
     }
+
 }

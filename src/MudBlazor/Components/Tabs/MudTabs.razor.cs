@@ -25,7 +25,8 @@ namespace MudBlazor
         private bool _showScrollButtons;
         private ElementReference _tabsContentSize;
         private double _sliderSize;
-        private double _sliderPosition;
+        private double _sliderYaxis;
+        private double _sliderXaxis;
         private double _tabBarContentSize;
         private double _allTabsSize;
         private double _scrollPosition;
@@ -98,6 +99,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public bool AlwaysShowScrollButtons { get; set; }
+
+        /// <summary>
+        /// If true, tab headers will wrap instead of scroll.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public bool WrapHeaders { get; set; }
 
         /// <summary>
         /// Sets the maxheight the component can have.
@@ -410,6 +418,23 @@ namespace MudBlazor
             }
 
             _panels.Remove(tabPanel);
+
+            var removedSize = _resizeObserver.GetSizeInfo(tabPanel.PanelRef);
+            if (removedSize is not null)
+            {
+                foreach (var panel in _panels.Skip(index))
+                {
+                    var panelSize = _resizeObserver.GetSizeInfo(panel.PanelRef);
+                    if (panelSize is null)
+                        continue; // should not happen
+
+                    if (IsHorizontalTabs())
+                        panelSize.Left -= removedSize.Width;
+                    else
+                        panelSize.Top -= removedSize.Height;
+                }
+            }
+
             await _resizeObserver.Unobserve(tabPanel.PanelRef);
             Rerender();
             StateHasChanged();
@@ -488,11 +513,12 @@ namespace MudBlazor
             new CssBuilder("mud-tabs-tabbar-wrapper")
             .AddClass($"mud-tabs-centered", Centered)
             .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+            .AddClass($"mud-tabs-inline", WrapHeaders)
             .Build();
 
         protected string WrapperScrollStyle =>
         new StyleBuilder()
-            .AddStyle("transform", $"translateX({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", Position is Position.Top or Position.Bottom)
+            .AddStyle("transform", $"translateX({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", IsHorizontalTabs())
             .AddStyle("transform", $"translateY({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", IsVerticalTabs())
             .Build();
 
@@ -505,10 +531,8 @@ namespace MudBlazor
         protected string SliderClass =>
             new CssBuilder("mud-tab-slider")
             .AddClass($"mud-{SliderColor.ToDescriptionString()}", SliderColor != Color.Inherit)
-            .AddClass($"mud-tab-slider-horizontal", Position is Position.Top or Position.Bottom)
+            .AddClass($"mud-tab-slider-horizontal", IsHorizontalTabs())
             .AddClass($"mud-tab-slider-vertical", IsVerticalTabs())
-            .AddClass($"mud-tab-slider-horizontal-reverse", Position == Position.Bottom)
-            .AddClass($"mud-tab-slider-vertical-reverse", Position == Position.Right || Position == Position.Start && RightToLeft || Position == Position.End && !RightToLeft)
             .Build();
 
         protected string MaxHeightStyles =>
@@ -516,27 +540,18 @@ namespace MudBlazor
             .AddStyle("max-height", MaxHeight.ToPx(), MaxHeight != null)
             .Build();
 
-        protected string SliderStyle => RightToLeft ?
+        protected string SliderStyle =>
             new StyleBuilder()
-            .AddStyle("width", _sliderSize.ToPx(), Position is Position.Top or Position.Bottom)
-            .AddStyle("right", _sliderPosition.ToPx(), Position is Position.Top or Position.Bottom)
-            .AddStyle("transition", SliderAnimation ? "right .3s cubic-bezier(.64,.09,.08,1);" : "none", Position is Position.Top or Position.Bottom)
-            .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", IsVerticalTabs())
+            .AddStyle("width", _sliderSize.ToPx(), IsHorizontalTabs())
             .AddStyle("height", _sliderSize.ToPx(), IsVerticalTabs())
-            .AddStyle("top", _sliderPosition.ToPx(), IsVerticalTabs())
-            .Build() : new StyleBuilder()
-            .AddStyle("width", _sliderSize.ToPx(), Position is Position.Top or Position.Bottom)
-            .AddStyle("left", _sliderPosition.ToPx(), Position is Position.Top or Position.Bottom)
-            .AddStyle("transition", SliderAnimation ? "left .3s cubic-bezier(.64,.09,.08,1);" : "none", Position is Position.Top or Position.Bottom)
-            .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", IsVerticalTabs())
-            .AddStyle("height", _sliderSize.ToPx(), IsVerticalTabs())
-            .AddStyle("top", _sliderPosition.ToPx(), IsVerticalTabs())
+            .AddStyle(RightToLeft ? "right" : "left", _sliderXaxis.ToPx())
+            .AddStyle("top", _sliderYaxis.ToPx())
+            .AddStyle("transition", "none", SliderAnimation == false)
             .Build();
 
-        private bool IsVerticalTabs()
-        {
-            return Position is Position.Left or Position.Right or Position.Start or Position.End;
-        }
+        private bool IsHorizontalTabs() => Position is Position.Top or Position.Bottom;
+
+        private bool IsVerticalTabs() => Position is Position.Left or Position.Right or Position.Start or Position.End;
 
         private Position ConvertPosition(Position position)
         {
@@ -584,6 +599,13 @@ namespace MudBlazor
             return tabStyle;
         }
 
+        private Color GetPanelIconColor(MudTabPanel panel)
+        {
+            var iconColor = panel.Disabled ? Color.Inherit : panel.IconColor != default ? panel.IconColor : IconColor;
+
+            return iconColor;
+        }
+
         #endregion
 
         #region Rendering and placement
@@ -602,19 +624,56 @@ namespace MudBlazor
 
         private async void OnResized(IDictionary<ElementReference, BoundingClientRect> changes)
         {
+            if (changes.Count == 1 && changes.ContainsKey(_tabsContentSize) && _panels.Count > 0)
+                await _resizeObserver.Resync();
+
             Rerender();
             await InvokeAsync(StateHasChanged);
         }
 
         private void SetSliderState()
         {
-            if (ActivePanel == null) { return; }
+            if (ActivePanel == null)
+            {
+                _sliderSize = 0; // hide slider
+                return;
+            }
 
-            _sliderPosition = GetLengthOfPanelItems(ActivePanel);
-            _sliderSize = GetRelevantSize(ActivePanel.PanelRef);
+            var activeSize = _resizeObserver.GetSizeInfo(ActivePanel.PanelRef);
+            var wrapperSize = _resizeObserver.GetSizeInfo(_tabsContentSize);
+
+            if (activeSize is null || wrapperSize is null)
+            {
+                _sliderSize = 0; // hide slider
+                return;
+            }
+
+            _sliderYaxis = activeSize.AbsoluteTop - wrapperSize.AbsoluteTop;
+
+            if (IsHorizontalTabs())
+            {
+                _sliderSize = activeSize.Width;
+
+                if (Position is Position.Top)
+                    _sliderYaxis += activeSize.Height - 2;
+
+                if (RightToLeft)
+                    _sliderXaxis = wrapperSize.AbsoluteRight - activeSize.AbsoluteRight;
+                else
+                    _sliderXaxis = activeSize.AbsoluteLeft - wrapperSize.AbsoluteLeft;
+            }
+            else
+            {
+                _sliderSize = activeSize.Height;
+
+                if (Position == Position.Start || Position == (RightToLeft ? Position.Right : Position.Left))
+                    _sliderXaxis = activeSize.Width - 2;
+                else
+                    _sliderXaxis = 0;
+            }
         }
 
-        private bool IsSliderPositionDetermined => _activePanelIndex > 0 && _sliderPosition > 0 ||
+        private bool IsSliderPositionDetermined => (_activePanelIndex > 0 && _sliderSize > 0) ||
                                                    _activePanelIndex <= 0;
 
         private void GetTabBarContentSize() => _tabBarContentSize = GetRelevantSize(_tabsContentSize);
@@ -631,11 +690,9 @@ namespace MudBlazor
             _allTabsSize = totalTabsSize;
         }
 
-        private double GetRelevantSize(ElementReference reference) => Position switch
-        {
-            Position.Top or Position.Bottom => _resizeObserver.GetWidth(reference),
-            _ => _resizeObserver.GetHeight(reference)
-        };
+        private double GetRelevantSize(ElementReference reference) => IsHorizontalTabs()
+            ? _resizeObserver.GetWidth(reference)
+            : _resizeObserver.GetHeight(reference);
 
         private double GetLengthOfPanelItems(MudTabPanel panel, bool inclusive = false)
         {
@@ -666,6 +723,9 @@ namespace MudBlazor
 
         private void SetScrollButtonVisibility()
         {
+            if (WrapHeaders)
+                return;
+
             _showScrollButtons = AlwaysShowScrollButtons || _allTabsSize > _tabBarContentSize || _scrollIndex != 0;
         }
 
@@ -738,6 +798,9 @@ namespace MudBlazor
 
         private void CenterScrollPositionAroundSelectedItem()
         {
+            if (WrapHeaders)
+                return;
+
             if (_showScrollButtons && ActivePanelIndex + 1 == _panels.Count)
             {
                 var lastPannel = _panels.Last();

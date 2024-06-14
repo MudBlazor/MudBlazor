@@ -4,7 +4,6 @@
 <MudIconButton Icon="@(Toggled ? ToggledIcon : Icon)"
                Size="(Toggled ? ToggledSize : Size)"
                Color="(Toggled ? ToggledColor : Color)"
-               Title="@(Toggled ? ToggledTitle ?? Title : Title)"
                Variant="Variant"
                Disabled="Disabled"
                Edge="Edge"
@@ -15,5 +14,4 @@
                DropShadow="@DropShadow"
                ClickPropagation="ClickPropagation"
                aria-pressed="@((Toggled ? "true" : "false"))"
-               aria-label="@((Toggled ? ToggledAriaLabel ?? AriaLabel : AriaLabel))"
                @attributes="UserAttributes" />

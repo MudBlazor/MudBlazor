@@ -1,11 +1,11 @@
 @namespace MudBlazor.UnitTests.TestComponents
 
-<MudTreeView T="TreeItemData" ServerData="LoadServerData" Items="TreeItems" Hover="true" Width="100%">
+<MudTreeView ServerData="LoadServerData" Items="TreeItems" Hover="true" Width="100%">
     <ItemTemplate Context="item">
-        <MudTreeViewItem T="TreeItemData" Value="@item" CanExpand="true" Icon="@Icons.Material.Filled.Label">
+        <MudTreeViewItem Value="@item.Value" CanExpand="true" Icon="@Icons.Material.Filled.Label">
             <BodyContent>
                 <div class="mud-treeview-item-bodycontent" style="display: grid; grid-template-columns: 1fr auto; align-items: center; width: 100%;">
-                    <MudText Style="justify-self: start;">@item.Title</MudText>
+                    <MudText Style="justify-self: start;">@item.Text</MudText>
                     <div style="justify-self: end;">
                         <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Color="Color.Inherit" />
                         <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" Color="Color.Inherit" />
@@ -17,17 +17,15 @@
 </MudTreeView>
 
 @code {
-    public IReadOnlyCollection<TreeItemData> TreeItems { get; set; } = Array.Empty<TreeItemData>();
+    public IReadOnlyCollection<TreeItemData<string>> TreeItems { get; set; } = Array.Empty<TreeItemData<string>>();
     public bool SimulateUpdateRoot = false;
     public bool SimulateUpdate3 = false;
 
-    public class TreeItemData
+    public class TreeItemData : TreeItemData<string>
     {
-        public string Title { get; set; }
-
-        public TreeItemData(string title)
+        public TreeItemData(string value) : base(value)
         {
-            Title = title;
+            Text = value;
         }
     }
 
@@ -36,33 +34,36 @@
         TreeItems = await LoadServerData(null);
     }
 
-    public Task<IReadOnlyCollection<TreeItemData>> LoadServerData(TreeItemData parentNode)
+    public Task<IReadOnlyCollection<TreeItemData<string>>> LoadServerData(string parentValue)
     {
-        if (parentNode == null) {
+        if (parentValue == null) {
             if (SimulateUpdateRoot == false) {
-                return Task.FromResult((IReadOnlyCollection<TreeItemData>)[
+                return Task.FromResult((IReadOnlyCollection<TreeItemData<string>>) [
                     new TreeItemData("This is item one"),
                     new TreeItemData("This is item two"),
                     new TreeItemData("This is item three"),
-                    new TreeItemData("This is item six")]);
+                    new TreeItemData("This is item six")
+                ]);
             }
-            return Task.FromResult((IReadOnlyCollection<TreeItemData>)[
+            return Task.FromResult((IReadOnlyCollection<TreeItemData<string>>) [
                 new TreeItemData("This is item one"),
                 new TreeItemData("This is item 2"),
                 new TreeItemData("This is item three"),
-                new TreeItemData("This is item six")]);
+                new TreeItemData("This is item six")
+            ]);
         }
-        if (parentNode.Title == "This is item three") {
-            if (SimulateUpdate3 == false)
-            {
-                return Task.FromResult((IReadOnlyCollection<TreeItemData>)[
+        if (parentValue == "This is item three") {
+            if (SimulateUpdate3 == false) {
+                return Task.FromResult((IReadOnlyCollection<TreeItemData<string>>) [
                     new TreeItemData("This is item four"),
-                    new TreeItemData("This is item five")]);
+                    new TreeItemData("This is item five")
+                ]);
             }
-            return Task.FromResult((IReadOnlyCollection<TreeItemData>)[
+            return Task.FromResult((IReadOnlyCollection<TreeItemData<string>>) [
                 new TreeItemData("This is item 4"),
-                new TreeItemData("This is item 5")]);
+                new TreeItemData("This is item 5")
+            ]);
         }
-        return Task.FromResult((IReadOnlyCollection<TreeItemData>)[]);
+        return Task.FromResult((IReadOnlyCollection<TreeItemData<string>>)[]);
     }
 }

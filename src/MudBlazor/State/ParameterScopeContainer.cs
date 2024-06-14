@@ -12,6 +12,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.State.Comparer;
 
 namespace MudBlazor.State;
 
@@ -23,7 +24,7 @@ namespace MudBlazor.State;
 /// <remarks>
 /// For details and usage please read CONTRIBUTING.md
 /// </remarks>
-internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
+internal class ParameterScopeContainer : IParameterScopeContainer
 {
     private readonly IParameterStatesReader _parameterStatesReader;
 
@@ -32,6 +33,9 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
 #else
     private readonly Lazy<Dictionary<string, IParameterComponentLifeCycle>> _parameters;
 #endif
+
+    /// <inheritdoc/>
+    public bool IsLocked { get; private set; }
 
     /// <summary>
     /// Gets a value indicating whether the parameter set has been initialized.
@@ -42,28 +46,28 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     public bool IsInitialized => _parameters.IsValueCreated;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ParameterSet"/> class with the specified parameters.
+    /// Initializes a new instance of the <see cref="ParameterScopeContainer"/> class with the specified parameters.
     /// </summary>
     /// <param name="parameters">An optional array of parameters to initialize the set.</param>
-    public ParameterSet(params IParameterComponentLifeCycle[] parameters)
-        : this(new ParameterSetReadonlyEnumerable(parameters))
+    public ParameterScopeContainer(params IParameterComponentLifeCycle[] parameters)
+        : this(new ParameterScopeContainerReadonlyEnumerable(parameters))
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ParameterSet"/> class with the specified parameters.
+    /// Initializes a new instance of the <see cref="ParameterScopeContainer"/> class with the specified parameters.
     /// </summary>
     /// <param name="parameters">An enumerable collection of parameters to initialize the set.</param>
-    public ParameterSet(IEnumerable<IParameterComponentLifeCycle> parameters)
-        : this(new ParameterSetReadonlyEnumerable(parameters))
+    public ParameterScopeContainer(IEnumerable<IParameterComponentLifeCycle> parameters)
+        : this(new ParameterScopeContainerReadonlyEnumerable(parameters))
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ParameterSet"/> class with the specified parameter states factory.
+    /// Initializes a new instance of the <see cref="ParameterScopeContainer"/> class with the specified parameter states factory.
     /// </summary>
     /// <param name="parameterStatesReader">The factory used to read an enumerable collection of parameters to initialize the set.</param>
-    public ParameterSet(IParameterStatesReader parameterStatesReader)
+    public ParameterScopeContainer(IParameterStatesReader parameterStatesReader)
     {
         _parameterStatesReader = parameterStatesReader;
 #if NET8_0_OR_GREATER
@@ -73,10 +77,10 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
 #endif
     }
 
-
 #if NET8_0_OR_GREATER
     private FrozenDictionary<string, IParameterComponentLifeCycle> ParametersFactory()
     {
+        IsLocked = true;
         var parameters = _parameterStatesReader.ReadParameters();
         var dictionary = parameters.ToFrozenDictionary(parameter => parameter.Metadata.ParameterName, parameter => parameter);
         _parameterStatesReader.Complete();
@@ -86,6 +90,7 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
 #else
     private Dictionary<string, IParameterComponentLifeCycle> ParametersFactory()
     {
+        IsLocked = true;
         var parameters = _parameterStatesReader.ReadParameters();
         var dictionary = parameters.ToDictionary(parameter => parameter.Metadata.ParameterName, parameter => parameter);
         _parameterStatesReader.Complete();
@@ -129,7 +134,7 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     /// Determines which <see cref="ParameterState{T}"/> have been changed and calls their respective change handler.
     /// </summary>
     /// <param name="baseSetParametersAsync">A func to call the base class' <see cref="ComponentBase.SetParametersAsync"/>.</param>
-    /// <param name="parameters">The ParameterView coming from Blazor's  <see cref="ComponentBase.SetParametersAsync"/>.</param>
+    /// <param name="parameters">The ParameterView coming from Blazor's <see cref="ComponentBase.SetParametersAsync"/>.</param>
     public async Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
     {
 #if NET8_0_OR_GREATER
@@ -150,17 +155,23 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
         }
     }
 
-    /// <summary>Searches the set for a given value and returns the equal value it finds, if any.</summary>
-    /// <param name="parameterName">The value to search for.</param>
-    /// <param name="parameterComponentLifeCycle">The value from the set that the search found, or the default value when the search yielded no match.</param>
-    /// <returns>A value indicating whether the search was successful.</returns>
+    /// <inheritdoc/>
     public bool TryGetValue(string parameterName, [MaybeNullWhen(false)] out IParameterComponentLifeCycle parameterComponentLifeCycle)
     {
         return _parameters.Value.TryGetValue(parameterName, out parameterComponentLifeCycle);
     }
 
     /// <inheritdoc/>
-    public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => ((IDictionary<string, IParameterComponentLifeCycle>)_parameters.Value).Values.GetEnumerator();
+    public void Dispose()
+    {
+        if (!IsLocked)
+        {
+            ForceParametersAttachment();
+        }
+    }
+
+    /// <inheritdoc/>
+    public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => ((IReadOnlyDictionary<string, IParameterComponentLifeCycle>)_parameters.Value).Values.GetEnumerator();
 
     /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -168,15 +179,15 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     /// <summary>
     /// Represents an enumerable reader for parameter states.
     /// </summary>
-    private class ParameterSetReadonlyEnumerable : IParameterStatesReader
+    private class ParameterScopeContainerReadonlyEnumerable : IParameterStatesReader
     {
         private readonly IEnumerable<IParameterComponentLifeCycle> _parameters;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ParameterSetReadonlyEnumerable"/> class with the specified parameters.
+        /// Initializes a new instance of the <see cref="ParameterScopeContainerReadonlyEnumerable"/> class with the specified parameters.
         /// </summary>
         /// <param name="parameters">The parameters to be read.</param>
-        public ParameterSetReadonlyEnumerable(IEnumerable<IParameterComponentLifeCycle> parameters) => _parameters = parameters;
+        public ParameterScopeContainerReadonlyEnumerable(IEnumerable<IParameterComponentLifeCycle> parameters) => _parameters = parameters;
 
         /// <inheritdoc />
         public IEnumerable<IParameterComponentLifeCycle> ReadParameters() => _parameters;

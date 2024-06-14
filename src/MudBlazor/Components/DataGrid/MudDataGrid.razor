@@ -14,7 +14,7 @@
 
 <CascadingValue IsFixed="true" Value="this">
     <div @attributes="UserAttributes" class="@_classname" style="@_style">
-        @if (Items != null || ServerData != null)
+        @if (Items != null || HasServerData)
         {
             @if (ToolBarContent != null)
             {
@@ -179,7 +179,7 @@
                                                 }
                                             </MudStack>
                                             <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">@Localizer["MudDataGrid.AddFilter"]</MudButton>
-                                            @if (ServerData != null)
+                                            @if (HasServerData)
                                             {
                                                 <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFiltersAsync" Color="@Color.Primary">@Localizer["MudDataGrid.Apply"]</MudButton>
                                             }
@@ -230,33 +230,50 @@
 
                                     @if (g.Expanded)
                                     {
-                                        <MudVirtualize Enabled="@Virtualize" Items="@g.Grouping.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
-                                            @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
-                                            @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
-                                            @{ var tmpRowIndex = rowIndex; }
-                                            <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" 
-                                                @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))" 
-                                                @oncontextmenu="@((args) => OnContextMenuClickedAsync(args, item, tmpRowIndex))"
-                                                @oncontextmenu:preventDefault="@(RowContextMenuClick.HasDelegate ? true : false)">
-                                                <CascadingValue Value="@Validator" IsFixed="true">
-                                                    @foreach (var column in RenderedColumns)
-                                                    {
-                                                        if (!column.HiddenState.Value)
+                                        <MudVirtualize @ref="_mudVirtualize" ItemsProvider="@VirtualItemsProvider" Enabled="@Virtualize" Items="@g.Grouping.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
+                                            <Placeholder>
+                                                @if (RowLoadingContent != null)
+                                                {
+                                                    @RowLoadingContent
+                                                }
+                                                else
+                                                {
+                                                    <tr class="mud-table-row">
+                                                        <td class="mud-table-cell" colspan="1000">
+                                                            @Localizer["MudDataGrid.Loading"]
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </Placeholder>
+                                            
+                                            <ChildContent>
+                                                @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
+                                                @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
+                                                @{ var tmpRowIndex = rowIndex; }
+                                                <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" 
+                                                    @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))" 
+                                                    @oncontextmenu="@((args) => OnContextMenuClickedAsync(args, item, tmpRowIndex))"
+                                                    @oncontextmenu:preventDefault="@(RowContextMenuClick.HasDelegate ? true : false)">
+                                                    <CascadingValue Value="@Validator" IsFixed="true">
+                                                        @foreach (var column in RenderedColumns)
                                                         {
-                                                            @Cell(column, item)
+                                                            if (!column.HiddenState.Value)
+                                                            {
+                                                                @Cell(column, item)
+                                                            }
                                                         }
-                                                    }
-                                                </CascadingValue>
-                                            </tr>
-                                            @if (ChildRowContent != null && (_openHierarchies.Contains(item) || !hasHierarchyColumn))
-                                            {
-                                                <tr class="mud-table-row">
-                                                    <td class="mud-table-cell" colspan="1000">
-                                                        @ChildRowContent(new CellContext<T>(this, item))
-                                                    </td>
+                                                    </CascadingValue>
                                                 </tr>
-                                            }
-                                            @{ rowIndex++; }
+                                                @if (ChildRowContent != null && (_openHierarchies.Contains(item) || !hasHierarchyColumn))
+                                                {
+                                                    <tr class="mud-table-row">
+                                                        <td class="mud-table-cell" colspan="1000">
+                                                            @ChildRowContent(new CellContext<T>(this, item))
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                @{ rowIndex++; }
+                                            </ChildContent>
                                         </MudVirtualize>
                                         @*Group Footer*@
                                         <tr class="mud-table-row">
@@ -268,33 +285,50 @@
                             else
                             {
                                 var rowIndex = 0;
-                                <MudVirtualize Enabled="@Virtualize" Items="@resolvedPageItems" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
-                                    @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
-                                    @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
-                                    @{ var tmpRowIndex = rowIndex; }
-                                    <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" 
-                                        @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))" 
-                                        @oncontextmenu="@((args) => OnContextMenuClickedAsync(args, item, tmpRowIndex))"
-                                        @oncontextmenu:preventDefault="@(RowContextMenuClick.HasDelegate ? true : false)">
-                                        <CascadingValue Value="@Validator" IsFixed="true">
-                                            @foreach (var column in RenderedColumns)
-                                            {
-                                                if (!column.HiddenState.Value)
+                                <MudVirtualize @ref="_mudVirtualize" ItemsProvider="@VirtualItemsProvider" Enabled="@Virtualize" Items="@resolvedPageItems" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
+                                    <Placeholder>
+                                        @if (RowLoadingContent != null)
+                                        {
+                                            @RowLoadingContent
+                                        }
+                                        else
+                                        {
+                                            <tr class="mud-table-row">
+                                                <td class="mud-table-cell" colspan="1000">
+                                                    @Localizer["MudDataGrid.Loading"]
+                                                </td>
+                                            </tr>
+                                        }
+                                    </Placeholder>
+
+                                    <ChildContent>
+                                        @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
+                                        @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
+                                        @{ var tmpRowIndex = rowIndex; }
+                                        <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" 
+                                            @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))" 
+                                            @oncontextmenu="@((args) => OnContextMenuClickedAsync(args, item, tmpRowIndex))"
+                                            @oncontextmenu:preventDefault="@(RowContextMenuClick.HasDelegate ? true : false)">
+                                            <CascadingValue Value="@Validator" IsFixed="true">
+                                                @foreach (var column in RenderedColumns)
                                                 {
-                                                    @Cell(column, item)
+                                                    if (!column.HiddenState.Value)
+                                                    {
+                                                        @Cell(column, item)
+                                                    }
                                                 }
-                                            }
-                                        </CascadingValue>
-                                    </tr>
-                                    @if (ChildRowContent != null && (_openHierarchies.Contains(item) || !hasHierarchyColumn))
-                                    {
-                                        <tr class="mud-table-row">
-                                            <td class="mud-table-cell" colspan="1000">
-                                                @ChildRowContent(new CellContext<T>(this, item))
-                                            </td>
+                                            </CascadingValue>
                                         </tr>
-                                    }
-                                    @{ rowIndex++; }
+                                        @if (ChildRowContent != null && (_openHierarchies.Contains(item) || !hasHierarchyColumn))
+                                        {
+                                            <tr class="mud-table-row">
+                                                <td class="mud-table-cell" colspan="1000">
+                                                    @ChildRowContent(new CellContext<T>(this, item))
+                                                </td>
+                                            </tr>
+                                        }
+                                        @{ rowIndex++; }
+                                    </ChildContent>
                                 </MudVirtualize>
                             }
                         }
@@ -385,7 +419,7 @@
                     <MudMenuItem OnClick="@dataGrid.ExpandAllGroups">@Localizer["MudDataGrid.ExpandAllGroups"]</MudMenuItem>
                     <MudMenuItem OnClick="@dataGrid.CollapseAllGroups">@Localizer["MudDataGrid.CollapseAllGroups"]</MudMenuItem>
                 }
-                @if (dataGrid.ServerData is not null)
+                @if (dataGrid.HasServerData)
                 {
                     <MudMenuItem OnClick="@dataGrid.InvokeServerLoadFunc">@Localizer["MudDataGrid.RefreshData"]</MudMenuItem>
                 }

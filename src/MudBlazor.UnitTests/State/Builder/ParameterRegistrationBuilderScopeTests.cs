@@ -4,6 +4,8 @@
 
 using System;
 using FluentAssertions;
+using Moq;
+using MudBlazor.State;
 using MudBlazor.State.Builder;
 using NUnit.Framework;
 
@@ -17,7 +19,9 @@ public class ParameterRegistrationBuilderScopeTests
     public void IsLocked_ReturnsFalse_WhenScopeIsNotEnded()
     {
         // Arrange
-        using var scope = new ParameterRegistrationBuilderScope();
+        var mockWriter = new Mock<IParameterStatesWriter>();
+        var mockReader = new Mock<IParameterStatesReader>();
+        using var scope = new ParameterRegistrationBuilderScope(new ParameterScopeContainer(mockReader.Object), mockWriter.Object);
 
         // Act
         var isLocked = scope.IsLocked;
@@ -30,7 +34,9 @@ public class ParameterRegistrationBuilderScopeTests
     public void IsLocked_ReturnsTrue_WhenScopeIsEnded()
     {
         // Arrange
-        var scope = new ParameterRegistrationBuilderScope();
+        var mockWriter = new Mock<IParameterStatesWriter>();
+        var mockReader = new Mock<IParameterStatesReader>();
+        using var scope = new ParameterRegistrationBuilderScope(new ParameterScopeContainer(mockReader.Object), mockWriter.Object);
 
         // Act
         using (scope)
@@ -46,9 +52,9 @@ public class ParameterRegistrationBuilderScopeTests
     public void Dispose_LocksScopeAndWritesParameters_WhenScopeNotEnded()
     {
         // Arrange
-        var scopeEndedCount = 0;
-        void OnScopeEndedAction() => scopeEndedCount++;
-        using var scope = new ParameterRegistrationBuilderScope(OnScopeEndedAction);
+        var mockWriter = new Mock<IParameterStatesWriter>();
+        var mockReader = new Mock<IParameterStatesReader>();
+        using var scope = new ParameterRegistrationBuilderScope(new ParameterScopeContainer(mockReader.Object), mockWriter.Object);
 
         scope.RegisterParameter<int>();
         scope.RegisterParameter<string>();
@@ -57,7 +63,8 @@ public class ParameterRegistrationBuilderScopeTests
         ((IDisposable)scope).Dispose();
 
         // Assert
-        scopeEndedCount.Should().Be(1);
+        mockReader.Verify(reader => reader.ReadParameters(), Times.Once);
+        mockReader.Verify(reader => reader.Complete(), Times.Once);
         scope.IsLocked.Should().BeTrue();
     }
 
@@ -65,9 +72,9 @@ public class ParameterRegistrationBuilderScopeTests
     public void Dispose_DoesNotWriteParameters_AfterScopeEnded()
     {
         // Arrange
-        var scopeEndedCount = 0;
-        void OnScopeEndedAction() => scopeEndedCount++;
-        var scope = new ParameterRegistrationBuilderScope(OnScopeEndedAction);
+        var mockWriter = new Mock<IParameterStatesWriter>();
+        var mockReader = new Mock<IParameterStatesReader>();
+        var scope = new ParameterRegistrationBuilderScope(new ParameterScopeContainer(mockReader.Object), mockWriter.Object);
         using (scope)
         {
             scope.RegisterParameter<int>();
@@ -76,11 +83,13 @@ public class ParameterRegistrationBuilderScopeTests
 
         scope.RegisterParameter<double>();
         scope.RegisterParameter<float>();
+
         // Act
         ((IDisposable)scope).Dispose();
 
         // Assert
-        scopeEndedCount.Should().Be(1);
+        mockReader.Verify(reader => reader.ReadParameters(), Times.Once);
+        mockReader.Verify(reader => reader.Complete(), Times.Once);
         scope.IsLocked.Should().BeTrue();
     }
 }

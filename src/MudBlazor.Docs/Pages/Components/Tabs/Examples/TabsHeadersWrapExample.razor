@@ -1,0 +1,53 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSelect Variant="Variant.Outlined" Label="Tabs Position" Dense="true" Margin="Margin.Dense" T="@Position" @bind-Value="Position">
+    <MudSelectItem T="Position" Value="@Position.Top">Top</MudSelectItem>
+    <MudSelectItem T="Position" Value="@Position.Start">Start</MudSelectItem>
+    <MudSelectItem T="Position" Value="@Position.Left">Left</MudSelectItem>
+    <MudSelectItem T="Position" Value="@Position.Right">Right</MudSelectItem>
+    <MudSelectItem T="Position" Value="@Position.End">End</MudSelectItem>
+    <MudSelectItem T="Position" Value="@Position.Bottom">Bottom</MudSelectItem>
+</MudSelect>
+
+<MudTabs Elevation="4" Rounded="true" TabHeadersInline="true" Position="@Position">
+    <MudTabPanel Text="One" />
+    <MudTabPanel Text="Two">
+        <TabWrapperContent>
+            <MudTooltip Text="ToolTip Two">
+                @context
+            </MudTooltip>
+        </TabWrapperContent>
+    </MudTabPanel>
+    <MudTabPanel Text="Three" />
+    <MudTabPanel>
+        <TabWrapperContent>
+            <MudTooltip Text="ToolTip Four">
+                @context
+            </MudTooltip>
+        </TabWrapperContent>
+        <TabContent>
+            <MudText Typo="Typo.h6">Four</MudText>
+        </TabContent>
+    </MudTabPanel>
+    <MudTabPanel Text="Five" />
+    <MudTabPanel Text="Six" />
+    <MudTabPanel>
+        <TabContent>
+            <MudText Typo="Typo.h6">Seven</MudText>
+        </TabContent>
+    </MudTabPanel>
+    <MudTabPanel Text="Eight" />
+    <MudTabPanel Text="Nine with a long title" />
+    <MudTabPanel Text="Ten" />
+    <MudTabPanel>
+        <TabContent>
+            Eleven
+        </TabContent>
+    </MudTabPanel>
+    <MudTabPanel Text="Twelve" />
+    <MudTabPanel Text="Thirteen" />
+</MudTabs>
+
+@code {
+    public Position Position { get; set; } = Position.Top;
+}

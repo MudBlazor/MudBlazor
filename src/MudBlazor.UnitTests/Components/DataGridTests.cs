@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
@@ -126,6 +127,103 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridSortableVirtualizeServerDataTest()
+        {
+            var comp = Context.RenderComponent<DataGridSortableVirtualizeServerDataTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableVirtualizeServerDataTest.Item>>();
+
+            // Count the number of rows including header.
+            var rows = dataGrid.FindAll("tr");
+            rows.Count.Should().Be(9, because: "1 header row + 7 data rows + 1 footer row");
+
+            var cells = dataGrid.FindAll("td");
+            cells.Count.Should().Be(21, because: "We have 7 data rows with three columns");
+
+            // Check the values of rows without sorting
+            cells[0].TextContent.Should().Be("B"); cells[1].TextContent.Should().Be("42"); cells[2].TextContent.Should().Be("555");
+            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("73"); cells[5].TextContent.Should().Be("7");
+            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("11"); cells[8].TextContent.Should().Be("4444");
+            cells[9].TextContent.Should().Be("C"); cells[10].TextContent.Should().Be("33"); cells[11].TextContent.Should().Be("33333");
+            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("99"); cells[14].TextContent.Should().Be("66");
+            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => { return x.Name; }));
+            cells = dataGrid.FindAll("td");
+
+            // Check the values of rows - should be sorted ascending by Name.
+            cells[0].TextContent.Should().Be("A"); cells[1].TextContent.Should().Be("73"); cells[2].TextContent.Should().Be("7");
+            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("11"); cells[5].TextContent.Should().Be("4444");
+            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("99"); cells[8].TextContent.Should().Be("66");
+            cells[9].TextContent.Should().Be("B"); cells[10].TextContent.Should().Be("42"); cells[11].TextContent.Should().Be("555");
+            cells[12].TextContent.Should().Be("C"); cells[13].TextContent.Should().Be("33"); cells[14].TextContent.Should().Be("33333");
+            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => { return x.Name; }));
+            cells = dataGrid.FindAll("td");
+
+            // Check the values of rows - should be sorted descending by Name.
+            cells[0].TextContent.Should().Be("C"); cells[1].TextContent.Should().Be("33"); cells[2].TextContent.Should().Be("33333");
+            cells[3].TextContent.Should().Be("C"); cells[4].TextContent.Should().Be("44"); cells[5].TextContent.Should().Be("1111111");
+            cells[6].TextContent.Should().Be("C"); cells[7].TextContent.Should().Be("55"); cells[8].TextContent.Should().Be("222222");
+            cells[9].TextContent.Should().Be("B"); cells[10].TextContent.Should().Be("42"); cells[11].TextContent.Should().Be("555");
+            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("73"); cells[14].TextContent.Should().Be("7");
+            cells[15].TextContent.Should().Be("A"); cells[16].TextContent.Should().Be("11"); cells[17].TextContent.Should().Be("4444");
+            cells[18].TextContent.Should().Be("A"); cells[19].TextContent.Should().Be("99"); cells[20].TextContent.Should().Be("66");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync("Name"));
+            cells = dataGrid.FindAll("td");
+
+            // Back to original order without sorting
+            cells[0].TextContent.Should().Be("B"); cells[1].TextContent.Should().Be("42"); cells[2].TextContent.Should().Be("555");
+            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("73"); cells[5].TextContent.Should().Be("7");
+            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("11"); cells[8].TextContent.Should().Be("4444");
+            cells[9].TextContent.Should().Be("C"); cells[10].TextContent.Should().Be("33"); cells[11].TextContent.Should().Be("33333");
+            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("99"); cells[14].TextContent.Should().Be("66");
+            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
+
+            var column = dataGrid.FindComponent<Column<DataGridSortableVirtualizeServerDataTest.Item>>();
+            await comp.InvokeAsync(() => column.Instance.SortBy = x => { return x.Name; });
+
+            // Check the values of rows - should not be sorted and should be in the original order.
+            cells[0].TextContent.Should().Be("B"); cells[1].TextContent.Should().Be("42"); cells[2].TextContent.Should().Be("555");
+            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("73"); cells[5].TextContent.Should().Be("7");
+            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("11"); cells[8].TextContent.Should().Be("4444");
+            cells[9].TextContent.Should().Be("C"); cells[10].TextContent.Should().Be("33"); cells[11].TextContent.Should().Be("33333");
+            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("99"); cells[14].TextContent.Should().Be("66");
+            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
+
+            // sort through the sort icon
+            dataGrid.Find(".column-options button").Click();
+            cells = dataGrid.FindAll("td");
+            // Check the values of rows - should be sorted ascending by Name.
+            cells[0].TextContent.Should().Be("A"); cells[1].TextContent.Should().Be("73"); cells[2].TextContent.Should().Be("7");
+            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("11"); cells[5].TextContent.Should().Be("4444");
+            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("99"); cells[8].TextContent.Should().Be("66");
+            cells[9].TextContent.Should().Be("B"); cells[10].TextContent.Should().Be("42"); cells[11].TextContent.Should().Be("555");
+            cells[12].TextContent.Should().Be("C"); cells[13].TextContent.Should().Be("33"); cells[14].TextContent.Should().Be("33333");
+            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
+
+            // test other sort methods
+            var headerCell = dataGrid.FindComponent<HeaderCell<DataGridSortableVirtualizeServerDataTest.Item>>();
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs()));
+            //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
+            await comp.InvokeAsync(() => headerCell.Instance.RemoveSortAsync());
+            await comp.InvokeAsync(() => headerCell.Instance.AddFilter());
+            await comp.InvokeAsync(() => headerCell.Instance.OpenFilters());
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SortMode = SortMode.None);
+            dataGrid.Render();
+            dataGrid.Instance.DropContainerHasChanged();
+            // Since Sortable is now false, the click handler (and element holding it) should no longer exist.
+            dataGrid.FindAll(".column-header .sortable-column-header").Should().BeEmpty();
+        }
+
+        [Test]
         public async Task DataGridSortableHeaderRowTest()
         {
             var comp = Context.RenderComponent<DataGridSortableHeaderRowTest>();
@@ -226,6 +324,39 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridFilterableVirtualizeServerDataTest()
+        {
+            var comp = Context.RenderComponent<DataGridFilterableVirtualizeServerDataTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterableVirtualizeServerDataTest.Item>>();
+
+            // Count the number of rows including header.
+            dataGrid.FindAll("tr").Count.Should().Be(6, because: "header row + four rows + footer row");
+
+            // Check the values of rows
+            dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("B");
+            dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("A");
+            dataGrid.FindAll("td")[2].TextContent.Trim().Should().Be("C");
+            dataGrid.FindAll("td")[3].TextContent.Trim().Should().Be("C");
+
+            // Add a FilterDefinition to filter where the Name = "C".
+            await comp.InvokeAsync(() =>
+            {
+                return dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterableVirtualizeServerDataTest.Item>
+                {
+                    Column = dataGrid.Instance.RenderedColumns.First(),
+                    Operator = FilterOperator.String.Equal,
+                    Value = "C"
+                });
+            });
+
+            // Check the values of rows
+            dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("C");
+            dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("C");
+
+            dataGrid.Instance.Filterable = false;
+        }
+
+        [Test]
         public async Task DataGridFilterableTest()
         {
             var comp = Context.RenderComponent<DataGridFilterableTest>();
@@ -288,6 +419,60 @@ namespace MudBlazor.UnitTests.Components
                 )
             );
             exception.Message.Should().Be("Do not supply both 'ServerData' and 'QuickFilter'.");
+        }
+
+        [Test]
+        public async Task DataGrid_SetParameters_VirtualizeServerData_QuickFilter_Throw()
+        {
+            var virtualizeServerDataFunc =
+                new Func<GridStateVirtualize<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+                Context.RenderComponent<MudDataGrid<TestModel1>>(
+                    Parameter(nameof(MudDataGrid<TestModel1>.VirtualizeServerData), virtualizeServerDataFunc),
+                    Parameter(nameof(MudDataGrid<TestModel1>.QuickFilter), (TestModel1 x) => true)
+                )
+            );
+            exception.Message.Should().Be("Do not supply both 'VirtualizeServerData' and 'QuickFilter'.");
+        }
+
+        [Test]
+        public async Task DataGrid_SetParameters_ServerData_VirtualizeServerData_Throw()
+        {
+            var serverDataFunc =
+                new Func<GridState<TestModel1>, Task<GridData<TestModel1>>>((x) => throw new NotImplementedException());
+            var virtualizeServerDataFunc =
+                new Func<GridStateVirtualize<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+                Context.RenderComponent<MudDataGrid<TestModel1>>(
+                    Parameter(nameof(MudDataGrid<TestModel1>.ServerData), serverDataFunc),
+                    Parameter(nameof(MudDataGrid<TestModel1>.VirtualizeServerData), virtualizeServerDataFunc)
+                )
+            );
+
+            exception.Message.Should().Be(
+                """
+                MudBlazor.MudDataGrid`1[MudBlazor.UnitTests.Components.TestModel1] can only accept one item source from its parameters. Do not supply both 'VirtualizeServerData' and 'ServerData'.
+                """
+            );
+        }
+
+        [Test]
+        public async Task DataGrid_SetParameters_Items_VirtualizeServerData_Throw()
+        {
+            var virtualizeServerDataFunc =
+                new Func<GridStateVirtualize<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+                Context.RenderComponent<MudDataGrid<TestModel1>>(
+                    Parameter(nameof(MudDataGrid<TestModel1>.Items), Array.Empty<TestModel1>()),
+                    Parameter(nameof(MudDataGrid<TestModel1>.VirtualizeServerData), virtualizeServerDataFunc)
+                )
+            );
+
+            exception.Message.Should().Be(
+                """
+                MudBlazor.MudDataGrid`1[MudBlazor.UnitTests.Components.TestModel1] can only accept one item source from its parameters. Do not supply both 'Items' and 'VirtualizeServerData'.
+                """
+            );
         }
 
         [Test]
@@ -486,6 +671,75 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridInlineEditVirtualizeServerDataTest()
+        {
+            var comp = Context.RenderComponent<DataGridCellEditVirtualizeServerDataTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellEditVirtualizeServerDataTest.Item>>();
+
+            dataGrid.FindAll("td input")[0].GetAttribute("value").Trim().Should().Be("John");
+            dataGrid.FindAll("td input")[1].GetAttribute("value").Trim().Should().Be("45");
+            dataGrid.FindAll("td input")[2].GetAttribute("value").Trim().Should().Be("Johanna");
+            dataGrid.FindAll("td input")[3].GetAttribute("value").Trim().Should().Be("23");
+            dataGrid.FindAll("td input")[4].GetAttribute("value").Trim().Should().Be("Steve");
+            dataGrid.FindAll("td input")[5].GetAttribute("value").Trim().Should().Be("32");
+            dataGrid.FindAll(".mud-table-body tr td input")[0].Change("Jonathan");
+            dataGrid.FindAll(".mud-table-body tr td input")[1].Change(52d);
+            dataGrid.FindAll(".mud-table-body tr td input")[0].GetAttribute("value").Trim().Should().Be("Jonathan");
+            dataGrid.FindAll(".mud-table-body tr td input")[1].GetAttribute("value").Trim().Should().Be("52");
+        }
+
+        /// <summary>
+        /// Ensures that multiple calls to reload the data grid data properly flag the CancellationToken.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> object.</returns>
+        [Test]
+        public async Task DataGridVirtualizeServerDataLoadingTestWithCancel()
+        {
+            var comp = Context.RenderComponent<DataGridVirtualizeServerDataLoadingTestWithCancel>();
+            var dataGrid = comp.FindComponent<MudDataGrid<int>>();
+
+            // Make a cancellation token we can monitor
+            CancellationToken? cancelToken = null;
+            // Make a task completion source
+            var first = new TaskCompletionSource<GridData<int>>();
+            // Set the ServerData function
+            dataGrid.SetParam(p =>
+                p.VirtualizeServerData,
+                new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((s, cancellationToken) =>
+                {
+                    // Remember the cancellation token
+                    cancelToken = cancellationToken;
+                    // Return a task that never completes
+                    return first.Task;
+                }));
+
+            await Task.Delay(20);
+
+            // Test
+
+            // Make sure this first request was not canceled
+            comp.WaitForAssertion(() => cancelToken?.IsCancellationRequested.Should().BeFalse());
+
+            // Arrange a server data refresh
+            var second = new TaskCompletionSource<GridData<int>>();
+            // Set the VirtualizeServerData function to a new method...
+            dataGrid.SetParam(p =>
+                p.VirtualizeServerData,
+                new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((s, cancellationToken) =>
+                {
+                    // ... which returns the second task.
+                    return second.Task;
+                }));
+
+            await Task.Delay(20);
+
+            // Test
+
+            // Make sure this second request DID cancel the first request's token
+            comp.WaitForAssertion(() => cancelToken?.IsCancellationRequested.Should().BeTrue());
+        }
+
+        [Test]
         public async Task DataGridPaginationTest()
         {
             var comp = Context.RenderComponent<DataGridPaginationTest>();
@@ -680,7 +934,7 @@ namespace MudBlazor.UnitTests.Components
             //open edit dialog
             dataGrid.FindAll("tbody tr")[1].Click();
             //No close button
-            comp.FindAll("button[aria-label=\"close\"]").Should().BeEmpty();
+            comp.FindAll("button[aria-label=\"Close dialog\"]").Should().BeEmpty();
             //edit data
             comp.FindAll("div input")[0].Change("Galadriel");
             comp.FindAll("div input")[1].Change(1);
@@ -719,7 +973,7 @@ namespace MudBlazor.UnitTests.Components
             //open edit dialog
             dataGrid.FindAll("tbody tr")[1].Click();
             //No close button
-            comp.FindAll("button[aria-label=\"close\"]").Should().BeEmpty();
+            comp.FindAll("button[aria-label=\"Close dialog\"]").Should().BeEmpty();
             //edit data
             comp.FindAll("div input")[0].Change("Galadriel");
             comp.FindAll("div input")[1].Change("Steve");
@@ -3347,7 +3601,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedTest.Fruit>>();
 
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(7);
-            comp.Instance.CollapseAllGroups();
+            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
             dataGrid.Render();
             // after all groups are collapsed
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
@@ -3365,7 +3619,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedAsyncTest.Fruit>>();
 
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
-            comp.Instance.CollapseAllGroups();
+            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
             dataGrid.Render();
             // after all groups are collapsed
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
@@ -3383,7 +3637,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedServerDataTest.Fruit>>();
 
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
-            comp.Instance.CollapseAllGroups();
+            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
             dataGrid.Render();
             // after all groups are collapsed
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
@@ -3400,7 +3654,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseTest.Fruit>>();
 
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
-            comp.Instance.ExpandAllGroups();
+            await comp.InvokeAsync(async () => dataGrid.Instance.ExpandAllGroups());
             dataGrid.Render();
             // after all groups are expanded
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(7);
@@ -3418,7 +3672,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseAsyncTest.Fruit>>();
 
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
-            dataGrid.Instance.ExpandAllGroups();
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
             dataGrid.Render();
             // after all groups are expanded
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
@@ -3436,7 +3690,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseServerDataTest.Fruit>>();
 
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
-            dataGrid.Instance.ExpandAllGroups();
+            await comp.InvokeAsync(async () => dataGrid.Instance.ExpandAllGroups());
             dataGrid.Render();
             // after all groups are expanded
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
@@ -3453,10 +3707,10 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupCollapseAllTest.TestObject>>();
 
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
-            comp.Instance.ExpandAllGroups();
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
             comp.Render();
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(15);
-            comp.Instance.CollapseAllGroups();
+            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
             comp.Render();
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
             comp.Instance.RefreshList();
@@ -3472,13 +3726,13 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandAllCollapseAllTest.Element>>();
 
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
-            comp.Instance.ExpandAllGroups();
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
             comp.Render();
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(14);
             await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
             await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.Next));
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(18);
-            comp.Instance.CollapseAllGroups();
+            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
             await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
             comp.Instance.RefreshList();
@@ -3624,10 +3878,10 @@ namespace MudBlazor.UnitTests.Components
             //check if dialog is open
             comp.FindAll("div.mud-dialog-container").Should().NotBeEmpty();
             //find button with arialabel close in dialog
-            var closeButton = comp.Find("button[aria-label=\"close\"]");
+            var closeButton = comp.Find("button[aria-label=\"Close dialog\"]");
             closeButton.Should().NotBeNull();
             //click close button
-            comp.Find("button[aria-label=\"close\"]").Click();
+            comp.Find("button[aria-label=\"Close dialog\"]").Click();
             //check if dialog is closed
             comp.FindAll("div.mud-dialog-container").Should().BeEmpty();
         }
@@ -3865,6 +4119,72 @@ namespace MudBlazor.UnitTests.Components
             // test filter not applied
             var statusHeaderCell = dataGrid.FindComponents<HeaderCell<DataGridFiltersTest.Model>>()[2];
             statusHeaderCell.Instance.hasFilter.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task DataGridGroupedWithServerDataPaginationTest()
+        {
+            var comp = Context.RenderComponent<DataGridGroupableServerDataTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupableServerDataTest.Item>>();
+            var rows = dataGrid.FindAll("tr");
+            rows.Count.Should().Be(12, because: "1 header row + 10 data rows + 1 footer row");
+            var cells = dataGrid.FindAll("td");
+            cells.Count.Should().Be(10, because: "We have 10 data rows with one group collapsed");
+            await comp.InvokeAsync(async () => dataGrid.Instance.ExpandAllGroups());
+            rows = dataGrid.FindAll("tr");
+            rows.Count.Should().Be(32, because: "1 header row + 10 data rows + 1 footer row + 10 group rows + 10 footer group rows");
+            cells = dataGrid.FindAll("td");
+            cells.Count.Should().Be(30, because: "We have 10 data rows with one group + 10*2 cells inside groups");
+            //check cells
+            cells[0].TextContent.Should().Be("Number: 1");
+            cells[1].TextContent.Should().Be("Hydrogen"); cells[2].TextContent.Should().Be("1");
+            cells[3].TextContent.Should().Be("Number: 2");
+            cells[4].TextContent.Should().Be("Helium"); cells[5].TextContent.Should().Be("2");
+            cells[6].TextContent.Should().Be("Number: 3");
+            cells[7].TextContent.Should().Be("Lithium"); cells[8].TextContent.Should().Be("3");
+            cells[9].TextContent.Should().Be("Number: 4");
+            cells[10].TextContent.Should().Be("Beryllium"); cells[11].TextContent.Should().Be("4");
+            cells[12].TextContent.Should().Be("Number: 5");
+            cells[13].TextContent.Should().Be("Boron"); cells[14].TextContent.Should().Be("5");
+            cells[15].TextContent.Should().Be("Number: 6");
+            cells[16].TextContent.Should().Be("Carbon"); cells[17].TextContent.Should().Be("6");
+            cells[18].TextContent.Should().Be("Number: 7");
+            cells[19].TextContent.Should().Be("Nitrogen"); cells[20].TextContent.Should().Be("7");
+            cells[21].TextContent.Should().Be("Number: 8");
+            cells[22].TextContent.Should().Be("Oxygen"); cells[23].TextContent.Should().Be("8");
+            cells[24].TextContent.Should().Be("Number: 9");
+            cells[25].TextContent.Should().Be("Fluorine"); cells[26].TextContent.Should().Be("9");
+            cells[27].TextContent.Should().Be("Number: 10");
+            cells[28].TextContent.Should().Be("Neon"); cells[29].TextContent.Should().Be("10");
+            //get next page
+            dataGrid.Instance.CurrentPage = 1;
+            await comp.InvokeAsync(async () => await dataGrid.Instance.ReloadServerData());
+            cells = dataGrid.FindAll("td");
+            cells.Count.Should().Be(10, because: "We have 10 data rows with one group collapsed from next page");
+            await comp.InvokeAsync(async () => dataGrid.Instance.ExpandAllGroups());
+            cells = dataGrid.FindAll("td");
+            cells.Count.Should().Be(30, because: "We have next 10 data rows with one group + 10*2 cells inside groups");
+            //cells should have data from next page
+            cells[0].TextContent.Should().Be("Number: 11");
+            cells[1].TextContent.Should().Be("Sodium"); cells[2].TextContent.Should().Be("11");
+            cells[3].TextContent.Should().Be("Number: 12");
+            cells[4].TextContent.Should().Be("Magnesium"); cells[5].TextContent.Should().Be("12");
+            cells[6].TextContent.Should().Be("Number: 13");
+            cells[7].TextContent.Should().Be("Aluminium"); cells[8].TextContent.Should().Be("13");
+            cells[9].TextContent.Should().Be("Number: 14");
+            cells[10].TextContent.Should().Be("Silicon"); cells[11].TextContent.Should().Be("14");
+            cells[12].TextContent.Should().Be("Number: 15");
+            cells[13].TextContent.Should().Be("Phosphorus"); cells[14].TextContent.Should().Be("15");
+            cells[15].TextContent.Should().Be("Number: 16");
+            cells[16].TextContent.Should().Be("Sulfur"); cells[17].TextContent.Should().Be("16");
+            cells[18].TextContent.Should().Be("Number: 17");
+            cells[19].TextContent.Should().Be("Chlorine"); cells[20].TextContent.Should().Be("17");
+            cells[21].TextContent.Should().Be("Number: 18");
+            cells[22].TextContent.Should().Be("Argon"); cells[23].TextContent.Should().Be("18");
+            cells[24].TextContent.Should().Be("Number: 19");
+            cells[25].TextContent.Should().Be("Potassium"); cells[26].TextContent.Should().Be("19");
+            cells[27].TextContent.Should().Be("Number: 20");
+            cells[28].TextContent.Should().Be("Calcium"); cells[29].TextContent.Should().Be("20");
         }
 
     }

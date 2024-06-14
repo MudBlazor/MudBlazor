@@ -5,18 +5,36 @@
 
 @if (Enabled)
 {
-    <Virtualize Items="@Items" ItemsProvider="@ItemsProvider" Context="item" OverscanCount="@OverscanCount" ItemSize="@ItemSize" SpacerElement="@SpacerElement">
-        <ChildContent>
-            @if (ChildContent is not null)
-            {
-                @ChildContent(item)
-            }
-        </ChildContent>
+    if (ItemsProvider != null)
+    {
+        <Virtualize @ref="@_virtualizeContainerReference" ItemsProvider="@ItemsProvider" Context="item" OverscanCount="@OverscanCount" ItemSize="@ItemSize" SpacerElement="@SpacerElement">
+            <ChildContent>
+                @if (ChildContent is not null)
+                {
+                    @ChildContent(item)
+                }
+            </ChildContent>
 
-        <Placeholder>
-            @Placeholder
-        </Placeholder>
-    </Virtualize>
+            <Placeholder>
+                @Placeholder
+            </Placeholder>
+        </Virtualize>
+    }
+    else
+    {
+        <Virtualize @ref="@_virtualizeContainerReference" Items="@Items" Context="item" OverscanCount="@OverscanCount" ItemSize="@ItemSize" SpacerElement="@SpacerElement">
+            <ChildContent>
+                @if (ChildContent is not null)
+                {
+                    @ChildContent(item)
+                }
+            </ChildContent>
+
+            <Placeholder>
+                @Placeholder
+            </Placeholder>
+        </Virtualize>
+    }
 }
 else
 {

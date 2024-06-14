@@ -378,23 +378,6 @@ namespace MudBlazor.UnitTests.Components
                 .BeFalse();
         }
 
-        /// <summary>
-        /// MudIconButton should have a title tag/attribute if specified
-        /// </summary>
-        [Test]
-        public void ShouldRenderTitle()
-        {
-            var title = "Title and tooltip";
-            var icon = Parameter(nameof(MudIconButton.Icon), Icons.Material.Filled.Add);
-            var titleParam = Parameter(nameof(MudIconButton.Title), title);
-            var comp = Context.RenderComponent<MudIconButton>(icon, titleParam);
-            comp.Find($"button[title=\"{title}\"]");
-
-            icon = Parameter(nameof(MudIconButton.Icon), "customicon");
-            comp.SetParametersAndRender(icon, titleParam);
-            comp.Find($"button[title=\"{title}\"]");
-        }
-
         [Test]
         public async Task MudToggleIconTest()
         {

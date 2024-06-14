@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,44 +19,63 @@ namespace MudBlazor.UnitTests.State;
 
 #nullable enable
 [TestFixture]
-public class ParameterSetTests
+public class ParameterScopeContainerTests
 {
     [Test]
-    public void IsInitialized_False()
+    public void IsInitializedAndLocked_False()
     {
         // Arrange & Act
-        var parameterSet = new ParameterSet(Enumerable.Empty<IParameterComponentLifeCycle>());
+        using var parameterScopeContainer = new ParameterScopeContainer(Enumerable.Empty<IParameterComponentLifeCycle>());
 
         // Assert
-        parameterSet.IsInitialized.Should().BeFalse();
+        parameterScopeContainer.IsInitialized.Should().BeFalse();
+        parameterScopeContainer.IsLocked.Should().BeFalse();
     }
 
     [Test]
-    public void IsInitialized_TrueOnRead()
+    public void IsInitializedAndLocked_TrueOnRead()
     {
         // Arrange
-        var parameterSet = new ParameterSet(Enumerable.Empty<IParameterComponentLifeCycle>());
+        using var parameterScopeContainer = new ParameterScopeContainer(Enumerable.Empty<IParameterComponentLifeCycle>());
 
         // Act
-        _ = parameterSet.Count();
+        _ = parameterScopeContainer.Count();
 
         // Assert
-        parameterSet.IsInitialized.Should().BeTrue();
+        parameterScopeContainer.IsInitialized.Should().BeTrue();
+        parameterScopeContainer.IsLocked.Should().BeTrue();
     }
 
     [Test]
-    public void ForceParametersAttachment_IsInitializedTrue()
+    public void ForceParametersAttachment_IsInitializedAndLockedTrue()
     {
         // Arrange
-        var parameterSet = new ParameterSet(Enumerable.Empty<IParameterComponentLifeCycle>());
+        using var parameterScopeContainer = new ParameterScopeContainer(Enumerable.Empty<IParameterComponentLifeCycle>());
 
         // Act
-        parameterSet.ForceParametersAttachment();
+        parameterScopeContainer.ForceParametersAttachment();
 
         // Assert
-        parameterSet.IsInitialized.Should().BeTrue();
+        parameterScopeContainer.IsInitialized.Should().BeTrue();
+        parameterScopeContainer.IsLocked.Should().BeTrue();
     }
 
+    [Test]
+    public void Dispose_IsInitializedAndLockedTrue()
+    {
+        // Arrange
+        var parameterScopeContainer = new ParameterScopeContainer(Enumerable.Empty<IParameterComponentLifeCycle>());
+
+        // Act
+        using (parameterScopeContainer)
+        {
+            // Do nothing
+        }
+
+        // Assert
+        parameterScopeContainer.IsInitialized.Should().BeTrue();
+        parameterScopeContainer.IsLocked.Should().BeTrue();
+    }
 
     [Test]
     public void Add_AddsParameterSuccessfully()
@@ -70,15 +90,15 @@ public class ParameterSetTests
             .Attach();
 
         // Act
-        var parameterSet = new ParameterSet(parameterState);
+        using var parameterScopeContainer = new ParameterScopeContainer(parameterState);
 
         // Assert
-        parameterSet.Count().Should().Be(1);
-        parameterSet.Contains(parameterState).Should().BeTrue();
+        parameterScopeContainer.Count().Should().Be(1);
+        parameterScopeContainer.Contains(parameterState).Should().BeTrue();
     }
 
     [Test]
-    public void Add_IgnoreSameRegistration()
+    public void Add_ThrowsExceptionIfParameterAlreadyRegistered()
     {
         // Arrange
         const int Parameter = 1;
@@ -89,10 +109,11 @@ public class ParameterSetTests
             .Attach();
 
         // Act
-        var parameterSet = new ParameterSet(parameterState);
+        using var parameterScopeContainer = new ParameterScopeContainer(parameterState, parameterState);
+        var count = () => parameterScopeContainer.Count();
 
         // Assert
-        parameterSet.Count().Should().Be(1);
+        count.Should().Throw<ArgumentException>();
     }
 
     [Test]
@@ -126,7 +147,7 @@ public class ParameterSetTests
             .WithGetParameterValueFunc(() => Parameter2)
             .WithParameterChangedHandler(OnParameter2Change)
             .Attach();
-        var parameterSet = new ParameterSet(parameter1State, parameter2State);
+        using var parameterScopeContainer = new ParameterScopeContainer(parameter1State, parameter2State);
         void OnParameter1Change()
         {
             handler1FireCount++;
@@ -138,7 +159,7 @@ public class ParameterSetTests
         }
 
         // Act
-        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+        await parameterScopeContainer.SetParametersAsync(_ => Task.CompletedTask, parameterView);
 
         // Assert
         handler1FireCount.Should().Be(1);
@@ -178,7 +199,7 @@ public class ParameterSetTests
             .WithGetParameterValueFunc(() => Parameter2)
             .WithParameterChangedHandler(OnParameter2Change)
             .Attach();
-        var parameterSet = new ParameterSet(parameter1State, parameter2State);
+        using var parameterScopeContainer = new ParameterScopeContainer(parameter1State, parameter2State);
         void OnParameter1Change()
         {
             handler1FireCount++;
@@ -190,7 +211,7 @@ public class ParameterSetTests
         }
 
         // Act
-        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+        await parameterScopeContainer.SetParametersAsync(_ => Task.CompletedTask, parameterView);
 
         // Assert
         handler1FireCount.Should().Be(0);
@@ -229,7 +250,7 @@ public class ParameterSetTests
             .WithGetParameterValueFunc(() => Parameter2)
             .WithParameterChangedHandler(OnParameter2ChangeAsync)
             .Attach();
-        var parameterSet = new ParameterSet(parameter1State, parameter2State);
+        using var parameterScopeContainer = new ParameterScopeContainer(parameter1State, parameter2State);
         Task OnParameter1ChangeAsync()
         {
             handler1FireCount++;
@@ -245,7 +266,7 @@ public class ParameterSetTests
         }
 
         // Act
-        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+        await parameterScopeContainer.SetParametersAsync(_ => Task.CompletedTask, parameterView);
 
         // Assert
         handler1FireCount.Should().Be(1);
@@ -285,7 +306,7 @@ public class ParameterSetTests
             .WithGetParameterValueFunc(() => Parameter2)
             .WithParameterChangedHandler(OnParameter2ChangeAsync)
             .Attach();
-        var parameterSet = new ParameterSet(parameter1State, parameter2State);
+        using var parameterScopeContainer = new ParameterScopeContainer(parameter1State, parameter2State);
         Task OnParameter1ChangeAsync()
         {
             handler1FireCount++;
@@ -301,7 +322,7 @@ public class ParameterSetTests
         }
 
         // Act
-        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+        await parameterScopeContainer.SetParametersAsync(_ => Task.CompletedTask, parameterView);
 
         // Assert
         handler1FireCount.Should().Be(0);
@@ -345,14 +366,14 @@ public class ParameterSetTests
             .WithGetParameterValueFunc(() => Parameter3)
             .WithParameterChangedHandler(OnParameterChange)
             .Attach();
-        var parameterSet = new ParameterSet(parameterState1, parameterState2, parameterState3);
+        var parameterScopeContainer = new ParameterScopeContainer(parameterState1, parameterState2, parameterState3);
         void OnParameterChange()
         {
             handlerFireCount++;
         }
 
         // Act
-        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+        await parameterScopeContainer.SetParametersAsync(_ => Task.CompletedTask, parameterView);
 
         // Assert
         handlerFireCount.Should().Be(1);
@@ -395,10 +416,10 @@ public class ParameterSetTests
             .WithGetParameterValueFunc(() => Parameter3)
             .WithParameterChangedHandler(() => handlerFireCount++)
             .Attach();
-        var parameterSet = new ParameterSet(parameterState1, parameterState2, parameterState3);
+        using var parameterScopeContainer = new ParameterScopeContainer(parameterState1, parameterState2, parameterState3);
 
         // Act
-        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+        await parameterScopeContainer.SetParametersAsync(_ => Task.CompletedTask, parameterView);
 
         // Assert
         handlerFireCount.Should().Be(3);
@@ -440,14 +461,14 @@ public class ParameterSetTests
             .WithGetParameterValueFunc(() => Parameter3)
             .WithParameterChangedHandler(OnParameterChange)
             .Attach();
-        var parameterSet = new ParameterSet(parameterState1, parameterState2, parameterState3);
+        using var parameterScopeContainer = new ParameterScopeContainer(parameterState1, parameterState2, parameterState3);
         void OnParameterChange()
         {
             handlerFireCount++;
         }
 
         // Act
-        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+        await parameterScopeContainer.SetParametersAsync(_ => Task.CompletedTask, parameterView);
 
         // Assert
         handlerFireCount.Should().Be(3);
@@ -489,7 +510,7 @@ public class ParameterSetTests
             .WithGetParameterValueFunc(() => Parameter3)
             .WithParameterChangedHandler(OnParameterChange3)
             .Attach();
-        var parameterSet = new ParameterSet(parameterState1, parameterState2, parameterState3);
+        using var parameterScopeContainer = new ParameterScopeContainer(parameterState1, parameterState2, parameterState3);
         void OnParameterChange1()
         {
             handlerFireCount++;
@@ -504,7 +525,7 @@ public class ParameterSetTests
         }
 
         // Act
-        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+        await parameterScopeContainer.SetParametersAsync(_ => Task.CompletedTask, parameterView);
 
         // Assert
         handlerFireCount.Should().Be(3);
@@ -531,10 +552,10 @@ public class ParameterSetTests
             .WithParameterChangedHandler(parameterChangedHandlerMock)
             .WithComparer(comparer)
             .Attach();
-        var parameterSet = new ParameterSet(parameterState);
+        using var parameterScopeContainer = new ParameterScopeContainer(parameterState);
 
         // Act
-        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+        await parameterScopeContainer.SetParametersAsync(_ => Task.CompletedTask, parameterView);
 
         // Assert
         parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
@@ -564,10 +585,10 @@ public class ParameterSetTests
             .WithParameterChangedHandler(parameterChangedHandlerMock)
             .WithComparer(comparer)
             .Attach();
-        var parameterSet = new ParameterSet(parameterState);
+        using var parameterScopeContainer = new ParameterScopeContainer(parameterState);
 
         // Act
-        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+        await parameterScopeContainer.SetParametersAsync(_ => Task.CompletedTask, parameterView);
 
         // Assert
         parameterChangedHandlerMock.Changes.Should().BeEmpty("Within the epsilon tolerance.");
@@ -595,14 +616,14 @@ public class ParameterSetTests
             .WithParameterChangedHandler(parameterChangedHandlerMock)
             .WithComparer(() => comparer)
             .Attach();
-        var parameterSet = new ParameterSet(parameterState);
+        using var parameterScopeContainer = new ParameterScopeContainer(parameterState);
 
         // Act && Assert
-        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+        await parameterScopeContainer.SetParametersAsync(_ => Task.CompletedTask, parameterView);
         parameterChangedHandlerMock.Changes.Should().BeEmpty("Within the epsilon tolerance.");
 
         comparer = new DoubleEpsilonEqualityComparer(0.00001f);
-        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+        await parameterScopeContainer.SetParametersAsync(_ => Task.CompletedTask, parameterView);
         parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
         {
             new ParameterChangedEventArgs<double>(ParameterName, Parameter, ParameterNewValue)
@@ -632,10 +653,10 @@ public class ParameterSetTests
             .WithParameterChangedHandler(parameterChangedHandlerMock)
             .WithComparer(() => comparer)
             .Attach();
-        var parameterSet = new ParameterSet(parameterState);
+        using var parameterScopeContainer = new ParameterScopeContainer(parameterState);
 
         // Act && Assert
-        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+        await parameterScopeContainer.SetParametersAsync(_ => Task.CompletedTask, parameterView);
         parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
         {
             new ParameterChangedEventArgs<double>(ParameterName, Parameter, ParameterNewValue)
@@ -664,10 +685,10 @@ public class ParameterSetTests
             .WithParameterChangedHandler(parameterChangedHandlerMock)
             .WithComparer(() => comparer, x => new DoubleArrayEpsilonEqualityComparer(x))
             .Attach();
-        var parameterSet = new ParameterSet(parameterState);
+        using var parameterScopeContainer = new ParameterScopeContainer(parameterState);
 
         // Act && Assert
-        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+        await parameterScopeContainer.SetParametersAsync(_ => Task.CompletedTask, parameterView);
         parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
         {
             new ParameterChangedEventArgs<double[]>(ParameterName, parameter, parameterNewValue)
@@ -697,16 +718,19 @@ public class ParameterSetTests
             .WithGetParameterValueFunc(() => Parameter3)
             .Attach();
         var expectedParameters = new List<IParameterComponentLifeCycle> { parameterState1, parameterState2, parameterState3 };
-        var parameters = new ParameterSet(expectedParameters);
+        using var parameters = new ParameterScopeContainer(expectedParameters);
 
         // Act
         var actualParameters = new List<IParameterComponentLifeCycle>();
         var enumerator = ((IEnumerable)parameters).GetEnumerator();
-        while (enumerator.MoveNext())
+        using (enumerator as IDisposable)
         {
-            if (enumerator.Current is IParameterComponentLifeCycle parameter)
+            while (enumerator.MoveNext())
             {
-                actualParameters.Add(parameter);
+                if (enumerator.Current is IParameterComponentLifeCycle parameter)
+                {
+                    actualParameters.Add(parameter);
+                }
             }
         }
 
@@ -738,7 +762,7 @@ public class ParameterSetTests
             .WithGetParameterValueFunc(() => Parameter3)
             .Attach();
         var expectedParameters = new List<IParameterComponentLifeCycle> { parameterState1, parameterState2, parameterState3 };
-        var parameters = new ParameterSet(expectedParameters);
+        using var parameters = new ParameterScopeContainer(expectedParameters);
 
         // Act
         var actualParameters = expectedParameters.ToList();

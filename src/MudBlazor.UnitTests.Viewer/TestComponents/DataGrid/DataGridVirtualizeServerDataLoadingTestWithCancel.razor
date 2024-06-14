@@ -1,0 +1,27 @@
+@using System.Threading
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid T="int" VirtualizeServerData="@ServerDataFunc" Virtualize>
+    <Columns>
+        <PropertyColumn Property="x=>x" Title="Number"/>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = @"The data grid should cancel prior requests for server data when using VirtualizeServerData.";
+
+    /// <summary>
+    /// Reloads the data from the server, with support for cancellation.
+    /// </summary>
+    private async Task<GridData<int>> ServerDataFunc(GridStateVirtualize<int> state, CancellationToken token)
+    {
+        // Simulate "loading data" for two seconds
+        await Task.Delay(2000, token);
+
+        // Make some test data to return
+        IEnumerable<int> data = new List<int>() { 1, 2, 3 };
+
+        // Return the data
+        return new GridData<int>() { TotalItems = data.Count(), Items = data.ToArray() };
+    }
+}
