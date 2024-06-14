@@ -2,6 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
@@ -25,19 +27,8 @@ public partial class ApiText : ComponentBase
     /// The XML documentation text to parse.
     /// </summary>
     [Parameter]
+    [EditorRequired]
     public string Text { get; set; } = "";
-
-    /// <summary>
-    /// Occurs when <see cref="Text"/> as changed.
-    /// </summary>
-    public EventCallback<string> TextChanged { get; set; }
-
-    /// <inheritdoc />
-    protected override void OnParametersSet()
-    {
-
-    }
-
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
@@ -68,15 +59,9 @@ public partial class ApiText : ComponentBase
                                     if (linkType == "T") // Type
                                     {
                                         // Add a link to the type
-                                        var type = ApiDocumentation.GetType(linkRef);
-                                        if (type != null)
-                                        {
-                                            builder.AddDocumentedTypeLink(sequence++, type);
-                                        }
-                                        else
-                                        {
-                                            builder.AddCode(sequence++, linkRef);
-                                        }
+                                        builder.OpenComponent<ApiTypeLink>(sequence++);
+                                        builder.AddComponentParameter(sequence++, "TypeName", linkRef);
+                                        builder.CloseComponent();
                                     }
                                     else // Property, Method, Field, or Event
                                     {
@@ -85,6 +70,14 @@ public partial class ApiText : ComponentBase
                                         {
                                             builder.AddDocumentedMemberLink(sequence++, member);
                                         }
+                                        else if (linkRef.StartsWith("MudBlazor.Icons"))
+                                        {
+                                            builder.AddMudIcon(sequence++, linkRef, Color.Primary, Size.Medium);
+                                        }
+                                        else if (linkRef != null && (linkRef.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase) || linkRef.StartsWith("System", StringComparison.OrdinalIgnoreCase)))
+                                        {
+                                            builder.AddMudLink(0, $"https://learn.microsoft.com/en-us/dotnet/api/{linkRef}", linkRef, "docs-link docs-code docs-code-primary", "_external");
+                                        }
                                         else
                                         {
                                             builder.AddCode(sequence++, linkRef);
@@ -92,7 +85,7 @@ public partial class ApiText : ComponentBase
                                     }
                                     break;
                                 case "href":
-                                    builder.AddMudLink(sequence++, link.Substring(2), link.Substring(2), "docs-link docs-code docs-code-primary");
+                                    builder.AddMudLink(sequence++, link, link, "docs-link docs-code docs-code-primary", "_external");
                                     break;
                             }
                             break;
@@ -111,15 +104,16 @@ public partial class ApiText : ComponentBase
                 case XmlNodeType.EndElement:
                     switch (reader.Name)
                     {
-                        case "c": // Constant
+                        case "c": // </c>
                             builder.CloseElement();
                             break;
-                        case "para":
+                        case "para":  // </p>
                             builder.CloseElement();
                             break;
                     }
                     break;
                 case XmlNodeType.Text:
+                    // <MudText Typo="Typo.caption">{value}</MudText>
                     builder.AddMudText(sequence++, Typo.caption, reader.Value);
                     break;
             }
@@ -127,16 +121,4 @@ public partial class ApiText : ComponentBase
     }
 
     protected override bool ShouldRender() => !string.IsNullOrEmpty(Text);
-
-    /// <summary>
-    /// The regular expression for "see cref" XML links.
-    /// </summary>
-    [GeneratedRegex("<see cref=\"([FTEPM]:[\\S.]*)\"[ ]\\/>")]
-    private static partial Regex SeeCrefRegEx();
-
-    /// <summary>
-    /// The regular expression for "see href" XML links.
-    /// </summary>
-    [GeneratedRegex("<see href=\"([\\S.]*)\"[ ]\\/>")]
-    private static partial Regex SeeHrefRegEx();
 }

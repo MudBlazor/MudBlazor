@@ -734,7 +734,7 @@ public partial class ApiDocumentationBuilder()
         using var writer = new ApiDocumentationWriter(Paths.ApiDocumentationFilePath);
         writer.WriteHeader();
         writer.WriteClassStart();
-        writer.WriteConstructorStart(Types.Count);
+        writer.WriteConstructorStart();
         writer.WriteProperties(Properties);
         writer.WriteMethods(Methods);
         writer.WriteFields(Fields);

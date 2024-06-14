@@ -34,7 +34,7 @@
             }
         </MudTd>
         <MudTd Class="docs-content-api-cell" DataLabel="Type">
-            <CodeInline>@context.TypeFriendlyName</CodeInline>
+            <ApiTypeLink Type="@context.Type" TypeName="@context.TypeFriendlyName" />
         </MudTd>
         <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">
             <ApiText Text="@(context.Summary + " " + context.Remarks)" />

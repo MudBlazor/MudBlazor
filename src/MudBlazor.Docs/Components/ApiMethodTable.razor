@@ -24,9 +24,7 @@
         <MudTd id="@context.Name" Class="docs-content-api-cell" Style="white-space: nowrap;" DataLabel="Name">
             @if (context.DeclaringType != null && context.DeclaringType.Name != Type.Name)
             {
-                <MudTooltip Text="@("From " + context.DeclaringType.NameFriendly)">
-                    <CodeInline>@context.Name</CodeInline>
-                </MudTooltip>
+                <ApiTypeLink Type="@context.DeclaringType" TypeName="@context.DeclaringTypeName" />
             }
             else
             {
@@ -34,7 +32,7 @@
             }
         </MudTd>
         <MudTd Class="docs-content-api-cell" DataLabel="Return Type">
-            <CodeInline>@context.TypeFriendlyName</CodeInline>
+            <ApiTypeLink Type="@context.Type" TypeName="@context.TypeFriendlyName" />
         </MudTd>
         <MudTd id="@context.Name" Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">
             <ApiText Text="@(context.Summary + " " + context.Remarks)" />

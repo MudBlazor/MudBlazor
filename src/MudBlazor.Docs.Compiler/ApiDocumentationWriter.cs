@@ -69,6 +69,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         "MudBlazor.Icons+Material+Rounded",
         "MudBlazor.Icons+Material+Sharp",
         "MudBlazor.Icons+Material+TwoTone",
+        "string"
     ];
 
     /// <summary>
@@ -182,7 +183,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <summary>
     /// Writes the start of the ApiDocumentation constructor.
     /// </summary>
-    public void WriteConstructorStart(int typeCount)
+    public void WriteConstructorStart()
     {
         WriteLineIndented("static ApiDocumentation()");
         WriteLineIndented("{");
@@ -392,7 +393,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         WriteIndented($"Fields.Add(\"{field.Key}\", new()");
         Write(" { ");
         Write($"Name = \"{field.Name}\", ");
-        Write($"Type = \"{field.Type.FullName}\", ");
+        Write($"TypeName = \"{field.Type.FullName}\", ");
         Write($"TypeFriendlyName = \"{GetFriendlyTypeName(field.Type)}\", ");
         WriteDeclaringType(field);
         WriteCategory(field.Category);
@@ -439,7 +440,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         WriteIndented($"Properties.Add(\"{property.Key}\", new()");
         Write(" { ");
         Write($"Name = \"{property.Name}\", ");
-        Write($"Type = \"{property.Type.FullName}\", ");
+        Write($"TypeName = \"{property.Type.FullName}\", ");
         Write($"TypeFriendlyName = \"{GetFriendlyTypeName(property.Type)}\", ");
         WriteDeclaringType(property);
         WriteCategory(property.Category);
@@ -701,7 +702,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <param name="method">The property being described.</param>
     public void WriteReturnType(DocumentedMethod method)
     {
-        Write($"Type = \"{Escape(method.Type.Name)}\", ");
+        Write($"TypeName = \"{Escape(method.Type.Name)}\", ");
         Write($"TypeFriendlyName = \"{GetFriendlyTypeName(method.Type)}\", ");
     }
 

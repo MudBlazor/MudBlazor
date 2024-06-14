@@ -9,8 +9,18 @@ using MudBlazor.Docs.Models;
 
 namespace MudBlazor.Docs.Extensions;
 
+/// <summary>
+/// Extension methods added to <see cref="RenderTreeBuilder"/> for custom components.
+/// </summary>
 public static class RenderTreeExtensions
 {
+    /// <summary>
+    /// Adds a MudText to the render tree.
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <param name="sequence"></param>
+    /// <param name="typo"></param>
+    /// <param name="text"></param>
     public static void AddMudText(this RenderTreeBuilder builder, int sequence, Typo typo = Typo.body1, string text = null)
     {
         if (!string.IsNullOrEmpty(text))
@@ -27,6 +37,14 @@ public static class RenderTreeExtensions
         }
     }
 
+    /// <summary>
+    /// Adds a MudTooltip to the render tree.
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <param name="sequence"></param>
+    /// <param name="placement"></param>
+    /// <param name="text"></param>
+    /// <param name="childContentBuilder"></param>
     public static void AddMudTooltip(this RenderTreeBuilder builder, int sequence, Placement placement = Placement.Top, string text = "", Action<int, RenderTreeBuilder> childContentBuilder = null)
     {
         // <MudTooltip Placement="Placement.Top" Text="{summary}">
@@ -42,15 +60,58 @@ public static class RenderTreeExtensions
         builder.CloseRegion();
     }
 
-    public static void AddMudLink(this RenderTreeBuilder builder, int sequence, string href, string text = null, string cssClass = null)
+    /// <summary>
+    /// Adds a MudIcon component to the render tree.
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <param name="sequence"></param>
+    /// <param name="iconTypeName"></param>
+    /// <param name="color"></param>
+    /// <param name="size"></param>
+    public static void AddMudIcon(this RenderTreeBuilder builder, int sequence, string iconTypeName, Color color = Color.Default, Size size = Size.Small)
+    {
+        // Use Reflection to get the SVG for the icon
+        var parts = iconTypeName.Split('.');
+        var icon = parts[parts.Length - 1];
+        var svg = typeof(Icons).GetNestedType(parts[2])?.GetNestedType(parts[3])?.GetField(icon)?.GetValue(null);
+        // And pass into a <MudIcon>
+        AddMudTooltip(builder, sequence, Placement.Top, iconTypeName, (childSequence, childContentBuilder) =>
+        {
+            childContentBuilder.OpenComponent<MudIcon>(childSequence++);
+            childContentBuilder.AddComponentParameter(childSequence++, "Color", color);
+            childContentBuilder.AddComponentParameter(childSequence++, "Size", size);
+            childContentBuilder.AddComponentParameter(childSequence++, "Icon", svg);
+            childContentBuilder.AddComponentParameter(childSequence++, "Style", "position:relative;top:7px;"); // Vertically center the icon
+            childContentBuilder.CloseComponent();
+        });
+    }
+
+    /// <summary>
+    /// Adds a MudLink component.
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <param name="sequence"></param>
+    /// <param name="href"></param>
+    /// <param name="text"></param>
+    /// <param name="cssClass"></param>
+    /// <param name="target"></param>
+    /// <param name="color"></param>
+    public static void AddMudLink(this RenderTreeBuilder builder, int sequence, string href, string text = null, string cssClass = null, string target = null)
     {
         builder.OpenRegion(sequence);
         builder.OpenComponent<MudLink>(0);
         builder.AddComponentParameter(1, "Href", href);
-        builder.AddComponentParameter(2, "Class", cssClass);
-        builder.AddComponentParameter(3, "ChildContent", (RenderFragment)(linkContentBuilder =>
+        if (!string.IsNullOrEmpty(cssClass))
         {
-            linkContentBuilder.AddContent(4, text ?? href);
+            builder.AddComponentParameter(2, "Class", cssClass);
+        }
+        if (!string.IsNullOrEmpty(target))
+        {
+            builder.AddComponentParameter(3, "Target", target);
+        }
+        builder.AddComponentParameter(5, "ChildContent", (RenderFragment)(linkContentBuilder =>
+        {
+            linkContentBuilder.AddContent(5, text ?? href);
         }));
         builder.CloseComponent();
         builder.CloseRegion();
@@ -90,10 +151,10 @@ public static class RenderTreeExtensions
         if (!string.IsNullOrEmpty(member.Summary))
         {
             // <MudTooltip Placement="Placement.Top" Text="{summary}">
-            builder.AddMudTooltip(sequence, Placement.Top, member.SummaryPlain, ((childSequence, childContentBuilder) =>
+            builder.AddMudTooltip(sequence, Placement.Top, member.SummaryPlain, (childSequence, childContentBuilder) =>
             {
-                childContentBuilder.AddMudLink(childSequence++, member.DeclaringType?.ApiUrl, member.Name, "docs-link docs-code docs-code-primary");
-            }));
+                childContentBuilder.AddMudLink(childSequence++, member.DeclaringType?.ApiUrl + "#" + member.Name, member.Name, "docs-link docs-code docs-code-primary");
+            });
         }
         else
         {

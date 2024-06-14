@@ -85,9 +85,14 @@ public abstract class DocumentedMember
     public string? SummaryPlain => Summary == null ? null : GetPlaintext(Summary);
 
     /// <summary>
+    /// The name of the type of this member.
+    /// </summary>
+    public string TypeName { get; set; } = "";
+
+    /// <summary>
     /// The type of this member.
     /// </summary>
-    public string Type { get; set; } = "";
+    public DocumentedType Type => ApiDocumentation.GetType(TypeName);
 
     /// <summary>
     /// The user-facing name of this member's type.
