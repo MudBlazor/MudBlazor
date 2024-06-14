@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild;BeforeRebuild">
+  <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild;BeforeRebuild">
     <ItemGroup>
       <Compile Include="Generated\ApiDocsTests.generated.cs" Condition="!Exists('Generated\ApiDocsTests.generated.cs')" />
       <Compile Include="Generated\ExampleDocsTests.generated.cs" Condition="!Exists('Generated\ExampleDocsTests.generated.cs')" />
