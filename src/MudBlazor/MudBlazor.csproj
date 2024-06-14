@@ -102,7 +102,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="true" OutputItemType="Analyzer" SetTargetFramework="TargetFramework=netstandard2.0" />
-    </ItemGroup>
+  </ItemGroup>
   
   <ItemGroup>
     <None Include="$(OutputPath)\net7.0\$(AssemblyName).Analyzers.dll" Pack="true" PackagePath="analyzers/dotnet/cs/" Visible="true" />
@@ -131,7 +131,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MudBlazor.SourceCodeGenerator\MudBlazor.SourceCodeGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\MudBlazor.SourceGenerator\MudBlazor.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
  </ItemGroup>
 
   <ItemGroup>
