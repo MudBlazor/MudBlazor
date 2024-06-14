@@ -13,21 +13,16 @@
 
   <!--Analyzer Config-->
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <MudAllowedAttributePattern>LowerCase</MudAllowedAttributePattern>
-    <MudIllegalParameters>V7IgnoreCase</MudIllegalParameters>
+    <MudAllowedAttributePattern>Any</MudAllowedAttributePattern>
+    <MudIllegalParameters>None</MudIllegalParameters>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <MudAllowedAttributePattern>LowerCase</MudAllowedAttributePattern>
     <MudIllegalParameters>V7IgnoreCase</MudIllegalParameters>
+    <MudDebugAnalyzer>false</MudDebugAnalyzer>
   </PropertyGroup>
   
-  <ItemGroup>
-    <CompilerVisibleProperty Include="MudDebugAnalyzer" />
-    <CompilerVisibleProperty Include="MudAllowedAttributePattern" />
-    <CompilerVisibleProperty Include="MudIllegalParameters" />
-  </ItemGroup>
-
   <!--Project path for code generator-->
   <PropertyGroup>
     <BinDocsCompiler>$(SolutionDir)MudBlazor.Docs.Compiler/bin/Debug/net8.0/MudBlazor.Docs.Compiler.dll</BinDocsCompiler>

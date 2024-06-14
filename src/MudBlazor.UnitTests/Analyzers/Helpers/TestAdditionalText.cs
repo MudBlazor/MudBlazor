@@ -1,0 +1,29 @@
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Text;
+using Microsoft.CodeAnalysis;
+
+namespace MudBlazor.UnitTests.Analyzers.Helpers
+{
+#nullable enable
+    public sealed class TestAdditionalText(string path, SourceText text) : AdditionalText
+    {
+        public TestAdditionalText(string text = "", Encoding? encoding = null, string path = "dummy")
+            : this(path, SourceText.From(text, encoding))
+        {
+        }
+
+        public override string Path { get; } = path;
+
+        public override SourceText GetText(CancellationToken cancellationToken = default) => text;
+    }
+#nullable restore
+}

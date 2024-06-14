@@ -70,7 +70,7 @@ namespace MudBlazor.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Illegal Parameter &apos;{0}&apos; detected on component &apos;{1}&apos; using &apos;{2}&apos;.
+        ///   Looks up a localized string similar to Illegal Parameter &apos;{0}&apos; on &apos;{1}&apos; using &apos;{2}&apos; source location &apos;{3}&apos;.
         /// </summary>
         internal static string MUD0001MessageFormat {
             get {
@@ -97,7 +97,7 @@ namespace MudBlazor.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Illegal Attribute &apos;{0}&apos; detected on component &apos;{1}&apos; using pattern &apos;{2}&apos;.
+        ///   Looks up a localized string similar to Illegal Attribute &apos;{0}&apos; on &apos;{1}&apos; using pattern &apos;{2}&apos; source location &apos;{3}&apos;.
         /// </summary>
         internal static string MUD0002MessageFormat {
             get {

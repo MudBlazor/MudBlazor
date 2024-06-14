@@ -1,4 +1,6 @@
-﻿using Microsoft.CodeAnalysis;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
 namespace MudBlazor.Analyzers
 {
@@ -18,7 +20,7 @@ namespace MudBlazor.Analyzers
             IllegalParameters = illegalParameters;
             Comparer = illegalParameters == IllegalParameters.V7IgnoreCase ? StringComparer.CurrentCultureIgnoreCase : StringComparer.CurrentCulture;
 
-            if (illegalParameters != IllegalParameters.None)
+            if (illegalParameters != IllegalParameters.Disabled)
             {
                 AddIllegalParameterSet("MudBlazor.MudBadge", "Bottom", "Left", "Start");
 

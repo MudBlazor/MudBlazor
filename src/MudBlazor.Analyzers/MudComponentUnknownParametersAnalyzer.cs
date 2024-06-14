@@ -1,10 +1,11 @@
-﻿using System.Collections.Concurrent;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Diagnostics;
-
-#if ROSLYN_3_8
-using System.Collections.Immutable;
-#endif
+using Microsoft.CodeAnalysis.Text;
 
 namespace MudBlazor.Analyzers
 {
@@ -13,6 +14,7 @@ namespace MudBlazor.Analyzers
     {
         public const string DiagnosticId1 = "MUD0001";
         public const string DiagnosticId2 = "MUD0002";
+        public const string ClassNamePropertyKey = "ClassName";
 
         // You can change these strings in the Resources.resx file. If you do not want your analyzer to be localize-able, you can use regular strings for Title and MessageFormat.
         // See https://github.com/dotnet/roslyn/blob/main/docs/analyzers/Localizing%20Analyzers.md for more on localization
@@ -23,6 +25,9 @@ namespace MudBlazor.Analyzers
         private static readonly LocalizableResourceString _url = new(nameof(Resources.MUD0001Url), Resources.ResourceManager, typeof(Resources));
 
         private const string Category = "Attributes/Parameters";
+        public const string DebugAnalyzerProperty = "build_property.MudDebugAnalyzer";
+        public const string AllowedAttributePatternProperty = "build_property.mudallowedattributepattern";
+        public const string IllegalParametersProperty = "build_property.mudillegalparameters";
 
         private static readonly DiagnosticDescriptor _parameterRule = new(DiagnosticId1, _title, _parameterMessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: _description, helpLinkUri: _url.ToString());
         private static readonly DiagnosticDescriptor _attributeRule = new(DiagnosticId2, _title, _attributeMessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: _description, helpLinkUri: _url.ToString());
@@ -39,25 +44,25 @@ namespace MudBlazor.Analyzers
                 var global = ctx.Options.AnalyzerConfigOptionsProvider.GlobalOptions;
 
 
-                if (global.TryGetValue("build_property.MudDebugAnalyzer", out var debugValue) &&
+                if (global.TryGetValue(DebugAnalyzerProperty, out var debugValue) &&
                     bool.TryParse(debugValue, out var shouldDebug) && shouldDebug)
                 {
                     Debugger.Launch();
                 }
 
-                if (!global.TryGetValue("build_property.mudallowedattributepattern", out var allowPattern)
+                if (!global.TryGetValue(AllowedAttributePatternProperty, out var allowPattern)
                    || !Enum.TryParse<AllowedAttributePattern>(allowPattern, out var allowedAttributePattern))
                 {
                     allowedAttributePattern = AllowedAttributePattern.LowerCase;
                 }
 
-                if (!global.TryGetValue("build_property.mudillegalparameters", out var deny)
+                if (!global.TryGetValue(IllegalParametersProperty, out var deny)
                     || !Enum.TryParse<IllegalParameters>(deny, out var illegalParameters))
                 {
                     illegalParameters = IllegalParameters.V7IgnoreCase;
                 }
 
-                if (illegalParameters == IllegalParameters.None && allowedAttributePattern == AllowedAttributePattern.Any)
+                if (illegalParameters == IllegalParameters.Disabled && allowedAttributePattern == AllowedAttributePattern.Any)
                     return;
 
                 var illegalParameterSet = new IllegalParameterSet(ctx.Compilation, illegalParameters);
@@ -71,7 +76,6 @@ namespace MudBlazor.Analyzers
 
             });
         }
-
 
         private sealed class AnalyzerContext(Compilation compilation, IllegalParameterSet illegalParameterSet, AllowedAttributePattern allowedAttributePattern)
         {
@@ -90,53 +94,9 @@ namespace MudBlazor.Analyzers
             {
                 try
                 {
-                    var blockOperation = (IBlockOperation)context.Operation;
-                    ITypeSymbol? currentComponent = null;
-                    ComponentDescriptor? currentComponentDescriptor = null;
-                    RazorHelper? currentRazorHelper = null;
-
-                    foreach (var operation in blockOperation.Operations)
-                    {
-                        if (operation is IExpressionStatementOperation expressionStatement)
-                        {
-                            if (expressionStatement.Operation is IInvocationOperation invocation)
-                            {
-                                var targetMethod = invocation.TargetMethod;
-                                if (targetMethod.ContainingType.IsEqualTo(RenderTreeBuilderSymbol))
-                                {
-                                    if (string.Equals(targetMethod.Name, "OpenComponent", StringComparison.Ordinal) && targetMethod.TypeArguments.Length == 1)
-                                    {
-                                        if (targetMethod.TypeArguments.Length == 1)
-                                        {
-                                            var componentType = targetMethod.TypeArguments[0];
-                                            if (componentType.IsOrInheritFrom(MudComponentBaseType) /* componentType.IsOrImplements(IComponentSymbol)*/)
-                                            {
-                                                currentComponent = componentType;
-                                                currentComponentDescriptor = _componentDescriptors.GetOrAdd(currentComponent, ComponentDescriptor.GetComponentDescriptor(componentType, ParameterSymbol));
-                                            }
-                                        }
-                                    }
-                                    else if (string.Equals(targetMethod.Name, "CloseComponent", StringComparison.Ordinal))
-                                    {
-                                        currentComponent = null;
-                                        currentComponentDescriptor = null;
-                                        currentRazorHelper = null;
-                                    }
-                                    else if (currentComponent is not null && targetMethod.Name is "AddAttribute" or "AddComponentParameter")
-                                    {
-                                        if (targetMethod.Parameters.Length >= 2 && targetMethod.Parameters[1].Type.IsString())
-                                        {
-                                            var value = invocation.Arguments[1].Value.ConstantValue;
-                                            if (value.HasValue && value.Value is string parameterName)
-                                            {
-                                                ValidateAttribute(currentRazorHelper, context, invocation, currentComponentDescriptor, currentComponent, parameterName);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    var classSymbol = context.Operation.GetClassSymbol(context);
+                    if (classSymbol is not null && classSymbol.IsOrInheritFrom(ComponentBaseSymbol, _symbolComparer))
+                        TraverseTree(context, (IBlockOperation)context.Operation, classSymbol.ToDisplayString());
                 }
                 catch (OperationCanceledException)
                 {
@@ -144,8 +104,68 @@ namespace MudBlazor.Analyzers
                 }
             }
 
-            private void ValidateAttribute(RazorHelper? razorHelper, OperationAnalysisContext context, IInvocationOperation invocation,
-                ComponentDescriptor? componentDescriptor, ITypeSymbol componentType, string parameterName)
+            public void TraverseTree(OperationAnalysisContext context, IBlockOperation operations, string className)
+            {
+                ITypeSymbol? currentComponent = null;
+                ComponentDescriptor? currentComponentDescriptor = null;
+
+                foreach (var operation in operations.Operations)
+                {
+                    if (operation is IExpressionStatementOperation expressionStatement)
+                    {
+                        if (expressionStatement.Operation is IInvocationOperation invocation)
+                        {
+                            var targetMethod = invocation.TargetMethod;
+
+                            if (targetMethod.ContainingType.IsEqualTo(RenderTreeBuilderSymbol))
+                            {
+                                if (string.Equals(targetMethod.Name, "OpenComponent", StringComparison.Ordinal) && targetMethod.TypeArguments.Length == 1)
+                                {
+                                    var componentType = targetMethod.TypeArguments[0];
+                                    if (componentType.IsOrInheritFrom(MudComponentBaseType))
+                                    {
+                                        currentComponent = componentType;
+                                        currentComponentDescriptor = _componentDescriptors.GetOrAdd(currentComponent, ComponentDescriptor.GetComponentDescriptor(componentType, ParameterSymbol));
+                                    }
+                                }
+                                else if (string.Equals(targetMethod.Name, "CloseComponent", StringComparison.Ordinal))
+                                {
+                                    currentComponent = null;
+                                    currentComponentDescriptor = null;
+                                }
+                                else if (currentComponent is not null && targetMethod.Name is "AddAttribute" or "AddComponentParameter")
+                                {
+                                    if (targetMethod.Parameters.Length >= 2 && targetMethod.Parameters[1].Type.IsString())
+                                    {
+                                        var pName = invocation.Arguments[1].Value.ConstantValue;
+
+                                        if (pName.HasValue && pName.Value is string parameterName)
+                                            ValidateAttribute(context, invocation, currentComponentDescriptor, currentComponent, parameterName, className);
+                                    }
+                                }
+                            }
+                            else if (string.Equals(targetMethod.ContainingType.MetadataName, "TypeInference", StringComparison.Ordinal))
+                            {
+                                var methods = context.FilterTree.GetRoot().DescendantNodes().OfType<MethodDeclarationSyntax>();
+                                var method = methods?.Where(x => x.Identifier.ValueText == targetMethod.MetadataName).SingleOrDefault();
+
+                                if (method is not null)
+                                {
+                                    var op = context.Compilation.GetSemanticModel(method.SyntaxTree).GetOperation(method);
+                                    if (op != null)
+                                    {
+                                        var blockOperation = op.ChildOperations.OfType<IBlockOperation>().Single();
+                                        TraverseTree(context, blockOperation, className);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            private void ValidateAttribute(OperationAnalysisContext context, IInvocationOperation invocation,
+                ComponentDescriptor? componentDescriptor, ITypeSymbol componentType, string parameterName, string className)
             {
                 if (componentDescriptor is null || componentDescriptor.Parameters.Contains(parameterName))
                     return;
@@ -158,7 +178,7 @@ namespace MudBlazor.Analyzers
                         {
                             if (componentType.IsOrInheritFrom(illegalParam.Key, _symbolComparer) && illegalParam.Value.Contains(parameterName, illegalParameterSet.Comparer))
                             {
-                                ReportDiagnosticRazorMapped(razorHelper, _parameterRule, context, invocation, parameterName, componentDescriptor, illegalParameterSet.IllegalParameters.ToString());
+                                Report(_parameterRule, context, invocation, parameterName, componentDescriptor, className, illegalParameterSet.IllegalParameters.ToString());
                                 return;
                             }
                         }
@@ -173,29 +193,33 @@ namespace MudBlazor.Analyzers
                         case AllowedAttributePattern.Any:
                             return;
                         default:
-                            ReportDiagnosticRazorMapped(razorHelper, _attributeRule, context, invocation, parameterName, componentDescriptor, allowedAttributePattern.ToString());
+                            Report(_attributeRule, context, invocation, parameterName, componentDescriptor, className, allowedAttributePattern.ToString());
                             return;
                     }
+                }
+            }
 
+            private void Report(DiagnosticDescriptor diagnosticDescriptor, OperationAnalysisContext context, IInvocationOperation invocation,
+                string parameterName, ComponentDescriptor componentDescriptor, string className, string pattern)
+            {
+                var location = invocation.Syntax.GetLocation();
+                var mappedLocation = location;
+
+                var razorPath = invocation.GetRazorFilePath();
+                if (razorPath is not null)
+                {
+                    var newLineSpan = new LinePositionSpan(new LinePosition(), new LinePosition());
+                    mappedLocation = Location.Create(razorPath, new TextSpan(0, 0), newLineSpan);
                 }
 
+                context.ReportDiagnostic(
+                 Diagnostic.Create(
+                    descriptor: diagnosticDescriptor,
+                    location: mappedLocation,
+                    additionalLocations: [location],
+                    properties: ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string?>(ClassNamePropertyKey, className) }),
+                    messageArgs: [parameterName, componentDescriptor.TagName, pattern, location.GetLineSpan().Span]));
             }
-
-            private void ReportDiagnosticRazorMapped(RazorHelper? razorHelper, DiagnosticDescriptor diagnosticDescriptor, OperationAnalysisContext context, IInvocationOperation invocation,
-                string parameterName, ComponentDescriptor componentDescriptor, string pattern)
-            {
-                razorHelper ??= new RazorHelper(context, invocation, componentDescriptor);
-                razorHelper.TryGetRazorLocation(parameterName, out var newLocation);
-
-                context.ReportDiagnostic(Diagnostic.Create(diagnosticDescriptor, newLocation,
-                    [newLocation],
-                    parameterName, componentDescriptor.TagName, pattern));
-            }
-
-
-
-
-
 
         }
     }

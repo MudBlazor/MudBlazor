@@ -8,13 +8,7 @@
     <WarningsAsErrors>true</WarningsAsErrors>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
   </PropertyGroup>
-
-  <ItemGroup>
-    <CompilerVisibleProperty Include="MudDebugAnalyzer" />
-    <CompilerVisibleProperty Include="MudAllowedAttributePattern" />
-    <CompilerVisibleProperty Include="MudIllegalParameters" />
-  </ItemGroup>
-
+  
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
       <PrivateAssets>all</PrivateAssets>

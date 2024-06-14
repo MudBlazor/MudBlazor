@@ -121,7 +121,7 @@
     <value>This is not a component parameter, it could be an attribute.</value>
   </data>
   <data name="MUD0001MessageFormat" xml:space="preserve">
-    <value>Illegal Parameter '{0}' detected on component '{1}' using '{2}'</value>
+    <value>Illegal Parameter '{0}' on '{1}' using '{2}' source location '{3}'</value>
   </data>
   <data name="MUD0001Title" xml:space="preserve">
     <value>Unknown MudBlazor attribute/parameter</value>
@@ -130,6 +130,6 @@
     <value>https://mudblazor.com/features/analyzers</value>
   </data>
   <data name="MUD0002MessageFormat" xml:space="preserve">
-    <value>Illegal Attribute '{0}' detected on component '{1}' using pattern '{2}'</value>
+    <value>Illegal Attribute '{0}' on '{1}' using pattern '{2}' source location '{3}'</value>
   </data>
 </root>

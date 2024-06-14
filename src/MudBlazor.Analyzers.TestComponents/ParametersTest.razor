@@ -1,0 +1,62 @@
+﻿@*Line and character positions are matched from the source gen file so any amendment may mean updating them*@
+@*comment test <MudChip AvatarClass="y">*@
+@*illegal parameter with value *@
+<MudChip T="string" Text="Href set" AvatarClass="y" />
+@*illegal parameter with value full tag *@
+<MudChip T="string" Text="Href set" AvatarClass></MudChip>
+@*illegal parameter different case *@
+<MudChip T="string" Text="Href set" avatarclass></MudChip>
+@*illegal parameter no value *@
+<MudSlider T="int" Text/>
+@*illegal parameter no value full tag  *@
+<MudSlider T="int" Text></MudSlider>
+@*casing*@
+<MudChip T="string" Text="Href set" lowerCase UpperCase/>
+@*dataandaria*@
+<MudChip T="string" Text="Href set" data-animation="a" aria-disabled="false" />
+@*inheritence with AvatarClass implemented *@
+<InheritedMudChip T="string" Text="Href set" Avatar="" AvatarClass="@bindx" />
+@*sub component*@
+<MudContainer>
+    <MudAvatar Image="y" />
+</MudContainer>
+
+@*in code section*@
+@{
+    <MudChip T="string" AvatarClass="@bindx" />
+}
+
+@*in loop section*@
+@for (int i = 0; i < 5; i++)
+{
+    string z = @"<MudChip AvatarClass=""y"">";
+    //comment test <MudChip AvatarClass="y">
+    /*
+    * comment test <MudChip AvatarClass="y">
+    */
+    <MudChip T="string" Text="Href set" AvatarClass="@z" />
+}
+
+@*bind-Text will create TextChanged event which is invalid*@
+<MudChip Value="@bindx" @bind-Text=@bindx />
+
+@*bind-Value will mean a TypeInference class in source generator*@
+<MudChip @bind-Value="@bindx" Text="Href set" @bind-Value:after="Test" AvatarClass="@bindx" />
+
+@*bind- case2*@
+<MudChip T="string" @bind="@bindx" Text="Href set" @bind:after="Test" />
+
+@*valid bind*@
+<MudTextField @bind-Value="@bindx" @bind-Value:after="Test" Label="Standard" Variant="Variant.Text"></MudTextField>
+
+@code
+{
+    public static string __description__ = "Invalid parameter Avatar on MudChip";
+
+    public string bindx = "y";
+
+    internal Task Test()
+    {
+        return Task.CompletedTask;
+    }
+}

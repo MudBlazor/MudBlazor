@@ -46,6 +46,18 @@
     <None Include="..\..\content\Nuget.png" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
 
+  <!--Analyzer Config-->
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <MudAllowedAttributePattern>Any</MudAllowedAttributePattern>
+    <MudIllegalParameters>Disabled</MudIllegalParameters>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <MudAllowedAttributePattern>LowerCase</MudAllowedAttributePattern>
+    <MudIllegalParameters>V7IgnoreCase</MudIllegalParameters>
+    <MudDebugAnalyzer>false</MudDebugAnalyzer>
+  </PropertyGroup>
+
   <!--Is this a rebuild - Dont clean generated files as this breaks rebuild behaviour-->
   <Target Name="ShouldCleanGeneratedFiles" BeforeTargets="BeforeRebuild">
     <PropertyGroup>
@@ -87,17 +99,14 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
-
+  
   <ItemGroup>
-    <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" Pack="false">
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <OutputItemType>Content</OutputItemType>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </ProjectReference>
-  </ItemGroup>
-
+    <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="true" OutputItemType="Analyzer" SetTargetFramework="TargetFramework=netstandard2.0" />
+    </ItemGroup>
+  
   <ItemGroup>
     <None Include="$(OutputPath)\net7.0\$(AssemblyName).Analyzers.dll" Pack="true" PackagePath="analyzers/dotnet/cs/" Visible="true" />
+    <Content Include="..\Directory.Build.targets" Pack="true" PackagePath="build\$(PackageId).targets" Visible="true" />
   </ItemGroup>
 
   <!--Dont Include in build output-->
@@ -123,7 +132,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor.SourceCodeGenerator\MudBlazor.SourceCodeGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-  </ItemGroup>
+ </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Update="Resources\LanguageResource.resx">

@@ -1,4 +1,8 @@
-﻿namespace MudBlazor.Analyzers.Internal
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+namespace MudBlazor.Analyzers.Internal
 {
     internal sealed class ComponentDescriptor
     {
@@ -7,7 +11,6 @@
 
         internal static ComponentDescriptor GetComponentDescriptor(ITypeSymbol typeSymbol, INamedTypeSymbol? parameterSymbol)
         {
-
             var descriptor = new ComponentDescriptor();
             var currentSymbol = typeSymbol as INamedTypeSymbol;
             if (currentSymbol is not null)
