@@ -14,7 +14,8 @@ namespace MudBlazor
         public static string GetFullPathOfMember<T>(this Expression<Func<T>> property)
         {
             var resultingString = string.Empty;
-            var p = property.Body as MemberExpression;
+            // Add handling for validation expressions that refer to non-nullable properties (#8931):
+            var p = (property.Body as MemberExpression ?? (MemberExpression)((UnaryExpression)property.Body).Operand);
 
             while (p is not null)
             {
