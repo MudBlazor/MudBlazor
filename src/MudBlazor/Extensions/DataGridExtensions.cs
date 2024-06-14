@@ -13,6 +13,9 @@ namespace MudBlazor
         public static IEnumerable<T> OrderBySortDefinitions<T>(this IEnumerable<T> source, GridState<T> state)
             => OrderBySortDefinitions(source, state.SortDefinitions);
 
+        public static IQueryable<T> OrderBySortDefinitions<T>(this IQueryable<T> source, GridState<T> state)
+            => OrderBySortDefinitions(source, state.SortDefinitions);
+
         public static IEnumerable<T> OrderBySortDefinitions<T>(this IEnumerable<T> source, ICollection<SortDefinition<T>> sortDefinitions)
         {
             //avoid multiple enumeration
@@ -41,6 +44,40 @@ namespace MudBlazor
                 {
                     orderedEnumerable = sortDefinition.Descending ? orderedEnumerable.ThenByDescending(sortDefinition.SortFunc)
                         : orderedEnumerable.ThenBy(sortDefinition.SortFunc);
+                }
+            }
+
+            return orderedEnumerable ?? source;
+        }
+
+        public static IQueryable<T> OrderBySortDefinitions<T>(this IQueryable<T> source, ICollection<SortDefinition<T>> sortDefinitions)
+        {
+            if (!source.Any())
+            {
+                return source;
+            }
+
+            if (sortDefinitions.Count == 0)
+            {
+                return source;
+            }
+
+            var sourceOrderedIQueryable = source.OrderBy(x => x);
+            IOrderedQueryable<T>? orderedEnumerable = null;
+
+            foreach (var sortDefinition in sortDefinitions)
+            {
+                if (orderedEnumerable is null)
+                {
+                    orderedEnumerable = sortDefinition.Descending
+                        ? sourceOrderedIQueryable.OrderByDescending(x => sortDefinition.SortFunc)
+                        : sourceOrderedIQueryable.OrderBy(x => sortDefinition.SortFunc); 
+                }
+                else
+                {
+                    orderedEnumerable = sortDefinition.Descending
+                        ? orderedEnumerable.ThenByDescending(x => sortDefinition.SortFunc, sortDefinition.Comparer)
+                        : orderedEnumerable.ThenBy(x => sortDefinition.SortFunc, sortDefinition.Comparer);
                 }
             }
 
