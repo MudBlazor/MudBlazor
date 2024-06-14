@@ -308,6 +308,8 @@ dotnet_diagnostic.IDE0056.severity = none
 dotnet_diagnostic.IDE0057.severity = none
 # BL0007 Component Parameters must be auto props
 dotnet_diagnostic.BL0007.severity = suggestion
+# IDE0290 Use primary constructor
+dotnet_diagnostic.IDE0290.severity = none
 
 [*]
 end_of_line = lf
