@@ -132,7 +132,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../MudBlazor.SourceGenerator/MudBlazor.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
- </ItemGroup>
+  </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Update="Resources\LanguageResource.resx">
