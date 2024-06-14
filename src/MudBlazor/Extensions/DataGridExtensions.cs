@@ -10,6 +10,18 @@ namespace MudBlazor
 #nullable enable
     public static class DataGridExtensions
     {
+        public static IEnumerable<T> ApplyFilters<T>(this IEnumerable<T> source,
+            GridState<T> state, FilterOptions? filterOptions = null)
+            => ApplyFilters(source, state.FilterDefinitions, filterOptions);
+
+        public static IEnumerable<T> ApplyFilters<T>(this IEnumerable<T> source,
+            ICollection<IFilterDefinition<T>> filterDefinitions, FilterOptions? filterOptions)
+        {
+            IEnumerable<T> sourceArray = source as T[] ?? source.ToArray();
+            return filterDefinitions.Aggregate(
+                sourceArray, (current, filterDefinition) => current.Where(filterDefinition.GenerateFilterFunction(filterOptions)));
+        }
+
         public static IEnumerable<T> OrderBySortDefinitions<T>(this IEnumerable<T> source, GridState<T> state)
             => OrderBySortDefinitions(source, state.SortDefinitions);
 
