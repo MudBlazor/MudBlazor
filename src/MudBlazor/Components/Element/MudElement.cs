@@ -6,7 +6,7 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// A primitive component that renders an HTML element.
+    /// A primitive component which allows dynamically changing the HTML element rendered under the hood.
     /// </summary>
     public class MudElement : MudComponentBase
     {
