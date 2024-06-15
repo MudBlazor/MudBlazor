@@ -175,13 +175,11 @@ namespace MudBlazor
 
         protected bool GetDisabledState() => Disabled || ParentDisabled || ParentReadOnly;
 
-        /// <summary>
-        /// Clears any uploaded files.
-        /// </summary>
-        public Task ClearAsync()
+        public async Task ClearAsync()
         {
             _value = default;
-            return NotifyValueChangedAsync();
+            await NotifyValueChangedAsync();
+            await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInput.resetValue", _id);
         }
 
         /// <summary>
