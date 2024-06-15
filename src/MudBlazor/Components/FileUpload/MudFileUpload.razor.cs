@@ -19,7 +19,7 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// A form component for uploading files.
+    /// A form component for uploading one or more files.  For <c>T</c>, use either <c>IBrowserFile</c> for a single file or <c>IReadOnlyCollection&lt;IBrowserFile&gt;</c> for multiple files.
     /// </summary>
     /// <typeparam name="T">Either <see cref="IBrowserFile"/> for a single file or <see cref="IReadOnlyCollection{IBrowserFile}">IReadOnlyCollection&lt;IBrowserFile&gt;</see> for multiple files.</typeparam>
     public partial class MudFileUpload<T> : MudFormComponent<T, string>, IActivatable

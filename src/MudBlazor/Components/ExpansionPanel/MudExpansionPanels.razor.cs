@@ -9,7 +9,7 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// A set of <see cref="MudExpansionPanel"/> components.
+    /// A container which manages <see cref="MudExpansionPanel"/> components such that when one panel is expanded the others are collapsed automatically.
     /// </summary>
     public partial class MudExpansionPanels : MudComponentBase
     {
@@ -122,7 +122,6 @@ namespace MudBlazor
         /// <summary>
         /// Refreshes the expansion state of all panels.
         /// </summary>
-        /// <returns></returns>
         public Task UpdateAllAsync()
         {
             MudExpansionPanel? last = null;

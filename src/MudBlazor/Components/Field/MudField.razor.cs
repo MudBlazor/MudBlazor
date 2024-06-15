@@ -73,7 +73,7 @@ namespace MudBlazor
         public bool Error { get; set; }
 
         /// <summary>
-        /// A description of this field's error when <see cref="Error"/> is <c>true</c>.
+        /// A description of this field's error that is displayed under the field when <see cref="Error"/> is <c>true</c>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Field.Validation)]
@@ -83,7 +83,7 @@ namespace MudBlazor
         /// The text displayed below the text field.
         /// </summary>
         /// <remarks>
-        /// This property is typically used to help the user understand what kind of input is allowed.
+        /// Typically used to help the user understand what kind of input is allowed.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Field.Behavior)]

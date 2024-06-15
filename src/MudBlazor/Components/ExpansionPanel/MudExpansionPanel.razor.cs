@@ -9,8 +9,11 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// A set of panels which can be expanded to show more content.
+    /// A component which can be expanded to show more content or collapsed to show only its header.
     /// </summary>
+    /// <remarks>
+    /// This component is always inside a <see cref="MudExpansionPanels"/> component.
+    /// </remarks>
     public partial class MudExpansionPanel : MudComponentBase, IDisposable
     {
         internal readonly ParameterState<bool> _expandedState;
@@ -38,7 +41,7 @@ namespace MudBlazor
         /// The maximum allowed height, in pixels.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.
+        /// Defaults to <c>null</c>.  When <c>null</c>, the CSS default is used for maximum height.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
@@ -114,14 +117,14 @@ namespace MudBlazor
         /// Displays the panel content.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  Can be bound via <c>@bind-Expanded</c>.
+        /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
         public bool Expanded { get; set; }
 
         /// <summary>
-        /// Disables user interaction with this panel.
+        /// Disables user interaction and prevents <see cref="ToggleExpansionAsync"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -199,7 +202,6 @@ namespace MudBlazor
         /// <summary>
         /// Hides the content in this panel.
         /// </summary>
-        /// <returns></returns>
         public async Task CollapseAsync()
         {
             await _expandedState.SetValueAsync(false);

@@ -13,9 +13,6 @@ public enum DefaultFocus
     /// <summary>
     /// This component will receive focus.
     /// </summary>
-    /// <remarks>
-    /// The user can press the <c>Tab</c> key to move to the next element.
-    /// </remarks>
     Element,
 
     /// <summary>
