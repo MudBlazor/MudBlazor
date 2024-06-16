@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using AngleSharp.Diffing.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using MudBlazor.Analyzers;
-
 
 namespace MudBlazor.UnitTests.Analyzers.Helpers
 {

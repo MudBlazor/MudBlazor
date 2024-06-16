@@ -3,21 +3,10 @@ using FluentAssertions;
 using MudBlazor.Analyzers;
 using NUnit.Framework;
 using MudBlazor.UnitTests.Analyzers.Helpers;
-using System.Linq;
-using System.IO;
-using MudBlazor.UnitTests.TestComponents;
-using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using System.Collections.Immutable;
 using System.Collections.Generic;
-using System;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.Build.Evaluation;
-using System.Text;
 using Microsoft.CodeAnalysis.Text;
-using System.Diagnostics;
 using MudBlazor.Analyzers.TestComponents;
 
 namespace MudBlazor.UnitTests.Components
@@ -73,7 +62,7 @@ namespace MudBlazor.UnitTests.Components
 
         private FileLinePositionSpan BindParameter { get; set; } = new FileLinePositionSpan($"{nameof(ParametersTest)}_razor.g.cs", new LinePosition(210, 12), new LinePosition(218, 13));
         private FileLinePositionSpan BindAfter { get; set; } = new FileLinePositionSpan($"{nameof(ParametersTest)}_razor.g.cs", new LinePosition(220, 12), new LinePosition(220, 70));
-        
+
         private FileLinePositionSpan TextChangedTypeInference { get; set; } = new FileLinePositionSpan($"{nameof(ParametersTest)}_razor.g.cs", new LinePosition(277, 8), new LinePosition(277, 70));
         private FileLinePositionSpan AvatarClassTypeInference { get; set; } = new FileLinePositionSpan($"{nameof(ParametersTest)}_razor.g.cs", new LinePosition(284, 8), new LinePosition(284, 70));
         private FileLinePositionSpan ValueChangedTypeInference { get; set; } = new FileLinePositionSpan($"{nameof(ParametersTest)}_razor.g.cs", new LinePosition(286, 8), new LinePosition(286, 71));
@@ -119,7 +108,7 @@ namespace MudBlazor.UnitTests.Components
             diagnostics.Count.Should().Be(expectedLocations.Count);
             diagnostics.CompareLocations(expectedLocations);
         }
-        
+
         [Test]
         public void AttributesLowerCase()
         {
@@ -146,7 +135,7 @@ namespace MudBlazor.UnitTests.Components
             diagnostics.CompareLocations(expectedLocations);
         }
 
-        
+
         [Test]
         public void AttributesDataAndAria()
         {
@@ -199,15 +188,6 @@ namespace MudBlazor.UnitTests.Components
                 AvatarClassTypeInference,
                 ValueChangedTypeInference]);
 
-            /*generate positions*/
-            string dd = "";
-            foreach (var diag in diagnostics.OrderBy(x => x.AdditionalLocations.First().GetLineSpan().StartLinePosition.Line))
-            {
-                var lineSpan = diag.AdditionalLocations.First().GetLineSpan();
-                dd += $"private FileLinePositionSpan IllegalParameter {{ get; set; }} = new FileLinePositionSpan($\"{{nameof(ParametersTest)}}_razor.g.cs\", new LinePosition({lineSpan.StartLinePosition.Line}, {lineSpan.StartLinePosition.Character}), new LinePosition({lineSpan.EndLinePosition.Line}, {lineSpan.EndLinePosition.Character}));\n";
-            }          
-            
-                
             diagnostics.Count.Should().Be(expectedLocations.Count);
             diagnostics.CompareLocations(expectedLocations);
         }
