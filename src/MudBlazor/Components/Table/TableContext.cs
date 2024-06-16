@@ -8,6 +8,13 @@ using MudBlazor.Extensions;
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// The current state of a <see cref="MudTable{T}"/>.
+    /// </summary>
+    /// <remarks>
+    /// Typically used to share functionality across a table's related components.
+    /// </remarks>
     public abstract class TableContext
     {
         public MudTableBase? Table { get; set; }
