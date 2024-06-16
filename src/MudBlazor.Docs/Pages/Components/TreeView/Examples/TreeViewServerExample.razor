@@ -4,48 +4,31 @@
 <MudPaper Width="300px" Elevation="0">
     <MudTreeView ServerData="LoadServerData" Items="TreeItems">
         <ItemTemplate>
-            <MudTreeViewItem Text="@context.Text" Value="@context.Value" Icon="@context.Icon" LoadingIconColor="Color.Info" CanExpand="@context.Expandable"
-                             EndText="@((context as ExampleTreeItemData).Number?.ToString())" EndTextTypo="@Typo.caption" />
+            <MudTreeViewItem Value="@context.Value" Icon="@context.Icon" LoadingIconColor="Color.Info" CanExpand="@context.Expandable"/>
         </ItemTemplate>
     </MudTreeView>
 </MudPaper>
 
 @code {
-    private List<ExampleTreeItemData> TreeItems { get; set; } = new();
-
-    public class ExampleTreeItemData : TreeItemData<string>
-    {
-        public ExampleTreeItemData(string value) : base(value)
-        {
-            Text = value;
-        }
-
-        public int? Number { get; set; }
-    }
+    private List<TreeItemData<string>> TreeItems { get; set; } = new();
 
     protected override void OnInitialized()
     {
-        TreeItems.Add(new ExampleTreeItemData("All Mail") { Icon = Icons.Material.Filled.Email, Number = 2345 });
-        TreeItems.Add(new ExampleTreeItemData("Trash") { Icon = Icons.Material.Filled.Delete, Expandable = false });
-        TreeItems.Add(new ExampleTreeItemData("Categories") {
-                Icon = Icons.Material.Filled.Label,
-                Expanded = true,
+        TreeItems.Add(new TreeItemData<string> {
+                Value = "All Mail", Icon = Icons.Material.Filled.Label, Expanded = true,
                 Children = [
-                            new ExampleTreeItemData("Promotions") { 
-                                Icon = Icons.Material.Filled.Group, 
-                                Number = 4,
+                        new TreeItemData<string> { Value = "Promotions", Icon = Icons.Material.Filled.Group, 
                                 Children = [
-                                    new ExampleTreeItemData("L.E.D Door Mats") { Icon = Icons.Material.Outlined.Lightbulb, Expandable = false },
-                                    new ExampleTreeItemData("Car Beauty Salon") { Icon = Icons.Material.Filled.CarRepair, Expandable = false },
-                                    new ExampleTreeItemData("Fakedoors.com") { Icon = Icons.Material.Outlined.DoorFront, Expandable = false },
-                                    new ExampleTreeItemData("Bluetooth Toilet") { Icon = Icons.Material.Filled.Wc, Expandable = false }
+                                    new TreeItemData<string> { Value = "L.E.D Door Mats", Icon = Icons.Material.Outlined.Lightbulb, Expandable = false },
+                                    new TreeItemData<string> { Value = "Car Beauty Salon", Icon = Icons.Material.Filled.CarRepair, Expandable = false },
+                                    new TreeItemData<string> { Value = "Fakedoors.com", Icon = Icons.Material.Outlined.DoorFront, Expandable = false },
+                                    new TreeItemData<string> { Value = "Bluetooth Toilet", Icon = Icons.Material.Filled.Wc, Expandable = false }
                                 ]},
-                        new ExampleTreeItemData("Updates") { Icon = Icons.Material.Filled.Info, Number = 2294, Expandable = false },
-                        new ExampleTreeItemData("Forums") { Icon = Icons.Material.Filled.QuestionAnswer, Number = 3566, Expandable = false },
-                        new ExampleTreeItemData("Social") { Icon = Icons.Material.Filled.LocalOffer, Number = 733, Expandable = false }
-                    ]
-            });
-        TreeItems.Add(new ExampleTreeItemData("History") { Icon = Icons.Material.Filled.Label, Number = 69 });
+                    new TreeItemData<string> { Value = "Updates", Icon = Icons.Material.Filled.Info, Expandable = false },
+                    new TreeItemData<string> { Value = "Forums", Icon = Icons.Material.Filled.QuestionAnswer, Expandable = false },
+                    new TreeItemData<string> { Value = "Social", Icon = Icons.Material.Filled.LocalOffer, Expandable = false }
+                ]});
+        TreeItems.Add(new TreeItemData<string> { Value = "Trash", Icon = Icons.Material.Filled.Delete });
     }
 
     public async Task<IReadOnlyCollection<TreeItemData<string>>> LoadServerData(string parentValue)
