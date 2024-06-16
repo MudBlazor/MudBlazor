@@ -8,6 +8,9 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// A container which manages <see cref="MudExpansionPanel"/> components such that when one panel is expanded the others are collapsed automatically.
+    /// </summary>
     public partial class MudExpansionPanels : MudComponentBase
     {
         private List<MudExpansionPanel> _panels = new();
@@ -19,49 +22,67 @@ namespace MudBlazor
                 .Build();
 
         /// <summary>
-        /// If true, border-radius is set to 0.
+        /// Uses square corners for the panel.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
         public bool Square { get; set; }
 
         /// <summary>
-        /// If true, multiple panels can be expanded at the same time.
+        /// Allows multiple panels to be expanded at the same time.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
         public bool MultiExpansion { get; set; }
 
         /// <summary>
-        /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
+        /// The size of the drop shadow.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>1</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
         public int Elevation { set; get; } = 1;
 
         /// <summary>
-        /// If true, removes vertical padding from all panels' <see cref="ChildContent"/>.
+        /// Uses compact padding for all panels.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
         public bool Dense { get; set; }
 
         /// <summary>
-        /// If true, left and right padding is added to all panels' <see cref="ChildContent"/>. Default is true
+        /// Adds left and right padding to all panels.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
         public bool Gutters { get; set; } = true;
 
         /// <summary>
-        /// Determines whether the borders around each panel are shown.
+        /// Shows borders around each panel.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
         public bool Outlined { get; set; } = true;
 
         /// <summary>
-        /// Child content of component.
+        /// The content within this component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
@@ -98,6 +119,9 @@ namespace MudBlazor
             await UpdateAllAsync();
         }
 
+        /// <summary>
+        /// Refreshes the expansion state of all panels.
+        /// </summary>
         public Task UpdateAllAsync()
         {
             MudExpansionPanel? last = null;
@@ -118,7 +142,7 @@ namespace MudBlazor
         /// <summary>
         /// Collapses all panels except the given one.
         /// </summary>
-        /// <param name="panel">The panel not to collapse.</param>
+        /// <param name="panel">The panel to keep expanded.</param>
         public async Task CollapseAllExceptAsync(MudExpansionPanel panel)
         {
             foreach (var expansionPanel in _panels)
@@ -134,7 +158,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Collapses all panels.
+        /// Hides the content of all panels.
         /// </summary>
         public async Task CollapseAllAsync()
         {
@@ -146,7 +170,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Expands all panels.
+        /// Shows the content of all panels.
         /// </summary>
         public async Task ExpandAllAsync()
         {
