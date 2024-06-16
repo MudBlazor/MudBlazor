@@ -32,6 +32,8 @@
                   @oncut="OnCut"
                   @oncopy="OnCopy"
                   inputmode="@InputMode.ToDescriptionString()"
+                  aria-describedby="@GetAriaDescribedByString()"
+                  aria-invalid="@Error.ToString().ToLowerInvariant()"
                   required="@Required"
                   aria-required="@Required.ToString().ToLowerInvariant()">
             @Text
@@ -53,6 +55,8 @@
                @oncut="OnCut"
                @oncopy="OnCopy"
                inputmode="@InputMode.ToDescriptionString()"
+               aria-describedby="@GetAriaDescribedByString()"
+               aria-invalid="@Error.ToString().ToLowerInvariant()"
                required="@Required"
                aria-required="@Required.ToString().ToLowerInvariant()">
     }

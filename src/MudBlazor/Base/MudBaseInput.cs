@@ -141,7 +141,7 @@ namespace MudBlazor
         /// The location of the adornment icon or text.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Adornment.None"/>.  When set to <c>Start</c> or <c>End</c>, the <see cref="AdornmentText"/> will be displayed, or <see cref="AdornmentIcon"/> if no adornment text is specified.  
+        /// Defaults to <see cref="Adornment.None"/>.  When set to <c>Start</c> or <c>End</c>, the <see cref="AdornmentText"/> will be displayed, or <see cref="AdornmentIcon"/> if no adornment text is specified.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
@@ -700,6 +700,19 @@ namespace MudBlazor
             _validated = false;
             await base.ResetValueAsync();
         }
+
+        protected string? GetAriaDescribedByString()
+        {
+            var errorId = ErrorId;
+            var helperId = GetHelperId();
+
+            return errorId is not null && helperId is not null
+                ? $"{errorId} {helperId}"
+                : errorId ?? helperId ?? null;
+        }
+
+        protected string? GetHelperId()
+            => HelperText is null ? null : $"{InputIdState.Value}-helper-text";
 
         /// <summary>
         /// The type of input received by this component.
