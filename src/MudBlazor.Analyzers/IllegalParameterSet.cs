@@ -73,15 +73,15 @@ namespace MudBlazor.Analyzers
 
                 AddIllegalParameterSet("MudBlazor.MudTable`1", "QuickColumns");
 
-                AddIllegalParameterSet("MudBlazor.MudComponentBase", "UnCheckedColor", "Command", "CommandParameter", "IsEnabled", 
-                    "ClassAction", "InputIcon", "InputVariant", "AllowKeyboardInput", "ClassActions", "DisableRipple", "DisableGutters", 
-                    "DisablePadding", "DisableElevation","DisableUnderLine", "DisableRowsPerPage", "Link", "Delayed", "AlertTextPosition", 
-                    "ShowDelimiters", "DelimitersColor", "DrawerWidth", "DrawerHeightTop", "DrawerHeightBottom", "AppbarMinHeight", 
-                    "ClassBackground", "Cancelled", "ClassContent", "IsExpanded", "IsExpandedChanged", "IsInitiallyExpanded", "InitiallyExpanded", 
+                AddIllegalParameterSet("MudBlazor.MudComponentBase", "UnCheckedColor", "Command", "CommandParameter", "IsEnabled",
+                    "ClassAction", "InputIcon", "InputVariant", "AllowKeyboardInput", "ClassActions", "DisableRipple", "DisableGutters",
+                    "DisablePadding", "DisableElevation", "DisableUnderLine", "DisableRowsPerPage", "Link", "Delayed", "AlertTextPosition",
+                    "ShowDelimiters", "DelimitersColor", "DrawerWidth", "DrawerHeightTop", "DrawerHeightBottom", "AppbarMinHeight",
+                    "ClassBackground", "Cancelled", "ClassContent", "IsExpanded", "IsExpandedChanged", "IsInitiallyExpanded", "InitiallyExpanded",
                     "RightAlignSmall", "IsExpandable", "ToolBarClass", "DisableToolbar", "DisableLegend", "DisableSliders", "DisablePreview",
-                    "DisableModeSwitch", "DisableInputs", "DisableDragEffect", "DisableColorField", "DisableAlpha", "DisableSidePadding", 
-                    "DisableOverlay", "DisableSliderAnimation", "DisableModifiers", "IsChecked", "IsCheckable", "IsCheckedChanged", 
-                    "IsVisible","IsVisibleChanged", "IsOpen", "IsOpened", "IsOpenChanged", "IsActive", "ItemIsDisabled", "IsSelected", 
+                    "DisableModeSwitch", "DisableInputs", "DisableDragEffect", "DisableColorField", "DisableAlpha", "DisableSidePadding",
+                    "DisableOverlay", "DisableSliderAnimation", "DisableModifiers", "IsChecked", "IsCheckable", "IsCheckedChanged",
+                    "IsVisible", "IsVisibleChanged", "IsOpen", "IsOpened", "IsOpenChanged", "IsActive", "ItemIsDisabled", "IsSelected",
                     "IsSelectedChanged", "IsEditable", "IsEditing", "IsEditSwitchBlocked", "IsHidden", "IsHiddenChanged");
             }
         }

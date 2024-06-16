@@ -2,13 +2,13 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.MSBuild;
-using Microsoft.CodeAnalysis;
-using FluentAssertions;
-using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
 using System.Threading;
+using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.MSBuild;
 
 namespace MudBlazor.UnitTests.Analyzers.Helpers
 {

@@ -4,8 +4,8 @@
 
 using System.Text;
 using System.Threading;
-using Microsoft.CodeAnalysis.Text;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Text;
 
 namespace MudBlazor.UnitTests.Analyzers.Helpers
 {

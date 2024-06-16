@@ -1,13 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentAssertions;
-using MudBlazor.Analyzers;
-using NUnit.Framework;
-using MudBlazor.UnitTests.Analyzers.Helpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis.Text;
+using MudBlazor.Analyzers;
 using MudBlazor.Analyzers.TestComponents;
+using MudBlazor.UnitTests.Analyzers.Helpers;
+using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
