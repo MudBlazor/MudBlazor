@@ -25,7 +25,7 @@
 
     protected override void OnInitialized()
     {
-        TreeItems.Add(new ExampleTreeItemData("All Mail") { Icon = Icons.Material.Filled.Email });
+        TreeItems.Add(new ExampleTreeItemData("All Mail") { Icon = Icons.Material.Filled.Email, Number = 2345 });
         TreeItems.Add(new ExampleTreeItemData("Trash") { Icon = Icons.Material.Filled.Delete, Expandable = false });
         TreeItems.Add(new ExampleTreeItemData("Categories") {
                 Icon = Icons.Material.Filled.Label,
@@ -33,19 +33,19 @@
                 Children = [
                             new ExampleTreeItemData("Promotions") { 
                                 Icon = Icons.Material.Filled.Group, 
-                                Number = 69,
+                                Number = 4,
                                 Children = [
-                                    new ExampleTreeItemData("L.E.D Door Mats") { Icon = Icons.Material.Outlined.Lightbulb, Number = 10 },
-                                    new ExampleTreeItemData("Car Beauty Salon") { Icon = Icons.Material.Filled.CarRepair, Number = 20 },
-                                    new ExampleTreeItemData("Fakedoors.com") { Icon = Icons.Material.Outlined.DoorFront, Number = 30 },
-                                    new ExampleTreeItemData("Bluetooth Toilet") { Icon = Icons.Material.Filled.Wc, Number = 42 }
+                                    new ExampleTreeItemData("L.E.D Door Mats") { Icon = Icons.Material.Outlined.Lightbulb, Expandable = false },
+                                    new ExampleTreeItemData("Car Beauty Salon") { Icon = Icons.Material.Filled.CarRepair, Expandable = false },
+                                    new ExampleTreeItemData("Fakedoors.com") { Icon = Icons.Material.Outlined.DoorFront, Expandable = false },
+                                    new ExampleTreeItemData("Bluetooth Toilet") { Icon = Icons.Material.Filled.Wc, Expandable = false }
                                 ]},
-                        new ExampleTreeItemData("Updates") { Icon = Icons.Material.Filled.Info, Number = 2294 },
-                        new ExampleTreeItemData("Forums") { Icon = Icons.Material.Filled.QuestionAnswer, Number = 3566 },
-                        new ExampleTreeItemData("Social") { Icon = Icons.Material.Filled.LocalOffer, Number = 733 }
-                ]
+                        new ExampleTreeItemData("Updates") { Icon = Icons.Material.Filled.Info, Number = 2294, Expandable = false },
+                        new ExampleTreeItemData("Forums") { Icon = Icons.Material.Filled.QuestionAnswer, Number = 3566, Expandable = false },
+                        new ExampleTreeItemData("Social") { Icon = Icons.Material.Filled.LocalOffer, Number = 733, Expandable = false }
+                    ]
             });
-        TreeItems.Add(new ExampleTreeItemData("History") { Icon = Icons.Material.Filled.Label });
+        TreeItems.Add(new ExampleTreeItemData("History") { Icon = Icons.Material.Filled.Label, Number = 69 });
     }
 
     public async Task<IReadOnlyCollection<TreeItemData<string>>> LoadServerData(string parentValue)
