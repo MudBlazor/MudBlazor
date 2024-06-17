@@ -15,13 +15,13 @@
 
     protected override void OnInitialized()
     {
-        // TreeItem initially only gets the top-level items
-        InitialTreeItems.Add(new TreeItemData<string> { Value = "All Mail", Icon = Icons.Material.Filled.Label, Expanded = true, });
+        // MudTreeView initially only gets these top-level items
+        InitialTreeItems.Add(new TreeItemData<string> { Value = "All Mail", Icon = Icons.Material.Filled.Label, });
         InitialTreeItems.Add(new TreeItemData<string> { Value = "Trash", Icon = Icons.Material.Filled.Delete });
 
         // LoadServerData will load from this hierarchy
         ServerTreeItems.Add(new TreeItemData<string> {
-                Value = "All Mail", Icon = Icons.Material.Filled.Label, Expanded = true,
+                Value = "All Mail", Icon = Icons.Material.Filled.Label,
                 Children = [
                         new TreeItemData<string> { Value = "Promotions", Icon = Icons.Material.Filled.Group, 
                                 Children = [
