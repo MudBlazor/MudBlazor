@@ -66,7 +66,7 @@ namespace MudBlazor
         /// <summary>
         /// Occurs when a request is made to close a dialog.
         /// </summary>
-        public event Action<IDialogReference, DialogResult>? OnDialogCloseRequested;
+        public event Action<IDialogReference, DialogResult?>? OnDialogCloseRequested;
 
         /// <inheritdoc />
         public IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>() where T : IComponent
@@ -276,6 +276,12 @@ namespace MudBlazor
             };
             var reference = await ShowAsync<MudMessageBox>(title: messageBoxOptions.Title, parameters: parameters, options: options);
             var result = await reference.Result;
+
+            if (result is null)
+            {
+                return null;
+            }
+
             if (result.Canceled || result.Data is not bool data)
             {
                 return null;
@@ -291,7 +297,7 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        public virtual void Close(IDialogReference dialog, DialogResult result)
+        public virtual void Close(IDialogReference dialog, DialogResult? result)
         {
             OnDialogCloseRequested?.Invoke(dialog, result);
         }
