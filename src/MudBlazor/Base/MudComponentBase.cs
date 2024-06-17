@@ -73,12 +73,13 @@ namespace MudBlazor
         /// </remarks>
         protected bool IsJSRuntimeAvailable { get; set; }
 
+        private readonly string _id = $"mudinput-{Guid.NewGuid()}";
         /// <summary>
         /// If the UserAttributes contain an ID make it accessible for WCAG labelling of input fields
         /// </summary>
-        public string FieldId => UserAttributes.TryGetValue("id", out var id) && id != null
-                    ? id.ToString() ?? $"mudinput-{Guid.NewGuid()}"
-                    : $"mudinput-{Guid.NewGuid()}";
+        public string FieldId => UserAttributes.TryGetValue("id", out var id) && id is not null
+            ? id.ToString() ?? _id
+            : _id;
 
         /// <inheritdoc />
         protected override void OnAfterRender(bool firstRender)
