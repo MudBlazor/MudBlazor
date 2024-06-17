@@ -7,7 +7,6 @@
 // See https://github.com/Blazored
 
 #nullable enable
-
 namespace MudBlazor
 {
     /// <summary>
@@ -21,6 +20,12 @@ namespace MudBlazor
     /// <seealso cref="DialogService"/>
     public class DialogOptions
     {
+        /// <summary>
+        /// The default dialog options.
+        /// This field is only intended for options that do not differ from their default values.
+        /// </summary>
+        internal static readonly DialogOptions Default = new();
+
         /// <summary>
         /// The location of the dialog.
         /// </summary>
