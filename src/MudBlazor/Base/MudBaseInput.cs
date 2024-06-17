@@ -98,6 +98,16 @@ namespace MudBlazor
         public bool Underline { get; set; } = true;
 
         /// <summary>
+        /// The ID of the helper element, for use by <c>aria-describedby</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When set it is appended to the <c>aria-describedby</c> attribute to improve accessibility for users. This ID takes precedence over the helper element rendered when <see cref="HelperText"/> is provided.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public string? HelperId { get; set; }
+
+        /// <summary>
         /// The text displayed below the text field.
         /// </summary>
         /// <remarks>
@@ -701,18 +711,33 @@ namespace MudBlazor
             await base.ResetValueAsync();
         }
 
+        protected string? GetHelperId()
+        {
+            if (HelperId is not null)
+            {
+                return HelperId;
+            }
+
+            // error text replaces helper text in MudInputControl, so if the user does not provide a custom helper id, we have no valid helper element
+            if (HasErrors)
+            {
+                return null;
+            }
+
+            return HelperText is not null
+                ? $"{InputIdState.Value}-helper-text"
+                : null;
+        }
+
         protected string? GetAriaDescribedByString()
         {
-            var errorId = ErrorId;
+            var errorId = HasErrors ? ErrorId : null;
             var helperId = GetHelperId();
 
             return errorId is not null && helperId is not null
                 ? $"{errorId} {helperId}"
                 : errorId ?? helperId ?? null;
         }
-
-        protected string? GetHelperId()
-            => HelperText is null ? null : $"{InputIdState.Value}-helper-text";
 
         /// <summary>
         /// The type of input received by this component.

@@ -1467,7 +1467,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Required and aria-required TextField with Mask  should be dynamic.
+        /// Required and aria-required TextField with Mask should be dynamic.
         /// </summary>
         [Test]
         public void RequiredAndAriaRequiredTextFieldWithMask_Should_BeDynamic()
@@ -1533,5 +1533,42 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("textarea").HasAttribute("required").Should().BeTrue();
             comp.Find("textarea").GetAttribute("aria-required").Should().Be("true");
         }
+
+#nullable enable
+        /// <summary>
+        /// Verifies that a text field with various configurations renders the expected <c>aria-describedby</c> attribute.
+        /// </summary>
+        [Theory]
+        [TestCase("input-id", null, "helper text", "error-id", null, 1, null, "input", "input-id-helper-text", "error-id")]
+        public void Should_pass_various_aria_describedby_tests(
+            string? inputId,
+            string? helperId,
+            string? helperText,
+            string? errorId,
+            string? errorText,
+            int lines,
+            IMask? mask,
+            string inputSelector,
+            string firstExpectedAriaDescribedBy,
+            string secondExpectedAriaDescribedBy)
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.InputId, inputId)
+                .Add(p => p.HelperId, helperId)
+                .Add(p => p.HelperText, helperText)
+                .Add(p => p.Error, false)
+                .Add(p => p.ErrorId, errorId)
+                .Add(p => p.ErrorText, errorText)
+                .Add(p => p.Lines, lines)
+                .Add(p => p.Mask, mask));
+
+            comp.Find(inputSelector).GetAttribute("aria-describedby").Should().Be(firstExpectedAriaDescribedBy);
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Error, true));
+
+            comp.Find(inputSelector).GetAttribute("aria-describedby").Should().Be(secondExpectedAriaDescribedBy);
+        }
+#nullable disable
     }
 }
