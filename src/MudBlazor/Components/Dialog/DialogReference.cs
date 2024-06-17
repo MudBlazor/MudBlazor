@@ -10,6 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -60,10 +61,10 @@ namespace MudBlazor
         public Guid Id { get; }
 
         /// <inheritdoc />
-        public object Dialog { get; private set; }
+        public object? Dialog { get; private set; }
 
         /// <inheritdoc />
-        public RenderFragment RenderFragment { get; set; }
+        public RenderFragment? RenderFragment { get; set; }
 
         /// <inheritdoc />
         public Task<DialogResult> Result => _resultCompletion.Task;
@@ -83,12 +84,12 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        public async Task<T> GetReturnValueAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>()
+        public async Task<T?> GetReturnValueAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>()
         {
             var result = await Result;
             try
             {
-                return (T)result.Data;
+                return (T?)result.Data;
             }
             catch (InvalidCastException)
             {

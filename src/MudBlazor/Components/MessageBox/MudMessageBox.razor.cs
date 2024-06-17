@@ -6,7 +6,6 @@ using MudBlazor.State;
 using MudBlazor.Utilities;
 
 #nullable enable
-
 namespace MudBlazor
 {
     public partial class MudMessageBox : MudComponentBase

@@ -6,8 +6,6 @@
 // License: MIT
 // See https://github.com/Blazored
 
-#nullable enable
-
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -15,6 +13,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -191,14 +190,9 @@ namespace MudBlazor
         /// </summary>
         public void Dispose()
         {
-            if (NavigationManager != null)
-                NavigationManager.LocationChanged -= LocationChanged;
-
-            if (DialogService != null)
-            {
-                DialogService.OnDialogInstanceAdded -= AddInstance;
-                DialogService.OnDialogCloseRequested -= DismissInstance;
-            }
+            NavigationManager.LocationChanged -= LocationChanged;
+            DialogService.OnDialogInstanceAdded -= AddInstance;
+            DialogService.OnDialogCloseRequested -= DismissInstance;
         }
     }
 }

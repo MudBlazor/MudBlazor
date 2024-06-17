@@ -9,7 +9,6 @@ using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 #nullable enable
-
 namespace MudBlazor
 {
     /// <summary>

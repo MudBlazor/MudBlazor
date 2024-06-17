@@ -9,6 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -25,7 +26,7 @@ namespace MudBlazor
         /// <summary>
         /// The content within this dialog.
         /// </summary>
-        RenderFragment RenderFragment { get; set; }
+        RenderFragment? RenderFragment { get; set; }
 
         /// <summary>
         /// The result of closing the dialog.
@@ -55,7 +56,7 @@ namespace MudBlazor
         /// <summary>
         /// The dialog linked to this reference.
         /// </summary>
-        object Dialog { get; }
+        object? Dialog { get; }
 
         /// <summary>
         /// Replaces the dialog content.
@@ -74,6 +75,6 @@ namespace MudBlazor
         /// </summary>
         /// <typeparam name="T">The type of value to return.</typeparam>
         /// <returns>The results of closing the dialog.</returns>
-        Task<T> GetReturnValueAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>();
+        Task<T?> GetReturnValueAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>();
     }
 }

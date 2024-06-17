@@ -4,12 +4,13 @@
 using System.Collections;
 using System.Collections.Generic;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
     /// The parameters passed into a <see cref="MudDialog"/> instance.
     /// </summary>
-    public class DialogParameters : IEnumerable<KeyValuePair<string, object>>
+    public class DialogParameters : IEnumerable<KeyValuePair<string, object?>>
     {
         /// <summary>
         /// The default dialog parameters.
@@ -17,14 +18,14 @@ namespace MudBlazor
         /// </summary>
         internal static readonly DialogParameters Default = new();
 
-        internal Dictionary<string, object> _parameters = new();
+        internal Dictionary<string, object?> _parameters = new();
 
         /// <summary>
         /// Adds or updates a parameter.
         /// </summary>
         /// <param name="parameterName">The name of the parameter.</param>
         /// <param name="value">The value to add or update.</param>
-        public void Add(string parameterName, object value)
+        public void Add(string parameterName, object? value)
         {
             _parameters[parameterName] = value;
         }
@@ -35,11 +36,11 @@ namespace MudBlazor
         /// <typeparam name="T">The type of value to return.</typeparam>
         /// <param name="parameterName">The name of the parameter to find.</param>
         /// <returns>The parameter value, if it exists.</returns>
-        public T Get<T>(string parameterName)
+        public T? Get<T>(string parameterName)
         {
             if (_parameters.TryGetValue(parameterName, out var value))
             {
-                return (T)value;
+                return (T?)value;
             }
 
             throw new KeyNotFoundException($"{parameterName} does not exist in Dialog parameters");
@@ -51,11 +52,11 @@ namespace MudBlazor
         /// <typeparam name="T">The type of value to return.</typeparam>
         /// <param name="parameterName">The name of the parameter to find.</param>
         /// <returns>The parameter value, if it exists.</returns>
-        public T TryGet<T>(string parameterName)
+        public T? TryGet<T>(string parameterName)
         {
             if (_parameters.TryGetValue(parameterName, out var value))
             {
-                return (T)value;
+                return (T?)value;
             }
 
             return default;
@@ -71,9 +72,9 @@ namespace MudBlazor
         /// </summary>
         /// <param name="parameterName">The name of the parameter to find.</param>
         /// <returns>The parameter value.</returns>
-        public object this[string parameterName]
+        public object? this[string parameterName]
         {
-            get => Get<object>(parameterName);
+            get => Get<object?>(parameterName);
             set => _parameters[parameterName] = value;
         }
 
@@ -81,7 +82,7 @@ namespace MudBlazor
         /// Gets an enumerator for all parameters.
         /// </summary>
         /// <returns>An enumerator of <see cref="KeyValuePair{TKey, TValue}"/> values.</returns>
-        public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, object?>> GetEnumerator()
         {
             return _parameters.GetEnumerator();
         }

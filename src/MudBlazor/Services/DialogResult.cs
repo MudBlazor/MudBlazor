@@ -9,7 +9,6 @@
 using System;
 
 #nullable enable
-
 namespace MudBlazor
 {
     /// <summary>

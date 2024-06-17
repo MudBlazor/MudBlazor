@@ -7,7 +7,6 @@
 // See https://github.com/Blazored
 
 #nullable enable
-
 namespace MudBlazor
 {
     /// <summary>
