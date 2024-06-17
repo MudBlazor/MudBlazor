@@ -7,7 +7,6 @@ using System.Linq.Expressions;
 namespace MudBlazor;
 
 #nullable enable
-
 /// <summary>
 /// The parameters passed into a <see cref="MudDialog"/> instance.
 /// </summary>
@@ -42,7 +41,7 @@ public class DialogParameters<T> : DialogParameters
     /// <typeparam name="TParam">The type of parameter to get.</typeparam>
     /// <param name="propertyExpression">The property to get as a parameter.</param>
     /// <returns>The parameter value.</returns>
-    public TParam Get<TParam>(Expression<Func<T, TParam>> propertyExpression)
+    public TParam? Get<TParam>(Expression<Func<T, TParam>> propertyExpression)
     {
         ArgumentNullException.ThrowIfNull(propertyExpression);
         if (propertyExpression.Body is not MemberExpression memberExpression)
@@ -50,7 +49,7 @@ public class DialogParameters<T> : DialogParameters
             throw new ArgumentException($"Argument '{nameof(propertyExpression)}' must be a '{nameof(MemberExpression)}'");
         }
 
-        return Get<TParam>(memberExpression.Member.Name);
+        return Get<TParam?>(memberExpression.Member.Name);
     }
 
     /// <summary>

@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
+#nullable enable
 namespace MudBlazor
 {
-#nullable enable
     public partial class MudMessageBox : MudComponentBase
     {
         private readonly ParameterState<bool> _visibleState;
@@ -165,6 +165,12 @@ namespace MudBlazor
             };
             _reference = await DialogService.ShowAsync<MudMessageBox>(title: Title, parameters: parameters, options: options);
             var result = await _reference.Result;
+
+            if (result is null)
+            {
+                return null;
+            }
+
             if (result.Canceled || result.Data is not bool data)
             {
                 return null;
