@@ -31,7 +31,7 @@ namespace MudBlazor
         /// <summary>
         /// The result of closing the dialog.
         /// </summary>
-        Task<DialogResult> Result { get; }
+        Task<DialogResult?> Result { get; }
 
         TaskCompletionSource<bool> RenderCompleteTaskCompletionSource { get; }
 
@@ -44,14 +44,14 @@ namespace MudBlazor
         /// Hides the dialog and returns a result.
         /// </summary>
         /// <param name="result">The result of closing the dialog.</param>
-        void Close(DialogResult result);
+        void Close(DialogResult? result);
 
         /// <summary>
         /// Notifies that this dialog has been dismissed.
         /// </summary>
         /// <param name="result">The result of closing the dialog.</param>
         /// <returns>Returns <c>true</c> if the result was set successfully.</returns>
-        bool Dismiss(DialogResult result);
+        bool Dismiss(DialogResult? result);
 
         /// <summary>
         /// The dialog linked to this reference.

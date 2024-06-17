@@ -167,7 +167,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private void DismissInstance(IDialogReference dialog, DialogResult result)
+        private void DismissInstance(IDialogReference dialog, DialogResult? result)
         {
             if (!dialog.Dismiss(result)) return;
 

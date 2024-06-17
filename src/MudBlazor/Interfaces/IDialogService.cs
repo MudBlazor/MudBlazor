@@ -23,7 +23,7 @@ namespace MudBlazor
     public interface IDialogService
     {
         public event Action<IDialogReference>? OnDialogInstanceAdded;
-        public event Action<IDialogReference, DialogResult>? OnDialogCloseRequested;
+        public event Action<IDialogReference, DialogResult?>? OnDialogCloseRequested;
 
         /// <summary>
         /// Displays a dialog.
@@ -248,6 +248,6 @@ namespace MudBlazor
         /// </summary>
         /// <param name="dialog">The reference of the dialog to hide.</param>
         /// <param name="result">The result to include.</param>
-        void Close(IDialogReference dialog, DialogResult result);
+        void Close(IDialogReference dialog, DialogResult? result);
     }
 }
