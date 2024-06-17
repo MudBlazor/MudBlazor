@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.MSBuild;
 
-namespace MudBlazor.UnitTests.Analyzers.Helpers
+namespace MudBlazor.UnitTests.Analyzers.Internal
 {
 #nullable enable
     internal class ProjectCompilation

@@ -7,7 +7,7 @@ using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
-namespace MudBlazor.UnitTests.Analyzers.Helpers
+namespace MudBlazor.UnitTests.Analyzers.Internal
 {
 #nullable enable
     public sealed class TestAdditionalText(string path, SourceText text) : AdditionalText

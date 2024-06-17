@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using MudBlazor.Analyzers;
 
-namespace MudBlazor.UnitTests.Analyzers.Helpers
+namespace MudBlazor.UnitTests.Analyzers.Internal
 {
 #nullable enable
     internal sealed class TestAnalyzerOptions : AnalyzerConfigOptionsProvider

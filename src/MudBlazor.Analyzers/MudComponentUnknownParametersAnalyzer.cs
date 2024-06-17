@@ -29,10 +29,10 @@ namespace MudBlazor.Analyzers
         public const string AllowedAttributePatternProperty = "build_property.mudallowedattributepattern";
         public const string IllegalParametersProperty = "build_property.mudillegalparameters";
 
-        private static readonly DiagnosticDescriptor _parameterRule = new(DiagnosticId1, _title, _parameterMessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: _description, helpLinkUri: _url.ToString());
-        private static readonly DiagnosticDescriptor _attributeRule = new(DiagnosticId2, _title, _attributeMessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: _description, helpLinkUri: _url.ToString());
+        public static readonly DiagnosticDescriptor ParameterDescriptor = new(DiagnosticId1, _title, _parameterMessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: _description, helpLinkUri: _url.ToString());
+        public static readonly DiagnosticDescriptor AttributeDescriptor = new(DiagnosticId2, _title, _attributeMessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: _description, helpLinkUri: _url.ToString());
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get => [_parameterRule, _attributeRule]; }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get => [ParameterDescriptor, AttributeDescriptor]; }
 
         public override void Initialize(AnalysisContext context)
         {
@@ -178,7 +178,7 @@ namespace MudBlazor.Analyzers
                         {
                             if (componentType.IsOrInheritFrom(illegalParam.Key, _symbolComparer) && illegalParam.Value.Contains(parameterName, illegalParameterSet.Comparer))
                             {
-                                Report(_parameterRule, context, invocation, parameterName, componentDescriptor, className, illegalParameterSet.IllegalParameters.ToString());
+                                Report(ParameterDescriptor, context, invocation, parameterName, componentDescriptor, className, illegalParameterSet.IllegalParameters.ToString());
                                 return;
                             }
                         }
@@ -193,7 +193,7 @@ namespace MudBlazor.Analyzers
                         case AllowedAttributePattern.Any:
                             return;
                         default:
-                            Report(_attributeRule, context, invocation, parameterName, componentDescriptor, className, allowedAttributePattern.ToString());
+                            Report(AttributeDescriptor, context, invocation, parameterName, componentDescriptor, className, allowedAttributePattern.ToString());
                             return;
                     }
                 }
