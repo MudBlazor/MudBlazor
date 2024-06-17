@@ -2,7 +2,7 @@
 @namespace MudBlazor.Docs.Examples
 
 <MudPaper Width="300px" Elevation="0">
-    <MudTreeView ServerData="LoadServerData" Items="TreeItems">
+    <MudTreeView ServerData="@LoadServerData" Items="@InitialTreeItems">
         <ItemTemplate>
             <MudTreeViewItem Value="@context.Value" Icon="@context.Icon" LoadingIconColor="Color.Info" CanExpand="@context.Expandable"/>
         </ItemTemplate>
@@ -10,11 +10,17 @@
 </MudPaper>
 
 @code {
-    private List<TreeItemData<string>> TreeItems { get; set; } = new();
+    private List<TreeItemData<string>> InitialTreeItems { get; set; } = new();
+    private List<TreeItemData<string>> ServerTreeItems { get; set; } = new();
 
     protected override void OnInitialized()
     {
-        TreeItems.Add(new TreeItemData<string> {
+        // TreeItem initially only gets the top-level items
+        InitialTreeItems.Add(new TreeItemData<string> { Value = "All Mail", Icon = Icons.Material.Filled.Label, Expanded = true, });
+        InitialTreeItems.Add(new TreeItemData<string> { Value = "Trash", Icon = Icons.Material.Filled.Delete });
+
+        // LoadServerData will load from this hierarchy
+        ServerTreeItems.Add(new TreeItemData<string> {
                 Value = "All Mail", Icon = Icons.Material.Filled.Label, Expanded = true,
                 Children = [
                         new TreeItemData<string> { Value = "Promotions", Icon = Icons.Material.Filled.Group, 
@@ -28,14 +34,13 @@
                     new TreeItemData<string> { Value = "Forums", Icon = Icons.Material.Filled.QuestionAnswer, Expandable = false },
                     new TreeItemData<string> { Value = "Social", Icon = Icons.Material.Filled.LocalOffer, Expandable = false }
                 ]});
-        TreeItems.Add(new TreeItemData<string> { Value = "Trash", Icon = Icons.Material.Filled.Delete });
     }
 
     public async Task<IReadOnlyCollection<TreeItemData<string>>> LoadServerData(string parentValue)
     {
         // wait 500ms to simulate a server load, then recursively search through our tree to find the child items for the given value
         await Task.Delay(500);
-        foreach (var item in TreeItems) {
+        foreach (var item in ServerTreeItems) {
             if (item.Value == parentValue)
                 return item.Children;
             if (!item.HasChildren)
