@@ -533,6 +533,7 @@ namespace MudBlazor
             .AddClass($"mud-{SliderColor.ToDescriptionString()}", SliderColor != Color.Inherit)
             .AddClass($"mud-tab-slider-horizontal", IsHorizontalTabs())
             .AddClass($"mud-tab-slider-vertical", IsVerticalTabs())
+            .AddClass($"mud-tab-slider-transition", SliderAnimation && _isRendered)
             .Build();
 
         protected string MaxHeightStyles =>
@@ -546,7 +547,6 @@ namespace MudBlazor
             .AddStyle("height", _sliderSize.ToPx(), IsVerticalTabs())
             .AddStyle(RightToLeft ? "right" : "left", _sliderXaxis.ToPx())
             .AddStyle("top", _sliderYaxis.ToPx())
-            .AddStyle("transition", "none", SliderAnimation == false)
             .Build();
 
         private bool IsHorizontalTabs() => Position is Position.Top or Position.Bottom;

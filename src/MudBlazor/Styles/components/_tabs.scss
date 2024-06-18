@@ -188,19 +188,21 @@
 .mud-tab-slider {
   position: absolute;
   background: var(--mud-palette-primary);
-  transition-duration: .3s;
-  transition-timing-function: cubic-bezier(.64,.09,.08,1);
 
   &.mud-tab-slider-horizontal {
     height: 2px;
     will-change: left;
-    transition-property: left,right,width,top;
   }
 
   &.mud-tab-slider-vertical {
     width: 2px;
     will-change: top;
-    transition-property: top,width;
+  }
+
+  &.mud-tab-slider-transition {
+    transition-duration: .3s;
+    transition-timing-function: cubic-bezier(.64,.09,.08,1);
+    transition-property: left,right,width,top;
   }
 }
 
