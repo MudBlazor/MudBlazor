@@ -13,7 +13,8 @@
                            Size="@IconSize"
                            Text="@AdornmentText"
                            Edge="@Edge.Start"
-                           AdornmentClick="@OnAdornmentClick"/>
+                           AdornmentClick="@OnAdornmentClick"
+                           AriaLabel="@AdornmentAriaLabel" />
     }
 
     @if (Lines > 1)
@@ -102,7 +103,8 @@
                            Size="@IconSize"
                            Text="@AdornmentText"
                            Edge="@Edge.End"
-                           AdornmentClick="@OnAdornmentClick"/>
+                           AdornmentClick="@OnAdornmentClick"
+                           AriaLabel="@AdornmentAriaLabel" />
     }
 
     @if (Variant == Variant.Outlined)

@@ -13,6 +13,7 @@ using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Field;
 using MudBlazor.UnitTests.TestComponents.Form;
@@ -1534,24 +1535,85 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("textarea").GetAttribute("aria-required").Should().Be("true");
         }
 
+        [Test]
+        public void Should_render_conversion_error_message()
+        {
+            var comp = Context.RenderComponent<MudTextField<int>>(parameters => parameters
+                .Add(p => p.ErrorId, "error-id")
+                .Add(p => p.Text, "not a number")
+                .Add(p => p.Converter, new DummyErrorConverter()));
+
+            comp.Instance.ConversionErrorMessage.Should().NotBeNullOrEmpty();
+            comp.Find("#error-id").InnerHtml.Should().Be(comp.Instance.ConversionErrorMessage);
+        }
+
+        [TestCase(Adornment.Start, false, false)]
+        [TestCase(Adornment.Start, false, true)]
+        [TestCase(Adornment.Start, true, false)]
+        [TestCase(Adornment.Start, true, true)]
+        [TestCase(Adornment.End, false, false)]
+        [TestCase(Adornment.End, false, true)]
+        [TestCase(Adornment.End, true, false)]
+        [TestCase(Adornment.End, true, true)]
+        public void Should_render_aria_label_for_adornment_if_provided(Adornment adornment, bool withMultipleLines, bool withMask)
+        {
+            var ariaLabel = "the aria label";
+            var lines = withMultipleLines ? 5 : 1;
+            var mask = withMask ? new PatternMask("0000") : null;
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Adornment, adornment)
+                .Add(p => p.AdornmentIcon, Icons.Material.Filled.Accessibility)
+                .Add(p => p.AdornmentAriaLabel, ariaLabel)
+                .Add(p => p.Lines, lines)
+                .Add(p => p.Mask, mask));
+
+            comp.Find(".mud-input-adornment-icon").Attributes.GetNamedItem("aria-label")!.Value.Should().Be(ariaLabel);
+        }
+
 #nullable enable
         /// <summary>
         /// Verifies that a text field with various configurations renders the expected <c>aria-describedby</c> attribute.
         /// </summary>
-        [Theory]
-        [TestCase("input-id", null, "helper text", "error-id", null, 1, null, "input", "input-id-helper-text", "error-id")]
+        // no helpers, validates error id is present when error is present
+        [TestCase(false, false, false, false)]
+        [TestCase(false, false, false, true)]
+        [TestCase(false, false, true, false)]
+        [TestCase(false, false, true, true)]
+        // with helper text, helper element should only be present when there is no error
+        [TestCase(false, true, false, false)]
+        [TestCase(false, true, false, true)]
+        [TestCase(false, true, true, false)]
+        [TestCase(false, true, true, true)]
+        // with user helper id, helper id should always be present
+        [TestCase(true, false, false, false)]
+        [TestCase(true, false, false, true)]
+        [TestCase(true, false, true, false)]
+        [TestCase(true, false, true, true)]
+        // with user helper id and helper text, should always favour user helper id
+        [TestCase(true, true, false, false)]
+        [TestCase(true, true, false, true)]
+        [TestCase(true, true, true, false)]
+        [TestCase(true, true, true, true)]
         public void Should_pass_various_aria_describedby_tests(
-            string? inputId,
-            string? helperId,
-            string? helperText,
-            string? errorId,
-            string? errorText,
-            int lines,
-            IMask? mask,
-            string inputSelector,
-            string firstExpectedAriaDescribedBy,
-            string secondExpectedAriaDescribedBy)
+            bool withUserHelperId,
+            bool withHelperText,
+            bool withMultipleLines,
+            bool withMask)
         {
+            var inputId = "input-id";
+            var helperId = withUserHelperId ? "user-helper-id" : null;
+            var helperText = withHelperText ? "helper text" : null;
+            var lines = withMultipleLines ? 5 : 1;
+            var mask = withMask ? new PatternMask("0000") : null;
+            var errorId = "error-id";
+            var errorText = "error text";
+            var inputSelector = withMultipleLines ? "textarea" : "input";
+            var firstExpectedAriaDescribedBy = withUserHelperId
+                ? helperId
+                : withHelperText
+                    ? $"{inputId}-helper-text"
+                    : null;
+
             var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
                 .Add(p => p.InputId, inputId)
                 .Add(p => p.HelperId, helperId)
@@ -1562,10 +1624,29 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Lines, lines)
                 .Add(p => p.Mask, mask));
 
-            comp.Find(inputSelector).GetAttribute("aria-describedby").Should().Be(firstExpectedAriaDescribedBy);
+            // verify helper text is rendered
+            if (withUserHelperId is false && withHelperText)
+            {
+                var action = () => comp.Find($"#{inputId}-helper-text");
+                action.Should().NotThrow();
+            }
+
+            if (firstExpectedAriaDescribedBy is null)
+            {
+                comp.Find(inputSelector).HasAttribute("aria-describedby").Should().BeFalse();
+            }
+            else
+            {
+                comp.Find(inputSelector).GetAttribute("aria-describedby").Should().Be(firstExpectedAriaDescribedBy);
+            }
 
             comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.Error, true));
+            var secondExpectedAriaDescribedBy = withUserHelperId ? $"{errorId} {helperId}" : errorId;
+
+            // verify error text is rendered
+            var errorAction = () => comp.Find($"#{errorId}");
+            errorAction.Should().NotThrow();
 
             comp.Find(inputSelector).GetAttribute("aria-describedby").Should().Be(secondExpectedAriaDescribedBy);
         }
