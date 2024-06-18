@@ -1132,21 +1132,15 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ToggleTabsSliderAnimation()
         {
-            //The first tab should be active because for the rest the slider position is calculated by JS
-            //and before the calculation the slider is hidden to avoid movement on first load
             var comp = Context.RenderComponent<ToggleTabsSlideAnimationTest>(p => p.Add(x => x.SelectedTab, 0));
 
-            //Set SliderAnimation to true
-            //Check if style attr does not contain transform: none
             comp.Instance.SliderAnimation = true;
             comp.Render();
-            comp.Find(".mud-tab-slider").GetAttribute("style").Contains("transition:none").Should().BeFalse();
+            comp.Find(".mud-tab-slider").ClassList.Should().Contain("mud-tab-slider-transition");
 
-            //Set SliderAnimation to false
-            //Check if style attr contains transform: none
             comp.Instance.SliderAnimation = false;
             comp.Render();
-            comp.Find(".mud-tab-slider").GetAttribute("style").Contains("transition:none").Should().BeTrue();
+            comp.Find(".mud-tab-slider").ClassList.Should().NotContain("mud-tab-slider-transition");
 
         }
 
