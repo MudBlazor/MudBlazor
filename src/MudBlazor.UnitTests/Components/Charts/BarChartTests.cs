@@ -2,15 +2,15 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
-using MudBlazor.UnitTests.Components;
 using System.Linq;
+using Bunit;
 using FluentAssertions;
 using MudBlazor.Charts;
-using NUnit.Framework;
-using Bunit;
+using MudBlazor.UnitTests.Components;
 using MudBlazor.UnitTests.Utilities;
-using System;
+using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Charts
 {
