@@ -109,11 +109,12 @@ namespace MudBlazor
                 { "Message", message as object }
             };
 
-            return Add
+            return Add<SnackbarMessageRenderFragment>
             (
-                new SnackbarMessage(typeof(SnackbarMessageRenderFragment), componentParams, key),
+                componentParams,
                 severity,
-                configure
+                configure,
+                key
             );
         }
 
@@ -132,12 +133,7 @@ namespace MudBlazor
 
             var componentParams = new Dictionary<string, object>() { { "Message", new MarkupString(message) } };
 
-            return Add
-            (
-                new SnackbarMessage(typeof(SnackbarMessageText), componentParams, string.IsNullOrEmpty(key) ? message : key) { Text = message },
-                severity,
-                configure
-            );
+            return AddCore<SnackbarMessageText>(message, componentParams, severity, configure, string.IsNullOrEmpty(key) ? message : key);
         }
 
         [Obsolete("Use Add instead.", true)]
@@ -201,6 +197,14 @@ namespace MudBlazor
             }
 
             OnSnackbarsUpdated?.Invoke();
+        }
+
+        private Snackbar AddCore<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(string text, Dictionary<string, object> componentParameters = null, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null, string key = "") where T : IComponent
+        {
+            var type = typeof(T);
+            var message = new SnackbarMessage(type, componentParameters, key) { Text = text };
+
+            return Add(message, severity, configure);
         }
 
         private bool ResolvePreventDuplicates(SnackbarOptions options)
