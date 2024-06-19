@@ -610,7 +610,7 @@ namespace MudBlazor
         /// Use the provided <see cref="TableState"/> to request items for a specific page index, page size, sort column, and sort order.<br />  
         /// Return a <see cref="TableData{T}"/> which contains the requested page of items and the total number of items (excluding pagination).<br />
         /// Forward the <see cref="CancellationToken"/> to methods which support it such as <c>HttpClient</c> and <c>DbContext</c> to cancel ongoing requests.<br />  
-        /// When this parameter is set, <see cref="Items"/> should not be set.
+        /// When this parameter is set, <see cref="Items"/> and <see cref="Filter"/> should not be set.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
