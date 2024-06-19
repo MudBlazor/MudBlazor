@@ -8,18 +8,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
-using static MudBlazor.UnitTests.TestComponents.AutocompleteSetParametersInitialization;
 using static Bunit.ComponentParameterFactory;
-using Microsoft.AspNetCore.Components;
-using System.Threading;
+using static MudBlazor.UnitTests.TestComponents.AutocompleteSetParametersInitialization;
 
 namespace MudBlazor.UnitTests.Components
 {

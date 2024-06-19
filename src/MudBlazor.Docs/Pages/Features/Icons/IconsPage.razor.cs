@@ -5,12 +5,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Reflection;
-using MudBlazor.Docs.Models;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Services;
+using MudBlazor.Docs.Models;
 using MudBlazor.Interop;
+using MudBlazor.Services;
 
 namespace MudBlazor.Docs.Pages.Features.Icons
 {

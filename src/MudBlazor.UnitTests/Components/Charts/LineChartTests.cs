@@ -5,12 +5,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AngleSharp.Dom;
+using Bunit;
 using FluentAssertions;
 using MudBlazor.Charts;
 using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
-using Bunit;
-using AngleSharp.Dom;
 
 namespace MudBlazor.UnitTests.Charts
 {
