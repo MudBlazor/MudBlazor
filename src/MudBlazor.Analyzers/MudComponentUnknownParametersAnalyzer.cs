@@ -77,25 +77,35 @@ namespace MudBlazor.Analyzers
             });
         }
 
-        private sealed class AnalyzerContext(Compilation compilation, IllegalParameterSet illegalParameterSet, AllowedAttributePattern allowedAttributePattern)
+        private sealed class AnalyzerContext
         {
-            private IEqualityComparer<ISymbol?> _symbolComparer = new MetadataSymbolComparer();
+            private readonly IEqualityComparer<ISymbol?> _symbolComparer = new MetadataSymbolComparer();
             private readonly ConcurrentDictionary<ITypeSymbol, ComponentDescriptor> _componentDescriptors = new(SymbolEqualityComparer.Default);
+            private readonly IllegalParameterSet _illegalParameterSet;
+            private readonly AllowedAttributePattern _allowedAttributePattern;
+            private readonly INamedTypeSymbol? _componentBaseSymbol;
+            private readonly INamedTypeSymbol? _parameterSymbol;
+            private readonly INamedTypeSymbol? _renderTreeBuilderSymbol;
+            private readonly INamedTypeSymbol? _mudComponentBaseType;
 
-            public bool IsValid => IComponentSymbol is not null && ComponentBaseSymbol is not null && ParameterSymbol is not null && MudComponentBaseType is not null;
+            public AnalyzerContext(Compilation compilation, IllegalParameterSet illegalParameterSet, AllowedAttributePattern allowedAttributePattern)
+            {
+                _illegalParameterSet = illegalParameterSet;
+                _allowedAttributePattern = allowedAttributePattern;
+                _componentBaseSymbol = compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Components.ComponentBase");
+                _parameterSymbol = compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Components.ParameterAttribute");
+                _renderTreeBuilderSymbol = compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder");
+                _mudComponentBaseType = compilation.GetBestTypeByMetadataName("MudBlazor.MudComponentBase");
+            }
 
-            public INamedTypeSymbol? IComponentSymbol { get; } = compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Components.IComponent");
-            public INamedTypeSymbol? ComponentBaseSymbol { get; } = compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Components.ComponentBase");
-            public INamedTypeSymbol? ParameterSymbol { get; } = compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Components.ParameterAttribute");
-            public INamedTypeSymbol? RenderTreeBuilderSymbol { get; } = compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder");
-            public INamedTypeSymbol? MudComponentBaseType { get; } = compilation.GetBestTypeByMetadataName("MudBlazor.MudComponentBase");
+            public bool IsValid => _componentBaseSymbol is not null && _parameterSymbol is not null && _renderTreeBuilderSymbol is not null && _mudComponentBaseType is not null;
 
             public void AnalyzeBlockOptions(OperationAnalysisContext context)
             {
                 try
                 {
                     var classSymbol = context.Operation.GetClassSymbol(context);
-                    if (classSymbol is not null && classSymbol.IsOrInheritFrom(ComponentBaseSymbol, _symbolComparer))
+                    if (classSymbol is not null && classSymbol.IsOrInheritFrom(_componentBaseSymbol, _symbolComparer))
                         TraverseTree(context, (IBlockOperation)context.Operation, classSymbol.ToDisplayString());
                 }
                 catch (OperationCanceledException)
@@ -117,15 +127,15 @@ namespace MudBlazor.Analyzers
                         {
                             var targetMethod = invocation.TargetMethod;
 
-                            if (targetMethod.ContainingType.IsEqualTo(RenderTreeBuilderSymbol))
+                            if (targetMethod.ContainingType.IsEqualTo(_renderTreeBuilderSymbol))
                             {
                                 if (string.Equals(targetMethod.Name, "OpenComponent", StringComparison.Ordinal) && targetMethod.TypeArguments.Length == 1)
                                 {
                                     var componentType = targetMethod.TypeArguments[0];
-                                    if (componentType.IsOrInheritFrom(MudComponentBaseType))
+                                    if (componentType.IsOrInheritFrom(_mudComponentBaseType))
                                     {
                                         currentComponent = componentType;
-                                        currentComponentDescriptor = _componentDescriptors.GetOrAdd(currentComponent, ComponentDescriptor.GetComponentDescriptor(componentType, ParameterSymbol));
+                                        currentComponentDescriptor = _componentDescriptors.GetOrAdd(currentComponent, ComponentDescriptor.GetComponentDescriptor(componentType, _parameterSymbol));
                                     }
                                 }
                                 else if (string.Equals(targetMethod.Name, "CloseComponent", StringComparison.Ordinal))
@@ -152,7 +162,7 @@ namespace MudBlazor.Analyzers
                                 if (method is not null)
                                 {
                                     var op = context.Compilation.GetSemanticModel(method.SyntaxTree).GetOperation(method);
-                                    if (op != null)
+                                    if (op is not null)
                                     {
                                         var blockOperation = op.ChildOperations.OfType<IBlockOperation>().Single();
                                         TraverseTree(context, blockOperation, className);
@@ -171,20 +181,17 @@ namespace MudBlazor.Analyzers
                     return;
                 else
                 {
-                    //check illegals first
-                    if (illegalParameterSet is not null)
+                    //check illegals first                    
+                    foreach (var illegalParam in _illegalParameterSet.Parameters)
                     {
-                        foreach (var illegalParam in illegalParameterSet.Parameters)
+                        if (componentType.IsOrInheritFrom(illegalParam.Key, _symbolComparer) && illegalParam.Value.Contains(parameterName, _illegalParameterSet.Comparer))
                         {
-                            if (componentType.IsOrInheritFrom(illegalParam.Key, _symbolComparer) && illegalParam.Value.Contains(parameterName, illegalParameterSet.Comparer))
-                            {
-                                Report(ParameterDescriptor, context, invocation, parameterName, componentDescriptor, className, illegalParameterSet.IllegalParameters.ToString());
-                                return;
-                            }
+                            Report(ParameterDescriptor, context, invocation, parameterName, componentDescriptor, className, _illegalParameterSet.IllegalParameters.ToString());
+                            return;
                         }
                     }
 
-                    switch (allowedAttributePattern)
+                    switch (_allowedAttributePattern)
                     {
                         case AllowedAttributePattern.LowerCase when char.IsLower(parameterName, 0):
                             return;
@@ -193,7 +200,7 @@ namespace MudBlazor.Analyzers
                         case AllowedAttributePattern.Any:
                             return;
                         default:
-                            Report(AttributeDescriptor, context, invocation, parameterName, componentDescriptor, className, allowedAttributePattern.ToString());
+                            Report(AttributeDescriptor, context, invocation, parameterName, componentDescriptor, className, _allowedAttributePattern.ToString());
                             return;
                     }
                 }

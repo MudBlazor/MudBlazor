@@ -101,7 +101,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="true" OutputItemType="Analyzer" SetTargetFramework="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="true" OutputItemType="Analyzer" />
   </ItemGroup>
   
   <ItemGroup>

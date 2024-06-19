@@ -11,10 +11,7 @@ namespace MudBlazor.Analyzers.Internal
             if (x is null || y is null)
                 return false;
 
-            if (x.MetadataName.Equals(y.MetadataName))
-                return true;
-
-            return false;
+            return x.MetadataName.Equals(y.MetadataName);
         }
 
         public int GetHashCode(ISymbol? obj)

@@ -124,7 +124,6 @@ namespace MudBlazor.UnitTests.Components
         [OneTimeSetUp]
         public async Task OneTimeSetup()
         {
-            await Task.Yield();
             Workspace = await ProjectCompilation.CreateAsync(Util.ProjectPath());
             Workspace.Should().NotBeNull("Workspace null");
 
@@ -134,6 +133,12 @@ namespace MudBlazor.UnitTests.Components
             AttributesLowerCaseDiagnostics = await Workspace.GetDiagnosticsAsync([Analyzer], TestAnalyzerOptions.Create(IllegalParameters.Disabled, AllowedAttributePattern.LowerCase, Workspace.AdditionalTexts));
             AttributesDataAndAriaDiagnostics = await Workspace.GetDiagnosticsAsync([Analyzer], TestAnalyzerOptions.Create(IllegalParameters.Disabled, AllowedAttributePattern.DataAndAria, Workspace.AdditionalTexts));
             AttributesNoneDiagnostics = await Workspace.GetDiagnosticsAsync([Analyzer], TestAnalyzerOptions.Create(IllegalParameters.Disabled, AllowedAttributePattern.None, Workspace.AdditionalTexts));
+        }
+
+        [OneTimeTearDown]
+        public void Cleanup()
+        {
+            Workspace?.Dispose();
         }
 
         [Test]

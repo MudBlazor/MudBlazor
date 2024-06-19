@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ using Microsoft.CodeAnalysis.MSBuild;
 namespace MudBlazor.UnitTests.Analyzers.Internal
 {
 #nullable enable
-    internal class ProjectCompilation
+    internal class ProjectCompilation : IDisposable
     {
         internal MSBuildWorkspace Workspace { get; private set; }
         internal Project Project { get; private set; }
@@ -54,6 +55,11 @@ namespace MudBlazor.UnitTests.Analyzers.Internal
         {
             CompilationWithAnalyzers = Compilation.WithAnalyzers(analyzers, analyzerOptions);
             return await CompilationWithAnalyzers.GetAnalyzerDiagnosticsAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        public void Dispose()
+        {
+            Workspace?.Dispose();
         }
     }
 
