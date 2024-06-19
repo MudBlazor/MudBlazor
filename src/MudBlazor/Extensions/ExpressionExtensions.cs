@@ -33,7 +33,7 @@ namespace MudBlazor
         /// </summary>
         public static string GetLabelString<T>(this Expression<Func<T>> expression)
         {
-            var memberExpression = (MemberExpression)expression.Body;
+            var memberExpression = (expression.Body as MemberExpression ?? (MemberExpression)((UnaryExpression)expression.Body).Operand);
 
             // Currently we have no solution for this which is trimming incompatible
             // A possible solution is to use source gen

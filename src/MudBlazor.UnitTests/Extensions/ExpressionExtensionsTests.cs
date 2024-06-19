@@ -15,6 +15,9 @@ namespace MudBlazor.UnitTests.Extensions
             public string Field1 { get; set; }
 
             public TestClass1 TestClass1 { get; set; }
+
+            [Label("NonNullableDateTimeField Label Attribute")]
+            public DateTime NonNullableDateTimeField { get; set; }
         }
 
         private class TestClass1
@@ -37,6 +40,16 @@ namespace MudBlazor.UnitTests.Extensions
             Expression<Func<string>> expression = () => model.Field1;
 
             expression.GetFullPathOfMember().Should().Be("Field1");
+        }
+
+        [Test]
+        public void GetFullPathOfNonNullableMemberTest()
+        {
+            var model = new TestClass();
+
+            Expression<Func<DateTime?>> expression = () => model.NonNullableDateTimeField;
+
+            expression.GetFullPathOfMember().Should().Be("NonNullableDateTimeField");
         }
 
         [Test]
@@ -77,6 +90,16 @@ namespace MudBlazor.UnitTests.Extensions
             Expression<Func<string>> expression = () => model.Field1;
 
             expression.GetLabelString().Should().Be("");
+        }
+
+        [Test]
+        public void GetLabelStringTest3()
+        {
+            var model = new TestClass();
+
+            Expression<Func<DateTime?>> expression = () => model.NonNullableDateTimeField;
+
+            expression.GetLabelString().Should().Be("NonNullableDateTimeField Label Attribute");
         }
     }
 }

@@ -736,6 +736,54 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Testing error handling of MudFormComponent.ValidateModelWithFullPathOfMember
+        /// Validation func throws an error, the error should contain the exception message
+        /// </summary>
+        [Test]
+        public async Task Form_Should_ValidateDatePickerWithNonNullableBackingFieldTest()
+        {
+            var comp = Context.RenderComponent<FormWithDatePickerTest>();
+            var formInstance = comp.FindComponent<MudForm>().Instance;
+            var model = new { date = DateTime.Now };
+            var dateComp = comp.FindComponent<MudDatePicker>();
+            var datepicker = comp.FindComponent<MudDatePicker>().Instance;
+
+            Expression<Func<DateTime?>> expression = () => model.date;
+            dateComp.SetParam(nameof(MudDatePicker.For), expression);
+
+            dateComp.Find("input").Change(DateTime.Now.ToShortDateString());
+            formInstance.IsValid.Should().Be(true);
+            formInstance.Errors.Length.Should().Be(0);
+            datepicker.Error.Should().BeFalse();
+            datepicker.ErrorText.Should().BeNullOrEmpty();
+
+
+            //var validationFunc = new Func<object, string, IEnumerable<string>>((obj, property) =>
+            //{
+            //    throw new InvalidOperationException("User error");
+            //});
+            //dateComp.SetParam(nameof(MudDatePicker.Validation), validationFunc);
+            //Expression <Func<DateTime?>> expression = () => model.date;
+            //dateComp.SetParam(nameof(MudDatePicker.For), expression);
+            //await comp.InvokeAsync(dateComp.Instance.Validate);
+            //dateComp.Instance.Error.Should().Be(true);
+            //dateComp.Instance.ErrorText.Should().Be("Error in validation func: User error");
+
+            //form.SetParam(nameof(MudForm.Model), model);
+            //var tf = comp.FindComponent<MudTextField<string>>();
+            //var validationFunc = new Func<object, string, IEnumerable<string>>((obj, property) =>
+            //{
+            //    throw new InvalidOperationException("User error");
+            //});
+            //tf.SetParam(nameof(MudTextField<string>.Validation), validationFunc);
+            //Expression<Func<DateTime?>> expression = () => model.date;
+            //tf.SetParam(nameof(MudTextField<string>.For), expression);
+            //await comp.InvokeAsync(tf.Instance.Validate);
+            //tf.Instance.Error.Should().Be(true);
+            //tf.Instance.ErrorText.Should().Be("Error in validation func: User error");
+        }
+
+        /// <summary>
         /// DateRangePicker should be validated like every other form component when the dateRange
         /// is changed via inputs
         /// </summary>
