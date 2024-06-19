@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MudBlazor.Docs.Extensions;
-using MudBlazor.Docs.WasmHost.Prerender;
 using MudBlazor.Docs.Services;
 using MudBlazor.Docs.Services.Notifications;
+using MudBlazor.Docs.WasmHost.Prerender;
 using MudBlazor.Examples.Data;
 
 var builder = WebApplication.CreateBuilder(args);

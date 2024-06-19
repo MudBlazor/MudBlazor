@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
-using System.Collections.Generic;
 
 namespace MudBlazor.UnitTests;
 

@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using System;
+﻿using System;
+using System.Linq;
 using FluentAssertions;
 using MudBlazor.UnitTests.Dummy;
 using NUnit.Framework;
