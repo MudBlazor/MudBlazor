@@ -47,12 +47,7 @@
   </ItemGroup>
 
   <!--Analyzer Config-->
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <MudAllowedAttributePattern>Any</MudAllowedAttributePattern>
-    <MudIllegalParameters>Disabled</MudIllegalParameters>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+  <PropertyGroup>
     <MudAllowedAttributePattern>LowerCase</MudAllowedAttributePattern>
     <MudIllegalParameters>V7IgnoreCase</MudIllegalParameters>
     <MudDebugAnalyzer>false</MudDebugAnalyzer>
