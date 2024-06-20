@@ -7,6 +7,7 @@
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
         <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+        <MudButton Color="Color.Secondary" OnClick="CloseDefault">Ok Default</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -15,5 +16,6 @@
     public MudDialogInstance MudDialog { get; set; }
 
     private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    private void CloseDefault() => MudDialog.Close();
     private void Cancel() => MudDialog.Cancel();
 }
