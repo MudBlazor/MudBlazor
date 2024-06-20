@@ -23,5 +23,5 @@ public enum SortDirection
     /// Results are sorted in descending order (Z-A).
     /// </summary>
     [Description("descending")]
-    Descending
+    Descending,
 }

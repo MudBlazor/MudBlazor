@@ -19,5 +19,5 @@ public enum TableEditTrigger
     /// <summary>
     /// Editing begins when the edit button is clicked.
     /// </summary>
-    EditButton
+    EditButton,
 }

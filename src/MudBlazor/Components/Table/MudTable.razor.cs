@@ -143,7 +143,7 @@ namespace MudBlazor
         public RenderFragment? LoadingContent { get; set; }
 
         /// <summary>
-        /// Shows a horizontal scroll bar.
+        /// Shows a horizontal scroll bar if the content exceeds the maximum width.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  Typically <c>true</c> for tables with more columns than can fit on the screen.
@@ -158,7 +158,7 @@ namespace MudBlazor
         /// The data to display.
         /// </summary>
         /// <remarks>
-        /// When this parameter is set, <see cref="ServerData"/> should not be set.  Use <see cref="ServerData"/> to get data from a back end.
+        /// When set, <see cref="ServerData"/> should not be set.  Use that property to get data from a back end.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
