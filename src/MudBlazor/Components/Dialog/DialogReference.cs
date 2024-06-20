@@ -10,6 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -23,7 +24,7 @@ namespace MudBlazor
     /// <seealso cref="DialogService"/>
     public class DialogReference : IDialogReference
     {
-        private readonly TaskCompletionSource<DialogResult> _resultCompletion = new();
+        private readonly TaskCompletionSource<DialogResult?> _resultCompletion = new();
 
         private readonly IDialogService _dialogService;
 
@@ -45,13 +46,13 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        public void Close(DialogResult result)
+        public void Close(DialogResult? result)
         {
             _dialogService.Close(this, result);
         }
 
         /// <inheritdoc />
-        public virtual bool Dismiss(DialogResult result)
+        public virtual bool Dismiss(DialogResult? result)
         {
             return _resultCompletion.TrySetResult(result);
         }
@@ -60,13 +61,13 @@ namespace MudBlazor
         public Guid Id { get; }
 
         /// <inheritdoc />
-        public object Dialog { get; private set; }
+        public object? Dialog { get; private set; }
 
         /// <inheritdoc />
-        public RenderFragment RenderFragment { get; set; }
+        public RenderFragment? RenderFragment { get; set; }
 
         /// <inheritdoc />
-        public Task<DialogResult> Result => _resultCompletion.Task;
+        public Task<DialogResult?> Result => _resultCompletion.Task;
 
         TaskCompletionSource<bool> IDialogReference.RenderCompleteTaskCompletionSource { get; } = new();
 
@@ -83,12 +84,12 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        public async Task<T> GetReturnValueAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>()
+        public async Task<T?> GetReturnValueAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>()
         {
             var result = await Result;
             try
             {
-                return (T)result.Data;
+                return (T?)result?.Data;
             }
             catch (InvalidCastException)
             {
