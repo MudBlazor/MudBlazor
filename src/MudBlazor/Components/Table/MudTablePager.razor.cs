@@ -6,6 +6,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// A component which changes pages and page size for a <see cref="MudTable{T}"/>.
+    /// </summary>
     public partial class MudTablePager : MudComponentBase
     {
         protected string Classname =>
@@ -25,49 +29,73 @@ namespace MudBlazor
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
+        /// <summary>
+        /// The current state of the <see cref="MudTable{T}"/> containing this pager.
+        /// </summary>
         [CascadingParameter]
         public TableContext? Context { get; set; }
 
         /// <summary>
-        /// Set true to hide the part of the pager which allows to change the page size.
+        /// Hides the list of page sizes.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         public bool HideRowsPerPage { get; set; }
 
         /// <summary>
-        /// Set true to hide the number of pages.
+        /// Hides the current page number.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         public bool HidePageNumber { get; set; }
 
         /// <summary>
-        /// Set true to hide the pagination.
+        /// Hides the list of page numbers.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         public bool HidePagination { get; set; }
 
         /// <summary>
-        /// Set the horizontal alignment position.
+        /// The location of this pager relative to the parent <see cref="MudTable{T}"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="HorizontalAlignment.Right"/>.
+        /// </remarks>
         [Parameter]
         public HorizontalAlignment HorizontalAlignment { get; set; } = HorizontalAlignment.Right;
 
         /// <summary>
-        /// Define a list of available page size options for the user to choose from
+        /// The list of page sizes.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>10</c>, <c>25</c>, <c>50</c>, and <c>100</c>.  Requires <see cref="HideRowsPerPage"/> to be <c>false</c>.
+        /// </remarks>
         [Parameter]
         public int[] PageSizeOptions { get; set; } = new[] { 10, 25, 50, 100 };
 
         /// <summary>
-        /// Format string for the display of the current page, which you can localize to your language. Available variables are:
-        /// {first_item}, {last_item} and {all_items} which will replaced with the indices of the page's first and last item, as well as the total number of items.
-        /// Default: "{first_item}-{last_item} of {all_items}" which is transformed into "0-25 of 77". 
+        /// The format of the text label.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>"{first_item}-{last_item} of {all_items}"</c> (e.g. <c>0-25 of 77</c>).  You can use any of the following values:
+        /// <list type="bullet"> 
+        /// <item><description><c>{first_item}</c>: The index of the first row being displayed.</description></item> 
+        /// <item><description><c>{last_item}</c>: The index of the last row being displayed.</description></item> 
+        /// <item><description><c>{all_items}</c>: The total number of rows in all pages.</description></item> 
+        /// </list> 
+        /// </remarks>
         [Parameter]
         public string InfoFormat { get; set; } = "{first_item}-{last_item} of {all_items}";
 
         /// <summary>
-        /// Defines the text shown in the items per page dropdown when a user provides int.MaxValue as an option
+        /// The text displayed in the page-size dropdown when <see cref="PageSizeOptions"/> contains <see cref="int.MaxValue"/>.
         /// </summary>
         [Parameter]
         public string AllItemsText { get; set; } = "All";
@@ -89,32 +117,44 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The localizable "Rows per page:" text.
+        /// The text label for the current rows per page.
         /// </summary>
         [Parameter]
         public string RowsPerPageString { get; set; } = "Rows per page:";
 
         /// <summary>
-        /// Custom first icon.
+        /// The icon for the "First Page" button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.FirstPage"/>.
+        /// </remarks>
         [Parameter]
         public string FirstIcon { get; set; } = Icons.Material.Filled.FirstPage;
 
         /// <summary>
-        /// Custom before icon.
+        /// The icon for the "Previous Page" button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.NavigateBefore"/>.
+        /// </remarks>
         [Parameter]
         public string BeforeIcon { get; set; } = Icons.Material.Filled.NavigateBefore;
 
         /// <summary>
-        /// Custom next icon.
+        /// The icon for the "Next Page" button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.NavigateNext"/>.
+        /// </remarks>
         [Parameter]
         public string NextIcon { get; set; } = Icons.Material.Filled.NavigateNext;
 
         /// <summary>
-        /// Custom last icon.
+        /// The icon for the "Last Page" button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.LastPage"/>.
+        /// </remarks>
         [Parameter]
         public string LastIcon { get; set; } = Icons.Material.Filled.LastPage;
 
@@ -124,6 +164,9 @@ namespace MudBlazor
 
         private bool ForwardButtonsDisabled => Table != null && (Table.CurrentPage + 1) * Table.RowsPerPage >= Table.GetFilteredItemsCount();
 
+        /// <summary>
+        /// The <see cref="MudTable{T}"/> linked to this pager.
+        /// </summary>
         public MudTableBase? Table => Context?.Table;
 
         protected override void OnInitialized()

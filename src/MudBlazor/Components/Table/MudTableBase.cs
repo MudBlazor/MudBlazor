@@ -499,85 +499,106 @@ namespace MudBlazor
         /// The behavior which begins inline editing.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="TableEditTrigger.RowClick"/>.  
+        /// Defaults to <see cref="TableEditTrigger.RowClick"/>.  Requires <see cref="Editable"/> to be <c>true</c> and <see cref="ReadOnly"/> to be <c>false</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
         public TableEditTrigger EditTrigger { get; set; } = TableEditTrigger.RowClick;
 
         /// <summary>
-        /// Defines the edit button that will be rendered when EditTrigger.EditButton
+        /// The content of the Edit button which starts inline editing.
         /// </summary>
+        /// <remarks>
+        /// Requires <see cref="Editable"/> to be <c>true</c> and <see cref="ReadOnly"/> to be <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
         public RenderFragment<MudBlazorFix.EditButtonContext>? EditButtonContent { get; set; }
 
         /// <summary>
-        /// The method is called before the item is modified in inline editing.
+        /// Occurs before inline editing begins for a row.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
         public Action<object?>? RowEditPreview { get; set; }
 
         /// <summary>
-        /// The method is called when the edition of the item has been committed in inline editing.
+        /// Occurs when changes are committed for an row being edited.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
         public Action<object?>? RowEditCommit { get; set; }
 
         /// <summary>
-        /// The method is called when the edition of the item has been canceled in inline editing.
+        /// Occurs when changed are canceled for a row being edited.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
         public Action<object?>? RowEditCancel { get; set; }
 
         /// <summary>
-        /// Number of items. Used only with ServerData="true"
+        /// The total number of rows (excluding pages) when using <c>ServerData</c> for data.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
         public int TotalItems { get; set; }
 
         /// <summary>
-        /// CSS class for the table rows. Note, many CSS settings are overridden by MudTd though
+        /// The CSS classes applied to each row.
         /// </summary>
+        /// <remarks>
+        /// Multiple classes must be separated by spaces.  Some CSS classes will be overridden by <see cref="MudTd"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Rows)]
         public string? RowClass { get; set; }
 
         /// <summary>
-        /// CSS styles for the table rows. Note, many CSS settings are overridden by MudTd though
+        /// The CSS styles applied to each row.
         /// </summary>
+        /// <remarks>
+        /// Some CSS styles will be overridden by <see cref="MudTd"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Rows)]
         public string? RowStyle { get; set; }
 
         /// <summary>
-        /// If true, the results are displayed in a Virtualize component, allowing a boost in rendering speed.
+        /// Uses virtualization to display large amounts of items efficiently.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  Typically used for more than <c>1000</c> items.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Behavior)]
         public bool Virtualize { get; set; }
 
         /// <summary>
-        /// Gets or sets a value that determines how many additional items will be rendered
-        /// before and after the visible region. This help to reduce the frequency of rendering
-        /// during scrolling. However, higher values mean that more elements will be present
-        /// in the page.
+        /// The number of additional items to render outside of view when <see cref="Virtualize"/> is <c>true</c>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>3</c>.  Can reduce the frequency of rendering during scrolling, but higher values can reduce performance.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Behavior)]
         public int OverscanCount { get; set; } = 3;
 
         /// <summary>
-        /// Gets the size of each item in pixels. Defaults to 50px.
+        /// The height of each row, in pixels, when <see cref="Virtualize"/> is <c>true</c>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>50</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Behavior)]
         public float ItemSize { get; set; } = 50f;
 
+        /// <summary>
+        /// The current state of this table.
+        /// </summary>
+        /// <remarks>
+        /// Typically used to interact with other components such as <see cref="MudTablePager"/>.
+        /// </remarks>
         public abstract TableContext TableContext { get; }
 
         protected override Task OnAfterRenderAsync(bool firstRender)
@@ -588,6 +609,10 @@ namespace MudBlazor
             return base.OnAfterRenderAsync(firstRender);
         }
 
+        /// <summary>
+        /// Changes the current page.
+        /// </summary>
+        /// <param name="page">The <c>Next</c>, <c>Previous</c>, <c>First</c>, or <c>Last</c> page to navigate to.</param>
         public void NavigateTo(Page page)
         {
             switch (page)
@@ -607,14 +632,18 @@ namespace MudBlazor
             }
         }
         /// <summary>
-        /// Navigate to page with specified index.
+        /// Navigates to the specified page.
         /// </summary>
-        /// <param name="pageIndex"> The index of the page number.</param>
+        /// <param name="pageIndex">The index of the page to navigate to.</param>
         public void NavigateTo(int pageIndex)
         {
             CurrentPage = Math.Min(Math.Max(0, pageIndex), NumPages - 1);
         }
 
+        /// <summary>
+        /// Changes the rows per page to the specified value.
+        /// </summary>
+        /// <param name="size">The number of rows per page.</param>
         public void SetRowsPerPage(int size)
         {
             if (_rowsPerPage == size)
@@ -634,10 +663,22 @@ namespace MudBlazor
 
         protected abstract int NumPages { get; }
 
+        /// <summary>
+        /// Gets the number of items after applying filters.
+        /// </summary>
+        /// <returns>The number of filtered items.</returns>
         public abstract int GetFilteredItemsCount();
 
+        /// <summary>
+        /// Changes the currently selected item.
+        /// </summary>
+        /// <param name="item">The new item to select.</param>
         public abstract void SetSelectedItem(object? item);
 
+        /// <summary>
+        /// Changes the item being edited.
+        /// </summary>
+        /// <param name="item">The new item to edit.</param>
         public abstract void SetEditingItem(object? item);
 
         internal async Task OnCommitEditHandler(MouseEventArgs ev, object? item)
@@ -683,10 +724,24 @@ namespace MudBlazor
 
         internal abstract bool Editable { get; }
 
+        /// <summary>
+        /// Gets whether the specified item exists.
+        /// </summary>
+        /// <param name="item">The item to find.</param>
+        /// <returns></returns>
         public abstract bool ContainsItem(object? item);
 
+        /// <summary>
+        /// Refreshes the table's current selection.
+        /// </summary>
         public abstract void UpdateSelection();
 
+        /// <summary>
+        /// The validator for this table.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to a new <see cref="TableRowValidator"/>.
+        /// </remarks>
         public Interfaces.IForm Validator { get; set; } = new TableRowValidator();
     }
 }
