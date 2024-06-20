@@ -624,7 +624,8 @@ namespace MudBlazor
 
         private async void OnResized(IDictionary<ElementReference, BoundingClientRect> changes)
         {
-            if (changes.Count == 1 && changes.ContainsKey(_tabsContentSize) && _panels.Count > 0)
+            // parent resized and children are missing from the event
+            if (changes.ContainsKey(_tabsContentSize) && _panels.Any(x => changes.ContainsKey(x.PanelRef) == false))
                 await _resizeObserver.Resync();
 
             Rerender();
