@@ -53,6 +53,8 @@ class MudResizeObserver {
         this.options = options;
         this._dotNetRef = dotNetRef
 
+        this.tranformRegex = /(?<axis>[XY])\(-?(?<amount>\d+)/;
+
         var delay = (this.options || {}).reportRate || 200;
 
         this.throttleResizeHandlerId = -1;
@@ -70,7 +72,7 @@ class MudResizeObserver {
                 var affectedObservedElement = observervedElements.find((x) => x.element == target);
                 if (affectedObservedElement) {
 
-                    var size = window.mudElementRef.getBoundingClientRect(entry.target);
+                    var size = this.getBoundingClientRect(entry.target);
                     if (affectedObservedElement.isInitialized == true) {
 
                         changes.push({ id: affectedObservedElement.id, size: size });
@@ -90,6 +92,22 @@ class MudResizeObserver {
 
             }
         });
+    }
+
+    getBoundingClientRect(element) {
+        var rect = window.mudElementRef.getBoundingClientRect(element);
+
+        var transform = element.parentNode.style.transform.match(this.tranformRegex);
+        if (transform !== null) {
+            var amount = parseInt(transform.groups.amount);
+
+            if (transform.groups.axis == 'X')
+                rect.scrollX += amount;
+            else
+                rect.scrollY += amount;
+        }
+
+        return rect;
     }
 
     resizeHandler(changes) {
@@ -114,7 +132,7 @@ class MudResizeObserver {
 
             this.logger("[MudBlazor | ResizeObserver] Start observing element:", { newEntry });
 
-            result.push(window.mudElementRef.getBoundingClientRect(elements[i]));
+            result.push(this.getBoundingClientRect(elements[i]));
 
             this._observervedElements.push(newEntry);
             this._resizeObserver.observe(elements[i]);
@@ -144,7 +162,7 @@ class MudResizeObserver {
 
         for (var i = 0; i < this._observervedElements.length; i++) {
             var entry = this._observervedElements[i];
-            result.push({ id: entry.id, size: window.mudElementRef.getBoundingClientRect(entry.element) });
+            result.push({ id: entry.id, size: this.getBoundingClientRect(entry.element) });
         }
 
         this.resizeHandler.call(this, result);
