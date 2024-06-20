@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @using System.Globalization;
 
-<MudDataGrid @ref="DataGrid" Items="@_items" Sortable="true">
+<MudDataGrid @ref="DataGrid" Items="@_items" SortMode="SortMode.Multiple">
     <Columns>
         <PropertyColumn Property="x => x.Name" Comparer="@(NaturalSortingEnabled ? new MudBlazor.Utilities.NaturalComparer() : null)" />
         <PropertyColumn Property="x => x.Value" />

@@ -46,6 +46,13 @@
     <None Include="..\..\content\Nuget.png" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
 
+  <!--Analyzer Config-->
+  <PropertyGroup>
+    <MudAllowedAttributePattern>LowerCase</MudAllowedAttributePattern>
+    <MudIllegalParameters>V7IgnoreCase</MudIllegalParameters>
+    <MudDebugAnalyzer>false</MudDebugAnalyzer>
+  </PropertyGroup>
+
   <!--Is this a rebuild - Dont clean generated files as this breaks rebuild behaviour-->
   <Target Name="ShouldCleanGeneratedFiles" BeforeTargets="BeforeRebuild">
     <PropertyGroup>
@@ -86,6 +93,15 @@
     <PackageReference Include="MudBlazor.JSCompiler" Version="1.0.15">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="true" OutputItemType="Analyzer" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Include="$(OutputPath)\net7.0\$(AssemblyName).Analyzers.dll" Pack="true" PackagePath="analyzers/dotnet/cs/" Visible="true" />
+    <Content Include="..\Directory.Build.targets" Pack="true" PackagePath="build\$(PackageId).targets" Visible="true" />
   </ItemGroup>
 
   <!--Dont Include in build output-->
