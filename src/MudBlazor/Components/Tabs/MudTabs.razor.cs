@@ -329,6 +329,8 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
+            base.OnParametersSet();
+
             if (_resizeObserver == null)
             {
                 _resizeObserver = _resizeObserverFactory.Create();
