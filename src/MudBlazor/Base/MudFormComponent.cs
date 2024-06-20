@@ -713,6 +713,7 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
+            base.OnParametersSet();
             if (For is not null && For != _currentFor)
             {
                 // Extract validation attributes
