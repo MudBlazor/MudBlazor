@@ -21,6 +21,8 @@ namespace MudBlazor.Charts
 
         protected override void OnParametersSet()
         {
+            base.OnParametersSet();
+
             _paths.Clear();
             _legends.Clear();
 
