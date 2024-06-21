@@ -138,6 +138,7 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
+            base.OnParametersSet();
             //if params change, must set default values again
             SetDefaultValues();
         }
