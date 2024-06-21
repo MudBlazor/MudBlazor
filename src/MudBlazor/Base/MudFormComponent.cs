@@ -9,6 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -725,7 +726,7 @@ namespace MudBlazor
                 // A possible solution is to use source gen
 #pragma warning disable IL2075
                 var propertyInfo = expression.Expression?.Type.GetProperty(expression.Member.Name);
-#pragma warning restore IL2075                
+#pragma warning restore IL2075
                 _validationAttrsFor = propertyInfo?.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
 
                 _fieldIdentifier = FieldIdentifier.Create(For);
