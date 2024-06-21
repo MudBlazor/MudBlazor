@@ -97,15 +97,12 @@ class MudResizeObserver {
     getBoundingClientRect(element) {
         var rect = window.mudElementRef.getBoundingClientRect(element);
 
-        var transform = element.parentNode.style.transform.match(this.tranformRegex);
-        if (transform !== null) {
-            var amount = parseInt(transform.groups.amount);
+        var [, axis, amount] = element.parentNode.style.transform.match(this.tranformRegex) || [];
 
-            if (transform.groups.axis == 'X')
-                rect.scrollX += amount;
-            else
-                rect.scrollY += amount;
-        }
+        if (axis == 'X')
+            rect.scrollX += parseInt(amount);
+        else if (axis == 'Y')
+            rect.scrollY += parseInt(amount);
 
         return rect;
     }
