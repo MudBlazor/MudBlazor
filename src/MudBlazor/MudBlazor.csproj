@@ -99,11 +99,20 @@
     <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="true" OutputItemType="Analyzer" />
   </ItemGroup>
   
-  <ItemGroup>
-    <None Include="$(OutputPath)\net7.0\$(AssemblyName).Analyzers.dll" Pack="true" PackagePath="analyzers/dotnet/cs/" Visible="true" />
-    <Content Include="..\Directory.Build.targets" Pack="true" PackagePath="build\$(PackageId).targets" Visible="true" />
-  </ItemGroup>
-
+  <PropertyGroup>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddAnalyzersToOutput</TargetsForTfmSpecificContentInPackage>
+  </PropertyGroup>
+  
+  <!--Add analyzer to build output so it works transitively -->
+  <Target Name="_AddAnalyzersToOutput">
+    <!--Limit to one copy (MudBlazor is multi targeted) analyzers are .net standard 2.0 -->
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
+      <TfmSpecificPackageFile Include="$(OutputPath)\$(AssemblyName).Analyzers.dll" PackagePath="analyzers/dotnet/cs" />
+      <!-- Add compiler visible properties to nuget for analyzers -->
+      <TfmSpecificPackageFile Include="..\Directory.Build.targets" Pack="true" PackagePath="build\$(PackageId).targets" />
+    </ItemGroup>
+  </Target>
+  
   <!--Dont Include in build output-->
   <ItemGroup>
     <Content Remove="compilerconfig.json" />
