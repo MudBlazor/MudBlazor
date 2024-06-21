@@ -12,7 +12,14 @@
         <MudSelect T="string" ValueChanged="@SetRowsPerPageAsync" Value="@DataGrid?.RowsPerPage.ToString()" Class="mud-table-pagination-select" Underline="false" Dense="true" Disabled="@Disabled">
             @foreach (int pageSize in PageSizeOptions)
             {
-                <MudSelectItem T="string" Value="@pageSize.ToString()">@pageSize.ToString().ToUpper()</MudSelectItem>
+                if (pageSize == int.MaxValue)
+                {
+                    <MudSelectItem T="int" Value="@pageSize">@AllItemsText</MudSelectItem>
+                }
+                else 
+                {
+                    <MudSelectItem T="string" Value="@pageSize.ToString()">@pageSize.ToString().ToUpper()</MudSelectItem>
+                }
             }
         </MudSelect>
     }
