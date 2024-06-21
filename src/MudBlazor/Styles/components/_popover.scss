@@ -4,10 +4,6 @@
   position: absolute;
   opacity: 0;
 
-  * {
-    touch-action: pinch-zoom;
-  }
-
   &.mud-popover-fixed {
     position: fixed;
   }
