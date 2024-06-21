@@ -53,7 +53,7 @@ class MudResizeObserver {
         this.options = options;
         this._dotNetRef = dotNetRef
 
-        this.tranformRegex = /(?<axis>[XY])\(-?(?<amount>\d+)/;
+        this.tranformRegex = /^translate([XY])\(-?([1-9]\d*)/;
 
         var delay = (this.options || {}).reportRate || 200;
 
