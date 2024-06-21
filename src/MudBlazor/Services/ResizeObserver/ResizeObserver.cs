@@ -55,7 +55,6 @@ namespace MudBlazor.Services
             var counter = 0;
             foreach (var item in result)
             {
-                // ElementAt is used due to tests that use own GUIDs
                 _cachedValues.Add(filteredElements.ElementAt(counter), item);
                 counter++;
             }
@@ -73,11 +72,6 @@ namespace MudBlazor.Services
 
             _cachedValueIds.Remove(elementId);
             _cachedValues.Remove(element);
-        }
-
-        public async Task Resync()
-        {
-            await _jsRuntime.InvokeVoidAsync($"mudResizeObserver.resync", _id);
         }
 
         public bool IsElementObserved(ElementReference reference) => _cachedValues.ContainsKey(reference);
