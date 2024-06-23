@@ -112,11 +112,11 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
-        private async Task SetRowsPerPageAsync(string size)
+        private async Task SetRowsPerPageAsync(int size)
         {
             if (DataGrid != null)
             {
-                await DataGrid.SetRowsPerPageAsync(int.Parse(size));
+                await DataGrid.SetRowsPerPageAsync(size);
             }
         }
 
