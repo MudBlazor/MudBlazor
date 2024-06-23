@@ -9,6 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -25,12 +26,12 @@ namespace MudBlazor
         /// <summary>
         /// The content within this dialog.
         /// </summary>
-        RenderFragment RenderFragment { get; set; }
+        RenderFragment? RenderFragment { get; set; }
 
         /// <summary>
         /// The result of closing the dialog.
         /// </summary>
-        Task<DialogResult> Result { get; }
+        Task<DialogResult?> Result { get; }
 
         TaskCompletionSource<bool> RenderCompleteTaskCompletionSource { get; }
 
@@ -43,19 +44,19 @@ namespace MudBlazor
         /// Hides the dialog and returns a result.
         /// </summary>
         /// <param name="result">The result of closing the dialog.</param>
-        void Close(DialogResult result);
+        void Close(DialogResult? result);
 
         /// <summary>
         /// Notifies that this dialog has been dismissed.
         /// </summary>
         /// <param name="result">The result of closing the dialog.</param>
         /// <returns>Returns <c>true</c> if the result was set successfully.</returns>
-        bool Dismiss(DialogResult result);
+        bool Dismiss(DialogResult? result);
 
         /// <summary>
         /// The dialog linked to this reference.
         /// </summary>
-        object Dialog { get; }
+        object? Dialog { get; }
 
         /// <summary>
         /// Replaces the dialog content.
@@ -74,6 +75,6 @@ namespace MudBlazor
         /// </summary>
         /// <typeparam name="T">The type of value to return.</typeparam>
         /// <returns>The results of closing the dialog.</returns>
-        Task<T> GetReturnValueAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>();
+        Task<T?> GetReturnValueAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>();
     }
 }

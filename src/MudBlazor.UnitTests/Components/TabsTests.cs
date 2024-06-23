@@ -1298,37 +1298,5 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.Ripple, false));
             comp.FindAll("div.mud-ripple").Count.Should().Be(0);
         }
-
-        [Test]
-        public async Task WrapHeaders()
-        {
-            var observer = new MockResizeObserver
-            {
-                PanelSize = 100.0,
-                PanelTotalSize = 300,
-                WrapHeaders = true,
-            };
-
-            var factory = new MockResizeObserverFactory(observer);
-            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
-
-            var comp = Context.RenderComponent<ScrollableTabsTest>(p =>
-            {
-                p.Add(x => x.WrapHeaders, true);
-                p.Add(x => x.AlwaysShowScrollButtons, false);
-            });
-
-            comp.Find(".mud-tabs-tabbar-wrapper").ClassList.Should().Contain("mud-tabs-inline");
-
-            for (var i = 0; i < 6; i++)
-            {
-                comp.Instance.SetPanelActive(i);
-
-                var row = Math.Floor(i / 3.0) + 1;
-
-                GetSliderValue(comp, "top").Should().Be(row * 48.0 - 2);
-                GetSliderValue(comp, "left").Should().Be(i % 3 * 100.0);
-            }
-        }
     }
 }

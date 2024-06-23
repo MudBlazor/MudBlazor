@@ -11,6 +11,13 @@
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)../</SolutionDir>
   </PropertyGroup>
 
+  <!--Analyzer Config-->
+  <PropertyGroup>
+    <MudAllowedAttributePattern>LowerCase</MudAllowedAttributePattern>
+    <MudIllegalParameters>V7IgnoreCase</MudIllegalParameters>
+    <MudDebugAnalyzer>false</MudDebugAnalyzer>
+  </PropertyGroup>
+  
   <!--Project path for code generator-->
   <PropertyGroup>
     <BinDocsCompiler>$(SolutionDir)MudBlazor.Docs.Compiler/bin/Debug/net8.0/MudBlazor.Docs.Compiler.dll</BinDocsCompiler>
@@ -90,6 +97,7 @@
     <ProjectReference Include="../MudBlazor/MudBlazor.csproj" />
     <ProjectReference Include="../MudBlazor.Examples.Data/MudBlazor.Examples.Data.csproj" />
     <ProjectReference Include="../MudBlazor.SourceGenerator/MudBlazor.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
   </ItemGroup>
 
   <PropertyGroup>

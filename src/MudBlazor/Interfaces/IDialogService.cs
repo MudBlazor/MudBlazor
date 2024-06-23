@@ -10,6 +10,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
+#nullable enable
+
 namespace MudBlazor
 {
     /// <summary>
@@ -20,8 +22,8 @@ namespace MudBlazor
     /// </remarks>
     public interface IDialogService
     {
-        public event Action<IDialogReference> OnDialogInstanceAdded;
-        public event Action<IDialogReference, DialogResult> OnDialogCloseRequested;
+        public event Action<IDialogReference>? OnDialogInstanceAdded;
+        public event Action<IDialogReference, DialogResult?>? OnDialogCloseRequested;
 
         /// <summary>
         /// Displays a dialog.
@@ -36,7 +38,7 @@ namespace MudBlazor
         /// <typeparam name="TComponent">The type of dialog to display.</typeparam>
         /// <param name="title">The text at the top of the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
-        IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string title) where TComponent : IComponent;
+        IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string? title) where TComponent : IComponent;
 
         /// <summary>
         /// Displays a dialog with a custom title and options.
@@ -45,7 +47,7 @@ namespace MudBlazor
         /// <param name="title">The text at the top of the dialog.</param>
         /// <param name="options">The custom display options for the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
-        IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string title, DialogOptions options) where TComponent : IComponent;
+        IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string? title, DialogOptions options) where TComponent : IComponent;
 
         /// <summary>
         /// Displays a dialog with custom parameters.
@@ -54,7 +56,7 @@ namespace MudBlazor
         /// <param name="title">The text at the top of the dialog.</param>
         /// <param name="parameters">The custom parameters to set within the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
-        IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string title, DialogParameters parameters) where TComponent : IComponent;
+        IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string? title, DialogParameters parameters) where TComponent : IComponent;
 
         /// <summary>
         /// Displays a dialog with custom options and parameters.
@@ -64,7 +66,7 @@ namespace MudBlazor
         /// <param name="parameters">The custom parameters to set within the dialog.</param>
         /// <param name="options">The custom display options for the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
-        IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string title, DialogParameters parameters, DialogOptions options) where TComponent : IComponent;
+        IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string? title, DialogParameters parameters, DialogOptions? options) where TComponent : IComponent;
 
         /// <summary>
         /// Displays a dialog.
@@ -79,7 +81,7 @@ namespace MudBlazor
         /// <param name="component">The type of dialog to display.</param>
         /// <param name="title">The text at the top of the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
-        IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string title);
+        IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title);
 
         /// <summary>
         /// Displays a dialog with a custom title and options.
@@ -88,7 +90,7 @@ namespace MudBlazor
         /// <param name="title">The text at the top of the dialog.</param>
         /// <param name="options">The custom display options for the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
-        IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string title, DialogOptions options);
+        IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title, DialogOptions options);
 
         /// <summary>
         /// Displays a dialog with a custom title and options.
@@ -97,7 +99,7 @@ namespace MudBlazor
         /// <param name="title">The text at the top of the dialog.</param>
         /// <param name="parameters">The custom parameters to set within the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
-        IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string title, DialogParameters parameters);
+        IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title, DialogParameters parameters);
 
         /// <summary>
         /// Displays a dialog with a custom title, parameters, and options.
@@ -107,7 +109,7 @@ namespace MudBlazor
         /// <param name="parameters">The custom parameters to set within the dialog.</param>
         /// <param name="options">The custom display options for the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
-        IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string title, DialogParameters parameters, DialogOptions options);
+        IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title, DialogParameters parameters, DialogOptions options);
 
         /// <summary>
         /// Displays a dialog.
@@ -122,7 +124,7 @@ namespace MudBlazor
         /// <typeparam name="TComponent">The dialog to display.</typeparam>
         /// <param name="title">The text at the top of the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
-        Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string title) where TComponent : IComponent;
+        Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string? title) where TComponent : IComponent;
 
         /// <summary>
         /// Displays a dialog with a custom title and options.
@@ -131,7 +133,7 @@ namespace MudBlazor
         /// <param name="title">The text at the top of the dialog.</param>
         /// <param name="options">The custom display options for the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
-        Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string title, DialogOptions options) where TComponent : IComponent;
+        Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string? title, DialogOptions options) where TComponent : IComponent;
 
         /// <summary>
         /// Displays a dialog with a custom title and parameters.
@@ -140,7 +142,7 @@ namespace MudBlazor
         /// <param name="title">The text at the top of the dialog.</param>
         /// <param name="parameters">The custom parameters to set within the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
-        Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string title, DialogParameters parameters) where TComponent : IComponent;
+        Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string? title, DialogParameters parameters) where TComponent : IComponent;
 
         /// <summary>
         /// Displays a dialog with a custom title, parameters, and options.
@@ -150,7 +152,7 @@ namespace MudBlazor
         /// <param name="parameters">The custom parameters to set within the dialog.</param>
         /// <param name="options">The custom display options for the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
-        Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string title, DialogParameters parameters, DialogOptions options) where TComponent : IComponent;
+        Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string? title, DialogParameters parameters, DialogOptions? options) where TComponent : IComponent;
 
         /// <summary>
         /// Displays a dialog.
@@ -165,7 +167,7 @@ namespace MudBlazor
         /// <param name="component">The dialog to display.</param>
         /// <param name="title">The text at the top of the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
-        Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string title);
+        Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title);
 
         /// <summary>
         /// Displays a dialog with a custom title and options.
@@ -174,7 +176,7 @@ namespace MudBlazor
         /// <param name="title">The text at the top of the dialog.</param>
         /// <param name="options">The custom display options for the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
-        Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string title, DialogOptions options);
+        Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title, DialogOptions options);
 
         /// <summary>
         /// Displays a dialog with a custom title and parameters.
@@ -183,7 +185,7 @@ namespace MudBlazor
         /// <param name="title">The text at the top of the dialog.</param>
         /// <param name="parameters">The custom parameters to set within the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
-        Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string title, DialogParameters parameters);
+        Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title, DialogParameters parameters);
 
         /// <summary>
         /// Displays a dialog with a custom title, parameters, and options.
@@ -193,7 +195,7 @@ namespace MudBlazor
         /// <param name="parameters">The custom parameters to set within the dialog.</param>
         /// <param name="options">The custom display options for the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
-        Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string title, DialogParameters parameters, DialogOptions options);
+        Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title, DialogParameters parameters, DialogOptions options);
 
         /// <summary>
         /// Creates a reference to a dialog.
@@ -211,8 +213,8 @@ namespace MudBlazor
         /// <param name="cancelText">The text of the "Cancel" button.  Defaults to <c>null</c>.</param>
         /// <param name="options">The custom display options for the dialog.  Defaults to <c>null</c>.</param>
         /// <returns>Returns <c>null</c> if the <c>Cancel</c> button was clicked, <c>true</c> if the <c>Yes</c> button was clicked, or <c>false</c> if the <c>No</c> button was clicked.</returns>
-        Task<bool?> ShowMessageBox(string title, string message, string yesText = "OK",
-            string noText = null, string cancelText = null, DialogOptions options = null);
+        Task<bool?> ShowMessageBox(string? title, string message, string yesText = "OK",
+            string? noText = null, string? cancelText = null, DialogOptions? options = null);
 
         /// <summary>
         /// Shows a simple dialog with a title, HTML message, and up to three custom buttons.
@@ -224,8 +226,8 @@ namespace MudBlazor
         /// <param name="cancelText">The text of the "Cancel" button.  Defaults to <c>null</c>.</param>
         /// <param name="options">The custom display options for the dialog.  Defaults to <c>null</c>.</param>
         /// <returns>Returns <c>null</c> if the <c>Cancel</c> button was clicked, <c>true</c> if the <c>Yes</c> button was clicked, or <c>false</c> if the <c>No</c> button was clicked.</returns>
-        Task<bool?> ShowMessageBox(string title, MarkupString markupMessage, string yesText = "OK",
-            string noText = null, string cancelText = null, DialogOptions options = null);
+        Task<bool?> ShowMessageBox(string? title, MarkupString markupMessage, string yesText = "OK",
+            string? noText = null, string? cancelText = null, DialogOptions? options = null);
 
         /// <summary>
         /// Shows a simple dialog with custom options.
@@ -233,19 +235,19 @@ namespace MudBlazor
         /// <param name="messageBoxOptions">The options for the message box.</param>
         /// <param name="options">The custom display options for the dialog.  Defaults to <c>null</c>.</param>
         /// <returns>Returns <c>null</c> if the <c>Cancel</c> button was clicked, <c>true</c> if the <c>Yes</c> button was clicked, or <c>false</c> if the <c>No</c> button was clicked.</returns>
-        Task<bool?> ShowMessageBox(MessageBoxOptions messageBoxOptions, DialogOptions options = null);
+        Task<bool?> ShowMessageBox(MessageBoxOptions messageBoxOptions, DialogOptions? options = null);
 
         /// <summary>
         /// Hides an existing dialog.
         /// </summary>
         /// <param name="dialog">The reference of the dialog to hide.</param>
-        void Close(DialogReference dialog);
+        void Close(IDialogReference dialog);
 
         /// <summary>
         /// Hides an existing dialog.
         /// </summary>
         /// <param name="dialog">The reference of the dialog to hide.</param>
         /// <param name="result">The result to include.</param>
-        void Close(DialogReference dialog, DialogResult result);
+        void Close(IDialogReference dialog, DialogResult? result);
     }
 }

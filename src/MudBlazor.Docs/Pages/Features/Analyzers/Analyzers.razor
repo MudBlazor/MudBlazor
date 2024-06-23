@@ -1,0 +1,115 @@
+﻿@page "/features/analyzers"
+@using System.Reflection
+@using System.Text.RegularExpressions
+
+<DocsPage>
+    <DocsPageHeader Title="Analyzers">
+        <Description>
+            MudBlazor includes a Roslyn analyzer to detect common MudBlazor issues at compile time.
+        </Description>
+    </DocsPageHeader>
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="MUD0001">
+                <Description>
+                    Identifies MudBlazor parameters that have been removed or renamed in MudBlazor v7. 
+                    The warning will only indicate the correct .razor file not the exact location. 
+                    Configure the analyzer by adding the code below to your <CodeInline>.csproj</CodeInline> file.                 
+                </Description>
+            </SectionHeader>
+            <MUD0001ConfigurationTable />
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="MUD0002">
+                <Description>
+                    Identifies attributes set on MudBlazor components that don't match a defined pattern. This helps prevent parameter errors such as typos. 
+                    The warning will only indicate the correct .razor file not the exact location. 
+                    Configure the analyzer by adding the code below to your <CodeInline>.csproj</CodeInline> file.
+                </Description>
+            </SectionHeader>
+            <MUD0002ConfigurationTable />
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
+
+@code {
+
+    List<MaterialColor> MaterialColors = new List<MaterialColor>();
+    List<MaterialColor> MaterialColorShades = new List<MaterialColor>();
+
+    public bool IsLightColor { get; set; }
+
+    protected override void OnInitialized()
+    {
+        LoadColors();
+    }
+    
+    private string GetColorClass(string value)
+    {
+        if (value.StartsWith("deep"))
+        {
+            return value.Replace("deep", "deep-");
+        }
+        else if(value.StartsWith("light"))
+        {
+            return value.Replace("light", "light-");
+        }
+        else if(value.StartsWith("bluegray"))
+        {
+            return value.Replace("bluegray", "blue-gray");
+        }
+        else if(value.StartsWith("shades"))
+        {
+            return value.Replace("shades", "black shades-text text-white");
+        }
+        else
+        {
+            return value;
+        }
+    }
+
+    private string GetShadeClass(string value)
+    {
+        return Regex.Replace(value, "[0-9]", "-$&");
+    }
+
+    public void LoadColors()
+    {
+        var shades = new List<MaterialColor>();
+        var colors = new List<MaterialColor>();
+
+        foreach (var prop in typeof(Colors).GetMembers(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
+        {
+            if (prop.MemberType == MemberTypes.NestedType)
+            {
+                var Assembly = typeof(Colors).Assembly;
+                Type SubColorType = Assembly.GetType(prop.ToString());
+                string tempHex = "";
+                foreach (var color in SubColorType.GetProperties())
+                {
+                    var shadeColor = new MaterialColor
+                    {
+                        Color = prop.Name,
+                        Name = color.Name,
+                        Value = color.GetValue(SubColorType).ToString()
+                    };
+                    if (color.Name is "Default" or "Black")
+                    {
+                        tempHex = shadeColor.Value;
+                    }
+                    shades.Add(shadeColor);
+                }
+                var materialColor = new MaterialColor
+                {
+                    Color = prop.Name,
+                    Value = tempHex
+                };
+                colors.Add(materialColor);
+            }
+        }
+        MaterialColors = colors;
+        MaterialColorShades = shades;
+    }
+}
