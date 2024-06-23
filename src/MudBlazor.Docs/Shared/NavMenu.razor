@@ -11,12 +11,12 @@
 
 <MudNavLink Href="docs/overview" Class="docs-single-link">Explore</MudNavLink>
 
-<MudNavGroup Title="Components" Expanded="@(_section == "components")">
+<MudNavGroup Title="Components" Expanded="@(_section == "components")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
     @foreach (var item in MenuService.Components)
     {
         if (item.IsNavGroup)
         {
-            <MudNavGroup Title="@item.Name" Expanded="true">
+            <MudNavGroup Title="@item.Name" Expanded="true" ExpandIcon="@Icons.Material.Filled.ExpandMore">
                 @foreach (var subItem in item.GroupComponents)
                 {
                     var href = $"components/{subItem.Link}";
@@ -32,28 +32,28 @@
     }
 </MudNavGroup>
 
-<MudNavGroup Title="Component API" Expanded="@(_section == "api")">
+<MudNavGroup Title="Component API" Expanded="@(_section == "api")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
     @foreach (var item in MenuService.Api.OrderBy(x => x.Name))
     {
         <MudNavLink Href="@ApiLink.GetApiLinkFor(item.Type)">@item.Name</MudNavLink>
     }
 </MudNavGroup>
 
-<MudNavGroup Title="Features" Expanded="@(_section == "features")">
+<MudNavGroup Title="Features" Expanded="@(_section == "features")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
     @foreach (var link in MenuService.Features)
     {
         <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
     }
 </MudNavGroup>
 
-<MudNavGroup Title="Customization" Expanded="@(_section == "customization")">
+<MudNavGroup Title="Customization" Expanded="@(_section == "customization")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
     @foreach (var link in MenuService.Customization)
     {
         <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
     }
 </MudNavGroup>
 
-<MudNavGroup Title="CSS Utilities" Expanded="@(_section == "utilities")">
+<MudNavGroup Title="CSS Utilities" Expanded="@(_section == "utilities")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
     @foreach (var title in MenuService.Utilities.GroupBy(x => x.Group).Select(x => x.Key))
     {
         <div class="docs-css-utility-header">
