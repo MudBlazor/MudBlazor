@@ -745,7 +745,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridPaginationTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationTest.Item>>();
             // check that the page size dropdown is shown
-            comp.FindComponents<MudSelect<string>>().Count.Should().Be(1);
+            comp.FindComponents<MudSelect<int>>().Count.Should().Be(1);
 
             dataGrid.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20");
 
