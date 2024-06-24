@@ -14,7 +14,8 @@ namespace MudBlazor
         public static string GetFullPathOfMember<T>(this Expression<Func<T>> property)
         {
             var resultingString = string.Empty;
-            var p = property.Body as MemberExpression;
+            // Add handling for validation expressions that refer to non-nullable properties (#8931):
+            var p = (property.Body as MemberExpression ?? (MemberExpression)((UnaryExpression)property.Body).Operand);
 
             while (p is not null)
             {
@@ -32,7 +33,7 @@ namespace MudBlazor
         /// </summary>
         public static string GetLabelString<T>(this Expression<Func<T>> expression)
         {
-            var memberExpression = (MemberExpression)expression.Body;
+            var memberExpression = (expression.Body as MemberExpression ?? (MemberExpression)((UnaryExpression)expression.Body).Operand);
 
             // Currently we have no solution for this which is trimming incompatible
             // A possible solution is to use source gen

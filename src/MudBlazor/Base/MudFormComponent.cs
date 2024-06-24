@@ -651,7 +651,8 @@ namespace MudBlazor
                 // Extract validation attributes
                 // Sourced from https://stackoverflow.com/a/43076222/4839162
                 // and also https://stackoverflow.com/questions/59407225/getting-a-custom-attribute-from-a-property-using-an-expression
-                var expression = (MemberExpression)For.Body;
+                // Add handling for validation expressions that refer to non-nullable properties (#8931):
+                var expression = (For.Body as MemberExpression ?? (MemberExpression)((UnaryExpression)For.Body).Operand);
 
                 // Currently we have no solution for this which is trimming incompatible
                 // A possible solution is to use source gen
@@ -660,7 +661,28 @@ namespace MudBlazor
 #pragma warning restore IL2075                
                 _validationAttrsFor = propertyInfo?.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
 
-                _fieldIdentifier = FieldIdentifier.Create(For);
+                // Add handling for validation expressions that refer to non-nullable properties (#8931):
+                if (For.Body is UnaryExpression unaryExpression
+                    && unaryExpression.NodeType == ExpressionType.Convert
+                    && unaryExpression.Operand is MemberExpression memberExpression
+                    && memberExpression.Expression is MemberExpression member
+                    && member.Expression is ConstantExpression model
+                )
+                {
+                    var fieldName = memberExpression.Member.Name;
+                    object? value = model.Value ?? throw new ArgumentException("The provided expression must evaluate to a non-null value.");
+                    Func<object, object>? accessor = CreateAccessor((value.GetType(), member.Member.Name));
+                    if (accessor == null)
+                    {
+                        throw new InvalidOperationException($"Unable to compile expression: {member}");
+                    }
+                    _fieldIdentifier = new FieldIdentifier(model, fieldName);
+                }
+                else
+                {
+                    _fieldIdentifier = FieldIdentifier.Create(For);
+                }
+
                 _currentFor = For;
             }
 
@@ -669,6 +691,22 @@ namespace MudBlazor
                 DetachValidationStateChangedListener();
                 EditContext.OnValidationStateChanged += OnValidationStateChanged;
                 _currentEditContext = EditContext;
+            }
+
+            [UnconditionalSuppressMessage(
+            "Trimming",
+            "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code",
+            Justification = "Application code does not get trimmed. We expect the members in the expression to not be trimmed.")]
+            static Func<object, object> CreateAccessor((Type model, string member) arg)
+            {
+                var parameter = Expression.Parameter(typeof(object), "value");
+                Expression expression = Expression.Convert(parameter, arg.model);
+                expression = Expression.PropertyOrField(expression, arg.member);
+                expression = Expression.Convert(expression, typeof(object));
+                var lambda = Expression.Lambda<Func<object, object>>(expression, parameter);
+
+                var func = lambda.Compile();
+                return func;
             }
         }
 
