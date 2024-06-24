@@ -4187,5 +4187,27 @@ namespace MudBlazor.UnitTests.Components
             cells[28].TextContent.Should().Be("Calcium"); cells[29].TextContent.Should().Be("20");
         }
 
+        [Test]
+        public void QueryFilterExtensionTest()
+        {
+            var comp = Context.RenderComponent<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            var nameFilter = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("Name"),
+                Operator = FilterOperator.String.Contains,
+                Value = "Sam",
+            };
+            var ageFilter = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("Age"),
+                Operator = FilterOperator.Number.GreaterThan,
+                Value = 42,
+            };
+
+            var query = Array.Empty<DataGridFiltersTest.Model>().AsQueryable().Where([nameFilter, ageFilter]);
+            query.ToString().Should().Match("*x.Name.Contains(*x.Age > Convert(42*");
+        }
     }
 }
