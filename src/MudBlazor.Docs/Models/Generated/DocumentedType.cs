@@ -5,7 +5,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Xml.Linq;
 
 namespace MudBlazor.Docs.Models;
 
@@ -35,7 +34,7 @@ public class DocumentedType
     /// <summary>
     /// The link to examples related to this type.
     /// </summary>
-    public string? ComponentUrl => (IsComponent ? "/components/" + Name.Replace("Mud", "") : null);
+    public string? ComponentUrl => "/components/" + Name;
 
     /// <summary>
     /// Whether this type is a Blazor component.

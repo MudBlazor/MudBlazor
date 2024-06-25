@@ -8,6 +8,9 @@ namespace MudBlazor.Docs.Compiler;
 
 #nullable enable
 
+/// <summary>
+/// Represents a documented event (including EventCallback properties).
+/// </summary>
 public class DocumentedEvent : DocumentedMember
 {
 

@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -74,13 +73,31 @@ public static partial class ApiDocumentation
         {
             return match;
         }
-        // Look for legacy links
+        // Look for legacy links like "api/bar"
         if (LegacyToModernTypeNames.TryGetValue(name.ToLowerInvariant(), out var newTypeName) && Types.TryGetValue(newTypeName, out match))
         {
             return match;
         }
+        // Try to match just on the name
+        var looseMatch = Types.FirstOrDefault(type => type.Value.Name.Equals(name, StringComparison.OrdinalIgnoreCase) || type.Value.NameFriendly.Equals(name, StringComparison.OrdinalIgnoreCase)).Value;
+        if (looseMatch != null)
+        {
+            return looseMatch;
+        }
         // Nothing found        
         return null;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="text"></param>
+    /// <returns></returns>
+    public static List<DocumentedType> SearchTypes(string text)
+    {
+        return Types.Where(type => type.Value.NameFriendly.Contains(text))
+            .Select(pair => pair.Value)
+            .ToList();
     }
 
     /// <summary>

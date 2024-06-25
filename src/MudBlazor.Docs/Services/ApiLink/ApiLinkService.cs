@@ -31,9 +31,23 @@ namespace MudBlazor.Docs.Services
             // Case is ignored.
             text = text.ToLowerInvariant();
 
+            // Make a copy of the list so we can append documented API types
+            var entriesPlusApi = new Dictionary<string, ApiLinkServiceEntry>(_entries);
+
+            // Append documented types
+            foreach (var type in ApiDocumentation.SearchTypes(text))
+            {
+                entriesPlusApi.Add(type.NameFriendly, new ApiLinkServiceEntry()
+                {
+                    Title = type.NameFriendly,
+                    SubTitle = type.SummaryPlain,
+                    Link = type.ApiUrl
+                });
+            }
+
             // Calculate the ratios of all keywords to the search input.
             var ratios = new Dictionary<ApiLinkServiceEntry, double>();
-            foreach (var (keyword, entry) in _entries)
+            foreach (var (keyword, entry) in entriesPlusApi)
             {
                 var ratio = GetSearchMatchRatio(text, keyword);
 

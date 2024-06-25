@@ -18,11 +18,17 @@ namespace MudBlazor.Docs.Components;
 /// </summary>
 public partial class ApiTypeHierarchy
 {
+
     /// <summary>
-    /// The type to show inheritance for.
+    /// The name of the type to display.
     /// </summary>
     [Parameter]
     [EditorRequired]
+    public string? TypeName { get; set; }
+
+    /// <summary>
+    /// The type to display members for.
+    /// </summary>
     public DocumentedType? Type { get; set; }
 
     /// <summary>
@@ -37,63 +43,61 @@ public partial class ApiTypeHierarchy
 
     protected override void OnParametersSet()
     {
-        base.OnParametersSet();
-        if (Type == null)
+        if (Type == null || Type.Name != TypeName)
         {
-            return;
-        }
+            Type = ApiDocumentation.GetType(TypeName);
+            SelectedType = Type;
 
-        SelectedType = Type;
-        // Start with the current type
-        var primaryItem = new TreeItemData<DocumentedType>
-        {
-            Text = Type.Name,
-            Selected = true,
-            Expanded = false,
-            Value = Type,
-            Children = [],
-        };
-        var root = new List<TreeItemData<DocumentedType>>() { primaryItem };
-        // Walk up the hierarchy to build the tree
-        var parent = Type.BaseType;
-        while (parent != null)
-        {
-            root[0] = new TreeItemData<DocumentedType>()
+            // Start with the current type
+            var primaryItem = new TreeItemData<DocumentedType>
             {
-                Children = [root[0]],
-                Expanded = true,
-                Text = parent.NameFriendly,
-                Value = parent
+                Text = Type.Name,
+                Selected = true,
+                Expanded = false,
+                Value = Type,
+                Children = [],
             };
-            if (parent.BaseType != null)
-            {
-                parent = parent.BaseType;
-            }
-            else
+            var root = new List<TreeItemData<DocumentedType>>() { primaryItem };
+            // Walk up the hierarchy to build the tree
+            var parent = Type.BaseType;
+            while (parent != null)
             {
                 root[0] = new TreeItemData<DocumentedType>()
                 {
                     Children = [root[0]],
                     Expanded = true,
-                    Text = parent.BaseTypeName,
-                    Value = new DocumentedType() { Name = "Root" }
+                    Text = parent.NameFriendly,
+                    Value = parent
                 };
-                break;
+                if (parent.BaseType != null)
+                {
+                    parent = parent.BaseType;
+                }
+                else
+                {
+                    root[0] = new TreeItemData<DocumentedType>()
+                    {
+                        Children = [root[0]],
+                        Expanded = true,
+                        Text = parent.BaseTypeName,
+                        Value = new DocumentedType() { Name = "Root" }
+                    };
+                    break;
+                }
             }
-        }
-        // Now check for types inheriting from this type
-        foreach (var descendant in ApiDocumentation.Types.Values.OrderBy(type => type.Name).Where(type => type.BaseTypeName == Type.Name))
-        {
-            primaryItem?.Children?.Add(new()
+            // Now check for types inheriting from this type
+            foreach (var descendant in ApiDocumentation.Types.Values.OrderBy(type => type.Name).Where(type => type.BaseTypeName == Type.Name))
             {
-                Children = [],
-                Text = descendant.NameFriendly,
-                Value = descendant
-            });
+                primaryItem?.Children?.Add(new()
+                {
+                    Children = [],
+                    Text = descendant.NameFriendly,
+                    Value = descendant
+                });
+            }
+            // Set the items
+            Root = new ReadOnlyCollection<TreeItemData<DocumentedType>>(root);
         }
-        // Set the items
-        Root = new ReadOnlyCollection<TreeItemData<DocumentedType>>(root);
-        StateHasChanged();
     }
 
     [Inject]

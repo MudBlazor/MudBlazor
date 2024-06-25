@@ -7,7 +7,7 @@
     {
         <ApiBreadcrumbs Type="@DocumentedType" />
 
-        <DocsPageHeader Title="@(@DocumentedType.NameFriendly + " API")" />
+        <DocsPageHeader Title="@Title" />
         <DocsPageContent>
 
             @if (DocumentedType.Summary != null)
@@ -36,10 +36,9 @@
                     <SectionHeader Title="Inheritance" />
                     <SectionContent Outlined="true" IsApiSection="true">
                         <MudGrid Class="pa-0">
-                            <MudItem xs="5">
-                                <ApiTypeHierarchy Type="@DocumentedType" />
+                            <MudItem xs="12">
+                                <ApiTypeHierarchy TypeName="@DocumentedType.Name" />
                             </MudItem>
-                            <MudItem xs="7"></MudItem>
                         </MudGrid>
                     </SectionContent>
                 </DocsPageSection>
@@ -52,21 +51,7 @@
                     <SectionContent Outlined="true" IsApiSection="true">
                         <MudGrid Class="pa-0">
                             <MudItem xs="12">
-                                <ApiPropertyTable Type="@DocumentedType" />
-                            </MudItem>
-                        </MudGrid>
-                    </SectionContent>
-                </DocsPageSection>
-            }
-
-            @if (DocumentedType.Fields.Count > 0)
-            {
-                <DocsPageSection>
-                    <SectionHeader Title="Fields" />
-                    <SectionContent Outlined="true" IsApiSection="true">
-                        <MudGrid Class="pa-0">
-                            <MudItem xs="12">
-                                <ApiFieldTable Type="@DocumentedType" />
+                                <ApiMemberTable Mode="@ApiMemberTableMode.Properties" TypeName="@DocumentedType.Name" />
                             </MudItem>
                         </MudGrid>
                     </SectionContent>
@@ -80,7 +65,35 @@
                     <SectionContent Outlined="true" IsApiSection="true">
                         <MudGrid Class="pa-0">
                             <MudItem xs="12">
-                                <ApiMethodTable Type="@DocumentedType" />
+                                <ApiMemberTable Mode="@ApiMemberTableMode.Methods" TypeName="@DocumentedType.Name" />
+                            </MudItem>
+                        </MudGrid>
+                    </SectionContent>
+                </DocsPageSection>
+            }
+
+            @if (DocumentedType.Fields.Count > 0)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Fields" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <MudGrid Class="pa-0">
+                            <MudItem xs="12">
+                                <ApiMemberTable Mode="@ApiMemberTableMode.Fields" TypeName="@DocumentedType.Name" />
+                            </MudItem>
+                        </MudGrid>
+                    </SectionContent>
+                </DocsPageSection>
+            }
+
+            @if (DocumentedType.Events.Count > 0)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Fields" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <MudGrid Class="pa-0">
+                            <MudItem xs="12">
+                                <ApiMemberTable Mode="@ApiMemberTableMode.Events" TypeName="@DocumentedType.Name" />
                             </MudItem>
                         </MudGrid>
                     </SectionContent>

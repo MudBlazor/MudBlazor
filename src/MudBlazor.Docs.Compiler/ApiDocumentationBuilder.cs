@@ -103,6 +103,86 @@ public partial class ApiDocumentationBuilder()
     public List<string> UnresolvedEvents { get; private set; } = [];
 
     /// <summary>
+    /// Any types to exclude from documentation.
+    /// </summary>
+    public static List<string> ExcludedTypes { get; private set; } =
+    [
+        "MudBlazor._Imports",
+        "MudBlazor.CategoryTypes",
+        "MudBlazor.CategoryTypes+",
+        "MudBlazor.Colors",
+        "MudBlazor.Colors+",
+        "MudBlazor.Resources.LanguageResource",
+        "MudBlazor.Icons",
+        "MudBlazor.Icons+",
+        "string"
+    ];
+
+    /// <summary>
+    /// Gets whether a type is excluded from documentation.
+    /// </summary>
+    /// <param name="type">The type to check.</param>
+    /// <returns>When <c>true</c>, the type is excluded from documentation.</returns>
+    public static bool IsExcluded(Type type)
+    {
+        if (ExcludedTypes.Contains(type.Name))
+        {
+            return true;
+        }
+        if (type.FullName != null && ExcludedTypes.Contains(type.FullName))
+        {
+            return true;
+        }
+        if (type.FullName != null && ExcludedTypes.Any(excludedType => type.FullName.StartsWith(excludedType)))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Any methods to exclude from documentation.
+    /// </summary>
+    public static List<string> ExcludedMethods { get; private set; } =
+    [
+        // Object methods
+        "ToString",
+        "Equals",
+        "MemberwiseClone",
+        "GetHashCode",
+        "GetType",
+        // Operators
+        "op_Equality",
+        "op_Inequality",
+        "op_Implicit",
+        "op_Explicit",
+        // Constructors
+        "#ctor",
+        // Blazor component methods
+        "BuildRenderTree",
+        "InvokeAsync",
+        "OnAfterRender",
+        "OnAfterRenderAsync",
+        "OnInitialized",
+        "OnInitializedAsync",
+        "OnParametersSet",
+        "OnParametersSetAsync",
+        "StateHasChanged",
+        "ShouldRender",
+        // Dispose methods
+        "Dispose",
+        "DisposeAsync",
+        "Finalize",
+        // Internal MudBlazor methods
+        "SetParametersAsync",
+        "DispatchExceptionAsync",
+        "CreateRegisterScope",
+        "DetectIllegalRazorParametersV7",
+        "MudBlazor.Interfaces.IMudStateHasChanged.StateHasChanged",
+    ];
+
+    /// <summary>
     /// Generates documentation for all types.
     /// </summary>
     public bool Execute()
@@ -120,7 +200,7 @@ public partial class ApiDocumentationBuilder()
     /// </summary>
     public void AddTypesToDocument()
     {
-        // Get all MudBlazor components (which inherit from ComponentBase)
+        // Get all MudBlazor public types
         PublicTypes = new(Assembly.GetTypes().Where(type => type.IsPublic).ToDictionary(r => r.Name, v => v));
         foreach (var type in PublicTypes)
         {
@@ -134,6 +214,12 @@ public partial class ApiDocumentationBuilder()
     /// <param name="type">The type to add.</param>
     public DocumentedType AddTypeToDocument(Type type)
     {
+        // Is this type excluded?
+        if (IsExcluded(type))
+        {
+            return null;
+        }
+
         // Is the type already documented?
         if (!Types.TryGetValue(type.FullName, out var documentedType))
         {
@@ -299,7 +385,7 @@ public partial class ApiDocumentationBuilder()
     /// <summary>
     /// Adds fields for the specified type.
     /// </summary>
-    /// <param name="type">the type to examine.</param>
+    /// <param name="type">The type to examine.</param>
     public void AddFieldsToDocument(Type type, DocumentedType documentedType)
     {
         // Look for public properties 
@@ -342,7 +428,7 @@ public partial class ApiDocumentationBuilder()
     /// <summary>
     /// Adds events for the specified type.
     /// </summary>
-    /// <param name="type">the type to examine.</param>
+    /// <param name="type">The type to examine.</param>
     public void AddEventsToDocument(Type type, DocumentedType documentedType)
     {
         // Look for public properties 
@@ -364,9 +450,13 @@ public partial class ApiDocumentationBuilder()
                 // No.
                 documentedEvent = new DocumentedEvent()
                 {
+                    Category = category?.Name,
+                    DeclaringType = eventItem.DeclaringType,
                     Key = key,
                     Name = eventItem.Name,
+                    Order = category?.Order,
                     Type = eventItem.EventHandlerType,
+                    XmlKey = GetXmlKey(GetTypeFullName(eventItem.DeclaringType), eventItem.Name),
                 };
                 Events.Add(key, documentedEvent);
             }
@@ -738,7 +828,7 @@ public partial class ApiDocumentationBuilder()
         writer.WriteProperties(Properties);
         writer.WriteMethods(Methods);
         writer.WriteFields(Fields);
-        // writer.WriteEvents(Events);
+        writer.WriteEvents(Events);
         writer.WriteTypes(Types);
         writer.WriteConstructorEnd();
         writer.WriteClassEnd();

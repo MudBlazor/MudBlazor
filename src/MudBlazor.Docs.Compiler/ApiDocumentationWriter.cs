@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -29,89 +30,6 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// Defaults to <c>true</c>.  When <c>false</c>, no code will be indented, which saves space but is less readable.
     /// </remarks>
     public bool EnableIndentation { get; set; } = true;
-
-    /// <summary>
-    /// Any types to exclude from documentation.
-    /// </summary>
-    public static List<string> ExcludedTypes { get; private set; } =
-    [
-        "MudBlazor._Imports",
-        "MudBlazor.Colors",
-        "MudBlazor.Colors+Amber",
-        "MudBlazor.Colors+Blue",
-        "MudBlazor.Colors+BlueGray",
-        "MudBlazor.Colors+Brown",
-        "MudBlazor.Colors+Cyan",
-        "MudBlazor.Colors+DeepOrange",
-        "MudBlazor.Colors+DeepPurple",
-        "MudBlazor.Colors+Gray",
-        "MudBlazor.Colors+Green",
-        "MudBlazor.Colors+Indigo",
-        "MudBlazor.Colors+LightBlue",
-        "MudBlazor.Colors+LightGreen",
-        "MudBlazor.Colors+Lime",
-        "MudBlazor.Colors+Orange",
-        "MudBlazor.Colors+Pink",
-        "MudBlazor.Colors+Purple",
-        "MudBlazor.Colors+Red",
-        "MudBlazor.Colors+Shades",
-        "MudBlazor.Colors+Teal",
-        "MudBlazor.Colors+Yellow",
-        "MudBlazor.Resources.LanguageResource",
-        "MudBlazor.Icons",
-        "MudBlazor.Icons+Custom",
-        "MudBlazor.Icons+Custom+Brands",
-        "MudBlazor.Icons+Custom+FileFormats",
-        "MudBlazor.Icons+Custom+Uncategorized",
-        "MudBlazor.Icons+Material",
-        "MudBlazor.Icons+Material+Filled",
-        "MudBlazor.Icons+Material+Outlined",
-        "MudBlazor.Icons+Material+Rounded",
-        "MudBlazor.Icons+Material+Sharp",
-        "MudBlazor.Icons+Material+TwoTone",
-        "string"
-    ];
-
-    /// <summary>
-    /// Any methods to exclude from documentation.
-    /// </summary>
-    public static List<string> ExcludedMethods { get; private set; } =
-    [
-        // Object methods
-        "ToString",
-        "Equals",
-        "MemberwiseClone",
-        "GetHashCode",
-        "GetType",
-        // Operators
-        "op_Equality",
-        "op_Inequality",
-        "op_Implicit",
-        "op_Explicit",
-        // Constructors
-        "#ctor",
-        // Blazor component methods
-        "BuildRenderTree",
-        "InvokeAsync",
-        "OnAfterRender",
-        "OnAfterRenderAsync",
-        "OnInitialized",
-        "OnInitializedAsync",
-        "OnParametersSet",
-        "OnParametersSetAsync",
-        "StateHasChanged",
-        "ShouldRender",
-        // Dispose methods
-        "Dispose",
-        "DisposeAsync",
-        "Finalize",
-        // Internal MudBlazor methods
-        "SetParametersAsync",
-        "DispatchExceptionAsync",
-        "CreateRegisterScope",
-        "DetectIllegalRazorParametersV7",
-        "MudBlazor.Interfaces.IMudStateHasChanged.StateHasChanged"
-    ];
 
     /// <summary>
     /// The current indentation level.
@@ -252,14 +170,26 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     public static string Escape(string code) => code?.Replace("\"", "\\\"");
 
     /// <summary>
-    /// Serializes an XML summary for a category.
+    /// Writes the category for the member.
     /// </summary>
-    /// <param name="category"></param>
+    /// <param name="category">The category (derived from <see cref="CategoryAttribute"/>).</param>
     public void WriteCategory(string category)
     {
         if (!string.IsNullOrEmpty(category))
         {
             Write($"Category = \"{category}\", ");
+        }
+    }
+
+    /// <summary>
+    /// Writes the category order.
+    /// </summary>
+    /// <param name="order">The category order (derived from <see cref="CategoryAttribute"/>).</param>
+    public void WriteOrder(int? order)
+    {
+        if (order.HasValue)
+        {
+            Write($"Order = {order}, ");
         }
     }
 
@@ -295,7 +225,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     {
         if (!string.IsNullOrEmpty(remarks))
         {
-            Write($"Remarks = \"{Escape(remarks)}\", ");
+            WriteLine($"Remarks = \"{Escape(remarks)}\", ");
         }
     }
 
@@ -307,7 +237,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     {
         if (!string.IsNullOrEmpty(remarks))
         {
-            WriteIndented($"Remarks = \"{Escape(remarks)}\", ");
+            WriteLineIndented($"Remarks = \"{Escape(remarks)}\", ");
         }
     }
 
@@ -334,11 +264,6 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <param name="type">The type to serialize.</param>
     public void WriteType(DocumentedType type)
     {
-        if (ExcludedTypes.Contains(type.Key))
-        {
-            return;
-        }
-
         WriteIndented($"Types.Add(\"{type.Key}\", new()");
         WriteLine(" {");
         Indent();
@@ -354,6 +279,43 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         WriteMethods(type);
         Outdent();
         WriteLineIndented("});");
+    }
+
+    /// <summary>
+    /// Serializes all documented events.
+    /// </summary>
+    /// <param name="events">The events to write.</param>
+    public void WriteEvents(IDictionary<string, DocumentedEvent> events)
+    {
+        WriteLineIndented("// Build all of the documented events");
+        WriteLineIndented($"Events = new Dictionary<string, DocumentedEvent>();");
+
+        foreach (var documentedEvent in events)
+        {
+            WriteEvent(documentedEvent.Value);
+        }
+
+        WriteLine();
+    }
+
+    /// <summary>
+    /// Serializes a documented event.
+    /// </summary>
+    /// <param name="documentedEvent">The event to serialize.</param>
+    public void WriteEvent(DocumentedEvent documentedEvent)
+    {
+        WriteIndented($"Events.Add(\"{documentedEvent.Key}\", new()");
+        Write(" { ");
+        Write($"Name = \"{documentedEvent.Name}\", ");
+        Write($"TypeName = \"{documentedEvent.Type.FullName}\", ");
+        Write($"TypeFriendlyName = \"{GetFriendlyTypeName(documentedEvent.Type)}\", ");
+        WriteDeclaringType(documentedEvent);
+        WriteCategory(documentedEvent.Category);
+        WriteOrder(documentedEvent.Order);
+        WriteSummary(documentedEvent.Summary);
+        WriteRemarks(documentedEvent.Remarks);
+        Write(" }");
+        WriteLine(");");
     }
 
     /// <summary>
@@ -379,17 +341,6 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <param name="field">The field to serialize.</param>
     public void WriteField(DocumentedField field)
     {
-        // Skip excluded types
-        if (field.DeclaringType.FullName != null && ExcludedTypes.Contains(field.DeclaringType.FullName))
-        {
-            return;
-        }
-        // Skip System properties
-        if (field.DeclaringType.FullName != null && field.DeclaringType.FullName.StartsWith("System."))
-        {
-            return;
-        }
-
         WriteIndented($"Fields.Add(\"{field.Key}\", new()");
         Write(" { ");
         Write($"Name = \"{field.Name}\", ");
@@ -397,6 +348,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         Write($"TypeFriendlyName = \"{GetFriendlyTypeName(field.Type)}\", ");
         WriteDeclaringType(field);
         WriteCategory(field.Category);
+        WriteOrder(field.Order);
         WriteSummary(field.Summary);
         WriteRemarks(field.Remarks);
         Write(" }");
@@ -414,7 +366,10 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
 
         foreach (var property in properties)
         {
-            WriteProperty(property.Value);
+            if (!ApiDocumentationBuilder.IsExcluded(property.Value.Type))
+            {
+                WriteProperty(property.Value);
+            }
         }
 
         WriteLine();
@@ -426,17 +381,6 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <param name="property">the property to serialize.</param>
     public void WriteProperty(DocumentedProperty property)
     {
-        // Skip excluded types
-        if (property.DeclaringType.FullName != null && ExcludedTypes.Contains(property.DeclaringType.FullName))
-        {
-            return;
-        }
-        // Skip System properties
-        if (property.DeclaringType.FullName != null && property.DeclaringType.FullName.StartsWith("System."))
-        {
-            return;
-        }
-
         WriteIndented($"Properties.Add(\"{property.Key}\", new()");
         Write(" { ");
         Write($"Name = \"{property.Name}\", ");
@@ -528,19 +472,6 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <param name="property">The property to serialize.</param>
     public void WriteProperty(DocumentedType type, DocumentedProperty property)
     {
-        // Skip excluded types
-        if (property.DeclaringType.FullName != null && ExcludedTypes.Contains(property.DeclaringType.FullName))
-        {
-            return;
-        }
-        // Skip System properties
-        if (property.DeclaringType.FullName != null && property.DeclaringType.FullName.StartsWith("System."))
-        {
-            return;
-        }
-
-        // Example:  { "BrowserWindowSize", Properties["Type.BrowserWindowSize"], },
-
         WriteIndented("{ ");
         Write($"\"{property.Name}\", Properties[\"{property.Key}\"]");
         WriteLine(" },");
@@ -553,19 +484,6 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <param name="field">The property to serialize.</param>
     public void WriteField(DocumentedType type, DocumentedField field)
     {
-        // Skip excluded types
-        if (field.DeclaringType.FullName != null && ExcludedTypes.Contains(field.DeclaringType.FullName))
-        {
-            return;
-        }
-        // Skip System properties
-        if (field.DeclaringType.FullName != null && field.DeclaringType.FullName.StartsWith("System."))
-        {
-            return;
-        }
-
-        // Example:  { "BrowserWindowSize", Properties["Type.BrowserWindowSize"], },
-
         WriteIndented("{ ");
         Write($"\"{field.Name}\", Fields[\"{field.Key}\"]");
         WriteLine(" },");
@@ -606,19 +524,10 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
 
         */
 
-        // Get the non-excluded methods
-        var methods = type.Methods.Where(method => !ExcludedMethods.Contains(method.Value.Name) && !ExcludedTypes.Contains(method.Value.DeclaringType.Name)).ToList();
-
-        // Anything to do?
-        if (methods.Count == 0)
-        {
-            return;
-        }
-
         WriteLineIndented("Methods = { ");
         Indent();
 
-        foreach (var method in methods)
+        foreach (var method in type.Methods)
         {
             WriteMethod(type, method.Value);
         }
@@ -627,30 +536,19 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         WriteLineIndented("},");
     }
 
+    /// <summary>
+    /// Serializes a documented method.
+    /// </summary>
+    /// <param name="method"></param>
     public void WriteMethod(DocumentedMethod method)
     {
-        // Skip excluded methods and types
-        if (ExcludedMethods.Contains(method.Name) || ExcludedTypes.Contains(method.DeclaringType.Name) || method.Name.StartsWith('<'))
-        {
-            return;
-        }
-        // Skip System properties
-        if (method.DeclaringType.FullName != null && method.DeclaringType.FullName.StartsWith("System."))
-        {
-            return;
-        }
-
-        /* Example:
-         
-        	methods.Add("BrowserWindowSize", new() { Type = "BrowserWindowSize", ReturnType = "Void", Summary = "Gets the browser window size.", });
-		
-         */
-
         WriteIndented($"Methods.Add(\"{method.Key}\", new()");
         Write(" { ");
         Write($"Name = \"{method.Name}\", ");
         WriteReturnType(method);
         WriteDeclaringType(method);
+        WriteCategory(method.Category);
+        WriteOrder(method.Order);
         WriteSummary(method.Summary);
         WriteRemarks(method.Remarks);
         Write(" }");
@@ -664,19 +562,6 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <param name="method">The method to serialize.</param>
     public void WriteMethod(DocumentedType type, DocumentedMethod method)
     {
-        // Skip excluded methods and types
-        if (ExcludedMethods.Contains(method.Name) || ExcludedTypes.Contains(method.DeclaringType.Name) || method.Name.StartsWith('<'))
-        {
-            return;
-        }
-        // Skip System properties
-        if (method.DeclaringType.FullName != null && method.DeclaringType.FullName.StartsWith("System."))
-        {
-            return;
-        }
-
-        // Example:  { "GetWindowSize", Methods["Type.GetWindowSize"], },
-
         WriteIndented("{ ");
         Write($"\"{method.Name}\", Methods[\"{method.Key}\"]");
         WriteLine(" },");
@@ -728,6 +613,15 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         {
             WriteLineIndented($"BaseTypeName = \"{baseType.Name}\", ");
         }
+    }
+
+    /// <summary>
+    /// Writes the declaring type of an event.
+    /// </summary>
+    /// <param name="documentedEvent">The event to serialize.</param>
+    public void WriteDeclaringType(DocumentedEvent documentedEvent)
+    {
+        Write($"DeclaringTypeName = \"{Escape(documentedEvent.DeclaringType.FullName)}\", ");
     }
 
     /// <summary>

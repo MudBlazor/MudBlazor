@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.Docs.Compiler
 {
@@ -12,17 +10,9 @@ namespace MudBlazor.Docs.Compiler
     public partial class TestsForApiPages
     {
         /// <summary>
-        /// The types excluded from tests.
-        /// </summary>
-        /// <remarks>
-        /// This should be a short list; types which are covered by other site documentation pages.
-        /// </remarks>
-        public List<string> ExcludedTypes = ["_Imports", "Color", "Colors", "Icons", "Input", "LanguageResource"];
-
-        /// <summary>
         /// The current production links to API documentation.
         /// </summary>
-        public string[] LegacyApiAddresses = {
+        public string[] LegacyApiAddresses = [
             // available from the main menu in "API" group
             "api/alert",
             "api/appbar",
@@ -139,7 +129,7 @@ namespace MudBlazor.Docs.Compiler
             "api/RTLProvider",
             "api/SnackbarElement",
             "api/SparkLine",
-        };
+        ];
 
         /// <summary>
         /// Ensures that an API page is available for each MudBlazor component.
@@ -210,8 +200,13 @@ namespace MudBlazor.Docs.Compiler
             var mudBlazorComponents = typeof(_Imports).Assembly.GetTypes().Where(type => type.IsPublic);
             foreach (var type in mudBlazorComponents)
             {
-                // Exclude some types
-                if (ExcludedTypes.Contains(type.Name) || ApiDocumentationWriter.ExcludedTypes.Contains(type.Name))
+                if (ApiDocumentationBuilder.IsExcluded(type))
+                {
+                    continue;
+                }
+
+                // Skip MudBlazor.Color and MudBlazor.Input types
+                if (type.Name == "Color" || type.Name == "Input")
                 {
                     continue;
                 }
