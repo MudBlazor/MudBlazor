@@ -1,4 +1,4 @@
-﻿@property --rotate {
+@property --rotate {
   syntax: "<angle>";
   initial-value: 132deg;
   inherits: false;
@@ -38,7 +38,7 @@
     width: 100%;
     height: calc(100vw / 5);
     min-height: 200px;
-    background-color: var(--mud-palette-background-grey);
+    background-color: var(--mud-palette-background-gray);
     top: 0;
     left: 0;
     position: absolute;
@@ -51,7 +51,7 @@
     height: 100%;
     min-height: 200px;
     max-height: 384px;
-    background-color: var(--mud-palette-background-grey);
+    background-color: var(--mud-palette-background-gray);
     bottom: 0;
     left: 0;
     position: absolute;
@@ -295,18 +295,18 @@
 
   .mud-link {
     margin: 8px 0px;
-    color: var(--mud-palette-grey-default);
+    color: var(--mud-palette-gray-default);
     cursor: pointer;
     transition: color 200ms cubic-bezier(.4,0,.2,1) 0ms;
 
     @media(hover: hover) and (pointer: fine) {
       &:hover {
-        color: var(--mud-palette-grey-light);
+        color: var(--mud-palette-gray-light);
       }
     }
 
     &:active {
-      color: var(--mud-palette-grey-light);
+      color: var(--mud-palette-gray-light);
     }
   }
 
@@ -328,7 +328,7 @@
     border-left: 1px solid var(--mud-palette-primary);
   }
 
-  .mud-tabs-toolbar-transparent {
+  .mud-tabs-tabbar-transparent {
     background-color: transparent;
 
     .mud-tab {
@@ -390,7 +390,7 @@
       }
 
       &.sweet {
-        background-color: var(--mud-palette-background-grey);
+        background-color: var(--mud-palette-background-gray);
       }
     }
 
@@ -423,7 +423,7 @@
         }
 
         &.sweet {
-          background-color: var(--mud-palette-background-grey);
+          background-color: var(--mud-palette-background-gray);
         }
 
         &.background {
@@ -457,19 +457,14 @@
     }
 
     @media (max-width:600px) {
-      h1 {
-        font-size: 2.5rem;
-      }
-
-      h6 {
-        font-size: .875rem;
-      }
+      --mud-typography-h1-size: 2.5rem;
+      --mud-typography-subtitle1-size: .875rem;
     }
 
     .graphic-wrapper {
       position: absolute;
-      top: 0;
-      right: 0;
+      top: 12px;
+      right: -12px;
     }
   }
 
@@ -564,13 +559,13 @@
   }
 
   .dark-section-text {
-    color: var(--mud-palette-grey-lighter);
+    color: var(--mud-palette-gray-lighter);
   }
 
   .world-map {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 12px;
+    left: 12px;
     height: 100%;
     width: 100%;
     z-index: -1;
@@ -658,7 +653,7 @@
         bottom: -100%;
         width: 100%;
         height: 150%;
-        background: linear-gradient(0deg, var(--mud-palette-background-grey) 0%, rgba(249,250,252,0) 100%);
+        background: linear-gradient(0deg, var(--mud-palette-background-gray) 0%, rgba(249,250,252,0) 100%);
       }
     }
 
@@ -813,9 +808,9 @@
 
   .mudblazor-landingpage .top-section .graphic-wrapper {
     position: absolute;
-    top: 0;
+    top: 12px;
     right: unset;
-    left: 0;
+    left: 12px;
 
     .lp-device.phone, .lp-effect.phone-shadow {
       top: 128px;

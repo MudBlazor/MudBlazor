@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MudBlazor.UnitTests.Dummy;
@@ -107,57 +108,56 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Verifies the button template context's ToString method returns the FileUpload component Id
-        /// </summary>
-        [Test]
-        public void FileUpload_ButtonTemplate_Backwards_Compatibility_Test()
-        {
-            var comp = Context.RenderComponent<FileUploadButtonTemplateTest>();
-
-            var label = comp.Find("label");
-            label.ToMarkup().Should().Contain("Upload");
-            label.GetAttribute("for").Should().StartWith("mud_fileupload_"); //ensure button markup renders
-
-            var after = comp.Find(".mud-input-control-input-container div");
-            after.MarkupMatches("<div>Select Template</div>");
-        }
-
-        /// <summary>
         /// Verifies the button template renders
         /// </summary>
         [Test]
         public void FileUpload_ButtonTemplateContextTest_Renders()
         {
-            var comp = Context.RenderComponent<FileUploadButtonTemplateContextTest>();
+            var comp = Context.RenderComponent<FileUploadWithDragAndDropActivatorTest>();
 
-            var label = comp.Find("label");
-            label.ToMarkup().Should().Contain("Upload");
-            label.GetAttribute("for").Should().StartWith("mud_fileupload_"); //ensure button markup renders
+            var openFilePickerButton = comp.Find("button#open-file-picker-button");
+            openFilePickerButton.ToMarkup().Should().Contain("Open file picker");
 
             var clearButton = comp.Find("button#clear-button");
             clearButton.ToMarkup().Should().Contain("Clear");
         }
 
         /// <summary>
-        /// Verifies the button template context's ClearAsync action clears the Files property
+        /// Verifies the ClearAsync function clears the Files property
         /// </summary>
         [Test]
-        public async Task FileUpload_ButtonTemplateContext_ClearAsync_Action_Clears_Files()
+        public async Task FileUpload_ClearAsync_Should_Clear_Files()
         {
             var fileName = "cat.jpg";
-            var defaultFile = new DummyBrowserFile(fileName, DateTimeOffset.Now, 0, "image/jpeg", Array.Empty<byte>());
-            var comp = Context.RenderComponent<FileUploadButtonTemplateContextTest>(
-                ComponentParameterFactory.Parameter(nameof(FileUploadButtonTemplateContextTest.File), defaultFile));
+            var defaultFile = new DummyBrowserFile(fileName, DateTimeOffset.Now, 0, "image/jpeg", []);
+            var comp = Context.RenderComponent<FileUploadWithDragAndDropActivatorTest>(
+                ComponentParameterFactory.Parameter(nameof(FileUploadWithDragAndDropActivatorTest.File), defaultFile));
             var fileUploadComp = comp.FindComponent<MudFileUpload<IBrowserFile>>();
             var fileUploadInstance = fileUploadComp.Instance;
-            var clearButton = fileUploadComp.Find("button#clear-button");
 
             fileUploadInstance.Files.Should().NotBeNull();
-            fileUploadInstance.Files.Name.Should().Be(fileName);
+            fileUploadInstance.Files!.Name.Should().Be(fileName);
 
-            await comp.InvokeAsync(() => clearButton.Click());
+            await comp.InvokeAsync(() => comp.Find("button#clear-button").Click());
 
             fileUploadInstance.Files.Should().BeNull();
+        }
+
+        /// <summary>
+        /// Verifies the OpenFilePickerAsync method opens the file picker when the file picker button is clicked
+        /// <remarks>
+        /// Native HTML buttons trigger the onclick event when the space or enter keys are pressed.
+        /// If users use something that does not render a native button, they will need to add the appropriate keyboard event handlers.
+        /// </remarks>
+        /// </summary>
+        [Test]
+        public async Task FileUpload_OpenFilePickerAsync_Should_OpenFilePicker_When_Clicked()
+        {
+            var comp = Context.RenderComponent<FileUploadWithDragAndDropActivatorTest>();
+
+            await comp.InvokeAsync(() => comp.Find("button#open-file-picker-button").Click());
+
+            Context.JSInterop.Invocations.Should().ContainSingle(invocation => invocation.Identifier == "mudFileUpload.openFilePicker");
         }
 
         /// <summary>
@@ -297,7 +297,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FileUploadDisabledTest>();
             comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("input").HasAttribute("disabled").Should().BeFalse();
-            comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("label").HasAttribute("disabled").Should().BeFalse();
+            comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("button").HasAttribute("disabled").Should().BeFalse();
+
 
             comp.SetParametersAndRender(parameters =>
                 parameters.Add(x => x.Disabled,
@@ -330,6 +331,49 @@ namespace MudBlazor.UnitTests.Components
             {
                 return InputFileContent.CreateFromText("snakex64 is Canadian", $"{Guid.NewGuid()}.txt");
             }
+        }
+
+        /// <summary>
+        /// Optional FileUpload should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalFileUpload_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>();
+
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required FileUpload should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredFileUpload_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required FileUpload attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredFileUploadAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>();
+
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
         }
     }
 }

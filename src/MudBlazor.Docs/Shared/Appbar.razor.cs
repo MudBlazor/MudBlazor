@@ -27,7 +27,7 @@ public partial class Appbar
         {
             Title = "Installation",
             Link = "getting-started/installation",
-            SubTitle = "Getting started with MudBlazor fast and easy."
+            SubTitle = "Get started with MudBlazor fast and easy."
         },
 
         new ApiLinkServiceEntry
@@ -115,16 +115,16 @@ public partial class Appbar
     private LayoutService LayoutService { get; set; } = null!;
 
     [Parameter]
-    public bool DisplaySearchBar { get; set; }
+    public EventCallback<MouseEventArgs> DrawerToggleCallback { get; set; }
 
     [Parameter]
-    public EventCallback<MouseEventArgs> DrawerToggleCallback { get; set; }
+    public bool DisplaySearchBar { get; set; } = true;
 
     private async void OnSearchResult(ApiLinkServiceEntry entry)
     {
         NavigationManager.NavigateTo(entry.Link);
         await Task.Delay(1000);
-        await _searchAutocomplete.Clear();
+        await _searchAutocomplete.ClearAsync();
     }
 
     private string GetActiveClass(DocsBasePage page)
@@ -136,8 +136,7 @@ public partial class Appbar
     {
         if (string.IsNullOrWhiteSpace(text))
         {
-            // the user just clicked the autocomplete open, show the most popular pages as search result according to our analytics data
-            // ordered by popularity
+            // The user just opened the popover so show the most popular pages according to our analytics data as search results.
             return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>(_apiLinkServiceEntries);
         }
 

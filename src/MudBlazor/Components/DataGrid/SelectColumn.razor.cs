@@ -4,12 +4,47 @@
 
 using Microsoft.AspNetCore.Components;
 
-namespace MudBlazor
+namespace MudBlazor;
+
+/// <summary>
+/// Represents a checkbox column used to select rows in a <see cref="MudDataGrid{T}"/>.
+/// </summary>
+/// <typeparam name="T">The type of item to select.</typeparam>
+public partial class SelectColumn<T>
 {
-    public partial class SelectColumn<T>
-    {
-        [Parameter] public bool ShowInHeader { get; set; } = true;
-        [Parameter] public bool ShowInFooter { get; set; } = true;
-        [Parameter] public Size Size { get; set; } = Size.Medium;
-    }
+    /// <summary>
+    /// Shows a checkbox in the header.
+    /// </summary>
+    /// <remarks>
+    /// When <c>true</c>, all rows can be checked by selecting this checkbox.
+    /// </remarks>
+    [Parameter]
+    public bool ShowInHeader { get; set; } = true;
+
+    /// <summary>
+    /// Shows a checkbox in the footer.
+    /// </summary>
+    /// <remarks>
+    /// When <c>true</c>, all rows can be checked by selecting this checkbox.
+    /// </remarks>
+    [Parameter]
+    public bool ShowInFooter { get; set; } = false;
+
+    /// <summary>
+    /// The size of the checkbox icon.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="Size.Medium"/>.
+    /// </remarks>
+    [Parameter]
+    public Size Size { get; set; } = Size.Medium;
+
+    /// <summary>
+    /// Allows this column to be reordered via drag-and-drop operations.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>. When set, this overrides the <see cref="MudDataGrid{T}.DragDropColumnReordering"/> property.
+    /// </remarks>
+    [Parameter]
+    public bool? DragAndDropEnabled { get; set; } = false;
 }

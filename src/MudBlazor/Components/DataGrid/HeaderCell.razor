@@ -6,7 +6,7 @@
 
 @if (IsOnlyHeader)
 {
-    <th scope="col" class="mud-table cell @_classname" style="" @attributes="@UserAttributes">
+    <th scope="col" class="mud-table-cell @_classname" style="" @attributes="@UserAttributes">
         @ChildContent
     </th>
 }
@@ -15,7 +15,7 @@ else if (Column != null && !Column.HiddenState.Value)
     <th @ref=@_headerElement scope="col" class="@_classname" style="@_style" colspan="@Column.HeaderColSpan" @attributes="@UserAttributes">
         @if (DataGrid.DragDropColumnReordering)
         {
-            <MudDropZone CanDrop="@((item) => (Column.DragAndDropEnabled ?? true))" ItemIsDisabled="@((item) => !item.DragAndDropEnabled ?? false)" T="Column<T>" Identifier="@(Column.PropertyName ?? $"mud-header-cell-{_id}")">
+            <MudDropZone CanDrop="@((item) => (Column.DragAndDropEnabled ?? true))" ItemDisabled="@((item) => !item.DragAndDropEnabled ?? false)" T="Column<T>" Identifier="@(Column.PropertyName ?? $"mud-header-cell-{_id}")">
 
             </MudDropZone>
         }
@@ -25,7 +25,7 @@ else if (Column != null && !Column.HiddenState.Value)
         }
         @if (resizable)
         {
-            <div @onmousedown=OnResizerMouseDown @onmouseover=OnResizerMouseOver @onmouseleave=OnResizerMouseLeave
+            <div @onpointerdown=OnResizerPointerDown @onpointerover=OnResizerPointerOver @onpointerleave=OnResizerPointerLeave
                  class="@_resizerClass" style="@_resizerStyle" />
         }
     </th>
@@ -113,7 +113,7 @@ else if (Column != null && !Column.HiddenState.Value)
                         }
                         @if (groupable)
                         {
-                            if (Column?.grouping ?? false)
+                            if (Column?.GroupingState.Value ?? false)
                             {
                                 <MudMenuItem OnClick="@UngroupColumn">@Localizer["MudDataGrid.Ungroup"]</MudMenuItem>
                             }

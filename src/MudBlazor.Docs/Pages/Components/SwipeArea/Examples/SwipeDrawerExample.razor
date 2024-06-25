@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSwipeArea OnSwipe="@OnSwipe" Style="width: 100%;">
+<MudSwipeArea OnSwipeEnd="@OnSwipeEnd" Style="width: 100%;">
     <MudPaper Height="200px" Style="overflow:hidden; position:relative;">
         <MudDrawer @bind-Open="@_drawerOpen" Fixed="false" Elevation="1" Variant="@DrawerVariant.Persistent" Color="Color.Primary">
             <MudDrawerHeader>
@@ -15,17 +15,17 @@
     </MudPaper>
 </MudSwipeArea>
 
-@code{
+@code {
     bool _drawerOpen;
 
-    public void OnSwipe(SwipeDirection direction)
+    public void OnSwipeEnd(SwipeEventArgs e)
     {
-        if (direction == SwipeDirection.LeftToRight && !_drawerOpen)
+        if (e.SwipeDirection == SwipeDirection.LeftToRight && !_drawerOpen)
         {
             _drawerOpen = true;
             StateHasChanged();
         }
-        else if (direction == SwipeDirection.RightToLeft && _drawerOpen)
+        else if (e.SwipeDirection == SwipeDirection.RightToLeft && _drawerOpen)
         {
             _drawerOpen = false;
             StateHasChanged();

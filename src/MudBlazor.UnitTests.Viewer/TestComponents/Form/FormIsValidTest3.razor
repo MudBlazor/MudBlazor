@@ -9,8 +9,8 @@
         <MudButton Variant="Variant.Filled" OnClick="@(()=>form1.ResetValidation())">Reset Validation</MudButton>
     </div>
     <div class="d-flex mt-3">
-        <MudSwitch @bind-Checked="@valid" Label="IsValid " Color="Color.Info" />
-        <MudSwitch @bind-Checked="@touched" Label="IsTouched" Color="Color.Info" />
+        <MudSwitch @bind-Value="@valid" Label="IsValid " Color="Color.Info" />
+        <MudSwitch @bind-Value="@touched" Label="IsTouched" Color="Color.Info" />
     </div>
 </div>
 

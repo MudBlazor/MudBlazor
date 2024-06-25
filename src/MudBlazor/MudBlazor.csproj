@@ -11,8 +11,9 @@
     <Authors>Garderoben, Henon and Contributors</Authors>
     <Copyright>Copyright 2024 MudBlazor</Copyright>
     <PackageTags>Blazor, MudBlazor, Material, Material Design, Components, Blazor Components, Blazor Library</PackageTags>
-    <Description>MudBlazor is an ambitious Material Design component framework for Blazor with an emphasis on ease of use and clear structure. It is perfect for .NET developers who want to rapidly build web applications without having to struggle with CSS and Javascript. MudBlazor, being written entirely in C#, empowers them to adapt, fix or extend the framework and the multitude of examples in the documentation makes learning MudBlazor very easy.</Description>
+    <Description>A Blazor Component Library based on Material Design principles, focusing on ease of use. Written mainly in C# with minimal JavaScript, it allows .NET developers to easily understand and debug the code when needed.</Description>
     <PackageProjectUrl>https://mudblazor.com/</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/MudBlazor/MudBlazor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
@@ -41,8 +42,16 @@
 
   <ItemGroup>
     <None Include="..\..\LICENSE" Pack="true" Visible="false" PackagePath="" />
+    <None Include="..\..\README.md" Pack="true" Visible="false" PackagePath="" />
     <None Include="..\..\content\Nuget.png" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
+
+  <!--Analyzer Config-->
+  <PropertyGroup>
+    <MudAllowedAttributePattern>LowerCase</MudAllowedAttributePattern>
+    <MudIllegalParameters>V7IgnoreCase</MudIllegalParameters>
+    <MudDebugAnalyzer>false</MudDebugAnalyzer>
+  </PropertyGroup>
 
   <!--Is this a rebuild - Dont clean generated files as this breaks rebuild behaviour-->
   <Target Name="ShouldCleanGeneratedFiles" BeforeTargets="BeforeRebuild">
@@ -62,15 +71,15 @@
   </Target>
   
   <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.17" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.17" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.17" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.20" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.20" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.20" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.6" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -85,7 +94,25 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
-
+  
+  <ItemGroup>
+    <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="true" OutputItemType="Analyzer" />
+  </ItemGroup>
+  
+  <PropertyGroup>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddAnalyzersToOutput</TargetsForTfmSpecificContentInPackage>
+  </PropertyGroup>
+  
+  <!--Add analyzer to build output so it works transitively -->
+  <Target Name="_AddAnalyzersToOutput">
+    <!--Limit to one copy (MudBlazor is multi targeted) analyzers are .net standard 2.0 -->
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
+      <TfmSpecificPackageFile Include="$(OutputPath)\$(AssemblyName).Analyzers.dll" PackagePath="analyzers/dotnet/cs" />
+      <!-- Add compiler visible properties to nuget for analyzers -->
+      <TfmSpecificPackageFile Include="..\Directory.Build.targets" Pack="true" PackagePath="build\$(PackageId).targets" />
+    </ItemGroup>
+  </Target>
+  
   <!--Dont Include in build output-->
   <ItemGroup>
     <Content Remove="compilerconfig.json" />
@@ -96,6 +123,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="MudBlazor.Docs" />
     <InternalsVisibleTo Include="MudBlazor.UnitTests" />
     <InternalsVisibleTo Include="MudBlazor.UnitTests.Viewer" />
     <!--We need to make internal types to be visible for mocking-->
@@ -107,7 +135,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MudBlazor.SourceCodeGenerator\MudBlazor.SourceCodeGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../MudBlazor.SourceGenerator/MudBlazor.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>

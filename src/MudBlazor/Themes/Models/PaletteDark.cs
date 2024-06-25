@@ -1,14 +1,16 @@
-﻿using MudBlazor.Utilities;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
 #nullable enable
-#pragma warning disable CS0618
     /// <summary>
     /// Represents a dark color palette.
     /// </summary>
     public class PaletteDark : Palette
-#pragma warning restore CS0618
     {
         /// <inheritdoc />
         public override MudColor Black { get; set; } = "#27272f";
@@ -53,7 +55,7 @@ namespace MudBlazor
         public override MudColor Background { get; set; } = "#32333d";
 
         /// <inheritdoc />
-        public override MudColor BackgroundGrey { get; set; } = "#27272f";
+        public override MudColor BackgroundGray { get; set; } = "#27272f";
 
         /// <inheritdoc />
         public override MudColor Surface { get; set; } = "#373740";
@@ -90,11 +92,5 @@ namespace MudBlazor
 
         /// <inheritdoc />
         public override MudColor DividerLight { get; set; } = "rgba(255,255,255, 0.06)";
-
-        /// <inheritdoc />
-        public override MudColor ChipDefault { get; set; } = "rgba(255,255,255, 0.16)";
-
-        /// <inheritdoc />
-        public override MudColor ChipDefaultHover { get; set; } = "rgba(255,255,255, 0.24)";
     }
 }

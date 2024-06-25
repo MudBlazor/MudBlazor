@@ -1,33 +1,33 @@
 ﻿@namespace MudBlazor
+@using MudBlazor.Resources
+@typeparam T
 @inherits MudComponentBase
+@inject InternalMudLocalizer Localizer
 
-<div tabindex="0" @attributes="UserAttributes" class="@Classname" style="@Style" @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)">
+<div tabindex="0" role="@RoleAttribute" @attributes="UserAttributes" class="@Classname" style="@Style" @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnClickAsync)">
     @{
         if (AvatarContent is not null)
         {
             @AvatarContent
         }
-#pragma warning disable CS0618
-        else if (!String.IsNullOrEmpty(Avatar))
+        else if (!string.IsNullOrEmpty(Icon) && !ShowCheckMark)
         {
-            <MudAvatar Class="@AvatarClass" Color="@Color">
-                <MudIcon Icon="@Avatar" />
-            </MudAvatar>
+            <MudIcon Disabled="@Disabled" Icon="@Icon" Class="mud-chip-icon" Size="MudBlazor.Size.Small" Color="@GetIconColor()" />
         }
-#pragma warning restore CS0618
-        else if (!String.IsNullOrEmpty(Icon) && !IsChecked)
+        else if (ShowCheckMark)
         {
-            <MudIcon Icon="@Icon" Class="mud-chip-icon" Size="Size.Small" Color="@IconColor" />
-        }
-        else if (IsChecked)
-        {
-            <MudIcon Icon="@CheckedIcon" Class="mud-chip-icon" Size="Size.Small" />
+            <MudIcon Disabled="@Disabled" Icon="@GetCheckedIcon()" Class="mud-chip-icon" Size="MudBlazor.Size.Small" />
         }
     }
     <span class="mud-chip-content">
-        @if (ChildContent == null)
+        @if (ChildContent is null)
         {
-            @Text
+            @if(Text is null) {
+                @($"{Value}")
+            }
+            else {
+                @Text
+            }
         }
         else
         {
@@ -35,7 +35,8 @@
         }
         @if (OnClose.HasDelegate || ChipSet?.AllClosable == true)
         {
-            <MudIconButton Class="mud-chip-close-button" Icon="@(String.IsNullOrEmpty(CloseIcon) ? $"{Icons.Material.Filled.Cancel}" : $"{CloseIcon}")" OnClick="OnCloseHandler" Size="Size.Small" />
+            <MudIconButton Class="mud-chip-close-button" Icon="@GetCloseIcon()" OnClick="OnCloseAsync" Size="MudBlazor.Size.Small"
+                           aria-label="@Localizer[nameof(LanguageResource.MudChip_Close)]" />
         }
     </span>
 </div>

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Docs.Services.UserPreferences;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
+using MudBlazor.Docs.Services.UserPreferences;
 
 namespace MudBlazor.Docs.Shared
 {
@@ -15,7 +15,7 @@ namespace MudBlazor.Docs.Shared
 
         protected override void OnInitialized()
         {
-            LayoutService.MajorUpdateOccured += LayoutServiceOnMajorUpdateOccured;
+            LayoutService.MajorUpdateOccurred += LayoutServiceOnMajorUpdateOccured;
             base.OnInitialized();
         }
 
@@ -44,7 +44,7 @@ namespace MudBlazor.Docs.Shared
 
         public void Dispose()
         {
-            LayoutService.MajorUpdateOccured -= LayoutServiceOnMajorUpdateOccured;
+            LayoutService.MajorUpdateOccurred -= LayoutServiceOnMajorUpdateOccured;
         }
 
         private void LayoutServiceOnMajorUpdateOccured(object sender, EventArgs e) => StateHasChanged();

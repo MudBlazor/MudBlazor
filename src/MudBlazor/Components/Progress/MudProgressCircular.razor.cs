@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -10,10 +9,10 @@ namespace MudBlazor
     public partial class MudProgressCircular : MudComponentBase
     {
         private int _svgValue;
-        private IParameterState<double> _valueState;
-        private const int _magicNumber = 126; // weird, but required for the SVG to work
+        private readonly ParameterState<double> _valueState;
+        private const int MagicNumber = 126; // weird, but required for the SVG to work
 
-        protected string DivClassname =>
+        protected string Classname =>
             new CssBuilder("mud-progress-circular")
                 .AddClass($"mud-{Color.ToDescriptionString()}-text")
                 .AddClass($"mud-progress-{Size.ToDescriptionString()}")
@@ -65,19 +64,13 @@ namespace MudBlazor
         [Category(CategoryTypes.ProgressCircular.Appearance)]
         public int StrokeWidth { get; set; } = 3;
 
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use Min instead.", true)]
-        [Parameter]
-        public double Minimum { get => Min; set => Min = value; }
-
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use Max instead.", true)]
-        [Parameter]
-        public double Maximum { get => Max; set => Max = value; }
-
         public MudProgressCircular()
         {
-            _valueState = RegisterParameter(nameof(Value), () => Value, OnValueParameterChanged, DoubleEpsilonEqualityComparer.Default);
+            using var registerScope = CreateRegisterScope();
+            _valueState = registerScope.RegisterParameter<double>(nameof(Value))
+                .WithParameter(() => Value)
+                .WithChangeHandler(OnValueParameterChanged)
+                .WithComparer(DoubleEpsilonEqualityComparer.Default);
         }
 
         private void OnValueParameterChanged(ParameterChangedEventArgs<double> args)
@@ -98,7 +91,7 @@ namespace MudBlazor
             // calculate fraction, which is a value between 0 and 1
             var fraction = (minValue - Min) / (Max - Min);
             // now project into the range of the SVG value (126 .. 0)
-            return (int)Math.Round(_magicNumber - _magicNumber * fraction);
+            return (int)Math.Round(MagicNumber - (MagicNumber * fraction));
         }
     }
 }

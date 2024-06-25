@@ -1,0 +1,58 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTreeView Items="@TreeItems" Hover="true" Width="100%" ServerData="LoadServerData" @ref="Tree">
+    <ItemTemplate Context="item">
+        <MudTreeViewItem Items="@item.Children" CanExpand=@item.Expandable>
+            <BodyContent>
+                <MudIcon Icon="@item.Icon" Size="Size.Small"></MudIcon>
+                <MudText>@item.Text</MudText>
+                <MudText Typo="Typo.caption">@((item as TreeItemData).Number)</MudText>
+            </BodyContent>
+        </MudTreeViewItem>
+    </ItemTemplate>
+</MudTreeView>
+
+@code {
+    #nullable enable
+    public MudTreeView<string>? Tree { get; set; }
+
+    public List<TreeItemData<string>> TreeItems { get; set; } = new();
+
+    public class TreeItemData : TreeItemData<string>
+    {
+        public TreeItemData(string text, string icon, int? number = null, bool canExpand = true) : base(text)
+        {
+            Text = text;
+            Icon = icon;
+            Number = number;
+            Expandable = canExpand;
+        }
+
+        public int? Number { get; set; }
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        TreeItems.Add(new TreeItemData("All Mail", Icons.Material.Filled.Email));
+        TreeItems.Add(new TreeItemData("Trash", Icons.Material.Filled.Delete));
+        TreeItems.Add(new TreeItemData("Categories", Icons.Material.Filled.Label) {
+                Children = new List<TreeItemData<string>>()
+                {
+                    new TreeItemData("Social", Icons.Material.Filled.Group, 90),
+                    new TreeItemData("Updates", Icons.Material.Filled.Info, 2294),
+                    new TreeItemData("Forums", Icons.Material.Filled.QuestionAnswer, 3566),
+                    new TreeItemData("Promotions", Icons.Material.Filled.LocalOffer, 733)
+                }
+            });
+        TreeItems.Add(new TreeItemData("History", Icons.Material.Filled.Label, null, false));
+    }
+
+    public async Task<IReadOnlyCollection<TreeItemData<string>>?> LoadServerData(string parentValue)
+    {
+        if (parentValue == null) 
+            throw new Exception("Parent value is null!");
+        await Task.Delay(500);
+        return TreeItems.FirstOrDefault(x => x.Value == parentValue)?.Children;
+    }
+}

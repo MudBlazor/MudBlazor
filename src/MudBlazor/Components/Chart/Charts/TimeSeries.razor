@@ -1,0 +1,58 @@
+﻿@namespace MudBlazor.Charts
+@using MudBlazor.Components.Chart.Models
+@using System.Globalization;
+@inherits MudTimeSeriesChartBase
+
+<svg @attributes="UserAttributes" class="mud-chart-line mud-ltr" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 @BoundWidth @BoundHeight">
+    <g class="mud-charts-grid">
+        <g class="mud-charts-gridlines-yaxis">
+            @foreach (var horizontalLine in _horizontalLines)
+            {
+                <path stroke="#e0e0e0" stroke-width="0.3" d="@horizontalLine.Data"></path>
+            }
+        </g>
+        @if (MudChartParent?.ChartOptions.XAxisLines == true)
+        {
+            <g class="mud-charts-gridlines-xaxis-lines">
+                @foreach (var verticalLine in _verticalLines)
+                {
+                    <path stroke="gray" stroke-width="0.3" d="@verticalLine.Data"></path>
+                }
+            </g>
+        }
+    </g>
+    <g class="mud-charts-yaxis">
+        @foreach (var horizontalLineValue in _horizontalValues)
+        {
+            @((MarkupString)$"<text x='{horizontalLineValue.X.ToString(CultureInfo.InvariantCulture)}' y='{horizontalLineValue.Y.ToString(CultureInfo.InvariantCulture)}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value.ToString(CultureInfo.InvariantCulture)}</text>")
+        }
+    </g>
+    <g class="mud-charts-xaxis">
+        @foreach (var verticalLineValue in _verticalValues)
+        {
+            @((MarkupString)$"<text x='{verticalLineValue.X.ToString(CultureInfo.InvariantCulture)}' y='{verticalLineValue.Y.ToString(CultureInfo.InvariantCulture)}' font-size='12px' text-anchor='middle'>{verticalLineValue.Value.ToString(CultureInfo.InvariantCulture)}</text>")
+        }
+    </g>
+    <g class="mud-charts-line-series">
+        @foreach (var chartLine in _chartLines)
+        {
+            var series = _series[chartLine.Index];
+            var colour = MudChartParent.ChartOptions.ChartPalette.GetValue(chartLine.Index % MudChartParent.ChartOptions.ChartPalette.Count());
+
+            <path class="mud-chart-line" @onclick="() => SelectedIndex = chartLine.Index" fill="none" stroke="@colour" stroke-opacity="@series.StrokeOpacity" stroke-width="@MudChartParent.ChartOptions.LineStrokeWidth" d="@chartLine.Data"></path>
+
+            if (series.Type == TimeSeriesDiplayType.Area)
+            {
+                var chartArea = _chartAreas[chartLine.Index];
+                <path class="mud-chart-line" @onclick="() => SelectedIndex = chartLine.Index" fill="@colour" fill-opacity="@series.FillOpacity" d="@chartArea.Data"></path>
+            }
+        }
+    </g>
+
+    @MudChartParent?.CustomGraphics
+</svg>
+<Legend Data="@_legends" />
+
+@code {
+
+}

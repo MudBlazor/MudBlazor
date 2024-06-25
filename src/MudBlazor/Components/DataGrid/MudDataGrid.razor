@@ -14,7 +14,7 @@
 
 <CascadingValue IsFixed="true" Value="this">
     <div @attributes="UserAttributes" class="@_classname" style="@_style">
-        @if (Items != null || ServerData != null)
+        @if (Items != null || HasServerData)
         {
             @if (ToolBarContent != null)
             {
@@ -87,7 +87,7 @@
                                         </MudStack>
 
                                         <MudDropContainer @ref="_columnsPanelDropContainer" T="Column<T>" Items="@RenderedColumns" ItemsSelector="(item, dropzone) => true" 
-                                            ItemIsDisabled="@((item) => !this.ColumnsPanelReordering)" ItemDropped="ColumnOrderUpdated">
+                                            ItemDisabled="@((item) => !this.ColumnsPanelReordering)" ItemDropped="ColumnOrderUpdated">
                                             <ChildContent>
                                                 <MudDropZone T="Column<T>" Class="flex-grow-1" AllowReorder=this.ColumnsPanelReordering />
                                             </ChildContent>
@@ -100,28 +100,28 @@
                                                             <MudStack Spacing="0">
                                                                 @if (RenderedColumns.IndexOf(context) != 0)
                                                                 {
-                                                                    <MudIconButton DisableRipple="true" Icon="@Icons.Material.Filled.ArrowDropUp" Size="@Size.Small" Title=@Localizer["MudDataGrid.MoveUp"] Disabled="@(RenderedColumns.IndexOf(context) == 0)" OnClick="@(e => ColumnUp(context))"></MudIconButton>
+                                                                    <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.ArrowDropUp" Size="@Size.Small" title=@Localizer["MudDataGrid.MoveUp"] Disabled="@(RenderedColumns.IndexOf(context) == 0)" OnClick="@(e => ColumnUp(context))"></MudIconButton>
                                                                 }
                                                                 @if (RenderedColumns.IndexOf(context) != RenderedColumns.Count - 1)
                                                                 {
-                                                                    <MudIconButton DisableRipple="true" Icon="@Icons.Material.Filled.ArrowDropDown" Size="@Size.Small" Title=@Localizer["MudDataGrid.MoveDown"] Disabled="@(RenderedColumns.IndexOf(context) == RenderedColumns.Count - 1)" OnClick="@(e => ColumnDown(context))"></MudIconButton>
+                                                                    <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.ArrowDropDown" Size="@Size.Small" title=@Localizer["MudDataGrid.MoveDown"] Disabled="@(RenderedColumns.IndexOf(context) == RenderedColumns.Count - 1)" OnClick="@(e => ColumnDown(context))"></MudIconButton>
                                                                 }
                                                             </MudStack>
                                                         }
 
-                                                        @if (context?.grouping ?? false)
+                                                        @if (context?.GroupingState.Value ?? false)
                                                         {
-                                                            <MudIconButton DisableRipple="true" Icon="@Icons.Material.Filled.AccountTree" Size="@Size.Small" Title=@Localizer["MudDataGrid.Ungroup"] Disabled="!context.groupable" OnClick="@(e => context?.HeaderCell.UngroupColumn())"></MudIconButton>
+                                                            <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.AccountTree" Size="@Size.Small" title=@Localizer["MudDataGrid.Ungroup"] Disabled="!context.groupable" OnClick="@(e => context?.HeaderCell.UngroupColumn())"></MudIconButton>
                                                         }
                                                         else
                                                         {
-                                                            <MudIconButton DisableRipple="true" Icon="@Icons.Material.Filled.TableRows" Size="@Size.Small" Title=@Localizer["MudDataGrid.Group"] Disabled="!context.groupable" OnClick="@(e => context?.HeaderCell.GroupColumn())"></MudIconButton>
+                                                            <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.TableRows" Size="@Size.Small" title=@Localizer["MudDataGrid.Group"] Disabled="!context.groupable" OnClick="@(e => context?.HeaderCell.GroupColumn())"></MudIconButton>
                                                         }
-                                                        <MudSwitch T="bool" DisableRipple="true" Class="flex-grow-1" Color="Color.Primary" Disabled="@(!context.hideable)" Checked="@context.HiddenState.Value" CheckedChanged="@context.ToggleAsync" Converter="_oppositeBoolConverter" Label="@context.Title" />
+                                                        <MudSwitch T="bool" Ripple="false" Class="flex-grow-1" Color="Color.Primary" Disabled="@(!context.hideable)" Value="@context.HiddenState.Value" ValueChanged="@context.ToggleAsync" Converter="_oppositeBoolConverter" Label="@context.Title" />
                                                         <MudSpacer />
 
                                                         <div>
-                                                            <MudIconButton DisableRipple="true" Icon="@context.SortIcon" Class="@context.HeaderCell.sortIconClass" Size="@Size.Small" Title=@Localizer["MudDataGrid.Sort"] Disabled="!context.sortable" OnClick="@(e => context?.HeaderCell.SortChangedAsync(e))"></MudIconButton>
+                                                            <MudIconButton Ripple="false" Icon="@context.SortIcon" Class="@context.HeaderCell.sortIconClass" Size="@Size.Small" title=@Localizer["MudDataGrid.Sort"] Disabled="!context.sortable" OnClick="@(e => context?.HeaderCell.SortChangedAsync(e))"></MudIconButton>
                                                             @if (context.DataGrid.SortMode == SortMode.Multiple)
                                                             {
                                                                 if (context.SortIndex < 0)
@@ -137,16 +137,16 @@
 
                                                         @if (context.HeaderCell.hasFilter)
                                                         {
-                                                            <MudIconButton DisableRipple="true" Class="filter-button filtered" Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" Title=@Localizer["MudDataGrid.Filter"] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.OpenFilters())"></MudIconButton>
+                                                            <MudIconButton Ripple="false" Class="filter-button filtered" Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" title=@Localizer["MudDataGrid.Filter"] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.OpenFilters())"></MudIconButton>
                                                         }
                                                         else
                                                         {
-                                                            <MudIconButton DisableRipple="true" Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" Title=@Localizer["MudDataGrid.Filter"] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.AddFilter())"></MudIconButton>
+                                                            <MudIconButton Ripple="false" Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" title=@Localizer["MudDataGrid.Filter"] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.AddFilter())"></MudIconButton>
                                                         }
 
                                                         @if (ColumnsPanelReordering)
                                                         {
-                                                            <MudIconButton DisableRipple="true" Icon="@context.DataGrid.DragIndicatorIcon" Size="@Size.Small" Class="drag-icon-options"></MudIconButton>
+                                                            <MudIconButton Ripple="false" Icon="@context.DataGrid.DragIndicatorIcon" Size="@Size.Small" Class="drag-icon-options"></MudIconButton>
                                                         }
                                                     </MudStack>
                                                 }
@@ -179,7 +179,7 @@
                                                 }
                                             </MudStack>
                                             <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">@Localizer["MudDataGrid.AddFilter"]</MudButton>
-                                            @if (ServerData != null)
+                                            @if (HasServerData)
                                             {
                                                 <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFiltersAsync" Color="@Color.Primary">@Localizer["MudDataGrid.Apply"]</MudButton>
                                             }
@@ -211,9 +211,9 @@
                                         @{ var groupClass = new CssBuilder(GroupClass).AddClass(GroupClassFunc?.Invoke(g)).Build(); }
                                         @{ var groupStyle = new StyleBuilder().AddStyle(GroupStyle).AddStyle(GroupStyleFunc?.Invoke(g)).Build(); }
 
-                                        <td class="mud-table-cell @groupClass" colspan="1000" style="background-color:var(--mud-palette-background-grey);@groupStyle">
+                                        <td class="mud-table-cell @groupClass" colspan="1000" style="background-color:var(--mud-palette-background-gray);@groupStyle">
                                             <MudIconButton Class="mud-table-row-expander"
-                                           Icon="@(g.IsExpanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)"
+                                           Icon="@(g.Expanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)"
                                            OnClick="@(() => ToggleGroupExpansion(g))" />
 
                                             @if (GroupedColumn.GroupTemplate == null)
@@ -228,35 +228,52 @@
                                     </tr>
                                     var rowIndex = 0;
 
-                                    @if (g.IsExpanded)
+                                    @if (g.Expanded)
                                     {
-                                        <MudVirtualize IsEnabled="@Virtualize" Items="@g.Grouping.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
-                                            @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
-                                            @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
-                                            @{ var tmpRowIndex = rowIndex; }
-                                            <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" 
-                                                @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))" 
-                                                @oncontextmenu="@((args) => OnContextMenuClickedAsync(args, item, tmpRowIndex))"
-                                                @oncontextmenu:preventDefault="@(RowContextMenuClick.HasDelegate ? true : false)">
-                                                <CascadingValue Value="@Validator" IsFixed="true">
-                                                    @foreach (var column in RenderedColumns)
-                                                    {
-                                                        if (!column.HiddenState.Value)
+                                        <MudVirtualize @ref="_mudVirtualize" ItemsProvider="@VirtualItemsProvider" Enabled="@Virtualize" Items="@g.Grouping.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
+                                            <Placeholder>
+                                                @if (RowLoadingContent != null)
+                                                {
+                                                    @RowLoadingContent
+                                                }
+                                                else
+                                                {
+                                                    <tr class="mud-table-row">
+                                                        <td class="mud-table-cell" colspan="1000">
+                                                            @Localizer["MudDataGrid.Loading"]
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </Placeholder>
+                                            
+                                            <ChildContent>
+                                                @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
+                                                @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
+                                                @{ var tmpRowIndex = rowIndex; }
+                                                <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" 
+                                                    @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))" 
+                                                    @oncontextmenu="@((args) => OnContextMenuClickedAsync(args, item, tmpRowIndex))"
+                                                    @oncontextmenu:preventDefault="@(RowContextMenuClick.HasDelegate ? true : false)">
+                                                    <CascadingValue Value="@Validator" IsFixed="true">
+                                                        @foreach (var column in RenderedColumns)
                                                         {
-                                                            @Cell(column, item)
+                                                            if (!column.HiddenState.Value)
+                                                            {
+                                                                @Cell(column, item)
+                                                            }
                                                         }
-                                                    }
-                                                </CascadingValue>
-                                            </tr>
-                                            @if (ChildRowContent != null && (_openHierarchies.Contains(item) || !hasHierarchyColumn))
-                                            {
-                                                <tr class="mud-table-row">
-                                                    <td class="mud-table-cell" colspan="1000">
-                                                        @ChildRowContent(new CellContext<T>(this, item))
-                                                    </td>
+                                                    </CascadingValue>
                                                 </tr>
-                                            }
-                                            @{ rowIndex++; }
+                                                @if (ChildRowContent != null && (_openHierarchies.Contains(item) || !hasHierarchyColumn))
+                                                {
+                                                    <tr class="mud-table-row">
+                                                        <td class="mud-table-cell" colspan="1000">
+                                                            @ChildRowContent(new CellContext<T>(this, item))
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                @{ rowIndex++; }
+                                            </ChildContent>
                                         </MudVirtualize>
                                         @*Group Footer*@
                                         <tr class="mud-table-row">
@@ -268,33 +285,50 @@
                             else
                             {
                                 var rowIndex = 0;
-                                <MudVirtualize IsEnabled="@Virtualize" Items="@resolvedPageItems" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
-                                    @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
-                                    @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
-                                    @{ var tmpRowIndex = rowIndex; }
-                                    <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" 
-                                        @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))" 
-                                        @oncontextmenu="@((args) => OnContextMenuClickedAsync(args, item, tmpRowIndex))"
-                                        @oncontextmenu:preventDefault="@(RowContextMenuClick.HasDelegate ? true : false)">
-                                        <CascadingValue Value="@Validator" IsFixed="true">
-                                            @foreach (var column in RenderedColumns)
-                                            {
-                                                if (!column.HiddenState.Value)
+                                <MudVirtualize @ref="_mudVirtualize" ItemsProvider="@VirtualItemsProvider" Enabled="@Virtualize" Items="@resolvedPageItems" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
+                                    <Placeholder>
+                                        @if (RowLoadingContent != null)
+                                        {
+                                            @RowLoadingContent
+                                        }
+                                        else
+                                        {
+                                            <tr class="mud-table-row">
+                                                <td class="mud-table-cell" colspan="1000">
+                                                    @Localizer["MudDataGrid.Loading"]
+                                                </td>
+                                            </tr>
+                                        }
+                                    </Placeholder>
+
+                                    <ChildContent>
+                                        @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
+                                        @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
+                                        @{ var tmpRowIndex = rowIndex; }
+                                        <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" 
+                                            @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))" 
+                                            @oncontextmenu="@((args) => OnContextMenuClickedAsync(args, item, tmpRowIndex))"
+                                            @oncontextmenu:preventDefault="@(RowContextMenuClick.HasDelegate ? true : false)">
+                                            <CascadingValue Value="@Validator" IsFixed="true">
+                                                @foreach (var column in RenderedColumns)
                                                 {
-                                                    @Cell(column, item)
+                                                    if (!column.HiddenState.Value)
+                                                    {
+                                                        @Cell(column, item)
+                                                    }
                                                 }
-                                            }
-                                        </CascadingValue>
-                                    </tr>
-                                    @if (ChildRowContent != null && (_openHierarchies.Contains(item) || !hasHierarchyColumn))
-                                    {
-                                        <tr class="mud-table-row">
-                                            <td class="mud-table-cell" colspan="1000">
-                                                @ChildRowContent(new CellContext<T>(this, item))
-                                            </td>
+                                            </CascadingValue>
                                         </tr>
-                                    }
-                                    @{ rowIndex++; }
+                                        @if (ChildRowContent != null && (_openHierarchies.Contains(item) || !hasHierarchyColumn))
+                                        {
+                                            <tr class="mud-table-row">
+                                                <td class="mud-table-cell" colspan="1000">
+                                                    @ChildRowContent(new CellContext<T>(this, item))
+                                                </td>
+                                            </tr>
+                                        }
+                                        @{ rowIndex++; }
+                                    </ChildContent>
                                 </MudVirtualize>
                             }
                         }
@@ -337,7 +371,7 @@
         }
     </div>
     <CascadingValue Value="true" IsFixed Name="IsNested">
-        <MudDialog Options="EditDialogOptions" @bind-IsVisible="isEditFormOpen">
+        <MudDialog Options="EditDialogOptions" @bind-Visible="isEditFormOpen">
             <DialogContent>
                 <MudForm @ref="_editForm" FieldChanged="FormFieldChanged">
                     @foreach (var column in RenderedColumns)
@@ -355,12 +389,12 @@
                             if (propertyType == typeof(string))
                             {
                                 <MudTextField T="string" Label="@column.Title" Value="@cell._valueString" ValueChanged="@cell.StringValueChangedAsync" Margin="@Margin.Dense"
-                                  Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
+                                  Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" />
                             }
                             else if (TypeIdentifier.IsNumber(propertyType))
                             {
                                 <MudNumericField T="double?" Label="@column.Title" Value="@cell._valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
-                                     Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
+                                     Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" />
                             }
                         }
                     }
@@ -385,7 +419,7 @@
                     <MudMenuItem OnClick="@dataGrid.ExpandAllGroups">@Localizer["MudDataGrid.ExpandAllGroups"]</MudMenuItem>
                     <MudMenuItem OnClick="@dataGrid.CollapseAllGroups">@Localizer["MudDataGrid.CollapseAllGroups"]</MudMenuItem>
                 }
-                @if (dataGrid.ServerData is not null)
+                @if (dataGrid.HasServerData)
                 {
                     <MudMenuItem OnClick="@dataGrid.InvokeServerLoadFunc">@Localizer["MudDataGrid.RefreshData"]</MudMenuItem>
                 }
@@ -416,7 +450,7 @@
                 var cell = new Cell<T>(this, column, item);
             }
             <td data-label="@column.Title" class="@cell.computedClass" style="@cell.computedStyle">
-                @if (column.IsEditable && !ReadOnly && EditMode == DataGridEditMode.Cell)
+                @if (column.Editable && !ReadOnly && EditMode == DataGridEditMode.Cell)
                 {
                     if (column.EditTemplate is not null)
                     {

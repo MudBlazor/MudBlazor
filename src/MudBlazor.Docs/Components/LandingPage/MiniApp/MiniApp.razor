@@ -10,7 +10,7 @@
             <MudBlazorLogo Class="me-3" Style="width:36px;"/>
             <MudText Typo="Typo.h6">Mud Mini</MudText>
         </div>
-        <MudList Clickable="true" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue" Class="py-6 mini-fake-nav">
+        <MudList T="int" @bind-SelectedValue="selectedValue" Class="py-6 mini-fake-nav">
 
             <MudListSubheader Class="pt-6 pb-2">General</MudListSubheader>
 
@@ -30,7 +30,7 @@
 
             <MudListItem Value="9" Icon="@Icons.Material.Rounded.Person" Text="Users" />
             <MudListItem Value="10" Icon="@Icons.Material.Rounded.Group" Text="Groups" />
-            <MudListItem Value="11" Icon="@Icons.Material.Rounded.ShoppingCart" Text="E-Commerce" InitiallyExpanded="false">
+            <MudListItem Value="11" Icon="@Icons.Material.Rounded.ShoppingCart" Text="E-Commerce" Expanded="false">
                 <NestedList>
                     <MudListItem Value="12" Text="Analytics"/>
                     <MudListItem Value="13" Text="Products"/>
@@ -41,10 +41,10 @@
         </MudList>
     </div>
     <div class="@ContentClassNames">
-        <MudToolBar DisableGutters="true" Class="mud-text-secondary">
-            <MudIconButton OnClick="@(() => ToggleMiniDrawer())" Icon="@GetIcon()" Color="Color.Inherit"/>
-            <MudIconButton Icon="@Icons.Material.Outlined.Search" Color="Color.Inherit"/>
-            <MudSpacer/>
+        <MudToolBar Gutters="false" Class="mud-text-secondary">
+            <MudIconButton OnClick="@(() => ToggleMiniDrawer())" Icon="@GetIcon()" Color="Color.Inherit" />
+            <MudIconButton Icon="@Icons.Material.Outlined.Search" Color="Color.Inherit" />
+            <MudSpacer />
             <MudIconButton Class="mud-text-secondary" Icon="@Icons.Material.Outlined.Notifications"/>
             <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" PopoverClass="mudblazor-landingpage-scaled-menu mud-elevation-1">
                 <ActivatorContent>
@@ -56,9 +56,9 @@
                         <MudText Class="mt-n2" Typo="Typo.body1">martin@mudsson.se</MudText>
                     </div>
                     <MudDivider Class="my-2"/>
-                    <MudListItem Dense="true" Icon="@Icons.Material.Rounded.Person">Profile</MudListItem>
-                    <MudListItem Dense="true" Icon="@Icons.Material.Rounded.Settings">Settings</MudListItem>
-                    <MudListItem Dense="true" Icon="@Icons.Material.Rounded.Logout">Logout</MudListItem>
+                    <MudListItem T="string" Dense="true" Icon="@Icons.Material.Rounded.Person">Profile</MudListItem>
+                    <MudListItem T="string" Dense="true" Icon="@Icons.Material.Rounded.Settings">Settings</MudListItem>
+                    <MudListItem T="string" Dense="true" Icon="@Icons.Material.Rounded.Logout">Logout</MudListItem>
                 </ChildContent>
             </MudMenu>
         </MudToolBar>
@@ -147,7 +147,7 @@
                     <MudDivider Class="my-3"/>
                     <MudText Typo="Typo.subtitle2" GutterBottom="true">Reactor Type</MudText>
                     <div class="mx-n2 mb-2">
-                        <MudChip Color="Color.Primary">RBMK-1000</MudChip><MudChip>RBMK-1500</MudChip><MudChip>RBMKP-2400</MudChip>
+                    <MudChip T="string" Color="Color.Primary">RBMK-1000</MudChip><MudChip T="string">RBMK-1500</MudChip><MudChip T="string">RBMKP-2400</MudChip>
                     </div>
                     <div>
                         <MudButton Variant="Variant.Text" Color="Color.Primary" Class="ml-n2 mb-n2">Read More</MudButton>
@@ -200,7 +200,7 @@
                     </div>
                 </div>
                 <div class="d-flex align-end flex-grow-1 pa-4">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" DisableElevation="true">Pay now</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" DropShadow="false">Pay now</MudButton>
                 </div>
             </MudPaper>
             <div class="d-flex flex-column gap-6">
@@ -241,7 +241,7 @@
                                         Nope :)
                                     </ChildContent>
                                 </MudExpansionPanel>
-                                <MudExpansionPanel @bind-IsExpanded="@expansionPanel1">
+                                <MudExpansionPanel @bind-Expanded="@expansionPanel1">
                                     <TitleContent>
                                         <div class="d-flex gap-4">
                                             <MudIcon Icon="@Icons.Material.Filled.Folder"/>
@@ -263,34 +263,6 @@
 </div>
 
 
-@*<MudPaper Class="pa-4 rounded-lg d-flex align-center">
-        <div class="flex-grow-1">
-            <MudText Typo="Typo.subtitle1">Graphite on roof</MudText>
-            <MudText Typo="Typo.h4">150,000</MudText>
-        </div>
-        <MudAvatar Rounded="true" Color="Color.Primary" Size="Size.Large">
-            <MudIcon Icon="@Icons.Material.Filled.Token" Size="Size.Large" />
-        </MudAvatar>
-    </MudPaper>
-    <MudPaper Class="pa-4 rounded-lg d-flex align-center">
-        <div class="flex-grow-1">
-            <MudText Typo="Typo.subtitle1">Global Spread</MudText>
-            <MudText Typo="Typo.h4">12%</MudText>
-        </div>
-        <MudAvatar Rounded="true" Color="Color.Success" Size="Size.Large">
-            <MudIcon Icon="@Icons.Material.Outlined.Public" Size="Size.Large" />
-        </MudAvatar>
-    </MudPaper>
-    <MudPaper Class="pa-4 rounded-lg d-flex align-center">
-        <div class="flex-grow-1">
-            <MudText Typo="Typo.subtitle1">Roentgen</MudText>
-        <MudText Typo="Typo.h4">3,6</MudText>
-        </div>
-        <MudAvatar Rounded="true" Color="Color.Warning" Size="Size.Large">
-            <MudIcon Icon="@Icons.Custom.Uncategorized.Radioactive" Color="Color.Dark" Size="Size.Large" />
-        </MudAvatar>
-    </MudPaper>*@
-
 @code {
     [Parameter] public bool IsMobile { get; set; }
 
@@ -298,8 +270,7 @@
     private bool overlayVisible { get; set; }
     private double sliderValue = 50.0;
     private bool expansionPanel1 = true;
-    MudListItem selectedItem;
-    object selectedValue = 1;
+    int selectedValue = 1;
 
     private void ToggleMiniDrawer()
     {

@@ -41,6 +41,16 @@ else
     public string Icon { get; set; }
 
     /// <summary>
+    /// The color of the <see cref="Icon" />.
+    /// </summary>
+    /// <remarks>
+    /// When set, overrides the <see cref="MudTabs.IconColor" /> property.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Tabs.Behavior)]
+    public Color IconColor { get; set; }
+
+    /// <summary>
     /// If true, the tabpanel will be disabled.
     /// </summary>
     [Parameter]

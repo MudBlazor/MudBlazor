@@ -1,17 +1,16 @@
-﻿using Microsoft.AspNetCore.Components.Web;
+﻿using System;
+using System.Net.Http;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
-
-using System;
-using System.Net.Http;
-using MudBlazor.Docs.Wasm;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Services.Notifications;
+using MudBlazor.Docs.Wasm;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-// We use javascript to extract the data-prerender attibute which we created in the _Host.cshtml razor page.
+// We use javascript to extract the data-prerender attribute which we created in the _Host.cshtml razor page.
 // There is no other easy way to pass data into the wasm entry point since (args) is always null.
 // Reference https://github.com/dotnet/aspnetcore/issues/24461
 // We have to do this because the following code should only run when not prerendering.

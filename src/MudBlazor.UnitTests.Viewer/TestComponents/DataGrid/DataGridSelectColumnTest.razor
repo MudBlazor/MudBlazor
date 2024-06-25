@@ -1,0 +1,11 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid Items="@_items">
+    <Columns>
+        <SelectColumn T="int" ShowInFooter="true" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private List<int> _items = [1, 2];
+}

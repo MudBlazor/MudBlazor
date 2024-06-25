@@ -5,7 +5,7 @@
 <MudInputControl Class="@Classname" Style="@Style" Error="@HasErrors" ErrorText="@GetErrorText()" Required="@Required">
     <InputContent>
         <CascadingValue Value="@((IMudRadioGroup)this)" IsFixed="false">
-            <div role="radiogroup" @attributes="UserAttributes" class="@GetInputClass()" style="@InputStyle">
+            <div role="radiogroup" @attributes="UserAttributes" class="@GetInputClass()" style="@InputStyle" required="@Required" aria-required="@Required.ToString().ToLowerInvariant()">
                 @ChildContent
             </div>
         </CascadingValue>

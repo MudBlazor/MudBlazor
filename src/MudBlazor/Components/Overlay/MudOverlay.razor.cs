@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
@@ -11,7 +10,7 @@ namespace MudBlazor
 #nullable enable
     public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     {
-        private IParameterState<bool> _visibleState;
+        private readonly ParameterState<bool> _visibleState;
 
         protected string Classname =>
             new CssBuilder("mud-overlay")
@@ -111,13 +110,20 @@ namespace MudBlazor
 
         public MudOverlay()
         {
-            _visibleState = RegisterParameter(nameof(Visible), () => Visible, () => VisibleChanged, VisibleParameterChangedHandlerAsync);
+            using var registerScope = CreateRegisterScope();
+            _visibleState = registerScope.RegisterParameter<bool>(nameof(Visible))
+                .WithParameter(() => Visible)
+                .WithEventCallback(() => VisibleChanged)
+                .WithChangeHandler(OnVisibleParameterChangedAsync);
         }
 
         protected internal async Task OnClickHandlerAsync(MouseEventArgs ev)
         {
             if (AutoClose)
-                Visible = false;
+            {
+                await _visibleState.SetValueAsync(false);
+            }
+
             await OnClick.InvokeAsync(ev);
         }
 
@@ -125,15 +131,21 @@ namespace MudBlazor
         protected override async Task OnAfterRenderAsync(bool firstTime)
         {
             if (!LockScroll || Absolute)
+            {
                 return;
+            }
 
             if (Visible)
+            {
                 await BlockScrollAsync();
+            }
             else
+            {
                 await UnblockScrollAsync();
+            }
         }
 
-        private Task VisibleParameterChangedHandlerAsync()
+        private Task OnVisibleParameterChangedAsync()
         {
             return VisibleChanged.InvokeAsync(_visibleState.Value);
         }

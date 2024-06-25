@@ -3,8 +3,8 @@
 
 <div @attributes="UserAttributes" class="@TabsClassnames" style="@Style">
     <CascadingValue Value="this" IsFixed="true">
-        <div class="@ToolbarClassnames">
-            <div class="mud-tabs-toolbar-inner" style="@MaxHeightStyles">
+        <div class="@TabBarClassnames">
+            <div class="mud-tabs-tabbar-inner" style="@MaxHeightStyles">
                 @if (HeaderPosition == TabHeaderPosition.Before && Header != null)
                 {
                     <div class="mud-tabs-header mud-tabs-header-before">
@@ -17,7 +17,7 @@
                         <MudIconButton Icon="@_prevIcon" Color="@ScrollIconColor" OnClick="@((e) => ScrollPrev())" Disabled="@_prevButtonDisabled" />
                     </div>
                 }
-                <div @ref="@_tabsContentSize" class="mud-tabs-toolbar-content">
+                <div @ref="@_tabsContentSize" class="mud-tabs-tabbar-content">
                     <div class="@WrapperClassnames" style="@WrapperScrollStyle">
                         @foreach (MudTabPanel panel in _panels)
                         {
@@ -89,11 +89,11 @@
             }
             else if (String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
             {
-                <MudIcon Icon="@panel.Icon" Color="@IconColor" />
+                <MudIcon Icon="@panel.Icon" Color="@GetPanelIconColor(panel)" />
             }
             else if (!String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
             {
-                <MudIcon Icon="@panel.Icon" Color="@IconColor" Class="mud-tab-icon-text" />
+                <MudIcon Icon="@panel.Icon" Color="@GetPanelIconColor(panel)" Class="mud-tab-icon-text" />
                 @panel.Text
             }
             @if (panel.BadgeData != null || panel.BadgeDot)

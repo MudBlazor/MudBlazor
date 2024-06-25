@@ -2,14 +2,14 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using MudBlazor.UnitTests.Components;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using Bunit;
 using FluentAssertions;
 using MudBlazor.Charts;
+using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
-using Bunit;
-using System.Collections.Generic;
 
 namespace MudBlazor.UnitTests.Charts
 {
@@ -116,15 +116,15 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = _baseChartPalette })
                 .Add(p => p.InputLabels, labels));
 
-            var svgViewBox = comp.Find("svg").GetAttribute("viewBox")?.Split(" ")?.Select(s => Int32.Parse(s))?.ToArray();
+            var svgViewBox = comp.Find("svg").GetAttribute("viewBox")?.Split(" ")?.Select(s => int.Parse(s))?.ToArray();
             var circles = comp.FindAll("circle");
 
             svgViewBox.Should().NotBeNullOrEmpty("must have a valid viewbox", svgViewBox);
 
             foreach (var c in circles)
             {
-                var cx = Int32.Parse(c.GetAttribute("cx") ?? "0");
-                var cy = Int32.Parse(c.GetAttribute("cy") ?? "0");
+                var cx = int.Parse(c.GetAttribute("cx") ?? "0");
+                var cy = int.Parse(c.GetAttribute("cy") ?? "0");
 
                 cx.Should().Be(svgViewBox[2] / 2);
 

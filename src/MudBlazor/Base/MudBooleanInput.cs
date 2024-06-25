@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -6,13 +9,20 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// Represents a form input component which stores a boolean value.
+    /// </summary>
+    /// <typeparam name="T">The type of item managed by this component.</typeparam>
     public class MudBooleanInput<T> : MudFormComponent<T?, bool?>
     {
         public MudBooleanInput() : base(new BoolConverter<T?>()) { }
 
         /// <summary>
-        /// If true, the input element will be disabled.
+        /// Prevents the user from interacting with this input.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Disabled { get; set; }
@@ -23,8 +33,11 @@ namespace MudBlazor
         protected bool GetDisabledState() => Disabled || ParentDisabled;
 
         /// <summary>
-        /// If true, the input will be read-only.
+        /// Prevents the user from changing the input.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, the user can copy the input but cannot change it.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool ReadOnly { get; set; }
@@ -35,19 +48,7 @@ namespace MudBlazor
         protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
         /// <summary>
-        /// The state of the component
-        /// </summary>
-        [Obsolete("Use Value instead.")]
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Data)]
-        public T? Checked
-        {
-            get => _value;
-            set => _value = value;
-        }
-
-        /// <summary>
-        /// The state of the component
+        /// The currently selected value.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
@@ -62,50 +63,48 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// If true will prevent the click from bubbling up the event tree.
+        /// Prevents the parent component from receiving click events.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  When <c>true</c>, the click will not bubble up to parent components.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool StopClickPropagation { get; set; } = true;
 
         /// <summary>
-        /// Fired when Value changes.
+        /// Occurs when the <see cref="Value"/> has changed.
         /// </summary>
         [Parameter]
         public EventCallback<T?> ValueChanged { get; set; }
-
-        /// <summary>
-        /// Fired when Checked changes.
-        /// </summary>
-        [Obsolete("Use ValueChanged instead.")]
-        [Parameter]
-        public EventCallback<T?> CheckedChanged { get; set; }
 
         protected bool? BoolValue => Converter.Set(Value);
 
         protected virtual Task OnChange(ChangeEventArgs args)
         {
-            Touched = true;
-            return SetBoolValueAsync((bool?)args.Value);
+            return SetBoolValueAsync((bool?)args.Value, true);
         }
 
-        protected Task SetBoolValueAsync(bool? value)
+        protected Task SetBoolValueAsync(bool? value, bool? markAsTouched = null)
         {
+            if (markAsTouched is true)
+            {
+                Touched = true;
+            }
             return SetCheckedAsync(Converter.Get(value));
         }
 
         protected async Task SetCheckedAsync(T? value)
         {
             if (GetDisabledState())
+            {
                 return;
+            }
+
             if (!EqualityComparer<T>.Default.Equals(Value, value))
             {
                 Value = value;
                 await ValueChanged.InvokeAsync(value);
-#pragma warning disable CS0618
-                Checked = value;
-                await CheckedChanged.InvokeAsync(value);
-#pragma warning restore CS0618
                 await BeginValidateAsync();
                 FieldChanged(Value);
             }
@@ -115,7 +114,9 @@ namespace MudBlazor
         {
             var changed = base.SetConverter(value);
             if (changed)
-                SetBoolValueAsync(Converter.Set(Value)).AndForget();
+            {
+                SetBoolValueAsync(Converter.Set(Value)).CatchAndLog();
+            }
 
             return changed;
         }
@@ -125,7 +126,7 @@ namespace MudBlazor
         /// </summary>
         protected override bool HasValue(T? value)
         {
-            return (BoolValue == true);
+            return BoolValue == true;
         }
     }
 }

@@ -10,25 +10,22 @@
     <th scope="col" class="@_classname" style="@_style" colspan="@Column?.HeaderColSpan" @attributes="@UserAttributes">
         @if (Column.filterable && Column.FilterTemplate != null)
         {
-            @Column.FilterTemplate(Column.FilterContext) 
+            @Column.FilterTemplate(Column.FilterContext)
         }
         else if (Column.filterable)
         {
             <MudStack Row="true">
-                @{
-                    var fieldType = FieldType.Identify(dataType);
-                }
-                @if (fieldType.IsString && !(_operator ?? "").EndsWith("empty"))
+                @if (fieldType.IsString && !(@operator ?? "").EndsWith("empty"))
                 {
-                    <MudTextField T="string" Value="@_valueString" ValueChanged="@StringValueChangedAsync" FullWidth="true" Placeholder="@Localizer["MudDataGrid.FilterValue"]" Margin="@Margin.Dense" Immediate="true" DebounceInterval="@(DataGrid.ServerData is null ? 0 : 500.0)"/>
+                    <MudTextField T="string" Value="@valueString" ValueChanged="@StringValueChangedAsync" FullWidth="true" Placeholder="@Localizer["MudDataGrid.FilterValue"]" Margin="@Margin.Dense" Immediate="true" DebounceInterval="@(!DataGrid.HasServerData ? 0 : 500.0)" />
                 }
-                else if (fieldType.IsNumber && !(_operator ?? "").EndsWith("empty"))
+                else if (fieldType.IsNumber && !(@operator ?? "").EndsWith("empty"))
                 {
-                    <MudNumericField T="double?" Culture="@Column.Culture" Value="@_valueNumber" ValueChanged="@NumberValueChangedAsync" FullWidth="true" Placeholder="@Localizer["MudDataGrid.FilterValue"]" Margin="@Margin.Dense" Immediate="true" DebounceInterval="@(DataGrid.ServerData is null ? 0 : 500.0)"/>
+                    <MudNumericField T="double?" Culture="@Column.Culture" Value="@valueNumber" ValueChanged="@NumberValueChangedAsync" FullWidth="true" Placeholder="@Localizer["MudDataGrid.FilterValue"]" Margin="@Margin.Dense" Immediate="true" DebounceInterval="@(!DataGrid.HasServerData ? 0 : 500.0)" />
                 }
                 else if (fieldType.IsEnum)
                 {
-                    <MudSelect T="Enum" Value="@_valueEnum" ValueChanged="@EnumValueChangedAsync" FullWidth="true" Dense="true" Margin="@Margin.Dense">
+                    <MudSelect T="Enum" Value="@valueEnum" ValueChanged="@EnumValueChangedAsync" FullWidth="true" Dense="true" Margin="@Margin.Dense">
                         <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
                         @foreach (var item in EnumExtensions.GetSafeEnumValues(fieldType.InnerType))
                         {
@@ -38,20 +35,20 @@
                 }
                 else if (fieldType.IsBoolean)
                 {
-                    <MudSelect T="bool?" Value="@_valueBool" ValueChanged="@BoolValueChangedAsync" FullWidth="true" Dense="true" Margin="@Margin.Dense">
+                    <MudSelect T="bool?" Value="@valueBool" ValueChanged="@BoolValueChangedAsync" FullWidth="true" Dense="true" Margin="@Margin.Dense">
                         <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
                         <MudSelectItem T="bool?" Value="@(true)">@Localizer["MudDataGrid.True"]</MudSelectItem>
                         <MudSelectItem T="bool?" Value="@(false)">@Localizer["MudDataGrid.False"]</MudSelectItem>
                     </MudSelect>
                 }
-                else if (fieldType.IsDateTime && !(_operator ?? "").EndsWith("empty"))
+                else if (fieldType.IsDateTime && !(@operator ?? "").EndsWith("empty"))
                 {
                     <MudGrid Spacing="0">
                         <MudItem xs="7">
-                            <MudDatePicker Date="@_valueDate" DateChanged="@DateValueChangedAsync" Margin="@Margin.Dense"/>
+                            <MudDatePicker Date="@valueDate" DateChanged="@DateValueChangedAsync" Margin="@Margin.Dense" />
                         </MudItem>
                         <MudItem xs="5">
-                            <MudTimePicker Time="@_valueTime" TimeChanged="@TimeValueChangedAsync" Margin="@Margin.Dense"/>
+                            <MudTimePicker Time="@valueTime" TimeChanged="@TimeValueChangedAsync" Margin="@Margin.Dense" />
                         </MudItem>
                     </MudGrid>
                 }
@@ -65,7 +62,7 @@
                     }
                 </MudMenu>
                 <MudIconButton Class="align-self-center" Icon="@Icons.Material.Filled.FilterAltOff" Size="@Size.Small" OnClick="@ClearFilterAsync"></MudIconButton>
-            </MudStack>      
+            </MudStack>
         }
     </th>
 }

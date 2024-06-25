@@ -1,6 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -8,30 +8,59 @@ namespace MudBlazor
 #nullable enable
     public partial class MudNavGroup : MudComponentBase
     {
-        private bool _expanded;
+        private readonly ParameterState<bool> _expandedState;
+        private readonly ParameterState<bool> _disabledState;
+        private readonly ParameterState<NavigationContext?> _parentNavigationContextState;
+        private NavigationContext _navigationContext = new(false, true);
+
+        public MudNavGroup()
+        {
+            using var registerScope = CreateRegisterScope();
+            _disabledState = registerScope.RegisterParameter<bool>(nameof(Disabled))
+                .WithParameter(() => Disabled)
+                .WithChangeHandler(UpdateNavigationContext);
+            _parentNavigationContextState = registerScope.RegisterParameter<NavigationContext?>(nameof(ParentNavigationContext))
+                .WithParameter(() => ParentNavigationContext)
+                .WithChangeHandler(UpdateNavigationContext);
+            _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
+                .WithParameter(() => Expanded)
+                .WithEventCallback(() => ExpandedChanged)
+                .WithChangeHandler(UpdateNavigationContext);
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            UpdateNavigationContext();
+        }
 
         protected string Classname =>
             new CssBuilder("mud-nav-group")
                 .AddClass(Class)
-                .AddClass($"mud-nav-group-disabled", Disabled)
+                .AddClass("mud-nav-group-disabled", _disabledState.Value)
                 .Build();
 
         protected string ButtonClassname =>
             new CssBuilder("mud-nav-link")
-                .AddClass($"mud-ripple", !DisableRipple)
-                .AddClass("mud-expanded", Expanded)
+                .AddClass($"mud-ripple", Ripple)
+                .AddClass("mud-expanded", _expandedState.Value)
                 .Build();
 
         protected string IconClassname =>
             new CssBuilder("mud-nav-link-icon")
-                .AddClass($"mud-nav-link-icon-default", IconColor == Color.Default)
+                .AddClass("mud-nav-link-icon-default", IconColor == Color.Default)
                 .Build();
 
         protected string ExpandIconClassname =>
             new CssBuilder("mud-nav-link-expand-icon")
-                .AddClass($"mud-transform", Expanded && !Disabled)
-                .AddClass($"mud-transform-disabled", Expanded && Disabled)
+                .AddClass("mud-transform", _expandedState.Value && _disabledState.Value is false)
+                .AddClass("mud-transform-disabled", _expandedState.Value && _disabledState.Value)
                 .Build();
+
+        protected int ButtonTabIndex => _disabledState.Value || _parentNavigationContextState.Value is { Disabled: true } or { Expanded: false } ? -1 : 0;
+
+        [CascadingParameter]
+        private NavigationContext? ParentNavigationContext { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
@@ -59,30 +88,19 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// If true, disables ripple effect.
+        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
-        public bool DisableRipple { get; set; }
+        public bool Ripple { get; set; } = true;
 
         /// <summary>
-        /// If true, expands the nav group, otherwise collapse it. 
+        /// If true, expands the nav group, otherwise collapse it.
         /// Two-way bindable
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
-        public bool Expanded
-        {
-            get => _expanded;
-            set
-            {
-                if (_expanded == value)
-                    return;
-
-                _expanded = value;
-                ExpandedChanged.InvokeAsync(_expanded);
-            }
-        }
+        public bool Expanded { get; set; }
 
         /// <summary>
         /// If true, hides expand-icon at the end of the NavGroup.
@@ -103,7 +121,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
-        public string ExpandIcon { get; set; } = @Icons.Material.Filled.ArrowDropDown;
+        public string ExpandIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
@@ -112,18 +130,18 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
 
-        [Obsolete($"Use {nameof(ExpandedToggleAsync)} instead. This will be removed in v7.")]
-        protected void ExpandedToggle()
+        private async Task ExpandedToggleAsync()
         {
-            _expanded = !Expanded;
-            ExpandedChanged.InvokeAsync(_expanded);
+            await _expandedState.SetValueAsync(!_expandedState.Value);
+            UpdateNavigationContext();
         }
 
-        protected Task ExpandedToggleAsync()
-        {
-            _expanded = !Expanded;
-
-            return ExpandedChanged.InvokeAsync(_expanded);
-        }
+        private void UpdateNavigationContext()
+            => _navigationContext = _navigationContext with
+            {
+                Disabled = _disabledState.Value || _parentNavigationContextState.Value is { Disabled: true },
+                Expanded = _expandedState.Value
+                           && _parentNavigationContextState.Value is null or { Expanded: true }
+            };
     }
 }

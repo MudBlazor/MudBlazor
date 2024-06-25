@@ -1,11 +1,11 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudPaper Width="350px" MaxHeight="500px" Class="overflow-y-auto" Elevation="0">
+<MudPaper Width="350px" MaxHeight="500px" Class="overflow-y-auto" Elevation="2">
     <MudTreeView Items="@TreeItems">
         <ItemTemplate>
-            <MudTreeViewItem @bind-Expanded="@context.IsExpanded" Items="@context.TreeItems">
+            <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children">
                 <Content>
-                    <MudTreeViewItemToggleButton @bind-Expanded="@context.IsExpanded" Visible="@context.HasChild" />
+                    <MudTreeViewItemToggleButton @bind-Expanded="@context.Expanded" Visible="@context.HasChildren" />
                     <MudIcon Icon="@context.Icon" Class="ml-0 mr-2" Color="@Color.Default" />
                     <MudText>@context.Text</MudText>
                 </Content>
@@ -16,21 +16,11 @@
 
 @code {
 
-    private HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
+    private HashSet<TreeItemData<string>> TreeItems { get; set; } = new();
 
-    public class TreeItemData
+    public class TreeItemData : TreeItemData<string>
     {
-        public string Text { get; set; }
-
-        public string Icon { get; set; }
-
-        public bool IsExpanded { get; set; } = true;
-
-        public bool HasChild => TreeItems != null && TreeItems.Count > 0;
-
-        public HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
-
-        public TreeItemData(string text, string icon)
+        public TreeItemData(string text, string icon) : base(text)
         {
             Text = text;
             Icon = icon;
@@ -45,18 +35,16 @@
         TreeItems.Add(new TreeItemData("content", Icons.Custom.FileFormats.FileDocument));
         TreeItems.Add(new TreeItemData("src", Icons.Custom.FileFormats.FileCode)
         {
-            TreeItems = new HashSet<TreeItemData>()
-            {
+            Children = [
                 new TreeItemData("MudBlazor", Icons.Custom.Brands.MudBlazor),
                 new TreeItemData("MudBlazor.Docs", Icons.Custom.FileFormats.FileDocument)
                 {
-                    TreeItems = new HashSet<TreeItemData>()
-                    {
+                    Children = [                    
                         new TreeItemData("_Imports.razor", Icons.Material.Filled.AlternateEmail),
                         new TreeItemData( "compilerconfig.json", Icons.Custom.FileFormats.FileImage),
                         new TreeItemData( "MudBlazor.Docs.csproj", Icons.Custom.Brands.MicrosoftVisualStudio),
                         new TreeItemData("NewFilesToBuild.txt" , Icons.Custom.FileFormats.FileDocument),
-                    }
+                    ]
                 },
                 new TreeItemData("MudBlazor.Docs.Client", Icons.Material.Filled.Folder),
                 new TreeItemData("MudBlazor.Docs.Compiler", Icons.Material.Filled.Folder),
@@ -65,7 +53,7 @@
                 new TreeItemData("MudBlazor.UnitTests.Viewer", Icons.Material.Filled.Folder),
                 new TreeItemData(".editorconfig", Icons.Custom.FileFormats.FileCode),
                 new TreeItemData("MudBlazor.sln", Icons.Custom.Brands.MicrosoftVisualStudio)
-            }
+            ]
         });
         TreeItems.Add(new TreeItemData("History", Icons.Material.Filled.Folder));
     }

@@ -1,11 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using MudBlazor.Docs.Extensions;
+﻿using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Services;
 using MudBlazor.Docs.Services.Notifications;
-using MudBlazor.Examples.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,9 +43,9 @@ app.MapFallbackToPage("/_Host");
 using (var scope = app.Services.CreateScope())
 {
     var notificationService = scope.ServiceProvider.GetService<INotificationService>();
-    if (notificationService is InMemoryNotificationService inmemoryService)
+    if (notificationService is InMemoryNotificationService inMemoryService)
     {
-        inmemoryService.Preload();
+        inMemoryService.Preload();
     }
 }
 

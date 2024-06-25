@@ -335,7 +335,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Note: Keeping positions of input blocks works only with Placeholder, and only in certain scenarios. 
+        /// Note: Keeping positions of input blocks works only with Placeholder, and only in certain scenarios.
         /// </summary>
         /// <returns></returns>
         [Test]
@@ -721,7 +721,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ReadonlyMaskedTextFieldTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
             var mask = comp.FindComponent<MudMask>().Instance;
-            var maskInput = comp.Find("input");
             var originalValue = textField.Text;
 
             originalValue.Should().Be("1234 1234 1234 1234");
@@ -740,7 +739,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() =>
             {
                 mask.OnSelect(0, mask.Text.Length);
-                maskInput.CutAsync(new ClipboardEventArgs { Type = "cut" });
+                comp.Find("input").CutAsync(new ClipboardEventArgs { Type = "cut" });
             });
             comp.WaitForAssertion(() => textField.Value.Should().Be(originalValue));
 
@@ -759,7 +758,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() =>
             {
                 mask.OnSelect(0, textField.Value.Length);
-                maskInput.Cut(new ClipboardEventArgs { Type = "cut" });
+                comp.Find("input").Cut(new ClipboardEventArgs { Type = "cut" });
             });
             comp.WaitForAssertion(() => textField.Value.Should().Be(""));
         }
@@ -804,6 +803,95 @@ namespace MudBlazor.UnitTests.Components
 
             regexMaskComponent.Markup.Contains(regexMaskComponent.Instance.ClearIcon).Should().BeTrue();
             regexMaskField.Mask.Text.Should().Be(comp.Instance.RegexMaskValue);
+        }
+
+        /// <summary>
+        /// Optional Mask should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalMask_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudMask>();
+
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required Mask should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredMask_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudMask>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required Mask attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredMaskAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudMask>();
+
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Optional Mask with multiple lines should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalMaskWithMultipleLines_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudMask>(parameters => parameters
+                .Add(p => p.Lines, 5));
+
+            comp.Find("textarea").HasAttribute("required").Should().BeFalse();
+            comp.Find("textarea").GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required Mask with multiple lines  should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredMaskWithMultipleLines_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudMask>(parameters => parameters
+                .Add(p => p.Required, true)
+                .Add(p => p.Lines, 5));
+
+            comp.Find("textarea").HasAttribute("required").Should().BeTrue();
+            comp.Find("textarea").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required Mask with multiple lines  attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredMaskWithMultipleLinesAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudMask>(parameters => parameters
+                .Add(p => p.Lines, 5));
+
+            comp.Find("textarea").HasAttribute("required").Should().BeFalse();
+            comp.Find("textarea").GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.Find("textarea").HasAttribute("required").Should().BeTrue();
+            comp.Find("textarea").GetAttribute("aria-required").Should().Be("true");
         }
     }
 }

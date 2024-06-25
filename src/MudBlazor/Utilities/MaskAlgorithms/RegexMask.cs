@@ -179,8 +179,7 @@ public class RegexMask : BaseMask
     public override void UpdateFrom(IMask other)
     {
         base.UpdateFrom(other);
-        var o = other as RegexMask;
-        if (o == null)
+        if (other is not RegexMask o)
             return;
         if (Delimiters != o.Delimiters)
         {
