@@ -745,7 +745,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridPaginationTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationTest.Item>>();
             // check that the page size dropdown is shown
-            comp.FindComponents<MudSelect<string>>().Count.Should().Be(1);
+            comp.FindComponents<MudSelect<int>>().Count.Should().Be(1);
 
             dataGrid.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20");
 
@@ -789,6 +789,31 @@ namespace MudBlazor.UnitTests.Components
 
             // page size drop-down is not shown
             comp.FindComponents<MudSelect<string>>().Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Tests that the "All" data grid pager option shows all items
+        /// </summary>
+        [Test]
+        public async Task DataGridPagingAllTest()
+        {
+            var comp = Context.RenderComponent<DataGridPaginationAllItemsTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationAllItemsTest.Item>>();
+            var pager = comp.FindComponent<MudSelect<int>>().Instance;
+
+            dataGrid.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20"); //check initial value
+            // change page size
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetRowsPerPageAsync(int.MaxValue));
+            pager.Value.Should().Be(int.MaxValue);
+            dataGrid.Instance.RowsPerPage.Should().Be(int.MaxValue);
+            comp.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-20 of 20");
+
+            comp.FindAll(".mud-table-pagination-actions button")[0].IsDisabled().Should().Be(true); //buttons are disabled
+            comp.FindAll(".mud-table-pagination-actions button")[1].IsDisabled().Should().Be(true);
+            comp.FindAll(".mud-table-pagination-actions button")[2].IsDisabled().Should().Be(true);
+            comp.FindAll(".mud-table-pagination-actions button")[3].IsDisabled().Should().Be(true);
+
+            comp.FindAll(".mud-table-pagination-select")[^1].TextContent.Trim().Should().Be("All");
         }
 
         [Test]
