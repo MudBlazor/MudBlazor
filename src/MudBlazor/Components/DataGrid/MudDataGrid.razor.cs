@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
+using Microsoft.Extensions.Logging;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Clone;
 
@@ -1280,6 +1281,8 @@ namespace MudBlazor
             {
                 if (_mudVirtualize != null)
                 {
+                    // Cancel any prior request
+                    CancelServerDataToken();
                     await _mudVirtualize.RefreshDataAsync();
                     StateHasChanged();
                 }
@@ -1740,16 +1743,28 @@ namespace MudBlazor
 
             VirtualItemsProvider = async request =>
             {
-                var state = new GridStateVirtualize<T>
+                var stateFunc = (int startIndex, int count) => new GridStateVirtualize<T>
                 {
-                    StartIndex = request.StartIndex,
-                    Count = request.Count,
+                    StartIndex = startIndex,
+                    Count = count,
                     SortDefinitions = SortDefinitions.Values.OrderBy(sd => sd.Index).ToList(),
                     // Additional ToList() here to decouple clients from internal list avoiding runtime issues
                     FilterDefinitions = FilterDefinitions.ToList()
                 };
 
-                _server_data = await VirtualizeServerData(state, request.CancellationToken);
+                _server_data = await VirtualizeServerData(
+                    stateFunc(request.StartIndex, request.Count),
+                    request.CancellationToken
+                    );
+
+                if (request.StartIndex > 0 && _server_data.TotalItems < request.StartIndex + request.Count)
+                {
+                    _server_data = await VirtualizeServerData(
+                        stateFunc(0, request.Count),
+                        request.CancellationToken
+                    );
+                }
+
                 _currentRenderFilteredItemsCache = null;
 
                 return new ItemsProviderResult<T>(
