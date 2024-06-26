@@ -83,6 +83,12 @@ namespace MudBlazor
         [Parameter]
         public bool ShowPageNumber { get; set; } = true;
 
+        /// <summary>
+        /// Defines the text shown in the items per page dropdown when a user provides int.MaxValue as an option
+        /// </summary>
+        [Parameter]
+        public string AllItemsText { get; set; } = "All";
+
         private string Info
         {
             get
@@ -106,11 +112,11 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
-        private async Task SetRowsPerPageAsync(string size)
+        private async Task SetRowsPerPageAsync(int size)
         {
             if (DataGrid != null)
             {
-                await DataGrid.SetRowsPerPageAsync(int.Parse(size));
+                await DataGrid.SetRowsPerPageAsync(size);
             }
         }
 
