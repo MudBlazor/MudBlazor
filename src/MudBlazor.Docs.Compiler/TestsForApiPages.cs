@@ -225,7 +225,7 @@ namespace MudBlazor.Docs.Compiler
                 if (type.IsSubclassOf(typeof(MudComponentBase)))
                 {
                     // Yes.  Check for the example link
-                    cb.AddLine(@$"var exampleLink = comp.FindComponents<MudLink>().FirstOrDefault(link => link.Instance.Href.StartsWith(""/component""));");
+                    cb.AddLine(@$"var exampleLink = comp.FindComponents<MudLink>().FirstOrDefault(link => link.Instance.Href != null && link.Instance.Href.StartsWith(""/component""));");
                     cb.AddLine(@$"exampleLink.Should().NotBeNull();");
                 }
                 cb.IndentLevel--;

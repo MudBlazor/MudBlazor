@@ -11,7 +11,6 @@ namespace MudBlazor.Docs.Compiler;
 /// <summary>
 /// Represents documentation for a property.
 /// </summary>
-[DebuggerDisplay("({PropertyTypeName}) {Name}: {Summary}")]
 public sealed class DocumentedProperty : DocumentedMember
 {
     /// <summary>

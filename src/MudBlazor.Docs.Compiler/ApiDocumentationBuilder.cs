@@ -152,6 +152,11 @@ public partial class ApiDocumentationBuilder()
         "MemberwiseClone",
         "GetHashCode",
         "GetType",
+        // Enum methods
+        "CompareTo",
+        "GetTypeCode",
+        "GetValue",
+        "HasFlag",
         // Operators
         "op_Equality",
         "op_Inequality",
@@ -367,6 +372,7 @@ public partial class ApiDocumentationBuilder()
                 {
                     Category = category?.Name,
                     DeclaringType = property.DeclaringType,
+                    DeclaringTypeFullName = GetTypeFullName(property.DeclaringType),
                     IsProtected = property.GetMethod.IsFamily,
                     IsParameter = blazorParameter != null,
                     Key = key,

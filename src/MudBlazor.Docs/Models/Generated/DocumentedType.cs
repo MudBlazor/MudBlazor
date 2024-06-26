@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace MudBlazor.Docs.Models;
 /// Represents documentation for a type.
 /// </summary>
 [DebuggerDisplay("{Name}: Summary={Summary}")]
-public class DocumentedType
+public class DocumentedType : IComparable<DocumentedType>
 {
     /// <summary>
     /// The Reflection name of this type.
@@ -95,4 +96,13 @@ public class DocumentedType
     /// The properties in this type (including inherited properties).
     /// </summary>
     public Dictionary<string, DocumentedProperty> GlobalSettings { get; set; } = [];
+
+    public int CompareTo(DocumentedType? other)
+    {
+        if (other == null)
+        {
+            return -1;
+        }
+        return Name.CompareTo(other.Name);
+    }
 }

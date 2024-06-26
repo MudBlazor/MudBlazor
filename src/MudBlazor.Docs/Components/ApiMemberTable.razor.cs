@@ -87,27 +87,21 @@ public partial class ApiMemberTable
             _ => new List<DocumentedMember>().AsQueryable(),
         };
 
-        // Sort by the category order  
-        members = members.OrderBy(property => property.Order); // .ThenBy(property => property.Category);
-
         // What's the grouping?
         if (CurrentGrouping == ApiMemberGrouping.Categories)
         {
             // Sort by category
-            var orderedMembers = members.OrderBy(property => property.Category);
+            var orderedMembers = members.OrderBy(property => property.Order).ThenBy(property => property.Category);
 
             // ... then by sort column
             members = state.SortLabel switch
             {
                 "Description" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(property => property.Summary) : orderedMembers.ThenByDescending(property => property.Summary),
                 "Name" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(property => property.Name) : orderedMembers.ThenByDescending(property => property.Name),
-                "Return Type" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(property => property.Type) : orderedMembers.ThenByDescending(property => property.Type),
-                "Type" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(property => property.Type) : orderedMembers.ThenByDescending(property => property.Type),
+                "Return Type" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(property => property.TypeFriendlyName) : orderedMembers.ThenByDescending(property => property.TypeFriendlyName),
+                "Type" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(property => property.TypeFriendlyName) : orderedMembers.ThenByDescending(property => property.TypeFriendlyName),
                 _ => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(property => property.Name) : orderedMembers.ThenByDescending(property => property.Name),
             };
-
-            // Use the sorted members
-            members = orderedMembers;
         }
 
         // Make the final results

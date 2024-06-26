@@ -388,6 +388,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         Write($"TypeFriendlyName = \"{GetFriendlyTypeName(property.Type)}\", ");
         WriteDeclaringType(property);
         WriteCategory(property.Category);
+        WriteOrder(property.Order);
         WriteIsParameter(property.IsParameter);
         WriteSummary(property.Summary);
         WriteRemarks(property.Remarks);
@@ -500,7 +501,11 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
 
         foreach (var method in methods)
         {
-            WriteMethod(method.Value);
+            // Skip excluded methods and internally generated methods
+            if (!ApiDocumentationBuilder.ExcludedMethods.Contains(method.Value.Name) && !method.Value.Name.StartsWith('<'))
+            {
+                WriteMethod(method.Value);
+            }
         }
 
         WriteLine();
@@ -529,7 +534,11 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
 
         foreach (var method in type.Methods)
         {
-            WriteMethod(type, method.Value);
+            // Skip excluded methods and internally generated methods
+            if (!ApiDocumentationBuilder.ExcludedMethods.Contains(method.Value.Name) && !method.Value.Name.StartsWith('<'))
+            {
+                WriteMethod(type, method.Value);
+            }
         }
 
         Outdent();
@@ -621,7 +630,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <param name="documentedEvent">The event to serialize.</param>
     public void WriteDeclaringType(DocumentedEvent documentedEvent)
     {
-        Write($"DeclaringTypeName = \"{Escape(documentedEvent.DeclaringType.FullName)}\", ");
+        Write($"DeclaringTypeName = \"{Escape(documentedEvent.DeclaringTypeFullName)}\", ");
     }
 
     /// <summary>
@@ -630,7 +639,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <param name="property">The property to serialize.</param>
     public void WriteDeclaringType(DocumentedProperty property)
     {
-        Write($"DeclaringTypeName = \"{Escape(property.DeclaringType.FullName)}\", ");
+        Write($"DeclaringTypeName = \"{Escape(property.DeclaringTypeFullName)}\", ");
     }
 
     /// <summary>
@@ -639,7 +648,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <param name="field">The property to serialize.</param>
     public void WriteDeclaringType(DocumentedField field)
     {
-        Write($"DeclaringTypeName = \"{Escape(field.DeclaringType.FullName)}\", ");
+        Write($"DeclaringTypeName = \"{Escape(field.DeclaringTypeFullName)}\", ");
     }
 
     /// <summary>
@@ -649,7 +658,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <param name="method">The property being described.</param>
     public void WriteDeclaringType(DocumentedMethod method)
     {
-        Write($"DeclaringTypeName = \"{Escape(method.DeclaringType.FullName)}\", ");
+        Write($"DeclaringTypeName = \"{Escape(method.DeclaringTypeFullName)}\", ");
     }
 
     /// <summary>
@@ -683,15 +692,24 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     public static string GetFriendlyTypeName(Type type)
     {
         // Replace value types
-        var name = type.Name
-            .Replace("Boolean", "bool")
-            .Replace("Int32", "int")
-            .Replace("Int64", "long")
-            .Replace("String", "string")
-            .Replace("Double", "double")
-            .Replace("Single", "float")
-            .Replace("Object", "object")
-            .Replace("Void", "");
+        var name = type.FullName switch
+        {
+            "System.Boolean" => "bool",
+            "System.Boolean[]" => "bool[]",
+            "System.Int32" => "int",
+            "System.Int32[]" => "int[]",
+            "System.Int64" => "long",
+            "System.Int64[]" => "long[]",
+            "System.String" => "string",
+            "System.String[]" => "string[]",
+            "System.Double" => "double",
+            "System.Double[]" => "double[]",
+            "System.Single" => "float",
+            "System.Single[]" => "float[]",
+            "System.Object" => "object",
+            "System.Void" => "",
+            _ => type.Name
+        };
 
         // Replace generics
         if (type.IsGenericType)

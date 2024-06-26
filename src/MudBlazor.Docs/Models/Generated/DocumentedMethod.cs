@@ -17,4 +17,9 @@ public class DocumentedMethod : DocumentedMember
     /// The parameters for this method.
     /// </summary>
     public Dictionary<string, DocumentedParameter> Parameters { get; set; } = [];
+
+    /// <summary>
+    /// The XML documentation for what this method returns.
+    /// </summary>
+    public string? Returns { get; set; }
 }

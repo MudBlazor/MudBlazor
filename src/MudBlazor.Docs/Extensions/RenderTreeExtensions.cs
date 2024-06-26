@@ -109,9 +109,9 @@ public static class RenderTreeExtensions
         {
             builder.AddComponentParameter(3, "Target", target);
         }
-        builder.AddComponentParameter(5, "ChildContent", (RenderFragment)(linkContentBuilder =>
+        builder.AddComponentParameter(4, "ChildContent", (RenderFragment)(linkContentBuilder =>
         {
-            linkContentBuilder.AddContent(5, text ?? href);
+            linkContentBuilder.AddContent(5, text);
         }));
         builder.CloseComponent();
         builder.CloseRegion();
@@ -127,10 +127,17 @@ public static class RenderTreeExtensions
         builder.CloseRegion();
     }
 
-    public static void AddDocumentedTypeLink(this RenderTreeBuilder builder, int sequence, DocumentedType type)
+    /// <summary>
+    /// Adds a link to APi documentation to the render tree.
+    /// </summary>
+    /// <param name="builder">The render tree builder.</param>
+    /// <param name="sequence">The ordinal of this item relative to the other components.</param>
+    /// <param name="type">The type to link.</param>
+    /// <param name="showTooltip">When <c>true</c>, a tooltip will display with the type's summary.</param>
+    public static void AddDocumentedTypeLink(this RenderTreeBuilder builder, int sequence, DocumentedType type, bool showTooltip = true)
     {
         // Is a summary available?
-        if (!string.IsNullOrEmpty(type.Summary))
+        if (!string.IsNullOrEmpty(type.Summary) && showTooltip)
         {
             // <MudTooltip Placement="Placement.Top" Text="{summary}">
             builder.AddMudTooltip(sequence, Placement.Top, type.SummaryPlain, ((childSequence, childContentBuilder) =>

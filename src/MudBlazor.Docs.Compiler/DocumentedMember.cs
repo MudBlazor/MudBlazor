@@ -12,7 +12,7 @@ namespace MudBlazor.Docs.Compiler;
 /// <summary>
 /// Represents a base class for designing documented members.
 /// </summary>
-[DebuggerDisplay("({Type.Name}) {Name}: {Summary}")]
+[DebuggerDisplay("({Type?.Name}) {Name}: {Summary}")]
 public abstract class DocumentedMember
 {
     /// <summary>
@@ -27,6 +27,11 @@ public abstract class DocumentedMember
     /// The type which defines this member.
     /// </summary>
     public Type? DeclaringType { get; set; }
+
+    /// <summary>
+    /// The name of the type which defines this member.
+    /// </summary>
+    public string? DeclaringTypeFullName { get; set; }
 
     /// <summary>
     /// Whether this member is only visible to inheritors.

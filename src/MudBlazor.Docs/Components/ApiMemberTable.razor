@@ -15,6 +15,11 @@
             </MudTh>
         }
     </GroupHeaderTemplate>
+    <ColGroup>
+        <col style="max-width:25%;word-wrap:break-word;" />
+        <col style="max-width:25%;word-wrap:break-word;" />
+        <col style="max-width:50%;word-wrap:break-word;" />
+    </ColGroup>
     <HeaderContent>
         <MudTh><MudTableSortLabel T="DocumentedMember" SortLabel="Name" InitialDirection="SortDirection.Ascending">Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel T="DocumentedMember" SortLabel="Type">Type</MudTableSortLabel></MudTh>
@@ -24,7 +29,7 @@
         <MudTd id="@context.Name" DataLabel="Name">
             @if (context.DeclaringType != null && context.DeclaringType.Name != Type.Name)
             {
-                <MudTooltip Text="@("From " + context.DeclaringType.NameFriendly)">
+                <MudTooltip Text="@("From " + context.DeclaringType.NameFriendly)" Placement="Placement.Top">
                     <CodeInline>@context.Name</CodeInline>
                 </MudTooltip>
             }
@@ -34,7 +39,7 @@
             }
         </MudTd>
         <MudTd DataLabel="Type">
-            <ApiTypeLink Type="@context.Type" TypeName="@context.TypeFriendlyName" />
+            <ApiTypeLink Type="@context.Type" TypeName="@context.TypeName" TypeFriendlyName="@context.TypeFriendlyName" />
         </MudTd>
         <MudTd DataLabel="Description">
             <ApiText Text="@(context.Summary + " " + context.Remarks)" />

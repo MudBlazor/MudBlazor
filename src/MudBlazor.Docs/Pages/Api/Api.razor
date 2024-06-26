@@ -15,19 +15,11 @@
                 <ApiText Text="@DocumentedType.Summary" />
             }
 
-            @if (DocumentedType.ComponentUrl != null)
+            @if (DocumentedType.IsComponent)
             {
-                <DocsPageSection>
-                    <SectionHeader Title="Examples" />
-                    <SectionContent Outlined="true" IsApiSection="true">
-                        <MudGrid>
-                            <MudItem xs="6">
-                                <MudLink Href="@DocumentedType.ComponentUrl"><CodeInline>@DocumentedType.NameFriendly</CodeInline></MudLink>
-                            </MudItem>
-                            <MudItem xs="6"></MudItem>
-                        </MudGrid>
-                    </SectionContent>
-                </DocsPageSection>
+                <MudAlert Severity="Severity.Info" Class="mt-6">
+                    For examples and details on the usage of this component, visit the example page: <MudLink Href="@DocumentedType.ComponentUrl">@DocumentedType.NameFriendly</MudLink>
+                </MudAlert>
             }
 
             @if (ShowInheritance)
@@ -140,4 +132,4 @@
             </MudGrid>
         </DocsPageContent>
     }
-    </DocsPage>
+</DocsPage>

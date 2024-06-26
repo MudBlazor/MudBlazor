@@ -13,7 +13,7 @@ namespace MudBlazor.Docs.Models;
 /// <summary>
 /// Represents a documented member of a type.
 /// </summary>
-[DebuggerDisplay("({DeclaringTypeFriendlyName}) {Name}: {Summary}")]
+[DebuggerDisplay("({DeclaringType.NameFriendly}) {Name}: {Summary}")]
 public abstract class DocumentedMember
 {
     /// <summary>
