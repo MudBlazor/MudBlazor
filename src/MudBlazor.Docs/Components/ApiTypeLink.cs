@@ -53,7 +53,7 @@ public class ApiTypeLink : ComponentBase
     protected override bool ShouldRender() => !string.IsNullOrEmpty(TypeName) || Type != null;
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
-    {        
+    {
         // Is there a linkable type?
         if (Type != null)
         {
