@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
-using Microsoft.Extensions.Logging;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Clone;
 
@@ -1755,7 +1754,7 @@ namespace MudBlazor
                 _server_data = await VirtualizeServerData(
                     stateFunc(request.StartIndex, request.Count),
                     request.CancellationToken
-                    );
+                );
 
                 if (request.StartIndex > 0 && _server_data.TotalItems < request.StartIndex + request.Count)
                 {
