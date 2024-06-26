@@ -89,7 +89,8 @@ public sealed class FastEnumDescriptionGenerator : IIncrementalGenerator
                     attribute.ConstructorArguments.Length > 0 &&
                     attribute.ConstructorArguments[0].Value is not null)
                 {
-                    var description = attribute.ConstructorArguments[0].Value!.ToString();
+                    var rawDescription = attribute.ConstructorArguments[0].Value!.ToString();
+                    var description = SymbolDisplay.FormatLiteral(rawDescription, true);
                     var isKeyword = SyntaxFacts.GetKeywordKind(enumMember.Name) != SyntaxKind.None;
                     var memberName = isKeyword ? $"@{enumMember.Name}" : enumMember.Name;
                     var member = new EnumMember(memberName, description);

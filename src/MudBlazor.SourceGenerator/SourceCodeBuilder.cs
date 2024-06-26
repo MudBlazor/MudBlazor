@@ -51,7 +51,7 @@ internal static class SourceCodeBuilder
         builder.AppendCode("{", 2);
         foreach (var item in enumData.Members)
         {
-            builder.AppendCode($"{enumData.Name}.{item.Value} => \"{item.Description}\",", 3);
+            builder.AppendCode($"{enumData.Name}.{item.Value} => {item.Description},", 3);
         }
 
         builder.AppendCode($"_ => {Identifier}.ToString()", 3);

@@ -224,4 +224,42 @@ public class FastEnumDescriptionGeneratorTest
         var generatedSourceCode = outputCompilation.SyntaxTrees.Last().ToString();
         generatedSourceCode.Should().Contain("internal static class PrioritySourceGeneratorEnumExtensions").And.Contain("internal static string ToDescriptionString");
     }
+
+    [Test]
+    public void Generator_ShouldEscapeDescriptionValue_WhenValueContainsEscapedCharacters()
+    {
+        // Arrange
+        const string SourceCodeToTest = """
+                                        using System.ComponentModel;
+
+                                        namespace MudBlazor;
+
+                                        public enum Priority
+                                        {
+                                            [Description("Low\"est")]
+                                            Lowest,
+                                        
+                                            [Description("\"Low\"")]
+                                            Low,
+                                        }
+                                        """;
+
+        var compiledSourceCode = CreateCompilation(SourceCodeToTest);
+
+        // Act
+        _driver.RunGeneratorsAndUpdateCompilation(compiledSourceCode, out var outputCompilation, out _);
+
+        // Assert
+        outputCompilation.SyntaxTrees.Should().HaveCount(2);
+        const string Expected = """
+                                        return mudEnum switch
+                                        {
+                                            MudBlazor.Priority.Lowest => "Low\"est",
+                                            MudBlazor.Priority.Low => "\"Low\"",
+                                            _ => mudEnum.ToString()
+                                        };
+                                """;
+        var generatedSourceCode = outputCompilation.SyntaxTrees.Last().ToString().ReplaceLineEndings();
+        generatedSourceCode.Should().Contain(Expected.ReplaceLineEndings());
+    }
 }
