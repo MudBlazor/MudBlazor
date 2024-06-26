@@ -182,6 +182,8 @@ namespace MudBlazor
         [ExcludeFromCodeCoverage] //If we can check this exception can include the coverage again
         protected override void OnParametersSet()
         {
+            base.OnParametersSet();
+
             if (!string.IsNullOrEmpty(Icon))
             {
                 _icon = Icon;

@@ -21,7 +21,7 @@ public sealed class DialogParametersTests
         dialogParameters._parameters.Should().BeEmpty();
 
         dialogParameters.Add(x => x.TestValue, "Test");
-        dialogParameters._parameters.Should().Contain(new KeyValuePair<string, object>("TestValue", "Test"));
+        dialogParameters._parameters.Should().Contain(new KeyValuePair<string, object?>("TestValue", "Test"));
     }
 
     [Test]
@@ -31,7 +31,7 @@ public sealed class DialogParametersTests
         dialogParameters._parameters.Should().BeEmpty();
 
         dialogParameters.Add("TestValue", "Test");
-        dialogParameters._parameters.Should().Contain(new KeyValuePair<string, object>("TestValue", "Test"));
+        dialogParameters._parameters.Should().Contain(new KeyValuePair<string, object?>("TestValue", "Test"));
     }
 
     [Test]
