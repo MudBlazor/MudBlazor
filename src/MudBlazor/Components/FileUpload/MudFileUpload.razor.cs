@@ -177,8 +177,8 @@ namespace MudBlazor
 
         public async Task ClearAsync()
         {
-            await _filesState.SetValueAsync(default);
-            await NotifyValueChangedAsync();
+            //await _filesState.SetValueAsync(default);
+            await NotifyValueChangedAsync(default);
             await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInput.resetValue", _id);
         }
 
@@ -203,29 +203,30 @@ namespace MudBlazor
                 return;
             }
 
+            T? value;
             if (typeof(T) == typeof(IReadOnlyList<IBrowserFile>))
             {
                 var newFiles = args.GetMultipleFiles(MaximumFileCount);
                 if (AppendMultipleFiles && _filesState.Value is IReadOnlyList<IBrowserFile> oldFiles)
                 {
                     var allFiles = oldFiles.Concat(newFiles).ToList();
-                    await _filesState.SetValueAsync((T)(object)allFiles.AsReadOnly());
+                    value = (T)(object)allFiles.AsReadOnly();
                 }
                 else
                 {
-                    await _filesState.SetValueAsync((T)newFiles);
+                    value = (T)newFiles;
                 }
             }
             else if (typeof(T) == typeof(IBrowserFile))
             {
-                await _filesState.SetValueAsync(args.FileCount == 1 ? (T)args.File : default);
+                value = args.FileCount == 1 ? (T)args.File : default;
             }
             else
             {
                 return;
             }
 
-            await NotifyValueChangedAsync();
+            await NotifyValueChangedAsync(value);
 
             if (!Error || !SuppressOnChangeWhenInvalid) // only trigger FilesChanged if validation passes or SuppressOnChangeWhenInvalid is false
             {
@@ -243,12 +244,12 @@ namespace MudBlazor
             base.OnInitialized();
         }
 
-        private async Task NotifyValueChangedAsync()
+        private async Task NotifyValueChangedAsync(T? value)
         {
             Touched = true;
-            await FilesChanged.InvokeAsync(_filesState.Value);
+            await _filesState.SetValueAsync(value);
             await BeginValidateAsync();
-            FieldChanged(_filesState.Value);
+            FieldChanged(value);
         }
 
         protected override T? ReadValue() => _filesState.Value;
