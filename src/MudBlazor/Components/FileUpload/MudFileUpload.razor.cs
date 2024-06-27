@@ -177,7 +177,6 @@ namespace MudBlazor
 
         public async Task ClearAsync()
         {
-            //await _filesState.SetValueAsync(default);
             await NotifyValueChangedAsync(default);
             await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInput.resetValue", _id);
         }
