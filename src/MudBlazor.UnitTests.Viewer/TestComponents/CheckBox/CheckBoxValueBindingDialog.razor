@@ -1,0 +1,30 @@
+<MudDialog>
+    <DialogContent>
+        Change checkbox state?
+    </DialogContent>
+    <DialogActions>
+        <MudButton id="false-button"
+                   OnClick="Cancel">
+            Cancel
+        </MudButton>
+        <MudButton id="null-button"
+                   Color="Color.Warning"
+                   OnClick="Maybe">
+            Maybe
+        </MudButton>
+        <MudButton id="true-button"
+                   Color="Color.Primary"
+                   OnClick="Ok">
+            Ok
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Cancel() => MudDialog.Close(DialogResult.Ok<bool?>(false));
+    void Maybe() => MudDialog.Close(DialogResult.Ok<bool?>(null));
+    void Ok() => MudDialog.Close(DialogResult.Ok<bool?>(true));
+}

@@ -1,9 +1,11 @@
 ﻿using System.Linq;
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.CheckBox;
 using MudBlazor.UnitTests.Utilities;
 using NUnit.Framework;
 
@@ -406,6 +408,130 @@ namespace MudBlazor.UnitTests.Components
             Context.RenderComponent<MudCheckBox<bool>>(self => self.Add(x => x.Disabled, false)).Find("span").ClassList.Should().Contain("hover:mud-default-hover");
             Context.RenderComponent<MudCheckBox<bool>>(self => self.Add(x => x.Disabled, true).Add(x => x.ReadOnly, false)).Find("span").ClassList.Should().NotContain("hover:mud-default-hover");
             Context.RenderComponent<MudCheckBox<bool>>(self => self.Add(x => x.Disabled, true).Add(x => x.ReadOnly, true)).Find("span").ClassList.Should().NotContain("hover:mud-default-hover");
+        }
+
+        [Test]
+        public void Checkbox_inputs_checked_value_should_match_parameter_value()
+        {
+            var comp = Context.RenderComponent<MudCheckBox<bool?>>(parameters => parameters
+                .Add(p => p.TriState, true));
+
+            // change value using parameter
+            comp.Instance.Value.Should().BeNull();
+            SwitchInput().HasAttribute("checked").Should().BeFalse();
+            comp.SetParam(x => x.Value, true);
+            comp.Instance.Value.Should().BeTrue();
+            SwitchInput().HasAttribute("checked").Should().BeTrue();
+            comp.SetParam(x => x.Value, false);
+            comp.Instance.Value.Should().BeFalse();
+            SwitchInput().HasAttribute("checked").Should().BeFalse();
+            comp.SetParam(x => x.Value, null);
+            // tri-state
+            comp.Instance.Value.Should().BeNull();
+            SwitchInput().HasAttribute("checked").Should().BeFalse();
+
+            // change value using input
+            SwitchInput().Change(true);
+            comp.Instance.Value.Should().BeTrue();
+            SwitchInput().HasAttribute("checked").Should().BeTrue();
+            SwitchInput().Change(true);
+            comp.Instance.Value.Should().BeFalse();
+            SwitchInput().HasAttribute("checked").Should().BeFalse();
+            // tri-state
+            SwitchInput().Change(true);
+            comp.Instance.Value.Should().BeNull();
+            SwitchInput().HasAttribute("checked").Should().BeFalse();
+            return;
+
+            IElement SwitchInput()
+                => comp.Find("input");
+        }
+
+        [Test]
+        public void Should_pass_value_binding_tests()
+        {
+            var comp = Context.RenderComponent<CheckBoxValueBindingTest>();
+
+            // CheckBoxWithNoValueOrCallback should maintain correct internal state
+            CheckBoxWithNoValueOrCallback().Change(true);
+            CheckBoxWithNoValueOrCallback().HasAttribute("checked").Should().BeTrue();
+            comp.Instance.LatestFormFieldValue.Should().BeTrue();
+            CheckBoxWithNoValueOrCallback().Change(false);
+            CheckBoxWithNoValueOrCallback().HasAttribute("checked").Should().BeFalse();
+            comp.Instance.LatestFormFieldValue.Should().BeFalse();
+            // tri-state
+            CheckBoxWithNoValueOrCallback().Change(true);
+            CheckBoxWithNoValueOrCallback().HasAttribute("checked").Should().BeFalse();
+            comp.Instance.LatestFormFieldValue.Should().BeNull();
+
+            // CheckBoxWithValueButNoCallback should maintain correct internal state but not update the one-way bound value
+            CheckBoxWithValueButNoCallback().Change(true);
+            CheckBoxWithValueButNoCallback().HasAttribute("checked").Should().BeTrue();
+            comp.Instance.LatestFormFieldValue.Should().BeTrue();
+            comp.Instance.OneWayBoundValue.Should().BeNull();
+            CheckBoxWithValueButNoCallback().Change(false);
+            CheckBoxWithValueButNoCallback().HasAttribute("checked").Should().BeFalse();
+            comp.Instance.LatestFormFieldValue.Should().BeFalse();
+            comp.Instance.OneWayBoundValue.Should().BeNull();
+            // tri-state
+            CheckBoxWithValueButNoCallback().Change(true);
+            CheckBoxWithValueButNoCallback().HasAttribute("checked").Should().BeFalse();
+            comp.Instance.LatestFormFieldValue.Should().BeNull();
+            comp.Instance.OneWayBoundValue.Should().BeNull();
+
+            // CheckBoxWithNoValueButWithCallback should not change (empty callback prevents changes)
+            CheckBoxWithNoValueButWithCallback().Change(true);
+            CheckBoxWithNoValueButWithCallback().HasAttribute("checked").Should().BeFalse();
+            comp.Instance.LatestFormFieldValue.Should().BeNull();
+            CheckBoxWithNoValueButWithCallback().Change(false);
+            CheckBoxWithNoValueButWithCallback().HasAttribute("checked").Should().BeFalse();
+            comp.Instance.LatestFormFieldValue.Should().BeNull();
+            // tri-state
+            CheckBoxWithNoValueButWithCallback().Change(true);
+            CheckBoxWithNoValueButWithCallback().HasAttribute("checked").Should().BeFalse();
+            comp.Instance.LatestFormFieldValue.Should().BeNull();
+
+            // CheckBoxWithValueAndCallback should maintain the correct internal and external state
+            CheckBoxWithValueAndCallback().Change(true);
+            TrueDialogButton().Click();
+            CheckBoxWithValueAndCallback().HasAttribute("checked").Should().BeTrue();
+            comp.Instance.LatestFormFieldValue.Should().BeTrue();
+            comp.Instance.OneWayBoundValueWithCallback.Should().BeTrue();
+            CheckBoxWithValueAndCallback().Change(true);
+            NullDialogButton().Click();
+            CheckBoxWithValueAndCallback().HasAttribute("checked").Should().BeFalse();
+            comp.Instance.LatestFormFieldValue.Should().BeNull();
+            comp.Instance.OneWayBoundValueWithCallback.Should().BeNull();
+            CheckBoxWithValueAndCallback().Change(true);
+            FalseDialogButton().Click();
+            CheckBoxWithValueAndCallback().HasAttribute("checked").Should().BeFalse();
+            comp.Instance.LatestFormFieldValue.Should().BeFalse();
+            comp.Instance.OneWayBoundValueWithCallback.Should().BeFalse();
+
+            // CheckBoxWithTwoWayBinding should maintain the correct internal and external state
+            CheckBoxWithTwoWayBinding().Change(true);
+            CheckBoxWithTwoWayBinding().HasAttribute("checked").Should().BeTrue();
+            comp.Instance.LatestFormFieldValue.Should().BeTrue();
+            comp.Instance.TwoWayBoundValue.Should().BeTrue();
+            CheckBoxWithTwoWayBinding().Change(false);
+            CheckBoxWithTwoWayBinding().HasAttribute("checked").Should().BeFalse();
+            comp.Instance.LatestFormFieldValue.Should().BeFalse();
+            comp.Instance.TwoWayBoundValue.Should().BeFalse();
+            // tri-state
+            CheckBoxWithTwoWayBinding().Change(true);
+            CheckBoxWithTwoWayBinding().HasAttribute("checked").Should().BeFalse();
+            comp.Instance.LatestFormFieldValue.Should().BeNull();
+            comp.Instance.TwoWayBoundValue.Should().BeNull();
+
+            return;
+            IElement CheckBoxWithNoValueOrCallback() => comp.Find("#no-value-and-no-callback");
+            IElement CheckBoxWithValueButNoCallback() => comp.Find("#value-but-no-callback");
+            IElement CheckBoxWithNoValueButWithCallback() => comp.Find("#no-value-but-callback");
+            IElement CheckBoxWithValueAndCallback() => comp.Find("#value-and-callback");
+            IElement CheckBoxWithTwoWayBinding() => comp.Find("#two-way-bound");
+            IElement FalseDialogButton() => comp.Find("#false-button");
+            IElement NullDialogButton() => comp.Find("#null-button");
+            IElement TrueDialogButton() => comp.Find("#true-button");
         }
     }
 }

@@ -4032,31 +4032,35 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridSelectColumnTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<int>>();
-            var rowCheckbox = dataGrid.FindAll("td input");
+
             var selectAllCheckboxes = dataGrid.FindComponents<MudCheckBox<bool?>>();
 
             selectAllCheckboxes[0].Instance.Value.Should().BeFalse();
             selectAllCheckboxes[1].Instance.Value.Should().BeFalse();
 
-            rowCheckbox[0].Change(true);
+            RowCheckboxes()[0].Change(true);
 
             selectAllCheckboxes[0].Instance.Value.Should().Be(default);
             selectAllCheckboxes[1].Instance.Value.Should().Be(default);
 
-            rowCheckbox[1].Change(true);
+            RowCheckboxes()[1].Change(true);
 
             selectAllCheckboxes[0].Instance.Value.Should().BeTrue();
             selectAllCheckboxes[1].Instance.Value.Should().BeTrue();
 
-            rowCheckbox[1].Change(false);
+            RowCheckboxes()[1].Change(false);
 
             selectAllCheckboxes[0].Instance.Value.Should().Be(default);
             selectAllCheckboxes[1].Instance.Value.Should().Be(default);
 
-            rowCheckbox[0].Change(false);
+            RowCheckboxes()[0].Change(false);
 
             selectAllCheckboxes[0].Instance.Value.Should().BeFalse();
             selectAllCheckboxes[1].Instance.Value.Should().BeFalse();
+            return;
+
+            IRefreshableElementCollection<IElement> RowCheckboxes()
+                => dataGrid.FindAll("td input");
         }
 
         [Test]

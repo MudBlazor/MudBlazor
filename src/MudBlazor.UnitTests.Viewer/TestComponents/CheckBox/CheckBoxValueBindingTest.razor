@@ -1,0 +1,67 @@
+﻿@using MudBlazor.Utilities
+
+<MudDialogProvider />
+
+<MudForm FieldChanged="OnFormFieldChanged">
+    <MudCheckBox id="no-value-and-no-callback"
+                 T="bool?"
+                 TriState="@true"
+                 Label="Without value and callback"/>
+    <MudCheckBox id="value-but-no-callback"
+                 T="bool?"
+                 TriState="@true"
+                 Value="@OneWayBoundValue"
+                 Label="Fixed value, no callback"/>
+    <MudCheckBox id="no-value-but-callback"
+                 T="bool?"
+                 TriState="@true"
+                 ValueChanged="@(_ => Task.CompletedTask)"
+                 Label="No value but with callback" />
+    <MudCheckBox id="value-and-callback"
+                 T="bool?"
+                 TriState="@true"
+                 Value="@OneWayBoundValueWithCallback"
+                 ValueChanged="@OpenDialogAsync"
+                 Label="With value and callback"/>
+    <MudCheckBox id="two-way-bound"
+                 T="bool?"
+                 TriState="@true"
+                 @bind-Value="TwoWayBoundValue"
+                 Label="Two-way bound"/>
+</MudForm>
+
+<MudText>
+    @NewValueText
+</MudText>
+
+@code {
+    [Inject]
+    IDialogService DialogService { get; set; }
+
+    [Parameter]
+    public bool? LatestFormFieldValue { get; set; }
+
+    [Parameter]
+    public bool? TwoWayBoundValue { get; set; }
+
+    [Parameter]
+    public bool? OneWayBoundValue { get; set; }
+
+    [Parameter]
+    public bool? OneWayBoundValueWithCallback { get; set; }
+
+    private string NewValueText => LatestFormFieldValue.HasValue ? LatestFormFieldValue.Value.ToString() : "null";
+
+    private async Task OpenDialogAsync(bool? _)
+    {
+        var dialog = await DialogService.ShowAsync<CheckBoxValueBindingDialog>("Simple Dialog");
+        var result = (await dialog.Result)?.Data as bool?;
+        OneWayBoundValueWithCallback = result;
+    }
+
+    private Task OnFormFieldChanged(FormFieldChangedEventArgs formFieldChangedEventArgs)
+    {
+        LatestFormFieldValue = formFieldChangedEventArgs.NewValue as bool?;
+        return InvokeAsync(StateHasChanged);
+    }
+}

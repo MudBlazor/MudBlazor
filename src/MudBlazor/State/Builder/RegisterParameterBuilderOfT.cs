@@ -23,6 +23,7 @@ public class RegisterParameterBuilder<T> : IParameterBuilderAttach
     private string? _comparerParameterName;
     private Func<T>? _getParameterValueFunc;
     private Func<EventCallback<T>> _eventCallbackFunc = () => default;
+    private Func<EventCallback<T>> _fallbackEventCallbackFunc = () => default;
     private IParameterChangedHandler<T>? _parameterChangedHandler;
     private IParameterEqualityComparerSwappable<T>? _comparer;
     private readonly Lazy<ParameterStateInternal<T>> _parameterStateLazy;
@@ -67,6 +68,18 @@ public class RegisterParameterBuilder<T> : IParameterBuilderAttach
     public RegisterParameterBuilder<T> WithEventCallback(Func<EventCallback<T>> eventCallbackFunc)
     {
         _eventCallbackFunc = eventCallbackFunc;
+
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the function to create the fallback event callback for the parameter.
+    /// </summary>
+    /// <param name="fallbackEventCallbackFunc">The function to create the fallback event callback.</param>
+    /// <returns>The current instance of the builder.</returns>
+    public RegisterParameterBuilder<T> WithFallbackEventCallback(Func<EventCallback<T>> fallbackEventCallbackFunc)
+    {
+        _fallbackEventCallbackFunc = fallbackEventCallbackFunc;
 
         return this;
     }
@@ -199,6 +212,7 @@ public class RegisterParameterBuilder<T> : IParameterBuilderAttach
             new ParameterMetadata(_parameterName, _handlerName, _comparerParameterName),
             _getParameterValueFunc ?? throw new ArgumentNullException(nameof(_getParameterValueFunc)),
             _eventCallbackFunc,
+            _fallbackEventCallbackFunc,
             _parameterChangedHandler,
             _comparer);
 

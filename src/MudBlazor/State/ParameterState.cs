@@ -25,15 +25,16 @@ public abstract class ParameterState<T>
     public abstract T? Value { get; }
 
     /// <summary>
-    /// Set the parameter's value. 
+    /// Set the parameter's value.
     /// </summary>
     /// <remarks>
     /// Note: you should never set the parameter's property directly from within the component.
     /// Instead, use SetValueAsync on the ParameterState object.
     /// </remarks>
     /// <param name="value">New parameter's value.</param>
+    /// <param name="parameterStateValueChangeTiming">The type of value change logic to use. Defaults to <see cref="ParameterStateValueChangeTiming.Immediate"/>.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    public abstract Task SetValueAsync(T value);
+    public abstract Task SetValueAsync(T value, ParameterStateValueChangeTiming parameterStateValueChangeTiming = ParameterStateValueChangeTiming.Immediate);
 
     /// <summary>
     /// Defines an implicit conversion of a <see cref="ParameterState{T}"/> object to its underlying value of type <typeparamref name="T"/>.
@@ -41,4 +42,22 @@ public abstract class ParameterState<T>
     /// <param name="parameterState">The <see cref="ParameterState{T}"/> object to convert.</param>
     /// <returns>The underlying value of type <typeparamref name="T"/>.</returns>
     public static implicit operator T?(ParameterState<T> parameterState) => parameterState.Value;
+}
+
+/// <summary>
+/// Defines when <see cref="ParameterState{T}.Value"/> should be changed.
+/// </summary>
+public enum ParameterStateValueChangeTiming
+{
+    /// <summary>
+    /// Sets <see cref="ParameterState{T}.Value"/> immediately using the value provided to the <see cref="ParameterState{T}.SetValueAsync"/> method.
+    /// </summary>
+    Immediate,
+    /// <summary>
+    /// Sets <see cref="ParameterState{T}.Value"/> after the event callbacks have been executed.
+    /// </summary>
+    /// <remarks>
+    /// When a parameter event callback is provided we let Blazor handle the update. When a component fallback event callback is provided, we update after execution of the callback by using the value from the component.
+    /// </remarks>
+    AfterEventCallbacks
 }
