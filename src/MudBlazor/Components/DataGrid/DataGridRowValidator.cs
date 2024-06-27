@@ -5,6 +5,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
 using MudBlazor.Interfaces;
 
 namespace MudBlazor
@@ -21,7 +22,7 @@ namespace MudBlazor
         {
             get
             {
-                Validate();
+                ValidateAsync().Wait();
                 return Errors.Length <= 0;
             }
         }
@@ -71,12 +72,12 @@ namespace MudBlazor
         /// Checks this row for any validation errors.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        public void Validate()
+        public async Task ValidateAsync()
         {
             _errors.Clear();
             foreach (var formControl in _formControls.ToArray())
             {
-                formControl.Validate();
+                await formControl.ValidateAsync();
                 foreach (var err in formControl.ValidationErrors)
                 {
                     _errors.Add(err);

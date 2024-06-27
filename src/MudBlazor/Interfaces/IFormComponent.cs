@@ -14,10 +14,10 @@ namespace MudBlazor.Interfaces
         public bool HasErrors { get; }
         public bool Touched { get; }
         public object Validation { get; set; }
-        public bool IsForNull { get; }
+        public bool ForIsNull { get; }
         public List<string> ValidationErrors { get; set; }
-        public Task Validate();
+        public Task ValidateAsync();
         public Task ResetAsync();
-        public void ResetValidation();
+        public Task ResetValidationAsync();
     }
 }

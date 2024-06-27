@@ -139,7 +139,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().Be(true);
 
             //reset validation should not reset touched state
-            await comp.InvokeAsync(() => form.ResetValidation());
+            await comp.InvokeAsync(() => form.ResetValidationAsync());
             form.IsTouched.Should().Be(true);
         }
 
@@ -174,7 +174,7 @@ namespace MudBlazor.UnitTests.Components
             nestedForm.IsTouched.Should().Be(false);
 
             //reset validation should not reset touched state
-            await comp.InvokeAsync(() => form.ResetValidation());
+            await comp.InvokeAsync(() => form.ResetValidationAsync());
             form.IsTouched.Should().Be(true);
             nestedForm.IsTouched.Should().Be(false);
         }
@@ -212,7 +212,7 @@ namespace MudBlazor.UnitTests.Components
             nestedForm.IsTouched.Should().Be(true);
 
             //reset validation should not reset touched state
-            await comp.InvokeAsync(() => nestedFormDateField.ResetValidation());
+            await comp.InvokeAsync(() => nestedFormDateField.ResetValidationAsync());
             form.IsTouched.Should().Be(false);
             nestedForm.IsTouched.Should().Be(true);
         }
@@ -1197,7 +1197,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("input")[5].Blur();
 
             var form = comp.FindComponent<MudForm>().Instance;
-            await comp.InvokeAsync(() => form.Validate());
+            await comp.InvokeAsync(() => form.ValidateAsync());
             form.IsValid.Should().BeFalse();
 
             var textfields = comp.FindComponents<MudTextField<string>>();
@@ -1242,7 +1242,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("input")[9].Blur();
 
             var form = comp.FindComponent<MudForm>().Instance;
-            await comp.InvokeAsync(() => form.Validate());
+            await comp.InvokeAsync(() => form.ValidateAsync());
             form.IsValid.Should().BeFalse();
 
             var textfields = comp.FindComponents<MudTextField<string>>();
@@ -1297,7 +1297,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("input")[9].Blur();
 
             var form = comp.FindComponent<MudForm>().Instance;
-            await comp.InvokeAsync(() => form.Validate());
+            await comp.InvokeAsync(() => form.ValidateAsync());
             form.IsValid.Should().BeTrue();
 
             var textfields = comp.FindComponents<MudTextField<string>>();
@@ -1347,7 +1347,7 @@ namespace MudBlazor.UnitTests.Components
             tf.SetParam(nameof(MudTextField<string>.Validation), validationFunc);
             Expression<Func<string>> expression = () => model.data;
             tf.SetParam(nameof(MudTextField<string>.For), expression);
-            await comp.InvokeAsync(tf.Instance.Validate);
+            await comp.InvokeAsync(tf.Instance.ValidateAsync);
             tf.Instance.Error.Should().Be(true);
             tf.Instance.ErrorText.Should().Be("Error in validation func: User error");
         }
@@ -1369,7 +1369,7 @@ namespace MudBlazor.UnitTests.Components
                 throw new InvalidOperationException("User error");
             });
             tf.SetParam(nameof(MudTextField<string>.Validation), validationFunc);
-            await comp.InvokeAsync(tf.Instance.Validate);
+            await comp.InvokeAsync(tf.Instance.ValidateAsync);
             tf.Instance.Error.Should().Be(true);
             tf.Instance.ErrorText.Should().Be("For is null, please set parameter For on the form input component of type MudTextField`1");
         }
@@ -1391,7 +1391,7 @@ namespace MudBlazor.UnitTests.Components
                 throw new InvalidOperationException("User error");
             });
             tf.SetParam(nameof(MudTextField<string>.Validation), validationFunc);
-            await comp.InvokeAsync(tf.Instance.Validate);
+            await comp.InvokeAsync(tf.Instance.ValidateAsync);
             tf.Instance.Error.Should().Be(true);
             tf.Instance.ErrorText.Should().Be("For is null, please set parameter For on the form input component of type MudTextField`1");
         }
@@ -1416,7 +1416,7 @@ namespace MudBlazor.UnitTests.Components
             tf.SetParam(nameof(MudTextField<string>.Validation), validationFunc);
             Expression<Func<string>> expression = () => model.data;
             tf.SetParam(nameof(MudTextField<string>.For), expression);
-            await comp.InvokeAsync(tf.Instance.Validate);
+            await comp.InvokeAsync(tf.Instance.ValidateAsync);
             tf.Instance.Error.Should().Be(true);
             tf.Instance.ErrorText.Should().Be("Error1");
         }

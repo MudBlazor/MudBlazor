@@ -9,7 +9,7 @@
                              RequiredError="Very long error message. Very long error message. Very long error message. Very long error message. Very long error message. Very long error message. Very long error message. Very long error message. Very long error message. Very long error message. Very long error message. Very long error message. Very long error message." 
                              ResetValueOnEmptyText="true" />
         </MudForm>
-        <MudButton Variant="Variant.Filled" OnClick="@(()=>form.ResetValidation())">Reset Validation</MudButton>
+        <MudButton Variant="Variant.Filled" OnClick="@(()=>form.ResetValidationAsync())">Reset Validation</MudButton>
     </MudItem>
 </MudGrid>
 @code {

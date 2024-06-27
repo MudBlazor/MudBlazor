@@ -293,7 +293,7 @@ namespace MudBlazor
         /// <remarks>
         /// When using a <see cref="MudForm"/>, the input is validated via the function set in the <see cref="Validation"/> property.
         /// </remarks>
-        public Task Validate()
+        public Task ValidateAsync()
         {
             // when a validation is forced, we must set Touched to true, because for untouched fields with
             // no value, validation does nothing due to the way forms are expected to work (display errors
@@ -611,7 +611,7 @@ namespace MudBlazor
         public async Task ResetAsync()
         {
             await ResetValueAsync();
-            ResetValidation();
+            await ResetValidationAsync();
         }
 
         protected virtual Task ResetValueAsync()
@@ -629,12 +629,13 @@ namespace MudBlazor
         /// <remarks>
         /// When called, the <see cref="Error"/>, <see cref="ErrorText"/>, and <see cref="ValidationErrors"/> properties are all reset.
         /// </remarks>
-        public void ResetValidation()
+        public Task ResetValidationAsync()
         {
             Error = false;
             ValidationErrors.Clear();
             ErrorText = null;
             StateHasChanged();
+            return Task.CompletedTask;
         }
 
         #endregion
@@ -675,7 +676,7 @@ namespace MudBlazor
         /// Indicates whether the <see cref="For"/> property is <c>null</c>.
         /// </summary>
         [MemberNotNullWhen(false, nameof(For))]
-        public bool IsForNull => For is null;
+        public bool ForIsNull => For is null;
 
         /// <summary>
         /// Stores the list of validation attributes attached to the property targeted by <seealso cref="For"/>. If <seealso cref="For"/> is null, this property is null too.

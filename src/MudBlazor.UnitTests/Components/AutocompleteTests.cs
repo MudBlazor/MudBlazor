@@ -375,7 +375,7 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.Should().Be("Quux");
             autocomplete.Text.Should().Be("Quux");
             // check validity
-            await comp.InvokeAsync(autocomplete.Validate);
+            await comp.InvokeAsync(autocomplete.ValidateAsync);
             autocomplete.ValidationErrors.Should().NotBeEmpty();
             autocomplete.ValidationErrors.Should().HaveCount(1);
             autocomplete.ValidationErrors[0].Should().Be("Should not be longer than 3");
@@ -394,7 +394,7 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.Should().Be("Qux");
             autocomplete.Text.Should().Be("Qux");
             // check validity
-            await comp.InvokeAsync(autocomplete.Validate);
+            await comp.InvokeAsync(autocomplete.ValidateAsync);
             autocomplete.ValidationErrors.Should().BeEmpty();
         }
 
@@ -410,7 +410,7 @@ namespace MudBlazor.UnitTests.Components
 
             autocomplete.Required.Should().BeTrue();
 
-            await comp.InvokeAsync(autocomplete.Validate);
+            await comp.InvokeAsync(autocomplete.ValidateAsync);
 
             autocomplete.ValidationErrors.First().Should().Be("Required");
         }

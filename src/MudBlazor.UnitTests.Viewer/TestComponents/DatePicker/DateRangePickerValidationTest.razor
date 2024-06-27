@@ -14,7 +14,7 @@
         </PickerActions>
     </MudDateRangePicker>
 
-    <MudButton Class="mt-2" OnClick="@(() => _form.Validate())">Validate</MudButton>
+    <MudButton Class="mt-2" OnClick="@(() => _form.ValidateAsync())">Validate</MudButton>
 </MudForm>
 
 @code {
