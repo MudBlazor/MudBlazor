@@ -51,7 +51,7 @@ public partial class HierarchyColumn<T> : MudComponentBase
     /// </remarks>
     [Parameter]
     public bool? DragAndDropEnabled { get; set; } = false;
-    
+
     /// <summary>
     /// Determines whether this column can be hidden. This overrides the Hideable parameter on the DataGrid.
     /// </summary>
