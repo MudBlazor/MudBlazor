@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -12,14 +13,31 @@ namespace MudBlazor
     [ExcludeFromCodeCoverage]
     public static class ElementReferenceExtensions
     {
-        private static readonly PropertyInfo? jsRuntimeProperty =
+        private static readonly PropertyInfo? _jsRuntimeProperty =
             typeof(WebElementReferenceContext).GetProperty("JSRuntime", BindingFlags.Instance | BindingFlags.NonPublic);
+
+        private static readonly Lazy<Func<WebElementReferenceContext, IJSRuntime?>> _jsRuntimeAccessor = new(JsRuntimeFactory);
+
+        private static Func<WebElementReferenceContext, IJSRuntime?> JsRuntimeFactory()
+        {
+            var parameter = Expression.Parameter(typeof(WebElementReferenceContext), "context");
+
+            if (_jsRuntimeProperty is null)
+            {
+                return _ => null;
+            }
+
+            var propertyAccess = Expression.Property(parameter, _jsRuntimeProperty);
+            var lambda = Expression.Lambda<Func<WebElementReferenceContext, IJSRuntime?>>(propertyAccess, parameter);
+
+            return lambda.Compile();
+        }
 
         internal static IJSRuntime? GetJSRuntime(this ElementReference elementReference)
         {
             if (elementReference.Context is WebElementReferenceContext context)
             {
-                return (IJSRuntime?)jsRuntimeProperty?.GetValue(context);
+                return _jsRuntimeAccessor.Value(context);
             }
 
             return null;
