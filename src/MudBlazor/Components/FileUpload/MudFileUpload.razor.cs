@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using MudBlazor.Interfaces;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -24,13 +25,21 @@ namespace MudBlazor
     /// <typeparam name="T">Either <see cref="IBrowserFile"/> for a single file or <see cref="IReadOnlyCollection{IBrowserFile}">IReadOnlyCollection&lt;IBrowserFile&gt;</see> for multiple files.</typeparam>
     public partial class MudFileUpload<T> : MudFormComponent<T, string>, IActivatable
     {
+        private readonly ParameterState<T?> _filesState;
+
         [Inject]
         private IJSRuntime JsRuntime { get; set; } = null!;
 
         /// <summary>
         /// Creates a new instance.
         /// </summary>
-        public MudFileUpload() : base(new DefaultConverter<T>()) { }
+        public MudFileUpload() : base(new DefaultConverter<T>())
+        {
+            using var registerScope = CreateRegisterScope();
+            _filesState = registerScope.RegisterParameter<T?>(nameof(Files))
+                .WithParameter(() => Files)
+                .WithEventCallback(() => FilesChanged);
+        }
 
         private readonly string _id = $"mud_fileupload_{Guid.NewGuid()}";
 
@@ -48,16 +57,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
-        public T? Files
-        {
-            get => _value;
-            set
-            {
-                if (_value != null && _value.Equals(value))
-                    return;
-                _value = value;
-            }
-        }
+        public T? Files { get; set; }
 
         /// <summary>
         /// Occurs when <see cref="Files"/> has changed.
@@ -177,7 +177,7 @@ namespace MudBlazor
 
         public async Task ClearAsync()
         {
-            _value = default;
+            await _filesState.SetValueAsync(default);
             await NotifyValueChangedAsync();
             await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInput.resetValue", _id);
         }
@@ -206,19 +206,19 @@ namespace MudBlazor
             if (typeof(T) == typeof(IReadOnlyList<IBrowserFile>))
             {
                 var newFiles = args.GetMultipleFiles(MaximumFileCount);
-                if (AppendMultipleFiles && _value is IReadOnlyList<IBrowserFile> oldFiles)
+                if (AppendMultipleFiles && _filesState.Value is IReadOnlyList<IBrowserFile> oldFiles)
                 {
                     var allFiles = oldFiles.Concat(newFiles).ToList();
-                    _value = (T)(object)allFiles.AsReadOnly();
+                    await _filesState.SetValueAsync((T)(object)allFiles.AsReadOnly());
                 }
                 else
                 {
-                    _value = (T)newFiles;
+                    await _filesState.SetValueAsync((T)newFiles);
                 }
             }
             else if (typeof(T) == typeof(IBrowserFile))
             {
-                _value = args.FileCount == 1 ? (T)args.File : default;
+                await _filesState.SetValueAsync(args.FileCount == 1 ? (T)args.File : default);
             }
             else
             {
@@ -246,9 +246,13 @@ namespace MudBlazor
         private async Task NotifyValueChangedAsync()
         {
             Touched = true;
-            await FilesChanged.InvokeAsync(_value);
+            await FilesChanged.InvokeAsync(_filesState.Value);
             await BeginValidateAsync();
-            FieldChanged(_value);
+            FieldChanged(_filesState.Value);
         }
+
+        protected override T? ReadValue() => _filesState.Value;
+
+        protected override Task WriteValueAsync(T? value) => _filesState.SetValueAsync(value);
     }
 }
