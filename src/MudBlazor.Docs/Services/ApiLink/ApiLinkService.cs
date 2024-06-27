@@ -32,7 +32,7 @@ namespace MudBlazor.Docs.Services
             text = text.ToLowerInvariant();
 
             // Calculate the ratios of all keywords to the search input.
-            var ratios = new Dictionary<ApiLinkServiceEntry, int>();
+            var ratios = new Dictionary<ApiLinkServiceEntry, double>();
             foreach (var (keyword, entry) in _entries)
             {
                 var ratio = GetSearchMatchRatio(text, keyword);
@@ -61,13 +61,13 @@ namespace MudBlazor.Docs.Services
             );
         }
 
-        private int GetSearchMatchRatio(string search, string keyword)
+        private double GetSearchMatchRatio(string search, string keyword)
         {
             var ratio = Fuzz.Ratio(keyword, search);
             var partialOutOfOrderRatio = Fuzz.PartialTokenSortRatio(keyword, search);
-            var finalRatio = Math.Max(ratio, partialOutOfOrderRatio);
+            var averageRatio = (ratio + partialOutOfOrderRatio) / 2.0;
 
-            return finalRatio;
+            return averageRatio;
         }
 
         private void AddEntry(ApiLinkServiceEntry entry)
@@ -112,7 +112,6 @@ namespace MudBlazor.Docs.Services
             RegisterPage("Expander", subtitle: "Go to Collapse", componentType: typeof(MudCollapse));
             RegisterPage("Harmonica", subtitle: "Go to Expansion Panels", componentType: typeof(MudExpansionPanels));
             RegisterPage("Horizontal Line", subtitle: "Go to Divider", componentType: typeof(MudDivider));
-            RegisterPage("Hiliter", subtitle: "Go to Highlighter", componentType: typeof(MudHighlighter));
             RegisterPage("Notification", subtitle: "Go to Snackbar", componentType: typeof(MudSnackbarProvider));
             RegisterPage("Popup", subtitle: "Go to Popover", componentType: typeof(MudPopover));
             RegisterPage("Side Panel", subtitle: "Go to Drawer", componentType: typeof(MudDrawer));

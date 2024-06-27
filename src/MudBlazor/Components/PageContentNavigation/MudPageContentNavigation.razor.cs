@@ -29,7 +29,7 @@ namespace MudBlazor
         /// <summary>
         /// The currently active session. null if there is no section selected
         /// </summary>
-        public MudPageContentSection? ActiveSection => _sections.FirstOrDefault(x => x.IsActive);
+        public MudPageContentSection? ActiveSection => _sections.FirstOrDefault(x => x.Active);
 
         /// <summary>
         /// The text displayed about the section links. Defaults to "Contents"
@@ -38,7 +38,13 @@ namespace MudBlazor
         public string Headline { get; set; } = "Contents";
 
         /// <summary>
-        /// The css selector used to identify the HTML elements that should be observed for viewport changes
+        /// The CSS selector used to identify the scroll container
+        /// </summary>
+        [Parameter]
+        public string ScrollContainerSelector { get; set; } = "html";
+
+        /// <summary>
+        /// The class name (without .) to identify the HTML elements that should be observed for viewport changes
         /// </summary>
         [Parameter]
         public string SectionClassSelector { get; set; } = string.Empty;
@@ -63,8 +69,6 @@ namespace MudBlazor
 
         private Task OnNavLinkClick(string id)
         {
-            SelectActiveSection(id);
-
             return _scrollSpy is not null
                 ? _scrollSpy.ScrollToSection(id)
                 : Task.CompletedTask;
@@ -94,7 +98,7 @@ namespace MudBlazor
 
         private string GetNavLinkClass(MudPageContentSection section) =>
             new CssBuilder("page-content-navigation-navlink")
-                .AddClass("active", section.IsActive)
+                .AddClass("active", section.Active)
                 .AddClass($"navigation-level-{section.Level}")
                 .Build();
 
@@ -146,7 +150,7 @@ namespace MudBlazor
             else if (_sections.Count == 1 && ActivateFirstSectionAsDefault)
             {
                 section.Activate();
-                _scrollSpy?.SetSectionAsActive(section.Id).AndForget();
+                _scrollSpy?.SetSectionAsActive(section.Id).CatchAndLog();
             }
 
             if (forceUpdate)
@@ -172,7 +176,7 @@ namespace MudBlazor
 
                     if (!string.IsNullOrEmpty(SectionClassSelector))
                     {
-                        await _scrollSpy.StartSpying(SectionClassSelector);
+                        await _scrollSpy.StartSpying(ScrollContainerSelector, SectionClassSelector);
                     }
 
                     SelectActiveSection(_scrollSpy.CenteredSection);

@@ -52,7 +52,7 @@
     }
   }
 
-  &:focus-visible, &:focus, &:active {
+  &:focus-visible, &:active {
     background-color: var(--mud-palette-action-default-hover);
   }
 }
@@ -82,7 +82,7 @@
         }
       }
 
-      &:focus-visible, &:focus, &:active {
+      &:focus-visible, &:active {
         background-color: var(--mud-palette-#{$color}-hover);
       }
     }
@@ -109,7 +109,7 @@
     }
   }
 
-  &:focus-visible, &:focus, &:active {
+  &:focus-visible, &:active {
     background-color: var(--mud-palette-action-default-hover);
   }
 
@@ -126,7 +126,7 @@
         }
       }
 
-      &:focus-visible, &:focus, &:active {
+      &:focus-visible, &:active {
         border: 1px solid var(--mud-palette-#{$color});
         background-color: var(--mud-palette-#{$color}-hover);
       }
@@ -185,7 +185,7 @@
         }
       }
 
-      &:focus-visible, &:focus, &:active {
+      &:focus-visible, &:active {
         background-color: var(--mud-palette-#{$color}-darken);
       }
     }

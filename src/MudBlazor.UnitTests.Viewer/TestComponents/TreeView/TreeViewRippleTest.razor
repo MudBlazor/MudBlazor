@@ -1,0 +1,27 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTreeView T="string" ExpandOnClick="true" Ripple="@Ripple" Disabled="@Disabled">
+    <MudTreeViewItem Value='"content"'>
+        <MudTreeViewItem Value='"logo.png"' Selected="true" />
+        <MudTreeViewItem Value='"MudBlazor.svg"' />
+        <MudTreeViewItem Value='"Nuget.png"' />
+    </MudTreeViewItem>
+    <MudTreeViewItem Value='"src"'>
+        <MudTreeViewItem Value='"MudBlazor"' />
+        <MudTreeViewItem Value='"MudBlazor.Docs"'>
+            <MudTreeViewItem Value='"wwwroot"'>
+                <MudTreeViewItem Value='"MudAppbarCorner.svg"' />
+                <MudTreeViewItem Value='"MudBlazorDocs.min.css"' />
+            </MudTreeViewItem>
+        </MudTreeViewItem>
+    </MudTreeViewItem>
+</MudTreeView>
+
+@code
+{
+    [Parameter]
+    public bool Ripple { get; set; } = true;
+    
+    [Parameter]
+    public bool Disabled { get; set; }
+}

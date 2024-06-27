@@ -1,0 +1,23 @@
+﻿@page "/components/timeserieschart"
+@page "/components/chart-types/timeserieschart"
+
+<DocsPage>
+    <DocsPageHeader Title="Time Series Chart" SubTitle="">
+    </DocsPageHeader>
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage">
+                <Description>
+                    To get a Line Chart use <CodeInline>Type="TimeSeriesDiplayType.Line"</CodeInline> to render the configured <CodeInline>TimeSeriesChartSeries</CodeInline> as a line graph.
+                    To get an Area Chart use <CodeInline>Type="TimeSeriesDiplayType.Area"</CodeInline> to render the configured <CodeInline>TimeSeriesChartSeries</CodeInline> as a area graph.
+                    Like in the other chart types, the Series in the chart are clickable. You can bind <CodeInline>SelectedIndex</CodeInline> to make your chart interactive.  
+                    Using the <CodeInline>ChartOptions</CodeInline> you can change the thickness of the lines by setting the parameter <CodeInline>LineStrokeWidth</CodeInline>. 
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="TimeSeriesExample1">
+                <TimeSeriesExample1 />
+            </SectionContent>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

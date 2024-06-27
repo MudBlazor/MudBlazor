@@ -13,7 +13,7 @@ namespace MudBlazor
         private readonly ParameterState<double> _valueState;
         private readonly ParameterState<double> _bufferValueState;
 
-        protected string DivClassname =>
+        protected string Classname =>
             new CssBuilder("mud-progress-linear")
                 .AddClass("mud-progress-linear-rounded", Rounded)
                 .AddClass($"mud-progress-linear-striped", Striped)
@@ -98,7 +98,7 @@ namespace MudBlazor
         public double Max { get; set; } = 100.0;
 
         /// <summary>
-        /// The maximum allowed value of the linear progress. Should not be equal to min.
+        /// The current value of the linear progress. Should be between min and max.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
@@ -110,17 +110,18 @@ namespace MudBlazor
 
         public MudProgressLinear()
         {
-            _valueState = RegisterParameterBuilder<double>(nameof(Value))
+            using var registerScope = CreateRegisterScope();
+            _valueState = registerScope.RegisterParameter<double>(nameof(Value))
                 .WithParameter(() => Value)
                 .WithChangeHandler(OnParameterChangedShared)
                 .WithComparer(DoubleEpsilonEqualityComparer.Default);
-            _minState = RegisterParameterBuilder<double>(nameof(Min))
+            _minState = registerScope.RegisterParameter<double>(nameof(Min))
                 .WithParameter(() => Min)
                 .WithChangeHandler(OnParameterChangedShared);
-            _maxState = RegisterParameterBuilder<double>(nameof(Max))
+            _maxState = registerScope.RegisterParameter<double>(nameof(Max))
                 .WithParameter(() => Max)
                 .WithChangeHandler(OnParameterChangedShared);
-            _bufferValueState = RegisterParameterBuilder<double>(nameof(BufferValue))
+            _bufferValueState = registerScope.RegisterParameter<double>(nameof(BufferValue))
                 .WithParameter(() => BufferValue)
                 .WithChangeHandler(OnParameterChangedShared);
         }

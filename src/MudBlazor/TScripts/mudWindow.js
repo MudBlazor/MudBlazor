@@ -30,5 +30,6 @@ class MudWindow {
     open (args) {
         window.open(args);
     }
-};
+}
+
 window.mudWindow = new MudWindow();

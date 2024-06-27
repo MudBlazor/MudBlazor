@@ -3,10 +3,12 @@
 
 using System;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Link;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -67,6 +69,20 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<NavLinkDisabledTest>(Parameter(nameof(NavLinkDisabledTest.Disabled), true));
             comp.Find("a").Click();
             comp.Instance.IsNavigated.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task NavLinkOnClickErrorContentCaughtException()
+        {
+            var comp = Context.RenderComponent<NavLinkErrorContenCaughtException>();
+            IElement AlertText() => MudAlert().Find("div.mud-alert-message");
+            IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
+            IRefreshableElementCollection<IElement> Links() => comp.FindAll(".mud-nav-link");
+            IElement MudLink() => Links()[0];
+
+            await MudLink().ClickAsync(new MouseEventArgs());
+
+            AlertText().InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
         }
     }
 }

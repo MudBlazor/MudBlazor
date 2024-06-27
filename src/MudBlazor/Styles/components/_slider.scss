@@ -5,6 +5,7 @@
   display: inline-block;
   width: 100%;
   user-select: none;
+  touch-action: pinch-zoom;
 
   & > .mud-typography {
     margin-top: 10px;
@@ -210,6 +211,6 @@
   .mud-slider-track-tick-label {
     position: absolute;
     top: 0;
-    left: 0;
+    left: 50%;
   }
 }

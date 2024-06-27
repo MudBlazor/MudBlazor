@@ -1,17 +1,15 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudDialog DisableSidePadding="true">
+<MudDialog Style="height: 400px">
     <DialogContent>
-        <MudContainer Style="max-height: 300px; overflow-y: scroll">
-            @if (_loading)
-            {
-                <MudProgressCircular Indeterminate="true"></MudProgressCircular>
-            }
-            else
-            {
-                <MudText Style="white-space: pre-wrap;">@_licenseText</MudText>
-            }
-        </MudContainer>
+        @if (_loading)
+        {
+            <MudProgressCircular Indeterminate="true"></MudProgressCircular>
+        }
+        else
+        {
+            <MudText Style="white-space: pre-wrap;">@_licenseText</MudText>
+        }
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Primary" OnClick="Ok">Accept</MudButton>

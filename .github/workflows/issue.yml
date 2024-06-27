@@ -14,7 +14,7 @@ jobs:
             if (body.includes("- [X] I would like to do a Pull Request")) {
               labels.push("wants to do a PR");
               const author = context.payload.issue.user.login;              
-              const comment = '👋 Thanks for wanting to do a PR @' + author + ' !\nWe will try to merge all (non-breaking) bugfix PRs and we will deliberate the value of feature PRs for the community. But be warned that there is no guarantee that new features will be merged. If you want to be sure before investing the work please contact the team about your planned feature PR'
+              const comment = 'Thanks for wanting to do a PR, @' + author + ' !\n\nWe try to merge all non-breaking bugfixes and will deliberate the value of new features for the community. Please note there is no guarantee your pull request will be merged, so if you want to be sure before investing the work, feel free to contact the team first.'
               github.rest.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,

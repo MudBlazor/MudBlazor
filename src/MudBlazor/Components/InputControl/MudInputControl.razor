@@ -6,7 +6,7 @@
         @InputContent
         @if (!string.IsNullOrEmpty(Label))
         {
-            <MudInputLabel Class="mud-input-label-inputcontrol" Variant="@Variant" Disabled=@Disabled Error="@Error" 
+            <MudInputLabel Class="mud-input-label-inputcontrol" Variant="@Variant" Disabled=@Disabled Error="@Error"
                            Margin="@Margin" ForId="@ForId">
                 @Label
             </MudInputLabel>
@@ -15,7 +15,7 @@
     @if (Error || !string.IsNullOrEmpty(HelperText) || !string.IsNullOrEmpty(CounterText))
     {
         <div class="@HelperContainer">
-            <p class="@HelperClass">
+            <span class="@HelperClass">
                 <div class="d-flex">
                     @if (Error)
                     {
@@ -25,7 +25,7 @@
                     }
                     else if (!string.IsNullOrEmpty(HelperText))
                     {
-                        <div class="me-auto">
+                        <div class="me-auto" id="@HelperId">
                             @HelperText
                         </div>
                     }
@@ -33,10 +33,10 @@
                     {
                         <div class="ms-auto">
                             @CounterText
-                        </div>            
+                        </div>
                     }
                 </div>
-            </p>
+            </span>
         </div>
     }
     @ChildContent

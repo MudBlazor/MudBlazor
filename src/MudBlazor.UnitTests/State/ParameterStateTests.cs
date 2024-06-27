@@ -402,6 +402,23 @@ public class ParameterStateTests
     }
 
     [Test]
+    public void MetadataToString_ShouldReturnParameterName()
+    {
+        // Arrange
+        var parameterName = "TestParameter1";
+        var parameterState1 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(parameterName))
+            .WithGetParameterValueFunc(() => 5)
+            .Attach();
+
+        var toString = parameterState1.Metadata.ToString();
+
+        // Assert
+        toString.Should().Be(parameterName);
+    }
+
+    [Test]
     public void ImplicitOperator()
     {
         // Arrange

@@ -19,42 +19,43 @@ namespace MudBlazor
     {
         public MudToggleGroup()
         {
-            _value = RegisterParameterBuilder<T?>(nameof(Value))
+            using var registerScope = CreateRegisterScope();
+            _value = registerScope.RegisterParameter<T?>(nameof(Value))
                 .WithParameter(() => Value)
                 .WithEventCallback(() => ValueChanged)
                 .WithChangeHandler(OnValueChanged);
-            _values = RegisterParameterBuilder<IEnumerable<T?>?>(nameof(Values))
+            _values = registerScope.RegisterParameter<IEnumerable<T?>?>(nameof(Values))
                 .WithParameter(() => Values)
                 .WithEventCallback(() => ValuesChanged)
                 .WithChangeHandler(OnValuesChanged);
-            _color = RegisterParameterBuilder<Color>(nameof(Color))
+            _color = registerScope.RegisterParameter<Color>(nameof(Color))
                 .WithParameter(() => Color)
                 .WithChangeHandler(OnParameterChanged);
-            _selectedClass = RegisterParameterBuilder<string?>(nameof(SelectedClass))
+            _selectedClass = registerScope.RegisterParameter<string?>(nameof(SelectedClass))
                 .WithParameter(() => SelectedClass)
                 .WithChangeHandler(OnParameterChanged);
-            _outline = RegisterParameterBuilder<bool>(nameof(Outlined))
+            _outline = registerScope.RegisterParameter<bool>(nameof(Outlined))
                 .WithParameter(() => Outlined)
                 .WithChangeHandler(OnParameterChanged);
-            _delimiters = RegisterParameterBuilder<bool>(nameof(Delimiters))
+            _delimiters = registerScope.RegisterParameter<bool>(nameof(Delimiters))
                 .WithParameter(() => Delimiters)
                 .WithChangeHandler(OnParameterChanged);
-            _rtl = RegisterParameterBuilder<bool>(nameof(RightToLeft))
+            _rtl = registerScope.RegisterParameter<bool>(nameof(RightToLeft))
                 .WithParameter(() => RightToLeft)
                 .WithChangeHandler(OnParameterChanged);
-            _dense = RegisterParameterBuilder<bool>(nameof(Dense))
-                .WithParameter(() => Dense)
+            _size = registerScope.RegisterParameter<Size>(nameof(Size))
+                .WithParameter(() => Size)
                 .WithChangeHandler(OnParameterChanged);
-            _rounded = RegisterParameterBuilder<bool>(nameof(Rounded))
+            _rounded = registerScope.RegisterParameter<bool>(nameof(Rounded))
                 .WithParameter(() => Rounded).
                 WithChangeHandler(OnParameterChanged);
-            _checkMark = RegisterParameterBuilder<bool>(nameof(CheckMark))
+            _checkMark = registerScope.RegisterParameter<bool>(nameof(CheckMark))
                 .WithParameter(() => CheckMark)
                 .WithChangeHandler(OnParameterChanged);
-            _fixedContent = RegisterParameterBuilder<bool>(nameof(FixedContent))
+            _fixedContent = registerScope.RegisterParameter<bool>(nameof(FixedContent))
                 .WithParameter(() => FixedContent)
                 .WithChangeHandler(OnParameterChanged);
-            _disabled = RegisterParameterBuilder<bool>(nameof(Disabled))
+            _disabled = registerScope.RegisterParameter<bool>(nameof(Disabled))
                 .WithParameter(() => Disabled)
                 .WithChangeHandler(OnParameterChanged);
         }
@@ -66,7 +67,7 @@ namespace MudBlazor
         private readonly ParameterState<bool> _outline;
         private readonly ParameterState<bool> _delimiters;
         private readonly ParameterState<bool> _rtl;
-        private readonly ParameterState<bool> _dense;
+        private readonly ParameterState<Size> _size;
         private readonly ParameterState<bool> _rounded;
         private readonly ParameterState<bool> _checkMark;
         private readonly ParameterState<bool> _fixedContent;
@@ -76,6 +77,7 @@ namespace MudBlazor
         protected string Classname => new CssBuilder("mud-toggle-group")
             .AddClass("mud-toggle-group-horizontal", !Vertical)
             .AddClass("mud-toggle-group-vertical", Vertical)
+            .AddClass($"mud-toggle-group-size-{Size.ToDescriptionString()}")
             .AddClass("rounded", !Rounded)
             .AddClass("rounded-xl", Rounded)
             .AddClass("mud-toggle-group-rtl", RightToLeft)
@@ -185,11 +187,11 @@ namespace MudBlazor
         public bool Ripple { get; set; } = true;
 
         /// <summary>
-        /// If true, the component's padding is reduced so it takes up less space.
+        /// The size of the items in the toggle group.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public bool Dense { get; set; }
+        public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
         /// The selection behavior of the group. SingleSelection (the default) is a radio-button like exclusive collection.
@@ -346,9 +348,9 @@ namespace MudBlazor
             if (SelectionMode == SelectionMode.MultiSelection)
             {
                 var selectedValues = new HashSet<T?>(_values.Value ?? Array.Empty<T?>());
-                item.SetSelected(!item.IsSelected);
+                item.SetSelected(!item.Selected);
 
-                if (item.IsSelected)
+                if (item.Selected)
                 {
                     selectedValues.Add(itemValue);
                 }
@@ -361,7 +363,7 @@ namespace MudBlazor
             }
             else if (SelectionMode == SelectionMode.ToggleSelection)
             {
-                if (item.IsSelected)
+                if (item.Selected)
                 {
                     item.SetSelected(false);
                     await _value.SetValueAsync(default);

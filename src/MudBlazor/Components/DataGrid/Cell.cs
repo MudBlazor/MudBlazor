@@ -17,7 +17,7 @@ namespace MudBlazor
         internal T _item;
         internal string? _valueString;
         internal double? _valueNumber;
-        internal bool _isEditing;
+        internal bool _editing;
         internal CellContext<T> _cellContext;
 
         #region Computed Properties
@@ -40,7 +40,7 @@ namespace MudBlazor
                     .AddClass("mud-table-cell-hide", _column.HideSmall)
                     .AddClass("sticky-left", _column.StickyLeft)
                     .AddClass("sticky-right", _column.StickyRight)
-                    .AddClass($"edit-mode-cell", _dataGrid.EditMode == DataGridEditMode.Cell && _column.IsEditable)
+                    .AddClass($"edit-mode-cell", _dataGrid.EditMode == DataGridEditMode.Cell && _column.Editable)
                     .Build();
             }
         }

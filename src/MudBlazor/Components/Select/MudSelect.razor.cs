@@ -270,7 +270,7 @@ namespace MudBlazor
                 _selectedValues = new HashSet<T>(set, _comparer);
                 SelectionChangedFromOutside?.Invoke(_selectedValues);
                 if (!MultiSelection)
-                    SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
+                    SetValueAsync(_selectedValues.FirstOrDefault()).CatchAndLog();
                 else
                 {
                     //Warning. Here the Converter was not set yet
@@ -278,16 +278,16 @@ namespace MudBlazor
                     {
                         SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
                             selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
-                            multiSelectionTextFunc: MultiSelectionTextFunc).AndForget();
+                            multiSelectionTextFunc: MultiSelectionTextFunc).CatchAndLog();
                     }
                     else
                     {
-                        SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue: false).AndForget();
+                        SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue: false).CatchAndLog();
                     }
                 }
                 SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues, _comparer));
                 if (MultiSelection && typeof(T) == typeof(string))
-                    SetValueAsync((T)(object)Text, updateText: false).AndForget();
+                    SetValueAsync((T)(object)Text, updateText: false).CatchAndLog();
             }
         }
 
@@ -454,7 +454,7 @@ namespace MudBlazor
                 if (value != _multiSelection)
                 {
                     _multiSelection = value;
-                    UpdateTextPropertyAsync(false).AndForget();
+                    UpdateTextPropertyAsync(false).CatchAndLog();
                 }
             }
         }
@@ -550,7 +550,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
-        internal bool _isOpen;
+        internal bool _open;
 
         public string _currentIcon { get; set; }
 
@@ -603,19 +603,19 @@ namespace MudBlazor
                 }
 
                 await SetValueAsync(value);
-                _elementReference.SetText(Text).AndForget();
+                _elementReference.SetText(Text).CatchAndLog();
                 _selectedValues.Clear();
                 _selectedValues.Add(value);
             }
 
-            await HilightItemForValueAsync(value);
+            HilightItemForValueAsync(value);
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 await SetValueAsync((T)(object)Text, updateText: false);
             await InvokeAsync(StateHasChanged);
         }
 
-        private async Task HilightItemForValueAsync(T value)
+        private async void HilightItemForValueAsync(T value)
         {
             if (value == null)
             {
@@ -645,7 +645,7 @@ namespace MudBlazor
             if (MultiSelection)
                 HilightItem(_items.FirstOrDefault(x => !x.Disabled));
             else
-                await HilightItemForValueAsync(Value);
+                HilightItemForValueAsync(Value);
         }
 
         private void UpdateSelectAllChecked()
@@ -672,7 +672,7 @@ namespace MudBlazor
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
-            if (_isOpen)
+            if (_open)
                 await CloseMenu(true);
             else
                 await OpenMenu();
@@ -682,7 +682,7 @@ namespace MudBlazor
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
-            _isOpen = true;
+            _open = true;
             UpdateIcon();
             StateHasChanged();
             await HilightSelectedValue();
@@ -704,13 +704,13 @@ namespace MudBlazor
 
         public async Task CloseMenu(bool focusAgain = true)
         {
-            _isOpen = false;
+            _open = false;
             UpdateIcon();
             if (focusAgain)
             {
                 StateHasChanged();
                 await OnBlur.InvokeAsync(new FocusEventArgs());
-                _elementReference.FocusAsync().AndForget(ignoreExceptions: true);
+                _elementReference.FocusAsync().CatchAndLog(ignoreExceptions: true);
                 StateHasChanged();
             }
 
@@ -722,7 +722,7 @@ namespace MudBlazor
 
         private void UpdateIcon()
         {
-            _currentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
+            _currentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _open ? CloseIcon : OpenIcon;
         }
 
         protected override void OnInitialized()
@@ -865,7 +865,7 @@ namespace MudBlazor
             if (GetDisabledState() || GetReadOnlyState())
                 return;
             var key = obj.Key.ToLowerInvariant();
-            if (_isOpen && key.Length == 1 && key != " " && !(obj.CtrlKey || obj.ShiftKey || obj.AltKey || obj.MetaKey))
+            if (_open && key.Length == 1 && key != " " && !(obj.CtrlKey || obj.ShiftKey || obj.AltKey || obj.MetaKey))
             {
                 await SelectFirstItem(key);
                 return;
@@ -881,7 +881,7 @@ namespace MudBlazor
                         await CloseMenu();
                         break;
                     }
-                    else if (_isOpen == false)
+                    else if (_open == false)
                     {
                         await OpenMenu();
                         break;
@@ -897,7 +897,7 @@ namespace MudBlazor
                         await OpenMenu();
                         break;
                     }
-                    else if (_isOpen == false)
+                    else if (_open == false)
                     {
                         await OpenMenu();
                         break;
@@ -924,7 +924,7 @@ namespace MudBlazor
                     var index = _items.FindIndex(x => x.ItemId == (string)_activeItemId);
                     if (!MultiSelection)
                     {
-                        if (!_isOpen)
+                        if (!_open)
                         {
                             await OpenMenu();
                             return;
@@ -935,7 +935,7 @@ namespace MudBlazor
                     }
                     else
                     {
-                        if (_isOpen == false)
+                        if (_open == false)
                         {
                             await OpenMenu();
                             break;
@@ -964,13 +964,13 @@ namespace MudBlazor
                     }
                     break;
             }
-            OnKeyDown.InvokeAsync(obj).AndForget();
+            OnKeyDown.InvokeAsync(obj).CatchAndLog();
 
         }
 
         internal void HandleKeyUp(KeyboardEventArgs obj)
         {
-            OnKeyUp.InvokeAsync(obj).AndForget();
+            OnKeyUp.InvokeAsync(obj).CatchAndLog();
         }
 
         /// <summary>
@@ -1023,7 +1023,7 @@ namespace MudBlazor
             await BeginValidateAsync();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
-                SetValueAsync((T)(object)Text, updateText: false).AndForget();
+                SetValueAsync((T)(object)Text, updateText: false).CatchAndLog();
         }
 
         public void RegisterShadowItem(MudSelectItem<T> item)
@@ -1042,7 +1042,7 @@ namespace MudBlazor
 
         private async Task OnFocusOutAsync(FocusEventArgs focusEventArgs)
         {
-            if (_isOpen)
+            if (_open)
             {
                 // when the menu is open we immediately get back the focus if we lose it (i.e. because of checkboxes in multi-select)
                 // otherwise we can't receive key strokes any longer

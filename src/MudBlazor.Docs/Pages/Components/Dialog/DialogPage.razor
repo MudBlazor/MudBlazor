@@ -93,7 +93,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="Scrollable Dialog">
-                <Description>Quick example on how to give your dialog scrollable content.</Description>
+                <Description>Quick example on how content that exeeds the available height becomes scrollable.</Description>
             </SectionHeader>
             <SectionContent Codes="@(new[] {new CodeFile("Page.razor", nameof(DialogScrollableExample)), new CodeFile("Dialog.razor", nameof(DialogScrollableExample_Dialog))})">
                 <DialogScrollableExample />
@@ -175,7 +175,7 @@
         <DocsPageSection>
             <SectionHeader Title="Custom Styling">
                 <Description>
-                    Additional classes can be applied to the title, content and the action buttons section.
+                    Classes can be applied to the title, content, and action button sections, or the dialog itself, to make customization easier.
                 </Description>
             </SectionHeader>
             <SectionContent Codes="@(new[] {new CodeFile("Page.razor", nameof(DialogStylingExample)), new CodeFile("Dialog.razor", nameof(DialogStylingExample_Dialog))})">

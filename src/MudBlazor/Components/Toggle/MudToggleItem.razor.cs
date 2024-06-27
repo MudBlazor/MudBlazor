@@ -11,80 +11,29 @@ namespace MudBlazor
 #nullable enable
     public partial class MudToggleItem<T> : MudComponentBase
     {
-        private bool _selected;
-
         protected string Classname => new CssBuilder("mud-toggle-item")
-            .AddClass($"mud-theme-{Parent?.Color.ToDescriptionString()}", _selected && string.IsNullOrEmpty(Parent?.SelectedClass))
-            .AddClass(Parent?.SelectedClass, _selected && !string.IsNullOrEmpty(Parent?.SelectedClass))
+            .AddClass($"mud-theme-{Parent?.Color.ToDescriptionString()}", Selected && string.IsNullOrEmpty(Parent?.SelectedClass))
+            .AddClass(Parent?.SelectedClass, Selected && !string.IsNullOrEmpty(Parent?.SelectedClass))
+            .AddClass("mud-toggle-item-selected", Selected)
             .AddClass($"mud-toggle-item-{Parent?.Color.ToDescriptionString()}")
-            .AddClass("mud-ripple", Parent?.Ripple == true)
-            .AddClass($"mud-border-{Parent?.Color.ToDescriptionString()} border-solid")
-            .AddClass("mud-toggle-delimiter-alternative", Parent?.SelectionMode == SelectionMode.MultiSelection && IsSelected && Parent?.Color != Color.Default)
-            .AddClass(ItemPadding)
             .AddClass("mud-toggle-item-vertical", Parent?.Vertical == true)
             .AddClass("mud-toggle-item-delimiter", Parent?.Delimiters == true)
+            .AddClass("mud-ripple", Parent?.Ripple == true)
+            .AddClass($"mud-border-{Parent?.Color.ToDescriptionString()} border-solid")
+            .AddClass("mud-toggle-delimiter-alternative", Parent?.SelectionMode == SelectionMode.MultiSelection && Selected && Parent?.Color != Color.Default)
+            .AddClass("mud-toggle-item-fixed", Parent?.CheckMark == true && Parent?.FixedContent == true)
             .AddClass("mud-disabled", GetDisabledState())
             .AddClass(Class)
             .Build();
 
-        protected string TextClassname => new CssBuilder()
+        protected string TextClassname => new CssBuilder("mud-toggle-item-text")
+            .AddClass("mud-typography mud-typography-align-center")
             .AddClass(Parent?.TextClass)
             .Build();
 
-        protected string CheckMarkClassname => new CssBuilder()
+        protected string CheckMarkClassname => new CssBuilder("mud-toggle-item-check-icon")
             .AddClass(Parent?.CheckMarkClass)
-            .AddClass("me-2")
             .Build();
-
-        protected string ItemPadding
-        {
-            get
-            {
-                if (Parent?.Vertical == true)
-                {
-                    if (Parent?.Rounded == true)
-                    {
-                        if (Parent?.IsFirstItem(this) == true)
-                        {
-                            return Parent?.Dense == true ? "px-1 pt-2 pb-1" : "px-2 pt-3 pb-2";
-                        }
-                        else if (Parent?.IsLastItem(this) == true)
-                        {
-                            return Parent?.Dense == true ? "px-1 pt-1 pb-2" : "px-2 pt-2 pb-3";
-                        }
-                        else
-                        {
-                            return Parent?.Dense == true ? "px-1 py-1" : "px-2 py-2";
-                        }
-                    }
-
-                    // not rounded 
-                    return Parent?.Dense == true ? "px-1 py-1" : "px-2 py-2";
-                }
-
-                // horizontal
-                if (Parent?.Rounded == true)
-                {
-                    if (Parent?.IsFirstItem(this) == true)
-                    {
-                        return Parent?.Dense == true ? "ps-2 pe-1 py-1" : "ps-3 pe-2 py-2";
-                    }
-                    else if (Parent?.IsLastItem(this) == true)
-                    {
-                        return Parent?.Dense == true ? "ps-1 pe-2 py-1" : "ps-2 pe-3 py-2";
-                    }
-                    else
-                    {
-                        return Parent?.Dense == true ? "px-1 py-1" : "px-2 py-2";
-                    }
-                }
-
-                // not rounded 
-                return Parent?.Dense == true ? "px-1 py-1" : "px-2 py-2";
-            }
-        }
-
-        private bool CounterBalanceCheckMark => Parent?.CheckMark == true && Parent?.FixedContent == true;
 
         [CascadingParameter]
         public MudToggleGroup<T>? Parent { get; set; }
@@ -116,7 +65,7 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Appearance)]
         public string? SelectedIcon { get; set; } = Icons.Material.Filled.Check;
 
-        private string? CurrentIcon => IsSelected ? SelectedIcon ?? UnselectedIcon : UnselectedIcon;
+        private string? CurrentIcon => Selected ? SelectedIcon ?? UnselectedIcon : UnselectedIcon;
 
         /// <summary>
         /// The text to show. You need to set this only if you want a text that differs from the Value. If null,
@@ -142,11 +91,11 @@ namespace MudBlazor
 
         public void SetSelected(bool selected)
         {
-            _selected = selected;
+            Selected = selected;
             StateHasChanged();
         }
 
-        protected internal bool IsSelected => _selected;
+        protected internal bool Selected { get; private set; }
 
         protected async Task HandleOnClickAsync()
         {

@@ -4,7 +4,7 @@
 
 <MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
     <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">Checkout</MudText>
-    <MudGrid Spacing="6" Class="mt-16">
+    <MudGrid Spacing="12" Class="mt-16">
         <MudItem xs="7">
             <MudText Typo="Typo.h5" GutterBottom="true">Billing address</MudText>
             <MudGrid>
@@ -40,11 +40,11 @@
         <MudItem xs="5">
             <MudText Typo="Typo.h5" GutterBottom="true">Cart</MudText>
             <MudPaper Class="d-flex flex-column" Style="height:100%;" Outlined="true">
-                <MudList T="string" Clickable="true">
+                <MudList T="string">
                     <MudListItem Icon="@Icons.Material.Filled.ContentCut">
                         <div class="d-flex">
                             <MudText>Scissor - Big</MudText>
-                            <MudText Inline="true" Class="ml-auto">$5</MudText>
+                            <MudText HtmlTag="span" Class="ml-auto">$5</MudText>
                         </div>
                     </MudListItem>
                     <MudListItem Icon="@Icons.Material.Filled.AirplanemodeActive">

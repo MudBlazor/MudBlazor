@@ -117,11 +117,14 @@ public partial class Appbar
     [Parameter]
     public EventCallback<MouseEventArgs> DrawerToggleCallback { get; set; }
 
+    [Parameter]
+    public bool DisplaySearchBar { get; set; } = true;
+
     private async void OnSearchResult(ApiLinkServiceEntry entry)
     {
         NavigationManager.NavigateTo(entry.Link);
         await Task.Delay(1000);
-        await _searchAutocomplete.Clear();
+        await _searchAutocomplete.ClearAsync();
     }
 
     private string GetActiveClass(DocsBasePage page)

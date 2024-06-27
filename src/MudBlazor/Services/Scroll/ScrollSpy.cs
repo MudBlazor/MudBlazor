@@ -26,9 +26,10 @@ namespace MudBlazor
         /// <summary>
         /// Start spying for scroll events for elements with the specified classes
         /// </summary>
-        /// <param name="elementsSelector">the class name (without .) to identify the containers to spy on</param>
+        /// <param name="containerSelector">the CSS selector to identify the scroll container</param>
+        /// <param name="sectionClassSelector">the CSS class (without .) to identify the section containers to spy on</param>
         /// <returns></returns>
-        public Task StartSpying(string elementsSelector);
+        public Task StartSpying(string containerSelector, string sectionClassSelector);
 
         /// <summary>
         /// Center the viewport to DOM element with the given Id 
@@ -70,7 +71,8 @@ namespace MudBlazor
             _dotNetRef = DotNetObjectReference.Create(this);
         }
 
-        public async Task StartSpying(string containerSelector) => await _js.InvokeVoidAsync("mudScrollSpy.spying", containerSelector, _dotNetRef);
+        public async Task StartSpying(string containerSelector, string sectionClassSelector) =>
+            await _js.InvokeVoidAsync("mudScrollSpy.spying", _dotNetRef, containerSelector, sectionClassSelector);
 
         [JSInvokable]
         public void SectionChangeOccured(string id)

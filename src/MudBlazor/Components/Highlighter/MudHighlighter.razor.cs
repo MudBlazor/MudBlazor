@@ -65,6 +65,7 @@ public partial class MudHighlighter : MudComponentBase
 
     protected override void OnParametersSet()
     {
+        base.OnParametersSet();
         _fragments = GetFragments(Text, HighlightedText, HighlightedTexts, out _regex, CaseSensitive, UntilNextBoundary);
     }
 
