@@ -71,7 +71,9 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     /// <returns></returns>
     public async Task<bool> GetSystemPreference()
     {
-        return await JsRuntime.InvokeAsync<bool>("darkModeChange");
+        var (_, value) = await JsRuntime.InvokeAsyncWithErrorHandling(false, "darkModeChange");
+
+        return value;
     }
 
     public Task WatchSystemPreference(Func<bool, Task> functionOnChange)
@@ -418,6 +420,15 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
             $"--{Typography}-body2-lineheight: {_theme.Typography.Body2.LineHeight.ToString(CultureInfo.InvariantCulture)};");
         theme.AppendLine($"--{Typography}-body2-letterspacing: {_theme.Typography.Body2.LetterSpacing};");
         theme.AppendLine($"--{Typography}-body2-text-transform: {_theme.Typography.Body2.TextTransform};");
+
+        theme.AppendLine(
+            $"--{Typography}-input-family: '{string.Join("','", _theme.Typography.Input.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())}';");
+        theme.AppendLine($"--{Typography}-input-size: {_theme.Typography.Input.FontSize};");
+        theme.AppendLine($"--{Typography}-input-weight: {_theme.Typography.Input.FontWeight};");
+        theme.AppendLine(
+            $"--{Typography}-input-lineheight: {_theme.Typography.Input.LineHeight.ToString(CultureInfo.InvariantCulture)};");
+        theme.AppendLine($"--{Typography}-input-letterspacing: {_theme.Typography.Input.LetterSpacing};");
+        theme.AppendLine($"--{Typography}-input-text-transform: {_theme.Typography.Input.TextTransform};");
 
         theme.AppendLine(
             $"--{Typography}-button-family: '{string.Join("','", _theme.Typography.Button.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())}';");

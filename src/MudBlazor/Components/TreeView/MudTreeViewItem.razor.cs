@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -59,7 +58,7 @@ namespace MudBlazor
         private MudTreeView<T>? MudTreeRoot { get; set; }
 
         [CascadingParameter]
-        private MudTreeViewItem<T>? Parent { get; set; }
+        internal MudTreeViewItem<T>? Parent { get; set; }
 
         /// <summary>
         /// Value of the TreeViewItem. Acts as the displayed text if no text is set.
@@ -148,11 +147,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
-        public RenderFragment<MudTreeViewItem<T>>? BodyContent { get; set; }
+        public RenderFragment<MudTreeViewItem<T?>>? BodyContent { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public IReadOnlyCollection<T>? Items { get; set; }
+        public IReadOnlyCollection<TreeItemData<T?>>? Items { get; set; }
 
         /// <summary>
         /// Expand or collapse TreeView item when it has children. Two-way bindable. Note: if you directly set this to
@@ -259,9 +258,9 @@ namespace MudBlazor
 
         private string CheckedIcon => MudTreeRoot?.CheckedIcon ?? Icons.Material.Filled.CheckBox;
 
-        private string UncheckedIcon => MudTreeRoot?.CheckedIcon ?? Icons.Material.Filled.CheckBoxOutlineBlank;
+        private string UncheckedIcon => MudTreeRoot?.UncheckedIcon ?? Icons.Material.Filled.CheckBoxOutlineBlank;
 
-        private string IndeterminateIcon => MudTreeRoot?.CheckedIcon ?? Icons.Material.Filled.IndeterminateCheckBox;
+        private string IndeterminateIcon => MudTreeRoot?.IndeterminateIcon ?? Icons.Material.Filled.IndeterminateCheckBox;
 
         private bool _loading;
 
@@ -332,6 +331,15 @@ namespace MudBlazor
                 await item.CollapseAllAsync();
         }
 
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+            if (Text == null && Value == null && MudTreeRoot?.ServerData != null)
+                throw new InvalidOperationException(
+                    $"'{nameof(MudTreeView<T>)}.{nameof(MudTreeRoot.ServerData)}' requires '{nameof(MudTreeRoot.ItemTemplate)}.{nameof(MudTreeViewItem<T>)}.{nameof(Value)}' to be supplied.");
+        }
+
         private async Task OnCheckboxChangedAsync()
         {
             if (MudTreeRoot == null)
@@ -354,7 +362,7 @@ namespace MudBlazor
                     await MudTreeRoot.AddChildAsync(this);
                 }
             }
-            base.OnInitialized();
+            await base.OnInitializedAsync();
         }
 
         private Task OnSelectedParameterChangedAsync(ParameterChangedEventArgs<bool> arg)
@@ -441,7 +449,7 @@ namespace MudBlazor
         {
             if (Items is not null)
             {
-                Items = Array.Empty<T>();
+                Items = Array.Empty<TreeItemData<T?>>();
             }
             await TryInvokeServerLoadFunc();
 

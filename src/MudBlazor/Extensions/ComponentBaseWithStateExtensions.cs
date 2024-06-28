@@ -13,7 +13,7 @@ namespace MudBlazor.Extensions;
 /// <summary>
 /// Provides extension methods for <see cref="ComponentBaseWithState"/> components to facilitate accessing parameter states.
 /// </summary>
-internal static class ComponentBaseWithStateExtensions
+public static class ComponentBaseWithStateExtensions
 {
     /// <summary>
     /// Gets the read-only parameter state of a specified property in the component.
@@ -45,7 +45,7 @@ internal static class ComponentBaseWithStateExtensions
     /// <exception cref="KeyNotFoundException">Thrown when the parameter state with <paramref name="propertyName"/> is not found.</exception>
     public static T? GetState<T>(this ComponentBaseWithState component, string propertyName)
     {
-        if (component.Parameters.TryGetValue(propertyName, out var lifeCycle))
+        if (component.ParameterContainer.TryGetValue(propertyName, out var lifeCycle))
         {
             if (lifeCycle is ParameterStateInternal<T> parameterState)
             {

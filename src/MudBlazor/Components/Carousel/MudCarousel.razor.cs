@@ -33,17 +33,11 @@ namespace MudBlazor
             .AddClass(BulletsClass)
             .Build();
 
-        /// <summary>
-        /// Gets or sets whether text is displayed Right-to-Left (RTL).
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, text will display property for RTL languages such as Arabic, Hebrew, and Persian.
-        /// </remarks>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
         /// <summary>
-        /// Gets or sets whether "Next" and "Previous" arrows are displayed.
+        /// Displays "Next" and "Previous" arrows.
         /// </summary>
         /// <reamrks>
         /// Defaults to <c>true</c>.  
@@ -53,7 +47,7 @@ namespace MudBlazor
         public bool ShowArrows { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets where the arrows are displayed, if <see cref="ShowArrows"/> is <c>true</c>.
+        /// The position where the arrows are displayed, if <see cref="ShowArrows"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Position.Center"/>.
@@ -63,7 +57,7 @@ namespace MudBlazor
         public Position ArrowsPosition { get; set; } = Position.Center;
 
         /// <summary>
-        /// Gets or sets whether a bullet is displayed for each <see cref="MudCarouselItem"/>.
+        /// Displays a bullet for each <see cref="MudCarouselItem"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -73,7 +67,7 @@ namespace MudBlazor
         public bool ShowBullets { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets the location of the bullets when <see cref="ShowBullets"/> is <c>true</c>.
+        /// The location of the bullets when <see cref="ShowBullets"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Position.Bottom"/>.  
@@ -83,7 +77,7 @@ namespace MudBlazor
         public Position BulletsPosition { get; set; } = Position.Bottom;
 
         /// <summary>
-        /// Gets or sets the color of bullets when <see cref="ShowBullets"/> is <c>true</c>.
+        /// The color of bullets when <see cref="ShowBullets"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  When <c>null</c> the <see cref="MudCarouselItem.Color"/> property is used.
@@ -93,7 +87,7 @@ namespace MudBlazor
         public Color? BulletsColor { get; set; }
 
         /// <summary>
-        /// Gets or sets whether items are automatically cycled.
+        /// Automatically cycles items based on <see cref="AutoCycleTime"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the <see cref="MudCarouselItem"/> items will be rotated after the delay specified in <see cref="AutoCycleTime" />.
@@ -119,7 +113,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets or sets the delay before displaying the next <see cref="MudCarouselItem"/> when <see cref="AutoCycle"/> is <c>true</c>.
+        /// The delay before displaying the next <see cref="MudCarouselItem"/> when <see cref="AutoCycle"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="TimeSpan.Zero"/>.
@@ -145,7 +139,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets or sets any custom CSS classes for the "Next" and "Previous" icons when <see cref="ShowArrows"/> is <c>true</c>.
+        /// The custom CSS classes for the "Next" and "Previous" icons when <see cref="ShowArrows"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Separate each CSS class with spaces.
@@ -155,7 +149,7 @@ namespace MudBlazor
         public string? NavigationButtonsClass { get; set; }
 
         /// <summary>
-        /// Gets or sets any custom CSS classes for bullets when <see cref="ShowBullets"/> is <c>true</c>.
+        /// The custom CSS classes for bullets when <see cref="ShowBullets"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Separate each CSS class with spaces.
@@ -165,7 +159,7 @@ namespace MudBlazor
         public string? BulletsClass { get; set; }
 
         /// <summary>
-        /// Gets or sets the "Previous" button icon when <see cref="ShowBullets" /> is <c>true</c> and no <see cref="PreviousButtonTemplate"/> is set.
+        /// The "Previous" button icon when <see cref="ShowBullets" /> is <c>true</c> and no <see cref="PreviousButtonTemplate"/> is set.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.NavigateBefore" />.
@@ -175,21 +169,21 @@ namespace MudBlazor
         public string PreviousIcon { get; set; } = Icons.Material.Filled.NavigateBefore;
 
         /// <summary>
-        /// Gets or sets the icon displayed for the current <see cref="MudCarouselItem"/> when no <see cref="BulletTemplate"/> is set.
+        /// The icon displayed for the current <see cref="MudCarouselItem"/> when no <see cref="BulletTemplate"/> is set.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Carousel.Appearance)]
         public string CheckedIcon { get; set; } = Icons.Material.Filled.RadioButtonChecked;
 
         /// <summary>
-        /// Gets or sets the icon displayed for unselected <see cref="MudCarouselItem"/>s when no <see cref="BulletTemplate"/> is set.
+        /// The icon displayed for unselected <see cref="MudCarouselItem"/>s when no <see cref="BulletTemplate"/> is set.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Carousel.Appearance)]
         public string UncheckedIcon { get; set; } = Icons.Material.Filled.RadioButtonUnchecked;
 
         /// <summary>
-        /// Gets or sets the "Next" button icon when <see cref="ShowBullets" /> is <c>true</c> and no <see cref="NextButtonTemplate"/> is set.
+        /// The "Next" button icon when <see cref="ShowBullets" /> is <c>true</c> and no <see cref="NextButtonTemplate"/> is set.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.NavigateNext" />.
@@ -199,21 +193,21 @@ namespace MudBlazor
         public string NextIcon { get; set; } = Icons.Material.Filled.NavigateNext;
 
         /// <summary>
-        /// Gets or sets any custom template for the "Next" button.
+        /// The custom template for the "Next" button.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Carousel.Appearance)]
         public RenderFragment? NextButtonTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets any custom template for the "Previous" button.
+        /// The custom template for the "Previous" button.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Carousel.Appearance)]
         public RenderFragment? PreviousButtonTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets any custom template for bullets.
+        /// The custom template for bullets.
         /// </summary>
         /// <remarks>
         /// When set, the template will be used and the <see cref="CheckedIcon"/> and <see cref="UncheckedIcon"/> properties will be ignored.
@@ -223,7 +217,7 @@ namespace MudBlazor
         public RenderFragment<bool>? BulletTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets whether swipe gestures are allowed for touch devices.
+        /// Allows swipe gestures for touch devices.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  When <c>true</c>, swipe gestures on touch devices can be used to change the current <see cref="MudCarouselItem"/>.

@@ -3,8 +3,8 @@
 <MudPaper Width="300px" Elevation="0">
     <MudTreeView Items="TreeItems" SelectionMode="SelectionMode.MultiSelection" @bind-SelectedValues="SelectedValues">
         <ItemTemplate>
-            <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.TreeItems" Value="@context"
-                             Icon="@context.Icon" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" />
+            <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value"
+                             Icon="@context.Icon" Text="@context.Text" EndText="@((context as TreeItemData).Number?.ToString())" EndTextTypo="@Typo.caption" />
         </ItemTemplate>
     </MudTreeView>
 </MudPaper>
@@ -14,25 +14,18 @@
 </MudStack>
 
 @code {
-    private IReadOnlyCollection<TreeItemData> SelectedValues { get; set; }
+    public IReadOnlyCollection<string> SelectedValues { get; set; }
 
-    private HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
+    public List<TreeItemData<string>> TreeItems { get; set; } = new();
+    public Dictionary<string, int?> ValueMap { get; set; }
 
-    public class TreeItemData
+    public class TreeItemData : TreeItemData<string>
     {
-        public string Title { get; set; }
-
-        public string Icon { get; set; }
-
         public int? Number { get; set; }
 
-        public bool Expanded { get; set; }
-
-        public HashSet<TreeItemData> TreeItems { get; set; }
-
-        public TreeItemData(string title, string icon, int? number = null)
+        public TreeItemData(string text, string icon, int? number = null) : base(text)
         {
-            Title = title;
+            Text = text;
             Icon = icon;
             Number = number;
         }
@@ -45,19 +38,21 @@
         TreeItems.Add(new TreeItemData("Categories", Icons.Material.Filled.Label)
         {
             Expanded = true,
-            TreeItems = new HashSet<TreeItemData>()
-            {
+            Children = [            
                 new TreeItemData("Social", Icons.Material.Filled.Group, 90),
                 new TreeItemData("Updates", Icons.Material.Filled.Info, 2294),
                 new TreeItemData("Forums", Icons.Material.Filled.QuestionAnswer, 3566),
                 new TreeItemData("Promotions", Icons.Material.Filled.LocalOffer, 733)
-            }
+            ]
         });
         TreeItems.Add(new TreeItemData("History", Icons.Material.Filled.Label));
+        ValueMap = TreeItems.Concat(TreeItems.SelectMany(x => x.Children ?? [])).OfType<TreeItemData>().ToDictionary(x => x.Value, x => x.Number);
     }
 
     public int GetSelectedSum()
     {
-        return SelectedValues?.Sum(i => i.Number ?? 0) ?? 0;
+        if (SelectedValues is null)
+            return 0;
+        return SelectedValues.Select(x => ValueMap.GetValueOrDefault(x, 0)).Sum(i => i ?? 0);
     }
 }

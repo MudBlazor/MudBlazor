@@ -1,7 +1,5 @@
 ﻿@namespace MudBlazor.Internal
 
-
-
 <div class="@Class">
     @if (!string.IsNullOrWhiteSpace(Text))
     {
@@ -11,15 +9,14 @@
     {
         @if (AdornmentClick.HasDelegate)
         {
-            <MudIconButton Class="mud-input-adornment-icon-button" Icon="@Icon" OnClick="@AdornmentClick" Edge="@Edge" Size="@Size" Color="@Color" aria-label="@(!string.IsNullOrEmpty(AriaLabel) ? AriaLabel : "Icon Button")" tabindex="-1"/>
+            <MudIconButton Class="mud-input-adornment-icon-button" Icon="@Icon" OnClick="@AdornmentClick" Edge="@Edge" Size="@Size" Color="@Color" aria-label="@AriaLabel" tabindex="-1" />
         }
         else
         {
-            <MudIcon Class="mud-input-adornment-icon" Icon="@Icon" Size="@Size" Color="@Color" aria-label="@(!string.IsNullOrEmpty(AriaLabel) ? AriaLabel : "Icon")" tabindex="-1" />
+            <MudIcon Class="mud-input-adornment-icon" Icon="@Icon" Size="@Size" Color="@Color" aria-label="@AriaLabel" tabindex="-1" />
         }
     }
 </div>
-
 
 @code {
     [Parameter] public string Class { get; set; }

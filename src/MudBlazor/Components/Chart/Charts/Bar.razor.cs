@@ -9,7 +9,7 @@ namespace MudBlazor.Charts
     /// <summary>
     /// Represents a chart which displays series values as rectangular bars.
     /// </summary>
-    partial class Bar : MudChartBase
+    partial class Bar : MudCategoryChartBase
     {
         private const double BoundWidth = 650.0;
         private const double BoundHeight = 350.0;
@@ -19,7 +19,7 @@ namespace MudBlazor.Charts
         private const double VerticalEndSpace = 25.0;
 
         /// <summary>
-        /// Gets or sets the chart, if any, containing this component.
+        /// The chart, if any, containing this component.
         /// </summary>
         [CascadingParameter]
         public MudChart MudChartParent { get; set; }

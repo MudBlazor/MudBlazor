@@ -8,10 +8,10 @@ namespace MudBlazor.Charts
     /// <summary>
     /// Represents a chart which displays series values as portions of vertical rectangles.
     /// </summary>
-    partial class StackedBar : MudChartBase
+    partial class StackedBar : MudCategoryChartBase
     {
         /// <summary>
-        /// Gets or sets the chart, if any, containing this component.
+        /// The chart, if any, containing this component.
         /// </summary>
         [CascadingParameter]
         public MudChart MudChartParent { get; set; }

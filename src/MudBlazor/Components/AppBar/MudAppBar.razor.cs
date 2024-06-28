@@ -28,14 +28,14 @@ namespace MudBlazor
                 .Build();
 
         /// <summary>
-        /// Gets or sets a value indicating whether the appbar will be placed at the bottom of the screen instead of the top.
+        /// Places the appbar at the bottom of the screen instead of the top.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AppBar.Behavior)]
         public bool Bottom { get; set; }
 
         /// <summary>
-        /// Gets or sets the size of the drop shadow.
+        /// The size of the drop shadow.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>4</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
@@ -45,7 +45,7 @@ namespace MudBlazor
         public int Elevation { set; get; } = 4;
 
         /// <summary>
-        /// Gets or sets a value indicating whether compact padding will be used.
+        /// Uses compact padding.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -55,7 +55,7 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether left and right padding is added to the appbar.
+        /// Adds left and right padding to this appbar.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -65,27 +65,27 @@ namespace MudBlazor
         public bool Gutters { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets the color of the component. It supports the theme colors.
+        /// The color of this appbar.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.
+        /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.AppBar.Appearance)]
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// Gets or sets a value indicating whether the appbar remains in the same place when the page is scrolled.
+        /// Fixes this appbar in place as the page is scrolled.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.
+        /// Defaults to <c>true</c>.  When <c>false</c>, the appbar will scroll with other page content.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.AppBar.Behavior)]
         public bool Fixed { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets a value indicating whether the appbar content is allowed to wrap.
+        /// Allows appbar content to wrap.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -95,7 +95,7 @@ namespace MudBlazor
         public bool WrapContent { get; set; } = false;
 
         /// <summary>
-        /// Gets or sets CSS classes applied to the nested toolbar.
+        /// The CSS classes applied to the nested toolbar.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.
@@ -105,7 +105,7 @@ namespace MudBlazor
         public string? ToolBarClass { get; set; }
 
         /// <summary>
-        /// Gets or sets any child content for the component.
+        /// The content within this component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AppBar.Behavior)]

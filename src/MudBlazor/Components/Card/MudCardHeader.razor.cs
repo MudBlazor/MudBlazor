@@ -14,28 +14,28 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// Gets or sets any avatar to display.
+        /// The avatar to display within this header.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Card.Behavior)]
         public RenderFragment? CardHeaderAvatar { get; set; }
 
         /// <summary>
-        /// Gets or sets the main content of the header.
+        /// The main content of this header.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Card.Behavior)]
         public RenderFragment? CardHeaderContent { get; set; }
 
         /// <summary>
-        /// Gets or sets any actions displayed in this header.
+        /// The actions displayed within this header.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Card.Behavior)]
         public RenderFragment? CardHeaderActions { get; set; }
 
         /// <summary>
-        /// Gets or sets any additional content to display.
+        /// The custom content within this header.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Card.Behavior)]

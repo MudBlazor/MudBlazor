@@ -1,8 +1,8 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudToggleIconButton @bind-Toggled="@AlarmOn"
-                     Icon="@Icons.Material.Filled.AlarmOff" Color="@Color.Error" Title="Off"
-                     ToggledIcon="@Icons.Material.Filled.AlarmOn" ToggledColor="@Color.Success" ToggledTitle="On"/>
+                     Icon="@Icons.Material.Filled.AlarmOff" Color="@Color.Error" title=@(AlarmOn ? "On" : "Off")
+                     ToggledIcon="@Icons.Material.Filled.AlarmOn" ToggledColor="@Color.Success" />
 
 <span>Alarm is @(AlarmOn ? "On" : "Off")</span>
 

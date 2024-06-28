@@ -19,7 +19,7 @@ namespace MudBlazor
     {
         private bool _isDirty;
         /// <summary>
-        /// Gets whether validation has been performed during a validation cycle.
+        /// Prevents validation from occurring more than once during a validation cycle.
         /// </summary>
         /// <remarks>
         /// This field is set to <c>true</c> to prevent validation from occurring more than once during a validation cycle.  Each change in the <see cref="Value"/> will reset this field to <c>false</c>.
@@ -42,7 +42,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets or sets whether the component can receive input.
+        /// Allows the component to receive input.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -55,7 +55,7 @@ namespace MudBlazor
         private bool ParentDisabled { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the input can be changed by the user.
+        /// Prevents the input from being changed by the user.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the user can copy text in the control, but cannot change the <see cref="Value" />.
@@ -68,7 +68,7 @@ namespace MudBlazor
         private bool ParentReadOnly { get; set; }
 
         /// <summary>
-        /// Gets or sets whether this input fills the full width of its container.
+        /// Fills the full width of the parent container.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -78,7 +78,7 @@ namespace MudBlazor
         public bool FullWidth { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the <see cref="Value"/> is changed as soon as input is received.
+        /// Changes the <see cref="Value"/> as soon as input is received.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the <see cref="Value"/> property will be updated any time user input occurs.  Otherwise, <see cref="Value"/> is updated when the user presses <c>Enter</c> or the input loses focus.
@@ -88,7 +88,7 @@ namespace MudBlazor
         public bool Immediate { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the input has an underline.
+        /// Displays an underline for the input.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -98,7 +98,17 @@ namespace MudBlazor
         public bool Underline { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets the text displayed below the text field.
+        /// The ID of the helper element, for use by <c>aria-describedby</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When set it is appended to the <c>aria-describedby</c> attribute to improve accessibility for users. This ID takes precedence over the helper element rendered when <see cref="HelperText"/> is provided.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public string? HelperId { get; set; }
+
+        /// <summary>
+        /// The text displayed below the text field.
         /// </summary>
         /// <remarks>
         /// This property is typically used to help the user understand what kind of input is allowed.  The <see cref="HelperTextOnFocus"/> property controls when this text is visible.
@@ -108,7 +118,7 @@ namespace MudBlazor
         public string? HelperText { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the <see cref="HelperText"/> is only shown when this input has focus.
+        /// Displays the <see cref="HelperText"/> only when this input has focus.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -118,7 +128,7 @@ namespace MudBlazor
         public bool HelperTextOnFocus { get; set; }
 
         /// <summary>
-        /// Gets or sets the icon displayed for the adornment.
+        /// The icon displayed for the adornment.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  This icon will be displayed when <see cref="Adornment"/> is <c>Start</c> or <c>End</c>, and no value for <see cref="AdornmentText"/> is set.
@@ -128,7 +138,7 @@ namespace MudBlazor
         public string? AdornmentIcon { get; set; }
 
         /// <summary>
-        /// Gets or sets the text displayed for the adornment.
+        /// The text displayed for the adornment.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  This text will be displayed when <see cref="Adornment"/> is <c>Start</c> or <c>End</c>.  The <see cref="AdornmentIcon"/> property will be ignored if this property is set.
@@ -138,17 +148,17 @@ namespace MudBlazor
         public string? AdornmentText { get; set; }
 
         /// <summary>
-        /// Gets or sets the location of the adornment icon or text.
+        /// The location of the adornment icon or text.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Adornment.None"/>.  Then set to <c>Start</c> or <c>End</c>, the <see cref="AdornmentText"/> will be displayed, or <see cref="AdornmentIcon"/> if no adornment text is specified.  
+        /// Defaults to <see cref="Adornment.None"/>.  When set to <c>Start</c> or <c>End</c>, the <see cref="AdornmentText"/> will be displayed, or <see cref="AdornmentIcon"/> if no adornment text is specified.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public Adornment Adornment { get; set; } = Adornment.None;
 
         /// <summary>
-        /// Gets whether validation only occurs when the user changes the <see cref="Value"/>.
+        /// Limits validation to when the user changes the <see cref="Value"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>. When <c>true</c>, validation only occurs if the user has changed the input value at least once.
@@ -158,7 +168,7 @@ namespace MudBlazor
         public bool OnlyValidateIfDirty { get; set; }
 
         /// <summary>
-        /// Gets or sets the color of <see cref="AdornmentText"/> or <see cref="AdornmentIcon"/>.
+        /// The color of <see cref="AdornmentText"/> or <see cref="AdornmentIcon"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
@@ -168,20 +178,20 @@ namespace MudBlazor
         public Color AdornmentColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// Gets or sets the ARIA label of the adornment.
+        /// The <c>aria-label</c> for the adornment.
         /// </summary>
         /// <remarks>
-        /// Defaults to an empty string.  This property controls the value set for the <c>aria-label</c> attribute.
+        /// Defaults to <c>null</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public string AdornmentAriaLabel { get; set; } = string.Empty;
+        public string? AdornmentAriaLabel { get; set; }
 
         /// <summary>
-        /// Gets or sets the size of the icon.
+        /// The size of the icon.
         /// </summary>
         /// <remarks>
-        /// Default to <see cref="Size.Medium"/>.
+        /// Defaults to <see cref="Size.Medium"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
@@ -194,7 +204,7 @@ namespace MudBlazor
         public EventCallback<MouseEventArgs> OnAdornmentClick { get; set; }
 
         /// <summary>
-        /// Gets or sets the appearance variation to use.
+        /// The appearance variation to use.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Variant.Text"/>.  Other options are <c>Outlined</c> and <c>Filled</c>.
@@ -204,7 +214,7 @@ namespace MudBlazor
         public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        /// Gets or sets the amount of vertical spacing for this input.
+        /// The amount of vertical spacing for this input.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Margin.None"/>.
@@ -214,7 +224,14 @@ namespace MudBlazor
         public Margin Margin { get; set; } = Margin.None;
 
         /// <summary>
-        /// Gets or sets the text displayed in the input if no <see cref="Value"/> is specified.
+        /// Typography for the input text.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Typo Typo { get; set; } = Typo.input;
+
+        /// <summary>
+        /// The text displayed in the input if no <see cref="Value"/> is specified.
         /// </summary>
         /// <remarks>
         /// This property is typically used to give the user a hint as to what kind of input is expected.
@@ -224,7 +241,7 @@ namespace MudBlazor
         public string? Placeholder { get; set; }
 
         /// <summary>
-        /// Gets or sets an optional character count and stop count.
+        /// The optional character count and stop count.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  When <c>0</c>, the current character count is displayed.  When <c>1</c> or greater, the character count and this count are displayed.
@@ -234,7 +251,7 @@ namespace MudBlazor
         public int? Counter { get; set; }
 
         /// <summary>
-        /// Gets or sets the maximum number of characters allowed.
+        /// The maximum number of characters allowed.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>524288</c>.  This value is typically set to a maximum length such as the size of a database column the value will be persisted to.
@@ -244,7 +261,7 @@ namespace MudBlazor
         public int MaxLength { get; set; } = 524288;
 
         /// <summary>
-        /// Gets or sets the label for this input.
+        /// The label for this input.
         /// </summary>
         /// <remarks>
         /// If no <see cref="Value"/> is specified, the label will be displayed in the input.  Otherwise, it will be scaled down to the top of the input.
@@ -254,7 +271,7 @@ namespace MudBlazor
         public string? Label { get; set; }
 
         /// <summary>
-        /// Gets or sets whether this input automatically receives focus.
+        /// Automatically receives focus.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the input will receive focus automatically.
@@ -271,14 +288,14 @@ namespace MudBlazor
         public int Lines { get; set; } = 1;
 
         /// <summary>
-        /// Gets or sets the text displayed in the input.
+        /// The text displayed in the input.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
         public string? Text { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the text cannot be updated via a bound value.
+        /// Prevents the text from being updated via a bound value.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  Applies only to Blazor Server (BSS) applications.  When <c>false</c>, the input's text can be updated programmatically while the input has focus.
@@ -288,7 +305,7 @@ namespace MudBlazor
         public bool TextUpdateSuppression { get; set; } = true; // Solves issue #1012: Textfield swallowing chars when typing rapidly
 
         /// <summary>
-        /// Gets or sets the type of input expected.
+        /// The type of input expected.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="InputMode.text"/>.
@@ -298,7 +315,7 @@ namespace MudBlazor
         public virtual InputMode InputMode { get; set; } = InputMode.text;
 
         /// <summary>
-        /// Gets or sets the regular expression used to validate the <see cref="Value"/> property.
+        /// The regular expression used to validate the <see cref="Value"/> property.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  This property is used to validate the input against a regular expression.  Not supported if <see cref="Lines"/> is <c>2</c> or greater.  Must be a valid JavaScript regular expression.
@@ -308,14 +325,14 @@ namespace MudBlazor
         public virtual string? Pattern { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the label is allowed to appear inside the input if no <see cref="Value"/> is specified.
+        /// Shows the label inside the input if no <see cref="Value"/> is specified.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the label will not move into the input when the input is empty.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public bool ShrinkLabel { get; set; }
+        public bool ShrinkLabel { get; set; } = MudGlobal.InputDefaults.ShrinkLabel;
 
         /// <summary>
         /// Occurs when the <see cref="Text"/> property has changed.
@@ -342,7 +359,7 @@ namespace MudBlazor
         public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the default key-down action occurs.
+        /// Allows the default key-down action to occur.
         /// </summary>
         /// <remarks>
         /// When <c>true</c>, the browser will not perform its default behavior when a key-down occurs.  This is typically used when a key-down needs to override a browser's default behavior.
@@ -358,7 +375,7 @@ namespace MudBlazor
         public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the default key-up action occurs.
+        /// Prevents the default key-up action.
         /// </summary>
         /// <remarks>
         /// When <c>true</c>, the browser will not perform its default behavior when a key-up occurs.  This is typically used when a key-up needs to override the browser's default behavior.
@@ -374,7 +391,7 @@ namespace MudBlazor
         public EventCallback<T> ValueChanged { get; set; }
 
         /// <summary>
-        /// Gets or sets the value for this input.
+        /// The value for this input.
         /// </summary>
         /// <remarks>
         /// This property represents the strongly typed value for the input.  It is typically the result of parsing raw input via the <see cref="Text"/> property.
@@ -388,7 +405,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets or sets the format applied to values.
+        /// The format applied to values.
         /// </summary>
         /// <remarks>
         /// This property is passed into the <c>ToString()</c> method of the <see cref="Value"/> property, such as formatting <c>int</c>, <c>float</c>, <c>DateTime</c> and <c>TimeSpan</c> values.
@@ -556,7 +573,7 @@ namespace MudBlazor
             var changed = base.SetConverter(value);
             if (changed)
             {
-                UpdateTextPropertyAsync(false).AndForget();      // refresh only Text property from current Value
+                UpdateTextPropertyAsync(false).CatchAndLog();      // refresh only Text property from current Value
             }
 
             return changed;
@@ -567,7 +584,7 @@ namespace MudBlazor
             var changed = base.SetCulture(value);
             if (changed)
             {
-                UpdateTextPropertyAsync(false).AndForget();      // refresh only Text property from current Value
+                UpdateTextPropertyAsync(false).CatchAndLog();      // refresh only Text property from current Value
             }
 
             return changed;
@@ -579,7 +596,7 @@ namespace MudBlazor
             if (changed)
             {
                 ((Converter<T>)Converter).Format = value;
-                UpdateTextPropertyAsync(false).AndForget();      // refresh only Text property from current Value
+                UpdateTextPropertyAsync(false).CatchAndLog();      // refresh only Text property from current Value
             }
 
             return changed;
@@ -625,7 +642,7 @@ namespace MudBlazor
         public virtual void ForceRender(bool forceTextUpdate)
         {
             _forceTextUpdate = true;
-            UpdateTextPropertyAsync(false).AndForget();
+            UpdateTextPropertyAsync(false).CatchAndLog();
             StateHasChanged();
         }
 
@@ -694,8 +711,36 @@ namespace MudBlazor
             await base.ResetValueAsync();
         }
 
+        protected string? GetHelperId()
+        {
+            if (HelperId is not null)
+            {
+                return HelperId;
+            }
+
+            // error text replaces helper text in MudInputControl, so if the user does not provide a custom helper id, we have no valid helper element
+            if (HasErrors)
+            {
+                return null;
+            }
+
+            return HelperText is not null
+                ? $"{InputIdState.Value}-helper-text"
+                : null;
+        }
+
+        protected string? GetAriaDescribedByString()
+        {
+            var errorId = HasErrors ? ErrorId : null;
+            var helperId = GetHelperId();
+
+            return errorId is not null && helperId is not null
+                ? $"{errorId} {helperId}"
+                : errorId ?? helperId ?? null;
+        }
+
         /// <summary>
-        /// Gets the type of input received by this component.
+        /// The type of input received by this component.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="InputType.Text"/>.

@@ -12,10 +12,10 @@ namespace MudBlazor.State.Builder;
 /// <summary>
 /// Represents a scope for registering parameters.
 /// </summary>
-internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilderScope, IParameterStatesReader
+internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilderScope
 {
-    private readonly Action? _onScopeEndedAction;
-    private readonly List<IParameterBuilderAttach> _builders;
+    private readonly IParameterStatesWriter _parameterStatesWriter;
+    private readonly IParameterScopeContainer _parameterScopeContainer;
 
     /// <summary>
     /// Gets a value indicating whether the parameter registration builder scope is locked.
@@ -23,16 +23,15 @@ internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilder
     /// <remarks>
     /// The scope becomes locked when it has ended (Disposed), indicating that no more parameter states will be registered.
     /// </remarks>
-    public bool IsLocked { get; private set; }
+    public bool IsLocked => _parameterScopeContainer.IsLocked;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ParameterRegistrationBuilderScope"/> class with the specified parameter set register.
     /// </summary>
-    /// <param name="onScopeEndedAction">The action to be executed when the scope ends.</param>
-    public ParameterRegistrationBuilderScope(Action? onScopeEndedAction = null)
+    public ParameterRegistrationBuilderScope(IParameterScopeContainer scopeContainer, IParameterStatesWriter parameterStatesWriter)
     {
-        _onScopeEndedAction = onScopeEndedAction;
-        _builders = new List<IParameterBuilderAttach>();
+        _parameterScopeContainer = scopeContainer;
+        _parameterStatesWriter = parameterStatesWriter;
     }
 
     /// <inheritdoc/>
@@ -42,33 +41,37 @@ internal class ParameterRegistrationBuilderScope : IParameterRegistrationBuilder
     public RegisterParameterBuilder<T> RegisterParameter<T>()
     {
         var builder = new RegisterParameterBuilder<T>();
-        _builders.Add(builder);
+        _parameterStatesWriter.WriteParameter(builder);
 
         return builder;
     }
 
-    /// <summary>
-    /// Clears the list of parameter builders.
-    /// </summary>
-    private void CleanUp()
-    {
-        _builders.Clear();
-        _builders.TrimExcess();
-    }
-
     /// <inheritdoc/>
-    void IDisposable.Dispose()
+    void IDisposable.Dispose() => _parameterScopeContainer.Dispose();
+
+    /// <summary>
+    /// Provides functionality to process parameter states, including reading and writing parameter builders.
+    /// </summary>
+    internal class ParameterStatesProcessor : IParameterStatesReader, IParameterStatesWriter
     {
-        if (!IsLocked)
+        private readonly List<IParameterBuilderAttach> _builders = new();
+
+        /// <inheritdoc />
+        void IParameterStatesWriter.WriteParameter(IParameterBuilderAttach builder) => _builders.Add(builder);
+
+        /// <inheritdoc />
+        IEnumerable<IParameterComponentLifeCycle> IParameterStatesReader.ReadParameters() => _builders.Select(parameter => parameter.Attach());
+
+        /// <inheritdoc />
+        void IParameterStatesReader.Complete() => CleanUp();
+
+        /// <summary>
+        /// Clears the list of parameter builders.
+        /// </summary>
+        private void CleanUp()
         {
-            IsLocked = true;
-            _onScopeEndedAction?.Invoke();
+            _builders.Clear();
+            _builders.TrimExcess();
         }
     }
-
-    /// <inheritdoc />
-    IEnumerable<IParameterComponentLifeCycle> IParameterStatesReader.ReadParameters() => _builders.Select(parameter => parameter.Attach());
-
-    /// <inheritdoc />
-    void IParameterStatesReader.Complete() => CleanUp();
 }

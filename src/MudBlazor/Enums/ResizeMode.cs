@@ -4,17 +4,28 @@
 
 using System.ComponentModel;
 
-namespace MudBlazor
+namespace MudBlazor;
+
+/// <summary>
+/// Indicates the column resizing behavior for a <see cref="MudDataGrid{T}"/>.
+/// </summary>
+public enum ResizeMode
 {
-    public enum ResizeMode
-    {
-        [Description("none")]
-        None,
+    /// <summary>
+    /// Nothing happens when the grid is resized.
+    /// </summary>
+    [Description("none")]
+    None,
 
-        [Description("column")]
-        Column,
+    /// <summary>
+    /// Columns can be expanded a limited amount, ensuring all columns remain visible.
+    /// </summary>
+    [Description("column")]
+    Column,
 
-        [Description("container")]
-        Container
-    }
+    /// <summary>
+    /// Columns can be expanded any amount; the grid width will be expanded.
+    /// </summary>
+    [Description("container")]
+    Container
 }

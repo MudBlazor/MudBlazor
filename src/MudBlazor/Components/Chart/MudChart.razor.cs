@@ -15,12 +15,12 @@ namespace MudBlazor
     }
 
     /// <summary>
-    /// Represents a base class for designing <see cref="MudChart"/> components.
+    /// Represents a base class for designing category <see cref="MudChart"/> components.
     /// </summary>
-    public abstract class MudChartBase : MudComponentBase
+    public abstract class MudCategoryChartBase : MudChartBase
     {
         /// <summary>
-        /// Gets or sets the data to be displayed.
+        /// The data to be displayed.
         /// </summary>
         /// <remarks>
         /// Applies to <c>Pie</c> and <c>Donut</c> charts.  The number of values in this array should be the same as the number of labels in the <see cref="InputLabels"/> property.
@@ -30,7 +30,7 @@ namespace MudBlazor
         public double[] InputData { get; set; } = Array.Empty<double>();
 
         /// <summary>
-        /// Gets or sets the labels describing data values.
+        /// The labels describing data values.
         /// </summary>
         /// <remarks>
         /// Applies to <c>Pie</c> and <c>Donut</c> charts.  The number of labels in this array is typically the same as the number of values in the <see cref="InputData"/> property.
@@ -40,7 +40,7 @@ namespace MudBlazor
         public string[] InputLabels { get; set; } = Array.Empty<string>();
 
         /// <summary>
-        /// Gets or sets the labels applied to the horizontal axis.
+        /// The labels applied to the horizontal axis.
         /// </summary>
         /// <remarks>
         /// Applies to <c>Line</c>, <c>Bar</c>, and <c>StackedBar</c> charts.  The number of values in this array is typically equal to the number of values in the <see cref="ChartSeries.Data"/> property.
@@ -50,21 +50,38 @@ namespace MudBlazor
         public string[] XAxisLabels { get; set; } = Array.Empty<string>();
 
         /// <summary>
-        /// Gets or sets the series of values to display.
+        /// The series of values to display.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
         public List<ChartSeries> ChartSeries { get; set; } = new();
 
         /// <summary>
-        /// Gets or sets display options applied to the chart.
+        /// Scales the input data to the range between 0 and 1
+        /// </summary>
+        protected double[] GetNormalizedData()
+        {
+            if (InputData == null)
+                return Array.Empty<double>();
+            var total = InputData.Sum();
+            return InputData.Select(x => Math.Abs(x) / total).ToArray();
+        }
+    }
+
+    /// <summary>
+    /// Shared a base class for designing category <see cref="MudChart"/> and <see cref="MudTimeSeriesChart"/> components.
+    /// </summary>
+    public abstract class MudChartBase : MudComponentBase
+    {
+        /// <summary>
+        /// The display options applied to the chart.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chart.Appearance)]
         public ChartOptions ChartOptions { get; set; } = new();
 
         /// <summary>
-        /// Gets or sets any custom graphics within this chart.
+        /// The custom graphics within this chart.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chart.Appearance)]
@@ -75,24 +92,19 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
-        /// <summary>
-        /// Gets or sets whether text is displayed Right-to-Left (RTL).
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, text will display property for RTL languages such as Arabic, Hebrew, and Persian.
-        /// </remarks>
         [CascadingParameter(Name = "RightToLeft")]
+        [Category(CategoryTypes.Chart.Behavior)]
         public bool RightToLeft { get; set; }
 
         /// <summary>
-        /// Gets or sets the type of chart to display.
+        /// The type of chart to display.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
         public ChartType ChartType { get; set; }
 
         /// <summary>
-        /// Gets or sets the width of the chart, as a CSS style.
+        /// The width of the chart, as a CSS style.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>80%</c>.  Values can be a percentage or pixel width such as <c>200px</c>.
@@ -102,7 +114,7 @@ namespace MudBlazor
         public string Width { get; set; } = "80%";
 
         /// <summary>
-        /// Gets or sets the height of the chart, as a CSS style.
+        /// The height of the chart, as a CSS style.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>80%</c>.  Values can be a percentage or pixel width such as <c>200px</c>.
@@ -112,7 +124,7 @@ namespace MudBlazor
         public string Height { get; set; } = "80%";
 
         /// <summary>
-        /// Gets or sets the location of series labels.
+        /// The location of series labels.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Position.Bottom"/>.
@@ -134,7 +146,7 @@ namespace MudBlazor
         private int _selectedIndex;
 
         /// <summary>
-        /// Gets or sets the currently selected data point.
+        /// The currently selected data point.
         /// </summary>
         /// <remarks>
         /// When this property changes, the <see cref="SelectedIndexChanged"/> event occurs.
@@ -154,22 +166,17 @@ namespace MudBlazor
             }
         }
 
+        internal void SetSelectedIndex(int index)
+        {
+            SelectedIndex = index;
+        }
+
         /// <summary>
         /// Occurs when the <see cref="SelectedIndex"/> has changed.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Chart.Behavior)]
         public EventCallback<int> SelectedIndexChanged { get; set; }
-
-        /// <summary>
-        /// Scales the input data to the range between 0 and 1
-        /// </summary>
-        protected double[] GetNormalizedData()
-        {
-            if (InputData == null)
-                return Array.Empty<double>();
-            var total = InputData.Sum();
-            return InputData.Select(x => Math.Abs(x) / total).ToArray();
-        }
 
         protected string ToS(double d, string format = null)
         {
@@ -180,7 +187,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets or sets whether lines can be hidden when <see cref="ChartType"/> is <see cref="ChartType.Line"/>.
+        /// Allows series to be hidden when <see cref="ChartType"/> is <see cref="ChartType.Line"/>.
         /// </summary>
         /// <remarks>
         /// When <c>true</c>, checkboxes are displayed which can toggle visibility of each line.
@@ -214,6 +221,10 @@ namespace MudBlazor
         /// <summary>
         /// Data is displayed as connected rectangles.
         /// </summary>
-        StackedBar
+        StackedBar,
+        /// <summary>
+        /// Data is displayed as connecting lines or as areas.
+        /// </summary>
+        Timeseries
     }
 }

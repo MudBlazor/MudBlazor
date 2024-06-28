@@ -5,7 +5,7 @@
     {
         int tempIndex = i;
 
-        <MudTabPanel @key="@Tabs[tempIndex].Name" @ref="Tabs[tempIndex].Panel" Text="@Tabs[tempIndex].Name" ID="@Tabs[tempIndex].Tag" @bind-Disabled="@Tabs[tempIndex].IsDisabled">
+        <MudTabPanel @key="@Tabs[tempIndex].Name" @ref="Tabs[tempIndex].Panel" Text="@Tabs[tempIndex].Name" ID="@Tabs[tempIndex].Tag" @bind-Disabled="@Tabs[tempIndex].Disabled">
             <MudText>@Tabs[tempIndex].Content</MudText>
         </MudTabPanel>
     }
@@ -17,7 +17,7 @@
     public class TabBindingHelper
     {
         public string Name { get; set; }
-        public bool IsDisabled { get; set; }
+        public bool Disabled { get; set; }
         public DummyPlaceHolder Tag { get; set; }
         public MudTabPanel Panel { get; set; }
         public int Index { get; set; }
@@ -42,7 +42,7 @@
         Tabs = new();
         for (int i = 0; i < 5; i++)
         {
-            Tabs.Add(new TabBindingHelper { Name = (i + 1).ToString(), IsDisabled = true, Tag = new DummyPlaceHolder { Id = Guid.NewGuid() }, Index = i, Content = $"Tab Content {i + 1}" });
+            Tabs.Add(new TabBindingHelper { Name = (i + 1).ToString(), Disabled = true, Tag = new DummyPlaceHolder { Id = Guid.NewGuid() }, Index = i, Content = $"Tab Content {i + 1}" });
         }
     }
 
@@ -52,7 +52,7 @@
         {
             foreach (var item in Tabs)
             {
-                item.IsDisabled = false;
+                item.Disabled = false;
             }
 
             StateHasChanged();
@@ -63,14 +63,14 @@
     {
         base.OnParametersSet();
 
-        Tabs[InitialStartIndex].IsDisabled = false;
+        Tabs[InitialStartIndex].Disabled = false;
     }
 
     public void EnableTab(int index)
     {
         InvokeAsync(() =>
         {
-            Tabs[index].IsDisabled = false;
+            Tabs[index].Disabled = false;
             StateHasChanged();
         });
     }
@@ -95,7 +95,7 @@
     {
         InvokeAsync(() =>
         {
-            Tabs[index].IsDisabled = true;
+            Tabs[index].Disabled = true;
             StateHasChanged();
         });
     }

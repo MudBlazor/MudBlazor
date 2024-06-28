@@ -11,55 +11,83 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Represents a pager for navigating pages of a <see cref="MudDataGrid{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">The kind of data displayed in the grid.</typeparam>
     public partial class MudDataGridPager<T> : MudComponentBase, IDisposable
     {
+        /// <summary>
+        /// The grid which contains this pager.
+        /// </summary>
         [CascadingParameter]
         public MudDataGrid<T> DataGrid { get; set; }
 
         /// <summary>
-        /// Determines whether to show a drop-down for changing the page size.
+        /// Shows the page-size drop-down list.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  Use <see cref="PageSizeOptions"/> to control the allowed page sizes.
+        /// </remarks>
         [Parameter]
         public bool PageSizeSelector { get; set; } = true;
 
         /// <summary>
-        /// Set true to disable user interaction with the backward/forward buttons
-        /// and the part of the pager which allows to change the page size.
+        /// Disables the back button, forward button, and page-size drop-down list.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// Define a list of available page size options for the user to choose from
+        /// The allowed page sizes when <see cref="PageSizeSelector"/> is <c>true</c>.  Defaults to <c>10</c>, <c>25</c>, <c>50</c>, <c>100</c>.
         /// </summary>
         [Parameter]
         public int[] PageSizeOptions { get; set; } = new int[] { 10, 25, 50, 100 };
 
         /// <summary>
-        /// Format string for the display of the current page, which you can localize to your language. Available variables are:
-        /// {first_item}, {last_item} and {all_items} which will replaced with the indices of the page's first and last item, as well as the total number of items.
-        /// Default: "{first_item}-{last_item} of {all_items}" which is transformed into "0-25 of 77". 
+        /// The format for the first item, last item, and number of total items.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>{first_item}-{last_item} of {all_items}</c> (e.g. <c>0-25 of 77</c>).  Available values are <c>{first_item}</c>, <c>{last_item}</c>, and <c>{all_items}</c>.
+        /// </remarks>
         [Parameter]
         public string InfoFormat { get; set; } = "{first_item}-{last_item} of {all_items}";
 
         /// <summary>
-        /// The localizable "Rows per page:" text.
+        /// The text to show for the "Rows per page:" label.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>Rows per page:</c>.  Can be localized to other languages.
+        /// </remarks>
         [Parameter]
         public string RowsPerPageString { get; set; } = "Rows per page:";
 
         /// <summary>
-        /// Set false to hide the pagination. Default is true.
+        /// Shows the pagination buttons.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         public bool ShowNavigation { get; set; } = true;
 
         /// <summary>
-        /// Set false to hide the number of pages. Default is true.
+        /// Shows the current page number.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         public bool ShowPageNumber { get; set; } = true;
+
+        /// <summary>
+        /// Defines the text shown in the items per page dropdown when a user provides int.MaxValue as an option
+        /// </summary>
+        [Parameter]
+        public string AllItemsText { get; set; } = "All";
 
         private string Info
         {
@@ -84,11 +112,11 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
-        private async Task SetRowsPerPageAsync(string size)
+        private async Task SetRowsPerPageAsync(int size)
         {
             if (DataGrid != null)
             {
-                await DataGrid.SetRowsPerPageAsync(int.Parse(size));
+                await DataGrid.SetRowsPerPageAsync(size);
             }
         }
 
@@ -104,6 +132,9 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Releases resources used by this pager.
+        /// </summary>
         public void Dispose()
         {
             if (DataGrid != null)

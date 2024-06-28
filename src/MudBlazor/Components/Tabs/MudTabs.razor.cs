@@ -321,6 +321,8 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
+            base.OnParametersSet();
+
             if (_resizeObserver == null)
             {
                 _resizeObserver = _resizeObserverFactory.Create();
@@ -553,7 +555,7 @@ namespace MudBlazor
             var tabClass = new CssBuilder("mud-tab")
               .AddClass($"mud-tab-active", when: () => panel == ActivePanel)
               .AddClass($"mud-disabled", panel.Disabled)
-              .AddClass($"mud-ripple", !Ripple)
+              .AddClass($"mud-ripple", Ripple)
               .AddClass(ActiveTabClass, when: () => panel == ActivePanel)
               .AddClass(TabPanelClass)
               .AddClass(panel.Class)
@@ -582,6 +584,13 @@ namespace MudBlazor
             .Build();
 
             return tabStyle;
+        }
+
+        private Color GetPanelIconColor(MudTabPanel panel)
+        {
+            var iconColor = panel.Disabled ? Color.Inherit : panel.IconColor != default ? panel.IconColor : IconColor;
+
+            return iconColor;
         }
 
         #endregion

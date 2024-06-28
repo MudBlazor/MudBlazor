@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
@@ -384,7 +385,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Unselected_Select_CheckSelected_Deselect_CheckDeselected()
         {
-            var comp = Context.RenderComponent<TreeViewTest1>();
+            var comp = Context.RenderComponent<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.MultiSelection));
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
             comp.Find("button").Click();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
@@ -394,7 +395,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Item1Selected.Should().BeTrue();
             comp.FindAll("input.mud-checkbox-input")[2].Change(false);
             comp.Instance.SubItemSelected.Should().BeFalse();
-            comp.Instance.Item1Selected.Should().BeTrue();
+            comp.Instance.Item1Selected.Should().BeFalse(); // <-- selecting child updates parent in multi-selection mode
         }
 
         [Test]
@@ -464,6 +465,51 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void TreeViewTreeItemDataTest()
+        {
+            // test default values
+            new TreeItemData<int>().Expanded.Should().Be(false);
+            new TreeItemData<int>().Selected.Should().Be(false);
+            new TreeItemData<int>().Expandable.Should().Be(true);
+            new TreeItemData<int>().Text.Should().Be(null);
+            new TreeItemData<int>().Icon.Should().Be(null);
+            new TreeItemData<int>().HasChildren.Should().Be(false);
+            new TreeItemData<int>().Children.Should().BeNull();
+
+            var data = new TreeItemData<string>()
+            {
+                Value = "val",
+                Icon = "i",
+                Text = "t",
+                Expandable = false,
+                Expanded = true,
+                Selected = true,
+                Children = [new TreeItemData<string>()]
+            };
+            data.Value.Should().Be("val");
+            data.Icon.Should().Be("i");
+            data.Text.Should().Be("t");
+            data.Expandable.Should().Be(false);
+            data.Expanded.Should().Be(true);
+            data.Selected.Should().Be(true);
+            data.HasChildren.Should().Be(true);
+            data.Children.Count.Should().Be(1);
+            new TreeItemData<int> { Value = 17 }.Should().Be(new TreeItemData<int> { Value = 17 });
+            new TreeItemData<int> { Value = 17 }.Should().NotBe(new TreeItemData<int> { Value = 77 });
+            new TreeItemData<int> { Value = 17 }.GetHashCode().Should().Be(17.GetHashCode());
+            Equals(new TreeItemData<int> { Value = 17 }, new TreeItemData<int> { Value = 17 }).Should().Be(true);
+            Equals(new TreeItemData<int> { Value = 17 }, new TreeItemData<int> { Value = 18 }).Should().Be(false);
+            Equals(new TreeItemData<int> { Value = 17 }, null).Should().Be(false);
+            var x = new TreeItemData<int> { Value = 17 };
+            Equals(x, x).Should().Be(true);
+            x.Equals(x).Should().Be(true);
+            x.Equals(null).Should().Be(false);
+            new TreeItemData<string>().GetHashCode().Should().Be(0);
+            new TreeItemData<string>().Equals(new TreeItemData<string>()).Should().Be(true);
+            new TreeItemData<int>().Value.Should().Be(default);
+        }
+
+        [Test]
         public void TreeViewItem_DoubleClick_CheckExpanded()
         {
             var comp = Context.RenderComponent<TreeViewTest3>();
@@ -518,8 +564,8 @@ namespace MudBlazor.UnitTests.Components
         public async Task TreeViewItem_BodyContent()
         {
             var comp = Context.RenderComponent<TreeViewTest5>();
-            var treeView = comp.FindComponent<MudTreeView<TreeViewTest5.TreeItemData>>();
-            var treeViewItem = comp.FindComponents<MudTreeViewItem<TreeViewTest5.TreeItemData>>()[2];
+            var treeView = comp.FindComponent<MudTreeView<string>>();
+            var treeViewItem = comp.FindComponents<MudTreeViewItem<string>>()[2];
 
             comp.FindAll("ul.mud-treeview").Count.Should().Be(5);
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
@@ -918,6 +964,24 @@ namespace MudBlazor.UnitTests.Components
             isExpanded("tasks.json").Should().Be(false);
             isExpanded("images").Should().Be(false);
             isExpanded("logo.png").Should().Be(false);
+        }
+
+        [Test]
+        public void TreeViewItem_SetParameters_ValueIsSetNull_WhenTextUnset_RootServerdataIsSet_Throw()
+        {
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+            {
+                var comp = Context.RenderComponent<TreeViewTest8>();
+                comp.SetParametersAndRender();
+                comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
+            });
+
+#nullable enable 
+            MudTreeView<string>? nullInstanceTree = null;
+            MudTreeViewItem<string>? nullInstanceItem = null;
+#nullable disable
+
+            exception.Message.Should().Be($"'{nameof(MudTreeView<string>)}.{nameof(nullInstanceTree.ServerData)}' requires '{nameof(nullInstanceTree.ItemTemplate)}.{nameof(MudTreeViewItem<string>)}.{nameof(nullInstanceItem.Value)}' to be supplied.");
         }
     }
 }

@@ -8,10 +8,10 @@ namespace MudBlazor.Charts
     /// <summary>
     /// Represents a chart which displays values as a percentage of a circle.
     /// </summary>
-    partial class Pie : MudChartBase
+    partial class Pie : MudCategoryChartBase
     {
         /// <summary>
-        /// Gets or sets the chart, if any, containing this component.
+        /// The chart, if any, containing this component.
         /// </summary>
         [CascadingParameter]
         public MudChart MudChartParent { get; set; }
@@ -21,6 +21,8 @@ namespace MudBlazor.Charts
 
         protected override void OnParametersSet()
         {
+            base.OnParametersSet();
+
             _paths.Clear();
             _legends.Clear();
 

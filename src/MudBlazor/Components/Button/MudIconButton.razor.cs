@@ -8,6 +8,11 @@ namespace MudBlazor
     /// <summary>
     /// Represents a button consisting of an icon.
     /// </summary>
+    /// <remarks>
+    /// Creates a <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Button">button</see> element,
+    /// or <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a">anchor</see> if <c>Href</c> is set.<br/>
+    /// You can directly add attributes like <c>title</c> or <c>aria-label</c>.
+    /// </remarks>
     public partial class MudIconButton : MudBaseButton, IHandleEvent
     {
         protected string Classname => new CssBuilder("mud-button-root mud-icon-button")
@@ -27,7 +32,7 @@ namespace MudBlazor
         protected bool AsButton => Variant != Variant.Text;
 
         /// <summary>
-        /// Gets or sets the icon to display.
+        /// The icon to display.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -37,7 +42,7 @@ namespace MudBlazor
         public string? Icon { get; set; }
 
         /// <summary>
-        /// Gets or sets the color of the button.
+        /// The color of the button.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
@@ -47,7 +52,7 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// Gets or sets the size of the button.
+        /// The size of the button.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Size.Medium"/>.
@@ -57,17 +62,17 @@ namespace MudBlazor
         public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
-        /// Gets or sets any negative margin applied.
+        /// The amount of negative margin applied.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Edge.False"/>.
+        /// Defaults to <see cref="Edge.False"/>.  Other values are <see cref="Edge.Start"/> and <see cref="Edge.End"/>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
         public Edge Edge { get; set; }
 
         /// <summary>
-        /// Gets or sets the variation to use.
+        /// The variation to use.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Variant.Text"/>.  Other values include <see cref="Variant.Filled"/> and <see cref="Variant.Outlined"/>.
@@ -77,7 +82,7 @@ namespace MudBlazor
         public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        /// Gets or sets any custom content within this button.
+        /// The custom content within this button.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Only displays if <see cref="Icon"/> is not set.

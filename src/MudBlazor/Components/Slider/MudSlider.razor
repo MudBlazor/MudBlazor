@@ -4,7 +4,7 @@
 @typeparam T
 
 <div class="@Classname" style="@Style">
-	@if (ChildContent != null)
+	@if (ChildContent is not null)
 	{
 		<MudText Typo="Typo.body1">@ChildContent</MudText>
 	}
@@ -42,11 +42,11 @@
             <div class="mud-slider-value-label" style="@($"left:{Width}%;")">
                 @if (ValueLabelContent is null)
                 {
-                    @_valueState.Value?.ToString(ValueLabelStringFormat, ValueLabelCultureInfo)
+                    @_valueState.Value.ToString(ValueLabelFormat, Culture)
                 }
                 else
                 {
-                    @ValueLabelContent(_valueState.Value)
+                    @ValueLabelContent(new SliderContext<T>(_valueState.Value, _nullableValueState.Value))
                 }
             </div>
         }

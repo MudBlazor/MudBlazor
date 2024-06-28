@@ -6,15 +6,16 @@
     <div class="@OuterClassname" id="@_elementId" @onfocusout="@OnFocusOutAsync">
         <MudInputControl Label="@Label"
                          Variant="@Variant"
+                         HelperId="@GetHelperId()"
                          HelperText="@HelperText"
                          HelperTextOnFocus="@HelperTextOnFocus"
                          FullWidth="@FullWidth"
                          Margin="@Margin"
                          Class="@Classname"
                          Style="@Style"
-                         Error="@Error"
-                         ErrorText="@ErrorText"
+                         Error="@HasErrors"
                          ErrorId="@ErrorId"
+                         ErrorText="@GetErrorText()"
                          Disabled="@GetDisabledState()"
                          Required="@Required"
                          ForId="@(InputIdState.Value ?? string.Empty)"
@@ -27,18 +28,23 @@
                           Placeholder="@Placeholder"
                           Label="@Label"
                           Variant="@Variant"
+                          Typo="@Typo"
                           TextUpdateSuppression="false"
                           Value="@(Strict && !IsValueInList ? null : Text)"
                           Underline="@Underline"
                           Disabled="@GetDisabledState()"
-                          ReadOnly="true" Error="@Error"
+                          ReadOnly="true"
+                          Error="@Error"
                           ErrorId="@ErrorId"
-                          OnAdornmentClick="@OnAdornmentClick"
+                          HelperId="@GetHelperId()"
+                          HelperText="@HelperText"
+                          AdornmentText="@AdornmentText"
                           AdornmentIcon="@_currentIcon"
                           Adornment="@Adornment"
                           AdornmentColor="@AdornmentColor"
                           IconSize="@IconSize"
-                          AdornmentText="@AdornmentText"
+                          AdornmentAriaLabel="@AdornmentAriaLabel"
+                          OnAdornmentClick="@OnAdornmentClick"
                           Clearable="@Clearable"
                           OnClearButtonClick="@(async (e) => await SelectClearButtonClickHandlerAsync(e))"
                           @attributes="UserAttributes"
@@ -50,7 +56,7 @@
                         @GetSelectedValuePresenter()
                     }
                 </MudInput>
-                <MudPopover Open=@(_isOpen)
+                <MudPopover Open=@(_open)
                             MaxHeight="@MaxHeight"
                             AnchorOrigin="@AnchorOrigin"
                             TransformOrigin="@TransformOrigin"
@@ -86,5 +92,5 @@
     </CascadingValue>
 
 </CascadingValue>
-<!-- mousedown instead of click needed to close the menu before OnLostFocus runs -->
-<MudOverlay Visible="_isOpen" @onmousedown="@(() => CloseMenu(false))" LockScroll="@LockScroll" />
+<!-- pointerdown instead of click needed to close the menu before OnLostFocus runs -->
+<MudOverlay Visible="_open" @onpointerdown="@(() => CloseMenu(false))" LockScroll="@LockScroll" />
