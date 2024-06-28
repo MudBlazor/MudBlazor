@@ -78,7 +78,7 @@ body:
     attributes:
       label: Version (working)
       description: Did it work on a previous version? If so, which version?
-      placeholder: 7.x.x
+      placeholder: 6.x.x
   - type: dropdown
     id: browsers
     attributes:
