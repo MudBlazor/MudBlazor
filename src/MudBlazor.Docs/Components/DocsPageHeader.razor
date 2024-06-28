@@ -26,6 +26,7 @@
 {
     <div class="docs-page-header my-16">
         @SpecialHeaderContent
+        <DocsRenderBenchmark />
     </div>
 }
 else
@@ -33,6 +34,7 @@ else
     <div class="docs-page-header">
         <MudText Typo="@Typo.h4">@Title</MudText>
         <MudText Typo="@Typo.body1">@GetSubTitle() @Description</MudText>
+        <DocsRenderBenchmark />
     </div>
 }
 
