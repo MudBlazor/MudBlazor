@@ -567,7 +567,7 @@ namespace MudBlazor
                 CurrentPage = 0;
 
             Loading = false;
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
             Context?.PagerStateHasChanged?.Invoke();
         }
 
