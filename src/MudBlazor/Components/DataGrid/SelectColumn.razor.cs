@@ -49,9 +49,26 @@ public partial class SelectColumn<T>
     public bool? DragAndDropEnabled { get; set; } = false;
 
     /// <summary>
-    /// Determines whether this column can be hidden. This overrides the Hideable parameter on the DataGrid.
+    /// Allows this column to be hidden.
     /// </summary>
-    [Parameter] public bool? Hideable { get; set; }
-    [Parameter] public bool Hidden { get; set; }
-    [Parameter] public EventCallback<bool> HiddenChanged { get; set; }
+    /// <remarks>
+    /// Defaults to <c>null</c>.  When set, this overrides the <see cref="MudDataGrid{T}.Hideable"/> property.
+    /// </remarks>
+    [Parameter]
+    public bool? Hideable { get; set; }
+
+    /// <summary>
+    /// Hides this column.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    [Parameter]
+    public bool Hidden { get; set; }
+
+    /// <summary>
+    /// Occurs when the <see cref="Hidden"/> property has changed.
+    /// </summary>
+    [Parameter]
+    public EventCallback<bool> HiddenChanged { get; set; }
 }
