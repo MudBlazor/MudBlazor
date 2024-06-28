@@ -13,6 +13,8 @@ namespace MudBlazor;
 /// <typeparam name="T">The kind of item managed by the column.</typeparam>
 public partial class HierarchyColumn<T> : MudComponentBase
 {
+    private bool _finishedInitialExpanded;
+
     /// <summary>
     /// The icon to display for the close button.
     /// </summary>
@@ -41,7 +43,7 @@ public partial class HierarchyColumn<T> : MudComponentBase
     /// The function which determines whether buttons are disabled.
     /// </summary>
     [Parameter]
-    public Func<T, bool> ButtonDisabledFunc { get; set; } = x => false;
+    public Func<T, bool> ButtonDisabledFunc { get; set; } = _ => false;
 
     /// <summary>
     /// Allows this column to be reordered via drag-and-drop operations.
@@ -75,4 +77,25 @@ public partial class HierarchyColumn<T> : MudComponentBase
     /// </summary>
     [Parameter]
     public EventCallback<bool> HiddenChanged { get; set; }
+
+    /// <summary>
+    /// The function which determines whether the row should be initially expanded.
+    /// </summary>
+    /// <remarks>
+    /// This function takes an item of type <typeparamref name="T"/> as input and returns a boolean indicating
+    /// whether the row should be expanded.
+    /// Defaults to a function that always returns <c>false</c>.
+    /// </remarks>
+    [Parameter]
+    public Func<T, bool> InitiallyExpandedFunc { get; set; } = _ => false;
+
+    /// <inheritdoc/>
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (firstRender)
+        {
+            _finishedInitialExpanded = true;
+        }
+    }
 }
