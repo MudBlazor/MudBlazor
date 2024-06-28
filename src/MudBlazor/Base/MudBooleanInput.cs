@@ -19,12 +19,10 @@ namespace MudBlazor
 
         protected MudBooleanInput() : base(new BoolConverter<T?>())
         {
-            var fallbackValueChanged = EventCallback.Factory.Create<T?>(this, newValue => Value = newValue);
             using var registerScope = CreateRegisterScope();
             _valueState = registerScope.RegisterParameter<T?>(nameof(Value))
                 .WithParameter(() => Value)
                 .WithEventCallback(() => ValueChanged)
-                .WithFallbackEventCallback(() => fallbackValueChanged)
                 .WithChangeHandler(OnValueChangedAsync);
         }
 
@@ -133,6 +131,10 @@ namespace MudBlazor
             await base.ResetValueAsync();
         }
 
+
+        protected virtual Task OnValueChangedAsync(ParameterChangedEventArgs<T?> args)
+            => UpdateFormValueAsync(args.Value);
+
         private async Task SetCheckedAsync(T? value)
         {
             if (GetReadOnlyState() || GetDisabledState())
@@ -142,12 +144,16 @@ namespace MudBlazor
 
             // let parameter state handle the value, then update the input state
             await _valueState.SetValueAsync(value, ParameterStateValueChangeTiming.AfterEventCallbacks);
+            // ParameterState won't call ChangeHandler without ValueChanged, so we have to update the form value manually
+            if (ValueChanged.HasDelegate is false)
+            {
+                await UpdateFormValueAsync(value);
+            }
         }
 
-        protected virtual async Task OnValueChangedAsync(ParameterChangedEventArgs<T?> args)
+        private async Task UpdateFormValueAsync(T? value)
         {
-            // update form state
-            _value = args.Value;
+            _value = value;
             await BeginValidateAsync();
             FieldChanged(_value);
         }

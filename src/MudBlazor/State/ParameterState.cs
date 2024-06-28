@@ -57,7 +57,7 @@ public enum ParameterStateValueChangeTiming
     /// Sets <see cref="ParameterState{T}.Value"/> after the event callbacks have been executed.
     /// </summary>
     /// <remarks>
-    /// When a parameter event callback is provided we let Blazor handle the update. When a component fallback event callback is provided, we update after execution of the callback by using the value from the component.
+    /// When a parameter event callback is provided we let Blazor handle the update.
     /// </remarks>
     AfterEventCallbacks
 }

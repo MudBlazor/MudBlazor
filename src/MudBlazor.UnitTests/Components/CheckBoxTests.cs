@@ -28,7 +28,7 @@ namespace MudBlazor.UnitTests.Components
                 .Find(".mud-checkbox span").ClassList.Should().NotContain("mud-checkbox-false");
             Context.RenderComponent<MudCheckBox<bool>>(self => self.Add(x => x.Value, true))
                 .Find(".mud-checkbox span").ClassList.Should().NotContain("mud-checkbox-null");
-            var comp = Context.RenderComponent<MudCheckBox<bool?>>(self => self
+            var comp = Context.RenderComponent<CheckBoxWithTwoWayBindingTest<bool?>>(self => self
                 .Add(x => x.Value, null)
                 .Add(x => x.TriState, true));
             comp.Find(".mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
@@ -46,7 +46,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CheckBoxTest1()
         {
-            var comp = Context.RenderComponent<MudCheckBox<bool>>();
+            var comp = Context.RenderComponent<CheckBoxWithTwoWayBindingTest<bool>>();
             // print the generated html
             // select elements needed for the test
             var box = comp.Instance;
@@ -65,7 +65,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CheckBoxTest2()
         {
-            var comp = Context.RenderComponent<MudCheckBox<bool>>(ComponentParameter.CreateParameter("Value", true));
+            var comp = Context.RenderComponent<CheckBoxWithTwoWayBindingTest<bool>>(parameters => parameters
+                .Add(p => p.Value, true));
             // select elements needed for the test
             var box = comp.Instance;
             // check initial state
@@ -134,7 +135,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CheckBoxTriStateTest()
         {
-            var comp = Context.RenderComponent<MudCheckBox<bool?>>(ComponentParameter.CreateParameter("TriState", true));
+            var comp = Context.RenderComponent<CheckBoxWithTwoWayBindingTest<bool?>>(parameters => parameters
+                .Add(p => p.TriState, true));
             // print the generated html
             // select elements needed for the test
             var box = comp.Instance;
@@ -209,7 +211,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CheckBoxTest_KeyboardInput()
         {
-            var comp = Context.RenderComponent<MudCheckBox<bool?>>();
+            var comp = Context.RenderComponent<CheckBoxWithTwoWayBindingTest<bool?>>();
             comp.SetParam(x => x.TriState, true);
             // print the generated html
             // select elements needed for the test
@@ -248,7 +250,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
 
-            comp.SetParam("Disabled", true);
+            comp.SetParam(p => p.Disabled, true);
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
         }
@@ -315,7 +317,9 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Dark, Color.Primary)]
         public void CheckBoxColorTest(Color color, Color uncheckedcolor)
         {
-            var comp = Context.RenderComponent<MudCheckBox<bool>>(x => x.Add(c => c.Color, color).Add(b => b.UncheckedColor, uncheckedcolor));
+            var comp = Context.RenderComponent<CheckBoxWithTwoWayBindingTest<bool>>(x => x
+                .Add(c => c.Color, color)
+                .Add(b => b.UncheckedColor, uncheckedcolor));
 
             var box = comp.Instance;
 
@@ -413,7 +417,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Checkbox_inputs_checked_value_should_match_parameter_value()
         {
-            var comp = Context.RenderComponent<MudCheckBox<bool?>>(parameters => parameters
+            var comp = Context.RenderComponent<CheckBoxWithTwoWayBindingTest<bool?>>(parameters => parameters
                 .Add(p => p.TriState, true));
 
             // change value using parameter

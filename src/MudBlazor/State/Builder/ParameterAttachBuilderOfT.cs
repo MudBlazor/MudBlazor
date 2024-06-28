@@ -27,7 +27,6 @@ internal class ParameterAttachBuilder<T>
     private ParameterMetadata? _metadata;
     private Func<T>? _getParameterValueFunc;
     private Func<EventCallback<T>> _eventCallbackFunc = () => default;
-    private Func<EventCallback<T>> _fallbackEventCallbackFunc = () => default;
     private IParameterChangedHandler<T>? _parameterChangedHandler;
     private IParameterEqualityComparerSwappable<T>? _comparer;
 
@@ -63,18 +62,6 @@ internal class ParameterAttachBuilder<T>
     public ParameterAttachBuilder<T> WithEventCallbackFunc(Func<EventCallback<T>> eventCallbackFunc)
     {
         _eventCallbackFunc = eventCallbackFunc;
-
-        return this;
-    }
-
-    /// <summary>
-    /// Sets the function to create the fallback event callback for the parameter.
-    /// </summary>
-    /// <param name="fallbackEventCallbackFunc">The function to create the fallback event callback.</param>
-    /// <returns>The current instance of the builder.</returns>
-    public ParameterAttachBuilder<T> WithFallbackEventCallbackFunc(Func<EventCallback<T>> fallbackEventCallbackFunc)
-    {
-        _fallbackEventCallbackFunc = fallbackEventCallbackFunc;
 
         return this;
     }
@@ -182,7 +169,6 @@ internal class ParameterAttachBuilder<T>
             _metadata ?? throw new ArgumentNullException(nameof(_metadata)),
             _getParameterValueFunc ?? throw new ArgumentNullException(nameof(_getParameterValueFunc)),
             _eventCallbackFunc,
-            _fallbackEventCallbackFunc,
             _parameterChangedHandler,
             _comparer
         );

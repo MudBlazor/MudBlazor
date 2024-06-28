@@ -33,7 +33,6 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     private readonly Func<T> _getParameterValueFunc;
     private readonly IParameterEqualityComparerSwappable<T> _comparer;
     private readonly Func<EventCallback<T>> _eventCallbackFunc;
-    private readonly Func<EventCallback<T>> _fallbackEventCallbackFunc;
     private readonly IParameterChangedHandler<T>? _parameterChangedHandler;
 
     [MemberNotNullWhen(true, nameof(_parameterChangedEventArgs))]
@@ -63,12 +62,11 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     /// </summary>
     public IParameterEqualityComparerSwappable<T> Comparer => _comparer;
 
-    private ParameterStateInternal(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Func<EventCallback<T>> fallbackEventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, IParameterEqualityComparerSwappable<T>? comparer = null)
+    private ParameterStateInternal(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, IParameterEqualityComparerSwappable<T>? comparer = null)
     {
         Metadata = metadata;
         _getParameterValueFunc = getParameterValueFunc;
         _eventCallbackFunc = eventCallbackFunc;
-        _fallbackEventCallbackFunc = fallbackEventCallbackFunc;
         _parameterChangedHandler = parameterChangedHandler;
         _comparer = comparer ?? new ParameterEqualityComparerSwappable<T>(() => EqualityComparer<T>.Default);
         _lastValue = default;
@@ -76,11 +74,11 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     }
 
     /// <inheritdoc/>
-    public override async Task SetValueAsync(T value, ParameterStateValueChangeTiming parameterStateValueChangeTiming = ParameterStateValueChangeTiming.Immediate)
+    public override Task SetValueAsync(T value, ParameterStateValueChangeTiming parameterStateValueChangeTiming = ParameterStateValueChangeTiming.Immediate)
     {
         if (_comparer.Equals(Value, value))
         {
-            return;
+            return Task.CompletedTask;
         }
 
         if (parameterStateValueChangeTiming is ParameterStateValueChangeTiming.Immediate)
@@ -91,25 +89,15 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
         var eventCallback = _eventCallbackFunc();
         if (eventCallback.HasDelegate)
         {
-            await eventCallback.InvokeAsync(value);
-            return;
+            return eventCallback.InvokeAsync(value);
         }
 
-        var fallbackEventCallback = _fallbackEventCallbackFunc();
-        if (fallbackEventCallback.HasDelegate)
+        if (parameterStateValueChangeTiming is ParameterStateValueChangeTiming.AfterEventCallbacks)
         {
-            var currentParameterValue = _getParameterValueFunc();
-            await fallbackEventCallback.InvokeAsync(value);
-            var newParameterValue = _getParameterValueFunc();
-
-            if (_comparer.Equals(currentParameterValue, newParameterValue) is false)
-            {
-                _value = newParameterValue;
-                // since our fallback event callback belongs to the component and won't invoke OnParametersSet, we need to trigger the parameter change handler manually
-                _parameterChangedEventArgs = new ParameterChangedEventArgs<T>(Metadata.ParameterName, currentParameterValue, newParameterValue);
-                await ParameterChangeHandleAsync();
-            }
+            _value = value;
         }
+
+        return Task.CompletedTask;
     }
 
     /// <inheritdoc />
@@ -189,18 +177,17 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     ///  <param name="metadata">The parameter's metadata.</param>
     ///  <param name="getParameterValueFunc">A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
     ///  <param name="eventCallbackFunc">A function that allows <see cref="ParameterState{T}"/> to get the <see cref="EventCallback{T}"/> of the parameter.</param>
-    ///  <param name="fallbackEventCallbackFunc">A function that allows <see cref="ParameterState{T}"/> to get a fallback for the <see cref="EventCallback{T}"/> of the parameter if no <c>eventCallbackFunc</c> is provided.</param>
     ///  <param name="parameterChangedHandler">A change handler containing code that needs to be executed when the parameter value changes/</param>
     ///  <param name="comparer">An optional comparer used to determine equality of parameter values.</param>
     ///  <remarks>
     ///  For details and usage please read CONTRIBUTING.md
     ///  </remarks>
     ///  <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
-    public static ParameterStateInternal<T> Attach(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Func<EventCallback<T>> fallbackEventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, IParameterEqualityComparerSwappable<T>? comparer = null)
+    public static ParameterStateInternal<T> Attach(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, IParameterEqualityComparerSwappable<T>? comparer = null)
     {
         metadata = ParameterMetadataRules.Morph(metadata);
 
-        return new ParameterStateInternal<T>(metadata, getParameterValueFunc, eventCallbackFunc, fallbackEventCallbackFunc, parameterChangedHandler, comparer);
+        return new ParameterStateInternal<T>(metadata, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler, comparer);
     }
 
     /// <inheritdoc />
