@@ -150,15 +150,14 @@ public partial class SectionContent
 
     protected virtual async void RunOnTryMudBlazor()
     {
-        var firstFile = "";
-
-        if (Codes != null)
+        string firstFile;
+        if (Codes == null)
         {
-            firstFile = Codes.FirstOrDefault().code;
+            firstFile = Code;
         }
         else
         {
-            firstFile = Code;
+            firstFile = Codes.FirstOrDefault().code;
         }
 
         // We use a separator that wont be in code so we can send 2 files later
