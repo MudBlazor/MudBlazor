@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     tags: 
-      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v7.[0-9]+.[0-9]+"
 
 jobs:
   wait-for-nuget:
