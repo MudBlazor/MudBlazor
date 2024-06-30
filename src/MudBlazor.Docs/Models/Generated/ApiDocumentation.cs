@@ -208,7 +208,7 @@ public static partial class ApiDocumentation
     /// <remarks>
     /// This can be removed once it is decided that users are no longer using legacy API links.
     /// </remarks>
-    private readonly static Dictionary<string, string> LegacyToModernTypeNames = new()
+    private static readonly Dictionary<string, string> LegacyToModernTypeNames = new()
     {
         { "alert", "MudBlazor.MudAlert" },
         { "appbar", "MudBlazor.MudAppBar" },
