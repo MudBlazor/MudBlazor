@@ -27,7 +27,8 @@ public partial class SelectColumn<T>
     /// <remarks>
     /// When <c>true</c>, all rows can be checked by selecting this checkbox.
     /// </remarks>
-    [Parameter] public bool ShowInFooter { get; set; } = true;
+    [Parameter]
+    public bool ShowInFooter { get; set; } = false;
 
     /// <summary>
     /// The size of the checkbox icon.
@@ -35,5 +36,39 @@ public partial class SelectColumn<T>
     /// <remarks>
     /// Defaults to <see cref="Size.Medium"/>.
     /// </remarks>
-    [Parameter] public Size Size { get; set; } = Size.Medium;
+    [Parameter]
+    public Size Size { get; set; } = Size.Medium;
+
+    /// <summary>
+    /// Allows this column to be reordered via drag-and-drop operations.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>. When set, this overrides the <see cref="MudDataGrid{T}.DragDropColumnReordering"/> property.
+    /// </remarks>
+    [Parameter]
+    public bool? DragAndDropEnabled { get; set; } = false;
+
+    /// <summary>
+    /// Allows this column to be hidden.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  When set, this overrides the <see cref="MudDataGrid{T}.Hideable"/> property.
+    /// </remarks>
+    [Parameter]
+    public bool? Hideable { get; set; }
+
+    /// <summary>
+    /// Hides this column.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    [Parameter]
+    public bool Hidden { get; set; }
+
+    /// <summary>
+    /// Occurs when the <see cref="Hidden"/> property has changed.
+    /// </summary>
+    [Parameter]
+    public EventCallback<bool> HiddenChanged { get; set; }
 }

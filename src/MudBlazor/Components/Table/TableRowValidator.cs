@@ -5,8 +5,15 @@ using MudBlazor.Interfaces;
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// A validator for rows within a <see cref="MudTable{T}"/>.
+    /// </summary>
     public class TableRowValidator : IForm
     {
+        /// <summary>
+        /// Whether the table row is valid.
+        /// </summary>
         public bool IsValid
         {
             get
@@ -16,8 +23,14 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// The validation errors for this row.
+        /// </summary>
         public string[] Errors => _errors.ToArray();
 
+        /// <summary>
+        /// The model being edited by the form.
+        /// </summary>
         public object? Model { get; set; }
 
         protected HashSet<string> _errors = new();
@@ -44,6 +57,9 @@ namespace MudBlazor
 
         protected HashSet<IFormComponent> _formControls = new();
 
+        /// <summary>
+        /// Checks for data errors within this row.
+        /// </summary>
         public void Validate()
         {
             _errors.Clear();

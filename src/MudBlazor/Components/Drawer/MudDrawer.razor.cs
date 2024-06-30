@@ -13,6 +13,8 @@ namespace MudBlazor
     /// <summary>
     /// Represents a navigation panel docked to the side of the page.
     /// </summary>
+    /// <seealso cref="MudDrawerContainer"/>
+    /// <seealso cref="MudDrawerHeader"/>
     public partial class MudDrawer : MudComponentBase, INavigationEventReceiver, IBrowserViewportObserver, IDisposable
     {
         private double _height;
@@ -28,6 +30,9 @@ namespace MudBlazor
         private bool _keepInitialState;
         private Breakpoint _lastUpdatedBreakpoint = Breakpoint.None;
 
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
         public MudDrawer()
         {
             using var registerScope = CreateRegisterScope();
@@ -104,7 +109,7 @@ namespace MudBlazor
         /// The size of the drop shadow.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>4</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
+        /// Defaults to <c>1</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Appearance)]
@@ -124,21 +129,24 @@ namespace MudBlazor
         /// The color of the drawer.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
+        /// Defaults to <see cref="Color.Default"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Appearance)]
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// Variant of the drawer. It specifies how the drawer will be displayed.
+        /// The display variant of this drawer.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="DrawerVariant.Responsive"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public DrawerVariant Variant { get; set; } = DrawerVariant.Responsive;
 
         /// <summary>
-        /// The content within this component.
+        /// The content within this drawer.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]

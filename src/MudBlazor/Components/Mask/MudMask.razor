@@ -13,7 +13,8 @@
                            Size="@IconSize"
                            Text="@AdornmentText"
                            Edge="@Edge.Start"
-                           AdornmentClick="@OnAdornmentClick"/>
+                           AdornmentClick="@OnAdornmentClick"
+                           AriaLabel="@AdornmentAriaLabel" />
     }
 
     @if (Lines > 1)
@@ -31,7 +32,9 @@
                   @onfocus="OnFocused"
                   @oncut="OnCut"
                   @oncopy="OnCopy"
-                  inputmode="@InputMode.ToString()"
+                  inputmode="@InputMode.ToDescriptionString()"
+                  aria-describedby="@GetAriaDescribedByString()"
+                  aria-invalid="@Error.ToString().ToLowerInvariant()"
                   required="@Required"
                   aria-required="@Required.ToString().ToLowerInvariant()">
             @Text
@@ -52,7 +55,9 @@
                @onfocus="OnFocused"
                @oncut="OnCut"
                @oncopy="OnCopy"
-               inputmode="@InputMode.ToString()"
+               inputmode="@InputMode.ToDescriptionString()"
+               aria-describedby="@GetAriaDescribedByString()"
+               aria-invalid="@Error.ToString().ToLowerInvariant()"
                required="@Required"
                aria-required="@Required.ToString().ToLowerInvariant()">
     }
@@ -98,7 +103,8 @@
                            Size="@IconSize"
                            Text="@AdornmentText"
                            Edge="@Edge.End"
-                           AdornmentClick="@OnAdornmentClick"/>
+                           AdornmentClick="@OnAdornmentClick"
+                           AriaLabel="@AdornmentAriaLabel" />
     }
 
     @if (Variant == Variant.Outlined)

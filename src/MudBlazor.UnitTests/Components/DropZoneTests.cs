@@ -1254,5 +1254,52 @@ namespace MudBlazor.UnitTests.Components
 
             secondDropItemText.Should().Be("Second Item");
         }
+
+
+        [Test]
+        public async Task DropZone_IsOriginTest()
+        {
+            var comp = Context.RenderComponent<DropzoneBasicTest>();
+
+            var container = comp.Find(".mud-drop-container");
+            container.Children.Should().HaveCount(2);
+
+            var firstDropZone = container.Children[0];
+            firstDropZone.Children.Should().HaveCount(2);
+
+            var firstDropItem = firstDropZone.Children[1];
+
+            firstDropItem.TextContent.Should().Be("First Item");
+            await firstDropItem.DragStartAsync(new DragEventArgs());
+
+            var containerComponent = comp.FindComponent<MudDropContainer<TestComponents.DropzoneBasicTest.SimpleDropItem>>();
+            containerComponent.Instance.IsOrigin(0, "Column 1").Should().Be(true);
+#pragma warning disable CS0618 // Type or member is obsolete
+            containerComponent.Instance.IsOrign(0, "Column 1").Should().Be(true);
+#pragma warning restore CS0618 // Type or member is obsolete
+        }
+
+        [Test]
+        public async Task DropZone_GetTransactionOrignZoneIdentifierTest()
+        {
+            var comp = Context.RenderComponent<DropzoneBasicTest>();
+
+            var container = comp.Find(".mud-drop-container");
+            container.Children.Should().HaveCount(2);
+
+            var firstDropZone = container.Children[0];
+            firstDropZone.Children.Should().HaveCount(2);
+
+            var firstDropItem = firstDropZone.Children[1];
+
+            firstDropItem.TextContent.Should().Be("First Item");
+            await firstDropItem.DragStartAsync(new DragEventArgs());
+
+            var containerComponent = comp.FindComponent<MudDropContainer<TestComponents.DropzoneBasicTest.SimpleDropItem>>();
+            containerComponent.Instance.GetTransactionOrignZoneIdentifier().Should().Be("Column 1");
+#pragma warning disable CS0618 // Type or member is obsolete
+            containerComponent.Instance.GetTransactionOrignZoneIdentiifer().Should().Be("Column 1");
+#pragma warning restore CS0618 // Type or member is obsolete
+        }
     }
 }

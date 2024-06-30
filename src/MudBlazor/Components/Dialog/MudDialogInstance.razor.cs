@@ -8,20 +8,45 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
+#nullable enable
 namespace MudBlazor
 {
+    /// <summary>
+    /// An instance of a <see cref="MudDialog"/>.
+    /// </summary>
+    /// <remarks>
+    /// When a <see cref="MudDialog"/> is shown, a new instance is created.  This instance can then be used to perform actions such as hiding the dialog programmatically.
+    /// </remarks>
+    /// <seealso cref="MudDialog"/>
+    /// <seealso cref="MudDialogProvider"/>
+    /// <seealso cref="DialogOptions"/>
+    /// <seealso cref="DialogParameters{T}"/>
+    /// <seealso cref="DialogReference"/>
+    /// <seealso cref="DialogService"/>
     public partial class MudDialogInstance : MudComponentBase, IDisposable
     {
-        private DialogOptions _options = new();
-        private string _elementId = "dialog_" + Guid.NewGuid().ToString().Substring(0, 8);
-        private IKeyInterceptor _keyInterceptor;
+        private DialogOptions? _options = new();
+        private readonly string _elementId = "dialog_" + Guid.NewGuid().ToString().Substring(0, 8);
+        private IKeyInterceptor? _keyInterceptor;
 
-        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
+        [Inject]
+        private IKeyInterceptorFactory KeyInterceptorFactory { get; set; } = null!;
 
-        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
-        [CascadingParameter] private MudDialogProvider Parent { get; set; }
-        [CascadingParameter] private DialogOptions GlobalDialogOptions { get; set; } = new DialogOptions();
+        [CascadingParameter(Name = "RightToLeft")]
+        public bool RightToLeft { get; set; }
 
+        [CascadingParameter]
+        private MudDialogProvider Parent { get; set; } = null!;
+
+        [CascadingParameter]
+        private DialogOptions GlobalDialogOptions { get; set; } = DialogOptions.Default;
+
+        /// <summary>
+        /// The options used for this dialog.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to the options in the <see cref="MudDialog"/> or options passed during <see cref="DialogService.ShowAsync(Type)"/> methods.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Misc)]  // Behavior and Appearance
         public DialogOptions Options
@@ -35,38 +60,58 @@ namespace MudBlazor
             set => _options = value;
         }
 
+        /// <summary>
+        /// The text displayed at the top of this dialog if <see cref="TitleContent" /> is not set.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
+        /// <summary>
+        /// The custom content at the top of this dialog.
+        /// </summary>
+        /// <remarks>
+        /// This content will display so long as <see cref="Title"/> is not set.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
-        public RenderFragment TitleContent { get; set; }
+        public RenderFragment? TitleContent { get; set; }
 
+        /// <summary>
+        /// The content within this dialog.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to the content of the <see cref="MudDialog"/> being displayed.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
-        public RenderFragment Content { get; set; }
+        public RenderFragment? Content { get; set; }
 
+        /// <summary>
+        /// The unique ID for this instance.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
         public Guid Id { get; set; }
 
         /// <summary>
-        /// Custom close icon.
+        /// The custom icon displayed in the upper-right corner for closing this dialog.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.Close"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Appearance)]
         public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
 
-        private string Position { get; set; }
-        private string DialogMaxWidth { get; set; }
+        private string Position { get; set; } = null!;
+        private string DialogMaxWidth { get; set; } = null!;
         private bool BackdropClick { get; set; } = true;
         private bool CloseOnEscapeKey { get; set; }
         private bool NoHeader { get; set; }
         private bool CloseButton { get; set; }
         private bool FullScreen { get; set; }
         private bool FullWidth { get; set; }
-
 
         protected override void OnInitialized()
         {
@@ -80,7 +125,7 @@ namespace MudBlazor
                 //Since CloseOnEscapeKey is the only thing to be handled, turn interceptor off
                 if (CloseOnEscapeKey)
                 {
-                    _keyInterceptor = _keyInterceptorFactory.Create();
+                    _keyInterceptor = KeyInterceptorFactory.Create();
 
                     await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                     {
@@ -108,6 +153,13 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Overwrites the current dialog options.
+        /// </summary>
+        /// <param name="options">The new dialog options to use.</param>
+        /// <remarks>
+        /// Use this method to change options while a dialog is open, such as toggling fullscreen mode.
+        /// </remarks>
         public void SetOptions(DialogOptions options)
         {
             Options = options;
@@ -115,6 +167,13 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        /// <summary>
+        /// Overwrites the dialog title.
+        /// </summary>
+        /// <param name="title">The new dialog title to use.</param>
+        /// <remarks>
+        /// Use this method to change the title while a dialog is open, such as when the title reflects a value within this dialog.  Has no effect when <see cref="TitleContent"/> is set.
+        /// </remarks>
         public void SetTitle(string title)
         {
             Title = title;
@@ -122,29 +181,27 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// <para>Close and return null. </para>
-        /// <para>This is a shorthand of Close(DialogResult.Ok((object)null));</para>
+        /// Closes this dialog with a result of <c>DialogResult.Ok</c>.
         /// </summary>
         public void Close()
         {
-            Close(DialogResult.Ok<object>(null));
+            Close(DialogResult.Ok<object?>(null));
         }
 
         /// <summary>
-        /// <para>Close with dialog result.</para>
-        /// <para>Usage: Close(DialogResult.Ok(returnValue))</para>
+        /// Closes this dialog with a custom result.
         /// </summary>
+        /// <param name="dialogResult">The result to include, such as <see cref="DialogResult.Ok{T}(T)"/> or <see cref="DialogResult.Cancel"/>.</param>
         public void Close(DialogResult dialogResult)
         {
             Parent.DismissInstance(Id, dialogResult);
         }
 
         /// <summary>
-        /// <para>Close and directly pass a return value. </para>
-        /// <para>This is a shorthand for Close(DialogResult.Ok(returnValue))</para>
+        /// Closes this dialog with a custom return value.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="returnValue"></param>
+        /// <typeparam name="T">The type of value being returned.</typeparam>
+        /// <param name="returnValue">The custom value to include.</param>
         public void Close<T>(T returnValue)
         {
             var dialogResult = DialogResult.Ok<T>(returnValue);
@@ -152,7 +209,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Cancel the dialog. DialogResult.Canceled will be set to true
+        /// Closes this dialog with a result of <c>DialogResult.Cancel</c>.
         /// </summary>
         public void Cancel()
         {
@@ -307,13 +364,18 @@ namespace MudBlazor
             await _dialog.OnBackdropClick.InvokeAsync(args);
         }
 
-        private MudDialog _dialog;
+        private MudDialog? _dialog;
         private bool _disposedValue;
 
+        /// <summary>
+        /// Links a dialog with this instance.
+        /// </summary>
+        /// <param name="dialog">The dialog to use.</param>
+        /// <remarks>
+        /// This method is used internally when displaying a new dialog.
+        /// </remarks>
         public void Register(MudDialog dialog)
         {
-            if (dialog == null)
-                return;
             _dialog = dialog;
             Class = dialog.Class;
             Style = dialog.Style;
@@ -324,7 +386,7 @@ namespace MudBlazor
         public new void StateHasChanged() => base.StateHasChanged();
 
         /// <summary>
-        /// Cancels all dialogs in dialog provider collection.
+        /// Closes this dialog and any parent dialogs.
         /// </summary>
         public void CancelAll()
         {
@@ -351,6 +413,9 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Releases resources used by this dialog.
+        /// </summary>
         public void Dispose()
         {
             Dispose(disposing: true);

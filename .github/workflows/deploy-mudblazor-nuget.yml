@@ -41,26 +41,18 @@ jobs:
     name: Deploy mudblazor nuget to nuget.org
     needs: get-version
     runs-on: ubuntu-latest
-    env:
-      ASSEMBLY_VERSION: 1.0.0
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: 'refs/tags/v${{ needs.get-version.outputs.VERSION }}'
     - name: Setup dotnet version
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
-          6.0.x
-          7.0.x
-    - name: Assembly version
-      run: |
-        PACKAGE_VERSION="${{ needs.get-version.outputs.VERSION }}"
-        ASSEMBLY_VERSION=$(echo $PACKAGE_VERSION | sed 's/-preview//')
-        echo "ASSEMBLY_VERSION=$ASSEMBLY_VERSION" >> $GITHUB_ENV
+          8.0.x
     - name: Pack nuget package
-      run: dotnet pack -c Release --output nupkgs /p:PackageVersion=${{ needs.get-version.outputs.VERSION }} /p:AssemblyVersion=${{ env.ASSEMBLY_VERSION }} /p:Version=${{  env.ASSEMBLY_VERSION }}
+      run: dotnet pack -c Release --output nupkgs /p:Version=${{ needs.get-version.outputs.VERSION }}
       working-directory: ./src/MudBlazor
     - name: Publish nuget package
       run: dotnet nuget push nupkgs/*.nupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate

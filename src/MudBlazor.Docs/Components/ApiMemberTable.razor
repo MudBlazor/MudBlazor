@@ -1,0 +1,46 @@
+﻿<MudTable T="DocumentedMember" @ref="Table" ServerData="@GetData"
+          Elevation="0" Class="ma-0 mud-width-full" Hover="true" Dense="true"
+          AllowUnsorted="false" GroupBy="@CurrentGroups">
+    <GroupHeaderTemplate>
+        @if (CurrentGrouping == ApiMemberGrouping.Inheritance)
+        {
+            <MudTh Class="mud-table-cell-custom-group" colspan="3" aria-label="Grouped by inheritance">
+                <MudText Typo="Typo.h6">@context.Key</MudText>
+            </MudTh>
+        }
+        else if (CurrentGrouping == ApiMemberGrouping.Categories)
+        {
+            <MudTh Class="mud-table-cell-custom-group" colspan="3" aria-label="Grouped by category">
+                <MudText Typo="Typo.h6">@(context.Key ?? "General")</MudText>
+            </MudTh>
+        }
+    </GroupHeaderTemplate>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel T="DocumentedMember" SortLabel="Name" InitialDirection="SortDirection.Ascending">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="DocumentedMember" SortLabel="Type">Type</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="DocumentedMember" SortLabel="Description">Description</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd id="@context.Name" DataLabel="Name">
+            @if (context.DeclaringType != null && context.DeclaringType.Name != Type.Name)
+            {
+                <MudTooltip Text="@("From " + context.DeclaringType.NameFriendly)" Placement="Placement.Top">
+                    <CodeInline>@context.Name</CodeInline>
+                </MudTooltip>
+            }
+            else
+            {
+                <CodeInline>@context.Name</CodeInline>
+            }
+        </MudTd>
+        <MudTd DataLabel="Type">
+            <ApiTypeLink Type="@context.Type" TypeName="@context.TypeName" TypeFriendlyName="@context.TypeFriendlyName" />
+        </MudTd>
+        <MudTd DataLabel="Description">
+            <ApiText Text="@(context.Summary + " " + context.Remarks)" />
+        </MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudAlert Severity="Severity.Info">No members match the current filters.</MudAlert>
+    </NoRecordsContent>
+</MudTable>

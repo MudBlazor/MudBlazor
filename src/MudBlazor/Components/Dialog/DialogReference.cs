@@ -10,60 +10,86 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
+#nullable enable
 namespace MudBlazor
 {
+    /// <summary>
+    /// An instance of a <see cref="MudDialog"/>.
+    /// </summary>
+    /// <seealso cref="MudDialog"/>
+    /// <seealso cref="MudDialogInstance"/>
+    /// <seealso cref="MudDialogProvider"/>
+    /// <seealso cref="DialogOptions"/>
+    /// <seealso cref="DialogParameters{T}"/>
+    /// <seealso cref="DialogService"/>
     public class DialogReference : IDialogReference
     {
-        private readonly TaskCompletionSource<DialogResult> _resultCompletion = new();
+        private readonly TaskCompletionSource<DialogResult?> _resultCompletion = new();
 
         private readonly IDialogService _dialogService;
 
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
+        /// <param name="dialogInstanceId">The unique ID of the dialog.</param>
+        /// <param name="dialogService">The service used to manage dialogs.</param>
         public DialogReference(Guid dialogInstanceId, IDialogService dialogService)
         {
             Id = dialogInstanceId;
             _dialogService = dialogService;
         }
 
+        /// <inheritdoc />
         public void Close()
         {
             _dialogService.Close(this);
         }
 
-        public void Close(DialogResult result)
+        /// <inheritdoc />
+        public void Close(DialogResult? result)
         {
             _dialogService.Close(this, result);
         }
 
-        public virtual bool Dismiss(DialogResult result)
+        /// <inheritdoc />
+        public virtual bool Dismiss(DialogResult? result)
         {
             return _resultCompletion.TrySetResult(result);
         }
 
+        /// <inheritdoc />
         public Guid Id { get; }
 
-        public object Dialog { get; private set; }
-        public RenderFragment RenderFragment { get; set; }
+        /// <inheritdoc />
+        public object? Dialog { get; private set; }
 
-        public Task<DialogResult> Result => _resultCompletion.Task;
+        /// <inheritdoc />
+        public RenderFragment? RenderFragment { get; set; }
+
+        /// <inheritdoc />
+        public Task<DialogResult?> Result => _resultCompletion.Task;
 
         TaskCompletionSource<bool> IDialogReference.RenderCompleteTaskCompletionSource { get; } = new();
 
+        /// <inheritdoc />
         public void InjectDialog(object inst)
         {
             Dialog = inst;
         }
 
+        /// <inheritdoc />
         public void InjectRenderFragment(RenderFragment rf)
         {
             RenderFragment = rf;
         }
 
-        public async Task<T> GetReturnValueAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>()
+        /// <inheritdoc />
+        public async Task<T?> GetReturnValueAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>()
         {
             var result = await Result;
             try
             {
-                return (T)result.Data;
+                return (T?)result?.Data;
             }
             catch (InvalidCastException)
             {

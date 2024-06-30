@@ -30,7 +30,7 @@
                 placeholder="@Placeholder"
                 disabled=@GetDisabledState()
                 readonly="@GetReadOnlyState()"
-                inputmode="@InputMode.ToString()"
+                inputmode="@InputMode.ToDescriptionString()"
                 @oninput="OnInput"
                 @onchange="OnChange"
                 @onblur="@OnBlurredAsync"
@@ -43,9 +43,9 @@
                 @onkeyup:preventDefault="@KeyUpPreventDefault"
                 @onmousewheel="@OnMouseWheel"
                 @onwheel="@OnMouseWheel"
+                aria-describedby="@GetAriaDescribedByString()"
+                aria-invalid="@Error.ToString().ToLowerInvariant()"
                 required="@Required"
-                aria-invalid="@Error.ToString().ToLower()"
-                aria-describedby="@ErrorId"
                 aria-required="@Required.ToString().ToLowerInvariant()">
             @Text
         </textarea>
@@ -66,7 +66,7 @@
                 disabled=@GetDisabledState()
                 readonly="@GetReadOnlyState()"
                 @onblur="@OnBlurredAsync"
-                inputmode="@InputMode.ToString()"
+                inputmode="@InputMode.ToDescriptionString()"
                 pattern="@Pattern"
                 @onkeydown="@InvokeKeyDownAsync"
                 @onkeyup="@InvokeKeyUpAsync"
@@ -75,10 +75,10 @@
                 @onkeyup:preventDefault="@KeyUpPreventDefault"
                 @onmousewheel="@OnMouseWheel"
                 @onwheel="@OnMouseWheel"
+                aria-describedby="@GetAriaDescribedByString()"
+                aria-invalid="@Error.ToString().ToLowerInvariant()"
                 required="@Required"
-                aria-invalid="@Error.ToString().ToLower()"
-                aria-describedby="@ErrorId"
-                aria-required="@Required.ToString().ToLowerInvariant()" />
+                aria-required="@Required.ToString().ToLowerInvariant()">
 
         @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
 

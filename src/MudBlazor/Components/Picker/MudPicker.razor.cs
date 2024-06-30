@@ -286,6 +286,9 @@ namespace MudBlazor
         /// <summary>
         /// The display variant of the text input.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Variant.Text"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Variant Variant { get; set; } = Variant.Text;
