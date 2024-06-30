@@ -107,8 +107,7 @@ public partial class SectionContent
     private async Task CopyTextToClipboard()
     {
         var code = Snippets.GetCode(Code);
-        if (code == null)
-            code = await DocsJsApiService.GetInnerTextByIdAsync(_snippetId);
+        code ??= await DocsJsApiService.GetInnerTextByIdAsync(_snippetId);
         await JsApiService.CopyToClipboardAsync(code ?? $"Snippet '{Code}' not found!");
     }
 
@@ -124,7 +123,7 @@ public partial class SectionContent
 
                 if (!string.IsNullOrEmpty(HighLight))
                 {
-                    if (HighLight.Contains(","))
+                    if (HighLight.Contains(','))
                     {
                         var highlights = HighLight.Split(",");
 
