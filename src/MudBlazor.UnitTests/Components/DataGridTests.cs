@@ -818,6 +818,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridPaginationNoItemsTest()
+        {
+            var comp = Context.RenderComponent<DataGridPaginationNoItemsTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationNoItemsTest.Item>>();
+            // check that the page size dropdown is shown
+            comp.FindComponents<MudSelect<int>>().Count.Should().Be(1);
+
+            dataGrid.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("0-0 of 0");
+        }
+
+        [Test]
         public void DataGridHideNavigationTest()
         {
             var comp = Context.RenderComponent<DataGridPaginationTest>();
