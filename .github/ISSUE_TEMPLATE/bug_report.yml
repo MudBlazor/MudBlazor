@@ -69,7 +69,7 @@ body:
     id: bug-version
     attributes:
       label: Version (bug)
-      description: With which version are you experiencing the issue? Note: v6 is no longer actively maintained and most bug fixes will be reserved for v7.
+      description: With which version are you experiencing the issue? Note that v6 is no longer actively maintained and most bug fixes will be reserved for v7.
       placeholder: 7.x.x
     validations:
       required: true
