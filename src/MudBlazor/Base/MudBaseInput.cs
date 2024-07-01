@@ -28,7 +28,10 @@ namespace MudBlazor
         protected bool _isFocused;
         protected bool _forceTextUpdate;
 
-        protected string? InternalInputId => _inputIdState.Value;
+        /// <summary>
+        /// The resolved input element ID.
+        /// </summary>
+        protected string? InputElementId => _inputIdState.Value;
         private string? _userAttributesId = $"mudinput-{Guid.NewGuid()}";
         private readonly string _componentId = $"mudinput-{Guid.NewGuid()}";
         private readonly ParameterState<string?> _inputIdState;
@@ -419,6 +422,12 @@ namespace MudBlazor
             set => SetFormat(value);
         }
 
+        /// <summary>
+        /// The ID of the input element.
+        /// </summary>
+        /// <remarks>
+        /// When set takes precedence over any internally generated IDs.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string? InputId { get; set; }

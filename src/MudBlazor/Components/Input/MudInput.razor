@@ -25,7 +25,7 @@
                 @ref="ElementReference"
                 rows="@Lines"
                 @attributes="UserAttributes"
-                id="@InternalInputId"
+                id="@InputElementId"
                 type="@InputTypeString"
                 placeholder="@Placeholder"
                 disabled=@GetDisabledState()
@@ -57,7 +57,7 @@
         <input class="@InputClassname"
                 @ref="ElementReference"
                 @attributes="UserAttributes"
-                id="@InternalInputId"
+                id="@InputElementId"
                 type="@InputTypeString"
                 value="@_internalText"
                 @oninput="OnInput"
