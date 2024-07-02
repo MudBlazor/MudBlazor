@@ -11,14 +11,8 @@
   &.mud-tabs-vertical {
     flex-direction: row;
 
-    .mud-tab-wrapper {
-      > .mud-tooltip-root {
-        width: auto;
-      }
-
-      > .mud-tooltip-inline {
-        display: initial;
-      }
+    .mud-tooltip-root {
+      width: auto;
     }
   }
 
@@ -120,11 +114,6 @@
     &.mud-tabs-vertical {
       flex-direction: column;
     }
-
-    &.mud-tabs-inline {
-      flex-wrap: wrap;
-      width: initial;
-    }
   }
 }
 
@@ -188,19 +177,29 @@
 .mud-tab-slider {
   position: absolute;
   background: var(--mud-palette-primary);
-  transition-duration: .3s;
-  transition-timing-function: cubic-bezier(.64,.09,.08,1);
 
   &.mud-tab-slider-horizontal {
     height: 2px;
+    bottom: 0;
+    transition: left .3s cubic-bezier(.64,.09,.08,1);
     will-change: left;
-    transition-property: left,right,width,top;
+
+    &.mud-tab-slider-horizontal-reverse {
+      top: 0;
+      bottom: unset;
+    }
   }
 
   &.mud-tab-slider-vertical {
     width: 2px;
+    right: 0;
+    transition: top .3s cubic-bezier(.64,.09,.08,1);
     will-change: top;
-    transition-property: top,width;
+
+    &.mud-tab-slider-vertical-reverse {
+      left: 0;
+      right: unset;
+    }
   }
 }
 

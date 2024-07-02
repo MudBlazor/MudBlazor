@@ -98,6 +98,16 @@ namespace MudBlazor
         public bool Underline { get; set; } = true;
 
         /// <summary>
+        /// The ID of the helper element, for use by <c>aria-describedby</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When set it is appended to the <c>aria-describedby</c> attribute to improve accessibility for users. This ID takes precedence over the helper element rendered when <see cref="HelperText"/> is provided.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public string? HelperId { get; set; }
+
+        /// <summary>
         /// The text displayed below the text field.
         /// </summary>
         /// <remarks>
@@ -141,7 +151,7 @@ namespace MudBlazor
         /// The location of the adornment icon or text.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Adornment.None"/>.  Then set to <c>Start</c> or <c>End</c>, the <see cref="AdornmentText"/> will be displayed, or <see cref="AdornmentIcon"/> if no adornment text is specified.  
+        /// Defaults to <see cref="Adornment.None"/>.  When set to <c>Start</c> or <c>End</c>, the <see cref="AdornmentText"/> will be displayed, or <see cref="AdornmentIcon"/> if no adornment text is specified.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
@@ -699,6 +709,34 @@ namespace MudBlazor
             _isDirty = false;
             _validated = false;
             await base.ResetValueAsync();
+        }
+
+        protected string? GetHelperId()
+        {
+            if (HelperId is not null)
+            {
+                return HelperId;
+            }
+
+            // error text replaces helper text in MudInputControl, so if the user does not provide a custom helper id, we have no valid helper element
+            if (HasErrors)
+            {
+                return null;
+            }
+
+            return HelperText is not null
+                ? $"{InputIdState.Value}-helper-text"
+                : null;
+        }
+
+        protected string? GetAriaDescribedByString()
+        {
+            var errorId = HasErrors ? ErrorId : null;
+            var helperId = GetHelperId();
+
+            return errorId is not null && helperId is not null
+                ? $"{errorId} {helperId}"
+                : errorId ?? helperId ?? null;
         }
 
         /// <summary>

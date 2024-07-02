@@ -39,8 +39,9 @@ public partial class SectionContent
             .AddClass($"relative d-flex flex-grow-1 flex-wrap justify-center align-center", !Block)
             .AddClass($"d-block mx-auto", Block)
             .AddClass($"mud-width-full", Block && FullWidth)
-            .AddClass("pa-8", !_hasCode)
-            .AddClass("px-8 pb-8 pt-2", _hasCode)
+            .AddClass("pa-8", !_hasCode && !IsApiSection)
+            .AddClass("px-8 pb-8 pt-2", _hasCode && !IsApiSection)
+            .AddClass("pa-2", IsApiSection)
             .Build();
 
     protected string SourceClassname =>
@@ -61,6 +62,8 @@ public partial class SectionContent
     [Parameter] public string HighLight { get; set; }
     [Parameter] public IEnumerable<CodeFile> Codes { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
+
+    [Parameter] public bool IsApiSection { get; set; }
 
     private bool _hasCode;
     private string _activeCode;

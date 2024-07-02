@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 
@@ -14,6 +12,11 @@ namespace MudBlazor
 {
 #nullable enable
     // note: the MudTable code is split. Everything depending on the type parameter T of MudTable<T> is here in MudTable<T>
+
+    /// <summary>
+    /// A sortable, filterable table with multiselection and pagination.
+    /// </summary>
+    /// <typeparam name="T">The type of item displayed in this table.</typeparam>
     public partial class MudTable<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudTableBase, IDisposable
     {
         private T? _selectedItem;
@@ -32,29 +35,41 @@ namespace MudBlazor
         internal override bool HasServerData => ServerData is not null;
 
         /// <summary>
-        /// Defines how a table row looks like. Use MudTd to define the table cells and their content.
+        /// The columns for each row in this table.
         /// </summary>
+        /// <remarks>
+        /// Use <see cref="MudTd"/> to define columns, and <c>context</c> to access item properties for each column.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Rows)]
         public RenderFragment<T>? RowTemplate { get; set; }
 
         /// <summary>
-        /// Row Child content of the component.
+        /// The optional nested content underneath each row.
         /// </summary>
+        /// <remarks>
+        /// Use <see cref="MudTr"/> and <see cref="MudTd"/> to define the child content, and <c>context</c> to access item properties.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Rows)]
         public RenderFragment<T>? ChildRowContent { get; set; }
 
         /// <summary>
-        /// Defines how a table row looks like in edit mode (for selected row). Use MudTd to define the table cells and their content.
+        /// The columns for each row when a row is being edited.
         /// </summary>
+        /// <remarks>
+        /// Use <see cref="MudTd"/> to define columns, and <c>context</c> to access item properties for each column.  Typically looks similar to rows in <see cref="RowTemplate"/> but with edit components.
+        /// </remarks>        
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
         public RenderFragment<T>? RowEditingTemplate { get; set; }
 
         /// <summary>
-        /// A function that returns whether or not an item should be editable. Use to remove editing for certain rows.
+        /// The function which determines if a row can be edited.
         /// </summary>
+        /// <remarks>
+        /// Make the function return <c>true</c> to allow editing, and <c>false</c> to prevent it.  When no value is set, all rows are considered editable.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
         public Func<T, bool>? RowEditableFunc { get; set; }
@@ -75,8 +90,9 @@ namespace MudBlazor
         }
 
         #region Code for column based approach
+
         /// <summary>
-        /// Defines how a table column looks like. Columns components should inherit from MudBaseColumn
+        /// The columns for each row in this table.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Behavior)]
@@ -98,9 +114,7 @@ namespace MudBlazor
                 return default;
             }
         }
-        /// <summary>
-        /// Creates a default Column renderfragment if there is no templates defined
-        /// </summary>
+
         protected override void OnInitialized()
         {
             if (HasServerData)
@@ -110,23 +124,30 @@ namespace MudBlazor
         }
 
         #endregion
+
         /// <summary>
-        /// Defines the table body content when there are no matching records found
+        /// The content shown when there are no rows to display.
         /// </summary>
+        /// <remarks>
+        /// No <see cref="MudTr"/> or <see cref="MudTd"/> is necessary.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
         public RenderFragment? NoRecordsContent { get; set; }
 
         /// <summary>
-        /// Defines the table body content  the table has no rows and is loading
+        /// The content shown while table data is loading and the table has no rows.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
         public RenderFragment? LoadingContent { get; set; }
 
         /// <summary>
-        /// Defines if the table has a horizontal scrollbar.
+        /// Shows a horizontal scroll bar if the content exceeds the maximum width.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  Typically <c>true</c> for tables with more columns than can fit on the screen.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Behavior)]
         public bool HorizontalScrollbar { get; set; }
@@ -134,9 +155,11 @@ namespace MudBlazor
         internal string GetHorizontalScrollbarStyle() => HorizontalScrollbar ? ";display: block; overflow-x: auto;" : string.Empty;
 
         /// <summary>
-        /// The data to display in the table. MudTable will render one row per item
+        /// The data to display.
         /// </summary>
-        /// 
+        /// <remarks>
+        /// When set, <see cref="ServerData"/> should not be set.  Use that property to get data from a back end.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
         public IEnumerable<T>? Items
@@ -153,14 +176,17 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// A function that returns whether or not an item should be displayed in the table. You can use this to implement your own search function.
+        /// The function which determines whether an item should be displayed.
         /// </summary>
+        /// <remarks>
+        /// Typically used to implement custom filtering.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Filtering)]
         public Func<T, bool>? Filter { get; set; } = null;
 
         /// <summary>
-        /// Row click event.
+        /// Occurs when a row has been clicked.
         /// </summary>
         [Parameter]
         public EventCallback<TableRowClickEventArgs<T>> OnRowClick { get; set; }
@@ -177,7 +203,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Row hover start event.
+        /// Occurs when the pointer hovers over a row.
         /// </summary>
         [Parameter]
         public EventCallback<TableRowHoverEventArgs<T>> OnRowMouseEnter { get; set; }
@@ -196,7 +222,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Row hover stop event.
+        /// Occurs when the pointer is no longer hovering over a row.
         /// </summary>
         [Parameter]
         public EventCallback<TableRowHoverEventArgs<T>> OnRowMouseLeave { get; set; }
@@ -215,22 +241,31 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Returns the class that will get joined with RowClass. Takes the current item and row index.
+        /// The function which returns CSS classes for a row.
         /// </summary>
+        /// <remarks>
+        /// The current item and row index are provided to the function.  Multiple classes must be separated by spaces.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Rows)]
         public Func<T, int, string>? RowClassFunc { get; set; }
 
         /// <summary>
-        /// Returns the style that will get joined with RowStyle. Takes the current item and row index.
+        /// The function which returns CSS styles for a row.
         /// </summary>
+        /// <remarks>
+        /// The current item and row index are provided to the function.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Rows)]
         public Func<T, int, string>? RowStyleFunc { get; set; }
 
         /// <summary>
-        /// Returns the item which was last clicked on in single selection mode (that is, if MultiSelection is false)
+        /// The currently selected item when <c>MultiSelection</c> is <c>false</c>.
         /// </summary>
+        /// <remarks>
+        /// When the selected item changes, the <see cref="SelectedItemChanged"/> event occurs.  When <c>MultiSelection</c> is <c>true</c>, use the <see cref="SelectedItems"/> property.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Selecting)]
         public T? SelectedItem
@@ -248,14 +283,20 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Callback is called when a row has been clicked and returns the selected item.
+        /// Occurs when <see cref="SelectedItem"/> has changed.
         /// </summary>
+        /// <remarks>
+        /// Occurs when <c>MultiSelection</c> is <c>false</c>, otherwise <see cref="SelectedItemsChanged"/> occurs.
+        /// </remarks>
         [Parameter]
         public EventCallback<T> SelectedItemChanged { get; set; }
 
         /// <summary>
-        /// If MultiSelection is true, this returns the currently selected items. You can bind this property and the initial content of the HashSet you bind it to will cause these rows to be selected initially.
+        /// The currently selected item when <c>MultiSelection</c> is <c>true</c>.
         /// </summary>
+        /// <remarks>
+        /// When the selected items change, the <see cref="SelectedItemsChanged"/> event occurs.  When <c>MultiSelection</c> is <c>false</c>, use the <see cref="SelectedItem"/> property.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Selecting)]
         public HashSet<T>? SelectedItems
@@ -295,7 +336,7 @@ namespace MudBlazor
             => _comparer is not null ? Context.Selection.Any(x => _comparer.Equals(x, item)) : Context.Selection.Contains(item);
 
         /// <summary>
-        /// The Comparer to use for comparing selected items internally.
+        /// The comparer used to determine selected items.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
@@ -312,14 +353,20 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Callback is called whenever items are selected or deselected in multi selection mode.
+        /// Occurs when <see cref="SelectedItems"/> has changed.
         /// </summary>
+        /// <remarks>
+        /// Occurs when <c>MultiSelection</c> is <c>true</c>, otherwise <see cref="SelectedItemChanged"/> occurs.
+        /// </remarks>
         [Parameter]
         public EventCallback<HashSet<T>> SelectedItemsChanged { get; set; }
 
         /// <summary>
-        /// Defines data grouping parameters. It can has N hierarchical levels
+        /// Defines how rows are grouped together.
         /// </summary>
+        /// <remarks>
+        /// Groups can be defined in multiple levels.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Grouping)]
         public TableGroupDefinition<T>? GroupBy
@@ -334,43 +381,55 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Defines how a table grouping row header looks like. It works only when GroupBy is not null. Use MudTd to define the table cells and their content.
+        /// The content for the header of each group when <see cref="GroupBy"/> is set.
         /// </summary>
+        /// <remarks>
+        /// Use <see cref="MudTd"/> to define the cells in the group header.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Grouping)]
         public RenderFragment<TableGroupData<object, T>>? GroupHeaderTemplate { get; set; }
 
         /// <summary>
-        /// Defines custom CSS classes for using on Group Header's MudTr.
+        /// The custom CSS classes to apply to each group header row.
         /// </summary>
+        /// <remarks>
+        /// Multiple classes must be separated by spaces.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Grouping)]
         public string? GroupHeaderClass { get; set; }
 
         /// <summary>
-        /// Defines custom styles for using on Group Header's MudTr.
+        /// The custom CSS styles to apply to each group header row.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Grouping)]
         public string? GroupHeaderStyle { get; set; }
 
         /// <summary>
-        /// Defines custom CSS classes for using on Group Footer's MudTr.
+        /// The custom CSS classes to apply to each group footer row.
         /// </summary>
+        /// <remarks>
+        /// Multiple classes must be separated by spaces.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Grouping)]
         public string? GroupFooterClass { get; set; }
 
         /// <summary>
-        /// Defines custom styles for using on Group Footer's MudTr.
+        /// The custom CSS styles to apply to each group footer row.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Grouping)]
         public string? GroupFooterStyle { get; set; }
 
         /// <summary>
-        /// Defines how a table grouping row footer looks like. It works only when GroupBy is not null. Use MudTd to define the table cells and their content.
+        /// The content for the footer of each group when <see cref="GroupBy"/> is set.
         /// </summary>
+        /// <remarks>
+        /// Use <see cref="MudTd"/> to define the cells in the group footer.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Grouping)]
         public RenderFragment<TableGroupData<object, T>>? GroupFooterTemplate { get; set; }
@@ -380,6 +439,12 @@ namespace MudBlazor
         /// </summary>
         internal uint FilteringRunCount { get; private set; } = 0;
 
+        /// <summary>
+        /// The table items after filters are applied.
+        /// </summary>
+        /// <remarks>
+        /// When <see cref="ServerData"/> is set, the latest items are returned.  When <see cref="Filter"/> is set, filtered items are returned.
+        /// </remarks>
         public IEnumerable<T> FilteredItems
         {
             get
@@ -445,6 +510,10 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Gets the number of filtered items.
+        /// </summary>
+        /// <returns>When <see cref="ServerData"/> is set, the total number of items, otherwise the number of <see cref="FilteredItems"/>.</returns>
         public override int GetFilteredItemsCount()
         {
             if (HasServerData)
@@ -452,17 +521,30 @@ namespace MudBlazor
             return FilteredItems.Count();
         }
 
+        /// <summary>
+        /// Sets the <see cref="SelectedItem"/>.
+        /// </summary>
+        /// <param name="item">The new value to set.</param>
         public override void SetSelectedItem(object? item)
         {
             SelectedItem = item.As<T>();
         }
 
+        /// <summary>
+        /// Sets the item to edit.
+        /// </summary>
+        /// <param name="item">The item to edit.</param>
         public override void SetEditingItem(object? item)
         {
             if (!ReferenceEquals(_editingItem, item))
                 _editingItem = item;
         }
 
+        /// <summary>
+        /// Gets whether <see cref="Items"/> contains the specified item.
+        /// </summary>
+        /// <param name="item">The item to find.</param>
+        /// <returns>When <c>true</c>, the item was found, otherwise <c>false</c>.</returns>
         public override bool ContainsItem(object? item)
         {
             var t = item.As<T>();
@@ -471,8 +553,14 @@ namespace MudBlazor
             return Items?.Contains(t) ?? false;
         }
 
+        /// <summary>
+        /// Raises the <see cref="SelectedItemsChanged"/> event.
+        /// </summary>
         public override void UpdateSelection() => SelectedItemsChanged.InvokeAsync(SelectedItems);
 
+        /// <summary>
+        /// Gets the current state of the table.
+        /// </summary>
         public override TableContext TableContext
         {
             get
@@ -483,7 +571,9 @@ namespace MudBlazor
             }
         }
 
-        // TableContext provides shared functionality between all table sub-components
+        /// <summary>
+        /// Gets the current state of the table.
+        /// </summary>
         public TableContext<T> Context { get; } = new();
 
         private void OnRowCheckboxChanged(bool checkedState, T item)
@@ -514,14 +604,13 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Supply an async function which (re)loads filtered, paginated and sorted data from server.
-        /// Table will await this func and update based on the returned TableData.
-        /// Used only with ServerData
+        /// Gets the sorted and paginated data for the table.
         /// </summary>
         /// <remarks>
-        /// MudTable will automatically control loading animation visibility if ServerData is set.
-        /// See <see cref="MudTableBase.Loading"/>.  Forward the provided cancellation token to
-        /// methods which support it.
+        /// Use the provided <see cref="TableState"/> to request items for a specific page index, page size, sort column, and sort order.<br />  
+        /// Return a <see cref="TableData{T}"/> which contains the requested page of items and the total number of items (excluding pagination).<br />
+        /// Forward the <see cref="CancellationToken"/> to methods which support it such as <c>HttpClient</c> and <c>DbContext</c> to cancel ongoing requests.<br />  
+        /// When this parameter is set, <see cref="Items"/> and <see cref="Filter"/> should not be set.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
@@ -567,7 +656,7 @@ namespace MudBlazor
                 CurrentPage = 0;
 
             Loading = false;
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
             Context?.PagerStateHasChanged?.Invoke();
         }
 
@@ -587,8 +676,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Call this to reload the server-filtered, -sorted and -paginated items
+        /// Reloads this table's data via the <see cref="ServerData"/> function.
         /// </summary>
+        /// <remarks>
+        /// Use this method to reload this table's results when <see cref="ServerData"/> is set.
+        /// </remarks>
         public Task ReloadServerData()
         {
             return InvokeServerLoadFunc();
@@ -639,11 +731,17 @@ namespace MudBlazor
                 SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
 
+        /// <summary>
+        /// Expands all groups within this table.
+        /// </summary>
         public void ExpandAllGroups()
         {
             ToggleExpandGroups(expand: true);
         }
 
+        /// <summary>
+        /// Collapses all groups within this table.
+        /// </summary>
         public void CollapseAllGroups()
         {
             ToggleExpandGroups(expand: false);

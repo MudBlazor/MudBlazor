@@ -6,25 +6,22 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// A primitive component that allows rendering any HTML element specified through the <see cref="HtmlTag"/> property.
+    /// A primitive component which allows dynamically changing the HTML element rendered under the hood.
     /// </summary>
-    /// <remarks>
-    /// Useful for creating custom elements with dynamic tag names.
-    /// </remarks>
     public class MudElement : MudComponentBase
     {
         /// <summary>
-        /// The content to be rendered inside the element.
+        /// The content within this element.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Element.Misc)]
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Defines the HTML tag that will be rendered at the root of this component.
+        /// The HTML tag rendered for this element.
         /// </summary>
         /// <remarks>
-        /// Default is <c>span</c>.
+        /// Defaults to <c>span</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Element.Misc)]
@@ -34,14 +31,14 @@ namespace MudBlazor
         /// The <see cref="ElementReference"/> to bind to.
         /// </summary>
         /// <remarks>
-        /// Use like <c>@bind-Ref="myRef"</c>.
+        /// This is typically bound via <c>@bind-Ref="myRef"</c>.  When this property changes, the <see cref="RefChanged"/> event occurs.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Element.Misc)]
         public ElementReference? Ref { get; set; }
 
         /// <summary>
-        /// Callback invoked when the element reference changes.
+        /// Occurs when <see cref="Ref"/> has changed.
         /// </summary>
         [Parameter]
         public EventCallback<ElementReference> RefChanged { get; set; }
@@ -50,17 +47,17 @@ namespace MudBlazor
         /// Propagates click events beyond this element.
         /// </summary>
         /// <remarks>
-        /// Default is <c>true</c>, allowing propagation.
+        /// Defaults to <c>true</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public bool ClickPropagation { get; set; } = true;
 
         /// <summary>
-        /// Prevents the default action for the <c>onclick</c> event.
+        /// Prevents the default action when this element is clicked.
         /// </summary>
         /// <remarks>
-        /// Default is <c>false</c>, allowing default actions.
+        /// Defaults to <c>false</c>, allowing default actions.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]

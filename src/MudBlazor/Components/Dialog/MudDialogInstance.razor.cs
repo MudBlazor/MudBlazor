@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -24,21 +25,21 @@ namespace MudBlazor
     /// <seealso cref="DialogService"/>
     public partial class MudDialogInstance : MudComponentBase, IDisposable
     {
-        private DialogOptions _options = new();
-        private string _elementId = "dialog_" + Guid.NewGuid().ToString().Substring(0, 8);
-        private IKeyInterceptor _keyInterceptor;
+        private DialogOptions? _options = new();
+        private readonly string _elementId = "dialog_" + Guid.NewGuid().ToString().Substring(0, 8);
+        private IKeyInterceptor? _keyInterceptor;
 
         [Inject]
-        private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
+        private IKeyInterceptorFactory KeyInterceptorFactory { get; set; } = null!;
 
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
         [CascadingParameter]
-        private MudDialogProvider Parent { get; set; }
+        private MudDialogProvider Parent { get; set; } = null!;
 
         [CascadingParameter]
-        private DialogOptions GlobalDialogOptions { get; set; } = new DialogOptions();
+        private DialogOptions GlobalDialogOptions { get; set; } = DialogOptions.Default;
 
         /// <summary>
         /// The options used for this dialog.
@@ -64,7 +65,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         /// <summary>
         /// The custom content at the top of this dialog.
@@ -74,7 +75,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
-        public RenderFragment TitleContent { get; set; }
+        public RenderFragment? TitleContent { get; set; }
 
         /// <summary>
         /// The content within this dialog.
@@ -84,7 +85,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
-        public RenderFragment Content { get; set; }
+        public RenderFragment? Content { get; set; }
 
         /// <summary>
         /// The unique ID for this instance.
@@ -103,8 +104,8 @@ namespace MudBlazor
         [Category(CategoryTypes.Dialog.Appearance)]
         public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
 
-        private string Position { get; set; }
-        private string DialogMaxWidth { get; set; }
+        private string Position { get; set; } = null!;
+        private string DialogMaxWidth { get; set; } = null!;
         private bool BackdropClick { get; set; } = true;
         private bool CloseOnEscapeKey { get; set; }
         private bool NoHeader { get; set; }
@@ -124,7 +125,7 @@ namespace MudBlazor
                 //Since CloseOnEscapeKey is the only thing to be handled, turn interceptor off
                 if (CloseOnEscapeKey)
                 {
-                    _keyInterceptor = _keyInterceptorFactory.Create();
+                    _keyInterceptor = KeyInterceptorFactory.Create();
 
                     await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                     {
@@ -184,7 +185,7 @@ namespace MudBlazor
         /// </summary>
         public void Close()
         {
-            Close(DialogResult.Ok<object>(null));
+            Close(DialogResult.Ok<object?>(null));
         }
 
         /// <summary>
@@ -363,7 +364,7 @@ namespace MudBlazor
             await _dialog.OnBackdropClick.InvokeAsync(args);
         }
 
-        private MudDialog _dialog;
+        private MudDialog? _dialog;
         private bool _disposedValue;
 
         /// <summary>
@@ -375,8 +376,6 @@ namespace MudBlazor
         /// </remarks>
         public void Register(MudDialog dialog)
         {
-            if (dialog == null)
-                return;
             _dialog = dialog;
             Class = dialog.Class;
             Style = dialog.Style;

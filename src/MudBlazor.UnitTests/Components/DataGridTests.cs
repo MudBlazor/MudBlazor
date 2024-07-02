@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -745,7 +746,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridPaginationTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationTest.Item>>();
             // check that the page size dropdown is shown
-            comp.FindComponents<MudSelect<string>>().Count.Should().Be(1);
+            comp.FindComponents<MudSelect<int>>().Count.Should().Be(1);
 
             dataGrid.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20");
 
@@ -789,6 +790,31 @@ namespace MudBlazor.UnitTests.Components
 
             // page size drop-down is not shown
             comp.FindComponents<MudSelect<string>>().Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Tests that the "All" data grid pager option shows all items
+        /// </summary>
+        [Test]
+        public async Task DataGridPagingAllTest()
+        {
+            var comp = Context.RenderComponent<DataGridPaginationAllItemsTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationAllItemsTest.Item>>();
+            var pager = comp.FindComponent<MudSelect<int>>().Instance;
+
+            dataGrid.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20"); //check initial value
+            // change page size
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetRowsPerPageAsync(int.MaxValue));
+            pager.Value.Should().Be(int.MaxValue);
+            dataGrid.Instance.RowsPerPage.Should().Be(int.MaxValue);
+            comp.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-20 of 20");
+
+            comp.FindAll(".mud-table-pagination-actions button")[0].IsDisabled().Should().Be(true); //buttons are disabled
+            comp.FindAll(".mud-table-pagination-actions button")[1].IsDisabled().Should().Be(true);
+            comp.FindAll(".mud-table-pagination-actions button")[2].IsDisabled().Should().Be(true);
+            comp.FindAll(".mud-table-pagination-actions button")[3].IsDisabled().Should().Be(true);
+
+            comp.FindAll(".mud-table-pagination-select")[^1].TextContent.Trim().Should().Be("All");
         }
 
         [Test]
@@ -2700,6 +2726,21 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridRowDetailInitiallyExpandedMultipleTest()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            var item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Ira");
+
+            dataGrid.Instance._openHierarchies.Should().Contain(item);
+
+            item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Anders");
+
+            dataGrid.Instance._openHierarchies.Should().Contain(item);
+        }
+
+        [Test]
         public async Task DataGridChildRowContentTest()
         {
             var comp = Context.RenderComponent<DataGridChildRowContentTest>();
@@ -4187,5 +4228,55 @@ namespace MudBlazor.UnitTests.Components
             cells[28].TextContent.Should().Be("Calcium"); cells[29].TextContent.Should().Be("20");
         }
 
+        [Test]
+        public void QueryFilterExtensionTest()
+        {
+            var comp = Context.RenderComponent<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            var nameFilter = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("Name"),
+                Operator = FilterOperator.String.Contains,
+                Value = "Sam",
+            };
+            var ageFilter = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("Age"),
+                Operator = FilterOperator.Number.GreaterThan,
+                Value = 42,
+            };
+
+            var query = Array.Empty<DataGridFiltersTest.Model>().AsQueryable().Where([nameFilter, ageFilter]);
+            query.ToString().Should().Match("*x.Name.Contains(*x.Age > Convert(42*");
+        }
+
+        [Test]
+        public void QuerySortExtensionTest()
+        {
+            var nameSort = new SortDefinition<DataGridFiltersTest.Model>("Name", Descending: true, 0, default!);
+            var ageSort = new SortDefinition<DataGridFiltersTest.Model>("Age", Descending: false, 1, default!);
+
+            var query = Array.Empty<DataGridFiltersTest.Model>().AsQueryable().OrderBy([nameSort, ageSort]);
+            query.ToString().Should().Be("MudBlazor.UnitTests.TestComponents.DataGridFiltersTest+Model[].OrderByDescending(x => x.Name).ThenBy(x => x.Age)");
+        }
+
+        [Test]
+        public void QuerySortExtensionTestAscendingThenDescending()
+        {
+            var nameSort = new SortDefinition<DataGridFiltersTest.Model>("Name", Descending: false, 0, default!);
+            var ageSort = new SortDefinition<DataGridFiltersTest.Model>("Age", Descending: true, 1, default!);
+
+            var query = Array.Empty<DataGridFiltersTest.Model>().AsQueryable().OrderBy([nameSort, ageSort]);
+            query.ToString().Should().Be("MudBlazor.UnitTests.TestComponents.DataGridFiltersTest+Model[].OrderBy(x => x.Name).ThenByDescending(x => x.Age)");
+        }
+
+        [Test]
+        public void QuerySortExtensionTestEmptyDefinitions()
+        {
+            var source = Array.Empty<DataGridFiltersTest.Model>().AsQueryable();
+            var query = source.OrderBy([]);
+            query.Should().BeSameAs(source);
+        }
     }
 }
