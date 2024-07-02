@@ -52,6 +52,4 @@ public partial class ApiBreadcrumbs
             parent = parent.BaseType;
         }
     }
-
-
 }

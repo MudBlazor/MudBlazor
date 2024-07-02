@@ -33,7 +33,7 @@
 </MudNavGroup>
 
 <MudNavGroup Title="Component API" Expanded="@(_section == "api")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
-    <MudNavLink Href="/api" Match="NavLinkMatch.All">Index</MudNavLink>
+    <MudNavLink Href="/api" Match="NavLinkMatch.All">API Index</MudNavLink>
     @foreach (var item in MenuService.Api.OrderBy(x => x.Name))
     {
         <MudNavLink Href="@ApiLink.GetApiLinkFor(item.Type)">@item.Name</MudNavLink>

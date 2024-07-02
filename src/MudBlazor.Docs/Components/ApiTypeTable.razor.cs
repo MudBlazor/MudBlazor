@@ -3,10 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -68,7 +65,7 @@ public partial class ApiTypeTable
     /// <param name="state">The current table state.</param>
     /// <param name="token">A <see cref="CancellationToken"/> for aborting ongoing requests.</param>
     /// <returns></returns>
-    public async Task<TableData<DocumentedType>> GetData(TableState state, CancellationToken token)
+    public Task<TableData<DocumentedType>> GetData(TableState state, CancellationToken token)
     {
         // Get properties which are in the selected categories
         var types = ApiDocumentation.Types.Values.ToList().AsQueryable();
@@ -99,7 +96,7 @@ public partial class ApiTypeTable
         var results = types.ToList();
 
         // What categories are selected?
-        return await Task.FromResult(new TableData<DocumentedType>()
+        return Task.FromResult(new TableData<DocumentedType>()
         {
             Items = results,
             TotalItems = results.Count,

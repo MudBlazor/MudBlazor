@@ -18,7 +18,7 @@
                          ErrorText="@GetErrorText()"
                          Disabled="@GetDisabledState()"
                          Required="@Required"
-                         ForId="@(InputIdState.Value ?? string.Empty)"
+                         ForId="@(InputElementId ?? string.Empty)"
                          @onclick="@ToggleMenu">
             <InputContent>
                 <MudInput @ref="_elementReference"
@@ -50,7 +50,7 @@
                           @attributes="UserAttributes"
                           OnBlur="@OnBlurAsync"
                           ShrinkLabel="@ShrinkLabel"
-                          InputId="@InputIdState.Value"
+                          InputId="@InputElementId"
                           Required="@Required">
                     @if (CanRenderValue) {
                         @GetSelectedValuePresenter()

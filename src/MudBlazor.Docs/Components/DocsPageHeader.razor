@@ -33,7 +33,8 @@ else
 {
     <div class="docs-page-header">
         <MudText Typo="@Typo.h4">@Title</MudText>
-        <MudText Typo="@Typo.body1">@GetSubTitle() @Description</MudText>
+        <MudText Typo="@Typo.subtitle1">@GetSubTitle()</MudText>
+        <MudText Typo="@Typo.body1">@Description</MudText>
         <DocsRenderBenchmark />
     </div>
 }
@@ -112,7 +113,7 @@ else
         _componentTypeName = _componentType?.Name.Replace("`1", "");
         _apiLink = $"api/{_componentName}";
         _componentPage = (_component?.Type == null) ? _parentComponent?.Name : _component?.Name;
-    }   
+    }
 
     private string GetComponentLink()
     {
