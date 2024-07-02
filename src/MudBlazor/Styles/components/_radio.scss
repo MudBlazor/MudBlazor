@@ -62,13 +62,7 @@
   }
 }
 
-.mud-radio-button {
-  width: 100%;
-  display: flex;
-  align-items: inherit;
-  justify-content: inherit;
-
-  & .mud-radio-input {
+.mud-radio-input {
     top: 0;
     left: 0;
     width: 100%;
@@ -79,12 +73,11 @@
     padding: 0;
     z-index: 1;
     position: absolute;
-  }
+}
 
-  & .mud-radio-icons {
+.mud-radio-icons {
     display: flex;
     position: relative;
-  }
 }
 
 
@@ -102,8 +95,6 @@
 
 .mud-radio-content-placement- {
   &start {
-    margin-right: -11px;
-    margin-inline-end: -11px;
     flex-direction: row-reverse;
 
     &.mud-radio-with-content {
@@ -113,8 +104,6 @@
   }
 
   &end {
-    margin-left: -11px;
-    margin-inline-start: -11px;
     flex-direction: row;
 
     &.mud-radio-with-content {

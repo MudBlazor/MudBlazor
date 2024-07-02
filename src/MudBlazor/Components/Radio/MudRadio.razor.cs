@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudRadio<T> : MudComponentBase, IDisposable
+    public partial class MudRadio<T> : MudBooleanInput<T>, IDisposable
     {
         private IMudRadioGroup? _parent;
         private IKeyInterceptor? _keyInterceptor;
@@ -97,13 +97,6 @@ namespace MudBlazor
         public Placement Placement { get; set; } = Placement.End;
 
         /// <summary>
-        /// The value to associate to the button.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Radio.Behavior)]
-        public T? Value { get; set; }
-
-        /// <summary>
         /// If true, compact padding will be applied.
         /// </summary>
         [Parameter]
@@ -125,18 +118,60 @@ namespace MudBlazor
         public bool Ripple { get; set; } = true;
 
         /// <summary>
-        /// If true, the button will be disabled.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Radio.Behavior)]
-        public bool Disabled { get; set; }
-
-        /// <summary>
         /// Child content of component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Radio.Behavior)]
         public RenderFragment? ChildContent { get; set; }
+
+        /// <summary>
+        /// The icon to display for a checked state.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.RadioButtonChecked"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string CheckedIcon { get; set; } = Icons.Material.Filled.RadioButtonChecked;
+
+        /// <summary>
+        /// The icon to display for an unchecked state.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.RadioButtonUnchecked"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string UncheckedIcon { get; set; } = Icons.Material.Filled.RadioButtonUnchecked;
+
+        /// <summary>
+        /// The icon to display for an indeterminate state.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.IndeterminateCheckBox"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
+
+        private string GetIcon()
+        {
+            return Checked switch
+            {
+                true => CheckedIcon,
+                false => UncheckedIcon
+            };
+        }
+
+        /// <summary>
+        /// The text to display next to the checkbox.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? Label { get; set; }
 
         private bool GetDisabled() => Disabled || MudRadioGroup?.GetDisabledState() == true;
 
