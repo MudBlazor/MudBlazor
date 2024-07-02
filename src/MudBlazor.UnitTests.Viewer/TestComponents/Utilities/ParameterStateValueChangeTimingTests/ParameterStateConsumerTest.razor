@@ -1,0 +1,45 @@
+@if (RenderDialogProvider)
+{
+    <MudDialogProvider />
+}
+
+<ParameterStateImmediateComp Value="@_immediateValue"
+                             ValueChanged="@OnImmediateValueChanged" />
+
+<br/>
+
+<ParameterStateAfterEventCallbackComp Value="@_afterEventCallbackValue"
+                                      ValueChanged="@OnAfterEventCallbackValueChanged" />
+
+@code {
+    [Inject]
+    private IDialogService DialogService { get; set; }
+
+    [Parameter]
+    public bool RenderDialogProvider { get; set; }
+
+    public bool ImmediateValue => _immediateValue;
+    private bool _immediateValue;
+
+
+    public bool AfterEventCallbackValue => _afterEventCallbackValue;
+    private bool _afterEventCallbackValue;
+
+    private async Task OnImmediateValueChanged(bool value)
+    {
+        var dialog = await DialogService.ShowAsync<ParameterStateValueChangeTimingConfirmationDialog>("Simple Dialog");
+        if (!(await dialog.Result)?.Canceled ?? false)
+        {
+            _immediateValue = value;
+        }
+    }
+
+    private async Task OnAfterEventCallbackValueChanged(bool value)
+    {
+        var dialog = await DialogService.ShowAsync<ParameterStateValueChangeTimingConfirmationDialog>("Simple Dialog");
+        if (!(await dialog.Result)?.Canceled ?? false)
+        {
+            _afterEventCallbackValue = value;
+        }
+    }
+}

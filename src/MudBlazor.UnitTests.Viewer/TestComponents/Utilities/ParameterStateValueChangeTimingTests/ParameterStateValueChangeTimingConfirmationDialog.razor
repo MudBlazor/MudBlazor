@@ -1,0 +1,25 @@
+<MudDialog>
+    <DialogContent>
+        Change parameter state?
+    </DialogContent>
+    <DialogActions>
+        <MudButton id="cancel-button"
+                   OnClick="Cancel">
+            Cancel
+        </MudButton>
+        <MudButton id="submit-button"
+                   Color="Color.Primary"
+                   OnClick="Submit">
+            Ok
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
+}

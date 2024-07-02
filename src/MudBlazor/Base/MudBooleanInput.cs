@@ -127,7 +127,7 @@ namespace MudBlazor
 
         protected override async Task ResetValueAsync()
         {
-            await _valueState.SetValueAsync(default, ParameterStateValueChangeTiming.AfterEventCallbacks);
+            await _valueState.SetValueAsync(default, ParameterStateValueChangeTiming.AfterEventCallback);
             await base.ResetValueAsync();
         }
 
@@ -143,7 +143,7 @@ namespace MudBlazor
             }
 
             // let parameter state handle the value, then update the input state
-            await _valueState.SetValueAsync(value, ParameterStateValueChangeTiming.AfterEventCallbacks);
+            await _valueState.SetValueAsync(value, ParameterStateValueChangeTiming.AfterEventCallback);
             // ParameterState won't call ChangeHandler without ValueChanged, so we have to update the form value manually
             if (ValueChanged.HasDelegate is false)
             {

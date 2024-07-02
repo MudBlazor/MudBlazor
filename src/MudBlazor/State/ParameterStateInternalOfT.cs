@@ -81,23 +81,14 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
             return Task.CompletedTask;
         }
 
-        if (parameterStateValueChangeTiming is ParameterStateValueChangeTiming.Immediate)
-        {
-            _value = value;
-        }
-
         var eventCallback = _eventCallbackFunc();
-        if (eventCallback.HasDelegate)
-        {
-            return eventCallback.InvokeAsync(value);
-        }
-
-        if (parameterStateValueChangeTiming is ParameterStateValueChangeTiming.AfterEventCallbacks)
+        if (parameterStateValueChangeTiming is ParameterStateValueChangeTiming.Immediate
+            || eventCallback.HasDelegate is false)
         {
             _value = value;
         }
 
-        return Task.CompletedTask;
+        return eventCallback.InvokeAsync(value);
     }
 
     /// <inheritdoc />
