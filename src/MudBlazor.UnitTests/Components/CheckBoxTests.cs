@@ -537,5 +537,33 @@ namespace MudBlazor.UnitTests.Components
             IElement NullDialogButton() => comp.Find("#null-button");
             IElement TrueDialogButton() => comp.Find("#true-button");
         }
+
+        [Test]
+        public void Checkbox_aria_checked_value_should_match_parameter_value()
+        {
+            var comp = Context.RenderComponent<CheckBoxWithTwoWayBindingTest<bool?>>(parameters => parameters
+                .Add(p => p.TriState, true));
+
+            // change value using parameter
+            SwitchInput().GetAttribute("aria-checked").Should().Be("mixed");
+            comp.SetParam(x => x.Value, true);
+            SwitchInput().GetAttribute("aria-checked").Should().Be("true");
+            comp.SetParam(x => x.Value, false);
+            SwitchInput().GetAttribute("aria-checked").Should().Be("false");
+            comp.SetParam(x => x.Value, null);
+            SwitchInput().GetAttribute("aria-checked").Should().Be("mixed");
+
+            // change value using input
+            SwitchInput().Change(true);
+            SwitchInput().GetAttribute("aria-checked").Should().Be("true");
+            SwitchInput().Change(true);
+            SwitchInput().GetAttribute("aria-checked").Should().Be("false");
+            SwitchInput().Change(true);
+            SwitchInput().GetAttribute("aria-checked").Should().Be("mixed");
+            return;
+
+            IElement SwitchInput()
+                => comp.Find("input");
+        }
     }
 }
