@@ -28,15 +28,19 @@ namespace MudBlazor
         protected bool _isFocused;
         protected bool _forceTextUpdate;
 
+        /// <summary>
+        /// The resolved input element ID.
+        /// </summary>
+        protected string? InputElementId => _inputIdState.Value;
         private string? _userAttributesId = $"mudinput-{Guid.NewGuid()}";
         private readonly string _componentId = $"mudinput-{Guid.NewGuid()}";
-        internal readonly ParameterState<string?> InputIdState;
+        private readonly ParameterState<string?> _inputIdState;
 
         protected MudBaseInput()
             : base(new DefaultConverter<T>())
         {
             using var registerScope = CreateRegisterScope();
-            InputIdState = registerScope.RegisterParameter<string?>(nameof(InputId))
+            _inputIdState = registerScope.RegisterParameter<string?>(nameof(InputId))
                 .WithParameter(() => InputId)
                 .WithChangeHandler(UpdateInputIdStateAsync);
         }
@@ -418,6 +422,12 @@ namespace MudBlazor
             set => SetFormat(value);
         }
 
+        /// <summary>
+        /// The ID of the input element.
+        /// </summary>
+        /// <remarks>
+        /// When set takes precedence over any internally generated IDs.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string? InputId { get; set; }
@@ -725,7 +735,7 @@ namespace MudBlazor
             }
 
             return HelperText is not null
-                ? $"{InputIdState.Value}-helper-text"
+                ? $"{_inputIdState.Value}-helper-text"
                 : null;
         }
 
@@ -756,11 +766,11 @@ namespace MudBlazor
 
             if (_userAttributesId is not null)
             {
-                await InputIdState.SetValueAsync(_userAttributesId);
+                await _inputIdState.SetValueAsync(_userAttributesId);
                 return;
             }
 
-            await InputIdState.SetValueAsync(_componentId);
+            await _inputIdState.SetValueAsync(_componentId);
         }
     }
 }

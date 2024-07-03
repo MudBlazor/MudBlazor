@@ -18,7 +18,7 @@
                          ErrorId="@ErrorId"
                          Disabled="@GetDisabledState()"
                          Required="@Required"
-                         ForId="@InputIdState.Value">
+                         ForId="@InputElementId">
             <InputContent>
                 <MudInput @ref="_elementReference" @key="_elementKey" InputType="InputType.Text"
                           Class="mud-select-input" Margin="@Margin"
@@ -46,7 +46,7 @@
                           InputMode="@InputMode" Pattern="@Pattern"
                           ShrinkLabel="@ShrinkLabel"
                           Required="@Required"
-                          InputId="@InputIdState.Value" />
+                          InputId="@InputElementId" />
 
                 @if (ShowProgressIndicator && IsLoading)
                 {
