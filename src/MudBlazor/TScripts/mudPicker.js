@@ -13,7 +13,7 @@ window.mudPicker = {
             // Set the selected value to the stick that the pointer went down on.
             if (event.target.classList.contains('mud-picker-stick')) {
                 let attributeValue = event.target.getAttribute('data-stick-value');
-                let stickValue = attributeValue ? parseInt(attributeValue) : 0; // Ensure an integer.
+                let stickValue = attributeValue ? parseInt(attributeValue) : -1; // Ensure an integer.
 
                 dotNetHelper.invokeMethodAsync('UpdateClock', stickValue);
             }
@@ -42,7 +42,7 @@ window.mudPicker = {
         // Add pointerover event listeners to each stick element.
         sticks.forEach((stick) => {
             const attributeValue = stick.getAttribute('data-stick-value');
-            const stickValue = attributeValue ? parseInt(attributeValue) : 0; // Ensure an integer.
+            const stickValue = attributeValue ? parseInt(attributeValue) : -1; // Ensure an integer.
 
             const moveHandler = (event) => {
                 event.target.releasePointerCapture(event.pointerId);

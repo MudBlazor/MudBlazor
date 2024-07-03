@@ -34,7 +34,7 @@
         <MudPickerContent>
             <div class="mud-picker-time-container">
                 <div class="mud-picker-time-clock">
-                    <div role="menu" tabindex="-1" class="mud-picker-time-clock-mask">
+                    <div role="menu" tabindex="-1" class="mud-picker-time-clock-mask" @onpointerdown="OnPointerDown" @onpointerup="OnPointerUp">
                         <div class="@GetClockPinColor()"></div>
                         <div class="@GetClockPointerColor()" style="height: @GetPointerHeight(); transform: @GetPointerRotation()">
                             <div class="@GetClockPointerThumbColor()"></div>

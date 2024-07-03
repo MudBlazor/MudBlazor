@@ -537,80 +537,25 @@ namespace MudBlazor
 
         public bool PointerDown { get; set; }
 
-        /// <summary>
-        /// Sets <see cref="PointerDown"/> to true if the pointer is inside the clock mask.
-        /// </summary>
-        private async Task OnPointerDown(PointerEventArgs e)
+        private void OnPointerDown(PointerEventArgs e)
         {
             PointerDown = true;
-            await UpdateTimeFromSelectedStick();
         }
 
-        private async Task OnPointerOverAsync(PointerEventArgs e)
+        private void OnPointerUp(PointerEventArgs e)
         {
-            if (PointerDown)
-            {
-                Console.WriteLine("PointerOver");
-                await UpdateTimeFromSelectedStick();
-            }
+            PointerDown = false;
         }
 
         /// <summary>
-        /// Sets <see cref="PointerDown"/> to false if the pointer is inside the clock mask.
+        /// Updates the position of the hands on the clock.
+        /// This method is used by JavaScript events and should not be called otherwise.
         /// </summary>
-        private async Task OnPointerUpAsync(PointerEventArgs e)
-        {
-            PointerDown = false;
-            await UpdateTimeFromSelectedStick();
-
-            if (_currentView == OpenTo.Minutes)
-            {
-                await SubmitAndCloseAsync();
-            }
-            else if (_currentView == OpenTo.Hours)
-            {
-                if (TimeEditMode == TimeEditMode.Normal)
-                {
-                    _currentView = OpenTo.Minutes;
-                }
-                else if (TimeEditMode == TimeEditMode.OnlyHours)
-                {
-                    await SubmitAndCloseAsync();
-                }
-            }
-        }
-
-        private async Task UpdateTimeFromSelectedStick()
-        {
-            if (!IsJSRuntimeAvailable)
-            {
-                return;
-            }
-
-            var value = await JsRuntime.InvokeAsync<int>("mudPicker.getStickValue", ElementReference);
-
-            if (value == 0)
-            {
-                return;
-            }
-
-            if (_currentView == OpenTo.Minutes)
-            {
-                var minute = RoundToStepInterval(value);
-                _timeSet.Minute = minute;
-            }
-            else if (_currentView == OpenTo.Hours)
-            {
-                _timeSet.Hour = HourAmPm(value);
-            }
-
-            await UpdateTimeAsync();
-        }
-
+        /// <param name="value"></param>
         [JSInvokable]
         public void UpdateClock(int value)
         {
-            if (value == 0)
+            if (value == -1)
             {
                 return;
             }
