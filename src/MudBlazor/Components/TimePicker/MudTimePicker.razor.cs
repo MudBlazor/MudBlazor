@@ -487,7 +487,6 @@ namespace MudBlazor
 
         private readonly SetTime _timeSet = new();
         private int _initialHour;
-        private int _lastSelectedHour;
         private int _initialMinute;
 
         protected override void OnInitialized()
