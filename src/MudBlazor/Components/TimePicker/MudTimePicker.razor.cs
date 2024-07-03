@@ -9,11 +9,12 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTimePicker : MudPicker<TimeSpan?>
+    public partial class MudTimePicker : MudPicker<TimeSpan?>, IAsyncDisposable
     {
         private const string Format24Hours = "HH:mm";
         private const string Format12Hours = "hh:mm tt";
@@ -500,6 +501,26 @@ namespace MudBlazor
             _initialMinute = _timeSet.Minute;
         }
 
+        [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await base.OnAfterRenderAsync(firstRender);
+
+            if (firstRender)
+            {
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudPicker.initPointerEvents", ElementReference);
+            }
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if (IsJSRuntimeAvailable)
+            {
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudPicker.destroyPointerEvents", ElementReference);
+            }
+        }
+
         private void UpdateTimeSetFromTime()
         {
             if (TimeIntermediate == null)
@@ -528,17 +549,43 @@ namespace MudBlazor
         /// </summary>
         private async Task OnPointerUpAsync(PointerEventArgs e)
         {
-            if ((PointerDown && _currentView == OpenTo.Minutes && _timeSet.Minute != _initialMinute) || (_currentView == OpenTo.Hours && _timeSet.Hour != _initialHour && TimeEditMode == TimeEditMode.OnlyHours))
-            {
-                PointerDown = false;
-                await SubmitAndCloseAsync();
-            }
-
             PointerDown = false;
 
-            if (_currentView == OpenTo.Hours && _timeSet.Hour != _initialHour && TimeEditMode == TimeEditMode.Normal)
+            await UpdateTimeFromSelectedStick();
+
+            if (_currentView == OpenTo.Minutes)
             {
-                _currentView = OpenTo.Minutes;
+                await UpdateTimeAsync();
+                await SubmitAndCloseAsync();
+            }
+        }
+
+        private async Task OnPointerMoveAsync(PointerEventArgs e)
+        {
+            if (PointerDown)
+            {
+                await UpdateTimeFromSelectedStick();
+            }
+        }
+
+        private async Task UpdateTimeFromSelectedStick()
+        {
+            var value = await JsRuntime.InvokeAsync<int>("mudPicker.getStickValue", ElementReference);
+
+            if (value == 0)
+            {
+                return;
+            }
+
+            if (_currentView == OpenTo.Minutes)
+            {
+                var minute = RoundToStepInterval(value);
+                _timeSet.Minute = minute;
+                await UpdateTimeAsync();
+            }
+            else if (_currentView == OpenTo.Hours)
+            {
+                _timeSet.Hour = HourAmPm(value);
             }
         }
 
@@ -557,64 +604,6 @@ namespace MudBlazor
             }
 
             return hour;
-        }
-
-        /// <summary>
-        /// If <see cref="PointerDown"/> is true enables "dragging" effect on the clock pin/stick.
-        /// </summary>
-        private async Task OnPointerOverHourAsync(int hour)
-        {
-            if (PointerDown)
-            {
-                _timeSet.Hour = HourAmPm(hour);
-                await UpdateTimeAsync();
-            }
-        }
-
-        /// <summary>
-        /// On click for the hour "sticks", sets the hour.
-        /// </summary>
-        private async Task OnClickHourAsync(int hour)
-        {
-            _timeSet.Hour = HourAmPm(hour);
-
-            if (_currentView == OpenTo.Hours || _timeSet.Hour != _lastSelectedHour)
-            {
-                await UpdateTimeAsync();
-            }
-
-            if (TimeEditMode == TimeEditMode.Normal)
-            {
-                _currentView = OpenTo.Minutes;
-            }
-            else if (TimeEditMode == TimeEditMode.OnlyHours)
-            {
-                await SubmitAndCloseAsync();
-            }
-        }
-
-        /// <summary>
-        /// On pointer over for the minutes "sticks", sets the minute.
-        /// </summary>
-        private async Task OnPointerOverMinuteAsync(int minute)
-        {
-            if (PointerDown)
-            {
-                minute = RoundToStepInterval(minute);
-                _timeSet.Minute = minute;
-                await UpdateTimeAsync();
-            }
-        }
-
-        /// <summary>
-        /// On click for the minute "sticks", sets the minute.
-        /// </summary>
-        private async Task OnClickMinuteAsync(int minute)
-        {
-            minute = RoundToStepInterval(minute);
-            _timeSet.Minute = minute;
-            await UpdateTimeAsync();
-            await SubmitAndCloseAsync();
         }
 
         private int RoundToStepInterval(int value)

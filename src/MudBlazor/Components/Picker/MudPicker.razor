@@ -41,11 +41,12 @@
 
     protected virtual RenderFragment Render =>
     @<CascadingValue Value="@this" IsFixed="true">
-        <div class="@PickerClassname" id="@_elementId">
+        <div class="@PickerClassname" id="@_elementId" @ref="ElementReference">
             @if (PickerVariant != PickerVariant.Static)
             {
                 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
-					@if(InputContent != null) {    
+					@if(InputContent != null)
+                    {
 						@InputContent
 					}
                 </CascadingValue>

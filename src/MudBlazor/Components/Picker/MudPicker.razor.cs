@@ -422,6 +422,8 @@ namespace MudBlazor
         [Category(CategoryTypes.Popover.Appearance)]
         public Origin TransformOrigin { get; set; } = Origin.TopLeft;
 
+        public ElementReference ElementReference { get; private set; }
+
         protected IMask _mask = null;
 
         protected async Task SetTextAsync(string value, bool callback)
