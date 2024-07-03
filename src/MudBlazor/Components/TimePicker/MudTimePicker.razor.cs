@@ -537,29 +537,21 @@ namespace MudBlazor
 
         public bool PointerDown { get; set; }
 
-        private void OnPointerDown(PointerEventArgs e)
+        private Task OnPointerDownStickAsync(int value)
         {
             PointerDown = true;
+
+            return OnPointerOverStickAsync(value);
         }
 
-        private void OnPointerUp(PointerEventArgs e)
+        private Task OnPointerOverStickAsync(int value)
         {
-            PointerDown = false;
-        }
-
-        /// <summary>
-        /// Updates the position of the hands on the clock.
-        /// This method is used by JavaScript events and should not be called otherwise.
-        /// </summary>
-        /// <param name="value"></param>
-        [JSInvokable]
-        public void UpdateClock(int value)
-        {
-            if (value == -1)
+            if (!PointerDown)
             {
-                return;
+                return Task.CompletedTask;
             }
 
+            // Update the internal time based on the active stick value.
             if (_currentView == OpenTo.Minutes)
             {
                 var minute = RoundToStepInterval(value);
@@ -570,7 +562,30 @@ namespace MudBlazor
                 _timeSet.Hour = HourAmPm(value);
             }
 
-            UpdateTimeAsync().CatchAndLog();
+            return UpdateTimeAsync();
+        }
+
+        private async Task OnPointerUpStickAsync(int value)
+        {
+            await OnPointerOverStickAsync(value);
+
+            PointerDown = false;
+
+            if (_currentView == OpenTo.Minutes)
+            {
+                await SubmitAndCloseAsync();
+            }
+            else if (_currentView == OpenTo.Hours)
+            {
+                if (TimeEditMode == TimeEditMode.Normal)
+                {
+                    _currentView = OpenTo.Minutes;
+                }
+                else if (TimeEditMode == TimeEditMode.OnlyHours)
+                {
+                    await SubmitAndCloseAsync();
+                }
+            }
         }
 
         private int HourAmPm(int hour)
