@@ -3,26 +3,35 @@
 // See the LICENSE file in the project root for more information.
 
 window.mudPicker = {
-    initTimePicker: (picker) => {
+    initTimePicker: (picker, dotNetHelper) => {
         const sticks = picker.querySelectorAll('.mud-picker-stick');
         let isPointerDown = false;
 
         const startHandler = (event) => {
             isPointerDown = true;
-
-            // Allow the pointerover event to trigger.
-            event.target.releasePointerCapture(event.pointerId);
+            console.log("start");
 
             // Set the selected value to the stick that the pointer went down on.
             if (event.target.classList.contains('mud-picker-stick')) {
-                picker.setAttribute('data-selected-value', event.target.getAttribute('data-stick-value'));
+                let attributeValue = event.target.getAttribute('data-stick-value');
+                let stickValue = attributeValue ? parseInt(attributeValue) : 0; // Ensure an integer.
+
+                dotNetHelper.invokeMethodAsync('UpdateClock', stickValue)
+                    .then(data => {
+                        console.log(data);
+                    });
             }
+
+            // Allow the pointerover event to trigger.
+            event.target.releasePointerCapture(event.pointerId);
 
             event.preventDefault();
         };
 
         const endHandler = (event) => {
             isPointerDown = false;
+
+            console.log("end");
             event.preventDefault();
         };
 
@@ -38,12 +47,17 @@ window.mudPicker = {
 
         // Add pointerover event listeners to each stick element.
         sticks.forEach((stick) => {
-            let value = stick.getAttribute('data-stick-value');
+            const attributeValue = stick.getAttribute('data-stick-value');
+            const stickValue = attributeValue ? parseInt(attributeValue) : 0; // Ensure an integer.
 
             const moveHandler = (event) => {
                 event.target.releasePointerCapture(event.pointerId);
                 if (isPointerDown) {
-                    picker.setAttribute('data-selected-value', value);
+                    console.log(stickValue);
+                    dotNetHelper.invokeMethodAsync('UpdateClock', stickValue)
+                        .then(data => {
+                            console.log(data);
+                        });
                 }
                 event.preventDefault();
             };
@@ -69,11 +83,5 @@ window.mudPicker = {
                 stick.destroy();
             }
         });
-    },
-
-    // Returns the selected stick (ex: Hour 12 or Minute 21).
-    getStickValue: (picker) => {
-        const value = picker.getAttribute('data-selected-value');
-        return value ? parseInt(value) : 0; // Ensure it returns an integer.
     }
 };

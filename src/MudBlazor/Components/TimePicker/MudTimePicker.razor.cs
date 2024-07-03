@@ -488,6 +488,7 @@ namespace MudBlazor
         private readonly SetTime _timeSet = new();
         private int _initialHour;
         private int _initialMinute;
+        private DotNetObjectReference<MudTimePicker> _dotNetRef;
 
         protected override void OnInitialized()
         {
@@ -496,6 +497,7 @@ namespace MudBlazor
             _currentView = OpenTo;
             _initialHour = _timeSet.Hour;
             _initialMinute = _timeSet.Minute;
+            _dotNetRef = DotNetObjectReference.Create(this);
         }
 
         [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
@@ -506,7 +508,7 @@ namespace MudBlazor
 
             if (firstRender)
             {
-                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudPicker.initTimePicker", ElementReference);
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudPicker.initTimePicker", ElementReference, _dotNetRef);
             }
         }
 
@@ -516,6 +518,8 @@ namespace MudBlazor
             {
                 await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudPicker.destroyTimePicker", ElementReference);
             }
+
+            _dotNetRef?.Dispose();
         }
 
         private void UpdateTimeSetFromTime()
@@ -546,6 +550,7 @@ namespace MudBlazor
         {
             if (PointerDown)
             {
+                Console.WriteLine("PointerOver");
                 await UpdateTimeFromSelectedStick();
             }
         }
@@ -577,6 +582,11 @@ namespace MudBlazor
 
         private async Task UpdateTimeFromSelectedStick()
         {
+            if (!IsJSRuntimeAvailable)
+            {
+                return;
+            }
+
             var value = await JsRuntime.InvokeAsync<int>("mudPicker.getStickValue", ElementReference);
 
             if (value == 0)
@@ -595,6 +605,27 @@ namespace MudBlazor
             }
 
             await UpdateTimeAsync();
+        }
+
+        [JSInvokable]
+        public void UpdateClock(int value)
+        {
+            if (value == 0)
+            {
+                return;
+            }
+
+            if (_currentView == OpenTo.Minutes)
+            {
+                var minute = RoundToStepInterval(value);
+                _timeSet.Minute = minute;
+            }
+            else if (_currentView == OpenTo.Hours)
+            {
+                _timeSet.Hour = HourAmPm(value);
+            }
+
+            UpdateTimeAsync().CatchAndLog();
         }
 
         private int HourAmPm(int hour)
