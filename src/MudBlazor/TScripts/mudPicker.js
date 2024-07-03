@@ -10,6 +10,9 @@ window.mudPicker = {
         const startHandler = (event) => {
             isPointerDown = true;
 
+            // Allow the pointerover event to trigger.
+            event.target.releasePointerCapture(event.pointerId);
+
             // Set the selected value to the stick that the pointer went down on.
             if (event.target.classList.contains('mud-picker-stick')) {
                 let attributeValue = event.target.getAttribute('data-stick-value');
@@ -17,9 +20,6 @@ window.mudPicker = {
 
                 dotNetHelper.invokeMethodAsync('UpdateClock', stickValue);
             }
-
-            // Allow the pointerover event to trigger.
-            event.target.releasePointerCapture(event.pointerId);
 
             event.preventDefault();
         };
@@ -45,10 +45,10 @@ window.mudPicker = {
             const stickValue = attributeValue ? parseInt(attributeValue) : -1; // Ensure an integer.
 
             const moveHandler = (event) => {
-                event.target.releasePointerCapture(event.pointerId);
                 if (isPointerDown) {
                     dotNetHelper.invokeMethodAsync('UpdateClock', stickValue);
                 }
+
                 event.preventDefault();
             };
 
