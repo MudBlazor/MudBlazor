@@ -280,7 +280,6 @@ namespace MudBlazor
 
         private async Task UpdateTimeAsync()
         {
-            _lastSelectedHour = _timeSet.Hour;
             TimeIntermediate = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
             if ((PickerVariant == PickerVariant.Static && PickerActions == null) || (PickerActions != null && AutoClose))
             {
@@ -497,7 +496,6 @@ namespace MudBlazor
             UpdateTimeSetFromTime();
             _currentView = OpenTo;
             _initialHour = _timeSet.Hour;
-            _lastSelectedHour = _timeSet.Hour;
             _initialMinute = _timeSet.Minute;
         }
 
@@ -509,7 +507,7 @@ namespace MudBlazor
 
             if (firstRender)
             {
-                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudPicker.initPointerEvents", ElementReference);
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudPicker.initTimePicker", ElementReference);
             }
         }
 
@@ -517,7 +515,7 @@ namespace MudBlazor
         {
             if (IsJSRuntimeAvailable)
             {
-                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudPicker.destroyPointerEvents", ElementReference);
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudPicker.destroyTimePicker", ElementReference);
             }
         }
 
@@ -539,9 +537,18 @@ namespace MudBlazor
         /// <summary>
         /// Sets <see cref="PointerDown"/> to true if the pointer is inside the clock mask.
         /// </summary>
-        private void OnPointerDown(PointerEventArgs e)
+        private async Task OnPointerDown(PointerEventArgs e)
         {
             PointerDown = true;
+            await UpdateTimeFromSelectedStick();
+        }
+
+        private async Task OnPointerOverAsync(PointerEventArgs e)
+        {
+            if (PointerDown)
+            {
+                await UpdateTimeFromSelectedStick();
+            }
         }
 
         /// <summary>
@@ -566,14 +573,6 @@ namespace MudBlazor
                 {
                     await SubmitAndCloseAsync();
                 }
-            }
-        }
-
-        private async Task OnPointerOverAsync(PointerEventArgs e)
-        {
-            if (PointerDown)
-            {
-                await UpdateTimeFromSelectedStick();
             }
         }
 
