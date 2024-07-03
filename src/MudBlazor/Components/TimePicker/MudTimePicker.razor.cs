@@ -550,17 +550,26 @@ namespace MudBlazor
         private async Task OnPointerUpAsync(PointerEventArgs e)
         {
             PointerDown = false;
-
             await UpdateTimeFromSelectedStick();
 
             if (_currentView == OpenTo.Minutes)
             {
-                await UpdateTimeAsync();
                 await SubmitAndCloseAsync();
+            }
+            else if (_currentView == OpenTo.Hours)
+            {
+                if (TimeEditMode == TimeEditMode.Normal)
+                {
+                    _currentView = OpenTo.Minutes;
+                }
+                else if (TimeEditMode == TimeEditMode.OnlyHours)
+                {
+                    await SubmitAndCloseAsync();
+                }
             }
         }
 
-        private async Task OnPointerMoveAsync(PointerEventArgs e)
+        private async Task OnPointerOverAsync(PointerEventArgs e)
         {
             if (PointerDown)
             {
@@ -581,12 +590,13 @@ namespace MudBlazor
             {
                 var minute = RoundToStepInterval(value);
                 _timeSet.Minute = minute;
-                await UpdateTimeAsync();
             }
             else if (_currentView == OpenTo.Hours)
             {
                 _timeSet.Hour = HourAmPm(value);
             }
+
+            await UpdateTimeAsync();
         }
 
         private int HourAmPm(int hour)
