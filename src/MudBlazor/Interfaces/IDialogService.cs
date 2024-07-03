@@ -22,7 +22,7 @@ namespace MudBlazor
     /// </remarks>
     public interface IDialogService
     {
-        public event Action<IDialogReference>? OnDialogInstanceAdded;
+        public event Func<IDialogReference, Task>? OnDialogInstanceAdded;
         public event Action<IDialogReference, DialogResult?>? OnDialogCloseRequested;
 
         /// <summary>

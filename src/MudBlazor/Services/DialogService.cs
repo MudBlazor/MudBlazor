@@ -61,7 +61,7 @@ namespace MudBlazor
         /// <summary>
         /// Occurs when a new dialog instance is created.
         /// </summary>
-        public event Action<IDialogReference>? OnDialogInstanceAdded;
+        public event Func<IDialogReference, Task>? OnDialogInstanceAdded;
 
         /// <summary>
         /// Occurs when a request is made to close a dialog.
