@@ -114,7 +114,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("#mud-pagination-test-button-clicked").TextContent.Should()
                 .Be("Button clicked: " + expectedButtonClickedValue);
         }
-        
+
         /// <summary>
         /// Tests if the page buttons are hidden
         /// </summary>
@@ -122,7 +122,7 @@ namespace MudBlazor.UnitTests.Components
         public void HidePageButtonTest()
         {
             var comp = Context.RenderComponent<PaginationHidePageButtonsTest>();
-            
+
             comp.FindAll(".mud-pagination-item button").Count.Should().Be(2);
         }
 
