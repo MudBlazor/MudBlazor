@@ -200,10 +200,10 @@ namespace MudBlazor.Docs.Compiler
             var mudBlazorComponents = typeof(_Imports).Assembly.GetTypes().Where(type => type.IsPublic);
             foreach (var type in mudBlazorComponents)
             {
-                if (ApiDocumentationBuilder.IsExcluded(type))
-                {
-                    continue;
-                }
+                //if (ApiDocumentationBuilder.IsExcluded(type))
+                //{
+                //    continue;
+                //}
 
                 // Skip MudBlazor.Color and MudBlazor.Input types
                 if (type.Name == "Color" || type.Name == "Input")

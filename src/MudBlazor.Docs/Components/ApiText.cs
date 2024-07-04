@@ -64,19 +64,20 @@ public partial class ApiText : ComponentBase
                                         builder.CloseComponent();
                                     }
                                     else // Property, Method, Field, or Event
-                                    {
-                                        var member = ApiDocumentation.GetMember(linkRef);
-                                        if (member != null)
-                                        {
-                                            builder.AddDocumentedMemberLink(sequence++, member);
-                                        }
-                                        else if (linkRef.StartsWith("MudBlazor.Icons"))
+                                    {                                        
+                                        if (linkRef.StartsWith("MudBlazor.Icons"))
                                         {
                                             builder.AddMudIcon(sequence++, linkRef, Color.Primary, Size.Medium);
                                         }
-                                        else if (linkRef != null && (linkRef.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase) || linkRef.StartsWith("System", StringComparison.OrdinalIgnoreCase)))
+                                        else if (linkRef.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase) || linkRef.StartsWith("System", StringComparison.OrdinalIgnoreCase))
                                         {
                                             builder.AddMudLink(0, $"https://learn.microsoft.com/en-us/dotnet/api/{linkRef}", linkRef, "docs-link docs-code docs-code-primary", "_external");
+                                        }
+                                        else if (linkRef.StartsWith("MudBlazor."))
+                                        {
+                                            builder.OpenComponent<ApiMemberLink>(0);
+                                            builder.AddComponentParameter(1, "MemberName", linkRef);
+                                            builder.CloseComponent();
                                         }
                                         else
                                         {

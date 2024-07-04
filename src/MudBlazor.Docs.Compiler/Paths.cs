@@ -8,7 +8,6 @@ namespace MudBlazor.Docs.Compiler
         private const string DocsDirectory = "MudBlazor.Docs";
         private const string TestDirectory = "MudBlazor.UnitTests";
         private const string SnippetsFile = "Snippets.generated.cs";
-        private const string ApiDocumentationFile = "ApiDocumentation.generated.cs";
         private const string DocStringsFile = "DocStrings.generated.cs";
         private const string ComponentTestsFile = "ExampleDocsTests.generated.cs";
         private const string ApiPageTestsFile = "ApiDocsTests.generated.cs";
@@ -46,9 +45,5 @@ namespace MudBlazor.Docs.Compiler
         public static string ApiPageTestsFilePath => Path.Join(TestDirPath, ApiPageTestsFile);
 
         public static string NewFilesToBuildPath => Path.Join(DocsDirPath, NewFilesToBuild);
-
-        public static string ApiDocumentationPath => Path.Join(DocsDirPath, "Models", "Generated");
-
-        public static string ApiDocumentationFilePath => Path.Join(ApiDocumentationPath, ApiDocumentationFile);
     }
 }

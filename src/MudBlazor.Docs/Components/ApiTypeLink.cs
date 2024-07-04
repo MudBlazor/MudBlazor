@@ -3,26 +3,32 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Diagnostics;
+using LoxSmoke.DocXml;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using MudBlazor.Docs.Extensions;
-using MudBlazor.Docs.Models;
+using MudBlazor.Docs.Services.XmlDocs;
 
 namespace MudBlazor.Docs.Components;
 
 #nullable enable
 
 /// <summary>
-/// A link to an API type, property, method, event, or field.
+/// A link to a type.
 /// </summary>
 public class ApiTypeLink : ComponentBase
 {
     /// <summary>
+    /// The service for XML documentation.
+    /// </summary>
+    [Inject]
+    public IXmlDocsService? Docs { get; set; }
+
+    /// <summary>
     /// The type to link.
     /// </summary>
     [Parameter]
-    public DocumentedType? Type { get; set; }
+    public Type? Type { get; set; }
 
     /// <summary>
     /// The name of the type to link.
@@ -37,6 +43,11 @@ public class ApiTypeLink : ComponentBase
     public string? TypeFriendlyName { get; set; }
 
     /// <summary>
+    /// The XML documentation for this type.
+    /// </summary>
+    public TypeComments? TypeComments { get; set; }
+
+    /// <summary>
     /// Shows a tooltip with the type's summary.
     /// </summary>
     [Parameter]
@@ -44,9 +55,15 @@ public class ApiTypeLink : ComponentBase
 
     protected override void OnParametersSet()
     {
-        if (Type == null || (TypeName != null && Type.Name.Equals(TypeName, StringComparison.OrdinalIgnoreCase)))
+        if (!string.IsNullOrWhiteSpace(TypeName) && (Type == null || Type.Name != TypeName))
         {
-            Type = ApiDocumentation.GetType(TypeName);
+            Type = Docs?.GetType(TypeName);
+            TypeFriendlyName = Type == null
+                ? TypeName.Substring(TypeName.LastIndexOf('.') + 1)
+                : Type.GetFriendlyName();
+            TypeComments = Type == null
+                ? null
+                : Docs?.GetTypeComments(Type);
         }
     }
 
@@ -54,13 +71,8 @@ public class ApiTypeLink : ComponentBase
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        // Is there a linkable type?
-        if (Type != null)
-        {
-            builder.AddDocumentedTypeLink(0, Type);
-        }
         // Is this an internal type?
-        else if (TypeName != null && (TypeName.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase) || TypeName.StartsWith("System", StringComparison.OrdinalIgnoreCase)))
+        if (TypeName != null && (TypeName.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase) || TypeName.StartsWith("System", StringComparison.OrdinalIgnoreCase)))
         {
             // Is this a native type?
             switch (TypeName)
@@ -92,6 +104,21 @@ public class ApiTypeLink : ComponentBase
                         builder.AddCode(0, TypeFriendlyName);
                     }
                     break;
+            }
+        }
+        // Is there a linkable type?
+        else if (Type != null && (Type.FullName == null || Type.FullName.StartsWith("MudBlazor.")))
+        {
+            if (ShowTooltip && TypeComments != null && !string.IsNullOrEmpty(TypeComments.Summary))
+            {
+                builder.AddMudTooltip(0, Placement.Top, TypeComments.Summary, (childSequence, childBuilder) =>
+                {
+                    builder.AddMudLink(0, $"api/{Type.Name}", Type.GetFriendlyName(), "docs-link docs-code docs-code-primary");
+                });
+            }
+            else
+            {
+                builder.AddMudLink(0, $"api/{Type.Name}", Type.GetFriendlyName(), "docs-link docs-code docs-code-primary");
             }
         }
         // Is there some text to link?

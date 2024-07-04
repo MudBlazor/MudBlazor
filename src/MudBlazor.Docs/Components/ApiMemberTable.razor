@@ -1,30 +1,46 @@
-﻿<MudTable T="DocumentedMember" @ref="Table" ServerData="@GetData"
-          Elevation="0" Class="ma-0 mud-width-full" Hover="true" Dense="true"
-          AllowUnsorted="false" GroupBy="@CurrentGroups">
+﻿@using MudBlazor.Docs.Extensions
+@using Services.XmlDocs
+@using System.Reflection
+
+<MudTable T="MemberInfo" @ref="Table" ServerData="GetData"
+          RowsPerPage="9999" Hover="true" Dense="true" AllowUnsorted="false"
+          Elevation="0" Class="ma-0 mud-width-full"
+          GroupBy="@CurrentGroups">
+    <ToolBarContent>
+        <MudGrid>
+            <MudItem xs="6">
+                <MudButtonGroup OverrideStyles="false">
+                    <MudButton Color="Color.Primary" Variant="@GetButtonVariant(ApiMemberGrouping.Categories)" OnClick="@(() => OnGroupBy(ApiMemberGrouping.Categories))">Category</MudButton>
+                    <MudButton Color="Color.Primary" Variant="@GetButtonVariant(ApiMemberGrouping.Inheritance)" OnClick="@(() => OnGroupBy(ApiMemberGrouping.Inheritance))">Inheritance</MudButton>
+                    <MudButton Color="Color.Primary" Variant="@GetButtonVariant(ApiMemberGrouping.None)" OnClick="@(() => OnGroupBy(ApiMemberGrouping.None))">None</MudButton>
+                </MudButtonGroup>
+            </MudItem>
+        </MudGrid>
+    </ToolBarContent>
     <GroupHeaderTemplate>
-        @if (CurrentGrouping == ApiMemberGrouping.Inheritance)
+        @if (Grouping == ApiMemberGrouping.Inheritance)
         {
-            <MudTh Class="mud-table-cell-custom-group" colspan="3" aria-label="Grouped by inheritance">
+            <MudTh Class="mud-table-cell-custom-group" colspan="3">
                 <MudText Typo="Typo.h6">@context.Key</MudText>
             </MudTh>
         }
-        else if (CurrentGrouping == ApiMemberGrouping.Categories)
+        else if (Grouping == ApiMemberGrouping.Categories)
         {
-            <MudTh Class="mud-table-cell-custom-group" colspan="3" aria-label="Grouped by category">
+            <MudTh Class="mud-table-cell-custom-group" colspan="3">
                 <MudText Typo="Typo.h6">@(context.Key ?? "General")</MudText>
             </MudTh>
         }
     </GroupHeaderTemplate>
     <HeaderContent>
-        <MudTh><MudTableSortLabel T="DocumentedMember" SortLabel="Name" InitialDirection="SortDirection.Ascending">Name</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel T="DocumentedMember" SortLabel="Type">Type</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel T="DocumentedMember" SortLabel="Description">Description</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="MemberInfo" SortLabel="Name" InitialDirection="SortDirection.Ascending">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="MemberInfo" SortLabel="Type">Type</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="MemberInfo" SortLabel="Description">Description</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd id="@context.Name" DataLabel="Name">
+        <MudTd DataLabel="Name">
             @if (context.DeclaringType != null && context.DeclaringType.Name != Type.Name)
             {
-                <MudTooltip Text="@("From " + context.DeclaringType.NameFriendly)" Placement="Placement.Top">
+                <MudTooltip Text="@("From " + context.DeclaringType.GetFriendlyName())" Placement="Placement.Top">
                     <CodeInline>@context.Name</CodeInline>
                 </MudTooltip>
             }
@@ -34,10 +50,20 @@
             }
         </MudTd>
         <MudTd DataLabel="Type">
-            <ApiTypeLink Type="@context.Type" TypeName="@context.TypeName" TypeFriendlyName="@context.TypeFriendlyName" />
+            @if (Mode == ApiMemberType.Properties)
+            {
+                var property = context as PropertyInfo;
+                <ApiTypeLink Type="@property.PropertyType" TypeName="@property.PropertyType.Name" TypeFriendlyName="@property.PropertyType.GetFriendlyName()" />
+            }
         </MudTd>
         <MudTd DataLabel="Description">
-            <ApiText Text="@(context.Summary + " " + context.Remarks)" />
+            @{
+                var comments = Docs.GetMemberComments(context);
+                if (comments != null)
+                {
+                    <ApiText Text="@(comments.Summary + " " + comments.Remarks)" />
+                }
+            }
         </MudTd>
     </RowTemplate>
     <NoRecordsContent>

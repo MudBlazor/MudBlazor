@@ -5,7 +5,6 @@
 using System;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
-using MudBlazor.Docs.Models;
 
 namespace MudBlazor.Docs.Extensions;
 
@@ -125,48 +124,5 @@ public static class RenderTreeExtensions
         builder.AddContent(2, code);
         builder.CloseElement();
         builder.CloseRegion();
-    }
-
-    /// <summary>
-    /// Adds a link to APi documentation to the render tree.
-    /// </summary>
-    /// <param name="builder">The render tree builder.</param>
-    /// <param name="sequence">The ordinal of this item relative to the other components.</param>
-    /// <param name="type">The type to link.</param>
-    /// <param name="showTooltip">When <c>true</c>, a tooltip will display with the type's summary.</param>
-    public static void AddDocumentedTypeLink(this RenderTreeBuilder builder, int sequence, DocumentedType type, bool showTooltip = true)
-    {
-        // Is a summary available?
-        if (!string.IsNullOrEmpty(type.Summary) && showTooltip)
-        {
-            // <MudTooltip Placement="Placement.Top" Text="{summary}">
-            builder.AddMudTooltip(sequence, Placement.Top, type.SummaryPlain, ((childSequence, childContentBuilder) =>
-            {
-                childContentBuilder.AddMudLink(childSequence++, type.ApiUrl, type.NameFriendly, "docs-link docs-code docs-code-primary");
-            }));
-        }
-        else
-        {
-            // <MudLink Href="{api_link}" Class="docs-link">
-            builder.AddMudLink(sequence, type.ApiUrl, type.NameFriendly, "docs-link docs-code docs-code-primary");
-        }
-    }
-
-    public static void AddDocumentedMemberLink(this RenderTreeBuilder builder, int sequence, DocumentedMember member)
-    {
-        // Is a summary available?
-        if (!string.IsNullOrEmpty(member.Summary))
-        {
-            // <MudTooltip Placement="Placement.Top" Text="{summary}">
-            builder.AddMudTooltip(sequence, Placement.Top, member.SummaryPlain, (childSequence, childContentBuilder) =>
-            {
-                childContentBuilder.AddMudLink(childSequence++, member.DeclaringType?.ApiUrl + "#" + member.Name, member.Name, "docs-link docs-code docs-code-primary");
-            });
-        }
-        else
-        {
-            // <MudLink Href="{api_link}" Class="docs-link">
-            builder.AddMudLink(sequence, member.DeclaringType?.ApiUrl, member.Name, "docs-link docs-code docs-code-primary");
-        }
     }
 }

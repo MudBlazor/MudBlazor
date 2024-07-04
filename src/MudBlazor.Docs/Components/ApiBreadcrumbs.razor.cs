@@ -4,13 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Docs.Models;
 
 namespace MudBlazor.Docs.Components;
 
@@ -25,7 +19,8 @@ public partial class ApiBreadcrumbs
     /// The type to display links for.
     /// </summary>
     [Parameter]
-    public DocumentedType? Type { get; set; }
+    [EditorRequired]
+    public Type? Type { get; set; }
 
     /// <summary>
     /// Gets the breadcrumb items.
@@ -43,12 +38,12 @@ public partial class ApiBreadcrumbs
         }
 
         // Add the type breadcrumb
-        Items.Add(new(Type.NameFriendly, Type.ApiUrl));
+        Items.Add(new(Type.Name, $"/api/{Type.Name}"));
         var parent = Type.BaseType;
         // Walk up the hierarchy and add base type breadcrumbs
         while (parent != null)
         {
-            Items.Insert(1, new(parent.NameFriendly, parent.ApiUrl));
+            Items.Insert(1, new(parent.Name, $"/api/{parent.Name}"));
             parent = parent.BaseType;
         }
     }

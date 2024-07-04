@@ -6,6 +6,7 @@ using MudBlazor.Docs.Pages.Consent.Prompt;
 using MudBlazor.Docs.Services;
 using MudBlazor.Docs.Services.Notifications;
 using MudBlazor.Docs.Services.UserPreferences;
+using MudBlazor.Docs.Services.XmlDocs;
 using MudBlazor.Examples.Data;
 using MudBlazor.Services;
 
@@ -47,6 +48,7 @@ namespace MudBlazor.Docs.Extensions
             services.AddSingleton<IPeriodicTableService, PeriodicTableService>();
             services.AddSingleton<IRenderQueueService, RenderQueueService>();
             services.AddScoped<LayoutService>();
+            services.AddSingleton<IXmlDocsService, XmlDocsService>();
             services.AddGoogleAnalytics("G-PRYNCB61NV");
             services.AddCookieConsent(options =>
             {

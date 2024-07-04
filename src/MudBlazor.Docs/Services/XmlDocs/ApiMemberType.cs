@@ -8,12 +8,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MudBlazor.Docs.Components;
+namespace MudBlazor.Docs.Services.XmlDocs;
 
 /// <summary>
 /// The kind of members to display in a member table.
 /// </summary>
-public enum ApiMemberTableMode
+public enum ApiMemberType
 {
     /// <summary>
     /// No items will be displayed.

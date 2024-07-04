@@ -2,12 +2,17 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Docs.Models;
+using MudBlazor.Docs.Pages.Api;
+using MudBlazor.Docs.Extensions;
+using MudBlazor.Docs.Services.XmlDocs;
+using LoxSmoke.DocXml;
 
 namespace MudBlazor.Docs.Components;
 
@@ -19,12 +24,31 @@ namespace MudBlazor.Docs.Components;
 public partial class ApiMemberTable
 {
     /// <summary>
-    /// This table.
+    /// The service for XML documentation.
     /// </summary>
-    public MudTable<DocumentedMember>? Table { get; set; }
+    [Inject]
+    public IXmlDocsService? Docs { get; set; }
 
     /// <summary>
-    /// The name of the type to display.
+    /// This table.
+    /// </summary>
+    public MudTable<MemberInfo>? Table { get; set; }
+
+    /// <summary>
+    /// The kind of member to display.
+    /// </summary>
+    [Parameter]
+    [EditorRequired]
+    public ApiMemberType Mode { get; set; } = ApiMemberType.None;
+
+    /// <summary>
+    /// The currently selected grouping.
+    /// </summary>
+    [Parameter]
+    public ApiMemberGrouping Grouping { get; set; } = ApiMemberGrouping.Categories;
+
+    /// <summary>
+    /// The type containing the members.
     /// </summary>
     [Parameter]
     [EditorRequired]
@@ -33,32 +57,23 @@ public partial class ApiMemberTable
     /// <summary>
     /// The type to display members for.
     /// </summary>
-    public DocumentedType? Type { get; set; }
+    public Type? Type { get; set; }
 
     /// <summary>
-    /// The kind of member to display.
+    /// The members to display.
     /// </summary>
     [Parameter]
     [EditorRequired]
-    public ApiMemberTableMode Mode { get; set; }
+    public List<MemberInfo> Members { get; set; } = [];
 
-    /// <summary>
-    /// The currently selected grouping.
-    /// </summary>
-    public ApiMemberGrouping CurrentGrouping { get; set; } = ApiMemberGrouping.Categories!;
-
-    /// <inheritdoc />
     protected override async Task OnParametersSetAsync()
     {
-        // Has the type to display changed?
-        if (Type == null || Type.Name != TypeName)
+        // Do we have to look up a new type?
+        if (!string.IsNullOrEmpty(TypeName) && (Type == null || Type.Name != TypeName))
         {
-            // Load the new type
-            Type = ApiDocumentation.GetType(TypeName);
-            // Is a table available?
+            Type = Docs!.GetType(TypeName);
             if (Table != null)
             {
-                // Yup.  Reload it
                 await Table.ReloadServerData();
             }
         }
@@ -70,67 +85,116 @@ public partial class ApiMemberTable
     /// <param name="state">The current table state.</param>
     /// <param name="token">A <see cref="CancellationToken"/> for aborting ongoing requests.</param>
     /// <returns></returns>
-    public async Task<TableData<DocumentedMember>> GetData(TableState state, CancellationToken token)
+    public async Task<TableData<MemberInfo>> GetData(TableState state, CancellationToken token)
     {
-        if (Type == null || Mode == ApiMemberTableMode.None)
+        if (Members == null || Members.Count == 0 || Mode == ApiMemberType.None)
         {
-            return new TableData<DocumentedMember> { };
+            return new TableData<MemberInfo> { Items = [], TotalItems = 0 };
         }
 
-        // Get members for the desired mode
-        var members = Mode switch
-        {
-            ApiMemberTableMode.Events => Type.Events.Values.AsQueryable(),
-            ApiMemberTableMode.Fields => Type.Fields.Values.AsQueryable(),
-            ApiMemberTableMode.Methods => Type.Methods.Values.AsQueryable(),
-            ApiMemberTableMode.Properties => Type.Properties.Values.AsQueryable(),
-            _ => new List<DocumentedMember>().AsQueryable(),
-        };
+        // Get a queryable list of members to start with
+        var members = Members.AsQueryable();
 
-        // What's the grouping?
-        if (CurrentGrouping == ApiMemberGrouping.Categories)
+        // First, sort by grouping
+        switch (Grouping)
         {
-            // Sort by category
-            var orderedMembers = members.OrderBy(property => property.Order).ThenBy(property => property.Category);
-
-            // ... then by sort column
-            members = state.SortLabel switch
-            {
-                "Description" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(property => property.Summary) : orderedMembers.ThenByDescending(property => property.Summary),
-                "Name" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(property => property.Name) : orderedMembers.ThenByDescending(property => property.Name),
-                "Return Type" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(property => property.TypeFriendlyName) : orderedMembers.ThenByDescending(property => property.TypeFriendlyName),
-                "Type" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(property => property.TypeFriendlyName) : orderedMembers.ThenByDescending(property => property.TypeFriendlyName),
-                _ => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(property => property.Name) : orderedMembers.ThenByDescending(property => property.Name),
-            };
+            case ApiMemberGrouping.None:
+                // Nothing to do                
+                members = SortByColumn(members.OrderBy(member => 1), state);
+                break;
+            case ApiMemberGrouping.Categories:
+                // Group by category order
+                members = SortByColumn(members.OrderBy(member => member.GetCategoryOrder()), state);
+                break;
+            case ApiMemberGrouping.Inheritance:
+                // Group by base class
+                members = SortByColumn(members.OrderBy(member => member.DeclaringType!.GetFriendlyName()), state);
+                break;
         }
+
+        // Get the total count
+        var totalItems = members.Count();
 
         // Make the final results
-        var results = members.ToList();
+        var items = members.Skip(state.Page * state.PageSize).Take(state.PageSize);
 
-        // What categories are selected?
-        return await Task.FromResult(new TableData<DocumentedMember>()
+        // Return the final results
+        return await Task.FromResult(new TableData<MemberInfo>()
         {
-            Items = results,
-            TotalItems = results.Count,
+            Items = items,
+            TotalItems = totalItems
         });
+    }
+
+    /// <summary>
+    /// Sorts a list of members by the sort column and direction.
+    /// </summary>
+    /// <param name="members"></param>
+    /// <param name="state"></param>
+    /// <returns></returns>
+    private IQueryable<MemberInfo> SortByColumn(IOrderedQueryable<MemberInfo> members, TableState state)
+    {
+        // Next, sort by column
+        return state.SortLabel switch
+        {
+            "Name" => state.SortDirection == SortDirection.Ascending
+                                ? members.ThenBy(member => member.Name)
+                                : members.ThenByDescending(member => member.Name),
+            "Type" => Mode switch
+            {
+                ApiMemberType.Properties => state.SortDirection == SortDirection.Ascending
+                                            ? members.ThenBy(member => ((PropertyInfo)member).PropertyType.GetFriendlyName())
+                                            : members.ThenByDescending(member => ((PropertyInfo)member).PropertyType.GetFriendlyName()),
+                ApiMemberType.Methods => state.SortDirection == SortDirection.Ascending
+                                            ? members.ThenBy(member => ((MethodInfo)member).ReturnType.GetFriendlyName())
+                                            : members.ThenByDescending(member => ((MethodInfo)member).ReturnType.GetFriendlyName()),
+                ApiMemberType.Fields => state.SortDirection == SortDirection.Ascending
+                                            ? members.ThenBy(member => ((FieldInfo)member).FieldType.GetFriendlyName())
+                                            : members.ThenByDescending(member => ((FieldInfo)member).FieldType.GetFriendlyName()),
+                _ => members,
+            },
+            "Description" => state.SortDirection == SortDirection.Ascending
+                                    ? members.ThenBy(member => Docs!.GetMemberComments(member)!.Summary ?? "")
+                                    : members.ThenByDescending(member => Docs!.GetMemberComments(member)!.Summary ?? ""),
+            _ => members,
+        };
     }
 
     /// <summary>
     /// The current groups.
     /// </summary>
-    public TableGroupDefinition<DocumentedMember> CurrentGroups
+    public TableGroupDefinition<MemberInfo>? CurrentGroups => Grouping switch
     {
-        get
-        {
-            return CurrentGrouping switch
-            {
-                ApiMemberGrouping.Categories => new() { Selector = (property) => property.Category ?? "" },
-                ApiMemberGrouping.Inheritance => new() { Selector = (property) => property.DeclaringType?.Name ?? "" },
-                _ => new() { Selector = (property) => property.Category ?? "" }
-            };
-        }
+        ApiMemberGrouping.None => null,
+        ApiMemberGrouping.Categories => new() { Selector = (property) => property.GetCategoryName() },
+        ApiMemberGrouping.Inheritance => new() { Selector = (property) => property.DeclaringType?.GetFriendlyName() ?? "" },
+        _ => null
+    };
+
+    /// <summary>
+    /// Gets the grouping button variant based on the current grouping.
+    /// </summary>
+    /// <param name="grouping">The grouping to compare.</param>
+    /// <returns>The button variant to use.</returns>
+    public Variant GetButtonVariant(ApiMemberGrouping grouping)
+    {
+        return Grouping == grouping ? Variant.Filled : Variant.Outlined;
     }
 
+    /// <summary>
+    /// Changes the grouping for this table.
+    /// </summary>
+    /// <param name="grouping">The new grouping to use.</param>
+    /// <returns></returns>
+    public void OnGroupBy(ApiMemberGrouping grouping)
+    {
+        Grouping = grouping;
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// The service for navigating to other pages.
+    /// </summary>
     [Inject]
     private NavigationManager? Browser { get; set; }
 
