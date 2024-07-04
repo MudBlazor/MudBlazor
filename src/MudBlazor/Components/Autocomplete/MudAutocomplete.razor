@@ -41,7 +41,7 @@
                           @onclick="@OnInputClickedAsync"
                           @onfocus="@OnInputFocusedAsync" OnBlur="OnInputBlurredAsync"
                           OnKeyDown="@OnInputKeyDownAsync"
-                          OnKeyUp="@OnInputKeyUpAsync" autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"
+                          OnKeyUp="@OnInputKeyUpAsync" autocomplete=@AutoComplete KeyUpPreventDefault="KeyUpPreventDefault"
                           Placeholder="@Placeholder" Immediate="true"
                           InputMode="@InputMode" Pattern="@Pattern"
                           ShrinkLabel="@ShrinkLabel"
