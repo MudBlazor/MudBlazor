@@ -31,7 +31,7 @@ public class TreeItemData<T> : IEquatable<TreeItemData<T>>
 
     public virtual List<TreeItemData<T>>? Children { get; set; }
 
-    public virtual bool HasChildren => Children is not null && Children.Count > 0;
+    public virtual bool HasChildren => Children is not null && Children.Count != 0;
 
     public virtual bool Equals(TreeItemData<T>? other)
     {
