@@ -8,7 +8,7 @@ window.mudTimePicker = {
         let isPointerDown = false;
 
         const startHandler = (event) => {
-            if (!event.isPrimary) {
+            if (event.button !== 0) {
                 return;
             }
 
@@ -29,7 +29,7 @@ window.mudTimePicker = {
         };
 
         const endHandler = (event) => {
-            if (!event.isPrimary) {
+            if (event.button !== 0) {
                 return;
             }
 

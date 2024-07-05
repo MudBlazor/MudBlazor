@@ -547,11 +547,21 @@ namespace MudBlazor
 
         private void OnPointerDown(PointerEventArgs e)
         {
+            if (e.Button != 0)
+            {
+                return;
+            }
+
             PointerDown = true;
         }
 
         private void OnPointerUp(PointerEventArgs e)
         {
+            if (e.Button != 0)
+            {
+                return;
+            }
+
             PointerDown = false;
         }
 
