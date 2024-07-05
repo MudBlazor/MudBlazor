@@ -278,13 +278,15 @@ namespace MudBlazor
             return $"{Math.Min(59, Math.Max(0, TimeIntermediate.Value.Minutes)):D2}";
         }
 
-        private async Task UpdateTimeAsync()
+        private Task UpdateTimeAsync()
         {
             TimeIntermediate = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
             if ((PickerVariant == PickerVariant.Static && PickerActions == null) || (PickerActions != null && AutoClose))
             {
-                await SubmitAsync();
+                return SubmitAsync();
             }
+
+            return Task.CompletedTask;
         }
 
         private async Task OnHourClickAsync()
@@ -616,6 +618,7 @@ namespace MudBlazor
             }
 
             await UpdateTimeAsync();
+            StateHasChanged();
         }
 
         private int HourAmPm(int hour)
