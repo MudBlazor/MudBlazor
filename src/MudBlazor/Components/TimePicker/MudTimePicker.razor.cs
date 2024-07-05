@@ -370,7 +370,7 @@ namespace MudBlazor
 
         private string GetClockPointerColor()
         {
-            if (PointerDown)
+            if (PointerMoving)
             {
                 return $"mud-picker-time-clock-pointer mud-{Color.ToDescriptionString()}";
             }
@@ -544,47 +544,28 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// <c>true</c> while the main (left) pointer button is held down.
+        /// <c>true</c> while the main (left) pointer button is moving.
+        /// Animations will be disabled.
         /// </summary>
-        public bool PointerDown { get; set; }
-
-        private void OnPointerDown(PointerEventArgs e)
-        {
-            if (e.Button != 0)
-            {
-                // Only handle main (left) pointer button.
-                return;
-            }
-
-            // While the pointer is down, animations are disabled and the time will be updated via the pointer events define in JavaScript.
-            PointerDown = true;
-        }
-
-        private void OnPointerUp(PointerEventArgs e)
-        {
-            if (e.Button != 0)
-            {
-                // Only handle main (left) pointer button.
-                return;
-            }
-
-            // The pointer is now up and animations can be enabled again.
-            PointerDown = false;
-        }
+        public bool PointerMoving { get; set; }
 
         /// <summary>
         /// Updates the position of the hands on the clock.
         /// This method is called by the JavaScript events.
         /// </summary>
         /// <param name="value">The minute or hour.</param>
+        /// <param name="pointerMoving">Is the pointer being moved?</param>
         [JSInvokable]
-        public Task SelectTimeFromStick(int value)
+        public async Task SelectTimeFromStick(int value, bool pointerMoving)
         {
             if (value == -1)
             {
                 // This means a stick wasn't the target.
-                return Task.CompletedTask;
+                return;
             }
+
+            // While the pointer is being moved, animations are disabled.
+            PointerMoving = pointerMoving;
 
             // Update the .NET properties from the JavaScript events.
             if (_currentView == OpenTo.Minutes)
@@ -597,10 +578,10 @@ namespace MudBlazor
                 _timeSet.Hour = HourAmPm(value);
             }
 
+            await UpdateTimeAsync();
+
             // Manually update because the event won't do it from JavaScript.
             StateHasChanged();
-
-            return UpdateTimeAsync();
         }
 
         /// <summary>
@@ -611,6 +592,9 @@ namespace MudBlazor
         [JSInvokable]
         public async Task OnStickClick(int value)
         {
+            // The pointer is up and not moving so animations can be enabled again.
+            PointerMoving = false;
+
             // Clicking a stick will submit the time.
             if (_currentView == OpenTo.Minutes)
             {
@@ -627,6 +611,9 @@ namespace MudBlazor
                     await SubmitAndCloseAsync();
                 }
             }
+
+            // Manually update because the event won't do it from JavaScript.
+            StateHasChanged();
         }
 
         private int HourAmPm(int hour)

@@ -22,7 +22,7 @@ window.mudTimePicker = {
                 let attributeValue = event.target.getAttribute('data-stick-value');
                 let stickValue = attributeValue ? parseInt(attributeValue) : -1; // Ensure an integer.
 
-                dotNetHelper.invokeMethodAsync('SelectTimeFromStick', stickValue);
+                dotNetHelper.invokeMethodAsync('SelectTimeFromStick', stickValue, false);
             }
 
             event.preventDefault();
@@ -55,7 +55,7 @@ window.mudTimePicker = {
             let attributeValue = event.target.getAttribute('data-stick-value');
             let stickValue = attributeValue ? parseInt(attributeValue) : -1; // Ensure an integer.
 
-            dotNetHelper.invokeMethodAsync('SelectTimeFromStick', stickValue);
+            dotNetHelper.invokeMethodAsync('SelectTimeFromStick', stickValue, true);
 
             event.preventDefault();
         };
