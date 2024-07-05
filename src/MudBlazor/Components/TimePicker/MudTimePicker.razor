@@ -14,9 +14,9 @@
             <div class="mud-timepicker-hourminute mud-ltr">
                 @if (TimeEditMode == TimeEditMode.Normal)
                 {
-                    <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@HoursButtonClassname" OnClick="OnHourClickAsync">@GetHourString()</MudButton>
+                    <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@HoursButtonClassname" OnClick="@OnHourClickAsync">@GetHourString()</MudButton>
                     <MudText Typo="@Typo.h2" Class="mud-timepicker-separator">:</MudText>
-                    <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@MinuteButtonClassname" OnClick="OnMinutesClick">@GetMinuteString()</MudButton>
+                    <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@MinuteButtonClassname" OnClick="@OnMinutesClick">@GetMinuteString()</MudButton>
                 }
                 else
                 {
@@ -56,7 +56,7 @@
                                 }
                             }
                             else
-                            { 
+                            {
                                 @*Hours from 13 to 24 (00)*@
                                 for (int i = 1; i <= 12; ++i)
                                 {

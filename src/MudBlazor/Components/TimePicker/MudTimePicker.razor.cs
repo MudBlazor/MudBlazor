@@ -511,7 +511,7 @@ namespace MudBlazor
         {
             await base.OnAfterRenderAsync(firstRender);
 
-            // Initialize the pointer events for the clock Every time it is created (popover opening and closing).
+            // Initialize the pointer events for the clock every time it's created (ex: popover opening and closing).
             if (ClockElementReference.Id != _clockElementReferenceId)
             {
                 _clockElementReferenceId = ClockElementReference.Id;
@@ -544,9 +544,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// <c>true</c> while the main (left) pointer button is moving.
-        /// Animations will be disabled.
+        /// <c>true</c> while the main pointer button is held down and moving.
         /// </summary>
+        /// <remarks>
+        /// Disables clock animations.
+        /// </remarks>
         public bool PointerMoving { get; set; }
 
         /// <summary>
@@ -560,11 +562,10 @@ namespace MudBlazor
         {
             if (value == -1)
             {
-                // This means a stick wasn't the target.
+                // This means a stick wasn't the target (which shouldn't happen).
                 return;
             }
 
-            // While the pointer is being moved, animations are disabled.
             PointerMoving = pointerMoving;
 
             // Update the .NET properties from the JavaScript events.
