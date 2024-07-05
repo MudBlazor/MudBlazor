@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -13,6 +14,10 @@ namespace MudBlazor
     [ExcludeFromCodeCoverage]
     public static class ElementReferenceExtensions
     {
+#if NET8_0_OR_GREATER
+        [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "<JSRuntime>k__BackingField")]
+        private static extern ref IJSRuntime GetJsRuntime(WebElementReferenceContext context);
+#else
         private static readonly PropertyInfo? _jsRuntimeProperty =
             typeof(WebElementReferenceContext).GetProperty("JSRuntime", BindingFlags.Instance | BindingFlags.NonPublic);
 
@@ -32,12 +37,19 @@ namespace MudBlazor
 
             return lambda.Compile();
         }
+#endif
 
         internal static IJSRuntime? GetJSRuntime(this ElementReference elementReference)
         {
             if (elementReference.Context is WebElementReferenceContext context)
             {
-                return _jsRuntimeAccessor.Value(context);
+#if NET8_0_OR_GREATER
+                var jsRuntime = GetJsRuntime(context);
+#else
+                var jsRuntime = _jsRuntimeAccessor.Value(context);
+#endif
+
+                return jsRuntime;
             }
 
             return null;
