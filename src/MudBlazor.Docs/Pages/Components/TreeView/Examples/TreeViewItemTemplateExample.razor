@@ -1,15 +1,20 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Width="300px" Elevation="0">
-    <MudTreeView Items="TreeItems" SelectionMode="SelectionMode.MultiSelection" @bind-SelectedValues="SelectedValues">
+    <MudTreeView Items="@TreeItems" SelectionMode="SelectionMode.MultiSelection" @bind-SelectedValues="SelectedValues">
         <ItemTemplate>
+            @{
+                // Casting context from TreeItemData<string> to our own derived class TreeItemPresenter
+                // for convenient usage in the template
+                var presenter = context as TreeItemPresenter;
+            }
             <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value"
-                             Icon="@context.Icon" Text="@context.Text" EndText="@((context as TreeItemData).Number?.ToString())" EndTextTypo="@Typo.caption" />
+                             Icon="@context.Icon" Text="@context.Text" EndText="@presenter?.Number?.ToString()" EndTextTypo="@Typo.caption" />
         </ItemTemplate>
     </MudTreeView>
 </MudPaper>
 
-<MudStack Row Justify="Justify.Center" style="width: 100%">
+<MudStack Row Justify="Justify.Center" Style="width: 100%">
     <MudText Typo="@Typo.subtitle1">Sum of selected items: <MudChip T="string">@GetSelectedSum()</MudChip></MudText>
 </MudStack>
 
@@ -19,11 +24,11 @@
     public List<TreeItemData<string>> TreeItems { get; set; } = new();
     public Dictionary<string, int?> ValueMap { get; set; }
 
-    public class TreeItemData : TreeItemData<string>
+    public class TreeItemPresenter : TreeItemData<string>
     {
         public int? Number { get; set; }
 
-        public TreeItemData(string text, string icon, int? number = null) : base(text)
+        public TreeItemPresenter(string text, string icon, int? number = null) : base(text)
         {
             Text = text;
             Icon = icon;
@@ -33,20 +38,19 @@
 
     protected override void OnInitialized()
     {
-        TreeItems.Add(new TreeItemData("All Mail", Icons.Material.Filled.Email));
-        TreeItems.Add(new TreeItemData("Trash", Icons.Material.Filled.Delete));
-        TreeItems.Add(new TreeItemData("Categories", Icons.Material.Filled.Label)
-        {
+        TreeItems.Add(new TreeItemPresenter("All Mail", Icons.Material.Filled.Email));
+        TreeItems.Add(new TreeItemPresenter("Trash", Icons.Material.Filled.Delete));
+        TreeItems.Add(new TreeItemPresenter("Categories", Icons.Material.Filled.Label) {
             Expanded = true,
-            Children = [            
-                new TreeItemData("Social", Icons.Material.Filled.Group, 90),
-                new TreeItemData("Updates", Icons.Material.Filled.Info, 2294),
-                new TreeItemData("Forums", Icons.Material.Filled.QuestionAnswer, 3566),
-                new TreeItemData("Promotions", Icons.Material.Filled.LocalOffer, 733)
-            ]
+            Children = [
+                    new TreeItemPresenter("Social", Icons.Material.Filled.Group, 90),
+                    new TreeItemPresenter("Updates", Icons.Material.Filled.Info, 2294),
+                    new TreeItemPresenter("Forums", Icons.Material.Filled.QuestionAnswer, 3566),
+                    new TreeItemPresenter("Promotions", Icons.Material.Filled.LocalOffer, 733)
+                ]
         });
-        TreeItems.Add(new TreeItemData("History", Icons.Material.Filled.Label));
-        ValueMap = TreeItems.Concat(TreeItems.SelectMany(x => x.Children ?? [])).OfType<TreeItemData>().ToDictionary(x => x.Value, x => x.Number);
+        TreeItems.Add(new TreeItemPresenter("History", Icons.Material.Filled.Label));
+        ValueMap = TreeItems.Concat(TreeItems.SelectMany(x => x.Children ?? [])).OfType<TreeItemPresenter>().ToDictionary(x => x.Value, x => x.Number);
     }
 
     public int GetSelectedSum()
