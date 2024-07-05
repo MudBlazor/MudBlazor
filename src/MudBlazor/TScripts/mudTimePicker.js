@@ -22,7 +22,7 @@ window.mudTimePicker = {
                 let attributeValue = event.target.getAttribute('data-stick-value');
                 let stickValue = attributeValue ? parseInt(attributeValue) : -1; // Ensure an integer.
 
-                dotNetHelper.invokeMethodAsync('UpdateClock', stickValue, false);
+                dotNetHelper.invokeMethodAsync('UpdateClock', stickValue);
             }
 
             event.preventDefault();
@@ -34,14 +34,6 @@ window.mudTimePicker = {
             }
 
             isPointerDown = false;
-
-            // Handle the click action when the pointer is released.
-            if (event.target.classList.contains('mud-picker-stick')) {
-                let attributeValue = event.target.getAttribute('data-stick-value');
-                let stickValue = attributeValue ? parseInt(attributeValue) : -1; // Ensure an integer.
-
-                dotNetHelper.invokeMethodAsync('UpdateClock', stickValue, true);
-            }
 
             event.preventDefault();
         };
@@ -66,7 +58,7 @@ window.mudTimePicker = {
                     return;
                 }
 
-                dotNetHelper.invokeMethodAsync('UpdateClock', stickValue, false);
+                dotNetHelper.invokeMethodAsync('UpdateClock', stickValue);
 
                 event.preventDefault();
             };

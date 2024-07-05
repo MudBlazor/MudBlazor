@@ -555,7 +555,7 @@ namespace MudBlazor
             PointerDown = true;
         }
 
-        private void OnPointerUp(PointerEventArgs e)
+        private async Task OnPointerUpAsync(PointerEventArgs e)
         {
             if (e.Button != 0)
             {
@@ -563,6 +563,22 @@ namespace MudBlazor
             }
 
             PointerDown = false;
+
+            if (_currentView == OpenTo.Minutes)
+            {
+                await SubmitAndCloseAsync();
+            }
+            else if (_currentView == OpenTo.Hours)
+            {
+                if (TimeEditMode == TimeEditMode.Normal)
+                {
+                    _currentView = OpenTo.Minutes;
+                }
+                else if (TimeEditMode == TimeEditMode.OnlyHours)
+                {
+                    await SubmitAndCloseAsync();
+                }
+            }
         }
 
         /// <summary>
@@ -570,9 +586,8 @@ namespace MudBlazor
         /// This method is used by JavaScript events and should not be called otherwise.
         /// </summary>
         /// <param name="value">The minute or hour.</param>
-        /// <param name="clicked">Whether the clock was clicked or just dragged over.</param>
         [JSInvokable]
-        public async Task UpdateClock(int value, bool clicked)
+        public async Task UpdateClock(int value)
         {
             if (value == -1)
             {
@@ -590,25 +605,6 @@ namespace MudBlazor
             }
 
             await UpdateTimeAsync();
-
-            if (clicked)
-            {
-                if (_currentView == OpenTo.Minutes)
-                {
-                    await SubmitAndCloseAsync();
-                }
-                else if (_currentView == OpenTo.Hours)
-                {
-                    if (TimeEditMode == TimeEditMode.Normal)
-                    {
-                        _currentView = OpenTo.Minutes;
-                    }
-                    else if (TimeEditMode == TimeEditMode.OnlyHours)
-                    {
-                        await SubmitAndCloseAsync();
-                    }
-                }
-            }
         }
 
         private int HourAmPm(int hour)
