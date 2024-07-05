@@ -542,16 +542,20 @@ namespace MudBlazor
             _timeSet.Minute = TimeIntermediate.Value.Minutes;
         }
 
-
+        /// <summary>
+        /// <c>true</c> while the main (left) pointer button is held down.
+        /// </summary>
         public bool PointerDown { get; set; }
 
         private void OnPointerDown(PointerEventArgs e)
         {
             if (e.Button != 0)
             {
+                // Only handle main (left) pointer button.
                 return;
             }
 
+            // While the pointer is down, animations are disabled and the time will be updated via the pointer events define in JavaScript.
             PointerDown = true;
         }
 
@@ -559,11 +563,14 @@ namespace MudBlazor
         {
             if (e.Button != 0)
             {
+                // Only handle main (left) pointer button.
                 return;
             }
 
+            // The pointer is now up and animations are enabled again.
             PointerDown = false;
 
+            // Clicking a stick will submit the time.
             if (_currentView == OpenTo.Minutes)
             {
                 await SubmitAndCloseAsync();
@@ -583,17 +590,19 @@ namespace MudBlazor
 
         /// <summary>
         /// Updates the position of the hands on the clock.
-        /// This method is used by JavaScript events and should not be called otherwise.
+        /// This method is called by the JavaScript events.
         /// </summary>
         /// <param name="value">The minute or hour.</param>
         [JSInvokable]
-        public async Task UpdateClock(int value)
+        public async Task SelectTimeFromStick(int value)
         {
             if (value == -1)
             {
+                // This means a stick wasn't the target.
                 return;
             }
 
+            // Update the .NET properties from the JavaScript events.
             if (_currentView == OpenTo.Minutes)
             {
                 var minute = RoundToStepInterval(value);

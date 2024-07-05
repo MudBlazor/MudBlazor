@@ -9,6 +9,7 @@ window.mudTimePicker = {
 
         const startHandler = (event) => {
             if (event.button !== 0) {
+                // Only handle main (left) pointer button.
                 return;
             }
 
@@ -22,7 +23,7 @@ window.mudTimePicker = {
                 let attributeValue = event.target.getAttribute('data-stick-value');
                 let stickValue = attributeValue ? parseInt(attributeValue) : -1; // Ensure an integer.
 
-                dotNetHelper.invokeMethodAsync('UpdateClock', stickValue);
+                dotNetHelper.invokeMethodAsync('SelectTimeFromStick', stickValue);
             }
 
             event.preventDefault();
@@ -30,6 +31,7 @@ window.mudTimePicker = {
 
         const endHandler = (event) => {
             if (event.button !== 0) {
+                // Only handle main (left) pointer button.
                 return;
             }
 
@@ -55,10 +57,11 @@ window.mudTimePicker = {
 
             const moveHandler = (event) => {
                 if (!isPointerDown) {
+                    // Only update time from the stick if the pointer is down.
                     return;
                 }
 
-                dotNetHelper.invokeMethodAsync('UpdateClock', stickValue);
+                dotNetHelper.invokeMethodAsync('SelectTimeFromStick', stickValue);
 
                 event.preventDefault();
             };
