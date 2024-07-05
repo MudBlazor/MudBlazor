@@ -4,7 +4,6 @@
 
 window.mudTimePicker = {
     initPointerEvents: (container, dotNetHelper) => {
-        const sticks = container.querySelectorAll('.mud-picker-stick');
         let isPointerDown = false;
 
         const startHandler = (event) => {
@@ -40,38 +39,31 @@ window.mudTimePicker = {
             event.preventDefault();
         };
 
+        const moveHandler = (event) => {
+            if (!isPointerDown || !event.target.classList.contains('mud-picker-stick')) {
+                // Only update time from the stick if the pointer is down.
+                return;
+            }
+
+            let attributeValue = event.target.getAttribute('data-stick-value');
+            let stickValue = attributeValue ? parseInt(attributeValue) : -1; // Ensure an integer.
+
+            dotNetHelper.invokeMethodAsync('SelectTimeFromStick', stickValue);
+
+            event.preventDefault();
+        };
+
         container.addEventListener('pointerdown', startHandler);
         container.addEventListener('pointerup', endHandler);
         container.addEventListener('pointercancel', endHandler);
+        container.addEventListener('pointerover', moveHandler);
 
         container.destroy = () => {
             container.removeEventListener('pointerdown', startHandler);
             container.removeEventListener('pointerup', endHandler);
             container.removeEventListener('pointercancel', endHandler);
+            container.removeEventListener('pointerover', moveHandler);
         };
-
-        // Add pointerover event listeners to each stick element.
-        sticks.forEach((stick) => {
-            const attributeValue = stick.getAttribute('data-stick-value');
-            const stickValue = attributeValue ? parseInt(attributeValue) : -1; // Ensure an integer.
-
-            const moveHandler = (event) => {
-                if (!isPointerDown) {
-                    // Only update time from the stick if the pointer is down.
-                    return;
-                }
-
-                dotNetHelper.invokeMethodAsync('SelectTimeFromStick', stickValue);
-
-                event.preventDefault();
-            };
-
-            stick.addEventListener('pointerover', moveHandler);
-
-            stick.destroy = () => {
-                stick.removeEventListener('pointerover', moveHandler);
-            };
-        });
     },
 
     destroyPointerEvents: (container) => {
@@ -79,13 +71,5 @@ window.mudTimePicker = {
         if (typeof container.destroy === 'function') {
             container.destroy();
         }
-
-        // Clean up event listeners from each stick.
-        const sticks = container.querySelectorAll('.mud-picker-stick');
-        sticks.forEach((stick) => {
-            if (typeof stick.destroy === 'function') {
-                stick.destroy();
-            }
-        });
     }
 };
