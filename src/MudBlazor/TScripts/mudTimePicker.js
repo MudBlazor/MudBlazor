@@ -18,7 +18,7 @@ window.mudTimePicker = {
             event.target.releasePointerCapture(event.pointerId);
 
             // Set the selected value to the stick that the pointer went down on.
-            if (event.target.classList.contains('mud-picker-stick')) {
+            if (event.target.classList.contains('mud-hour') || event.target.classList.contains('mud-minute')) {
                 let attributeValue = event.target.getAttribute('data-stick-value');
                 let stickValue = attributeValue ? parseInt(attributeValue) : -1; // Ensure an integer.
 
@@ -36,7 +36,7 @@ window.mudTimePicker = {
 
             isPointerDown = false;
 
-            if (event.target.classList.contains('mud-picker-stick')) {
+            if (event.target.classList.contains('mud-hour') || event.target.classList.contains('mud-minute')) {
                 let attributeValue = event.target.getAttribute('data-stick-value');
                 let stickValue = attributeValue ? parseInt(attributeValue) : -1; // Ensure an integer.
 
@@ -47,7 +47,7 @@ window.mudTimePicker = {
         };
 
         const moveHandler = (event) => {
-            if (!isPointerDown || !event.target.classList.contains('mud-picker-stick')) {
+            if (!isPointerDown || (!event.target.classList.contains('mud-hour') && !event.target.classList.contains('mud-minute'))) {
                 // Only update time from the stick if the pointer is down.
                 return;
             }
