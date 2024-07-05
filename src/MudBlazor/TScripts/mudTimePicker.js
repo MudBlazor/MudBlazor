@@ -36,6 +36,13 @@ window.mudTimePicker = {
 
             isPointerDown = false;
 
+            if (event.target.classList.contains('mud-picker-stick')) {
+                let attributeValue = event.target.getAttribute('data-stick-value');
+                let stickValue = attributeValue ? parseInt(attributeValue) : -1; // Ensure an integer.
+
+                dotNetHelper.invokeMethodAsync('OnStickClick', stickValue);
+            }
+
             event.preventDefault();
         };
 
