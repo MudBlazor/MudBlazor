@@ -491,7 +491,7 @@ namespace MudBlazor
         private int _initialHour;
         private int _initialMinute;
         private DotNetObjectReference<MudTimePicker> _dotNetRef;
-        private bool _clockHasRendered;
+        private string _clockElementReferenceId;
 
         protected override void OnInitialized()
         {
@@ -511,21 +511,18 @@ namespace MudBlazor
         {
             await base.OnAfterRenderAsync(firstRender);
 
-            // Set up the pointer events for the clock the first time the element reference has been loaded.
-            if (ClockElementReference.Context != null)
+            // Initialize the pointer events for the clock Every time it is created (popover opening and closing).
+            if (ClockElementReference.Id != _clockElementReferenceId)
             {
-                if (!_clockHasRendered)
-                {
-                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.initPointerEvents", ClockElementReference, _dotNetRef);
-                }
+                _clockElementReferenceId = ClockElementReference.Id;
 
-                _clockHasRendered = true;
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.initPointerEvents", ClockElementReference, _dotNetRef);
             }
         }
 
         public async ValueTask DisposeAsync()
         {
-            if (_clockHasRendered && IsJSRuntimeAvailable)
+            if (IsJSRuntimeAvailable && ClockElementReference.Id != null)
             {
                 await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.destroyPointerEvents", ClockElementReference);
             }
