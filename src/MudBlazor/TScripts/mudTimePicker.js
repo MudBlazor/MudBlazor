@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 window.mudTimePicker = {
-    initPointerEvents: (container, dotNetHelper) => {
+    initPointerEvents: (clock, dotNetHelper) => {
         let isPointerDown = false;
 
         const startHandler = (event) => {
@@ -53,16 +53,16 @@ window.mudTimePicker = {
             event.preventDefault();
         };
 
-        container.addEventListener('pointerdown', startHandler);
-        container.addEventListener('pointerup', endHandler);
-        container.addEventListener('pointercancel', endHandler);
-        container.addEventListener('pointerover', moveHandler);
+        clock.addEventListener('pointerdown', startHandler);
+        clock.addEventListener('pointerup', endHandler);
+        clock.addEventListener('pointercancel', endHandler);
+        clock.addEventListener('pointerover', moveHandler);
 
-        container.destroy = () => {
-            container.removeEventListener('pointerdown', startHandler);
-            container.removeEventListener('pointerup', endHandler);
-            container.removeEventListener('pointercancel', endHandler);
-            container.removeEventListener('pointerover', moveHandler);
+        clock.destroy = () => {
+            clock.removeEventListener('pointerdown', startHandler);
+            clock.removeEventListener('pointerup', endHandler);
+            clock.removeEventListener('pointercancel', endHandler);
+            clock.removeEventListener('pointerover', moveHandler);
         };
     },
 

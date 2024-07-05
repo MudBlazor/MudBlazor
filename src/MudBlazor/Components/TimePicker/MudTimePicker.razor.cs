@@ -489,7 +489,7 @@ namespace MudBlazor
         private int _initialHour;
         private int _initialMinute;
         private DotNetObjectReference<MudTimePicker> _dotNetRef;
-        private bool _pickerContainerElementReferenceHasRendered;
+        private bool _clockHasRendered;
 
         protected override void OnInitialized()
         {
@@ -503,27 +503,29 @@ namespace MudBlazor
 
         [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
 
+        protected ElementReference ClockElementReference { get; private set; }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
 
             // Set up the pointer events for the clock the first time the element reference has been loaded.
-            if (PickerContainerElementReference.Context != null)
+            if (ClockElementReference.Context != null)
             {
-                if (!_pickerContainerElementReferenceHasRendered)
+                if (!_clockHasRendered)
                 {
-                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.initPointerEvents", PickerContainerElementReference, _dotNetRef);
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.initPointerEvents", ClockElementReference, _dotNetRef);
                 }
 
-                _pickerContainerElementReferenceHasRendered = true;
+                _clockHasRendered = true;
             }
         }
 
         public async ValueTask DisposeAsync()
         {
-            if (_pickerContainerElementReferenceHasRendered && IsJSRuntimeAvailable)
+            if (_clockHasRendered && IsJSRuntimeAvailable)
             {
-                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.destroyPointerEvents", PickerContainerElementReference);
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.destroyPointerEvents", ClockElementReference);
             }
 
             _dotNetRef?.Dispose();

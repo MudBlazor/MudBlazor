@@ -56,7 +56,7 @@
 				<MudPopover Open="@Open" Fixed="true" AnchorOrigin="@(AnchorOrigin)" TransformOrigin="@(TransformOrigin)" OverflowBehavior="OverflowBehavior.FlipOnOpen" Paper="false">
 				   <div @ref="_pickerInlineRef" class="@PickerInlineClassname">
 					   <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Elevation="@_pickerElevation" Square="@_pickerSquare">
-						   <div class="@PickerContainerClassname" @ref="PickerContainerElementReference">
+						   <div class="@PickerContainerClassname">
 							   @if(PickerContent != null){
 								   @PickerContent
 							   }
@@ -74,7 +74,7 @@
             else if (PickerVariant == PickerVariant.Static)
             {
                <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Elevation="@_pickerElevation" Square="@_pickerSquare">
-                   <div class="@PickerContainerClassname" @ref="PickerContainerElementReference">
+                   <div class="@PickerContainerClassname">
 					   @if(PickerContent != null){
 						   @PickerContent
 					   }
@@ -91,7 +91,7 @@
             {
                <MudOverlay Visible="@Open" OnClick="CloseOverlayAsync" DarkBackground="true" Class="mud-overlay-dialog">
                    <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Elevation="@_pickerElevation" Square="@_pickerSquare">
-                       <div class="@PickerContainerClassname" @ref="PickerContainerElementReference">
+                       <div class="@PickerContainerClassname">
 							@if(PickerContent != null){
 								@PickerContent
 							}
