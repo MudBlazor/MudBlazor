@@ -598,12 +598,12 @@ namespace MudBlazor
         /// </summary>
         /// <param name="value">The minute or hour.</param>
         [JSInvokable]
-        public async Task SelectTimeFromStick(int value)
+        public Task SelectTimeFromStick(int value)
         {
             if (value == -1)
             {
                 // This means a stick wasn't the target.
-                return;
+                return Task.CompletedTask;
             }
 
             // Update the .NET properties from the JavaScript events.
@@ -617,8 +617,10 @@ namespace MudBlazor
                 _timeSet.Hour = HourAmPm(value);
             }
 
-            await UpdateTimeAsync();
+            // Manually update because the event won't do it from JavaScript.
             StateHasChanged();
+
+            return UpdateTimeAsync();
         }
 
         private int HourAmPm(int hour)
