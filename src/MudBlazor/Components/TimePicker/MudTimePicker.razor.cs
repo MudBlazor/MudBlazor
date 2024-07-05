@@ -489,6 +489,7 @@ namespace MudBlazor
         private int _initialHour;
         private int _initialMinute;
         private DotNetObjectReference<MudTimePicker> _dotNetRef;
+        private bool _pickerContainerElementReferenceHasRendered;
 
         protected override void OnInitialized()
         {
@@ -506,17 +507,23 @@ namespace MudBlazor
         {
             await base.OnAfterRenderAsync(firstRender);
 
-            if (firstRender)
+            // Set up the pointer events for the clock the first time the element reference has been loaded.
+            if (PickerContainerElementReference.Context != null)
             {
-                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudPicker.initTimePicker", ElementReference, _dotNetRef);
+                if (!_pickerContainerElementReferenceHasRendered)
+                {
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.initPointerEvents", PickerContainerElementReference, _dotNetRef);
+                }
+
+                _pickerContainerElementReferenceHasRendered = true;
             }
         }
 
         public async ValueTask DisposeAsync()
         {
-            if (IsJSRuntimeAvailable)
+            if (_pickerContainerElementReferenceHasRendered && IsJSRuntimeAvailable)
             {
-                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudPicker.destroyTimePicker", ElementReference);
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.destroyPointerEvents", PickerContainerElementReference);
             }
 
             _dotNetRef?.Dispose();
@@ -535,6 +542,7 @@ namespace MudBlazor
             _timeSet.Minute = TimeIntermediate.Value.Minutes;
         }
 
+
         public bool PointerDown { get; set; }
 
         private void OnPointerDown(PointerEventArgs e)
@@ -551,7 +559,7 @@ namespace MudBlazor
         /// Updates the position of the hands on the clock.
         /// This method is used by JavaScript events and should not be called otherwise.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">The minute or hour.</param>
         [JSInvokable]
         public void UpdateClock(int value)
         {
