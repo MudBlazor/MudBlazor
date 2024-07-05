@@ -45,8 +45,7 @@
             @if (PickerVariant != PickerVariant.Static)
             {
                 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
-					@if(InputContent != null)
-                    {
+					@if(InputContent != null) {    
 						@InputContent
 					}
                 </CascadingValue>
