@@ -7,12 +7,10 @@ window.mudTimePicker = {
         let isPointerDown = false;
 
         const startHandler = (event) => {
-            console.log("start");
             if (event.button !== 0) {
                 // Only handle main (left) pointer button.
                 return;
             }
-            console.log(event.target.classList);
 
             isPointerDown = true;
 
@@ -31,7 +29,6 @@ window.mudTimePicker = {
         };
 
         const endHandler = (event) => {
-            console.log("end");
             if (event.button !== 0) {
                 // Only handle main (left) pointer button.
                 return;
@@ -50,7 +47,6 @@ window.mudTimePicker = {
         };
 
         const moveHandler = (event) => {
-            console.log("move");
             if (!isPointerDown || !event.target.classList.contains('mud-picker-stick')) {
                 // Only update time from the stick if the pointer is down.
                 return;
@@ -64,14 +60,12 @@ window.mudTimePicker = {
             event.preventDefault();
         };
 
-        console.log("sub");
         clock.addEventListener('pointerdown', startHandler);
         clock.addEventListener('pointerup', endHandler);
         clock.addEventListener('pointercancel', endHandler);
         clock.addEventListener('pointerover', moveHandler);
 
-        clock.destroyPointerEvents = () => {
-            console.log("unsub");
+        clock.destroy = () => {
             clock.removeEventListener('pointerdown', startHandler);
             clock.removeEventListener('pointerup', endHandler);
             clock.removeEventListener('pointercancel', endHandler);
@@ -79,36 +73,10 @@ window.mudTimePicker = {
         };
     },
 
-    destroyPointerEvents: (clock) => {
+    destroyPointerEvents: (container) => {
         // Clean up event listeners from the picker element
-        if (typeof clock.destroyPointerEvents === 'function') {
-            clock.destroyPointerEvents();
+        if (typeof container.destroy === 'function') {
+            container.destroy();
         }
-    },
-
-    initTimePicker: (dotNetHelper) => {
-        if (window.mudTimePickerInitialized) {
-            return;
-        }
-
-        window.mudTimePickerInitialized = true;
-
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                mutation.addedNodes.forEach((node) => {
-                    if (node.classList && node.classList.contains('mud-picker-time-clock-mask')) {
-                        window.mudTimePicker.initPointerEvents(node, dotNetHelper);
-                    }
-                });
-            });
-        });
-
-        observer.observe(document.body, { childList: true, subtree: true });
-
-        // Clean up the observer when it's no longer needed
-        return () => observer.disconnect();
     }
 };
-
-// Initialize the time picker with the DotNet helper
-window.mudTimePicker.initTimePicker(dotNetHelper);

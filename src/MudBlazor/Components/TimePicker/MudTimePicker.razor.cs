@@ -491,6 +491,7 @@ namespace MudBlazor
         private int _initialHour;
         private int _initialMinute;
         private DotNetObjectReference<MudTimePicker> _dotNetRef;
+        private bool _clockHasRendered;
 
         protected override void OnInitialized()
         {
@@ -504,22 +505,29 @@ namespace MudBlazor
 
         [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
 
+        protected ElementReference ClockElementReference { get; private set; }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
 
             // Set up the pointer events for the clock the first time the element reference has been loaded.
-            if (firstRender)
+            if (ClockElementReference.Context != null)
             {
-                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.initTimePicker", _dotNetRef);
+                if (!_clockHasRendered)
+                {
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.initPointerEvents", ClockElementReference, _dotNetRef);
+                }
+
+                _clockHasRendered = true;
             }
         }
 
         public async ValueTask DisposeAsync()
         {
-            if (IsJSRuntimeAvailable)
+            if (_clockHasRendered && IsJSRuntimeAvailable)
             {
-                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.destroyPointerEvents");
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.destroyPointerEvents", ClockElementReference);
             }
 
             _dotNetRef?.Dispose();
@@ -545,7 +553,6 @@ namespace MudBlazor
 
         private void OnPointerDown(PointerEventArgs e)
         {
-            Console.WriteLine("down");
             if (e.Button != 0)
             {
                 // Only handle main (left) pointer button.
@@ -558,7 +565,6 @@ namespace MudBlazor
 
         private void OnPointerUp(PointerEventArgs e)
         {
-            Console.WriteLine("up");
             if (e.Button != 0)
             {
                 // Only handle main (left) pointer button.
@@ -618,7 +624,6 @@ namespace MudBlazor
                 if (TimeEditMode == TimeEditMode.Normal)
                 {
                     _currentView = OpenTo.Minutes;
-                    StateHasChanged();
                 }
                 else if (TimeEditMode == TimeEditMode.OnlyHours)
                 {
