@@ -570,8 +570,9 @@ namespace MudBlazor
         /// This method is used by JavaScript events and should not be called otherwise.
         /// </summary>
         /// <param name="value">The minute or hour.</param>
+        /// <param name="clicked">Whether the clock was clicked or just dragged over.</param>
         [JSInvokable]
-        public void UpdateClock(int value)
+        public async Task UpdateClock(int value, bool clicked)
         {
             if (value == -1)
             {
@@ -588,7 +589,26 @@ namespace MudBlazor
                 _timeSet.Hour = HourAmPm(value);
             }
 
-            UpdateTimeAsync().CatchAndLog();
+            await UpdateTimeAsync();
+
+            if (clicked)
+            {
+                if (_currentView == OpenTo.Minutes)
+                {
+                    await SubmitAndCloseAsync();
+                }
+                else if (_currentView == OpenTo.Hours)
+                {
+                    if (TimeEditMode == TimeEditMode.Normal)
+                    {
+                        _currentView = OpenTo.Minutes;
+                    }
+                    else if (TimeEditMode == TimeEditMode.OnlyHours)
+                    {
+                        await SubmitAndCloseAsync();
+                    }
+                }
+            }
         }
 
         private int HourAmPm(int hour)
