@@ -435,6 +435,17 @@ namespace MudBlazor
         public EventCallback<int> ReturnedItemsCountChanged { get; set; }
 
         /// <summary>
+        ///  Sets the autocomplete attribute.
+        /// </summary>
+        /// <remarks>
+        /// The autocomplete attribute specifies whether the browser should enable autocomplete for the input field. 
+        /// By default, this attribute is set to a unique identifier to disable the browser's autocomplete feature. 
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string AutoComplete { get; set; } = "mud-disabled-" + Guid.NewGuid();
+
+        /// <summary>
         /// Displays the search result drop-down.
         /// </summary>
         /// <remarks>
