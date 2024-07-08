@@ -553,7 +553,7 @@
                         }
                         else if (fieldType.IsEnum)
                         {
-                            <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
+                            <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Dense="true" Margin="@Margin.Dense"
                                        Class="filter-input">
                                 <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
                                 @foreach (var item in EnumExtensions.GetSafeEnumValues(fieldType.InnerType))
@@ -564,7 +564,7 @@
                         }
                         else if (fieldType.IsBoolean)
                         {
-                            <MudSelect T="bool?" Value="@filter._valueBool" ValueChanged="@filter.BoolValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
+                            <MudSelect T="bool?" Value="@filter._valueBool" ValueChanged="@filter.BoolValueChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Dense="true" Margin="@Margin.Dense"
                                        Class="filter-input">
                                 <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
                                 <MudSelectItem T="bool?" Value="@(true)">@Localizer[LanguageResource.MudDataGrid_True]</MudSelectItem>
@@ -575,10 +575,10 @@
                         {
                             <MudGrid Spacing="0">
                                 <MudItem xs="7">
-                                    <MudDatePicker Date="@filter._valueDate" DateChanged="@filter.DateValueChanged" Margin="@Margin.Dense" Class="filter-input-date"/>
+                                    <MudDatePicker Date="@filter._valueDate" DateChanged="@filter.DateValueChanged" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
                                 </MudItem>
                                 <MudItem xs="5">
-                                    <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Margin="@Margin.Dense" Class="filter-input-time"/>
+                                    <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-time" />
                                 </MudItem>
                             </MudGrid>
                         }
@@ -616,7 +616,7 @@
                         }
                         else if (fieldType.IsEnum)
                         {
-                            <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
+                            <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Dense="true" Margin="@Margin.Dense"
                                        Class="filter-input">
                                 <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
                                 @foreach (var item in EnumExtensions.GetSafeEnumValues(fieldType.InnerType))
@@ -627,7 +627,7 @@
                         }
                         else if (fieldType.IsBoolean)
                         {
-                            <MudSelect T="bool?" Value="@filter._valueBool" ValueChanged="@filter.BoolValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
+                            <MudSelect T="bool?" Value="@filter._valueBool" ValueChanged="@filter.BoolValueChanged" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Dense="true" Margin="@Margin.Dense"
                                        Class="filter-input">
                                 <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
                                 <MudSelectItem T="bool?" Value="@(true)">@Localizer[LanguageResource.MudDataGrid_True]</MudSelectItem>
@@ -638,16 +638,16 @@
                         {
                             <MudGrid Spacing="0">
                                 <MudItem xs="7">
-                                    <MudDatePicker Date="@filter._valueDate" DateChanged="@filter.DateValueChanged" Margin="@Margin.Dense" Class="filter-input-date"/>
+                                    <MudDatePicker Date="@filter._valueDate" DateChanged="@filter.DateValueChanged" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
                                 </MudItem>
                                 <MudItem xs="5">
-                                    <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Margin="@Margin.Dense" Class="filter-input-time"/>
+                                    <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-time"/>
                                 </MudItem>
                             </MudGrid>
                         }
                         else if (fieldType.IsGuid)
                         {
-                            <MudTextField T="Guid?" Value="@filter._valueGuid" ValueChanged="@filter.GuidValueChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
+                            <MudTextField T="Guid?" Value="@filter._valueGuid" ValueChanged="@filter.GuidValueChanged" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
                                           Immediate="true" Class="filter-input"/>
                         }
                     </MudItem>
