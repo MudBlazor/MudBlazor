@@ -124,7 +124,6 @@
                                                         class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon mud-picker-calendar-day @(!firstMonthFirstYear || day.Day == _picker_month.Value.Day? GetDayClasses(tempMonth, day) : GetDayClasses(tempMonth, selectedDay))"
                                                         @onclick="(async () => { var d = selectedDay; await OnDayClickedAsync(d); })"
                                                         @onclick:stopPropagation="true"
-                                                        aria-label='@selectedDay.ToString("dddd, dd MMMM yyyy")'
                                                         onpointerover="@(async () => await HandleMouseoverOnPickerCalendarDayButton(!firstMonthFirstYear ? tempId : tempId + 1))"
                                                         disabled="@((selectedDay < MinDate) || (selectedDay > MaxDate) || IsDateDisabledFunc(selectedDay))">
                                                     <p class="mud-typography mud-typography-body2 mud-inherit-text">@GetCalendarDayOfMonth(selectedDay)</p>
@@ -132,9 +131,8 @@
                                             }
                                             else
                                             {
-                                                <button @key="0" type="button" style="--day-id: 1;"
-                                                        class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon mud-picker-calendar-day mud-day"
-                                                        aria-label='' disabled>
+                                                <button @key="0" type="button" disabled style="--day-id: 1;"
+                                                        class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon mud-picker-calendar-day mud-day">
                                                     <p class="mud-typography mud-typography-body2 mud-inherit-text"></p>
                                                 </button>
                                             }

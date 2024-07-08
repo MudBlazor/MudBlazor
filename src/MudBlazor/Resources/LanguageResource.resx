@@ -292,16 +292,16 @@
     <value>Switch Mode</value>
   </data>
   <data name="MudBaseDatePicker_PrevYear" xml:space="preserve">
-    <value>Go to previous year {0}</value>
+    <value>Previous year {0}</value>
   </data>
   <data name="MudBaseDatePicker_NextYear" xml:space="preserve">
-    <value>Go to next year {0}</value>
+    <value>Next year {0}</value>
   </data>
   <data name="MudBaseDatePicker_PrevMonth" xml:space="preserve">
-    <value>Go to previous month {0}</value>
+    <value>Previous month {0}</value>
   </data>
   <data name="MudBaseDatePicker_NextMonth" xml:space="preserve">
-    <value>Go to next month {0}</value>
+    <value>Next month {0}</value>
   </data>
   <data name="MudPagination_CurrentPage" xml:space="preserve">
     <value>Current page {0}</value>
@@ -328,10 +328,10 @@
     <value>Index {0}</value>
   </data>
   <data name="MudCarousel_Next" xml:space="preserve">
-    <value>Go to next</value>
+    <value>Next</value>
   </data>
   <data name="MudCarousel_Previous" xml:space="preserve">
-    <value>Go to previous</value>
+    <value>Previous</value>
   </data>
   <data name="MudColorPicker_ColorDot" xml:space="preserve">
     <value>Select Color Dot</value>
