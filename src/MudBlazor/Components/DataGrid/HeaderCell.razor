@@ -116,11 +116,11 @@ else if (Column != null && !Column.HiddenState.Value)
                         {
                             if (Column?.GroupingState.Value ?? false)
                             {
-                                <MudMenuItem OnClick="@UngroupColumn">@Localizer[LanguageResource.MudDataGrid_Ungroup]</MudMenuItem>
+                                <MudMenuItem OnClick="@UngroupColumnAsync">@Localizer[LanguageResource.MudDataGrid_Ungroup]</MudMenuItem>
                             }
                             else
                             {
-                                <MudMenuItem OnClick="@GroupColumn">@Localizer[LanguageResource.MudDataGrid_Group]</MudMenuItem>
+                                <MudMenuItem OnClick="@GroupColumnAsync">@Localizer[LanguageResource.MudDataGrid_Group]</MudMenuItem>
                             }
                         }
                     </MudMenu>
