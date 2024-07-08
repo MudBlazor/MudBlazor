@@ -34,11 +34,11 @@
             {
                 @if (PreviousButtonTemplate is null)
                 {
-                    <MudIconButton tabindex="1" aria-label="@Localizer[nameof(LanguageResource.MudCarousel_Previous)]" Class="@NavigationButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@PreviousIcon" OnClick="Previous" Color="Color.Inherit" />
+                    <MudIconButton tabindex="1" aria-label="@Localizer[LanguageResource.MudCarousel_Previous]" Class="@NavigationButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@PreviousIcon" OnClick="Previous" Color="Color.Inherit" />
                 }
                 else
                 {
-                    <div @onclick="Previous" tabindex="1" aria-label="@Localizer[nameof(LanguageResource.MudCarousel_Previous)]" class="@NavigationButtonsClassName" style="z-index:3">
+                    <div @onclick="Previous" tabindex="1" aria-label="@Localizer[LanguageResource.MudCarousel_Previous]" class="@NavigationButtonsClassName" style="z-index:3">
                         @PreviousButtonTemplate
                     </div>
                 }
@@ -54,7 +54,7 @@
                             int current = i;
                             if (BulletTemplate is null)
                             {
-                                <MudIconButton tabindex="@(current+3)" aria-label="@Localizer[nameof(LanguageResource.MudCarousel_Index), $"{current + 1}"]" Class="@BulletsButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@(current == SelectedIndex ? CheckedIcon : UncheckedIcon)" OnClick="(() => MoveTo(current))" Color="Color.Inherit" />
+                                <MudIconButton tabindex="@(current+3)" aria-label="@Localizer[LanguageResource.MudCarousel_Index, $"{current + 1}"]" Class="@BulletsButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@(current == SelectedIndex ? CheckedIcon : UncheckedIcon)" OnClick="(() => MoveTo(current))" Color="Color.Inherit" />
                             }
                             else
                             {
@@ -72,11 +72,11 @@
             {
                 @if (NextButtonTemplate is null)
                 {
-                    <MudIconButton tabindex="2" aria-label="@Localizer[nameof(LanguageResource.MudCarousel_Next)]" Class="@NavigationButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@NextIcon" OnClick="Next" Color="Color.Inherit" />
+                    <MudIconButton tabindex="2" aria-label="@Localizer[LanguageResource.MudCarousel_Next]" Class="@NavigationButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@NextIcon" OnClick="Next" Color="Color.Inherit" />
                 }
                 else
                 {
-                    <div @onclick="Next" tabindex="2" aria-label="@Localizer[nameof(LanguageResource.MudCarousel_Next)]" class="@NavigationButtonsClassName" style="z-index:3">
+                    <div @onclick="Next" tabindex="2" aria-label="@Localizer[LanguageResource.MudCarousel_Next]" class="@NavigationButtonsClassName" style="z-index:3">
                         @NextButtonTemplate
                     </div>
                 }

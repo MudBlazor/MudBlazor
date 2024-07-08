@@ -459,6 +459,19 @@ namespace MudBlazor
 
         private string CurrentIcon => !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _open ? CloseIcon : OpenIcon;
 
+        /// <summary>
+        /// Returns a value for the <c>autocomplete</c> attribute, either supplied by default or the one specified in the attribute overrides.
+        /// </summary>
+        protected object GetAutocomplete()
+        {
+            if (UserAttributes.TryGetValue("autocomplete", out var userAutocomplete))
+            {
+                return userAutocomplete;
+            }
+
+            return $"mud-disable-{Guid.NewGuid()}";
+        }
+
         public MudAutocomplete()
         {
             Adornment = Adornment.End;
