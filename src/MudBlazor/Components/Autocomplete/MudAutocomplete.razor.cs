@@ -469,7 +469,7 @@ namespace MudBlazor
                 return userAutocomplete;
             }
 
-            return $"mud-disable-{Guid.NewGuid()}";
+            return "off";
         }
 
         public MudAutocomplete()
