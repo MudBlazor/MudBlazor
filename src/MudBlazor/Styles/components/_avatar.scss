@@ -1,4 +1,4 @@
-﻿@import '../abstracts/variables';
+@import '../abstracts/variables';
 
 .mud-avatar {
   display: inline-flex;
@@ -91,12 +91,6 @@
   &.mud-avatar-group-outlined {
     .mud-avatar:not(.mud-avatar-outlined) {
       border-color: var(--mud-palette-surface);
-    }
-
-    &.mud-avatar-group-outlined-transparent {
-      .mud-avatar:not(.mud-avatar-outlined) {
-        border-color: transparent;
-      }
     }
 
     @each $color in $mud-palette-colors {
