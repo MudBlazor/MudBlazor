@@ -91,7 +91,6 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Warning, "warning")]
         [TestCase(Color.Error, "error")]
         [TestCase(Color.Dark, "dark")]
-        [TestCase(Color.Transparent, "transparent")]
         [TestCase(Color.Inherit, "inherit")]
         public void CheckColorCssClass(Color color, string expectedColorClass)
         {

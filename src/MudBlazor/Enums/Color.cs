@@ -22,8 +22,6 @@ namespace MudBlazor
         Error,
         [Description("dark")]
         Dark,
-        [Description("transparent")]
-        Transparent,
         [Description("inherit")]
         Inherit,
     }
