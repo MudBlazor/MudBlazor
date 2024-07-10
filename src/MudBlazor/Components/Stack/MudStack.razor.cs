@@ -16,7 +16,7 @@ public partial class MudStack : MudComponentBase
             .AddClass($"justify-{Justify?.ToDescriptionString()}", Justify is not null)
             .AddClass($"align-{AlignItems?.ToDescriptionString()}", AlignItems is not null)
             .AddClass($"flex-{Wrap?.ToDescriptionString()}", Wrap is not null)
-            .AddClass($"gap-{Spacing}")
+            .AddClass($"gap-{Spacing}", Spacing >= 0)
             .AddClass($"flex-grow-{StretchItems?.ToDescriptionString()}", StretchItems is not null and not MudBlazor.StretchItems.None)
             .AddClass(Class)
             .Build();
@@ -36,7 +36,11 @@ public partial class MudStack : MudComponentBase
     public bool Reverse { get; set; }
 
     /// <summary>
-    /// Defines the spacing between its items.
+    /// The gap between items, measured in increments of <c>4px</c>.
+    /// <br/>
+    /// Maximum is <c>20</c>.
+    /// <br/>
+    /// Default is <c>3</c>.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]

@@ -30,7 +30,7 @@ namespace MudBlazor
         private int _selectedListItemIndex;
         private int _elementKey = 0;
         private int _returnedItemsCount;
-        private bool _isOpen;
+        private bool _open;
         private bool _doNotOpenMenuOnNextFocus;
         private MudInput<string> _elementReference;
         private CancellationTokenSource _cancellationTokenSrc;
@@ -117,7 +117,7 @@ namespace MudBlazor
         public Origin TransformOrigin { get; set; } = Origin.TopCenter;
 
         /// <summary>
-        /// Whether compact padding will be used.
+        /// Uses compact padding.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -181,7 +181,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Whether to show the progress indicator during searches.
+        /// Shows the progress indicator during searches.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  The progress indicator uses the color specified in the <see cref="ProgressIndicatorColor"/> property.
@@ -231,7 +231,7 @@ namespace MudBlazor
         public int MinCharacters { get; set; } = 0;
 
         /// <summary>
-        /// Whether to reset the selected value if the user deletes the text.
+        /// Reset the selected value if the user deletes the text.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -241,7 +241,7 @@ namespace MudBlazor
         public bool ResetValueOnEmptyText { get; set; }
 
         /// <summary>
-        /// Whether the text will be selected (highlighted) when the component receives focus.
+        /// Highlights the text when the component receives focus.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -251,7 +251,7 @@ namespace MudBlazor
         public bool SelectOnActivation { get; set; } = true;
 
         /// <summary>
-        /// Whether other items can be selected without resetting the Value.
+        /// Selects items without resetting the <c>Value</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  When <c>true</c>, selecting an option will trigger a <see cref="SearchFunc"/> with the current Text.  Otherwise, an empty string is passed which can make it easier to view and select other options without resetting the Value. When <c>false</c>, <c>T</c> must either be a <c>record</c> or override the <c>GetHashCode</c> and <c>Equals</c> methods.
@@ -361,7 +361,7 @@ namespace MudBlazor
         public RenderFragment ProgressIndicatorInPopoverTemplate { get; set; }
 
         /// <summary>
-        /// Whether the <c>Text</c> property is overridden when an item is selected.
+        /// Overrides the <c>Text</c> property when an item is selected.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  When <c>true</c>, selecting a value will update the Text property.  When <c>false</c>, incomplete values for Text are allowed.
@@ -371,7 +371,7 @@ namespace MudBlazor
         public bool CoerceText { get; set; } = true;
 
         /// <summary>
-        /// Whether the <c>Value</c> property is set even if no match is found by <see cref="SearchFunc"/>.
+        /// Sets the <c>Value</c> property even if no match is found by <see cref="SearchFunc"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the user input will be applied to the Value property which allows it to be validated and show an error message.
@@ -391,13 +391,13 @@ namespace MudBlazor
         public Func<T, bool> ItemDisabledFunc { get; set; }
 
         /// <summary>
-        /// Occurs when the <see cref="IsOpen"/> property has changed.
+        /// Occurs when the <see cref="Open"/> property has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<bool> IsOpenChanged { get; set; }
+        public EventCallback<bool> OpenChanged { get; set; }
 
         /// <summary>
-        /// Whether pressing the <c>Tab</c> key updates the Value to the currently selected item.
+        /// Updates the Value to the currently selected item when pressing the <c>Tab</c> key.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -407,7 +407,7 @@ namespace MudBlazor
         public bool SelectValueOnTab { get; set; }
 
         /// <summary>
-        /// Whether a Clear icon button is displayed.
+        /// Displays the Clear icon button.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <c>ClearIcon</c> property to control the Clear button icon.
@@ -435,29 +435,42 @@ namespace MudBlazor
         public EventCallback<int> ReturnedItemsCountChanged { get; set; }
 
         /// <summary>
-        /// Whether the search result drop-down is currently displayed.
+        /// Displays the search result drop-down.
         /// </summary>
         /// <remarks>
-        /// When this property changes, the <see cref="IsOpenChanged"/> event will occur.
+        /// When this property changes, the <see cref="OpenChanged"/> event will occur.
         /// </remarks>
-        public bool IsOpen
+        public bool Open
         {
-            get => _isOpen;
+            get => _open;
             // Note: the setter is protected because it was needed by a user who derived his own autocomplete from this class.
-            // Note: setting IsOpen will not open or close it. Use ToggleMenu() for that.
+            // Note: setting Open will not open or close it. Use ToggleMenuAsync() for that.
             protected set
             {
-                if (_isOpen == value)
+                if (_open == value)
                     return;
-                _isOpen = value;
+                _open = value;
 
-                IsOpenChanged.InvokeAsync(_isOpen).AndForget();
+                OpenChanged.InvokeAsync(_open).CatchAndLog();
             }
         }
 
         private bool IsLoading => _currentSearchTask is { IsCompleted: false };
 
-        private string CurrentIcon => !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
+        private string CurrentIcon => !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _open ? CloseIcon : OpenIcon;
+
+        /// <summary>
+        /// Returns a value for the <c>autocomplete</c> attribute, either supplied by default or the one specified in the attribute overrides.
+        /// </summary>
+        protected object GetAutocomplete()
+        {
+            if (UserAttributes.TryGetValue("autocomplete", out var userAutocomplete))
+            {
+                return userAutocomplete;
+            }
+
+            return "off";
+        }
 
         public MudAutocomplete()
         {
@@ -469,7 +482,7 @@ namespace MudBlazor
         /// Changes the currently selected item to the specified value.
         /// </summary>
         /// <param name="value">The value to set.</param>
-        public async Task SelectOption(T value)
+        public async Task SelectOptionAsync(T value)
         {
             _isProcessingValue = true;
             try
@@ -485,7 +498,7 @@ namespace MudBlazor
                     await SetTextAsync(optionText, false);
 
                 _debounceTimer?.Dispose();
-                IsOpen = false;
+                Open = false;
 
                 await BeginValidateAsync();
 
@@ -520,10 +533,10 @@ namespace MudBlazor
         {
             if (_isClearing || _isProcessingValue)
             {
-                //When you select a value in the popover, SelectOption will be called.
+                //When you select a value in the popover, SelectOptionAsync will be called.
                 //When it reaches SetValueAsync, it will be awaited.
-                //Meanwhile, in parallel, the Clear method will be called, which sets isCleared to true.
-                //However, by the time SetValueAsync is released and SelectOption continues its execution, an OnAfterRender event might fire, setting isCleared back to false.
+                //Meanwhile, in parallel, the ClearAsync method will be called, which sets isCleared to true.
+                //However, by the time SetValueAsync is released and SelectOptionAsync continues its execution, an OnAfterRender event might fire, setting isCleared back to false.
                 //This can result in a race condition.
                 //https://github.com/MudBlazor/MudBlazor/pull/6701
                 base.OnAfterRender(firstRender);
@@ -539,7 +552,7 @@ namespace MudBlazor
         {
             _debounceTimer?.Dispose();
 
-            // This keeps the text from being set when clear() was called
+            // This keeps the text from being set when ClearAsync() was called
             if (_isCleared)
                 return Task.CompletedTask;
 
@@ -588,12 +601,12 @@ namespace MudBlazor
         /// </remarks>
         public Task ToggleMenuAsync()
         {
-            if ((GetDisabledState() || GetReadOnlyState()) && !IsOpen)
+            if ((GetDisabledState() || GetReadOnlyState()) && !Open)
             {
                 return Task.CompletedTask;
             }
 
-            return IsOpen ? CloseMenuAsync() : OpenMenuAsync();
+            return Open ? CloseMenuAsync() : OpenMenuAsync();
         }
 
         /// <summary>
@@ -604,8 +617,8 @@ namespace MudBlazor
             CancelToken();
             _debounceTimer?.Dispose();
             await RestoreScrollPositionAsync();
-            await CoerceTextToValue();
-            IsOpen = false;
+            await CoerceTextToValueAsync();
+            Open = false;
             StateHasChanged();
         }
 
@@ -619,7 +632,7 @@ namespace MudBlazor
         {
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
             {
-                IsOpen = false;
+                Open = false;
                 StateHasChanged();
                 return;
             }
@@ -634,7 +647,7 @@ namespace MudBlazor
                 if (ProgressIndicatorInPopoverTemplate != null)
                 {
                     // Open before searching if a progress indicator is defined.
-                    IsOpen = true;
+                    Open = true;
                 }
 
                 // Search while selected if enabled and the Text is equivalent to the Value.
@@ -683,19 +696,19 @@ namespace MudBlazor
             if (_isFocused || !wasFocused)
             {
                 // Open after the search has finished if we're still focused (UI), or were never focused in the first place (programmatically).
-                IsOpen = true;
+                Open = true;
             }
 
             if (_items?.Length == 0)
             {
-                await CoerceValueToText();
+                await CoerceValueToTextAsync();
                 StateHasChanged();
                 return;
             }
 
             if (!CoerceText && CoerceValue)
             {
-                await CoerceValueToText();
+                await CoerceValueToTextAsync();
             }
 
             StateHasChanged();
@@ -704,16 +717,16 @@ namespace MudBlazor
         /// <summary>
         /// Resets the Text and Value, and closes the drop-down if it is open.
         /// </summary>
-        public async Task Clear()
+        public async Task ClearAsync()
         {
             _isClearing = true;
             try
             {
                 _isCleared = true;
-                IsOpen = false;
+                Open = false;
 
                 await SetTextAsync(null, updateValue: false);
-                await CoerceValueToText();
+                await CoerceValueToTextAsync();
 
                 if (_elementReference != null)
                     await _elementReference.SetText("");
@@ -727,7 +740,7 @@ namespace MudBlazor
             }
         }
 
-        protected override Task ResetValueAsync() => Clear();
+        protected override Task ResetValueAsync() => ClearAsync();
 
         private string GetItemString(T item)
         {
@@ -745,21 +758,21 @@ namespace MudBlazor
         {
             switch (args.Key)
             {
-                // We need to catch Tab here because a tab will move focus to the next element and thus we'd never get the tab key in OnInputKeyUp.
+                // We need to catch Tab here because a tab will move focus to the next element and thus we'd never get the tab key in OnInputKeyUpAsync.
                 case "Tab":
-                    if (IsOpen)
+                    if (Open)
                     {
                         if (SelectValueOnTab)
-                            await OnEnterKey();
+                            await OnEnterKeyAsync();
                         else
-                            IsOpen = false;
+                            Open = false;
                     }
                     break;
                 case "ArrowDown":
-                    if (IsOpen)
+                    if (Open)
                     {
                         var increment = _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) + 1) - _selectedListItemIndex;
-                        await SelectNextItem(increment < 0 ? 1 : increment);
+                        await SelectNextItemAsync(increment < 0 ? 1 : increment);
                     }
                     else
                     {
@@ -771,14 +784,14 @@ namespace MudBlazor
                     {
                         await CloseMenuAsync();
                     }
-                    else if (!IsOpen)
+                    else if (!Open)
                     {
                         await ToggleMenuAsync();
                     }
                     else
                     {
                         var decrement = _selectedListItemIndex - _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) - 1);
-                        await SelectNextItem(-(decrement < 0 ? 1 : decrement));
+                        await SelectNextItemAsync(-(decrement < 0 ? 1 : decrement));
                     }
                     break;
             }
@@ -792,9 +805,9 @@ namespace MudBlazor
             {
                 case "Enter":
                 case "NumpadEnter":
-                    if (IsOpen)
+                    if (Open)
                     {
-                        await OnEnterKey();
+                        await OnEnterKeyAsync();
                     }
                     else
                     {
@@ -815,21 +828,21 @@ namespace MudBlazor
             await base.InvokeKeyUpAsync(args);
         }
 
-        private ValueTask SelectNextItem(int increment)
+        private ValueTask SelectNextItemAsync(int increment)
         {
             if (increment == 0 || _items == null || _items.Length == 0 || !_enabledItemIndices.Any())
                 return ValueTask.CompletedTask;
 
             // if we are at the end, or the beginning we just do an rollover
             _selectedListItemIndex = Math.Clamp(value: ((10 * _items.Length) + _selectedListItemIndex + increment) % _items.Length, min: 0, max: _items.Length - 1);
-            return ScrollToListItem(_selectedListItemIndex);
+            return ScrollToListItemAsync(_selectedListItemIndex);
         }
 
         /// <summary>
         /// Scrolls the list of items to the item at the specified index.
         /// </summary>
         /// <param name="index">The index of the item to scroll to.</param>
-        public ValueTask ScrollToListItem(int index)
+        public ValueTask ScrollToListItemAsync(int index)
         {
             var id = GetListItemId(index);
 
@@ -851,9 +864,9 @@ namespace MudBlazor
             return $"{_componentId}_item{index}";
         }
 
-        internal async Task OnEnterKey()
+        internal async Task OnEnterKeyAsync()
         {
-            if (!IsOpen)
+            if (!Open)
                 return;
 
             try
@@ -862,25 +875,25 @@ namespace MudBlazor
                     return;
 
                 if (_selectedListItemIndex >= 0 && _selectedListItemIndex < _items.Length)
-                    await SelectOption(_items[_selectedListItemIndex]);
+                    await SelectOptionAsync(_items[_selectedListItemIndex]);
             }
             finally
             {
-                if (IsOpen)
-                    IsOpen = false;
+                if (Open)
+                    Open = false;
             }
         }
 
-        private Task OnInputClicked()
+        private Task OnInputClickedAsync()
         {
-            return _isFocused ? OnInputFocused() : Task.CompletedTask;
+            return _isFocused ? OnInputFocusedAsync() : Task.CompletedTask;
         }
 
-        private async Task OnInputFocused()
+        private async Task OnInputFocusedAsync()
         {
             _isFocused = true;
 
-            if (_doNotOpenMenuOnNextFocus || IsOpen || GetDisabledState() || GetReadOnlyState())
+            if (_doNotOpenMenuOnNextFocus || Open || GetDisabledState() || GetReadOnlyState())
             {
                 _doNotOpenMenuOnNextFocus = false;
                 return;
@@ -895,14 +908,14 @@ namespace MudBlazor
             await OpenMenuAsync();
         }
 
-        private async Task AdornmentClickHandler()
+        private async Task AdornmentClickHandlerAsync()
         {
             await FocusAsync();
 
             await OnAdornmentClick.InvokeAsync();
         }
 
-        private Task OnInputBlurred(FocusEventArgs args)
+        private Task OnInputBlurredAsync(FocusEventArgs args)
         {
             _isFocused = false;
 
@@ -913,7 +926,17 @@ namespace MudBlazor
             //base.OnBlurred(args);
         }
 
-        private Task CoerceTextToValue()
+        private Task OnOverlayVisibleChangedAsync(bool willBeVisible)
+        {
+            if (!willBeVisible && Open)
+            {
+                return CloseMenuAsync();
+            }
+
+            return Task.CompletedTask;
+        }
+
+        private Task CoerceTextToValueAsync()
         {
             if (!CoerceText)
                 return Task.CompletedTask;
@@ -929,7 +952,7 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
-        private Task CoerceValueToText()
+        private Task CoerceValueToTextAsync()
         {
             if (!CoerceValue)
                 return Task.CompletedTask;
@@ -991,7 +1014,7 @@ namespace MudBlazor
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
 
-        private async Task OnTextChanged(string text)
+        private async Task OnTextChangedAsync(string text)
         {
             await base.TextChanged.InvokeAsync(text);
 
@@ -1001,6 +1024,6 @@ namespace MudBlazor
             await SetTextAsync(text, true);
         }
 
-        private Task ListItemOnClick(T item) => SelectOption(item);
+        private Task ListItemOnClickAsync(T item) => SelectOptionAsync(item);
     }
 }

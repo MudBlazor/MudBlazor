@@ -1,4 +1,6 @@
 ﻿@page "/components/chipset"
+@page "/components/MudChipSet"
+@page "/components/MudChipSet`1"
 
 <DocsPage>
     <DocsPageHeader Title="Chip Set" SubTitle="The ChipSet is used for creating groups of selections using chips.">
@@ -63,7 +65,7 @@
         <DocsPageSection>
             <SectionHeader Title="Binding chips in a selection">
                 <Description>
-                    You can bind a Chip's <CodeInline>IsSelected</CodeInline> parameter to manipulate the selection.
+                    You can bind a Chip's <CodeInline>@nameof(MudChip<T>.Selected)</CodeInline> parameter to manipulate the selection.
                 </Description>
             </SectionHeader>
             <SectionContent ShowCode="false" Code="@nameof(ChipSetChipBindingExample)" Block="true">

@@ -1,0 +1,24 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<ErrorBoundary>
+    <ChildContent>
+        <MudNavMenu Margin="Margin.Dense" Color="Color.Warning">
+            <MudNavLink OnClick="HandleClickAsync">
+                Clickable Link
+            </MudNavLink>
+        </MudNavMenu>
+    </ChildContent>
+    <ErrorContent>
+        <MudAlert Severity="Severity.Error">Oh my! We caught an error and handled it!</MudAlert>
+    </ErrorContent>
+</ErrorBoundary>
+
+@code {
+#nullable enable
+
+    public async Task HandleClickAsync()
+    {
+        await Task.Delay(100);
+        throw new Exception("Something went wrong...");
+    }
+}

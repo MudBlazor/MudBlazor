@@ -547,6 +547,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void Open_FixDay_CheckOpenTo()
+        {
+            var comp = OpenPicker(new[] { Parameter(nameof(MudDatePicker.FixDay), 1) });
+            comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
+        }
+
+        [Test]
+        public void Open_FixMonth_FixDay_CheckOpenTo()
+        {
+            var comp = OpenPicker(new[] { Parameter(nameof(MudDatePicker.FixMonth), 1), Parameter(nameof(MudDatePicker.FixDay), 1) });
+            comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
+        }
+
+        [Test]
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
             var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
@@ -573,6 +587,22 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => datePicker.Instance.OpenAsync());
 
             datePicker.Instance.Text.Should().Be("1399/11/26");
+        }
+
+        [Test]
+        public async Task PersianCalendarTest_GoToDate()
+        {
+            var cal = new PersianCalendar();
+            var comp = Context.RenderComponent<PersianDatePickerTest>();
+            var datePicker = comp.FindComponent<MudDatePicker>().Instance;
+            await comp.InvokeAsync(() => datePicker.OpenAsync());
+            datePicker.Text.Should().Be("1399/11/26");
+            await comp.InvokeAsync(() => datePicker.GoToDate(new DateTime(2024, 5, 8)));
+            comp.WaitForAssertion(() => datePicker.Text.Should().Be("1403/02/19"));
+            var button = comp
+                .FindAll(".mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-picker-calendar-day.mud-day")
+                .Single(x => x.GetAttribute("style") == "--day-id: 1;");
+            button.TextContent.Should().Be("1");
         }
 
         [Test]
@@ -1152,7 +1182,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task OnMouseOver_ShouldCallJavaScriptFunction()
+        public async Task OnPointerOver_ShouldCallJavaScriptFunction()
         {
             var comp = OpenPicker();
 
@@ -1160,7 +1190,7 @@ namespace MudBlazor.UnitTests.Components
                 .FindAll(".mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-picker-calendar-day.mud-day")
                 .Single(x => x.GetAttribute("style") == "--day-id: 5;");
 
-            await button.MouseOverAsync(new());
+            await button.PointerOverAsync(new());
 
             Context.JSInterop.VerifyInvoke("mudWindow.updateStyleProperty", 1);
             Context.JSInterop.Invocations["mudWindow.updateStyleProperty"].Single()

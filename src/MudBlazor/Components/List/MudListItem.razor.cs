@@ -51,6 +51,13 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Behavior)]
         public string? Text { get; set; }
 
+        /// <summary>
+        /// The secondary text to display
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public string? SecondaryText { get; set; }
+
         [Parameter]
         [Category(CategoryTypes.List.Selecting)]
         public T? Value { get; set; }
@@ -70,14 +77,25 @@ namespace MudBlazor
         public string? Href { get; set; }
 
         /// <summary>
-        /// If true, force browser to redirect outside component router-space.
+        /// The target attribute specifies where to open the link, if Href is specified.
+        /// Possible values: _blank | _self | _parent | _top | <i>framename</i>
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.ClickAction)]
+        public string? Target { get; set; }
+
+        /// <summary>
+        /// If true in combination with <see cref="Href"/>, bypasses client-side routing 
+        /// and forces the browser to load the new page from the server, whether or not 
+        /// the URI would normally be handled by the client-side router.
+        /// <see cref="NavigationManager.NavigateTo(string, bool, bool)"/>
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.ClickAction)]
         public bool ForceLoad { get; set; }
 
         /// <summary>
-        /// If true, will disable the list item if it has onclick.
+        /// If true, will disable the list item if it has <see cref="OnClick"/>.
         /// The value can be overridden by the parent list.
         /// </summary>
         [Parameter]
@@ -189,6 +207,7 @@ namespace MudBlazor
 
         /// <summary>
         /// List click event.
+        /// Also called when <see cref="Href"/> is set
         /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
@@ -259,9 +278,12 @@ namespace MudBlazor
                 }
             }
             await OnClick.InvokeAsync(eventArgs);
-            if (Href != null)
+            // the only case a manual Navigition is required, is when
+            // the target is empty, but a force reload is desired, all other cases are handled
+            // by the html anchor
+            if (ForceLoad && string.IsNullOrEmpty(Href) == false && string.IsNullOrEmpty(Target))
             {
-                UriHelper.NavigateTo(Href, ForceLoad);
+                UriHelper.NavigateTo(Href, forceLoad: ForceLoad);
             }
         }
 
@@ -321,6 +343,16 @@ namespace MudBlazor
         private string GetCheckedIcon() => TopLevelList?.CheckedIcon ?? Icons.Material.Filled.CheckBox;
 
         private string GetUncheckedIcon() => TopLevelList?.UncheckedIcon ?? Icons.Material.Filled.CheckBoxOutlineBlank;
+
+        /// <summary>
+        /// returns the kind of element the list item should render to
+        /// When <see cref="OnClickPreventDefault"/> is set the link should not be followed thus it is rendered as div
+        /// </summary>        
+        private string HtmlTag => string.IsNullOrEmpty(Href) || OnClickPreventDefault ? "div" : "a";
+
+        private bool GetPreventDefault() => GetDisabled();
+
+        private bool GetClickPropagation() => false;
 
         public void Dispose()
         {

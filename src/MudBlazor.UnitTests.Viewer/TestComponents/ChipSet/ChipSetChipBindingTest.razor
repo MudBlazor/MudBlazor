@@ -4,7 +4,7 @@
     @for (int i = 0; i < _included.Length; i++) 
     {
         var index = i;
-        <MudChip Value="@_ingredients[index]" @bind-IsSelected="_included[index]" Color="Color.Primary" Variant="@Variant.Text" />
+        <MudChip Value="@_ingredients[index]" @bind-Selected="_included[index]" Color="Color.Primary" Variant="@Variant.Text" />
     }
 </MudChipSet>
 

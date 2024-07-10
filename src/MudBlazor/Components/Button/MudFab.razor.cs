@@ -5,10 +5,14 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-
     /// <summary>
-    ///  Represents a floating action button.
+    /// Represents a floating action button.
     /// </summary>
+    /// <remarks>
+    /// Creates a <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Button">button</see> element,
+    /// or <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a">anchor</see> if <c>Href</c> is set.<br/>
+    /// You can directly add attributes like <c>title</c> or <c>aria-label</c>.
+    /// </remarks>
     public partial class MudFab : MudBaseButton, IHandleEvent
     {
         protected string Classname => new CssBuilder("mud-button-root mud-fab")

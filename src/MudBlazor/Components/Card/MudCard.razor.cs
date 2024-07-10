@@ -24,7 +24,7 @@ namespace MudBlazor
         public int Elevation { set; get; } = 1;
 
         /// <summary>
-        /// Whether rounded corners are disabled.
+        /// Disables rounded corners.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -34,7 +34,7 @@ namespace MudBlazor
         public bool Square { get; set; }
 
         /// <summary>
-        /// Whether an outline is displayed.
+        /// Displays an outline.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  This property is useful to differentiate cards which are the same color or use images.

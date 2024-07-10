@@ -25,7 +25,7 @@ namespace MudBlazor
         public double[] Data { get; set; }
 
         /// <summary>
-        /// Whether this series is displayed in the chart.
+        /// Displays this series in the chart.
         /// </summary>
         public bool Visible { get; set; } = true;
 

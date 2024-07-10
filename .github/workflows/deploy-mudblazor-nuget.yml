@@ -35,8 +35,7 @@ jobs:
 
     - name: VERSION to job output
       id: output-version
-      run: |
-        echo "VERSION=${{ env.VERSION }}" >> $GITHUB_OUTPUT
+      run: echo "VERSION=${{ env.VERSION }}" >> $GITHUB_OUTPUT
 
   deploy-nuget:
     name: Deploy mudblazor nuget to nuget.org
@@ -44,17 +43,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: 'refs/tags/v${{ needs.get-version.outputs.VERSION }}'
     - name: Setup dotnet version
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
-          6.0.x
-          7.0.x
+          8.0.x
     - name: Pack nuget package
-      run: dotnet pack -c Release --output nupkgs /p:PackageVersion=${{ needs.get-version.outputs.VERSION }} /p:AssemblyVersion=${{ needs.get-version.outputs.VERSION }} /p:Version=${{ needs.get-version.outputs.VERSION }}
+      run: dotnet pack -c Release --output nupkgs /p:Version=${{ needs.get-version.outputs.VERSION }}
       working-directory: ./src/MudBlazor
     - name: Publish nuget package
       run: dotnet nuget push nupkgs/*.nupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate

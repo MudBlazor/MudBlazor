@@ -1,7 +1,15 @@
 ﻿@namespace MudBlazor
+@using MudBlazor.Extensions
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" class="@DivClassname" role="progressbar" style="@Style" aria-valuenow="@_valueState.Value">
+<div role="progressbar"
+     aria-valuenow="@_valueState.Value.ToInvariantString()"
+     aria-valuemin="@Min.ToInvariantString()"
+     aria-valuemax="@Max.ToInvariantString()"
+     aria-live="@((Indeterminate ? null : "polite"))"
+     class="@Classname"
+     style="@Style"
+     @attributes="UserAttributes">
     <svg class="mud-progress-circular-svg" viewBox="22 22 44 44">
         @if (Indeterminate)
         {
@@ -9,8 +17,7 @@
         }
         else
         {
-            <circle class="@SvgClassname" cx="44" cy="44" r="20" fill="none" stroke-width="@StrokeWidth" style="stroke-dasharray: @_magicNumber; stroke-dashoffset: @_svgValue;"></circle>
+            <circle class="@SvgClassname" cx="44" cy="44" r="20" fill="none" stroke-width="@StrokeWidth" style="stroke-dasharray: @MagicNumber; stroke-dashoffset: @_svgValue;"></circle>
         }
     </svg>
 </div>
-

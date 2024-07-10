@@ -66,16 +66,20 @@ namespace MudBlazor
         public Dictionary<string, object?> UserAttributes { get; set; } = new Dictionary<string, object?>();
 
         /// <summary>
-        /// Whether <see cref="JSRuntime" /> is available.
+        /// Whether the <see cref="JSRuntime" /> is available.
         /// </summary>
+        /// <remarks>
+        /// When <c>true</c>, JavaScript interop calls can be made.
+        /// </remarks>
         protected bool IsJSRuntimeAvailable { get; set; }
 
+        private readonly string _id = $"mudinput-{Guid.NewGuid()}";
         /// <summary>
         /// If the UserAttributes contain an ID make it accessible for WCAG labelling of input fields
         /// </summary>
-        public string FieldId => UserAttributes.TryGetValue("id", out var id) && id != null
-                    ? id.ToString() ?? $"mudinput-{Guid.NewGuid()}"
-                    : $"mudinput-{Guid.NewGuid()}";
+        public string FieldId => UserAttributes.TryGetValue("id", out var id) && id is not null
+            ? id.ToString() ?? _id
+            : _id;
 
         /// <inheritdoc />
         protected override void OnAfterRender(bool firstRender)
@@ -173,6 +177,9 @@ namespace MudBlazor
                     switch (parameter)
                     {
                         case "Outline":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                        case "Dense":
                             NotifyIllegalParameter(parameter);
                             break;
                     }
@@ -304,6 +311,15 @@ namespace MudBlazor
                             break;
                     }
                 }
+                else if (MatchTypes(typeof(MudTable<>)))
+                {
+                    switch (parameter)
+                    {
+                        case "QuickColumns":
+                            NotifyIllegalParameter(parameter);
+                            break;
+                    }
+                }
                 else
                 {
                     switch (parameter)
@@ -360,6 +376,18 @@ namespace MudBlazor
                         case "IsCheckedChanged":
                         case "IsVisible":
                         case "IsVisibleChanged":
+                        case "IsOpen":
+                        case "IsOpened":
+                        case "IsOpenChanged":
+                        case "IsActive":
+                        case "ItemIsDisabled":
+                        case "IsSelected":
+                        case "IsSelectedChanged":
+                        case "IsEditable":
+                        case "IsEditing":
+                        case "IsEditSwitchBlocked":
+                        case "IsHidden":
+                        case "IsHiddenChanged":
                             NotifyIllegalParameter(parameter);
                             break;
                     }

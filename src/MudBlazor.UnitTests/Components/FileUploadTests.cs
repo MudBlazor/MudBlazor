@@ -157,7 +157,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => comp.Find("button#open-file-picker-button").Click());
 
-            Context.JSInterop.Invocations.Should().ContainSingle(invocation => invocation.Identifier == "mudWindow.click");
+            Context.JSInterop.Invocations.Should().ContainSingle(invocation => invocation.Identifier == "mudFileUpload.openFilePicker");
         }
 
         /// <summary>

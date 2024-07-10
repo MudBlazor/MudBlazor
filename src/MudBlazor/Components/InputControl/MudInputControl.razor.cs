@@ -17,8 +17,8 @@ namespace MudBlazor
 
         protected string HelperContainer =>
             new CssBuilder("mud-input-control-helper-container")
-                .AddClass($"px-1", Variant == Variant.Filled)
-                .AddClass($"px-2", Variant == Variant.Outlined)
+                .AddClass("px-1", Variant == Variant.Filled)
+                .AddClass("px-2", Variant == Variant.Outlined)
                 .Build();
 
         protected string HelperClass =>
@@ -40,7 +40,7 @@ namespace MudBlazor
         public RenderFragment? InputContent { get; set; }
 
         /// <summary>
-        ///  Will adjust vertical spacing. 
+        ///  Will adjust vertical spacing.
         /// </summary>
         [Parameter]
         public Margin Margin { get; set; } = Margin.None;
@@ -74,6 +74,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public string? HelperText { get; set; }
+
+        /// <summary>
+        /// The ID that will be used by aria-describedby if <see cref="HelperText"/> is provided.
+        /// </summary>
+        [Parameter]
+        public string? HelperId { get; set; }
 
         /// <summary>
         /// If true, the helper text will only be visible on focus.

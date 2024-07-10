@@ -1,4 +1,17 @@
 ﻿@page "/components/table"
+@page "/components/MudTable"
+@page "/components/MudTable`1"
+@page "/components/MudTableBase"
+@page "/components/MudTableGroupRow"
+@page "/components/MudTableGroupRow`1"
+@page "/components/MudTablePager"
+@page "/components/MudTableSortLabel"
+@page "/components/MudTableSortLabel`1"
+@page "/components/MudTd"
+@page "/components/MudTFootRow"
+@page "/components/MudTh"
+@page "/components/MudTHeadRow"
+@page "/components/MudTr"
 
 <DocsPage>
     <DocsPageHeader Title="Table" SubTitle="A sortable, filterable table with multiselection and pagination" />
@@ -32,8 +45,8 @@
         <DocsPageSection>
             <SectionHeader Title="Hover Events">
                 <Description>
-                    <CodeInline>OnRowMouseEnter</CodeInline> is triggered when the row starts being hovered (onmouseenter event).
-                    <CodeInline>OnRowMouseLeave</CodeInline> is triggered when the row stops being hovered (onmouseleave event).
+                    <CodeInline>OnRowMouseEnter</CodeInline> is triggered when the row starts being hovered (onpointerenter event).
+                    <CodeInline>OnRowMouseLeave</CodeInline> is triggered when the row stops being hovered (onpointerleave event).
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(TableRowHoverEventsExample)" ShowCode="false" Block="true" FullWidth="true">

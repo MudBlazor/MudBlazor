@@ -19,7 +19,7 @@ namespace MudBlazor
     {
         private bool _isDirty;
         /// <summary>
-        /// Whether validation has been performed during a validation cycle.
+        /// Prevents validation from occurring more than once during a validation cycle.
         /// </summary>
         /// <remarks>
         /// This field is set to <c>true</c> to prevent validation from occurring more than once during a validation cycle.  Each change in the <see cref="Value"/> will reset this field to <c>false</c>.
@@ -28,21 +28,25 @@ namespace MudBlazor
         protected bool _isFocused;
         protected bool _forceTextUpdate;
 
+        /// <summary>
+        /// The resolved input element ID.
+        /// </summary>
+        protected string? InputElementId => _inputIdState.Value;
         private string? _userAttributesId = $"mudinput-{Guid.NewGuid()}";
         private readonly string _componentId = $"mudinput-{Guid.NewGuid()}";
-        internal readonly ParameterState<string?> InputIdState;
+        private readonly ParameterState<string?> _inputIdState;
 
         protected MudBaseInput()
             : base(new DefaultConverter<T>())
         {
             using var registerScope = CreateRegisterScope();
-            InputIdState = registerScope.RegisterParameter<string?>(nameof(InputId))
+            _inputIdState = registerScope.RegisterParameter<string?>(nameof(InputId))
                 .WithParameter(() => InputId)
                 .WithChangeHandler(UpdateInputIdStateAsync);
         }
 
         /// <summary>
-        /// Whether the component can receive input.
+        /// Allows the component to receive input.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -55,7 +59,7 @@ namespace MudBlazor
         private bool ParentDisabled { get; set; }
 
         /// <summary>
-        /// Whether the input can be changed by the user.
+        /// Prevents the input from being changed by the user.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the user can copy text in the control, but cannot change the <see cref="Value" />.
@@ -68,7 +72,7 @@ namespace MudBlazor
         private bool ParentReadOnly { get; set; }
 
         /// <summary>
-        /// Whether this input fills the full width of its container.
+        /// Fills the full width of the parent container.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -78,7 +82,7 @@ namespace MudBlazor
         public bool FullWidth { get; set; }
 
         /// <summary>
-        /// Whether the <see cref="Value"/> is changed as soon as input is received.
+        /// Changes the <see cref="Value"/> as soon as input is received.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the <see cref="Value"/> property will be updated any time user input occurs.  Otherwise, <see cref="Value"/> is updated when the user presses <c>Enter</c> or the input loses focus.
@@ -88,7 +92,7 @@ namespace MudBlazor
         public bool Immediate { get; set; }
 
         /// <summary>
-        /// Whether the input has an underline.
+        /// Displays an underline for the input.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -96,6 +100,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public bool Underline { get; set; } = true;
+
+        /// <summary>
+        /// The ID of the helper element, for use by <c>aria-describedby</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When set it is appended to the <c>aria-describedby</c> attribute to improve accessibility for users. This ID takes precedence over the helper element rendered when <see cref="HelperText"/> is provided.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public string? HelperId { get; set; }
 
         /// <summary>
         /// The text displayed below the text field.
@@ -108,7 +122,7 @@ namespace MudBlazor
         public string? HelperText { get; set; }
 
         /// <summary>
-        /// Whether the <see cref="HelperText"/> is only shown when this input has focus.
+        /// Displays the <see cref="HelperText"/> only when this input has focus.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -141,14 +155,14 @@ namespace MudBlazor
         /// The location of the adornment icon or text.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Adornment.None"/>.  Then set to <c>Start</c> or <c>End</c>, the <see cref="AdornmentText"/> will be displayed, or <see cref="AdornmentIcon"/> if no adornment text is specified.  
+        /// Defaults to <see cref="Adornment.None"/>.  When set to <c>Start</c> or <c>End</c>, the <see cref="AdornmentText"/> will be displayed, or <see cref="AdornmentIcon"/> if no adornment text is specified.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public Adornment Adornment { get; set; } = Adornment.None;
 
         /// <summary>
-        /// Whether validation only occurs when the user changes the <see cref="Value"/>.
+        /// Limits validation to when the user changes the <see cref="Value"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>. When <c>true</c>, validation only occurs if the user has changed the input value at least once.
@@ -168,14 +182,14 @@ namespace MudBlazor
         public Color AdornmentColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// The ARIA label of the adornment.
+        /// The <c>aria-label</c> for the adornment.
         /// </summary>
         /// <remarks>
-        /// Defaults to an empty string.  This property controls the value set for the <c>aria-label</c> attribute.
+        /// Defaults to <c>null</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public string AdornmentAriaLabel { get; set; } = string.Empty;
+        public string? AdornmentAriaLabel { get; set; }
 
         /// <summary>
         /// The size of the icon.
@@ -261,7 +275,7 @@ namespace MudBlazor
         public string? Label { get; set; }
 
         /// <summary>
-        /// Whether this input automatically receives focus.
+        /// Automatically receives focus.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the input will receive focus automatically.
@@ -285,7 +299,7 @@ namespace MudBlazor
         public string? Text { get; set; }
 
         /// <summary>
-        /// Whether the text cannot be updated via a bound value.
+        /// Prevents the text from being updated via a bound value.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  Applies only to Blazor Server (BSS) applications.  When <c>false</c>, the input's text can be updated programmatically while the input has focus.
@@ -315,14 +329,14 @@ namespace MudBlazor
         public virtual string? Pattern { get; set; }
 
         /// <summary>
-        /// Whether the label is allowed to appear inside the input if no <see cref="Value"/> is specified.
+        /// Shows the label inside the input if no <see cref="Value"/> is specified.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the label will not move into the input when the input is empty.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public bool ShrinkLabel { get; set; }
+        public bool ShrinkLabel { get; set; } = MudGlobal.InputDefaults.ShrinkLabel;
 
         /// <summary>
         /// Occurs when the <see cref="Text"/> property has changed.
@@ -349,7 +363,7 @@ namespace MudBlazor
         public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
         /// <summary>
-        /// Whether the default key-down action occurs.
+        /// Allows the default key-down action to occur.
         /// </summary>
         /// <remarks>
         /// When <c>true</c>, the browser will not perform its default behavior when a key-down occurs.  This is typically used when a key-down needs to override a browser's default behavior.
@@ -365,7 +379,7 @@ namespace MudBlazor
         public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
 
         /// <summary>
-        /// Whether the default key-up action occurs.
+        /// Prevents the default key-up action.
         /// </summary>
         /// <remarks>
         /// When <c>true</c>, the browser will not perform its default behavior when a key-up occurs.  This is typically used when a key-up needs to override the browser's default behavior.
@@ -408,6 +422,12 @@ namespace MudBlazor
             set => SetFormat(value);
         }
 
+        /// <summary>
+        /// The ID of the input element.
+        /// </summary>
+        /// <remarks>
+        /// When set takes precedence over any internally generated IDs.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string? InputId { get; set; }
@@ -563,7 +583,7 @@ namespace MudBlazor
             var changed = base.SetConverter(value);
             if (changed)
             {
-                UpdateTextPropertyAsync(false).AndForget();      // refresh only Text property from current Value
+                UpdateTextPropertyAsync(false).CatchAndLog();      // refresh only Text property from current Value
             }
 
             return changed;
@@ -574,7 +594,7 @@ namespace MudBlazor
             var changed = base.SetCulture(value);
             if (changed)
             {
-                UpdateTextPropertyAsync(false).AndForget();      // refresh only Text property from current Value
+                UpdateTextPropertyAsync(false).CatchAndLog();      // refresh only Text property from current Value
             }
 
             return changed;
@@ -586,7 +606,7 @@ namespace MudBlazor
             if (changed)
             {
                 ((Converter<T>)Converter).Format = value;
-                UpdateTextPropertyAsync(false).AndForget();      // refresh only Text property from current Value
+                UpdateTextPropertyAsync(false).CatchAndLog();      // refresh only Text property from current Value
             }
 
             return changed;
@@ -632,7 +652,7 @@ namespace MudBlazor
         public virtual void ForceRender(bool forceTextUpdate)
         {
             _forceTextUpdate = true;
-            UpdateTextPropertyAsync(false).AndForget();
+            UpdateTextPropertyAsync(false).CatchAndLog();
             StateHasChanged();
         }
 
@@ -701,6 +721,34 @@ namespace MudBlazor
             await base.ResetValueAsync();
         }
 
+        protected string? GetHelperId()
+        {
+            if (HelperId is not null)
+            {
+                return HelperId;
+            }
+
+            // error text replaces helper text in MudInputControl, so if the user does not provide a custom helper id, we have no valid helper element
+            if (HasErrors)
+            {
+                return null;
+            }
+
+            return HelperText is not null
+                ? $"{_inputIdState.Value}-helper-text"
+                : null;
+        }
+
+        protected string? GetAriaDescribedByString()
+        {
+            var errorId = HasErrors ? ErrorId : null;
+            var helperId = GetHelperId();
+
+            return errorId is not null && helperId is not null
+                ? $"{errorId} {helperId}"
+                : errorId ?? helperId ?? null;
+        }
+
         /// <summary>
         /// The type of input received by this component.
         /// </summary>
@@ -718,11 +766,11 @@ namespace MudBlazor
 
             if (_userAttributesId is not null)
             {
-                await InputIdState.SetValueAsync(_userAttributesId);
+                await _inputIdState.SetValueAsync(_userAttributesId);
                 return;
             }
 
-            await InputIdState.SetValueAsync(_componentId);
+            await _inputIdState.SetValueAsync(_componentId);
         }
     }
 }

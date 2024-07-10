@@ -12,8 +12,7 @@
             target="@Target"
             rel="@GetRel()"
             disabled="@GetDisabledState()"
-            title="@Title"
-            ClickPropagation="@ClickPropagation">
+            ClickPropagation="@GetClickPropagation()">
     <span class="mud-fab-label">
         @if (!string.IsNullOrWhiteSpace(StartIcon))
         {

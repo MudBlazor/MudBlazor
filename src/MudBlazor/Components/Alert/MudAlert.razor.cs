@@ -45,12 +45,6 @@ namespace MudBlazor
             };
         }
 
-        /// <summary>
-        /// Gets or sets whether Right-to-Left (RTL) mode is enabled.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c>, text will be displayed right-to-left.
-        /// </remarks>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
@@ -188,6 +182,8 @@ namespace MudBlazor
         [ExcludeFromCodeCoverage] //If we can check this exception can include the coverage again
         protected override void OnParametersSet()
         {
+            base.OnParametersSet();
+
             if (!string.IsNullOrEmpty(Icon))
             {
                 _icon = Icon;
