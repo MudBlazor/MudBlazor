@@ -45,7 +45,7 @@
                         }
                         else
                         {
-								<MudTHeadRow Checkable="MultiSelection" CheckableReadOnly="MultiSelectionReadOnly" Expandable="@(GroupBy?.Expandable ?? false)">
+                                <MudTHeadRow Checkable="MultiSelection" CheckableReadOnly="MultiSelectionReadOnly" Expandable="@(GroupBy?.Expandable ?? false)">
                                 @if (HeaderContent != null)
                                 {
                                     @HeaderContent
@@ -97,7 +97,7 @@
                                @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
                                @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
                                <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" 
-								      Checkable="MultiSelection" CheckableReadOnly="MultiSelectionReadOnly" Editable="IsItemEditable(item)"
+                                      Checkable="MultiSelection" CheckableReadOnly="MultiSelectionReadOnly" Editable="IsItemEditable(item)"
                                       Checked="@(IsCheckedRow(item))"
                                       CheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
 
@@ -163,7 +163,7 @@
                         }
                         else
                         {
-								<MudTFootRow Checkable="MultiSelection" CheckableReadOnly="MultiSelectionReadOnly" Expandable="@(GroupBy?.Expandable ?? false)">
+                                <MudTFootRow Checkable="MultiSelection" CheckableReadOnly="MultiSelectionReadOnly" Expandable="@(GroupBy?.Expandable ?? false)">
                                 @if (FooterContent != null)
                                 {
                                     @FooterContent

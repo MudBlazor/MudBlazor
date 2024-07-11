@@ -53,7 +53,7 @@ namespace MudBlazor
         public bool Checkable { get; set; }
 
         /// <summary>
-        /// Disables the checkbox which selects or deselects every row in the group.
+        /// Disables the checkbox at the start of this row.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  Requires <see cref="Checkable"/> to be <c>true</c>.
