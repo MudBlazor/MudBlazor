@@ -265,7 +265,7 @@ namespace MudBlazor
         /// <inheritdoc />
         public async Task<bool?> ShowMessageBox(MessageBoxOptions messageBoxOptions, DialogOptions? options = null)
         {
-            messageBoxOptions.CloseOnEscape = options?.CloseOnEscapeKey ?? messageBoxOptions.CloseOnEscape;
+            messageBoxOptions.CloseOnEscapeKey = options?.CloseOnEscapeKey ?? messageBoxOptions.CloseOnEscapeKey;
             var parameters = new DialogParameters()
             {
                 [nameof(MessageBoxOptions.Title)] = messageBoxOptions.Title,
@@ -274,7 +274,7 @@ namespace MudBlazor
                 [nameof(MessageBoxOptions.CancelText)] = messageBoxOptions.CancelText,
                 [nameof(MessageBoxOptions.NoText)] = messageBoxOptions.NoText,
                 [nameof(MessageBoxOptions.YesText)] = messageBoxOptions.YesText,
-                [nameof(messageBoxOptions.CloseOnEscape)] = messageBoxOptions.CloseOnEscape,
+                [nameof(messageBoxOptions.CloseOnEscapeKey)] = messageBoxOptions.CloseOnEscapeKey,
             };
             var reference = await ShowAsync<MudMessageBox>(title: messageBoxOptions.Title, parameters: parameters, options: options);
             var result = await reference.Result;
@@ -362,6 +362,6 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to application settings. 
         /// </remarks>
-        public bool CloseOnEscape { get; set; } = DialogOptions.Default.CloseOnEscapeKey ?? true;
+        public bool? CloseOnEscapeKey { get; set; } = DialogOptions.Default.CloseOnEscapeKey ?? true;
     }
 }

@@ -151,7 +151,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.MessageBox.Behavior)]
-        public bool CloseOnEscape { get; set; } = DialogOptions.Default.CloseOnEscapeKey ?? true;
+        public bool? CloseOnEscapeKey { get; set; } = DialogOptions.Default.CloseOnEscapeKey ?? true;
 
         [MemberNotNullWhen(false, nameof(DialogInstance))]
         private bool IsInline => DialogInstance is null;
@@ -180,7 +180,7 @@ namespace MudBlazor
                 [nameof(NoButton)] = NoButton,
                 [nameof(YesText)] = YesText,
                 [nameof(YesButton)] = YesButton,
-                [nameof(CloseOnEscape)] = CloseOnEscape,
+                [nameof(CloseOnEscapeKey)] = CloseOnEscapeKey,
             };
             _reference = await DialogService.ShowAsync<MudMessageBox>(title: Title, parameters: parameters, options: options);
             var result = await _reference.Result;
@@ -248,7 +248,7 @@ namespace MudBlazor
 
         private void HandleKeyDown(KeyboardEventArgs args)
         {
-            var closeOnEscape = CloseOnEscape = dialogOptions?.CloseOnEscapeKey ?? CloseOnEscape;
+            var closeOnEscape = dialogOptions?.CloseOnEscapeKey ?? CloseOnEscapeKey ?? true;
             switch (args.Key)
             {
                 case "Escape":
