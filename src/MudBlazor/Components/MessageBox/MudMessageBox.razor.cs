@@ -144,11 +144,20 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<bool> VisibleChanged { get; set; }
 
+        /// <summary>
+        /// The CloseOnEscapeKey option used for this dialog. Defaults to application setting. <c>true</c> 
+        /// Can be overridden by passing in DialogOptions with a different value.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
+        public bool CloseOnEscape { get; set; } = DialogOptions.Default.CloseOnEscapeKey ?? true;
+
         [MemberNotNullWhen(false, nameof(DialogInstance))]
         private bool IsInline => DialogInstance is null;
 
         public async Task<bool?> ShowAsync(DialogOptions? options = null)
         {
+            CloseOnEscape = options?.CloseOnEscapeKey ?? CloseOnEscape;
             var parameters = new DialogParameters
             {
                 [nameof(Title)] = Title,
@@ -162,6 +171,7 @@ namespace MudBlazor
                 [nameof(NoButton)] = NoButton,
                 [nameof(YesText)] = YesText,
                 [nameof(YesButton)] = YesButton,
+                [nameof(CloseOnEscape)] = CloseOnEscape,
             };
             _reference = await DialogService.ShowAsync<MudMessageBox>(title: Title, parameters: parameters, options: options);
             var result = await _reference.Result;
@@ -229,9 +239,12 @@ namespace MudBlazor
 
         private void HandleKeyDown(KeyboardEventArgs args)
         {
-            if (args.Key == "Escape")
+            switch (args.Key) 
             {
-                OnCancelClicked();
+                case "Escape":
+                    if (CloseOnEscape)
+                        OnCancelClicked();
+                    break;
             }
         }
     }
