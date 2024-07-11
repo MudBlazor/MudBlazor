@@ -14,7 +14,7 @@
             class="@ButtonClassname"
             aria-controls="@_navigationContext.MenuId"
             aria-expanded="@_navigationContext.Expanded.ToString().ToLowerInvariant()"
-            aria-label="@Localizer[nameof(LanguageResource.MudNavGroup_ToggleExpand), Title ?? _navigationContext.MenuId]">
+            aria-label="@Localizer[LanguageResource.MudNavGroup_ToggleExpand, Title ?? _navigationContext.MenuId]">
         @if (!string.IsNullOrEmpty(Icon))
         {
             <MudIcon Disabled="@Disabled" Icon="@Icon" Color="@IconColor" Class="@IconClassname" />
