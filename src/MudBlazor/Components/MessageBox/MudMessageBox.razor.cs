@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Options;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -155,9 +156,17 @@ namespace MudBlazor
         [MemberNotNullWhen(false, nameof(DialogInstance))]
         private bool IsInline => DialogInstance is null;
 
+        /// <summary>
+        /// Stores DialogOptions when passed in
+        /// </summary>
+        private DialogOptions? dialogOptions;
+
+        /// <param name="options"></param>
+        /// <returns></returns>
+
         public async Task<bool?> ShowAsync(DialogOptions? options = null)
         {
-            CloseOnEscape = options?.CloseOnEscapeKey ?? CloseOnEscape;
+            dialogOptions = options;
             var parameters = new DialogParameters
             {
                 [nameof(Title)] = Title,
@@ -239,10 +248,11 @@ namespace MudBlazor
 
         private void HandleKeyDown(KeyboardEventArgs args)
         {
+            var closeOnEscape = CloseOnEscape = dialogOptions?.CloseOnEscapeKey ?? CloseOnEscape;
             switch (args.Key)
             {
                 case "Escape":
-                    if (CloseOnEscape)
+                    if (closeOnEscape)
                         OnCancelClicked();
                     break;
             }
