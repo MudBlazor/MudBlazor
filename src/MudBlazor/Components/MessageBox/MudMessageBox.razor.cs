@@ -239,7 +239,7 @@ namespace MudBlazor
 
         private void HandleKeyDown(KeyboardEventArgs args)
         {
-            switch (args.Key) 
+            switch (args.Key)
             {
                 case "Escape":
                     if (CloseOnEscape)
