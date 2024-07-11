@@ -249,6 +249,16 @@ namespace MudBlazor
         public bool MultiSelection { get; set; }
 
         /// <summary>
+        /// Disables the selection of rows but keep showing the checkbox for selected rows.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  Requires <see cref="MultiSelection"/> to be <c>true</c> and <see cref="Editable"/> to be <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Selecting)]
+        public bool MultiSelectionReadOnly { get; set; }
+
+        /// <summary>
         /// Toggles the checkbox when a row is clicked.
         /// </summary>
         /// <remarks>

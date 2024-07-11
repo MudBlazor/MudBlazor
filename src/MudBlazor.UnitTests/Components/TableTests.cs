@@ -954,6 +954,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// The checkboxes should all be disabled on load, even the header and footer checkboxes.
+        /// </summary>
+        [Test]
+        public void TableMultiSelectionTest9()
+        {
+            var comp = Context.RenderComponent<TableMultiSelectionTest9>();
+            // select elements needed for the test
+            var table = comp.FindComponent<MudTable<TableGroupingTest.RacingCar>>().Instance;
+            var headerAndFooterCheckboxes = comp.FindComponents<MudCheckBox<bool?>>().Select(x => x.Instance).ToArray();
+            var dataCheckboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+            // check result
+            headerAndFooterCheckboxes.Sum(x => x.Disabled ? 0 : 1).Should().Be(0); // No checkbox should be enabled on header, group headers and footer
+            dataCheckboxes.Sum(x => x.Disabled ? 1 : 0).Should().Be(comp.Instance.Items.Count()); // No checkbox should be enabled on rows
+        }
+
+        /// <summary>
         /// Changing page should retain the selected items using ServerData
         /// </summary>
         [Test]

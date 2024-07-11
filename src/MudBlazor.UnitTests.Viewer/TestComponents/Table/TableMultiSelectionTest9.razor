@@ -1,0 +1,34 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTable Items="Items" MultiSelection="true" MultiSelectionReadOnly="true" GroupBy="@groups" 
+          GroupHeaderStyle="background-color:var(--mud-palette-background-gray)">
+	<HeaderContent>
+		<MudTh>Name</MudTh>
+		<MudTh>Category</MudTh>
+	</HeaderContent>
+	<GroupHeaderTemplate>
+		<MudTh colspan="2">@($"{context.GroupName}: {context.Key}")</MudTh>
+	</GroupHeaderTemplate>
+	<RowTemplate>
+		<MudTd>@context.Name</MudTd>
+		<MudTd>@context.Category</MudTd>
+	</RowTemplate>
+	<FooterContent>
+		<MudTd colspan="2">F</MudTd>
+	</FooterContent>
+</MudTable>
+
+@code {
+	public static string __description__ = "The checkboxes should all be disabled on load, even the header, group headers and footer checkboxes.";
+	public IEnumerable<TableGroupingTest.RacingCar> Items { get; private set; } = [
+		new("F488", "Ferrari", "GTE"),
+		new("919 Hybrid", "Porsche", "LMP1"),
+		new("911 RSR", "Porsche", "GTE"),
+		new("911 RS", "Porsche", "GT3")
+	];
+	private TableGroupDefinition<TableGroupingTest.RacingCar> groups = new()
+    {
+        GroupName = "Brand",
+        Selector = rc => rc.Brand
+    };
+}
