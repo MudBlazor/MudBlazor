@@ -894,11 +894,11 @@ namespace MudBlazor
             }
         }
 
-        private Task OnInputClickedAsync() => _isFocused ? ActivateByFocus(true) : Task.CompletedTask;
+        private Task OnInputClickedAsync() => _isFocused ? ActivateByFocusAsync(true) : Task.CompletedTask;
 
-        private Task OnInputFocusedAsync() => ActivateByFocus(false);
+        private Task OnInputFocusedAsync() => ActivateByFocusAsync(false);
 
-        private async Task ActivateByFocus(bool fromPointer)
+        private async Task ActivateByFocusAsync(bool fromPointer)
         {
             _isFocused = true;
 
