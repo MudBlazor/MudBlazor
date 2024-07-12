@@ -1317,18 +1317,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
-        public async Task Autocomplete_Should_OpenMenuOnFocus_AlwaysOnClick(bool openOnFocus)
+        public async Task Autocomplete_Should_OpenMenuOnFocus_AlwaysOnClick()
         {
             var comp = Context.RenderComponent<AutocompleteFocusTest>();
-
-            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            comp.SetParam(a => a.OpenOnFocus, false);
 
             comp.Find("input.mud-input-root").Focus(); // Browser would focus first.
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+
             comp.Find("input.mud-input-root").Click();
 
-            // OpenOnFocus isn't respected by clicks. This property added after the fact to restore v6 behavior via opt-in.
+            // OpenOnFocus=false isn't respected by clicks. It added after the fact to allow opting in to v6 behavior.
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
         }
 
