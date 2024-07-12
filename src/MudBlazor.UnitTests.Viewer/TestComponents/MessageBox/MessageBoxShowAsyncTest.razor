@@ -1,0 +1,30 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudMessageBox @ref="mbox" Title="Warning" CancelText="Cancel" NoText="Not" CloseOnEscapeKey="@_closeOnEscapeKey">
+	<MessageContent>
+		Deleting can <b><i>not</i></b> be undone!
+	</MessageContent>
+	<YesButton>
+		<MudButton id="deleteYesButton" Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.DeleteForever">Delete!</MudButton>
+	</YesButton>
+</MudMessageBox>
+
+@code {
+
+	private MudMessageBox mbox { get; set; } = default!;
+	private bool? _closeOnEscapeKey;
+
+	public async Task<bool?> ShowAsyncWithCloseOnEscapeSet(bool closeOnEscapeKey)
+	{
+		_closeOnEscapeKey = closeOnEscapeKey;
+		StateHasChanged();
+		return await mbox.ShowAsync();
+	}
+
+	public async Task<bool?> ShowAsyncWithDialogOptions(DialogOptions dialogOptions)
+	{
+		_closeOnEscapeKey = null;
+		StateHasChanged();
+		return await mbox.ShowAsync(dialogOptions);
+	}
+}

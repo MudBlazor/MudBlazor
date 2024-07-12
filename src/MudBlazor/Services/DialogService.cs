@@ -265,7 +265,6 @@ namespace MudBlazor
         /// <inheritdoc />
         public async Task<bool?> ShowMessageBox(MessageBoxOptions messageBoxOptions, DialogOptions? options = null)
         {
-            messageBoxOptions.CloseOnEscapeKey = options?.CloseOnEscapeKey ?? messageBoxOptions.CloseOnEscapeKey;
             var parameters = new DialogParameters()
             {
                 [nameof(MessageBoxOptions.Title)] = messageBoxOptions.Title,
@@ -274,7 +273,6 @@ namespace MudBlazor
                 [nameof(MessageBoxOptions.CancelText)] = messageBoxOptions.CancelText,
                 [nameof(MessageBoxOptions.NoText)] = messageBoxOptions.NoText,
                 [nameof(MessageBoxOptions.YesText)] = messageBoxOptions.YesText,
-                [nameof(messageBoxOptions.CloseOnEscapeKey)] = messageBoxOptions.CloseOnEscapeKey,
             };
             var reference = await ShowAsync<MudMessageBox>(title: messageBoxOptions.Title, parameters: parameters, options: options);
             var result = await reference.Result;
@@ -355,13 +353,5 @@ namespace MudBlazor
         /// Defaults to <c>null</c>.  When <c>null</c>, this button will be hidden.
         /// </remarks>
         public string? CancelText { get; set; }
-
-        /// <summary>
-        /// The CloseOnEscapeKey Option of the MessageBox, defaults to application settings and can be overridden by passing in DialogOptions
-        /// </summary>
-        /// <remarks>
-        /// Defaults to application settings. 
-        /// </remarks>
-        public bool? CloseOnEscapeKey { get; set; } = DialogOptions.Default.CloseOnEscapeKey ?? true;
     }
 }

@@ -145,28 +145,14 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<bool> VisibleChanged { get; set; }
 
-        /// <summary>
-        /// The CloseOnEscapeKey option used for this dialog. Defaults to application setting. <c>true</c> 
-        /// Can be overridden by passing in DialogOptions with a different value.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.MessageBox.Behavior)]
-        public bool? CloseOnEscapeKey { get; set; } = DialogOptions.Default.CloseOnEscapeKey ?? true;
-
         [MemberNotNullWhen(false, nameof(DialogInstance))]
         private bool IsInline => DialogInstance is null;
-
-        /// <summary>
-        /// Stores DialogOptions when passed in
-        /// </summary>
-        private DialogOptions? dialogOptions;
 
         /// <param name="options"></param>
         /// <returns></returns>
 
         public async Task<bool?> ShowAsync(DialogOptions? options = null)
         {
-            dialogOptions = options;
             var parameters = new DialogParameters
             {
                 [nameof(Title)] = Title,
@@ -180,7 +166,6 @@ namespace MudBlazor
                 [nameof(NoButton)] = NoButton,
                 [nameof(YesText)] = YesText,
                 [nameof(YesButton)] = YesButton,
-                [nameof(CloseOnEscapeKey)] = CloseOnEscapeKey,
             };
             _reference = await DialogService.ShowAsync<MudMessageBox>(title: Title, parameters: parameters, options: options);
             var result = await _reference.Result;
@@ -245,17 +230,5 @@ namespace MudBlazor
         private void OnNoClicked() => DialogInstance?.Close(DialogResult.Ok(false));
 
         private void OnCancelClicked() => DialogInstance?.Close(DialogResult.Cancel());
-
-        private void HandleKeyDown(KeyboardEventArgs args)
-        {
-            var closeOnEscape = dialogOptions?.CloseOnEscapeKey ?? CloseOnEscapeKey ?? true;
-            switch (args.Key)
-            {
-                case "Escape":
-                    if (closeOnEscape)
-                        OnCancelClicked();
-                    break;
-            }
-        }
     }
 }

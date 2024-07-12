@@ -27,8 +27,8 @@
         }
     </DialogContent>
     <DialogActions>
-        <div tabindex="-1" @onkeydown="HandleKeyDown">
-            <MudFocusTrap DefaultFocus="DefaultFocus.LastChild">
+		<div tabindex="-1">
+            <MudFocusTrap DefaultFocus="MudGlobal.DialogDefaults.DefaultFocus">
                 @if (CancelButton is not null)
                 {
                     <CascadingValue Value="@_cancelCallback">
