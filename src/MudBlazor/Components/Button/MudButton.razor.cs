@@ -35,6 +35,9 @@ namespace MudBlazor
             .AddClass(IconClass)
             .Build();
 
+        protected string LabelClassname => new CssBuilder("mud-button-label")
+            .Build();
+
         /// <summary>
         /// The icon displayed before the text.
         /// </summary>

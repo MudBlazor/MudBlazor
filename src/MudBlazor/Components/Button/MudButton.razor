@@ -13,7 +13,7 @@
             rel="@GetRel()"
             disabled="@GetDisabledState()"
             ClickPropagation="@GetClickPropagation()">
-    <span class="mud-button-label">
+    <span class="@LabelClassname">
         @if (!string.IsNullOrWhiteSpace(StartIcon))
         {
             <span class="@StartIconClass">

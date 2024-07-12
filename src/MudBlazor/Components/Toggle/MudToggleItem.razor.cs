@@ -21,14 +21,9 @@ namespace MudBlazor
             .AddClass("mud-ripple", Parent?.Ripple == true)
             .AddClass($"mud-border-{Parent?.Color.ToDescriptionString()} border-solid")
             .AddClass("mud-toggle-delimiter-alternative", Parent?.SelectionMode == SelectionMode.MultiSelection && Selected && Parent?.Color != Color.Default)
-            .AddClass("mud-toggle-item-fixed", Parent?.CheckMark == true && Parent?.FixedContent == true)
+            .AddClass("mud-toggle-item--fixed", Parent?.CheckMark == true && Parent?.FixedContent == true)
             .AddClass("mud-disabled", GetDisabledState())
             .AddClass(Class)
-            .Build();
-
-        protected string TextClassname => new CssBuilder("mud-toggle-item-text")
-            .AddClass("mud-typography mud-typography-align-center")
-            .AddClass(Parent?.TextClass)
             .Build();
 
         protected string CheckMarkClassname => new CssBuilder("mud-toggle-item-check-icon")
