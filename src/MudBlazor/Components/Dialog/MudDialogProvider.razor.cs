@@ -152,10 +152,11 @@ namespace MudBlazor
                 DismissInstance(reference, result);
         }
 
-        private async Task AddInstanceAsync(IDialogReference dialog)
+        private Task AddInstanceAsync(IDialogReference dialog)
         {
             _dialogs.Add(dialog);
-            await InvokeAsync(StateHasChanged);
+
+            return InvokeAsync(StateHasChanged);
         }
 
         /// <summary>
