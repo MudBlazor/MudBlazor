@@ -9,11 +9,12 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTimePicker : MudPicker<TimeSpan?>
+    public partial class MudTimePicker : MudPicker<TimeSpan?>, IAsyncDisposable
     {
         private const string Format24Hours = "HH:mm";
         private const string Format12Hours = "hh:mm tt";
@@ -277,14 +278,15 @@ namespace MudBlazor
             return $"{Math.Min(59, Math.Max(0, TimeIntermediate.Value.Minutes)):D2}";
         }
 
-        private async Task UpdateTimeAsync()
+        private Task UpdateTimeAsync()
         {
-            _lastSelectedHour = _timeSet.Hour;
             TimeIntermediate = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
             if ((PickerVariant == PickerVariant.Static && PickerActions == null) || (PickerActions != null && AutoClose))
             {
-                await SubmitAsync();
+                return SubmitAsync();
             }
+
+            return Task.CompletedTask;
         }
 
         private async Task OnHourClickAsync()
@@ -368,7 +370,7 @@ namespace MudBlazor
 
         private string GetClockPointerColor()
         {
-            if (PointerDown)
+            if (PointerMoving)
             {
                 return $"mud-picker-time-clock-pointer mud-{Color.ToDescriptionString()}";
             }
@@ -487,8 +489,9 @@ namespace MudBlazor
 
         private readonly SetTime _timeSet = new();
         private int _initialHour;
-        private int _lastSelectedHour;
         private int _initialMinute;
+        private DotNetObjectReference<MudTimePicker> _dotNetRef;
+        private string _clockElementReferenceId;
 
         protected override void OnInitialized()
         {
@@ -496,8 +499,35 @@ namespace MudBlazor
             UpdateTimeSetFromTime();
             _currentView = OpenTo;
             _initialHour = _timeSet.Hour;
-            _lastSelectedHour = _timeSet.Hour;
             _initialMinute = _timeSet.Minute;
+            _dotNetRef = DotNetObjectReference.Create(this);
+        }
+
+        [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
+
+        protected ElementReference ClockElementReference { get; private set; }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await base.OnAfterRenderAsync(firstRender);
+
+            // Initialize the pointer events for the clock every time it's created (ex: popover opening and closing).
+            if (ClockElementReference.Id != _clockElementReferenceId)
+            {
+                _clockElementReferenceId = ClockElementReference.Id;
+
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.initPointerEvents", ClockElementReference, _dotNetRef);
+            }
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if (IsJSRuntimeAvailable && ClockElementReference.Id != null)
+            {
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.destroyPointerEvents", ClockElementReference);
+            }
+
+            _dotNetRef?.Dispose();
         }
 
         private void UpdateTimeSetFromTime()
@@ -513,33 +543,78 @@ namespace MudBlazor
             _timeSet.Minute = TimeIntermediate.Value.Minutes;
         }
 
-        public bool PointerDown { get; set; }
+        /// <summary>
+        /// <c>true</c> while the main pointer button is held down and moving.
+        /// </summary>
+        /// <remarks>
+        /// Disables clock animations.
+        /// </remarks>
+        public bool PointerMoving { get; set; }
 
         /// <summary>
-        /// Sets <see cref="PointerDown"/> to true if the pointer is inside the clock mask.
+        /// Updates the position of the hands on the clock.
+        /// This method is called by the JavaScript events.
         /// </summary>
-        private void OnPointerDown(PointerEventArgs e)
+        /// <param name="value">The minute or hour.</param>
+        /// <param name="pointerMoving">Is the pointer being moved?</param>
+        [JSInvokable]
+        public async Task SelectTimeFromStick(int value, bool pointerMoving)
         {
-            PointerDown = true;
+            if (value == -1)
+            {
+                // This means a stick wasn't the target (which shouldn't happen).
+                return;
+            }
+
+            PointerMoving = pointerMoving;
+
+            // Update the .NET properties from the JavaScript events.
+            if (_currentView == OpenTo.Minutes)
+            {
+                var minute = RoundToStepInterval(value);
+                _timeSet.Minute = minute;
+            }
+            else if (_currentView == OpenTo.Hours)
+            {
+                _timeSet.Hour = HourAmPm(value);
+            }
+
+            await UpdateTimeAsync();
+
+            // Manually update because the event won't do it from JavaScript.
+            StateHasChanged();
         }
 
         /// <summary>
-        /// Sets <see cref="PointerDown"/> to false if the pointer is inside the clock mask.
+        /// Performs the click action for the sticks.
+        /// This method is called by the JavaScript events.
         /// </summary>
-        private async Task OnPointerUpAsync(PointerEventArgs e)
+        /// <param name="value">The minute or hour.</param>
+        [JSInvokable]
+        public async Task OnStickClick(int value)
         {
-            if ((PointerDown && _currentView == OpenTo.Minutes && _timeSet.Minute != _initialMinute) || (_currentView == OpenTo.Hours && _timeSet.Hour != _initialHour && TimeEditMode == TimeEditMode.OnlyHours))
+            // The pointer is up and not moving so animations can be enabled again.
+            PointerMoving = false;
+
+            // Clicking a stick will submit the time.
+            if (_currentView == OpenTo.Minutes)
             {
-                PointerDown = false;
                 await SubmitAndCloseAsync();
             }
-
-            PointerDown = false;
-
-            if (_currentView == OpenTo.Hours && _timeSet.Hour != _initialHour && TimeEditMode == TimeEditMode.Normal)
+            else if (_currentView == OpenTo.Hours)
             {
-                _currentView = OpenTo.Minutes;
+                if (TimeEditMode == TimeEditMode.Normal)
+                {
+                    _currentView = OpenTo.Minutes;
+                }
+                else if (TimeEditMode == TimeEditMode.OnlyHours)
+                {
+                    await SubmitAndCloseAsync();
+                }
             }
+
+            // Manually update because the event won't do it from JavaScript.
+            StateHasChanged();
         }
 
         private int HourAmPm(int hour)
@@ -557,64 +632,6 @@ namespace MudBlazor
             }
 
             return hour;
-        }
-
-        /// <summary>
-        /// If <see cref="PointerDown"/> is true enables "dragging" effect on the clock pin/stick.
-        /// </summary>
-        private async Task OnPointerOverHourAsync(int hour)
-        {
-            if (PointerDown)
-            {
-                _timeSet.Hour = HourAmPm(hour);
-                await UpdateTimeAsync();
-            }
-        }
-
-        /// <summary>
-        /// On click for the hour "sticks", sets the hour.
-        /// </summary>
-        private async Task OnClickHourAsync(int hour)
-        {
-            _timeSet.Hour = HourAmPm(hour);
-
-            if (_currentView == OpenTo.Hours || _timeSet.Hour != _lastSelectedHour)
-            {
-                await UpdateTimeAsync();
-            }
-
-            if (TimeEditMode == TimeEditMode.Normal)
-            {
-                _currentView = OpenTo.Minutes;
-            }
-            else if (TimeEditMode == TimeEditMode.OnlyHours)
-            {
-                await SubmitAndCloseAsync();
-            }
-        }
-
-        /// <summary>
-        /// On pointer over for the minutes "sticks", sets the minute.
-        /// </summary>
-        private async Task OnPointerOverMinuteAsync(int minute)
-        {
-            if (PointerDown)
-            {
-                minute = RoundToStepInterval(minute);
-                _timeSet.Minute = minute;
-                await UpdateTimeAsync();
-            }
-        }
-
-        /// <summary>
-        /// On click for the minute "sticks", sets the minute.
-        /// </summary>
-        private async Task OnClickMinuteAsync(int minute)
-        {
-            minute = RoundToStepInterval(minute);
-            _timeSet.Minute = minute;
-            await UpdateTimeAsync();
-            await SubmitAndCloseAsync();
         }
 
         private int RoundToStepInterval(int value)

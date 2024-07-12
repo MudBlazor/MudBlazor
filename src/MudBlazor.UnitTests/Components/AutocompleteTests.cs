@@ -1541,5 +1541,20 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(inputSelector).GetAttribute("aria-describedby").Should().Be(secondExpectedAriaDescribedBy);
         }
 #nullable disable
+
+        public void Autocomplete_Attribute_Should_Exist()
+        {
+            var comp = Context.RenderComponent<MudAutocomplete<string>>();
+
+            comp.Find("input.mud-input-root").GetAttribute("autocomplete").Should().Be("off");
+        }
+
+        public void Should_Override_Autocomplete_Attribute_With_UserAttributes()
+        {
+            var comp = Context.RenderComponent<MudAutocomplete<string>>(parameters => parameters
+                .Add(p => p.UserAttributes, new() { ["autocomplete"] = "on" }));
+
+            comp.Find("input.mud-input-root").GetAttribute("autocomplete").Should().Be("on");
+        }
     }
 }
