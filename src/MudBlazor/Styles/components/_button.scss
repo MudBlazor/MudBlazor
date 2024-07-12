@@ -57,6 +57,13 @@
   }
 }
 
+.mud-button-label {
+  width: 100%;
+  display: inherit;
+  align-items: inherit;
+  justify-content: inherit;
+}
+
 .mud-button-text {
   padding: 6px 8px;
 
@@ -264,11 +271,8 @@
 }
 
 .mud-button-label {
-  width: 100%;
-  display: contents;
-
   .mud-button-icon-start {
-    display: contents;
+    display: inherit;
     margin-left: -4px;
     margin-right: 8px;
     margin-inline-start: -4px;
@@ -282,7 +286,7 @@
   }
 
   .mud-button-icon-end {
-    display: contents;
+    display: inherit;
     margin-left: 8px;
     margin-right: -4px;
     margin-inline-start: 8px;

@@ -48,10 +48,6 @@
 }
 
 .mud-toggle-item {
-  padding: 0.375em;
-  cursor: pointer;
-  user-select: none;
-
   @each $color in $mud-palette-colors {
     &.mud-toggle-item-#{$color} {
       color: var(--mud-palette-#{$color});
@@ -83,6 +79,7 @@
   align-items: center;
   justify-content: center;
   column-gap: 0.5em;
+  /*TODO: Rely more on native button styles*/
 }
 
 .mud-toggle-item--fixed > .mud-button-label {
