@@ -115,11 +115,11 @@ namespace MudBlazor
         /// The maximum allowed avatars to display.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>0</c>.  When <c>0</c>, no maximum is enforced.  Otherwise, a "+#" avatar is shown for the number of avatars exceeding this number.
+        /// Avatars above this limit are hidden, and a "+#" is shown for the number of avatars in excess. Defaults to <see cref="int.MaxValue" />.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.AvatarGroup.Behavior)]
-        public int Max { get; set; }
+        public int Max { get; set; } = int.MaxValue;
 
         /// <summary>
         /// The CSS class applied when the number of avatars exceeds <see cref="Max"/>.
@@ -179,7 +179,7 @@ namespace MudBlazor
 
         internal bool MaxGroupReached(MudAvatar avatar)
         {
-            return _avatars.IndexOf(avatar) < Max;
+            return _avatars.IndexOf(avatar) >= Max;
         }
 
         /// <inheritdoc />

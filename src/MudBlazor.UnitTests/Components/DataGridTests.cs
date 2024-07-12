@@ -818,6 +818,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridPaginationNoItemsTest()
+        {
+            var comp = Context.RenderComponent<DataGridPaginationNoItemsTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationNoItemsTest.Item>>();
+            // check that the page size dropdown is shown
+            comp.FindComponents<MudSelect<int>>().Count.Should().Be(1);
+
+            dataGrid.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("0-0 of 0");
+        }
+
+        [Test]
         public void DataGridHideNavigationTest()
         {
             var comp = Context.RenderComponent<DataGridPaginationTest>();
@@ -4073,6 +4084,48 @@ namespace MudBlazor.UnitTests.Components
 
             selectAllCheckboxes[0].Instance.Value.Should().BeFalse();
             selectAllCheckboxes[1].Instance.Value.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task DataGridServerGroupUngroupingTest()
+        {
+            var comp = Context.RenderComponent<DataGridServerDataColumnGroupingTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<Examples.Data.Models.Element>>();
+            var popoverProvider = comp.FindComponent<MudPopoverProvider>();
+
+            //click name grouping in grid
+            var headerOption = comp.Find("th.name .mud-menu button");
+            headerOption.Click();
+            var listItems = popoverProvider.FindComponents<MudListItem<object>>();
+            listItems.Count.Should().Be(4);
+            var clickablePopover = listItems[3].Find(".mud-list-item");
+            clickablePopover.Click();
+            var cells = dataGrid.FindAll("td");
+
+            //checking cell content is the most reliable way to verify grouping
+            cells[0].TextContent.Should().Be("Name: Hydrogen");
+            cells[1].TextContent.Should().Be("Name: Helium");
+            cells[2].TextContent.Should().Be("Name: Lithium");
+            cells[3].TextContent.Should().Be("Name: Beryllium");
+            cells[4].TextContent.Should().Be("Name: Boron");
+            cells[5].TextContent.Should().Be("Name: Carbon");
+            cells[6].TextContent.Should().Be("Name: Nitrogen");
+            cells[7].TextContent.Should().Be("Name: Oxygen");
+            cells[8].TextContent.Should().Be("Name: Fluorine");
+            cells[9].TextContent.Should().Be("Name: Neon");
+            dataGrid.Instance.GroupedColumn.Should().NotBeNull();
+
+            //click name ungrouping in grid
+            headerOption = comp.Find("th.name .mud-menu button");
+            headerOption.Click();
+            listItems = popoverProvider.FindComponents<MudListItem<object>>();
+            listItems.Count.Should().Be(4);
+            clickablePopover = listItems[3].Find(".mud-list-item");
+            clickablePopover.Click();
+            cells = dataGrid.FindAll("td");
+            // We do not need check all 10 rows as it's clear that it's ungrouped if first row pass
+            cells[0].TextContent.Should().Be("1"); cells[1].TextContent.Should().Be("H"); cells[2].TextContent.Should().Be("Hydrogen"); cells[3].TextContent.Should().Be("0"); cells[4].TextContent.Should().Be("1.00794"); cells[5].TextContent.Should().Be("Other");
+            dataGrid.Instance.GroupedColumn.Should().BeNull();
         }
 
         [Test]

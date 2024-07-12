@@ -118,7 +118,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            DialogService.OnDialogInstanceAdded += AddInstance;
+            DialogService.DialogInstanceAddedAsync += AddInstanceAsync;
             DialogService.OnDialogCloseRequested += DismissInstance;
             NavigationManager.LocationChanged += LocationChanged;
 
@@ -152,10 +152,11 @@ namespace MudBlazor
                 DismissInstance(reference, result);
         }
 
-        private void AddInstance(IDialogReference dialog)
+        private Task AddInstanceAsync(IDialogReference dialog)
         {
             _dialogs.Add(dialog);
-            StateHasChanged();
+
+            return InvokeAsync(StateHasChanged);
         }
 
         /// <summary>
@@ -191,7 +192,7 @@ namespace MudBlazor
         public void Dispose()
         {
             NavigationManager.LocationChanged -= LocationChanged;
-            DialogService.OnDialogInstanceAdded -= AddInstance;
+            DialogService.DialogInstanceAddedAsync -= AddInstanceAsync;
             DialogService.OnDialogCloseRequested -= DismissInstance;
         }
     }
