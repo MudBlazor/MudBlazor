@@ -31,7 +31,7 @@ namespace MudBlazor
         private int _elementKey = 0;
         private int _returnedItemsCount;
         private bool _open;
-        private bool _doNotOpenMenuOnNextFocus;
+        private bool _doNotOpenMenuOnNextFocus; // TODO: Remove and refactor to avoid race conditions.
         private MudInput<string> _elementReference;
         private CancellationTokenSource _cancellationTokenSrc;
         private Task _currentSearchTask;
@@ -397,7 +397,7 @@ namespace MudBlazor
         public EventCallback<bool> OpenChanged { get; set; }
 
         /// <summary>
-        /// Updates the Value to the currently selected item when pressing the <c>Tab</c> key.
+        /// Updates the Value to the currently selected item when pressing the Tab key.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -405,6 +405,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public bool SelectValueOnTab { get; set; }
+
+        /// <summary>
+        /// Opens the list when focus is received on the input element; otherwise only opens on click.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool OpenOnFocus { get; set; } = true;
 
         /// <summary>
         /// Displays the Clear icon button.
@@ -884,12 +894,11 @@ namespace MudBlazor
             }
         }
 
-        private Task OnInputClickedAsync()
-        {
-            return _isFocused ? OnInputFocusedAsync() : Task.CompletedTask;
-        }
+        private Task OnInputClickedAsync() => _isFocused ? ActivateByFocus(true) : Task.CompletedTask;
 
-        private async Task OnInputFocusedAsync()
+        private Task OnInputFocusedAsync() => ActivateByFocus(false);
+
+        private async Task ActivateByFocus(bool fromPointer)
         {
             _isFocused = true;
 
@@ -904,8 +913,11 @@ namespace MudBlazor
                 await SelectAsync();
             }
 
-            // Open the menu.
-            await OpenMenuAsync();
+            // Open the menu on focus if configured to, or always by pointer.
+            if (OpenOnFocus || fromPointer)
+            {
+                await OpenMenuAsync();
+            }
         }
 
         private async Task AdornmentClickHandlerAsync()
