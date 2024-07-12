@@ -1325,6 +1325,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
 
+            comp.Find("input.mud-input-root").Focus(); // Browser would focus first.
             comp.Find("input.mud-input-root").Click();
 
             // OpenOnFocus isn't respected by clicks. This property added after the fact to restore v6 behavior via opt-in.
