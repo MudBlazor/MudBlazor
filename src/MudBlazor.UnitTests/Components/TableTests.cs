@@ -961,12 +961,17 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TableMultiSelectionTest9>();
             // select elements needed for the test
-            var table = comp.FindComponent<MudTable<TableGroupingTest.RacingCar>>().Instance;
+            var tableComponent = comp.FindComponent<MudTable<TableGroupingTest.RacingCar>>();
+            var table = tableComponent.Instance;
+            var rows = tableComponent.FindAll("tr").ToArray();
             var headerAndFooterCheckboxes = comp.FindComponents<MudCheckBox<bool?>>().Select(x => x.Instance).ToArray();
             var dataCheckboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+            foreach (var row in rows.Where(el => el.ClassName.Contains("row-click-test"))) // simulate selection on row click, excluding headers and footer
+                row.Click();
             // check result
             headerAndFooterCheckboxes.Sum(x => x.Disabled ? 0 : 1).Should().Be(0); // No checkbox should be enabled on header, group headers and footer
             dataCheckboxes.Sum(x => x.Disabled ? 1 : 0).Should().Be(comp.Instance.Items.Count()); // No checkbox should be enabled on rows
+            table.SelectedItems.Count.Should().Be(0); // No item should be selected
         }
 
         /// <summary>

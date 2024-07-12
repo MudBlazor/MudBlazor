@@ -40,13 +40,13 @@ namespace MudBlazor
         public bool Checkable { get; set; }
 
         /// <summary>
-        /// Disables the checkbox which selects or deselects every row in the group.
+        /// Prevents the change of the current selection of rows in the group.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  Requires <see cref="Checkable"/> to be <c>true</c>.
+        /// Defaults to <c>true</c>.  Requires <see cref="Checkable"/> to be <c>true</c>.
         /// </remarks>
         [Parameter]
-        public bool CheckableReadOnly { get; set; }
+        public bool SelectionChangeable { get; set; } = true;
 
         /// <summary>
         /// Hides the extra column displayed when <see cref="MudTableBase.MultiSelection"/> is <c>true</c>.

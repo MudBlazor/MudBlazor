@@ -1,22 +1,30 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudTable Items="Items" MultiSelection="true" MultiSelectionReadOnly="true" GroupBy="@groups" 
-          GroupHeaderStyle="background-color:var(--mud-palette-background-gray)">
+<MudText>SelectedItems { @string.Join(", ", selectedItems) }</MudText>
+<MudTable Items="Items"
+          T="TableGroupingTest.RacingCar"
+          MultiSelection="true"
+          SelectOnRowClick="true"
+          SelectionChangeable="false"
+          @bind-SelectedItems="selectedItems"
+          GroupBy="@groups"
+          GroupHeaderStyle="background-color:var(--mud-palette-background-gray)"
+          RowClass="row-click-test"
+          OnRowClick="(args) => ++_count">
     <HeaderContent>
         <MudTh>Name</MudTh>
-        <MudTh>Category</MudTh>
     </HeaderContent>
     <GroupHeaderTemplate>
-        <MudTh colspan="2">@($"{context.GroupName}: {context.Key}")</MudTh>
+        <MudTh>@($"{context.GroupName}: {context.Key}")</MudTh>
     </GroupHeaderTemplate>
     <RowTemplate>
         <MudTd>@context.Name</MudTd>
-        <MudTd>@context.Category</MudTd>
     </RowTemplate>
     <FooterContent>
-        <MudTd colspan="2">F</MudTd>
+        <MudTd>F</MudTd>
     </FooterContent>
 </MudTable>
+<MudText>Clicked: @_count</MudText>
 
 @code {
     public static string __description__ = "The checkboxes should all be disabled on load, even the header, group headers and footer checkboxes.";
@@ -28,7 +36,14 @@
     ];
     private TableGroupDefinition<TableGroupingTest.RacingCar> groups = new()
     {
-        GroupName = "Brand",
-        Selector = rc => rc.Brand
+        GroupName = "Category",
+        Selector = rc => rc.Category,
+        InnerGroup = new()
+        {
+            GroupName = "Brand",
+            Selector = rc => rc.Brand
+        }
     };
+    private HashSet<TableGroupingTest.RacingCar> selectedItems = [];
+    private int _count = 0;
 }

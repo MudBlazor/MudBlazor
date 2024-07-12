@@ -6,8 +6,8 @@
 <MudText HtmlTag="span">Item: @_selectedItemText</MudText>
 <MudText>Selected items (@selectedItems?.Count): @(selectedItems == null ? "" : string.Join(", ", selectedItems.OrderBy(x => x.Sign).Select(x => x.Sign)))</MudText>
 
-<MudTable @ref="_table" T="Element" Items="@Elements" MultiSelection="true" MultiSelectionReadOnly="_disableMultiSelection" Hover="true"
-		  @bind-SelectedItems="selectedItems" OnRowClick="@OnRowClick" SelectOnRowClick="@_selectOnRowClick">
+<MudTable @ref="_table" T="Element" Items="@Elements" MultiSelection="true" SelectionChangeable="_selectionChangeable" Hover="true"
+          @bind-SelectedItems="selectedItems" OnRowClick="@OnRowClick" SelectOnRowClick="@_selectOnRowClick">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -30,14 +30,14 @@
     </FooterContent>
 </MudTable>
 <MudSwitch @bind-Value="_selectOnRowClick" Color="Color.Primary">Select on row click</MudSwitch>
-<MudSwitch @bind-Value="_disableMultiSelection" Color="Color.Primary">Disable multiselection</MudSwitch>
+<MudSwitch @bind-Value="_selectionChangeable" Color="Color.Primary">Selection is changeable</MudSwitch>
 
 @code {
     private HashSet<Element> selectedItems = new HashSet<Element>();
     private IEnumerable<Element> Elements = new List<Element>();
     private bool _selectOnRowClick = true;
-    private bool _disableMultiSelection;
-	private MudTable<Element> _table;
+    private bool _selectionChangeable = true;
+    private MudTable<Element> _table;
     private string _selectedItemText = "No row clicked";
 
     protected override async Task OnInitializedAsync()

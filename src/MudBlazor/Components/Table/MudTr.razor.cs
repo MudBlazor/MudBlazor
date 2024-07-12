@@ -53,13 +53,13 @@ namespace MudBlazor
         public bool Checkable { get; set; }
 
         /// <summary>
-        /// Disables the checkbox at the start of this row.
+        /// Prevents the change of the current selection.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  Requires <see cref="Checkable"/> to be <c>true</c>.
+        /// Defaults to <c>true</c>.  Requires <see cref="Checkable"/> to be <c>true</c>.  Managed automatically by the parent <see cref="MudTable{T}"/>.
         /// </remarks>
         [Parameter]
-        public bool CheckableReadOnly { get; set; }
+        public bool SelectionChangeable { get; set; } = true;
 
         /// <summary>
         /// Allows this row to be edited.
@@ -116,7 +116,7 @@ namespace MudBlazor
 
             table.SetSelectedItem(Item);
             StartEditingItem(buttonClicked: false);
-            if (table is { MultiSelection: true, SelectOnRowClick: true, Editable: false })
+            if (table is { MultiSelection: true, SelectionChangeable: true, SelectOnRowClick: true, Editable: false })
             {
                 Checked = !Checked;
             }
