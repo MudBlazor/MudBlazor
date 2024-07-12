@@ -22,7 +22,7 @@
     };
 
     [Parameter]
-    public bool OpenOnFocus { get; set; }
+    public bool OpenOnFocus { get; set; } = true;
 
     private async Task<IEnumerable<string>> Search1(string value, CancellationToken token)
     {
