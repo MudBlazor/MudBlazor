@@ -417,6 +417,12 @@ namespace MudBlazor
         public bool Clearable { get; set; }
 
         /// <summary>
+        /// Custom clear icon.
+        /// </summary>
+        [Parameter]
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
+
+        /// <summary>
         /// Occurs when the Clear button has been clicked.
         /// </summary>
         /// <remarks>

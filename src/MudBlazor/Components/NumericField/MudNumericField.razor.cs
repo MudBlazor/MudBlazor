@@ -174,6 +174,12 @@ namespace MudBlazor
         public bool Clearable { get; set; } = false;
 
         /// <summary>
+        /// Custom clear icon.
+        /// </summary>
+        [Parameter]
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
+
+        /// <summary>
         /// Decrements or increments depending on factor
         /// </summary>
         /// <param name="factor">Multiplication factor (1 or -1) will be applied to the step</param>

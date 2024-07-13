@@ -36,9 +36,16 @@ namespace MudBlazor
         public bool Clearable { get; set; } = false;
 
         /// <summary>
+        /// Custom clear icon.
+        /// </summary>
+        [Parameter]
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
+
+        /// <summary>
         /// Button click event for clear button. Called after text and value has been cleared.
         /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         public override ValueTask FocusAsync()
         {

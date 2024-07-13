@@ -539,6 +539,12 @@ namespace MudBlazor
         public bool Clearable { get; set; } = false;
 
         /// <summary>
+        /// Custom clear icon.
+        /// </summary>
+        [Parameter]
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
+
+        /// <summary>
         /// If true, prevent scrolling while dropdown is open.
         /// </summary>
         [Parameter]
