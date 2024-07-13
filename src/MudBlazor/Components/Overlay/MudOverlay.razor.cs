@@ -41,7 +41,7 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Fires when Visible changes
+        /// Occurs when <see cref="Visible"/> changes.
         /// </summary>
         [Parameter]
         public EventCallback<bool> VisibleChanged { get; set; }
@@ -103,10 +103,16 @@ namespace MudBlazor
         public int ZIndex { get; set; } = 5;
 
         /// <summary>
-        /// Fired when the overlay is clicked
+        /// Occurs when the overlay is clicked.
         /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+        /// <summary>
+        /// Occurs when <see cref="Visible"/> changes to <c>false</c>.
+        /// </summary>
+        [Parameter]
+        public EventCallback OnClosed { get; set; }
 
         public MudOverlay()
         {
@@ -145,9 +151,15 @@ namespace MudBlazor
             }
         }
 
-        private Task OnVisibleParameterChangedAsync()
+        private async Task OnVisibleParameterChangedAsync()
         {
-            return VisibleChanged.InvokeAsync(_visibleState.Value);
+            await VisibleChanged.InvokeAsync(_visibleState.Value);
+
+            // A change to false means the overlay is closing.
+            if (!_visibleState.Value)
+            {
+                await OnClosed.InvokeAsync();
+            }
         }
 
         //locks the scroll attaching a CSS class to the specified element, in this case the body
