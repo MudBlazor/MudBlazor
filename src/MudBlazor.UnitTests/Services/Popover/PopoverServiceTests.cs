@@ -129,7 +129,7 @@ public class PopoverServiceTests
         var popover = new PopoverMock();
         var options = new PopoverOptions { CheckForPopoverProvider = checkForPopoverProvider };
         var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock, new OptionsWrapper<PopoverOptions>(options));
-        
+
         // Act
         var create = () => service.CreatePopoverAsync(popover);
 
