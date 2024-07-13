@@ -1295,14 +1295,39 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Autocomplete_Should_OpenMenuOnFocus()
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task Autocomplete_Should_OpenMenuOnFocus(bool openOnFocus)
         {
-            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var comp = Context.RenderComponent<AutocompleteFocusTest>();
+            comp.SetParam(a => a.OpenOnFocus, openOnFocus);
 
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
 
             comp.Find("input.mud-input-root").Focus();
 
+            if (openOnFocus)
+            {
+                comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            }
+            else
+            {
+                comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            }
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_OpenMenuOnFocus_AlwaysOnClick()
+        {
+            var comp = Context.RenderComponent<AutocompleteFocusTest>();
+            comp.SetParam(a => a.OpenOnFocus, false);
+
+            comp.Find("input.mud-input-root").Focus(); // Browser would focus first.
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+
+            comp.Find("input.mud-input-root").Click();
+
+            // OpenOnFocus=false isn't respected by clicks. It added after the fact to allow opting in to v6 behavior.
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
         }
 
