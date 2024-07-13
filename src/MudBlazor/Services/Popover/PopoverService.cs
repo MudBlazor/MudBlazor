@@ -109,6 +109,14 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
             return;
         }
 
+        if (PopoverOptions.CheckForPopoverProvider)
+        {
+            if (ObserversCount == 0)
+            {
+                throw new InvalidOperationException($"The component requires to have at least one observer({nameof(MudPopoverProvider)}) to create a popover.");
+            }
+        }
+
         var holder = new MudPopoverHolder(popover.Id)
             .SetFragment(popover.ChildContent)
             .SetClass(popover.PopoverClass)
