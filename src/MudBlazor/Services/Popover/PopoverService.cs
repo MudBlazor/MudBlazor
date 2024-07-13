@@ -113,7 +113,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         {
             if (ObserversCount == 0)
             {
-                throw new InvalidOperationException($"The component requires to have at least one observer({nameof(MudPopoverProvider)}) to create a popover.");
+                throw new InvalidOperationException($"Missing <{nameof(MudPopoverProvider)} />, please add it to your layout. See https://mudblazor.com/getting-started/installation#manual-install-add-components");
             }
         }
 
