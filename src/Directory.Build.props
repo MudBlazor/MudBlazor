@@ -7,6 +7,6 @@
   </PropertyGroup>
   
   <ItemGroup>
-	<PackageReference Include="Microsoft.Net.Compilers.Razor.Toolset" Version="9.0.0-preview.24359.2" Condition=" '$(UsingMicrosoftNETSdkRazor)' == 'true' " />
+    <PackageReference Include="Microsoft.Net.Compilers.Razor.Toolset" Version="9.0.0-preview.24359.2" Condition=" '$(UsingMicrosoftNETSdkRazor)' == 'true' " />
   </ItemGroup>
 </Project>
