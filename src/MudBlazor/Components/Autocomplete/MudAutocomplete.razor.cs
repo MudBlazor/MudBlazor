@@ -427,6 +427,13 @@ namespace MudBlazor
         public bool Clearable { get; set; }
 
         /// <summary>
+        /// Custom clear icon when <see cref="Clearable"/> is enabled.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
+
+        /// <summary>
         /// Occurs when the Clear button has been clicked.
         /// </summary>
         /// <remarks>
