@@ -148,9 +148,6 @@ namespace MudBlazor
         [MemberNotNullWhen(false, nameof(DialogInstance))]
         private bool IsInline => DialogInstance is null;
 
-        /// <param name="options"></param>
-        /// <returns></returns>
-
         public async Task<bool?> ShowAsync(DialogOptions? options = null)
         {
             var parameters = new DialogParameters
