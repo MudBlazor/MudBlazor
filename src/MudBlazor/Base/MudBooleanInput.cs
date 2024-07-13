@@ -81,16 +81,6 @@ namespace MudBlazor
 
         protected bool? BoolValue => Converter.Set(_valueState.Value);
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-            {
-                // ensure underlying form component has correct initial value
-                _value = Value;
-            }
-
-            await base.OnAfterRenderAsync(firstRender);
-        }
 
         protected virtual Task OnChange(ChangeEventArgs args)
             => SetBoolValueAsync((bool?)args.Value, true);
@@ -131,9 +121,12 @@ namespace MudBlazor
             await base.ResetValueAsync();
         }
 
-
         protected virtual Task OnValueChangedAsync(ParameterChangedEventArgs<T?> args)
             => UpdateFormValueAsync(args.Value);
+
+        protected override T? ReadValue() => _valueState.Value;
+
+        protected override Task WriteValueAsync(T? value) => _valueState.SetValueAsync(value);
 
         private async Task SetCheckedAsync(T? value)
         {
@@ -153,9 +146,8 @@ namespace MudBlazor
 
         private async Task UpdateFormValueAsync(T? value)
         {
-            _value = value;
             await BeginValidateAsync();
-            FieldChanged(_value);
+            FieldChanged(value);
         }
     }
 }
