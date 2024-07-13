@@ -37,6 +37,7 @@
                           AdornmentAriaLabel="@AdornmentAriaLabel"
                           Clearable="@(!GetReadOnlyState() && Clearable)" OnClearButtonClick="@OnClearButtonClick"
                           ClearIcon="@ClearIcon"
+                          MaxLength="@MaxLength"
                           autocomplete="@GetAutocomplete()"
                           @attributes="UserAttributes"
                           TextChanged="OnTextChangedAsync"
