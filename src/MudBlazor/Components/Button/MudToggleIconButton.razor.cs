@@ -44,6 +44,9 @@ namespace MudBlazor
         /// <summary>
         /// The color of the icon.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
         public Color Color { get; set; } = Color.Default;
@@ -58,6 +61,9 @@ namespace MudBlazor
         /// <summary>
         /// The size of the button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Size.Medium"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
         public Size Size { get; set; } = Size.Medium;
@@ -72,6 +78,9 @@ namespace MudBlazor
         /// <summary>
         /// The variant to use in the regular state.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Variant.Text"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
         public Variant Variant { get; set; } = Variant.Text;
@@ -86,6 +95,9 @@ namespace MudBlazor
         /// <summary>
         /// Applies a negative margin.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Edge.False"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
         public Edge Edge { get; set; }
@@ -113,6 +125,9 @@ namespace MudBlazor
         /// <summary>
         /// Disables interaction with the button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public bool Disabled { get; set; }
