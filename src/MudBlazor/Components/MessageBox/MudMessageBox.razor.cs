@@ -32,7 +32,7 @@ namespace MudBlazor
         private IDialogService DialogService { get; set; } = null!;
 
         [CascadingParameter]
-        private MudDialogInstance? DialogInstance { get; set; }
+        internal MudDialogInstance? DialogInstance { get; set; }
 
         /// <summary>
         /// The message box title. If null or empty, title will be hidden
