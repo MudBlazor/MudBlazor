@@ -8,7 +8,7 @@ namespace MudBlazor.UnitTests.Components;
 public class TextTests : BunitTest
 {
     [Test]
-    public void DefaultState()
+    public void DefaultPropertyValues()
     {
         var comp = Context.RenderComponent<MudText>();
 

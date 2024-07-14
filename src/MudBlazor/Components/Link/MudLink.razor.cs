@@ -53,8 +53,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The color of the component. It supports the theme colors.
+        /// The color of the link.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Primary"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Link.Appearance)]
         public Color Color { get; set; } = Color.Primary;
@@ -62,13 +65,19 @@ namespace MudBlazor
         /// <summary>
         /// Typography variant to use.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Typo.body1"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Link.Appearance)]
         public Typo Typo { get; set; } = Typo.body1;
 
         /// <summary>
-        /// Controls when the link should have an underline.
+        /// Applies a style of underline on the link.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Underline.Hover"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Link.Appearance)]
         public Underline Underline { get; set; } = Underline.Hover;
@@ -76,34 +85,45 @@ namespace MudBlazor
         /// <summary>
         /// The URL, which is the actual link.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Link.Behavior)]
         public string? Href { get; set; }
 
         /// <summary>
-        /// The target attribute specifies where to open the link, if Href is specified.
-        /// Possible values: _blank | _self | _parent | _top | <i>framename</i>
+        /// Specifies where to open the link if <see cref="Href"/> is specified.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Possible values: _blank | _self | _parent | _top | <i>framename</i>
+        /// </para>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Link.Behavior)]
         public string? Target { get; set; }
 
         /// <summary>
-        /// If true, the navlink will be disabled.
+        /// Prevents user interaction with the link.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Link.Behavior)]
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// Child content of component.
+        /// Child content of the component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Link.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Link click event.
+        /// Occurs when the link has been clicked.
         /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
