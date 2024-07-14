@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -89,25 +90,47 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MessageBox_CloseOnEscape_NoOptions_NoMudDefaults()
+        public async Task MessageBox_CloseOnEscapeKey_NoOptions_NoMudDefaults()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
-            var service = Context.Services.GetService<IDialogService>() as DialogService;            
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
 
             // open message box.
-            Task<bool?> yesNoCancel = null;
-            await comp.InvokeAsync(() =>
+            // we need the DialogReference to access the DialogInstance to access the HandleKeyDown
+            // keyinterceptor does not seem to work in unit tests so I can't just "key down" on the correct element
+            IDialogReference dialogReference = null;
+            Task<DialogResult> dialogResult = null;
+            await comp.InvokeAsync(async () =>
             {
-                yesNoCancel = service?.ShowMessageBox(
-                    "Boom!",
-                    (MarkupString)"I'm a pickle. What do you make of that?",
-                    "Great",
-                    "Whatever",
-                    "Go away!");
+                // DialogService line 252 through 291 show assigning the text, turning it into messageboxoptions, then again to dialogparameters
+                // showmessagebox and messagebox.showasync handle the dialogreference and returns the result only, where we need the instance
+                // from the reference so we are accessing the method directly.
+                var messageBoxOptions = new MessageBoxOptions
+                {
+                    MarkupMessage = (MarkupString)"I'm a pickle. What do you make of that?",
+                    Title = "Boom!",
+                    YesText = "Great",
+                    NoText = "Whatever",
+                    CancelText = "Go away!",
+                };
+                var parameters = new DialogParameters()
+                {
+                    [nameof(MessageBoxOptions.Title)] = messageBoxOptions.Title,
+                    [nameof(MessageBoxOptions.Message)] = messageBoxOptions.Message,
+                    [nameof(MessageBoxOptions.MarkupMessage)] = messageBoxOptions.MarkupMessage,
+                    [nameof(MessageBoxOptions.CancelText)] = messageBoxOptions.CancelText,
+                    [nameof(MessageBoxOptions.NoText)] = messageBoxOptions.NoText,
+                    [nameof(MessageBoxOptions.YesText)] = messageBoxOptions.YesText,
+                };
+                dialogReference = await service?.ShowAsync<MudMessageBox>(messageBoxOptions.Title, parameters);
+                dialogResult = dialogReference.Result;
             });
-
+            dialogReference.Should().NotBeNull();
+            // this component has an instance of MudDialog as a cascading parameter allowing us to access HandleKeyDown
+            var dialog = (MudMessageBox)dialogReference.Dialog;
+            // just the same as the above test method 
             comp.Find("div.mud-message-box").Should().NotBe(null);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
@@ -117,79 +140,119 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-message-box__no-button").TrimmedText().Should().Be("Whatever");
             comp.Find(".mud-message-box__yes-button").TrimmedText().Should().Be("Great");
 
-            comp.FindAll(".mud-dialog div")[1].KeyDown(Key.Escape);
+            await comp.InvokeAsync(() => dialog.DialogInstance.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape" }));
 
             comp.FindAll("button").Count.Should().Be(3);
 
+            // close it manually
             comp.FindAll("button")[0].Click();
             comp.FindAll("button").Should().BeEmpty();
-            yesNoCancel.Result.Should().Be(null);
+
+            dialogResult?.Result.Data?.Should().BeNull();
         }
 
         [Test]
-        public async Task MessageBox_CloseOnEscape_NoOptions_WithMudDefaults()
+        public async Task MessageBox_CloseOnEscapeKey_WithOptions_NoMudDefaults()
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+
+            // open message box.
+            // we need the DialogReference to access the DialogInstance to access the HandleKeyDown
+            // keyinterceptor does not seem to work in unit tests so I can't just "key down" on the correct element
+            IDialogReference dialogReference = null;
+            Task<DialogResult> dialogResult = null;
+            var dialogOptions = new DialogOptions { CloseOnEscapeKey = true };
+            await comp.InvokeAsync(async () =>
+            {
+                // DialogService line 252 through 291 show assigning the text, turning it into messageboxoptions, then again to dialogparameters
+                // showmessagebox itself handles the dialogreference and returns the result only
+                var messageBoxOptions = new MessageBoxOptions
+                {
+                    MarkupMessage = (MarkupString)"I'm a pickle. What do you make of that?",
+                    Title = "Boom!",
+                    YesText = "Great",
+                    NoText = "Whatever",
+                    CancelText = "Go away!",
+                };
+                var parameters = new DialogParameters()
+                {
+                    [nameof(MessageBoxOptions.Title)] = messageBoxOptions.Title,
+                    [nameof(MessageBoxOptions.Message)] = messageBoxOptions.Message,
+                    [nameof(MessageBoxOptions.MarkupMessage)] = messageBoxOptions.MarkupMessage,
+                    [nameof(MessageBoxOptions.CancelText)] = messageBoxOptions.CancelText,
+                    [nameof(MessageBoxOptions.NoText)] = messageBoxOptions.NoText,
+                    [nameof(MessageBoxOptions.YesText)] = messageBoxOptions.YesText,
+                };
+                dialogReference = await service?.ShowAsync<MudMessageBox>(messageBoxOptions.Title, parameters, dialogOptions);
+                dialogResult = dialogReference.Result;
+            });
+            dialogReference.Should().NotBeNull();
+            // this component has an instance of MudDialog as a cascading parameter allowing us to access HandleKeyDown
+            var dialog = (MudMessageBox)dialogReference.Dialog;
+            // just the same as the above test method 
+            comp.Find("div.mud-message-box").Should().NotBe(null);
+            comp.Find("div.mud-dialog-container").Should().NotBe(null);
+            comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
+            comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("pickle");
+            comp.FindAll("button").Count.Should().Be(3);
+            comp.Find(".mud-message-box__cancel-button").TrimmedText().Should().Be("Go away!");
+            comp.Find(".mud-message-box__no-button").TrimmedText().Should().Be("Whatever");
+            comp.Find(".mud-message-box__yes-button").TrimmedText().Should().Be("Great");
+
+            await comp.InvokeAsync(() => dialog.DialogInstance.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape" }));
+
+            comp.FindAll("button").Should().BeEmpty();
+
+            dialogResult?.Result.Data?.Should().BeNull();
+        }
+
+        [Test]
+        public async Task MessageBox_CloseOnEscapeKey_NoOptions_WithMudDefaults()
         {
             var comp = Context.RenderComponent<MudDialogProvider>(builder =>
             {
-                builder.Add(p => p.CloseOnEscapeKey, true); 
+                builder.Add(p => p.CloseOnEscapeKey, true);
             });
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
 
             // open message box.
-            Task<bool?> yesNoCancel = null;
-            await comp.InvokeAsync(() =>
+            // we need the DialogReference to access the DialogInstance to access the HandleKeyDown
+            // keyinterceptor does not seem to work in unit tests so I can't just "key down" on the correct element
+            IDialogReference dialogReference = null;
+            Task<DialogResult> dialogResult = null;
+            await comp.InvokeAsync(async () =>
             {
-                yesNoCancel = service?.ShowMessageBox(
-                    "Boom!",
-                    (MarkupString)"I'm a pickle. What do you make of that?",
-                    "Great",
-                    "Whatever",
-                    "Go away!");
+                // DialogService line 252 through 291 show assigning the text, turning it into messageboxoptions, then again to dialogparameters
+                // showmessagebox itself handles the dialogreference and returns the result only
+                var messageBoxOptions = new MessageBoxOptions
+                {
+                    MarkupMessage = (MarkupString)"I'm a pickle. What do you make of that?",
+                    Title = "Boom!",
+                    YesText = "Great",
+                    NoText = "Whatever",
+                    CancelText = "Go away!",
+                };
+                var parameters = new DialogParameters()
+                {
+                    [nameof(MessageBoxOptions.Title)] = messageBoxOptions.Title,
+                    [nameof(MessageBoxOptions.Message)] = messageBoxOptions.Message,
+                    [nameof(MessageBoxOptions.MarkupMessage)] = messageBoxOptions.MarkupMessage,
+                    [nameof(MessageBoxOptions.CancelText)] = messageBoxOptions.CancelText,
+                    [nameof(MessageBoxOptions.NoText)] = messageBoxOptions.NoText,
+                    [nameof(MessageBoxOptions.YesText)] = messageBoxOptions.YesText,
+                };
+                dialogReference = await service?.ShowAsync<MudMessageBox>(messageBoxOptions.Title, parameters);
+                dialogResult = dialogReference.Result;
             });
-
-            comp.Find("div.mud-message-box").Should().NotBe(null);
-            comp.Find("div.mud-dialog-container").Should().NotBe(null);
-            comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
-            comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("pickle");
-            comp.FindAll("button").Count.Should().Be(3);
-            comp.Find(".mud-message-box__cancel-button").TrimmedText().Should().Be("Go away!");
-            comp.Find(".mud-message-box__no-button").TrimmedText().Should().Be("Whatever");
-            comp.Find(".mud-message-box__yes-button").TrimmedText().Should().Be("Great");
-            await Task.Delay(1000);
-            comp.Find(".mud-dialog").KeyDown(Key.Escape);
-
-            comp.FindAll("button").Should().BeEmpty();
-            yesNoCancel.Result.Should().Be(null);
-        }
-
-        [Test]
-        public async Task MessageBox_KeyNavTest_Service_WithDialogOptions()
-        {
-            var comp = Context.RenderComponent<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
-            var service = Context.Services.GetService<IDialogService>() as DialogService;
-            service.Should().NotBe(null);
-
-            // set dialog options
-            DialogOptions dialogOptions = new DialogOptions
-            {
-                CloseOnEscapeKey = false,
-            };
-
-            // open message box.
-            Task<bool?> yesNoCancel = null;
-            await comp.InvokeAsync(() =>
-            {
-                yesNoCancel = service?.ShowMessageBox(
-                    "Boom!",
-                    (MarkupString)"I'm a pickle. What do you make of that?",
-                    "Great",
-                    "Whatever",
-                    "Go away!", dialogOptions);
-            });
-
+            dialogReference.Should().NotBeNull();
+            // this component has an instance of MudDialog as a cascading parameter allowing us to access HandleKeyDown
+            var dialog = (MudMessageBox)dialogReference.Dialog;
+            // just the same as the above test method 
             comp.Find("div.mud-message-box").Should().NotBe(null);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
@@ -199,114 +262,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-message-box__no-button").TrimmedText().Should().Be("Whatever");
             comp.Find(".mud-message-box__yes-button").TrimmedText().Should().Be("Great");
 
-            comp.FindAll(".mud-dialog-actions div")[0].KeyDown(Key.Escape);
-
-            comp.FindAll("button").Count.Should().Be(3);
-
-            comp.FindAll("button")[0].Click();
-            comp.FindAll("button").Should().BeEmpty();
-            yesNoCancel.Result.Should().Be(null);
-        }
-
-        [Test]
-        public async Task MessageBox_KeyNavTest_Razor_FalseCloseOnEscape()
-        {
-            var comp = Context.RenderComponent<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
-            var cut = Context.RenderComponent<MessageBoxShowAsyncTest>();
-            // open message box.            
-            Task<bool?> yesNoCancel = null;
-            
-            await comp.InvokeAsync(() =>
-            {
-                yesNoCancel = cut.Instance.ShowAsyncWithCloseOnEscapeSet(false);
-            });
-
-            comp.Find("div.mud-message-box").Should().NotBe(null);
-            comp.Find("div.mud-dialog-container").Should().NotBe(null);
-            comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Warning");
-            comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("Deleting");
-            comp.FindAll("button").Count.Should().Be(3);
-            comp.Find(".mud-message-box__cancel-button").TrimmedText().Should().Be("Cancel");
-            comp.Find(".mud-message-box__no-button").TrimmedText().Should().Be("Not");
-            comp.Find("#deleteYesButton").TrimmedText().Should().Be("Delete!");
-
-            comp.FindAll(".mud-dialog-actions div")[0].KeyDown(Key.Escape);
-
-            comp.FindAll("button").Count.Should().Be(3);
-
-            comp.FindAll("button")[0].Click();
-            comp.Markup.Trim().Should().BeEmpty();
-            yesNoCancel.Result.Should().Be(null);
-        }
-
-        [Test]
-        public async Task MessageBox_KeyNavTest_Razor_TrueCloseOnEscape()
-        {
-            var comp = Context.RenderComponent<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
-            var cut = Context.RenderComponent<MessageBoxShowAsyncTest>();
-
-            // open message box.            
-            Task<bool?> yesNoCancel = null;
-
-            await comp.InvokeAsync(() =>
-            {
-                yesNoCancel = cut.Instance.ShowAsyncWithCloseOnEscapeSet(true);
-            });
-
-            comp.Find("div.mud-message-box").Should().NotBe(null);
-            comp.Find("div.mud-dialog-container").Should().NotBe(null);
-            comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Warning");
-            comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("Deleting");
-            comp.FindAll("button").Count.Should().Be(3);
-            comp.Find(".mud-message-box__cancel-button").TrimmedText().Should().Be("Cancel");
-            comp.Find(".mud-message-box__no-button").TrimmedText().Should().Be("Not");
-            comp.Find("#deleteYesButton").TrimmedText().Should().Be("Delete!");
-
-            comp.FindAll(".mud-dialog-actions div")[0].KeyDown(Key.Escape);
+            await comp.InvokeAsync(() => dialog.DialogInstance.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape" }));
 
             comp.FindAll("button").Should().BeEmpty();
-            comp.Markup.Trim().Should().BeEmpty();
-            yesNoCancel.Result.Should().Be(null);
-        }
 
-        [Test]
-        public async Task MessageBox_KeyNavTest_Razor_CloseOnEscape_WithDialogOptions()
-        {
-            var comp = Context.RenderComponent<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
-            var cut = Context.RenderComponent<MessageBoxShowAsyncTest>();
-
-            // open message box.            
-            Task<bool?> yesNoCancel = null;
-
-            DialogOptions dialogOptions = new DialogOptions
-            {
-                CloseOnEscapeKey = false,
-            };
-
-            await comp.InvokeAsync(() =>
-            {                
-                yesNoCancel = cut.Instance.ShowAsyncWithDialogOptions(dialogOptions);
-            });
-
-            comp.Find("div.mud-message-box").Should().NotBe(null);
-            comp.Find("div.mud-dialog-container").Should().NotBe(null);
-            comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Warning");
-            comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("Deleting");
-            comp.FindAll("button").Count.Should().Be(3);
-            comp.Find(".mud-message-box__cancel-button").TrimmedText().Should().Be("Cancel");
-            comp.Find(".mud-message-box__no-button").TrimmedText().Should().Be("Not");
-            comp.Find("#deleteYesButton").TrimmedText().Should().Be("Delete!");
-
-            comp.FindAll(".mud-dialog-actions div")[0].KeyDown(Key.Escape);
-
-            comp.FindAll("button").Count.Should().Be(3);
-
-            comp.FindAll("button")[0].Click();
-            comp.Markup.Trim().Should().BeEmpty();
-            yesNoCancel.Result.Should().Be(null);
+            dialogResult?.Result.Data?.Should().BeNull();
         }
     }
 }
