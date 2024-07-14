@@ -47,5 +47,81 @@ namespace MudBlazor.UnitTests.Components
             comp1.Instance.Toggled.Should().BeTrue();
             comp2.Instance.Toggled.Should().BeTrue();
         }
+
+        [TestCase("icon-default", "icon-toggled", "icon-default", "icon-toggled")]
+        [TestCase("icon-default", null, "icon-default", "icon-default")]
+        public void GetIcon_ShouldReturnCorrectIcon(string icon, string toggledIcon, string expectedIcon, string expectedToggledIcon)
+        {
+            var comp = Context.RenderComponent<MudToggleIconButton>(parameters => parameters
+                .Add(p => p.Icon, icon)
+                .Add(p => p.ToggledIcon, toggledIcon)
+            );
+
+            // Check initial state
+            comp.Instance.GetIcon().Should().Be(expectedIcon);
+
+            // Toggle state
+            comp.Find("button").Click();
+
+            // Check toggled state
+            comp.Instance.GetIcon().Should().Be(expectedToggledIcon);
+        }
+
+        [TestCase(Size.Medium, Size.Large, Size.Medium, Size.Large)]
+        [TestCase(Size.Medium, null, Size.Medium, Size.Medium)]
+        public void GetSize_ShouldReturnCorrectSize(Size size, Size? toggledSize, Size expectedSize, Size expectedToggledSize)
+        {
+            var comp = Context.RenderComponent<MudToggleIconButton>(parameters => parameters
+                .Add(p => p.Size, size)
+                .Add(p => p.ToggledSize, toggledSize)
+            );
+
+            // Check initial state
+            comp.Instance.GetSize().Should().Be(expectedSize);
+
+            // Toggle state
+            comp.Find("button").Click();
+
+            // Check toggled state
+            comp.Instance.GetSize().Should().Be(expectedToggledSize);
+        }
+
+        [TestCase(Color.Default, Color.Primary, Color.Default, Color.Primary)]
+        [TestCase(Color.Default, null, Color.Default, Color.Default)]
+        public void GetColor_ShouldReturnCorrectColor(Color color, Color? toggledColor, Color expectedColor, Color expectedToggledColor)
+        {
+            var comp = Context.RenderComponent<MudToggleIconButton>(parameters => parameters
+                .Add(p => p.Color, color)
+                .Add(p => p.ToggledColor, toggledColor)
+            );
+
+            // Check initial state
+            comp.Instance.GetColor().Should().Be(expectedColor);
+
+            // Toggle state
+            comp.Find("button").Click();
+
+            // Check toggled state
+            comp.Instance.GetColor().Should().Be(expectedToggledColor);
+        }
+
+        [TestCase(Variant.Text, Variant.Filled, Variant.Text, Variant.Filled)]
+        [TestCase(Variant.Text, null, Variant.Text, Variant.Text)]
+        public void GetVariant_ShouldReturnCorrectVariant(Variant variant, Variant? toggledVariant, Variant expectedVariant, Variant expectedToggledVariant)
+        {
+            var comp = Context.RenderComponent<MudToggleIconButton>(parameters => parameters
+                .Add(p => p.Variant, variant)
+                .Add(p => p.ToggledVariant, toggledVariant)
+            );
+
+            // Check initial state
+            comp.Instance.GetVariant().Should().Be(expectedVariant);
+
+            // Toggle state
+            comp.Find("button").Click();
+
+            // Check toggled state
+            comp.Instance.GetVariant().Should().Be(expectedToggledVariant);
+        }
     }
 }

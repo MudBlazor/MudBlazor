@@ -15,106 +15,124 @@ namespace MudBlazor
     public partial class MudToggleIconButton : MudComponentBase
     {
         /// <summary>
-        /// The toggled value.
+        /// Whether the icon is in the toggled state.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public bool Toggled { get; set; }
 
         /// <summary>
-        /// Fires whenever toggled is changed.
+        /// Occurs when <see cref="Toggled"/> is changed.
         /// </summary>
         [Parameter]
         public EventCallback<bool> ToggledChanged { get; set; }
 
         /// <summary>
-        /// The Icon that will be used in the untoggled state.
+        /// The icon to use.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
+        [Category(CategoryTypes.Button.Appearance)]
         public string? Icon { get; set; }
 
         /// <summary>
-        /// The Icon that will be used in the toggled state.
+        /// An alternative icon to use in the toggled state.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
+        [Category(CategoryTypes.Button.Appearance)]
         public string? ToggledIcon { get; set; }
 
         /// <summary>
-        /// The color of the icon in the untoggled state. It supports the theme colors.
+        /// The color of the icon.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// The color of the icon in the toggled state. It supports the theme colors.
+        /// An alternative color to use in the toggled state.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Color ToggledColor { get; set; } = Color.Default;
+        public Color? ToggledColor { get; set; }
 
         /// <summary>
-        /// The Size of the component in the untoggled state.
+        /// The size of the button.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
         public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
-        /// The Size of the component in the toggled state.
+        /// An alternative size to use in the toggled state.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Size ToggledSize { get; set; } = Size.Medium;
+        public Size? ToggledSize { get; set; }
 
         /// <summary>
-        /// If set uses a negative margin.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Button.Appearance)]
-        public Edge Edge { get; set; }
-
-        /// <summary>
-        /// Whether to show a ripple effect when the user clicks the button. Default is true.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Button.Appearance)]
-        public bool Ripple { get; set; } = true;
-
-        /// <summary>
-        /// If true, the button will be disabled.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
-        public bool Disabled { get; set; }
-
-        /// <summary>
-        /// The variant to use.
+        /// The variant to use in the regular state.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
         public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        /// Determines whether the component has a drop-shadow. Default is true
+        /// An alternative variant to use in the toggled state.
         /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public Variant? ToggledVariant { get; set; }
+
+        /// <summary>
+        /// Applies a negative margin.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public Edge Edge { get; set; }
+
+        /// <summary>
+        /// Shows a ripple effect when the user clicks the button.
+        /// </summary>
+        /// <remarks>
+        /// Default is <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public bool Ripple { get; set; } = true;
+
+        /// <summary>
+        /// Displays a shadow.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
         public bool DropShadow { get; set; } = true;
 
         /// <summary>
-        /// If true, the click event bubbles up to the containing/parent component.
+        /// Disables interaction with the button.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public bool Disabled { get; set; }
+
+        /// <summary>
+        /// If <c>true</c>, the click event bubbles up to the containing/parent component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public bool ClickPropagation { get; set; }
 
-        public Task Toggle()
-        {
-            return SetToggledAsync(!Toggled);
-        }
+        public string? GetIcon() => Toggled ? (ToggledIcon ?? Icon) : Icon;
+
+        public Size GetSize() => Toggled ? (ToggledSize ?? Size) : Size;
+
+        public Color GetColor() => Toggled ? (ToggledColor ?? Color) : Color;
+
+        public Variant GetVariant() => Toggled ? (ToggledVariant ?? Variant) : Variant;
+
+        public Task Toggle() => SetToggledAsync(!Toggled);
 
         protected internal async Task SetToggledAsync(bool toggled)
         {
