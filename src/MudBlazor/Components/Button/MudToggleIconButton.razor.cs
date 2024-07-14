@@ -94,7 +94,7 @@ namespace MudBlazor
         /// Shows a ripple effect when the user clicks the button.
         /// </summary>
         /// <remarks>
-        /// Default is <c>true</c>.
+        /// Defaults to <c>true</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
@@ -118,20 +118,50 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// If <c>true</c>, the click event bubbles up to the containing/parent component.
+        /// Allows the click event to bubble up to the parent component.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public bool ClickPropagation { get; set; }
 
+        /// <summary>
+        /// Gets the icon to display based on the toggled state.
+        /// </summary>
+        /// <returns>
+        /// <see cref="ToggledIcon"/> if toggled and that property is set; otherwise, <see cref="Icon"/>.
+        /// </returns>
         public string? GetIcon() => Toggled ? (ToggledIcon ?? Icon) : Icon;
 
+        /// <summary>
+        /// Gets the size to use based on the toggled state.
+        /// </summary>
+        /// <returns>
+        /// <see cref="ToggledSize"/> if toggled and that property is set; otherwise, <see cref="Size"/>.
+        /// </returns>
         public Size GetSize() => Toggled ? (ToggledSize ?? Size) : Size;
 
+        /// <summary>
+        /// Gets the color to use based on the toggled state.
+        /// </summary>
+        /// <returns>
+        /// <see cref="ToggledColor"/> if toggled and that property is set; otherwise, <see cref="Color"/>.
+        /// </returns>
         public Color GetColor() => Toggled ? (ToggledColor ?? Color) : Color;
 
+        /// <summary>
+        /// Gets the variant to use based on the toggled state.
+        /// </summary>
+        /// <returns>
+        /// <see cref="ToggledVariant"/> if toggled and that property is set; otherwise, <see cref="Variant"/>.
+        /// </returns>
         public Variant GetVariant() => Toggled ? (ToggledVariant ?? Variant) : Variant;
 
+        /// <summary>
+        /// Toggles the state of the button.
+        /// </summary>
         public Task Toggle() => SetToggledAsync(!Toggled);
 
         protected internal async Task SetToggledAsync(bool toggled)
