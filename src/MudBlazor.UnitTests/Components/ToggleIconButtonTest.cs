@@ -67,8 +67,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetIcon().Should().Be(expectedToggledIcon);
         }
 
-        [TestCase(Size.Medium, Size.Large, Size.Medium, Size.Large)]
-        [TestCase(Size.Medium, null, Size.Medium, Size.Medium)]
+        [TestCase(Size.Small, Size.Large, Size.Small, Size.Large)]
+        [TestCase(Size.Small, null, Size.Small, Size.Small)]
         public void GetSize_ShouldReturnCorrectSize(Size size, Size? toggledSize, Size expectedSize, Size expectedToggledSize)
         {
             var comp = Context.RenderComponent<MudToggleIconButton>(parameters => parameters
@@ -86,8 +86,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetSize().Should().Be(expectedToggledSize);
         }
 
-        [TestCase(Color.Default, Color.Primary, Color.Default, Color.Primary)]
-        [TestCase(Color.Default, null, Color.Default, Color.Default)]
+        [TestCase(Color.Tertiary, Color.Secondary, Color.Tertiary, Color.Secondary)]
+        [TestCase(Color.Tertiary, null, Color.Tertiary, Color.Tertiary)]
         public void GetColor_ShouldReturnCorrectColor(Color color, Color? toggledColor, Color expectedColor, Color expectedToggledColor)
         {
             var comp = Context.RenderComponent<MudToggleIconButton>(parameters => parameters
@@ -105,8 +105,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetColor().Should().Be(expectedToggledColor);
         }
 
-        [TestCase(Variant.Text, Variant.Filled, Variant.Text, Variant.Filled)]
-        [TestCase(Variant.Text, null, Variant.Text, Variant.Text)]
+        [TestCase(Variant.Outlined, Variant.Filled, Variant.Outlined, Variant.Filled)]
+        [TestCase(Variant.Outlined, null, Variant.Outlined, Variant.Outlined)]
         public void GetVariant_ShouldReturnCorrectVariant(Variant variant, Variant? toggledVariant, Variant expectedVariant, Variant expectedToggledVariant)
         {
             var comp = Context.RenderComponent<MudToggleIconButton>(parameters => parameters
