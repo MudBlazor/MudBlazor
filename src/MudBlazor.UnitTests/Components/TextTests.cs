@@ -41,7 +41,7 @@ public class TextTests : BunitTest
     [TestCase(Align.End, false, "mud-typography-align-right")]
     [TestCase(Align.Start, true, "mud-typography-align-right")]
     [TestCase(Align.End, true, "mud-typography-align-left")]
-    public void Align_And_RightToLeft_Class(Align align, bool rightToLeft, string expectedClass)
+    public void Align_And_RightToLeft_AppliesCorrectClass(Align align, bool rightToLeft, string expectedClass)
     {
         // Arrange
         var comp = Context.RenderComponent<MudText>(builder => builder
@@ -63,7 +63,7 @@ public class TextTests : BunitTest
     [TestCase(Color.Primary, "mud-primary-text")]
     [TestCase(Color.Secondary, "mud-secondary-text")]
     [TestCase(Color.Tertiary, "mud-tertiary-text")]
-    public void ColorProperty_Class(Color color, string expectedClass)
+    public void ColorProperty_AppliesCorrectClass(Color color, string expectedClass)
     {
         // Arrange
         var comp = Context.RenderComponent<MudText>(builder => builder
@@ -77,7 +77,7 @@ public class TextTests : BunitTest
     [Test]
     [TestCase(true)]
     [TestCase(false)]
-    public void GutterBottom_Class(bool gutterBottom)
+    public void GutterBottom_AppliesCorrectClass(bool gutterBottom)
     {
         // Arrange
         var comp = Context.RenderComponent<MudText>(builder => builder
@@ -152,7 +152,7 @@ public class TextTests : BunitTest
 
     [TestCase(true)]
     [TestCase(false)]
-    public void InlineProperty_Class(bool inline)
+    public void InlineProperty_AppliesCorrectClass(bool inline)
     {
         // Arrange
         var comp = Context.RenderComponent<MudText>(builder => builder
