@@ -148,7 +148,7 @@ namespace MudBlazor
         /// <returns>
         /// <see cref="ToggledIcon"/> if toggled and that property is set; otherwise, <see cref="Icon"/>.
         /// </returns>
-        public string? GetIcon() => Toggled ? (ToggledIcon ?? Icon) : Icon;
+        internal string? GetIcon() => Toggled ? (ToggledIcon ?? Icon) : Icon;
 
         /// <summary>
         /// Gets the size to use based on the toggled state.
@@ -156,7 +156,7 @@ namespace MudBlazor
         /// <returns>
         /// <see cref="ToggledSize"/> if toggled and that property is set; otherwise, <see cref="Size"/>.
         /// </returns>
-        public Size GetSize() => Toggled ? (ToggledSize ?? Size) : Size;
+        internal Size GetSize() => Toggled ? (ToggledSize ?? Size) : Size;
 
         /// <summary>
         /// Gets the color to use based on the toggled state.
@@ -164,7 +164,7 @@ namespace MudBlazor
         /// <returns>
         /// <see cref="ToggledColor"/> if toggled and that property is set; otherwise, <see cref="Color"/>.
         /// </returns>
-        public Color GetColor() => Toggled ? (ToggledColor ?? Color) : Color;
+        internal Color GetColor() => Toggled ? (ToggledColor ?? Color) : Color;
 
         /// <summary>
         /// Gets the variant to use based on the toggled state.
@@ -172,7 +172,7 @@ namespace MudBlazor
         /// <returns>
         /// <see cref="ToggledVariant"/> if toggled and that property is set; otherwise, <see cref="Variant"/>.
         /// </returns>
-        public Variant GetVariant() => Toggled ? (ToggledVariant ?? Variant) : Variant;
+        internal Variant GetVariant() => Toggled ? (ToggledVariant ?? Variant) : Variant;
 
         /// <summary>
         /// Toggles the state of the button.
