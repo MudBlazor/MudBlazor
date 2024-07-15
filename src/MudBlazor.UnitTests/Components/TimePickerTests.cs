@@ -1,11 +1,8 @@
-﻿#pragma warning disable BL0005 // Set parameter outside component
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.TimePicker;
 using NUnit.Framework;
@@ -220,6 +217,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TimePickerTest_KeyboardNavigation()
         {
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             var comp = Context.RenderComponent<SimpleTimePickerTest>();
             var timePicker = comp.FindComponent<MudTimePicker>().Instance;
             var overlay = comp.FindComponent<MudOverlay>();
@@ -319,6 +317,7 @@ namespace MudBlazor.UnitTests.Components
 
             timePicker.ReadOnly = true;
             await comp.InvokeAsync(timePicker.SubmitAsync);
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
         }
 
         /// <summary>
