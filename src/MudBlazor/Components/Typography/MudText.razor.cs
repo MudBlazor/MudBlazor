@@ -20,22 +20,26 @@ public partial class MudText : MudComponentBase
     public bool RightToLeft { get; set; }
 
     /// <summary>
-    /// Applies the theme typography styles.
-    /// <para>
-    /// This will determine the HTML tag rendered unless <see cref="HtmlTag"/> is specified.
-    /// <br/>
-    /// The tag influences the display type and whether certain other properties (like <see cref="Align"/> and <see cref="GutterBottom"/>) take effect.
-    /// </para>
+    /// Applies theme typography styles to the element.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The rendered HTML tag is determined by the theme unless <see cref="HtmlTag"/> is set.
+    /// The tag affects the display type and the applicability of properties like <see cref="Align"/> and <see cref="GutterBottom"/>.
+    /// </para>
+    /// Defaults to <see cref="Typo.body1"/> which uses the block-level <c>p</c> element.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Text.Appearance)]
     public Typo Typo { get; set; } = Typo.body1;
 
     /// <summary>
-    /// The text-align on the component.
-    /// <br/>
-    /// Won't have any effect on inline displays.
+    /// The <c>text-align</c> that will be used.
     /// </summary>
+    /// <remarks>
+    /// Has no effect on inline displays.
+    /// Defaults to <see cref="Align.Inherit"/>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Text.Appearance)]
     public Align Align { get; set; } = Align.Inherit;
@@ -43,24 +47,32 @@ public partial class MudText : MudComponentBase
     /// <summary>
     /// The theme color of the component.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="Color.Inherit"/>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Text.Appearance)]
     public Color Color { get; set; } = Color.Inherit;
 
     /// <summary>
     /// Adds a bottom margin.
-    /// <br/>
-    /// Won't have any effect on inline displays.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// Has no effect on inline displays.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Text.Appearance)]
     public bool GutterBottom { get; set; }
 
     /// <summary>
-    /// If true, text will continue after previous text instead of placing in a new line.
+    /// Adds the <c>d-inline</c> display class, allowing text to continue on the same line rather than starting a new line.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>, meaning no display class will be added.
+    /// </remarks>
     [Parameter]
-    [Category(CategoryTypes.Text.Appearance)]
+    [Category(CategoryTypes.Text.Behavior)]
     public bool Inline { get; set; }
 
     /// <summary>
@@ -71,14 +83,16 @@ public partial class MudText : MudComponentBase
     public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
-    /// The HTML element that will be rendered (<c>span</c>, <c>p</c>, <c>h1</c>).
-    /// <br/>
-    /// If <c>null</c> it will be automatically decided based on the <see cref="Typo"/>.
+    /// The HTML element that will be rendered (Example: <c>span</c>, <c>p</c>, <c>h1</c>).
     /// </summary>
     /// <remarks>
-    /// This can be used to specify the type of content for accessibility and SEO more accurately.
-    /// <br/>
-    /// https://developer.mozilla.org/en-US/docs/Web/HTML/Element#text_content
+    /// <para>
+    /// This can be used to
+    /// <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element#text_content">
+    /// specify the type of content for accessibility and SEO more accurately
+    /// </see>.
+    /// </para>
+    /// Defaults to <c>null</c>, meaning the tag be decided based on <see cref="Typo"/>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Text.Behavior)]
