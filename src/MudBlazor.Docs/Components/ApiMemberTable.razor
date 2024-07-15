@@ -53,17 +53,39 @@
             @if (Mode == ApiMemberType.Properties)
             {
                 var property = context as PropertyInfo;
-                <ApiTypeLink Type="@property.PropertyType" TypeName="@property.PropertyType.Name" TypeFriendlyName="@property.PropertyType.GetFriendlyName()" />
+                <ApiTypeLink TypeFullName="@property.PropertyType.FullName" />
+            }
+            else if (Mode == ApiMemberType.Methods)
+            {
+                var method = context as MethodInfo;
+                <ApiTypeLink TypeFullName="@method.ReturnType.FullName" />
+            }
+            else if (Mode == ApiMemberType.Fields)
+            {
+                var field = context as FieldInfo;
+                <ApiTypeLink TypeFullName="@field.FieldType.FullName" />
+            }
+            else if (Mode == ApiMemberType.Events)
+            {
+                var eventItem = context as EventInfo;
+                var field = context as FieldInfo;
+                var property = context as PropertyInfo;
+                if (eventItem != null)
+                {
+                    <ApiTypeLink TypeFullName="@eventItem.EventHandlerType.FullName" />
+                }
+                else if (field != null)
+                {
+                    <ApiTypeLink TypeFullName="@field.FieldType.FullName" />
+                }
+                else if (property != null)
+                {
+                    <ApiTypeLink TypeFullName="@property.PropertyType.FullName" />
+                }
             }
         </MudTd>
         <MudTd DataLabel="Description">
-            @{
-                var comments = Docs.GetMemberComments(context);
-                if (comments != null)
-                {
-                    <ApiText Text="@(comments.Summary + " " + comments.Remarks)" />
-                }
-            }
+            <ApiText Context="@Type" Comments="Docs.GetMemberComments(context)" />
         </MudTd>
     </RowTemplate>
     <NoRecordsContent>

@@ -8,11 +8,11 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using MudBlazor.Docs.Pages.Api;
-using MudBlazor.Docs.Extensions;
-using MudBlazor.Docs.Services.XmlDocs;
 using LoxSmoke.DocXml;
+using Microsoft.AspNetCore.Components;
+using MudBlazor.Docs.Extensions;
+using MudBlazor.Docs.Pages.Api;
+using MudBlazor.Docs.Services.XmlDocs;
 
 namespace MudBlazor.Docs.Components;
 
@@ -65,6 +65,11 @@ public partial class ApiMemberTable
     [Parameter]
     [EditorRequired]
     public List<MemberInfo> Members { get; set; } = [];
+
+    protected override void OnInitialized()
+    {
+        OnGroupBy(Grouping);
+    }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -163,13 +168,7 @@ public partial class ApiMemberTable
     /// <summary>
     /// The current groups.
     /// </summary>
-    public TableGroupDefinition<MemberInfo>? CurrentGroups => Grouping switch
-    {
-        ApiMemberGrouping.None => null,
-        ApiMemberGrouping.Categories => new() { Selector = (property) => property.GetCategoryName() },
-        ApiMemberGrouping.Inheritance => new() { Selector = (property) => property.DeclaringType?.GetFriendlyName() ?? "" },
-        _ => null
-    };
+    public TableGroupDefinition<MemberInfo>? CurrentGroups { get; set; }
 
     /// <summary>
     /// Gets the grouping button variant based on the current grouping.
@@ -189,6 +188,14 @@ public partial class ApiMemberTable
     public void OnGroupBy(ApiMemberGrouping grouping)
     {
         Grouping = grouping;
+        CurrentGroups = Grouping switch
+        {
+            ApiMemberGrouping.None => null,
+            ApiMemberGrouping.Categories => new() { Selector = (property) => property.GetCategoryName() },
+            ApiMemberGrouping.Inheritance => new() { Selector = (property) => property.DeclaringType?.GetFriendlyName() ?? "" },
+            _ => null
+        };
+
         StateHasChanged();
     }
 

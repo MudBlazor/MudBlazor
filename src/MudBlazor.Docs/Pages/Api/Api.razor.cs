@@ -3,12 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Reflection;
-using Microsoft.AspNetCore.Components;
-using LoxSmoke.DocXml;
-using MudBlazor.Docs.Services.XmlDocs;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using LoxSmoke.DocXml;
+using Microsoft.AspNetCore.Components;
+using MudBlazor.Docs.Extensions;
+using MudBlazor.Docs.Services.XmlDocs;
 
 namespace MudBlazor.Docs.Pages.Api;
 
@@ -93,8 +94,20 @@ public partial class Api
             }
             else
             {
-                // Is this a component?
-                Title = Type.IsSubclassOf(typeof(MudComponentBase)) ? $"{Type.Name} Component" : $"{Type.Name} Class";
+                // Is this a component?  An enum?  A class?
+                Title = Type.GetFriendlyName();
+                if (Type.IsSubclassOf(typeof(MudComponentBase)))
+                {
+                    Title += " Component";
+                }
+                else if (Type.IsEnum)
+                {
+                    Title += " Enumeration";
+                }
+                else if (Type.IsClass)
+                {
+                    Title += " Class";
+                }
                 // Load the type's comments
                 TypeComments = Docs!.GetTypeComments(Type);
                 // Get types inheriting from this one

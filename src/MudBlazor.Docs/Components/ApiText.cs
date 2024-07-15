@@ -4,15 +4,12 @@
 
 using System;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
+using LoxSmoke.DocXml;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using MudBlazor.Docs.Extensions;
-using MudBlazor.Docs.Models;
-using MudBlazor.State;
 
 namespace MudBlazor.Docs.Components;
 
@@ -24,18 +21,38 @@ namespace MudBlazor.Docs.Components;
 public partial class ApiText : ComponentBase
 {
     /// <summary>
+    /// The type currently being documented.
+    /// </summary>
+    [Parameter]
+    public Type? Context { get; set; }
+
+    /// <summary>
     /// The XML documentation text to parse.
     /// </summary>
     [Parameter]
     [EditorRequired]
-    public string Text { get; set; } = "";
+    public CommonComments? Comments { get; set; }
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
+        // Anything to do?
+        if (Comments == null || string.IsNullOrEmpty(Comments.FullCommentText))
+        {
+            return;
+        }
+
+        //Debug.Write("Rendering: " + Comments.FullCommentText);
+
+
+        //if (Comments.FullCommentText.Contains("M:MudBlazor.Services.ServiceCollectionExtensions.AddLocalizationInterceptor``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{System.IServiceProvider,``0})"))
+        //{
+        //    Debugger.Break();
+        //}
+
         var sequence = 0;
 
         // Convert XML documentation text, links, and HTML to MudBlazor equivalents
-        var xml = XElement.Parse("<xml>" + Text + "</xml>");
+        var xml = XElement.Parse("<xml>" + Comments.Summary + " " + Comments.Remarks + "</xml>");
         using var reader = xml.CreateReader();
         while (reader.Read())
         {
@@ -60,11 +77,11 @@ public partial class ApiText : ComponentBase
                                     {
                                         // Add a link to the type
                                         builder.OpenComponent<ApiTypeLink>(sequence++);
-                                        builder.AddComponentParameter(sequence++, "TypeName", linkRef);
+                                        builder.AddComponentParameter(sequence++, nameof(ApiTypeLink.TypeFullName), linkRef);
                                         builder.CloseComponent();
                                     }
                                     else // Property, Method, Field, or Event
-                                    {                                        
+                                    {
                                         if (linkRef.StartsWith("MudBlazor.Icons"))
                                         {
                                             builder.AddMudIcon(sequence++, linkRef, Color.Primary, Size.Medium);
@@ -75,8 +92,9 @@ public partial class ApiText : ComponentBase
                                         }
                                         else if (linkRef.StartsWith("MudBlazor."))
                                         {
-                                            builder.OpenComponent<ApiMemberLink>(0);
-                                            builder.AddComponentParameter(1, "MemberName", linkRef);
+                                            builder.OpenComponent<ApiMemberLink>(sequence++);
+                                            builder.AddComponentParameter(sequence++, nameof(ApiMemberLink.Context), Context);
+                                            builder.AddComponentParameter(sequence++, nameof(ApiMemberLink.MemberName), linkRef);
                                             builder.CloseComponent();
                                         }
                                         else
@@ -93,9 +111,29 @@ public partial class ApiText : ComponentBase
                         case "c": // Constant
                             builder.OpenElement(sequence++, "code");
                             builder.AddAttribute(sequence++, "class", "docs-code docs-code-primary");
+                            if (reader.IsEmptyElement)
+                            {
+                                builder.CloseElement();
+                            }
                             break;
                         case "para": // Paragraph
                             builder.OpenElement(sequence++, "p");
+                            if (reader.IsEmptyElement)
+                            {
+                                builder.CloseElement();
+                            }
+                            break;
+                        case "xml": // Start of document
+                            break;
+                        case "br": // Line break
+                            builder.OpenElement(sequence++, "br");
+                            if (reader.IsEmptyElement)
+                            {
+                                builder.CloseElement();
+                            }
+                            break;
+                        default:
+                            //Debugger.Break();
                             break;
                     }
 
@@ -111,6 +149,12 @@ public partial class ApiText : ComponentBase
                         case "para":  // </p>
                             builder.CloseElement();
                             break;
+                        case "xml":
+                            // End of the document
+                            break;
+                        default:
+                            //Debugger.Break();
+                            break;
                     }
                     break;
                 case XmlNodeType.Text:
@@ -121,5 +165,5 @@ public partial class ApiText : ComponentBase
         }
     }
 
-    protected override bool ShouldRender() => !string.IsNullOrEmpty(Text);
+    protected override bool ShouldRender() => Comments != null && !string.IsNullOrWhiteSpace(Comments.FullCommentText);
 }

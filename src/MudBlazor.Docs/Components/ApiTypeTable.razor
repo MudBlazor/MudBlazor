@@ -21,16 +21,10 @@
     </HeaderContent>
     <RowTemplate>
         <MudTd Class="docs-content-api-cell" DataLabel="Name">
-            <ApiTypeLink Type="@context" TypeName="@context.Name" TypeFriendlyName="@context.GetFriendlyName()" ShowTooltip="false" />
+            <ApiTypeLink TypeFullName="@context.Name" />
         </MudTd>
         <MudTd id="@context.Name" Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">
-            @{
-                var comments = Docs!.GetTypeComments(context);
-                if(comments != null)
-                {
-                    <ApiText Text="@(comments.Summary + " " + comments.Remarks)" />
-                }
-            }
+            <ApiText Comments="Docs?.GetTypeComments(context)" />
         </MudTd>
     </RowTemplate>
     <GroupFooterTemplate></GroupFooterTemplate>

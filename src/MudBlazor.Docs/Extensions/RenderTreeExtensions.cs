@@ -94,7 +94,6 @@ public static class RenderTreeExtensions
     /// <param name="text"></param>
     /// <param name="cssClass"></param>
     /// <param name="target"></param>
-    /// <param name="color"></param>
     public static void AddMudLink(this RenderTreeBuilder builder, int sequence, string href, string text = null, string cssClass = null, string target = null)
     {
         builder.OpenRegion(sequence);
@@ -116,6 +115,12 @@ public static class RenderTreeExtensions
         builder.CloseRegion();
     }
 
+    /// <summary>
+    /// Adds a short section of code.
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <param name="sequence"></param>
+    /// <param name="code"></param>
     public static void AddCode(this RenderTreeBuilder builder, int sequence, string code)
     {
         builder.OpenRegion(sequence);

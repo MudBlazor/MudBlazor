@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using LoxSmoke.DocXml;
+using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.Docs.Services.XmlDocs;
 
@@ -35,14 +36,22 @@ public sealed class XmlDocsService : IXmlDocsService
     /// <inheritdoc />
     public Type? GetType(string typeName)
     {
-        return mudBlazorAssembly.GetType(typeName)
-            ?? mudBlazorAssembly.GetType("MudBlazor." + typeName);
+        var type = mudBlazorAssembly.GetType(typeName)
+            ?? mudBlazorAssembly.GetType("MudBlazor." + typeName)
+            ?? typeof(string).Assembly.GetType(typeName)
+            ?? typeof(RenderFragment).Assembly.GetType(typeName);
+        return type;
     }
 
     /// <inheritdoc />
     public MemberInfo? GetMember(string memberName)
     {
         // Assume the last part of the name is a member
+        var parameterIndex = memberName.IndexOf('(');
+        if (parameterIndex >= 0)
+        {
+            memberName = memberName.Replace(memberName.Substring(parameterIndex), "");
+        }
         var typePortion = memberName.Substring(0, memberName.LastIndexOf('.'));
         var memberPortion = memberName.Substring(memberName.LastIndexOf('.') + 1);
 
@@ -54,7 +63,7 @@ public sealed class XmlDocsService : IXmlDocsService
     /// <inheritdoc />
     public IEnumerable<PropertyInfo> GetProperties(Type type)
     {
-        foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
         {
             // Exclude event callbacks
             if (property.PropertyType.Name == "EventCallback`1")
@@ -77,10 +86,10 @@ public sealed class XmlDocsService : IXmlDocsService
     /// <inheritdoc />
     public IEnumerable<FieldInfo> GetFields(Type type)
     {
-        foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.Instance))
+        foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
         {
             // Exclude event callbacks
-            if (field.FieldType.Name == "EventCallback`1")
+            if (field.FieldType.Name == "EventCallback`1" || field.Name == "value__")
             {
                 continue;
             }
@@ -100,7 +109,7 @@ public sealed class XmlDocsService : IXmlDocsService
     /// <inheritdoc />
     public IEnumerable<MethodInfo> GetMethods(Type type)
     {
-        foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Instance))
+        foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
         {
             if (method.Name.StartsWith("get_") || method.Name.StartsWith("set_"))
             {
@@ -122,7 +131,7 @@ public sealed class XmlDocsService : IXmlDocsService
     /// <inheritdoc />
     public IEnumerable<MemberInfo> GetEvents(Type type)
     {
-        foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.Instance))
+        foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
         {
             // Include event callbacks
             if (field.FieldType.Name == "EventCallback`1")
@@ -130,7 +139,7 @@ public sealed class XmlDocsService : IXmlDocsService
                 yield return field;
             }
         }
-        foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
         {
             // Include event callbacks
             if (property.PropertyType.Name == "EventCallback`1")

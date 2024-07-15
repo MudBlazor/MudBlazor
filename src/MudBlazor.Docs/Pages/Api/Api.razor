@@ -11,9 +11,9 @@
         <DocsPageHeader Title="@Title" />
         <DocsPageContent>
 
-            @if (TypeComments != null && !string.IsNullOrEmpty(TypeComments.Summary))
+            @if (TypeComments != null)
             {
-                @* <ApiText Text="@TypeComments.Summary" /> *@
+                <ApiText Comments="@TypeComments" />
             }
 
             @if (Type.IsSubclassOf(typeof(MudComponentBase)))
@@ -23,27 +23,30 @@
                 </MudAlert>
             }
 
-            <DocsPageSection>
-                <SectionHeader Title="Properties" />
-                <SectionContent Outlined="true" IsApiSection="true">
-                    <MudGrid Class="pa-0">
-                        <MudItem xs="12">
-                            <ApiMemberTable Mode="@ApiMemberType.Properties" TypeName="@TypeName" Members="@Properties" />
-                        </MudItem>
-                    </MudGrid>
-                </SectionContent>
-            </DocsPageSection>
+            @if (!Type.IsEnum)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Properties" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <MudGrid Class="pa-0">
+                            <MudItem xs="12">
+                                <ApiMemberTable Mode="@ApiMemberType.Properties" TypeName="@TypeName" Members="@Properties" />
+                            </MudItem>
+                        </MudGrid>
+                    </SectionContent>
+                </DocsPageSection>
 
-            <DocsPageSection>
-                <SectionHeader Title="Methods" />
-                <SectionContent Outlined="true" IsApiSection="true">
-                    <MudGrid Class="pa-0">
-                        <MudItem xs="12">
-                            <ApiMemberTable Mode="@ApiMemberType.Methods" TypeName="@TypeName" Members="@Methods" />
-                        </MudItem>
-                    </MudGrid>
-                </SectionContent>
-            </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Methods" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <MudGrid Class="pa-0">
+                            <MudItem xs="12">
+                                <ApiMemberTable Mode="@ApiMemberType.Methods" TypeName="@TypeName" Members="@Methods" />
+                            </MudItem>
+                        </MudGrid>
+                    </SectionContent>
+                </DocsPageSection>
+            }
 
             <DocsPageSection>
                 <SectionHeader Title="Fields" />
@@ -56,29 +59,30 @@
                 </SectionContent>
             </DocsPageSection>
 
+            @if (!Type.IsEnum)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Events" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <MudGrid Class="pa-0">
+                            <MudItem xs="12">
+                                <ApiMemberTable Mode="@ApiMemberType.Events" TypeName="@TypeName" Members="@Events" />
+                            </MudItem>
+                        </MudGrid>
+                    </SectionContent>
+                </DocsPageSection>
 
-            <DocsPageSection>
-                <SectionHeader Title="Events" />
-                <SectionContent Outlined="true" IsApiSection="true">
-                    <MudGrid Class="pa-0">
-                        <MudItem xs="12">
-                            <ApiMemberTable Mode="@ApiMemberType.Events" TypeName="@TypeName" Members="@Events" />
-                        </MudItem>
-                    </MudGrid>
-                </SectionContent>
-            </DocsPageSection>
-
-            <DocsPageSection>
-                <SectionHeader Title="Derived Classes" />
-                <SectionContent Outlined="true" IsApiSection="true">
-                    <MudGrid Class="pa-0">
-                        <MudItem xs="12">
-                            <ApiTypeTable BaseType="@Type" />
-                        </MudItem>
-                    </MudGrid>
-                </SectionContent>
-            </DocsPageSection>
-
+                <DocsPageSection>
+                    <SectionHeader Title="Derived Classes" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <MudGrid Class="pa-0">
+                            <MudItem xs="12">
+                                <ApiTypeTable BaseType="@Type" />
+                            </MudItem>
+                        </MudGrid>
+                    </SectionContent>
+                </DocsPageSection>
+            }
 
             @*  @if (DocumentedType.GlobalSettings.Count > 0)
         {

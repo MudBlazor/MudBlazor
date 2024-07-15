@@ -158,6 +158,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("using Microsoft.Extensions.DependencyInjection;");
                 cb.AddLine("using MudBlazor.Docs.Pages.Api;");
                 cb.AddLine("using MudBlazor.Docs.Services;");
+                cb.AddLine("using MudBlazor.Docs.Services.XmlDocs;");
                 cb.AddLine("using MudBlazor.UnitTests.Mocks;");
                 cb.AddLine("using NUnit.Framework;");
                 cb.AddLine();
@@ -195,7 +196,7 @@ namespace MudBlazor.Docs.Compiler
         /// <summary>
         /// Creates tests for all public MudBlazor types.
         /// </summary>
-        public void WritePublicTypeTests(CodeBuilder cb)
+        public static void WritePublicTypeTests(CodeBuilder cb)
         {
             var mudBlazorComponents = typeof(_Imports).Assembly.GetTypes().Where(type => type.IsPublic);
             foreach (var type in mudBlazorComponents)
@@ -217,6 +218,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.IndentLevel++;
                 // Create Api.razor with a type
                 cb.AddLine(@$"ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager(""https://localhost:2112/"", ""https://localhost:2112/components/{type.Name}""));");
+                cb.AddLine($@"ctx.Services.AddSingleton<IXmlDocsService, XmlDocsService>();");
                 cb.AddLine(@$"var comp = ctx.RenderComponent<Api>(ComponentParameter.CreateParameter(""TypeName"", ""{type.Name}""));");
                 cb.AddLine(@$"await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();");
                 // Make sure docs for the type were actually found
@@ -248,6 +250,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.IndentLevel++;
                 // Create Api.razor with a type
                 cb.AddLine(@$"ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager(""https://localhost:2112/"", ""https://localhost:2112/components/{url}""));");
+                cb.AddLine($@"ctx.Services.AddSingleton<IXmlDocsService, XmlDocsService>();");
                 cb.AddLine(@$"var comp = ctx.RenderComponent<Api>(ComponentParameter.CreateParameter(""TypeName"", ""{component}""));");
                 cb.AddLine(@$"await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();");
                 // Make sure docs for the type were actually found

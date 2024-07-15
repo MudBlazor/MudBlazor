@@ -48,6 +48,12 @@ public class ApiMemberLink : ComponentBase
     public Type? Type { get; set; }
 
     /// <summary>
+    /// The type currently being documented.
+    /// </summary>
+    [Parameter]
+    public Type? Context { get; set; }
+
+    /// <summary>
     /// Shows a tooltip with the type's summary.
     /// </summary>
     [Parameter]
@@ -63,7 +69,7 @@ public class ApiMemberLink : ComponentBase
         }
     }
 
-    protected override bool ShouldRender() => !string.IsNullOrEmpty(MemberName) || Member != null;
+    protected override bool ShouldRender() => Type != null && Member != null;
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
@@ -73,14 +79,14 @@ public class ApiMemberLink : ComponentBase
             // Can we show a tooltip with the summary?
             if (MemberComments != null && !string.IsNullOrEmpty(MemberComments.Summary))
             {
-                builder.AddMudTooltip(0, Placement.Top, MemberComments.Summary, (childSequence, childBuilder) =>
-                {
-                    builder.AddMudLink(childSequence, $"api/{Type.Name}#{Member?.Name}", $"{Type.Name}.{Member?.Name}", "docs-link docs-code docs-code-primary");
-                });
+                //builder.AddMudTooltip(0, Placement.Top, MemberComments.Summary, (childSequence, childBuilder) =>
+                //{
+                builder.AddMudLink(0, $"api/{Type.Name}#{Member?.Name}", $"{Type.GetFriendlyName()}.{Member?.Name}", "docs-link docs-code docs-code-primary");
+                //});
             }
             else
             {
-                builder.AddMudLink(0, $"api/{Type.Name}#{Member?.Name}", $"{Type.Name}.{Member?.Name}", "docs-link docs-code docs-code-primary");
+                builder.AddMudLink(0, $"api/{Type.Name}#{Member?.Name}", $"{Type.GetFriendlyName()}.{Member?.Name}", "docs-link docs-code docs-code-primary");
             }
         }
         // Is this an internal type?

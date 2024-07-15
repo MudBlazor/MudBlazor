@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Diagnostics;
 using LoxSmoke.DocXml;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -27,19 +28,18 @@ public class ApiTypeLink : ComponentBase
     /// <summary>
     /// The type to link.
     /// </summary>
-    [Parameter]
     public Type? Type { get; set; }
 
     /// <summary>
     /// The name of the type to link.
     /// </summary>
     [Parameter]
-    public string? TypeName { get; set; }
+    [EditorRequired]
+    public string? TypeFullName { get; set; }
 
     /// <summary>
     /// The name of the type to display.
     /// </summary>
-    [Parameter]
     public string? TypeFriendlyName { get; set; }
 
     /// <summary>
@@ -47,35 +47,50 @@ public class ApiTypeLink : ComponentBase
     /// </summary>
     public TypeComments? TypeComments { get; set; }
 
-    /// <summary>
-    /// Shows a tooltip with the type's summary.
-    /// </summary>
-    [Parameter]
-    public bool ShowTooltip { get; set; } = true;
-
     protected override void OnParametersSet()
     {
-        if (!string.IsNullOrWhiteSpace(TypeName) && (Type == null || Type.Name != TypeName))
+        if (!string.IsNullOrWhiteSpace(TypeFullName) && (Type == null || TypeFriendlyName == null || TypeComments == null || Type.Name != TypeFullName))
         {
-            Type = Docs?.GetType(TypeName);
-            TypeFriendlyName = Type == null
-                ? TypeName.Substring(TypeName.LastIndexOf('.') + 1)
-                : Type.GetFriendlyName();
-            TypeComments = Type == null
-                ? null
-                : Docs?.GetTypeComments(Type);
+            Type = Docs?.GetType(TypeFullName);
+            if (Type == null)
+            {
+                TypeComments = null;
+                TypeFriendlyName = TypeFullName switch
+                {
+                    "System.Boolean" => "bool",
+                    "System.Boolean[]" => "bool[]",
+                    "System.Int32" => "int",
+                    "System.Int32[]" => "int[]",
+                    "System.Int64" => "long",
+                    "System.Int64[]" => "long[]",
+                    "System.String" => "string",
+                    "System.String[]" => "string[]",
+                    "System.Double" => "double",
+                    "System.Double[]" => "double[]",
+                    "System.Single" => "float",
+                    "System.Single[]" => "float[]",
+                    "System.Object" => "object",
+                    "System.Void" => "void",
+                    _ => TypeFullName.Substring(TypeFullName.LastIndexOf('.') + 1)
+                };
+            }
+            else
+            {
+                TypeComments = Docs?.GetTypeComments(Type);
+                TypeFriendlyName = Type.GetFriendlyName();
+            }
         }
     }
 
-    protected override bool ShouldRender() => !string.IsNullOrEmpty(TypeName) || Type != null;
+    protected override bool ShouldRender() => !string.IsNullOrEmpty(TypeFullName) || Type != null;
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         // Is this an internal type?
-        if (TypeName != null && (TypeName.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase) || TypeName.StartsWith("System", StringComparison.OrdinalIgnoreCase)))
+        if (TypeFullName != null && (TypeFullName.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase) || TypeFullName.StartsWith("System", StringComparison.OrdinalIgnoreCase)))
         {
             // Is this a native type?
-            switch (TypeName)
+            switch (TypeFullName)
             {
                 case "System.Boolean":
                 case "System.Boolean[]":
@@ -95,9 +110,9 @@ public class ApiTypeLink : ComponentBase
                     break;
                 default:
                     // Is this a linkable type?
-                    if (!TypeName.Contains("[["))
+                    if (!TypeFullName.Contains("[["))
                     {
-                        builder.AddMudLink(0, $"https://learn.microsoft.com/en-us/dotnet/api/{TypeName}", TypeFriendlyName, "docs-link docs-code docs-code-primary", "_external");
+                        builder.AddMudLink(0, $"https://learn.microsoft.com/en-us/dotnet/api/{TypeFullName}", TypeFriendlyName, "docs-link docs-code docs-code-primary", "_external");
                     }
                     else
                     {
@@ -109,17 +124,7 @@ public class ApiTypeLink : ComponentBase
         // Is there a linkable type?
         else if (Type != null && (Type.FullName == null || Type.FullName.StartsWith("MudBlazor.")))
         {
-            if (ShowTooltip && TypeComments != null && !string.IsNullOrEmpty(TypeComments.Summary))
-            {
-                builder.AddMudTooltip(0, Placement.Top, TypeComments.Summary, (childSequence, childBuilder) =>
-                {
-                    builder.AddMudLink(0, $"api/{Type.Name}", Type.GetFriendlyName(), "docs-link docs-code docs-code-primary");
-                });
-            }
-            else
-            {
-                builder.AddMudLink(0, $"api/{Type.Name}", Type.GetFriendlyName(), "docs-link docs-code docs-code-primary");
-            }
+            builder.AddMudLink(0, $"api/{TypeFullName}", Type.GetFriendlyName(), "docs-link docs-code docs-code-primary");
         }
         // Is there some text to link?
         else if (!string.IsNullOrEmpty(TypeFriendlyName))
@@ -127,9 +132,9 @@ public class ApiTypeLink : ComponentBase
             builder.AddCode(0, TypeFriendlyName);
         }
         // Is there some text to link?
-        else if (!string.IsNullOrEmpty(TypeName))
+        else if (!string.IsNullOrEmpty(TypeFullName))
         {
-            builder.AddCode(0, TypeName);
+            builder.AddCode(0, TypeFullName);
         }
     }
 }
