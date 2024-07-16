@@ -78,15 +78,14 @@
             Value=new Product("Coffee Makers", Icons.Material.Filled.Label), 
             Expanded = true,
             Children = [
-                new TreeItemData<Product> { 
-                    Value=new Product("Moka pot", Icons.Material.Filled.LocalOffer, 36.99m),  
-                    Expanded = true,
-                    Children = [ new TreeItemData<Product> { Value = new Product("Cleaning Kit", Icons.Material.Filled.LocalOffer, 17.59m) } ]
-                },
+                new TreeItemData<Product> { Value=new Product("Moka Pot", Icons.Material.Filled.LocalOffer, 36.99m),  },
                 new TreeItemData<Product> { 
                     Value=new Product("French Press", Icons.Material.Filled.LocalOffer, 19.99m),
                     Expanded = true,
-                    Children = [ new TreeItemData<Product> { Value = new Product("Spare Sieve", Icons.Material.Filled.LocalOffer, 6.00m) } ]
+                    Children = [ 
+                        new TreeItemData<Product> { Value = new Product("Spare Sieve", Icons.Material.Filled.LocalOffer, 6.00m) },
+                        new TreeItemData<Product> { Value = new Product("Cleaning Kit", Icons.Material.Filled.LocalOffer, 17.59m) }
+                    ]
                 }
             ]
         });
@@ -104,7 +103,7 @@
                 },
                 new TreeItemData<Product> { Value = new Product("Stainless Steel Teapot", Icons.Material.Filled.LocalOffer, 14.15m) },
                 new TreeItemData<Product> { Value = new Product("Japanese Cast Iron Teapot", Icons.Material.Filled.LocalOffer, 26.39m) },
-                new TreeItemData<Product> { Value = new Product("Porcelain Teapot", Icons.Material.Filled.LocalOffer, 38.00m) },
+                new TreeItemData<Product> { Value = new Product("Porcelain Teapot", Icons.Material.Filled.LocalOffer, 38.00m) }
             ]
         });
     }
