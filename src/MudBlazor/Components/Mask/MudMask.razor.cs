@@ -35,6 +35,7 @@ namespace MudBlazor
                 .AddClass("mud-disabled", GetDisabledState())
                 .AddClass("mud-input-error", HasErrors)
                 .AddClass("mud-ltr", GetInputType() == InputType.Email || GetInputType() == InputType.Telephone)
+                .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
                 .AddClass(Class)
                 .Build();
 
