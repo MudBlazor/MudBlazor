@@ -94,7 +94,14 @@
             Value = new Product("Tea Pots", Icons.Material.Filled.Label),
             Expanded = true,
             Children = [
-                new TreeItemData<Product> { Value = new Product("Glass Teapot with Infuser", Icons.Material.Filled.LocalOffer, 7.99m) },
+                new TreeItemData<Product> {
+                    Value=new Product("Glass Teapot", Icons.Material.Filled.LocalOffer, 36.99m),
+                    Expanded = true,
+                    Children = [ 
+                        new TreeItemData<Product> { Value = new Product("Glass Infuser", Icons.Material.Filled.LocalOffer, 2.99m) }, 
+                        new TreeItemData<Product> { Value = new Product("Stainless Steel Infuser", Icons.Material.Filled.LocalOffer, 5.99m) }
+                    ]
+                },
                 new TreeItemData<Product> { Value = new Product("Stainless Steel Teapot", Icons.Material.Filled.LocalOffer, 14.15m) },
                 new TreeItemData<Product> { Value = new Product("Japanese Cast Iron Teapot", Icons.Material.Filled.LocalOffer, 26.39m) },
                 new TreeItemData<Product> { Value = new Product("Porcelain Teapot", Icons.Material.Filled.LocalOffer, 38.00m) },
