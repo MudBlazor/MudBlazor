@@ -90,6 +90,10 @@
     <PackageReference Include="AspNetCore.SassCompiler" Version="1.72.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.ResxSourceGenerator" Version="3.11.0-beta1.24225.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="MudBlazor.JSCompiler" Version="1.0.15">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -140,17 +144,9 @@
 
   <ItemGroup>
     <EmbeddedResource Update="Resources\LanguageResource.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>LanguageResource.Designer.cs</LastGenOutput>
+      <Public>false</Public>
+      <AsConstants>true</AsConstants>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Resources\LanguageResource.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>LanguageResource.resx</DependentUpon>
-    </Compile>
   </ItemGroup>
 
 </Project>

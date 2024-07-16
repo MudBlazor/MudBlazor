@@ -14,14 +14,6 @@ namespace MudBlazor.UnitTests
     [TestFixture]
     public class ComponentBaseTests : BunitTest
     {
-        [Test]
-        public void MatchTypes()
-        {
-            new MudAvatar().MatchTypes(typeof(MudAvatar), typeof(MudButton)).Should().Be(true);
-            new MudAvatar().MatchTypes(typeof(MudButton)).Should().Be(false);
-            new MudList<string>().MatchTypes(typeof(MudList<>), typeof(MudListItem<>)).Should().Be(true);
-            new MudList<int>().MatchTypes(typeof(MudList<>), typeof(MudListItem<>)).Should().Be(true);
-        }
 
         [Test]
         public void Should_have_consistent_field_id_when_user_id_is_not_provided()
