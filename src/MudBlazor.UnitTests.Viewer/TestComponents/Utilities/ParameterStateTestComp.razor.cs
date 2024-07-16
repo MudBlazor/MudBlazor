@@ -11,10 +11,13 @@ public partial class ParameterStateTestComp : MudComponentBase
 
     public ParameterStateTestComp()
     {
-        _intParam = RegisterParameter(nameof(IntParam), () => IntParam, OnIntParamChanged);
+        using var registerScope = CreateRegisterScope();
+        _intParam = registerScope.RegisterParameter<int>(nameof(IntParam))
+            .WithParameter(() => IntParam)
+            .WithChangeHandler(OnIntParamChanged);
     }
 
-    private IParameterState<int> _intParam;
+    private readonly ParameterState<int> _intParam;
 
     private void OnIntParamChanged(ParameterChangedEventArgs<int> args)
     {

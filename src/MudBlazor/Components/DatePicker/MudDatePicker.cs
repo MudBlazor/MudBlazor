@@ -7,24 +7,27 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Represents a picker for dates.
+    /// </summary>
     public class MudDatePicker : MudBaseDatePicker
     {
         private DateTime? _selectedDate;
 
         /// <summary>
-        /// Fired when the DateFormat changes.
+        /// Occurs when the <see cref="Date"/> has changed.
         /// </summary>
         [Parameter] public EventCallback<DateTime?> DateChanged { get; set; }
 
         /// <summary>
-        /// The currently selected date (two-way bindable). If null, then nothing was selected.
+        /// The currently selected date.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
         public DateTime? Date
         {
             get => _value;
-            set => SetDateAsync(value, true).AndForget();
+            set => SetDateAsync(value, true).CatchAndLog();
         }
 
         private DateTime _lastSetTime = DateTime.MinValue;
@@ -190,6 +193,7 @@ namespace MudBlazor
             _selectedDate = null;
         }
 
+        /// <inheritdoc />
         public override async Task ClearAsync(bool close = true)
         {
             _selectedDate = null;
@@ -229,25 +233,25 @@ namespace MudBlazor
             switch (args.Key)
             {
                 case "ArrowRight":
-                    if (IsOpen)
+                    if (Open)
                     {
 
                     }
                     break;
                 case "ArrowLeft":
-                    if (IsOpen)
+                    if (Open)
                     {
 
                     }
                     break;
                 case "ArrowUp":
-                    if (IsOpen == false && Editable == false)
+                    if (Open == false && Editable == false)
                     {
-                        IsOpen = true;
+                        Open = true;
                     }
                     else if (args.AltKey)
                     {
-                        IsOpen = false;
+                        Open = false;
                     }
                     else if (args.ShiftKey)
                     {
@@ -259,9 +263,9 @@ namespace MudBlazor
                     }
                     break;
                 case "ArrowDown":
-                    if (IsOpen == false && Editable == false)
+                    if (Open == false && Editable == false)
                     {
-                        IsOpen = true;
+                        Open = true;
                     }
                     else if (args.ShiftKey)
                     {
@@ -277,7 +281,7 @@ namespace MudBlazor
                     break;
                 case "Enter":
                 case "NumpadEnter":
-                    if (!IsOpen)
+                    if (!Open)
                     {
                         await OpenAsync();
                     }
@@ -291,7 +295,7 @@ namespace MudBlazor
                 case " ":
                     if (!Editable)
                     {
-                        if (!IsOpen)
+                        if (!Open)
                         {
                             await OpenAsync();
                         }
@@ -317,7 +321,8 @@ namespace MudBlazor
         {
             if (Date.HasValue)
             {
-                PickerMonth = new DateTime(Date.Value.Year, Date.Value.Month, 1);
+                PickerMonth = new DateTime(Culture.Calendar.GetYear(Date.Value), Culture.Calendar.GetMonth(Date.Value),
+                    1, Culture.Calendar);
                 ScrollToYear();
             }
         }
@@ -327,7 +332,8 @@ namespace MudBlazor
         /// </summary>
         public async Task GoToDate(DateTime date, bool submitDate = true)
         {
-            PickerMonth = new DateTime(date.Year, date.Month, 1);
+            PickerMonth = new DateTime(Culture.Calendar.GetYear(date), Culture.Calendar.GetMonth(date), 1,
+                Culture.Calendar);
             if (submitDate)
             {
                 await SetDateAsync(date, true);

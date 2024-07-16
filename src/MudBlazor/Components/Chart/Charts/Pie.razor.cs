@@ -5,15 +5,24 @@ using MudBlazor.Charts.SVG.Models;
 
 namespace MudBlazor.Charts
 {
-    partial class Pie : MudChartBase
+    /// <summary>
+    /// Represents a chart which displays values as a percentage of a circle.
+    /// </summary>
+    partial class Pie : MudCategoryChartBase
     {
-        [CascadingParameter] public MudChart MudChartParent { get; set; }
+        /// <summary>
+        /// The chart, if any, containing this component.
+        /// </summary>
+        [CascadingParameter]
+        public MudChart MudChartParent { get; set; }
 
         private List<SvgPath> _paths = new();
         private List<SvgLegend> _legends = new();
 
         protected override void OnParametersSet()
         {
+            base.OnParametersSet();
+
             _paths.Clear();
             _legends.Clear();
 

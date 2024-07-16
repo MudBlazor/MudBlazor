@@ -24,7 +24,7 @@ namespace MudBlazor
             new CssBuilder("mud-pagination")
                 .AddClass($"mud-pagination-{Variant.ToDescriptionString()}")
                 .AddClass($"mud-pagination-{Size.ToDescriptionString()}")
-                .AddClass("mud-pagination-disable-elevation", DisableElevation)
+                .AddClass("mud-pagination-disable-elevation", !DropShadow)
                 .AddClass("mud-pagination-rtl", RightToLeft)
                 .AddClass(Class)
                 .Build();
@@ -140,11 +140,11 @@ namespace MudBlazor
         public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
-        /// If true, no drop-shadow will be used.
+        /// Determines whether the component has a drop-shadow. Default is true
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
-        public bool DisableElevation { get; set; }
+        public bool DropShadow { get; set; } = true;
 
         /// <summary>
         /// If true, the pagination will be disabled.
@@ -180,6 +180,14 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Pagination.Behavior)]
         public bool ShowNextButton { get; set; } = true;
+
+        /// <summary>
+        /// If true, the page buttons are shown.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Pagination.Behavior)]
+        public bool ShowPageButtons { get; set; } = true;
+
 
         /// <summary>
         /// Invokes the callback when a control button is clicked.

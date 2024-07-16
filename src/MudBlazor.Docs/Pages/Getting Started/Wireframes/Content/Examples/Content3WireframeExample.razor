@@ -4,7 +4,7 @@
 
 <MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
     <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">Checkout</MudText>
-    <MudGrid Spacing="6" Class="mt-16">
+    <MudGrid Spacing="12" Class="mt-16">
         <MudItem xs="7">
             <MudText Typo="Typo.h5" GutterBottom="true">Billing address</MudText>
             <MudGrid>
@@ -33,18 +33,18 @@
                     <MudTextField T="string" Label="Postal Area" />
                 </MudItem>
                 <MudItem xs="12" Class="d-flex justify-center">
-                    <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" Size="Size.Large" Class="mt-8">Continue to Payment</MudButton>
+                    <MudButton Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" Size="Size.Large" Class="mt-8">Continue to Payment</MudButton>
                 </MudItem>
             </MudGrid>
         </MudItem>
         <MudItem xs="5">
             <MudText Typo="Typo.h5" GutterBottom="true">Cart</MudText>
             <MudPaper Class="d-flex flex-column" Style="height:100%;" Outlined="true">
-                <MudList Clickable="true">
+                <MudList T="string">
                     <MudListItem Icon="@Icons.Material.Filled.ContentCut">
                         <div class="d-flex">
                             <MudText>Scissor - Big</MudText>
-                            <MudText Inline="true" Class="ml-auto">$5</MudText>
+                            <MudText HtmlTag="span" Class="ml-auto">$5</MudText>
                         </div>
                     </MudListItem>
                     <MudListItem Icon="@Icons.Material.Filled.AirplanemodeActive">

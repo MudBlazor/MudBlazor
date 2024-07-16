@@ -12,12 +12,29 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Represents a column filter shown when <see cref="MudDataGrid{T}.FilterMode"/> is <see cref="DataGridFilterMode.ColumnFilterRow"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of value managed by the <see cref="MudDataGrid{T}"/></typeparam>
     public partial class FilterHeaderCell<T> : MudComponentBase
     {
-        [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
+        /// <summary>
+        /// The <see cref="MudDataGrid{T}"/> containing this filter cell.
+        /// </summary>
+        [CascadingParameter]
+        public MudDataGrid<T> DataGrid { get; set; }
 
-        [Parameter] public Column<T> Column { get; set; }
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        /// <summary>
+        /// The column associated with this filter cell.
+        /// </summary>
+        [Parameter]
+        public Column<T> Column { get; set; }
+
+        /// <summary>
+        /// The content within this filter cell.
+        /// </summary>
+        [Parameter]
+        public RenderFragment ChildContent { get; set; }
 
         private string _classname =>
             new CssBuilder(Column?.HeaderClass)
@@ -140,9 +157,10 @@ namespace MudBlazor
 
         internal async Task ApplyFilterAsync(IFilterDefinition<T> filterDefinition)
         {
-            if (!DataGrid.FilterDefinitions.Any(x => x.Id == filterDefinition.Id))
+            if (DataGrid.FilterDefinitions.All(x => x.Id != filterDefinition.Id))
                 DataGrid.FilterDefinitions.Add(filterDefinition);
-            if (DataGrid.ServerData is not null) await DataGrid.ReloadServerData();
+            if (DataGrid.HasServerData)
+                await DataGrid.ReloadServerData();
 
             DataGrid.GroupItems();
             ((IMudStateHasChanged)DataGrid).StateHasChanged();

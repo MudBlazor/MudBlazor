@@ -8,16 +8,15 @@ namespace MudBlazor.Docs.Compiler
     {
         public bool Execute()
         {
-            var paths = new Paths();
             var success = true;
             try
             {
-                Directory.CreateDirectory(paths.TestDirPath);
+                Directory.CreateDirectory(Paths.TestDirPath);
 
                 var currentCode = string.Empty;
-                if (File.Exists(paths.ComponentTestsFilePath))
+                if (File.Exists(Paths.ComponentTestsFilePath))
                 {
-                    currentCode = File.ReadAllText(paths.ComponentTestsFilePath);
+                    currentCode = File.ReadAllText(Paths.ComponentTestsFilePath);
                 }
 
                 var cb = new CodeBuilder();
@@ -32,11 +31,12 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("{");
                 cb.IndentLevel++;
                 cb.AddLine("// These tests just check if all the examples from the doc page render without errors");
+                cb.AddLine("[System.CodeDom.Compiler.GeneratedCodeAttribute(\"MudBlazor.Docs.Compiler\", \"0.0.0.0\")]");
                 cb.AddLine("public partial class ExampleDocsTests");
                 cb.AddLine("{");
                 cb.IndentLevel++;
 
-                foreach (var entry in Directory.EnumerateFiles(paths.DocsDirPath, "*.razor", SearchOption.AllDirectories)
+                foreach (var entry in Directory.EnumerateFiles(Paths.DocsDirPath, "*.razor", SearchOption.AllDirectories)
                     .OrderBy(e => e.Replace("\\", "/"), StringComparer.Ordinal))
                 {
                     if (entry.EndsWith("Code.razor"))
@@ -64,12 +64,12 @@ namespace MudBlazor.Docs.Compiler
 
                 if (currentCode != cb.ToString())
                 {
-                    File.WriteAllText(paths.ComponentTestsFilePath, cb.ToString());
+                    File.WriteAllText(Paths.ComponentTestsFilePath, cb.ToString());
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error generating {paths.ComponentTestsFilePath} : {e.Message}");
+                Console.WriteLine($"Error generating {Paths.ComponentTestsFilePath} : {e.Message}");
                 success = false;
             }
 

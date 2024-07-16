@@ -47,8 +47,17 @@ namespace MudBlazor.Utilities
         private const double Epsilon = 0.000000000000001;
         private readonly byte[] _valuesAsByte;
 
+        /// <summary>
+        /// Gets the hexadecimal representation of the color.
+        /// </summary>
         [JsonIgnore]
         public string Value => $"#{R:x2}{G:x2}{B:x2}{A:x2}";
+
+        /// <summary>
+        /// Gets the 32-bit unsigned integer representation of the color.
+        /// </summary>
+        [JsonIgnore]
+        public uint UInt32 => (uint)(R << 24 | G << 16 | B << 8 | A);
 
         /// <summary>
         /// Gets the red component value of the color.
@@ -84,19 +93,19 @@ namespace MudBlazor.Utilities
         /// Gets the hue component value of the color.
         /// </summary>
         [JsonIgnore]
-        public double H { get; private set; }
+        public double H { get; }
 
         /// <summary>
-        /// Gets the luminance component value of the color.
+        /// Gets the lightness component value of the color.
         /// </summary>
         [JsonIgnore]
-        public double L { get; private set; }
+        public double L { get; }
 
         /// <summary>
         /// Gets the saturation component value of the color.
         /// </summary>
         [JsonIgnore]
-        public double S { get; private set; }
+        public double S { get; }
 
         /// <summary>
         /// Deserialization constructor for <see cref="MudColor"/>.
@@ -121,11 +130,11 @@ namespace MudBlazor.Utilities
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MudColor"/> class with the specified hue, saturation, luminance, and alpha values.
+        /// Initializes a new instance of the <see cref="MudColor"/> class with the specified hue, saturation, lightness, and alpha values.
         /// </summary>
         /// <param name="h">The hue component value (0 to 360).</param>
         /// <param name="s">The saturation component value (0.0 to 1.0).</param>
-        /// <param name="l">The luminance component value (0.0 to 1.0).</param>
+        /// <param name="l">The lightness component value (0.0 to 1.0).</param>
         /// <param name="a">The alpha component value (0 to 1.0).</param>
         public MudColor(double h, double s, double l, double a)
             : this(h, s, l, (int)(a * 255.0).EnsureRange(255))
@@ -133,11 +142,11 @@ namespace MudBlazor.Utilities
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MudColor"/> class with the specified hue, saturation, luminance, and alpha values.
+        /// Initializes a new instance of the <see cref="MudColor"/> class with the specified hue, saturation, lightness, and alpha values.
         /// </summary>
         /// <param name="h">The hue component value (0 to 360).</param>
         /// <param name="s">The saturation component value (0.0 to 1.0).</param>
-        /// <param name="l">The luminance component value (0.0 to 1.0).</param>
+        /// <param name="l">The lightness component value (0.0 to 1.0).</param>
         /// <param name="a">The alpha component value (0 to 255).</param>
         public MudColor(double h, double s, double l, int a)
         {
@@ -215,7 +224,19 @@ namespace MudBlazor.Utilities
             _valuesAsByte[2] = b;
             _valuesAsByte[3] = a;
 
-            CalculateHsl();
+            var (h, s, l) = CalculateHsl();
+            H = h;
+            S = s;
+            L = l;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MudColor"/> class with the specified color.
+        /// </summary>
+        /// <param name="rgba">the four bytes of this 32-bit unsigned integer contain the red, green, blue and alpha components</param>
+        public MudColor(uint rgba)
+            : this(r: (byte)(rgba >> 24), g: (byte)(rgba >> 16), b: (byte)(rgba >> 8), a: (byte)rgba)
+        {
         }
 
         /// <summary>
@@ -267,7 +288,9 @@ namespace MudBlazor.Utilities
         /// </remarks>
         public MudColor(string value)
         {
-            value = value.Trim().ToLower();
+            ArgumentException.ThrowIfNullOrEmpty(value);
+
+            value = value.Trim().ToLowerInvariant();
 
             if (value.StartsWith("rgba"))
             {
@@ -277,7 +300,7 @@ namespace MudBlazor.Utilities
                     throw new ArgumentException("Invalid color format.");
                 }
 
-                _valuesAsByte = new byte[]
+                _valuesAsByte = new[]
                 {
                     byte.Parse(parts[0], CultureInfo.InvariantCulture),
                     byte.Parse(parts[1], CultureInfo.InvariantCulture),
@@ -293,11 +316,12 @@ namespace MudBlazor.Utilities
                     throw new ArgumentException("Invalid color format.");
                 }
 
-                _valuesAsByte = new byte[]
+                _valuesAsByte = new[]
                 {
                     byte.Parse(parts[0], CultureInfo.InvariantCulture),
                     byte.Parse(parts[1], CultureInfo.InvariantCulture),
-                    byte.Parse(parts[2], CultureInfo.InvariantCulture), 255
+                    byte.Parse(parts[2], CultureInfo.InvariantCulture),
+                    byte.MaxValue
                 };
             }
             else
@@ -325,7 +349,7 @@ namespace MudBlazor.Utilities
                         throw new ArgumentException(@"Not a valid color.", nameof(value));
                 }
 
-                _valuesAsByte = new byte[]
+                _valuesAsByte = new[]
                 {
                     GetByteFromValuePart(value,0),
                     GetByteFromValuePart(value,2),
@@ -334,28 +358,31 @@ namespace MudBlazor.Utilities
                 };
             }
 
-            CalculateHsl();
+            var (h, s, l) = CalculateHsl();
+            H = h;
+            S = s;
+            L = l;
         }
 
         /// <summary>
-        /// Creates a new <see cref="MudColor"/> instance with the specified hue value while keeping the saturation, luminance, and alpha values unchanged.
+        /// Creates a new <see cref="MudColor"/> instance with the specified hue value while keeping the saturation, lightness, and alpha values unchanged.
         /// </summary>
         /// <param name="h">The hue component value (0 to 360).</param>
         /// <returns>A new <see cref="MudColor"/> instance with the specified hue value.</returns>
         public MudColor SetH(double h) => new(h, S, L, A);
 
         /// <summary>
-        /// Creates a new <see cref="MudColor"/> instance with the specified saturation value while keeping the hue, luminance, and alpha values unchanged.
+        /// Creates a new <see cref="MudColor"/> instance with the specified saturation value while keeping the hue, lightness, and alpha values unchanged.
         /// </summary>
         /// <param name="s">The saturation component value (0.0 to 1.0).</param>
         /// <returns>A new <see cref="MudColor"/> instance with the specified saturation value.</returns>
         public MudColor SetS(double s) => new(H, s, L, A);
 
         /// <summary>
-        /// Creates a new <see cref="MudColor"/> instance with the specified luminance value while keeping the hue, saturation, and alpha values unchanged.
+        /// Creates a new <see cref="MudColor"/> instance with the specified lightness value while keeping the hue, saturation, and alpha values unchanged.
         /// </summary>
-        /// <param name="l">The luminance component value (0.0 to 1.0).</param>
-        /// <returns>A new <see cref="MudColor"/> instance with the specified luminance value.</returns>
+        /// <param name="l">The lightness component value (0.0 to 1.0).</param>
+        /// <returns>A new <see cref="MudColor"/> instance with the specified lightness value.</returns>
         public MudColor SetL(double l) => new(H, S, l, A);
 
         /// <summary>
@@ -394,10 +421,10 @@ namespace MudBlazor.Utilities
         public MudColor SetAlpha(double a) => new(R, G, B, a);
 
         /// <summary>
-        /// Creates a new <see cref="MudColor"/> instance by adjusting the luminance component value by the specified amount.
+        /// Creates a new <see cref="MudColor"/> instance by adjusting the lightness component value by the specified amount.
         /// </summary>
-        /// <param name="amount">The amount to adjust the luminance by (-1.0 to 1.0).</param>
-        /// <returns>A new <see cref="MudColor"/> instance with the adjusted luminance.</returns>
+        /// <param name="amount">The amount to adjust the lightness by (-1.0 to 1.0).</param>
+        /// <returns>A new <see cref="MudColor"/> instance with the adjusted lightness.</returns>
         public MudColor ChangeLightness(double amount) => new(H, S, Math.Max(0, Math.Min(1, L + amount)), A);
 
         /// <summary>
@@ -427,7 +454,7 @@ namespace MudBlazor.Utilities
         public MudColor ColorRgbDarken() => ColorDarken(0.075);
 
         /// <summary>
-        /// Checks whether the HSL (Hue, Saturation, Luminance) values of this <see cref="MudColor"/> instance have changed compared to another <see cref="MudColor"/> instance.
+        /// Checks whether the HSL (Hue, Saturation, lightness) values of this <see cref="MudColor"/> instance have changed compared to another <see cref="MudColor"/> instance.
         /// </summary>
         /// <param name="value">The <see cref="MudColor"/> instance to compare HSL values with.</param>
         /// <returns>True if the HSL values have changed; otherwise, false.</returns>
@@ -529,7 +556,14 @@ namespace MudBlazor.Utilities
         /// <returns>The string representation of the color.</returns>
         public static explicit operator string(MudColor? color) => color == null ? string.Empty : color.Value;
 
-        private byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new char[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
+        /// <summary>
+        /// Converts a <see cref="MudColor"/> instance to a 32-bit unsigned integer.
+        /// </summary>
+        /// <param name="mudColor">The MudColor instance to convert.</param>
+        /// <returns>The 32-bit unsigned integer representation of the color.</returns>
+        public static explicit operator uint(MudColor mudColor) => mudColor.UInt32;
+
+        private byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
 
         private static string[] SplitInputIntoParts(string value)
         {
@@ -545,7 +579,7 @@ namespace MudBlazor.Utilities
             return parts;
         }
 
-        private void CalculateHsl()
+        private (double h, double s, double l) CalculateHsl()
         {
             var h = 0D;
             var s = 0D;
@@ -580,7 +614,7 @@ namespace MudBlazor.Utilities
                 h = ((60D * (r - g)) / (max - min)) + 240D;
             }
 
-            // luminance
+            // lightness
             var l = (max + min) / 2D;
 
             // saturation
@@ -597,9 +631,7 @@ namespace MudBlazor.Utilities
                 s = (max - min) / (2D - (max + min)); //(max-min > 0)?
             }
 
-            H = Math.Round(h.EnsureRange(360), 0);
-            S = Math.Round(s.EnsureRange(1), 2);
-            L = Math.Round(l.EnsureRange(1), 2);
+            return (Math.Round(h.EnsureRange(360), 0), Math.Round(s.EnsureRange(1), 2), Math.Round(l.EnsureRange(1), 2));
         }
 
         /// <inheritdoc />

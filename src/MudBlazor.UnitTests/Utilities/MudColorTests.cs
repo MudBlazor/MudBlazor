@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Buffers.Binary;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -736,6 +737,33 @@ namespace MudBlazor.UnitTests.Utilities
             Palette palette = new PaletteLight();
 
             palette.Should().NotBeNull();
+        }
+
+        [Test]
+        [TestCase(0x000000FFu)]//Black
+        [TestCase(0xFF0000FFu)]//Red
+        [TestCase(0x00FF00FFu)]//Green
+        [TestCase(0x0000FFFFu)]//Blue
+        public void UInt32(uint rgba)
+        {
+            MudColor mudColor = new(rgba);
+
+            mudColor.Value.Should().BeEquivalentTo($"#{rgba:X8}");
+            ((uint)mudColor).Should().Be(rgba);
+            mudColor.UInt32.Should().Be(rgba);
+        }
+
+        [Test]
+        public void UInt32_CheckAgainstBinaryPrimitive()
+        {
+            const byte R = 255, G = 128, B = 64, A = 192;
+            var mudColor = new MudColor(R, G, B, A);
+            var expectedUint = BinaryPrimitives.ReadUInt32BigEndian([mudColor.R, mudColor.G, mudColor.B, mudColor.A]);
+
+            var actualUint = (uint)mudColor;
+
+            actualUint.Should().Be(expectedUint);
+            mudColor.UInt32.Should().Be(mudColor.UInt32);
         }
     }
 }

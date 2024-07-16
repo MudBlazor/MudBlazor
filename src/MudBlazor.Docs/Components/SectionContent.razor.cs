@@ -39,8 +39,9 @@ public partial class SectionContent
             .AddClass($"relative d-flex flex-grow-1 flex-wrap justify-center align-center", !Block)
             .AddClass($"d-block mx-auto", Block)
             .AddClass($"mud-width-full", Block && FullWidth)
-            .AddClass("pa-8", !_hasCode)
-            .AddClass("px-8 pb-8 pt-2", _hasCode)
+            .AddClass("pa-8", !_hasCode && !IsApiSection)
+            .AddClass("px-8 pb-8 pt-2", _hasCode && !IsApiSection)
+            .AddClass("pa-2", IsApiSection)
             .Build();
 
     protected string SourceClassname =>
@@ -61,6 +62,8 @@ public partial class SectionContent
     [Parameter] public string HighLight { get; set; }
     [Parameter] public IEnumerable<CodeFile> Codes { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
+
+    [Parameter] public bool IsApiSection { get; set; }
 
     private bool _hasCode;
     private string _activeCode;
@@ -104,8 +107,7 @@ public partial class SectionContent
     private async Task CopyTextToClipboard()
     {
         var code = Snippets.GetCode(Code);
-        if (code == null)
-            code = await DocsJsApiService.GetInnerTextByIdAsync(_snippetId);
+        code ??= await DocsJsApiService.GetInnerTextByIdAsync(_snippetId);
         await JsApiService.CopyToClipboardAsync(code ?? $"Snippet '{Code}' not found!");
     }
 
@@ -121,7 +123,7 @@ public partial class SectionContent
 
                 if (!string.IsNullOrEmpty(HighLight))
                 {
-                    if (HighLight.Contains(","))
+                    if (HighLight.Contains(','))
                     {
                         var highlights = HighLight.Split(",");
 
@@ -147,15 +149,14 @@ public partial class SectionContent
 
     protected virtual async void RunOnTryMudBlazor()
     {
-        var firstFile = "";
-
-        if (Codes != null)
+        string firstFile;
+        if (Codes == null)
         {
-            firstFile = Codes.FirstOrDefault().code;
+            firstFile = Code;
         }
         else
         {
-            firstFile = Code;
+            firstFile = Codes.FirstOrDefault().code;
         }
 
         // We use a separator that wont be in code so we can send 2 files later

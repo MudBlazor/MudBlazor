@@ -1,4 +1,5 @@
 ﻿@page "/components/divider"
+@page "/components/MudDivider"
 
 <DocsPage>
     <DocsPageHeader Title="Divider" SubTitle="A divider is a thin line that groups content in lists and layouts."/>
@@ -8,7 +9,7 @@
             <SectionHeader Title="List Dividers">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="DividerListExample">
+            <SectionContent DarkenBackground="true" Code="@nameof(DividerListExample)">
                 <DividerListExample />
             </SectionContent>
         </DocsPageSection>
@@ -17,7 +18,7 @@
             <SectionHeader Title="Inset Dividers">
                 <Description>Adds a margin to the left side of the divider.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="DividerInsertExample">
+            <SectionContent DarkenBackground="true" Code="@nameof(DividerInsertExample)">
                 <DividerInsertExample />
             </SectionContent>
         </DocsPageSection>
@@ -26,7 +27,7 @@
             <SectionHeader Title="Middle Dividers">
                 <Description>Middle dividers have margin on both left and right side.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="DividerMiddleExample" ShowCode="false">
+            <SectionContent DarkenBackground="true" Code="@nameof(DividerMiddleExample)" ShowCode="false">
                 <DividerMiddleExample />
             </SectionContent>
         </DocsPageSection>
@@ -35,7 +36,7 @@
             <SectionHeader Title="Vertical Dividers">
                 <Description>Vertical dividers can be used inside parents with a set height. If the parent doesn't have a set height but is displayed with flex, use the <CodeInline>Flexitem</CodeInline> property.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="DividerVerticalExample">
+            <SectionContent DarkenBackground="true" Code="@nameof(DividerVerticalExample)">
                 <DividerVerticalExample />
             </SectionContent>
         </DocsPageSection>

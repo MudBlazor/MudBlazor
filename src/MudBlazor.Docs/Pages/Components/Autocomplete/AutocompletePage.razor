@@ -1,5 +1,6 @@
 ﻿@page "/components/autocomplete"
-
+@page "/components/MudAutoComplete"
+@page "/components/MudAutoComplete`1"
 
 <DocsPage>
     <DocsPageHeader Title="Autocomplete"
@@ -20,7 +21,7 @@
                     the <CodeInline>Value</CodeInline> will be overwritten with the user input which allows it to be passed to the validation function.
                 </Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="AutocompleteUsageExample">
+            <SectionContent ShowCode="false" Code="@nameof(AutocompleteUsageExample)">
                 <AutocompleteUsageExample />
             </SectionContent>
         </DocsPageSection>
@@ -29,7 +30,7 @@
             <SectionHeader Title="Margin And Dense">
                 <Description>While the margin property affects the input element, the dense property affects the dropdown element.</Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="AutocompleteMarginDenseExample">
+            <SectionContent ShowCode="false" Code="@nameof(AutocompleteMarginDenseExample)">
                 <AutocompleteMarginDenseExample />
             </SectionContent>
         </DocsPageSection>
@@ -39,11 +40,11 @@
                 <Description>
                     When you use objects, Autocomplete uses <CodeInline>ToString()</CodeInline> to convert the object into text form. You can set a custom <CodeInline>ToStringFunc</CodeInline>
                     to override how the list items are stringified. This string representation is also what you'll get as input to the search function.<br />
-                    If that is not enough, you can define an <CodeInline Tag="true">ItemTemplate</CodeInline> and even an <CodeInline Tag="true">ItemSelectedTemplate</CodeInline>
+                    If that is not enough, you can define the following templates <CodeInline Tag="true">ItemTemplate</CodeInline>, <CodeInline Tag="true">ItemSelectedTemplate</CodeInline>, and <CodeInline Tag="true">ItemDisabledTemplate</CodeInline>
                     to create highly sophisticated list item presentations.
                 </Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="AutocompleteClrObjectsExample">
+            <SectionContent ShowCode="false" Code="@nameof(AutocompleteClrObjectsExample)">
                 <AutocompleteClrObjectsExample />
             </SectionContent>
         </DocsPageSection>
@@ -57,7 +58,7 @@
                     <CodeInline Tag="true">BeforeItemsTemplate</CodeInline> and the <CodeInline Tag="true">AfterItemsTemplate</CodeInline>.
                 </Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="AutocompletePresentationExtrasExample">
+            <SectionContent ShowCode="false" Code="@nameof(AutocompletePresentationExtrasExample)">
                 <AutocompletePresentationExtrasExample />
             </SectionContent>
         </DocsPageSection>
@@ -70,7 +71,7 @@
                     For more info on form validation, check out <MudLink Href="/components/form">Form</MudLink>.
                 </Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="AutocompleteValidationExample">
+            <SectionContent ShowCode="false" Code="@nameof(AutocompleteValidationExample)">
                 <AutocompleteValidationExample />
             </SectionContent>
         </DocsPageSection>
@@ -89,7 +90,7 @@
                     <MudText>*If search func didn't return any value, keys can't open the dropdown.</MudText>
                 </Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="AutocompleteUsageExample">
+            <SectionContent ShowCode="false" Code="@nameof(AutocompleteUsageExample)">
                 <AutocompleteUsageExample />
             </SectionContent>
         </DocsPageSection>
@@ -105,7 +106,7 @@
                     <MudText><CodeInline>ProgressIndicatorColor</CodeInline>: customize the color of the circular progress indicator.</MudText>
                 </Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="AutocompleteProgressExample">
+            <SectionContent ShowCode="false" Code="@nameof(AutocompleteProgressExample)">
                 <AutocompleteProgressExample />
             </SectionContent>
         </DocsPageSection>
@@ -122,7 +123,7 @@
                     </MudAlert>
                 </Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="AutocompleteStrictFalseExample">
+            <SectionContent ShowCode="false" Code="@nameof(AutocompleteStrictFalseExample)">
                 <AutocompleteStrictFalseExample />
             </SectionContent>
         </DocsPageSection>
@@ -133,7 +134,7 @@
 					<MudText>Autocomplete can cancel request if the user types new input</MudText>
 				</Description>
 			</SectionHeader>
-			<SectionContent ShowCode="false" Code="AutocompleteCancellationTokenExample">
+			<SectionContent ShowCode="false" Code="@nameof(AutocompleteCancellationTokenExample)">
 				<AutocompleteCancellationTokenExample />
 			</SectionContent>
 		</DocsPageSection>

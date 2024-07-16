@@ -1,0 +1,76 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using MudBlazor.Components.Chart.Models
+
+<div>
+    <MudTimeSeriesChart ChartSeries="@_series" @bind-SelectedIndex="Index" Width="100%" Height="350px" ChartOptions="@_options" CanHideSeries TimeLabelSpacing="TimeSpan.FromMinutes(5)" />
+    <MudGrid>
+        <MudItem xs="6">
+            <MudText Typo="Typo.body1" Class="py-3">Selected: @(Index < 0 ? "None" : _series[Index].Name)</MudText>
+        </MudItem>
+        <MudItem xs="6">
+            <MudSlider @bind-Value="_options.LineStrokeWidth" Min="1" Max="10" Color="Color.Info">Line Width: @_options.LineStrokeWidth.ToString()</MudSlider>
+        </MudItem>
+    </MudGrid>
+</div>
+
+@code
+{
+    private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.
+    private ChartOptions _options = new ChartOptions
+        {
+            YAxisLines = false,
+            YAxisTicks = 500,
+            MaxNumYAxisTicks = 10,
+            YAxisRequireZeroPoint = true,
+            XAxisLines = false,
+            LineStrokeWidth = 1,
+        };
+
+    private TimeSeriesChartSeries _chart1 = new();
+    private TimeSeriesChartSeries _chart2 = new();
+    private TimeSeriesChartSeries _chart3 = new();
+
+    private List<TimeSeriesChartSeries> _series = new();
+
+    private readonly Random _random = new Random();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        var now = DateTime.Now;
+
+        _chart1 = new TimeSeriesChartSeries
+            {
+                Index = 0,
+                Name = "Series 1",
+                Data = Enumerable.Range(-360, 360).Select(x => new TimeSeriesChartSeries.TimeValue(now.AddSeconds(x * 10), _random.Next(6000, 15000))).ToList(),
+                IsVisible = true,
+                Type = TimeSeriesDiplayType.Line
+            };
+
+        _chart2 = new TimeSeriesChartSeries
+            {
+                Index = 1,
+                Name = "Series 2",
+                Data = Enumerable.Range(-360, 360).Select(x => new TimeSeriesChartSeries.TimeValue(now.AddSeconds(x * 10), _random.Next(0, 7000))).ToList(),
+                IsVisible = true,
+                Type = TimeSeriesDiplayType.Area
+            };
+
+        _chart3 = new TimeSeriesChartSeries
+            {
+                Index = 2,
+                Name = "Series 3",
+                Data = Enumerable.Range(-90, 60).Select(x => new TimeSeriesChartSeries.TimeValue(now.AddSeconds(x * 30), _random.Next(4000, 10000))).ToList(),
+                IsVisible = true,
+                Type = TimeSeriesDiplayType.Line
+            };
+
+        _series.Add(_chart1);
+        _series.Add(_chart2);
+        _series.Add(_chart3);
+
+        StateHasChanged();
+    }
+}

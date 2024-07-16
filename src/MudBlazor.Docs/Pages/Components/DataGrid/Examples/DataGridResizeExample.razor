@@ -5,8 +5,8 @@
 
 <MudDataGrid T="Element" Items="@Elements" ColumnResizeMode="@(_resizeColumn ? ResizeMode.Column : ResizeMode.Container)" RowsPerPage="5">
     <Columns>
-        <PropertyColumn Property="x => x.Number" Title="Nr" Resizable="false" />
-        <PropertyColumn Property="x => x.Sign" />
+        <PropertyColumn Property="x => x.Number" Title="Nr" />
+        <PropertyColumn Property="x => x.Sign" Resizable="false" />
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Position" />
         <PropertyColumn Property="x => x.Molar" Title="Molar mass" />

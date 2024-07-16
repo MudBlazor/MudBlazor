@@ -1,9 +1,5 @@
 @namespace MudBlazor.UnitTests.TestComponents
-<MudFileUpload T="IReadOnlyList<IBrowserFile>" AppendMultipleFiles="AppendMultipleFiles" @bind-Files="Files">
-    <ButtonTemplate>
-        <MudButton HtmlTag="label" for="@context.Id"></MudButton>
-    </ButtonTemplate>
-</MudFileUpload>
+<MudFileUpload T="IReadOnlyList<IBrowserFile>" AppendMultipleFiles="AppendMultipleFiles" @bind-Files="Files" />
 
 @code
 {

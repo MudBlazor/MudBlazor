@@ -6,11 +6,18 @@
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
-  <!--Outside Visual Studio SolutionDir is not available-->  
+  <!--Outside Visual Studio SolutionDir is not available-->
   <PropertyGroup>
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)../</SolutionDir>
   </PropertyGroup>
 
+  <!--Analyzer Config-->
+  <PropertyGroup>
+    <MudAllowedAttributePattern>LowerCase</MudAllowedAttributePattern>
+    <MudIllegalParameters>V7IgnoreCase</MudIllegalParameters>
+    <MudDebugAnalyzer>false</MudDebugAnalyzer>
+  </PropertyGroup>
+  
   <!--Project path for code generator-->
   <PropertyGroup>
     <BinDocsCompiler>$(SolutionDir)MudBlazor.Docs.Compiler/bin/Debug/net8.0/MudBlazor.Docs.Compiler.dll</BinDocsCompiler>
@@ -36,18 +43,18 @@
   </Target>
 
   <!--Add Content that is being generated as part of the build cycle-->
-  <!--We need to do this because the project is not yet aware of files that were generated after the build started-->  
+  <!--We need to do this because the project is not yet aware of files that were generated after the build started-->
   <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild" DependsOnTargets="CompileDocs;ReadFromFile">
     <ItemGroup>
       <!--Include without duplication-->
       <_NewCompiledSnippets Include="Models\Snippets.generated.cs" Exclude="@(Compile)" />
-      <_NewCompiledDocsStrings Include="Models\DocStrings.generated.cs" Exclude="@(Compile)" />
+      <_NewCompiledDocsStrings Include="Models\Generated\ApiDocumentation.generated.cs" Exclude="@(Compile)" />
       <Compile Include="@(_NewCompiledSnippets)" />
       <Compile Include="@(_NewCompiledDocsStrings)" />
       <EmbeddedResource Include="@(NewExampleCodeToBuild)" Condition="@(NewExampleCodeToBuild-&gt;Count()) != 0" />
     </ItemGroup>
   </Target>
- 
+
   <!--Update ExampleCode-->
   <ItemGroup>
     <EmbeddedResource Include="Pages\**\*.html" />
@@ -66,7 +73,7 @@
       <FilesToClean Include="./Pages/**/*Example_DialogCode.*" />
       <FilesToClean Include="./NewFilesToBuild.txt" />
       <FilesToClean Include="./Models/Snippets.generated.cs" />
-      <FilesToClean Include="./Models/DocStrings.generated.cs" />
+      <FilesToClean Include="./Models/Generated/ApiDocumentation.generated.cs" />
       <FilesToClean Include="./wwwroot/MudBlazorDocs.css" />
       <FilesToClean Include="./wwwroot/MudBlazorDocs.min.css" />
     </ItemGroup>
@@ -76,11 +83,12 @@
   <!--Packages-->
   <ItemGroup>
     <PackageReference Include="Blazor-Analytics" Version="3.12.0" />
-    <PackageReference Include="FluentValidation" Version="11.9.0" />
+    <PackageReference Include="BytexDigital.Blazor.Components.CookieConsent" Version="1.2.0-preview.1698872627" />
+    <PackageReference Include="FluentValidation" Version="11.9.2" />
     <PackageReference Include="FuzzySharp" Version="2.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.6" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
   </ItemGroup>
 
@@ -88,7 +96,8 @@
   <ItemGroup>
     <ProjectReference Include="../MudBlazor/MudBlazor.csproj" />
     <ProjectReference Include="../MudBlazor.Examples.Data/MudBlazor.Examples.Data.csproj" />
-    <ProjectReference Include="..\MudBlazor.SourceCodeGenerator\MudBlazor.SourceCodeGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../MudBlazor.SourceGenerator/MudBlazor.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
   </ItemGroup>
 
   <PropertyGroup>

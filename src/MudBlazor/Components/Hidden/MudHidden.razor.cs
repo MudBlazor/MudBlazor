@@ -8,7 +8,7 @@ namespace MudBlazor
 #nullable enable
     public partial class MudHidden : MudComponentBase, IBrowserViewportObserver, IAsyncDisposable
     {
-        private IParameterState<bool> _isHiddenState;
+        private readonly ParameterState<bool> _hiddenState;
         private bool _serviceIsReady = false;
         private Breakpoint _currentBreakpoint = Breakpoint.None;
 
@@ -33,17 +33,17 @@ namespace MudBlazor
         public bool Invert { get; set; }
 
         /// <summary>
-        /// True if the component is not visible (two-way bindable)
+        /// True if the component is hidden (two-way bindable)
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Hidden.Behavior)]
-        public bool IsHidden { get; set; } = true;
+        public bool Hidden { get; set; } = true;
 
         /// <summary>
         /// Fires when the breakpoint changes visibility of the component
         /// </summary>
         [Parameter]
-        public EventCallback<bool> IsHiddenChanged { get; set; }
+        public EventCallback<bool> HiddenChanged { get; set; }
 
         /// <summary>
         /// Child content of component.
@@ -54,7 +54,10 @@ namespace MudBlazor
 
         public MudHidden()
         {
-            _isHiddenState = RegisterParameter(nameof(IsHidden), () => IsHidden, () => IsHiddenChanged);
+            using var registerScope = CreateRegisterScope();
+            _hiddenState = registerScope.RegisterParameter<bool>(nameof(Hidden))
+                .WithParameter(() => Hidden)
+                .WithEventCallback(() => HiddenChanged);
         }
 
         protected override async Task OnParametersSetAsync()
@@ -124,7 +127,7 @@ namespace MudBlazor
                 hidden = !hidden;
             }
 
-            await _isHiddenState.SetValueAsync(hidden);
+            await _hiddenState.SetValueAsync(hidden);
         }
     }
 }

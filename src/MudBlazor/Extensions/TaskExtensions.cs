@@ -12,9 +12,11 @@ namespace MudBlazor
     public static class TaskExtensions
     {
         /// <summary>
-        /// Task will be awaited and exceptions will be forwarded to MudBlazorGlobal.UnhandledExceptionHandler.
+        /// Executes the <see cref="Task"/> asynchronously as a fire-and-forget operation and forwards any exceptions to <see cref="MudGlobal.UnhandledExceptionHandler"/>.
         /// </summary>
-        public static async void AndForget(this Task task, bool ignoreExceptions = false)
+        /// <param name="task">The task to be executed.</param>
+        /// <param name="ignoreExceptions">If set to true, exceptions are ignored; otherwise, exceptions are forwarded to the global exception handler.</param>
+        public static async void CatchAndLog(this Task task, bool ignoreExceptions = false)
         {
             try
             {
@@ -30,9 +32,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// ValueTask will be awaited and exceptions will be forwarded to MudBlazorGlobal.UnhandledExceptionHandler.
+        /// Executes the <see cref="ValueTask"/> asynchronously as a fire-and-forget operation and forwards any exceptions to <see cref="MudGlobal.UnhandledExceptionHandler"/>.
         /// </summary>
-        public static async void AndForget(this ValueTask task, bool ignoreExceptions = false)
+        /// <param name="task">The task to be executed.</param>
+        /// <param name="ignoreExceptions">If set to true, exceptions are ignored; otherwise, exceptions are forwarded to the global exception handler.</param>
+        public static async void CatchAndLog(this ValueTask task, bool ignoreExceptions = false)
         {
             try
             {
@@ -48,9 +52,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// ValueTask(bool) will be awaited and exceptions will be forwarded to MudBlazorGlobal.UnhandledExceptionHandler.
+        /// Executes the <see cref="ValueTask{T}"/> asynchronously as a fire-and-forget operation and forwards any exceptions to <see cref="MudGlobal.UnhandledExceptionHandler"/>.
         /// </summary>
-        public static async void AndForget<T>(this ValueTask<T> task, bool ignoreExceptions = false)
+        /// <param name="task">The task to be executed.</param>
+        /// <param name="ignoreExceptions">If set to true, exceptions are ignored; otherwise, exceptions are forwarded to the global exception handler.</param>
+        public static async void CatchAndLog<T>(this ValueTask<T> task, bool ignoreExceptions = false)
         {
             try
             {

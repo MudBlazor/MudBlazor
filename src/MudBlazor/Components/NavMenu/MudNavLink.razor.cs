@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudNavLink : MudBaseSelectItem
+    public partial class MudNavLink : MudBaseSelectItem, IHandleEvent
     {
         protected string Classname =>
             new CssBuilder("mud-nav-item")
@@ -36,8 +36,13 @@ namespace MudBlazor
             };
         }
 
+        protected int TabIndex => Disabled || NavigationContext is { Disabled: true } or { Expanded: false } ? -1 : 0;
+
         [CascadingParameter]
         private INavigationEventReceiver? NavigationEventReceiver { get; set; }
+
+        [CascadingParameter]
+        private NavigationContext? NavigationContext { get; set; }
 
         /// <summary>
         /// Icon to use if set.
@@ -77,5 +82,13 @@ namespace MudBlazor
 
             return Task.CompletedTask;
         }
+
+        /// <inheritdoc/>
+        /// <remarks>
+        /// See: https://github.com/MudBlazor/MudBlazor/issues/8365
+        /// <para/>
+        /// Since <see cref="MudLink"/> implements only single <see cref="EventCallback"/> <see cref="MudBaseSelectItem.OnClick"/> this is safe to disable globally within the component.
+        /// </remarks>
+        Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg) => callback.InvokeAsync(arg);
     }
 }

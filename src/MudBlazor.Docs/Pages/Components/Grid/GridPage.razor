@@ -1,8 +1,10 @@
 ﻿@page "/components/grid"
+@page "/components/MudGrid"
+@page "/components/MudItem"
 
 <DocsPage>
     <DocsPageHeader Title="Grid" SubTitle="The grid component helps keep layouts consistent across various screen resolutions and sizes.">
-        <Description>            
+        <Description>
             MudBlazor comes with a 12-point grid system and contains 6 breakpoints that are used for specific screen sizes.<br /><br />
             Read more about <MudLink Href="/features/breakpoints">MudBlazor's breakpoints here.</MudLink>
         </Description>
@@ -13,26 +15,35 @@
             <SectionHeader Title="Spacing">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Class="demo-grid-spacing" Code="GridSpacingExample" ShowCode="false">
+            <SectionContent DarkenBackground="true" Class="demo-grid-spacing" Code="@nameof(GridSpacingExample)" ShowCode="false">
                 <GridSpacingExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Basic grid">
+            <SectionHeader Title="Basic Grid">
                 <Description>The column widths apply at all breakpoints, xs and up.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Class="demo-grid-basic" Code="GridBasicExample" ShowCode="false">
+            <SectionContent DarkenBackground="true" Class="demo-grid-basic" Code="@nameof(GridBasicExample)" ShowCode="false">
                 <GridBasicExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Grid with breakpoints">
+            <SectionHeader Title="Grid With Breakpoints">
                 <Description>You can apply multiple column widths, causing the layout to change at the specific break point.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Class="demo-grid-basic" Code="GridWithBreakpointsExample" ShowCode="false">
+            <SectionContent DarkenBackground="true" Class="demo-grid-basic" Code="@nameof(GridWithBreakpointsExample)" ShowCode="false">
                 <GridWithBreakpointsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Line Break">
+                <Description>You can force items onto the next line by adding a <CodeInline>MudFlexBreak</CodeInline>.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Class="demo-grid-basic" Code="@nameof(GridLineBreakExample)" ShowCode="false">
+                <GridLineBreakExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -40,7 +51,7 @@
             <SectionHeader Title="Grid Builder">
                 <Description>Calculate your breakpoints with this tool. Move the slider to add and remove items.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Class="demo-grid-basic" Code="GridBuilderExample" ShowCode="false">
+            <SectionContent DarkenBackground="true" Class="demo-grid-basic" Code="@nameof(GridBuilderExample)" ShowCode="false">
                 <GridBuilderExample />
             </SectionContent>
         </DocsPageSection>

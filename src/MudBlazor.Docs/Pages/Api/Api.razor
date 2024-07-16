@@ -1,25 +1,135 @@
-﻿@page "/api/{component}"
-@using MudBlazor.Docs.Extensions
+﻿@page "/api/{TypeName}"
+@using MudBlazor.Docs.Components
+@namespace MudBlazor.Docs.Pages.Api
 
-
-@if (ComponentType == null)
-{
-    <MudProgressCircular Indeterminate="true"></MudProgressCircular>
-}
-else
-{
-    <DocsApi Type="@ComponentType"></DocsApi>
-}
-
-
-@code {
-    [Parameter] public string component { get; set; }
-
-    public Type ComponentType { get; set; }
-
-    protected override void OnParametersSet()
+<DocsPage>
+    @if (DocumentedType != null)
     {
-        ComponentType = ApiLink.GetTypeFromComponentLink(component);
-        StateHasChanged();
+        <ApiBreadcrumbs Type="@DocumentedType" />
+
+        <DocsPageHeader Title="@Title" />
+        <DocsPageContent>
+
+            @if (DocumentedType.Summary != null)
+            {
+                <ApiText Text="@DocumentedType.Summary" />
+            }
+
+            @if (DocumentedType.IsComponent)
+            {
+                <MudAlert Severity="Severity.Info" Class="mt-6">
+                    For examples and details on the usage of this component, visit the example page: <MudLink Href="@DocumentedType.ComponentUrl" Typo="Typo.inherit">@DocumentedType.NameFriendly</MudLink>
+                </MudAlert>
+            }
+
+            @if (ShowInheritance)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Inheritance" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <MudGrid Class="pa-0">
+                            <MudItem xs="12">
+                                <ApiTypeHierarchy TypeName="@DocumentedType.Name" />
+                            </MudItem>
+                        </MudGrid>
+                    </SectionContent>
+                </DocsPageSection>
+            }
+
+            @if (DocumentedType.Properties.Count > 0)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Properties" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <MudGrid Class="pa-0">
+                            <MudItem xs="12">
+                                <ApiMemberTable Mode="@ApiMemberTableMode.Properties" TypeName="@DocumentedType.Name" />
+                            </MudItem>
+                        </MudGrid>
+                    </SectionContent>
+                </DocsPageSection>
+            }
+
+            @if (DocumentedType.Methods.Count > 0)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Methods" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <MudGrid Class="pa-0">
+                            <MudItem xs="12">
+                                <ApiMemberTable Mode="@ApiMemberTableMode.Methods" TypeName="@DocumentedType.Name" />
+                            </MudItem>
+                        </MudGrid>
+                    </SectionContent>
+                </DocsPageSection>
+            }
+
+            @if (DocumentedType.Fields.Count > 0)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Fields" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <MudGrid Class="pa-0">
+                            <MudItem xs="12">
+                                <ApiMemberTable Mode="@ApiMemberTableMode.Fields" TypeName="@DocumentedType.Name" />
+                            </MudItem>
+                        </MudGrid>
+                    </SectionContent>
+                </DocsPageSection>
+            }
+
+            @if (DocumentedType.Events.Count > 0)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Fields" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <MudGrid Class="pa-0">
+                            <MudItem xs="12">
+                                <ApiMemberTable Mode="@ApiMemberTableMode.Events" TypeName="@DocumentedType.Name" />
+                            </MudItem>
+                        </MudGrid>
+                    </SectionContent>
+                </DocsPageSection>
+            }
+
+            @if (DocumentedType.Children.Count > 0)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Derived Classes" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <MudGrid Class="pa-0">
+                            <MudItem xs="12">
+                                <ApiTypeTable BaseType="@DocumentedType" />
+                            </MudItem>
+                        </MudGrid>
+                    </SectionContent>
+                </DocsPageSection>
+            }
+
+            @if (DocumentedType.GlobalSettings.Count > 0)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Global Settings" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <MudGrid Class="pa-0">
+                            <MudItem xs="12">
+                                <ApiGlobalSettingTable Type="@DocumentedType" />
+                            </MudItem>
+                        </MudGrid>
+                    </SectionContent>
+                </DocsPageSection>
+            }
+        </DocsPageContent>
     }
-}
+    else
+    {
+        <DocsPageHeader Title="@(TypeName + " Not Found")" />
+        <DocsPageContent>
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudAlert Severity="Severity.Warning">Sorry, the type @TypeName was not found.</MudAlert>
+                </MudItem>
+            </MudGrid>
+        </DocsPageContent>
+    }
+</DocsPage>

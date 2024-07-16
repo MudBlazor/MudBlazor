@@ -9,7 +9,10 @@ using MudBlazor.Components.Chart.Interpolation;
 
 namespace MudBlazor.Charts
 {
-    partial class Line : MudChartBase
+    /// <summary>
+    /// Represents a chart which displays series values as connected lines.
+    /// </summary>
+    partial class Line : MudCategoryChartBase
     {
         private const double BoundWidth = 650.0;
         private const double BoundHeight = 350.0;
@@ -18,7 +21,11 @@ namespace MudBlazor.Charts
         private const double VerticalStartSpace = 25.0;
         private const double VerticalEndSpace = 25.0;
 
-        [CascadingParameter] public MudChart MudChartParent { get; set; }
+        /// <summary>
+        /// The chart, if any, containing this component.
+        /// </summary>
+        [CascadingParameter]
+        public MudChart MudChartParent { get; set; }
 
         private List<SvgPath> _horizontalLines = new();
         private List<SvgText> _horizontalValues = new();
@@ -34,7 +41,11 @@ namespace MudBlazor.Charts
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
+            RebuildChart();
+        }
 
+        private void RebuildChart()
+        {
             if (MudChartParent != null)
                 _series = MudChartParent.ChartSeries;
 
@@ -202,7 +213,7 @@ namespace MudBlazor.Charts
                         chartLine.Append(ToS(y));
                     }
                 }
-                if (_series[i].IsVisible)
+                if (_series[i].Visible)
                 {
                     var line = new SvgPath()
                     {
@@ -215,7 +226,7 @@ namespace MudBlazor.Charts
                 {
                     Index = i,
                     Labels = _series[i].Name,
-                    IsVisible = _series[i].IsVisible,
+                    Visible = _series[i].Visible,
                     OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
                 };
                 _legends.Add(legend);
@@ -227,8 +238,8 @@ namespace MudBlazor.Charts
             var series = _series[legend.Index];
             if (series != null)
             {
-                series.IsVisible = legend.IsVisible;
-                OnParametersSet();
+                series.Visible = legend.Visible;
+                RebuildChart();
             }
         }
     }

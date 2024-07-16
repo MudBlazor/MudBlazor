@@ -39,10 +39,17 @@ class MudScrollManager {
 
     scrollToBottom(selector, behavior) {
         let element = document.querySelector(selector);
-        if (element)
-            element.scrollTop = element.scrollHeight;
-        else
-            window.scrollTo(0, document.body.scrollHeight);
+        if (element) {
+            element.scrollTo({
+                top: element.scrollHeight,
+                behavior: behavior
+            });
+        } else {
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: behavior
+            });
+        }
     }
 
     //locks the scroll of the selected element. Default is body

@@ -1,64 +1,85 @@
-﻿using System;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using MudBlazor.Interfaces;
-using MudBlazor.State;
 
 namespace MudBlazor
 {
 #nullable enable
-    public abstract partial class MudComponentBase : ComponentBase, IMudStateHasChanged
+    /// <summary>
+    /// Represents a base class for designing MudBlazor components.
+    /// </summary>
+    public abstract class MudComponentBase : ComponentBaseWithState, IMudStateHasChanged
     {
-        internal readonly ParameterSet Parameters = new();
-
         [Inject]
         private ILoggerFactory LoggerFactory { get; set; } = null!;
         private ILogger? _logger;
         protected ILogger Logger => _logger ??= LoggerFactory.CreateLogger(GetType());
 
         /// <summary>
-        /// User class names, separated by space.
+        /// The CSS classes applied to this component.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.  Use the <see cref="Style"/> property to apply custom CSS styles.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ComponentBase.Common)]
         public string? Class { get; set; }
 
         /// <summary>
-        /// User styles, applied on top of the component's own classes and styles.
+        /// The CSS styles applied to this component.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Use the <see cref="Class"/> property to apply CSS classes.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ComponentBase.Common)]
         public string? Style { get; set; }
 
         /// <summary>
-        /// Use Tag to attach any user data object to the component for your convenience.
+        /// The arbitrary object to link to this component.
         /// </summary>
+        /// <remarks>
+        /// This property is typically used to associate additional information with this component, such as a model containing data for this component.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ComponentBase.Common)]
         public object? Tag { get; set; }
 
         /// <summary>
-        /// UserAttributes carries all attributes you add to the component that don't match any of its parameters.
-        /// They will be splatted onto the underlying HTML tag.
+        /// The additional HTML attributes to apply to this component.
         /// </summary>
+        /// <remarks>
+        /// This property is typically used to provide additional HTML attributes during rendering such as ARIA accessibility tags or a custom ID.
+        /// </remarks>
         [Parameter(CaptureUnmatchedValues = true)]
         [Category(CategoryTypes.ComponentBase.Common)]
         public Dictionary<string, object?> UserAttributes { get; set; } = new Dictionary<string, object?>();
 
         /// <summary>
-        /// Gets or sets a value indicating whether <see cref="JSRuntime" /> is available.
+        /// Whether the <see cref="JSRuntime" /> is available.
         /// </summary>
+        /// <remarks>
+        /// When <c>true</c>, JavaScript interop calls can be made.
+        /// </remarks>
         protected bool IsJSRuntimeAvailable { get; set; }
 
+        private readonly string _id = $"mudinput-{Guid.NewGuid()}";
         /// <summary>
         /// If the UserAttributes contain an ID make it accessible for WCAG labelling of input fields
         /// </summary>
-        public string FieldId => (UserAttributes != null && UserAttributes.TryGetValue("id", out var id) && id != null)
-                    ? (id.ToString() ?? $"mudinput-{Guid.NewGuid()}")
-                    : $"mudinput-{Guid.NewGuid()}";
+        public string FieldId => UserAttributes.TryGetValue("id", out var id) && id is not null
+            ? id.ToString() ?? _id
+            : _id;
 
         /// <inheritdoc />
         protected override void OnAfterRender(bool firstRender)
@@ -68,26 +89,7 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-            Parameters.OnInitialized();
-        }
-
-        /// <inheritdoc />
-        public override Task SetParametersAsync(ParameterView parameters)
-        {
-            return Parameters.SetParametersAsync(base.SetParametersAsync, parameters);
-        }
-
-        /// <inheritdoc />
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
-            Parameters.OnParametersSet();
-        }
-
-        /// <inheritdoc />
         void IMudStateHasChanged.StateHasChanged() => StateHasChanged();
+
     }
 }

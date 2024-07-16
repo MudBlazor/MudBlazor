@@ -1,7 +1,4 @@
-﻿
-#pragma warning disable CS1998 // async without await
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -606,7 +603,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [Obsolete]
-        public async Task MudPopoverService_CallInitializeOnlyOnce()
+        public void MudPopoverService_CallInitializeOnlyOnce()
         {
             var mock = new Mock<IJSRuntime>();
 
@@ -855,6 +852,7 @@ namespace MudBlazor.UnitTests.Components
 
             popover.MaxHeight.Should().BeNull();
             popover.Paper.Should().BeTrue();
+            popover.DropShadow.Should().BeTrue();
             popover.Elevation.Should().Be(8);
             popover.Square.Should().BeFalse();
             popover.Open.Should().BeFalse();
@@ -1033,6 +1031,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void MudPopover_Property_DropShadow_False_NoElevation()
+        {
+            var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
+                x => x.DropShadow, false));
+
+            var popoverElement = comp.Find(".test-popover-content").ParentElement;
+
+            popoverElement.ClassList.Should().NotContainMatch("mud-elevation-*");
+        }
+
+        [Test]
         public async Task MudPopover_WithDynamicContent()
         {
             var comp = Context.RenderComponent<PopoverComplexContent>();
@@ -1061,29 +1070,29 @@ namespace MudBlazor.UnitTests.Components
         public void MudPopoverProvider_DefaultValue()
         {
             var provider = new MudPopoverProvider();
-            provider.IsEnabled.Should().BeTrue();
+            provider.Enabled.Should().BeTrue();
         }
 
         [Test]
         public void MudPopoverProvider_RenderElementsBasedOnEnableState()
         {
-            var comp = Context.RenderComponent<PopoverProviderTest>(p => p.Add(x => x.ProviderIsEnabled, true));
+            var comp = Context.RenderComponent<PopoverProviderTest>(p => p.Add(x => x.ProviderEnabled, true));
             comp.Find("#my-content").TextContent.Should().Be("Popover content");
 
             for (var i = 0; i < 3; i++)
             {
-                comp.SetParametersAndRender(p => p.Add(x => x.ProviderIsEnabled, false));
+                comp.SetParametersAndRender(p => p.Add(x => x.ProviderEnabled, false));
                 Assert.Throws<ElementNotFoundException>(() => comp.Find("#my-content"));
 
-                comp.SetParametersAndRender(p => p.Add(x => x.ProviderIsEnabled, true));
+                comp.SetParametersAndRender(p => p.Add(x => x.ProviderEnabled, true));
                 comp.Find("#my-content").TextContent.Should().Be("Popover content");
             }
         }
 
         [Test]
-        public void MudPopoverProvider_NoRenderWhenIsEnabledIsFalse()
+        public void MudPopoverProvider_NoRenderWhenEnabledIsFalse()
         {
-            var comp = Context.RenderComponent<PopoverProviderTest>(p => p.Add(x => x.ProviderIsEnabled, false));
+            var comp = Context.RenderComponent<PopoverProviderTest>(p => p.Add(x => x.ProviderEnabled, false));
             Assert.Throws<ElementNotFoundException>(() => comp.Find("#my-content"));
         }
 
