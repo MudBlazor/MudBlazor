@@ -16,26 +16,29 @@
             <MudIconButton Icon="@BeforeIcon" Size="@Size" Variant="@Variant" Disabled="@(Selected == 1 || Disabled)" OnClick="@(() => OnClickControlButton(Page.Previous))" aria-label="@Localizer[LanguageResource.MudPagination_PreviousPage]"></MudIconButton>
         </li>
     }
-    @foreach (var state in GeneratePagination())
+    @if (ShowPageButtons)
     {
-        var currentPage = state;
-        if (currentPage == -1)
+        foreach (var state in GeneratePagination())
         {
-            <li class="@ItemClassname">
-                <MudText disabled="@Disabled">...</MudText>
-            </li>
-        }
-        else if (currentPage == Selected)
-        {
-            <li class="@SelectedItemClassname">
-                <MudButton Variant="@(Variant == Variant.Outlined ? Variant.Outlined : Variant.Filled)" Size="@Size" Ripple="false" Disabled="@Disabled" Color="@Color" aria-current="page" aria-label="@Localizer[LanguageResource.MudPagination_CurrentPage, $"{currentPage}"]">@currentPage</MudButton>
-            </li>
-        }
-        else
-        {
-            <li class="@ItemClassname">
-                <MudButton OnClick="@(() => Selected = currentPage)" Variant="@Variant" Size="@Size" Ripple="false" Disabled="@Disabled" aria-label="@Localizer[LanguageResource.MudPagination_PageIndex, $"{currentPage}"]">@currentPage</MudButton>
-            </li>
+            var currentPage = state;
+            if (currentPage == -1)
+            {
+                <li class="@ItemClassname">
+                    <MudText disabled="@Disabled">...</MudText>
+                </li>
+            }
+            else if (currentPage == Selected)
+            {
+                <li class="@SelectedItemClassname">
+                    <MudButton Variant="@(Variant == Variant.Outlined ? Variant.Outlined : Variant.Filled)" Size="@Size" Ripple="false" Disabled="@Disabled" Color="@Color" aria-current="page" aria-label="@Localizer[LanguageResource.MudPagination_CurrentPage, $"{currentPage}"]">@currentPage</MudButton>
+                </li>
+            }
+            else
+            {
+                <li class="@ItemClassname">
+                    <MudButton OnClick="@(() => Selected = currentPage)" Variant="@Variant" Size="@Size" Ripple="false" Disabled="@Disabled" aria-label="@Localizer[LanguageResource.MudPagination_PageIndex, $"{currentPage}"]">@currentPage</MudButton>
+                </li>
+            }
         }
     }
     @if (ShowNextButton)
