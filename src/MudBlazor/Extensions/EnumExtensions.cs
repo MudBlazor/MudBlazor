@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
@@ -36,16 +37,15 @@ namespace MudBlazor.Extensions
         }
 
         /// <summary>
-        /// Returns the name of the enumeration if attributes are set DisplayName in enum
+        /// Returns the best display name for the given type.
         /// </summary>
-        /// <param name="currentEnum">Current enum</param>
-        /// <returns>Get value Name of Display attribute or default value if non exist</returns>
-        public static string GetEnumDisplayName(this Enum currentEnum)
-        {
-            return currentEnum.GetType().GetMember(currentEnum.ToString())
-                .First()
-                .GetCustomAttribute<DisplayAttribute>()
-                ?.Name ?? currentEnum.ToString();
-        }
+        /// <param name="type">Type</param>
+        /// <param name="shortName">Try to find the shorter version of the name</param>
+        public static string? GetDisplayName(this Type type, bool shortName = false) =>
+            (shortName ? type.GetCustomAttribute<DisplayAttribute>()?.ShortName : null) ??
+            type?.GetCustomAttribute<DisplayAttribute>()?.Name ??
+            type?.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName ??
+            type?.GetCustomAttribute<DescriptionAttribute>()?.Description ??
+            type?.Name;
     }
 }

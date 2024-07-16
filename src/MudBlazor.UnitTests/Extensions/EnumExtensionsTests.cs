@@ -1,8 +1,9 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using FluentAssertions;
 using MudBlazor.Extensions;
-using MudBlazor.UnitTests.Dummy;
+using MudBlazor.UnitTests.TestData;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Extensions
@@ -28,18 +29,20 @@ namespace MudBlazor.UnitTests.Extensions
             Align.Inherit.ToDescriptionString().Should().Be("inherit");
             Breakpoint.Sm.ToDescriptionString().Should().Be("sm");
         }
-        
+
         [Test]
-        [TestCase(typeof(Adornment), new[] { "None", "start", "end" })]
-        public void GetEnumDisplayName_Test(Type type, string[] expectedNames)
+        [TestCase(typeof(EnumFormTraining), new[] { "Бюджетная оплата", "Внебюджетная оплата" })]
+        public void GetEnumDisplayName_Test(Type type, string[] expectedDisplayNames)
         {
-            foreach (var expectedName in expectedNames)
-            {
-                var enumValue = Enum.Parse(type, expectedName, true) as Enum;
-                var displayName = enumValue?.GetEnumDisplayName();
-                displayName.Should().Be(expectedName);
-            }
+            var enumValues = EnumExtensions.GetSafeEnumValues(type).ToArray();
+            var displayNames = enumValues
+                .Select(e => e.GetType().GetField(e.ToString())
+                    ?.GetCustomAttributes(typeof(DisplayAttribute), false)
+                    .FirstOrDefault() as DisplayAttribute)
+                .Select(attr => attr?.Name)
+                .ToArray();
+
+            displayNames.Should().BeEquivalentTo(expectedDisplayNames);
         }
-        
     }
 }

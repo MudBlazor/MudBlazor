@@ -558,7 +558,7 @@
                                 <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
                                 @foreach (var item in EnumExtensions.GetSafeEnumValues(fieldType.InnerType))
                                 {
-                                    <MudSelectItem T="Enum" Value="@((Enum)item)">@item.GetEnumDisplayName()</MudSelectItem>
+                                    <MudSelectItem T="Enum" Value="@((Enum)item)">@item.GetType().GetDisplayName()</MudSelectItem>
                                 }
                             </MudSelect>
                         }
@@ -621,7 +621,7 @@
                                 <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
                                 @foreach (var item in EnumExtensions.GetSafeEnumValues(fieldType.InnerType))
                                 {
-                                    <MudSelectItem T="Enum" Value="@((Enum)item)">@item.GetEnumDisplayName()</MudSelectItem>
+                                    <MudSelectItem T="Enum" Value="@((Enum)item)">@item.GetType().GetDisplayName()</MudSelectItem>
                                 }
                             </MudSelect>
                         }
