@@ -7,7 +7,7 @@
 <MudButton OnClick="@(() => OpenDialogAsync(_fullScreen))" Color="Color.Info">Full Screen Dialog</MudButton>
 <MudButton OnClick="@(() => OpenDialogAsync(_topCenter))" Color="Color.Success">Top Center Dialog</MudButton>
 <br />
-<MudSwitch @bind-Value="IsInline" Label="Inline" LabelPosition="LabelPosition.End" />
+<MudSwitch @bind-Value="_isInline" Label="Inline" LabelPosition="LabelPosition.End" />
 <MudChip T="string">@_state</MudChip>
 <br />
 
@@ -22,11 +22,12 @@
 
 @code
 {
-    [Inject] private IDialogService DialogService { get; set; }
+    [Inject]
+    private IDialogService DialogService { get; set; }
 
     private MudMessageBox _mudMessageBox;
     private string _state = "Message box hasn't been opened yet";
-    private bool IsInline = true;
+    private bool _isInline = true;
 
     private readonly DialogOptions _maxWidth = new() { MaxWidth = MaxWidth.Medium, FullWidth = true };
     private readonly DialogOptions _closeOnEscape = new() { CloseOnEscapeKey = true };
@@ -38,7 +39,7 @@
     private async Task OpenDialogAsync(DialogOptions options)
     {
         bool? result;
-        if (IsInline)
+        if (_isInline)
         {
             result = await _mudMessageBox.ShowAsync(options);
         }
@@ -46,7 +47,7 @@
         {
             result = await DialogService.ShowMessageBox(
                         "Warning",
-                        (MarkupString)$"Deleting can <b><i>not</i></b> be undone!",
+                        (MarkupString)"Deleting can <b><i>not</i></b> be undone!",
                         yesText: "Delete!", cancelText: "Cancel", options: options);
         }
         _state = result is null ? "Canceled" : "Deleted!";
