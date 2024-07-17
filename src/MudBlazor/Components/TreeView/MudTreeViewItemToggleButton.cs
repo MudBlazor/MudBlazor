@@ -19,6 +19,7 @@ public partial class MudTreeViewItemToggleButton : MudComponentBase
 
     protected string Classname =>
         new CssBuilder(Class)
+            .AddClass("mud-treeview-item-expand-button")
             .AddClass("mud-treeview-item-arrow-expand", !Loading)
             .AddClass("mud-transform", Expanded && !Loading)
             .AddClass("mud-treeview-item-arrow-load", Loading)
