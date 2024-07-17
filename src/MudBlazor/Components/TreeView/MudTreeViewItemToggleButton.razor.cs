@@ -2,26 +2,31 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 #nullable enable
-
 namespace MudBlazor;
 
 public partial class MudTreeViewItemToggleButton : MudComponentBase
 {
+    private readonly ParameterState<bool> _expandedState;
+
+    public MudTreeViewItemToggleButton()
+    {
+        using var registerScope = CreateRegisterScope();
+        _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
+            .WithParameter(() => Expanded)
+            .WithEventCallback(() => ExpandedChanged);
+    }
 
     protected string Classname =>
         new CssBuilder(Class)
             .AddClass("mud-treeview-item-expand-button")
             .AddClass("mud-treeview-item-arrow-expand", !Loading)
-            .AddClass("mud-transform", Expanded && !Loading)
+            .AddClass("mud-transform", _expandedState.Value && !Loading)
             .AddClass("mud-treeview-item-arrow-load", Loading)
             .Build();
 
@@ -89,8 +94,7 @@ public partial class MudTreeViewItemToggleButton : MudComponentBase
 
     private Task ToggleAsync()
     {
-        Expanded = !Expanded;
-        return ExpandedChanged.InvokeAsync(Expanded);
+        return _expandedState.SetValueAsync(!_expandedState.Value);
     }
 
     private void OnDoubleClick()
