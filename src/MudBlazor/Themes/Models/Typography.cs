@@ -9,77 +9,77 @@
         /// <summary>
         /// Gets or sets the default typography settings.
         /// </summary>
-        public Default Default { get; set; } = new();
+        public BaseTypography Default { get; set; } = new Default();
 
         /// <summary>
         /// Gets or sets the typography settings for H1.
         /// </summary>
-        public H1 H1 { get; set; } = new();
+        public BaseTypography H1 { get; set; } = new H1();
 
         /// <summary>
         /// Gets or sets the typography settings for H2.
         /// </summary>
-        public H2 H2 { get; set; } = new();
+        public BaseTypography H2 { get; set; } = new H2();
 
         /// <summary>
         /// Gets or sets the typography settings for H3.
         /// </summary>
-        public H3 H3 { get; set; } = new();
+        public BaseTypography H3 { get; set; } = new H3();
 
         /// <summary>
         /// Gets or sets the typography settings for H4.
         /// </summary>
-        public H4 H4 { get; set; } = new();
+        public BaseTypography H4 { get; set; } = new H4();
 
         /// <summary>
         /// Gets or sets the typography settings for H5.
         /// </summary>
-        public H5 H5 { get; set; } = new();
+        public BaseTypography H5 { get; set; } = new H5();
 
         /// <summary>
         /// Gets or sets the typography settings for H6.
         /// </summary>
-        public H6 H6 { get; set; } = new();
+        public BaseTypography H6 { get; set; } = new H6();
 
         /// <summary>
-        /// Gets or sets the typography settings for H7.
+        /// Gets or sets the typography settings for Subtitle1.
         /// </summary>
-        public Subtitle1 Subtitle1 { get; set; } = new();
+        public BaseTypography Subtitle1 { get; set; } = new Subtitle1();
 
         /// <summary>
-        /// Gets or sets the typography settings for H8.
+        /// Gets or sets the typography settings for Subtitle2.
         /// </summary>
-        public Subtitle2 Subtitle2 { get; set; } = new();
+        public BaseTypography Subtitle2 { get; set; } = new Subtitle2();
 
         /// <summary>
-        /// Gets or sets the typography settings for H9.
+        /// Gets or sets the typography settings for Body1.
         /// </summary>
-        public Body1 Body1 { get; set; } = new();
+        public BaseTypography Body1 { get; set; } = new Body1();
 
         /// <summary>
         /// Gets or sets the typography settings for Body2.
         /// </summary>
-        public Body2 Body2 { get; set; } = new();
+        public BaseTypography Body2 { get; set; } = new Body2();
 
         /// <summary>
         /// Gets or sets the typography settings for Input.
         /// </summary>
-        public Input Input { get; set; } = new();
+        public BaseTypography Input { get; set; } = new Input();
 
         /// <summary>
         /// Gets or sets the typography settings for Button.
         /// </summary>
-        public Button Button { get; set; } = new();
+        public BaseTypography Button { get; set; } = new Button();
 
         /// <summary>
         /// Gets or sets the typography settings for Caption.
         /// </summary>
-        public Caption Caption { get; set; } = new();
+        public BaseTypography Caption { get; set; } = new Caption();
 
         /// <summary>
         /// Gets or sets the typography settings for Overline.
         /// </summary>
-        public Overline Overline { get; set; } = new();
+        public BaseTypography Overline { get; set; } = new Overline();
     }
 
     /// <summary>
