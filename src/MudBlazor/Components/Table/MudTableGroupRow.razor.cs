@@ -86,6 +86,15 @@ namespace MudBlazor
         public bool Checkable { get; set; }
 
         /// <summary>
+        /// Prevents the change of the current selection of all items withing this group.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  Requires <see cref="Checkable"/> to be <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        public bool SelectionChangeable { get; set; } = true;
+
+        /// <summary>
         /// The CSS classes applied to this group's header.
         /// </summary>
         /// <remarks>
