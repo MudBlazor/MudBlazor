@@ -33,6 +33,7 @@ namespace MudBlazor
         /// </summary>
         public event Func<IDialogReference, Task> DialogInstanceAddedAsync
         {
+            // TODO: Remove default implementation in next major
             add
             {
 #pragma warning disable CS0618 // Type or member is obsolete
