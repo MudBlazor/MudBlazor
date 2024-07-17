@@ -342,7 +342,7 @@
     /// <summary>
     /// Represents the base typography settings.
     /// </summary>
-    public class BaseTypography
+    public abstract class BaseTypography
     {
         /// <summary>
         /// Gets or sets the font family.
