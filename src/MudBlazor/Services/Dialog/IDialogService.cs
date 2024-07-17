@@ -12,8 +12,6 @@ using Microsoft.AspNetCore.Components;
 #nullable enable
 namespace MudBlazor
 {
-    public delegate Task DialogInstanceAddedEventHandler(IDialogReference reference);
-
     /// <summary>
     /// A service for managing <see cref="MudDialog"/> components.
     /// </summary>
