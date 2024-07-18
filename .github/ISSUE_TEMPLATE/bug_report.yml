@@ -6,8 +6,8 @@ body:
     attributes:
       value: |
         Thanks for taking the time to fill out this bug report for [MudBlazor](https://mudblazor.com). Note: this template is only for bug reports; Please use [GitHub Discussions](https://github.com/MudBlazor/MudBlazor/discussions) or [Discord](https://discord.gg/mudblazor) for any questions.
-        Before you continue, please searched the existing issues. 
-        To rule out caching problems please make sure the problem also happens in an incognito tab. 
+        Before you continue, please **search the existing issues**. 
+        To rule out caching problems please make sure the problem also happens in an **incognito tab**. 
         
   - type: dropdown
     id: bug-type
