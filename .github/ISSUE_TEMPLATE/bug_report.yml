@@ -9,7 +9,7 @@ body:
   - type: checkboxes
     id: preconditions
     attributes:
-      label: Things to check:
+      label: Things to check
       options:
         - label: I have searched the **existing issues** for this bug
           required: true
