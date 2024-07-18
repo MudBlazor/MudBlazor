@@ -46,7 +46,7 @@
 
 @code {
     private GitHubReleases[] _githubReleases;
-    private DateTime _oldReleases = DateTime.Parse("2022-11-09");
+    private readonly DateTime _oldReleases = DateTime.Parse("2022-11-09");
 
     protected override async Task OnInitializedAsync()
     {
@@ -54,7 +54,7 @@
         StateHasChanged();
     }
 
-    private string GetBody(string value)
+    private static string GetBody(string value)
     {
         value = Regex.Replace(value, @"((###\s)(?<subtitle>.+))(?<items>.*(?:\r?\n[*] .*)*)", "<h6 class=\"mud-typography mud-typography-h6\">${subtitle}</h6><ul class=\"mt-3 mb-6 px-6\">${items}</ul>");
         value = Regex.Replace(value, @"((##\s)(?<title>.+))(?<items>.*(?:\r?\n[*] .*)*)", "<h5 class=\"mud-typography mud-typography-h5\">${title}</h5><ul class=\"mt-3 mb-6 px-6\">${items}</ul>");
@@ -65,7 +65,7 @@
         return value;
     }
 
-    private string GetOldBody(string value)
+    private static string GetOldBody(string value)
     {
         value = Regex.Replace(value, @"((###\s)(?<subtitle>.+))(?<items>.*(?:\r?\n-\s[*][*].*)*)", "<h6 class=\"mud-typography mud-typography-h6\">${subtitle}</h6><ul class=\"mt-3 mb-6 px-6\">${items}</ul>");
         value = Regex.Replace(value, @"^(#\s)(?<title>.+)", "<h5 class=\"mud-typography mud-typography-h5 mud-inherit-text\">${title}</h5>");
