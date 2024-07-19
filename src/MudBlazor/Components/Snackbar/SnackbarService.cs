@@ -76,7 +76,7 @@ namespace MudBlazor
 
             return snackbar;
         }
-        
+
         /// <inheritdoc />
         public Snackbar? Add<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(Dictionary<string, object>? componentParameters = null, Severity severity = Severity.Normal, Action<SnackbarOptions>? configure = null, string? key = null) where T : IComponent
         {
@@ -220,7 +220,7 @@ namespace MudBlazor
                 ShownSnackbars.Where(s => s.State.Options.CloseAfterNavigation).ToList().ForEach(s => Remove(s));
             }
         }
-        
+
 
         private void RemoveAllSnackbars(IEnumerable<Snackbar> snackbars)
         {
