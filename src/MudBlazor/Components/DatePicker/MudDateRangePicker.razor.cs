@@ -73,6 +73,16 @@ namespace MudBlazor
             set => SetDateRangeAsync(value, true).CatchAndLog();
         }
 
+        /// <summary>
+        /// Enables capture for disabled dates within the selected date range.
+        /// </summary>
+        /// <remarks>
+        /// By default, it will always ignore disabled dates. This parameter will take effect when <see cref="MudBaseDatePicker.IsDateDisabledFunc"/> is set.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public bool StrictCaptureRange { get; set; } = true;
+
         protected async Task SetDateRangeAsync(DateRange range, bool updateValue)
         {
             if (_dateRange != range)
@@ -83,7 +93,7 @@ namespace MudBlazor
                     .TakeWhile(date => date <= range.End.Value)
                     .Any(date => IsDateDisabledFunc(date.Date));
 
-                if (doesRangeContainDisabledDates)
+                if (doesRangeContainDisabledDates && StrictCaptureRange)
                 {
                     _rangeText = null;
                     await SetTextAsync(null, false);
