@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Docs.Extensions;
 
 namespace MudBlazor.Docs.Components;
 
@@ -30,7 +31,7 @@ public partial class ApiBreadcrumbs
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
-        Items = [new("Index", "/api")];
+        Items = [];
 
         if (Type == null)
         {
@@ -38,13 +39,13 @@ public partial class ApiBreadcrumbs
         }
 
         // Add the type breadcrumb
-        Items.Add(new(Type.Name, $"/api/{Type.Name}"));
         var parent = Type.BaseType;
         // Walk up the hierarchy and add base type breadcrumbs
-        while (parent != null)
+        while (parent != null && parent.Name != "Object" && parent.Name != "ComponentBase")
         {
-            Items.Insert(1, new(parent.Name, $"/api/{parent.Name}"));
+            Items.Insert(0, new(parent.GetFriendlyName(), $"/api/{parent.Name}"));
             parent = parent.BaseType;
         }
+        Items.Add(new(Type.GetFriendlyName(), $"/api/{Type.Name}"));
     }
 }

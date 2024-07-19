@@ -1,5 +1,6 @@
 ﻿@page "/api/{TypeName}"
 @using MudBlazor.Docs.Components
+@using MudBlazor.Docs.Extensions
 @using Services.XmlDocs
 @namespace MudBlazor.Docs.Pages.Api
 
@@ -19,7 +20,7 @@
             @if (Type.IsSubclassOf(typeof(MudComponentBase)))
             {
                 <MudAlert Severity="Severity.Info" Class="mt-6">
-                    For examples and details on the usage of this component, visit the example page: <MudLink Href="@($"/components/{Type.Name}")" Typo="Typo.inherit">@Type.Name</MudLink>
+                    For examples and details on the usage of this component, visit the example page: <MudLink Href="@($"/components/{Type.Name}")" Typo="Typo.inherit">@Type.GetFriendlyName()</MudLink>
                 </MudAlert>
             }
 
@@ -77,7 +78,7 @@
                     <SectionContent Outlined="true" IsApiSection="true">
                         <MudGrid Class="pa-0">
                             <MudItem xs="12">
-                                <ApiTypeTable BaseType="@Type" />
+                                <ApiTypeTable BaseTypeName="@TypeName" />
                             </MudItem>
                         </MudGrid>
                     </SectionContent>

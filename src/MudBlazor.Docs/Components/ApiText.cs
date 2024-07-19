@@ -36,23 +36,16 @@ public partial class ApiText : ComponentBase
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         // Anything to do?
-        if (Comments == null || string.IsNullOrEmpty(Comments.FullCommentText))
+        if (Comments == null || string.IsNullOrEmpty(Comments.Summary + Comments.Remarks))
         {
             return;
         }
-
-        //Debug.Write("Rendering: " + Comments.FullCommentText);
-
-
-        //if (Comments.FullCommentText.Contains("M:MudBlazor.Services.ServiceCollectionExtensions.AddLocalizationInterceptor``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{System.IServiceProvider,``0})"))
-        //{
-        //    Debugger.Break();
-        //}
 
         var sequence = 0;
 
         // Convert XML documentation text, links, and HTML to MudBlazor equivalents
         var xml = XElement.Parse("<xml>" + Comments.Summary + " " + Comments.Remarks + "</xml>");
+
         using var reader = xml.CreateReader();
         while (reader.Read())
         {
@@ -65,6 +58,7 @@ public partial class ApiText : ComponentBase
                     switch (reader.Name)
                     {
                         case "see":
+                            var isEmptyElement = reader.IsEmptyElement;
                             reader.MoveToFirstAttribute();
                             var link = reader.Value;
                             switch (reader.Name)
@@ -84,11 +78,14 @@ public partial class ApiText : ComponentBase
                                     {
                                         if (linkRef.StartsWith("MudBlazor.Icons"))
                                         {
-                                            builder.AddMudIcon(sequence++, linkRef, Color.Primary, Size.Medium);
+                                            builder.AddMudIconWithTooltip(sequence++, linkRef, Color.Primary, Size.Medium);
                                         }
                                         else if (linkRef.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase) || linkRef.StartsWith("System", StringComparison.OrdinalIgnoreCase))
                                         {
-                                            builder.AddMudLink(0, $"https://learn.microsoft.com/en-us/dotnet/api/{linkRef}", linkRef, "docs-link docs-code docs-code-primary", "_external");
+                                            // Extract the type and member
+                                            var values = linkRef.Split(".");
+                                            var typeAndMember = values[values.Length - 2] + "." + values[values.Length - 1];
+                                            builder.AddMudLink(0, $"https://learn.microsoft.com/en-us/dotnet/api/{linkRef}", typeAndMember, "docs-link docs-code docs-code-primary", "_external");
                                         }
                                         else if (linkRef.StartsWith("MudBlazor."))
                                         {
@@ -104,7 +101,28 @@ public partial class ApiText : ComponentBase
                                     }
                                     break;
                                 case "href":
-                                    builder.AddMudLink(sequence++, link, link, "docs-link docs-code docs-code-primary", "_external");
+
+                                    // Is this a self contained (<see />) element?
+                                    if (isEmptyElement)
+                                    {
+                                        // Yes
+                                        builder.AddMudLink(sequence++, link, link, "docs-link docs-code docs-code-primary", "_external");
+                                    }
+                                    else
+                                    {
+                                        // No.  Get the link text
+                                        reader.Read();
+                                        while (reader.NodeType != XmlNodeType.Text)
+                                        {
+                                            reader.Read();
+                                        }
+                                        builder.AddExternalMudLink(sequence++, link, reader.Value, "docs-link docs-code docs-code-secondary");
+                                        while (!(reader.NodeType == XmlNodeType.EndElement && reader.Name == "see"))
+                                        {
+                                            reader.Read();
+                                        }
+                                    }
+
                                     break;
                             }
                             break;

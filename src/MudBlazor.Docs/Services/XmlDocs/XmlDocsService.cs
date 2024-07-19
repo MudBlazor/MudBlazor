@@ -48,7 +48,6 @@ public sealed class XmlDocsService : IXmlDocsService
         ?? typeof(string).Assembly.GetType(typeName)
         ?? typeof(RenderFragment).Assembly.GetType(typeName);
 
-
         return type;
     }
 

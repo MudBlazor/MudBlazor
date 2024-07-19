@@ -218,7 +218,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.IndentLevel++;
                 // Create Api.razor with a type
                 cb.AddLine(@$"ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager(""https://localhost:2112/"", ""https://localhost:2112/components/{type.Name}""));");
-                cb.AddLine($@"ctx.Services.AddSingleton<IXmlDocsService, XmlDocsService>();");
+                cb.AddLine($@"ctx.Services.AddScoped<IXmlDocsService, XmlDocsService>();");
                 cb.AddLine(@$"var comp = ctx.RenderComponent<Api>(ComponentParameter.CreateParameter(""TypeName"", ""{type.Name}""));");
                 cb.AddLine(@$"await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();");
                 // Make sure docs for the type were actually found

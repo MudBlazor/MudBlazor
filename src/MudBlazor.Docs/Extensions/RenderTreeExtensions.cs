@@ -67,6 +67,22 @@ public static class RenderTreeExtensions
     /// <param name="iconTypeName"></param>
     /// <param name="color"></param>
     /// <param name="size"></param>
+    public static void AddMudIconWithTooltip(this RenderTreeBuilder builder, int sequence, string iconTypeName, Color color = Color.Default, Size size = Size.Small)
+    {
+        AddMudTooltip(builder, sequence, Placement.Top, iconTypeName, (childSequence, childContentBuilder) =>
+        {
+            AddMudIcon(childContentBuilder, childSequence, iconTypeName, color, size);
+        });
+    }
+
+    /// <summary>
+    /// Adds a MudIcon component to the render tree.
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <param name="sequence"></param>
+    /// <param name="iconTypeName"></param>
+    /// <param name="color"></param>
+    /// <param name="size"></param>
     public static void AddMudIcon(this RenderTreeBuilder builder, int sequence, string iconTypeName, Color color = Color.Default, Size size = Size.Small)
     {
         // Use Reflection to get the SVG for the icon
@@ -74,15 +90,12 @@ public static class RenderTreeExtensions
         var icon = parts[parts.Length - 1];
         var svg = typeof(Icons).GetNestedType(parts[2])?.GetNestedType(parts[3])?.GetField(icon)?.GetValue(null);
         // And pass into a <MudIcon>
-        AddMudTooltip(builder, sequence, Placement.Top, iconTypeName, (childSequence, childContentBuilder) =>
-        {
-            childContentBuilder.OpenComponent<MudIcon>(childSequence++);
-            childContentBuilder.AddComponentParameter(childSequence++, "Color", color);
-            childContentBuilder.AddComponentParameter(childSequence++, "Size", size);
-            childContentBuilder.AddComponentParameter(childSequence++, "Icon", svg);
-            childContentBuilder.AddComponentParameter(childSequence++, "Style", "position:relative;top:7px;"); // Vertically center the icon
-            childContentBuilder.CloseComponent();
-        });
+        builder.OpenComponent<MudIcon>(sequence++);
+        builder.AddComponentParameter(sequence++, "Color", color);
+        builder.AddComponentParameter(sequence++, "Size", size);
+        builder.AddComponentParameter(sequence++, "Icon", svg);
+        builder.AddComponentParameter(sequence++, "Style", "position:relative;top:7px;"); // Vertically center the icon
+        builder.CloseComponent();
     }
 
     /// <summary>
@@ -112,6 +125,34 @@ public static class RenderTreeExtensions
             linkContentBuilder.AddContent(5, text);
         }));
         builder.CloseComponent();
+        builder.CloseRegion();
+    }
+
+    /// <summary>
+    /// Adds a MudLink component.
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <param name="sequence"></param>
+    /// <param name="href"></param>
+    /// <param name="text"></param>
+    /// <param name="cssClass"></param>
+    /// <param name="target"></param>
+    public static void AddExternalMudLink(this RenderTreeBuilder builder, int sequence, string href, string text = null, string cssClass = null)
+    {
+        builder.OpenRegion(sequence);
+        builder.OpenComponent<MudLink>(0);
+        builder.AddComponentParameter(1, "Href", href);
+        if (!string.IsNullOrEmpty(cssClass))
+        {
+            builder.AddComponentParameter(2, "Class", cssClass);
+        }
+        builder.AddComponentParameter(3, "Target", "_external");
+        builder.AddComponentParameter(4, "ChildContent", (RenderFragment)(linkContentBuilder =>
+        {
+            linkContentBuilder.AddContent(5, text);
+        }));
+        builder.CloseComponent();
+        //builder.AddMudIcon(6, "MudBlazor.Icons.Material.Filled.ArrowOutward", Color.Primary, Size.Small);
         builder.CloseRegion();
     }
 

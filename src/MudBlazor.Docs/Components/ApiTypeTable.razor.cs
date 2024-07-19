@@ -30,15 +30,29 @@ public partial class ApiTypeTable
     public MudTable<Type>? Table { get; set; }
 
     /// <summary>
-    /// The base type to filter types by.
+    /// The name of the base type to filter by.
     /// </summary>
     [Parameter]
+    public string? BaseTypeName { get; set; }
+
+    /// <summary>
+    /// The base type to filter types by.
+    /// </summary>
     public Type? BaseType { get; set; }
 
     /// <summary>
     /// The keyword to search for.
     /// </summary>
     public string Keyword { get; set; } = "";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (BaseTypeName != null && Table != null && (BaseType == null || BaseType.Name != BaseTypeName))
+        {
+            BaseType = Docs!.GetType(BaseTypeName);
+            await Table!.ReloadServerData();
+        }
+    }
 
     /// <summary>
     /// Occurs when <see cref="Keyword"/> has changed.
