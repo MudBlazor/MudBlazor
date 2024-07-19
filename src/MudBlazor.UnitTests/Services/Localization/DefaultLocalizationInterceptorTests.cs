@@ -131,7 +131,7 @@ public class DefaultLocalizationInterceptorTests
         var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationIInterceptor);
 
         // Act
-        
+
         var result = internalMudLocalizer[LanguageResource.MudBaseDatePicker_PrevMonth, "2024"];
 
         // Assert
@@ -156,7 +156,7 @@ public class DefaultLocalizationInterceptorTests
             IgnoreDefaultEnglish = ignoreDefaultEnglish
         };
         var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationIInterceptor);
-        
+
         // Act
         var result = internalMudLocalizer[LanguageResource.MudColorPicker_ModeSwitch];
 
