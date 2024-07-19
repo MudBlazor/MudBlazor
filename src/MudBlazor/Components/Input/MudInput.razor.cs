@@ -138,7 +138,7 @@ namespace MudBlazor
         [Parameter] public EventCallback<WheelEventArgs> OnMouseWheel { get; set; }
 
         /// <summary>
-        /// Custom clear icon.
+        /// Custom clear icon when <see cref="Clearable"/> is enabled.
         /// </summary>
         [Parameter] public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 

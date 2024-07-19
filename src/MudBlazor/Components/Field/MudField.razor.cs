@@ -22,6 +22,7 @@ namespace MudBlazor
                 .AddClass("mud-shrink", when: () => !string.IsNullOrWhiteSpace(ChildContent?.ToString()) || Adornment == Adornment.Start)
                 .AddClass("mud-disabled", Disabled)
                 .AddClass("mud-input-error", Error && !string.IsNullOrEmpty(ErrorText))
+                .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
                 .Build();
 
         protected string InnerClassname =>
@@ -61,6 +62,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Field.Appearance)]
         public Margin Margin { get; set; } = Margin.None;
+
+        /// <summary>
+        /// Typography for the field text.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Field.Appearance)]
+        public Typo Typo { get; set; } = Typo.input;
 
         /// <summary>
         /// Displays the error in <see cref="ErrorText"/>.

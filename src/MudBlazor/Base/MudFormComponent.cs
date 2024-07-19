@@ -304,6 +304,12 @@ namespace MudBlazor
 
         protected virtual async Task ValidateValue()
         {
+            // if there is an EditContext, there is no need for internal validation as it will get overwritten by 'OnValidationStateChanged'
+            if (EditContext is not null)
+            {
+                return;
+            }
+
             var changed = false;
             var errors = new List<string>();
             try
@@ -409,9 +415,10 @@ namespace MudBlazor
         {
             try
             {
-                // The validation context is applied either on the `EditContext.Model`, '_fieldIdentifier.Model', or `this` as a stub subject.
+                // The validation context is applied either on the '_fieldIdentifier.Model', `EditContext.Model`, or `this` as a stub subject.
                 // Complex validation with fields references (like `CompareAttribute`) should use an EditContext or For when not using EditContext.
-                var validationContextSubject = EditContext?.Model ?? _fieldIdentifier.Model ?? this;
+                // Prioritize more specific validation context of the input component (_fieldIdentifier) over the one from the more general, surrounding form (EditContext).
+                var validationContextSubject = _fieldIdentifier.Model ?? EditContext?.Model ?? this;
                 var validationContext = new ValidationContext(validationContextSubject);
                 if (validationContext.MemberName is null && !IsNullOrEmpty(_fieldIdentifier.FieldName))
                 {
@@ -716,17 +723,21 @@ namespace MudBlazor
             base.OnParametersSet();
             if (For is not null && For != _currentFor)
             {
-                // Extract validation attributes
-                // Sourced from https://stackoverflow.com/a/43076222/4839162
-                // and also https://stackoverflow.com/questions/59407225/getting-a-custom-attribute-from-a-property-using-an-expression
-                var expression = (MemberExpression)For.Body;
+                // if there is an EditContext, there is no need for internal validation as it will get overwritten by 'OnValidationStateChanged'
+                if (EditContext is null)
+                {
+                    // Extract validation attributes
+                    // Sourced from https://stackoverflow.com/a/43076222/4839162
+                    // and also https://stackoverflow.com/questions/59407225/getting-a-custom-attribute-from-a-property-using-an-expression
+                    var expression = (MemberExpression)For.Body;
 
-                // Currently we have no solution for this which is trimming incompatible
-                // A possible solution is to use source gen
+                    // Currently we have no solution for this which is trimming incompatible
+                    // A possible solution is to use source gen
 #pragma warning disable IL2075
-                var propertyInfo = expression.Expression?.Type.GetProperty(expression.Member.Name);
+                    var propertyInfo = expression.Expression?.Type.GetProperty(expression.Member.Name);
 #pragma warning restore IL2075
-                _validationAttrsFor = propertyInfo?.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
+                    _validationAttrsFor = propertyInfo?.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
+                }
 
                 _fieldIdentifier = FieldIdentifier.Create(For);
                 _currentFor = For;
