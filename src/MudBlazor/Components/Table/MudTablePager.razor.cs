@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Resources;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -92,27 +94,38 @@ namespace MudBlazor
         /// </list> 
         /// </remarks>
         [Parameter]
-        public string InfoFormat { get; set; } = "{first_item}-{last_item} of {all_items}";
+        public string InfoFormat { get; set; } = string.Empty;
 
         /// <summary>
         /// The text displayed in the page-size dropdown when <see cref="PageSizeOptions"/> contains <see cref="int.MaxValue"/>.
         /// </summary>
         [Parameter]
-        public string AllItemsText { get; set; } = "All";
+        public string AllItemsText { get; set; } = string.Empty;
 
         private string Info
         {
             get
             {
+                if (Table is null)
+                {
+                    return "Table==null";
+                }
+                Debug.Assert(Table != null);
+
                 // fetch number of filtered items (once only)
                 var filteredItemsCount = Table?.GetFilteredItemsCount() ?? 0;
+                var firstItem = (filteredItemsCount == 0 ? 0 : (Table?.CurrentPage * Table?.RowsPerPage) + 1) ?? 0;
+                var lastItem = Math.Min((Table?.CurrentPage + 1) * Table?.RowsPerPage ?? 0, filteredItemsCount);
 
-                return Table is null
-                    ? "Table==null"
-                    : InfoFormat
-                        .Replace("{first_item}", $"{(filteredItemsCount == 0 ? 0 : (Table?.CurrentPage * Table?.RowsPerPage) + 1)}")
-                        .Replace("{last_item}", $"{Math.Min((Table?.CurrentPage + 1) * Table?.RowsPerPage ?? 0, filteredItemsCount)}")
+                if (InfoFormat.Contains("{first_item}") || InfoFormat.Contains("{last_item}") || InfoFormat.Contains("{all_items}"))
+                {
+                    return InfoFormat
+                        .Replace("{first_item}", $"{firstItem}")
+                        .Replace("{last_item}", $"{lastItem}")
                         .Replace("{all_items}", $"{filteredItemsCount}");
+                }
+
+                return Localizer[LanguageResource.MudDataGridPager_InfoFormat, firstItem, lastItem, filteredItemsCount];
             }
         }
 
@@ -120,7 +133,7 @@ namespace MudBlazor
         /// The text label for the current rows per page.
         /// </summary>
         [Parameter]
-        public string RowsPerPageString { get; set; } = "Rows per page:";
+        public string RowsPerPageString { get; set; } = string.Empty;
 
         /// <summary>
         /// The icon for the "First Page" button.
@@ -178,6 +191,22 @@ namespace MudBlazor
                 Context.PagerStateHasChanged = StateHasChanged;
                 var size = Table?._rowsPerPage ?? PageSizeOptions.FirstOrDefault();
                 SetRowsPerPage(size);
+            }
+        }
+
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+            if (string.IsNullOrEmpty(RowsPerPageString))
+            {
+                RowsPerPageString = Localizer[LanguageResource.MudDataGridPager_RowsPerPage];
+            }
+
+            if (string.IsNullOrEmpty(AllItemsText))
+            {
+                AllItemsText = Localizer[LanguageResource.MudDataGridPager_AllItems];
             }
         }
     }

@@ -1,7 +1,4 @@
-﻿
-#pragma warning disable CS1998 // async without await
-
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
@@ -23,7 +20,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Badge_Renders_When_VisibleIsTrue()
+        public void Badge_Renders_When_VisibleIsTrue()
         {
             var comp = Context.RenderComponent<MudBadge>();
             comp.SetParam("Visible", true);
@@ -31,7 +28,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Badge_Does_Not_Render_When_VisibleIsFalse()
+        public void Badge_Does_Not_Render_When_VisibleIsFalse()
         {
             var comp = Context.RenderComponent<MudBadge>();
             comp.SetParam("Visible", false);
@@ -50,7 +47,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Badge_AccessibilityAttributes()
+        public void Badge_AccessibilityAttributes()
         {
             // Arrange
             const string BadgeAriaLabel = "New notifications";

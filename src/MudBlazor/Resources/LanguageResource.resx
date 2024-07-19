@@ -366,4 +366,13 @@
   <data name="MudSnackbar_Close" xml:space="preserve">
     <value>Close snackbar</value>
   </data>
+  <data name="MudDataGridPager_RowsPerPage" xml:space="preserve">
+    <value>Rows per page:</value>
+  </data>
+  <data name="MudDataGridPager_AllItems" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="MudDataGridPager_InfoFormat" xml:space="preserve">
+    <value>{0}-{1} of {2}</value>
+  </data>
 </root>
