@@ -21,7 +21,9 @@
 
 @code {
     private string _roadMap;
-    [Inject] HttpClient HttpClient { get; set; }
+
+    [Inject]
+    private HttpClient HttpClient { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -29,10 +31,14 @@
         _roadMap = await response.Content.ReadAsStringAsync();
     }
 
-    private string GetBody(string value)
+    private static string GetBody(string value)
     {
+        // Wrap paragraphs in <p> tags before titles are converted to HTML headers
+        value = Regex.Replace(value, @"(^|\n\n)(?!#)([^\n]+(\n(?!#)[^\n]+)*)", "$1<p>$2</p>", RegexOptions.Multiline);
         value = Regex.Replace(value, @"(##\s)(?<title>.+)", "<h5 class=\"mud-typography mud-typography-h5 mt-3\"><b>${title}</b></h5><hr class=\"mud-divider mud-divider-fullwidth\">");
         value = Regex.Replace(value, @"(#\s)(?<title>.+)", "<h4 class=\"mud-typography mud-typography-h4\"><b>${title}</b></h4><hr class=\"mud-divider mud-divider-fullwidth\">");
+        value = Regex.Replace(value, @"\[(.*?)\]\((.*?)\)", "<a target=\"_blank\" href=\"$2\" class=\"mud-link mud-primary-text mud-link-underline-hover\">$1</a>");
+
         return value;
     }
 }
