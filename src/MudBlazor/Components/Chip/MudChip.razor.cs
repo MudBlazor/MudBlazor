@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -15,6 +16,12 @@ namespace MudBlazor;
 /// <typeparam name="T">The type of item managed by this component.</typeparam>
 public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 {
+    [Inject]
+    private IKeyInterceptorFactory KeyInterceptorFactory { get; set; } = null!;
+
+    private IKeyInterceptor? _keyInterceptor;
+    private string _chipContainerId = $"chip-container-{Guid.NewGuid()}";
+
     public MudChip()
     {
         using var registerScope = CreateRegisterScope();
@@ -63,7 +70,8 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         .AddClass(Class)
         .Build();
 
-    private bool IsClickable => !ChipSet?.ReadOnly ?? (OnClick.HasDelegate || !string.IsNullOrEmpty(Href));
+    private bool IsClickable => (GetDisabled() is false || GetReadonly() is false)
+                                && (ChipSet is not null || OnClick.HasDelegate || !string.IsNullOrEmpty(Href));
 
     private string? RoleAttribute => IsClickable ? "button" : null;
 
@@ -97,6 +105,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     private Size GetSize() => Size ?? ChipSet?.Size ?? MudBlazor.Size.Medium;
 
     private bool GetDisabled() => Disabled || (ChipSet?.Disabled ?? false);
+    private bool GetReadonly() => ChipSet?.ReadOnly ?? false;
 
     private bool GetRipple() => Ripple ?? ChipSet?.Ripple ?? true;
 
@@ -339,6 +348,26 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         await ChipSet.AddAsync(this);
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        _keyInterceptor = KeyInterceptorFactory.Create();
+
+        await _keyInterceptor.Connect(_chipContainerId, new KeyInterceptorOptions
+        {
+            TargetClass = "mud-chip",
+            Keys = {
+                new KeyOptions { Key="Enter", PreventDown = "key+none" },
+                new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" },
+                new KeyOptions { Key="Backspace", PreventDown = "key+none" },
+                new KeyOptions { Key="Delete", PreventDown = "key+none" }
+            },
+        });
+
+        _keyInterceptor.KeyDown += HandleKeyDown;
+    }
+
     protected internal async Task OnClickAsync(MouseEventArgs ev)
     {
         if (ChipSet?.ReadOnly == true)
@@ -379,6 +408,24 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         StateHasChanged();
     }
 
+    private void HandleKeyDown(KeyboardEventArgs args)
+    {
+        if (GetDisabled() || GetReadonly())
+        {
+            return;
+        }
+
+        switch (args.Key)
+        {
+            case "Enter" or "NumpadEnter" or " ":
+                OnClickAsync(new MouseEventArgs()).CatchAndLog();
+                break;
+            case "Backspace" or "Delete":
+                OnCloseAsync(new MouseEventArgs()).CatchAndLog();
+                break;
+        }
+    }
+
     /// <summary>
     /// Releases unused resources.
     /// </summary>
@@ -389,6 +436,15 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
             if (ChipSet is null)
                 return;
             await ChipSet.RemoveAsync(this);
+
+            if (_keyInterceptor != null)
+            {
+                _keyInterceptor.KeyDown -= HandleKeyDown;
+                if (IsJSRuntimeAvailable)
+                {
+                    _keyInterceptor.Dispose();
+                }
+            }
         }
         catch (Exception)
         {
