@@ -189,7 +189,7 @@ public class DefaultLocalizationInterceptorTests
         result.Value.Should().Be(expectedValue, "The value should be the template string with the provided parameter.");
     }
 
-    private string GetResourceString(string key, params object[] parameters)
+    private static string GetResourceString(string key, params object[] parameters)
     {
         var resourceString = LanguageResource.GetResourceString(key) ?? string.Empty;
 

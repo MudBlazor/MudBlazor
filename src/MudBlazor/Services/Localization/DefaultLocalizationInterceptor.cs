@@ -78,12 +78,7 @@ public class DefaultLocalizationInterceptor : AbstractLocalizationInterceptor
 
         // If CurrentUICulture is not english and a custom MudLocalizer service implementation is registered, try to use user provided languages.
         // If no translation was found, fallback to the internal English translation
-        var res = MudLocalizer[key];
-
-        if (anyArguments)
-        {
-            res = new LocalizedString(res.Name, string.Format(res.Value, arguments), res.ResourceNotFound);
-        }
+        var res = MudLocalizer[key, arguments]; //Handles both scenarios with empty or non-empty arguments.
 
         if (res.ResourceNotFound)
         {
