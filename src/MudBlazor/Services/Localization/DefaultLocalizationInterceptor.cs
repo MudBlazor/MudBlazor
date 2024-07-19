@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -52,6 +53,7 @@ public class DefaultLocalizationInterceptor : AbstractLocalizationInterceptor
     /// This method is called when the default English translation is ignored or unavailable, and a custom MudLocalizer service implementation is registered.
     /// It attempts to use user-provided languages, falling back to the internal English translation if MudLocalizer is missing or no resource is found.
     /// </remarks>
+    [ExcludeFromCodeCoverage]
     [Obsolete("Use TranslationWithFallback(string key, params object[] arguments) overload instead! Will be removed in v8.", true)]
     protected virtual LocalizedString TranslationFallback(string key) => TranslationWithFallback(key, Array.Empty<object>());
 
