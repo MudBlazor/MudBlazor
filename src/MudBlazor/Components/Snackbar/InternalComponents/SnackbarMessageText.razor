@@ -1,8 +1,13 @@
 ﻿@namespace MudBlazor.Components.Snackbar.InternalComponents
 
+@{
+    #nullable enable
+}
 @Message
 
 @code {
+
     [Parameter]
-    public string Message { get; set; }
+    public string Message { get; set; } = null!;
+
 }
