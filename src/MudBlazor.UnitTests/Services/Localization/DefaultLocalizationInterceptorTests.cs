@@ -86,4 +86,24 @@ public class DefaultLocalizationInterceptorTests
         // Assert
         result.Value.Should().Be("XXX", "The UICulture is not English therefore the value is the one from the Mock.");
     }
+
+    [Test]
+    [SetUICulture("fr-FR")]
+    public void TranslationWithTemplate_ReturnsTranslatedString()
+    {
+        // Arrange
+        var mudLocalizer = new Mock<MudLocalizer> { CallBase = true };
+        mudLocalizer.Setup(mock => mock["TemplateString"]).Returns(new LocalizedString("TemplateString", "Hello {0}!", resourceNotFound: false));
+        var defaultLocalizationIInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
+        {
+            IgnoreDefaultEnglish = false
+        };
+        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationIInterceptor);
+
+        // Act
+        var result = internalMudLocalizer["TemplateString", "World"];
+
+        // Assert
+        result.Value.Should().Be("Hello World!", "The value should be the template string with the provided parameter.");
+    }
 }
