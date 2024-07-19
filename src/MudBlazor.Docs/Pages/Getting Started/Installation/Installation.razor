@@ -15,12 +15,12 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Using the Templates">
+            <SectionHeader Title="Using Templates">
                 <Description>
                     To get started quickly, you can use our <MudLink Href="https://github.com/MudBlazor/Templates" Target="_blank"><b>dotnet templates</b></MudLink>.
-                    They're based on the Microsoft Web App template, but have been modified to include MudBlazor components.
+                    They're based on the Microsoft Web App template but have been modified to include MudBlazor components.
                     <br /><br />
-                    Open a terminal and install them with this command:
+                    Open a terminal and install them using this command:
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(InstallationTemplateInstallExample)" />
@@ -49,7 +49,7 @@
 
                 <DocsPageSection>
                     <SectionHeader Title="Install Package">
-                        <Description>Install through the NuGet Package Manager or with following command:</Description>
+                        <Description>Install the library through the NuGet Package Manager or with following command:</Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(InstallationManualPackageExample)" />
                 </DocsPageSection>
@@ -97,7 +97,7 @@
                             Note that the <CodeInline>ThemeProvider</CodeInline> is essential for MudBlazor but the rest are optional.
                             <MudAlert Class="mt-4" Severity="Severity.Warning">
                                 Each component in a Blazor Web App uses a render mode to specify its hosting model, rendering location, and interactivity.
-                                Interactivity is required for MudBlazor to work and static rendering is not supported at this time.
+                                Interactivity is required for MudBlazor to work as static rendering is not supported at this time.
                                 If you experience certain menus not appearing, your render mode may be configured incorrectly.
                                 <br />
                                 <MudLink Href="https://learn.microsoft.com/aspnet/core/blazor/components/render-modes" Target="_blank">Learn about render modes</MudLink>
