@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -4087,6 +4088,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [SetCulture("en-US")]
         public async Task DataGridServerGroupUngroupingTest()
         {
             var comp = Context.RenderComponent<DataGridServerDataColumnGroupingTest>();
@@ -4124,7 +4126,12 @@ namespace MudBlazor.UnitTests.Components
             clickablePopover.Click();
             cells = dataGrid.FindAll("td");
             // We do not need check all 10 rows as it's clear that it's ungrouped if first row pass
-            cells[0].TextContent.Should().Be("1"); cells[1].TextContent.Should().Be("H"); cells[2].TextContent.Should().Be("Hydrogen"); cells[3].TextContent.Should().Be("0"); cells[4].TextContent.Should().Be("1.00794"); cells[5].TextContent.Should().Be("Other");
+            cells[0].TextContent.Should().Be("1");
+            cells[1].TextContent.Should().Be("H");
+            cells[2].TextContent.Should().Be("Hydrogen");
+            cells[3].TextContent.Should().Be("0");
+            cells[4].TextContent.Should().Be("1.00794");
+            cells[5].TextContent.Should().Be("Other");
             dataGrid.Instance.GroupedColumn.Should().BeNull();
         }
 
