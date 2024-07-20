@@ -1,4 +1,4 @@
-// Copyright (c) MudBlazor 2021
+﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -20,7 +20,7 @@ internal static class CollectionExtensions
     {
         return Array.Exists(array, predicate);
     }
-    
+
     /// <summary>
     /// Determines whether any element of a list satisfies a condition.
     /// </summary>
