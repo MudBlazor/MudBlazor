@@ -217,7 +217,11 @@ namespace MudBlazor
             }
             else
             {
-                ShownSnackbars.Where(s => s.State.Options.CloseAfterNavigation).ToList().ForEach(s => Remove(s));
+                var snackbarsToRemove = ShownSnackbars.Where(s => s.State.Options.CloseAfterNavigation).ToArray();
+                foreach (var snackbar in snackbarsToRemove)
+                {
+                    Remove(snackbar);
+                }
             }
         }
 
