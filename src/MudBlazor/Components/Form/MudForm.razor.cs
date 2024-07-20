@@ -128,7 +128,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  When <c>false</c>, the form will submit when <c>Enter</c> is pressed, and any parent dialog will close.  See: 
-        /// <see cref="https://www.w3.org/TR/2018/SPSD-html5-20180327/forms.html#implicit-submission">Implicit Form Submission</see>.
+        /// <see href="https://www.w3.org/TR/2018/SPSD-html5-20180327/forms.html#implicit-submission">Implicit Form Submission</see>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Form.Behavior)]
