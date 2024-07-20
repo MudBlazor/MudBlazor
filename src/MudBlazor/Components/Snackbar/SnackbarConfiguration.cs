@@ -11,7 +11,7 @@ namespace MudBlazor
         private bool _newestOnTop;
         private bool _preventDuplicates;
         private int _maxDisplayedSnackbars;
-        private string? _positionClass;
+        private string _positionClass = null!;
         private bool _clearAfterNavigation;
 
         internal event Action? OnUpdate;
@@ -46,7 +46,7 @@ namespace MudBlazor
             }
         }
 
-        public string? PositionClass
+        public string PositionClass
         {
             get => _positionClass;
             set

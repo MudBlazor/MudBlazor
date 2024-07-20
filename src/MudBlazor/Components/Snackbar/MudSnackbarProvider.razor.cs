@@ -8,13 +8,17 @@ using System.Linq;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
+#nullable enable
+
 namespace MudBlazor
 {
     public partial class MudSnackbarProvider : MudComponentBase, IDisposable
     {
-        [Inject] private ISnackbar Snackbars { get; set; }
+        [Inject]
+        private ISnackbar Snackbars { get; set; } = null!;
 
-        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")]
+        public bool RightToLeft { get; set; }
 
         protected IEnumerable<Snackbar> Snackbar => Snackbars.Configuration.NewestOnTop
                 ? Snackbars.ShownSnackbars.Reverse()
@@ -49,9 +53,18 @@ namespace MudBlazor
             InvokeAsync(StateHasChanged);
         }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Snackbars.OnSnackbarsUpdated -= OnSnackbarsUpdated;
+            }
+        }
+
         public void Dispose()
         {
-            Snackbars.OnSnackbarsUpdated -= OnSnackbarsUpdated;
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }
