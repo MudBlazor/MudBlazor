@@ -184,7 +184,6 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     {
         await VisibleChanged.InvokeAsync(_visibleState.Value);
 
-        // A change to false means the overlay is closing.
         if (!_visibleState.Value)
         {
             await OnClosed.InvokeAsync();
