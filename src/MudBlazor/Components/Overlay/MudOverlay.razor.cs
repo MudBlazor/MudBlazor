@@ -36,33 +36,48 @@ namespace MudBlazor
         /// <summary>
         /// Child content of the component.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Overlay.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Occurs when <see cref="Visible"/> changes.
+        /// Makes the overlay visible.
         /// </summary>
-        [Parameter]
-        public EventCallback<bool> VisibleChanged { get; set; }
-
-        /// <summary>
-        /// If true overlay will be visible. Two-way bindable.
-        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Overlay.Behavior)]
         public bool Visible { get; set; }
 
         /// <summary>
-        /// If true overlay will set Visible false on click.
+        /// Occurs when <see cref="Visible"/> changes.
         /// </summary>
+        /// <remarks>
+        /// This event is triggered when the visibility of the overlay changes.
+        /// </remarks>
+        [Parameter]
+        public EventCallback<bool> VisibleChanged { get; set; }
+
+        /// <summary>
+        /// Sets <see cref="Visible"/> to <c>false</c> on click.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Overlay.ClickAction)]
         public bool AutoClose { get; set; }
 
         /// <summary>
-        /// If true (default), the Document.body element will not be able to scroll
+        /// Prevents the <c>Document.body</c> element from scrolling.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Overlay.Behavior)]
         public bool LockScroll { get; set; } = true;
@@ -70,27 +85,39 @@ namespace MudBlazor
         /// <summary>
         /// The css class that will be added to body if lockscroll is used.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>"scroll-locked"</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Overlay.Behavior)]
         public string LockScrollClass { get; set; } = "scroll-locked";
 
         /// <summary>
-        /// If true applies the themes dark overlay color.
+        /// Applies the theme's dark overlay color.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Overlay.Behavior)]
         public bool DarkBackground { get; set; }
 
         /// <summary>
-        /// If true applies the themes light overlay color.
+        /// Applies the theme's light overlay color.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Overlay.Behavior)]
         public bool LightBackground { get; set; }
 
         /// <summary>
-        /// If true, use absolute positioning for the overlay.
+        /// Uses absolute positioning for the overlay.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Overlay.Behavior)]
         public bool Absolute { get; set; }
@@ -98,6 +125,9 @@ namespace MudBlazor
         /// <summary>
         /// Sets the z-index of the overlay.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>5</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Overlay.Behavior)]
         public int ZIndex { get; set; } = 5;
@@ -133,7 +163,6 @@ namespace MudBlazor
             await OnClick.InvokeAsync(ev);
         }
 
-        //if not visible or CSS `position:absolute`, don't lock scroll
         protected override async Task OnAfterRenderAsync(bool firstTime)
         {
             if (!LockScroll || Absolute)
@@ -162,19 +191,22 @@ namespace MudBlazor
             }
         }
 
-        //locks the scroll attaching a CSS class to the specified element, in this case the body
+        /// <summary>
+        /// Locks the scroll by attaching a CSS class to the specified element, in this case the body.
+        /// </summary>
         private ValueTask BlockScrollAsync()
         {
             return ScrollManager.LockScrollAsync("body", LockScrollClass);
         }
 
-        //removes the CSS class that prevented scrolling
+        /// <summary>
+        /// Removes the CSS class that prevented scrolling.
+        /// </summary>
         private ValueTask UnblockScrollAsync()
         {
             return ScrollManager.UnlockScrollAsync("body", LockScrollClass);
         }
 
-        //When disposing the overlay, remove the class that prevented scrolling
         public ValueTask DisposeAsync()
         {
             if (IsJSRuntimeAvailable)
