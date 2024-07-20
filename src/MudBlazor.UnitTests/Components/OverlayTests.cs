@@ -93,36 +93,54 @@ public class OverlayTests : BunitTest
     }
 
     [Test]
-    public void ShouldApplyDarkBackground()
+    [TestCase(true, true)]
+    [TestCase(true, false)]
+    [TestCase(false, true)]
+    [TestCase(false, false)]
+    public void ShouldApplyBackgroundColor(bool darkBackground, bool lightBackground)
     {
         var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, true)
-            .Add(p => p.DarkBackground, true)
+            .Add(p => p.DarkBackground, darkBackground)
+            .Add(p => p.LightBackground, lightBackground)
         );
 
-        comp.Find("div.mud-overlay-scrim").ClassList.Should().Contain("mud-overlay-dark");
+        if (darkBackground || lightBackground)
+        {
+            if (darkBackground)
+            {
+                comp.Find("div.mud-overlay-scrim").ClassList.Should().Contain("mud-overlay-dark");
+            }
+
+            if (lightBackground)
+            {
+                comp.Find("div.mud-overlay-scrim").ClassList.Should().Contain("mud-overlay-light");
+            }
+        }
+        else
+        {
+            comp.FindAll("div.mud-overlay-scrim").Count.Should().Be(0);
+        }
     }
 
     [Test]
-    public void ShouldApplyLightBackground()
+    [TestCase(true)]
+    [TestCase(false)]
+    public void ShouldApplyAbsoluteClass(bool absolute)
     {
         var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, true)
-            .Add(p => p.LightBackground, true)
+            .Add(p => p.Absolute, absolute)
         );
 
-        comp.Find("div.mud-overlay-scrim").ClassList.Should().Contain("mud-overlay-light");
-    }
-
-    [Test]
-    public void ShouldApplyAbsoluteClass()
-    {
-        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
-            .Add(p => p.Visible, true)
-            .Add(p => p.Absolute, true)
-        );
-
-        comp.Find("div.mud-overlay").ClassList.Should().Contain("mud-overlay-absolute");
+        if (absolute)
+        {
+            comp.Find("div.mud-overlay").ClassList.Should().Contain("mud-overlay-absolute");
+        }
+        else
+        {
+            comp.Find("div.mud-overlay").ClassList.Should().NotContain("mud-overlay-absolute");
+        }
     }
 
     [Test]
