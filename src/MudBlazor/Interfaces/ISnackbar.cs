@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor;
 
 /// <summary>
-/// Defines the functionality of a snackbar service in MudBlazor.
+/// Defines the snackbar service.
 /// </summary>
 public interface ISnackbar : IDisposable
 {
@@ -36,7 +36,7 @@ public interface ISnackbar : IDisposable
     /// <param name="message">The message to display in the snackbar.</param>
     /// <param name="severity">The severity of the snackbar message. Default is <see cref="Severity.Normal"/>.</param>
     /// <param name="configure">Optional action to configure the <see cref="SnackbarOptions"/>.</param>
-    /// <param name="key">An optional key to uniquely identify the snackbar.</param>
+    /// <param name="key">An optional key to uniquely identify the snackbar. Default is the value of <paramref name="message"/>.</param>
     /// <returns>The created snackbar instance, or null if not created.</returns>
     /// <remarks>If a <paramref name="key"/> is provided, this snackbar will not be shown while any snackbar with the same key is being shown.</remarks>
     Snackbar? Add(string message, Severity severity = Severity.Normal, Action<SnackbarOptions>? configure = null, string? key = null);
@@ -47,7 +47,7 @@ public interface ISnackbar : IDisposable
     /// <param name="message">The markup message to display in the snackbar.</param>
     /// <param name="severity">The severity of the snackbar message. Default is <see cref="Severity.Normal"/>.</param>
     /// <param name="configure">Optional action to configure the <see cref="SnackbarOptions"/>.</param>
-    /// <param name="key">An optional key to uniquely identify the snackbar.</param>
+    /// <param name="key">An optional key to uniquely identify the snackbar. Default is the value of <paramref name="message"/>.</param>
     /// <returns>The created snackbar instance, or null if not created.</returns>
     /// <remarks>If a <paramref name="key"/> is provided, this snackbar will not be shown while any snackbar with the same key is being shown.</remarks>
     Snackbar? Add(MarkupString message, Severity severity = Severity.Normal, Action<SnackbarOptions>? configure = null, string? key = null);

@@ -92,7 +92,7 @@ namespace MudBlazor
 
             var componentParams = new Dictionary<string, object>()
             {
-                { "Message", message as object }
+                { "Message", message }
             };
 
             return Add<SnackbarMessageRenderFragment>
