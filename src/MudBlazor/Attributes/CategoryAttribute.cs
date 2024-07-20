@@ -394,6 +394,7 @@ namespace MudBlazor
         {
             public const string Behavior = "Behavior";
             public const string ClickAction = "Click action";
+            public const string Appearance = "Appearance";
         }
 
         public static class Pagination

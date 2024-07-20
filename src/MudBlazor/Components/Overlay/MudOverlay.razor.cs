@@ -99,7 +99,7 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     /// Defaults to <c>false</c>.
     /// </remarks>
     [Parameter]
-    [Category(CategoryTypes.Overlay.Behavior)]
+    [Category(CategoryTypes.Overlay.Appearance)]
     public bool DarkBackground { get; set; }
 
     /// <summary>
@@ -109,7 +109,7 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     /// Defaults to <c>false</c>.
     /// </remarks>
     [Parameter]
-    [Category(CategoryTypes.Overlay.Behavior)]
+    [Category(CategoryTypes.Overlay.Appearance)]
     public bool LightBackground { get; set; }
 
     /// <summary>
@@ -135,12 +135,16 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     /// <summary>
     /// Occurs when the overlay is clicked.
     /// </summary>
+    [Obsolete("The OnClosed event with AutoClose should be preferred as they handle touch as well. Otherwise you can still use the @onclick event directly.")]
     [Parameter]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
 
     /// <summary>
     /// Occurs when <see cref="Visible"/> changes to <c>false</c>.
     /// </summary>
+    /// <remarks>
+    /// Typically used in conjunction with <see cref="AutoClose"/>, otherwise the <see cref="VisibleChanged"/> event may be more suitable.
+    /// </remarks>
     [Parameter]
     public EventCallback OnClosed { get; set; }
 
@@ -160,7 +164,9 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
             await _visibleState.SetValueAsync(false);
         }
 
+#pragma warning disable CS0618 // Type or member is obsolete
         await OnClick.InvokeAsync(ev);
+#pragma warning restore CS0618 // Type or member is obsolete
     }
 
     protected override async Task OnAfterRenderAsync(bool firstTime)
