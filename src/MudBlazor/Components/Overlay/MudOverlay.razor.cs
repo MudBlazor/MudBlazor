@@ -140,11 +140,8 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     public EventCallback<MouseEventArgs> OnClick { get; set; }
 
     /// <summary>
-    /// Occurs when <see cref="Visible"/> changes to <c>false</c>.
+    /// Occurs when the overlay is closed due to <see cref="AutoClose"/>.
     /// </summary>
-    /// <remarks>
-    /// Typically used in conjunction with <see cref="AutoClose"/>, otherwise the <see cref="VisibleChanged"/> event may be more suitable.
-    /// </remarks>
     [Parameter]
     public EventCallback OnClosed { get; set; }
 
@@ -155,18 +152,6 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
             .WithParameter(() => Visible)
             .WithEventCallback(() => VisibleChanged)
             .WithChangeHandler(OnVisibleParameterChangedAsync);
-    }
-
-    protected internal async Task OnClickHandlerAsync(MouseEventArgs ev)
-    {
-        if (AutoClose)
-        {
-            await _visibleState.SetValueAsync(false);
-        }
-
-#pragma warning disable CS0618 // Type or member is obsolete
-        await OnClick.InvokeAsync(ev);
-#pragma warning restore CS0618 // Type or member is obsolete
     }
 
     protected override async Task OnAfterRenderAsync(bool firstTime)
@@ -186,14 +171,22 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
         }
     }
 
-    private async Task OnVisibleParameterChangedAsync()
+    private Task OnVisibleParameterChangedAsync()
     {
-        await VisibleChanged.InvokeAsync(_visibleState.Value);
+        return VisibleChanged.InvokeAsync(_visibleState.Value);
+    }
 
-        if (!_visibleState.Value)
+    protected internal async Task OnClickHandlerAsync(MouseEventArgs ev)
+    {
+        if (AutoClose)
         {
+            await _visibleState.SetValueAsync(false);
             await OnClosed.InvokeAsync();
         }
+
+#pragma warning disable CS0618 // Type or member is obsolete
+        await OnClick.InvokeAsync(ev);
+#pragma warning restore CS0618 // Type or member is obsolete
     }
 
     /// <summary>
