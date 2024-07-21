@@ -20,18 +20,20 @@ namespace MudBlazor
         [Inject]
         private IKeyInterceptorFactory KeyInterceptorFactory { get; set; } = null!;
 
-        protected string Classname => new CssBuilder("mud-input-control-boolean-input")
+        protected new string Classname => new CssBuilder("mud-input-control-boolean-input")
+            .AddClass($"mud-disabled", GetDisabledState())
+            .AddClass($"mud-readonly", GetReadOnlyState())
+            .AddClass("mud-input-with-content", ChildContent is not null)
             .AddClass(Class)
             .Build();
 
-        protected string LabelClassname => new CssBuilder("mud-checkbox")
+        protected new string LabelClassname => new CssBuilder("mud-checkbox")
             .AddClass($"mud-disabled", GetDisabledState())
             .AddClass($"mud-readonly", GetReadOnlyState())
-            .AddClass("flex-row-reverse", LabelPosition == LabelPosition.Start)
             .AddClass($"mud-input-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
             .Build();
 
-        protected string CheckBoxClassname => new CssBuilder("mud-button-root mud-icon-button")
+        protected new string IconClassname => new CssBuilder("mud-button-root mud-icon-button")
             .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor == null || (UncheckedColor != null && BoolValue == true))
             .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && BoolValue == false)
             .AddClass($"mud-checkbox-dense", Dense)
@@ -72,16 +74,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string? Label { get; set; }
-
-        /// <summary>
-        /// The position of the <see cref="Label" /> text.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="LabelPosition.End"/>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public LabelPosition LabelPosition { get; set; } = LabelPosition.End;
 
         /// <summary>
         /// Allows this checkbox to be controlled via the keyboard.

@@ -16,48 +16,42 @@ namespace MudBlazor
         [Inject]
         private IKeyInterceptorFactory KeyInterceptorFactory { get; set; } = null!;
 
-        protected string Classname =>
-            new CssBuilder("mud-input-control-boolean-input")
-                .AddClass(Class)
-                .Build();
+        protected new string Classname => new CssBuilder("mud-input-control-boolean-input")
+            .AddClass(Class)
+            .Build();
 
-        protected string LabelClassname =>
-            new CssBuilder("mud-switch")
-                .AddClass("mud-disabled", GetDisabledState())
-                .AddClass("mud-readonly", GetReadOnlyState())
-                .AddClass(LabelPosition == LabelPosition.End ? "" : "flex-row-reverse", true)
-                .Build();
+        protected new string LabelClassname => new CssBuilder("mud-switch")
+            .AddClass("mud-disabled", GetDisabledState())
+            .AddClass("mud-readonly", GetReadOnlyState())
+            .AddClass($"mud-input-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
+            .AddClass(LabelPosition == LabelPosition.End ? "" : "flex-row-reverse", true)
+            .Build();
 
-        protected string SwitchLabelClassname =>
-            new CssBuilder($"mud-switch-label-{Size.ToDescriptionString()}")
-                .Build();
+        protected string SwitchLabelClassname => new CssBuilder($"mud-switch-label-{Size.ToDescriptionString()}")
+            .Build();
 
-        protected string SwitchClassname =>
-            new CssBuilder("mud-button-root mud-icon-button mud-switch-base")
-                .AddClass($"mud-ripple mud-ripple-switch", Ripple && !GetReadOnlyState() && !GetDisabledState())
-                .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == true)
-                .AddClass($"mud-{UncheckedColor.ToDescriptionString()}-text hover:mud-{UncheckedColor.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == false)
-                .AddClass($"mud-switch-disabled", GetDisabledState())
-                .AddClass($"mud-readonly", GetReadOnlyState())
-                .AddClass($"mud-checked", BoolValue)
-                .AddClass($"mud-switch-base-{Size.ToDescriptionString()}")
-                .Build();
+        protected string SwitchClassname => new CssBuilder("mud-button-root mud-icon-button mud-switch-base")
+            .AddClass($"mud-ripple mud-ripple-switch", Ripple && !GetReadOnlyState() && !GetDisabledState())
+            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == true)
+            .AddClass($"mud-{UncheckedColor.ToDescriptionString()}-text hover:mud-{UncheckedColor.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == false)
+            .AddClass($"mud-switch-disabled", GetDisabledState())
+            .AddClass($"mud-readonly", GetReadOnlyState())
+            .AddClass($"mud-checked", BoolValue)
+            .AddClass($"mud-switch-base-{Size.ToDescriptionString()}")
+            .Build();
 
-        protected string TrackClassname =>
-            new CssBuilder("mud-switch-track")
-                .AddClass($"mud-{Color.ToDescriptionString()}", BoolValue == true)
-                .AddClass($"mud-{UncheckedColor.ToDescriptionString()}", BoolValue == false)
-                .Build();
+        protected string TrackClassname => new CssBuilder("mud-switch-track")
+            .AddClass($"mud-{Color.ToDescriptionString()}", BoolValue == true)
+            .AddClass($"mud-{UncheckedColor.ToDescriptionString()}", BoolValue == false)
+            .Build();
 
-        protected string ThumbClassname =>
-            new CssBuilder($"mud-switch-thumb-{Size.ToDescriptionString()}")
-                .AddClass("d-flex align-center justify-center")
-                .Build();
+        protected string ThumbClassname => new CssBuilder($"mud-switch-thumb-{Size.ToDescriptionString()}")
+            .AddClass("d-flex align-center justify-center")
+            .Build();
 
-        protected string SpanClassname =>
-            new CssBuilder("mud-switch-span mud-flip-x-rtl")
-                .AddClass($"mud-switch-span-{Size.ToDescriptionString()}")
-                .Build();
+        protected string SpanClassname => new CssBuilder("mud-switch-span mud-flip-x-rtl")
+            .AddClass($"mud-switch-span-{Size.ToDescriptionString()}")
+            .Build();
 
         /// <summary>
         /// The color of the component. It supports the theme colors.

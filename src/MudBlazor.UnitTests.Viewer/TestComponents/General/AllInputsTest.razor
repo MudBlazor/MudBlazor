@@ -62,6 +62,14 @@
     <MudButton Variant="Variant.Filled">Text</MudButton>
 </MudStack>
 
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">Boolean Input</MudText>
+<MudRadio Value="1" Placement="Placement.Right">With Content</MudRadio>
+<MudRadio Value="2" Placement="Placement.Right"></MudRadio>
+<MudCheckBox T="bool" Placement="Placement.Right" />
+<MudCheckBox T="bool" Placement="Placement.Right" Label="With Label" />
+<MudSwitch T="bool" />
+<MudSwitch T="bool" Label="With Label" />
+
 @code {
     public static string __description__ = "Test used to validate any inputs leyout in a single place.";
 }

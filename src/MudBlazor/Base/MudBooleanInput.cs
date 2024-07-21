@@ -17,6 +17,10 @@ namespace MudBlazor
     {
         public MudBooleanInput() : base(new BoolConverter<T?>()) { }
 
+        protected string? Classname { get; set; }
+        protected string? LabelClassname { get; set; }
+        protected string? IconClassname { get; set; }
+
         /// <summary>
         /// Prevents the user from interacting with this input.
         /// </summary>
