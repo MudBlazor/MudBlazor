@@ -28,6 +28,7 @@ namespace MudBlazor
             .AddClass($"mud-disabled", GetDisabledState())
             .AddClass($"mud-readonly", GetReadOnlyState())
             .AddClass("flex-row-reverse", LabelPosition == LabelPosition.Start)
+            .AddClass($"mud-input-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
             .Build();
 
         protected string CheckBoxClassname => new CssBuilder("mud-button-root mud-icon-button")

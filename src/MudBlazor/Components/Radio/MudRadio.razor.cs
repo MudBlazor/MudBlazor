@@ -18,8 +18,8 @@ namespace MudBlazor
             new CssBuilder("mud-radio")
                 .AddClass("mud-disabled", GetDisabled())
                 .AddClass("mud-readonly", GetReadOnly())
-                .AddClass($"mud-radio-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
-                .AddClass("mud-radio-with-content", ChildContent is not null)
+                .AddClass($"mud-input-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
+                .AddClass("mud-input-with-content", ChildContent is not null)
                 .AddClass(Class)
                 .Build();
 
@@ -58,9 +58,6 @@ namespace MudBlazor
         [Inject]
         private IKeyInterceptorFactory KeyInterceptorFactory { get; set; } = null!;
 
-        [CascadingParameter(Name = "RightToLeft")]
-        public bool RightToLeft { get; set; }
-
         /// <summary>
         /// The parent Radio Group
         /// </summary>
@@ -88,13 +85,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
         public Color? UncheckedColor { get; set; } = null;
-
-        /// <summary>
-        /// The position of the child content.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Radio.Behavior)]
-        public Placement Placement { get; set; } = Placement.End;
 
         /// <summary>
         /// If true, compact padding will be applied.
@@ -180,16 +170,6 @@ namespace MudBlazor
         internal bool Checked { get; private set; }
 
         internal MudRadioGroup<T>? MudRadioGroup => (MudRadioGroup<T>?)IMudRadioGroup;
-
-        private Placement ConvertPlacement(Placement placement)
-        {
-            return placement switch
-            {
-                Placement.Left => RightToLeft ? Placement.End : Placement.Start,
-                Placement.Right => RightToLeft ? Placement.Start : Placement.End,
-                _ => placement
-            };
-        }
 
         internal void SetChecked(bool value)
         {

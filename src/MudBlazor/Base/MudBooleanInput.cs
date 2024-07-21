@@ -72,6 +72,16 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool StopClickPropagation { get; set; } = true;
 
+        [CascadingParameter(Name = "RightToLeft")]
+        public bool RightToLeft { get; set; }
+
+        /// <summary>
+        /// The position of the child content.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Radio.Behavior)]
+        public Placement Placement { get; set; } = Placement.End;
+
         /// <summary>
         /// Occurs when the <see cref="Value"/> has changed.
         /// </summary>
@@ -127,6 +137,16 @@ namespace MudBlazor
         protected override bool HasValue(T? value)
         {
             return BoolValue == true;
+        }
+
+        protected Placement ConvertPlacement(Placement placement)
+        {
+            return placement switch
+            {
+                Placement.Left => RightToLeft ? Placement.End : Placement.Start,
+                Placement.Right => RightToLeft ? Placement.Start : Placement.End,
+                _ => placement
+            };
         }
     }
 }
