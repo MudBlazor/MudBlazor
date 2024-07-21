@@ -1,0 +1,56 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudButton OnClick="@(() => OpenDialogAsync(_maxWidth))">Open MaxWidth Dialog</MudButton>
+<MudButton OnClick="@(() => OpenDialogAsync(_closeOnEscape))" Color="Color.Primary">Close On Escape Dialog</MudButton>
+<MudButton OnClick="@(() => OpenDialogAsync(_noHeader))" Color="Color.Secondary">No header Dialog</MudButton>
+<MudButton OnClick="@(() => OpenDialogAsync(_backdropClick))" Color="Color.Tertiary">Disable backdrop dialog</MudButton>
+<MudButton OnClick="@(() => OpenDialogAsync(_fullScreen))" Color="Color.Info">Full Screen Dialog</MudButton>
+<MudButton OnClick="@(() => OpenDialogAsync(_topCenter))" Color="Color.Success">Top Center Dialog</MudButton>
+<br />
+<MudSwitch @bind-Value="_isInline" Label="Inline" LabelPosition="LabelPosition.End" />
+<MudChip T="string">@_state</MudChip>
+<br />
+
+<MudMessageBox @ref="_mudMessageBox" Title="Warning" CancelText="Cancel">
+    <MessageContent>
+        Deleting can <b><i>not</i></b> be undone!
+    </MessageContent>
+    <YesButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.DeleteForever">Delete!</MudButton>
+    </YesButton>
+</MudMessageBox>
+
+@code
+{
+    [Inject]
+    private IDialogService DialogService { get; set; }
+
+    private MudMessageBox _mudMessageBox;
+    private string _state = "Message box hasn't been opened yet";
+    private bool _isInline = true;
+
+    private readonly DialogOptions _maxWidth = new() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+    private readonly DialogOptions _closeOnEscape = new() { CloseOnEscapeKey = true };
+    private readonly DialogOptions _noHeader = new() { NoHeader = true };
+    private readonly DialogOptions _backdropClick = new() { BackdropClick = false };
+    private readonly DialogOptions _fullScreen = new() { FullScreen = true, CloseButton = true };
+    private readonly DialogOptions _topCenter = new() { Position = DialogPosition.TopCenter };
+
+    private async Task OpenDialogAsync(DialogOptions options)
+    {
+        bool? result;
+        if (_isInline)
+        {
+            result = await _mudMessageBox.ShowAsync(options);
+        }
+        else
+        {
+            result = await DialogService.ShowMessageBox(
+                        "Warning",
+                        (MarkupString)"Deleting can <b><i>not</i></b> be undone!",
+                        yesText: "Delete!", cancelText: "Cancel", options: options);
+        }
+        _state = result is null ? "Canceled" : "Deleted!";
+        StateHasChanged();
+    }
+}

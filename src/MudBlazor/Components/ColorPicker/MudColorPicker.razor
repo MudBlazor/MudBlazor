@@ -19,7 +19,7 @@
                                Color="Color.Inherit"
                                Icon="@CloseIcon"
                                OnClick="@GetEventCallback()"
-                               aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_Close)]" />
+                               aria-label="@Localizer[LanguageResource.MudColorPicker_Close]" />
             }
             <MudSpacer />
             <MudIconButton Class="pa-1"
@@ -27,19 +27,19 @@
                            Color="GetButtonColor(ColorPickerView.Spectrum)"
                            Icon="@SpectrumIcon"
                            OnClick="(() => ChangeView(ColorPickerView.Spectrum))"
-                           aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_SpectrumView)]" />
+                           aria-label="@Localizer[LanguageResource.MudColorPicker_SpectrumView]" />
             <MudIconButton Class="pa-1 mx-1"
                            Size="Size.Small"
                            Color="GetButtonColor(ColorPickerView.Grid)"
                            Icon="@GridIcon"
                            OnClick="(() => ChangeView(ColorPickerView.Grid))"
-                           aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_GridView)]" />
+                           aria-label="@Localizer[LanguageResource.MudColorPicker_GridView]" />
             <MudIconButton Class="pa-1"
                            Size="Size.Small"
                            Color="GetButtonColor(ColorPickerView.Palette)"
                            Icon="@PaletteIcon"
                            OnClick="(() => ChangeView(ColorPickerView.Palette))"
-                           aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_PaletteView)]" />
+                           aria-label="@Localizer[LanguageResource.MudColorPicker_PaletteView]" />
         </MudPickerToolbar>
         <MudPickerContent Class="mud-picker-color-content">
             @if (ShowColorField)
@@ -86,7 +86,7 @@
                                 <div class="@GetColorDotClass(item)"
                                      style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")"
                                      @onclick="@GetSelectPaletteColorCallback(item)"
-                                     aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_ColorDot)]"></div>
+                                     aria-label="@Localizer[LanguageResource.MudColorPicker_ColorDot]"></div>
                             }
                         </div>
                     }
@@ -104,7 +104,7 @@
                                 {
                                     <div class="mud-picker-color-dot mud-picker-color-dot-current mud-ripple"
                                          @onclick="ToggleCollection"
-                                         aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_ToggleCurrentColor)]">
+                                         aria-label="@Localizer[LanguageResource.MudColorPicker_ToggleCurrentColor]">
                                         <div class="mud-picker-color-fill" style="@($"background: {_value.ToString(MudColorOutputFormats.RGBA)};")"></div>
                                     </div>
                                 }
@@ -121,7 +121,7 @@
                                                        Step="1"
                                                        Min="0"
                                                        Max="360"
-                                                       aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_HueSlider)]" />
+                                                       aria-label="@Localizer[LanguageResource.MudColorPicker_HueSlider]" />
                                         }
                                         @if (ShowAlpha)
                                         {
@@ -133,7 +133,7 @@
                                                        Max="255"
                                                        Step="1"
                                                        Style="@AlphaSliderStyle"
-                                                       aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_AlphaSlider)]" />
+                                                       aria-label="@Localizer[LanguageResource.MudColorPicker_AlphaSlider]" />
                                         }
                                     </div>
                                 }
@@ -145,7 +145,7 @@
                                             <div class="@GetColorDotClass(item)"
                                                  style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")"
                                                  @onclick="@GetSelectPaletteColorCallback(item)"
-                                                 aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_PaletteColor)]"></div>
+                                                 aria-label="@Localizer[LanguageResource.MudColorPicker_PaletteColor]"></div>
                                         }
                                     </div>
                                 }
@@ -259,7 +259,7 @@
                                         <MudIconButton OnClick="ChangeMode"
                                                        Icon="@ImportExportIcon"
                                                        Class="pa-1 me-n1"
-                                                       aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_ModeSwitch)]"></MudIconButton>
+                                                       aria-label="@Localizer[LanguageResource.MudColorPicker_ModeSwitch]"></MudIconButton>
                                     </div>
                                 }
                             </div>
@@ -275,7 +275,7 @@
                                 <div class="@GetColorDotClass(item)"
                                      style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")"
                                      @onclick="@GetSelectPaletteColorCallback(item)"
-                                     aria-label="@Localizer[nameof(LanguageResource.MudColorPicker_PaletteColor)]"></div>
+                                     aria-label="@Localizer[LanguageResource.MudColorPicker_PaletteColor]"></div>
                             }
                         </div>
                     </div>

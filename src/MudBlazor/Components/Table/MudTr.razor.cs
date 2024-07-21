@@ -53,6 +53,15 @@ namespace MudBlazor
         public bool Checkable { get; set; }
 
         /// <summary>
+        /// Prevents the change of the current selection.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  Requires <see cref="Checkable"/> to be <c>true</c>.  Managed automatically by the parent <see cref="MudTable{T}"/>.
+        /// </remarks>
+        [Parameter]
+        public bool SelectionChangeable { get; set; } = true;
+
+        /// <summary>
         /// Allows this row to be edited.
         /// </summary>
         /// <remarks>
@@ -107,7 +116,7 @@ namespace MudBlazor
 
             table.SetSelectedItem(Item);
             StartEditingItem(buttonClicked: false);
-            if (table is { MultiSelection: true, SelectOnRowClick: true, Editable: false })
+            if (table is { MultiSelection: true, SelectionChangeable: true, SelectOnRowClick: true, Editable: false })
             {
                 Checked = !Checked;
             }

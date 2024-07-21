@@ -13,6 +13,12 @@ namespace MudBlazor
     public class PopoverOptions
     {
         /// <summary>
+        /// Gets or sets a value indicating whether to check for the presence of a popover provider <see cref="MudPopoverProvider"/>.
+        /// The default value is <c>true</c>.
+        /// </summary>
+        public bool CheckForPopoverProvider { get; set; } = true;
+
+        /// <summary>
         /// Gets or sets the CSS class of the popover container.
         /// The default value is <c>mudblazor-main-content</c>.
         /// </summary>

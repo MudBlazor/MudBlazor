@@ -22,7 +22,7 @@
         <textarea class="@InputClassname"
                   @ref="_elementReference"
                   @attributes="UserAttributes"
-                  id="@InputIdState.Value"
+                  id="@InputElementId"
                   type="@InputType.ToDescriptionString()"
                   value="@Text"
                   placeholder="@Placeholder"
@@ -45,7 +45,7 @@
         <input class="@InputClassname"
                @ref="_elementReference"
                @attributes="UserAttributes"
-               id="@InputIdState.Value"
+               id="@InputElementId"
                type="@InputType.ToDescriptionString()"
                value="@Text"
                placeholder="@Placeholder"
@@ -92,7 +92,7 @@
                        Icon="@ClearIcon"
                        Size="@Size.Small"
                        OnClick="@HandleClearButtonAsync"
-                       aria-label="@Localizer[nameof(LanguageResource.MudInput_Clear)]" />
+                       aria-label="@Localizer[LanguageResource.MudInput_Clear]" />
     }
 
     @if (Adornment == Adornment.End)

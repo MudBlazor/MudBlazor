@@ -18,7 +18,7 @@
             @if (DocumentedType.IsComponent)
             {
                 <MudAlert Severity="Severity.Info" Class="mt-6">
-                    For examples and details on the usage of this component, visit the example page: <MudLink Href="@DocumentedType.ComponentUrl">@DocumentedType.NameFriendly</MudLink>
+                    For examples and details on the usage of this component, visit the example page: <MudLink Href="@DocumentedType.ComponentUrl" Typo="Typo.inherit">@DocumentedType.NameFriendly</MudLink>
                 </MudAlert>
             }
 

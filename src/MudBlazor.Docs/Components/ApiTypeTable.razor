@@ -1,8 +1,15 @@
-﻿<MudTable T="DocumentedType" @ref="Table" ServerData="@GetData" Elevation="0" Class="ma-0 mud-width-full" Hover="true" Dense="true" AllowUnsorted="false">   
+﻿<MudTable T="DocumentedType" @ref="Table" ServerData="@GetData" Elevation="0" Class="ma-0 mud-width-full" Hover="true" Dense="true" AllowUnsorted="false">
     <ToolBarContent>
         <MudGrid Class="pa-0">
             <MudItem xs="12">
-                <MudTextField T="string" Value="Keyword" ValueChanged="OnKeywordChanged" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Placeholder="Search" Immediate="true" />
+                <MudTextField T="string"
+                              Value="Keyword"
+                              ValueChanged="OnKeywordChanged"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Search"
+                              Placeholder="Search"
+                              Immediate="true"
+                              DebounceInterval="300" />
             </MudItem>
         </MudGrid>
     </ToolBarContent>

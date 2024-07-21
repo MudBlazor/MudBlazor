@@ -89,15 +89,13 @@ public static partial class ApiDocumentation
     }
 
     /// <summary>
-    /// 
+    /// Yields documented types whose friendly name matches the given text.
     /// </summary>
     /// <param name="text"></param>
-    /// <returns></returns>
-    public static List<DocumentedType> SearchTypes(string text)
+    public static IEnumerable<DocumentedType> FindTypesByFriendlyName(string text)
     {
         return Types.Where(type => type.Value.NameFriendly.Contains(text))
-            .Select(pair => pair.Value)
-            .ToList();
+            .Select(pair => pair.Value);
     }
 
     /// <summary>
@@ -205,12 +203,12 @@ public static partial class ApiDocumentation
     }
 
     /// <summary>
-    /// The converter used to handle legacy api links.
+    /// A dictionary that maps legacy api links to the new format.
     /// </summary>
     /// <remarks>
     /// This can be removed once it is decided that users are no longer using legacy API links.
     /// </remarks>
-    public static Dictionary<string, string> LegacyToModernTypeNames = new()
+    private static readonly Dictionary<string, string> LegacyToModernTypeNames = new()
     {
         { "alert", "MudBlazor.MudAlert" },
         { "appbar", "MudBlazor.MudAppBar" },
@@ -329,6 +327,6 @@ public static partial class ApiDocumentation
         { "treeview", "MudBlazor.MudTreeView`1" },
         { "treeviewitem", "MudBlazor.MudTreeViewItem`1" },
         { "treeviewitemtogglebutton", "MudBlazor.MudTreeViewItemToggleButton" },
-        { "typography", "MudBlazor.Typography" }
+        { "typography", "MudBlazor.Typography" },
     };
 }

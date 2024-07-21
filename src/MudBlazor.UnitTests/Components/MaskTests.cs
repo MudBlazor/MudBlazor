@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 #pragma warning disable CS1998 // async without await
-#pragma warning disable BL0005 // Set parameter outside component
 
 using System;
 using System.Linq;

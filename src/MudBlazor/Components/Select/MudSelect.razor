@@ -18,7 +18,7 @@
                          ErrorText="@GetErrorText()"
                          Disabled="@GetDisabledState()"
                          Required="@Required"
-                         ForId="@(InputIdState.Value ?? string.Empty)"
+                         ForId="@(InputElementId ?? string.Empty)"
                          @onclick="@ToggleMenu">
             <InputContent>
                 <MudInput @ref="_elementReference"
@@ -46,11 +46,12 @@
                           AdornmentAriaLabel="@AdornmentAriaLabel"
                           OnAdornmentClick="@OnAdornmentClick"
                           Clearable="@Clearable"
+                          ClearIcon="@ClearIcon"
                           OnClearButtonClick="@(async (e) => await SelectClearButtonClickHandlerAsync(e))"
                           @attributes="UserAttributes"
                           OnBlur="@OnBlurAsync"
                           ShrinkLabel="@ShrinkLabel"
-                          InputId="@InputIdState.Value"
+                          InputId="@InputElementId"
                           Required="@Required">
                     @if (CanRenderValue) {
                         @GetSelectedValuePresenter()

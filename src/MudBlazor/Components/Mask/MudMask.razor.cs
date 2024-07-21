@@ -35,6 +35,7 @@ namespace MudBlazor
                 .AddClass("mud-disabled", GetDisabledState())
                 .AddClass("mud-input-error", HasErrors)
                 .AddClass("mud-ltr", GetInputType() == InputType.Email || GetInputType() == InputType.Telephone)
+                .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
                 .AddClass(Class)
                 .Build();
 
@@ -127,10 +128,10 @@ namespace MudBlazor
         public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         /// <summary>
-        /// Custom clear icon.
+        /// Custom clear icon when <see cref="Clearable"/> is enabled.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.General.Appearance)]
+        [Category(CategoryTypes.FormComponent.Appearance)]
         public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 
         protected override async Task OnInitializedAsync()

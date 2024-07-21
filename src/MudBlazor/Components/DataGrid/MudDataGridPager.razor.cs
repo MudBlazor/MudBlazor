@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Resources;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -54,7 +55,7 @@ namespace MudBlazor
         /// Defaults to <c>{first_item}-{last_item} of {all_items}</c> (e.g. <c>0-25 of 77</c>).  Available values are <c>{first_item}</c>, <c>{last_item}</c>, and <c>{all_items}</c>.
         /// </remarks>
         [Parameter]
-        public string InfoFormat { get; set; } = "{first_item}-{last_item} of {all_items}";
+        public string InfoFormat { get; set; } = string.Empty;
 
         /// <summary>
         /// The text to show for the "Rows per page:" label.
@@ -63,7 +64,7 @@ namespace MudBlazor
         /// Defaults to <c>Rows per page:</c>.  Can be localized to other languages.
         /// </remarks>
         [Parameter]
-        public string RowsPerPageString { get; set; } = "Rows per page:";
+        public string RowsPerPageString { get; set; } = string.Empty;
 
         /// <summary>
         /// Shows the pagination buttons.
@@ -87,7 +88,7 @@ namespace MudBlazor
         /// Defines the text shown in the items per page dropdown when a user provides int.MaxValue as an option
         /// </summary>
         [Parameter]
-        public string AllItemsText { get; set; } = "All";
+        public string AllItemsText { get; set; } = string.Empty;
 
         private string Info
         {
@@ -96,10 +97,19 @@ namespace MudBlazor
                 if (DataGrid == null)
                     return "DataGrid==null";
                 Debug.Assert(DataGrid != null);
-                var firstItem = DataGrid.CurrentPage * DataGrid.RowsPerPage + 1;
+                var firstItem = DataGrid?.GetFilteredItemsCount() == 0 ? 0 : DataGrid.CurrentPage * DataGrid.RowsPerPage + 1;
                 var lastItem = Math.Min((DataGrid.CurrentPage + 1) * DataGrid.RowsPerPage, DataGrid.GetFilteredItemsCount());
-                var allItems = DataGrid?.GetFilteredItemsCount();
-                return InfoFormat.Replace("{first_item}", $"{firstItem}").Replace("{last_item}", $"{lastItem}").Replace("{all_items}", $"{allItems}");
+                var allItems = DataGrid?.GetFilteredItemsCount() ?? 0;
+
+                if (InfoFormat.Contains("{first_item}") || InfoFormat.Contains("{last_item}") || InfoFormat.Contains("{all_items}"))
+                {
+                    return InfoFormat
+                        .Replace("{first_item}", $"{firstItem}")
+                        .Replace("{last_item}", $"{lastItem}")
+                        .Replace("{all_items}", $"{allItems}");
+                }
+
+                return Localizer[LanguageResource.MudDataGridPager_InfoFormat, firstItem, lastItem, allItems];
             }
         }
 
@@ -117,6 +127,21 @@ namespace MudBlazor
             if (DataGrid != null)
             {
                 await DataGrid.SetRowsPerPageAsync(size);
+            }
+        }
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+            if (string.IsNullOrEmpty(RowsPerPageString))
+            {
+                RowsPerPageString = Localizer[LanguageResource.MudDataGridPager_RowsPerPage];
+            }
+
+            if (string.IsNullOrEmpty(AllItemsText))
+            {
+                AllItemsText = Localizer[LanguageResource.MudDataGridPager_AllItems];
             }
         }
 

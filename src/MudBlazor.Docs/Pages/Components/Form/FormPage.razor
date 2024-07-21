@@ -39,6 +39,9 @@
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
                         Note: for EditForm validation to work make sure to set <CodeInline>ButtonType="ButtonType.Submit"</CodeInline> and do not use a MudForm.
                     </MudAlert>
+                    <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-3">
+                        Make sure you don't forget the <CodeInline Tag>DataAnnotationsValidator /</CodeInline> tag inside your <CodeInline Tag>EditForm</CodeInline>
+                    </MudAlert>
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(EditFormExample)">

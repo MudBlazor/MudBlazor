@@ -107,8 +107,7 @@ public partial class SectionContent
     private async Task CopyTextToClipboard()
     {
         var code = Snippets.GetCode(Code);
-        if (code == null)
-            code = await DocsJsApiService.GetInnerTextByIdAsync(_snippetId);
+        code ??= await DocsJsApiService.GetInnerTextByIdAsync(_snippetId);
         await JsApiService.CopyToClipboardAsync(code ?? $"Snippet '{Code}' not found!");
     }
 
@@ -124,7 +123,7 @@ public partial class SectionContent
 
                 if (!string.IsNullOrEmpty(HighLight))
                 {
-                    if (HighLight.Contains(","))
+                    if (HighLight.Contains(','))
                     {
                         var highlights = HighLight.Split(",");
 
@@ -150,15 +149,14 @@ public partial class SectionContent
 
     protected virtual async void RunOnTryMudBlazor()
     {
-        var firstFile = "";
-
-        if (Codes != null)
+        string firstFile;
+        if (Codes == null)
         {
-            firstFile = Codes.FirstOrDefault().code;
+            firstFile = Code;
         }
         else
         {
-            firstFile = Code;
+            firstFile = Codes.FirstOrDefault().code;
         }
 
         // We use a separator that wont be in code so we can send 2 files later
