@@ -71,7 +71,7 @@ function getPreRender() {
 }
 
 // BytexDigital.Blazor.Components.CookieConsent
-let CookieConsent = {
+window.CookieConsent = {
     Data: {
         LoadedScripts: []
     },
