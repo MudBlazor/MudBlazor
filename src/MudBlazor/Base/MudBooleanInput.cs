@@ -87,6 +87,38 @@ namespace MudBlazor
         public Placement Placement { get; set; } = Placement.End;
 
         /// <summary>
+        /// The text/label will be displayed next to the switch if set.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? Label { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool Ripple { get; set; } = true;
+
+        /// <summary>
+        /// The Size of the component.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public Size Size { get; set; } = Size.Medium;
+
+        /// <summary>
+        /// The color of the component. It supports the theme colors.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Color Color { get; set; } = Color.Default;
+
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public RenderFragment? ChildContent { get; set; }
+
+        /// <summary>
         /// Occurs when the <see cref="Value"/> has changed.
         /// </summary>
         [Parameter]
@@ -147,8 +179,8 @@ namespace MudBlazor
         {
             return placement switch
             {
-                Placement.Left => RightToLeft ? Placement.End : Placement.Start,
-                Placement.Right => RightToLeft ? Placement.Start : Placement.End,
+                Placement.Left => Placement.Start,
+                Placement.Right => Placement.End,
                 _ => placement
             };
         }

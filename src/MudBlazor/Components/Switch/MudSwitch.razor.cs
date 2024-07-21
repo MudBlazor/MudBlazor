@@ -24,10 +24,6 @@ namespace MudBlazor
             .AddClass("mud-disabled", GetDisabledState())
             .AddClass("mud-readonly", GetReadOnlyState())
             .AddClass($"mud-input-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
-            .AddClass(LabelPosition == LabelPosition.End ? "" : "flex-row-reverse", true)
-            .Build();
-
-        protected string SwitchLabelClassname => new CssBuilder($"mud-switch-label-{Size.ToDescriptionString()}")
             .Build();
 
         protected string SwitchClassname => new CssBuilder("mud-button-root mud-icon-button mud-switch-base")
@@ -49,16 +45,9 @@ namespace MudBlazor
             .AddClass("d-flex align-center justify-center")
             .Build();
 
-        protected string SpanClassname => new CssBuilder("mud-switch-span mud-flip-x-rtl")
+        protected string SpanClassname => new CssBuilder("mud-switch-span")
             .AddClass($"mud-switch-span-{Size.ToDescriptionString()}")
             .Build();
-
-        /// <summary>
-        /// The color of the component. It supports the theme colors.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Appearance)]
-        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The base color of the component in its none active/unchecked state. It supports the theme colors.
@@ -66,20 +55,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
         public Color UncheckedColor { get; set; } = Color.Default;
-
-        /// <summary>
-        /// The text/label will be displayed next to the switch if set.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public string? Label { get; set; }
-
-        /// <summary>
-        /// The position of the text/label.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public LabelPosition LabelPosition { get; set; } = LabelPosition.End;
 
         /// <summary>
         /// Shows an icon on Switch's thumb.
@@ -94,24 +69,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Color ThumbIconColor { get; set; } = Color.Default;
-
-        /// <summary>
-        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Appearance)]
-        public bool Ripple { get; set; } = true;
-
-        /// <summary>
-        /// The Size of the switch.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Appearance)]
-        public Size Size { get; set; } = Size.Medium;
-
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public RenderFragment? ChildContent { get; set; }
 
         protected internal void HandleKeyDown(KeyboardEventArgs obj)
         {

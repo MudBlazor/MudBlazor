@@ -46,16 +46,6 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// The color of the checkbox.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Appearance)]
-        public Color Color { get; set; } = Color.Default;
-
-        /// <summary>
         /// The color of the checkbox when its <c>Value</c> is <c>false</c> or <c>null</c>.
         /// </summary>
         /// <remarks>
@@ -64,16 +54,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
         public Color? UncheckedColor { get; set; } = null;
-
-        /// <summary>
-        /// The text to display next to the checkbox.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public string? Label { get; set; }
 
         /// <summary>
         /// Allows this checkbox to be controlled via the keyboard.
@@ -86,16 +66,6 @@ namespace MudBlazor
         public bool KeyboardEnabled { get; set; } = true;
 
         /// <summary>
-        /// Shows a ripple effect when this checkbox is clicked.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>true</c>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Appearance)]
-        public bool Ripple { get; set; } = true;
-
-        /// <summary>
         /// Uses compact padding.
         /// </summary>
         /// <remarks>
@@ -104,23 +74,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public bool Dense { get; set; }
-
-        /// <summary>
-        /// The size of the checkbox.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Size.Medium"/>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Appearance)]
-        public Size Size { get; set; } = Size.Medium;
-
-        /// <summary>
-        /// The content within this checkbox.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// The icon to display for a checked state.

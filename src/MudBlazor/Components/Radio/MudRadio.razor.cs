@@ -38,26 +38,6 @@ namespace MudBlazor
             .AddClass("mud-error-text", MudRadioGroup?.HasErrors)
             .Build();
 
-        protected string RadioIconsClassNames =>
-            new CssBuilder("mud-radio-icons")
-                .AddClass($"mud-checked", Checked)
-                .Build();
-
-        protected string IconClassName =>
-            new CssBuilder("mud-icon-root mud-svg-icon")
-                .AddClass($"mud-icon-size-{Size.ToDescriptionString()}")
-                .Build();
-
-        protected string CheckedIconClassName =>
-            new CssBuilder("mud-icon-root mud-svg-icon mud-radio-icon-checked")
-                .AddClass($"mud-icon-size-{Size.ToDescriptionString()}")
-                .Build();
-
-        protected string ChildSpanClassName =>
-            new CssBuilder("mud-radio-content mud-typography mud-typography-body1")
-                .AddClass("mud-error-text", MudRadioGroup?.HasErrors)
-                .Build();
-
         [Inject]
         private IKeyInterceptorFactory KeyInterceptorFactory { get; set; } = null!;
 
@@ -76,13 +56,6 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The color of the component. It supports the theme colors.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Radio.Appearance)]
-        public Color Color { get; set; } = Color.Default;
-
-        /// <summary>
         /// The base color of the component in its none active/unchecked state. It supports the theme colors.
         /// </summary>
         [Parameter]
@@ -95,27 +68,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
         public bool Dense { get; set; }
-
-        /// <summary>
-        /// The Size of the component.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Radio.Appearance)]
-        public Size Size { get; set; } = Size.Medium;
-
-        /// <summary>
-        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Radio.Appearance)]
-        public bool Ripple { get; set; } = true;
-
-        /// <summary>
-        /// Child content of component.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Radio.Behavior)]
-        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// The icon to display for a checked state.
@@ -155,16 +107,6 @@ namespace MudBlazor
                 false => UncheckedIcon
             };
         }
-
-        /// <summary>
-        /// The text to display next to the checkbox.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public string? Label { get; set; }
 
         private bool GetDisabled() => Disabled || MudRadioGroup?.GetDisabledState() == true;
 
