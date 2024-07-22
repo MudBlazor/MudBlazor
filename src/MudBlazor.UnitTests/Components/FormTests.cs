@@ -1653,7 +1653,7 @@ namespace MudBlazor.UnitTests.Components
             textField.Find("input").HasAttribute("readonly").Should().BeTrue();
             maskedTextField.Find("input").HasAttribute("readonly").Should().BeTrue();
             checkBox.Find("label").ClassList.Should().Contain("mud-readonly");
-            radioGroup.Find("label > span").ClassList.Should().Contain("mud-readonly");
+            radioGroup.Find("label").ClassList.Should().Contain("mud-readonly");
             switch_.Find("label").ClassList.Should().Contain("mud-readonly");
             autocomplete.Find("input").HasAttribute("readonly").Should().BeTrue();
             numericField.Find("input").HasAttribute("readonly").Should().BeTrue();
@@ -1665,7 +1665,7 @@ namespace MudBlazor.UnitTests.Components
             textField.Find("input").HasAttribute("readonly").Should().BeTrue();
             maskedTextField.Find("input").HasAttribute("readonly").Should().BeTrue();
             checkBox.Find("label").ClassList.Should().Contain("mud-readonly");
-            radioGroup.Find("label > span").ClassList.Should().Contain("mud-readonly");
+            radioGroup.Find("label").ClassList.Should().Contain("mud-readonly");
             switch_.Find("label").ClassList.Should().Contain("mud-readonly");
             autocomplete.Find("input").HasAttribute("readonly").Should().BeTrue();
             numericField.Find("input").HasAttribute("readonly").Should().BeTrue();
