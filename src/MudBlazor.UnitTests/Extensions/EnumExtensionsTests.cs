@@ -31,15 +31,12 @@ namespace MudBlazor.UnitTests.Extensions
         }
 
         [Test]
-        [TestCase(typeof(EnumFormTraining), new[] { "Бюджетная оплата", "Внебюджетная оплата" })]
+        [TestCase(typeof(EnumFormTraining), new[] { "Free", "Paid" })]
         public void GetEnumDisplayName_Test(Type type, string[] expectedDisplayNames)
         {
-            var enumValues = EnumExtensions.GetSafeEnumValues(type).ToArray();
+            var enumValues = Enum.GetValues(type).Cast<Enum>().ToArray();
             var displayNames = enumValues
-                .Select(e => e.GetType().GetField(e.ToString())
-                    ?.GetCustomAttributes(typeof(DisplayAttribute), false)
-                    .FirstOrDefault() as DisplayAttribute)
-                .Select(attr => attr?.Name)
+                .Select(e => e.GetDisplayName())
                 .ToArray();
 
             displayNames.Should().BeEquivalentTo(expectedDisplayNames);
