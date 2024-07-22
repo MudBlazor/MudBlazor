@@ -7,7 +7,7 @@
     <InputContent>
         <label class="@LabelClassname" style="@Style" id="@_elementId" @onkeydown="@HandleKeyDownAsync" @onclick:stopPropagation="@StopClickPropagation">
             <span tabindex="0" class="@IconClassname">
-                <input tabindex="-1" @attributes="UserAttributes" type="radio" class="mud-radio-input" aria-checked="@(BoolValue.ToString().ToLower())" aria-disabled="@(GetDisabled().ToString().ToLower())" checked="@Checked" role="radio" name="@MudRadioGroup?.Name" disabled="@GetDisabled()" @onclick:preventDefault="@GetReadOnlyState()" @onclick="OnClickAsync" />
+                <input tabindex="-1" @attributes="UserAttributes" type="radio" class="mud-radio-input" aria-checked="@(BoolValue.ToString().ToLower())" aria-disabled="@(GetDisabled().ToString().ToLower())" checked="@Checked" role="radio" name="@MudRadioGroup?.Name" disabled="@GetDisabled()" @onclick:preventDefault="@GetReadOnly()" @onclick="OnClickAsync" />
                 <MudIcon Disabled="@Disabled" Icon="@GetIcon()" Color="HasErrors ? Color.Error : Color.Inherit" Size="@Size" />
             </span>
             @if (!string.IsNullOrEmpty(Label))

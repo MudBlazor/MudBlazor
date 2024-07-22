@@ -22,8 +22,8 @@ namespace MudBlazor
             .Build();
 
         protected new string LabelClassname => new CssBuilder("mud-radio")
-            .AddClass($"mud-disabled", GetDisabledState())
-            .AddClass($"mud-readonly", GetReadOnlyState())
+            .AddClass($"mud-disabled", GetDisabled())
+            .AddClass($"mud-readonly", GetReadOnly())
             .AddClass($"mud-input-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
             .Build();
 
@@ -107,10 +107,6 @@ namespace MudBlazor
                 false => UncheckedIcon
             };
         }
-
-        private bool GetDisabled() => Disabled || MudRadioGroup?.GetDisabledState() == true;
-
-        private bool GetReadOnly() => MudRadioGroup?.GetReadOnlyState() == true;
 
         internal bool Checked { get; private set; }
 
