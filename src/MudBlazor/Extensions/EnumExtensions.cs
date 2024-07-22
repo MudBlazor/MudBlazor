@@ -37,7 +37,7 @@ namespace MudBlazor.Extensions
         }
 
         /// <summary>
-        /// Returns the best display name for the given type.
+        /// Returns the best display name for the given enum
         /// </summary>
         /// <param name="enum">Type</param>
         /// <param name="shortName">Try to find the shorter version of the name</param>
