@@ -23,6 +23,7 @@ namespace MudBlazor
         protected new string LabelClassname => new CssBuilder("mud-switch")
             .AddClass("mud-disabled", GetDisabledState())
             .AddClass("mud-readonly", GetReadOnlyState())
+            .AddClass($"mud-switch-label-{Size.ToDescriptionString()}")
             .AddClass($"mud-input-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
             .Build();
 
