@@ -60,7 +60,8 @@ namespace MudBlazor
         /// <summary>
         /// Occurs when <see cref="DateRange"/> has changed.
         /// </summary>
-        [Parameter] public EventCallback<DateRange> DateRangeChanged { get; set; }
+        [Parameter]
+        public EventCallback<DateRange> DateRangeChanged { get; set; }
 
         /// <summary>
         /// The currently selected date range.
@@ -87,13 +88,13 @@ namespace MudBlazor
         {
             if (_dateRange != range)
             {
-                var doesRangeContainDisabledDates = range?.Start != null && range?.End != null && Enumerable
+                var doesRangeContainDisabledDates = StrictCaptureRange && range?.Start != null && range?.End != null && Enumerable
                     .Range(0, int.MaxValue)
                     .Select(index => range.Start.Value.AddDays(index))
                     .TakeWhile(date => date <= range.End.Value)
                     .Any(date => IsDateDisabledFunc(date.Date));
 
-                if (doesRangeContainDisabledDates && StrictCaptureRange)
+                if (doesRangeContainDisabledDates)
                 {
                     _rangeText = null;
                     await SetTextAsync(null, false);
