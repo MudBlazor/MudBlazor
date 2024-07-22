@@ -39,13 +39,13 @@ namespace MudBlazor.Extensions
         /// <summary>
         /// Returns the best display name for the given type.
         /// </summary>
-        /// <param name="type">Type</param>
+        /// <param name="enum">Type</param>
         /// <param name="shortName">Try to find the shorter version of the name</param>
-        public static string? GetDisplayName(this Type type, bool shortName = false) =>
-            (shortName ? type.GetCustomAttribute<DisplayAttribute>()?.ShortName : null) ??
-            type?.GetCustomAttribute<DisplayAttribute>()?.Name ??
-            type?.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName ??
-            type?.GetCustomAttribute<DescriptionAttribute>()?.Description ??
-            type?.Name;
+        internal static string? GetDisplayName(this Enum @enum, bool shortName = false) =>
+            (shortName ? @enum.GetType().GetCustomAttribute<DisplayAttribute>()?.ShortName : null) ??
+            @enum.GetType().GetCustomAttribute<DisplayAttribute>()?.Name ??
+            @enum.GetType().GetCustomAttribute<DisplayNameAttribute>()?.DisplayName ??
+            @enum.GetType().GetCustomAttribute<DescriptionAttribute>()?.Description ??
+            @enum.GetType().Name;
     }
 }
