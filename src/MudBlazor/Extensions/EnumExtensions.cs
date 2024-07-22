@@ -41,11 +41,13 @@ namespace MudBlazor.Extensions
         /// </summary>
         /// <param name="enum">Type</param>
         /// <param name="shortName">Try to find the shorter version of the name</param>
-        internal static string GetDisplayName(this Enum @enum, bool shortName = false) =>
-            (shortName ? @enum.GetType().GetCustomAttribute<DisplayAttribute>()?.ShortName : null) ??
-            @enum.GetType().GetCustomAttribute<DisplayAttribute>()?.Name ??
-            @enum.GetType().GetCustomAttribute<DisplayNameAttribute>()?.DisplayName ??
-            @enum.GetType().GetCustomAttribute<DescriptionAttribute>()?.Description ??
-            @enum.GetType().Name;
+        internal static string GetDisplayName(this Enum @enum, bool shortName = false)
+        {
+            return (shortName ? @enum.GetType().GetCustomAttribute<DisplayAttribute>()?.ShortName : null) ??
+                   @enum.GetType().GetCustomAttribute<DisplayAttribute>()?.Name ??
+                   @enum.GetType().GetCustomAttribute<DisplayNameAttribute>()?.DisplayName ??
+                   @enum.GetType().GetCustomAttribute<DescriptionAttribute>()?.Description ??
+                   @enum.ToString();
+        }
     }
 }
