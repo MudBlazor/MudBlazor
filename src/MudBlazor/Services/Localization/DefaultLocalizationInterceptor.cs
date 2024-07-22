@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -40,7 +41,7 @@ public class DefaultLocalizationInterceptor : AbstractLocalizationInterceptor
             }
         }
 
-        return TranslationWithFallback(key);
+        return TranslationWithFallback(key, arguments);
     }
 
     /// <summary>
@@ -52,17 +53,38 @@ public class DefaultLocalizationInterceptor : AbstractLocalizationInterceptor
     /// This method is called when the default English translation is ignored or unavailable, and a custom MudLocalizer service implementation is registered.
     /// It attempts to use user-provided languages, falling back to the internal English translation if MudLocalizer is missing or no resource is found.
     /// </remarks>
-    protected virtual LocalizedString TranslationWithFallback(string key)
+    [ExcludeFromCodeCoverage]
+    [Obsolete("Use TranslationWithFallback(string key, params object[] arguments) overload instead! Will be removed in v8.", true)]
+    protected virtual LocalizedString TranslationFallback(string key) => TranslationWithFallback(key, Array.Empty<object>());
+
+    /// <summary>
+    /// Gets the string resource with the given name.
+    /// </summary>
+    /// <param name="key">The name of the string resource</param>
+    /// <param name="arguments">The list of arguments to be passed to the string resource</param>
+    /// <returns>The string resource as a <see cref="LocalizedString" />.</returns>
+    /// <remarks>
+    /// This method is called when the default English translation is ignored or unavailable, and a custom MudLocalizer service implementation is registered.
+    /// It attempts to use user-provided languages, falling back to the internal English translation if MudLocalizer is missing or no resource is found.
+    /// </remarks>
+    protected virtual LocalizedString TranslationWithFallback(string key, params object[] arguments)
     {
-        var defaultTranslation = Localizer[key];
+        var anyArguments = arguments.Length > 0;
+
         if (MudLocalizer is null)
         {
-            return defaultTranslation;
+            return anyArguments ? Localizer[key, arguments] : Localizer[key];
         }
 
         // If CurrentUICulture is not english and a custom MudLocalizer service implementation is registered, try to use user provided languages.
         // If no translation was found, fallback to the internal English translation
-        var res = MudLocalizer[key];
-        return res.ResourceNotFound ? defaultTranslation : res;
+        var res = MudLocalizer[key, arguments]; //Handles both scenarios with empty or non-empty arguments.
+
+        if (res.ResourceNotFound)
+        {
+            return anyArguments ? Localizer[key, arguments] : Localizer[key];
+        }
+
+        return res;
     }
 }

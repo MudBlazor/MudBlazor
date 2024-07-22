@@ -16,7 +16,7 @@
             }
             @if (Checkable)
             {
-                <MudCheckBox @bind-Value="Checked" Class="mud-table-cell-checkbox"/>
+                <MudCheckBox @bind-Value="Checked" ReadOnly="!SelectionChangeable" Disabled="!SelectionChangeable" Class="mud-table-cell-checkbox" />
             }
         </MudTd>
     }

@@ -249,10 +249,20 @@ namespace MudBlazor
         public bool MultiSelection { get; set; }
 
         /// <summary>
-        /// Toggles the checkbox when a row is clicked.
+        /// Disables the selection of rows but keep showing the selected rows.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  Requires <see cref="MultiSelection"/> to be <c>true</c> and <see cref="Editable"/> to be <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Selecting)]
+        public bool SelectionChangeable { get; set; } = true;
+
+        /// <summary>
+        /// Toggles the checkbox when a row is clicked.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  Requires <see cref="MultiSelection"/> to be <c>true</c>, <see cref="SelectionChangeable"/> to be <c>true</c> and <see cref="Editable"/> to be <c>false</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Rows)]
@@ -652,7 +662,7 @@ namespace MudBlazor
             }
 
             _rowsPerPage = size;
-            CurrentPage = 0;
+            _currentPage = 0;
             StateHasChanged();
             RowsPerPageChanged.InvokeAsync(_rowsPerPage.Value);
             if (_isFirstRendered)

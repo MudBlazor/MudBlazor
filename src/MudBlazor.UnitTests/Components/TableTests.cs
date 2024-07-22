@@ -229,7 +229,7 @@ namespace MudBlazor.UnitTests.Components
             var searchString = comp.Find("#searchString");
             var switchElement = comp.Find("#switch");
 
-            // It should be equal to 5 = header row + group header row + 2 rows + footer row 
+            // It should be equal to 5 = header row + group header row + 2 rows + footer row
             comp.FindAll("tr").Count.Should().Be(5);
 
             // Add filter
@@ -287,7 +287,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TableSingleSelectionTest1>(parameters => parameters
                 .Add(p => p.EditTrigger, trigger));
-            // print the generated html      
+            // print the generated html
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int?>>().Instance;
             table.SelectedItem.Should().BeNull();
@@ -313,7 +313,7 @@ namespace MudBlazor.UnitTests.Components
         public void TableFilter()
         {
             var comp = Context.RenderComponent<TableFilterTest1>();
-            // print the generated html      
+            // print the generated html
             var table = comp.FindComponent<MudTable<string>>().Instance;
             var searchString = comp.Find("#searchString");
             // should return 3 items
@@ -341,7 +341,7 @@ namespace MudBlazor.UnitTests.Components
         public void TableFilterCachingTest()
         {
             var comp = Context.RenderComponent<TableFilterTest1>();
-            // print the generated html      
+            // print the generated html
             var table = comp.FindComponent<MudTable<string>>().Instance;
             var searchString = comp.Find("#searchString");
             table.FilteringRunCount.Should().Be(1);
@@ -366,7 +366,7 @@ namespace MudBlazor.UnitTests.Components
         public void TablePagingNavigationButtons()
         {
             var comp = Context.RenderComponent<TablePagingTest1>();
-            // print the generated html      
+            // print the generated html
             // after initial load
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
@@ -421,7 +421,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TableNavigateToPage(int pageIndex, string expectedFirstItem)
         {
             var comp = Context.RenderComponent<TablePagingTest1>();
-            // print the generated html      
+            // print the generated html
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<string>>();
             //navigate to specified page
@@ -436,7 +436,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TablePageSizeOptions()
         {
             var comp = Context.RenderComponent<TablePageSizeOptionsTest>();
-            // print the generated html      
+            // print the generated html
             // select elements needed for the test
             var pager = comp.FindComponent<MudSelect<int>>().Instance;
             pager.Value.Should().Be(8);
@@ -449,7 +449,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TablePagingChangePageSize()
         {
             var comp = Context.RenderComponent<TablePagingTest1>();
-            // print the generated html      
+            // print the generated html
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<string>>();
             var pager = comp.FindComponent<MudSelect<int>>().Instance;
@@ -572,7 +572,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TablePagingFilterAdjustCurrentPage()
         {
             var comp = Context.RenderComponent<TablePagingTest1>();
-            // print the generated html      
+            // print the generated html
             // after initial load
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
@@ -582,7 +582,7 @@ namespace MudBlazor.UnitTests.Components
             PagingButtons()[2].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("21-30 of 59");
-            // should return 3 items and 
+            // should return 3 items and
             var table = comp.FindComponent<MudTable<string>>().Instance;
             var searchString = comp.Find("#searchString");
             searchString.Change("Ala");
@@ -794,7 +794,7 @@ namespace MudBlazor.UnitTests.Components
             // uncheck a row then switch to page 2 and both checkboxes on page 2 should be checked
             checkboxRendered[1].Find("input").Change(false);
             checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(1);
-            // switch page 
+            // switch page
             await comp.InvokeAsync(() => table.CurrentPage = 1);
             // now two checkboxes should be checked on page 2
             checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
@@ -951,6 +951,27 @@ namespace MudBlazor.UnitTests.Components
             checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(4);
 
             checkboxes[0].Value.Should().BeTrue(); //manually verify header is checked after deleting item
+        }
+
+        /// <summary>
+        /// The checkboxes should all be disabled on load, even the header and footer checkboxes.
+        /// </summary>
+        [Test]
+        public void TableMultiSelectionTest9()
+        {
+            var comp = Context.RenderComponent<TableMultiSelectionTest9>();
+            // select elements needed for the test
+            var tableComponent = comp.FindComponent<MudTable<TableGroupingTest.RacingCar>>();
+            var table = tableComponent.Instance;
+            var rows = tableComponent.FindAll("tr").ToArray();
+            var headerAndFooterCheckboxes = comp.FindComponents<MudCheckBox<bool?>>().Select(x => x.Instance).ToArray();
+            var dataCheckboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+            foreach (var row in rows.Where(el => el.ClassName.Contains("row-click-test"))) // simulate selection on row click, excluding headers and footer
+                row.Click();
+            // check result
+            headerAndFooterCheckboxes.Sum(x => x.Disabled ? 0 : 1).Should().Be(0); // No checkbox should be enabled on header, group headers and footer
+            dataCheckboxes.Sum(x => x.Disabled ? 1 : 0).Should().Be(comp.Instance.Items.Count()); // No checkbox should be enabled on rows
+            table.SelectedItems.Count.Should().Be(0); // No item should be selected
         }
 
         /// <summary>
@@ -1304,6 +1325,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// https://github.com/MudBlazor/MudBlazor/issues/8298
+        /// </summary>
+        [Test]
+        public async Task SetRowsPerPageAsync_CallOneTimeServerData()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<TableServerSideDataTest2>();
+            var table = comp.FindComponent<MudTable<int>>();
+            table.Instance.CurrentPage = 2;
+            var serverDataCallCount = 0;
+            var originalServerDataFunc = table.Instance.ServerData;
+            table.Instance.ServerData = (state, cancellationToken) =>
+            {
+                serverDataCallCount++;
+                return originalServerDataFunc(state, cancellationToken);
+            };
+
+            // Act
+
+            await table.InvokeAsync(() => table.Instance.SetRowsPerPage(25));
+
+            // Assert
+
+            serverDataCallCount.Should().Be(1);
+        }
+
+        /// <summary>
         /// The table should not crash if its ServerData Items are null
         /// </summary>
         [Test]
@@ -1338,7 +1387,7 @@ namespace MudBlazor.UnitTests.Components
             CancellationToken? cancelToken = null;
             // Make a task completion source
             var first = new TaskCompletionSource<TableData<int>>();
-            // Set the ServerData function 
+            // Set the ServerData function
             table.SetParam(p => p.ServerData, new Func<TableState, CancellationToken, Task<TableData<int>>>((s, cancellationToken) =>
             {
                 // Remember the cancellation token
@@ -1656,7 +1705,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TableInlineEditCancelTest>();
             var taskCompletionSource = new TaskCompletionSource<bool>();
 
-            // Get the table and define the RowEditPreview method 
+            // Get the table and define the RowEditPreview method
             var instance = comp.Instance;
             var table = instance.Table;
             table.RowEditPreview = RowEditPreview;
@@ -1696,7 +1745,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// This test validates that when the CanCancel option is set to true and no SelectedItem has been defined, 
+        /// This test validates that when the CanCancel option is set to true and no SelectedItem has been defined,
         /// by clicking on another row, the previous row is no longer editable. Meaning there are always only 2 buttons
         /// </summary>
         [Test]
@@ -1835,7 +1884,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Row item data should be passed to EditButtonContext 
+        /// Row item data should be passed to EditButtonContext
         /// </summary>
         [Test]
         public async Task TableCustomEditButtonItemContext()
@@ -2011,7 +2060,7 @@ namespace MudBlazor.UnitTests.Components
 
             //verify the collapse and expand selection on UI and items
 
-            Inputs()[1].Change(false); // LMP1 
+            Inputs()[1].Change(false); // LMP1
 
             table.GroupBy.Indentation = true;
             table.GroupBy.Expandable = true;
@@ -2026,13 +2075,13 @@ namespace MudBlazor.UnitTests.Components
             table.SelectedItems.Count.Should().Be(0);
             Inputs().Where(x => x.IsChecked()).Count().Should().Be(0);
 
-            Inputs()[1].Change(true); // LMP1            
+            Inputs()[1].Change(true); // LMP1
             table.SelectedItems.Count.Should().Be(2);
 
             Inputs().Where(x => x.IsChecked()).Count().Should().Be(5);
 
-            Buttons()[0].Click(); //collapse            
-            Buttons()[0].Click(); //expand            
+            Buttons()[0].Click(); //collapse
+            Buttons()[0].Click(); //expand
             //selected item should persist
             table.SelectedItems.Count.Should().Be(2);
 
@@ -2146,7 +2195,7 @@ namespace MudBlazor.UnitTests.Components
             // create the component
             var tableComponent = Context.RenderComponent<TablePagerInfoTextTest>();
 
-            // print the generated html      
+            // print the generated html
 
             // assert correct info-text
             tableComponent.Find("div.mud-table-page-number-information").Text().Should().Be("1-10 of 59", "No filter applied yet.");
