@@ -11,8 +11,8 @@ namespace MudBlazor.UnitTests.TestData;
 /// </summary>
 public enum EnumFormTraining
 {
-    [Display(Name = "Бюджетная оплата", Description = "Постующие на бесплатной основе")]
+    [Display(Name = "Free", Description = "Free education")]
     Free,
-    [Display(Name = "Внебюджетная оплата", Description = "Постующие на платной основе")]
+    [Display(Name = "Paid", Description = "Paid training")]
     Paid
 }
