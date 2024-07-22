@@ -50,6 +50,7 @@ namespace MudBlazor.Docs.Extensions
             services.AddGoogleAnalytics("G-PRYNCB61NV");
             services.AddCookieConsent(options =>
             {
+                options.ImportJsAutomatically = false;
                 options.Revision = 1;
                 options.PolicyUrl = "/mud/cookie-policy";
 

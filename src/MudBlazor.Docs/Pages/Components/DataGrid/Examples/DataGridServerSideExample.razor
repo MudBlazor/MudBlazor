@@ -1,0 +1,102 @@
+@using System.Net.Http.Json
+@using System.Threading
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+
+<MudDataGrid @ref="dataGrid" T="Element" ServerData="ServerReload" Filterable="false">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Periodic Elements</MudText>
+        <MudSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="x => x.Number" Title="Nr" />
+        <PropertyColumn Property="x => x.Sign" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Position" />
+        <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
+        <PropertyColumn Property="x => x.Group" Title="Category" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Element" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    MudDataGrid<Element> dataGrid;
+    string searchString = null;
+
+    /// <summary>
+    /// Here we simulate getting the paged, filtered and ordered data from the server
+    /// </summary>
+    private async Task<GridData<Element>> ServerReload(GridState<Element> state)
+    {
+        IEnumerable<Element> data = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+        await Task.Delay(300);
+        data = data.Where(element =>
+        {
+            if(string.IsNullOrWhiteSpace(searchString))
+                return true;
+            if(element.Sign.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                return true;
+            if(element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                return true;
+            if($"{element.Number} {element.Position} {element.Molar}".Contains(searchString))
+                return true;
+            return false;
+        }).ToArray();
+        var totalItems = data.Count();
+
+        var sortDefinition = state.SortDefinitions.FirstOrDefault();
+        if(sortDefinition != null)
+        {
+            switch(sortDefinition.SortBy)
+            {
+                case nameof(Element.Number):
+                    data = data.OrderByDirection(
+                        sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending,
+                        o => o.Number
+                    );
+                    break;
+                case nameof(Element.Sign):
+                    data = data.OrderByDirection(
+                        sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending,
+                        o => o.Sign
+                    );
+                    break;
+                case nameof(Element.Name):
+                    data = data.OrderByDirection(
+                        sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending,
+                        o => o.Name
+                    );
+                    break;
+                case nameof(Element.Position):
+                    data = data.OrderByDirection(
+                        sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending,
+                        o => o.Position
+                    );
+                    break;
+                case nameof(Element.Molar):
+                    data = data.OrderByDirection(
+                        sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending,
+                        o => o.Molar
+                    );
+                    break;
+            }
+        }
+
+        var pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+        return new GridData<Element> {
+            TotalItems = totalItems,
+            Items = pagedData
+        };
+    }
+
+    private Task OnSearch(string text)
+    {
+        searchString = text;
+        return dataGrid.ReloadServerData();
+    }
+}
