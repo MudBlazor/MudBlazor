@@ -16,11 +16,11 @@ namespace MudBlazor
         [Inject]
         private IKeyInterceptorFactory KeyInterceptorFactory { get; set; } = null!;
 
-        protected new string Classname => new CssBuilder("mud-input-control-boolean-input")
+        protected override string Classname => new CssBuilder("mud-input-control-boolean-input")
             .AddClass(Class)
             .Build();
 
-        protected new string LabelClassname => new CssBuilder("mud-switch")
+        protected override string LabelClassname => new CssBuilder("mud-switch")
             .AddClass("mud-disabled", GetDisabled())
             .AddClass("mud-readonly", GetReadOnly())
             .AddClass($"mud-switch-label-{Size.ToDescriptionString()}")

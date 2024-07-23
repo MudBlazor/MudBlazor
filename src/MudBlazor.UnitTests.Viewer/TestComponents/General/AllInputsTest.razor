@@ -63,8 +63,10 @@
 </MudStack>
 
 <MudText Typo="Typo.h6" Class="mt-6 mb-2">Boolean Input</MudText>
-<MudRadio Value="1" Placement="Placement.Right">With Content</MudRadio>
-<MudRadio Value="2" Placement="Placement.Right"></MudRadio>
+<MudRadioGroup T="int" Class="some-main-class" InputClass="some-input-class">
+    <MudRadio Value="1" Placement="Placement.Right">With Content</MudRadio>
+    <MudRadio Value="2" Placement="Placement.Right"></MudRadio>
+</MudRadioGroup>
 <MudCheckBox T="bool" Placement="Placement.Right" />
 <MudCheckBox T="bool" Placement="Placement.Right" Label="With Label" />
 <MudSwitch T="bool" />

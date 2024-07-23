@@ -20,20 +20,20 @@ namespace MudBlazor
         [Inject]
         private IKeyInterceptorFactory KeyInterceptorFactory { get; set; } = null!;
 
-        protected new string Classname => new CssBuilder("mud-input-control-boolean-input")
+        protected override string Classname => new CssBuilder("mud-input-control-boolean-input")
             .AddClass($"mud-disabled", GetDisabled())
             .AddClass($"mud-readonly", GetReadOnly())
             .AddClass("mud-input-with-content", ChildContent is not null)
             .AddClass(Class)
             .Build();
 
-        protected new string LabelClassname => new CssBuilder("mud-checkbox")
+        protected override string LabelClassname => new CssBuilder("mud-checkbox")
             .AddClass($"mud-disabled", GetDisabled())
             .AddClass($"mud-readonly", GetReadOnly())
             .AddClass($"mud-input-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
             .Build();
 
-        protected new string IconClassname => new CssBuilder("mud-button-root mud-icon-button")
+        protected override string IconClassname => new CssBuilder("mud-button-root mud-icon-button")
             .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnly() && !GetDisabled() && UncheckedColor == null || (UncheckedColor != null && BoolValue == true))
             .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnly() && !GetDisabled() && UncheckedColor != null && BoolValue == false)
             .AddClass($"mud-checkbox-dense", Dense)

@@ -14,20 +14,20 @@ namespace MudBlazor
         private IKeyInterceptor? _keyInterceptor;
         private string _elementId = "radio" + Guid.NewGuid().ToString().Substring(0, 8);
 
-        protected new string Classname => new CssBuilder("mud-input-control-boolean-input")
+        protected override string Classname => new CssBuilder("mud-input-control-boolean-input")
             .AddClass("mud-disabled", GetDisabled())
             .AddClass("mud-readonly", GetReadOnly())
             .AddClass("mud-input-with-content", ChildContent is not null)
             .AddClass(Class)
             .Build();
 
-        protected new string LabelClassname => new CssBuilder("mud-radio")
+        protected override string LabelClassname => new CssBuilder("mud-radio")
             .AddClass($"mud-disabled", GetDisabled())
             .AddClass($"mud-readonly", GetReadOnly())
             .AddClass($"mud-input-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
             .Build();
 
-        protected new string IconClassname => new CssBuilder("mud-button-root mud-icon-button")
+        protected override string IconClassname => new CssBuilder("mud-button-root mud-icon-button")
             .AddClass("mud-ripple mud-ripple-radio", Ripple && !GetDisabled() && !GetReadOnly())
             .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnly() && !GetDisabled() && (UncheckedColor == null || (UncheckedColor != null && Checked)))
             .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnly() && !GetDisabled() && UncheckedColor != null && Checked == false)
