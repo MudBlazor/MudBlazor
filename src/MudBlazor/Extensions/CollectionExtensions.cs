@@ -20,7 +20,7 @@ internal static class CollectionExtensions
     {
         return Array.Exists(array, predicate);
     }
-    
+
     /// <summary>
     /// Determines if an array has any elements.
     /// </summary>
@@ -31,7 +31,7 @@ internal static class CollectionExtensions
     {
         return array.Length > 0;
     }
-    
+
     /// <summary>
     /// Determines whether the given element exists in the array.
     /// </summary>
@@ -55,7 +55,7 @@ internal static class CollectionExtensions
     {
         return list.FindIndex(predicate) != -1;
     }
-    
+
     /// <summary>
     /// Determines if a list has any elements.
     /// </summary>
