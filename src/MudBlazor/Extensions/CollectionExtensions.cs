@@ -20,6 +20,29 @@ internal static class CollectionExtensions
     {
         return Array.Exists(array, predicate);
     }
+    
+    /// <summary>
+    /// Determines if an array has any elements.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements of the array.</typeparam>
+    /// <param name="array">The array to check.</param>
+    /// <returns>true if the array has any elements; otherwise, false.</returns>
+    internal static bool Any<T>(this T[] array)
+    {
+        return array.Length > 0;
+    }
+    
+    /// <summary>
+    /// Determines whether the given element exists in the array.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements of the array.</typeparam>
+    /// <param name="array">The array to check.</param>
+    /// <param name="element">The element to check for.</param>
+    /// <returns>true if the element exists in the array; otherwise, false.</returns>
+    internal static bool Contains<T>(this T[] array, T element)
+    {
+        return Array.IndexOf(array, element) != -1;
+    }
 
     /// <summary>
     /// Determines whether any element of a list satisfies a condition.
@@ -31,5 +54,16 @@ internal static class CollectionExtensions
     internal static bool Any<T>(this List<T> list, Predicate<T> predicate)
     {
         return list.FindIndex(predicate) != -1;
+    }
+    
+    /// <summary>
+    /// Determines if a list has any elements.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements of the list.</typeparam>
+    /// <param name="list">The list to check.</param>
+    /// <returns>true if the list has any elements; otherwise, false.</returns>
+    internal static bool Any<T>(this List<T> list)
+    {
+        return list.Count > 0;
     }
 }

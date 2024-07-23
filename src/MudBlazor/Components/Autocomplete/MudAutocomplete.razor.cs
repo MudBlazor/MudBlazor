@@ -37,7 +37,7 @@ namespace MudBlazor
         private Task _currentSearchTask;
         private Timer _debounceTimer;
         private T[] _items;
-        private IList<int> _enabledItemIndices = new List<int>();
+        private List<int> _enabledItemIndices = [];
         private Func<T, string> _toStringFunc;
 
         [Inject]
