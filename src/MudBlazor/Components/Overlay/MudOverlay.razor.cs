@@ -150,8 +150,7 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
         using var registerScope = CreateRegisterScope();
         _visibleState = registerScope.RegisterParameter<bool>(nameof(Visible))
             .WithParameter(() => Visible)
-            .WithEventCallback(() => VisibleChanged)
-            .WithChangeHandler(OnVisibleParameterChangedAsync);
+            .WithEventCallback(() => VisibleChanged);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstTime)
@@ -169,11 +168,6 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
         {
             await UnblockScrollAsync();
         }
-    }
-
-    private Task OnVisibleParameterChangedAsync()
-    {
-        return VisibleChanged.InvokeAsync(_visibleState.Value);
     }
 
     protected internal async Task OnClickHandlerAsync(MouseEventArgs ev)
