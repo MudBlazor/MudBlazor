@@ -93,20 +93,21 @@
                 <DocsPageSection>
                     <SectionHeader Title="Add Components">
                         <Description>
-                            Add the following components to your <CodeInline>MainLayout.razor</CodeInline>.
-                            Note that the <CodeInline>ThemeProvider</CodeInline> is essential for MudBlazor but the rest are optional.
-                            <MudAlert Class="mt-4" Severity="Severity.Warning">
-                                Each component in a Blazor Web App uses a render mode to specify its hosting model, rendering location, and interactivity.
-                                Interactivity is required for MudBlazor to work as static rendering is not supported at this time.
-                                If you experience certain menus not appearing, your render mode may be configured incorrectly.
-                                <br />
-                                <MudLink Href="https://learn.microsoft.com/aspnet/core/blazor/components/render-modes" Target="_blank">Learn about render modes</MudLink>
-                                or
-                                <MudLink Href="https://github.com/MudBlazor/MudBlazor/discussions/7430" Target="_blank">view discussion</MudLink>.
-                            </MudAlert>
+                            Add the following components to your <CodeInline>MainLayout.razor</CodeInline>:
                         </Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(InstallationManualComponentsExample)" />
+                    <SectionHeader Class="mt-6">
+                        <Description>
+                            <MudAlert Class="mt-4" Severity="Severity.Warning">
+                                An interactive render mode is necessary for MudBlazor to work as static rendering is not supported at this time.
+                                If you experience certain menus not appearing, your render mode may be configured incorrectly.
+                                <MudLink Href="https://learn.microsoft.com/aspnet/core/blazor/components/render-modes" Target="_blank">Learn about render modes</MudLink>
+                                or
+                                <MudLink Href="https://github.com/MudBlazor/MudBlazor/discussions/7430" Target="_blank">view related discussion</MudLink>.
+                            </MudAlert>
+                        </Description>
+                    </SectionHeader>
                 </DocsPageSection>
 
             </SectionSubGroups>
