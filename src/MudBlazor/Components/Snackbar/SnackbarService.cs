@@ -22,7 +22,7 @@ namespace MudBlazor
 
         private NavigationManager _navigationManager;
         private ReaderWriterLockSlim SnackBarLock { get; }
-        private IList<Snackbar> SnackBarList { get; }
+        private List<Snackbar> SnackBarList { get; }
 
         public SnackbarService(NavigationManager navigationManager, IOptions<SnackbarConfiguration> configuration = null)
         {

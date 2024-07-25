@@ -2819,7 +2819,13 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridServerPaginationTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerPaginationTest.Model>>();
             dataGrid.Instance.CurrentPage = 2;
-            var beforeCount = comp.Instance.ServerReloadCallCount;
+            var serverDataCallCount = 0;
+            var originalServerDataFunc = dataGrid.Instance.ServerData;
+            dataGrid.Instance.ServerData = (state) =>
+            {
+                serverDataCallCount++;
+                return originalServerDataFunc(state);
+            };
 
             // Act
 
@@ -2827,9 +2833,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Assert
 
-            var afterCount = comp.Instance.ServerReloadCallCount;
-            var reloadCount = afterCount - beforeCount;
-            reloadCount.Should().Be(1);
+            serverDataCallCount.Should().Be(1);
         }
 
         [Test]
