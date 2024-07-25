@@ -491,7 +491,7 @@ namespace MudBlazor
 
         internal async Task TryInvokeServerLoadFunc()
         {
-            if (!_expandedState || (Items != null && Items.Count != 0) || !CanExpand || MudTreeRoot?.ServerData == null)
+            if ((Items != null && Items.Count != 0) || !CanExpand || MudTreeRoot?.ServerData == null)
                 return;
             _loading = true;
             StateHasChanged();
