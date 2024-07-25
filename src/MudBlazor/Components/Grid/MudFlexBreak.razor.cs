@@ -7,6 +7,8 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 #nullable enable
+
+
 public partial class MudFlexBreak : MudComponentBase
 {
     /// <summary>

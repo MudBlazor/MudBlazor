@@ -1,7 +1,7 @@
 ﻿namespace MudBlazor
 {
     /// <summary>
-    /// Represents a range of values.
+    /// A range of values.
     /// </summary>
     /// <typeparam name="T">The type of value for the range.</typeparam>
     public class Range<T>
