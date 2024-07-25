@@ -2808,6 +2808,34 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () => await dataGrid.Instance.ReloadServerData());
         }
 
+        /// <summary>
+        /// https://github.com/MudBlazor/MudBlazor/issues/8298
+        /// </summary>
+        [Test]
+        public async Task SetRowsPerPageAsync_CallOneTimeServerData()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<DataGridServerPaginationTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerPaginationTest.Model>>();
+            dataGrid.Instance.CurrentPage = 2;
+            var serverDataCallCount = 0;
+            var originalServerDataFunc = dataGrid.Instance.ServerData;
+            dataGrid.Instance.ServerData = (state) =>
+            {
+                serverDataCallCount++;
+                return originalServerDataFunc(state);
+            };
+
+            // Act
+
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.SetRowsPerPageAsync(25));
+
+            // Assert
+
+            serverDataCallCount.Should().Be(1);
+        }
+
         [Test]
         public async Task DataGridCellTemplateTest()
         {

@@ -101,10 +101,8 @@ public static class MudGlobal
     /// <remarks>
     /// Razor silently ignores parameters which don't exist. Since v7.0.0 renamed so many parameters we want
     /// to help our users find old parameters they missed by throwing a runtime exception.
-    ///
-    /// TODO: Remove this later. At the moment, we don't know yet when will be the best time to remove it.
-    /// Sometime when the v7 version has stabilized.
     /// </remarks>
+    [Obsolete("This field is obsolete and has no function due to the new Analyzer. It will be removed in a future version.", true)]
     public static bool EnableIllegalRazorParameterDetection = true;
 
     /// <summary>
