@@ -11,8 +11,9 @@ namespace MudBlazor;
 /// </summary>
 internal static class Identifier
 {
-    private const int GuidLength = 32;
-    private const int GuidSubLength = 8;
+    private const string Chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+    private const int CharsLength = 35;
+    private const int RandomStringLength = 8;
 
     /// <summary>
     /// Creates a unique identifier with the specified prefix.
@@ -22,10 +23,15 @@ internal static class Identifier
     /// <example><code>prefixdb54bcd0</code></example>
     internal static string Create(ReadOnlySpan<char> prefix)
     {
-        Span<char> identifierSpan = stackalloc char[prefix.Length + GuidLength];
+        Span<char> identifierSpan = stackalloc char[prefix.Length + RandomStringLength];
         prefix.CopyTo(identifierSpan);
-        Guid.NewGuid().TryFormat(identifierSpan[prefix.Length..], out _, ['n']);
-        return identifierSpan[..(prefix.Length + GuidSubLength)].ToString();
+        for (var i = 0; i < RandomStringLength; i++)
+        {
+            var index = Random.Shared.Next(CharsLength);
+            identifierSpan[prefix.Length + i] = Chars[index];
+        }
+
+        return identifierSpan.ToString();
     }
 
     /// <summary>
