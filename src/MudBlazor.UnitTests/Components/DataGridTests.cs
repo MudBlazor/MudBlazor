@@ -4380,9 +4380,9 @@ namespace MudBlazor.UnitTests.Components
 
             IElement SelectElement() => comp.Find("div.mud-select.filter-input");
             SelectElement().Click();
-            
+
             var items = comp.FindAll("div.mud-list-item").ToArray();
-            
+
             items.Length.Should().Be(3);
             items[0].TextContent.Should().BeEmpty();
             items[1].TextContent.Should().Be("Free education");
