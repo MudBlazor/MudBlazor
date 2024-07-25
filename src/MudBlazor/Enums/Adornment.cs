@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 
-
 namespace MudBlazor
 {
     public enum Adornment
