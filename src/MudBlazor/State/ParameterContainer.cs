@@ -4,9 +4,7 @@
 
 using System;
 using System.Collections;
-#if NET8_0_OR_GREATER
 using System.Collections.Frozen;
-#endif
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -93,15 +91,9 @@ internal class ParameterContainer : IParameterContainer
 
         VerifyOnAuto();
 
-#if NET8_0_OR_GREATER
         var parametersHandlerShouldFire = _parameterScopeContainers.SelectMany(parameter => parameter)
             .Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters))
             .ToFrozenSet(ParameterHandlerUniquenessComparer.Default);
-#else
-        var parametersHandlerShouldFire = _parameterScopeContainers.SelectMany(parameter => parameter)
-            .Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters))
-            .ToHashSet(ParameterHandlerUniquenessComparer.Default);
-#endif
 
         await baseSetParametersAsync(parameters);
 
