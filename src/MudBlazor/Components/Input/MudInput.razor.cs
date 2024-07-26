@@ -167,7 +167,7 @@ namespace MudBlazor
         public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         /// <summary>
-        /// Occurs when the mouse wheel has moved.
+        /// Occurs when a mouse wheel event is raised.
         /// </summary>
         [Parameter]
         public EventCallback<WheelEventArgs> OnMouseWheel { get; set; }
@@ -182,7 +182,7 @@ namespace MudBlazor
         public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 
         /// <summary>
-        /// The icon to display for the <c>Up</c> icon.
+        /// The icon to display for the <c>Up</c> arrow button.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.KeyboardArrowUp"/>.
@@ -191,7 +191,7 @@ namespace MudBlazor
         public string NumericUpIcon { get; set; } = Icons.Material.Filled.KeyboardArrowUp;
 
         /// <summary>
-        /// The icon to display for the <c>Down</c> icon.
+        /// The icon to display for the <c>Down</c> arrow button.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.KeyboardArrowDown"/>.

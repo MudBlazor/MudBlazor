@@ -34,7 +34,7 @@ public partial class MudInputAdornment
     public string Icon { get; set; }
 
     /// <summary>
-    /// The amount of negative margin applied when <see cref="Icon"/> is set.
+    /// The amount of negative margin applied to the icon.
     /// </summary>
     /// <remarks>
     /// Defaults to <see cref="Edge.False"/>.  Other values are <see cref="Edge.Start"/> and <see cref="Edge.End"/>.
@@ -43,7 +43,7 @@ public partial class MudInputAdornment
     public Edge Edge { get; set; }
 
     /// <summary>
-    /// The size of the icon when <see cref="Icon"/> is set.
+    /// The size of the icon.
     /// </summary>
     /// <remarks>
     /// Defaults to <see cref="Size.Medium"/>.
@@ -52,10 +52,10 @@ public partial class MudInputAdornment
     public Size Size { get; set; } = Size.Medium;
 
     /// <summary>
-    /// The color of the button when <see cref="Icon"/> is set.
+    /// The color of the icon button.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
+    /// Defaults to <see cref="Color.Default"/>.
     /// </remarks>
     [Parameter]
     public Color Color { get; set; } = Color.Default;

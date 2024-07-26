@@ -24,7 +24,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// the number of milliseconds to wait before updating the <see cref="MudBaseInput{T}.Text"/> value.
+        /// The number of milliseconds to wait before updating the <see cref="MudBaseInput{T}.Text"/> value.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
