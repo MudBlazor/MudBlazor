@@ -191,6 +191,8 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<TableRowClickEventArgs<T>> OnRowClick { get; set; }
 
+        public MudTr? SelectedRow { get; set; }
+
         internal override async Task FireRowClickEventAsync(MouseEventArgs args, MudTr row, object? o)
         {
             var item = default(T);
@@ -199,6 +201,7 @@ namespace MudBlazor
                 item = (T?)o;
             }
             catch (Exception) { /*ignore*/}
+            SelectedRow = row;
             await OnRowClick.InvokeAsync(new TableRowClickEventArgs<T>(args, row, item));
         }
 

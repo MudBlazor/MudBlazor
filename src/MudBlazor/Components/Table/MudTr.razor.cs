@@ -264,7 +264,7 @@ namespace MudBlazor
             }
         }
 
-        private void FinishEdit(MouseEventArgs ev)
+        public void FinishEdit(MouseEventArgs ev)
         {
             // Check the validity of the item
             if (!(Context?.Table?.Validator.IsValid ?? true)) return;
