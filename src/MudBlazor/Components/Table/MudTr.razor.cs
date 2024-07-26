@@ -287,7 +287,7 @@ namespace MudBlazor
             _hasBeenClickedFirstTime = false;
         }
 
-        private void CancelEdit(MouseEventArgs ev)
+        public void CancelEdit(MouseEventArgs ev)
         {
             // Set the item value to cancel edit mode
             Context?.Table?.SetEditingItem(null);
