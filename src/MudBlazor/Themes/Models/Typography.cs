@@ -9,76 +9,121 @@
         /// <summary>
         /// Gets or sets the default typography settings.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="Default.Default()"/> constructor.
+        /// </remarks>
         public BaseTypography Default { get; set; } = new Default();
 
         /// <summary>
         /// Gets or sets the typography settings for H1.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="H1.H1()"/> constructor.
+        /// </remarks>
         public BaseTypography H1 { get; set; } = new H1();
 
         /// <summary>
         /// Gets or sets the typography settings for H2.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="H2.H2()"/> constructor.
+        /// </remarks>
         public BaseTypography H2 { get; set; } = new H2();
 
         /// <summary>
         /// Gets or sets the typography settings for H3.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="H3.H3()"/> constructor.
+        /// </remarks>
         public BaseTypography H3 { get; set; } = new H3();
 
         /// <summary>
         /// Gets or sets the typography settings for H4.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="H4.H4()"/> constructor.
+        /// </remarks>
         public BaseTypography H4 { get; set; } = new H4();
 
         /// <summary>
         /// Gets or sets the typography settings for H5.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="H5.H5()"/> constructor.
+        /// </remarks>
         public BaseTypography H5 { get; set; } = new H5();
 
         /// <summary>
         /// Gets or sets the typography settings for H6.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="H6.H6()"/> constructor.
+        /// </remarks>
         public BaseTypography H6 { get; set; } = new H6();
 
         /// <summary>
         /// Gets or sets the typography settings for Subtitle1.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="Subtitle1.Subtitle1()"/> constructor.
+        /// </remarks>
         public BaseTypography Subtitle1 { get; set; } = new Subtitle1();
 
         /// <summary>
         /// Gets or sets the typography settings for Subtitle2.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="Subtitle2.Subtitle2()"/> constructor.
+        /// </remarks>
         public BaseTypography Subtitle2 { get; set; } = new Subtitle2();
 
         /// <summary>
         /// Gets or sets the typography settings for Body1.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="Body1.Body1()"/> constructor.
+        /// </remarks>
         public BaseTypography Body1 { get; set; } = new Body1();
 
         /// <summary>
         /// Gets or sets the typography settings for Body2.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="Body2.Body2()"/> constructor.
+        /// </remarks>
         public BaseTypography Body2 { get; set; } = new Body2();
 
         /// <summary>
         /// Gets or sets the typography settings for Input.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="Input.Input()"/> constructor.
+        /// </remarks>
         public BaseTypography Input { get; set; } = new Input();
 
         /// <summary>
         /// Gets or sets the typography settings for Button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="Button.Button()"/> constructor.
+        /// </remarks>
         public BaseTypography Button { get; set; } = new Button();
 
         /// <summary>
         /// Gets or sets the typography settings for Caption.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="Caption.Caption()"/> constructor.
+        /// </remarks>
         public BaseTypography Caption { get; set; } = new Caption();
 
         /// <summary>
         /// Gets or sets the typography settings for Overline.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="Overline.Overline()"/> constructor.
+        /// </remarks>
         public BaseTypography Overline { get; set; } = new Overline();
     }
 
@@ -92,7 +137,7 @@
         /// </summary>
         public Default()
         {
-            FontFamily = new[] { "Roboto", "Helvetica", "Arial", "sans-serif" };
+            FontFamily = ["Roboto", "Helvetica", "Arial", "sans-serif"];
             FontSize = ".875rem";
             FontWeight = 400;
             LineHeight = 1.43;
