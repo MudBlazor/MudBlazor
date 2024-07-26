@@ -12,7 +12,7 @@ namespace MudBlazor
     {
         private IMudRadioGroup? _parent;
         private IKeyInterceptor? _keyInterceptor;
-        private string _elementId = "radio" + Guid.NewGuid().ToString().Substring(0, 8);
+        private string _elementId = Identifier.Create("radio");
 
         protected string Classname =>
             new CssBuilder("mud-radio")

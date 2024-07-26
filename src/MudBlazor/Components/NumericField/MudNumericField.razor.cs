@@ -115,7 +115,7 @@ namespace MudBlazor
 
         [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
 
-        private string _elementId = "numericField_" + Guid.NewGuid().ToString().Substring(0, 8);
+        private string _elementId = Identifier.Create("numericField");
 
         private MudInput<string> _elementReference;
 

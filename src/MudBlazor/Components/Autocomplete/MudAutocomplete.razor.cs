@@ -19,7 +19,7 @@ namespace MudBlazor
         /// <summary>
         /// We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
         /// </summary>
-        private readonly string _componentId = Guid.NewGuid().ToString();
+        private readonly string _componentId = Identifier.Create();
 
         /// <summary>
         /// This boolean will keep track if the clear function is called too keep the set text function to be called.
