@@ -2,19 +2,19 @@
 
   <PropertyGroup>
     <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
+    <PackageId>GOPMudBlazor</PackageId> 
   </PropertyGroup>
 
   <PropertyGroup>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>Nuget.png</PackageIcon>
-    <Company>MudBlazor</Company>
+    <Company>GOPMudBlazor</Company>
     <Authors>Garderoben, Henon and Contributors</Authors>
     <Copyright>Copyright 2024 MudBlazor</Copyright>
     <PackageTags>Blazor, MudBlazor, Material, Material Design, Components, Blazor Components, Blazor Library</PackageTags>
     <Description>A Blazor Component Library based on Material Design principles, focusing on ease of use. Written mainly in C# with minimal JavaScript, it allows .NET developers to easily understand and debug the code when needed.</Description>
-    <PackageProjectUrl>https://mudblazor.com/</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/MudBlazor/MudBlazor</RepositoryUrl>
+    <RepositoryUrl>https://github.com/pahousegop/GOPMudBlazor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
   
