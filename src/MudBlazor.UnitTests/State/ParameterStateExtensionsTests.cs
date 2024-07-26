@@ -15,7 +15,7 @@ namespace MudBlazor.UnitTests.State;
 public class ParameterStateExtensionsTests
 {
     [Test]
-    public async Task SetValueAfterEventCallbackAsync_UpdatesValue_And_EventCallbackFire()
+    public async Task SetValueAfterEventCallbackAsync_EventCallbackFireFirst_ThenUpdatesValue()
     {
         // Arrange
         const int InitialValue = 5;
