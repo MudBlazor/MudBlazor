@@ -359,12 +359,34 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TreeViewTest1>();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
-            comp.Find("button").Click();
+            comp.Find("button.mud-treeview-item-expand-button").Click();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
-            comp.Find("button").Click();
+            comp.Find("button.mud-treeview-item-expand-button").Click();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(0);
             comp.Find("div.mud-treeview-item-content").Click();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(0);
+        }
+
+        [Test]
+        public void DoubleClickOnArrowButton_ShouldNotSelectItem()
+        {
+            var comp = Context.RenderComponent<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
+            comp.Find("button.mud-treeview-item-expand-button").Click();
+            comp.FindAll("input.mud-checkbox-input").Count.Should().Be(10);
+            comp.Instance.SubItemSelected.Should().BeFalse();
+            comp.Instance.Item1Selected.Should().BeFalse();
+            // double-click on expand button should not influence selection
+            comp.Find("button.mud-treeview-item-expand-button").DoubleClick();
+            comp.Instance.SubItemSelected.Should().BeFalse();
+            comp.Instance.Item1Selected.Should().BeFalse();
+            comp.Find("input.mud-checkbox-input").Change(true);
+            comp.Instance.SubItemSelected.Should().BeTrue();
+            comp.Instance.Item1Selected.Should().BeTrue();
+            // double-click on expand button should not influence selection
+            comp.Find("button.mud-treeview-item-expand-button").DoubleClick();
+            comp.Instance.SubItemSelected.Should().BeTrue();
+            comp.Instance.Item1Selected.Should().BeTrue();
         }
 
         [Test]
@@ -372,9 +394,9 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TreeViewTest2>();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
-            comp.Find("button").Click();
+            comp.Find("button.mud-treeview-item-expand-button").Click();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
-            comp.Find("button").Click();
+            comp.Find("button.mud-treeview-item-expand-button").Click();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(0);
             comp.Find("div.mud-treeview-item-content").Click();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
@@ -387,7 +409,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.MultiSelection));
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
-            comp.Find("button").Click();
+            comp.Find("button.mud-treeview-item-expand-button").Click();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
             comp.FindAll("input.mud-checkbox-input").Count.Should().Be(10);
             comp.Find("input.mud-checkbox-input").Change(true);
@@ -462,6 +484,26 @@ namespace MudBlazor.UnitTests.Components
                 .ChildElementCount.Should().Be(0);
             comp.FindAll("div.mud-treeview-item-content")[2].Click();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(8);
+        }
+
+        [Test]
+        public async Task TreeViewItem_ShouldBeAbleTo_ReloadInCollapsedState()
+        {
+            var comp = Context.RenderComponent<TreeViewServerTest2>();
+            var treeviewItem = comp.FindComponents<MudTreeViewItem<string>>().FirstOrDefault();
+            treeviewItem!.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded)).Should().Be(false);
+            comp.FindAll("div.mud-treeview-item-arrow button").Count.Should().Be(2);
+            // expand first tree
+            comp.Find("div.mud-treeview-item-arrow button").Click();
+            comp.FindAll("div.mud-treeview-item-arrow button").Count.Should().Be(3);
+            // collapse first tree again
+            comp.Find("div.mud-treeview-item-arrow button").Click();
+            treeviewItem.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded)).Should().Be(false);
+            // reload first tree in collapsed state
+            var reloadTask = Task.CompletedTask;
+            await comp.InvokeAsync(() => reloadTask = treeviewItem.Instance.ReloadAsync());
+            await reloadTask;
+            comp.FindAll("div.mud-treeview-item-arrow button").Count.Should().Be(3);
         }
 
         [Test]

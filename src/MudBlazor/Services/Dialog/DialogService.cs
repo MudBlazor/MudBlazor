@@ -58,14 +58,14 @@ namespace MudBlazor
                 });
         }
 
-        /// <summary>
-        /// Occurs when a new dialog instance is created.
-        /// </summary>
+        /// <inheritdoc />
+        [Obsolete($"Please use {nameof(DialogInstanceAddedAsync)} instead!")]
         public event Action<IDialogReference>? OnDialogInstanceAdded;
 
-        /// <summary>
-        /// Occurs when a request is made to close a dialog.
-        /// </summary>
+        /// <inheritdoc />
+        public event Func<IDialogReference, Task>? DialogInstanceAddedAsync;
+
+        /// <inheritdoc />
         public event Action<IDialogReference, DialogResult?>? OnDialogCloseRequested;
 
         /// <inheritdoc />
@@ -158,6 +158,8 @@ namespace MudBlazor
             });
             dialogReference.InjectRenderFragment(dialogInstance);
             OnDialogInstanceAdded?.Invoke(dialogReference);
+            //TODO: drop sync Show as it was planned in future and make this awaitable;
+            DialogInstanceAddedAsync?.Invoke(dialogReference);
 
             return dialogReference;
         }

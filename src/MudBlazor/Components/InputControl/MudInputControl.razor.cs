@@ -17,8 +17,8 @@ namespace MudBlazor
 
         protected string HelperContainer =>
             new CssBuilder("mud-input-control-helper-container")
-                .AddClass($"px-1", Variant == Variant.Filled)
-                .AddClass($"px-2", Variant == Variant.Outlined)
+                .AddClass("px-1", Variant == Variant.Filled)
+                .AddClass("px-2", Variant == Variant.Outlined)
                 .Build();
 
         protected string HelperClass =>

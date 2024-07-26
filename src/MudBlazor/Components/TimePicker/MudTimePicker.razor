@@ -26,15 +26,15 @@
             @if (AmPm)
             {
                 <div class="mud-timepicker-ampm">
-                    <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@AmButtonClassname" OnClick="@OnAmClickedAsync">AM</MudButton>
-                    <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@PmButtonClassname" OnClick="@OnPmClickedAsync">PM</MudButton>
+                    <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@AmButtonClassname" OnClick="OnAmClickedAsync">AM</MudButton>
+                    <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@PmButtonClassname" OnClick="OnPmClickedAsync">PM</MudButton>
                 </div>
             }
         </MudPickerToolbar>
         <MudPickerContent>
             <div class="mud-picker-time-container">
                 <div class="mud-picker-time-clock">
-                    <div role="menu" tabindex="-1" class="mud-picker-time-clock-mask" @onpointerdown="OnPointerDown" @onpointerup="OnPointerUpAsync">
+                    <div role="menu" tabindex="-1" class="mud-picker-time-clock-mask" @ref="ClockElementReference" @oncontextmenu:preventDefault>
                         <div class="@GetClockPinColor()"></div>
                         <div class="@GetClockPointerColor()" style="height: @GetPointerHeight(); transform: @GetPointerRotation()">
                             <div class="@GetClockPointerThumbColor()"></div>
@@ -52,7 +52,7 @@
                                 for (int i = 1; i <= 12; ++i)
                                 {
                                     var _i = i;
-                                    <div class="mud-picker-stick mud-hour" style="@($"transform: rotateZ({_i * 30}deg);")" @onclick="(async () => await OnClickHourAsync(_i))" @onpointerover="(async () => await OnPointerOverHourAsync(_i))" @onclick:stopPropagation="true"></div>
+                                    <div class="mud-picker-stick mud-hour" style="@($"transform: rotateZ({_i * 30}deg);")" data-stick-value="@_i"></div>
                                 }
                             }
                             else
@@ -75,8 +75,8 @@
                                 {
                                     var _i = i;
                                     <div class="mud-picker-stick" style="@($"transform: rotateZ({_i * 30}deg);")">
-                                        <div class="mud-picker-stick-inner mud-hour" @onclick="(async () => await OnClickHourAsync(_i))" @onpointerover="(async () => await OnPointerOverHourAsync(_i))" @onclick:stopPropagation="true"></div>
-                                        <div class="mud-picker-stick-outer mud-hour" @onclick="(async () => await OnClickHourAsync((_i + 12) % 24))" @onpointerover="(async () => await OnPointerOverHourAsync((_i + 12) % 24))" @onclick:stopPropagation="true"></div>
+                                        <div class="mud-picker-stick-inner mud-hour" data-stick-value="@_i"></div>
+                                        <div class="mud-picker-stick-outer mud-hour" data-stick-value="@((_i + 12) % 24)"></div>
                                     </div>
                                 }
                             }
@@ -92,7 +92,7 @@
                             @for (int i = 0; i < 60; ++i)
                             {
                                 var _i = i;
-                                <div class="mud-picker-stick mud-minute" style="@($"transform: rotateZ({_i * 6}deg);")" @onclick="(async () => await OnClickMinuteAsync(_i))" @onpointerover="(async () => await OnPointerOverMinuteAsync(_i))" @onclick:stopPropagation="true"></div>
+                                <div class="mud-picker-stick mud-minute" style="@($"transform: rotateZ({_i * 6}deg);")" data-stick-value="@_i"></div>
                             }
                         </div>
                     </div>

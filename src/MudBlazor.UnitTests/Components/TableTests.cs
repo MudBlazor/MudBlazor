@@ -975,6 +975,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// The checkboxes should all be disabled on load, even the header and footer checkboxes.
+        /// </summary>
+        [Test]
+        public void TableMultiSelectionTest9()
+        {
+            var comp = Context.RenderComponent<TableMultiSelectionTest9>();
+            // select elements needed for the test
+            var tableComponent = comp.FindComponent<MudTable<TableGroupingTest.RacingCar>>();
+            var table = tableComponent.Instance;
+            var rows = tableComponent.FindAll("tr").ToArray();
+            var headerAndFooterCheckboxes = comp.FindComponents<MudCheckBox<bool?>>().Select(x => x.Instance).ToArray();
+            var dataCheckboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+            foreach (var row in rows.Where(el => el.ClassName.Contains("row-click-test"))) // simulate selection on row click, excluding headers and footer
+                row.Click();
+            // check result
+            headerAndFooterCheckboxes.Sum(x => x.Disabled ? 0 : 1).Should().Be(0); // No checkbox should be enabled on header, group headers and footer
+            dataCheckboxes.Sum(x => x.Disabled ? 1 : 0).Should().Be(comp.Instance.Items.Count()); // No checkbox should be enabled on rows
+            table.SelectedItems.Count.Should().Be(0); // No item should be selected
+        }
+
+        /// <summary>
         /// Changing page should retain the selected items using ServerData
         /// </summary>
         [Test]
@@ -1322,6 +1343,34 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("span.mud-button-root.mud-table-sort-label").Click(); // sort
             comp.Find("#counter").TextContent.Should().Be("3");
+        }
+
+        /// <summary>
+        /// https://github.com/MudBlazor/MudBlazor/issues/8298
+        /// </summary>
+        [Test]
+        public async Task SetRowsPerPageAsync_CallOneTimeServerData()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<TableServerSideDataTest2>();
+            var table = comp.FindComponent<MudTable<int>>();
+            table.Instance.CurrentPage = 2;
+            var serverDataCallCount = 0;
+            var originalServerDataFunc = table.Instance.ServerData;
+            table.Instance.ServerData = (state, cancellationToken) =>
+            {
+                serverDataCallCount++;
+                return originalServerDataFunc(state, cancellationToken);
+            };
+
+            // Act
+
+            await table.InvokeAsync(() => table.Instance.SetRowsPerPage(25));
+
+            // Assert
+
+            serverDataCallCount.Should().Be(1);
         }
 
         /// <summary>

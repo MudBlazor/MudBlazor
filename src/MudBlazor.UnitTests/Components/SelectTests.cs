@@ -1,6 +1,5 @@
 ﻿#pragma warning disable CS1998 // async without await
 #pragma warning disable IDE1006 // leading underscore
-#pragma warning disable BL0005 // Set parameter outside component
 
 using System;
 using System.Collections.Generic;
@@ -90,7 +89,9 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("1"));
             //Check user on blur implementation works
             var @switch = comp.FindComponent<MudSwitch<bool>>();
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             @switch.Instance.Value = true;
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
             await comp.InvokeAsync(() => select.Instance.OnBlurAsync(new FocusEventArgs()));
             comp.WaitForAssertion(() => @switch.Instance.Value.Should().Be(false));
         }
@@ -142,10 +143,12 @@ namespace MudBlazor.UnitTests.Components
                 comp.FindAll("div.mud-list-item path")[3].Attributes["d"].Value.Should().Be(@checked);
                 comp.FindAll("div.mud-list-item path")[5].Attributes["d"].Value.Should().Be(@checked);
                 // now check how setting the SelectedValues makes items checked or unchecked
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
                 await comp.InvokeAsync(() =>
                 {
                     select.Instance.SelectedValues = new HashSet<string>() { "1", "2" };
                 });
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
                 comp.WaitForAssertion(() =>
                     comp.FindAll("div.mud-list-item path")[1].Attributes["d"].Value.Should().Be(@checked));
                 comp.FindAll("div.mud-list-item path")[3].Attributes["d"].Value.Should().Be(@checked);
@@ -1174,10 +1177,12 @@ namespace MudBlazor.UnitTests.Components
             var select = comp.FindComponent<MudSelect<string>>().Instance;
             select.SelectedValues.Count().Should().Be(2);
             select.Text.Should().Be("Programista, test");
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             await comp.InvokeAsync(() =>
             {
                 select.SelectedValues = new List<string> { "test" };
             });
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
             select.SelectedValues.Count().Should().Be(1);
             select.Text.Should().Be("test");
         }

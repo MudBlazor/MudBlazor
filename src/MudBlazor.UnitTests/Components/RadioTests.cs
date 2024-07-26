@@ -233,8 +233,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => radio.Instance.IMudRadioGroup = null);
             await comp.InvokeAsync(() => radio.Instance.OnClickAsync());
             comp.WaitForAssertion(() => radio.Instance.Value.Should().Be("1"));
-#pragma warning disable BL0005
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             await comp.InvokeAsync(() => radio.Instance.Disabled = true);
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
             comp.WaitForAssertion(() => group.Instance.Value.Should().Be(null));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });

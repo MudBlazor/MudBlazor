@@ -628,12 +628,14 @@ namespace MudBlazor
         }
 
         // Allows child components to change column grouping.
-        internal async Task SetGrouping(bool g)
+        internal async Task SetGroupingAsync(bool group)
         {
-            await GroupingState.SetValueAsync(g);
+            await GroupingState.SetValueAsync(group);
 
-            if (GroupingState.Value)
-                await DataGrid?.ChangedGrouping(this);
+            if (DataGrid is not null)
+            {
+                await DataGrid.ChangedGrouping(this);
+            }
         }
 
         /// <summary>

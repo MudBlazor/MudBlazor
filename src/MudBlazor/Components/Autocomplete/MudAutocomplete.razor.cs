@@ -31,13 +31,13 @@ namespace MudBlazor
         private int _elementKey = 0;
         private int _returnedItemsCount;
         private bool _open;
-        private bool _doNotOpenMenuOnNextFocus;
+        private bool _doNotOpenMenuOnNextFocus; // TODO: Remove and refactor to avoid race conditions.
         private MudInput<string> _elementReference;
         private CancellationTokenSource _cancellationTokenSrc;
         private Task _currentSearchTask;
         private Timer _debounceTimer;
         private T[] _items;
-        private IList<int> _enabledItemIndices = new List<int>();
+        private List<int> _enabledItemIndices = [];
         private Func<T, string> _toStringFunc;
 
         [Inject]
@@ -397,7 +397,7 @@ namespace MudBlazor
         public EventCallback<bool> OpenChanged { get; set; }
 
         /// <summary>
-        /// Updates the Value to the currently selected item when pressing the <c>Tab</c> key.
+        /// Updates the Value to the currently selected item when pressing the Tab key.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -405,6 +405,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public bool SelectValueOnTab { get; set; }
+
+        /// <summary>
+        /// Opens the list when focus is received on the input element; otherwise only opens on click.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool OpenOnFocus { get; set; } = true;
 
         /// <summary>
         /// Displays the Clear icon button.
@@ -415,6 +425,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Clearable { get; set; }
+
+        /// <summary>
+        /// Custom clear icon when <see cref="Clearable"/> is enabled.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 
         /// <summary>
         /// Occurs when the Clear button has been clicked.
@@ -469,7 +486,7 @@ namespace MudBlazor
                 return userAutocomplete;
             }
 
-            return $"mud-disable-{Guid.NewGuid()}";
+            return "off";
         }
 
         public MudAutocomplete()
@@ -884,12 +901,11 @@ namespace MudBlazor
             }
         }
 
-        private Task OnInputClickedAsync()
-        {
-            return _isFocused ? OnInputFocusedAsync() : Task.CompletedTask;
-        }
+        private Task OnInputClickedAsync() => _isFocused ? ActivateByFocusAsync(true) : Task.CompletedTask;
 
-        private async Task OnInputFocusedAsync()
+        private Task OnInputFocusedAsync() => ActivateByFocusAsync(false);
+
+        private async Task ActivateByFocusAsync(bool fromPointer)
         {
             _isFocused = true;
 
@@ -904,8 +920,11 @@ namespace MudBlazor
                 await SelectAsync();
             }
 
-            // Open the menu.
-            await OpenMenuAsync();
+            // Open the menu on focus if configured to, or always by pointer.
+            if (OpenOnFocus || fromPointer)
+            {
+                await OpenMenuAsync();
+            }
         }
 
         private async Task AdornmentClickHandlerAsync()
@@ -926,9 +945,9 @@ namespace MudBlazor
             //base.OnBlurred(args);
         }
 
-        private Task OnOverlayVisibleChangedAsync(bool willBeVisible)
+        private Task OnOverlayClosedAsync()
         {
-            if (!willBeVisible && Open)
+            if (Open)
             {
                 return CloseMenuAsync();
             }

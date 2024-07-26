@@ -1295,14 +1295,39 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Autocomplete_Should_OpenMenuOnFocus()
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task Autocomplete_Should_OpenMenuOnFocus(bool openOnFocus)
         {
-            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var comp = Context.RenderComponent<AutocompleteFocusTest>();
+            comp.SetParam(a => a.OpenOnFocus, openOnFocus);
 
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
 
             comp.Find("input.mud-input-root").Focus();
 
+            if (openOnFocus)
+            {
+                comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            }
+            else
+            {
+                comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            }
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_OpenMenuOnFocus_AlwaysOnClick()
+        {
+            var comp = Context.RenderComponent<AutocompleteFocusTest>();
+            comp.SetParam(a => a.OpenOnFocus, false);
+
+            comp.Find("input.mud-input-root").Focus(); // Browser would focus first.
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+
+            comp.Find("input.mud-input-root").Click();
+
+            // OpenOnFocus=false isn't respected by clicks. It added after the fact to allow opting in to v6 behavior.
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
         }
 
@@ -1546,15 +1571,15 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudAutocomplete<string>>();
 
-            comp.Find("input.mud-input-root").GetAttribute("autocomplete").Should().StartWith("mud-disable-");
+            comp.Find("input.mud-input-root").GetAttribute("autocomplete").Should().Be("off");
         }
 
         public void Should_Override_Autocomplete_Attribute_With_UserAttributes()
         {
             var comp = Context.RenderComponent<MudAutocomplete<string>>(parameters => parameters
-                .Add(p => p.UserAttributes, new() { ["autocomplete"] = "off" }));
+                .Add(p => p.UserAttributes, new() { ["autocomplete"] = "on" }));
 
-            comp.Find("input.mud-input-root").GetAttribute("autocomplete").Should().Be("off");
+            comp.Find("input.mud-input-root").GetAttribute("autocomplete").Should().Be("on");
         }
     }
 }

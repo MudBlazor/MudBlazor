@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Options;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -31,7 +32,7 @@ namespace MudBlazor
         private IDialogService DialogService { get; set; } = null!;
 
         [CascadingParameter]
-        private MudDialogInstance? DialogInstance { get; set; }
+        internal MudDialogInstance? DialogInstance { get; set; }
 
         /// <summary>
         /// The message box title. If null or empty, title will be hidden
@@ -226,13 +227,5 @@ namespace MudBlazor
         private void OnNoClicked() => DialogInstance?.Close(DialogResult.Ok(false));
 
         private void OnCancelClicked() => DialogInstance?.Close(DialogResult.Cancel());
-
-        private void HandleKeyDown(KeyboardEventArgs args)
-        {
-            if (args.Key == "Escape")
-            {
-                OnCancelClicked();
-            }
-        }
     }
 }

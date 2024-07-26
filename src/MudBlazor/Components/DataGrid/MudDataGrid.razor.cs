@@ -1633,7 +1633,7 @@ namespace MudBlazor
             _rowsPerPage = size;
 
             if (resetPage)
-                CurrentPage = 0;
+                _currentPage = 0;
 
             await RowsPerPageChanged.InvokeAsync(_rowsPerPage.Value);
 

@@ -36,6 +36,8 @@
                           OnAdornmentClick="@AdornmentClickHandlerAsync" AdornmentIcon="@CurrentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
                           AdornmentAriaLabel="@AdornmentAriaLabel"
                           Clearable="@(!GetReadOnlyState() && Clearable)" OnClearButtonClick="@OnClearButtonClick"
+                          ClearIcon="@ClearIcon"
+                          MaxLength="@MaxLength"
                           autocomplete="@GetAutocomplete()"
                           @attributes="UserAttributes"
                           TextChanged="OnTextChangedAsync"
@@ -127,4 +129,4 @@
     </div>
 </CascadingValue>
 
-<MudOverlay AutoClose Visible="Open" VisibleChanged="OnOverlayVisibleChangedAsync" LockScroll="false" />
+<MudOverlay AutoClose Visible="Open" OnClosed="OnOverlayClosedAsync" LockScroll="false" />

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 namespace MudBlazor;
 
 #nullable enable
+
 public class TreeItemData<T> : IEquatable<TreeItemData<T>>
 {
     public TreeItemData() : this(default) { }
@@ -17,17 +18,17 @@ public class TreeItemData<T> : IEquatable<TreeItemData<T>>
         Value = value;
     }
 
-    public string? Text { get; set; }
+    public virtual string? Text { get; set; }
 
-    public string? Icon { get; set; }
+    public virtual string? Icon { get; set; }
 
     public T? Value { get; init; }
 
-    public bool Expanded { get; set; }
+    public virtual bool Expanded { get; set; }
 
-    public bool Expandable { get; set; } = true;
+    public virtual bool Expandable { get; set; } = true;
 
-    public bool Selected { get; set; }
+    public virtual bool Selected { get; set; }
 
     public virtual List<TreeItemData<T>>? Children { get; set; }
 
