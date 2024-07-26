@@ -1,0 +1,41 @@
+name: .NET Core Build and Publish
+
+on: 
+  push:
+    branches: [ dev ]
+  workflow_dispatch:
+   
+env:
+  AZURE_WEBAPP_PACKAGE_PATH: './published'
+  NuGetDirectory: './NuGet'                     
+  NETCORE_VERSION: '8.0'                    # set this to the .NET Core version to use
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v1.1.1
+      with:
+         versionSpec: '5.x'
+
+    - name: Determine Version
+      id: version_step # step id used as reference for output values
+      uses: gittools/actions/gitversion/execute@v1.1.1
+      
+    - name: Setup .NET Core with Version ${{ env.NETCORE_VERSION }}
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.NETCORE_VERSION }}
+        
+ 
+    - name: Pack
+      run: dotnet pack GOPMudBlazor/MudBlazor.csproj  --configuration Release /p:Version=1.${{env.GitVersion_minor}}.${{env.buildMetaData}} --output ${{env.NuGetDirectory}}  
+
+    - name: Publish NuGet package
+      run:  dotnet nuget push "${{env.NuGetDirectory}}/*.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://nuget.pkg.github.com/pahousegop/index.json  
