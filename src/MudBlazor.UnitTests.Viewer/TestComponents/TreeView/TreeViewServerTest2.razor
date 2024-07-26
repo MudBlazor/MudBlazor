@@ -1,0 +1,77 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPaper Width="300px" Elevation="0">
+    <MudTreeView ServerData="@LoadServerData" Items="@InitialTreeItems">
+        <ItemTemplate>
+            <MudTreeViewItem Value="@context.Value" Icon="@context.Icon" LoadingIconColor="Color.Info" CanExpand="@context.Expandable">
+                <BodyContent Context="viewItem">
+                    <MudButton OnClick="() => OnClickAsync(viewItem)">Reload</MudButton>
+                </BodyContent>
+            </MudTreeViewItem>
+        </ItemTemplate>
+    </MudTreeView>
+</MudPaper>
+
+@code {
+    private List<TreeItemData<string>> InitialTreeItems { get; set; } = new();
+    private List<TreeItemData<string>> ServerTreeItems { get; set; } = new();
+
+    private Task OnClickAsync(MudTreeViewItem<string> viewItem)
+    {
+        return viewItem.ReloadAsync();
+    }
+
+    protected override void OnInitialized()
+    {
+        // MudTreeView initially only gets these top-level items
+        InitialTreeItems.Add(new TreeItemData<string> { Value = "All Mail", Icon = Icons.Material.Filled.Label, });
+        InitialTreeItems.Add(new TreeItemData<string> { Value = "Trash", Icon = Icons.Material.Filled.Delete });
+
+        // LoadServerData will load from this hierarchy
+        ServerTreeItems.Add(new TreeItemData<string> {
+                Value = "All Mail",
+                Icon = Icons.Material.Filled.Label,
+                Children = [
+                            new TreeItemData<string> { Value = "Promotions", Icon = Icons.Material.Filled.Group,
+                                Children = [
+                                    new TreeItemData<string> { Value = "L.E.D Door Mats", Icon = Icons.Material.Outlined.Lightbulb, Expandable = false },
+                                    new TreeItemData<string> { Value = "Car Beauty Salon", Icon = Icons.Material.Filled.CarRepair, Expandable = false },
+                                    new TreeItemData<string> { Value = "Fakedoors.com", Icon = Icons.Material.Outlined.DoorFront, Expandable = false },
+                                    new TreeItemData<string> { Value = "Bluetooth Toilet", Icon = Icons.Material.Filled.Wc, Expandable = false }
+                                ]},
+                    new TreeItemData<string> { Value = "Updates", Icon = Icons.Material.Filled.Info, Expandable = false },
+                    new TreeItemData<string> { Value = "Forums", Icon = Icons.Material.Filled.QuestionAnswer, Expandable = false },
+                    new TreeItemData<string> { Value = "Social", Icon = Icons.Material.Filled.LocalOffer, Expandable = false }
+                    ]
+            });
+    }
+
+    public Task<IReadOnlyCollection<TreeItemData<string>>> LoadServerData(string parentValue)
+    {
+        foreach (var item in ServerTreeItems) {
+            if (item.Value == parentValue)
+                return Task.FromResult<IReadOnlyCollection<TreeItemData<string>>>(item.Children);
+            if (!item.HasChildren)
+                continue;
+            var descendentItem = FindTreeItemData(parentValue, item);
+            if (descendentItem != null)
+                return Task.FromResult<IReadOnlyCollection<TreeItemData<string>>>(descendentItem.Children);
+        }
+        return null;
+    }
+
+    private TreeItemData<string> FindTreeItemData(string value, TreeItemData<string> parent)
+    {
+        foreach (var child in parent.Children) {
+            if (child.Value == value)
+                return child;
+            if (!child.HasChildren)
+                continue;
+            var descendentItem = FindTreeItemData(value, child);
+            if (descendentItem != null)
+                return descendentItem;
+        }
+        return null;
+    }
+
+}

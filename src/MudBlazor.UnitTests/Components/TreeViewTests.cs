@@ -487,6 +487,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task TreeViewItem_ShouldBeAbleTo_ReloadInCollapsedState()
+        {
+            var comp = Context.RenderComponent<TreeViewServerTest2>();
+            var treeviewItem = comp.FindComponents<MudTreeViewItem<string>>().FirstOrDefault();
+            treeviewItem!.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded)).Should().Be(false);
+            comp.FindAll("div.mud-treeview-item-arrow button").Count.Should().Be(2);
+            // expand first tree
+            comp.Find("div.mud-treeview-item-arrow button").Click();
+            comp.FindAll("div.mud-treeview-item-arrow button").Count.Should().Be(3);
+            // collapse first tree again
+            comp.Find("div.mud-treeview-item-arrow button").Click();
+            treeviewItem.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded)).Should().Be(false);
+            // reload first tree in collapsed state
+            var reloadTask = Task.CompletedTask;
+            await comp.InvokeAsync(() => reloadTask = treeviewItem.Instance.ReloadAsync());
+            await reloadTask;
+            comp.FindAll("div.mud-treeview-item-arrow button").Count.Should().Be(3);
+        }
+
+        [Test]
         public void TreeViewTreeItemDataTest()
         {
             // test default values
