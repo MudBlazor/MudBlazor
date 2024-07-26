@@ -8,4 +8,4 @@
         </CascadingValue>
     </div>
 </aside>
-<MudOverlay Visible="@OverlayVisible" @onclick="@CloseDrawerAsync" Class="@OverlayClass" DarkBackground="true" LockScroll="false" />
+<MudOverlay Visible="@OverlayVisible" AutoClose="@OverlayAutoClose" OnClosed="CloseDrawerAsync" Class="@OverlayClass" DarkBackground="true" LockScroll="false" />

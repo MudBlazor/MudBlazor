@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-using System.Timers;
+﻿using System.Timers;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
+using Timer = System.Timers.Timer;
 
 namespace MudBlazor
 {
