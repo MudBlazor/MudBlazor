@@ -1,0 +1,106 @@
+.mud-chat {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: .75rem;
+  padding-top: .25rem;
+  padding-bottom: .25rem;
+
+  &-bubble {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    padding: .5rem 1rem;
+    max-width: 90%;
+    border-radius: var(--mud-default-borderradius);
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+
+    &-default {
+      color: var(--mud-palette-dark-text);
+      background-color: var(--mud-palette-gray-darker);
+    }
+
+    &:before {
+      position: absolute;
+      bottom: 0;
+      width: .75rem;
+      height: .75rem;
+      background-color: inherit;
+      content: "";
+      mask-size: contain;
+      mask-repeat: no-repeat;
+      mask-position: center;
+    }
+  }
+
+  &-header {
+    grid-row-start: 1;
+    font-size: .875rem;
+    line-height: 1.25rem;
+
+    time {
+      margin-left: .5rem;
+      opacity: .5;
+      font-size: .75rem;
+      line-height: 1rem;
+    }
+  }
+
+  &-footer {
+    opacity: .5;
+  }
+
+  &-image {
+    grid-row: span 2 / span 2;
+    align-self: flex-end;
+  }
+
+  &-start {
+    place-items: start;
+    grid-template-columns: auto 1fr;
+
+    .mud-chat-header, .mud-chat-footer {
+      grid-column-start: 2;
+    }
+
+    .mud-chat-image {
+      grid-column-start: 1;
+    }
+
+    .mud-chat-bubble {
+      grid-column-start: 2;
+      border-end-start-radius: 0;
+
+      &:before {
+        mask-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMycgaGVpZ2h0PSczJyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnPjxwYXRoIGZpbGw9J2JsYWNrJyBkPSdtIDAgMyBMIDMgMyBMIDMgMCBDIDMgMSAxIDMgMCAzJy8+PC9zdmc+);
+        inset-inline-start: -.749rem;
+      }
+    }
+  }
+
+  &-end {
+    place-items: end;
+    grid-template-columns: 1fr auto;
+
+    .mud-chat-header, .mud-chat-footer {
+      grid-column-start: 1;
+    }
+
+    .mud-chat-image {
+      grid-column-start: 2;
+    }
+
+    .mud-chat-bubble {
+      grid-column-start: 1;
+      border-end-end-radius: 0;
+
+      &:before {
+        mask-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMycgaGVpZ2h0PSczJyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnPjxwYXRoIGZpbGw9J2JsYWNrJyBkPSdtIDAgMyBMIDEgMyBMIDMgMyBDIDIgMyAwIDEgMCAwJy8+PC9zdmc+);
+        inset-inline-start: 99.9%;
+      }
+    }
+  }
+}
+
