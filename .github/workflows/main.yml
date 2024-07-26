@@ -35,7 +35,7 @@ jobs:
         
  
     - name: Pack
-      run: dotnet pack GOPMudBlazor/MudBlazor.csproj  --configuration Release /p:Version=1.${{env.GitVersion_minor}}.${{env.buildMetaData}} --output ${{env.NuGetDirectory}}  
+      run: dotnet pack GOPMudBlazor/src/MudBlazor/MudBlazor.csproj  --configuration Release /p:Version=1.${{env.GitVersion_minor}}.${{env.buildMetaData}} --output ${{env.NuGetDirectory}}  
 
     - name: Publish NuGet package
       run:  dotnet nuget push "${{env.NuGetDirectory}}/*.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://nuget.pkg.github.com/pahousegop/index.json  
