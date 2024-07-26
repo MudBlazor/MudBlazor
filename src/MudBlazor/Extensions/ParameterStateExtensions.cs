@@ -32,6 +32,7 @@ internal static class ParameterStateExtensions
         var parameterStateUnsafe = parameterState.AsUnsafe();
         if (!parameterStateUnsafe.Comparer.Equals(parameterState.Value, value))
         {
+            // Cache ValueChanged as behind it is a lambda.
             var eventCallback = parameterStateUnsafe.ValueChanged;
             if (eventCallback.HasDelegate)
             {

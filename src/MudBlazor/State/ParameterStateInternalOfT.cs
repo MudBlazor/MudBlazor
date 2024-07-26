@@ -68,6 +68,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterStateUns
     /// <inheritdoc />
     EventCallback<T> IParameterStateUnsafe<T>.ValueChanged => _eventCallbackFunc();
 
+    /// <inheritdoc />
     T? IParameterStateUnsafe<T>.Value { get => _value; set { _value = value; } }
 
     private ParameterStateInternal(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, IParameterEqualityComparerSwappable<T>? comparer = null)
