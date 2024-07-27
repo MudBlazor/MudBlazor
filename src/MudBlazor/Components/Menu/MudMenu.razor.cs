@@ -309,7 +309,7 @@ namespace MudBlazor
                 // We only do this for mice because other pointers should toggle instead.
                 _isPointerOver = true;
 
-                await OpenMenuAsync(args);
+                await OpenMenuAsync(args, true);
             }
         }
 
