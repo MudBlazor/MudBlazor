@@ -75,8 +75,6 @@ namespace MudBlazor
 
         protected internal bool Selected { get; private set; }
 
-        protected internal bool IsEmpty => string.IsNullOrEmpty(Text) && Value is null;
-
         private string? GetCurrentIcon()
         {
             if (Parent?.CheckMark == true || Parent?.FixedContent == true)
