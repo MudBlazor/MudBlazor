@@ -283,6 +283,15 @@ namespace MudBlazor
         public Task OpenMenuAsync(EventArgs args) => OpenMenuAsync(args, false);
 
         /// <summary>
+        /// Sets the popover style ONLY when there is an activator.
+        /// </summary>
+        private void SetPopoverStyle(MouseEventArgs args)
+        {
+            AnchorOrigin = Origin.TopLeft;
+            _popoverStyle = $"margin-top: {args?.OffsetY.ToPx()}; margin-left: {args?.OffsetX.ToPx()};";
+        }
+
+        /// <summary>
         /// Toggle the visibility of the menu.
         /// </summary>
         /// <param name="args">The arguments from the event that called this.</param>
@@ -315,7 +324,7 @@ namespace MudBlazor
             }
         }
 
-        private async Task PointerLeaveAsync(PointerEventArgs args)
+        private async Task PointerLeaveAsync()
         {
             // If an overlay is visible then the menu isn't temporary and shouldn't close when the pointer leaves.
             if (_overlayVisible)
@@ -344,15 +353,6 @@ namespace MudBlazor
         void IActivatable.Activate(object activator, MouseEventArgs args)
         {
             _ = ToggleMenuAsync(args);
-        }
-
-        /// <summary>
-        /// Sets the popover style ONLY when there is an activator.
-        /// </summary>
-        private void SetPopoverStyle(MouseEventArgs args)
-        {
-            AnchorOrigin = Origin.TopLeft;
-            _popoverStyle = $"margin-top: {args?.OffsetY.ToPx()}; margin-left: {args?.OffsetX.ToPx()};";
         }
     }
 }
