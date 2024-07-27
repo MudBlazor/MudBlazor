@@ -4,9 +4,7 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 

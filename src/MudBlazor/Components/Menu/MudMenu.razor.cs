@@ -303,7 +303,7 @@ namespace MudBlazor
 
         private async Task PointerEnterAsync(PointerEventArgs args)
         {
-            if (ActivationEvent == MouseEvent.MouseOver && args.Type == "mouse")
+            if (ActivationEvent == MouseEvent.MouseOver && args.PointerType == "mouse")
             {
                 // Only set if conditions are met to avoid triggering unnecessary code in the Leave event.
                 // We only do this for mice because other pointers should toggle instead.
@@ -315,7 +315,7 @@ namespace MudBlazor
 
         private async Task PointerLeaveAsync(PointerEventArgs args)
         {
-            // Don't do anything unless Enter event was triggered first to avoid unnecessary execution.
+            // Don't do anything if the Enter event wasn't triggered first (rare) to avoid unnecessary execution.
             if (!_isPointerOver)
             {
                 return;
