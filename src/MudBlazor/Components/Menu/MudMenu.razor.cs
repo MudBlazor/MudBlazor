@@ -243,9 +243,19 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
-            if (PositionAtCursor)
+            // Validate the mouse event conditions. This is a consideration for regular event args or the MouseOver activation.
+            if (args is MouseEventArgs mouseEventArgs)
             {
-                if (args is MouseEventArgs mouseEventArgs)
+                var leftClick = ActivationEvent == MouseEvent.LeftClick && mouseEventArgs.Button == 0;
+                var rightClick = ActivationEvent == MouseEvent.RightClick && (mouseEventArgs.Button is -1 or 2);  // oncontextmenu button is -1, right click is 2.
+
+                // Only allow valid left or right conditions, except MouseOver activation should always be allowed to toggle.
+                if (!leftClick && !rightClick && ActivationEvent != MouseEvent.MouseOver)
+                {
+                    return Task.CompletedTask;
+                }
+
+                if (PositionAtCursor)
                 {
                     SetPopoverStyle(mouseEventArgs);
                 }
@@ -264,45 +274,23 @@ namespace MudBlazor
         public Task OpenMenuAsync() => OpenMenuAsync(EventArgs.Empty);
 
         /// <summary>
-        /// Sets the popover style ONLY when there is an activator.
-        /// </summary>
-        private void SetPopoverStyle(MouseEventArgs args)
-        {
-            AnchorOrigin = Origin.TopLeft;
-            _popoverStyle = $"margin-top: {args?.OffsetY.ToPx()}; margin-left: {args?.OffsetX.ToPx()};";
-        }
-
-        /// <summary>
         /// Toggle the visibility of the menu.
         /// </summary>
         /// <param name="args">The arguments from the event that called this.</param>
-        public async Task ToggleMenuAsync(EventArgs args)
+        public Task ToggleMenuAsync(EventArgs args)
         {
             if (Disabled)
             {
-                return;
-            }
-
-            // Validate the mouse event conditions. This is a consideration for regular event args or the MouseOver activation.
-            if (args is MouseEventArgs mouseEventArgs)
-            {
-                var leftClick = ActivationEvent == MouseEvent.LeftClick && mouseEventArgs.Button == 0;
-                var rightClick = ActivationEvent == MouseEvent.RightClick && (mouseEventArgs.Button is -1 or 2);  // oncontextmenu button is -1, right click is 2.
-
-                // Only allow valid left or right conditions, except MouseOver activation should always be allowed to toggle.
-                if (!leftClick && !rightClick && ActivationEvent != MouseEvent.MouseOver)
-                {
-                    return;
-                }
+                return Task.CompletedTask;
             }
 
             if (Open)
             {
-                await CloseMenuAsync();
+                return CloseMenuAsync();
             }
             else
             {
-                await OpenMenuAsync(args);
+                return OpenMenuAsync(args);
             }
         }
 
@@ -342,6 +330,15 @@ namespace MudBlazor
         void IActivatable.Activate(object activator, MouseEventArgs args)
         {
             _ = ToggleMenuAsync(args);
+        }
+
+        /// <summary>
+        /// Sets the popover style ONLY when there is an activator.
+        /// </summary>
+        private void SetPopoverStyle(MouseEventArgs args)
+        {
+            AnchorOrigin = Origin.TopLeft;
+            _popoverStyle = $"margin-top: {args?.OffsetY.ToPx()}; margin-left: {args?.OffsetX.ToPx()};";
         }
     }
 }
