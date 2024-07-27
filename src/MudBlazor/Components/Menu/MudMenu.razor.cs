@@ -259,6 +259,11 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Opens the menu.
+        /// </summary>
+        public Task OpenMenuAsync() => OpenMenuAsync(EventArgs.Empty);
+
+        /// <summary>
         /// Sets the popover style ONLY when there is an activator.
         /// </summary>
         private void SetPopoverStyle(MouseEventArgs args)
@@ -303,10 +308,10 @@ namespace MudBlazor
 
         private async Task PointerEnterAsync(PointerEventArgs args)
         {
+            // We only do this for mice because other pointers should toggle instead.
             if (ActivationEvent == MouseEvent.MouseOver && args.PointerType == "mouse")
             {
                 // Only set if conditions are met to avoid triggering unnecessary code in the Leave event.
-                // We only do this for mice because other pointers should toggle instead.
                 _isPointerOver = true;
 
                 await OpenMenuAsync(args, true);

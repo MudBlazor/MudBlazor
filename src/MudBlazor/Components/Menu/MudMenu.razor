@@ -7,13 +7,13 @@
      style="@Style"
      @onpointerenter="@PointerEnterAsync"
      @onpointerleave="@PointerLeaveAsync"
-     @oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? ToggleMenuAsync : null)"
+     @oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? OpenMenuAsync : null)"
      @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick)">
 
     @if (ActivatorContent != null)
     {
         <CascadingValue Value="@((IActivatable)this)" IsFixed="true">
-            <div @onclick="ToggleMenuAsync" disabled="@Disabled" class="@ActivatorClassname">
+            <div @onclick="OpenMenuAsync" disabled="@Disabled" class="@ActivatorClassname">
                 @ActivatorContent
             </div>
         </CascadingValue>
@@ -29,7 +29,7 @@
                    Disabled="@Disabled"
                    Ripple="@Ripple"
                    DropShadow="@DropShadow"
-                   OnClick="@ToggleMenuAsync"
+                   OnClick="@OpenMenuAsync"
                    aria-label="@AriaLabel">
             @Label
         </MudButton>
@@ -43,7 +43,7 @@
                        Disabled="@Disabled"
                        Ripple="@Ripple"
                        DropShadow="@DropShadow"
-                       @onclick="@ToggleMenuAsync"
+                       @onclick="@OpenMenuAsync"
                        aria-label="@AriaLabel" />
     }
 
