@@ -238,8 +238,15 @@ namespace MudBlazor
         /// </param>
         public Task OpenMenuAsync(EventArgs args, bool temporary = false)
         {
-            if (Disabled || Open)
+            if (Disabled)
             {
+                return Task.CompletedTask;
+            }
+
+            // Don't open if already open, but we can change from a temporary overlay to a permanent one.
+            if (Open)
+            {
+                _overlayVisible = !temporary;
                 return Task.CompletedTask;
             }
 
@@ -262,7 +269,6 @@ namespace MudBlazor
             }
 
             Open = true;
-            _overlayVisible = !temporary;
             StateHasChanged();
 
             return OpenChanged.InvokeAsync(Open);
