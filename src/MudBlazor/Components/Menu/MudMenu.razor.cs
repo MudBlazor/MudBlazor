@@ -293,8 +293,7 @@ namespace MudBlazor
                 }
             }
 
-            // The overlay being visible means we close it, otherwise we upgrade it to a permanent menu.
-            if (Open && _overlayVisible)
+            if (Open)
             {
                 return CloseMenuAsync();
             }
@@ -306,6 +305,12 @@ namespace MudBlazor
 
         private async Task PointerEnterAsync(PointerEventArgs args)
         {
+            // The device can't hover then this event will be called with the Click event and interfere.
+            if (args.PointerType is "touch" or "pen")
+            {
+                return;
+            }
+
             _isPointerOver = true;
 
             // If an overlay is visible then the menu is open and not temporary.
@@ -319,7 +324,8 @@ namespace MudBlazor
         private async Task PointerLeaveAsync()
         {
             // If an overlay is visible then the menu isn't temporary and shouldn't close when the pointer leaves.
-            if (_overlayVisible)
+            // There's also no reason to handle the leave event if the pointer never entered the menu.
+            if (_overlayVisible || !_isPointerOver)
             {
                 return;
             }
