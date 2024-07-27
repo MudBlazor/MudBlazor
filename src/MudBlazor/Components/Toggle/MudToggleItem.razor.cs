@@ -23,10 +23,6 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
-        protected string CheckMarkClassname => new CssBuilder("mud-toggle-item-check-icon")
-            .AddClass(Parent?.CheckMarkClass)
-            .Build();
-
         [CascadingParameter]
         public MudToggleGroup<T>? Parent { get; set; }
 

@@ -135,20 +135,6 @@ namespace MudBlazor
         public string? SelectedClass { get; set; }
 
         /// <summary>
-        /// Classes (separated by space) to be applied to the text of all toggle items.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.List.Appearance)]
-        public string? TextClass { get; set; }
-
-        /// <summary>
-        /// Classes (separated by space) to be applied to SelectedIcon/UnselectedIcon of the items (if CheckMark is true).
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.List.Appearance)]
-        public string? CheckMarkClass { get; set; }
-
-        /// <summary>
         /// If true, use vertical layout.
         /// </summary>
         [Parameter]
