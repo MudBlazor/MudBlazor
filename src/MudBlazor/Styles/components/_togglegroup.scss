@@ -40,11 +40,11 @@
   }
 }
 
-.mud-toggle-item-fixed > .mud-button-label {
+/*.mud-toggle-item > .mud-button-label:has(.mud-toggle-item-content) {
+  display: block;
+}*/
+
+.mud-toggle-item-fixed > .mud-button-label:has(.mud-icon-root) {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-}
-
-.mud-toggle-item > .mud-button-label:has(.mud-toggle-item-content) {
-  display: block;
 }

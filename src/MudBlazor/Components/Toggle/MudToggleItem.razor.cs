@@ -77,19 +77,19 @@ namespace MudBlazor
 
         private string? GetCurrentIcon()
         {
-            if (Parent?.CheckMark == true || Parent?.FixedContent == true)
+            if ((Parent?.CheckMark) != true)
             {
-                if (Selected)
-                {
-                    return SelectedIcon ?? UnselectedIcon;
-                }
-                else
-                {
-                    return UnselectedIcon;
-                }
+                return null;
             }
 
-            return null;
+            if (Selected)
+            {
+                return SelectedIcon ?? UnselectedIcon;
+            }
+            else
+            {
+                return UnselectedIcon;
+            }
         }
 
         protected override void OnInitialized()
