@@ -2,8 +2,11 @@
 @inherits MudComponentBase
 @typeparam T
 
-<MudButton role="checkbox" aria-checked="@(Selected.ToString().ToLower())"
-           @attributes="UserAttributes" Class="@Classname" Style="@Style"
+<MudButton role="checkbox"
+           aria-checked="@(Selected.ToString().ToLower())"
+           @attributes="UserAttributes"
+           Class="@Classname"
+           Style="@Style"
            @onclick="HandleOnClickAsync"
            Size="@(Parent?.Size ?? Size.Medium)"
            Variant="@(Selected ? Variant.Filled : Variant.Outlined)">
