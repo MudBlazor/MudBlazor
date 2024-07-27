@@ -211,11 +211,6 @@ namespace MudBlazor
         /// </summary>
         public Task CloseMenuAsync()
         {
-            if (Disabled || !Open)
-            {
-                return Task.CompletedTask;
-            }
-
             Open = false;
             _overlayVisible = false;
             _isPointerOver = false;
@@ -245,9 +240,9 @@ namespace MudBlazor
 
             _overlayVisible = !temporary;
 
-            if (args is MouseEventArgs mouseEventArgs)
+            if (PositionAtCursor)
             {
-                if (PositionAtCursor)
+                if (args is MouseEventArgs mouseEventArgs)
                 {
                     SetPopoverStyle(mouseEventArgs);
                 }
@@ -298,7 +293,8 @@ namespace MudBlazor
                 }
             }
 
-            if (Open)
+            // The overlay being visible means we close it, otherwise we upgrade it to a permanent menu.
+            if (Open && _overlayVisible)
             {
                 return CloseMenuAsync();
             }
@@ -314,7 +310,7 @@ namespace MudBlazor
 
             // If an overlay is visible then the menu is open and not temporary.
             // The pointer Enter event occurs before Click on a device that can't hover which causes a conflict.
-            if (!_overlayVisible && ActivationEvent == MouseEvent.MouseOver && args.PointerType == "mouse")
+            if (!_overlayVisible && ActivationEvent == MouseEvent.MouseOver)
             {
                 await OpenMenuAsync(args, true);
             }
@@ -335,8 +331,8 @@ namespace MudBlazor
                 // Wait a bit to allow the cursor to move from the activator to the items popover.
                 await Task.Delay(100);
 
-                // Close the menu if the pointer hasn't re-entered the menu.
-                if (!_isPointerOver)
+                // Close the menu if the pointer hasn't re-entered the menu or the overlay made permanent because it was clicked.
+                if (!_isPointerOver && !_overlayVisible)
                 {
                     await CloseMenuAsync();
                 }
