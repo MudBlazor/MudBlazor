@@ -15,14 +15,11 @@ namespace MudBlazor
             .AddClass($"mud-theme-{Parent?.Color.ToDescriptionString()}", Selected && string.IsNullOrEmpty(Parent?.SelectedClass))
             .AddClass(Parent?.SelectedClass, Selected && !string.IsNullOrEmpty(Parent?.SelectedClass))
             .AddClass("mud-toggle-item-selected", Selected)
-            .AddClass($"mud-toggle-item-{Parent?.Color.ToDescriptionString()}")
             .AddClass("mud-toggle-item-vertical", Parent?.Vertical == true)
             .AddClass("mud-toggle-item-delimiter", Parent?.Delimiters == true)
-            .AddClass("mud-ripple", Parent?.Ripple == true)
-            .AddClass($"mud-border-{Parent?.Color.ToDescriptionString()} border-solid")
+            .AddClass("mud-toggle-item-fixed", Parent?.CheckMark == true && Parent?.FixedContent == true)
             .AddClass("mud-toggle-delimiter-alternative", Parent?.SelectionMode == SelectionMode.MultiSelection && Selected && Parent?.Color != Color.Default)
-            .AddClass("mud-toggle-item--fixed", Parent?.CheckMark == true && Parent?.FixedContent == true)
-            .AddClass("mud-disabled", GetDisabledState())
+            .AddClass($"mud-border-{Parent?.Color.ToDescriptionString()} border-solid")
             .AddClass(Class)
             .Build();
 
@@ -60,8 +57,6 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Appearance)]
         public string? SelectedIcon { get; set; } = Icons.Material.Filled.Check;
 
-        private string? CurrentIcon => Selected ? SelectedIcon ?? UnselectedIcon : UnselectedIcon;
-
         /// <summary>
         /// The text to show. You need to set this only if you want a text that differs from the Value. If null,
         /// show Value?.ToString().
@@ -78,6 +73,12 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Appearance)]
         public RenderFragment<bool>? ChildContent { get; set; }
 
+        private string? CurrentIcon => Selected ? SelectedIcon ?? UnselectedIcon : UnselectedIcon;
+
+        protected internal bool Selected { get; private set; }
+
+        protected internal bool IsEmpty => string.IsNullOrEmpty(Text) && Value is null;
+
         protected override void OnInitialized()
         {
             base.OnInitialized();
@@ -90,8 +91,6 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        protected internal bool Selected { get; private set; }
-
         protected async Task HandleOnClickAsync()
         {
             if (Parent is not null)
@@ -99,9 +98,5 @@ namespace MudBlazor
                 await Parent.ToggleItemAsync(this);
             }
         }
-
-        protected internal bool IsEmpty => string.IsNullOrEmpty(Text) && Value is null;
-
-        protected bool GetDisabledState() => Disabled || (Parent?.Disabled ?? false);
     }
 }

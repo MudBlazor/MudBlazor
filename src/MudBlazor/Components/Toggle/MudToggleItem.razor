@@ -9,7 +9,9 @@
            Style="@Style"
            @onclick="HandleOnClickAsync"
            Size="@(Parent?.Size ?? Size.Medium)"
-           Variant="@(Selected ? Variant.Filled : Variant.Outlined)">
+           Variant="@(Selected ? Variant.Filled : Variant.Outlined)"
+           Disabled="Disabled || (Parent?.Disabled ?? false)"
+           Ripple="Parent?.Ripple == true">
     @if (Parent?.CheckMark == true && (CurrentIcon.IsNonEmpty() || Parent?.FixedContent == true))
     {
         <MudIcon Class="@CheckMarkClassname" Icon="@CurrentIcon" />

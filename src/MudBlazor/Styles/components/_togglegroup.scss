@@ -4,13 +4,6 @@
   display: grid;
   overflow: hidden;
   border-radius: var(--mud-default-borderradius);
-
-  &.mud-disabled {
-    cursor: default;
-    pointer-events: none;
-    color: var(--mud-palette-action-disabled) !important;
-    border-color: var(--mud-palette-action-disabled) !important;
-  }
 }
 
 .mud-toggle-group-horizontal {
@@ -47,31 +40,6 @@
   }
 }
 
-.mud-toggle-item {
-  @each $color in $mud-palette-colors {
-    &.mud-toggle-item-#{$color} {
-      color: var(--mud-palette-#{$color});
-
-      @media(hover: hover) and (pointer: fine) {
-        &:hover:not(.mud-toggle-item-selected) {
-          background-color: var(--mud-palette-#{$color}-hover);
-        }
-      }
-
-      &:focus-visible:not(.mud-toggle-item-selected), &:active:not(.mud-toggle-item-selected) {
-        background-color: var(--mud-palette-#{$color}-hover);
-      }
-    }
-  }
-
-  &.mud-disabled {
-    cursor: default;
-    pointer-events: none;
-    color: var(--mud-palette-action-disabled) !important;
-    border-color: inherit !important;
-  }
-}
-
 .mud-toggle-item > .mud-button-label {
   display: flex;
   flex-direction: row;
@@ -82,16 +50,11 @@
   /*TODO: Rely more on native button styles*/
 }
 
-.mud-toggle-item--fixed > .mud-button-label {
+.mud-toggle-item-fixed > .mud-button-label {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
 }
 
-.mud-toggle-item-text {
-  font-size: 0.875em !important;
-}
-
-.mud-toggle-item-check-icon {
-  font-size: 1.25em !important;
-  justify-self: end;
+.mud-toggle-item-content {
+  display: contents;
 }
