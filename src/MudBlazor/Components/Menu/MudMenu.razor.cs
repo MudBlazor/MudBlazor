@@ -11,8 +11,8 @@ namespace MudBlazor
     public partial class MudMenu : MudComponentBase, IActivatable
     {
         private bool _overlayVisible;
-        private bool _isPointerOver;
         private string? _popoverStyle;
+        private bool _isPointerOver;
 
         protected string Classname =>
             new CssBuilder("mud-menu")
@@ -202,7 +202,7 @@ namespace MudBlazor
         public EventCallback<bool> OpenChanged { get; set; }
 
         /// <summary>
-        /// Indicates whether the menu is currently open or not.
+        /// Gets a value indicating whether the menu is currently open or not.
         /// </summary>
         public bool Open { get; private set; }
 
