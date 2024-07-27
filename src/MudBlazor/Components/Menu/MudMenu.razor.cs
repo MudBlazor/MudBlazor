@@ -236,38 +236,27 @@ namespace MudBlazor
         /// If the menu is temporary, an overlay won't be applied.
         /// This is relevant for a menu that is only open while the cursor is over it.
         /// </param>
-        public Task OpenMenuAsync(EventArgs args, bool temporary)
+        public Task OpenMenuAsync(EventArgs args, bool temporary = false)
         {
             if (Disabled)
             {
                 return Task.CompletedTask;
             }
 
-            // Update from a temporary overlay to a permanent one or vice versa.
             _overlayVisible = !temporary;
 
-            // Don't open if already open.
-            if (Open)
-            {
-                return Task.CompletedTask;
-            }
-
-            // Validate the mouse event conditions. This is a consideration for regular event args or the MouseOver activation.
             if (args is MouseEventArgs mouseEventArgs)
             {
-                var leftClick = ActivationEvent == MouseEvent.LeftClick && mouseEventArgs.Button == 0;
-                var rightClick = ActivationEvent == MouseEvent.RightClick && (mouseEventArgs.Button is -1 or 2); // oncontextmenu button is -1, right click is 2.
-
-                // Only allow valid left or right conditions, except MouseOver activation should always be allowed to toggle.
-                if (!leftClick && !rightClick && ActivationEvent != MouseEvent.MouseOver)
-                {
-                    return Task.CompletedTask;
-                }
-
                 if (PositionAtCursor)
                 {
                     SetPopoverStyle(mouseEventArgs);
                 }
+            }
+
+            // Don't open if already open, but let the stuff above get updated.
+            if (Open)
+            {
+                return Task.CompletedTask;
             }
 
             Open = true;
@@ -275,12 +264,6 @@ namespace MudBlazor
 
             return OpenChanged.InvokeAsync(Open);
         }
-
-        /// <summary>
-        /// Opens the menu and it remains open until the spawned overlay is clicked.
-        /// </summary>
-        /// <param name="args">The arguments from the event that called this.</param>
-        public Task OpenMenuAsync(EventArgs args) => OpenMenuAsync(args, false);
 
         /// <summary>
         /// Sets the popover style ONLY when there is an activator.
@@ -300,6 +283,19 @@ namespace MudBlazor
             if (Disabled)
             {
                 return Task.CompletedTask;
+            }
+
+            // Validate the mouse event conditions. This is a consideration for regular event args or the MouseOver activation.
+            if (args is MouseEventArgs mouseEventArgs)
+            {
+                var leftClick = ActivationEvent == MouseEvent.LeftClick && mouseEventArgs.Button == 0;
+                var rightClick = ActivationEvent == MouseEvent.RightClick && (mouseEventArgs.Button is -1 or 2); // oncontextmenu button is -1, right click is 2.
+
+                // Only allow valid left or right conditions, except MouseOver activation should always be allowed to toggle.
+                if (!leftClick && !rightClick && ActivationEvent != MouseEvent.MouseOver)
+                {
+                    return Task.CompletedTask;
+                }
             }
 
             if (Open)
