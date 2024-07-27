@@ -10,8 +10,8 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// A component for collecting and validating user input. Every MudFormComponent 
-    // withing it is monitored and validated.
+    /// A component for collecting and validating user input. Every input derived from MudFormComponent 
+    /// within it is monitored and validated.
     /// </summary>
     public partial class MudForm : MudComponentBase, IDisposable, IForm
     {
