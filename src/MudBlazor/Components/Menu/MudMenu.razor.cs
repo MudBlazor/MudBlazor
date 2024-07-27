@@ -243,10 +243,12 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
-            // Don't open if already open, but we can change from a temporary overlay to a permanent one.
+            // Update from a temporary overlay to a permanent one or vice versa.
+            _overlayVisible = !temporary;
+
+            // Don't open if already open.
             if (Open)
             {
-                _overlayVisible = !temporary;
                 return Task.CompletedTask;
             }
 
@@ -302,6 +304,12 @@ namespace MudBlazor
 
         private async Task PointerEnterAsync(PointerEventArgs args)
         {
+            // Don't open again.
+            if (Open)
+            {
+                return;
+            }
+
             // We only do this for mice because other pointers should toggle instead.
             if (ActivationEvent == MouseEvent.MouseOver && args.PointerType == "mouse")
             {
@@ -315,7 +323,8 @@ namespace MudBlazor
         private async Task PointerLeaveAsync(PointerEventArgs args)
         {
             // Don't do anything if the Enter event wasn't triggered first (rare) to avoid unnecessary execution.
-            if (!_isPointerOver)
+            // And if an overlay is visible then the menu isn't temporary and shouldn't close when the pointer leaves.
+            if (!_isPointerOver || _overlayVisible)
             {
                 return;
             }
