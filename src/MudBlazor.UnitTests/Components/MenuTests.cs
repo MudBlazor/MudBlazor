@@ -126,6 +126,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task MenuPointerClickAndLeave_CheckClosed()
+        {
+            var comp = Context.RenderComponent<MenuTestMouseOver>();
+            var pop = comp.FindComponent<MudPopover>();
+            comp.FindAll("button.mud-button-root")[0].Click();
+
+            IElement List() => comp.FindAll("div.mud-list")[0];
+
+            await List().TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeTrue());
+
+            // Click activator to keep the menu open.
+            comp.FindAll("button.mud-button-root")[0].Click();
+
+            await List().TriggerEventAsync("onpointerleave", new PointerEventArgs());
+            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeTrue());
+        }
+
+        [Test]
         public async Task MenuPointerLeave_MenuPointerEnter_CheckOpen()
         {
             var comp = Context.RenderComponent<MenuTestMouseOver>();
