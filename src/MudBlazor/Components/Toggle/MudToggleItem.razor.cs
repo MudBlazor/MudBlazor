@@ -73,11 +73,26 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Appearance)]
         public RenderFragment<bool>? ChildContent { get; set; }
 
-        private string? CurrentIcon => Selected ? SelectedIcon ?? UnselectedIcon : UnselectedIcon;
-
         protected internal bool Selected { get; private set; }
 
         protected internal bool IsEmpty => string.IsNullOrEmpty(Text) && Value is null;
+
+        private string? GetCurrentIcon()
+        {
+            if (Parent?.CheckMark == true || Parent?.FixedContent == true)
+            {
+                if (Selected)
+                {
+                    return SelectedIcon ?? UnselectedIcon;
+                }
+                else
+                {
+                    return UnselectedIcon;
+                }
+            }
+
+            return null;
+        }
 
         protected override void OnInitialized()
         {

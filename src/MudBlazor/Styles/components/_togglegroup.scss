@@ -40,21 +40,11 @@
   }
 }
 
-.mud-toggle-item > .mud-button-label {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-items: center;
-  justify-content: center;
-  column-gap: 0.5em;
-  /*TODO: Rely more on native button styles*/
-}
-
 .mud-toggle-item-fixed > .mud-button-label {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
 }
 
-.mud-toggle-item-content {
-  display: contents;
+.mud-toggle-item > .mud-button-label:has(.mud-toggle-item-content) {
+  display: block;
 }
