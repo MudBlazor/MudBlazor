@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -11,8 +10,8 @@ namespace MudBlazor.UnitTests;
 [TestFixture]
 public class CollectionExtensionsTests
 {
-    private readonly int[] _array = [1, 2, 3, 4, 5];
-    private readonly List<int> _list = [1, 2, 3, 4, 5];
+    private readonly int?[] _array = [1, 2, 3, 4, 5];
+    private readonly List<int?> _list = [1, 2, 3, 4, 5];
 
     [Test]
     public void Any_ReturnsTrue_IfAnyElementMatches()
@@ -78,6 +77,49 @@ public class CollectionExtensionsTests
     }
 
     [Test]
+    public void FirstOrDefault_ReturnsElement_IfElementDoesExistInArray()
+    {
+        // Act
+        var result = _array.FirstOrDefault(x => x > 1);
+
+        // Assert
+        result.Should().Be(2);
+    }
+
+    [Test]
+    public void FirstOrDefault_ReturnsDefault_IfElementDoesNotExistInArray()
+    {
+        // Act
+        var result = _array.FirstOrDefault(x => x > 7);
+
+        // Assert
+        result.Should().BeNull();
+    }
+
+    [Test]
+    public void FirstOrDefault_ReturnsFirstElement_IfArrayHasElements()
+    {
+        // Act
+        var result = _array.FirstOrDefault();
+
+        // Assert
+        result.Should().Be(1);
+    }
+
+    [Test]
+    public void FirstOrDefault_ReturnsDefault_IfArrayIsEmpty()
+    {
+        // Arrange
+        int?[] array = [];
+
+        // Act
+        var result = array.FirstOrDefault();
+
+        // Assert
+        result.Should().BeNull();
+    }
+
+    [Test]
     public void Any_ReturnsTrue_IfAnyElementMatchesInList()
     {
         // Act
@@ -138,5 +180,48 @@ public class CollectionExtensionsTests
 
         // Assert
         result.Should().BeFalse();
+    }
+
+    [Test]
+    public void FirstOrDefault_ReturnsElement_IfElementDoesExistInList()
+    {
+        // Act
+        var result = _list.FirstOrDefault(x => x > 1);
+
+        // Assert
+        result.Should().Be(2);
+    }
+
+    [Test]
+    public void FirstOrDefault_ReturnsDefault_IfElementDoesNotExistInList()
+    {
+        // Act
+        var result = _list.FirstOrDefault(x => x > 7);
+
+        // Assert
+        result.Should().BeNull();
+    }
+
+    [Test]
+    public void FirstOrDefault_ReturnsFirstElement_IfListHasElements()
+    {
+        // Act
+        var result = _list.FirstOrDefault();
+
+        // Assert
+        result.Should().Be(1);
+    }
+
+    [Test]
+    public void FirstOrDefault_ReturnsDefault_IfListIsEmpty()
+    {
+        // Arrange
+        List<int?> array = [];
+
+        // Act
+        var result = array.FirstOrDefault();
+
+        // Assert
+        result.Should().BeNull();
     }
 }
