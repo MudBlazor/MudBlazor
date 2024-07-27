@@ -160,8 +160,13 @@ namespace MudBlazor.UnitTests.Components
             // Enter opens the menu.
             comp.FindAll("div.mud-menu")[0].PointerEnter();
 
-            // Clicking the button should keep the menu open.
+            // Clicking the button should close the menu.
             comp.FindAll("button.mud-button-root")[0].Click();
+            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeFalse());
+
+            // Clicking the button again should open the menu permanently.
+            comp.FindAll("button.mud-button-root")[0].Click();
+            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeTrue());
 
             // Leaving the menu should not close it.
             comp.FindAll("div.mud-menu")[0].PointerLeave();
