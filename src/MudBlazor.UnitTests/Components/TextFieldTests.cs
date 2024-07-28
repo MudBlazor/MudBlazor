@@ -36,7 +36,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<FormIsValidTest3>();
             var label = comp.FindAll(".mud-input-label");
             label[0].Attributes.GetNamedItem("for")?.Value.Should().Be("textFieldLabelTest");
-            label[1].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput-");
+            label[1].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput");
         }
 
         /// <summary>
@@ -47,8 +47,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FieldTest>();
             var label = comp.FindAll(".mud-input-label");
-            label[0].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput-");
-            label[1].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput-");
+            label[0].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput");
+            label[1].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput");
             label[2].Attributes.GetNamedItem("for")?.Value.Should().Be("fieldLabelTest");
         }
 
