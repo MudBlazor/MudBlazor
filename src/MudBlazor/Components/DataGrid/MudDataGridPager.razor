@@ -1,6 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 @typeparam T
+@inject InternalMudLocalizer Localizer
 
 <MudToolBar @attributes="UserAttributes" Class="@Classname" Style="@Style">
     <div class="mud-table-pagination-spacer"></div>
@@ -9,10 +10,17 @@
         <MudText Typo="Typo.body2" Class="mud-table-pagination-caption">
             @RowsPerPageString
         </MudText>
-        <MudSelect T="string" ValueChanged="@SetRowsPerPageAsync" Value="@DataGrid?.RowsPerPage.ToString()" Class="mud-table-pagination-select" Underline="false" Dense="true" Disabled="@Disabled">
+        <MudSelect T="int" ValueChanged="@SetRowsPerPageAsync" Value="@(DataGrid?.RowsPerPage ?? 0)" Class="mud-table-pagination-select" Underline="false" Dense="true" Disabled="@Disabled">
             @foreach (int pageSize in PageSizeOptions)
             {
-                <MudSelectItem T="string" Value="@pageSize.ToString()">@pageSize.ToString().ToUpper()</MudSelectItem>
+                if (pageSize == int.MaxValue)
+                {
+                    <MudSelectItem T="int" Value="@pageSize">@AllItemsText</MudSelectItem>
+                }
+                else 
+                {
+                    <MudSelectItem T="int" Value="@pageSize">@pageSize.ToString().ToUpper()</MudSelectItem>
+                }
             }
         </MudSelect>
     }

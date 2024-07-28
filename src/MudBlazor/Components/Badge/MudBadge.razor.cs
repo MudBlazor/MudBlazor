@@ -19,7 +19,7 @@ namespace MudBlazor
             .AddClass($"mud-badge-{Origin.ToDescriptionString().Replace("-", " ")}")
             .Build();
 
-        protected string BadgeClassName => new CssBuilder("mud-badge")
+        protected string BadgeClassname => new CssBuilder("mud-badge")
             .AddClass("mud-badge-dot", Dot)
             .AddClass("mud-badge-bordered", Bordered)
             .AddClass("mud-badge-icon", !string.IsNullOrEmpty(Icon) && !Dot)
@@ -52,7 +52,7 @@ namespace MudBlazor
         public int Elevation { set; get; } = 0;
 
         /// <summary>
-        /// Whether the badge can be seen.
+        /// Displays this badge.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -72,7 +72,7 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// Whether a dot is displayed instead of any content.
+        /// Displays a dot instead of any content.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -82,7 +82,7 @@ namespace MudBlazor
         public bool Dot { get; set; }
 
         /// <summary>
-        /// Whether to display <see cref="ChildContent"/> over the main badge content.
+        /// Displays <see cref="ChildContent"/> over the main badge content.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -92,7 +92,7 @@ namespace MudBlazor
         public bool Overlap { get; set; }
 
         /// <summary>
-        /// Whether a border is displayed around the badge.
+        /// Displays a border around the badge.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -137,6 +137,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Badge.Appearance)]
         public string? BadgeClass { get; set; }
+
+        /// <summary>
+        /// The <c>aria-label</c> for the badge.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Badge.Behavior)]
+        public string? BadgeAriaLabel { get; set; }
 
         /// <summary>
         /// The content within this badge.

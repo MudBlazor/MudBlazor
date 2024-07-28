@@ -10,6 +10,11 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// Represents a navigation panel docked to the side of the page.
+    /// </summary>
+    /// <seealso cref="MudDrawerContainer"/>
+    /// <seealso cref="MudDrawerHeader"/>
     public partial class MudDrawer : MudComponentBase, INavigationEventReceiver, IBrowserViewportObserver, IDisposable
     {
         private double _height;
@@ -19,13 +24,15 @@ namespace MudBlazor
         private readonly ParameterState<Breakpoint> _breakpointState;
         private readonly ParameterState<DrawerClipMode> _clipModeState;
         private ElementReference _contentRef;
-        private bool _closeOnMouseLeave = false;
+        private bool _closeOnPointerLeave = false;
         private bool _isRendered;
-        private bool _fixed = true;
         private bool _initial = true;
         private bool _keepInitialState;
         private Breakpoint _lastUpdatedBreakpoint = Breakpoint.None;
 
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
         public MudDrawer()
         {
             using var registerScope = CreateRegisterScope();
@@ -48,7 +55,7 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-drawer")
-                .AddClass($"mud-drawer-fixed", Fixed)
+                .AddClass($"mud-drawer-fixed", IsFixed)
                 .AddClass($"mud-drawer-pos-{GetPosition()}")
                 .AddClass($"mud-drawer--open", _openState.Value)
                 .AddClass($"mud-drawer--closed", !_openState.Value)
@@ -72,7 +79,7 @@ namespace MudBlazor
 
         protected string Stylename =>
             new StyleBuilder()
-                .AddStyle("--mud-drawer-width", Width, !string.IsNullOrWhiteSpace(Width) && (!Fixed || Variant == DrawerVariant.Temporary))
+                .AddStyle("--mud-drawer-width", Width, !string.IsNullOrWhiteSpace(Width) && (!IsFixed || Variant == DrawerVariant.Temporary))
                 .AddStyle("height", Height, !string.IsNullOrWhiteSpace(Height))
                 .AddStyle("--mud-drawer-content-height", string.IsNullOrWhiteSpace(Height) ? _height.ToPx() : Height, Anchor == Anchor.Bottom || Anchor == Anchor.Top)
                 .AddStyle("visibility", "hidden", string.IsNullOrWhiteSpace(Height) && _height == 0 && Anchor is Anchor.Bottom or Anchor.Top)
@@ -89,108 +96,173 @@ namespace MudBlazor
         private bool RightToLeft { get; set; }
 
         /// <summary>
-        /// If true, drawer position will be fixed. (CSS position: fixed;)
+        /// Shows the drawer in the same position even if the page is scrolled.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
-        public bool Fixed
-        {
-            get => _fixed && DrawerContainer is MudLayout;
-            set
-            {
-                _fixed = value;
-            }
-        }
+        public bool Fixed { get; set; } = true;
 
         /// <summary>
-        /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
+        /// The size of the drop shadow.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>1</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Appearance)]
         public int Elevation { set; get; } = 1;
 
         /// <summary>
-        /// Side from which the drawer will appear.
+        /// The edge of the container that the drawer will appear.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Anchor.Start" />.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public Anchor Anchor { get; set; } = Anchor.Start;
 
         /// <summary>
-        /// The color of the component. It supports the theme colors.
+        /// The color of the drawer.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Appearance)]
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// Variant of the drawer. It specifies how the drawer will be displayed.
+        /// The display variant of this drawer.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="DrawerVariant.Responsive"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public DrawerVariant Variant { get; set; } = DrawerVariant.Responsive;
 
         /// <summary>
-        /// Child content of component.
+        /// The content within this drawer.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Show overlay for responsive and temporary drawers.
+        /// For responsive and temporary drawers, darkens the screen with an overlay when displaying this drawer.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  Applies when <see cref="Variant"/> is <see cref="DrawerVariant.Responsive"/> or <see cref="DrawerVariant.Temporary"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public bool Overlay { get; set; } = true;
 
         /// <summary>
-        /// Open drawer automatically on mouse enter when <see cref="Variant" /> parameter is set to <see cref="DrawerVariant.Mini" />.
+        /// Sets a value indicating whether the overlay should automatically close when clicked.
         /// </summary>
+        /// <remarks>
+        /// If the <see cref="Variant"/> is set to <see cref="DrawerVariant.Temporary"/>, an overlay will be displayed. 
+        /// When this property is <c>true</c>, clicking on the overlay will close it automatically. 
+        /// When this property is <c>false</c>, the overlay will not close automatically.
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Drawer.Behavior)]
+        public bool OverlayAutoClose { get; set; } = true;
+
+        /// <summary>
+        /// For mini drawers, opens this drawer when the pointer hovers over it.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  Applies when <see cref="Variant" /> is set to <see cref="DrawerVariant.Mini" />.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public bool OpenMiniOnHover { get; set; }
 
         /// <summary>
-        /// Switching point for responsive drawers
+        /// The browser width at which responsive drawers are hidden.
         /// </summary>
+        /// <remarks> 
+        /// Defaults to <see cref="Breakpoint.Md"/>.  Supported breakpoints are: 
+        /// <list type="bullet"> 
+        /// <item><description><see cref="Breakpoint.Xs"/></description></item> 
+        /// <item><description><see cref="Breakpoint.Sm"/></description></item> 
+        /// <item><description><see cref="Breakpoint.Md"/></description></item> 
+        /// <item><description><see cref="Breakpoint.Lg"/></description></item> 
+        /// <item><description><see cref="Breakpoint.Xl"/></description></item> 
+        /// <item><description><see cref="Breakpoint.Xxl"/></description></item> 
+        /// </list> 
+        /// Other breakpoint combinations are aliased as follows: 
+        /// <list type="bullet"> 
+        /// <item><description><see cref="Breakpoint.SmAndDown"/>: Aliases to <see cref="Breakpoint.Sm"/></description></item> 
+        /// <item><description><see cref="Breakpoint.MdAndDown"/>: Aliases to <see cref="Breakpoint.Md"/></description></item> 
+        /// <item><description><see cref="Breakpoint.LgAndDown"/>: Aliases to <see cref="Breakpoint.Lg"/></description></item> 
+        /// <item><description><see cref="Breakpoint.XlAndDown"/>: Aliases to <see cref="Breakpoint.Xl"/></description></item> 
+        /// <item><description><see cref="Breakpoint.SmAndUp"/>: Aliases to <see cref="Breakpoint.Sm"/></description></item> 
+        /// <item><description><see cref="Breakpoint.MdAndUp"/>: Aliases to <see cref="Breakpoint.Md"/></description></item> 
+        /// <item><description><see cref="Breakpoint.LgAndUp"/>: Aliases to <see cref="Breakpoint.Lg"/></description></item> 
+        /// <item><description><see cref="Breakpoint.XlAndUp"/>: Aliases to <see cref="Breakpoint.Xl"/></description></item> 
+        /// </list> 
+        /// Setting the value to <see cref="Breakpoint.None"/> will always close the drawer, while <see cref="Breakpoint.Always"/> will always keep it open. 
+        /// </remarks> 
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public Breakpoint Breakpoint { get; set; } = Breakpoint.Md;
 
         /// <summary>
-        /// Sets the opened state on the drawer. Can be used with two-way binding to close itself on navigation.
+        /// Displays this drawer.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  Raises the <see cref="OpenChanged"/> event upon change.  When bound via <c>@bind-Open</c>, this property is updated when this drawer closes itself.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public bool Open { get; set; }
 
+        /// <summary>
+        /// Occurs when the <see cref="Open"/> value has changed.
+        /// </summary>
         [Parameter]
         public EventCallback<bool> OpenChanged { get; set; }
 
         /// <summary>
-        /// Width of left/right drawer. Only for non-fixed drawers.
+        /// For non-fixed or temporary drawers, the width of this drawer.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Values such as <c>300px</c> and <c>30%</c> are supported.  Applies to non-fixed or <see cref="DrawerVariant.Temporary"/> drawers anchored to the left or right.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Appearance)]
         public string? Width { get; set; }
 
         /// <summary>
-        /// Width of left/right drawer. Only for non-fixed drawers.
+        /// For mini drawers, the width of this drawer.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Values such as <c>300px</c> and <c>30%</c> are supported. Applies to <see cref="DrawerVariant.Mini"/> drawers achored to the left or right.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Appearance)]
         public string? MiniWidth { get; set; }
 
         /// <summary>
-        /// Height of top/bottom temporary drawer
+        /// The height of this drawer.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Values such as <c>300px</c> and <c>30%</c> are supported. Applies to drawers achored to the top or bottom.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Appearance)]
         public string? Height { get; set; }
 
         /// <summary>
-        /// Specify how the drawer should behave inside a MudLayout. It affects the position relative to <see cref="MudAppBar"/>.
+        /// The position of this drawer when opened, relative to a <see cref="MudAppBar"/> when inside a <see cref="MudLayout"/>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
@@ -238,7 +310,7 @@ namespace MudBlazor
 
                     if (IsJSRuntimeAvailable)
                     {
-                        BrowserViewportService.UnsubscribeAsync(this).AndForget();
+                        BrowserViewportService.UnsubscribeAsync(this).CatchAndLog();
                     }
                 }
             }
@@ -274,7 +346,7 @@ namespace MudBlazor
 
         private void OnClipModeParameterChange()
         {
-            if (Fixed)
+            if (IsFixed)
             {
                 DrawerContainerUpdate();
             }
@@ -329,13 +401,13 @@ namespace MudBlazor
 
         private bool IsBelowCurrentBreakpoint() => IsBelowBreakpoint(_lastUpdatedBreakpoint);
 
-        private bool IsBelowBreakpoint(Breakpoint breakpoint) => breakpoint < _breakpointState.Value;
+        private bool IsBelowBreakpoint(Breakpoint breakpoint) => breakpoint < NormalizeBreakpoint(_breakpointState.Value);
 
         private bool IsResponsiveOrMini() => Variant is DrawerVariant.Responsive or DrawerVariant.Mini;
 
-        private bool ShouldCloseDrawer(Breakpoint breakpoint) => IsBelowBreakpoint(breakpoint) && !IsBelowCurrentBreakpoint() && IsResponsiveOrMini();
+        private bool ShouldCloseDrawer(Breakpoint breakpoint) => IsResponsiveOrMini() && (_breakpointState.Value == Breakpoint.None || (IsBelowBreakpoint(breakpoint) && !IsBelowCurrentBreakpoint()));
 
-        private bool ShouldOpenDrawer(Breakpoint breakpoint) => !IsBelowBreakpoint(breakpoint) && IsBelowCurrentBreakpoint() && IsResponsiveOrMini();
+        private bool ShouldOpenDrawer(Breakpoint breakpoint) => IsResponsiveOrMini() && (_breakpointState.Value == Breakpoint.Always || (!IsBelowBreakpoint(breakpoint) && IsBelowCurrentBreakpoint()));
 
         internal string GetPosition()
         {
@@ -347,20 +419,22 @@ namespace MudBlazor
             };
         }
 
-        private async Task OnMouseEnterAsync()
+        internal bool IsFixed => Fixed && DrawerContainer is MudLayout;
+
+        private async Task OnPointerEnterAsync()
         {
             if (Variant == DrawerVariant.Mini && !_openState.Value && OpenMiniOnHover)
             {
-                _closeOnMouseLeave = true;
+                _closeOnPointerLeave = true;
                 await _openState.SetValueAsync(true);
             }
         }
 
-        private async Task OnMouseLeaveAsync()
+        private async Task OnPointerLeaveAsync()
         {
-            if (Variant == DrawerVariant.Mini && _openState.Value && _closeOnMouseLeave)
+            if (Variant == DrawerVariant.Mini && _openState.Value && _closeOnPointerLeave)
             {
-                _closeOnMouseLeave = false;
+                _closeOnPointerLeave = false;
                 await _openState.SetValueAsync(false);
             }
         }
@@ -386,12 +460,18 @@ namespace MudBlazor
         {
             if (browserViewportEventArgs.IsImmediate)
             {
-                var isBelowBreakpoint = IsBelowBreakpoint(browserViewportEventArgs.Breakpoint);
                 _lastUpdatedBreakpoint = browserViewportEventArgs.Breakpoint;
-                if (isBelowBreakpoint && _openState.Value)
+                if (HandleBreakpointNone())
                 {
-                    _keepInitialState = true;
-                    await _openState.SetValueAsync(false);
+                    await InitialOpenState(false);
+                }
+                else if (HandleBreakpointAlways())
+                {
+                    await InitialOpenState(true);
+                }
+                else if (HandleBelowBreakpointAndOpenState())
+                {
+                    await InitialOpenState(false);
                 }
 
                 return;
@@ -403,6 +483,35 @@ namespace MudBlazor
             }
 
             await InvokeAsync(() => UpdateBreakpointStateAsync(browserViewportEventArgs.Breakpoint));
+            return;
+
+            bool HandleBreakpointNone() => _breakpointState.Value == Breakpoint.None;
+            bool HandleBreakpointAlways() => _breakpointState.Value == Breakpoint.Always;
+            bool HandleBelowBreakpointAndOpenState() => IsBelowBreakpoint(browserViewportEventArgs.Breakpoint) && _openState.Value;
+            Task InitialOpenState(bool open)
+            {
+                _keepInitialState = true;
+                return _openState.SetValueAsync(open);
+            }
+        }
+
+        private static Breakpoint NormalizeBreakpoint(Breakpoint breakpoint)
+        {
+            // Historically, MudDrawer only functioned with breakpoints like Xs, Sm, Md, Lg, Xl, and Xxl.
+            // However, some users may supply additional breakpoints such as SmAndDown, MdAndDown, LgAndDown, XlAndDown, SmAndUp, MdAndUp, LgAndUp, XlAndUp, None, and Always.
+            // The IBrowserViewportService provides an IsBreakpointWithinReferenceSizeAsync method that considers these additional breakpoints.
+            // However, utilizing it would constitute a breaking change.
+            // For instance, users who previously specified Sm would find that their drawer opens only on screens of that size but not on any larger ones, requiring them to switch to SmAndUp.
+            // To maintain backward compatibility, we decided to alias SmAndUp and SmAndDown to simply Sm, and similarly for other breakpoints.
+
+            return breakpoint switch
+            {
+                Breakpoint.SmAndDown or Breakpoint.SmAndUp => Breakpoint.Sm,
+                Breakpoint.MdAndDown or Breakpoint.MdAndUp => Breakpoint.Md,
+                Breakpoint.LgAndDown or Breakpoint.LgAndUp => Breakpoint.Lg,
+                Breakpoint.XlAndUp or Breakpoint.XlAndDown => Breakpoint.Xl,
+                _ => breakpoint,
+            };
         }
     }
 }

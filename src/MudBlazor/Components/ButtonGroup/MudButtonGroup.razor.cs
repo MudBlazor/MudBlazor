@@ -22,17 +22,11 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
-        /// <summary>
-        /// Whether text is displayed Right-to-Left (RTL).
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, text will display property for RTL languages such as Arabic, Hebrew, and Persian.
-        /// </remarks>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
         /// <summary>
-        /// Whether this group's style overrides the style of individual buttons.
+        /// Overrides individual button styles with this group's style.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  When <c>true</c>, the button styles are defined by this group.
@@ -52,7 +46,7 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Whether buttons are displayed vertically.
+        /// Displays buttons vertically.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, buttons will be displayed vertically, otherwise horizontally.
@@ -62,7 +56,7 @@ namespace MudBlazor
         public bool Vertical { get; set; }
 
         /// <summary>
-        /// Whether a shadow is displayed.
+        /// Displays a shadow.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.

@@ -1,4 +1,8 @@
 ﻿@page "/components/treeview"
+@page "/components/MudTreeView"
+@page "/components/MudTreeView`1"
+@page "/components/MudTreeViewItem"
+@page "/components/MudTreeViewItem`1"
 
 <DocsPage>
     <DocsPageHeader Title="Tree View">
@@ -129,11 +133,14 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Custom Tree">
+            <SectionHeader Title="Custom Look and Behavior">
                 <Description>
-                    When the <CodeInline>Content</CodeInline> property is used, it will completely replace the default rendering of the MudTreeViewItem to use your own.
-                    You must constrain the container's <CodeInline>height</CodeInline> or <CodeInline>max-height</CodeInline> and set the container's <CodeInline>overflow-y</CodeInline>
-                    accordingly to scroll the <CodeInline Tag>MudTreeView</CodeInline>.
+                    When the <CodeInline>Content</CodeInline> property is used, it will completely replace the default rendering of the <CodeInline>MudTreeViewItem</CodeInline> to use your own. 
+                    This gives you every opportunity to change the behavior of <CodeInline>MudTreeView</CodeInline> to anything you want. In this example we build our own non-standard multi selection behavior where
+                    selecting the parent node does not automatically select the children and vice-versa. Also, note how only certain items can be selected.
+                    <br /><br />
+                    By the way, to get nice scrolling behavior like in this example, you must constrain the container's <CodeInline>height</CodeInline> or <CodeInline>max-height</CodeInline> and set the container's 
+                    <CodeInline>overflow-y</CodeInline> accordingly.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewCustomExample)" ShowCode="false">
@@ -144,24 +151,12 @@
         <DocsPageSection>
             <SectionHeader Title="Custom Body Content">
                 <Description>
-                    Use the <CodeInline Tag>BodyContent</CodeInline> instead of the <CodeInline Tag>Content</CodeInline> render fragment,
-                    when you want to customize the tree item, but still use the build-in icons and expansion buttons.
+                    Use the <CodeInline Tag>BodyContent</CodeInline> instead of the <CodeInline Tag>Content</CodeInline> render fragment
+                    if you want to customize the tree item but still use the built-in icons and expansion buttons.
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true" Code="@nameof(TreeViewBodyContentExample)" ShowCode="false">
                 <TreeViewBodyContentExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Custom Checkbox Behavior">
-                <Description>
-                    You can use the <CodeInline>Content</CodeInline> property to support custom checkbox behavior such as automatically checking a parent item when all
-                    children are selected.
-                </Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" Code="@nameof(TreeViewCustomCheckboxExample)" ShowCode="false">
-                <TreeViewCustomCheckboxExample />
             </SectionContent>
         </DocsPageSection>
 

@@ -174,6 +174,13 @@ namespace MudBlazor
         public bool Clearable { get; set; } = false;
 
         /// <summary>
+        /// Custom clear icon when <see cref="Clearable"/> is enabled.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
+
+        /// <summary>
         /// Decrements or increments depending on factor
         /// </summary>
         /// <param name="factor">Multiplication factor (1 or -1) will be applied to the step</param>
@@ -193,7 +200,7 @@ namespace MudBlazor
                 }
 
                 await SetValueAsync(ConstrainBoundaries(nextValue).value);
-                _elementReference.SetText(Text).AndForget();
+                await _elementReference.SetText(Text);
             }
             catch (OverflowException)
             {
@@ -281,15 +288,14 @@ namespace MudBlazor
                     await Decrement();
                     break;
             }
-            OnKeyDown.InvokeAsync(obj).AndForget();
+            await OnKeyDown.InvokeAsync(obj);
         }
 
         protected Task HandleKeyUp(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return Task.CompletedTask;
-            OnKeyUp.InvokeAsync(obj).AndForget();
-            return Task.CompletedTask;
+            return OnKeyUp.InvokeAsync(obj);
         }
 
         protected async Task OnMouseWheel(WheelEventArgs obj)

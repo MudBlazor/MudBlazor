@@ -8,7 +8,7 @@ namespace MudBlazor.Charts
     /// <summary>
     /// Represents a chart which displays values as ring shape.
     /// </summary>
-    partial class Donut : MudChartBase
+    partial class Donut : MudCategoryChartBase
     {
         /// <summary>
         /// The chart, if any, containing this component.
@@ -25,6 +25,8 @@ namespace MudBlazor.Charts
         /// <inheritdoc />
         protected override void OnParametersSet()
         {
+            base.OnParametersSet();
+
             _circles.Clear();
             _legends.Clear();
             const double counterClockwiseOffset = 25;

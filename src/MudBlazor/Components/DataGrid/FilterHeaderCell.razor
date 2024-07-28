@@ -1,4 +1,5 @@
 @using MudBlazor.Extensions
+@using MudBlazor.Resources
 @namespace MudBlazor
 @inherits MudComponentBase
 @typeparam T
@@ -17,11 +18,11 @@
             <MudStack Row="true">
                 @if (fieldType.IsString && !(@operator ?? "").EndsWith("empty"))
                 {
-                    <MudTextField T="string" Value="@valueString" ValueChanged="@StringValueChangedAsync" FullWidth="true" Placeholder="@Localizer["MudDataGrid.FilterValue"]" Margin="@Margin.Dense" Immediate="true" DebounceInterval="@(DataGrid.ServerData is null ? 0 : 500.0)" />
+                    <MudTextField T="string" Value="@valueString" ValueChanged="@StringValueChangedAsync" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Immediate="true" DebounceInterval="@(!DataGrid.HasServerData ? 0 : 500.0)" />
                 }
                 else if (fieldType.IsNumber && !(@operator ?? "").EndsWith("empty"))
                 {
-                    <MudNumericField T="double?" Culture="@Column.Culture" Value="@valueNumber" ValueChanged="@NumberValueChangedAsync" FullWidth="true" Placeholder="@Localizer["MudDataGrid.FilterValue"]" Margin="@Margin.Dense" Immediate="true" DebounceInterval="@(DataGrid.ServerData is null ? 0 : 500.0)" />
+                    <MudNumericField T="double?" Culture="@Column.Culture" Value="@valueNumber" ValueChanged="@NumberValueChangedAsync" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Immediate="true" DebounceInterval="@(!DataGrid.HasServerData ? 0 : 500.0)" />
                 }
                 else if (fieldType.IsEnum)
                 {
@@ -37,8 +38,8 @@
                 {
                     <MudSelect T="bool?" Value="@valueBool" ValueChanged="@BoolValueChangedAsync" FullWidth="true" Dense="true" Margin="@Margin.Dense">
                         <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
-                        <MudSelectItem T="bool?" Value="@(true)">@Localizer["MudDataGrid.True"]</MudSelectItem>
-                        <MudSelectItem T="bool?" Value="@(false)">@Localizer["MudDataGrid.False"]</MudSelectItem>
+                        <MudSelectItem T="bool?" Value="@(true)">@Localizer[LanguageResource.MudDataGrid_True]</MudSelectItem>
+                        <MudSelectItem T="bool?" Value="@(false)">@Localizer[LanguageResource.MudDataGrid_False]</MudSelectItem>
                     </MudSelect>
                 }
                 else if (fieldType.IsDateTime && !(@operator ?? "").EndsWith("empty"))
@@ -57,7 +58,7 @@
                     {
                         if (!string.IsNullOrWhiteSpace(o))
                         {
-                            <MudMenuItem Style="@chosenOperatorStyle(o)" OnClick="@(async () => await ChangeOperatorAsync(o))">@Localizer[$"MudDataGrid.{o}"]</MudMenuItem>
+                            <MudMenuItem Style="@chosenOperatorStyle(o)" OnClick="@(async () => await ChangeOperatorAsync(o))">@Localizer[FilterOperator.GetTranslationKeyByOperatorName(o)]</MudMenuItem>
                         }
                     }
                 </MudMenu>

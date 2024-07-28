@@ -18,26 +18,26 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public MudChip()
     {
         using var registerScope = CreateRegisterScope();
-        IsSelectedState = registerScope.RegisterParameter<bool>(nameof(IsSelected))
-            .WithParameter(() => IsSelected)
-            .WithEventCallback(() => IsSelectedChanged)
-            .WithChangeHandler(OnIsSelectedChangedAsync);
+        SelectedState = registerScope.RegisterParameter<bool>(nameof(Selected))
+            .WithParameter(() => Selected)
+            .WithEventCallback(() => SelectedChanged)
+            .WithChangeHandler(OnSelectedChangedAsync);
     }
 
-    private Task OnIsSelectedChangedAsync(ParameterChangedEventArgs<bool> args)
+    private Task OnSelectedChangedAsync(ParameterChangedEventArgs<bool> args)
     {
         if (ChipSet == null)
             return Task.CompletedTask;
-        return ChipSet.OnChipIsSelectedChangedAsync(this, args.Value);
+        return ChipSet.OnChipSelectedChangedAsync(this, args.Value);
     }
 
-    internal async Task UpdateSelectionStateAsync(bool isSelected)
+    internal async Task UpdateSelectionStateAsync(bool selected)
     {
-        await IsSelectedState.SetValueAsync(isSelected);
+        await SelectedState.SetValueAsync(selected);
         StateHasChanged();
     }
 
-    internal readonly ParameterState<bool> IsSelectedState;
+    internal readonly ParameterState<bool> SelectedState;
 
     /// <summary>
     /// The service used to navigate the browser to another URL.
@@ -59,11 +59,13 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         .AddClass("mud-ripple", IsClickable && GetRipple())
         .AddClass("mud-chip-label", GetLabel())
         .AddClass("mud-disabled", GetDisabled())
-        .AddClass("mud-chip-selected", IsSelectedState.Value)
+        .AddClass("mud-chip-selected", SelectedState.Value)
         .AddClass(Class)
         .Build();
 
     private bool IsClickable => !ChipSet?.ReadOnly ?? (OnClick.HasDelegate || !string.IsNullOrEmpty(Href));
+
+    private string? RoleAttribute => IsClickable ? "button" : null;
 
     internal Variant GetVariant()
     {
@@ -71,8 +73,8 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         var variant = Variant ?? chipSetVariant;
         return variant switch
         {
-            MudBlazor.Variant.Text => IsSelectedState.Value ? MudBlazor.Variant.Filled : MudBlazor.Variant.Text,
-            MudBlazor.Variant.Filled => IsSelectedState.Value ? MudBlazor.Variant.Text : MudBlazor.Variant.Filled,
+            MudBlazor.Variant.Text => SelectedState.Value ? MudBlazor.Variant.Filled : MudBlazor.Variant.Text,
+            MudBlazor.Variant.Filled => SelectedState.Value ? MudBlazor.Variant.Text : MudBlazor.Variant.Filled,
             MudBlazor.Variant.Outlined => MudBlazor.Variant.Outlined,
             _ => MudBlazor.Variant.Outlined
         };
@@ -81,7 +83,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     private Color GetColor()
     {
         var selectedColor = GetSelectedColor();
-        if (IsSelectedState.Value && selectedColor != MudBlazor.Color.Inherit)
+        if (SelectedState.Value && selectedColor != MudBlazor.Color.Inherit)
         {
             return selectedColor;
         }
@@ -155,7 +157,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public RenderFragment? AvatarContent { get; set; }
 
     /// <summary>
-    /// Whether the theme border radius is used for the chip edges.
+    /// Uses the theme border radius for chip edges.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.  When <c>true</c>, the <see cref="LayoutProperties.DefaultBorderRadius"/> is used for chip edges.
@@ -165,7 +167,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public bool? Label { get; set; }
 
     /// <summary>
-    /// Whether the user cannot interact with this chip.
+    /// Prevents the user from interacting with this chip.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.  When <c>true</c>, the chip is visibly disabled and interaction is not allowed.
@@ -185,7 +187,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public string? Icon { get; set; }
 
     /// <summary>
-    /// The icon to display when <see cref="IsSelected"/> is <c>true</c>.
+    /// The icon to display when <see cref="Selected"/> is <c>true</c>.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.
@@ -212,7 +214,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public string? CloseIcon { get; set; }
 
     /// <summary>
-    /// Whether a ripple effect is show when the chip is clicked.
+    /// Displays a ripple effect when this chip is clicked.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.
@@ -269,7 +271,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public T? Value { get; set; }
 
     /// <summary>
-    /// Whether a full page refresh is performed when navigating to the URL in <see cref="Href"/>.
+    /// Performs a full page refresh when navigating to the URL in <see cref="Href"/>.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.  When <c>true</c>, client-side routing is bypassed and a full page reload occurs.
@@ -279,7 +281,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public bool ForceLoad { get; set; }
 
     /// <summary>
-    /// Whether this chip is selected by default when part of a <see cref="MudChipSet{T}"/>.
+    /// Selects this chip by default when part of a <see cref="MudChipSet{T}"/>.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.
@@ -303,23 +305,23 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     [Parameter]
     public EventCallback<MudChip<T>> OnClose { get; set; }
 
-    internal bool ShowCheckMark => IsSelectedState.Value && ChipSet?.CheckMark == true;
+    internal bool ShowCheckMark => SelectedState.Value && ChipSet?.CheckMark == true;
 
     /// <summary>
-    /// Whether this chip is selected.
+    /// Selects this chip.
     /// </summary>
     /// <remarks>
     /// When <c>true</c>, the chip is displayed in a selected state.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Chip.Behavior)]
-    public bool IsSelected { get; set; }
+    public bool Selected { get; set; }
 
     /// <summary>
-    /// Occurs when the <see cref="IsSelected"/> property has changed.
+    /// Occurs when the <see cref="Selected"/> property has changed.
     /// </summary>
     [Parameter]
-    public EventCallback<bool> IsSelectedChanged { get; set; }
+    public EventCallback<bool> SelectedChanged { get; set; }
 
     internal T? GetValue()
     {
@@ -345,8 +347,8 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         }
         if (ChipSet != null)
         {
-            await IsSelectedState.SetValueAsync(!IsSelectedState.Value);
-            await ChipSet.OnChipIsSelectedChangedAsync(this, IsSelectedState.Value);
+            await SelectedState.SetValueAsync(!SelectedState.Value);
+            await ChipSet.OnChipSelectedChangedAsync(this, SelectedState.Value);
         }
         if (Href != null)
         {

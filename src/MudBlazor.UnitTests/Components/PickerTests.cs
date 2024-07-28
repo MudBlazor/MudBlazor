@@ -3,10 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -28,8 +24,9 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(async () => await picker.Instance.SelectAsync());
             await comp.InvokeAsync(async () => await picker.Instance.SelectRangeAsync(0, 0));
-#pragma warning disable BL0005
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             await comp.InvokeAsync(() => picker.Instance.Disabled = true);
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
             await comp.InvokeAsync(() => picker.Instance.OnHandleKeyDownAsync(new KeyboardEventArgs()));
         }
 
@@ -51,6 +48,5 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudPicker<DateTime?>>(ComponentParameter.CreateParameter("ImmediateText", true));
             comp.Instance.ImmediateText.Should().Be(true);
         }
-
     }
 }

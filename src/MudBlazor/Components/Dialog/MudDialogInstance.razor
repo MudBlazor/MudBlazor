@@ -1,5 +1,11 @@
 ﻿@namespace MudBlazor
+@using MudBlazor.Resources
 @inherits MudComponentBase
+@inject InternalMudLocalizer Localizer
+
+@{
+#nullable enable
+}
 
 <div @attributes="UserAttributes" id="@_elementId" class="mud-dialog-container @Position">
     <MudOverlay Visible="true" OnClick="HandleBackgroundClickAsync" Class="@BackgroundClassname" DarkBackground="true" />
@@ -17,7 +23,7 @@
                 }
                 @if (CloseButton)
                 {
-                    <MudIconButton aria-label="close" Icon="@CloseIcon" @onclick="Cancel" class="mud-button-close"/>
+                    <MudIconButton aria-label="@Localizer[LanguageResource.MudDialog_Close]" Icon="@CloseIcon" @onclick="Cancel" class="mud-button-close" />
                 }
             </div>
          }

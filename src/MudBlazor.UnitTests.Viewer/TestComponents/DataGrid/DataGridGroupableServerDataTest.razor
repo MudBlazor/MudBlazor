@@ -1,0 +1,62 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid T="Item" Filterable="true" ServerData="this.ServerDataFunc" Groupable="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Name"/>
+        <PropertyColumn Property="x => x.Number" Grouping="true" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Item"/>
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+
+    private readonly IEnumerable<Item> _items = new List<Item>()
+    {
+        new Item("Hydrogen", 1),
+        new Item("Helium", 2),
+        new Item("Lithium", 3),
+        new Item("Beryllium", 4),
+        new Item("Boron", 5),
+        new Item("Carbon", 6),
+        new Item("Nitrogen", 7),
+        new Item("Oxygen", 8),
+        new Item("Fluorine", 9),
+        new Item("Neon", 10),
+        new Item("Sodium", 11),
+        new Item("Magnesium", 12),
+        new Item("Aluminium", 13),
+        new Item("Silicon", 14),
+        new Item("Phosphorus", 15),
+        new Item("Sulfur", 16),
+        new Item("Chlorine", 17),
+        new Item("Argon", 18),
+        new Item("Potassium", 19),
+        new Item("Calcium", 20)
+    };
+
+    private async Task<GridData<Item>> ServerDataFunc(GridState<Item> gridState)
+    {
+        await Task.CompletedTask;
+        List<Item> itemsAscendingByNumber = _items.ToList();
+        itemsAscendingByNumber.Sort((x, y) =>
+        {
+            if (x.Number > y.Number) return 1;
+            if (x.Number < y.Number) return -1;
+            return 0;
+        });
+        return new GridData<Item>
+        {
+            TotalItems = _items.ToList().Count(),
+            Items = itemsAscendingByNumber.Skip(gridState.Page * gridState.PageSize).Take(gridState.PageSize)
+        };
+    }
+
+    public class Item(string name, int number)
+    {
+        public string Name { get; set; } = name;
+        public int Number { get; set; } = number;
+    }
+
+}

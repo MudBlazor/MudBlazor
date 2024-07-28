@@ -1,72 +1,117 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudPaper Width="350px" MaxHeight="500px" Class="overflow-y-auto" Elevation="2">
-    <MudTreeView Items="@TreeItems">
-        <ItemTemplate>
-            <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.TreeItems">
-                <Content>
-                    <MudTreeViewItemToggleButton @bind-Expanded="@context.Expanded" Visible="@context.HasChild" />
-                    <MudIcon Icon="@context.Icon" Class="ml-0 mr-2" Color="@Color.Default" />
-                    <MudText>@context.Text</MudText>
-                </Content>
-            </MudTreeViewItem>
-        </ItemTemplate>
-    </MudTreeView>
-</MudPaper>
+<MudStack>
+    <MudPaper Width="400px" MaxHeight="400px" Class="overflow-y-auto" Elevation="2">
+        <MudTreeView Items="@TreeItems" ReadOnly>
+            <ItemTemplate>
+                @{                
+                    var product = context.Value; // for convenient usage in the template
+                }
+                <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value">
+                    <Content>
+                        <MudTreeViewItemToggleButton @bind-Expanded="@context.Expanded" Visible="@context.HasChildren" />
+                        @if (product?.Price is not null) {
+                            <MudCheckBox T="bool" Size="Size.Small" Value="@context.Selected" ValueChanged="@((v)=> OnCheckboxChanged(v, context))" />
+                        }
+                        <MudIcon Icon="@product?.Icon" Class="ml-0 mr-2" Color="@Color.Default" />
+                        <MudText>@product?.Name</MudText>
+                        @if (product?.Price is not null) {
+                            <MudChip Class="ml-1">@product.Price.Value.ToString("C")</MudChip>
+                        }
+                    </Content>
+                </MudTreeViewItem>
+            </ItemTemplate>
+        </MudTreeView>
+    </MudPaper>
+    <MudStack Class="mt-3" Style="width: 400px">
+        <MudText Typo="@Typo.subtitle1" Inline>Selected items: @(string.Join(", ", (SelectedValues ?? []).Select(x => x.Name)))</MudText>
+        <MudStack>
+            <MudText Typo="@Typo.subtitle1">Sum: <MudChip T="string">@GetSelectedSum().ToString("C")</MudChip></MudText>
+        </MudStack>
+    </MudStack>
+</MudStack>
 
 @code {
-
-    private HashSet<TreeItemData> TreeItems { get; set; } = new();
-
-    public class TreeItemData
+    public void OnCheckboxChanged(bool selected, TreeItemData<Product> context)
     {
-        public string Text { get; set; }
+        context.Selected = selected;
+        if (context.Value?.Price is null)
+            return;
+        if (context.Selected)
+            SelectedValues.Add(context.Value);
+        else
+            SelectedValues.Remove(context.Value);
+    }
 
+    public HashSet<Product> SelectedValues { get; set; } = new();
+
+    public List<TreeItemData<Product>> TreeItems { get; set; } = new();
+
+    public class Product : IEquatable<Product>
+    {
+        public decimal? Price { get; set; }
+        public string Name { get; init; }
         public string Icon { get; set; }
 
-        public bool Expanded { get; set; } = true;
-
-        public bool HasChild => TreeItems != null && TreeItems.Count > 0;
-
-        public HashSet<TreeItemData> TreeItems { get; set; } = new();
-
-        public TreeItemData(string text, string icon)
+        public Product(string name, string icon, decimal? price = null)
         {
-            Text = text;
+            Name = name;
             Icon = icon;
+            Price = price;
         }
+
+        public bool Equals(Product other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Name == other.Name;
+        }
+
+        public override bool Equals(object obj) => ReferenceEquals(this, obj) || obj is Product other && Equals(other);
+
+        public override int GetHashCode() => Name?.GetHashCode() ?? 0;
     }
 
     protected override void OnInitialized()
     {
-        TreeItems.Add(new TreeItemData(".azure", Icons.Custom.Brands.MicrosoftAzure));
-        TreeItems.Add(new TreeItemData(".github", Icons.Custom.Brands.GitHub));
-        TreeItems.Add(new TreeItemData(".vscode", Icons.Custom.Brands.MicrosoftVisualStudio));
-        TreeItems.Add(new TreeItemData("content", Icons.Custom.FileFormats.FileDocument));
-        TreeItems.Add(new TreeItemData("src", Icons.Custom.FileFormats.FileCode)
-        {
-            TreeItems = new()
-            {
-                new TreeItemData("MudBlazor", Icons.Custom.Brands.MudBlazor),
-                new TreeItemData("MudBlazor.Docs", Icons.Custom.FileFormats.FileDocument)
-                {
-                    TreeItems = new()
-                    {
-                        new TreeItemData("_Imports.razor", Icons.Material.Filled.AlternateEmail),
-                        new TreeItemData( "compilerconfig.json", Icons.Custom.FileFormats.FileImage),
-                        new TreeItemData( "MudBlazor.Docs.csproj", Icons.Custom.Brands.MicrosoftVisualStudio),
-                        new TreeItemData("NewFilesToBuild.txt" , Icons.Custom.FileFormats.FileDocument),
-                    }
-                },
-                new TreeItemData("MudBlazor.Docs.Client", Icons.Material.Filled.Folder),
-                new TreeItemData("MudBlazor.Docs.Compiler", Icons.Material.Filled.Folder),
-                new TreeItemData("MudBlazor.Docs.Server", Icons.Material.Filled.Folder),
-                new TreeItemData("MudBlazor.UnitTests", Icons.Material.Filled.Folder),
-                new TreeItemData("MudBlazor.UnitTests.Viewer", Icons.Material.Filled.Folder),
-                new TreeItemData(".editorconfig", Icons.Custom.FileFormats.FileCode),
-                new TreeItemData("MudBlazor.sln", Icons.Custom.Brands.MicrosoftVisualStudio)
-            }
+        TreeItems.Add(new TreeItemData<Product> { 
+            Value=new Product("Coffee Makers", Icons.Material.Filled.Label), 
+            Expanded = true,
+            Children = [
+                new TreeItemData<Product> { Value=new Product("Moka Pot", Icons.Material.Filled.LocalOffer, 36.99m),  },
+                new TreeItemData<Product> { 
+                    Value=new Product("French Press", Icons.Material.Filled.LocalOffer, 19.99m),
+                    Expanded = true,
+                    Children = [ 
+                        new TreeItemData<Product> { Value = new Product("Spare Sieve", Icons.Material.Filled.LocalOffer, 6.00m) },
+                        new TreeItemData<Product> { Value = new Product("Cleaning Kit", Icons.Material.Filled.LocalOffer, 17.59m) }
+                    ]
+                }
+            ]
         });
-        TreeItems.Add(new TreeItemData("History", Icons.Material.Filled.Folder));
+        TreeItems.Add(new TreeItemData<Product> {
+            Value = new Product("Tea Pots", Icons.Material.Filled.Label),
+            Expanded = true,
+            Children = [
+                new TreeItemData<Product> {
+                    Value=new Product("Glass Teapot", Icons.Material.Filled.LocalOffer, 36.99m),
+                    Expanded = true,
+                    Children = [ 
+                        new TreeItemData<Product> { Value = new Product("Glass Infuser", Icons.Material.Filled.LocalOffer, 2.99m) }, 
+                        new TreeItemData<Product> { Value = new Product("Stainless Steel Infuser", Icons.Material.Filled.LocalOffer, 5.99m) }
+                    ]
+                },
+                new TreeItemData<Product> { Value = new Product("Stainless Steel Teapot", Icons.Material.Filled.LocalOffer, 14.15m) },
+                new TreeItemData<Product> { Value = new Product("Japanese Cast Iron Teapot", Icons.Material.Filled.LocalOffer, 26.39m) },
+                new TreeItemData<Product> { Value = new Product("Porcelain Teapot", Icons.Material.Filled.LocalOffer, 38.00m) }
+            ]
+        });
+    }
+
+    public decimal GetSelectedSum()
+    {
+        if (SelectedValues is null)
+            return 0;
+        return SelectedValues.Sum(p => p.Price ?? 0);
     }
 }

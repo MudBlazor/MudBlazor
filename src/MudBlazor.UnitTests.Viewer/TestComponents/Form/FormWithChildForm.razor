@@ -8,7 +8,7 @@
                   T="string"
                   Class="parent-text-field"
     />
-    <MudText Inline="true"><MudSwitch @bind-Value="@_showChildForm" Color="Color.Primary" /> Display child form</MudText>
+    <MudText HtmlTag="span"><MudSwitch @bind-Value="@_showChildForm" Color="Color.Primary" /> Display child form</MudText>
     @if (_showChildForm)
     {
         <MudForm @bind-IsValid="_childIsValid"

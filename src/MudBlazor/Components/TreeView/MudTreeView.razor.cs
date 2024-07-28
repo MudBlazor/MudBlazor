@@ -98,7 +98,7 @@ namespace MudBlazor
         public SelectionMode SelectionMode { get; set; } = SelectionMode.SingleSelection;
 
         /// <summary>
-        /// If true, the checkboxes will use the undetermined state in MultiSelection if any children in the sub-tree
+        /// If true, the checkboxes will use the undetermined state in MultiSelection if any children in the subtree
         /// have a different selection value than the parent item.
         /// </summary>
         [Parameter]
@@ -177,9 +177,12 @@ namespace MudBlazor
         [Category(CategoryTypes.TreeView.Appearance)]
         public bool Ripple { get; set; } = true;
 
+        /// <summary>
+        /// Tree items that will be rendered using the Item
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public IReadOnlyCollection<T>? Items { get; set; } = Array.Empty<T>();
+        public IReadOnlyCollection<TreeItemData<T>>? Items { get; set; } = Array.Empty<TreeItemData<T>>();
 
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
@@ -213,7 +216,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public RenderFragment<T>? ItemTemplate { get; set; }
+        public RenderFragment<TreeItemData<T>>? ItemTemplate { get; set; }
 
         /// <summary>
         /// Comparer is used to check if two tree items are equal
@@ -227,7 +230,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public Func<T?, Task<IReadOnlyCollection<T>>>? ServerData { get; set; }
+        public Func<T?, Task<IReadOnlyCollection<TreeItemData<T?>>>>? ServerData { get; set; }
 
         /// <summary>
         /// If true, the selection of the tree view can not be changed by clicking its items.
@@ -355,6 +358,7 @@ namespace MudBlazor
                         _selection.Add(item.GetValue()!);
                     }
                 }
+                UpdateParentItem(clickedItem.Parent);
                 await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
                 await UpdateItemsAsync();
                 return;
@@ -368,6 +372,27 @@ namespace MudBlazor
             {
                 // SingleSelection
                 await SetSelectedValueAsync(clickedItem.GetValue());
+            }
+        }
+
+        /// <summary>
+        /// This changes the parent item's state based on the selection state of its children in multi-selection mode
+        /// But only if the items are clicked, not when the selection is modified via SelectedValues
+        /// </summary>
+        private void UpdateParentItem(MudTreeViewItem<T>? parentItem)
+        {
+            while (parentItem is not null)
+            {
+                var parentValue = parentItem.GetValue();
+                if (parentValue is not null)
+                {
+                    var parentSelected = parentItem.ChildItems.Select(x => x.GetValue()).Where(x => x is not null).All(x => _selection.Contains(x!));
+                    if (parentSelected)
+                        _selection.Add(parentValue);
+                    else
+                        _selection.Remove(parentValue);
+                }
+                parentItem = parentItem.Parent;
             }
         }
 

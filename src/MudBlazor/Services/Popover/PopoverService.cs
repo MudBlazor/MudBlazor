@@ -109,6 +109,14 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
             return;
         }
 
+        if (PopoverOptions.CheckForPopoverProvider)
+        {
+            if (ObserversCount == 0)
+            {
+                throw new InvalidOperationException($"Missing <{nameof(MudPopoverProvider)} />, please add it to your layout. See https://mudblazor.com/getting-started/installation#manual-install-add-components");
+            }
+        }
+
         var holder = new MudPopoverHolder(popover.Id)
             .SetFragment(popover.ChildContent)
             .SetClass(popover.PopoverClass)

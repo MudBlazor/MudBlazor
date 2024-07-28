@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
@@ -52,7 +53,8 @@ public class PopoverServiceTests
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
         var popover = new PopoverMock();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var options = new PopoverOptions { CheckForPopoverProvider = false };
+        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock, new OptionsWrapper<PopoverOptions>(options));
 
         // Assert
         service.IsInitialized.Should().BeFalse();
@@ -115,6 +117,31 @@ public class PopoverServiceTests
 
         // Assert
         service.IsInitialized.Should().BeFalse();
+    }
+
+    [Test]
+    [TestCase(true)]
+    [TestCase(false)]
+    public async Task CreatePopoverAsync_CheckForPopoverProvider(bool checkForPopoverProvider)
+    {
+        // Arrange
+        var jsRuntimeMock = Mock.Of<IJSRuntime>();
+        var popover = new PopoverMock();
+        var options = new PopoverOptions { CheckForPopoverProvider = checkForPopoverProvider };
+        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock, new OptionsWrapper<PopoverOptions>(options));
+
+        // Act
+        var create = () => service.CreatePopoverAsync(popover);
+
+        // Assert
+        if (checkForPopoverProvider)
+        {
+            await create.Should().ThrowAsync<InvalidOperationException>();
+        }
+        else
+        {
+            await create.Should().NotThrowAsync<InvalidOperationException>();
+        }
     }
 
     [Test]
@@ -393,7 +420,8 @@ public class PopoverServiceTests
         var popoverOne = new PopoverMock();
         var popoverTwo = new PopoverMock();
         var popoverThree = new PopoverMock();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var options = new PopoverOptions { CheckForPopoverProvider = false };
+        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock, new OptionsWrapper<PopoverOptions>(options));
 
         // Act
         await service.CreatePopoverAsync(popoverOne);
@@ -449,7 +477,8 @@ public class PopoverServiceTests
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
         var popover = new PopoverMock();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var options = new PopoverOptions { CheckForPopoverProvider = false };
+        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock, new OptionsWrapper<PopoverOptions>(options));
 
         // Act
         await service.CreatePopoverAsync(popover);
@@ -475,7 +504,8 @@ public class PopoverServiceTests
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
         var popover = new PopoverMock();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var options = new PopoverOptions { CheckForPopoverProvider = false };
+        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock, new OptionsWrapper<PopoverOptions>(options));
 
         // Act
         await service.CreatePopoverAsync(popover);

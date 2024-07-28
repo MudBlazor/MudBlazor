@@ -6,7 +6,7 @@
     @{
         if (!OnClick.HasDelegate)
         {
-            <NavLink @onclick="EventUtil.AsNonRenderingEventHandler(HandleNavigation)"
+            <NavLink @onclick="HandleNavigation"
                     class="@LinkClassname"
                     @attributes="@Attributes"
                     tabindex="@TabIndex"
@@ -23,7 +23,7 @@
         }
         else
         {
-            <div @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)"
+            <div @onclick="OnClickHandler"
                  class="@LinkClassname"
                  tabindex="@TabIndex">
                 @if (!string.IsNullOrEmpty(Icon))

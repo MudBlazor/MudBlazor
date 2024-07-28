@@ -15,9 +15,9 @@ namespace MudBlazor
     }
 
     /// <summary>
-    /// Represents a base class for designing <see cref="MudChart"/> components.
+    /// Represents a base class for designing category <see cref="MudChart"/> components.
     /// </summary>
-    public abstract class MudChartBase : MudComponentBase
+    public abstract class MudCategoryChartBase : MudChartBase
     {
         /// <summary>
         /// The data to be displayed.
@@ -57,6 +57,23 @@ namespace MudBlazor
         public List<ChartSeries> ChartSeries { get; set; } = new();
 
         /// <summary>
+        /// Scales the input data to the range between 0 and 1
+        /// </summary>
+        protected double[] GetNormalizedData()
+        {
+            if (InputData == null)
+                return Array.Empty<double>();
+            var total = InputData.Sum();
+            return InputData.Select(x => Math.Abs(x) / total).ToArray();
+        }
+    }
+
+    /// <summary>
+    /// Shared a base class for designing category <see cref="MudChart"/> and <see cref="MudTimeSeriesChart"/> components.
+    /// </summary>
+    public abstract class MudChartBase : MudComponentBase
+    {
+        /// <summary>
         /// The display options applied to the chart.
         /// </summary>
         [Parameter]
@@ -75,13 +92,8 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
-        /// <summary>
-        /// Whether text is displayed Right-to-Left (RTL).
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, text will display property for RTL languages such as Arabic, Hebrew, and Persian.
-        /// </remarks>
         [CascadingParameter(Name = "RightToLeft")]
+        [Category(CategoryTypes.Chart.Behavior)]
         public bool RightToLeft { get; set; }
 
         /// <summary>
@@ -154,22 +166,17 @@ namespace MudBlazor
             }
         }
 
+        internal void SetSelectedIndex(int index)
+        {
+            SelectedIndex = index;
+        }
+
         /// <summary>
         /// Occurs when the <see cref="SelectedIndex"/> has changed.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Chart.Behavior)]
         public EventCallback<int> SelectedIndexChanged { get; set; }
-
-        /// <summary>
-        /// Scales the input data to the range between 0 and 1
-        /// </summary>
-        protected double[] GetNormalizedData()
-        {
-            if (InputData == null)
-                return Array.Empty<double>();
-            var total = InputData.Sum();
-            return InputData.Select(x => Math.Abs(x) / total).ToArray();
-        }
 
         protected string ToS(double d, string format = null)
         {
@@ -180,7 +187,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Whether lines can be hidden when <see cref="ChartType"/> is <see cref="ChartType.Line"/>.
+        /// Allows series to be hidden when <see cref="ChartType"/> is <see cref="ChartType.Line"/>.
         /// </summary>
         /// <remarks>
         /// When <c>true</c>, checkboxes are displayed which can toggle visibility of each line.
@@ -214,6 +221,10 @@ namespace MudBlazor
         /// <summary>
         /// Data is displayed as connected rectangles.
         /// </summary>
-        StackedBar
+        StackedBar,
+        /// <summary>
+        /// Data is displayed as connecting lines or as areas.
+        /// </summary>
+        Timeseries
     }
 }

@@ -1,4 +1,8 @@
 ﻿@page "/components/datagrid"
+@page "/components/MudDataGrid"
+@page "/components/MudDataGrid`1"
+@page "/components/MudDataGridPager"
+@page "/components/MudDataGridPager`1"
 
 <DocsPage>
     <DocsPageHeader Title="DataGrid" SubTitle="A sortable, filterable data grid with multiselection and pagination"/>
@@ -7,10 +11,10 @@
         <DocsPageSection>
             <SectionHeader Title="Default Data Grid">
                 <Description>
-                    The <CodeInline>&lt;MudDataGrid></CodeInline> is used to display and work with small amounts of data up to very large datasets, easily and efficiently. In its 
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> is used to display and work with small amounts of data up to very large datasets, easily and efficiently. In its
                     simplest form, the data grid is just a table, displaying data from a data source. In its most complex form, the data grid allows filtering, editing, grouping, and much more.
                     <br><br>
-                    Using the data grid is pretty simple to start with and just requires setting the <CodeInline>Items</CodeInline> property to a collection of data as IEnumerable, and adding 
+                    Using the data grid is pretty simple to start with and just requires setting the <CodeInline>Items</CodeInline> property to a collection of data as IEnumerable, and adding
                     <CodeInline>Columns</CodeInline>.
                 </Description>
             </SectionHeader>
@@ -38,12 +42,12 @@
         <DocsPageSection>
             <SectionHeader Title="Advanced Data Grid">
                 <Description>
-                    In a more advanced scenario, the data grid offers sorting, filtering, pagination and selection. There are two ways to filter the data 
-                    fed into the data grid. A <CodeInline>QuickFilter</CodeInline> function allows filtering the items in the grid globally. Data can also be filtered by specifying 
+                    In a more advanced scenario, the data grid offers sorting, filtering, pagination and selection. There are two ways to filter the data
+                    fed into the data grid. A <CodeInline>QuickFilter</CodeInline> function allows filtering the items in the grid globally. Data can also be filtered by specifying
                     column filters, enabling a more robust filtration.
                     <br><br>
                     In this example, we turn sorting and filtering off for the Nr column using the boolean <CodeInline>Sortable</CodeInline> and <CodeInline>Filterable</CodeInline> properties
-                    as well as hide the column options icon button by setting the <CodeInline>ShowColumnOptions</CodeInline> property to <CodeInline>false</CodeInline> (which is hidden by default). Additionally, we 
+                    as well as hide the column options icon button by setting the <CodeInline>ShowColumnOptions</CodeInline> property to <CodeInline>false</CodeInline> (which is hidden by default). Additionally, we
                     can override the default <CodeInline>SortBy</CodeInline> function for each column, seen in the Name column where we show how you can switch to a sort by the Name's length.
                     <br><br>
                     To hide the filter icons unless a column is currently filtered, you can set the <CodeInline>ShowFilterIcons</CodeInline> property to false.
@@ -59,11 +63,11 @@
                 <Description>
                     The <CodeInline>&lt;MudDataGrid></CodeInline> has many built in properties to change its style and also allows for custom styling as well.
                     <br><br>
-                    Row level classes and styles can be applied using the <CodeInline>RowClass</CodeInline> and <CodeInline>RowStyle</CodeInline> properties 
+                    Row level classes and styles can be applied using the <CodeInline>RowClass</CodeInline> and <CodeInline>RowStyle</CodeInline> properties
                     respectively. To style rows according to the data of the row, you would use the <CodeInline>RowClassFunc</CodeInline> and <CodeInline>RowStyleFunc</CodeInline>
-                    properties. For even finer grain control, you can style at the header, cell and footer level as well by using the <CodeInline>HeaderClass</CodeInline>, <CodeInline>HeaderStyle</CodeInline>, 
-                    <CodeInline>HeaderClassFunc</CodeInline>, <CodeInline>HeaderStyleFunc</CodeInline>, <CodeInline>CellClass</CodeInline>, 
-                    <CodeInline>CellStyle</CodeInline>, <CodeInline>CellClassFunc</CodeInline>, <CodeInline>CellStyleFunc</CodeInline>, 
+                    properties. For even finer grain control, you can style at the header, cell and footer level as well by using the <CodeInline>HeaderClass</CodeInline>, <CodeInline>HeaderStyle</CodeInline>,
+                    <CodeInline>HeaderClassFunc</CodeInline>, <CodeInline>HeaderStyleFunc</CodeInline>, <CodeInline>CellClass</CodeInline>,
+                    <CodeInline>CellStyle</CodeInline>, <CodeInline>CellClassFunc</CodeInline>, <CodeInline>CellStyleFunc</CodeInline>,
                     <CodeInline>FooterClass</CodeInline>, <CodeInline>FooterStyle</CodeInline>, <CodeInline>FooterClassFunc</CodeInline> and <CodeInline>FooterStyleFunc</CodeInline> properties.
                 </Description>
             </SectionHeader>
@@ -76,10 +80,10 @@
             <SectionHeader Title="Editing">
                 <Description>
                     The <CodeInline>&lt;MudDataGrid></CodeInline> allows editing the data passed into it. Setting the <CodeInline>ReadOnly</CodeInline> property
-                    to <CodeInline>false</CodeInline> and the <CodeInline>EditMode</CodeInline> property to <CodeInline>DataGridEditMode.Form</CodeInline> 
-                    or to <CodeInline>DataGridEditMode.Cell</CodeInline> turns on editing. Edit mode <CodeInline>Form</CodeInline> displays a form in a popup 
-                    when editing. Edit mode <CodeInline>Cell</CodeInline> is more like Excel where each cell is ready to edit and as you make edits, they are 
-                    applied to the data source. To disable editing on a column, set its <CodeInline>IsEditable</CodeInline> property to <CodeInline>false</CodeInline>. 
+                    to <CodeInline>false</CodeInline> and the <CodeInline>EditMode</CodeInline> property to <CodeInline>DataGridEditMode.Form</CodeInline>
+                    or to <CodeInline>DataGridEditMode.Cell</CodeInline> turns on editing. Edit mode <CodeInline>Form</CodeInline> displays a form in a popup
+                    when editing. Edit mode <CodeInline>Cell</CodeInline> is more like Excel where each cell is ready to edit and as you make edits, they are
+                    applied to the data source. To disable editing on a column, set its <CodeInline>IsEditable</CodeInline> property to <CodeInline>false</CodeInline>.
                     To mark a property as not required, set its <CodeInline>Required</CodeInline> property to <CodeInline>false</CodeInline>.
                     <br><br>
                     By default, the built-in editing in the data grid automatically supplies the proper input component for each cell. However, this can be overridden
@@ -97,7 +101,7 @@
             <SectionHeader Title="Grouping">
                 <Description>
                     The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to group data by column. Setting the <CodeInline>Grouping</CodeInline> property
-                    to <CodeInline>true</CodeInline> will turn on grouping which will add a menu item in the column options to toggle grouping of that column. 
+                    to <CodeInline>true</CodeInline> will turn on grouping which will add a menu item in the column options to toggle grouping of that column.
                     To disable grouping on a column, set its <CodeInline>Groupable</CodeInline> property to <CodeInline>false</CodeInline>.
 
                 </Description>
@@ -115,7 +119,7 @@
                     on a header column to extend the sort operation to another column.<br />
                     Clicking on the column header while <CodeInline>Alt-Key</CodeInline> is pressed, will un-sort a column (or remove it from the set of sorted columns) when multiple sorting
                     is enabled. In the case of multiple sorting, a small index-number next to the sort direction arrow will indicate the order in which columns are sorted.<br />
-                    When mode is set to <CodeInline>SortMode.Single</CodeInline>, only a single column can be used for sorting at a time. Using another column for sorting will automatically 
+                    When mode is set to <CodeInline>SortMode.Single</CodeInline>, only a single column can be used for sorting at a time. Using another column for sorting will automatically
                     un-sort any former sorted column. In single mode, the number indicator next to the direction arrow will not be shown.<br/><br/>
                     In both <i>active</i> modes, single columns can be excluded from sorting by setting the <CodeInline>Sortable</CodeInline> property to false for that column.
                     When SortMode is set to <CodeInline>SortMode.None</CodeInline> sorting is disabled globally and setting the <CodeInline>Sortable</CodeInline> property on a column has no effect.<br /><br />
@@ -147,7 +151,7 @@
                 <Description>
                     The <CodeInline>&lt;MudDataGrid></CodeInline> supports filtering with several different <CodeInline>DataGridFilterMode</CodeInline>s by setting the <CodeInline>FilterMode</CodeInline> property.
                     <CodeInline>DataGridFilterMode.Simple</CodeInline> is the default where all filters are managed in one popover in the data grid. It allows you to
-                    set multiple filters at one time for multiple different columns. In <CodeInline>DataGridFilterMode.ColumnFilterMenu</CodeInline> mode, there is a dedicated popover for 
+                    set multiple filters at one time for multiple different columns. In <CodeInline>DataGridFilterMode.ColumnFilterMenu</CodeInline> mode, there is a dedicated popover for
                     each column. Lastly, <CodeInline>DataGridFilterMode.ColumnFilterRow</CodeInline> allows you to inline the filtering behavior directly into the data grid.
                     <br><br>
                     Is it possible to define the case sensitivity when filtering string values by setting the parameter <CodeInline>FilterCaseSensitivity</CodeInline>.
@@ -164,7 +168,7 @@
                     It is possible to customize filtering by utilizing the <CodeInline>&lt;FilterTemplate></CodeInline> available on the <CodeInline>&lt;MudDataGrid></CodeInline>
                     as well as each <CodeInline>&lt;Column></CodeInline>. In the example below, the Sign column is customized.
                     <br><br>
-                    Inside the <CodeInline>&lt;FilterTemplate></CodeInline> on the data grid while using <CodeInline>DataGridFilterMode.Simple</CodeInline>, the context is set to the 
+                    Inside the <CodeInline>&lt;FilterTemplate></CodeInline> on the data grid while using <CodeInline>DataGridFilterMode.Simple</CodeInline>, the context is set to the
                     data grid's FilterDefinitions to allow for customizing the filtering behavior.
                     <br><br>
                     When using the <CodeInline>&lt;FilterTemplate></CodeInline> in the column specific filter modes, the context is a <CodeInline>DataGridFilterMode.Simple</CodeInline>
@@ -180,9 +184,9 @@
         <DocsPageSection>
             <SectionHeader Title="Row Detail View">
                 <Description>
-                    The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to create hierarchical layouts. To do that the <CodeInline>HierarchyColumn</CodeInline> has to be added in the <CodeInline>Columns</CodeInline> definitions. 
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to create hierarchical layouts. To do that the <CodeInline>HierarchyColumn</CodeInline> has to be added in the <CodeInline>Columns</CodeInline> definitions.
                     <br><br>
-                    You can customize the icon to toggle the RowDetail and also disable the toggle button.
+                    You can customize the icon to toggle the RowDetail, disable the toggle button and also initially expand the RowDetail.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridDetailRowExample)" ShowCode="false" Block="true" FullWidth="true">
@@ -208,11 +212,11 @@
         <DocsPageSection>
             <SectionHeader Title="Data Aggregation">
                 <Description>
-                    The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to aggregate data in several different ways. Data aggregation happens in the 
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to aggregate data in several different ways. Data aggregation happens in the
                     footer of the grid for the most part. By setting an <CodeInline>AggregateDefinition</CodeInline>, you can easily add a quick built-in aggregate
-                    or choose to tailor the display to your needs. There are 6 different <CodeInline>AggregateTypes</CodeInline> that can be used with the 
+                    or choose to tailor the display to your needs. There are 6 different <CodeInline>AggregateTypes</CodeInline> that can be used with the
                     <CodeInline>AggregateDefinition</CodeInline>: Avg, Count, Custom, Max, Min and Sum. For more control over the data aggregation, you can choose the
-                    <CodeInline>AggregationType.Custom</CodeInline> and supply your own function which will return a formatted string to display. Lastly, for 
+                    <CodeInline>AggregationType.Custom</CodeInline> and supply your own function which will return a formatted string to display. Lastly, for
                     complete control over the data aggregation including the look and feel, you use <CodeInline>&lt;FooterTemplate></CodeInline> which has its
                     context set to the <CodeInline>CurrentPageItems</CodeInline>.
                     <br><br>
@@ -230,8 +234,8 @@
                     The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to make a column stick to the left or right. Setting the <CodeInline>StickyLeft</CodeInline> or <CodeInline>StickyRight</CodeInline> properties
                     to <CodeInline>true</CodeInline> will make those columns "sticky". You must turn on <CodeInline>HorizontalScrollbar</CodeInline> to see the columns stick to either side.
                     <br><br>
-                    There are a couple of things to keep in mind with sticky columns. First, if there are not enough columns and data to force the data grid to scroll, you will not see 
-                    the columns stick, and that is by design and simply how sticky works in CSS. Secondly, there is nothing stopping you from making multiple columns sticky, but it will 
+                    There are a couple of things to keep in mind with sticky columns. First, if there are not enough columns and data to force the data grid to scroll, you will not see
+                    the columns stick, and that is by design and simply how sticky works in CSS. Secondly, there is nothing stopping you from making multiple columns sticky, but it will
                     not have the effect you presumably intend. Instead, each column will be sticky when it reached the left or right side of the data grid and will overlap the sticky column
                     before it.
 
@@ -239,6 +243,22 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridStickyColumnsExample)" ShowCode="false" Block="true" FullWidth="true">
                 <DataGridStickyColumnsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Server Side Filtering, Sorting and Pagination">
+                <Description>
+                    Set <CodeInline>ServerData</CodeInline> to load data from the backend that is filtered, sorted and paginated.
+                    DataGrid will call this async function whenever the user navigates the pager or changes sorting by clicking on the sort header icons.
+                    In this example, we also show how to force the table to update when the search textfield blurs, so that the table reloads server-filtered data.
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                        Note: with a <CodeInline>ServerData</CodeInline> func you don't need <CodeInline>Items</CodeInline> and <CodeInline>Filter</CodeInline>.
+                    </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(TableServerSidePaginateExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridServerSideExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -256,9 +276,25 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Virtualize server data">
+                <Description>
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> supports virtualization of data fetched from a server, enhancing the grid's performance for large datasets.
+                    For this feature to work, the <CodeInline>Virtualize</CodeInline> property must be set to <CodeInline>true</CodeInline>,
+                    the <CodeInline>VirtualizeServerData</CodeInline> parameter should be used to facilitate data retrieval and streaming from the server,
+                    and the <CodeInline>ItemSize</CodeInline> should be specified to optimize virtualization.
+
+                    Please make sure to constrain the grid's height, as virtualization relies on this dimension.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridVirtualizeServerDataExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridVirtualizeServerDataExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Observability">
                 <Description>
-                    When loading the <CodeInline>&lt;MudDataGrid></CodeInline> with a collection that implements <CodeInline>INotifyCollectionChanged</CodeInline>, changes to the 
+                    When loading the <CodeInline>&lt;MudDataGrid></CodeInline> with a collection that implements <CodeInline>INotifyCollectionChanged</CodeInline>, changes to the
                     underlying collection will automatically be reflected in the <CodeInline>&lt;MudDataGrid></CodeInline>.
 
                 </Description>
@@ -285,8 +321,8 @@
             <SectionHeader Title="Column Reordering">
                 <Description>
                     To enable Column Reordering via Drag and Drop, set the <CodeInline>DragDropColumnReordering</CodeInline> parameter to true. Columns can override this parameter with their <CodeInline>DragAndDropEnabled</CodeInline> parameter if necessary.
-                    In the example all but two fixed columns can be reordered by dragging their header onto another column header to swap places. On mouse-over the draggable columns show their <CodeInline>DragIndicatorIcon</CodeInline> and when dragging 
-                    a header over another column header, it will signal its ability to swap places by changing its text color. The drag-over effect can be customized by setting parameters <CodeInline>DropAllowedClass</CodeInline> and <CodeInline>DropNotAllowedClass</CodeInline> 
+                    In the example all but two fixed columns can be reordered by dragging their header onto another column header to swap places. On mouse-over the draggable columns show their <CodeInline>DragIndicatorIcon</CodeInline> and when dragging
+                    a header over another column header, it will signal its ability to swap places by changing its text color. The drag-over effect can be customized by setting parameters <CodeInline>DropAllowedClass</CodeInline> and <CodeInline>DropNotAllowedClass</CodeInline>
                     to your own CSS classes.
                 </Description>
             </SectionHeader>
@@ -297,7 +333,7 @@
         <DocsPageSection>
             <SectionHeader Title="Columns Panel">
                 <Description>
-                    The <CodeInline>&lt;MudDataGrid></CodeInline> can open a columns panel using <CodeInline>ShowColumnsPanel</CodeInline>. 
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> can open a columns panel using <CodeInline>ShowColumnsPanel</CodeInline>.
                     The panel allows the re-ordering, hiding, filtering and grouping of columns. The enabled functionality matches the grid and column options except column re-ordering.
                     <br><br>
                     Column re-ordering is enabled in the panel using the <CodeInline>ColumnsPanelReordering</CodeInline> property. Re-ordering is on an insert basis, so it does not respect the column level <CodeInline>DragAndDropEnabled</CodeInline> property which swaps columns.

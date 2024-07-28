@@ -35,7 +35,7 @@ namespace MudBlazor
         public string YAxisFormat { get; set; }
 
         /// <summary>
-        /// Whether vertical axis lines are shown.
+        /// Shows vertical axis lines.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -43,15 +43,16 @@ namespace MudBlazor
         public bool YAxisLines { get; set; } = true;
 
         /// <summary>
-        /// Whether horizontal axis lines are shown.
+        /// Shows horizontal axis lines.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
         public bool XAxisLines { get; set; }
+        public bool YAxisRequireZeroPoint { get; set; }
 
         /// <summary>
-        /// Whether the legend is shown.
+        /// Shows the chart series legend.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.

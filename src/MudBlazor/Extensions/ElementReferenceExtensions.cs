@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -12,18 +14,45 @@ namespace MudBlazor
     [ExcludeFromCodeCoverage]
     public static class ElementReferenceExtensions
     {
-        private static readonly PropertyInfo? jsRuntimeProperty =
+#if NET8_0_OR_GREATER
+        [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "<JSRuntime>k__BackingField")]
+        private static extern ref IJSRuntime GetJsRuntime(WebElementReferenceContext context);
+#else
+        private static readonly PropertyInfo? _jsRuntimeProperty =
             typeof(WebElementReferenceContext).GetProperty("JSRuntime", BindingFlags.Instance | BindingFlags.NonPublic);
+
+        private static readonly Lazy<Func<WebElementReferenceContext, IJSRuntime?>> _jsRuntimeAccessor = new(JsRuntimeFactory);
+
+        private static Func<WebElementReferenceContext, IJSRuntime?> JsRuntimeFactory()
+        {
+            var parameter = Expression.Parameter(typeof(WebElementReferenceContext), "context");
+
+            if (_jsRuntimeProperty is null)
+            {
+                return _ => null;
+            }
+
+            var propertyAccess = Expression.Property(parameter, _jsRuntimeProperty);
+            var lambda = Expression.Lambda<Func<WebElementReferenceContext, IJSRuntime?>>(propertyAccess, parameter);
+
+            return lambda.Compile();
+        }
+#endif
 
         internal static IJSRuntime? GetJSRuntime(this ElementReference elementReference)
         {
             if (elementReference.Context is WebElementReferenceContext context)
             {
-                return (IJSRuntime?)jsRuntimeProperty?.GetValue(context);
+#if NET8_0_OR_GREATER
+                var jsRuntime = GetJsRuntime(context);
+#else
+                var jsRuntime = _jsRuntimeAccessor.Value(context);
+#endif
+
+                return jsRuntime;
             }
 
             return null;
-
         }
 
         public static ValueTask MudFocusFirstAsync(this ElementReference elementReference, int skip = 0, int min = 0) =>

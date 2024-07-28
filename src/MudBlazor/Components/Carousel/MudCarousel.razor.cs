@@ -33,17 +33,11 @@ namespace MudBlazor
             .AddClass(BulletsClass)
             .Build();
 
-        /// <summary>
-        /// Whether text is displayed Right-to-Left (RTL).
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, text will display property for RTL languages such as Arabic, Hebrew, and Persian.
-        /// </remarks>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
         /// <summary>
-        /// Whether "Next" and "Previous" arrows are displayed.
+        /// Displays "Next" and "Previous" arrows.
         /// </summary>
         /// <reamrks>
         /// Defaults to <c>true</c>.  
@@ -63,7 +57,7 @@ namespace MudBlazor
         public Position ArrowsPosition { get; set; } = Position.Center;
 
         /// <summary>
-        /// Whether a bullet is displayed for each <see cref="MudCarouselItem"/>.
+        /// Displays a bullet for each <see cref="MudCarouselItem"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -93,7 +87,7 @@ namespace MudBlazor
         public Color? BulletsColor { get; set; }
 
         /// <summary>
-        /// Whether items are automatically cycled.
+        /// Automatically cycles items based on <see cref="AutoCycleTime"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the <see cref="MudCarouselItem"/> items will be rotated after the delay specified in <see cref="AutoCycleTime" />.
@@ -223,7 +217,7 @@ namespace MudBlazor
         public RenderFragment<bool>? BulletTemplate { get; set; }
 
         /// <summary>
-        /// Whether swipe gestures are allowed for touch devices.
+        /// Allows swipe gestures for touch devices.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  When <c>true</c>, swipe gestures on touch devices can be used to change the current <see cref="MudCarouselItem"/>.

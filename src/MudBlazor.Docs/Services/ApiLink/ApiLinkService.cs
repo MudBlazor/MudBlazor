@@ -14,6 +14,7 @@ namespace MudBlazor.Docs.Services
 
         public ApiLinkService(IMenuService menuService)
         {
+            // TODO: Merge MenuService with ApiDocumentation.
             Register(menuService.Api); // this also registers components
             Register(menuService.Customization);
             Register(menuService.Features);
@@ -21,6 +22,7 @@ namespace MudBlazor.Docs.Services
             RegisterAliases();
         }
 
+        /// <inheritdoc />
         public Task<IReadOnlyCollection<ApiLinkServiceEntry>> Search(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
@@ -30,6 +32,8 @@ namespace MudBlazor.Docs.Services
 
             // Case is ignored.
             text = text.ToLowerInvariant();
+
+            // TODO: Merge ApiLinkServiceEntry _entries with DocumentedType ApiDocumentation.Types to combine both datasets efficiently.
 
             // Calculate the ratios of all keywords to the search input.
             var ratios = new Dictionary<ApiLinkServiceEntry, double>();
@@ -61,6 +65,12 @@ namespace MudBlazor.Docs.Services
             );
         }
 
+        /// <summary>
+        /// Returns a value representing the match ratio of the search input to the keyword.
+        /// A higher ratio means a better match.
+        /// </summary>
+        /// <param name="search">The search query</param>
+        /// <param name="keyword">The keyword from an existing source</param>
         private double GetSearchMatchRatio(string search, string keyword)
         {
             var ratio = Fuzz.Ratio(keyword, search);
@@ -70,6 +80,9 @@ namespace MudBlazor.Docs.Services
             return averageRatio;
         }
 
+        /// <summary>
+        /// Adds the specified entry to the search index.
+        /// </summary>
         private void AddEntry(ApiLinkServiceEntry entry)
         {
             void AddKeyword(string? k)
@@ -86,6 +99,7 @@ namespace MudBlazor.Docs.Services
             AddKeyword(entry.Link);
         }
 
+        /// <inheritdoc />
         public void RegisterPage(string title, string? subtitle, Type? componentType, string? link = null)
         {
             link ??= ApiLink.GetComponentLinkFor(componentType!);
@@ -101,6 +115,9 @@ namespace MudBlazor.Docs.Services
             AddEntry(entry);
         }
 
+        /// <summary>
+        /// Registers specific aliases for components or pages.
+        /// </summary>
         private void RegisterAliases()
         {
             // Add search texts here which users might search and direct them to the correct component or page.
@@ -112,7 +129,6 @@ namespace MudBlazor.Docs.Services
             RegisterPage("Expander", subtitle: "Go to Collapse", componentType: typeof(MudCollapse));
             RegisterPage("Harmonica", subtitle: "Go to Expansion Panels", componentType: typeof(MudExpansionPanels));
             RegisterPage("Horizontal Line", subtitle: "Go to Divider", componentType: typeof(MudDivider));
-            RegisterPage("Hiliter", subtitle: "Go to Highlighter", componentType: typeof(MudHighlighter));
             RegisterPage("Notification", subtitle: "Go to Snackbar", componentType: typeof(MudSnackbarProvider));
             RegisterPage("Popup", subtitle: "Go to Popover", componentType: typeof(MudPopover));
             RegisterPage("Side Panel", subtitle: "Go to Drawer", componentType: typeof(MudDrawer));
@@ -120,6 +136,9 @@ namespace MudBlazor.Docs.Services
             RegisterPage("Typeahead", subtitle: "Go to Autocomplete", componentType: typeof(MudAutocomplete<T>));
         }
 
+        /// <summary>
+        /// Registers the specified items to the search index.
+        /// </summary>
         private void Register(IEnumerable<MudComponent> items)
         {
             foreach (var item in items)
@@ -133,6 +152,9 @@ namespace MudBlazor.Docs.Services
             }
         }
 
+        /// <summary>
+        /// Registers the specified links to the search index.
+        /// </summary>
         private void Register(IEnumerable<DocsLink> links)
         {
             foreach (var link in links)

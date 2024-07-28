@@ -360,6 +360,7 @@ namespace MudBlazor.Services
                 .AddMudBlazorJsApi()
                 .AddMudPopoverService(popoverOptions =>
                 {
+                    popoverOptions.CheckForPopoverProvider = options.PopoverOptions.CheckForPopoverProvider;
                     popoverOptions.ContainerClass = options.PopoverOptions.ContainerClass;
                     popoverOptions.FlipMargin = options.PopoverOptions.FlipMargin;
                     popoverOptions.QueueDelay = options.PopoverOptions.QueueDelay;
