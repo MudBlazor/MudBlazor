@@ -43,6 +43,7 @@ namespace MudBlazor
 
         protected string InputControlClassname =>
             new CssBuilder("mud-field")
+                .AddClass($"mud-input-control-with-label", !string.IsNullOrEmpty(Label))
                 .AddClass(Class)
                 .Build();
 
