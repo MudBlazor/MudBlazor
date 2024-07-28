@@ -1,17 +1,17 @@
 ﻿
 @* MODE SELECTORS *@
 
-<MudToolBar Dense WrapContent>
-    <MudSelect T="Margin" Label="Margin size" @bind-Value="Margin">
+<MudStack Row AlignItems="AlignItems.End">
+    <MudSelect T="Margin" Label="Margin size" @bind-Value="Margin" Variant="Variant.Outlined" Margin="Margin.Dense">
         @foreach (Margin margin in Enum.GetValues(typeof(Margin))) { <MudSelectItem Value="@margin">@margin</MudSelectItem> }
     </MudSelect>
-    <MudSelect T="AlignItems" Label="Align" @bind-Value="Align">
+    <MudSelect T="AlignItems" Label="Align" @bind-Value="Align" Variant="Variant.Outlined" Margin="Margin.Dense">
         @foreach (AlignItems align in Enum.GetValues(typeof(AlignItems)))
         {
             <MudSelectItem Value="@align">@align</MudSelectItem>
         }
     </MudSelect>
-</MudToolBar>
+</MudStack>
 
 @* INPUT EXAMPLES FOR EACH VARIANT *@
 
@@ -132,6 +132,23 @@
     <MudColorPicker HelperText="With Helper" Variant="Variant.Text" Margin="@Margin" />
     <MudColorPicker HelperText="With Helper" Variant="Variant.Filled" Margin="@Margin" />
     <MudColorPicker HelperText="With Helper" Variant="Variant.Outlined" Margin="@Margin" />
+</MudStack>
+
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">MudAutocomplete</MudText>
+<MudStack Row AlignItems="@Align">
+    <MudAutocomplete T="string" Variant="Variant.Text" Margin="@Margin" />
+    <MudAutocomplete T="string" Variant="Variant.Filled" Margin="@Margin" />
+    <MudAutocomplete T="string" Variant="Variant.Outlined" Margin="@Margin" />
+</MudStack>
+<MudStack Row AlignItems="@Align">
+    <MudAutocomplete T="string" Label="With Label" Variant="Variant.Text" Margin="@Margin" />
+    <MudAutocomplete T="string" Label="With Label" Variant="Variant.Filled" Margin="@Margin" />
+    <MudAutocomplete T="string" Label="With Label" Variant="Variant.Outlined" Margin="@Margin" />
+</MudStack>
+<MudStack Row AlignItems="@Align">
+    <MudAutocomplete T="string" HelperText="With Helper" Variant="Variant.Text" Margin="@Margin" />
+    <MudAutocomplete T="string" HelperText="With Helper" Variant="Variant.Filled" Margin="@Margin" />
+    <MudAutocomplete T="string" HelperText="With Helper" Variant="Variant.Outlined" Margin="@Margin" />
 </MudStack>
 
 @* CHECKBOX, RADIOBUTTONS, SWITCHES *@
