@@ -7,6 +7,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 #nullable enable
+
+/// <summary>
+/// A component for breaking a flex display using CSS styles.
+/// </summary>
 public partial class MudFlexBreak : MudComponentBase
 {
     /// <summary>
