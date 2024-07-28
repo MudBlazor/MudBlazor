@@ -55,8 +55,7 @@
                 TransformOrigin="@TransformOrigin"
                 RelativeWidth="@FullWidth"
                 Style="@_popoverStyle"
-                DropShadow="@DropShadow"
-                @ontouchend:preventDefault>
+                DropShadow="@DropShadow">
         <CascadingValue Value="@this">
             <MudList T="object"
                      Class="@ListClass"
@@ -68,5 +67,5 @@
         </CascadingValue>
     </MudPopover>
 
-    <MudOverlay Visible="@(_open && ActivationEvent != MouseEvent.MouseOver)" OnClick="@ToggleMenuAsync" LockScroll="LockScroll" />
+    <MudOverlay Visible="@(_open && ActivationEvent != MouseEvent.MouseOver)" AutoClose OnClosed="CloseMenuAsync" LockScroll="LockScroll" />
 </div>
