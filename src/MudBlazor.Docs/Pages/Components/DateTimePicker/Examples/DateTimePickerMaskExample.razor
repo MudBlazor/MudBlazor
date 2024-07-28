@@ -1,8 +1,8 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudDateTimePicker Label="dd.MM.yyyy hh:mm:ss" Editable="true" @bind-Date="date1" Mask="@(new DateTimeMask("dd.MM.yyyy hh:mm:ss"))" DateTimeFormat="dd.MM.yyyy hh:mm:ss" Placeholder="de-AT Date" />
-<MudDateTimePicker Label="MM/dd/yyyy hh:mm:ss" Editable="true" @bind-Date="date2" Mask="@(new DateTimeMask("MM/dd/yyyy hh:mm:ss"))" DateTimeFormat="MM/dd/yyyy hh:mm:ss" Placeholder="en-US Date" />
-<MudDateTimePicker Label="yyyy-MM-dd hh:mm:ss" Editable="true" @bind-Date="date3" Mask="@(new DateTimeMask("0000-00-00 hh:mm:ss"))" DateTimeFormat="yyyy-MM-dd hh:mm:ss" Placeholder="ISO Date" />
+<MudDateTimePicker Label="dd.MM.yyyy hh:mm:ss" Editable="true" @bind-DateTime="date1" Mask="@(new DateTimeMask("dd.MM.yyyy hh:mm:ss"))" DateTimeFormat="dd.MM.yyyy hh:mm:ss" Placeholder="de-AT Date" />
+<MudDateTimePicker Label="MM/dd/yyyy hh:mm:ss" Editable="true" @bind-DateTime="date2" Mask="@(new DateTimeMask("MM/dd/yyyy hh:mm:ss"))" DateTimeFormat="MM/dd/yyyy hh:mm:ss" Placeholder="en-US Date" />
+<MudDateTimePicker Label="yyyy-MM-dd hh:mm:ss" Editable="true" @bind-DateTime="date3" Mask="@(new DateTimeMask("0000-00-00 hh:mm:ss"))" DateTimeFormat="yyyy-MM-dd hh:mm:ss" Placeholder="ISO Date" />
 
 @code {
     DateTime? date1 = null;

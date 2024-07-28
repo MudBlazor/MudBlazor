@@ -2,9 +2,9 @@
 @using System.Reflection
 @namespace MudBlazor.Docs.Examples
 
-<MudDateTimePicker Label="Current UI Culture" @bind-Date="date" />
-<MudDateTimePicker Label="Persian" @bind-Date="date" Culture="@GetPersianCulture()" TitleDateTimeFormat="dddd, dd MMMM hh:mm"/>
-<MudDateTimePicker Label="Chinese" @bind-Date="date" Culture="@CultureInfo.GetCultureInfo("zh-Hans")" TitleDateTimeFormat="dddd, dd MMMM hh:mm" />
+<MudDateTimePicker Label="Current UI Culture" @bind-DateTime="date" />
+<MudDateTimePicker Label="Persian" @bind-DateTime="date" Culture="@GetPersianCulture()" TitleDateTimeFormat="dddd, dd MMMM hh:mm"/>
+<MudDateTimePicker Label="Chinese" @bind-DateTime="date" Culture="@CultureInfo.GetCultureInfo("zh-Hans")" TitleDateTimeFormat="dddd, dd MMMM hh:mm" />
 
 @code {
     DateTime? date = DateTime.Parse("2021-02-14 20:00:00"); // 1399-11-26 in Persian calendar

@@ -259,7 +259,7 @@ namespace MudBlazor
             Touched = true;
             if (string.IsNullOrEmpty(value))
             {
-                ClearAsync(false).AndForget();
+                ClearAsync(false).CatchAndLog();
             }
             else
             {
@@ -370,7 +370,7 @@ namespace MudBlazor
         /// Sets the date and time selection
         /// </summary>
         protected void SetDateTime(DateTime? dateTime, bool updateValue)
-            => SetDateTimeAsync(dateTime, updateValue).AndForget();
+            => SetDateTimeAsync(dateTime, updateValue).CatchAndLog();
 
         /// <summary>
         /// Goes to the specific date
@@ -421,7 +421,7 @@ namespace MudBlazor
         {
             if (AutoClose && PickerVariant is not PickerVariant.Static && _datePickedChanged && _timePickedChanged)
             {
-                CloseAsync().AndForget();
+                CloseAsync().CatchAndLog();
             }
         }
 
@@ -442,7 +442,7 @@ namespace MudBlazor
         /// </summary>
         public override async Task ClearAsync(bool close = true)
         {
-            SetDateTimeAsync(null, close).AndForget();
+            SetDateTimeAsync(null, close).CatchAndLog();
             await base.ClearAsync(close);
         }
     }
