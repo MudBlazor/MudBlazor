@@ -10,9 +10,10 @@ namespace MudBlazor
     public partial class MudTextField<T> : MudDebouncedInput<T>
     {
         protected string Classname =>
-           new CssBuilder("mud-input-input-control")
-           .AddClass(Class)
-           .Build();
+           new CssBuilder()
+               .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
+               .AddClass(Class)
+               .Build();
 
         public MudInput<string> InputReference { get; private set; }
         private MudMask _maskReference;
