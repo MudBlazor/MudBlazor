@@ -2,13 +2,11 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.Localization;
 
-namespace MudBlazor.Utilities.Localization;
+namespace MudBlazor.Localization;
 
 #nullable enable
 /// <summary>
@@ -26,7 +24,7 @@ internal class DefaultEnumLocalizationStrategy : IEnumLocalizationStrategy
     public string Handle(Enum enumValue, IStringLocalizer? localizer)
     {
         var enumType = enumValue.GetType();
-        var memberInfo = enumType.GetMember(enumValue.ToString()).FirstOrDefault();
+        var memberInfo = enumType.GetField(enumValue.ToString(), BindingFlags.Public | BindingFlags.Static);
 
         return GetDisplayName(memberInfo, localizer);
     }
