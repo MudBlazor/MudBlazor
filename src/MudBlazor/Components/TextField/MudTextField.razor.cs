@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
@@ -12,7 +11,7 @@ namespace MudBlazor
     public partial class MudTextField<T> : MudDebouncedInput<T>
     {
         protected string Classname =>
-           new CssBuilder()
+           new CssBuilder("mud-input-input-control")
                .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
                .AddClass(Class)
                .Build();
