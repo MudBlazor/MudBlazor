@@ -1,8 +1,9 @@
-﻿using System;
+﻿using System.Globalization;
 using FluentAssertions;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
+using MudBlazor.Docs.Extensions;
 using MudBlazor.Resources;
 using NUnit.Framework;
 
@@ -145,5 +146,39 @@ public class InternalMudLocalizerTests
 
         // Assert
         result.Should().BeEquivalentTo(new LocalizedString("MudDataGrid.>", ">", false));
+    }
+
+    [Test]
+    public void GetAllStrings_AbstractLocalizationInterceptor()
+    {
+        // Arrange
+        var interceptorMock = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer: null);
+        IStringLocalizer internalMudLocalizer = new InternalMudLocalizer(interceptorMock);
+
+        // Act
+        var result = internalMudLocalizer.GetAllStrings(includeParentCultures: true).ToArray();
+
+        // Assert
+        LanguageResource.ResourceManager.GetResourceSet(CultureInfo.InvariantCulture, true, true)
+            .ToEnumerable()
+            .ToDictionary(x => (string)x.Key, x => x.Value?.ToString(), StringComparer.Ordinal)
+            .Should().BeEquivalentTo(result.ToDictionary(x => x.Name, x => x.Value, StringComparer.Ordinal));
+    }
+
+    [Test]
+    public void GetAllStrings_ReplacedInterceptor()
+    {
+        // Arrange
+        var interceptorMock = new Mock<ILocalizationInterceptor>();
+        IStringLocalizer internalMudLocalizer = new InternalMudLocalizer(interceptorMock.Object);
+
+        // Act
+        var result = internalMudLocalizer.GetAllStrings(includeParentCultures: true).ToArray();
+
+        // Assert
+        LanguageResource.ResourceManager.GetResourceSet(CultureInfo.InvariantCulture, true, true)
+            .ToEnumerable()
+            .ToDictionary(x => (string)x.Key, x => x.Value?.ToString(), StringComparer.Ordinal)
+            .Should().BeEquivalentTo(result.ToDictionary(x => x.Name, x => x.Value, StringComparer.Ordinal));
     }
 }
