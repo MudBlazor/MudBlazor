@@ -140,7 +140,7 @@ public class InternalMudLocalizerTests
         interceptorMock.Setup(mock => mock.Handle(LanguageResource.MudDataGrid_GreaterThanSign)).Returns(new LocalizedString(LanguageResource.MudDataGrid_GreaterThanSign, "", true));
         interceptorMock.Setup(mock => mock.Handle("MudDataGrid.>")).Returns(new LocalizedString("MudDataGrid.>", ">", false));
         var internalMudLocalizer = new InternalMudLocalizer(interceptorMock.Object);
-        
+
         // Act
         var result = internalMudLocalizer[LanguageResource.MudDataGrid_GreaterThanSign];
 
