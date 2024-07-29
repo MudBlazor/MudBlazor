@@ -50,7 +50,7 @@ public partial class SectionContent
             .AddClass("show-code", _hasCode && ShowCode)
             .Build();
 
-    private string _snippetId = "_" + Guid.NewGuid().ToString()[..8];
+    private string _snippetId = Identifier.Create();
 
     [Parameter] public string Class { get; set; }
     [Parameter] public bool DarkenBackground { get; set; }
@@ -166,7 +166,7 @@ public partial class SectionContent
         if (firstFile.StartsWith("Dialog"))
         {
             var regex = ShowDialogRegularExpression();
-            var dialogCodeName = regex.Match(codeFiles).Groups[1].Value;
+            var dialogCodeName = regex.Match(codeFiles).Groups["dialogname"].Value;
             if (dialogCodeName != string.Empty)
             {
                 var dialogCodeFile = dialogCodeName + ".razor" + (char)31 + Snippets.GetCode(dialogCodeName);
@@ -197,7 +197,7 @@ public partial class SectionContent
         await JsApiService.OpenInNewTabAsync(url);
     }
 
-    [GeneratedRegex(@"\Show<(Dialog.*?_Dialog)\>")]
+    [GeneratedRegex(@"Show(?:Async)?<(?<dialogname>Dialog.*?_Dialog)>")]
     private static partial Regex ShowDialogRegularExpression();
 
     [GeneratedRegex(@"\bElement\b")]

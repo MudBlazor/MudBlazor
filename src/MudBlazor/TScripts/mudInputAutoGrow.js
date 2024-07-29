@@ -101,4 +101,4 @@ window.mudInputAutoGrow = {
             elem.restoreToInitialState();
         }
     }
-}
+};
