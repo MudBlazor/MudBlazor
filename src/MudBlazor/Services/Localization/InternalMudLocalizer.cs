@@ -30,7 +30,7 @@ internal sealed class InternalMudLocalizer : IStringLocalizer
     /// <inheritdoc />
     IEnumerable<LocalizedString> IStringLocalizer.GetAllStrings(bool includeParentCultures)
     {
-        // We already have access to our IStringLocalizer pointing at LanguageResource
+        // We already have access to our IStringLocalizer pointing at LanguageResource.
         if (_interceptor is AbstractLocalizationInterceptor abstractLocalizationInterceptor)
         {
             return abstractLocalizationInterceptor.Localizer.GetAllStrings(includeParentCultures);

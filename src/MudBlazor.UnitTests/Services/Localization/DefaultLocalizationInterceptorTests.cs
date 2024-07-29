@@ -29,7 +29,7 @@ public class DefaultLocalizationInterceptorTests
         var resourceSet = resourceManager
             .GetResourceSet(CultureInfo.InvariantCulture, true, true)
             .ToEnumerable()
-            .ToDictionary(x => x.Key.ToString()!, x => x.Value?.ToString(), StringComparer.Ordinal);
+            .ToDictionary(x => (string)x.Key, x => x.Value?.ToString(), StringComparer.Ordinal);
 
         // Act & Result
         foreach (var resource in resourceSet)
@@ -49,7 +49,7 @@ public class DefaultLocalizationInterceptorTests
 
         // Arrange
         var mudLocalizer = new Mock<MudLocalizer> { CallBase = true };
-        mudLocalizer.Setup(mock => mock["MudDataGrid_IsEmpty"]).Returns(new LocalizedString("MudDataGrid_IsEmpty", "XXX", resourceNotFound: false));
+        mudLocalizer.Setup(mock => mock[LanguageResource.MudDataGrid_IsEmpty]).Returns(new LocalizedString(LanguageResource.MudDataGrid_IsEmpty, "XXX", resourceNotFound: false));
         var defaultLocalizationIInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
         {
             IgnoreDefaultEnglish = false
@@ -57,7 +57,7 @@ public class DefaultLocalizationInterceptorTests
         var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationIInterceptor);
 
         // Act
-        var result = internalMudLocalizer["MudDataGrid_IsEmpty"];
+        var result = internalMudLocalizer[LanguageResource.MudDataGrid_IsEmpty];
 
         // Assert
         result.Value.Should().Be(LanguageResource.ResourceManager.GetString(LanguageResource.MudDataGrid_IsEmpty), "We default to english despite MudLocalizer, the value should be the one from the LanguageResource.");
@@ -71,7 +71,7 @@ public class DefaultLocalizationInterceptorTests
 
         // Arrange
         var mudLocalizer = new Mock<MudLocalizer> { CallBase = true };
-        mudLocalizer.Setup(mock => mock["MudDataGrid_IsEmpty"]).Returns(new LocalizedString("MudDataGrid_IsEmpty", "XXX", resourceNotFound: false));
+        mudLocalizer.Setup(mock => mock[LanguageResource.MudDataGrid_IsEmpty]).Returns(new LocalizedString(LanguageResource.MudDataGrid_IsEmpty, "XXX", resourceNotFound: false));
         var defaultLocalizationIInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
         {
             IgnoreDefaultEnglish = false
@@ -79,7 +79,7 @@ public class DefaultLocalizationInterceptorTests
         var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationIInterceptor);
 
         // Act
-        var result = internalMudLocalizer["MudDataGrid_IsEmpty"];
+        var result = internalMudLocalizer[LanguageResource.MudDataGrid_IsEmpty];
 
         // Assert
         result.Value.Should().Be("XXX", "The UICulture is not English therefore the value is the one from the Mock.");
