@@ -8,9 +8,9 @@ using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
+using MudBlazor.Localization;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Clone;
-using MudBlazor.Localization;
 
 namespace MudBlazor
 {
