@@ -38,7 +38,7 @@ namespace MudBlazor
         [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
         [Inject] IScrollManager ScrollManager { get; set; }
 
-        private string _elementId = "select_" + Guid.NewGuid().ToString().Substring(0, 8);
+        private string _elementId = Identifier.Create("select");
 
         private Task SelectNextItem() => SelectAdjacentItem(+1);
 
