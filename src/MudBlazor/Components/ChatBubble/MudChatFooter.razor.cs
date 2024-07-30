@@ -12,7 +12,7 @@ namespace MudBlazor
         protected string Classname => new CssBuilder("mud-chat-footer")
             .AddClass(Class)
             .Build();
-        
+
         /// <summary>
         /// The time to display within this header.
         /// </summary>

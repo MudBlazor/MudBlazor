@@ -12,14 +12,14 @@ namespace MudBlazor
         protected string Classname => new CssBuilder("mud-chat-header")
             .AddClass(Class)
             .Build();
-        
+
         /// <summary>
         /// The name to display within this header.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chat.Appearance)]
         public string? Name { get; set; }
-        
+
         /// <summary>
         /// The time to display within this header.
         /// </summary>

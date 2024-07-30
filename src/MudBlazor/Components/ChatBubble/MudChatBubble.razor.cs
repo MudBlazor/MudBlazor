@@ -14,7 +14,7 @@ namespace MudBlazor
             .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
             .AddClass(Class)
             .Build();
-        
+
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
