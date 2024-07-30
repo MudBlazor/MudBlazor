@@ -1,12 +1,10 @@
-﻿using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Pages.Api;
 using MudBlazor.Docs.Services;
+using MudBlazor.Localization;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
@@ -46,6 +44,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddScoped<IRenderQueueService, RenderQueueService>();
             ctx.Services.AddTransient<InternalMudLocalizer>();
             ctx.Services.AddTransient<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
+            ctx.Services.AddTransient<IEnumLocalizer, DefaultEnumLocalizer>();
             ctx.Services.AddScoped(sp => new HttpClient());
         }
 
