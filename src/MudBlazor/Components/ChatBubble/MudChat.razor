@@ -1,7 +1,7 @@
 @namespace MudBlazor
 @inherits MudComponentBase
 
-<div class="@Classname" style="@RootStyle">
+<div @attributes="UserAttributes" class="@Classname" style="@RootStyle">
   @if (ChildContent is not null)
   {
     @ChildContent
