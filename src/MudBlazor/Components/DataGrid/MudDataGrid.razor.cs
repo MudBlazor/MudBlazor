@@ -8,7 +8,6 @@ using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
-using MudBlazor.Localization;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Clone;
 
@@ -691,16 +690,6 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public ICloneStrategy<T> CloneStrategy { get; set; } = SystemTextJsonDeepCloneStrategy<T>.Instance;
-
-        /// <summary>
-        /// Sets the strategy used for localizing enum values.
-        /// </summary>
-        /// <remarks>
-        /// This property allows you to specify how enum values should be localized. 
-        /// The default strategy is <see cref="DefaultEnumLocalizationStrategy.Instance"/>.
-        /// </remarks>
-        [Parameter]
-        public IEnumLocalizationStrategy EnumLocalizationStrategy { get; set; } = DefaultEnumLocalizationStrategy.Instance;
 
         /// <summary>
         /// The data for this grid when <see cref="ServerData"/> is not set.

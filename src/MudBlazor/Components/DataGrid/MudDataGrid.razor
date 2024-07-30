@@ -3,9 +3,11 @@
 @typeparam T
 @using MudBlazor.Utilities
 @using MudBlazor.Extensions
+@using MudBlazor.Localization
 @using MudBlazor.Resources
 
 @inject InternalMudLocalizer Localizer
+@inject IEnumLocalizer EnumLocalizer
 
 @{
     _currentRenderFilteredItemsCache = null;
@@ -558,7 +560,7 @@
                                 <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
                                 @foreach (var item in EnumExtensions.GetSafeEnumValues(fieldType.InnerType))
                                 {
-                                    <MudSelectItem T="Enum" Value="@item">@EnumLocalizationStrategy.Handle(item, Localizer)</MudSelectItem>
+                                    <MudSelectItem T="Enum" Value="@item">@EnumLocalizer.Handle(item)</MudSelectItem>
                                 }
                             </MudSelect>
                         }
@@ -621,7 +623,7 @@
                                 <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
                                 @foreach (var item in EnumExtensions.GetSafeEnumValues(fieldType.InnerType))
                                 {
-                                    <MudSelectItem T="Enum" Value="@item">@EnumLocalizationStrategy.Handle(item, Localizer)</MudSelectItem>
+                                    <MudSelectItem T="Enum" Value="@item">@EnumLocalizer.Handle(item)</MudSelectItem>
                                 }
                             </MudSelect>
                         }

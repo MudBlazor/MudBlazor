@@ -4,41 +4,42 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
-using Microsoft.Extensions.Localization;
 
 namespace MudBlazor.Localization;
 
 #nullable enable
 /// <summary>
-/// Default implementation of the <see cref="IEnumLocalizationStrategy"/> interface.
+/// Default implementation of the <see cref="IEnumLocalizer"/> interface.
 /// Provides localization for enumeration values using display attributes and string localizers.
 /// </summary>
-internal class DefaultEnumLocalizationStrategy : IEnumLocalizationStrategy
+internal class DefaultEnumLocalizer : IEnumLocalizer
 {
-    /// <summary>
-    /// Singleton instance of the <see cref="DefaultEnumLocalizationStrategy"/> class.
-    /// </summary>
-    public static readonly DefaultEnumLocalizationStrategy Instance = new();
+    private readonly InternalMudLocalizer _internalMudLocalizer;
+
+    public DefaultEnumLocalizer(InternalMudLocalizer internalMudLocalizer)
+    {
+        _internalMudLocalizer = internalMudLocalizer;
+    }
 
     /// <inheritdoc />
-    public string Handle(Enum enumValue, IStringLocalizer? localizer)
+    public string Handle(Enum enumValue)
     {
         var enumType = enumValue.GetType();
         var memberInfo = enumType.GetField(enumValue.ToString(), BindingFlags.Public | BindingFlags.Static);
 
-        return GetDisplayName(memberInfo, localizer);
+        return GetDisplayName(memberInfo);
     }
 
-    private static string GetDisplayName(MemberInfo? member, IStringLocalizer? localizer)
+    private string GetDisplayName(MemberInfo? member)
     {
         var display = member?.GetCustomAttribute<DisplayAttribute>(inherit: false);
         if (display is not null)
         {
             // Note [Display(Name = "")] is allowed but we will not attempt to localize the empty name.
             var name = display.GetName();
-            if (localizer is not null && !string.IsNullOrEmpty(name) && display.ResourceType is null)
+            if (!string.IsNullOrEmpty(name) && display.ResourceType is null)
             {
-                name = localizer[name];
+                name = _internalMudLocalizer[name];
             }
 
             return name ?? member?.Name ?? string.Empty;

@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using MudBlazor.Localization;
 
 namespace MudBlazor.Services
 {
@@ -249,6 +250,7 @@ namespace MudBlazor.Services
         {
             services.TryAddTransient<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
             services.TryAddTransient<InternalMudLocalizer>();
+            services.TryAddTransient<IEnumLocalizer, DefaultEnumLocalizer>();
 
             return services;
         }
