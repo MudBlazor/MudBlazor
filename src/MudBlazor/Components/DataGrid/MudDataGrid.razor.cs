@@ -1444,6 +1444,10 @@ namespace MudBlazor
 
         internal async Task RemoveFilterAsync(Guid id)
         {
+            foreach (var item in FilterDefinitions.Where(x => x.Id == id))
+            {
+                item.Value = null;
+            }
             FilterDefinitions.RemoveAll(x => x.Id == id);
             await InvokeServerLoadFunc();
             GroupItems();
