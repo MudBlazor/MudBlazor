@@ -151,6 +151,45 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task MultiNest_MenuPointerLeave_MenuPointerEnter_CheckOpenClose()
+        {
+            var comp = Context.RenderComponent<MenuTestNestWithMouseOver>();
+            IRenderedComponent<MudPopover> Popover() => comp.FindComponent<MudPopover>();
+
+            var menus = comp.FindAll(".mud-menu");
+
+            comp.WaitForAssertion(() => Popover().Instance.Open.Should().BeFalse());
+
+            // Pointer over to menu to open popover
+            await menus[0].TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            menus = comp.FindAll(".mud-menu");
+            comp.WaitForAssertion(() => menus.Count.Should().Be(2));
+
+            await menus[0].TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            menus = comp.FindAll(".mud-menu");
+            comp.WaitForAssertion(() => menus.Count.Should().Be(3));
+
+            await menus[1].TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            menus = comp.FindAll(".mud-menu");
+            comp.WaitForAssertion(() => menus.Count.Should().Be(3));
+
+            menus = comp.FindAll(".mud-menu");
+
+            await menus[1].TriggerEventAsync("onpointerleave", new PointerEventArgs());
+            comp.WaitForAssertion(() => menus[1].IsVisible().Should().BeFalse());
+
+            await Task.Delay(100);
+
+            await menus[0].TriggerEventAsync("onpointerleave", new PointerEventArgs());
+            comp.WaitForAssertion(() => menus[0].IsVisible().Should().BeFalse());
+
+            await Task.Delay(100);
+
+            await menus[2].TriggerEventAsync("onpointerleave", new PointerEventArgs());
+            comp.WaitForAssertion(() => menus[2].IsVisible().Should().BeFalse());
+        }
+
+        [Test]
         public void ActivatorContent_Disabled_CheckDisabled()
         {
             var comp = Context.RenderComponent<MenuTestDisabledCustomActivator>();
