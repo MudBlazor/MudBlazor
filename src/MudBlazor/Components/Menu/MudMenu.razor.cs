@@ -201,6 +201,9 @@ namespace MudBlazor
         [Category(CategoryTypes.Menu.PopupBehavior)]
         public EventCallback<bool> OpenChanged { get; set; }
 
+        [CascadingParameter]
+        private MudMenu? ParentMenu { get; set; }
+
         /// <summary>
         /// Gets a value indicating whether the menu is currently open or not.
         /// </summary>
@@ -296,6 +299,8 @@ namespace MudBlazor
         private async Task PointerEnterAsync(PointerEventArgs args)
         {
             _isPointerOver = true;
+            if (ParentMenu is { ActivationEvent: MouseEvent.MouseOver })
+                ParentMenu._isPointerOver = true;
 
             if (ActivationEvent == MouseEvent.MouseOver)
             {
