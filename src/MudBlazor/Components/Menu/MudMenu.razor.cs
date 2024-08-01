@@ -308,15 +308,27 @@ namespace MudBlazor
             }
         }
 
+        private void OnPointerMoveAsync()
+        {
+            _isPointerOver = true;
+        }
+
         private async Task PointerLeaveAsync()
         {
-            _isPointerOver = false;
+            var menu = this;
+            while (menu is { ActivationEvent: MouseEvent.MouseOver })
+            {
+                menu._isPointerOver = false;
+                menu = menu.ParentMenu;
+            }
 
             await Task.Delay(100);
 
-            if (ActivationEvent == MouseEvent.MouseOver && !_isPointerOver)
+            menu = this;
+            while (menu is { ActivationEvent: MouseEvent.MouseOver, _isPointerOver: false, _open: true })
             {
-                await CloseMenuAsync();
+                await menu.CloseMenuAsync();
+                menu = menu.ParentMenu;
             }
         }
 

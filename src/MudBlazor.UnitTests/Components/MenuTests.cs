@@ -173,20 +173,9 @@ namespace MudBlazor.UnitTests.Components
             menus = comp.FindAll(".mud-menu");
             comp.WaitForAssertion(() => menus.Count.Should().Be(3));
 
-            menus = comp.FindAll(".mud-menu");
-
+            // parent menu will close when pointer leaves
             await menus[1].TriggerEventAsync("onpointerleave", new PointerEventArgs());
             comp.WaitForAssertion(() => menus[1].IsVisible().Should().BeFalse());
-
-            await Task.Delay(100);
-
-            await menus[0].TriggerEventAsync("onpointerleave", new PointerEventArgs());
-            comp.WaitForAssertion(() => menus[0].IsVisible().Should().BeFalse());
-
-            await Task.Delay(100);
-
-            await menus[2].TriggerEventAsync("onpointerleave", new PointerEventArgs());
-            comp.WaitForAssertion(() => menus[2].IsVisible().Should().BeFalse());
         }
 
         [Test]
