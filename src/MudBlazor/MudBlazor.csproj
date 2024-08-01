@@ -94,9 +94,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="MudBlazor.JSCompiler" Version="1.0.15">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    <PackageReference Include="MudBlazor.JSCompiler" Version="1.0.15" />
   </ItemGroup>
   
   <ItemGroup>
@@ -147,6 +145,10 @@
       <Public>false</Public>
       <AsConstants>true</AsConstants>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>
