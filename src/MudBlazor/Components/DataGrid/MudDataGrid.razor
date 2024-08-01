@@ -75,7 +75,7 @@
                                
                                 @if (_columnsPanelVisible)
                                 {
-                                    <MudOverlay ZIndex="10" Visible="true" OnClick="@(() => _columnsPanelVisible = false)"></MudOverlay>
+                                    <MudOverlay ZIndex="10" @bind-Visible="_columnsPanelVisible" AutoClose></MudOverlay>
 
                                     <MudPopover Open="@_columnsPanelVisible" Paper="true" Class="mud-data-grid-columns-panel px-2" OverflowBehavior="OverflowBehavior.FlipAlways" AnchorOrigin="Origin.TopLeft"
                                                 TransformOrigin="Origin.TopLeft" Elevation="4"

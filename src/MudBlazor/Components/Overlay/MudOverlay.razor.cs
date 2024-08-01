@@ -135,7 +135,7 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     /// <summary>
     /// Occurs when the overlay is clicked.
     /// </summary>
-    [Obsolete("The OnClosed event with AutoClose should be preferred as they handle touch as well. Otherwise you can still use the @onclick event directly.")]
+    [Obsolete("The OnClosed event with AutoClose is preferred as it can handle other types of events. Otherwise you can still use the @onclick event directly.")]
     [Parameter]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
 
