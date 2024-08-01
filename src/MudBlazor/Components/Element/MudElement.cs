@@ -67,12 +67,8 @@ namespace MudBlazor
         {
             base.BuildRenderTree(builder);
 
-            // Initialize the sequence number.
-            // https://learn.microsoft.com/en-us/aspnet/core/blazor/advanced-scenarios.
-            var seq = 0;
-
             // Open element.
-            builder.OpenElement(seq++, HtmlTag);
+            builder.OpenElement(0, HtmlTag);
 
             // Splatted attributes.
             foreach (var attribute in UserAttributes)
@@ -82,22 +78,22 @@ namespace MudBlazor
                 // This is useful because Blazor always adds the attribute value and creates an EventCallback in normal HTML elements.
                 if (attribute.Value is not null)
                 {
-                    builder.AddAttribute(seq++, attribute.Key, attribute.Value);
+                    builder.AddAttribute(1, attribute.Key, attribute.Value);
                 }
             }
 
             // Add class and style attributes.
-            builder.AddAttribute(seq++, "class", Class);
-            builder.AddAttribute(seq++, "style", Style);
+            builder.AddAttribute(2, "class", Class);
+            builder.AddAttribute(3, "style", Style);
 
             // Add event attributes.
-            builder.AddEventStopPropagationAttribute(seq++, "onclick", !ClickPropagation);
-            builder.AddEventPreventDefaultAttribute(seq++, "onclick", PreventDefault);
+            builder.AddEventStopPropagationAttribute(5, "onclick", !ClickPropagation);
+            builder.AddEventPreventDefaultAttribute(6, "onclick", PreventDefault);
 
             // Capture the element reference if specified.
             if (Ref != null)
             {
-                builder.AddElementReferenceCapture(seq++, async capturedRef =>
+                builder.AddElementReferenceCapture(7, async capturedRef =>
                 {
                     Ref = capturedRef;
                     await RefChanged.InvokeAsync(Ref.Value);
@@ -105,7 +101,7 @@ namespace MudBlazor
             }
 
             // Add child content.
-            builder.AddContent(seq++, ChildContent);
+            builder.AddContent(10, ChildContent);
 
             // Close element.
             builder.CloseElement();
