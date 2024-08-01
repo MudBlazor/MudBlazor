@@ -10,8 +10,8 @@ namespace MudBlazor
 #nullable enable
     public partial class MudMenu : MudComponentBase, IActivatable
     {
-        private bool _overlayVisible;
         private string? _popoverStyle;
+        private bool _isTemporary;
         private bool _isPointerOver;
 
         protected string Classname =>
@@ -212,7 +212,6 @@ namespace MudBlazor
         public Task CloseMenuAsync()
         {
             Open = false;
-            _overlayVisible = false;
             _isPointerOver = false;
             _popoverStyle = null;
             StateHasChanged();
@@ -238,7 +237,7 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
-            _overlayVisible = !temporary;
+            _isTemporary = temporary;
 
             if (PositionAtCursor)
             {
@@ -280,13 +279,12 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
-            // Validate the mouse event conditions. This is a consideration for regular event args or the MouseOver activation.
             if (args is MouseEventArgs mouseEventArgs)
             {
                 var leftClick = ActivationEvent == MouseEvent.LeftClick && mouseEventArgs.Button == 0;
-                var rightClick = ActivationEvent == MouseEvent.RightClick && (mouseEventArgs.Button is -1 or 2); // oncontextmenu button is -1, right click is 2.
+                var rightClick = ActivationEvent == MouseEvent.RightClick && (mouseEventArgs.Button is -1 or 2); // oncontextmenu is -1, right click is 2.
 
-                // Only allow valid left or right conditions, except MouseOver activation should always be allowed to toggle.
+                // Only allow valid left or right conditions, except MouseOver activation which should always be allowed to toggle.
                 if (!leftClick && !rightClick && ActivationEvent != MouseEvent.MouseOver)
                 {
                     return Task.CompletedTask;
@@ -305,7 +303,7 @@ namespace MudBlazor
 
         private async Task PointerEnterAsync(PointerEventArgs args)
         {
-            // The device can't hover then this event will be called with the Click event and interfere.
+            // The Enter event will be interfere with the Click event on devices that can't hover.
             if (args.PointerType is "touch" or "pen")
             {
                 return;
@@ -313,9 +311,7 @@ namespace MudBlazor
 
             _isPointerOver = true;
 
-            // If an overlay is visible then the menu is open and not temporary.
-            // The pointer Enter event occurs before Click on a device that can't hover which causes a conflict.
-            if (!_overlayVisible && ActivationEvent == MouseEvent.MouseOver)
+            if (_isTemporary && ActivationEvent == MouseEvent.MouseOver)
             {
                 await OpenMenuAsync(args, true);
             }
@@ -323,22 +319,21 @@ namespace MudBlazor
 
         private async Task PointerLeaveAsync()
         {
-            // If an overlay is visible then the menu isn't temporary and shouldn't close when the pointer leaves.
-            // There's also no reason to handle the leave event if the pointer never entered the menu.
-            if (_overlayVisible || !_isPointerOver)
+            // There's no reason to handle the leave event if the pointer never entered the menu.
+            if (!_isPointerOver)
             {
                 return;
             }
 
             _isPointerOver = false;
 
-            if (ActivationEvent == MouseEvent.MouseOver)
+            if (_isTemporary && ActivationEvent == MouseEvent.MouseOver)
             {
                 // Wait a bit to allow the cursor to move from the activator to the items popover.
                 await Task.Delay(100);
 
-                // Close the menu if the pointer hasn't re-entered the menu or the overlay made permanent because it was clicked.
-                if (!_isPointerOver && !_overlayVisible)
+                // Close the menu if, since the delay, the pointer hasn't re-entered the menu or the overlay was made persistent (because the activator was clicked).
+                if (!_isPointerOver && _isTemporary)
                 {
                     await CloseMenuAsync();
                 }

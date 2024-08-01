@@ -67,5 +67,5 @@
         </CascadingValue>
     </MudPopover>
 
-    <MudOverlay @bind-Visible="_overlayVisible" AutoClose OnClosed="CloseMenuAsync" LockScroll="LockScroll" />
+    <MudOverlay Visible="Open && !_isTemporary" AutoClose OnClosed="CloseMenuAsync" LockScroll="LockScroll" />
 </div>
