@@ -311,10 +311,12 @@ namespace MudBlazor
 
             _isPointerOver = true;
 
-            if (_isTemporary && ActivationEvent == MouseEvent.MouseOver)
+            if (Open || ActivationEvent != MouseEvent.MouseOver)
             {
-                await OpenMenuAsync(args, true);
+                return;
             }
+
+            await OpenMenuAsync(args, true);
         }
 
         private async Task PointerLeaveAsync()
