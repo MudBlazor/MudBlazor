@@ -52,7 +52,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ElementReferenceCapture()
         {
-            var comp = Context.RenderComponent<ElementReferenceException>();
+            var comp = Context.RenderComponent<ElementReferenceExceptionTest>();
             comp.Find("#element-button").Click();
         }
     }
