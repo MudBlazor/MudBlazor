@@ -24,7 +24,7 @@ namespace MudBlazor
         private bool _canDrop = false;
         private bool _dragInProgress = false;
         private bool _disposedValue = false;
-        private string _id = MudBlazor.Identifier.Create("mud-drop-zone");
+        private string _id = MudBlazor.Identifier.Create();
 
         private Dictionary<T, int> _indices = new();
 

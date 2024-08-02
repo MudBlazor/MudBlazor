@@ -41,7 +41,7 @@ namespace MudBlazor
                 .WithEventCallback(() => FilesChanged);
         }
 
-        private readonly string _id = Identifier.Create("mud_fileupload");
+        private readonly string _id = Identifier.Create();
 
         protected string Classname =>
             new CssBuilder("mud-file-upload")
