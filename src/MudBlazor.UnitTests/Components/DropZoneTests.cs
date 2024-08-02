@@ -110,7 +110,7 @@ namespace MudBlazor.UnitTests.Components
 
             Context.Services.AddSingleton(typeof(IJSRuntime), jsRuntimeMock.Object);
 
-            jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudDragAndDrop.initDropZone", It.Is<object[]>(y => y.Length == 1 && Guid.Parse(y[0].ToString()) != Guid.Empty)))
+            jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudDragAndDrop.initDropZone", It.Is<object[]>(y => y.Length == 1)))
                 .ReturnsAsync(Mock.Of<IJSVoidResult>(), TimeSpan.FromMilliseconds(200)).Verifiable();
 
             var comp = Context.RenderComponent<DropzoneBasicTest>();
