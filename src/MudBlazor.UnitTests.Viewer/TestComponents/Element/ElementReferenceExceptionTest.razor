@@ -10,19 +10,11 @@
     Error
 </MudButton>
 
-<button id="html-button" type="button" @onclick="@ButtonOnClick2" tabindex="@_tabindex2">No Error</button>
-
 @code {
     private string _tabindex = "-1";
-    private string _tabindex2 = "-1";
 
     void ButtonOnClick()
     {
         _tabindex = null;
-    }
-
-    void ButtonOnClick2()
-    {
-        _tabindex2 = null;
     }
 }
