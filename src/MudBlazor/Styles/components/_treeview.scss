@@ -41,6 +41,7 @@
   outline: 0;
   padding: 0;
   cursor: default;
+  color: var(--mud-palette-text-primary);
   list-style: none;
   min-height: 2rem;
   align-items: center;
@@ -53,9 +54,8 @@
   }
 
   &.mud-treeview-item-disabled {
-    color: var(--mud-palette-action-disabled) !important;
-    cursor: default !important;
-    pointer-events: none !important;
+    color: var(--mud-palette-action-disabled);
+    cursor: default;
   }
 }
 
