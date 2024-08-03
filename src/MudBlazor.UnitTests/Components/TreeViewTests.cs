@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
@@ -238,7 +237,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Note: in this test the trees are synchronized solely via their item's Selected parameter
+        /// Note: in this test the trees are synchronized solely via their item's Selected parameter 
         /// </summary>
         [Test]
         public void TreeViewItem_Selected_TwoWayBindingTest_SingleSelection()
@@ -716,7 +715,7 @@ namespace MudBlazor.UnitTests.Components
 
         /// <summary>
         /// This test checks that when multiple values are selected and the compare parameter is updated,
-        /// selected values are updated correctly.
+        /// selected values are updated correctly. 
         /// </summary>
         [Test]
         public void TreeView_SelectedValues_ShouldUseComparer()
@@ -1019,7 +1018,7 @@ namespace MudBlazor.UnitTests.Components
                 comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
             });
 
-#nullable enable
+#nullable enable 
             MudTreeView<string>? nullInstanceTree = null;
             MudTreeViewItem<string>? nullInstanceItem = null;
 #nullable disable
