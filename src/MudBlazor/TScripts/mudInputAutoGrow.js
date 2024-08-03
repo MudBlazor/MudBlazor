@@ -96,6 +96,10 @@ window.mudInputAutoGrow = {
         }
     },
     destroy: (elem) => {
+        if (container == null) {
+            return;
+        }
+
         window.removeEventListener('resize', elem.adjustAutoGrowHeight);
         if (typeof elem.restoreToInitialState === 'function') {
             elem.restoreToInitialState();
