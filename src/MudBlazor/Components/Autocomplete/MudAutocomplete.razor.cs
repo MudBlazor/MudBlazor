@@ -45,6 +45,7 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-select")
+            .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
             .AddClass(Class)
             .Build();
 
