@@ -898,7 +898,7 @@ namespace MudBlazor.UnitTests.Components
             var range = new DateRange(twoDaysAgo, today);
             Func<DateTime, bool> isDisabledFunc = date => date == yesterday;
             var comp = Context.RenderComponent<MudDateRangePicker>(
-                Parameter(nameof(MudDateRangePicker.StrictCaptureRange), false),
+                Parameter(nameof(MudDateRangePicker.AllowDisabledDatesInRange), true),
                 Parameter(nameof(MudDateRangePicker.IsDateDisabledFunc), isDisabledFunc),
                 EventCallback("DateRangeChanged", (DateRange _) => wasEventCallbackCalled = true)
             );
