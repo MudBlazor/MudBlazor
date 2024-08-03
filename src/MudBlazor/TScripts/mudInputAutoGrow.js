@@ -96,7 +96,7 @@ window.mudInputAutoGrow = {
         }
     },
     destroy: (elem) => {
-        if (container == null) {
+        if (elem == null) {
             return;
         }
 
