@@ -662,7 +662,7 @@ namespace MudBlazor
             }
 
             _rowsPerPage = size;
-            CurrentPage = 0;
+            _currentPage = 0;
             StateHasChanged();
             RowsPerPageChanged.InvokeAsync(_rowsPerPage.Value);
             if (_isFirstRendered)
