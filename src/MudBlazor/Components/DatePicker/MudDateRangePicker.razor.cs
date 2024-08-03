@@ -88,7 +88,7 @@ namespace MudBlazor
         {
             if (_dateRange != range)
             {
-                var doesRangeContainDisabledDates = StrictCaptureRange && range?.Start != null && range?.End != null && Enumerable
+                var doesRangeContainDisabledDates = StrictCaptureRange && range is { Start: not null, End: not null } && Enumerable
                     .Range(0, int.MaxValue)
                     .Select(index => range.Start.Value.AddDays(index))
                     .TakeWhile(date => date <= range.End.Value)
