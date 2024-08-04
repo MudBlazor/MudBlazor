@@ -19,6 +19,10 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
+        protected string TextClassname => new CssBuilder("mud-toggle-item-text")
+            .AddClass(Parent?.TextClass)
+            .Build();
+
         protected string CheckMarkClassname => new CssBuilder("mud-toggle-item-check-icon")
             .AddClass(Parent?.CheckMarkClass)
             .Build();

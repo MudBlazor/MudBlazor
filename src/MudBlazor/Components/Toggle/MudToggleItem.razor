@@ -17,10 +17,12 @@
            IconClass="@CheckMarkClassname">
     @if (ChildContent is not null)
     {
-        @ChildContent(Selected)
+        <div class="mud-toggle-item-content">
+            @ChildContent(Selected)
+        </div>
     }
     else
     {
-        @(Text == null ? Value : Text)
+        <p class="@TextClassname">@(Text == null ? Value : Text)</p>
     }
 </MudButton>
