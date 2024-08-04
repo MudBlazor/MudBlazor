@@ -1,10 +1,14 @@
-﻿using System.Threading.Tasks;
-using System.Timers;
+﻿using System.Timers;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
+using Timer = System.Timers.Timer;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// A base class for designing input components which update after a delay.
+    /// </summary>
+    /// <typeparam name="T">The type of object managed by this input.</typeparam>
     public abstract class MudDebouncedInput<T> : MudBaseInput<T>
     {
         private Timer _timer;
@@ -20,16 +24,18 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Interval to be awaited in milliseconds before changing the Text value
+        /// The number of milliseconds to wait before updating the <see cref="MudBaseInput{T}.Text"/> value.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public double DebounceInterval { get; set; }
 
         /// <summary>
-        /// callback to be called when the debounce interval has elapsed
-        /// receives the Text as a parameter
+        /// Occurs when the <see cref="DebounceInterval"/> has elapsed.
         /// </summary>
+        /// <remarks>
+        /// The value in <see cref="MudBaseInput{T}.Text"/> is included in this event.
+        /// </remarks>
         [Parameter]
         public EventCallback<string> OnDebounceIntervalElapsed { get; set; }
 

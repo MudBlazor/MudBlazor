@@ -2,10 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-
 namespace MudBlazor;
+
+#nullable enable
 
 internal static class CollectionExtensions
 {
@@ -45,6 +44,29 @@ internal static class CollectionExtensions
     }
 
     /// <summary>
+    /// Returns the first element in an array that matches the specified predicate, or the default value if no such element is found.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements of the array.</typeparam>
+    /// <param name="array">The array to search.</param>
+    /// <param name="predicate">The predicate to apply to each element.</param>
+    /// <returns>The first element that matches the predicate, or the default value if no such element is found.</returns>
+    internal static T? FirstOrDefault<T>(this T[] array, Predicate<T> predicate)
+    {
+        return Array.Find(array, predicate);
+    }
+
+    /// <summary>
+    /// Returns the first element in an array, or the default value if no such element is found.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements of the array.</typeparam>
+    /// <param name="array">The array to search.</param>
+    /// <returns>The first element, or the default value if no element is found.</returns>
+    internal static T? FirstOrDefault<T>(this T[] array)
+    {
+        return array.Length > 0 ? array[0] : default;
+    }
+
+    /// <summary>
     /// Determines whether any element of a list satisfies a condition.
     /// </summary>
     /// <typeparam name="T">The type of the elements of the list.</typeparam>
@@ -65,5 +87,28 @@ internal static class CollectionExtensions
     internal static bool Any<T>(this List<T> list)
     {
         return list.Count > 0;
+    }
+
+    /// <summary>
+    /// Returns the first element in a list that matches the specified predicate, or the default value if no such element is found.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements of the list.</typeparam>
+    /// <param name="list">The list to search.</param>
+    /// <param name="predicate">The predicate to apply to each element.</param>
+    /// <returns>The first element that matches the predicate, or the default value if no such element is found.</returns>
+    internal static T? FirstOrDefault<T>(this List<T> list, Predicate<T> predicate)
+    {
+        return list.Find(predicate);
+    }
+
+    /// <summary>
+    /// Returns the first element in a list, or the default value if no such element is found.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements of the list.</typeparam>
+    /// <param name="list">The list to search.</param>
+    /// <returns>The first element, or the default value if no element is found.</returns>
+    internal static T? FirstOrDefault<T>(this List<T> list)
+    {
+        return list.Count > 0 ? list[0] : default;
     }
 }

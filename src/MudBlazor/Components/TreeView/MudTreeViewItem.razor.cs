@@ -117,7 +117,14 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// If false, TreeViewItem will not be able to expand. 
+        /// If true, the MudTreeViewItem's selection can not be changed.  
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Behavior)]
+        public bool ReadOnly { get; set; }
+
+        /// <summary>
+        /// If false, TreeViewItem will not be able to expand.
         /// </summary>
         /// <remarks>
         /// This is especially useful for lazy-loaded items via ServerData. If you know that an item has no children
@@ -384,7 +391,7 @@ namespace MudBlazor
             return MudTreeRoot.UnselectAsync(value);
         }
 
-        private bool GetReadOnly() => MudTreeRoot?.ReadOnly == true;
+        private bool GetReadOnly() => ReadOnly || MudTreeRoot?.ReadOnly == true;
 
         private bool GetExpandOnClick() => MudTreeRoot?.ExpandOnClick == true;
 
@@ -491,7 +498,7 @@ namespace MudBlazor
 
         internal async Task TryInvokeServerLoadFunc()
         {
-            if (!_expandedState || (Items != null && Items.Count != 0) || !CanExpand || MudTreeRoot?.ServerData == null)
+            if ((Items != null && Items.Count != 0) || !CanExpand || MudTreeRoot?.ServerData == null)
                 return;
             _loading = true;
             StateHasChanged();
