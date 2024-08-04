@@ -9,15 +9,14 @@
            Style="@Style"
            @onclick="HandleOnClickAsync"
            Size="@(Parent?.Size ?? Size.Medium)"
+           Color="@(Parent?.Color ?? Color.Default)"
            Variant="@(Selected ? Variant.Filled : Variant.Outlined)"
            Disabled="Disabled || (Parent?.Disabled ?? false)"
            Ripple="Parent?.Ripple == true"
            StartIcon="@GetCurrentIcon()">
     @if (ChildContent is not null)
     {
-        <div class="mud-toggle-item-content">
-            @ChildContent(Selected)
-        </div>
+        @ChildContent(Selected)
     }
     else
     {

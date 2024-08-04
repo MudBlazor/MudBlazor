@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -18,7 +17,6 @@ namespace MudBlazor
             .AddClass("mud-toggle-item-vertical", Parent?.Vertical == true)
             .AddClass("mud-toggle-item-delimiter", Parent?.Delimiters == true)
             .AddClass("mud-toggle-item-fixed", Parent?.CheckMark == true && Parent?.FixedContent == true)
-            .AddClass("mud-toggle-delimiter-alternative", Parent?.SelectionMode == SelectionMode.MultiSelection && Selected && Parent?.Color != Color.Default)
             .AddClass($"mud-border-{Parent?.Color.ToDescriptionString()} border-solid")
             .AddClass(Class)
             .Build();
