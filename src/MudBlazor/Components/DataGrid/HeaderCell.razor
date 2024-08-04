@@ -133,7 +133,7 @@ else if (Column != null && !Column.HiddenState.Value)
         </span>
         @if (filterable && DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
         {
-        <MudOverlay Visible="@_filtersMenuVisible" AutoClose />
+        <MudOverlay @bind-Visible="@_filtersMenuVisible" AutoClose />
             <MudPopover Open="@_filtersMenuVisible" AnchorOrigin="@Origin.BottomRight" TransformOrigin="@Origin.TopRight" Class="pa-4 column-filter-popup">
                 @if (Column.FilterTemplate != null)
                 {
