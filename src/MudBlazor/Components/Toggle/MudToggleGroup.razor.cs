@@ -74,6 +74,7 @@ namespace MudBlazor
             .AddClass("mud-toggle-group-horizontal", !Vertical)
             .AddClass("mud-toggle-group-vertical", Vertical)
             .AddClass("mud-toggle-group-rtl", RightToLeft)
+            .AddClass($"mud-toggle-group-size-{Size.ToDescriptionString()}")
             .AddClass("rounded", !Rounded)
             .AddClass("rounded-xl", Rounded)
             .AddClass("mud-disabled", Disabled)
