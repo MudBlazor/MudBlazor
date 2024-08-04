@@ -7,7 +7,7 @@
 }
 
 .mud-toggle-item {
-  border-width: 0;
+  border-width: 0 !important;
   border-radius: 0;
 
   &:has(.mud-icon-root) {
@@ -23,7 +23,7 @@
   &:not(.mud-toggle-group-rtl) {
     > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
       &.mud-toggle-item-delimiter {
-        border-left-width: 1px;
+        border-left-width: 1px !important;
       }
     }
   }
@@ -31,7 +31,7 @@
   &.mud-toggle-group-rtl {
     > .mud-toggle-item:not(:last-child), > :not(:last-child) .mud-toggle-item {
       &.mud-toggle-item-delimiter {
-        border-left-width: 1px;
+        border-left-width: 1px !important;
       }
     }
   }
@@ -40,7 +40,7 @@
 .mud-toggle-group-vertical {
   > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
     &.mud-toggle-item-delimiter {
-      border-top-width: 1px;
+      border-top-width: 1px !important;
     }
   }
 }

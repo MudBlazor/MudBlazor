@@ -77,6 +77,7 @@ namespace MudBlazor
             .AddClass("rounded", !Rounded)
             .AddClass("rounded-xl", Rounded)
             .AddClass("mud-toggle-group-rtl", RightToLeft)
+            .AddClass($"border mud-border-{Color.ToDescriptionString()} border-solid", Outlined)
             .AddClass("mud-disabled", Disabled)
             .AddClass(Class)
             .Build();
