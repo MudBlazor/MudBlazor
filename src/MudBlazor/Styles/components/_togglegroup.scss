@@ -51,7 +51,7 @@
   justify-content: center;
 }
 
-.mud-toggle-item-fixed > .mud-button-label:has(.mud-icon-root) {
+.mud-toggle-item-fixed > .mud-button-label:has(.mud-toggle-item-check-icon) {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
 }
