@@ -117,7 +117,7 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// If true, TreeViewItem can not be selected.
+        /// If true, the MudTreeViewItem's selection can not be changed.  
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
