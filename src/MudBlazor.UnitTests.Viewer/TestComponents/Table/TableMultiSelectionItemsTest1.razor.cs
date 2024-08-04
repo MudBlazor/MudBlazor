@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.UnitTests.TestComponents
 {
-#pragma warning disable CS1998 // async without await
     public partial class TableMultiSelectionItemsTest1
     {
         [Parameter]

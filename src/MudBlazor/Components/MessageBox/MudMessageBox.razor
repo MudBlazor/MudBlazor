@@ -9,14 +9,15 @@
     <TitleContent>
         @if (TitleContent is null)
         {
-            <MudText Typo="Typo.h6">@Title</MudText> }
+            <MudText Typo="Typo.h6">@Title</MudText>
+        }
         else
         {
             @TitleContent
         }
     </TitleContent>
     <DialogContent>
-        @if(MessageContent is not null)
+        @if (MessageContent is not null)
         {
             @MessageContent
         }
@@ -27,7 +28,7 @@
         }
     </DialogContent>
     <DialogActions>
-        <div tabindex="-1" @onkeydown="HandleKeyDown">
+        <div tabindex="-1">
             <MudFocusTrap DefaultFocus="DefaultFocus.LastChild">
                 @if (CancelButton is not null)
                 {
@@ -61,6 +62,6 @@
                 }
             </MudFocusTrap>
         </div>
-        
+
     </DialogActions>
 </MudDialog>

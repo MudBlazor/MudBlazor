@@ -133,11 +133,14 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Custom Tree">
+            <SectionHeader Title="Custom Look and Behavior">
                 <Description>
-                    When the <CodeInline>Content</CodeInline> property is used, it will completely replace the default rendering of the MudTreeViewItem to use your own.
-                    You must constrain the container's <CodeInline>height</CodeInline> or <CodeInline>max-height</CodeInline> and set the container's <CodeInline>overflow-y</CodeInline>
-                    accordingly to scroll the <CodeInline Tag>MudTreeView</CodeInline>.
+                    When the <CodeInline>Content</CodeInline> property is used, it will completely replace the default rendering of the <CodeInline>MudTreeViewItem</CodeInline> to use your own. 
+                    This gives you every opportunity to change the behavior of <CodeInline>MudTreeView</CodeInline> to anything you want. In this example we build our own non-standard multi selection behavior where
+                    selecting the parent node does not automatically select the children and vice-versa. Also, note how only certain items can be selected.
+                    <br /><br />
+                    By the way, to get nice scrolling behavior like in this example, you must constrain the container's <CodeInline>height</CodeInline> or <CodeInline>max-height</CodeInline> and set the container's 
+                    <CodeInline>overflow-y</CodeInline> accordingly.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewCustomExample)" ShowCode="false">

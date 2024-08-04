@@ -1,7 +1,4 @@
-﻿
-#pragma warning disable CS1998 // async without await
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -606,7 +603,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [Obsolete]
-        public async Task MudPopoverService_CallInitializeOnlyOnce()
+        public void MudPopoverService_CallInitializeOnlyOnce()
         {
             var mock = new Mock<IJSRuntime>();
 

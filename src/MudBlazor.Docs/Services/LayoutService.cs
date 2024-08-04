@@ -9,6 +9,7 @@ using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services.UserPreferences;
 
 namespace MudBlazor.Docs.Services;
+
 public class LayoutService
 {
     private readonly IUserPreferencesService _userPreferencesService;
@@ -16,9 +17,12 @@ public class LayoutService
     private bool _systemPreferences;
 
     public bool IsRTL { get; private set; }
+
     public DarkLightMode CurrentDarkLightMode { get; private set; } = DarkLightMode.System;
 
     public bool IsDarkMode { get; private set; }
+
+    public bool ObserveSystemThemeChange { get; private set; }
 
     public MudTheme CurrentTheme { get; private set; }
 
@@ -80,16 +84,22 @@ public class LayoutService
     {
         switch (CurrentDarkLightMode)
         {
+            // Change to Light
             case DarkLightMode.System:
                 CurrentDarkLightMode = DarkLightMode.Light;
+                ObserveSystemThemeChange = false;
                 IsDarkMode = false;
                 break;
+            // Change to Dark
             case DarkLightMode.Light:
                 CurrentDarkLightMode = DarkLightMode.Dark;
+                ObserveSystemThemeChange = false;
                 IsDarkMode = true;
                 break;
+            // Change to System
             case DarkLightMode.Dark:
                 CurrentDarkLightMode = DarkLightMode.System;
+                ObserveSystemThemeChange = true;
                 IsDarkMode = _systemPreferences;
                 break;
         }

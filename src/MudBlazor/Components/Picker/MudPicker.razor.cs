@@ -27,7 +27,7 @@ namespace MudBlazor
         [Inject]
         private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
 
-        private string _elementId = "picker" + Guid.NewGuid().ToString().Substring(0, 8);
+        private string _elementId = Identifier.Create("picker");
 
         protected string PickerClassname =>
             new CssBuilder("mud-picker")
@@ -421,6 +421,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
         public Origin TransformOrigin { get; set; } = Origin.TopLeft;
+
+        /// <summary>
+        /// The behavior of the popover when it overflows its container.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="OverflowBehavior.FlipOnOpen"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
 
         protected IMask _mask = null;
 

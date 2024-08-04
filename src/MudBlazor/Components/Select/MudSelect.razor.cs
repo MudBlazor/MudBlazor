@@ -2,11 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
@@ -26,23 +21,24 @@ namespace MudBlazor
 
         protected string OuterClassname =>
             new CssBuilder("mud-select")
-            .AddClass(OuterClass)
-            .Build();
+                .AddClass(OuterClass)
+                .Build();
 
         protected string Classname =>
             new CssBuilder("mud-select")
-            .AddClass(Class)
-            .Build();
+                .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
+                .AddClass(Class)
+                .Build();
 
         protected string InputClassname =>
             new CssBuilder("mud-select-input")
-            .AddClass(InputClass)
-            .Build();
+                .AddClass(InputClass)
+                .Build();
 
         [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
         [Inject] IScrollManager ScrollManager { get; set; }
 
-        private string _elementId = "select_" + Guid.NewGuid().ToString().Substring(0, 8);
+        private string _elementId = Identifier.Create("select");
 
         private Task SelectNextItem() => SelectAdjacentItem(+1);
 
@@ -537,6 +533,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Clearable { get; set; } = false;
+
+        /// <summary>
+        /// Custom clear icon when <see cref="Clearable"/> is enabled.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 
         /// <summary>
         /// If true, prevent scrolling while dropdown is open.

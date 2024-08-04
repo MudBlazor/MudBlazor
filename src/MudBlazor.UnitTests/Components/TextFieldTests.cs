@@ -36,7 +36,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<FormIsValidTest3>();
             var label = comp.FindAll(".mud-input-label");
             label[0].Attributes.GetNamedItem("for")?.Value.Should().Be("textFieldLabelTest");
-            label[1].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput-");
+            label[1].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput");
         }
 
         /// <summary>
@@ -47,8 +47,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FieldTest>();
             var label = comp.FindAll(".mud-input-label");
-            label[0].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput-");
-            label[1].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput-");
+            label[0].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput");
+            label[1].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput");
             label[2].Attributes.GetNamedItem("for")?.Value.Should().Be("fieldLabelTest");
         }
 
@@ -115,7 +115,7 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
             comp.Find("input").Change("seventeen");
             comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(3);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
         }
 
@@ -845,12 +845,12 @@ namespace MudBlazor.UnitTests.Components
             // user puts in a invalid integer value
             comp.Find("input").Change("invalid");
             comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(1);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
 
             // user does not change invalid input value but changes focus
             comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(1);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
 
             // reset (must reset dirty state)
@@ -864,7 +864,7 @@ namespace MudBlazor.UnitTests.Components
             // user puts in a invalid integer value
             comp.Find("input").Change("invalid");
             comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(1);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
 
             // user corrects input
@@ -883,13 +883,13 @@ namespace MudBlazor.UnitTests.Components
 
             // user does not change input value but changes focus
             comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(3);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Required");
 
             // user puts in a invalid integer value
             comp.Find("input").Change("invalid");
             comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(3);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
 
             // reset
@@ -898,7 +898,7 @@ namespace MudBlazor.UnitTests.Components
 
             // user does not change input value but changes focus
             comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(3);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Required");
 
             // user corrects input

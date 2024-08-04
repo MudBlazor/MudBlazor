@@ -116,6 +116,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Tests if the page buttons are hidden
+        /// </summary>
+        [Test]
+        public void HidePageButtonTest()
+        {
+            var comp = Context.RenderComponent<PaginationHidePageButtonsTest>();
+
+            comp.FindAll(".mud-pagination-item button").Count.Should().Be(2);
+        }
+
+        /// <summary>
         /// Tests the clicking on page buttons
         /// </summary>
         /// <param name="clickIndexPage">The index of the clicked page button.</param>

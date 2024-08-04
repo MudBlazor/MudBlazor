@@ -1074,6 +1074,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task ShowAsync_FromNonUiThreadShouldAddInstance()
+        {
+            // Arrange
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            _ = Context.RenderComponent<MudDialogProvider>();
+            var invoked = false;
+            service.DialogInstanceAddedAsync += _ =>
+            {
+                invoked = true;
+
+                return Task.CompletedTask;
+            };
+
+            // Act 
+            await Task.Factory.StartNew(() => service.ShowAsync(typeof(DialogOkCancel))).ConfigureAwait(false);
+
+            // Assert
+            invoked.Should().BeTrue();
+        }
+
+        [Test]
         public async Task ShowAsync_ShouldProvideDefaultOption()
         {
             // Arrange
