@@ -11,13 +11,11 @@ namespace MudBlazor
     public partial class MudToggleItem<T> : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-toggle-item")
-            .AddClass($"mud-theme-{Parent?.Color.ToDescriptionString()}", Selected && string.IsNullOrEmpty(Parent?.SelectedClass))
             .AddClass(Parent?.SelectedClass, Selected && !string.IsNullOrEmpty(Parent?.SelectedClass))
             .AddClass("mud-toggle-item-selected", Selected)
             .AddClass("mud-toggle-item-vertical", Parent?.Vertical == true)
             .AddClass("mud-toggle-item-delimiter", Parent?.Delimiters == true)
             .AddClass("mud-toggle-item-fixed", Parent?.CheckMark == true && Parent?.FixedContent == true)
-            .AddClass($"mud-border-{Parent?.Color.ToDescriptionString()} border-solid")
             .AddClass(Class)
             .Build();
 
