@@ -10,11 +10,11 @@
   border-width: 0 !important;
   border-radius: 0;
 
-  &:has(.mud-icon-root) {
+  &:has(.mud-toggle-item-check-icon) {
     min-width: auto;
   }
 
-  &.mud-icon-root {
+  &.mud-toggle-item-check-icon {
     display: flex;
   }
 }
