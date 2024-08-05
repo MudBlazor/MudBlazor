@@ -88,7 +88,7 @@ For example:
 in your component and apply styles at component level.
 - You must add tests if your component contains any logic (CSS styling requires no testing)
 - Use our `css variables` if possible. For instance, you should not hard code any colors etc.
-- Include a summary comment for every public property ([Summary documentation](https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/xmldoc/summary))
+- Include a summary comment for every public property ([Summary documentation](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags))
 - Use the `CssBuilder` for classes and styles
 - Add a doc page and examples which should be ordered from easy to more complex
 - Examples with more than 15 lines should be collapsed by default
