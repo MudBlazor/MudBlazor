@@ -59,7 +59,7 @@ namespace MudBlazor
 
         private bool _collectionOpen;
 
-        private readonly Guid _id = Guid.NewGuid();
+        private readonly string _id = Identifier.Create();
 
         private ThrottleDispatcher _throttleDispatcher;
 
