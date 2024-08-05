@@ -386,7 +386,6 @@ In the Test make sure to instantiate the razor file you just prepared above.
 ```
 
 As soon as you interact with html elements they are potentially re-rendered, and your variable becomes stale.
-As soon as you interact with html elements they are potentially re-rendered, and your variable becomes stale.
 
 ```c#
    var comp = ctx.RenderComponent<MudTextField<string>>();
