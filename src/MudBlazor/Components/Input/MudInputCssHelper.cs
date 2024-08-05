@@ -39,6 +39,7 @@ internal static class MudInputCssHelper
     public static string GetInputClassname<T>(MudBaseInput<T> baseInput) =>
         new CssBuilder("mud-input-slot")
             .AddClass("mud-input-root")
+            .AddClass("mud-input-root-hidden-label", string.IsNullOrEmpty(baseInput.Label))
             .AddClass($"mud-input-root-{baseInput.Variant.ToDescriptionString()}")
             .AddClass($"mud-input-root-adorned-{baseInput.Adornment.ToDescriptionString()}", baseInput.Adornment != Adornment.None)
             .AddClass($"mud-input-root-margin-{baseInput.Margin.ToDescriptionString()}", when: () => baseInput.Margin != Margin.None)
