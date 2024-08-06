@@ -3,24 +3,37 @@
 .mud-toggle-group {
   display: grid;
   overflow: hidden;
+  box-sizing: border-box;
+  border-width: 1px;
+  border-style: none;
   border-radius: var(--mud-default-borderradius);
 
   & > .mud-button-root {
     box-shadow: none;
-    //border: 0 solid transparent;
-    //border-radius: 0;
+    border-width: 1px;
+    border-style: none;
+    border-color: inherit;
+    border-radius: 0;
   }
 }
 
 .mud-toggle-group-horizontal {
   &:not(.mud-toggle-group-rtl) {
     > .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+      &.mud-toggle-item-delimiter {
+        border-left-style: solid;
+      }
+
       margin-left: -1px;
     }
   }
 
   &.mud-toggle-group-rtl {
     > .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
+      &.mud-toggle-item-delimiter {
+        border-left-style: solid;
+      }
+
       margin-left: -1px;
     }
   }
@@ -28,6 +41,10 @@
 
 .mud-toggle-group-vertical {
   > .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+    &.mud-toggle-item-delimiter {
+      border-top-style: solid;
+    }
+
     margin-top: -1px;
   }
 }
