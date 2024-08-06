@@ -207,14 +207,14 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
             comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
             comp.Find("p.selected-values").TrimmedText().Should().Be("item1.1, item1.2");
-            
+
             // manually selecting a parent should still work
             comp.Find(".tree1 .item-1 .mud-treeview-item-content").Click();
             comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
             comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
             comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
             comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.1, item1.2");
-            
+
             // removing selection of a child should still unselect the parent
             comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
             comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
