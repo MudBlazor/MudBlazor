@@ -113,7 +113,6 @@ namespace MudBlazor
         public bool AutoSelectParent { get; set; } = true;
 
         /// <summary>
-        /// <summary>
         /// If true, clicking anywhere on the item will expand it, if it has children.
         /// </summary>
         [Parameter]
