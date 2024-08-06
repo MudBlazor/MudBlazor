@@ -146,8 +146,8 @@ namespace MudBlazor.UnitTests.Components
                 builder.Add(x => x.CheckMark, true);
                 builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a").Add(x => x.UnselectedIcon, @Icons.Material.Filled.Coronavirus));
             });
-            var icon = comp.Find("svg");
-            icon.ClassList.Should().Contain("c69");
+
+            comp.Find(".mud-button-label > span").ClassList.Should().Contain("c69");
         }
 
         [Test]
