@@ -106,6 +106,15 @@ namespace MudBlazor
         public bool TriState { get; set; } = true;
 
         /// <summary>
+        /// If true, selecting all children will result in the parent being automatically selected.
+        /// Unselecting a children will still unselect the parent.
+        /// Note: This only has an effect in SelectionMode.MultiSelection.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public bool AutoSelectParent { get; set; } = true;
+
+        /// <summary>
         /// If true, clicking anywhere on the item will expand it, if it has children.
         /// </summary>
         [Parameter]
@@ -358,7 +367,10 @@ namespace MudBlazor
                         _selection.Add(item.GetValue()!);
                     }
                 }
-                UpdateParentItem(clickedItem.Parent);
+                if (AutoSelectParent)
+                {
+                    UpdateParentItem(clickedItem.Parent);
+                }
                 await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
                 await UpdateItemsAsync();
                 return;
