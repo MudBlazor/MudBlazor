@@ -366,9 +366,7 @@ namespace MudBlazor
                         _selection.Add(item.GetValue()!);
                     }
                 }
-                bool itemSelected = clickedItem.GetValue() is { } value && _selection.Contains(value);
-                // ignore the AutoSelectParent configuration if the item got unselected
-                if (AutoSelectParent || !itemSelected)
+                if (AutoSelectParent)
                 {
                     UpdateParentItem(clickedItem.Parent);
                 }
