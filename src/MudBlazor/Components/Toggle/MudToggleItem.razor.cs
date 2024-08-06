@@ -73,14 +73,14 @@ namespace MudBlazor
 
         private string? GetCurrentIcon()
         {
-            if ((Parent?.CheckMark) != true)
+            if (Parent?.CheckMark != true)
             {
                 return null;
             }
 
             if (Selected)
             {
-                return SelectedIcon ?? UnselectedIcon;
+                return SelectedIcon;
             }
             else
             {
