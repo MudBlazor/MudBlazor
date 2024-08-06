@@ -64,7 +64,7 @@ public partial class MudInputAdornment
     /// The accessible name for this adornment.
     /// </summary>
     /// <remarks>
-    /// More information on accessible names can be found <see href="https://developer.mozilla.org/en-US/docs/Glossary/Accessible_name">here</see>.
+    /// More information on accessible names can be found <see href="https://developer.mozilla.org/docs/Glossary/Accessible_name">here</see>.
     /// </remarks>
     [Parameter]
     public string AriaLabel { get; set; }

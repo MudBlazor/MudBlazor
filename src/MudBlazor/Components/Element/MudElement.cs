@@ -68,7 +68,7 @@ namespace MudBlazor
             base.BuildRenderTree(builder);
 
             // Initialize the sequence number.
-            // https://learn.microsoft.com/en-us/aspnet/core/blazor/advanced-scenarios.
+            // https://learn.microsoft.com/aspnet/core/blazor/advanced-scenarios.
             var seq = 0;
 
             // Open element.

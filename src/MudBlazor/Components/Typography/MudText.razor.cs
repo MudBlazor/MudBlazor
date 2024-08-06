@@ -88,7 +88,7 @@ public partial class MudText : MudComponentBase
     /// <remarks>
     /// <para>
     /// This can be used to
-    /// <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element#text_content">
+    /// <see href="https://developer.mozilla.org/docs/Web/HTML/Element#text_content">
     /// specify the type of content for accessibility and SEO more accurately
     /// </see>.
     /// </para>
