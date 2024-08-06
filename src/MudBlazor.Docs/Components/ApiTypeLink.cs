@@ -85,7 +85,7 @@ public class ApiTypeLink : ComponentBase
                     // Is this a linkable type?
                     if (!TypeName.Contains("[["))
                     {
-                        builder.AddMudLink(0, $"https://learn.microsoft.com/en-us/dotnet/api/{TypeName}", TypeFriendlyName, "docs-link docs-code docs-code-primary", "_external");
+                        builder.AddMudLink(0, $"https://learn.microsoft.com/dotnet/api/{TypeName}", TypeFriendlyName, "docs-link docs-code docs-code-primary", "_external");
                     }
                     else
                     {

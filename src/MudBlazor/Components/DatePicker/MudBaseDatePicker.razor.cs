@@ -190,7 +190,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>ddd, dd MMM</c>.<br />
-        /// Supported date formats can be found here: <see href="https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings"/>.
+        /// Supported date formats can be found here: <see href="https://learn.microsoft.com/dotnet/standard/base-types/standard-date-and-time-format-strings"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
