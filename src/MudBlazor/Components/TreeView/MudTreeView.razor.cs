@@ -108,6 +108,7 @@ namespace MudBlazor
         /// <summary>
         /// If true, selecting all children will result in the parent being automatically selected.
         /// Unselecting a children will still unselect the parent.
+        /// Note: This only has an effect in SelectionMode.MultiSelection.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
