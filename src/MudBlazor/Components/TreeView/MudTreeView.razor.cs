@@ -107,6 +107,7 @@ namespace MudBlazor
 
         /// <summary>
         /// If true, selecting all children will result in the parent being automatically selected.
+        /// Unselecting a children will still unselect the parent.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
@@ -365,7 +366,9 @@ namespace MudBlazor
                         _selection.Add(item.GetValue()!);
                     }
                 }
-                if (AutoSelectParent)
+                bool itemSelected = clickedItem.GetValue() is { } value && _selection.Contains(value);
+                // ignore the AutoSelectParent configuration if the item got unselected
+                if (AutoSelectParent || !itemSelected) 
                 {
                     UpdateParentItem(clickedItem.Parent);
                 }
