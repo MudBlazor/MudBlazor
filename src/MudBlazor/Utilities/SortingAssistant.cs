@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace MudBlazor.Utilities
 {
-    public static class SortingAssistent
+    public static class SortingAssistant
     {
         public static void UpdateOrder<T>(this IEnumerable<T> items, MudItemDropInfo<T> dropInfo, Expression<Func<T, int>> valueUpdater, int zoneOffset = 0)
         {
