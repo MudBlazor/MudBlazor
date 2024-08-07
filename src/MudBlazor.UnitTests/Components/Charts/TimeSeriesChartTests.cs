@@ -43,7 +43,7 @@ namespace MudBlazor.UnitTests.Charts
                         Name = "Series 1",
                         Data = new[] {-1, 0, 1, 2}.Select(x => new TimeSeriesChartSeries.TimeValue(time.AddDays(x), 1000)).ToList(),
                         IsVisible = true,
-                        Type = TimeSeriesDiplayType.Line
+                        Type = TimeSeriesDisplayType.Line
                     }
                 })
                 .Add(p => p.TimeLabelSpacing, TimeSpan.FromDays(1))

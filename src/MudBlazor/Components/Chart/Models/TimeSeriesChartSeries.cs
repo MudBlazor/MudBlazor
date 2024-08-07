@@ -15,13 +15,13 @@ namespace MudBlazor.Components.Chart.Models
 
         public int Index { get; set; }
 
-        public TimeSeriesDiplayType Type { get; set; } = TimeSeriesDiplayType.Line;
+        public TimeSeriesDisplayType Type { get; set; } = TimeSeriesDisplayType.Line;
 
         public double FillOpacity { get; set; } = 0.4;
         public double StrokeOpacity { get; set; } = 1;
     }
 
-    public enum TimeSeriesDiplayType
+    public enum TimeSeriesDisplayType
     {
         Line,
         Area,

@@ -46,7 +46,7 @@
                 Name = "Series 1",
                 Data = Enumerable.Range(-360, 360).Select(x => new TimeSeriesChartSeries.TimeValue(now.AddSeconds(x * 10), _random.Next(6000, 15000))).ToList(),
                 IsVisible = true,
-                Type = TimeSeriesDiplayType.Line
+                Type = TimeSeriesDisplayType.Line
             };
 
         _chart2 = new TimeSeriesChartSeries
@@ -55,7 +55,7 @@
                 Name = "Series 2",
                 Data = Enumerable.Range(-360, 360).Select(x => new TimeSeriesChartSeries.TimeValue(now.AddSeconds(x * 10), _random.Next(0, 7000))).ToList(),
                 IsVisible = true,
-                Type = TimeSeriesDiplayType.Area
+                Type = TimeSeriesDisplayType.Area
             };
 
         _chart3 = new TimeSeriesChartSeries
@@ -64,7 +64,7 @@
                 Name = "Series 3",
                 Data = Enumerable.Range(-90, 60).Select(x => new TimeSeriesChartSeries.TimeValue(now.AddSeconds(x * 30), _random.Next(4000, 10000))).ToList(),
                 IsVisible = true,
-                Type = TimeSeriesDiplayType.Line
+                Type = TimeSeriesDisplayType.Line
             };
 
         _series.Add(_chart1);
