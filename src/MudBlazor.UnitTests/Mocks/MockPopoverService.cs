@@ -10,7 +10,7 @@ namespace MudBlazor.UnitTests.Mocks
     /// <summary>
     /// Mock for popover
     /// </summary>
-    [Obsolete($"Use {nameof(MockPopoverServiceV2)}. This will be removed in v7.")]
+    [Obsolete($"Use {nameof(MockPopoverServiceV2)}. This will be removed in a future version.")]
     public class MockPopoverService : IMudPopoverService
     {
         private List<MudPopoverHandler> _handlers = new();

@@ -20,7 +20,7 @@ namespace MudBlazor;
 /// </remarks>
 public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposable
 {
-    [Obsolete("For Legacy compatibility mode only, will be removed in v7.")]
+    [Obsolete("For Legacy compatibility mode only, will be removed in a future version.")]
     private MudPopoverHandler? _handler;
 
     private bool _afterFirstRender;
@@ -29,7 +29,7 @@ public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposa
     public virtual Guid Id { get; [Obsolete("Set is only needed for legacy mode only. Remove in v7.")] private set; } = Guid.NewGuid();
 
     [Inject]
-    [Obsolete($"Replaced by {nameof(PopoverService)}. Will be removed in v7.")]
+    [Obsolete($"Replaced by {nameof(PopoverService)}. Will be removed in a future version.")]
     public IMudPopoverService Service { get; set; } = null!;
 
     [Inject]

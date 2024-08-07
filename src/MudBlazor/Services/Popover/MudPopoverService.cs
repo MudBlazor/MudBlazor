@@ -16,7 +16,7 @@ using MudBlazor.Interop;
 namespace MudBlazor
 {
 #nullable enable
-    [Obsolete($"Please use {nameof(PopoverService)}. This will be removed in v7.")]
+    [Obsolete($"Please use {nameof(PopoverService)}. This will be removed in a future version.")]
     public class MudPopoverService : IMudPopoverService, IAsyncDisposable
     {
         private bool _isInitialized;
