@@ -26,7 +26,7 @@ public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposa
     private bool _afterFirstRender;
 
     /// <inheritdoc />
-    public virtual Guid Id { get; [Obsolete("Set is only needed for legacy mode only. Remove in v7.")] private set; } = Guid.NewGuid();
+    public virtual Guid Id { get; [Obsolete("Set is only needed for legacy mode only. Remove in a future version.")] private set; } = Guid.NewGuid();
 
     [Inject]
     [Obsolete($"Replaced by {nameof(PopoverService)}. Will be removed in a future version.")]
