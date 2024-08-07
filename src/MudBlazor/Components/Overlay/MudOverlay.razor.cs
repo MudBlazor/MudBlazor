@@ -136,6 +136,9 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     /// <summary>
     /// Occurs when the overlay is clicked.
     /// </summary>
+    /// <remarks>
+    /// If you need to close the overlay automatically, you can use <see cref="AutoClose"/> and <see cref="OnClosed"/> instead. 
+    /// </remarks>
     [Parameter]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
 
