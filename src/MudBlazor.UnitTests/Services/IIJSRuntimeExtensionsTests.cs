@@ -2,21 +2,15 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Threading.Tasks;
-using Bunit;
 using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
-using MudBlazor.Services;
-using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Services
 {
-    public class IIJSRuntimeExtentionsTests
+    public class IIJSRuntimeExtensionsTests
     {
         static object[] CatchedExceptions =
         {
