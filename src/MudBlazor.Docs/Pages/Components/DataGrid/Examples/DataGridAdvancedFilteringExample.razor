@@ -9,7 +9,7 @@
         <PropertyColumn Property="x => x.Sign">
             <FilterTemplate>
                 <MudIconButton OnClick="@OpenFilter" Icon="@_icon" Size="@Size.Small" />
-                <MudOverlay Visible="@_filterOpen" OnClick="@(() => _filterOpen = false)" />
+                <MudOverlay Visible="@_filterOpen" @onclick="@(() => _filterOpen = false)" />
                 <MudPopover Open="@_filterOpen" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter"
                     Style="width:150px">
 		           <MudStack Spacing="0">
