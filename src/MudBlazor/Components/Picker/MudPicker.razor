@@ -88,7 +88,7 @@
             }
             else if(Open && PickerVariant == PickerVariant.Dialog)
             {
-               <MudOverlay Visible="@Open" OnClick="CloseOverlayAsync" DarkBackground="true" Class="mud-overlay-dialog">
+               <MudOverlay Visible="@Open" @onclick="CloseOverlayAsync" DarkBackground="true" Class="mud-overlay-dialog">
                    <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Elevation="@_pickerElevation" Square="@_pickerSquare">
                        <div class="@PickerContainerClassname">
 							@if(PickerContent != null){
