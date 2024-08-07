@@ -18,7 +18,7 @@ namespace MudBlazor
         private bool _isConnectedToService = false;
 
         [Inject]
-        [Obsolete($"Use {nameof(PopoverService)} instead. This will be removed in v7")]
+        [Obsolete($"Use {nameof(PopoverService)} instead. This will be removed in a future version")]
         public IMudPopoverService Service { get; set; } = null!;
 
         [Inject]
@@ -34,7 +34,7 @@ namespace MudBlazor
         public void Dispose()
         {
 #pragma warning disable CS0618
-            //TODO: For backward compatibility with old service. Should be removed in v7
+            //TODO: For backward compatibility with old service. Should be removed in a future version
             Service.FragmentsChanged -= Service_FragmentsChanged;
 #pragma warning restore CS0618
             PopoverService.Unsubscribe(this);
@@ -48,7 +48,7 @@ namespace MudBlazor
             }
 
 #pragma warning disable CS0618
-            //TODO: For backward compatibility with old service. Should be removed in v7
+            //TODO: For backward compatibility with old service. Should be removed in a future version
             Service.FragmentsChanged += Service_FragmentsChanged;
 #pragma warning restore CS0618
             PopoverService.Subscribe(this);
@@ -62,7 +62,7 @@ namespace MudBlazor
             if (!Enabled && _isConnectedToService)
             {
 #pragma warning disable CS0618
-                //TODO: For backward compatibility with old service. Should be removed in v7 with the _isConnectedToService
+                //TODO: For backward compatibility with old service. Should be removed in a future version with the _isConnectedToService
                 Service.FragmentsChanged -= Service_FragmentsChanged;
 #pragma warning restore CS0618
                 PopoverService.Unsubscribe(this);
@@ -72,7 +72,7 @@ namespace MudBlazor
             }
 
 #pragma warning disable CS0618
-            //TODO: For backward compatibility with old service. Whole block should be removed in v7
+            //TODO: For backward compatibility with old service. Whole block should be removed in a future version
             if (Enabled && !_isConnectedToService)
             {
                 Service.FragmentsChanged -= Service_FragmentsChanged; // make sure to avoid multiple registration
@@ -102,13 +102,13 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        //TODO: For backward compatibility with old service. Should be removed in v7
+        //TODO: For backward compatibility with old service. Should be removed in a future version
         private void Service_FragmentsChanged(object? sender, EventArgs e)
         {
             InvokeAsync(StateHasChanged);
         }
 
-        //TODO: For backward compatibility with old service. Should be removed in v7
+        //TODO: For backward compatibility with old service. Should be removed in a future version
 #pragma warning disable CS0618
         private IEnumerable<IMudPopoverHolder> GetActivePopovers()
         {
