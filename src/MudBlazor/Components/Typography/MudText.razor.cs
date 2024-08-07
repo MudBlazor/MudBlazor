@@ -98,7 +98,7 @@ public partial class MudText : MudComponentBase
     [Category(CategoryTypes.Text.Behavior)]
     public string? HtmlTag { get; set; }
 
-    private string GetActualTag() => HtmlTag ?? GetTagName(Typo);
+    private string GetActualTag() => string.IsNullOrEmpty(HtmlTag) ? GetTagName(Typo) : HtmlTag;
 
     private static string GetTagName(Typo typo) => typo switch
     {
