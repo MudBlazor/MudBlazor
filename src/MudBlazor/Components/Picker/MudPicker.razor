@@ -107,7 +107,7 @@
         </div>
         @if (PickerVariant == PickerVariant.Inline)
         {
-            <MudOverlay Visible="@Open" OnClick="CloseOverlayAsync" LockScroll="false" />
+            <MudOverlay Visible="@Open" @onclick="CloseOverlayAsync" LockScroll="false" />
         }
     </CascadingValue>;
 }
