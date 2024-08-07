@@ -134,13 +134,6 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     public int ZIndex { get; set; } = 5;
 
     /// <summary>
-    /// Occurs when the overlay is clicked.
-    /// </summary>
-    [Obsolete("The OnClosed event with AutoClose enabled should be preferred as it can handle other types of interaction in the future. Otherwise you can still use the @onclick event.")]
-    [Parameter]
-    public EventCallback<MouseEventArgs> OnClick { get; set; }
-
-    /// <summary>
     /// Occurs when the overlay is closed due to <see cref="AutoClose"/>.
     /// </summary>
     [Parameter]
@@ -178,10 +171,6 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
             await _visibleState.SetValueAsync(false);
             await OnClosed.InvokeAsync();
         }
-
-#pragma warning disable CS0618 // Type or member is obsolete
-        await OnClick.InvokeAsync(ev);
-#pragma warning restore CS0618 // Type or member is obsolete
     }
 
     /// <summary>
