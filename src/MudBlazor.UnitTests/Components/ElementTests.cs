@@ -48,5 +48,12 @@ namespace MudBlazor.UnitTests.Components
             comp2.Find("span").MouseOver();
             comp2.Instance.WasHovered.Should().BeTrue();
         }
+
+        [Test]
+        public void ElementReferenceCapture()
+        {
+            var comp = Context.RenderComponent<ElementReferenceExceptionTest>();
+            comp.Find("#element-button").Click();
+        }
     }
 }

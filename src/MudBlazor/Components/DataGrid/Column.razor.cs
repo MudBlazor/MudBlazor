@@ -25,8 +25,6 @@ namespace MudBlazor
         internal ParameterState<bool> HiddenState { get; }
         internal ParameterState<bool> GroupingState { get; }
 
-        internal readonly Guid uid = Guid.NewGuid();
-
         /// <summary>
         /// The data grid which owns this column.
         /// </summary>

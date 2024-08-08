@@ -45,6 +45,7 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-select")
+            .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
             .AddClass(Class)
             .Build();
 
@@ -245,6 +246,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
+        /// Previously known as <c>SelectOnClick</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
