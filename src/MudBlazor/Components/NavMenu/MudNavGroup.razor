@@ -3,7 +3,7 @@
 @inherits MudComponentBase
 
 @inject InternalMudLocalizer Localizer
-
+@using Microsoft.AspNetCore.Components.Routing
 <nav @attributes="UserAttributes"
      class="@Classname"
      disabled="@_navigationContext.Disabled"
@@ -23,7 +23,7 @@
         <div Class="mud-nav-link-text">
             @if (Href != null)
             {
-                <a href="@Href">@Title</a>
+                <MudNavLink Href="@Href" Class="MudNavGroupHref">@Title</MudNavLink>
             }
             else
             {

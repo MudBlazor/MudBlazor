@@ -294,3 +294,27 @@
     }
   }
 }
+
+.MudNavGroupHref a {
+  font-weight: 500 !important;
+  padding-left: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.MudNavGroupHref a:hover {
+  background: none !important;
+  color: inherit !important;
+}
+
+.MudNavGroupHref .mud-nav-link-text {
+  margin-left: 0 !important;
+}
+
+.MudNavGroupHref .mud-nav-link.active:not(.mud-nav-link-disabled) {
+  background: none !important;
+  color: inherit !important;
+}
+
+.mud-nav-group span:has(.active) {
+  background-color: var(--mud-palette-action-default-hover) !important;
+}
