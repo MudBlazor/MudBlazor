@@ -295,13 +295,12 @@
   }
 }
 
-.MudNavGroupHref a {
+.MudNavGroupHref .mud-nav-link {
   font-weight: 500 !important;
-  padding-left: 0 !important;
-  padding-bottom: 0 !important;
+  padding: 0 !important;
 }
 
-.MudNavGroupHref a:hover {
+.MudNavGroupHref .mud-nav-link:hover {
   background: none !important;
   color: inherit !important;
 }

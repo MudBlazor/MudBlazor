@@ -8,6 +8,9 @@ namespace MudBlazor
 #nullable enable
     public partial class MudNavGroup : MudComponentBase
     {
+
+        [Inject]
+        private NavigationManager UriHelper { get; set; } = null!;
         private readonly ParameterState<bool> _expandedState;
         private readonly ParameterState<bool> _disabledState;
         private readonly ParameterState<NavigationContext?> _parentNavigationContextState;
@@ -138,6 +141,18 @@ namespace MudBlazor
         {
             await _expandedState.SetValueAsync(!_expandedState.Value);
             UpdateNavigationContext();
+        }
+
+        private async void TopLevelClicked()
+        {
+            if (Href != null)
+            {
+                if (!_expandedState.Value)
+                {
+                    await ExpandedToggleAsync();
+                }
+                UriHelper.NavigateTo(Href, false);
+            }
         }
 
         private void UpdateNavigationContext()

@@ -10,7 +10,7 @@
      style="@Style"
      aria-label="@Title">
      
-    <span @onclick="ExpandedToggleAsync"
+    <span 
             tabindex="@ButtonTabIndex"
             class="@ButtonClassname"
             aria-controls="@_navigationContext.MenuId"
@@ -18,21 +18,21 @@
             aria-label="@Localizer[LanguageResource.MudNavGroup_ToggleExpand, Title ?? _navigationContext.MenuId]">
         @if (!string.IsNullOrEmpty(Icon))
         {
-            <MudIcon Disabled="@Disabled" Icon="@Icon" Color="@IconColor" Class="@IconClassname" />
+            <MudIcon Disabled="@Disabled" Icon="@Icon" Color="@IconColor" Class="@IconClassname" @onclick="ExpandedToggleAsync" />
         }
         <div Class="mud-nav-link-text">
             @if (Href != null)
             {
-                <MudNavLink Href="@Href" Class="MudNavGroupHref">@Title</MudNavLink>
+                <MudNavLink OnClick="TopLevelClicked" Class="MudNavGroupHref">@Title</MudNavLink>
             }
             else
             {
-                @Title
+                <span @onclick="ExpandedToggleAsync">@Title</span>
             } 
         </div>
         @if (!HideExpandIcon)
         {
-            <MudIcon Disabled="@Disabled" Icon="@ExpandIcon" Class="@ExpandIconClassname" />
+            <MudIcon Disabled="@Disabled" Icon="@ExpandIcon" Class="@ExpandIconClassname" @onclick="ExpandedToggleAsync" />
         }
     </span>
     <MudCollapse aria-hidden="@((_navigationContext.Expanded is false).ToString().ToLowerInvariant())"
