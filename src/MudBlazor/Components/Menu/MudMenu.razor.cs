@@ -206,6 +206,9 @@ namespace MudBlazor
         /// </summary>
         public bool Open { get; private set; }
 
+        [CascadingParameter]
+        private MudMenu? ParentMenu { get; set; }
+
         /// <summary>
         /// Closes the menu.
         /// </summary>
@@ -316,7 +319,15 @@ namespace MudBlazor
                 return;
             }
 
+            if (ParentMenu is { ActivationEvent: MouseEvent.MouseOver })
+                ParentMenu._isPointerOver = true;
+
             await OpenMenuAsync(args, true);
+        }
+
+        private void PointerMoveAsync(PointerEventArgs args)
+        {
+            _isPointerOver = true;
         }
 
         private async Task PointerLeaveAsync()
@@ -327,7 +338,12 @@ namespace MudBlazor
                 return;
             }
 
-            _isPointerOver = false;
+            var menu = this;
+            while (menu is { ActivationEvent: MouseEvent.MouseOver })
+            {
+                menu._isPointerOver = false;
+                menu = menu.ParentMenu;
+            }
 
             if (_isTemporary && ActivationEvent == MouseEvent.MouseOver)
             {
@@ -335,9 +351,11 @@ namespace MudBlazor
                 await Task.Delay(100);
 
                 // Close the menu if, since the delay, the pointer hasn't re-entered the menu or the overlay was made persistent (because the activator was clicked).
-                if (!_isPointerOver && _isTemporary)
+                menu = this;
+                while (menu is { ActivationEvent: MouseEvent.MouseOver, _isPointerOver: false, _isTemporary: true })
                 {
-                    await CloseMenuAsync();
+                    await menu.CloseMenuAsync();
+                    menu = menu.ParentMenu;
                 }
             }
         }

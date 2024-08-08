@@ -5,7 +5,7 @@
 <div @attributes="UserAttributes"
      class="@Classname"
      style="@Style"
-     @onpointermove="@OnPointerMoveAsync"
+     @onpointermove="@PointerMoveAsync"
      @onpointerenter="@PointerEnterAsync"
      @onpointerleave="@PointerLeaveAsync"
      @oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? ToggleMenuAsync : null)"
@@ -61,7 +61,7 @@
             <MudList T="object"
                      Class="@ListClass"
                      Dense="@Dense"
-                     @onpointermove="@OnPointerMoveAsync"
+                     @onpointermove="@PointerMoveAsync"
                      @onpointerenter="@PointerEnterAsync"
                      @onpointerleave="@PointerLeaveAsync">
                 @ChildContent
