@@ -6,6 +6,7 @@ using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.Extensions;
+using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.Utilities;
 using NUnit.Framework;
 
@@ -400,6 +401,33 @@ namespace MudBlazor.UnitTests.Components
             var expectedPrimaryDarkenColorAsRgb = expectedPrimaryDarkenColor.ToString(MudColorOutputFormats.RGB);
             var expectedPrimaryDarkenLine = $"--mud-palette-primary-darken: {expectedPrimaryDarkenColorAsRgb};";
             styleLines.Should().Contain(expectedPrimaryDarkenLine);
+        }
+
+        [Test]
+        public async Task ObserveSystemThemeChange()
+        {
+            // Arrange & Act
+            Context.JSInterop.SetupVoid("stopWatchingDarkThemeMedia");
+            Context.JSInterop.SetupVoid("watchDarkThemeMedia");
+            var themeProvider = Context.RenderComponent<ThemeProviderObserveSystemThemeChangeTest>();
+
+            // Assert
+            Context.JSInterop.VerifyNotInvoke("watchDarkThemeMedia");
+            Context.JSInterop.VerifyNotInvoke("stopWatchingDarkThemeMedia");
+
+            // Act
+            await themeProvider.InvokeAsync(themeProvider.Instance.EnableObserve);
+
+            // Assert
+            Context.JSInterop.VerifyInvoke("watchDarkThemeMedia", 1);
+            Context.JSInterop.VerifyNotInvoke("stopWatchingDarkThemeMedia");
+
+            // Act
+            await themeProvider.InvokeAsync(themeProvider.Instance.DisableObserve);
+
+            // Assert
+            Context.JSInterop.VerifyInvoke("watchDarkThemeMedia", 1);
+            Context.JSInterop.VerifyInvoke("stopWatchingDarkThemeMedia", 1);
         }
 
         [Test]

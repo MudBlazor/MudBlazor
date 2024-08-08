@@ -74,6 +74,9 @@ window.mudTimePicker = {
     },
 
     destroyPointerEvents: (container) => {
+        if (container == null) {
+            return;
+        }
         // Clean up event listeners from the picker element
         if (typeof container.destroy === 'function') {
             container.destroy();

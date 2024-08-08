@@ -190,6 +190,40 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void TreeViewWith_MultiSelection_ShouldNotAutoSelectParent()
+        {
+            var comp = Context.RenderComponent<TreeViewAutoSelectParentTest>(self => self
+                .Add(x => x.SelectedValues, ["item1.2"])
+                .Add(x => x.AutoSelectParent, false));
+            // check initial selection
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1.2");
+
+            // select another value on tree1 and check parent is not selected
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1.1, item1.2");
+
+            // manually selecting a parent should still work
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").Click();
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.1, item1.2");
+
+            // removing selection of a child will keep the parent selected
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.2");
+        }
+
+        [Test]
         public void TreeViewItemSelected_ShouldBeInitializedCorrectly_SingleSelection()
         {
             var comp = Context.RenderComponent<TreeViewItemSelectedBindingTest>(self => self.Add(x => x.SelectedValue, "item1.2"));
@@ -1024,6 +1058,73 @@ namespace MudBlazor.UnitTests.Components
 #nullable disable
 
             exception.Message.Should().Be($"'{nameof(MudTreeView<string>)}.{nameof(nullInstanceTree.ServerData)}' requires '{nameof(nullInstanceTree.ItemTemplate)}.{nameof(MudTreeViewItem<string>)}.{nameof(nullInstanceItem.Value)}' to be supplied.");
+        }
+
+        [Test]
+        public void TreeView_ClickItemWhileActive_DoesChangeSelection()
+        {
+            var comp = Context.RenderComponent<ItemSelectableTreeViewTest>();
+
+            var parentItemButton = comp.Find(".parent-item button.mud-treeview-item-expand-button");
+            var parentItemContent = comp.Find(".parent-item > div.mud-treeview-item-content");
+
+            var GetSelectedValue = () => comp.Find("p.selected-value").TrimmedText();
+            var GetItemExpandedValue = () => comp
+                .FindComponent<MudTreeViewItem<string>>()
+                .Instance
+                .GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
+
+            parentItemContent.Click();
+
+            GetSelectedValue().Should().Be("content");
+
+            GetItemExpandedValue().Should().Be(false);
+            parentItemButton.Click();
+            GetItemExpandedValue().Should().Be(true);
+        }
+
+        [Test]
+        public void TreeView_ClickItemWhileReadOnly_DoesNotChangeSelection()
+        {
+            var comp = Context.RenderComponent<ItemSelectableTreeViewTest>(self => self.Add(x => x.ParentItemReadOnly, true));
+
+            var parentItemButton = comp.Find(".parent-item button.mud-treeview-item-expand-button");
+            var parentItemContent = comp.Find(".parent-item > div.mud-treeview-item-content");
+
+            var GetSelectedValue = () => comp.Find("p.selected-value").TrimmedText();
+            var GetItemExpandedValue = () => comp
+                .FindComponent<MudTreeViewItem<string>>()
+                .Instance
+                .GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
+
+            parentItemContent.Click();
+            GetSelectedValue().Should().BeNullOrWhiteSpace();
+
+            GetItemExpandedValue().Should().Be(false);
+            parentItemButton.Click();
+            GetItemExpandedValue().Should().Be(true);
+        }
+
+        [Test]
+        public void TreeView_ClickItemWhileDisabled_DoesNotChangeSelectionAndExpanded()
+        {
+            var comp = Context.RenderComponent<ItemSelectableTreeViewTest>(self => self.Add(x => x.ParentItemDisabled, true));
+
+            var parentItemButton = comp.Find(".parent-item button.mud-treeview-item-expand-button");
+            var parentItemContent = comp.Find(".parent-item > div.mud-treeview-item-content");
+
+            var GetSelectedValue = () => comp.Find("p.selected-value").TrimmedText();
+            var GetItemExpandedValue = () => comp
+                .FindComponent<MudTreeViewItem<string>>()
+                .Instance
+                .GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
+
+            parentItemContent.Click();
+            GetSelectedValue().Should().BeNullOrWhiteSpace();
+
+            GetItemExpandedValue().Should().Be(false);
+            parentItemButton.Click();
+            GetItemExpandedValue().Should().Be(false);
         }
     }
 }

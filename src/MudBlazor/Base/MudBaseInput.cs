@@ -32,8 +32,8 @@ namespace MudBlazor
         /// The resolved input element ID.
         /// </summary>
         protected string? InputElementId => _inputIdState.Value;
-        private string? _userAttributesId = $"mudinput-{Guid.NewGuid()}";
-        private readonly string _componentId = $"mudinput-{Guid.NewGuid()}";
+        private string? _userAttributesId = Identifier.Create("mudinput");
+        private readonly string _componentId = Identifier.Create("mudinput");
         private readonly ParameterState<string?> _inputIdState;
 
         protected MudBaseInput()
