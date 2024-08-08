@@ -9,7 +9,8 @@
      disabled="@_navigationContext.Disabled"
      style="@Style"
      aria-label="@Title">
-    <button @onclick="ExpandedToggleAsync"
+     
+    <span @onclick="ExpandedToggleAsync"
             tabindex="@ButtonTabIndex"
             class="@ButtonClassname"
             aria-controls="@_navigationContext.MenuId"
@@ -20,13 +21,20 @@
             <MudIcon Disabled="@Disabled" Icon="@Icon" Color="@IconColor" Class="@IconClassname" />
         }
         <div Class="mud-nav-link-text">
-            @Title
+            @if (Href != null)
+            {
+                <a href="@Href">@Title</a>
+            }
+            else
+            {
+                @Title
+            } 
         </div>
         @if (!HideExpandIcon)
         {
             <MudIcon Disabled="@Disabled" Icon="@ExpandIcon" Class="@ExpandIconClassname" />
         }
-    </button>
+    </span>
     <MudCollapse aria-hidden="@((_navigationContext.Expanded is false).ToString().ToLowerInvariant())"
                  Expanded="@_navigationContext.Expanded"
                  MaxHeight="@MaxHeight"

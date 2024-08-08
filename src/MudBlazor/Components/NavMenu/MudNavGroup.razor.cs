@@ -66,6 +66,10 @@ namespace MudBlazor
         [Category(CategoryTypes.NavMenu.Behavior)]
         public string? Title { get; set; }
 
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.Behavior)]
+        public string? Href { get; set; }
+
         /// <summary>
         /// Icon to use if set.
         /// </summary>
