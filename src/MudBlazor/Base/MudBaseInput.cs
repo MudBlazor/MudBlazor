@@ -680,7 +680,7 @@ namespace MudBlazor
                     // This is a fix for #1012
                     if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
                     {
-                        updateText = false;
+                        //updateText = false;
                     }
                 }
                 if (updateText)
