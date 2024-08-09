@@ -937,7 +937,7 @@ namespace MudBlazor
                             // this also closes the menu
                             await SelectOption(index);
                             break;
-                        }                     
+                        }
                     }
                     else
                     {
