@@ -161,7 +161,7 @@ namespace MudBlazor
         /// Prevents the user from uploading files.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>. 
+        /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
@@ -175,17 +175,25 @@ namespace MudBlazor
 
         protected bool GetDisabledState() => Disabled || ParentDisabled || ParentReadOnly;
 
+        private int _numberOfActiveFileInputs = 1;
+        private string? GetInputClass(int fileInputIndex)=> fileInputIndex == _numberOfActiveFileInputs
+            ? InputClass
+            : $"{InputClass} d-none";
+        private string GetInputId(int fileInputIndex) => $"{_id}-{fileInputIndex}";
+        private string GetActiveInputId() => $"{_id}-{_numberOfActiveFileInputs}";
+
         public async Task ClearAsync()
         {
+            _numberOfActiveFileInputs = 1;
             await NotifyValueChangedAsync(default);
-            await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInput.resetValue", _id);
+            await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInput.resetValue", GetActiveInputId());
         }
 
         /// <summary>
         /// Opens the file picker.
         /// </summary>
         public async Task OpenFilePickerAsync()
-            => await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudFileUpload.openFilePicker", _id);
+            => await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudFileUpload.openFilePicker", GetActiveInputId());
 
         /// <summary>
         /// Opens the file picker.
@@ -197,6 +205,8 @@ namespace MudBlazor
 
         private async Task OnChangeAsync(InputFileChangeEventArgs args)
         {
+            _numberOfActiveFileInputs++;
+
             if (GetDisabledState())
             {
                 return;
