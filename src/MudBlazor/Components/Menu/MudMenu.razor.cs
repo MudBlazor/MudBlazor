@@ -13,6 +13,7 @@ namespace MudBlazor
         private string? _popoverStyle;
         private bool _isTemporary;
         private bool _isPointerOver;
+        private bool _isClosing;
 
         protected string Classname =>
             new CssBuilder("mud-menu")
@@ -212,14 +213,19 @@ namespace MudBlazor
         /// <summary>
         /// Closes the menu.
         /// </summary>
-        public Task CloseMenuAsync()
+        public async Task CloseMenuAsync()
         {
             Open = false;
-            _isPointerOver = false;
+
+            // Disable pointer move event
+            // Avoid the issue where the menu can't close when the pointer moves, even though a menu item was clicked
+            _isClosing = true;
+            await PointerLeaveAsync();
+            _isClosing = false;
             _popoverStyle = null;
             StateHasChanged();
 
-            return OpenChanged.InvokeAsync(Open);
+            await OpenChanged.InvokeAsync(Open);
         }
 
         /// <summary>
@@ -319,15 +325,18 @@ namespace MudBlazor
                 return;
             }
 
-            if (ParentMenu is { ActivationEvent: MouseEvent.MouseOver })
+            if (ParentMenu != null)
                 ParentMenu._isPointerOver = true;
 
             await OpenMenuAsync(args, true);
         }
 
-        private void PointerMoveAsync(PointerEventArgs args)
+        private void PointerMove(PointerEventArgs args)
         {
-            _isPointerOver = true;
+            if (!_isClosing)
+            {
+                _isPointerOver = true;
+            }
         }
 
         private async Task PointerLeaveAsync()
@@ -339,11 +348,11 @@ namespace MudBlazor
             }
 
             var menu = this;
-            while (menu is { ActivationEvent: MouseEvent.MouseOver })
+            do
             {
                 menu._isPointerOver = false;
                 menu = menu.ParentMenu;
-            }
+            } while (menu != null);
 
             if (_isTemporary && ActivationEvent == MouseEvent.MouseOver)
             {
