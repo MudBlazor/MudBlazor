@@ -616,7 +616,11 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Data)]
         public Func<TableState, CancellationToken, Task<TableData<T>>>? ServerData { get; set; }
 
-        private void CancelToken()
+        /// <summary>
+        /// Cancel the token used by the table.
+        /// </summary>
+        /// <param name="cancellationTokenRecreated">By default, the cancellation token is recreated after it has been cancelled.</param>
+        public void CancelToken(bool cancellationTokenRecreated = true)
         {
             try
             {
@@ -625,7 +629,10 @@ namespace MudBlazor
             catch { /*ignored*/ }
             finally
             {
-                _cancellationTokenSrc = new CancellationTokenSource();
+                if (cancellationTokenRecreated)
+                {
+                    _cancellationTokenSrc = new CancellationTokenSource();
+                }
             }
         }
 
