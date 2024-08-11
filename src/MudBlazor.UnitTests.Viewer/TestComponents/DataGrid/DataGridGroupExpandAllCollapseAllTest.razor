@@ -1,0 +1,151 @@
+@namespace MudBlazor.UnitTests.TestComponents
+@using System.Collections.ObjectModel
+
+<MudDataGrid @ref="_dataGrid"
+    Items="@_elements"
+    Filterable="true"
+    Hideable="true"
+    Groupable="true"
+    GroupExpanded="false">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Elements</MudText>
+        <MudSpacer />
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Groupable="false" />
+        <PropertyColumn Property="x => x.Position" />
+        <PropertyColumn Property="x => x.Group" Title="Category" Grouping="true" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Element" />
+    </PagerContent>
+</MudDataGrid>
+<div class="d-flex flex-wrap mt-4">
+    <MudButton OnClick="@ExpandAllGroups" Color="@Color.Primary">Expand All</MudButton>
+    <MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary">Collapse All</MudButton>
+</div>
+
+@code {
+    public class Element
+    {
+        public string Name { get; set; }
+        public int Position { get; set; }
+        public string Group { get; set; }
+
+        public Element(string group, int position, string name)
+        {
+            Position = position;
+            Group = group;
+            Name = name;
+        }
+    }
+    
+    private IEnumerable<Element> _elements = new List<Element>()
+    {
+        new("Alkaline Earth Metal (s)",0,"Caesium"),
+        new("Alkaline Earth Metal (s)",0,"Francium"),
+        new("Alkaline Earth Metal (s)",0,"Lithium"),
+        new("Alkaline Earth Metal (s)",0,"Potassium"),
+        new("Alkaline Earth Metal (s)",0,"Rubidium"),
+        new("Alkaline Earth Metal (s)",0,"Sodium"),
+        new("Alkaline Metal (s)",1,"Barium"),
+        new("Alkaline Metal (s)",1,"Beryllium"),
+        new("Alkaline Metal (s)",1,"Calcium"),
+        new("Alkaline Metal (s)",1,"Magnesium"),
+        new("Alkaline Metal (s)",1,"Radium"),
+        new("Alkaline Metal (s)",1,"Strontium"),
+        new("Halogen (p)",16,"Astatine"),
+        new("Halogen (p)",16,"Bromine"),
+        new("Halogen (p)",16,"Chlorine"),
+        new("Halogen (p)",16,"Fluorine"),
+        new("Halogen (p)",16,"Iodine"),
+        new("Halogen (p)",16,"Tennessine"),
+        new("Metalloid Boron (p)",12,"Boron"),
+        new("Metalloid Carbon (p)",13,"Germanium"),
+        new("Metalloid Carbon (p)",13,"Silicon"),
+        new("Metalloid Chalcogen (p)",15,"Polonium"),
+        new("Metalloid Chalcogen (p)",15,"Tellurium"),
+        new("Metalloid Pnictogen (p)",14,"Antimony"),
+        new("Metalloid Pnictogen (p)",14,"Arsenic"),
+        new("Noble Gas (p)",17,"Argon"),
+        new("Noble Gas (p)",17,"Helium"),
+        new("Noble Gas (p)",17,"Krypton"),
+        new("Noble Gas (p)",17,"Neon"),
+        new("Noble Gas (p)",17,"Oganesson"),
+        new("Noble Gas (p)",17,"Radon"),
+        new("Noble Gas (p)",17,"Xenon"),
+        new("Nonmetal Carbon (p)",13,"Carbon"),
+        new("Nonmetal Chalcogen (p)",15,"Oxygen"),
+        new("Nonmetal Chalcogen (p)",15,"Selenium"),
+        new("Nonmetal Chalcogen (p)",15,"Sulfur"),
+        new("Nonmetal Pnictogen (p)",14,"Nitrogen"),
+        new("Nonmetal Pnictogen (p)",14,"Phosphorus"),
+        new("Other",0,"Hydrogen"),
+        new("Poor Boron (p)",12,"Aluminium"),
+        new("Poor Boron (p)",12,"Gallium"),
+        new("Poor Boron (p)",12,"Indium"),
+        new("Poor Boron (p)",12,"Nihonium"),
+        new("Poor Boron (p)",12,"Thallium"),
+        new("Poor Carbon (p)",13,"Flerovium"),
+        new("Poor Carbon (p)",13,"Lead"),
+        new("Poor Carbon (p)",13,"Tin"),
+        new("Poor Chalcogen (p)",15,"Livermorium"),
+        new("Poor Pnictogen (p)",14,"Bismuth"),
+        new("Poor Pnictogen (p)",14,"Moscovium"),
+        new("Transition Metal (d)",6,"Bohrium"),
+        new("Transition Metal (d)",11,"Cadmium"),
+        new("Transition Metal (d)",5,"Chromium"),
+        new("Transition Metal (d)",8,"Cobalt"),
+        new("Transition Metal (d)",11,"Copernicium"),
+        new("Transition Metal (d)",10,"Copper"),
+        new("Transition Metal (d)",9,"Darmstadtium"),
+        new("Transition Metal (d)",4,"Dubnium"),
+        new("Transition Metal (d)",10,"Gold"),
+        new("Transition Metal (d)",3,"Hafnium"),
+        new("Transition Metal (d)",7,"Hassium"),
+        new("Transition Metal (d)",8,"Iridium"),
+        new("Transition Metal (d)",7,"Iron"),
+        new("Transition Metal (d)",6,"Manganese"),
+        new("Transition Metal (d)",8,"Meitnerium"),
+        new("Transition Metal (d)",11,"Mercury"),
+        new("Transition Metal (d)",5,"Molybdenum"),
+        new("Transition Metal (d)",9,"Nickel"),
+        new("Transition Metal (d)",4,"Niobium"),
+        new("Transition Metal (d)",7,"Osmium"),
+        new("Transition Metal (d)",9,"Palladium"),
+        new("Transition Metal (d)",9,"Platinum"),
+        new("Transition Metal (d)",6,"Rhenium"),
+        new("Transition Metal (d)",8,"Rhodium"),
+        new("Transition Metal (d)",10,"Roentgenium"),
+        new("Transition Metal (d)",7,"Ruthenium"),
+        new("Transition Metal (d)",3,"Rutherfordium"),
+        new("Transition Metal (d)",2,"Scandium"),
+        new("Transition Metal (d)",5,"Seaborgium"),
+        new("Transition Metal (d)",10,"Silver"),
+        new("Transition Metal (d)",4,"Tantalum"),
+        new("Transition Metal (d)",6,"Technetium"),
+        new("Transition Metal (d)",3,"Titanium"),
+        new("Transition Metal (d)",5,"Tungsten"),
+        new("Transition Metal (d)",4,"Vanadium"),
+        new("Transition Metal (d)",2,"Yttrium"),
+        new("Transition Metal (d)",11,"Zinc"),
+        new("Transition Metal (d)",3,"Zirconium")
+    };
+
+    private MudDataGrid<Element> _dataGrid;
+
+    public void RefreshList()
+    {
+        _elements = _elements.Select(x => new Element(x.Group, x.Position, x.Name)).ToList();
+    }
+
+    public void ExpandAllGroups()
+    {
+        _dataGrid?.ExpandAllGroups();
+    }
+
+    public void CollapseAllGroups()
+    {
+        _dataGrid?.CollapseAllGroups();
+    }
+}

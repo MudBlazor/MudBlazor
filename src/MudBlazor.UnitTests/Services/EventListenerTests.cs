@@ -19,19 +19,31 @@ namespace MudBlazor.UnitTests.Services
     {
         private Mock<IJSRuntime> _runtimeMock;
         private EventListener _service;
+        private string[] _expectedProperties;
 
         [SetUp]
         public void SetUp()
         {
             _runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
             _service = new EventListener(_runtimeMock.Object);
+#if NET7_0_OR_GREATER
+            _expectedProperties = new[] {
+             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
+             "movementX", "movementY", "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
+            };
+#else
+            _expectedProperties  = new[] {
+            "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
+            "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
+            };
+#endif
         }
 
-        private bool ContainsEqual(IEnumerable<String> firstColl, IEnumerable<string> secondColl)
+        private bool ContainsEqual(IEnumerable<string> firstColl, IEnumerable<string> secondColl)
         {
             try
             {
-                CollectionAssert.AreEqual(firstColl, secondColl);
+                secondColl.Should().BeEquivalentTo(firstColl);
                 return true;
             }
             catch (Exception)
@@ -48,12 +60,7 @@ namespace MudBlazor.UnitTests.Services
             var throttleInterval = 20;
             var projectionName = "mynamespace.myfunction";
 
-            Func<Object, Task> callback = (x) => Task.Delay(10);
-
-            var expectedProperties = new[] {
-             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
-             "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
-            };
+            Func<object, Task> callback = (x) => Task.Delay(10);
 
             _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
                     (string)z[0] == eventName &&
@@ -61,7 +68,7 @@ namespace MudBlazor.UnitTests.Services
                     (string)z[2] == projectionName &&
                     (int)z[3] == throttleInterval &&
                     (Guid)z[4] != Guid.Empty &&
-                    ContainsEqual((IEnumerable<string>)z[5], expectedProperties) == true &&
+                    ContainsEqual((IEnumerable<string>)z[5], _expectedProperties) &&
                     z[6] is DotNetObjectReference<EventListener>
                 ))).ReturnsAsync(Mock.Of<IJSVoidResult>);
 
@@ -88,7 +95,7 @@ namespace MudBlazor.UnitTests.Services
             var offsetX = 200.24;
             var offsetY = 12425.2;
 
-            Func<Object, Task> callback = (x) =>
+            Func<object, Task> callback = (x) =>
             {
                 try
                 {
@@ -107,18 +114,13 @@ namespace MudBlazor.UnitTests.Services
                 return Task.CompletedTask;
             };
 
-            var expectedProperties = new[] {
-             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
-             "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
-            };
-
             _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
                     (string)z[0] == eventName &&
                     (string)z[1] == elementId &&
                     (string)z[2] == projectionName &&
                     (int)z[3] == throttleInterval &&
                     (Guid)z[4] != Guid.Empty &&
-                    ContainsEqual((IEnumerable<string>)z[5], expectedProperties) == true &&
+                    ContainsEqual((IEnumerable<string>)z[5], _expectedProperties) &&
                     z[6] is DotNetObjectReference<EventListener>
                 ))).ReturnsAsync(Mock.Of<IJSVoidResult>);
 
@@ -150,12 +152,7 @@ namespace MudBlazor.UnitTests.Services
             var throttleInterval = 20;
             string projectionName = null;
 
-            Func<Object, Task> callback = (x) => Task.Delay(10);
-
-            var expectedProperties = new[] {
-             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
-             "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
-            };
+            Func<object, Task> callback = (x) => Task.Delay(10);
 
             _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
                     z.Length == 7 &&
@@ -164,7 +161,7 @@ namespace MudBlazor.UnitTests.Services
                     (string)z[2] == projectionName &&
                     (int)z[3] == throttleInterval &&
                     (Guid)z[4] != Guid.Empty &&
-                    ContainsEqual((IEnumerable<string>)z[5], expectedProperties) == true &&
+                    ContainsEqual((IEnumerable<string>)z[5], _expectedProperties) &&
                     z[6] is DotNetObjectReference<EventListener>
                 ))).ReturnsAsync(Mock.Of<IJSVoidResult>);
 
@@ -190,12 +187,7 @@ namespace MudBlazor.UnitTests.Services
             var throttleInterval = 20;
             var projectionName = "mynamspace.something.somethingelse";
 
-            Func<Object, Task> callback = (x) => Task.Delay(10);
-
-            var expectedProperties = new[] {
-             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
-             "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
-            };
+            Func<object, Task> callback = (x) => Task.Delay(10);
 
             _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
                     z.Length == 7 &&
@@ -204,7 +196,7 @@ namespace MudBlazor.UnitTests.Services
                     (string)z[2] == projectionName &&
                     (int)z[3] == throttleInterval &&
                     (Guid)z[4] != Guid.Empty &&
-                    ContainsEqual((IEnumerable<string>)z[5], expectedProperties) == true &&
+                    ContainsEqual((IEnumerable<string>)z[5], _expectedProperties) &&
                     z[6] is DotNetObjectReference<EventListener>
                 ))).ReturnsAsync(Mock.Of<IJSVoidResult>);
 
@@ -230,12 +222,7 @@ namespace MudBlazor.UnitTests.Services
             var throttleInterval = 20;
             var projectionName = "mynamspace.something.somethingelse";
 
-            Func<Object, Task> callback = (x) => Task.Delay(10);
-
-            var expectedProperties = new[] {
-             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
-             "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
-            };
+            Func<object, Task> callback = (x) => Task.Delay(10);
 
             for (var i = 0; i < 10; i++)
             {
@@ -248,7 +235,7 @@ namespace MudBlazor.UnitTests.Services
                         (string)z[2] == projectionName &&
                         (int)z[3] == throttleInterval &&
                         (Guid)z[4] != Guid.Empty &&
-                        ContainsEqual((IEnumerable<string>)z[5], expectedProperties) == true &&
+                        ContainsEqual((IEnumerable<string>)z[5], _expectedProperties) &&
                         z[6] is DotNetObjectReference<EventListener>
                     ))).ReturnsAsync(Mock.Of<IJSVoidResult>);
 
@@ -290,12 +277,7 @@ namespace MudBlazor.UnitTests.Services
             var throttleInterval = 20;
             var projectionName = "mynamspace.something.somethingelse";
 
-            Func<Object, Task> callback = (x) => Task.Delay(10);
-
-            var expectedProperties = new[] {
-             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
-             "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
-            };
+            Func<object, Task> callback = (x) => Task.Delay(10);
 
             for (var i = 0; i < 10; i++)
             {
@@ -308,7 +290,7 @@ namespace MudBlazor.UnitTests.Services
                         (string)z[2] == projectionName &&
                         (int)z[3] == throttleInterval &&
                         (Guid)z[4] != Guid.Empty &&
-                        ContainsEqual((IEnumerable<string>)z[5], expectedProperties) == true &&
+                        ContainsEqual((IEnumerable<string>)z[5], _expectedProperties) &&
                         z[6] is DotNetObjectReference<EventListener>
                     ))).ReturnsAsync(Mock.Of<IJSVoidResult>);
 

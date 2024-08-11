@@ -18,7 +18,7 @@ namespace MudBlazor
         public SnackBarMessageState(SnackbarOptions options)
         {
             Options = options;
-            AnimationId = $"snackbar-{Guid.NewGuid()}";
+            AnimationId = Identifier.Create();
             SnackbarState = SnackbarState.Init;
         }
         private string Opacity => ((decimal)Options.MaximumOpacity / 100).ToPercentage();
@@ -28,6 +28,8 @@ namespace MudBlazor
 
         public bool HideIcon => Options.HideIcon;
         public string Icon => Options.Icon;
+        public Color IconColor => Options.IconColor;
+        public Size IconSize => Options.IconSize;
 
         public string ProgressBarStyle
         {
@@ -67,7 +69,14 @@ namespace MudBlazor
         {
             get
             {
-                var result = $"mud-snackbar {Options.SnackbarTypeClass}";
+                var baseTypeClass = $"mud-alert-{Options.SnackbarVariant.ToDescriptionString()}-{Options.Severity.ToDescriptionString()}";
+
+                if (Options.SnackbarVariant != Variant.Filled)
+                {
+                    baseTypeClass += Options.BackgroundBlurred ? " mud-snackbar-blurred" : " mud-snackbar-surface";
+                }
+
+                var result = $"mud-snackbar {baseTypeClass} {Options.SnackbarTypeClass}";
 
                 if (Options.Onclick != null && !ShowActionButton)
                     result += " force-cursor";

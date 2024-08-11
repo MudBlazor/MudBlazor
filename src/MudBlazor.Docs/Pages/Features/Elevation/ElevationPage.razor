@@ -11,9 +11,10 @@
                 <Description>
                     Below, we are using different levels of elevation in two different ways. All our components that have elevation also have the <CodeInline>Elevation</CodeInline> property where the elevation level (shadow) can be set.<br />
                     The same elevation types can be used with our predefined CSS classes.
+                    <br />Note: Elevation is disabled when a component supports and uses the <CodeInline>Outlined</CodeInline> property.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="ElevationUsageExample">
+            <SectionContent DarkenBackground="true" Code="@nameof(ElevationUsageExample)">
                 <ElevationUsageExample />
             </SectionContent>
         </DocsPageSection>
@@ -24,7 +25,7 @@
                     Every component that has the <CodeInline>Elevation</CodeInline> property takes values in the range of 0 - 25, or you can access them with the CSS classes displayed below.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="ElevationAllExample" ShowCode="false">
+            <SectionContent DarkenBackground="true" Code="@nameof(ElevationAllExample)" ShowCode="false">
                 <ElevationAllExample />
             </SectionContent>
         </DocsPageSection>

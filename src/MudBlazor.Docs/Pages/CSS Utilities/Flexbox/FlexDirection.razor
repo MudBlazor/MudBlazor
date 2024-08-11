@@ -1,0 +1,64 @@
+﻿@page "/utilities/flex-direction"
+
+<DocsPage>
+    <DocsPageHeader Title="Flex Direction" SubTitle="Utilities for controlling the direction of flex items." />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Class Reference" HideTitle="true" />
+            <DocsAutoGen_Flexbox_FlexDirection/>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage" />
+            <SectionSubGroups>
+                        
+                <DocsPageSection>
+                    <SectionHeader Title="Row">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(FlexDirectionRowExample)" HighLight="flex-row">
+                        <FlexDirectionRowExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Row reversed">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(FlexDirectionRowReversedExample)" HighLight="flex-row-reverse">
+                        <FlexDirectionRowReversedExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Column">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(FlexDirectionColumnExample)" HighLight="flex-column">
+                        <FlexDirectionColumnExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Column reversed">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(FlexDirectionColumnReversedExample)" HighLight="flex-column-reverse">
+                        <FlexDirectionColumnReversedExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
+            </SectionSubGroups>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Applying conditionally"/>
+            <SectionSubGroups>
+                <DynamicBreakpointSectionContent Utility="flex-md-column"/>
+            </SectionSubGroups>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>
+

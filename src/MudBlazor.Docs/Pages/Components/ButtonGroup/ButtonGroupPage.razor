@@ -1,15 +1,19 @@
 ﻿@page "/components/buttongroup"
+@page "/components/MudButtonGroup"
 
 <DocsPage>
     <DocsPageHeader Title="Button Group">
-        <Description>The <CodeInline>MudButtonGroup</CodeInline> component can be used to group related <CodeInline>MudButtons</CodeInline>.</Description>
+        <Description>
+            The <CodeInline>MudButtonGroup</CodeInline> component can be used to group related <CodeInline>MudButtons</CodeInline>.
+            <MudText>See also: <MudLink Href="/components/togglegroup">Toggle Group</MudLink></MudText>
+        </Description>
     </DocsPageHeader>
     <DocsPageContent>
 
         <DocsPageSection>
             <SectionHeader Title="Basic button group">
             </SectionHeader>
-            <SectionContent Code="ButtonGroupBasicExample" ShowCode="false">
+            <SectionContent Code="@nameof(ButtonGroupBasicExample)" ShowCode="false">
                 <ButtonGroupBasicExample />
             </SectionContent>
         </DocsPageSection>
@@ -17,16 +21,16 @@
         <DocsPageSection>
             <SectionHeader Title="Sizes and colors">
             </SectionHeader>
-            <SectionContent Code="ButtonGroupSizesColorsExample" ShowCode="false">
+            <SectionContent Code="@nameof(ButtonGroupSizesColorsExample)" ShowCode="false">
                 <ButtonGroupSizesColorsExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Vertical button group">
-                <Description>With <CodeInline>VerticalAlign="true"</CodeInline> the buttons are displayed vertically.</Description>
+                <Description>With <CodeInline>Vertical="true"</CodeInline> the buttons are displayed vertically.</Description>
             </SectionHeader>
-            <SectionContent Code="ButtonGroupVerticalExample" ShowCode="false">
+            <SectionContent Code="@nameof(ButtonGroupVerticalExample)" ShowCode="false">
                 <ButtonGroupVerticalExample />
             </SectionContent>
         </DocsPageSection>
@@ -35,7 +39,7 @@
             <SectionHeader Title="Icon buttons">
                 <Description><CodeInline>MudButtonGroup</CodeInline> can also make use of <CodeInline>MudIconButton</CodeInline> and <CodeInline>MudToggleIconButton</CodeInline>.</Description>
             </SectionHeader>
-            <SectionContent Code="ButtonGroupIconButtonExample">
+            <SectionContent Code="@nameof(ButtonGroupIconButtonExample)">
                 <ButtonGroupIconButtonExample />
             </SectionContent>
         </DocsPageSection>
@@ -44,17 +48,17 @@
             <SectionHeader Title="Split button">
                 <Description>A <CodeInline>MudMenu</CodeInline> can be used to create a split button.</Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="ButtonGroupSplitButtonExample">
+            <SectionContent ShowCode="false" Code="@nameof(ButtonGroupSplitButtonExample)">
                 <ButtonGroupSplitButtonExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Disable elevation">
-                <Description>With <CodeInline>DisableElevation="false"</CodeInline> the dropshadow of button groups with <CodeInline>Variant="Variant.Filled"</CodeInline> is removed.</Description>
+            <SectionHeader Title="Drop shadow">
+                <Description>With <CodeInline>DropShadow="false"</CodeInline> the drop shadow of button groups with <CodeInline>Variant="Variant.Filled"</CodeInline> is removed.</Description>
             </SectionHeader>
-            <SectionContent Code="ButtonGroupDisableElevationExample">
-                <ButtonGroupDisableElevationExample />
+            <SectionContent Code="@nameof(ButtonGroupDropShadowExample)">
+                <ButtonGroupDropShadowExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -62,7 +66,7 @@
             <SectionHeader Title="Custom styles">
                 <Description>With <CodeInline>OverrideStyles="false"</CodeInline> the <CodeInline>MudButtonGroup</CodeInline> no longer overrides the styles of the individual buttons.</Description>
             </SectionHeader>
-            <SectionContent Code="ButtonGroupCustomStylesExample">
+            <SectionContent Code="@nameof(ButtonGroupCustomStylesExample)">
                 <ButtonGroupCustomStylesExample />
             </SectionContent>
         </DocsPageSection>

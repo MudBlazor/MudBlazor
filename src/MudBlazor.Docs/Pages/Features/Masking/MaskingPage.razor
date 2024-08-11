@@ -1,0 +1,147 @@
+﻿@page "/features/masking"
+
+
+<DocsPage>
+    <DocsPageHeader Title="Masking" SubTitle="Input masking allows conforming user input to a specific format while typing." />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="PatternMask">
+                <Description>
+                    <CodeInline Tag>MudTextField</CodeInline> can be configured to apply rules to the user input by setting 
+                    its <CodeInline>Mask</CodeInline> property. 
+                    The easiest to use Mask is the <CodeInline>PatternMask</CodeInline> which allows you to specify the input structure with 
+                    a simple pattern consisting of pre-defined mask characters. 
+                    <br /><br/>
+                    In this example the mask string is <CodeInline>"0000 0000 0000 0000"</CodeInline> prompting for blocks of digits and 
+                    refusing invalid input. Note how the cursor automatically
+                    jumps over delimiters so you don't have to type them. You can also try pasting the test credit card number <i>4543474002249996</i>.
+                </Description>
+            </SectionHeader>
+            <SectionContent FullWidth="true" Outlined="true" Code="@nameof(PatternMaskExample)" ShowCode="false">
+                <PatternMaskExample />
+            </SectionContent>          
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Defining Mask Characters">
+                <Description>
+                    When you use <CodeInline>PatternMask</CodeInline> without setting its <CodeInline>MaskChars</CodeInline> property, 
+                    you can use the default masking characters <CodeInline>a</CodeInline>, <CodeInline>0</CodeInline> and <CodeInline>*</CodeInline>. 
+                    See their definitions below. But you are not limited to these. You can re-define them or define your own.
+                    <br />
+                    <MaskCharacterTable/>
+                    <br />
+                    <MudAlert Class="my-3" Severity="Severity.Info">
+                        Note: undefined mask characters are automatically treated as delimiters.
+                    </MudAlert>                    
+                    The example below defines its own <CodeInline>MaskChars</CodeInline>. It also shows the features <CodeInline>Placeholder</CodeInline> 
+                    which makes the user aware of the input format and <CodeInline>CleanDelimiters</CodeInline> 
+                    which removes delimiters from the resulting <CodeInline>Value</CodeInline>. Last but not least the second 
+                    mask also transforms all lower-case input into upper-case. You can also try pasting <i>dc12aa309c23</i> into the field. 
+                </Description>
+            </SectionHeader>
+            <SectionContent FullWidth="true" Outlined="true" Code="@nameof(CustomCharactersExample)" ShowCode="false">
+                <CustomCharactersExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="MultiMask">
+                <Description>
+                    <CodeInline>MultiMask</CodeInline> is a powerful masking algorithm which can change its pattern depending on partial input. 
+                    It uses the same <CodeInline>MaskChars</CodeInline> as PatternMask. Check out the example code to see how easy it is to set up. 
+                </Description>
+            </SectionHeader>
+            <SectionContent FullWidth="true" Outlined="true" Code="@nameof(MultiMaskExample)" ShowCode="false">
+                <MultiMaskExample />
+            </SectionContent>          
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="DateMask">
+                <Description>
+                    <CodeInline>DateMask</CodeInline> is an auto-correcting calendar-aware date input mask with customizable format. There are some restrictions though. 
+                    Day and month must be dual digit blocks like <CodeInline>dd</CodeInline> and <CodeInline>MM</CodeInline>. The year can either be denoted by 
+                    <CodeInline>yy</CodeInline> or by <CodeInline>yyyy</CodeInline>. The characters for the day, month and year blocks are customizable. You can align 
+                    the three blocks in any order and add any delimiters you want or none at all. The day block can be left out. Year and month blocks must be used or yields undefined
+                    results as will multiple usage of a block.
+                </Description>
+            </SectionHeader>
+            <SectionContent FullWidth="true" Outlined="true" Code="@nameof(DateMaskExample)" ShowCode="false">
+                <DateMaskExample />
+            </SectionContent>          
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="RegexMask">
+                <Description>
+                    <CodeInline>RegexMask</CodeInline> is very different from the other algorithms, because it does not use mask characters. 
+                    Instead it lets you define the allowed input with a single C# regular expression. The advantage of RegexMask is that it 
+                    can allow input of variable length. The disadvantage is that it can be applied only in very specific use-cases. The problem
+                    is that the Regex needs to match <b>all incomplete versions of the input value</b> which can be very challenging for non-trivial 
+                    use-cases.<br/><br/> 
+                    The following example restricts user input to digits only on the left and restricts input to Russian postal codes 
+                    (first digit between 1 and 6, total of 6 digits) on the right. 
+                </Description>
+            </SectionHeader>
+            <SectionContent FullWidth="true" Outlined="true" Code="@nameof(RegexMaskExample)" ShowCode="false">
+                <RegexMaskExample />
+            </SectionContent>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="RegexMask.IPv4">
+                        <Description>
+                            <CodeInline>RegexMask.IPv4()</CodeInline> is a predefined <CodeInline>RegexMask</CodeInline> for an <b>IPv4</b> Address with or without port masking. 
+                        </Description>
+                    </SectionHeader>                    
+                    <SectionContent FullWidth="true" Outlined="true" Code="@nameof(RegexMaskIPv4Example)" ShowCode="false">
+                        <RegexMaskIPv4Example />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="RegexMask.IPv6">
+                        <Description>
+                            <CodeInline>RegexMask.IPv6()</CodeInline> is a predefined <CodeInline>RegexMask</CodeInline> for an <b>IPv6</b> Address with or without port masking. 
+                        </Description>
+                    </SectionHeader>                    
+                    <SectionContent FullWidth="true" Outlined="true" Code="@nameof(RegexMaskIPv6Example)" ShowCode="false">
+                        <RegexMaskIPv6Example />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="RegexMask.Email">
+                        <Description>
+                            <CodeInline>RegexMask.Email()</CodeInline> is a predefined <CodeInline>RegexMask</CodeInline> for an <b>Email</b> Address. 
+                        </Description>
+                    </SectionHeader>                    
+                    <SectionContent FullWidth="true" Outlined="true" Code="@nameof(RegexMaskEmailExample)" ShowCode="false">
+                        <RegexMaskEmailExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="BlockMask">
+                <Description>
+                    <CodeInline>BlockMask</CodeInline> can match blocks of uniform patterns with a variable length (min, max) with delimiters in between. 
+                    In this example we show a BlockMask that matches all of the following flight numbers <i>LH4234</i>, <i>RUS1727</i>, <i>OS1</i> and <i>H028</i>. 
+                </Description>
+            </SectionHeader>
+            <SectionContent FullWidth="true" Outlined="true" Code="@nameof(BlockMaskExample)" ShowCode="false">
+                <BlockMaskExample />
+            </SectionContent>          
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Implement your own Mask">
+                <Description>
+                    To write your own custom mask either derive your own from one of our masking algorithms or implement the 
+                    interface <CodeInline>IMask</CodeInline>. 
+                </Description>
+            </SectionHeader>
+        </DocsPageSection>
+        
+    </DocsPageContent>
+</DocsPage>

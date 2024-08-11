@@ -1,0 +1,45 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid Items="@_items" Sortable="true">
+    <Columns>
+        <TemplateColumn Sortable="true" SortBy="x => x.Name">
+            <HeaderTemplate>
+                Name
+            </HeaderTemplate>
+            <CellTemplate>
+                @context.Item.Name
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = @"Test in-browser-sorting of DataGrid. Hold <Ctrl> key when clicking header to extend to multi sort. Hold <Alt> key to unsort a sorted column.
+Note that the 'Misc' column is being sorted by length and not by the content itself.";
+
+
+    private IEnumerable<Item> _items = new List<Item>()
+    {
+        new Item("B", 42, "555"), 
+        new Item("A", 73, "7"), 
+        new Item("A", 11, "4444"), 
+        new Item("C", 33, "33333"),
+        new Item("A", 99, "66"), 
+        new Item("C", 44, "1111111"),
+        new Item("C", 55, "222222")
+    };
+
+    public class Item
+    {
+        public string Name { get; set; }
+        public int Value { get; set; }
+        public string Misc { get; set; }
+
+        public Item(string name, int value, String misc)
+        {
+            Name = name;
+            Value = value;
+            Misc = misc;
+        }
+    }
+}

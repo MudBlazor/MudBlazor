@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -7,33 +8,53 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTableGroupRow<T> : MudComponentBase
+#nullable enable
+
+    /// <summary>
+    /// A grouping of values for a column in a <see cref="MudTable{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of item being grouped.</typeparam>
+    public partial class MudTableGroupRow<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudComponentBase
     {
+        private bool? _checked = false;
+        private IGrouping<object, T>? _items = null;
+        private IEnumerable<IGrouping<object, T>>? _innerGroupItems = null;
+
         protected string HeaderClassname => new CssBuilder("mud-table-row")
-                                .AddClass(HeaderClass)
-                                .AddClass($"mud-table-row-group-indented-{GroupDefinition?.Level - 1}", (GroupDefinition?.Indentation ?? false) && GroupDefinition?.Level > 1).Build();
+            .AddClass(HeaderClass)
+            .AddClass($"mud-table-row-group-indented-{GroupDefinition?.Level - 1}",
+                (GroupDefinition?.Indentation ?? false) && GroupDefinition?.Level > 1)
+            .Build();
 
         protected string FooterClassname => new CssBuilder("mud-table-row")
-                                .AddClass(FooterClass)
-                                .AddClass($"mud-table-row-group-indented-{GroupDefinition?.Level - 1}", (GroupDefinition?.Indentation ?? false) && GroupDefinition?.Level > 1).Build();
+            .AddClass(FooterClass)
+            .AddClass($"mud-table-row-group-indented-{GroupDefinition?.Level - 1}",
+                (GroupDefinition?.Indentation ?? false) && GroupDefinition?.Level > 1)
+            .Build();
 
         protected string ActionsStylename => new StyleBuilder()
             .AddStyle("padding-left", "34px", GroupDefinition?.IsParentExpandable ?? false).Build();
 
-        [CascadingParameter] public TableContext Context { get; set; }
-
-        private IEnumerable<IGrouping<object, T>> _innerGroupItems = null;
+        /// <summary>
+        /// The current state of the <see cref="MudTable{T}"/> containing this group.
+        /// </summary>
+        [CascadingParameter]
+        public TableContext? Context { get; set; }
 
         /// <summary>
-        /// The group definition for this grouping level. It's recursive.
+        /// The definition for this grouping level.
         /// </summary>
-        [Parameter] public TableGroupDefinition<T> GroupDefinition { get; set; }
+        /// <remarks>
+        /// Group definitions can be recursive.
+        /// </remarks>
+        [Parameter]
+        public TableGroupDefinition<T>? GroupDefinition { get; set; }
 
-        IGrouping<object, T> _items = null;
         /// <summary>
-        /// Inner Items List for the Group
+        /// The groups and items within this grouping.
         /// </summary>
-        [Parameter] public IGrouping<object, T> Items 
+        [Parameter]
+        public IGrouping<object, T>? Items
         {
             get => _items;
             set
@@ -44,43 +65,96 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Defines Group Header Data Template
+        /// The custom content for this group's header.
         /// </summary>
-        [Parameter] public RenderFragment<TableGroupData<object, T>> HeaderTemplate { get; set; }
+        [Parameter]
+        public RenderFragment<TableGroupData<object, T>>? HeaderTemplate { get; set; }
 
         /// <summary>
-        /// Defines Group Header Data Template
+        /// The custom content for this group's footer.
         /// </summary>
-        [Parameter] public RenderFragment<TableGroupData<object, T>> FooterTemplate { get; set; }
+        [Parameter]
+        public RenderFragment<TableGroupData<object, T>>? FooterTemplate { get; set; }
 
         /// <summary>
-        /// Add a multi-select checkbox that will select/unselect every item in the table
+        /// Displays a checkbox which selects or unselects all items within this group.
         /// </summary>
-        [Parameter] public bool IsCheckable { get; set; }
-
-        [Parameter] public string HeaderClass { get; set; }
-        [Parameter] public string FooterClass { get; set; }
-
-        [Parameter] public string HeaderStyle { get; set; }
-        [Parameter] public string FooterStyle { get; set; }
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool Checkable { get; set; }
 
         /// <summary>
-        /// Custom expand icon.
+        /// Prevents the change of the current selection of all items withing this group.
         /// </summary>
-        [Parameter] public string ExpandIcon { get; set; } = Icons.Material.Filled.ExpandMore;
+        /// <remarks>
+        /// Defaults to <c>true</c>.  Requires <see cref="Checkable"/> to be <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        public bool SelectionChangeable { get; set; } = true;
 
         /// <summary>
-        /// Custom collapse icon.
+        /// The CSS classes applied to this group's header.
         /// </summary>
-        [Parameter] public string CollapseIcon { get; set; } = Icons.Material.Filled.ChevronRight;
+        /// <remarks>
+        /// Multiple classes must be separated by spaces.
+        /// </remarks>
+        [Parameter]
+        public string? HeaderClass { get; set; }
 
         /// <summary>
-        /// On click event
+        /// The CSS classes applied to this group's footer.
         /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnRowClick { get; set; }
+        /// <remarks>
+        /// Multiple classes must be separated by spaces.
+        /// </remarks>
+        [Parameter]
+        public string? FooterClass { get; set; }
 
-        private bool _checked;
-        public bool IsChecked
+        /// <summary>
+        /// The CSS styles applied to this group's header.
+        /// </summary>
+        [Parameter]
+        public string? HeaderStyle { get; set; }
+
+        /// <summary>
+        /// The CSS styles applied to this group's footer.
+        /// </summary>
+        [Parameter]
+        public string? FooterStyle { get; set; }
+
+        /// <summary>
+        /// The icon of the expand button when <see cref="TableGroupDefinition{T}.Expandable"/> is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ExpandMore"/>.
+        /// </remarks>
+        [Parameter]
+        public string ExpandIcon { get; set; } = Icons.Material.Filled.ExpandMore;
+
+        /// <summary>
+        /// The icon of the collapse button when <see cref="TableGroupDefinition{T}.Expandable"/> is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ChevronRight"/>.
+        /// </remarks>
+        [Parameter]
+        public string CollapseIcon { get; set; } = Icons.Material.Filled.ChevronRight;
+
+        /// <summary>
+        /// Occurs when a grouping row is clicked.
+        /// </summary>
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnRowClick { get; set; }
+
+        /// <summary>
+        /// Selects the checkbox for this group's header.
+        /// </summary>
+        /// <remarks>
+        /// Only has an effect when <see cref="Checkable"/> is <c>true</c>.
+        /// </remarks>
+        public bool? Checked
         {
             get => _checked;
             set
@@ -88,20 +162,28 @@ namespace MudBlazor
                 if (value != _checked)
                 {
                     _checked = value;
-                    if (IsCheckable)
-                        Table.OnGroupHeaderCheckboxClicked(value, Items.ToList());
+                    if (Checkable)
+                    {
+                        Table?.OnGroupHeaderCheckboxClicked(_checked.HasValue && _checked.Value, Items?.ToList() ?? new List<T>());
+                    }
                 }
             }
         }
 
-        public bool IsExpanded { get; internal set; } = true;
+        /// <summary>
+        /// Shows the items in this group.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        public bool Expanded { get; internal set; } = true;
 
         protected override Task OnInitializedAsync()
         {
             if (GroupDefinition != null)
             {
-                IsExpanded = GroupDefinition.IsInitiallyExpanded;
-                ((TableContext<T>)Context)?.GroupRows.Add(this);
+                Expanded = GroupDefinition.IsInitiallyExpanded;
+                ((TableContext<T>?)Context)?.GroupRows.Add(this);
                 SyncInnerGroupItems();
             }
             return base.OnInitializedAsync();
@@ -109,33 +191,43 @@ namespace MudBlazor
 
         private void SyncInnerGroupItems()
         {
-            if (GroupDefinition.InnerGroup != null)
+            if (GroupDefinition?.InnerGroup != null)
             {
                 _innerGroupItems = Table?.GetItemsOfGroup(GroupDefinition.InnerGroup, Items);
             }
         }
 
+        /// <summary>
+        /// Releases resources used by this group row.
+        /// </summary>
         public void Dispose()
         {
-            ((TableContext<T>)Context)?.GroupRows.Remove(this);
+            ((TableContext<T>?)Context)?.GroupRows.Remove(this);
         }
 
-        public void SetChecked(bool b, bool notify)
+        /// <summary>
+        /// Sets the <see cref="Checked"/> value and optionally refreshes this group.
+        /// </summary>
+        /// <param name="checkedState">The new checked state.</param>
+        /// <param name="notify">When <c>true</c>, and <see cref="Checkable"/> is <c>true</c>, the <see cref="MudTable{T}.OnGroupHeaderCheckboxClicked(bool, IEnumerable{T})"/> event will occur.</param>
+        public void SetChecked(bool? checkedState, bool notify)
         {
-            if (notify)
-                IsChecked = b;
-            else
+            if (_checked != checkedState)
             {
-                _checked = b;
-                if (IsCheckable)
-                    InvokeAsync(StateHasChanged);
+                if (notify)
+                    Checked = checkedState;
+                else
+                {
+                    _checked = checkedState;
+                    if (Checkable)
+                        InvokeAsync(StateHasChanged);
+                }
             }
         }
 
-        private MudTable<T> Table
+        private MudTable<T>? Table
         {
-            get => (MudTable<T>)((TableContext<T>)Context)?.Table;
+            get => (MudTable<T>?)((TableContext<T>?)Context)?.Table;
         }
-
     }
 }

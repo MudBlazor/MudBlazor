@@ -1,6 +1,5 @@
 @namespace MudBlazor.UnitTests.TestComponents
 
-
 <MudTable @ref="filteredTable" Items="states" Filter="new Func<string, bool>(FilterFunc)">
      <ToolBarContent>
         <MudText>Filtered Item Count: @FilteredItemCount</MudText>
@@ -11,7 +10,7 @@
         <MudTd>@context</MudTd>
     </RowTemplate> 
     <PagerContent>
-        <MudTablePager />
+        <MudTablePager PageSizeOptions="new int[] {10, 25, int.MaxValue }" />
     </PagerContent>
 </MudTable>
 

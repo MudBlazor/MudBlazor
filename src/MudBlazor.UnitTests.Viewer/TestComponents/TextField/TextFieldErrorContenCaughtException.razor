@@ -1,0 +1,38 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<ErrorBoundary>
+    <ChildContent>
+        <MudTextField @bind-Value="Text"
+                      OnBlur="@HandleBlurAsync"
+                      OnKeyDown="@HandleKeyDownAsync"
+                      OnKeyUp="@HandleKeyUpAsync"
+                      Variant="Variant.Outlined"
+                      Label="Type here and blur input to show wrong exception handling"/>
+        <br/>
+    </ChildContent>
+    <ErrorContent>
+        <MudAlert Severity="Severity.Error">Oh my! We caught an error and handled it!</MudAlert>
+    </ErrorContent>
+</ErrorBoundary>
+
+@code {
+    public string Text { get; set; } = "";
+
+    public async Task HandleBlurAsync()
+    {
+        await Task.Delay(100);
+        throw new Exception("Something went wrong...");
+    }
+
+    private async Task HandleKeyDownAsync(KeyboardEventArgs arg)
+    {
+        await Task.Delay(100);
+        throw new Exception("Something went wrong...");
+    }
+
+    private async Task HandleKeyUpAsync(KeyboardEventArgs arg)
+    {
+        await Task.Delay(100);
+        throw new Exception("Something went wrong...");
+    }
+}

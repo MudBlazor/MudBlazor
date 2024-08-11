@@ -1,0 +1,29 @@
+﻿@import '../../abstracts/variables';
+
+@mixin align-content ($breakpoint) {
+  .align-content-#{$breakpoint}start {
+    align-content: flex-start !important;
+  }
+
+  .align-content-#{$breakpoint}end {
+    align-content: flex-end !important;
+  }
+
+  .align-content-#{$breakpoint}center {
+    align-content: center !important;
+  }
+
+  .align-content-#{$breakpoint}space-between {
+    align-content: space-between !important;
+  }
+
+  .align-content-#{$breakpoint}space-around {
+    align-content: space-around !important;
+  }
+
+  .align-content-#{$breakpoint}stretch {
+    align-content: stretch !important;
+  }
+}
+
+@include align-content("");

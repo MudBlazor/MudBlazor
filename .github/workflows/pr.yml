@@ -1,0 +1,47 @@
+on:
+  pull_request_target:
+    types: [opened]
+
+jobs:
+  pr-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const body = pr.body;
+            let labels = [];
+            const isChecked = /-\s*\[\s*[x|X]\s*\]\s*/;
+            if(RegExp(isChecked.source + "Bug fix \\(non-breaking change which fixes an issue\\)").test(body)) {
+              labels.push("bug");
+              console.log("PR type: bug fix.");
+            }
+            
+            if(RegExp(isChecked.source + "New feature \\(non-breaking change which adds functionality\\)").test(body)) {
+              labels.push("enhancement");
+              console.log("PR type: enhancement.");
+            }
+
+            if(RegExp(isChecked.source + "Breaking change \\(fix or feature that would cause existing functionality to not work as expected\\)").test(body)) {
+              labels.push("breaking change");
+              console.log("PR type: breaking change.");
+            }
+
+            if(RegExp(isChecked.source + "Documentation \\(fix or improvement to the website or code docs\\)").test(body)) {
+              labels.push("docs");
+              console.log("PR type: documentation.");
+            }
+            
+            if(!pr.draft) {
+              labels.push("PR: needs review");
+            }
+            
+            if(labels.length != 0) {
+              github.rest.issues.addLabels({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                labels: labels
+              })
+            }

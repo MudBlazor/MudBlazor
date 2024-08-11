@@ -1,0 +1,15 @@
+﻿$count: 1;
+$value: 0;
+
+@while $count < 12 {
+  .z-#{$value} {
+    z-index: $value;
+  }
+
+  $count: $count + 1;
+  $value: $value + 10;
+}
+
+.z-auto {
+  z-index: auto;
+}

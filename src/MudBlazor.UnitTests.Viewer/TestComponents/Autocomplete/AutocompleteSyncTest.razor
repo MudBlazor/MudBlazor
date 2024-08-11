@@ -1,0 +1,23 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
+
+<MudPopoverProvider />
+
+<MudAutocomplete T="@string" SearchFunc="@Search" Label="Item" Class="@AutocompleteClass" />
+
+@code {
+    public static string __description__ = "Autocomplete should allow for a SearchFunc that returns a non-async task";
+
+    public const string AutocompleteClass = "autocomplete-test";
+
+    public static readonly string[] Items = { "One", "Two", "Three" };
+
+    private Task<IEnumerable<string>> Search(string text, CancellationToken token)
+    {
+        var result = string.IsNullOrWhiteSpace(text)
+            ? Items
+            : Items.Where(value => value.Contains(text, StringComparison.OrdinalIgnoreCase));
+
+        return Task.FromResult(result);
+    }
+}

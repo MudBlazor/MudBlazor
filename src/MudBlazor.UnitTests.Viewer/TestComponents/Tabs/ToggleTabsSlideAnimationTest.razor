@@ -9,7 +9,7 @@
     <MudSelectItem T="Position" Value="@Position.Bottom">Bottom</MudSelectItem>
 </MudSelect>
 <br />
-<MudTabs @bind-ActivePanelIndex="@SelectedTab" DisableSliderAnimation="@toggle" Position="@Position">
+<MudTabs @bind-ActivePanelIndex="@SelectedTab" SliderAnimation="@SliderAnimation" Position="@Position">
     <MudTabPanel Text="Tab One">
         <MudText>Content One</MudText>
     </MudTabPanel>
@@ -24,18 +24,19 @@
     </MudTabPanel>
 </MudTabs>
 
-Disabled (@toggle):
-<MudToggleIconButton @bind-Toggled="@toggle" 
-    Icon="@Icons.Material.Filled.Animation" 
-    ToggledIcon="@Icons.Material.Filled.Animation" 
-    Color="Color.Error" 
-    ToggledColor="Color.Success"
-/>
+SliderAnimation (@SliderAnimation):
+<MudToggleIconButton @bind-Toggled="@SliderAnimation"
+        Icon="@Icons.Material.Filled.Animation" 
+        ToggledIcon="@Icons.Material.Filled.Animation" 
+        Color="Color.Error" 
+        ToggledColor="Color.Success"/>
 
 @code {
-    public static int SelectedTab { get; set; } = 2;
+    [Parameter]
+    public int SelectedTab { get; set; } = 2;
+
     public MudTabs Tabs;
-    public bool toggle { get; set; } = true;
+    public bool SliderAnimation { get; set; } = true;
 
      public Position Position { get; set; } = Position.Left;
 

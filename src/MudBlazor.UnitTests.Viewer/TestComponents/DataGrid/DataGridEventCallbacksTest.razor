@@ -1,11 +1,15 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
+@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid T="Item" Items="@_items" RowClick="@OnRowClick" SelectedItemChanged="@OnSelectedItemChanged"
-    SelectedItemsChanged="@OnSelectedItemsChanged" StartedEditingItem="@OnStartedEditingItem"
-    StartedCommittingItemChanges="@OnStartedCommittingItemChanges" EditingItemCancelled="@OnEditingItemCancelled">
+<MudDataGrid T="Item" Items="@_items" EditMode="@DataGridEditMode.Cell"
+    RowClick="@OnRowClick"
+    RowContextMenuClick="@OnRowContextMenuClick"
+    SelectedItemChanged="@OnSelectedItemChanged"
+    CommittedItemChanges="@OnCommittedItemChanges" 
+    StartedEditingItem="@OnStartedEditingItem" 
+    CanceledEditingItem="@OnCanceledEditingItem"
+    ReadOnly="false">
     <Columns>
-        <Column T="Item" Type="ColumnType.SelectionCheckBox" EnableFooterSelection="true" />
-        <Column T="Item" Field="@nameof(Item.Name)" />
+        <PropertyColumn Property="x => x.Name" />
     </Columns>
 </MudDataGrid>
 
@@ -18,15 +22,20 @@
     };
 
     public bool RowClicked { get; set; }
+    public bool RowContextMenuClicked { get; set; }
     public bool SelectedItemChanged { get; set; }
-    public bool SelectedItemsChanged { get; set; }
+    public bool CommittedItemChanges { get; set; }
     public bool StartedEditingItem { get; set; }
-    public bool StartedCommittingItemChanges { get; set; }
-    public bool EditingItemCancelled { get; set; }
+    public bool CanceledEditingItem { get; set; }
 
     private void OnRowClick(DataGridRowClickEventArgs<Item> args)
     {
         RowClicked = true;
+    }
+    
+    private void OnRowContextMenuClick(DataGridRowClickEventArgs<Item> args)
+    {
+        RowContextMenuClicked = true;
     }
 
     private void OnSelectedItemChanged(Item item)
@@ -34,9 +43,9 @@
         SelectedItemChanged = true;
     }
 
-    private void OnSelectedItemsChanged(HashSet<Item> items)
+    private void OnCommittedItemChanges(Item item)
     {
-        SelectedItemsChanged = true;
+        CommittedItemChanges = true;
     }
 
     private void OnStartedEditingItem(Item item)
@@ -44,14 +53,9 @@
         StartedEditingItem = true;
     }
 
-    private void OnStartedCommittingItemChanges(Item item)
+    private void OnCanceledEditingItem(Item item)
     {
-        StartedCommittingItemChanges = true;
-    }
-
-    private void OnEditingItemCancelled(Item item)
-    {
-        EditingItemCancelled = true;
+        CanceledEditingItem = true;
     }
 
     public class Item

@@ -1,36 +1,26 @@
-<!--https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-reference -->
+﻿<!--https://docs.microsoft.com/visualstudio/msbuild/msbuild-reference -->
 <!--Use: dotnet msbuild -preprocess:<fileName>.xml to evaluate this project-->
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
-  <!--Hook for the generated static content-->
   <PropertyGroup>
-    <ResolveStaticWebAssetsInputsDependsOn>
-      IncludeGeneratedStaticFiles;
-      $(ResolveStaticWebAssetsInputsDependsOn)
-    </ResolveStaticWebAssetsInputsDependsOn>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-  </PropertyGroup>
-
-  <!--Outside Visual Studio SolutionDir is not available-->  
+  <!--Outside Visual Studio SolutionDir is not available-->
   <PropertyGroup>
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)../</SolutionDir>
   </PropertyGroup>
 
-  <!--Binary path for the code generator-->
-  <Choose>
-    <When Condition="'$(TargetFramework)' == 'netstandard2.1'">
-      <PropertyGroup><BinDocsCompiler>$(SolutionDir)MudBlazor.Docs.Compiler/bin/Debug/netcoreapp3.1/MudBlazor.Docs.Compiler.dll</BinDocsCompiler></PropertyGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup><BinDocsCompiler>$(SolutionDir)MudBlazor.Docs.Compiler/bin/Debug/net6.0/MudBlazor.Docs.Compiler.dll</BinDocsCompiler></PropertyGroup>
-    </Otherwise>
-  </Choose>
-
+  <!--Analyzer Config-->
+  <PropertyGroup>
+    <MudAllowedAttributePattern>LowerCase</MudAllowedAttributePattern>
+    <MudIllegalParameters>V7IgnoreCase</MudIllegalParameters>
+    <MudDebugAnalyzer>false</MudDebugAnalyzer>
+  </PropertyGroup>
+  
   <!--Project path for code generator-->
   <PropertyGroup>
+    <BinDocsCompiler>$(SolutionDir)MudBlazor.Docs.Compiler/bin/Debug/net8.0/MudBlazor.Docs.Compiler.dll</BinDocsCompiler>
     <ProjectDocsCompiler>dotnet run --configuration release --project "$(SolutionDir)MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj"</ProjectDocsCompiler>
   </PropertyGroup>
 
@@ -53,15 +43,18 @@
   </Target>
 
   <!--Add Content that is being generated as part of the build cycle-->
-  <!--We need to do this because the project is not yet aware of files that were generated after the build started-->  
+  <!--We need to do this because the project is not yet aware of files that were generated after the build started-->
   <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild" DependsOnTargets="CompileDocs;ReadFromFile">
     <ItemGroup>
-      <Compile Include="Models/Snippets.generated.cs" Condition="!Exists('Models/Snippets.generated.cs')" />
-      <Compile Include="Models/DocStrings.generated.cs" Condition="!Exists('Models/DocStrings.generated.cs')" />
+      <!--Include without duplication-->
+      <_NewCompiledSnippets Include="Models\Snippets.generated.cs" Exclude="@(Compile)" />
+      <_NewCompiledDocsStrings Include="Models\Generated\ApiDocumentation.generated.cs" Exclude="@(Compile)" />
+      <Compile Include="@(_NewCompiledSnippets)" />
+      <Compile Include="@(_NewCompiledDocsStrings)" />
       <EmbeddedResource Include="@(NewExampleCodeToBuild)" Condition="@(NewExampleCodeToBuild-&gt;Count()) != 0" />
     </ItemGroup>
   </Target>
- 
+
   <!--Update ExampleCode-->
   <ItemGroup>
     <EmbeddedResource Include="Pages\**\*.html" />
@@ -80,7 +73,8 @@
       <FilesToClean Include="./Pages/**/*Example_DialogCode.*" />
       <FilesToClean Include="./NewFilesToBuild.txt" />
       <FilesToClean Include="./Models/Snippets.generated.cs" />
-      <FilesToClean Include="./Models/DocStrings.generated.cs" />
+      <FilesToClean Include="./Models/Generated/ApiDocumentation.generated.cs" />
+      <FilesToClean Include="./wwwroot/MudBlazorDocs.css" />
       <FilesToClean Include="./wwwroot/MudBlazorDocs.min.css" />
     </ItemGroup>
     <Delete Files="@(FilesToClean)" />
@@ -88,46 +82,38 @@
 
   <!--Packages-->
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="10.3.6" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.1.*" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.1.*" />
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
-    <PackageReference Include="Blazored.LocalStorage" Version="4.1.5" />
+    <PackageReference Include="Blazor-Analytics" Version="3.12.0" />
+    <PackageReference Include="BytexDigital.Blazor.Components.CookieConsent" Version="1.2.0-preview.1721587026" />
+    <PackageReference Include="FluentValidation" Version="11.9.2" />
+    <PackageReference Include="FuzzySharp" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.7" />
+    <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
   </ItemGroup>
 
   <!--Project dependencies-->
   <ItemGroup>
     <ProjectReference Include="../MudBlazor/MudBlazor.csproj" />
-      <ProjectReference Include="../MudBlazor.Examples.Data/MudBlazor.Examples.Data.csproj" />
+    <ProjectReference Include="../MudBlazor.Examples.Data/MudBlazor.Examples.Data.csproj" />
+    <ProjectReference Include="../MudBlazor.SourceGenerator/MudBlazor.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
   </ItemGroup>
 
-  <!--Excubo  webcompiler -  used for scss and js compilation-->
-  <Target Name="ToolRestore">
-      <Exec Command="dotnet tool restore" StandardOutputImportance="high" />
-  </Target>
+  <PropertyGroup>
+    <SassCompilerEnableWatcher>false</SassCompilerEnableWatcher>
+  </PropertyGroup>
 
-  <Target Name="WebCompiler" DependsOnTargets="ToolRestore">
-      <Exec Command="dotnet webcompiler ./Styles/MudBlazorDocs.scss -c excubowebcompiler.json" StandardOutputImportance="high" StandardErrorImportance="high" />
-  </Target>
-
-  <!--Output of Excubo webcompiler-->
-  <Target Name="IncludeGeneratedStaticFiles" DependsOnTargets="WebCompiler">
-    <Error Condition="!Exists('wwwroot/MudBlazorDocs.min.css')" Text="Missing MudBlazorDocs.min.css in wwwroot" />
-    <!--If we ever bundle js  for the docs site uncomment the below check-->
-    <!--<Error Condition="!Exists('wwwroot/MudBlazorDocs.min.js')" Text="Missing MudBlazorDocs.min.js in wwwroot" />-->
-    <ItemGroup>
-      <Content Include="wwwroot/MudBlazorDocs.min.css" Condition="!Exists('wwwroot/MudBlazorDocs.min.css')" />
-      <Content Include="wwwroot/MudBlazorDocs.min.js" Condition="!Exists('wwwroot/MudBlazorDocs.min.js')" />
-    </ItemGroup>
-  </Target>
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.SassCompiler" Version="1.72.0">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
 
   <!--Dont Include in build output-->
   <ItemGroup>
     <Content Remove="compilerconfig.json" />
-    <Content Remove="excubowebcompiler.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="wwwroot\images\landingpage" />
+    <Content Remove="sasscompiler.json" />
   </ItemGroup>
 
 </Project>

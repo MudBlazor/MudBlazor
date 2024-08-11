@@ -1,0 +1,30 @@
+﻿@using System.Threading
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTable T="int" ServerDataWithCancel="@(new Func<TableState, CancellationToken, Task<TableData<int>>>(ServerReload))">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortLabel="No." T="int">Nr</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    public static string __description__ = "The table should cancel prior requests for server data when using ServerDataWithCancel.";
+
+    /// <summary>
+    /// Reloads the data from the server, with support for cancellation.
+    /// </summary>
+    private async Task<TableData<int>> ServerReload(TableState state, CancellationToken token)
+    {
+        // Simulate "loading data" for two seconds
+        await Task.Delay(2000, token);
+
+        // Make some test data to return
+        IEnumerable<int> data = new List<int>() { 1, 2, 3 };
+
+        // Return the data
+        return new TableData<int>() { TotalItems = data.Count(), Items = data.ToArray() };
+    }
+}

@@ -1,0 +1,82 @@
+@namespace MudBlazor.UnitTests.TestComponents
+@typeparam TItem
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudDataGrid T="WeatherForecast"
+                     @ref="MudGridRef"
+                     Elevation="25"
+                     Items="@forecasts"
+                     Hover="true"
+                     Outlined="false"
+                     Filterable="true"
+                     Loading="@_loading"
+                     Height="500px"
+                     Bordered="true"
+                     FixedHeader="true">
+            <Columns>
+                <PropertyColumn Property="x => x.Id" Title="Id" Sortable="true" />
+                <PropertyColumn Property="x => x.Date" Title="Date" Sortable="true" />
+                <PropertyColumn Property="x => x.TemperatureC" Title="Temp. (C)" Sortable="true" />
+                <PropertyColumn Property="x => x.TemperatureF" Title="Temp. (F)" Sortable="true" />
+                <PropertyColumn Property="x => x.Summary" Title="Summary" Sortable="true" />
+            </Columns>
+            <PagerContent>
+                <MudDataGridPager T="WeatherForecast" />
+            </PagerContent>
+        </MudDataGrid>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public MudDataGrid<WeatherForecast> MudGridRef { get; private set; }
+    private bool _loading;
+    private IEnumerable<WeatherForecast> forecasts = new List<WeatherForecast>();
+
+    // These cannot be strings...
+    //public string Guid1 => "98ee67d6-0302-40f4-935a-0014e712a9e1";
+    //public string Guid2 => "C3D88136-44AF-4955-B422-5EE13463FDCE";
+    public Guid Guid1 => Guid.Parse("98ee67d6-0302-40f4-935a-0014e712a9e1");
+    public Guid Guid2 => Guid.Parse("C3D88136-44AF-4955-B422-5EE13463FDCE");
+
+    protected override void OnInitialized()
+    {
+        _loading = true;
+        forecasts = new List<WeatherForecast>()
+        {
+            new WeatherForecast()
+            {
+                Id = Parse(Guid1),
+                Date = DateTime.UtcNow,
+                TemperatureC = 14,
+                Summary = "Bracing"
+            },
+            new WeatherForecast()
+            {
+                Id = Parse(Guid2),
+                Date = DateTime.UtcNow,
+                TemperatureC = 64,
+                Summary = "Bracing"
+            },
+        };
+        _loading = false;
+    }
+
+    public dynamic Parse(Guid id)
+    {
+        return id;
+    }
+
+    public class WeatherForecast
+    {
+        public TItem Id { get; set; }
+
+        public DateTime Date { get; set; }
+
+        public int TemperatureC { get; set; }
+
+        public string Summary { get; set; }
+
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+}

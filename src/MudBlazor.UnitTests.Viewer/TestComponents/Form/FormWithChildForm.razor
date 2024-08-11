@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudForm @bind-IsValid="_parentIsValid"
+         ValidationDelay="0"
+         Class="parent-form">
+    <MudText>Parent Valid: @(_parentIsValid.ToString())</MudText>
+    <MudTextField Label="Text in Parent"
+                  Required="true"
+                  T="string"
+                  Class="parent-text-field"
+    />
+    <MudText HtmlTag="span"><MudSwitch @bind-Value="@_showChildForm" Color="Color.Primary" /> Display child form</MudText>
+    @if (_showChildForm)
+    {
+        <MudForm @bind-IsValid="_childIsValid"
+                 ValidationDelay="0"
+                 Class="child-form">
+            <MudText>Child Valid: @(_childIsValid.ToString())</MudText>
+            <MudTextField Label="Text in Child"
+                          Required="true"
+                          T="string"
+                          Class="child-text-field"
+            />
+        </MudForm>
+    }
+</MudForm>
+@code {
+    private bool _parentIsValid, _childIsValid, _showChildForm;
+    public static string __description__ = "Based on issue #7066. Removing the child form should no longer influence the parent form.";
+}

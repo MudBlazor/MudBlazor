@@ -1,0 +1,83 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+
+<MudDataGrid @ref="dataGrid" MultiSelection="true" Items="@Elements" Filterable="true"
+    Hideable="true" Groupable="true" GroupExpanded="false" GroupClassFunc="GroupClassFunc">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Periodic Elements</MudText>
+        <MudSpacer />
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="x => x.Number" Title="Nr" Filterable="false" Groupable="false" />
+        <PropertyColumn Property="x => x.Sign" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Position" />
+        <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
+        <PropertyColumn Property="x => x.Group" Title="Category" Grouping GroupBy="@_groupBy">
+            <GroupTemplate>
+                @if (_customizeGroupTemplate)
+                {
+                    <span style="font-weight:bold">Group: @context.Grouping.Key <MudChip Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small">total @context.Grouping.Count()</MudChip></span>
+                }
+                else
+                {
+                    <span style="font-weight:bold">Category: @context.Grouping.Key</span>
+                }
+            </GroupTemplate>
+        </PropertyColumn>
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Element" />
+    </PagerContent>
+</MudDataGrid>
+
+<div class="d-flex flex-wrap mt-4">
+    <MudSwitch T="bool" @bind-Value="_customizeGroupTemplate" Color="@Color.Primary">Customize Group Template</MudSwitch>
+    <MudSwitch T="bool" Value="@_customizeGroupBy" Color="@Color.Primary" ValueChanged="@CustomizeByGroupChanged">Customize Group By</MudSwitch>
+    <MudButton OnClick="@ExpandAllGroups" Color="@Color.Primary">Expand All</MudButton>
+    <MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary">Collapse All</MudButton>
+</div>
+
+@code {
+    IEnumerable<Element> Elements = new List<Element>();
+    MudDataGrid<Element> dataGrid;
+    bool _customizeGroupTemplate;
+    static bool _customizeGroupBy;
+    static string[] _nonmetals = new string[] { "H", "He","N", "O", "F", "Ne", "Cl", "Ar", "Kr", "Xe", "Rn", "Br", "C", "P", "Se", "Se", "I" };
+    Func<Element, object> _groupBy = x => 
+    {
+        if (_customizeGroupBy)
+            return _nonmetals.Contains(x.Sign) ? "Nonmetal":  "Metal";
+        return x.Group;
+    };
+
+    private string GroupClassFunc(GroupDefinition<Element> item)
+    {
+        return item.Grouping.Key?.ToString() == "Nonmetal" || item.Grouping.Key?.ToString() == "Other"
+                ? "mud-theme-warning"
+                : string.Empty;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+    }
+
+    void ExpandAllGroups()
+    {
+        dataGrid?.ExpandAllGroups();
+    }
+
+    void CollapseAllGroups()
+    {
+        dataGrid?.CollapseAllGroups();
+    }
+
+    void CustomizeByGroupChanged(bool isChecked)
+    {
+        _customizeGroupBy = isChecked;
+        dataGrid.GroupItems();
+    }
+}

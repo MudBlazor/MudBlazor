@@ -1,19 +1,15 @@
-﻿@using System.Net
-@using System.Text
-@namespace MudBlazor.Docs.Examples
+﻿@namespace MudBlazor.Docs.Examples
 
-<MudDialog DisableSidePadding="true">
+<MudDialog Style="height: 400px">
     <DialogContent>
-        <MudContainer Style="max-height: 300px; overflow-y: scroll">
-            @if (Loading)
-            {
-                <MudProgressCircular Indeterminate="true"></MudProgressCircular>
-            }
-            else
-            {
-                <MudText Style="white-space: pre-wrap;">@LicenseText</MudText>
-            }
-        </MudContainer>
+        @if (_loading)
+        {
+            <MudProgressCircular Indeterminate="true"></MudProgressCircular>
+        }
+        else
+        {
+            <MudText Style="white-space: pre-wrap;">@_licenseText</MudText>
+        }
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Primary" OnClick="Ok">Accept</MudButton>
@@ -22,24 +18,23 @@
 
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    private string _licenseText;
+    private bool _loading;
 
-    [Inject] HttpClient HttpClient { get; set; }
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    [Inject]
+    private HttpClient HttpClient { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        Loading = true;
+        _loading = true;
         var response = await HttpClient.GetAsync("https://raw.githubusercontent.com/MudBlazor/MudBlazor/master/LICENSE");
-        LicenseText = await response.Content.ReadAsStringAsync();
-        Loading = false;
+        _licenseText = await response.Content.ReadAsStringAsync();
+        _loading = false;
     }
 
-    private string LicenseText;
-    private bool Loading = false;
-
-    private void Ok()
-    {
-        MudDialog.Close(DialogResult.Ok(true));
-    }
+    private void Ok() => MudDialog.Close(DialogResult.Ok(true));
 }

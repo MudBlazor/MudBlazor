@@ -1,0 +1,129 @@
+﻿@page "/utilities/spacing"
+@page "/features/spacing"
+
+<DocsPage>
+    <DocsPageHeader Title="Spacing" SubTitle="Spacing is a way to modify padding or margin without creating new classes." />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="How it works">
+                <Description>
+                    Use the <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> <b>property</b> and choose a <b>direction</b>. Then add <b>size</b>, ranging from 0 to 20.
+                </Description>
+            </SectionHeader>
+            <MudText Class="pt-6 pb-2">The <b>properties</b>:</MudText>
+            <ul class="mud-typography-body1">
+                <li><CodeInline>m</CodeInline> - for classes that set <CodeInline>margin</CodeInline></li>
+                <li><CodeInline>p</CodeInline> - for classes that set <CodeInline>padding</CodeInline></li>
+            </ul>
+            <MudText Class="pt-6 pb-2">The <b>direction</b> property applies to:</MudText>
+            <ul class="mud-typography-body1">
+                <li><CodeInline>t</CodeInline> - for <CodeInline>margin-top</CodeInline> or <CodeInline>padding-top</CodeInline></li>
+                <li><CodeInline>b</CodeInline> - for <CodeInline>margin-bottom</CodeInline> or <CodeInline>padding-bottom</CodeInline></li>
+                <li><CodeInline>l</CodeInline> - for <CodeInline>margin-left</CodeInline> or <CodeInline>padding-left</CodeInline></li>
+                <li><CodeInline>r</CodeInline> - for <CodeInline>margin-right</CodeInline> or <CodeInline>padding-right</CodeInline></li>
+                <li><CodeInline>s</CodeInline> - for <CodeInline>margin-left/padding-left</CodeInline> <i>(in LTR mode)</i> and <CodeInline>margin-right/padding-right</CodeInline> <i>(in RTL mode)</i></li>
+                <li><CodeInline>e</CodeInline> - for <CodeInline>margin-right/padding-right</CodeInline> <i>(in LTR mode)</i> and <CodeInline>margin-left/padding-left</CodeInline> <i>(in RTL mode)</i></li>
+                <li><CodeInline>x</CodeInline> - for <CodeInline>margin-left/padding-left</CodeInline> and <CodeInline>margin-right/padding-right</CodeInline></li>
+                <li><CodeInline>y</CodeInline> - for <CodeInline>margin-top/padding-top</CodeInline> and <CodeInline>margin-bottom/padding-bottom</CodeInline></li>
+                <li><CodeInline>a</CodeInline> - for all 4 sides.</li>
+            </ul>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Size">
+                <Description>
+                    The size changes with an interval of 4 pixels.
+                </Description>
+            </SectionHeader>
+            <MudGrid>
+                <MudItem md="6">
+                    <MudText Typo="Typo.h6" Color="Color.Primary">Positive</MudText>
+                    <ul class="mud-typography-body1 my-2 mud-spacing-list">
+                        <li><CodeInline>0</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>0</CodeInline></li>
+                        <li><CodeInline>1</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>4px</CodeInline></li>
+                        <li><CodeInline>2</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>8px</CodeInline></li>
+                        <li><CodeInline>3</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>12px</CodeInline></li>
+                        <li><CodeInline>4</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>16px</CodeInline></li>
+                        <li><CodeInline>5</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>20px</CodeInline></li>
+                        <li><CodeInline>6</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>24px</CodeInline></li>
+                        <li><CodeInline>7</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>28px</CodeInline></li>
+                        <li><CodeInline>8</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>32px</CodeInline></li>
+                        <li><CodeInline>9</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>36px</CodeInline></li>
+                        <li><CodeInline>10</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>40px</CodeInline></li>
+                        <li><CodeInline>11</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>44px</CodeInline></li>
+                        <li><CodeInline>12</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>48px</CodeInline></li>
+                        <li><CodeInline>13</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>52px</CodeInline></li>
+                        <li><CodeInline>14</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>56px</CodeInline></li>
+                        <li><CodeInline>15</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>60px</CodeInline></li>
+                        <li><CodeInline>16</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>64px</CodeInline></li>
+                        <li><CodeInline>17</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>68px</CodeInline></li>
+                        <li><CodeInline>18</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>72px</CodeInline></li>
+                        <li><CodeInline>19</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>76px</CodeInline></li>
+                        <li><CodeInline>20</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>80px</CodeInline></li>
+                        <li><CodeInline>auto</CodeInline> sets the spacing to <CodeInline>auto</CodeInline></li>
+                    </ul>
+                </MudItem>
+                <MudItem md="6">
+                    <MudText Typo="Typo.h6" Color="Color.Secondary">Negative</MudText>
+                    <ul class="mud-typography-body1 my-2 mud-spacing-list">
+                        <li><CodeInline SecondaryColor="true">n1</CodeInline> sets <CodeInline SecondaryColor="true">margin</CodeInline> to <CodeInline SecondaryColor="true">-4px</CodeInline></li>
+                        <li><CodeInline SecondaryColor="true">n2</CodeInline> sets <CodeInline SecondaryColor="true">margin</CodeInline> to <CodeInline SecondaryColor="true">-8px</CodeInline></li>
+                        <li><CodeInline SecondaryColor="true">n3</CodeInline> sets <CodeInline SecondaryColor="true">margin</CodeInline> to <CodeInline SecondaryColor="true">-12px</CodeInline></li>
+                        <li><CodeInline SecondaryColor="true">n4</CodeInline> sets <CodeInline SecondaryColor="true">margin</CodeInline> to <CodeInline SecondaryColor="true">-16px</CodeInline></li>
+                        <li><CodeInline SecondaryColor="true">n5</CodeInline> sets <CodeInline SecondaryColor="true">margin</CodeInline> to <CodeInline SecondaryColor="true">-20px</CodeInline></li>
+                        <li><CodeInline SecondaryColor="true">n6</CodeInline> sets <CodeInline SecondaryColor="true">margin</CodeInline> to <CodeInline SecondaryColor="true">-24px</CodeInline></li>
+                        <li><CodeInline SecondaryColor="true">n7</CodeInline> sets <CodeInline SecondaryColor="true">margin</CodeInline> to <CodeInline SecondaryColor="true">-28px</CodeInline></li>
+                        <li><CodeInline SecondaryColor="true">n8</CodeInline> sets <CodeInline SecondaryColor="true">margin</CodeInline> to <CodeInline SecondaryColor="true">-32px</CodeInline></li>
+                        <li><CodeInline SecondaryColor="true">n9</CodeInline> sets <CodeInline SecondaryColor="true">margin</CodeInline> to <CodeInline SecondaryColor="true">-36px</CodeInline></li>
+                        <li><CodeInline SecondaryColor="true">n10</CodeInline> sets <CodeInline SecondaryColor="true">margin</CodeInline> to <CodeInline SecondaryColor="true">-40px</CodeInline></li>
+                        <li><CodeInline SecondaryColor="true">n11</CodeInline> sets <CodeInline SecondaryColor="true">margin</CodeInline> to <CodeInline SecondaryColor="true">-44px</CodeInline></li>
+                        <li><CodeInline SecondaryColor="true">n12</CodeInline> sets <CodeInline SecondaryColor="true">margin</CodeInline> to <CodeInline SecondaryColor="true">-48px</CodeInline></li>
+                        <li><CodeInline SecondaryColor="true">n13</CodeInline> sets <CodeInline SecondaryColor="true">margin</CodeInline> to <CodeInline SecondaryColor="true">-52px</CodeInline></li>
+                        <li><CodeInline SecondaryColor="true">n14</CodeInline> sets <CodeInline SecondaryColor="true">margin</CodeInline> to <CodeInline SecondaryColor="true">-56px</CodeInline></li>
+                        <li><CodeInline SecondaryColor="true">n15</CodeInline> sets <CodeInline SecondaryColor="true">margin</CodeInline> to <CodeInline SecondaryColor="true">-60px</CodeInline></li>
+                        <li><CodeInline SecondaryColor="true">n16</CodeInline> sets <CodeInline SecondaryColor="true">margin</CodeInline> to <CodeInline SecondaryColor="true">-64px</CodeInline></li>
+                        <li><CodeInline SecondaryColor="true">n17</CodeInline> sets <CodeInline SecondaryColor="true">margin</CodeInline> to <CodeInline SecondaryColor="true">-68px</CodeInline></li>
+                        <li><CodeInline SecondaryColor="true">n18</CodeInline> sets <CodeInline SecondaryColor="true">margin</CodeInline> to <CodeInline SecondaryColor="true">-72px</CodeInline></li>
+                        <li><CodeInline SecondaryColor="true">n19</CodeInline> sets <CodeInline SecondaryColor="true">margin</CodeInline> to <CodeInline SecondaryColor="true">-76px</CodeInline></li>
+                        <li><CodeInline SecondaryColor="true">n20</CodeInline> sets <CodeInline SecondaryColor="true">margin</CodeInline> to <CodeInline SecondaryColor="true">-80px</CodeInline></li>
+                    </ul>
+                </MudItem>
+            </MudGrid>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Examples">
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(SpacingExample)">
+                <SpacingExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Breakpoints">
+                <Description>You can combine the spacing system with <MudLink Href="/features/breakpoints">MudBlazor's breakpoints</MudLink> to target specific screen sizes.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(SpacingBreakpointExample)">
+                <SpacingBreakpointExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Centering Horizontal">
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(SpacingCenteringExample)">
+                <SpacingCenteringExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Negative Margins">
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(SpacingNegativeExample)" Block="true">
+                <SpacingNegativeExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

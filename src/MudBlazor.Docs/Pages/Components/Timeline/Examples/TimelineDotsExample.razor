@@ -14,7 +14,9 @@
                     }
                     else if(DotConfig == 2)
                     {
-                        <MudAvatar Size="@DotSize" Image="_content/MudBlazor.Docs/images/mony.png" />
+                        <MudAvatar Size="@DotSize">
+                            <MudImage Src="images/mony.jpg" />
+                        </MudAvatar>
                     }
                 </ItemDot>
             </MudTimelineItem>
@@ -26,7 +28,7 @@
     <MudItem xs="12" md="4">
         <MudPaper Class="pa-4" Elevation="0">
             <MudText Typo="Typo.h6">Dot Options</MudText>
-            <MudSelect Label="Color" OffsetY="true" Dense="true" Margin="Margin.Dense" @bind-Value="DotColor" Class="mt-4">
+            <MudSelect Label="Color" Dense="true" Margin="Margin.Dense" @bind-Value="DotColor" Class="mt-4">
                 <MudSelectItem T="Color" Value="Color.Default">Default</MudSelectItem>
                 <MudSelectItem T="Color" Value="Color.Primary">Primary</MudSelectItem>
                 <MudSelectItem T="Color" Value="Color.Secondary">Secondary</MudSelectItem>
@@ -37,21 +39,21 @@
                 <MudSelectItem T="Color" Value="Color.Error">Error</MudSelectItem>
                 <MudSelectItem T="Color" Value="Color.Dark">Dark</MudSelectItem>
             </MudSelect>
-            <MudSelect Label="Size" OffsetY="true" Dense="true" Margin="Margin.Dense" @bind-Value="DotSize" Class="mt-4">
+            <MudSelect Label="Size" Dense="true" Margin="Margin.Dense" @bind-Value="DotSize" Class="mt-4">
                 <MudSelectItem T="Size" Value="Size.Small">Small</MudSelectItem>
                 <MudSelectItem T="Size" Value="Size.Medium">Medium</MudSelectItem>
                 <MudSelectItem T="Size" Value="Size.Large">Large</MudSelectItem>
             </MudSelect>
-            <MudSelect Label="Variant" OffsetY="true" Dense="true" Margin="Margin.Dense" @bind-Value="DotVariant" Class="mt-4">
+            <MudSelect Label="Variant" Dense="true" Margin="Margin.Dense" @bind-Value="DotVariant" Class="mt-4">
                 <MudSelectItem T="Variant" Value="Variant.Outlined">Outlined</MudSelectItem>
                 <MudSelectItem T="Variant" Value="Variant.Filled">Filled</MudSelectItem>
             </MudSelect>
-            <MudSlider @bind-Value="@DotElevation" Step="1" Min="0" Max="25" Class="mt-2">Dot Elevation</MudSlider>
-            <MudRadioGroup T="int" SelectedOptionChanged="DotConfigChanged">
-                <MudRadio Option="0" Color="Color.Primary">Default</MudRadio>
-                <MudRadio Option="1" Color="Color.Secondary">Icon</MudRadio>
-                <MudRadio Option="2" Color="Color.Tertiary">Avatar</MudRadio>
-                <MudRadio Option="3" Color="Color.Default">Hide</MudRadio>
+            <MudSlider @bind-Value="DotElevation" Step="1" Min="0" Max="25" Class="mt-2">Dot Elevation</MudSlider>
+            <MudRadioGroup T="int" ValueChanged="DotConfigChanged">
+                <MudRadio Value="0" Color="Color.Primary">Default</MudRadio>
+                <MudRadio Value="1" Color="Color.Secondary">Icon</MudRadio>
+                <MudRadio Value="2" Color="Color.Tertiary">Avatar</MudRadio>
+                <MudRadio Value="3" Color="Color.Default">Hide</MudRadio>
             </MudRadioGroup>
         </MudPaper>
     </MudItem>

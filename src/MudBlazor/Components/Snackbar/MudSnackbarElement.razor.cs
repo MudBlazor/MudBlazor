@@ -4,6 +4,7 @@
 
 using System;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Components.Snackbar;
 using static System.String;
 
 namespace MudBlazor
@@ -18,30 +19,36 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
 
-        protected RenderFragment Css;
+        // appearance
+        private string Action => Snackbar?.State.Options.Action;
+        private Color ActionColor => Snackbar?.State.Options.ActionColor ?? Color.Default;
+        private Variant ActionVariant => Snackbar?.State.Options.ActionVariant ?? Snackbar?.State.Options.SnackbarVariant ?? Variant.Text;
+        private string AnimationStyle => Snackbar?.State.AnimationStyle + Style;
+        private string SnackbarClass => Snackbar?.State.SnackbarClass;
+        private RenderFragment Css;
+        private bool ShowActionButton => Snackbar?.State.ShowActionButton == true;
+        private bool ShowCloseIcon => Snackbar?.State.ShowCloseIcon == true;
 
-        protected string AnimationStyle => Snackbar?.State.AnimationStyle + Style;
-        protected string SnackbarClass => Snackbar?.State.SnackbarClass;
+        // icon
+        private bool HideIcon => Snackbar?.State.HideIcon == true;
+        private string Icon => Snackbar?.State.Icon;
+        private Color IconColor => Snackbar?.State.Options.IconColor ?? Color.Inherit;
+        private Size IconSize => Snackbar?.State.Options.IconSize ?? Size.Medium;
 
-        protected string Message => Snackbar?.Message;
+        // behavior
+        private void ActionClicked() => Snackbar?.Clicked(false);
+        private void CloseIconClicked() => Snackbar?.Clicked(true);
+        private SnackbarMessage Message => Snackbar?.SnackbarMessage;
 
-        protected string Action => Snackbar?.State.Options.Action;
-        protected Color ActionColor => Snackbar?.State.Options.ActionColor ?? Color.Default;
-        protected Variant ActionVariant => Snackbar?.State.Options.ActionVariant ?? Snackbar?.State.Options.SnackbarVariant ?? Variant.Text;
-
-        protected bool ShowActionButton => Snackbar?.State.ShowActionButton == true;
-        protected bool ShowCloseIcon => Snackbar?.State.ShowCloseIcon == true;
-
-        protected bool HideIcon => Snackbar?.State.HideIcon == true;
-        protected string Icon => Snackbar?.State.Icon;
-
-        protected void ActionClicked() => Snackbar?.Clicked(false);
-        protected void CloseIconClicked() => Snackbar?.Clicked(true);
-
-        protected void SnackbarClicked()
+        private void SnackbarClicked()
         {
             if (!ShowActionButton)
                 Snackbar?.Clicked(false);
+        }
+
+        private void SnackbarUpdated()
+        {
+            InvokeAsync(StateHasChanged);
         }
 
         protected override void OnInitialized()
@@ -65,9 +72,16 @@ namespace MudBlazor
             }
         }
 
-        private void SnackbarUpdated()
+        protected void InteractionStartHandler()
         {
-            InvokeAsync(StateHasChanged);
+            // Pause snackbar transitions while the user is interacting through hover or touch.
+            Snackbar.PauseTransitions(true);
+        }
+
+        protected void InteractionEndHandler()
+        {
+            // The user is done and we can now resume transitions.
+            Snackbar.PauseTransitions(false);
         }
 
         public void Dispose()

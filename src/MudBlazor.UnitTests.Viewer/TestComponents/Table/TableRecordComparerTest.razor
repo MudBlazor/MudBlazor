@@ -1,0 +1,51 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudText>Elements { @string.Join(", ", selectedItems) }</MudText>
+
+<MudTable @ref="MudTableRef" Items="items" T="Element" @bind-SelectedItems="selectedItems" MultiSelection Comparer="Comparer">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Value)">#</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Value</MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd>
+            <MudTextField T="string" id="@context.Id" @bind-Value="@context.Value"></MudTextField>
+        </MudTd>
+    </RowEditingTemplate>
+</MudTable>
+
+@code {
+    public static string __description__ = "editing a record should not break multiselection";
+
+    private ElementComparer Comparer = new();
+    private HashSet<Element> selectedItems = new();
+    public MudTable<Element> MudTableRef { get; private set; }
+
+    IEnumerable<Element> items = new List<Element> 
+    { 
+        new Element { Value = "A", Id = "Id1" }, 
+        new Element { Value = "B", Id = "Id2" }, 
+        new Element { Value = "C", Id = "Id3" }, 
+    };
+
+    public record Element
+    {
+        public string Id { get; set; }
+        public string Value { get; set; }
+
+        public override string ToString() => Value;
+    }
+
+    class ElementComparer : IEqualityComparer<Element>
+    {
+        public bool Equals(Element a, Element b) => a?.Id == b?.Id;
+        public int GetHashCode(Element x) => HashCode.Combine(x?.Id);
+    }
+
+    protected override void OnInitialized()
+    {
+        selectedItems = new(comparer: Comparer);
+    }
+}

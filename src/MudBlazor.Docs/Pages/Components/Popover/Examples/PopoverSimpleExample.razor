@@ -1,25 +1,18 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@ToggleOpen">Open</MudButton>
-<MudSwitch @bind-Checked="@_isOpen" Color="Color.Primary" />
-<MudToggleIconButton @bind-Toggled="@_isOpen" Icon="@Icons.Filled.Fullscreen" Color="@Color.Primary" ToggledIcon="@Icons.Filled.FullscreenExit" ToggledColor="@Color.Secondary" />
+<MudSwitch @bind-Value="_open" Color="Color.Primary" />
+<MudToggleIconButton @bind-Toggled="@_open" Icon="@Icons.Material.Filled.Fullscreen" Color="@Color.Primary" ToggledIcon="@Icons.Material.Filled.FullscreenExit" ToggledColor="@Color.Secondary" />
 
-<MudPopover Open="@_isOpen" Fixed="true" Class="px-4 pt-4">
+<MudPopover Open="@_open" Fixed="true" Class="px-4 pt-4">
     <div class="d-flex flex-column">
         <MudText>Content of the popover can be anything.</MudText>
         <MudButton OnClick="@ToggleOpen" Class="ml-auto mr-n3 mb-1" Color="Color.Error">Close</MudButton>
     </div>
 </MudPopover>
 
-
 @code{
-    public bool _isOpen;
+    private bool _open;
 
-    public void ToggleOpen()
-    {
-        if (_isOpen)
-            _isOpen = false;
-        else
-            _isOpen = true;
-    }
+    private void ToggleOpen() => _open = !_open;
 }

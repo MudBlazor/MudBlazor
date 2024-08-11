@@ -1,0 +1,23 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudText>SelectedItems { @string.Join(", ", selectedItems) }</MudText>
+<MudTable T="int" Items="items" @bind-SelectedItems="selectedItems" MultiSelection="true" SelectOnRowClick="false" OnRowClick="@OnRowClick">
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+</MudTable>
+<MudText>Clicked: @_count</MudText>
+
+@code {
+    public static string __description__ = "A row-click should not toggle the checkbox.";
+
+    int[] items = new int[] { 0, 1, 2 };
+    HashSet<int> selectedItems = new HashSet<int>();
+
+    int _count = 0;
+    Task OnRowClick()
+    {
+        ++_count;
+        return Task.CompletedTask;
+    }
+}

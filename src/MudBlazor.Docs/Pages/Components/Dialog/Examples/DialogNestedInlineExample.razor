@@ -1,0 +1,42 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject IDialogService DialogService
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Open">Open Inline</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Open2Async">Open With Show</MudButton>
+
+@*Outer inline dialog*@
+<MudDialog @bind-Visible="_visible">
+    <DialogContent>
+        <MudText>Hi There, I'm an inline dialog!</MudText>
+        <MudButton Variant="Variant.Filled" Color="Color.Tertiary" OnClick="OpenNested">Open Nested</MudButton>
+        @*Nested inline dialog*@
+        <MudDialog @bind-Visible="_nestedVisible">
+            <DialogContent>
+                <MudText Class="nested">Nested inline dialog!</MudText>
+            </DialogContent>
+            <DialogActions>
+                <MudButton Color="Color.Primary" OnClick="CloseNested">Close</MudButton>
+            </DialogActions>
+        </MudDialog>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="Close">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private bool _visible;
+    private bool _nestedVisible;
+
+    private void Open() => _visible = true;
+
+    private void Close() => _visible = false;
+
+    private void OpenNested() => _nestedVisible = true;
+
+    private void CloseNested() => _nestedVisible = false;
+
+    @*Open a non-inline dialog component that nests an inline dialog*@
+    private Task Open2Async() => DialogService.ShowAsync<DialogNestedInlineExample_Dialog>();
+}

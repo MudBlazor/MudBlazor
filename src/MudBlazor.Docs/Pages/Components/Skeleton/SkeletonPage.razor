@@ -1,4 +1,5 @@
 ﻿@page "/components/skeleton"
+@page "/components/MudSkeleton"
 
 <DocsPage>
     <DocsPageHeader Title="Skeleton" SubTitle="Display placeholder for your content while the data loads." />
@@ -8,7 +9,7 @@
             <SectionHeader Title="Variants">
                 <Description>The component can take the shape of 3 different variants.</Description>
             </SectionHeader>
-            <SectionContent Code="SkeletonVariantsExample" Block="true">
+            <SectionContent Code="@nameof(SkeletonVariantsExample)" Block="true">
                 <SkeletonVariantsExample />
             </SectionContent>
         </DocsPageSection>
@@ -17,7 +18,7 @@
             <SectionHeader Title="Animations">
                 <Description>The default animation is pulse, but you can disable it or change to wave.</Description>
             </SectionHeader>
-            <SectionContent Code="SkeletonAnimationsExample" Block="true" FullWidth="true">
+            <SectionContent Code="@nameof(SkeletonAnimationsExample)" Block="true" FullWidth="true">
                 <SkeletonAnimationsExample />
             </SectionContent>
         </DocsPageSection>
@@ -25,7 +26,7 @@
         <DocsPageSection>
             <SectionHeader Title="Pulsate Example">
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="SkeletonPulsateExample" ShowCode="false" Block="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(SkeletonPulsateExample)" ShowCode="false" Block="true">
                 <SkeletonPulsateExample />
             </SectionContent>
         </DocsPageSection>
@@ -33,7 +34,7 @@
         <DocsPageSection>
             <SectionHeader Title="Wave Example">
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="SkeletonWaveExample" ShowCode="false" Block="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(SkeletonWaveExample)" ShowCode="false" Block="true">
                 <SkeletonWaveExample />
             </SectionContent>
         </DocsPageSection>

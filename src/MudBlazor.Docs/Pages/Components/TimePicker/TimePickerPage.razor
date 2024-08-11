@@ -1,4 +1,5 @@
 ﻿@page "/components/timepicker"
+@page "/components/MudTimePicker"
 
 <DocsPage>
     <DocsPageHeader Title="Time Picker">
@@ -12,7 +13,7 @@
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: Always use the two-way binding <CodeInline>@@bind-Time</CodeInline> to bind to a field of type <CodeInline>TimeSpan?</CodeInline></MudAlert>
                 </Description>
             </SectionHeader>
-            <SectionContent Code="TimePickerBasicUsageExample" ShowCode="true">
+            <SectionContent Code="@nameof(TimePickerBasicUsageExample)" ShowCode="true">
                 <TimePickerBasicUsageExample />
             </SectionContent>
         </DocsPageSection>
@@ -21,7 +22,7 @@
             <SectionHeader Title="Read Only">
                 <Description>If <CodeInline>ReadOnly</CodeInline> is set to true, the TimePicker can be used but the value will remain unchanged regardless of the actions performed or the values entered.</Description>
             </SectionHeader>
-            <SectionContent Code="TimePickerReadOnlyExample" ShowCode="false">
+            <SectionContent Code="@nameof(TimePickerReadOnlyExample)" ShowCode="false">
                 <TimePickerReadOnlyExample />
             </SectionContent>
         </DocsPageSection>
@@ -30,7 +31,7 @@
             <SectionHeader Title="Action Buttons">
                 <Description>You can add buttons by using the <CodeInline>PickerActions</CodeInline> render fragment. If <CodeInline>AutoClose</CodeInline> is set to true and PickerActions are defined, the hour and the minutes can be selected and the drop-down will close without having to click any of the action buttons.</Description>
             </SectionHeader>
-            <SectionContent Code="TimePickerActionButtonsExample" ShowCode="false">
+            <SectionContent Code="@nameof(TimePickerActionButtonsExample)" ShowCode="false">
                 <TimePickerActionButtonsExample />
             </SectionContent>
         </DocsPageSection>
@@ -39,7 +40,7 @@
             <SectionHeader Title="Dialog Mode">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="TimePickerDialogExample" ShowCode="false">
+            <SectionContent Code="@nameof(TimePickerDialogExample)" ShowCode="false">
                 <TimePickerDialogExample />
             </SectionContent>
         </DocsPageSection>
@@ -48,7 +49,7 @@
             <SectionHeader Title="Static Mode">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="TimePickerStaticExample" ShowCode="false">
+            <SectionContent DarkenBackground="true" Code="@nameof(TimePickerStaticExample)" ShowCode="false">
                 <TimePickerStaticExample />
             </SectionContent>
         </DocsPageSection>
@@ -57,7 +58,7 @@
             <SectionHeader Title="Open to Minutes">
                 <Description>By default, MudTimePicker opens the hours editor and then switches into the minutes editor. By setting <CodeInline>OpenTo="OpenTo.Minutes"</CodeInline>, it will open the minutes editor instead.</Description>
             </SectionHeader>
-            <SectionContent Code="TimePickerViewsExample" ShowCode="false">
+            <SectionContent Code="@nameof(TimePickerViewsExample)" ShowCode="false">
                 <TimePickerViewsExample />
             </SectionContent>
         </DocsPageSection>
@@ -66,7 +67,7 @@
             <SectionHeader Title="Edit Mode">
                 <Description>By setting the <CodeInline>TimeEditMode</CodeInline>, you can restrict editing of the time value to allow only changing hours or minutes.</Description>
             </SectionHeader>
-            <SectionContent Code="TimePickerTimeEditModeExample" ShowCode="false">
+            <SectionContent Code="@nameof(TimePickerTimeEditModeExample)" ShowCode="false">
                 <TimePickerTimeEditModeExample />
             </SectionContent>
         </DocsPageSection>
@@ -75,7 +76,7 @@
             <SectionHeader Title="Colors">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Class="demo-datetime-margin" Code="TimePickerColorExample" ShowCode="false">
+            <SectionContent DarkenBackground="true" Class="demo-datetime-margin" Code="@nameof(TimePickerColorExample)" ShowCode="false">
                 <TimePickerColorExample />
             </SectionContent>
         </DocsPageSection>
@@ -84,8 +85,17 @@
             <SectionHeader Title="Elevation">
                 <Description>You can change the elevation with the <CodeInline>Elevation</CodeInline> parameter. The default value is 0 for static and 8 for inline.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Class="demo-datetime-margin" Code="TimePickerElevationExample" ShowCode="false">
+            <SectionContent DarkenBackground="true" Class="demo-datetime-margin" Code="@nameof(TimePickerElevationExample)" ShowCode="false">
                 <TimePickerElevationExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="MinuteSelectionStep">
+                <Description>You can change the granularity of selectable times with the <CodeInline>MinuteSelectionStep</CodeInline> parameter.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Class="demo-datetime-margin" Code="@nameof(TimePickerStepExample)" ShowCode="false">
+                <TimePickerStepExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -104,7 +114,7 @@
                     <MudText><CodeInline>Ctrl+Shift+Backspace</CodeInline> keys to reset (validation)</MudText>
                 </Description>
             </SectionHeader>
-            <SectionContent Class="demo-datetime-margin" Code="TimePickerKeyboardNavigationExample" ShowCode="false">
+            <SectionContent Class="demo-datetime-margin" Code="@nameof(TimePickerKeyboardNavigationExample)" ShowCode="false">
                 <TimePickerKeyboardNavigationExample />
             </SectionContent>
         </DocsPageSection>

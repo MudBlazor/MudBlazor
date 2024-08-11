@@ -1,0 +1,57 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudDataGrid @ref="grid" Items="@_items" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterMenu">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Status" />
+        <PropertyColumn Property="x => x.Hired">
+            <FilterTemplate>
+                <MudStack>
+                    <MudSwitch T="bool" Color="@Color.Primary" @bind-Value="FilterHired" Label="Show Hired"></MudSwitch>
+                    <MudButton Class="align-self-end" Color="@Color.Primary" OnClick="@(() => ApplyFilterAsync(context))">@(FilterHired ? "Filter" : "Remove Filter")</MudButton>
+                </MudStack>
+            </FilterTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.HiredOn" />
+    </Columns>
+</MudDataGrid>
+
+    @code {
+    public record Model (string Name, int? Age, Severity? Status, bool? Hired, DateTime? HiredOn);
+
+    MudDataGrid<Model> grid;
+
+    private IEnumerable<Model> _items = new List<Model>()
+    {
+        new Model("Sam", 56, Severity.Normal, false, null), 
+        new Model("Alicia", 54, Severity.Info, null, null), 
+        new Model("Ira", 27, Severity.Success, true, new DateTime(2011, 1, 2)),
+        new Model("John", 32, Severity.Warning, false, null)
+    };
+
+    public bool FilterHired;
+    FilterDefinition<Model> _filterDefinition = new();
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _filterDefinition = new FilterDefinition<Model>
+            {
+                Column = grid.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Hired"),
+                Operator = FilterOperator.Boolean.Is,
+                Value = true
+            };
+        }
+    }
+
+    public async Task ApplyFilterAsync(FilterContext<Model> context)
+    {
+        if (FilterHired)
+           await context.Actions.ApplyFilterAsync(_filterDefinition);
+        else
+           await context.Actions.ClearFilterAsync(_filterDefinition);
+    }
+}

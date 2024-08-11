@@ -1,0 +1,39 @@
+﻿@inherits MudFormComponent<T, string>
+
+@typeparam T
+@namespace MudBlazor
+@using Microsoft.AspNetCore.Components.Forms
+@using MudBlazor.Interfaces
+
+<MudInputControl Class="@Classname" Style="@Style" Error="HasErrors" ErrorText="@GetErrorText()" Required="@Required">
+    <InputContent>
+        <InputFile OnChange="OnChangeAsync"
+                   id="@_id"
+                   class="@InputClass"
+                   style="@InputStyle"
+                   hidden="@(Hidden ? "" : null)"
+                   multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)"
+                   accept="@Accept"
+                   disabled="@(GetDisabledState())"
+                   @attributes="UserAttributes"
+                   required="@Required"
+                   aria-required="@Required.ToString().ToLowerInvariant()"/>
+        @if (ActivatorContent != null)
+        {
+            <CascadingValue Value="@((IActivatable)this)"
+                            IsFixed="true">
+                <CascadingValue Name="ParentDisabled"
+                                Value="GetDisabledState()">
+                    <div @onclick="OpenFilePickerAsync"
+                         disabled="@GetDisabledState()">
+                        @ActivatorContent
+                    </div>
+                </CascadingValue>
+            </CascadingValue>
+        }
+        @if (SelectedTemplate != null)
+        {
+            @SelectedTemplate(_filesState.Value)
+        }
+    </InputContent>
+</MudInputControl>

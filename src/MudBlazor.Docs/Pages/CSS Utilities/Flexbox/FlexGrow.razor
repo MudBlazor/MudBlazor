@@ -1,0 +1,48 @@
+﻿@page "/utilities/flex-grow"
+
+<DocsPage>
+    <DocsPageHeader Title="Flex Grow" SubTitle="Utilities for controlling how flex items grow." />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Class Reference" HideTitle="true" />
+            <DocsAutoGen_Flexbox_FlexGrow/>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage" />
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Grow">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(FlexGrowExample)" HighLight="flex-grow-1">
+                        <DocsWidthSlider>
+                            <FlexGrowExample/>
+                        </DocsWidthSlider>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="No grow">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(FlexNoGrowExample)" HighLight="flex-grow-0">
+                        <DocsWidthSlider>
+                            <FlexNoGrowExample/>
+                        </DocsWidthSlider>
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Applying conditionally"/>
+            <SectionSubGroups>
+                <DynamicBreakpointSectionContent Utility="flex-md-grow-1"/>
+            </SectionSubGroups>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>
+

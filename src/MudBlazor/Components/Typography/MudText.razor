@@ -1,49 +1,6 @@
-﻿@namespace MudBlazor
+@namespace MudBlazor
 @inherits MudComponentBase
 
-
-@switch (Typo)
-{
-    case Typo.h1:
-        <h1 @attributes="UserAttributes" class="@Classname" style="@Style">@ChildContent</h1>
-        break;
-    case Typo.h2:
-        <h2 @attributes="UserAttributes" class="@Classname" style="@Style">@ChildContent</h2>
-        break;
-    case Typo.h3:
-        <h3 @attributes="UserAttributes" class="@Classname" style="@Style">@ChildContent</h3>
-        break;
-    case Typo.h4:
-        <h4 @attributes="UserAttributes" class="@Classname" style="@Style">@ChildContent</h4>
-        break;
-    case Typo.h5:
-        <h5 @attributes="UserAttributes" class="@Classname" style="@Style">@ChildContent</h5>
-        break;
-    case Typo.h6:
-        <h6 @attributes="UserAttributes" class="@Classname" style="@Style">@ChildContent</h6>
-        break;
-    case Typo.subtitle1:
-        <h6 @attributes="UserAttributes" class="@Classname" style="@Style">@ChildContent</h6>
-        break;
-    case Typo.subtitle2:
-        <h6 @attributes="UserAttributes" class="@Classname" style="@Style">@ChildContent</h6>
-        break;
-    case Typo.body1:
-        <p @attributes="UserAttributes" class="@Classname" style="@Style">@ChildContent</p>
-        break;
-    case Typo.body2:
-        <p @attributes="UserAttributes" class="@Classname" style="@Style">@ChildContent</p>
-        break;
-    case Typo.button:
-        <span @attributes="UserAttributes" class="@Classname" style="@Style">@ChildContent</span>
-        break;
-    case Typo.caption:
-        <span @attributes="UserAttributes" class="@Classname" style="@Style">@ChildContent</span>
-        break;
-    case Typo.overline:
-        <span @attributes="UserAttributes" class="@Classname" style="@Style">@ChildContent</span>
-        break;
-    case Typo.inherit:
-        <span @attributes="UserAttributes" class="@Classname" style="@Style">@ChildContent</span>
-        break;
-}
+<MudElement HtmlTag="@GetActualTag()" Class="@Classname" Style="@Style" UserAttributes="@UserAttributes">
+    @ChildContent
+</MudElement>

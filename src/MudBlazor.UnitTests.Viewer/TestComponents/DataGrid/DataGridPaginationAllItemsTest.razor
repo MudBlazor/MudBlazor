@@ -1,0 +1,32 @@
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid Items="@_items">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager PageSizeOptions="new int[] { 10, 25, int.MaxValue }" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    private List<Item> _items = new List<Item>();
+
+    protected override void OnInitialized()
+    {
+        for (var i = 0; i < 20; i++)
+        {
+            _items.Add(new Item(i.ToString()));
+        }
+    }
+
+    public class Item
+    {
+        public string Name { get; set; }
+
+        public Item(string name)
+        {
+            Name = name;
+        }
+    }
+}

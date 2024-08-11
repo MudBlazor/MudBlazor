@@ -1,27 +1,28 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudChipSet @bind-SelectedChips="selected" Filter="filter">
-    <MudChip Text="Milk"></MudChip>
-    <MudChip Text="Eggs"></MudChip>
-    <MudChip Text="Soap"></MudChip>
-    <MudChip Text="Corn flakes"></MudChip>
-    <MudChip Text="Salad"></MudChip>
-    <MudChip Text="Apples"></MudChip>
-    <MudChip Text="Red wine"></MudChip>
+<MudChipSet @bind-SelectedValues="_selected" MultiSelection="@MultiSelection" CheckMark="_checkMark">
+    <MudChip Value="@("Milk")" />
+    <MudChip Value="@("Eggs")" />
+    <MudChip Value="@("Soap")" />
+    <MudChip Value="@("Corn flakes")"/>
+    <MudChip Value="@("Salad")" />
+    <MudChip Value="@("Apples")" />
+    <MudChip Value="@("Red wine")" />
 </MudChipSet>
 
-
-@if (selected != null && selected.Length>0)
-{
-    <MudText>@string.Join(", ", selected.Select(chip=>chip.Text).OrderBy(x => x))</MudText>
+@if (_selected is { Count: > 0 }) {
+    <MudText>You selected @string.Join(", ", _selected).</MudText>
 }
-else
-{
+else {
     <MudText>Nothing selected.</MudText>
 }
-<MudCheckBox @bind-Checked="filter">Filter</MudCheckBox>
+<MudCheckBox @bind-Value="_checkMark">CheckMark</MudCheckBox>
+
 @code
 {
-    bool filter = false;
-    MudChip[] selected;
+    [Parameter]
+    public bool MultiSelection { get; set; }
+
+    private bool _checkMark = false;
+    private IReadOnlyCollection<string> _selected = ["Milk", "Cornflakes"];
 }

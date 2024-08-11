@@ -1,0 +1,40 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudDataGrid T="Item" Filterable="true" ServerData="this.ServerDataFunc">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private IEnumerable<Item> _items = new List<Item>()
+    {
+        new Item("B"), 
+        new Item("A"), 
+        new Item("C"),
+        new Item("C")
+    };
+
+    private async Task<GridData<Item>> ServerDataFunc(GridState<Item> gridState)
+    {
+        await Task.CompletedTask;
+        var filterFunctions = gridState.FilterDefinitions.Select(x => x.GenerateFilterFunction());
+        return new GridData<Item>
+        {
+            Items = this._items.Where(x => filterFunctions.All(f => f(x))),
+            TotalItems = this._items.Count()
+        };
+    }
+
+    public class Item
+    {
+        public string Name { get; set; }
+
+        public Item(string name)
+        {
+            Name = name;
+        }
+    }
+
+}

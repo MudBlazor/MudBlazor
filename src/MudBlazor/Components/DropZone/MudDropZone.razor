@@ -1,0 +1,83 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@typeparam T
+
+
+<div class="@Classname" style="@Style"
+     id="@_id"
+     identifier="@Identifier"
+     @ondrop="HandleDrop"
+     @ondragenter="HandleDragEnter"
+     @ondragleave="HandleDragLeave"
+     @ondragover:preventDefault
+     @ondragenter:preventDefault
+     @ondrop:preventDefault
+     @ondrop:stopPropagation
+     @ondragenter:stopPropagation
+     @ondragend:stopPropagation
+     @ondragover:stopPropagation
+     @ondragleave:stopPropagation
+     @ondragstart:stopPropagation
+     @attributes="UserAttributes">
+
+    @ChildContent
+
+    @if (!OnlyZone)
+    {
+        int index = 0;
+        var transactionIndex = Container?.GetTransactionIndex() ?? -1;
+        var items = GetItems();
+
+        @if (AllowReorder)
+        {
+            @if (!items.Any())
+            {
+                <div class="@PlaceholderClassname"></div>
+            }
+            else
+            {
+                if (transactionIndex == -1)
+                {
+                    <div class="@PlaceholderClassname"></div>
+                }
+                <MudDynamicDropItem @key="_id" T="T"
+                        Item="default"
+                        ZoneIdentifier="@Identifier"
+                        Disabled="true" HideContent="false"
+                        Class="mud-drop-item-preview-start" />
+            }
+        }
+        @foreach (var item in items)
+        {
+            var indexCopy = index;
+
+            <MudDynamicDropItem @key="@(item.GetHashCode())" T="T" DraggingClass="@GetItemDraggingClass()"
+                        Item="item"
+                        OnDragStarted="DragOperationStarted"
+                        OnDragEnded="FinishedDragOperation"
+                        ZoneIdentifier="@Identifier"
+                        Disabled="@GetItemDisabledStatus(item)"
+                        Index="indexCopy"
+                        DisabledClass="@(DisabledClass ?? Container?.DisabledClass)"
+                        Class="@(GetItemClassUsingSelector(item))">
+                @{
+                    var renderer = GetItemTemplate();
+                }
+
+                @if (renderer is not null)
+                {
+                    @renderer(item)
+                }
+
+            </MudDynamicDropItem>
+
+
+            if (transactionIndex == indexCopy && !IsOrigin(indexCopy))
+            {
+                <div class="@PlaceholderClassname"></div>
+            }
+
+            index++;
+        }
+    }
+</div>

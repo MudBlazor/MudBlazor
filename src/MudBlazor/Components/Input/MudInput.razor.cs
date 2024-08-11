@@ -2,32 +2,44 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
+using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudInput<T> : MudBaseInput<T>
+    /// <summary>
+    /// A component for collecting an input value.
+    /// </summary>
+    /// <typeparam name="T">The type of object managed by this input.</typeparam>
+    public partial class MudInput<T> : MudBaseInput<T>, IAsyncDisposable
     {
-        protected string Classname => MudInputCssHelper.GetClassname(this,
-            () => HasNativeHtmlPlaceholder() || !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder));
+        protected string Classname =>
+           new CssBuilder(
+               MudInputCssHelper.GetClassname(this,
+                   () => HasNativeHtmlPlaceholder() || !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder) || ShrinkLabel))
+            .AddClass("mud-input-auto-grow", when: () => AutoGrow)
+            .Build();
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
 
         protected string AdornmentClassname => MudInputCssHelper.GetAdornmentClassname(this);
 
         protected string ClearButtonClassname =>
-                    new CssBuilder()
+                    new CssBuilder("mud-input-clear-button")
                     .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
-                    .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons == true)
+                    .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons)
                     .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
-                    .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons == true)
+                    .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons)
                     .Build();
 
         /// <summary>
-        /// Type of the input element. It should be a valid HTML5 input type.
+        /// The type of input collected by this component.
         /// </summary>
-        [Parameter] public InputType InputType { get; set; } = InputType.Text;
+        /// <remarks>
+        /// Defaults to <see cref="InputType.Text"/>.  Represents a valid HTML5 input type.
+        /// </remarks>
+        [Parameter]
+        public InputType InputType { get; set; } = InputType.Text;
 
         internal override InputType GetInputType() => InputType;
 
@@ -54,23 +66,28 @@ namespace MudBlazor
         /// <summary>
         /// Paste hook for descendants.
         /// </summary>
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-
-        protected virtual async Task OnPaste(ClipboardEventArgs args)
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
+        protected virtual Task OnPaste(ClipboardEventArgs args)
         {
-            // do nothing
-            return;
+            return Task.CompletedTask;
         }
 
         /// <summary>
-        /// ChildContent of the MudInput will only be displayed if InputType.Hidden and if its not null.
+        /// The content within this input component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        /// <remarks>
+        /// Will only display if <see cref="InputType"/> is <see cref="InputType.Hidden"/>.
+        /// </remarks>
+        [Parameter]
+        public RenderFragment ChildContent { get; set; }
 
-        private ElementReference _elementReference;
+        /// <summary>
+        /// The reference to the HTML element for this component.
+        /// </summary>
+        public ElementReference ElementReference { get; private set; }
+
         private ElementReference _elementReference1;
 
+        /// <inheritdoc />
         public override async ValueTask FocusAsync()
         {
             try
@@ -78,7 +95,7 @@ namespace MudBlazor
                 if (InputType == InputType.Hidden && ChildContent != null)
                     await _elementReference1.FocusAsync();
                 else
-                    await _elementReference.FocusAsync();
+                    await ElementReference.FocusAsync();
             }
             catch (Exception e)
             {
@@ -86,99 +103,147 @@ namespace MudBlazor
             }
         }
 
+        /// <inheritdoc />
+        public override ValueTask BlurAsync()
+        {
+            return ElementReference.MudBlurAsync();
+        }
+
+        /// <inheritdoc />
         public override ValueTask SelectAsync()
         {
-            return _elementReference.MudSelectAsync();
+            return ElementReference.MudSelectAsync();
         }
 
+        /// <inheritdoc />
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
-            return _elementReference.MudSelectRangeAsync(pos1, pos2);
+            return ElementReference.MudSelectRangeAsync(pos1, pos2);
         }
 
         /// <summary>
-        /// Invokes the callback when the Up arrow button is clicked when the input is set to <see cref="InputType.Number"/>.
-        /// Note: use the optimized control <see cref="MudNumericField{T}"/> if you need to deal with numbers.
+        /// Occurs when the <c>Up</c> arrow button is clicked.
         /// </summary>
-        [Parameter] public EventCallback OnIncrement { get; set; }
+        /// <remarks>
+        /// Only occurs when <see cref="InputType"/> is <see cref="InputType.Number"/>.  For numeric inputs, use the <see cref="MudNumericField{T}"/> component.
+        /// </remarks>
+        [Parameter]
+        public EventCallback OnIncrement { get; set; }
 
         /// <summary>
-        /// Invokes the callback when the Down arrow button is clicked when the input is set to <see cref="InputType.Number"/>.
-        /// Note: use the optimized control <see cref="MudNumericField{T}"/> if you need to deal with numbers.
+        /// Occurs when the <c>Down</c> arrow button is clicked.
         /// </summary>
-        [Parameter] public EventCallback OnDecrement { get; set; }
+        /// <remarks>
+        /// Only occurs when <see cref="InputType"/> is <see cref="InputType.Number"/>.  For numeric inputs, use the <see cref="MudNumericField{T}"/> component.
+        /// </remarks>
+        [Parameter]
+        public EventCallback OnDecrement { get; set; }
 
         /// <summary>
-        /// Hides the spin buttons for <see cref="MudNumericField{T}"/>
+        /// For <see cref="MudNumericField{T}"/>, hides the spin buttons.
         /// </summary>
-        [Parameter] public bool HideSpinButtons { get; set; } = true;
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        public bool HideSpinButtons { get; set; } = true;
 
         /// <summary>
-        /// Show clear button.
+        /// Shows a button to clear this input's value.
         /// </summary>
-        [Parameter] public bool Clearable { get; set; } = false;
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool Clearable { get; set; } = false;
 
         /// <summary>
-        /// Button click event for clear button. Called after text and value has been cleared.
+        /// Occurs when the clear button is clicked.
         /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
+        /// <remarks>
+        /// When clicked, the <see cref="MudBaseInput{T}.Text"/> and <see cref="MudBaseInput{T}.Value"/> properties are reset.
+        /// </remarks>
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         /// <summary>
-        /// Mouse wheel event for input.
+        /// Occurs when a mouse wheel event is raised.
         /// </summary>
-        [Parameter] public EventCallback<WheelEventArgs> OnMouseWheel { get; set; }
+        [Parameter]
+        public EventCallback<WheelEventArgs> OnMouseWheel { get; set; }
 
         /// <summary>
-        /// Custom clear icon.
+        /// The icon to display when <see cref="Clearable"/> is <c>true</c>.
         /// </summary>
-        [Parameter] public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.Clear"/>.
+        /// </remarks>
+        [Parameter]
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 
         /// <summary>
-        /// Custom numeric up icon.
+        /// The icon to display for the <c>Up</c> arrow button.
         /// </summary>
-        [Parameter] public string NumericUpIcon { get; set; } = Icons.Material.Filled.KeyboardArrowUp;
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.KeyboardArrowUp"/>.
+        /// </remarks>
+        [Parameter]
+        public string NumericUpIcon { get; set; } = Icons.Material.Filled.KeyboardArrowUp;
 
         /// <summary>
-        /// Custom numeric down icon.
+        /// The icon to display for the <c>Down</c> arrow button.
         /// </summary>
-        [Parameter] public string NumericDownIcon { get; set; } = Icons.Material.Filled.KeyboardArrowDown;
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.KeyboardArrowDown"/>.
+        /// </remarks>
+        [Parameter]
+        public string NumericDownIcon { get; set; } = Icons.Material.Filled.KeyboardArrowDown;
+
+        /// <summary>
+        /// Stretches this input vertically to accommodate the <see cref="MudBaseInput{T}.Text"/> value.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool AutoGrow { get; set; }
+
+        /// <summary>
+        /// The maximum vertical lines to display when <see cref="AutoGrow"/> is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>0</c>.  When <c>0</c>. this property is ignored.
+        /// </remarks>
+        [Parameter]
+        public int MaxLines { get; set; }
 
         private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
 
-        private bool _showClearable;
-
-        private void UpdateClearable(object value)
-        {
-            var showClearable = Clearable && ((value is string stringValue && !string.IsNullOrWhiteSpace(stringValue)) || (value is not string && value is not null));
-            if (_showClearable != showClearable)
-                _showClearable = showClearable;
-        }
-
-        protected override async Task UpdateTextPropertyAsync(bool updateValue)
-        {
-            await base.UpdateTextPropertyAsync(updateValue);
-            if (Clearable)
-                UpdateClearable(Text);
-        }
-
-        protected override async Task UpdateValuePropertyAsync(bool updateText)
-        {
-            await base.UpdateValuePropertyAsync(updateText);
-            if (Clearable)
-                UpdateClearable(Value);
-        }
+        /// <summary>
+        /// If true, Clearable is true and there is a non null value (non-string for string values)
+        /// </summary>
+        private bool GetClearable() => Clearable && ((Value is string stringValue && !string.IsNullOrWhiteSpace(stringValue)) || (Value is not string && Value is not null));
 
         protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
         {
             await SetTextAsync(string.Empty, updateValue: true);
+            await ElementReference.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
         }
 
+        private string _oldText = null;
         private string _internalText;
+        private bool _shouldInitAutoGrow;
 
+        /// <inheritdoc />
         public override async Task SetParametersAsync(ParameterView parameters)
         {
+            var oldLines = Lines;
+            var oldMaxLines = MaxLines;
+            var oldAutoGrow = AutoGrow;
+
             await base.SetParametersAsync(parameters);
+
             //if (!_isFocused || _forceTextUpdate)
             //    _internalText = Text;
             if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
@@ -193,19 +258,63 @@ namespace MudBlazor
                 // in WASM (or in BSS with TextUpdateSuppression==false) we always update
                 _internalText = Text;
             }
+
+            // Flag AutoGrow to be initialized on the next render.
+            if (!oldAutoGrow && AutoGrow)
+            {
+                _shouldInitAutoGrow = true;
+            }
+
+            if (IsJSRuntimeAvailable)
+            {
+                if (oldAutoGrow && !AutoGrow)
+                {
+                    // Disable AutoGrow.
+                    _shouldInitAutoGrow = false;
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
+                }
+                else if (oldLines != Lines || oldMaxLines != MaxLines)
+                {
+                    if (AutoGrow && !_shouldInitAutoGrow)
+                    {
+                        // Update AutoGrow parameters (if it was already enabled).
+                        await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.updateParams", ElementReference, MaxLines);
+                    }
+                }
+            }
+        }
+
+        [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (AutoGrow)
+            {
+                if (firstRender || _shouldInitAutoGrow)
+                {
+                    _shouldInitAutoGrow = false;
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.initAutoGrow", ElementReference, MaxLines);
+                    _oldText = _internalText;
+                }
+                else if (_oldText != _internalText)
+                {
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.adjustHeight", ElementReference);
+                    _oldText = _internalText;
+                }
+            }
+
+            await base.OnAfterRenderAsync(firstRender);
         }
 
         /// <summary>
-        /// Sets the input text from outside programmatically
+        /// Set the <see cref="MudBaseInput{T}.Text"/> to the specified value.
         /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
+        /// <param name="text">The new value.</param>
         public Task SetText(string text)
         {
             _internalText = text;
             return SetTextAsync(text);
         }
-
 
         // Certain HTML5 inputs (dates and color) have a native placeholder
         private bool HasNativeHtmlPlaceholder()
@@ -213,7 +322,22 @@ namespace MudBlazor
             return GetInputType() is InputType.Color or InputType.Date or InputType.DateTimeLocal or InputType.Month
                 or InputType.Time or InputType.Week;
         }
+
+        /// <summary>
+        /// Releases resources used by this component.
+        /// </summary>
+        /// <returns></returns>
+        public async ValueTask DisposeAsync()
+        {
+            if (AutoGrow && IsJSRuntimeAvailable)
+            {
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
+            }
+        }
     }
 
+    /// <summary>
+    /// An input component for collecting alphanumeric values.
+    /// </summary>
     public class MudInputString : MudInput<string> { }
 }

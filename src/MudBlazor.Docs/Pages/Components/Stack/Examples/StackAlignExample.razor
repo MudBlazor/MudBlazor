@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Outlined="true" Class="border-dashed">
+    <MudStack AlignItems="_align" Row="true" Style="height:200px;">
+        <MudPaper Class="py-1 px-3 mud-theme-primary">Item 1</MudPaper>
+        <MudPaper Class="py-3 px-3 mud-theme-primary">Item 2</MudPaper>
+        <MudPaper Class="py-5 px-3 mud-theme-primary">Item 3</MudPaper>
+    </MudStack>
+</MudPaper>
+
+<MudChipSet T="string" CheckMark Class="d-flex justify-center mt-12">
+    <MudChip Text="Start" OnClick="@(() => _align = AlignItems.Start)" SelectedColor="Color.Primary" Default="true" />
+    <MudChip Text="Center" OnClick="@(() => _align = AlignItems.Center)" SelectedColor="Color.Primary" />
+    <MudChip Text="End" OnClick="@(() => _align = AlignItems.End)" SelectedColor="Color.Primary" />
+    <MudChip Text="Stretch" OnClick="@(() => _align = AlignItems.Stretch)" SelectedColor="Color.Primary" />
+    <MudChip Text="Baseline" OnClick="@(() => _align = AlignItems.Baseline)" SelectedColor="Color.Primary" />
+</MudChipSet>
+
+
+@code {
+    AlignItems _align = AlignItems.Start;
+}

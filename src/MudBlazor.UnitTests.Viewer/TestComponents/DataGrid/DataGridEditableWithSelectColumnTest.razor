@@ -1,0 +1,49 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid Items=@_items ReadOnly=false EditMode=DataGridEditMode.Cell Dense FixedHeader=true MultiSelection="true">
+    <Columns>
+        <SelectColumn ShowInFooter="true"/>        
+        <PropertyColumn Property="x => x.Name" Editable=false/>
+        <PropertyColumn Property="x => x.Value">
+            <EditTemplate>
+                <MudSelect @bind-Value=context.Item.Value>
+                    <MudSelectItem Value=1/>
+                    <MudSelectItem Value=10/>
+                    <MudSelectItem Value=100/>
+                    <MudSelectItem Value=1000/>
+                </MudSelect>
+            </EditTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Misc" Editable=false/>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "SelectColumn should be rendered in DataGrid in Edit mode .";
+    private IEnumerable<Item> _items = new List<Item>()
+    {
+        new("B", 42, "555"),
+        new("A", 73, "7"),
+        new("A", 11, "4444"),
+        new("C", 33, "33333"),
+        new("A", 99, "66"),
+        new("C", 44, "1111111"),
+        new("C", 55, "222222")
+    };
+
+
+    public class Item
+    {
+        public string Name { get; set; }
+        public int Value { get; set; }
+        public string Misc { get; set; }
+
+        public Item(string name, int value, String misc)
+        {
+            Name = name;
+            Value = value;
+            Misc = misc;
+        }
+    }
+
+}

@@ -1,0 +1,32 @@
+﻿<Router AppAssembly="@typeof(MudBlazor.Docs.Pages.Index).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MudBlazor.Docs.Shared.MainLayout)" />
+    </Found>
+    <NotFound>
+        <LayoutView Layout="@typeof(MudBlazor.Docs.Shared.MainLayout)">
+            <MudContainer MaxWidth="MaxWidth.Small">
+                <div class="d-flex flex-column">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 569 384.7" width="100%" height="100%" style="margin-top:25%; max-height:371.84px; max-width:550px;">
+                        <path d="M600.18,328.75v60.74L705.4,450.24V389.5Z" transform="translate(-315.12 -126.28)" style="fill:#7467ef" />
+                        <path d="M600.18,450.24V511L705.4,450.24V389.5Z" transform="translate(-315.12 -126.28)" style="fill:#594ae2" />
+                        <path d="M495.15,389.5v60.74l105-60.75V328.75Z" transform="translate(-315.12 -126.28)" style="fill:#594ae2" />
+                        <path d="M495.15,389.49v60.75l105,60.74V450.24Z" transform="translate(-315.12 -126.28)" style="fill:#7467ef" />
+                        <path d="M419.18,327.71l52.06,30.05L500,341.17l-52.06-30.05Z" transform="translate(-315.12 -126.28)" style="fill:#594ae2" />
+                        <path d="M471.24,276.38V436.64l-52.07-30.06V126.28l52.06,30.06" transform="translate(-315.12 -126.28)" style="fill:#7467ef" />
+                        <path d="M315.12,387.83l52.06,30.05,104.06-60.12L419.17,327.7Z" transform="translate(-315.12 -126.28)" style="fill:#594ae2" />
+                        <path d="M415.43,188.31l-52.06-30.05L315.12,387.82l52.06,30.06Z" transform="translate(-315.12 -126.28)" style="fill:#7467ef" />
+                        <path d="M363.37,158.26l52.06,30.05,55.8-32-52.06-30Z" transform="translate(-315.12 -126.28)" style="fill:#594ae2" />
+                        <path d="M751.3,311.12l-52.06,30.05L728,357.76l52.06-30.05Z" transform="translate(-315.12 -126.28)" style="fill:#7467ef" />
+                        <path d="M728,156.34l52.06-30V406.58L728,436.64V276.39" transform="translate(-315.12 -126.28)" style="fill:#594ae2" />
+                        <path d="M780.06,327.7,728,357.76l104.06,60.12,52.06-30.05Z" transform="translate(-315.12 -126.28)" style="fill:#7467ef" />
+                        <path d="M832.06,417.88l52.06-30.06L835.87,158.26l-52.06,30.05Z" transform="translate(-315.12 -126.28)" style="fill:#594ae2" />
+                        <path d="M780.07,126.29,728,156.34l55.8,32,52.06-30.05Z" transform="translate(-315.12 -126.28)" style="fill:#7467ef" />
+                    </svg>
+                    <MudText Typo="Typo.h3" Class="mt-6 mb-16" Align="Align.Center">Page doesn't exist.</MudText>
+                </div>
+            </MudContainer>
+        </LayoutView>
+    </NotFound>
+</Router>
+<NavigationTracker />
+<BytexDigital.Blazor.Components.CookieConsent.CookieConsentHandler />

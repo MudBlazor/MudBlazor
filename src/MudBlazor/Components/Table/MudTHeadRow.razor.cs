@@ -5,39 +5,86 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
+
+    /// <summary>
+    /// A header row displayed at the top of a <see cref="MudTable{T}"/> and each group.
+    /// </summary>
     public partial class MudTHeadRow : MudComponentBase
     {
+        private bool? _checked = false;
+
         protected string Classname => new CssBuilder("mud-table-row")
-            .AddClass(Class).Build();
-
-        [CascadingParameter] public TableContext Context { get; set; }
-
-        [Parameter] public RenderFragment ChildContent { get; set; }
+            .AddClass(Class)
+            .Build();
 
         /// <summary>
-        /// Add a multi-select checkbox that will select/unselect every item in the table
+        /// The current state of the <see cref="MudTable{T}"/> containing this header.
         /// </summary>
-        [Parameter] public bool IsCheckable { get; set; }
+        [CascadingParameter]
+        public TableContext? Context { get; set; }
 
         /// <summary>
-        /// Specify behavior in case the table is multi-select mode. If set to <code>true</code>, it won't render an additional empty column.
+        /// The content within this header row.
         /// </summary>
-        [Parameter] public bool IgnoreCheckbox { get; set; }
+        [Parameter]
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Specify behavior in case the table is editable. If set to <code>true</code>, it won't render an additional empty column.
+        /// Shows a checkbox which selects or deselects every row in the group.
         /// </summary>
-        [Parameter] public bool IgnoreEditable { get; set; }
-
-        [Parameter] public bool IsExpandable { get; set; }
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool Checkable { get; set; }
 
         /// <summary>
-        /// On click event
+        /// Prevents the change of the current selection of rows in the group.
         /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnRowClick { get; set; }
+        /// <remarks>
+        /// Defaults to <c>true</c>.  Requires <see cref="Checkable"/> to be <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        public bool SelectionChangeable { get; set; } = true;
 
-        private bool _checked;
-        public bool IsChecked
+        /// <summary>
+        /// Hides the extra column displayed when <see cref="MudTableBase.MultiSelection"/> is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool IgnoreCheckbox { get; set; }
+
+        /// <summary>
+        /// Hides the extra column displayed when <see cref="MudTableBase.Editable"/> is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool IgnoreEditable { get; set; }
+
+        /// <summary>
+        /// Shows an additional left and right margin when the parent group is expandable.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  Managed automatically by table groups.
+        /// </remarks>
+        [Parameter]
+        public bool Expandable { get; set; }
+
+        /// <summary>
+        /// Occurs when this header row is clicked.
+        /// </summary>
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnRowClick { get; set; }
+
+        /// <summary>
+        /// The state of the checkbox when <see cref="Checkable"/> is <c>true</c>.
+        /// </summary>
+        public bool? Checked
         {
             get => _checked;
             set
@@ -45,8 +92,10 @@ namespace MudBlazor
                 if (value != _checked)
                 {
                     _checked = value;
-                    if (IsCheckable)
-                        Context.Table.OnHeaderCheckboxClicked(value);
+                    if (Checkable)
+                    {
+                        Context?.Table?.OnHeaderCheckboxClicked(_checked.HasValue && _checked.Value);
+                    }
                 }
             }
         }
@@ -57,20 +106,35 @@ namespace MudBlazor
             return base.OnInitializedAsync();
         }
 
+        /// <summary>
+        /// Releases resources used by this header row.
+        /// </summary>
         public void Dispose()
         {
             Context?.HeaderRows.Remove(this);
         }
 
-        public void SetChecked(bool b, bool notify)
+        /// <summary>
+        /// Sets <see cref="Checked"/> to the specified value.
+        /// </summary>
+        /// <param name="checkedState">The new checked state.</param>
+        /// <param name="notify">When <c>true</c>, the table's <see cref="MudTable{T}.OnHeaderCheckboxClicked(bool)"/> event occurs.</param>
+        public void SetChecked(bool? checkedState, bool notify)
         {
-            if (notify)
-                IsChecked = b;
-            else
+            if (_checked != checkedState)
             {
-                _checked = b;
-                if (IsCheckable)
-                    InvokeAsync(StateHasChanged);
+                if (notify)
+                {
+                    Checked = checkedState;
+                }
+                else
+                {
+                    _checked = checkedState;
+                    if (Checkable)
+                    {
+                        InvokeAsync(StateHasChanged);
+                    }
+                }
             }
         }
     }

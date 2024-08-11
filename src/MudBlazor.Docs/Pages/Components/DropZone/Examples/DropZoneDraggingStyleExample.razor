@@ -1,0 +1,53 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudDropContainer T="DropItem" Items="_items" ItemsSelector="@((item,dropzone) => item.Identifier == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-column flex-grow-1">
+    <ChildContent>
+        <div class="d-flex flex-column flex-grow-1">
+            <MudListSubheader Class="mt-4 pb-2">Folders</MudListSubheader>
+            <MudDropZone T="DropItem" ItemDraggingClass="mud-info-text" Identifier="Folders" Class="d-flex flex-wrap flex-grow-1 pa-2 rounded" />
+        </div>
+        <div class="d-flex flex-column flex-grow-1">
+            <MudListSubheader Class="mt-4 pb-2">Files</MudListSubheader>
+            <MudDropZone T="DropItem" DraggingClass="mud-alert-text-normal" Identifier="Files" Class="d-flex flex-wrap flex-grow-1 pa-2 rounded" />
+        </div>
+        <div class="d-flex flex-column flex-grow-1">
+            <MudListSubheader Class="mt-4 pb-2">MudBlazor Secrets</MudListSubheader>
+            <MudDropZone T="DropItem" DraggingClass="mud-alert-text-error" ItemDraggingClass="mud-error-text" Identifier="MudBlazor" Class="d-flex flex-wrap flex-grow-1 pa-2 rounded" />
+        </div>
+    </ChildContent>
+    <ItemRenderer>
+        <div Class="rounded mud-paper-outlined d-flex align-center pa-3 ma-2">
+            <MudIcon Icon="@(context.Identifier == "Folders" ? Icons.Custom.Uncategorized.Folder : Icons.Custom.FileFormats.FileDocument)" Color="Color.Inherit" Class="mr-2"/>
+            @context.Name
+        </div>
+    </ItemRenderer>
+</MudDropContainer>
+
+@code {
+    private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
+    {
+        dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
+    }
+    
+    private List<DropItem> _items = new()
+    {
+        new DropItem(){ Name = "Wallpapers", Identifier = "Folders" },
+        new DropItem(){ Name = "Propaganda", Identifier = "Folders" },
+        new DropItem(){ Name = "Funny, Dank, Meme", Identifier = "Folders" },
+        new DropItem(){ Name = "Work", Identifier = "Folders" },
+        new DropItem(){ Name = "Photos", Identifier = "Folders" },
+        new DropItem(){ Name = "Untitled spreadsheet", Identifier = "Files" },
+        new DropItem(){ Name = "LoseLips.txt", Identifier = "Files" },
+        new DropItem(){ Name = "Untitled document", Identifier = "Files" },
+        new DropItem(){ Name = "GoonSwarmBestSwarm.png", Identifier = "Files" },
+        new DropItem(){ Name = "co2traitors.txt", Identifier = "Files" },
+        new DropItem(){ Name = "import.csv", Identifier = "Files" },
+        new DropItem(){ Name = "planned_components_2022-2023.txt", Identifier = "MudBlazor" },
+    };
+    
+    public class DropItem
+    {
+        public string Name { get; init; }
+        public string Identifier { get; set; }
+    }
+}

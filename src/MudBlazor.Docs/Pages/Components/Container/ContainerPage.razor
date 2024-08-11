@@ -1,4 +1,5 @@
 ﻿@page "/components/container"
+@page "/components/MudContainer"
 
 <DocsPage>
     <DocsPageHeader Title="Container">
@@ -10,7 +11,7 @@
             <SectionHeader Title="Fluid">
                 <Description>You can set the max width with the <CodeInline>MaxWidth</CodeInline> enum.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="ContainerFluidExample">
+            <SectionContent DarkenBackground="true" Code="@nameof(ContainerFluidExample)">
                 <ContainerFluidExample />
             </SectionContent>
         </DocsPageSection>
@@ -19,7 +20,7 @@
             <SectionHeader Title="Fixed">
                 <Description>With the <CodeInline>Fixed</CodeInline> property set to true the container will "snap" to the closest breakpoint.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="ContainedFixedExample">
+            <SectionContent DarkenBackground="true" Code="@nameof(ContainedFixedExample)">
                 <ContainedFixedExample />
             </SectionContent>
         </DocsPageSection>

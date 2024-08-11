@@ -1,20 +1,29 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudElement HtmlTag="@htmlTag">
-    This renders an <code style="color:red;">@htmlTag</code>  tag
+<MudElement HtmlTag="@htmlTag"
+            Class="reset-style"
+            href="https://mudblazor.com"
+            value="@($"The underlying tag is '{htmlTag}'")">
+    The underlying tag is '@htmlTag'
 </MudElement>
 
 <MudButton OnClick="ChangeTag" Variant="Variant.Filled" Color="Color.Secondary">Change tag</MudButton>
 
-@code{ 
-
-    private string htmlTag="h1";
-    private int hNumber = 2;
+@code{
+    private string htmlTag = "a";
+    private string[] tags = new[] { "a", "button", "input" };
+    private int index = 0;
 
     private void ChangeTag()
     {
-        htmlTag = "h" + hNumber;
-        hNumber++;
-        if (hNumber > 3) hNumber = 1;
+        index = (index + 1) % tags.Length;
+        htmlTag = tags[index];
     }
+
 }
+
+<style>
+.reset-style, .reset-style * {
+    all: revert;
+}
+</style>

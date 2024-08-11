@@ -1,0 +1,18 @@
+name: deploy-mudblazor-HEAD
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-web-app:
+    name: Deploy HEAD to web app to mudblazor.com
+    if: ${{ github.repository_owner == 'MudBlazor' }}
+    uses: MudBlazor/Workflows/.github/workflows/template-deploy-web-app.yml@main
+    with:
+      web-app-name: mudblazor
+      web-app-slot-name:  'staging'
+      swap-slots: true
+      project-directory: ./src/MudBlazor.Docs.WasmHost
+    secrets:
+      publish-profile: ${{ secrets.PUBLISH_MUDBLAZOR }}
+      azure-cred: ${{ secrets.AZURE_CREDENTIALS_MUD_PROD }}

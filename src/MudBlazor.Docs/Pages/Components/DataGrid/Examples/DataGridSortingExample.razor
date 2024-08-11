@@ -1,0 +1,53 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+
+<MudDataGrid T="Element" Items="@Elements" SortMode="@_sortMode">
+    <Columns>
+        <PropertyColumn Property="x => x.Number" Title="Nr" Sortable="false" />
+        <PropertyColumn Property="x => x.Sign" />
+        <PropertyColumn Property="x => x.Name" SortBy="@_sortBy" />
+        <PropertyColumn Property="x => x.Position" />
+        <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
+        <PropertyColumn Property="x => x.Group" Title="Category" />
+            <TemplateColumn Title="Custom" SortBy="@(x => $"{x.Sign} - {x.Name}")">
+                <CellTemplate>
+                    @context.Item.Sign - @context.Item.Name
+                </CellTemplate>
+            </TemplateColumn>
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Element" />
+    </PagerContent>
+</MudDataGrid>
+
+<div class="d-flex flex-wrap mt-4">
+    <MudSwitch @bind-Value="_sortNameByLength" Color="Color.Primary">Sort Name Column By Length</MudSwitch>
+    <MudRadioGroup T=SortMode @bind-Value="@_sortMode">
+        <MudRadio Dense=true Value=@SortMode.Multiple Color="Color.Primary">Multiple</MudRadio>
+        <MudRadio Dense=true Value=@SortMode.Single Color="Color.Tertiary">Single</MudRadio>
+        <MudRadio Dense=true Value=@SortMode.None>None</MudRadio>
+    </MudRadioGroup>
+</div>
+
+
+@code {
+    private IEnumerable<Element> Elements = new List<Element>();
+    private bool _sortNameByLength;
+    private SortMode _sortMode = SortMode.Multiple;
+
+    // custom sort by name length
+    private Func<Element, object> _sortBy => x =>
+    {
+        if (_sortNameByLength)
+            return x.Name.Length;
+        else
+            return x.Name;
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+    }
+}

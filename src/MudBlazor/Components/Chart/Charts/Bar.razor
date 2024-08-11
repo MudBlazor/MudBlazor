@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Charts
 @using System.Globalization;
-@inherits MudChartBase
+@inherits MudCategoryChartBase
 
 <svg @attributes="UserAttributes" class="mud-chart-line mud-ltr" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 650 350">
     <g class="mud-charts-grid">
@@ -35,7 +35,7 @@
     <g class="mud-charts-bar-series">
         @foreach (var bar in _bars)
         {
-            <path class="mud-chart-bar" @onclick="() => SelectedIndex = bar.Index"  fill="@(MudChartParent.ChartOptions.ChartPalette.GetValue(bar.Index % ChartOptions.ChartPalette.Count()))" stroke="@(MudChartParent.ChartOptions.ChartPalette.GetValue(bar.Index % ChartOptions.ChartPalette.Count()))" stroke-width="8" d="@bar.Data"></path>
+            <path class="mud-chart-bar" @onclick="() => SelectedIndex = bar.Index" fill="@(MudChartParent.ChartOptions.ChartPalette.GetValue(bar.Index % MudChartParent.ChartOptions.ChartPalette.Count()))" stroke="@(MudChartParent.ChartOptions.ChartPalette.GetValue(bar.Index % MudChartParent.ChartOptions.ChartPalette.Count()))" stroke-width="8" d="@bar.Data"></path>
         }
     </g>
 

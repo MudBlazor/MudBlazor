@@ -1,0 +1,16 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudChip T="string" Text="Click me" Href="https://mudblazor.com/" OnClick="Click" OnClose="Close" />
+<div id="chip-click-test-expected-value">@_event</div>
+@code
+{
+    public static string __description__ = "Chip with link";
+    private string _event = "";
+    private void Click() {
+        _event = "OnClick";
+    }
+    
+    private void Close() {
+        _event = "OnClose";
+    }
+}

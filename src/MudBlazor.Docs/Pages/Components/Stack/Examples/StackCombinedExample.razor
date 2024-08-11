@@ -1,0 +1,34 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Outlined="true" Class="border-dashed">
+    <MudStack Justify="_justify" AlignItems="_align" Row="_row" Style="height:200px;">
+        <MudPaper Class="py-1 px-3 mud-theme-primary">Item 1</MudPaper>
+        <MudPaper Class="py-3 px-3 mud-theme-primary">Item 2</MudPaper>
+        <MudPaper Class="py-5 px-3 mud-theme-primary">Item 3</MudPaper>
+    </MudStack>
+</MudPaper>
+
+<MudStack Row="true" Justify="Justify.Center">
+    <MudRadioGroup T="bool" @bind-Value="@_row">
+        <MudRadio Value="false" Dense="true">Column</MudRadio>
+        <MudRadio Value="true" Dense="true">Row</MudRadio>
+    </MudRadioGroup>
+</MudStack>
+
+<MudStack Row="true">
+    <MudChipSet T="string" CheckMark Class="d-flex justify-center">
+        <MudChip Text="Justify Start" OnClick="@(() => _justify = Justify.FlexStart)" SelectedColor="Color.Primary" Variant="Variant.Text" Default="true" />
+        <MudChip Text="Justify End" OnClick="@(() => _justify = Justify.FlexEnd)" SelectedColor="Color.Primary" Variant="Variant.Text" />
+    </MudChipSet>
+    <MudChipSet T="string" CheckMark Class="d-flex justify-center">
+        <MudChip Text="Align Start" OnClick="@(() => _align = AlignItems.Start)" SelectedColor="Color.Secondary" Variant="Variant.Text" Default="true" />
+        <MudChip Text="Align End" OnClick="@(() => _align = AlignItems.End)" SelectedColor="Color.Secondary" Variant="Variant.Text" />
+    </MudChipSet>
+</MudStack>
+
+
+@code {
+    bool _row = true;
+    Justify _justify = Justify.FlexStart;
+    AlignItems _align = AlignItems.Start;
+}

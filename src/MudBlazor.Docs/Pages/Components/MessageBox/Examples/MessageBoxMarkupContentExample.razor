@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="OnButtonClicked">I am Balrog</MudButton>
+
+<MudChip T="string">@state</MudChip>
+
+@code
+{
+    [Inject] private IDialogService DialogService { get; set; }
+
+    string state = "Message box hasn't been opened yet";
+
+    private async void OnButtonClicked()
+    {
+        bool? result = await DialogService.ShowMessageBox(
+            "Secure The Ring", 
+            (MarkupString) $"You <br /> Shall <br /> not <br /> <b>Pass!<b/>",
+            yesText:"Fire Whip!", cancelText:"Smash Ground");
+        state= result==null ? "Returned to Moria" : "Fighting With Gandalf!";
+        StateHasChanged();
+    }
+}

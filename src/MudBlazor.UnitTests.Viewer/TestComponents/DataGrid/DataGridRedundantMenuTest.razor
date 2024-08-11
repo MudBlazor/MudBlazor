@@ -1,0 +1,23 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid T="Model" Items="@_items" FilterMode="DataGridFilterMode.ColumnFilterRow" SortMode="SortMode.None" Filterable>
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Amount" />
+        <PropertyColumn Property="x => x.Total" />
+        <PropertyColumn Property="x => x.Distance" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private IEnumerable<Model> _items = new List<Model>()
+    {
+        new Model("Sam", 56, 3.5, 5.2, 2.1),
+        new Model("Alicia", 54, 3.6, 4.8, 2.2),
+        new Model("Ira", 27, 3.9, 6.2, 2.3),
+        new Model("John", 32, 4.2, 3.2, 2.4)
+    };
+
+    public record Model(string Name, int? Age, double? Amount, double? Total, double? Distance);
+}

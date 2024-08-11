@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" md="6" lg="4">       
+        <MudField Label="What am I?" ChildContent="@content"
+                  Variant="Variant.Outlined">            
+        </MudField>
+        <br/>
+        <MudSwitch T="bool" Color="Color.Primary" ValueChanged="@((b) => content=b?rf1:null)" /> Switch between Label and Placeholder
+    </MudItem>
+    <MudItem xs="12" md="6" lg="4">       
+        <MudField Label="Pick a color" Variant="Variant.Outlined">
+            <input type="color" @bind-value="color"/><span class="ml-3">@color</span>
+        </MudField>
+    </MudItem>
+</MudGrid>
+
+@code {
+    RenderFragment content = null;
+    RenderFragment rf1 = @<MudText Typo="@Typo.h6">I Am Field</MudText>;
+    string color="#6cf014";
+}

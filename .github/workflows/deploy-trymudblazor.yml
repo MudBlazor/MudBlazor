@@ -1,0 +1,33 @@
+name: deploy-trymudblazor
+
+on:
+  workflow_dispatch:
+  push:
+    tags: 
+      - "v7.[0-9]+.[0-9]+"
+
+jobs:
+  wait-for-nuget:
+    name: Wait for nuget
+    runs-on: ubuntu-latest
+    steps:
+    - name: Wait for nuget
+      if: ${{ github.ref_type == 'tag' }}
+      run: sleep 600s
+
+
+  deploy-web-app:
+    name: Deploy web app to try.mudblazor.com
+    needs: wait-for-nuget
+    if: ${{ github.repository_owner == 'MudBlazor' }}
+    uses: MudBlazor/Workflows/.github/workflows/template-deploy-web-app.yml@main
+    with:
+      checkout-repository: MudBlazor/TryMudBlazor
+      checkout-ref: main
+      web-app-name: trymudblazor
+      web-app-slot-name:  'staging'
+      swap-slots: true
+      project-directory: './src/TryMudBlazor.Server'
+    secrets:
+      publish-profile: ${{ secrets.PUBLISH_TRY_MUDBLAZOR }}
+      azure-cred: ${{ secrets.AZURE_CREDENTIALS_TRY_PROD }}

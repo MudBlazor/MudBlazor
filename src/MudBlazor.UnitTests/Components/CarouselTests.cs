@@ -1,6 +1,4 @@
-﻿#pragma warning disable BL0005 // Set parameter outside component
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,7 +22,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<CarouselTest>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             //// select elements needed for the test
             var carousel = comp.FindComponent<MudCarousel<object>>().Instance;
             //// validating some renders
@@ -101,7 +98,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.fake-class-item3").Count.Should().Be(1);
             //// Forcing SelectedIndex value by setter (for binding purposes)
             last = carousel.SelectedContainer;
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             await comp.InvokeAsync(() => carousel.SelectedIndex = 0);
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
             carousel.SelectedIndex.Should().Be(0);
             carousel.SelectedContainer.Should().Be(carousel.Items[0]);
             carousel.SelectedItem.Should().Be(carousel.Items[0]);
@@ -146,7 +145,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudCarousel<object>>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(2); //left + right
             // adding some pages
             comp.Instance.Items.Add(new());
@@ -182,7 +180,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudCarousel<object>>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             // adding some pages
             comp.Instance.Items.Add(new());
             comp.Instance.Items.Add(new());
@@ -208,6 +205,74 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Testing Transition With SelectedIndex
+        /// </summary>
+        [Test]
+        public void CarouselTest_SelectedIndexTransition()
+        {
+            var comp = Context.RenderComponent<CarouselTest>();
+
+            // No change
+            comp.Instance.SelectedIndex = 0;
+            comp.Render();
+            comp.Find(".mud-carousel-transition-slide-next-enter.fake-class-item1");
+            comp.FindAll(".mud-carousel-item").Should().HaveCount(1);
+
+            // Slide next
+            comp.Instance.SelectedIndex = 2;
+            comp.Render();
+            comp.Find(".mud-carousel-transition-slide-next-exit.fake-class-item1");
+            comp.Find(".mud-carousel-transition-slide-next-enter.fake-class-item3");
+
+            // Slide prev
+            comp.Instance.SelectedIndex = 0;
+            comp.Render();
+            comp.Find(".mud-carousel-transition-slide-prev-exit.fake-class-item3");
+            comp.Find(".mud-carousel-transition-slide-prev-enter.fake-class-item1");
+
+        }
+
+        /// <summary>
+        /// Testing when DisableSwipeGesture
+        /// </summary>
+        [Test]
+        public async Task CarouselTest_DisableSwipeGesture()
+        {
+            var comp = Context.RenderComponent<MudCarousel<object>>();
+
+            //Add some pages
+            comp.Instance.Items.Add(new());
+            comp.Instance.Items.Add(new());
+            comp.Instance.Items.Add(new());
+
+            //Move the SelectedIndex from -1 to 0
+            await comp.InvokeAsync(() => comp.Instance.MoveTo(0));
+
+            var mudSwipeArea = comp.FindComponent<MudSwipeArea>().Instance;
+
+            var initialTouchPoints = new TouchPoint[]
+            {
+                new() {ClientX = 200, ClientY = 0},
+            };
+            var touchPoints = new TouchPoint[]
+            {
+                new() {ClientX = 100, ClientY = 0},
+            };
+
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
+            comp.Instance.EnableSwipeGesture = false;
+            await comp.InvokeAsync(() => mudSwipeArea.OnTouchStart(new TouchEventArgs() { Touches = initialTouchPoints }));
+            await comp.InvokeAsync(async () => await mudSwipeArea.OnTouchEnd(new TouchEventArgs() { ChangedTouches = touchPoints }));
+            comp.Instance.SelectedIndex.Should().Be(0);
+
+            comp.Instance.EnableSwipeGesture = true;
+            await comp.InvokeAsync(() => mudSwipeArea.OnTouchStart(new TouchEventArgs() { Touches = initialTouchPoints }));
+            await comp.InvokeAsync(async () => await mudSwipeArea.OnTouchEnd(new TouchEventArgs() { ChangedTouches = touchPoints }));
+            comp.Instance.SelectedIndex.Should().Be(1);
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+        }
+
+        /// <summary>
         /// Testing DataBinding with Add and Remove from data source (MVVM, MVC and another patterns)
         /// </summary>
         /// <returns></returns>
@@ -216,7 +281,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<CarouselBindingTest>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             //// select elements needed for the test
             var carousel = comp.FindComponent<MudCarousel<string>>().Instance;
             //// validating some renders

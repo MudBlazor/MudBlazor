@@ -1,0 +1,76 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using System.Globalization;
+
+<MudDataGrid @ref="DataGrid" Items="@_items" SortMode="SortMode.Multiple">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Comparer="@(NaturalSortingEnabled ? new MudBlazor.Utilities.NaturalComparer() : null)" />
+        <PropertyColumn Property="x => x.Value" />
+        <PropertyColumn Property="x => x.Misc" />
+    </Columns>
+</MudDataGrid>
+<MudStack Row="true">
+    <MudSwitch T="bool" Value="@NaturalSortingEnabled" ValueChanged="OnCheckedChanged">Enable Natural Sorting</MudSwitch>
+</MudStack>
+
+@code {
+    private MudDataGrid<Item> DataGrid;
+
+    private bool NaturalSortingEnabled = true;
+
+    private IEnumerable<Item> _items = new List<Item>()
+    {
+        new Item("1", 42, "555"), 
+        new Item("10", 73, "7"), 
+        new Item("2", 11, "4444"), 
+        new Item("1_10", 33, "33333"),
+        new Item("1_2", 99, "66"), 
+        new Item("1_11", 44, "1111111"),
+        new Item("0", 55, "222222")
+    };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            await DataGrid.SetSortAsync(nameof(Item.Name), SortDirection.Ascending, x => x.Name, NaturalSortingEnabled ? new MudBlazor.Utilities.NaturalComparer() : null);
+        }
+    }
+
+    private async Task OnCheckedChanged(bool value)
+    {
+        NaturalSortingEnabled = value;
+        if (DataGrid.SortDefinitions.ContainsKey(nameof(Item.Name)))
+        {
+            if (DataGrid.SortDefinitions[nameof(Item.Name)].Descending)
+            {
+                DataGrid.SortDefinitions.Clear();
+                await DataGrid.SetSortAsync(nameof(Item.Name), SortDirection.Descending, x => x.Name, NaturalSortingEnabled ? new MudBlazor.Utilities.NaturalComparer() : null);
+            }
+            else
+            {
+                DataGrid.SortDefinitions.Clear();
+                await DataGrid.SetSortAsync(nameof(Item.Name), SortDirection.Ascending, x => x.Name, NaturalSortingEnabled ? new MudBlazor.Utilities.NaturalComparer() : null);
+            }
+        }
+        else
+        {
+            await DataGrid.SetSortAsync(nameof(Item.Name), SortDirection.Ascending, x => x.Name, NaturalSortingEnabled ? new MudBlazor.Utilities.NaturalComparer() : null);
+        }
+    }
+
+    public class Item
+    {
+        public string Name { get; set; }
+        public int Value { get; set; }
+        public string Misc { get; set; }
+
+        public Item(string name, int value, String misc)
+        {
+            Name = name;
+            Value = value;
+            Misc = misc;
+        }
+    }   
+}

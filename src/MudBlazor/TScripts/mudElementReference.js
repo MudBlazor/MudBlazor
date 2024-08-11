@@ -15,6 +15,12 @@ class MudElementReference {
         }
     }
 
+    blur(element) {
+        if (element) {
+            element.blur();
+        }
+    }
+
     focusFirst (element, skip = 0, min = 0) {
         if (element)
         {
@@ -79,29 +85,6 @@ class MudElementReference {
             element.select();
         }
     }
-    /**
-     * gets the client rect of the parent of the element
-     * @param {HTMLElement} element
-     */
-    getClientRectFromParent(element) {
-        if (!element) return;
-        let parent = element.parentElement;
-        if (!parent) return;
-        return this.getBoundingClientRect(parent);
-    }
-
-    /**
-     * Gets the client rect of the first child of the element
-     * @param {any} element
-     */
-
-    getClientRectFromFirstChild(element) {
-        if (!element) return;
-        let child = element.children && element.children[0];
-        if (!child) return;
-        return this.getBoundingClientRect(child);
-    }
-
 
     getBoundingClientRect(element) {
         if (!element) return;
@@ -116,18 +99,6 @@ class MudElementReference {
         return rect;
     }
 
-    /**
-     * Returns true if the element has any ancestor with style position==="fixed"
-     * @param {Element} element
-     */
-    hasFixedAncestors(element) {
-        for (; element && element !== document; element = element.parentNode) {
-            if (window.getComputedStyle(element).getPropertyValue("position") === "fixed")
-                return true;
-        }
-        return false
-    };
-
     changeCss (element, css) {
         if (element)
         {
@@ -135,29 +106,41 @@ class MudElementReference {
         }
     }
 
-    changeCssVariable (element, name, newValue) {
-        if (element)
-        {
-            element.style.setProperty(name, newValue);
-        }
+    removeEventListener (element, event, eventId) {
+        element.removeEventListener(event, this.eventListeners[eventId]);
+        delete this.eventListeners[eventId];
     }
 
-    addEventListener (element, dotnet, event, callback, spec, stopPropagation) {
-        let listener = function (e) {
-            const args = Array.from(spec, x => serializeParameter(e, x));
-            dotnet.invokeMethodAsync(callback, ...args);
-            if (stopPropagation) {
-                e.stopPropagation();
-            }
-        };
-        element.addEventListener(event, listener);
+    addDefaultPreventingHandler(element, eventName) {
+        let listener = function(e) {
+            e.preventDefault();
+        }
+        element.addEventListener(eventName, listener, { passive: false });
         this.eventListeners[++this.listenerId] = listener;
         return this.listenerId;
     }
 
-    removeEventListener (element, event, eventId) {
-        element.removeEventListener(event, this.eventListeners[eventId]);
-        delete this.eventListeners[eventId];
+    removeDefaultPreventingHandler(element, eventName, listenerId) {
+        this.removeEventListener(element, eventName, listenerId);
+    }
+
+    addDefaultPreventingHandlers(element, eventNames) {
+        let listeners = [];
+
+        for (const eventName of eventNames) {
+            let listenerId = this.addDefaultPreventingHandler(element, eventName);
+            listeners.push(listenerId);
+        }
+
+        return listeners;
+    }
+
+    removeDefaultPreventingHandlers(element, eventNames, listenerIds) {
+        for (let index = 0; index < eventNames.length; ++index) {
+            const eventName = eventNames[index];
+            const listenerId = listenerIds[index];
+            this.removeDefaultPreventingHandler(element, eventName, listenerId);
+        }
     }
 };
 window.mudElementRef = new MudElementReference();

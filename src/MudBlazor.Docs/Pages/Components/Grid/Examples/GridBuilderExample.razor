@@ -64,8 +64,8 @@
     void UpdateBreaks(int index,int changeamount)
     {
         List<int> newbreaks = breaks.ToList();
-
-        newbreaks[index] = newbreaks[index] += changeamount;
+        if (newbreaks[index] + changeamount > 12 || newbreaks[index] + changeamount < 1) return; //don't go above 12 or below 1
+        newbreaks[index] += changeamount;
 
         breaks = newbreaks.ToArray();
 

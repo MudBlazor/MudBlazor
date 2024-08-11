@@ -1,0 +1,13 @@
+﻿<MudSwitch @bind-Value="@Label_Switch2"  T="bool" Disabled="true" Label="Disabled" />
+<MudSwitch @bind-Value="@Label_Switch2"  T="bool" ReadOnly="true" Label="ReadOnly"  Color="Color.Success"  />
+<MudSwitch @bind-Value="@Label_Switch2"  T="bool" Ripple="false" Label="Disabled Ripple" />
+<MudSwitch @bind-Value="@Label_Switch2"  T="bool"  Label="Test" />
+<MudSwitch @bind-Value="@Label_Switch2" T="bool" Label="Small" Size="Size.Small" ThumbIcon="@Icons.Material.Filled.Favorite" ThumbIconColor="Color.Error" />
+<MudSwitch @bind-Value="@Label_Switch2" T="bool" Label="Medium" ThumbIcon="@Icons.Material.Filled.Favorite" ThumbIconColor="Color.Error" />
+<MudSwitch @bind-Value="@Label_Switch2" T="bool" Label="Large" Size="Size.Large" ThumbIcon="@Icons.Material.Filled.Favorite" ThumbIconColor="Color.Error" Color="Color.Info" />
+<MudSwitch @bind-Value="@Label_Switch2" T="bool" Label="Switches from small to large" Size="@(Label_Switch2 ? Size.Small : Size.Large)" ThumbIcon="@Icons.Material.Filled.Favorite" ThumbIconColor="Color.Error" />
+
+
+@code{
+    public bool Label_Switch2 { get; set; } = true;
+}

@@ -4,7 +4,6 @@
 
 //Functions related to MudThrottledEventManager
 class MudThrottledEventManager {
-
     constructor() {
         this.mapper = {};
     }
@@ -52,6 +51,25 @@ class MudThrottledEventManager {
         }
     }
 
+    subscribeGlobal(eventName, throotleInterval, key, properties, dotnetReference) {
+        let handlerRef = throotleInterval > 0 ?
+            this.throttleEventHandler.bind(this, key) :
+            this.eventHandler.bind(this, key);
+
+        document.addEventListener(eventName, handlerRef, false);
+
+        this.mapper[key] = {
+            eventName: eventName,
+            handler: handlerRef,
+            delay: throotleInterval,
+            timerId: -1,
+            reference: dotnetReference,
+            elementId: document,
+            properties: properties,
+            projection: null,
+        };
+    }
+
     throttleEventHandler(key, event) {
         const entry = this.mapper[key];
         if (!entry) {
@@ -72,7 +90,7 @@ class MudThrottledEventManager {
         }
 
         var elem = document.getElementById(entry.elementId);
-        if (elem != event.srcElement) {
+        if (elem != event.srcElement && entry.elementId != document) {
             return;
         }
 
@@ -98,9 +116,13 @@ class MudThrottledEventManager {
 
         entry.reference = null;
 
-        const elem = document.getElementById(entry.elementId);
-        if (elem) {
-            elem.removeEventListener(entry.eventName, entry.handler, false);
+        if (document == entry.elementId) {
+            document.removeEventListener(entry.eventName, entry.handler, false);
+        } else {
+            const elem = document.getElementById(entry.elementId);
+            if (elem) {
+                elem.removeEventListener(entry.eventName, entry.handler, false);
+            }
         }
 
         delete this.mapper[key];

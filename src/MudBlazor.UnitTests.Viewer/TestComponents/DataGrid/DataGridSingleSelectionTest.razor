@@ -1,0 +1,32 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid Items="_listItems" MultiSelection="false" @bind-SelectedItems="_selectionList">
+    <Columns>
+        <SelectColumn />
+        <PropertyColumn Property="x => x.Name"/>
+    </Columns>
+</MudDataGrid>
+
+@code {
+#nullable enable
+    private List<Item> _listItems = new();
+    private HashSet<Item> _selectionList = new();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        _listItems = new List<Item>
+        {
+            new() {Id = 0, Name = "Test1"},
+            new() {Id = 1, Name = "Test2"},
+            new() {Id = 2, Name = "Test3"}
+        };
+    }
+
+    public class Item
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+    }
+}

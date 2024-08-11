@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
 
 <MudGrid>
     <MudItem xs="12" sm="4">
@@ -7,7 +8,7 @@
                          CoerceText="@coerceText" CoerceValue="@coerceValue" />
     </MudItem>
     <MudItem xs="12" sm="4">
-        <MudButton OnClick="@(()=>ToggleValue())" Variant="Variant.Outlined">Toggle Value</MudButton>
+        <MudButton Class="toggle-value-button" OnClick="@(()=>ToggleValue())" Variant="Variant.Outlined">Toggle Value</MudButton>
     </MudItem>
 </MudGrid>
 
@@ -50,10 +51,10 @@
         StateHasChanged();
     }
 
-    private async Task<IEnumerable<string>> Search1(string value)
+    private async Task<IEnumerable<string>> Search1(string value, CancellationToken token)
     {
         // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(5);
+        await Task.Delay(5, token);
 
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))

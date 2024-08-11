@@ -14,13 +14,16 @@
     }
 </style>
 
+<MudText>Total items: @Elements?.Count() - Selected items: @selectedItems?.Count</MudText>
+
 <MudTable Hover="true" Breakpoint="Breakpoint.Sm" Height="500px" FixedHeader="true"
           Items="@Elements"
           GroupBy="@_groupDefinition"
-          GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
+          GroupHeaderStyle="background-color:var(--mud-palette-background-gray)"
           GroupFooterClass="mb-4"
           Dense="_dense"
-          MultiSelection="_multiSelect">
+          MultiSelection="_multiSelect"
+          @bind-SelectedItems="selectedItems">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -44,15 +47,16 @@
         <MudTh Class="mud-table-cell-custom-group mud-table-cell-custom-group-footer" colspan="6">Total Mass: @context.Items.Sum((e) => e.Molar)</MudTh>
     </GroupFooterTemplate>
 </MudTable>
-<MudSwitch @bind-Checked="_dense" Color="Color.Primary">Dense</MudSwitch>
-<MudSwitch @bind-Checked="_multiSelect" Color="Color.Primary">MultiSelect</MudSwitch>
-<MudSwitch @bind-Checked="_groupDefinition.Indentation" Color="Color.Primary">Indentation</MudSwitch>
-<MudSwitch @bind-Checked="_groupDefinition.Expandable" Color="Color.Primary">Expandable (Root Level)</MudSwitch>
-<MudSwitch @bind-Checked="_groupDefinition.InnerGroup.Expandable" Color="Color.Primary">Expandable (Second Level)</MudSwitch>
+<MudSwitch @bind-Value="_dense" Color="Color.Primary">Dense</MudSwitch>
+<MudSwitch @bind-Value="_multiSelect" Color="Color.Primary">MultiSelect</MudSwitch>
+<MudSwitch @bind-Value="_groupDefinition.Indentation" Color="Color.Primary">Indentation</MudSwitch>
+<MudSwitch @bind-Value="_groupDefinition.Expandable" Color="Color.Primary">Expandable (Root Level)</MudSwitch>
+<MudSwitch @bind-Value="_groupDefinition.InnerGroup.Expandable" Color="Color.Primary">Expandable (Second Level)</MudSwitch>
 
 @code {
     private bool _dense = false;
     private bool _multiSelect = true;
+    private HashSet<Element> selectedItems = new HashSet<Element>();
 
     private TableGroupDefinition<Element> _groupDefinition = new TableGroupDefinition<Element>()
     {

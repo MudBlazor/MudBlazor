@@ -1,48 +1,110 @@
 ﻿using System.Threading.Tasks;
-using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudMenuItem : MudComponentBase
     {
-        [CascadingParameter] public MudMenu MudMenu { get; set; }
+        [Inject]
+        protected NavigationManager UriHelper { get; set; } = null!;
 
-        [Parameter] [Category(CategoryTypes.Menu.Behavior)] public RenderFragment ChildContent { get; set; }
-        [Parameter] [Category(CategoryTypes.Menu.Behavior)] public bool Disabled { get; set; }
+        [Inject]
+        protected IJsApiService JsApiService { get; set; } = null!;
 
-        [Inject] public NavigationManager UriHelper { get; set; }
-        [Inject] public IJsApiService JsApiService { get; set; }
+        [CascadingParameter]
+        public MudMenu? MudMenu { get; set; }
 
-        [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public string Link { get; set; }
-        [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public string Target { get; set; }
-        [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public bool ForceLoad { get; set; }
-        [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public ICommand Command { get; set; }
-        [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public object CommandParameter { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Menu.Behavior)]
+        public RenderFragment? ChildContent { get; set; }
 
-        [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Menu.Behavior)]
+        public bool Disabled { get; set; }
 
-        protected async Task OnClickHandler(MouseEventArgs ev)
+        /// <summary>
+        /// If set to a URL, clicking the button will open the referenced document. Use <see cref="Target"/> to specify where
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Menu.ClickAction)]
+        public string? Href { get; set; }
+
+        /// <summary>
+        /// The target attribute specifies where to open the link, if Href is specified.
+        /// Possible values: _blank | _self | _parent | _top | <i>framename</i>
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.ClickAction)]
+        public string? Target { get; set; }
+
+        /// <summary>
+        /// If true in combination with <see cref="Href"/>, bypasses client-side routing 
+        /// and forces the browser to load the new page from the server, whether
+        /// the URI would normally be handled by the client-side router.
+        /// <see cref="NavigationManager.NavigateTo(string, bool, bool)"/>
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Menu.ClickAction)]
+        public bool ForceLoad { get; set; }
+
+        /// <summary>
+        /// Icon to be used for this menu entry
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public string? Icon { get; set; }
+
+        /// <summary>
+        /// The color of the icon. It supports the theme colors.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public Color IconColor { get; set; } = Color.Inherit;
+
+        /// <summary>
+        /// The Icon Size.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public Size IconSize { get; set; } = Size.Medium;
+
+        /// <summary>
+        /// If set to false, clicking the menu item will keep the menu open
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Menu.ClickAction)]
+        public bool AutoClose { get; set; } = true;
+
+        /// <summary>
+        /// Raised when the menu item is activated by either the mouse or touch.
+        /// Won't be raised if Href is also set.
+        /// </summary>
+        /// <remarks>
+        /// This is equivalent to <c>OnAction</c> from previous versions and replaces <c>OnTouch</c>.
+        /// </remarks>
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+        protected async Task OnClickHandlerAsync(MouseEventArgs ev)
         {
             if (Disabled)
-                return;
-            MudMenu.CloseMenu();
-
-            if (Link != null)
             {
-                if (string.IsNullOrWhiteSpace(Target))
-                    UriHelper.NavigateTo(Link, ForceLoad);
-                else
-                    await JsApiService.Open(Link, Target);
+                return;
             }
-            else
+
+            if (AutoClose)
+            {
+                if (MudMenu is not null)
+                {
+                    await MudMenu.CloseMenuAsync();
+                }
+            }
+
+            if (OnClick.HasDelegate)
             {
                 await OnClick.InvokeAsync(ev);
-                if (Command?.CanExecute(CommandParameter) ?? false)
-                {
-                    Command.Execute(CommandParameter);
-                }
             }
         }
     }

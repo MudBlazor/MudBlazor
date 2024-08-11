@@ -6,9 +6,9 @@
     <MudSelectItem Value="@("Espresso")" />
 </MudSelect>
 <MudSelect T="double" Label="Price" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
-    <MudSelectItem T="double" Value="4.50"/>
-    <MudSelectItem T="double" Value="4.99"/>
-    <MudSelectItem T="double" Value="3.60"/>
+    <MudSelectItem T="double" Value="4.50" />
+    <MudSelectItem T="double" Value="4.99" />
+    <MudSelectItem T="double" Value="3.60" />
 </MudSelect>
 <MudSelect T="Pizza" Label="Pizza" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
     <MudSelectItem Value="@(new Pizza("Cardinale"))" />
@@ -28,9 +28,10 @@
         public readonly string Name;
 
         // Note: this is important so the MudSelect can compare pizzas
-        public override bool Equals(object o) {
+        public override bool Equals(object o)
+        {
             var other = o as Pizza;
-            return other?.Name==Name;
+            return other?.Name == Name;
         }
 
         // Note: this is important too!

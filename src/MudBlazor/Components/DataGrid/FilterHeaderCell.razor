@@ -1,0 +1,69 @@
+@using MudBlazor.Extensions
+@using MudBlazor.Resources
+@namespace MudBlazor
+@inherits MudComponentBase
+@typeparam T
+
+@inject InternalMudLocalizer Localizer
+
+@if (Column != null && !Column.HiddenState.Value)
+{
+    <th scope="col" class="@_classname" style="@_style" colspan="@Column?.HeaderColSpan" @attributes="@UserAttributes">
+        @if (Column.filterable && Column.FilterTemplate != null)
+        {
+            @Column.FilterTemplate(Column.FilterContext)
+        }
+        else if (Column.filterable)
+        {
+            <MudStack Row="true">
+                @if (fieldType.IsString && !(@operator ?? "").EndsWith("empty"))
+                {
+                    <MudTextField T="string" Value="@valueString" ValueChanged="@StringValueChangedAsync" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Immediate="true" DebounceInterval="@(!DataGrid.HasServerData ? 0 : 500.0)" />
+                }
+                else if (fieldType.IsNumber && !(@operator ?? "").EndsWith("empty"))
+                {
+                    <MudNumericField T="double?" Culture="@Column.Culture" Value="@valueNumber" ValueChanged="@NumberValueChangedAsync" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Immediate="true" DebounceInterval="@(!DataGrid.HasServerData ? 0 : 500.0)" />
+                }
+                else if (fieldType.IsEnum)
+                {
+                    <MudSelect T="Enum" Value="@valueEnum" ValueChanged="@EnumValueChangedAsync" FullWidth="true" Dense="true" Margin="@Margin.Dense">
+                        <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
+                        @foreach (var item in EnumExtensions.GetSafeEnumValues(fieldType.InnerType))
+                        {
+                            <MudSelectItem T="Enum" Value="@((Enum)item)">@item</MudSelectItem>
+                        }
+                    </MudSelect>
+                }
+                else if (fieldType.IsBoolean)
+                {
+                    <MudSelect T="bool?" Value="@valueBool" ValueChanged="@BoolValueChangedAsync" FullWidth="true" Dense="true" Margin="@Margin.Dense">
+                        <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
+                        <MudSelectItem T="bool?" Value="@(true)">@Localizer[LanguageResource.MudDataGrid_True]</MudSelectItem>
+                        <MudSelectItem T="bool?" Value="@(false)">@Localizer[LanguageResource.MudDataGrid_False]</MudSelectItem>
+                    </MudSelect>
+                }
+                else if (fieldType.IsDateTime && !(@operator ?? "").EndsWith("empty"))
+                {
+                    <MudGrid Spacing="0">
+                        <MudItem xs="7">
+                            <MudDatePicker Date="@valueDate" DateChanged="@DateValueChangedAsync" Margin="@Margin.Dense" />
+                        </MudItem>
+                        <MudItem xs="5">
+                            <MudTimePicker Time="@valueTime" TimeChanged="@TimeValueChangedAsync" Margin="@Margin.Dense" />
+                        </MudItem>
+                    </MudGrid>
+                }
+                <MudMenu Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" Dense="true">
+                    @foreach (var o in operators)
+                    {
+                        if (!string.IsNullOrWhiteSpace(o))
+                        {
+                            <MudMenuItem Style="@chosenOperatorStyle(o)" OnClick="@(async () => await ChangeOperatorAsync(o))">@Localizer[FilterOperator.GetTranslationKeyByOperatorName(o)]</MudMenuItem>
+                        }
+                    }
+                </MudMenu>
+                <MudIconButton Class="align-self-center" Icon="@Icons.Material.Filled.FilterAltOff" Size="@Size.Small" OnClick="@ClearFilterAsync"></MudIconButton>
+            </MudStack>
+        }
+    </th>
+}

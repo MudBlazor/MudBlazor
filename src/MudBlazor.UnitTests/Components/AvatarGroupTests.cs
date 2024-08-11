@@ -15,7 +15,6 @@ namespace MudBlazor.UnitTests.Components
         public void AvatarGroupTest()
         {
             var comp = Context.RenderComponent<AvatarGroupTest>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudAvatarGroup>();
             var avatars = comp.FindAll(".mud-avatar").ToArray();
@@ -35,10 +34,39 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void AvatarGroupMaxDefaultTest()
+        {
+            var comp = Context.RenderComponent<AvatarGroupMaxDefaultTest>();
+            // select elements needed for the test
+            var group = comp.FindComponent<MudAvatarGroup>();
+            var avatars = group.FindAll(".mud-avatar").ToArray();
+
+            // check initial group settings
+            group.Instance.Max.Should().Be(int.MaxValue); // should default to 2147483647 when not provided
+            group.Instance._avatars.Should().HaveCount(7);
+
+            // verify MaxGroupReached is false for each avatar
+            foreach (var avatar in group.Instance._avatars)
+            {
+                group.Instance.MaxGroupReached(avatar).Should().Be(false);
+            }
+
+            // check initial avatars
+            avatars.Should().HaveCount(7);  // all 7 avatars should display
+            avatars[0].ClassList.Should().NotContain("mud-avatar-group-max-avatar");
+            avatars[1].ClassList.Should().NotContain("mud-avatar-group-max-avatar");
+            avatars[2].ClassList.Should().NotContain("mud-avatar-group-max-avatar");
+            avatars[3].ClassList.Should().NotContain("mud-avatar-group-max-avatar");
+            avatars[4].ClassList.Should().NotContain("mud-avatar-group-max-avatar");
+            avatars[5].ClassList.Should().NotContain("mud-avatar-group-max-avatar");
+            avatars[6].ClassList.Should().NotContain("mud-avatar-group-max-avatar");
+
+        }
+
+        [Test]
         public void AvatarGroupChangeMaxTest()
         {
             var comp = Context.RenderComponent<AvatarGroupChangeMaxTest>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudAvatarGroup>();
             var avatars = comp.FindAll(".mud-avatar").ToArray();
@@ -117,11 +145,20 @@ namespace MudBlazor.UnitTests.Components
         public void AvatarGroupRemoveTest()
         {
             var comp = Context.RenderComponent<AvatarGroupRemoveTest>();
-            //Console.WriteLine(comp.Markup);
 
             comp.FindAll("button")[0].Click();
 
             comp.FindComponent<MudAvatarGroup>().Instance._avatars.Count.Should().Be(0);
+        }
+
+        [Test]
+        public void AvatarGroupMaxAvatarsTemplateTest()
+        {
+            var comp = Context.RenderComponent<AvatarGroupMaxAvatarsTemplateTest>();
+
+            comp.FindComponent<MudButton>().Should().NotBeNull();
+
+            comp.FindComponent<MudAvatarGroup>().FindAll(".mud-avatar-group-max-avatar").Should().HaveCount(0);
         }
     }
 }

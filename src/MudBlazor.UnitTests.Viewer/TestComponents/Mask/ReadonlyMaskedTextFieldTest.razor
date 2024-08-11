@@ -1,0 +1,12 @@
+<MudTextField
+    Mask="@(new PatternMask("0000 0000 0000 0000"))"
+    @bind-Value=Text
+    ReadOnly=ReadOnly/>
+
+@code
+{
+    [Parameter]
+    public bool ReadOnly { get; set; } = true;
+
+    private string Text { get; set; } = "1234 1234 1234 1234";
+}

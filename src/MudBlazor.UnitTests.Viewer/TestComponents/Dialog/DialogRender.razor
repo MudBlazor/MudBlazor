@@ -1,0 +1,54 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDialog>
+    <DialogContent>
+        <MudText>Journey of life</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    public static int OnInitializedCount = 0;
+    public static int OnParametersSetCount = 0;
+
+    [CascadingParameter]
+    public MudDialogInstance MudDialog { get; set; }
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    private void Cancel() => MudDialog.Cancel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        await Task.Delay(10);
+
+        OnInitializedCount++;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        await Task.Delay(10);
+
+        OnParametersSetCount++;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            return;
+        }
+
+        await Task.Delay(10);
+
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+}

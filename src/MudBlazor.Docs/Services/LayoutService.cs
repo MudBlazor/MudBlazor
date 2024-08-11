@@ -4,7 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+using MudBlazor.Docs.Enums;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services.UserPreferences;
 
@@ -14,13 +14,18 @@ public class LayoutService
 {
     private readonly IUserPreferencesService _userPreferencesService;
     private UserPreferences.UserPreferences _userPreferences;
+    private bool _systemPreferences;
 
-    public bool IsRTL { get; private  set; } = false;
-    public bool IsDarkMode { get; private set; } = false;
+    public bool IsRTL { get; private set; }
+
+    public DarkLightMode CurrentDarkLightMode { get; private set; } = DarkLightMode.System;
+
+    public bool IsDarkMode { get; private set; }
+
+    public bool ObserveSystemThemeChange { get; private set; }
 
     public MudTheme CurrentTheme { get; private set; }
 
-    
     public LayoutService(IUserPreferencesService userPreferencesService)
     {
         _userPreferencesService = userPreferencesService;
@@ -30,33 +35,78 @@ public class LayoutService
     {
         IsDarkMode = value;
     }
-    
+
     public async Task ApplyUserPreferences(bool isDarkModeDefaultTheme)
     {
+        _systemPreferences = isDarkModeDefaultTheme;
+
         _userPreferences = await _userPreferencesService.LoadUserPreferences();
+
         if (_userPreferences != null)
         {
-            IsDarkMode = _userPreferences.DarkTheme;
+            CurrentDarkLightMode = _userPreferences.DarkLightTheme;
+            IsDarkMode = CurrentDarkLightMode switch
+            {
+                DarkLightMode.Dark => true,
+                DarkLightMode.Light => false,
+                DarkLightMode.System => isDarkModeDefaultTheme,
+                _ => IsDarkMode
+            };
+
             IsRTL = _userPreferences.RightToLeft;
         }
         else
         {
             IsDarkMode = isDarkModeDefaultTheme;
-            _userPreferences = new UserPreferences.UserPreferences {DarkTheme = IsDarkMode};
+            _userPreferences = new UserPreferences.UserPreferences { DarkLightTheme = DarkLightMode.System };
             await _userPreferencesService.SaveUserPreferences(_userPreferences);
         }
     }
-    
-    public event EventHandler MajorUpdateOccured;
 
-    private  void OnMajorUpdateOccured() => MajorUpdateOccured?.Invoke(this,EventArgs.Empty);
-    
-    public async Task ToggleDarkMode()
+    public Task OnSystemPreferenceChanged(bool newValue)
     {
-        IsDarkMode = !IsDarkMode;
-        _userPreferences.DarkTheme = IsDarkMode;
+        _systemPreferences = newValue;
+
+        if (CurrentDarkLightMode == DarkLightMode.System)
+        {
+            IsDarkMode = newValue;
+            OnMajorUpdateOccurred();
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public event EventHandler MajorUpdateOccurred;
+
+    private void OnMajorUpdateOccurred() => MajorUpdateOccurred?.Invoke(this, EventArgs.Empty);
+
+    public async Task CycleDarkLightModeAsync()
+    {
+        switch (CurrentDarkLightMode)
+        {
+            // Change to Light
+            case DarkLightMode.System:
+                CurrentDarkLightMode = DarkLightMode.Light;
+                ObserveSystemThemeChange = false;
+                IsDarkMode = false;
+                break;
+            // Change to Dark
+            case DarkLightMode.Light:
+                CurrentDarkLightMode = DarkLightMode.Dark;
+                ObserveSystemThemeChange = false;
+                IsDarkMode = true;
+                break;
+            // Change to System
+            case DarkLightMode.Dark:
+                CurrentDarkLightMode = DarkLightMode.System;
+                ObserveSystemThemeChange = true;
+                IsDarkMode = _systemPreferences;
+                break;
+        }
+
+        _userPreferences.DarkLightTheme = CurrentDarkLightMode;
         await _userPreferencesService.SaveUserPreferences(_userPreferences);
-        OnMajorUpdateOccured();
+        OnMajorUpdateOccurred();
     }
 
     public async Task ToggleRightToLeft()
@@ -64,34 +114,33 @@ public class LayoutService
         IsRTL = !IsRTL;
         _userPreferences.RightToLeft = IsRTL;
         await _userPreferencesService.SaveUserPreferences(_userPreferences);
-        OnMajorUpdateOccured();
-
+        OnMajorUpdateOccurred();
     }
 
     public void SetBaseTheme(MudTheme theme)
     {
         CurrentTheme = theme;
-        OnMajorUpdateOccured();
+        OnMajorUpdateOccurred();
     }
-    
+
     public DocsBasePage GetDocsBasePage(string uri)
     {
         if (uri.Contains("/docs/") || uri.Contains("/api/") || uri.Contains("/components/") ||
-            uri.Contains("/features/") || uri.Contains("/customization/"))
+            uri.Contains("/features/") || uri.Contains("/customization/") || uri.Contains("/utilities/"))
         {
             return DocsBasePage.Docs;
         }
-        else if (uri.Contains("/getting-started/"))
+
+        if (uri.Contains("/getting-started/"))
         {
             return DocsBasePage.GettingStarted;
         }
-        else if (uri.Contains("/mud/"))
+
+        if (uri.Contains("/mud/"))
         {
             return DocsBasePage.DiscoverMore;
         }
-        else
-        {
-            return DocsBasePage.None;
-        }
+
+        return DocsBasePage.None;
     }
 }

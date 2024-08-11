@@ -1,0 +1,52 @@
+name: deploy-mudblazor
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Tag to publish v[0-9]+.[0-9]+.[0-9]+*'
+        required: true
+        default: ''
+        type: string
+  push:
+    tags: 
+      - "v7.[0-9]+.[0-9]+"
+
+jobs:
+  get-version:
+    name: Get version to deploy
+    runs-on: ubuntu-latest
+    env:
+      VERSION: 1.0.0
+    outputs:
+      VERSION: ${{ steps.output-version.outputs.VERSION }}
+    steps:
+    - name: Set tag from input
+      if: ${{ github.event.inputs.version != '' }}
+      env:
+        TAG: ${{ github.event.inputs.version }}
+      run: echo "VERSION=${TAG#v}" >> $GITHUB_ENV
+
+    - name: Set version variable from tag
+      if: ${{ github.ref_type == 'tag' }}
+      env:
+        TAG: ${{ github.ref_name }}
+      run: echo "VERSION=${TAG#v}" >> $GITHUB_ENV
+
+    - name: VERSION to job output
+      id: output-version
+      run: echo "VERSION=${{ env.VERSION }}" >> $GITHUB_OUTPUT
+
+  deploy-web-app:
+    name: Deploy web app to mudblazor.com
+    needs: get-version
+    uses: MudBlazor/Workflows/.github/workflows/template-deploy-web-app.yml@main
+    with:
+      web-app-name: mudblazor
+      web-app-slot-name:  'staging'
+      checkout-ref:  'refs/tags/v${{ needs.get-version.outputs.VERSION }}'
+      swap-slots: true
+      project-directory: ./src/MudBlazor.Docs.WasmHost
+    secrets:
+      publish-profile: ${{ secrets.PUBLISH_MUDBLAZOR }}
+      azure-cred: ${{ secrets.AZURE_CREDENTIALS_MUD_PROD }}

@@ -1,0 +1,115 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Internal
+@using MudBlazor.Resources
+@inherits MudBaseInput<string>
+@inject InternalMudLocalizer Localizer
+
+<div id="@_elementId" class="@Classname" style="@Style">
+    @if (Adornment == Adornment.Start)
+    {
+        <MudInputAdornment Class="@AdornmentClassname"
+                           Icon="@AdornmentIcon"
+                           Color="@AdornmentColor"
+                           Size="@IconSize"
+                           Text="@AdornmentText"
+                           Edge="@Edge.Start"
+                           AdornmentClick="@OnAdornmentClick"
+                           AriaLabel="@AdornmentAriaLabel" />
+    }
+
+    @if (Lines > 1)
+    {
+        <textarea class="@InputClassname"
+                  @ref="_elementReference"
+                  @attributes="UserAttributes"
+                  id="@InputElementId"
+                  type="@InputType.ToDescriptionString()"
+                  value="@Text"
+                  placeholder="@Placeholder"
+                  disabled=@GetDisabledState()
+                  readonly="@GetReadOnlyState()"
+                  @onblur="@OnBlurredAsync"
+                  @onfocus="OnFocused"
+                  @oncut="OnCut"
+                  @oncopy="OnCopy"
+                  inputmode="@InputMode.ToDescriptionString()"
+                  aria-describedby="@GetAriaDescribedByString()"
+                  aria-invalid="@Error.ToString().ToLowerInvariant()"
+                  required="@Required"
+                  aria-required="@Required.ToString().ToLowerInvariant()">
+            @Text
+        </textarea>
+    }
+    else
+    {
+        <input class="@InputClassname"
+               @ref="_elementReference"
+               @attributes="UserAttributes"
+               id="@InputElementId"
+               type="@InputType.ToDescriptionString()"
+               value="@Text"
+               placeholder="@Placeholder"
+               disabled=@GetDisabledState()
+               readonly="@GetReadOnlyState()"
+               @onblur="@OnBlurredAsync"
+               @onfocus="OnFocused"
+               @oncut="OnCut"
+               @oncopy="OnCopy"
+               inputmode="@InputMode.ToDescriptionString()"
+               aria-describedby="@GetAriaDescribedByString()"
+               aria-invalid="@Error.ToString().ToLowerInvariant()"
+               required="@Required"
+               aria-required="@Required.ToString().ToLowerInvariant()">
+    }
+
+    @if (GetDisabledState())
+    {
+         @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.
+                       In Disabled state the tabindex attribute must NOT be set at all or else it will get focus on click
+         *@
+        <div class="@InputClassname"
+             style="@("display:" + (InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"
+             @onblur="@OnBlurredAsync" @ref="@_elementReference1">
+            @ChildContent
+        </div>
+    }
+    else
+    {
+         @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.*@
+        <div class="@InputClassname"
+             style="@("display:" + (InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"
+             tabindex="@(InputType == InputType.Hidden && ChildContent != null ? 0 : -1)"
+             @onblur="@OnBlurredAsync" @ref="@_elementReference1">
+            @ChildContent
+        </div>
+    }
+
+
+    @if (_showClearable && !GetDisabledState())
+    {
+        <MudIconButton Class="@ClearButtonClassname"
+                       Color="@Color.Default"
+                       Icon="@ClearIcon"
+                       Size="@Size.Small"
+                       OnClick="@HandleClearButtonAsync"
+                       aria-label="@Localizer[LanguageResource.MudInput_Clear]" />
+    }
+
+    @if (Adornment == Adornment.End)
+    {
+        <MudInputAdornment Class="@AdornmentClassname"
+                           Icon="@AdornmentIcon"
+                           Color="@AdornmentColor"
+                           Size="@IconSize"
+                           Text="@AdornmentText"
+                           Edge="@Edge.End"
+                           AdornmentClick="@OnAdornmentClick"
+                           AriaLabel="@AdornmentAriaLabel" />
+    }
+
+    @if (Variant == Variant.Outlined)
+    {
+        <div class="mud-input-outlined-border"></div>
+    }
+
+</div>

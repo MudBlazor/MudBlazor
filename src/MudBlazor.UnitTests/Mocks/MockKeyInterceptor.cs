@@ -7,11 +7,28 @@ namespace MudBlazor.UnitTests.Mocks
 {
 #pragma warning disable CS1998
 #pragma warning disable CS0067
+    public class MockKeyInterceptorServiceFactory : IKeyInterceptorFactory
+    {
+        private readonly MockKeyInterceptorService _interceptorService;
+
+        public MockKeyInterceptorServiceFactory(MockKeyInterceptorService interceptorService)
+        {
+            _interceptorService = interceptorService;
+        }
+
+        public MockKeyInterceptorServiceFactory()
+        {
+
+        }
+
+        public IKeyInterceptor Create() => _interceptorService ?? new MockKeyInterceptorService();
+    }
+
     public class MockKeyInterceptorService : IKeyInterceptor
     {
         public void Dispose()
         {
-            
+
         }
 
         public Task Connect(string element, KeyInterceptorOptions options)

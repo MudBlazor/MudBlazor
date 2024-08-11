@@ -7,19 +7,19 @@
                 <MudText Typo="Typo.body1">MudBlazor</MudText>
             </div>
             <div class="d-flex align-center my-2">
-                <MudIcon Icon="@Icons.Rounded.MapsHomeWork" Size="Size.Small" Color="Color.Inherit" Class="mr-2" />
+                <MudIcon Icon="@Icons.Material.Rounded.MapsHomeWork" Size="Size.Small" Color="Color.Inherit" Class="mr-2" />
                 <MudText Typo="Typo.body1">Gardnet AB</MudText>
             </div>
             <div class="d-flex align-center my-2">
-                <MudIcon Icon="@Icons.Rounded.NearMe" Size="Size.Small" Color="Color.Inherit" Class="mr-2" />
+                <MudIcon Icon="@Icons.Material.Rounded.NearMe" Size="Size.Small" Color="Color.Inherit" Class="mr-2" />
                 <MudText Typo="Typo.body1">Sweden</MudText>
             </div>
         </div>
         <div class="d-flex mt-4">
-            <MudIconButton Link="https://twitter.com/MudBlazor" Target="_blank" Edge="Edge.Start" Class="me-2" Color="Color.Inherit" Icon="@Icons.Custom.Brands.Twitter" aria-label="twitter"/>
-            <MudIconButton Link="https://discord.gg/mudblazor" Target="_blank" Edge="Edge.Start" Class="me-2" Color="Color.Inherit" Icon="@Icons.Custom.Brands.Discord" aria-label="discord"/>
-            <MudIconButton Link="https://github.com/MudBlazor/MudBlazor" Target="_blank" Edge="Edge.Start" Class="me-2" Color="Color.Inherit" Icon="@Icons.Custom.Brands.GitHub" aria-label="github"/>
-            <MudIconButton Link="https://stackoverflow.com/tags/mudblazor" Target="_blank" Edge="Edge.Start" Class="me-2" Color="Color.Inherit" Icon="@Icons.Custom.Brands.StackOverflow" aria-label="stack overflow"/>
+            <MudIconButton Href="https://twitter.com/MudBlazor" Target="_blank" Edge="Edge.Start" Class="me-2" Color="Color.Inherit" Icon="@Icons.Custom.Brands.Twitter" aria-label="twitter" />
+            <MudIconButton Href="https://discord.gg/mudblazor" Target="_blank" Edge="Edge.Start" Class="me-2" Color="Color.Inherit" Icon="@Icons.Custom.Brands.Discord" aria-label="discord"/>
+            <MudIconButton Href="https://github.com/MudBlazor/MudBlazor" Target="_blank" Edge="Edge.Start" Class="me-2" Color="Color.Inherit" Icon="@Icons.Custom.Brands.GitHub" aria-label="github"/>
+            <MudIconButton Href="https://stackoverflow.com/tags/mudblazor" Target="_blank" Edge="Edge.Start" Class="me-2" Color="Color.Inherit" Icon="@Icons.Custom.Brands.StackOverflow" aria-label="stack overflow"/>
         </div>
     </MudItem>
     <MudItem xs="6" sm="3" Class="d-flex flex-column">
@@ -31,33 +31,23 @@
     <MudItem xs="6" sm="3" Class="d-flex flex-column">
         <MudText Typo="Typo.subtitle2" Class="mb-3">Project</MudText>
         <MudLink Href="/mud/announcements" Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">Announcements</MudLink>
-        <MudLink Href="/mud/project/how-it-started" Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">How it started</MudLink>
         <MudLink Href="/mud/project/releases" Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">Releases</MudLink>
         <MudLink Href="/mud/project/roadmap" Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">Roadmap</MudLink>
-        <MudLink Href="/mud/project/sponsor" Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">Sponsors and Backers</MudLink>
-        <MudLink Href="/mud/project/team" Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">Team and Contributors</MudLink>
+        <MudLink Href="/mud/project/sponsor" Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">Sponsors & Backers</MudLink>
+        <MudLink Href="/mud/project/team" Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">Team & Contributors</MudLink>
+        <MudLink Href="/mud/project/how-it-started" Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">How it started</MudLink>
     </MudItem>
     <MudItem xs="6" sm="3" Class="d-flex flex-column">
-        <MudText Typo="Typo.subtitle2" Class="mb-3">Products</MudText>
+        <MudText Typo="Typo.subtitle2" Class="mb-3">Products & Legal Information</MudText>
         <MudLink Href="https://mudblazor.com/" Target="_blank" Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">MudBlazor</MudLink>
         <MudLink Href="https://try.mudblazor.com/" Target="_blank" Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">TryMudBlazor</MudLink>
         <MudLink Href="https://github.com/MudBlazor/ThemeManager" Target="_blank" Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">ThemeManager</MudLink>
         <MudLink Href="https://github.com/MudBlazor/Templates" Target="_blank" Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">Templates</MudLink>
+        <MudLink Href="/mud/cookie-policy" Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">Cookie Policy</MudLink>
     </MudItem>
     <MudItem xs="12">
-        <MudToolBar DisableGutters="true" Dense="true">
-            <MudText Typo="Typo.body1">Copyright © 2020-2022 MudBlazor.</MudText>
+        <MudToolBar Gutters="false" Dense="true">
+            <MudText Typo="Typo.body1">@($"Copyright © 2020-{DateTime.Now.Year} MudBlazor")</MudText>
         </MudToolBar>
     </MudItem>
 </MudGrid>
-
-@code {
-    string MudBlazorVersion
-    {
-        get
-        {
-            var v = typeof(MudText).Assembly.GetName().Version;
-            return $"v{v.Major}.{v.Minor}.{v.Build}.";
-        }
-    }
-}

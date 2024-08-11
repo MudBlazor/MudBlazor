@@ -1,0 +1,32 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudFormTestable ValidationDelay="0">
+    <MudInput T="string"></MudInput>
+    <MudInputString></MudInputString>
+
+    <MudTextField T="string"></MudTextField>
+
+    <MudNumericField T="decimal"></MudNumericField>
+
+    <MudRangeInput T="string"></MudRangeInput>
+
+    <MudRadioGroup T="string">
+        <MudRadio Value="@("A")">Option A</MudRadio>
+        <MudRadio Value="@("B")">Option B</MudRadio>
+    </MudRadioGroup>
+
+    <MudPicker T="DateTime"></MudPicker>
+    <MudDateRangePicker></MudDateRangePicker>
+    <MudDatePicker></MudDatePicker>
+    <MudTimePicker></MudTimePicker>
+
+    <MudCheckBox T="bool"></MudCheckBox>
+    <MudSwitch T="bool" />
+    <MudBooleanInput T="bool"></MudBooleanInput>
+
+    <MudColorPicker></MudColorPicker>
+</MudFormTestable>
+
+@code {
+    public static string __description__ = "Only the top SubscribeToParentForm fields should be registered inside the form.";
+}

@@ -1,25 +1,30 @@
-﻿@namespace MudBlazor
+@namespace MudBlazor
 @using MudBlazor.Charts
-@inherits MudChartBase
+@inherits MudCategoryChartBase
 
 <CascadingValue Value="@this" IsFixed="true">
-    <div @attributes="UserAttributes" class="@Classname" style="@Style" dir="ltr">
-        @if (ChartType == ChartType.Donut)
-        {
-            <Donut InputData="@InputData" @bind-SelectedIndex="@SelectedIndex" InputLabels="@InputLabels"></Donut>
-        }
-        @if (ChartType == ChartType.Pie)
-        {
-            <Pie InputData="@InputData" @bind-SelectedIndex="@SelectedIndex" InputLabels="@InputLabels"></Pie>
-        }
-        @if (ChartType == ChartType.Line)
-        {
-            <Line ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></Line>
-        }
-        @if (ChartType == ChartType.Bar)
-        {
-            <Bar ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></Bar>
-        }
-    </div>
+    <CascadingValue Value="@((MudChartBase)this)" IsFixed="true">
+        <div @attributes="UserAttributes" class="@Classname" style="@Style" dir="ltr">
+            @if (ChartType == ChartType.Donut)
+            {
+                <Donut InputData="@InputData" @bind-SelectedIndex="@SelectedIndex" InputLabels="@InputLabels"></Donut>
+            }
+            @if (ChartType == ChartType.Pie)
+            {
+                <Pie InputData="@InputData" @bind-SelectedIndex="@SelectedIndex" InputLabels="@InputLabels"></Pie>
+            }
+            @if (ChartType == ChartType.Line)
+            {
+                <Line ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></Line>
+            }
+            @if (ChartType == ChartType.Bar)
+            {
+                <Bar ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></Bar>
+            }
+            @if (ChartType == ChartType.StackedBar)
+            {
+                <StackedBar ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></StackedBar>
+            }
+        </div>
+    </CascadingValue>
 </CascadingValue>
-

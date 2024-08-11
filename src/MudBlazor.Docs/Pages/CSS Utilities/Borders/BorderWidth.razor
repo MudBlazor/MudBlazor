@@ -1,0 +1,47 @@
+﻿@page "/utilities/border-width"
+
+<DocsPage>
+    <DocsPageHeader Title="Border Width" SubTitle="Utilities for controlling the width of an element's borders." />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Class Reference" HideTitle="true" />
+            <DocsAutoGen_Borders_BorderWidth/>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage" />
+            <SectionSubGroups>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="All sides">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(BorderWidthAllSidesExample)" HighLight="border,border-2,border-4,border-8">
+                        <BorderWidthAllSidesExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Individual sides">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(BorderWidthIndividualSidesExample)" HighLight="border-t-4,border-r-4,border-b-4,border-l-4">
+                        <BorderWidthIndividualSidesExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Horizontal and vertical sides">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(BorderWidthHorizontalVerticalExample)" HighLight="border-x-4,border-y-4">
+                        <BorderWidthHorizontalVerticalExample/>
+                    </SectionContent>
+                </DocsPageSection>
+
+            </SectionSubGroups>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

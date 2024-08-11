@@ -2,14 +2,17 @@
 
 <MudDataGrid Items="@_items">
     <Columns>
-        <Column T="Item" Field="@nameof(Item.Name)" />
+        <PropertyColumn Property="x => x.Name" />
     </Columns>
     <PagerContent>
-        <MudDataGridPager T="Item" />
+        <MudDataGridPager PageSizeSelector="@PageSizeDropDown" />
     </PagerContent>
 </MudDataGrid>
 
 @code {
+    [Parameter]
+    public bool PageSizeDropDown { get; set; } = true;
+
     private List<Item> _items = new List<Item>();
 
     protected override void OnInitialized()

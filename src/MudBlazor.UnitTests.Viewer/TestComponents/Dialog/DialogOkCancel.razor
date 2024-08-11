@@ -1,18 +1,21 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDialog Class="test-class" ClassContent="content-class" Style="color: red;" ContentStyle="color: blue;">
+<MudDialog Class="test-class" ContentClass="content-class" Style="color: red;" ContentStyle="color: blue;">
     <DialogContent>
         <MudText>Wabalabadubdub!</MudText>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
         <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+        <MudButton Color="Color.Secondary" OnClick="CloseDefault">Ok Default</MudButton>
     </DialogActions>
 </MudDialog>
 
 @code {
-    [CascadingParameter] public MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter]
+    public MudDialogInstance MudDialog { get; set; }
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    void Cancel() => MudDialog.Cancel();
+    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    private void CloseDefault() => MudDialog.Close();
+    private void Cancel() => MudDialog.Cancel();
 }

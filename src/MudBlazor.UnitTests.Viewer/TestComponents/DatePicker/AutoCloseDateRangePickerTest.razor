@@ -1,0 +1,16 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudDateRangePicker id="picker" @ref="_picker" Label="With action buttons" @bind-DateRange="DateRange" AutoClose=@AutoClose>
+    <PickerActions>
+        <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.ClearAsync())">Clear</MudButton>
+        <MudButton OnClick="@(() => _picker.CloseAsync(false))">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="@(() => _picker.CloseAsync())">Ok</MudButton>
+    </PickerActions>
+</MudDateRangePicker>
+
+@code {
+    MudDateRangePicker _picker;
+    [Parameter] public DateRange DateRange { get; set; }
+    [Parameter] public bool AutoClose { get; set; }
+}

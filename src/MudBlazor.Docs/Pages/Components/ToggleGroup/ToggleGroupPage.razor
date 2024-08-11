@@ -1,0 +1,93 @@
+﻿@page "/components/togglegroup"
+@page "/components/MudToggleGroup"
+@page "/components/MudToggleGroup`1"
+@page "/components/MudToggleItem"
+@page "/components/MudToggleItem`1"
+
+<DocsPage>
+    <DocsPageHeader Title="Toggle Group" SubTitle="A bunch of toggle buttons forming a selection of values to choose from with various selection modes.">
+        <Description>
+            <MudText>See also: <MudLink Href="/components/buttongroup">Button Group</MudLink></MudText>
+            <DocsPageSection>           
+                <MudAlert Class="mt-4" Severity="Severity.Warning">
+                    <b>Warning experimental component!</b>
+                </MudAlert>
+                <MudAlert Class="mt-4" Severity="Severity.Error">
+                    This component is under development and breaking changes may occur even in minor patch releases.<br/>
+                    If you are prepared to update your code and adapt to changes, please try it out and help us mature it
+                    by reporting issues or contributing bug fixes and features.
+                </MudAlert>
+            </DocsPageSection>
+        </Description>
+    </DocsPageHeader>    
+       
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="Usage">
+                <Description>
+                    The <CodeInline>MudToggleGroup</CodeInline> holds a number of <CodeInline>MudToggleItems</CodeInline> 
+                    and semantically groups them together into a selection. The items can be configured to show text or 
+                    custom content such as an icon. To show a check mark set the <CodeInline>CheckMark</CodeInline> parameter. 
+                    The check mark will push the text to the side by default. If you don't want this you can set
+                    the <CodeInline>FixedContent</CodeInline> parameter to counterbalance the checkmark with padding on the right.
+                    <MudAlert Severity="Severity.Info" Class="mt-3">
+                        If you don't set the <CodeInline>Text</CodeInline> property the items will simply show the 
+                        <CodeInline>Value</CodeInline> if you didn't define the child content of a <CodeInline>MudToggleItem</CodeInline>.
+                    </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ToggleBasicsExample)" ShowCode="false">
+                <ToggleBasicsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Selection Mode">
+                <Description>
+                    <CodeInline>MudToggleGroup</CodeInline> has three different selection modes: <CodeInline>SelectionMode.SingleSelection</CodeInline>,
+                    <CodeInline>SelectionMode.MultiSelection</CodeInline> and <CodeInline>SelectionMode.ToggleSelection</CodeInline>. 
+                    Single selection is the default and allows only one choice to be selected at the same time, just like in a radio group. 
+                    With multi-selection many items can be selected at the same time or none. Toggle-selection is an exclusive single
+                    selection which allows toggling off the selected value so that nothing is selected.
+                    <MudAlert Severity="Severity.Info" Class="mt-3">
+                        You must set the <CodeInline>Value</CodeInline> property of each item to a unique value or the selection
+                        won't work. Also, the type of the item's value must match the group's <CodeInline>T</CodeInline> parameter.
+                    </MudAlert>
+                    <MudAlert Severity="Severity.Info" Class="mt-3">
+                        Make sure to bind the toggle group's <CodeInline>Value</CodeInline> property in single- and toggle-selection mode 
+                        and <CodeInline>Values</CodeInline> with multi-selection.
+                    </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ToggleSelectionsExample)" ShowCode="false">
+                <ToggleSelectionsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Custom Selection Style">
+                <Description>
+                    You can customize the look of selected items with <CodeInline>SelectedClass</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ToggleCustomSelectionStyleExample)" ShowCode="false">
+                <ToggleCustomSelectionStyleExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Custom Content">
+                <Description>
+                    <CodeInline>MudToggleItem</CodeInline> supports customization of its content with a 
+                    <CodeInline>RenderFragment<CodeInline Tag>bool</CodeInline></CodeInline> where the parameter conveys
+                    whether or not the item is currently selected. In the example the <CodeInline>context</CodeInline>
+                    variable was used to color the selected chip green.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ToggleCustomContentExample)" ShowCode="false">
+                <ToggleCustomContentExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

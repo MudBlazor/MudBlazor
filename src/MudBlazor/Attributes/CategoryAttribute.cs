@@ -55,6 +55,10 @@ namespace MudBlazor
             ["Selecting"] = 205,
             ["Editing"] = 206,
             ["Click action"] = 207,
+            ["Items"] = 208,
+            ["Disable"] = 209,
+            ["DraggingClass"] = 210,
+            ["DropRules"] = 211,
 
             ["Appearance"] = 300, // general category
 
@@ -91,7 +95,7 @@ namespace MudBlazor
     ///       - <i>Appearance</i> - Changing these properties doesn't change behavior of the component and behavior of the application, but only changes the appearance
     ///                             of the component irrelevant to the understanding of the application by a user. So in some way they are less important than the "Behavior"
     ///                             category, because they are only used to adjust the look of the application. Example properties are: a) <c>Elevation</c>, <c>Outlined</c>,
-    ///                             <c>Square</c>, <c>Rounded</c>, <c>DisableGutters</c>, <c>Dense</c>, <c>DisableRipple</c>; b) size, color, and typography of the item
+    ///                             <c>Square</c>, <c>Rounded</c>, <c>Gutters</c>, <c>Dense</c>, <c>Ripple</c>; b) size, color, and typography of the item
     ///                             and its subelements; c) CSS classes and styles of subelements; d) icons with the default value already set (because most often changing its value
     ///                             doesn't change passed information).<br/>
     ///       - <i>Common</i>     - Properties defined in <see cref="MudComponentBase"/>.
@@ -147,7 +151,7 @@ namespace MudBlazor
             public const string PickerAppearance = "Picker appearance";
         }
 
-        /// <summary>Used in all charts, that is in <see cref="MudChartBase"/> and all components inheriting from it.</summary>
+        /// <summary>Used in all charts, that is in <see cref="MudCategoryChartBase"/> and all components inheriting from it.</summary>
         public static class Chart
         {
             public const string Behavior = "Behavior";
@@ -260,6 +264,17 @@ namespace MudBlazor
             public const string Appearance = "Appearance";
         }
 
+        public static class DropZone
+        {
+            public const string Appearance = "Appearance";
+            public const string Behavior = "Behavior";
+            public const string Disabled = "Disable";
+            public const string Sorting = "Sorting";
+            public const string DraggingClass = "DraggingClass";
+            public const string DropRules = "DropRules";
+            public const string Items = "Items";
+        }
+
         public static class Element
         {
             public const string Misc = "Misc";
@@ -275,6 +290,12 @@ namespace MudBlazor
         {
             public const string Data = "Data";
             public const string Validation = "Validation";
+            public const string Behavior = "Behavior";
+            public const string Appearance = "Appearance";
+        }
+
+        public static class FileUpload
+        {
             public const string Behavior = "Behavior";
             public const string Appearance = "Appearance";
         }
@@ -298,6 +319,12 @@ namespace MudBlazor
         }
 
         public static class Highlighter
+        {
+            public const string Behavior = "Behavior";
+            public const string Appearance = "Appearance";
+        }
+
+        public static class Image
         {
             public const string Behavior = "Behavior";
             public const string Appearance = "Appearance";
@@ -367,6 +394,7 @@ namespace MudBlazor
         {
             public const string Behavior = "Behavior";
             public const string ClickAction = "Click action";
+            public const string Appearance = "Appearance";
         }
 
         public static class Pagination
@@ -376,6 +404,12 @@ namespace MudBlazor
         }
 
         public static class Paper
+        {
+            public const string Behavior = "Behavior";
+            public const string Appearance = "Appearance";
+        }
+
+        public static class Picker
         {
             public const string Behavior = "Behavior";
             public const string Appearance = "Appearance";
@@ -425,6 +459,12 @@ namespace MudBlazor
         }
 
         public static class Skeleton
+        {
+            public const string Behavior = "Behavior";
+            public const string Appearance = "Appearance";
+        }
+
+        public static class Stack
         {
             public const string Behavior = "Behavior";
             public const string Appearance = "Appearance";

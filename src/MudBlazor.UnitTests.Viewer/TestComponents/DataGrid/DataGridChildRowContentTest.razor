@@ -2,14 +2,12 @@
 
 <MudDataGrid Items="@_items" Filterable="true">
     <Columns>
-        <Column T="Model" Field="@nameof(Model.Name)" />
-        <Column T="Model" Field="@nameof(Model.Age)" />
-        <Column T="Model" Field="@nameof(Model.Status)" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Status" />
     </Columns>
     <ChildRowContent>
-        <tr>
-            <td colspan="3">@($"uid = {context.Name}|{context.Age}|{context.Status}|{Guid.NewGuid()}")</td>
-        </tr>
+        @($"uid = {context.Item.Name}|{context.Item.Age}|{context.Item.Status}|{Guid.NewGuid()}")
     </ChildRowContent>
 </MudDataGrid>
 

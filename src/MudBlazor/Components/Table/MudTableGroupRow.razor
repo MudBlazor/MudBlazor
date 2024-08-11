@@ -7,13 +7,13 @@
 @if (HeaderTemplate != null && GroupDefinition != null)
 {
 <tr class="@HeaderClassname" @onclick="@OnRowClick" style="@HeaderStyle" @attributes="@UserAttributes">        
-    @if ((GroupDefinition?.IsThisOrParentExpandable ?? false) || (Context?.Table.MultiSelection ?? false))
+    @if ((GroupDefinition?.IsThisOrParentExpandable ?? false) || (Context?.Table?.MultiSelection ?? false))
     {
         <MudTd>
             <div class="d-flex">
-                @if (GroupDefinition.Expandable)
+                @if (GroupDefinition?.Expandable ?? false)
                 {
-                    <MudIconButton Class="mud-table-row-expander" Icon="@(IsExpanded ? ExpandIcon : CollapseIcon)" OnClick="@(() => IsExpanded = !IsExpanded)"/>
+                    <MudIconButton Class="mud-table-row-expander" Icon="@(Expanded ? ExpandIcon : CollapseIcon)" OnClick="@(() => Expanded = !Expanded)"/>
                 }
                 else
                 {
@@ -22,15 +22,15 @@
                         <div style="@ActionsStylename"></div>
                     }
                 }
-                @if (IsCheckable)
+                @if (Checkable)
                 {
-                    <MudCheckBox @bind-Checked="IsChecked" Class="mud-table-cell-checkbox"/>
+                    <MudCheckBox T="bool?" @bind-Value="Checked" ReadOnly="!SelectionChangeable" Disabled="!SelectionChangeable" Class="mud-table-cell-checkbox"/>
                 }
             </div>
         </MudTd>
     }
-    @HeaderTemplate(new TableGroupData<object, T>(GroupDefinition.GroupName, Items.Key, Items.ToList()))
-    @if ((Context?.Table.IsEditable ?? false))
+    @HeaderTemplate(new TableGroupData<object, T>(GroupDefinition?.GroupName, Items?.Key, Items?.ToList() ?? new List<T>()))
+    @if ((Context?.Table?.Editable ?? false))
     {
         <MudTd />
     }
@@ -41,14 +41,16 @@ else
 <MudText @attributes="@UserAttributes">@("There aren't any group definition to use with this component.")</MudText>
 }
 
-@if (IsExpanded)
+@if (Expanded)
 {
+    Context?.UpdateRowCheckBoxes();
+
     @*CHILDREN:*@
     @if (_innerGroupItems != null && GroupDefinition != null)
     {
         @foreach (var group in _innerGroupItems)
         {
-            <MudTableGroupRow GroupDefinition="GroupDefinition.InnerGroup" Items="@group" IsCheckable="@IsCheckable"
+            <MudTableGroupRow GroupDefinition="GroupDefinition.InnerGroup" Items="@group" Checkable="@Checkable" SelectionChangeable="SelectionChangeable"
                               HeaderClass="@HeaderClass" HeaderStyle="@HeaderStyle"
                               FooterClass="@FooterClass" FooterStyle="@FooterStyle"
                               HeaderTemplate="@HeaderTemplate" FooterTemplate="@FooterTemplate" T="T" @attributes="@UserAttributes" />
@@ -63,12 +65,12 @@ else
     @if (FooterTemplate != null && GroupDefinition != null)
     {
         <tr class="@FooterClassname" @onclick="@OnRowClick" style="@FooterStyle" @attributes="@UserAttributes">
-            @if ((GroupDefinition?.IsThisOrParentExpandable ?? false) || (Context?.Table.MultiSelection ?? false))
+            @if ((GroupDefinition?.IsThisOrParentExpandable ?? false) || (Context?.Table?.MultiSelection ?? false))
             {
                 <MudTd/>
             }
             @FooterTemplate(new TableGroupData<object, T>(GroupDefinition.GroupName, Items.Key, Items.ToList()))
-            @if ((Context?.Table.IsEditable ?? false))
+            @if ((Context?.Table.Editable ?? false))
             {
                 <MudTd />
             }

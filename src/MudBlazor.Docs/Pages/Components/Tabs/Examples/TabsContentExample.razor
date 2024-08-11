@@ -1,0 +1,35 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTabs Elevation="1" Rounded="true" PanelClass="pa-6" ActiveTabClass="border-solid border-2 mud-border-primary">
+    <MudTabPanel>
+        <ChildContent>
+            <MudText>Custom tab content only</MudText>
+        </ChildContent>
+        <TabContent>
+            Item One
+        </TabContent>
+    </MudTabPanel>
+    <MudTabPanel>
+        <ChildContent>
+            <MudText>Both custom tab and wrapper content</MudText>
+        </ChildContent>
+        <TabWrapperContent>
+            <MudTooltip Text="ToolTip Two">
+                @context
+            </MudTooltip>
+        </TabWrapperContent>
+        <TabContent>
+            <MudText Typo="Typo.h6">Item Two</MudText>
+        </TabContent>
+    </MudTabPanel>
+    <MudTabPanel Text="Item Three">
+        <ChildContent>
+            <MudText>Custom wrapper content only</MudText>
+        </ChildContent>
+        <TabWrapperContent>
+            <MudTooltip Text="ToolTip Three">
+                @context
+            </MudTooltip>
+        </TabWrapperContent>
+    </MudTabPanel>
+</MudTabs>

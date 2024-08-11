@@ -1,4 +1,7 @@
 @page "/customization/default-theme"
+@page "/components/MudTheme"
+@page "/components/MudThemeProvider"
+
 @using System.Reflection
 @using System.Text.RegularExpressions
 
@@ -10,14 +13,14 @@
             <SectionSubGroups>
                 <DocsPageSection>
                     <SectionHeader Title="Palette"/>
-                    <MudSimpleTable Class="docs-class-table" Dense="true" Elevation="0" FixedHeader="true">
+                    <MudSimpleTable Class="docs-class-table default-theme" Dense="true" Elevation="0" FixedHeader="true">
                         <thead>
                             <tr>
                                 <th>Name</th>
                                 <th>Type</th>
-                                <th>Default</th>
+                                <th>Default Light</th>
+                                <th>Default Dark</th>
                                 <th>CSS Variable</th>
-                                <th>CSS Class</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -33,8 +36,16 @@
                                         </div>
                                         
                                     </td>
+                                    <td>
+                                        @if (!Row.Default.Equals(Row.Dark))
+                                        {
+                                            <div class="d-flex align-center">
+                                                <MudPaper Outlined="true" Height="16px" Width="16px" Class="mr-2" Style="@($"background-color:{Row.Dark}")"/>
+                                                @Row.Dark
+                                            </div>
+                                        }
+                                    </td>
                                     <td>@Row.CSSVariable</td>
-                                    <td>@Row.CSSClass</td>
                                 </tr>
                             }
                         </tbody>
@@ -42,7 +53,7 @@
                 </DocsPageSection>
                 <DocsPageSection>
                     <SectionHeader Title="Shadows"/>
-                    <MudSimpleTable Class="docs-class-table" Dense="true" Elevation="0" FixedHeader="true">
+                    <MudSimpleTable Class="docs-class-table default-theme" Dense="true" Elevation="0" FixedHeader="true">
                         <thead>
                         <tr>
                             <th>Name</th>
@@ -68,7 +79,7 @@
                 </DocsPageSection>
                 <DocsPageSection>
                     <SectionHeader Title="LayoutProperties"/>
-                    <MudSimpleTable Class="docs-class-table" Dense="true" Elevation="0" FixedHeader="true">
+                    <MudSimpleTable Class="docs-class-table default-theme" Dense="true" Elevation="0" FixedHeader="true">
                         <thead>
                         <tr>
                             <th>Name</th>
@@ -94,7 +105,7 @@
                 </DocsPageSection>
                 <DocsPageSection>
                     <SectionHeader Title="Typography"/>
-                    <MudSimpleTable Class="docs-class-table" Dense="true" Elevation="0" FixedHeader="true">
+                    <MudSimpleTable Class="docs-class-table default-theme" Dense="true" Elevation="0" FixedHeader="true">
                         <thead>
                         <tr>
                             <th>Name</th>
@@ -124,15 +135,18 @@
                                         @if (Row.CSSVariable.Contains("default-family"))
                                         {
                                             string fontFamily = "";
-                                            foreach (string font in mudTheme.Typography.Default.FontFamily)
+                                            if (mudTheme.Typography.Default.FontFamily is not null)
                                             {
-                                                if (fontFamily == "")
+                                                foreach (string font in mudTheme.Typography.Default.FontFamily)
                                                 {
-                                                    fontFamily += font;
-                                                }
-                                                else
-                                                {
-                                                    fontFamily = fontFamily + ", " + font;
+                                                    if (fontFamily == "")
+                                                    {
+                                                        fontFamily += font;
+                                                    }
+                                                    else
+                                                    {
+                                                        fontFamily = fontFamily + ", " + font;
+                                                    }
                                                 }
                                             }
                                             @fontFamily
@@ -153,7 +167,7 @@
                 </DocsPageSection>
                 <DocsPageSection>
                     <SectionHeader Title="ZIndex"/>
-                    <MudSimpleTable Class="docs-class-table" Dense="true" Elevation="0" FixedHeader="true">
+                    <MudSimpleTable Class="docs-class-table default-theme" Dense="true" Elevation="0" FixedHeader="true">
                         <thead>
                         <tr>
                             <th>Name</th>
@@ -204,13 +218,16 @@
 
     private void LoadPalette()
     {
+#pragma warning disable CS0618
         foreach (var value in typeof(Palette).GetProperties())
+#pragma warning restore CS0618
         {
             var newprop = new ApiDefaultTheme()
             {
                 Name = value.Name,
                 Type = value.PropertyType.ConvertToCSharpSource(),
-                Default = value.GetValue(mudTheme.Palette, null),
+                Default = value.GetValue(mudTheme.PaletteLight, null),
+                Dark = value.GetValue(mudTheme.PaletteDark, null),
                 CSSVariable = $"--mud-palette-{GetCssVar(value.Name)}"
             };
             ApiPalette.Add(newprop);
@@ -294,31 +311,31 @@
     {
         if (value == "AppBar")
         {
-            return value.ToLower();
+            return value.ToLowerInvariant();
         }
         else if (value.Contains("ContrastText"))
         {
-            return value.Replace("ContrastText", "-Text").ToLower();
+            return value.Replace("ContrastText", "-Text").ToLowerInvariant();
         }
         else if (value.Contains("Font"))
         {
-            return value.Replace("Font", "-").ToLower();
+            return value.Replace("Font", "-").ToLowerInvariant();
         }
         else if (value.Contains("LineHeight"))
         {
-            return value.Replace("LineHeight", "-LineHeight").ToLower();
+            return value.Replace("LineHeight", "-LineHeight").ToLowerInvariant();
         }
         else if (value.Contains("LetterSpacing"))
         {
-            return value.Replace("LetterSpacing", "-LetterSpacing").ToLower();
+            return value.Replace("LetterSpacing", "-LetterSpacing").ToLowerInvariant();
         }
         else if (value.Contains("TextTransform"))
         {
-            return value.Replace("TextTransform", "-Text-Transform").ToLower();
+            return value.Replace("TextTransform", "-Text-Transform").ToLowerInvariant();
         }
         else
         {
-            return Regex.Replace(value, @"\B[A-Z]", "-$&").ToLower();
+            return Regex.Replace(value, @"\B[A-Z]", "-$&").ToLowerInvariant();
         }
     }
 
@@ -327,6 +344,7 @@
         public string Name { get; set; }
         public string Type { get; set; }
         public object Default { get; set; }
+        public object Dark { get; set; }
         public string CSSClass { get; set; }
         public string CSSVariable { get; set; }
         public bool IsHeader { get; set; }

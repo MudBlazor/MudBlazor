@@ -1,0 +1,48 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using FluentValidation
+
+<MudForm Model="@Model" @ref="@Form" Validation="@(ValidationRules.ValidateValue)" ValidationDelay="0">
+    <MudFileUpload T="IBrowserFile" For="@(() => Model.File)" @bind-Files="Model.File" />
+    <MudFileUpload T="IReadOnlyList<IBrowserFile>" For="@(() => Model.Files)" @bind-Files="Model.Files" />
+</MudForm>
+
+<MudButton OnClick="(() => Form.Validate())">Submit</MudButton>
+@code
+{
+    public MudForm Form;
+    public FileModel Model = new();
+    private FileModelFluentValidator ValidationRules = new();
+
+    public class FileModel
+    {
+        public IBrowserFile File { get; set; }
+        public IReadOnlyList<IBrowserFile> Files { get; set; }
+    }
+
+    /// <summary>
+    /// A standard AbstractValidator which contains multiple rules and can be shared with the back end API
+    /// </summary>
+    /// <typeparam name="OrderModel"></typeparam>
+    public class FileModelFluentValidator : AbstractValidator<FileModel>
+    {
+        public FileModelFluentValidator()
+        {
+            RuleFor(x => x.File)
+            .NotEmpty();
+            When(x => x.File != null, () =>
+            {
+                RuleFor(x => x.File.Size).LessThanOrEqualTo(10485760).WithMessage("The maximum file size is 10 MB");
+            });
+            RuleFor(x => x.Files)
+            .NotEmpty();
+        }
+
+        public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
+        {
+            var result = await ValidateAsync(ValidationContext<FileModel>.CreateWithOptions((FileModel)model, x => x.IncludeProperties(propertyName)));
+            if (result.IsValid)
+                return Array.Empty<string>();
+            return result.Errors.Select(e => e.ErrorMessage);
+        };
+    }
+}

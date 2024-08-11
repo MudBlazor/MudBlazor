@@ -4,6 +4,23 @@ using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Mocks
 {
+    public class MockScrollSpyFactory : IScrollSpyFactory
+    {
+        private readonly MockScrollSpy _spy;
+
+        public MockScrollSpyFactory(MockScrollSpy spy)
+        {
+            _spy = spy;
+        }
+
+        public MockScrollSpyFactory()
+        {
+
+        }
+
+        public IScrollSpy Create() => _spy ?? new MockScrollSpy();
+    }
+
     /// <summary>
     /// Mock for scroll spy
     /// </summary>
@@ -23,6 +40,7 @@ namespace MudBlazor.UnitTests.Mocks
         public Task ScrollToSection(string id)
         {
             _scrollHistory.Add(id);
+            FireScrollSectionSectionCenteredEvent(id);
             return Task.FromResult(true);
         }
 
@@ -33,10 +51,10 @@ namespace MudBlazor.UnitTests.Mocks
         }
 
         public Task ScrollToSection(Uri uri) => Task.FromResult(false);
-        public Task StartSpying(string elementsSelector)
+        public Task StartSpying(string containerSelector, string sectionClassSelector)
         {
             SpyingInitiated = true;
-            SpyingClassSelector = elementsSelector;
+            SpyingClassSelector = sectionClassSelector;
 
             return Task.FromResult(false);
         }

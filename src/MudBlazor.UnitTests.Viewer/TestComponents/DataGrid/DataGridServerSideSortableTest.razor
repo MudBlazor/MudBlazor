@@ -1,18 +1,33 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid ServerData="@(new Func<GridState<Item>, Task<GridData<Item>>>(ServerReload))" Sortable="true">
+<MudDataGrid T="Item" ServerData="@(new Func<GridState<Item>, Task<GridData<Item>>>(ServerReload))">
     <Columns>
-        <Column T="Item" Field="@nameof(Item.A)" />
-        <Column T="Item" Field="@nameof(Item.B)" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Value" />
+        <PropertyColumn Property="x => x.Misc" />
     </Columns>
 </MudDataGrid>
 
 @code {
+    public static string __description__ = @"Test Sortable DataGrid with loading of data and sorting being simulated on server side.";
+
+    // Allow disable of simulated server time for unit-tests
+    public static bool DisableServerTimeoutForTests = false;
+
     public class Item
     {
-        public int A { get; set; }
-        public int B { get; set; }
+        public string Name { get; set; }
+        public int Value { get; set; }
+        public string Misc { get; set; }
+
+        public Item(string name, int value, String misc)
+        {
+            Name = name;
+            Value = value;
+            Misc = misc;
+        }
     }
+
     private int _totalItems;
 
     /// <summary>
@@ -20,12 +35,24 @@
     /// </summary>
     private async Task<GridData<Item>> ServerReload(GridState<Item> state)
     {
-        IEnumerable<Item> data = new List<Item>() { new Item() { A=2, B=3 },
-                                            new Item() { A=1, B=1 },
-                                            new Item() { A=3, B=2 } };
-        _totalItems = 3;
+        IEnumerable<Item> data = new List<Item>()
+        {
+            new Item("B", 42, "555"), 
+            new Item("A", 73, "7"), 
+            new Item("A", 11, "4444"), 
+            new Item("C", 33, "33333"),
+            new Item("A", 99, "66"), 
+            new Item("C", 44, "1111111"),
+            new Item("C", 55, "222222")
+        };
 
-        data = data.OrderByDirection(state);
+        _totalItems = 7;
+
+        data = data.OrderBySortDefinitions(state);
+
+        // Simulate some load on the server.
+        if (!DisableServerTimeoutForTests)
+            await Task.Delay(1000);
 
         return await Task.FromResult(new GridData<Item>() { TotalItems = _totalItems, Items = data });
     }

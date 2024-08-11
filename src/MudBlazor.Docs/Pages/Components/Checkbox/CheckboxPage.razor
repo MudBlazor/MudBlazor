@@ -1,7 +1,9 @@
 ﻿@page "/components/checkbox"
+@page "/components/MudCheckBox"
+@page "/components/MudCheckBox`1"
 
 <DocsPage>
-    <DocsPageHeader Title="Checkbox" SubTitle="Checkboxes are a great way to allow the user to make a selection of choices from things like a list.">
+    <DocsPageHeader Title="Check Box" SubTitle="Checkboxes are a great way to allow the user to make a selection of choices from things like a list.">
         <Description>
             If you want to let the user turn a setting on or off on demand, a Switch component is recommended instead.
         </Description>
@@ -12,16 +14,28 @@
             <SectionHeader Title="Basic Checkboxes">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="CheckboxBasicExample">
+            <SectionContent Code="@nameof(CheckboxBasicExample)">
                 <CheckboxBasicExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Labels">
+            <SectionHeader Title="Color">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="CheckboxLabelExample">
+            <SectionContent Code="@nameof(CheckboxColorExample)">
+                <CheckboxColorExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Labels">
+                <Description>
+                    Text can be added using the <CodeInline>Label</CodeInline> property and its
+                    position can be specified using the <CodeInline>LabelPosition</CodeInline> property
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(CheckboxLabelExample)">
                 <CheckboxLabelExample />
             </SectionContent>
         </DocsPageSection>
@@ -30,7 +44,7 @@
             <SectionHeader Title="Icons">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="CheckboxIconExample">
+            <SectionContent Code="@nameof(CheckboxIconExample)">
                 <CheckboxIconExample />
             </SectionContent>
         </DocsPageSection>
@@ -39,7 +53,7 @@
             <SectionHeader Title="Dense">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="CheckboxDenseExample">
+            <SectionContent Code="@nameof(CheckboxDenseExample)">
                 <CheckboxDenseExample />
             </SectionContent>
         </DocsPageSection>
@@ -48,7 +62,7 @@
             <SectionHeader Title="Sizes">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="CheckboxSizeExample">
+            <SectionContent Code="@nameof(CheckboxSizeExample)">
                 <CheckboxSizeExample />
             </SectionContent>
         </DocsPageSection>
@@ -65,7 +79,7 @@
                     It is not possible to obtain the Indeterminate state again. Except by resetting the value to <CodeInline>Null</CodeInline>. Or, by setting <CodeInline>TriState="true"</CodeInline>, you can get the Indeterminate state after the False state.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="CheckboxIndeterminateExample">
+            <SectionContent Code="@nameof(CheckboxIndeterminateExample)">
                 <CheckboxIndeterminateExample />
             </SectionContent>
         </DocsPageSection>
@@ -83,7 +97,7 @@
             <SectionHeader Title="ReadOnly Mode">
                 <Description>Setting <CodeInline>ReadOnly="true"</CodeInline> will make the checkbox control stop listening to user input.</Description>
             </SectionHeader>
-            <SectionContent Code="CheckboxReadOnlyExample" ShowCode="false" Block="true">
+            <SectionContent Code="@nameof(CheckboxReadOnlyExample)" ShowCode="false" Block="true">
                 <CheckboxReadOnlyExample />
             </SectionContent>
         </DocsPageSection>
@@ -100,7 +114,7 @@
                     <MudText>*Disabled or ReadOnly checkboxes cannot be changed by keys.</MudText>
                 </Description>
             </SectionHeader>
-            <SectionContent Code="CheckboxKeyboardNavigationExample" ShowCode="false">
+            <SectionContent Code="@nameof(CheckboxKeyboardNavigationExample)" ShowCode="false">
                 <CheckboxKeyboardNavigationExample />
             </SectionContent>
         </DocsPageSection>

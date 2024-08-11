@@ -1,0 +1,29 @@
+﻿@import '../../abstracts/variables';
+@import 'flex';
+@import 'flex-direction';
+@import 'flex-grow';
+@import 'flex-shrink';
+@import 'flex-wrap';
+@import 'justify-content';
+@import 'order';
+@import 'align-content';
+@import 'align-items';
+@import 'align-self';
+@import 'gap';
+
+
+@each $name, $value in $breakpoints-css-utilities-only {
+  @media (min-width:$value) {
+    @include flex($name + "-");
+    @include flex-direction($name + "-");
+    @include flex-grow($name + "-");
+    @include flex-shrink($name + "-");
+    @include flex-wrap($name + "-");
+    @include justify-content($name + "-");
+    @include order($name + "-");
+    @include align-content($name + "-");
+    @include align-items($name + "-");
+    @include align-self($name + "-");
+    @include gap($name + "-");
+  }
+}

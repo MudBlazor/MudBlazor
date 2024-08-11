@@ -1,0 +1,14 @@
+﻿<MudPopoverProvider></MudPopoverProvider>
+
+<MudDatePicker id="picker" @ref="_picker" Label="With action buttons" PickerVariant="PickerVariant.Static" @bind-Date="date">
+    <PickerActions>
+        <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.ClearAsync())">Clear</MudButton>
+        <MudButton OnClick="@(() => _picker.CloseAsync(false))">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="@(() => _picker.CloseAsync())">Ok</MudButton>
+    </PickerActions>
+</MudDatePicker>
+
+@code {
+    MudDatePicker _picker;
+    DateTime? date = DateTime.Today;
+}

@@ -1,0 +1,196 @@
+﻿@page "/components/dropzone"
+@page "/components/MudDragAndDropIndexChangedEventArgs"
+@page "/components/MudDragAndDropItemTransaction"
+@page "/components/MudDragAndDropItemTransaction`1"
+@page "/components/MudDragAndDropTransactionFinishedEventArgs"
+@page "/components/MudDragAndDropTransactionFinishedEventArgs`1"
+@page "/components/MudDropContainer"
+@page "/components/MudDropContainer`1"
+@page "/components/MudDropZone"
+@page "/components/MudDropZone`1"
+@page "/components/MudDynamicDropItem"
+@page "/components/MudDynamicDropItem`1"
+@page "/components/MudItemDropInfo"
+@page "/components/MudItemDropInfo`1"
+
+<DocsPage>
+    <DocsPageHeader Title="Drop Zone" SubTitle="Drag and Drop" />
+
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage">
+                <Description>
+
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(DropZoneUsageExample)">
+                <DropZoneUsageExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Nested Drop Zones">
+                <Description>
+
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(DropZoneNestedZonesExample)">
+                <DropZoneNestedZonesExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Transfer items between Drop Zones">
+                <Description>
+                    The <CodeInline>MudDropContainer</CodeInline> supports transferring dragged items between its drop zones.
+                    The <CodeInline>MudDropContainer</CodeInline> holds the collection of items used for dragging.
+                </Description>
+            </SectionHeader>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Drop Item Selector">
+                        <Description>
+                            Each <CodeInline>MudDropZone</CodeInline> has a unique settable <CodeInline>Identifier</CodeInline> that is used to determine what item should be placed in what dropzone.
+                            Provide the <CodeInline>MudDropContainer</CodeInline> with a selector function (<CodeInline>@("Func<T, string, bool>")</CodeInline>) for the property <CodeInline>ItemSelector</CodeInline> to place the items correctly. This method can be overridden by each drop zone.
+                            The callback <CodeInline>ItemDropped</CodeInline> should be used to update the data item, when a drag operation has finished.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(DropZoneItemSelectorExample)">
+                        <DropZoneItemSelectorExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Reorder items">
+                        <Description>
+                            Items can be reordered inside each dropzone with the <CodeInline>AllowReorder</CodeInline> bool set to true on the dropzone.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(DropZoneItemSelectorReorderingExample)">
+                        <DropZoneItemSelectorReorderingExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Save Reorder data">
+                        <Description>
+                            In this example we show one way to save the re-ordered data, click load and drag some items around then hit save and load again.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="@nameof(DropZoneReorderSaveExample)">
+                        <DropZoneReorderSaveExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Only Zones">
+                        <Description>
+                            With the <CodeInline>OnlyZone</CodeInline> property set to true, the dropzone will only act as a dropable zone and not render any items.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="@nameof(DropZoneItemSelectorOnlyZoneExample)">
+                        <DropZoneItemSelectorOnlyZoneExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Drop Rules">
+                <Description>
+                    If a draggable item can be dropped or not can be controlled with the <CodeInline>CanDrop</CodeInline> function, either globally in the <CodeInline>MudDropContainer</CodeInline> or per <CodeInline>MudDropZone</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(DropZoneDropRulesExample)">
+                <DropZoneDropRulesExample />
+            </SectionContent>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Drop Rule Styling">
+                        <Description>
+                            The cursor will change if a item can or cannot be dropped but it's also possible to effect the whole drop zone.<br />
+                            Add one of our or one of your own CSS class to <CodeInline>CanDropClass</CodeInline> and <CodeInline>NoDropClass</CodeInline> to change the styling of each behavior.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="@nameof(DropZoneCanDropStylesExample)">
+                        <DropZoneCanDropStylesExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Dragging Styles">
+                <Description>
+                    Its possible to style the drop zone from which the dragged item starts from as well as the item itself with the <CodeInline>DraggingClass</CodeInline> parameter and the <CodeInline>ItemDraggingClass</CodeInline> property.
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(DropZoneDraggingStyleExample)">
+                <DropZoneDraggingStyleExample />
+            </SectionContent>
+            <SectionSubGroups>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Override Values">
+                        <Description>
+                            Like the selector functions, the container also provides other values, like <CodeInline>DraggingClass</CodeInline>, that act as default values for all drop zones but can be overridden by the drop zone itself.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="@nameof(DropZoneOverrideExample)">
+                        <DropZoneOverrideExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+            </SectionSubGroups>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Disabled items">
+                <Description>
+                    Drop items can be prevented from being dragged by using the <CodeInline>@nameof(MudDropZone<T>.ItemDisabled)</CodeInline> property.
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(DropZoneDisabledExample)">
+                <DropZoneDisabledExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Miscellaneous">
+                <Description>
+
+                </Description>
+            </SectionHeader>
+            <SectionSubGroups>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Kanban">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(DropZoneKanbanExample)" Block="true" FullWidth="true">
+                        <DropZoneKanbanExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Mailbox">
+                        <Description>Demonstrates the usage of the <CodeInline>OnlyZone</CodeInline> property as well as multiple dropzones connected to the same Identifier.<br />Try drag items onto the list items, click on them to open the "mailbox".</Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(DropZoneMailExample)" Block="true" FullWidth="true">
+                        <DropZoneMailExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Chess Board">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(DropZoneChessBoardExample)">
+                        <DropZoneChessBoardExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+            </SectionSubGroups>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

@@ -1,0 +1,50 @@
+﻿@page "/utilities/flex-shrink"
+
+<DocsPage>
+    <DocsPageHeader Title="Flex Shrink" SubTitle="Utilities for controlling how flex items shrink." />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Class Reference" HideTitle="true" />
+            <DocsAutoGen_Flexbox_FlexShrink/>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage" />
+            <SectionSubGroups>
+                        
+                <DocsPageSection>
+                    <SectionHeader Title="Shrink">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(FlexShrinkExample)" HighLight="flex-shrink-1">
+                        <DocsWidthSlider>
+                            <FlexShrinkExample/>
+                        </DocsWidthSlider>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="No shrink">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(FlexNoShrinkExample)" HighLight="flex-shrink-0">
+                        <DocsWidthSlider>
+                            <FlexNoShrinkExample/>
+                        </DocsWidthSlider>
+                    </SectionContent>
+                </DocsPageSection>
+                
+            </SectionSubGroups>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Applying conditionally"/>
+            <SectionSubGroups>
+                <DynamicBreakpointSectionContent Utility="flex-md-shrink-1"/>
+            </SectionSubGroups>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>
+

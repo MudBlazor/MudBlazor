@@ -1,0 +1,46 @@
+﻿@using System.Threading
+@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
+<MudAutocomplete @ref="_selectAsync"
+                 T="string"
+                 ToStringFunc="x => x"
+                 ValueChanged="OnSelectAsync"
+                 SearchFunc="Search"
+                 Variant="Variant.Outlined"
+                 ResetValueOnEmptyText="true"
+                 MaxItems="null"
+                 Class="mb-3" />
+@code {
+#nullable enable
+    private MudAutocomplete<string> _selectAsync = null!;
+    private readonly IEnumerable<string> _elements = new List<string>(2)
+    {
+        "Test","Value"
+    };
+
+    private async Task OnSelectAsync(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return;
+        }
+        await SomeTask();
+        await _selectAsync.ResetAsync();
+    }
+
+    private Task SomeTask()
+    {
+        return Task.CompletedTask;
+    }
+
+    private Task<IEnumerable<string>> Search(string value, CancellationToken token)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return Task.FromResult(_elements);
+        }
+
+        var items = _elements.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        return Task.FromResult(items);
+    }
+}

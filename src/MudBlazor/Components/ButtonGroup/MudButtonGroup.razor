@@ -6,6 +6,5 @@
 </MudElement>
 
 @{
-    if(!UserAttributes.ContainsKey("role"))
-       UserAttributes.Add("role", "group");
+    UserAttributes.TryAdd("role", "group");
 }

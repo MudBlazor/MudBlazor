@@ -1,0 +1,44 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid @ref="grid" T="Model" Items="@_items">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" Hidden="@_hideAge" />
+    </Columns>
+</MudDataGrid>
+
+<MudSwitch @bind-Value="@_hideAge">Hide Age Column (Hidden Parameter)</MudSwitch>
+<MudButton OnClick="@ToggleColumn">@(_isColumnRemoved ? "Add" : "Remove")</MudButton>
+
+@code {
+    private MudDataGrid<Model> grid;
+    private bool _hideAge;
+    private bool _isColumnRemoved = false;
+    private Column<Model> _column;
+    private IEnumerable<Model> _items = new List<Model>()
+    {
+        new Model("John", 45), 
+        new Model("Johanna", 23), 
+        new Model("Steve", 32)
+    };
+
+    public record Model(string Name, int Age);
+
+    public void ToggleColumn()
+    {
+        if (_isColumnRemoved)
+        {
+            // Add the column back
+            grid.RenderedColumns.Add(_column);
+            _isColumnRemoved = false;
+        }
+        else
+        {
+            // Remove the column
+            _column = grid.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Age");
+            grid.RenderedColumns.Remove(_column);
+            _isColumnRemoved = true;
+
+        }
+    }
+}

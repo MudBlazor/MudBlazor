@@ -4,6 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
+using AngleSharp.Css.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
@@ -19,13 +20,12 @@ namespace MudBlazor.UnitTests.Components
         public void TimelineTest_DefaultValues()
         {
             var comp = Context.RenderComponent<MudTimeline>();
-            //Console.WriteLine(comp.Markup);
 
             comp.Instance.TimelineOrientation.Should().Be(TimelineOrientation.Vertical);
             comp.Instance.TimelinePosition.Should().Be(TimelinePosition.Alternate);
             comp.Instance.TimelineAlign.Should().Be(TimelineAlign.Default);
             comp.Instance.Reverse.Should().Be(false);
-            comp.Instance.DisableModifiers.Should().Be(false);
+            comp.Instance.Modifiers.Should().Be(true);
 
         }
 
@@ -38,7 +38,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TimelineTest>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             //// select elements needed for the test
             var timeline = comp.FindComponent<MudTimeline>().Instance;
             //// validating some renders
@@ -103,8 +102,7 @@ namespace MudBlazor.UnitTests.Components
 
         public void TimelineTest_Position(TimelineOrientation orientation, TimelinePosition position, bool rtl, string[] expectedClass)
         {
-            var comp = Context.RenderComponent<TimelineTest>(p => p.AddCascadingValue(rtl));
-            //Console.WriteLine(comp.Markup);
+            var comp = Context.RenderComponent<TimelineTest>(p => p.AddCascadingValue("RightToLeft", rtl));
 
             var timeline = comp.FindComponent<MudTimeline>();
 
@@ -125,18 +123,32 @@ namespace MudBlazor.UnitTests.Components
         public void TimelineTest_SelectItem()
         {
             var comp = Context.RenderComponent<TimelineTest>();
-            //Console.WriteLine(comp.Markup);
 
             var itemsDiv = comp.FindAll(".mud-timeline-item");
 
             itemsDiv.Should().HaveCount(5);
 
-            for (int i = 0; i < 5; i++)
+            for (var i = 0; i < 5; i++)
             {
                 itemsDiv[i].Click();
 
                 comp.Instance.SelectedIndex.Should().Be(i);
             }
+        }
+
+        [Test]
+        public void TimelineTest_DotStyles()
+        {
+            var comp = Context.RenderComponent<TimelineTest>();
+            var firstItem = comp.FindComponent<MudTimelineItem>();
+            comp.Find("div.mud-timeline-item-dot-inner").GetStyle()["background-color"].Should().Be("");
+
+            firstItem.SetParametersAndRender(p =>
+            {
+                p.Add(t => t.DotStyle, "background-color: #ff0000");
+            });
+
+            comp.Find("div.mud-timeline-item-dot-inner").GetStyle()["background-color"].Should().Be("rgba(255, 0, 0, 1)");
         }
     }
 }
