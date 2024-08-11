@@ -435,6 +435,13 @@ namespace MudBlazor
         public RenderFragment<TableGroupData<object, T>>? GroupFooterTemplate { get; set; }
 
         /// <summary>
+        /// Gives the possibility to define an external CancellationTokenSource reference. 
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Behavior)]
+        public CancellationTokenSource CancellationTokenSrc { get; set; } = new();
+
+        /// <summary>
         /// For unit testing the filtering cache mechanism.
         /// </summary>
         internal uint FilteringRunCount { get; private set; } = 0;
@@ -616,23 +623,16 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Data)]
         public Func<TableState, CancellationToken, Task<TableData<T>>>? ServerData { get; set; }
 
-        /// <summary>
-        /// Cancel the token used by the table.
-        /// </summary>
-        /// <param name="cancellationTokenRecreated">By default, the cancellation token is recreated after it has been cancelled.</param>
-        public void CancelToken(bool cancellationTokenRecreated = true)
+        private void CancelToken()
         {
             try
             {
                 _cancellationTokenSrc?.Cancel();
             }
-            catch { /*ignored*/ }
+            catch { /* ignored */ }
             finally
             {
-                if (cancellationTokenRecreated)
-                {
-                    _cancellationTokenSrc = new CancellationTokenSource();
-                }
+                _cancellationTokenSrc = CancellationTokenSource.CreateLinkedTokenSource(CancellationTokenSrc.Token);
             }
         }
 
