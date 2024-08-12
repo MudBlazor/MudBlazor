@@ -2,7 +2,6 @@
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
-using MudBlazor.Docs.Services.XmlDocs;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 
