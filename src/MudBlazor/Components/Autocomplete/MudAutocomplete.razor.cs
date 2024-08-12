@@ -992,6 +992,11 @@ namespace MudBlazor
             {
                 try
                 {
+                    _cancellationTokenSrc?.Cancel();
+                }
+                catch { /*ignored*/ }
+                try
+                {
                     _cancellationTokenSrc.Dispose();
                 }
                 catch { /*ignored*/ }
