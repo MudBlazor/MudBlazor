@@ -435,13 +435,6 @@ namespace MudBlazor
         public RenderFragment<TableGroupData<object, T>>? GroupFooterTemplate { get; set; }
 
         /// <summary>
-        /// Gives the possibility to define an external CancellationTokenSource reference. 
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Table.Behavior)]
-        public CancellationTokenSource CancellationTokenSrc { get; set; } = new();
-
-        /// <summary>
         /// For unit testing the filtering cache mechanism.
         /// </summary>
         internal uint FilteringRunCount { get; private set; } = 0;
@@ -629,10 +622,10 @@ namespace MudBlazor
             {
                 _cancellationTokenSrc?.Cancel();
             }
-            catch { /* ignored */ }
+            catch { /*ignored*/ }
             finally
             {
-                _cancellationTokenSrc = CancellationTokenSource.CreateLinkedTokenSource(CancellationTokenSrc.Token);
+                _cancellationTokenSrc = new CancellationTokenSource();
             }
         }
 
@@ -780,6 +773,11 @@ namespace MudBlazor
 
         protected virtual void Dispose(bool disposing)
         {
+            try
+            {
+                _cancellationTokenSrc?.Cancel();
+            }
+            catch { /*ignored*/ }
             _cancellationTokenSrc?.Dispose();
         }
     }
