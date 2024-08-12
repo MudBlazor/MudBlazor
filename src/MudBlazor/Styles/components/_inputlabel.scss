@@ -91,6 +91,11 @@ label.mud-input-label.mud-input-label-inputcontrol {
     transform-origin: top right;
   }
 
+  .mud-input-label-inputcontrol {
+    left: unset;
+    right: 0;
+  }
+
   .mud-input-label-shrink {
     transform-origin: top right;
   }
