@@ -15,7 +15,7 @@ namespace MudBlazor;
 public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
 {
     private bool _dragOperationIsInProgress = false;
-    private Guid _id = Guid.NewGuid();
+    private string _id = Identifier.Create();
     private double _onTouchStartX;
     private double _onTouchStartY;
     private double _onTouchLastX;
@@ -129,7 +129,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
     private async Task OnDroppedSucceeded()
     {
         _dragOperationIsInProgress = false;
-        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.resetItem", _id.ToString());
+        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.resetItem", _id);
         await OnDragEnded.InvokeAsync(Item);
         StateHasChanged();
     }
@@ -137,7 +137,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
     private async Task OnDroppedCanceled()
     {
         _dragOperationIsInProgress = false;
-        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.resetItem", _id.ToString());
+        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.resetItem", _id);
         await OnDragEnded.InvokeAsync(Item);
         StateHasChanged();
     }
@@ -170,7 +170,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
         _onTouchLastY = e.ChangedTouches[0].ClientY;
 
         //Send to JS to move DOM element
-        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.moveItemByDifference", _id.ToString(), x, y);
+        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.moveItemByDifference", _id, x, y);
 
         if (Container is not null && Container.TransactionInProgress())
         {

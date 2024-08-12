@@ -1,0 +1,24 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTreeView T="string" @bind-SelectedValue="SelectedValue" SelectionMode="SelectionMode.ToggleSelection">
+    <MudTreeViewItem Value='"content"' Class="parent-item" ReadOnly="ParentItemReadOnly" Disabled="ParentItemDisabled">
+        <MudTreeViewItem Value='"logo.png"' />
+        <MudTreeViewItem Value='"MudBlazor.svg"' />
+        <MudTreeViewItem Value='"Nuget.png"' />
+    </MudTreeViewItem>
+</MudTreeView>
+
+<p class="selected-value">
+    @SelectedValue
+</p>
+
+@code {
+    [Parameter] 
+    public bool ParentItemDisabled { get; set; } = false;
+
+    [Parameter] 
+    public bool ParentItemReadOnly { get; set; } = false;
+
+    [Parameter] 
+    public string SelectedValue { get; set; }
+}

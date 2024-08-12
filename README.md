@@ -45,7 +45,7 @@ MudBlazor is an ambitious Material Design component framework for Blazor with an
 
 :information_source: Currently only interactive rendering modes are supported - [Learn more](https://learn.microsoft.com/aspnet/core/blazor/components/render-modes).
 
-:warning: Blazor only supports [current browser versions](https://learn.microsoft.com/en-us/aspnet/core/blazor/supported-platforms).
+:warning: Blazor only supports [current browser versions](https://learn.microsoft.com/aspnet/core/blazor/supported-platforms).
 To ensure a seamless experience with MudBlazor, please use an up-to-date web browser.
 If a browser version is no longer maintained by its publisher, we cannot guarantee compatibility with MudBlazor.
 

@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
@@ -13,8 +12,9 @@ namespace MudBlazor
     {
         protected string Classname =>
            new CssBuilder("mud-input-input-control")
-           .AddClass(Class)
-           .Build();
+               .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
+               .AddClass(Class)
+               .Build();
 
         /// <summary>
         /// The reference to the underlying <see cref="MudInput{T}"/> component.
