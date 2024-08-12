@@ -212,12 +212,12 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
             var inputs = comp.FindAll("input").ToArray();
-            
+
             //Value should change on radio click and bind after should fire
             inputs[1].Click();
             group.Instance.Value.Should().Be("2");
             comp.Instance.BindAfterCount.Should().Be(1);
-            
+
             //Value should change when reset via the button, but bind after should NOT fire
             comp.Find("button").Click();
             group.Instance.Value.Should().Be(null);
