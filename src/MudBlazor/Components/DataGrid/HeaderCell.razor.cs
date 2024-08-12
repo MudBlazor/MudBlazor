@@ -19,7 +19,7 @@ namespace MudBlazor
     /// <typeparam name="T">The kind of item managed by the grid.</typeparam>
     public partial class HeaderCell<T> : MudComponentBase, IDisposable
     {
-        private Guid _id = Guid.NewGuid();
+        private string _id = Identifier.Create();
 
         /// <summary>
         /// The <see cref="MudDataGrid{T}"/> which contains this header cell.

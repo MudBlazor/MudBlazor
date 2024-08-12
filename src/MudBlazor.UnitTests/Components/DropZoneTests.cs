@@ -110,7 +110,7 @@ namespace MudBlazor.UnitTests.Components
 
             Context.Services.AddSingleton(typeof(IJSRuntime), jsRuntimeMock.Object);
 
-            jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudDragAndDrop.initDropZone", It.Is<object[]>(y => y.Length == 1 && Guid.Parse(y[0].ToString()) != Guid.Empty)))
+            jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudDragAndDrop.initDropZone", It.Is<object[]>(y => y.Length == 1)))
                 .ReturnsAsync(Mock.Of<IJSVoidResult>(), TimeSpan.FromMilliseconds(200)).Verifiable();
 
             var comp = Context.RenderComponent<DropzoneBasicTest>();
@@ -1280,7 +1280,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DropZone_GetTransactionOrignZoneIdentifierTest()
+        public async Task DropZone_GetTransactionOriginZoneIdentifierTest()
         {
             var comp = Context.RenderComponent<DropzoneBasicTest>();
 
@@ -1296,8 +1296,9 @@ namespace MudBlazor.UnitTests.Components
             await firstDropItem.DragStartAsync(new DragEventArgs());
 
             var containerComponent = comp.FindComponent<MudDropContainer<TestComponents.DropzoneBasicTest.SimpleDropItem>>();
-            containerComponent.Instance.GetTransactionOrignZoneIdentifier().Should().Be("Column 1");
+            containerComponent.Instance.GetTransactionOriginZoneIdentifier().Should().Be("Column 1");
 #pragma warning disable CS0618 // Type or member is obsolete
+            containerComponent.Instance.GetTransactionOrignZoneIdentifier().Should().Be("Column 1");
             containerComponent.Instance.GetTransactionOrignZoneIdentiifer().Should().Be("Column 1");
 #pragma warning restore CS0618 // Type or member is obsolete
         }

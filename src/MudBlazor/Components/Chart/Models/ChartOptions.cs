@@ -30,7 +30,7 @@ namespace MudBlazor
         /// The format applied to numbers on the vertical axis.
         /// </summary>
         /// <remarks>
-        /// Values in this property are standard .NET format strings, such as those passed into the <c>ToString()</c> method.  For a list of common formats, see: <see href="https://learn.microsoft.com/en-us/dotnet/standard/base-types/formatting-types" />
+        /// Values in this property are standard .NET format strings, such as those passed into the <c>ToString()</c> method.  For a list of common formats, see: <see href="https://learn.microsoft.com/dotnet/standard/base-types/formatting-types" />
         /// </remarks>
         public string YAxisFormat { get; set; }
 

@@ -24,7 +24,7 @@ namespace MudBlazor
         private bool _canDrop = false;
         private bool _dragInProgress = false;
         private bool _disposedValue = false;
-        private Guid _id = Guid.NewGuid();
+        private string _id = MudBlazor.Identifier.Create();
 
         private Dictionary<T, int> _indices = new();
 
@@ -248,22 +248,24 @@ namespace MudBlazor
             {
                 return Container.ItemsClassSelector(item, Identifier);
             }
-            else return string.Empty;
+            else
+            {
+                return string.Empty;
+            }
         }
-
 
         protected string Classname =>
             new CssBuilder("mud-drop-zone")
                 //.AddClass("mud-drop-zone-drag-block", Container?.TransactionInProgress() == true && Container.GetTransactionOrignZoneIdentiifer() != Identifier)
-                .AddClass(CanDropClass ?? Container?.CanDropClass, Container is not null && Container.TransactionInProgress() && Container.GetTransactionOrignZoneIdentifier() != Identifier && _canDrop && (_dragCounter > 0 || GetApplyDropClassesOnDragStarted()))
-                .AddClass(NoDropClass ?? Container?.NoDropClass, Container is not null && Container.TransactionInProgress() && Container.GetTransactionOrignZoneIdentifier() != Identifier && !_canDrop && (_dragCounter > 0 || GetApplyDropClassesOnDragStarted()))
+                .AddClass(CanDropClass ?? Container?.CanDropClass, Container is not null && Container.TransactionInProgress() && Container.GetTransactionOriginZoneIdentifier() != Identifier && _canDrop && (_dragCounter > 0 || GetApplyDropClassesOnDragStarted()))
+                .AddClass(NoDropClass ?? Container?.NoDropClass, Container is not null && Container.TransactionInProgress() && Container.GetTransactionOriginZoneIdentifier() != Identifier && !_canDrop && (_dragCounter > 0 || GetApplyDropClassesOnDragStarted()))
                 .AddClass(GetDraggingClass(), _dragInProgress)
                 .AddClass(Class)
                 .Build();
 
         protected string PlaceholderClassname =>
             new CssBuilder("border-2 mud-border-primary border-dashed mud-chip-text mud-chip-color-primary pa-4 mud-dropitem-placeholder")
-                .AddClass("d-none", !AllowReorder || (Container?.TransactionInProgress() == false || Container?.GetTransactionCurrentZoneIdentiifer() != Identifier))
+                .AddClass("d-none", !AllowReorder || Container?.TransactionInProgress() == false || Container?.GetTransactionCurrentZoneIdentifier() != Identifier)
                 .Build();
 
         #endregion

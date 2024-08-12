@@ -267,7 +267,7 @@ public partial class ApiDocumentationBuilder()
     /// <returns>The member key for looking up documentation.</returns>
     public static string GetXmlKey(string typeFullName, string memberName = null)
     {
-        // See: https://learn.microsoft.com/en-us/archive/msdn-magazine/2019/october/csharp-accessing-xml-documentation-via-reflection
+        // See: https://learn.microsoft.com/archive/msdn-magazine/2019/october/csharp-accessing-xml-documentation-via-reflection
 
         // Get the key for the type
         var key = TypeFullNameRegEx().Replace(typeFullName, string.Empty).Replace('+', '.');
