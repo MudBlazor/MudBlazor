@@ -8,5 +8,5 @@ namespace MudBlazor;
 #nullable enable
 public record NavigationContext(bool Disabled, bool Expanded)
 {
-    public string MenuId { get; } = $"mudnavmenu-{Guid.NewGuid()}";
+    public string MenuId { get; } = Identifier.Create();
 }

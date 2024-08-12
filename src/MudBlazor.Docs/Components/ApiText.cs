@@ -85,10 +85,11 @@ public partial class ApiText : ComponentBase
                                             // Extract the type and member
                                             var values = linkRef.Split(".");
                                             var typeAndMember = values[values.Length - 2] + "." + values[values.Length - 1];
-                                            builder.AddMudLink(0, $"https://learn.microsoft.com/en-us/dotnet/api/{linkRef}", typeAndMember, "docs-link docs-code docs-code-primary", "_external");
+                                            builder.AddMudLink(0, $"https://learn.microsoft.com/dotnet/api/{linkRef}", typeAndMember, "docs-link docs-code docs-code-primary", "_external");
                                         }
                                         else if (linkRef.StartsWith("MudBlazor."))
                                         {
+                                            builder.AddMudLink(0, $"https://learn.microsoft.com/dotnet/api/{linkRef}", linkRef, "docs-link docs-code docs-code-primary", "_external");
                                             builder.OpenComponent<ApiMemberLink>(sequence++);
                                             builder.AddComponentParameter(sequence++, nameof(ApiMemberLink.Context), Context);
                                             builder.AddComponentParameter(sequence++, nameof(ApiMemberLink.MemberName), linkRef);
