@@ -4,10 +4,11 @@
   display: grid;
   overflow: hidden;
   box-sizing: border-box;
+  border-width: 0;
 
   & > .mud-button-root {
     box-shadow: none;
-    border-width: 1px;
+    border-width: inherit;
     border-style: none;
     border-color: inherit;
     border-radius: 0;
