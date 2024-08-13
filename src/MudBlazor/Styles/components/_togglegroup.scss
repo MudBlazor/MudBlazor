@@ -6,7 +6,7 @@
   box-sizing: border-box;
   border-width: 0;
 
-  & > .mud-button-root {
+  & > .mud-toggle-item {
     box-shadow: none;
     border-width: inherit;
     border-style: none;
@@ -17,7 +17,7 @@
 
 .mud-toggle-group-horizontal {
   &:not(.mud-toggle-group-rtl) {
-    > .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+    > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
       &.mud-toggle-item-delimiter {
         border-left-style: solid !important;
       }
@@ -27,7 +27,7 @@
   }
 
   &.mud-toggle-group-rtl {
-    > .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
+    > .mud-toggle-item:not(:last-child), > :not(:last-child) .mud-toggle-item {
       &.mud-toggle-item-delimiter {
         border-left-style: solid !important;
       }
@@ -38,7 +38,7 @@
 }
 
 .mud-toggle-group-vertical {
-  > .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+  > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
     &.mud-toggle-item-delimiter {
       border-top-style: solid !important;
     }
@@ -52,10 +52,6 @@
 
   &:has(>.mud-toggle-item-check-icon) {
     min-width: auto;
-  }
-
-  &.mud-toggle-item-check-icon {
-    display: flex;
   }
 }
 
