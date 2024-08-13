@@ -51,6 +51,10 @@
   padding: 6px;
   min-width: auto;
   border-style: none !important;
+
+  & > .mud-button-label {
+    min-height: 20px;
+  }
 }
 
 .mud-toggle-item-size-small {
