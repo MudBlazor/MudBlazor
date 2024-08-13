@@ -1,0 +1,7 @@
+@using MudBlazor.Interfaces
+@namespace MudBlazor.UnitTests
+
+<CascadingValue Value="@((IActivatable)this)"
+                IsFixed="true">
+    @ChildContent
+</CascadingValue>

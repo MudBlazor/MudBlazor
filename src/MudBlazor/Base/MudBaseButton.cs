@@ -128,7 +128,12 @@ namespace MudBlazor
             if (GetDisabledState())
                 return;
             await OnClick.InvokeAsync(ev);
-            Activatable?.Activate(this, ev);
+
+            // Don't activate activatable parents if click propagation is disabled
+            if (ClickPropagation)
+            {
+                Activatable?.Activate(this, ev);
+            }
         }
 
         protected override void OnInitialized()
