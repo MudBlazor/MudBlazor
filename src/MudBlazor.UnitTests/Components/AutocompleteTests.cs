@@ -15,6 +15,7 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
@@ -103,14 +104,15 @@ namespace MudBlazor.UnitTests.Components
         public async Task AutocompleteCancelDisposeTest()
         {
             var comp = Context.RenderComponent<AutocompleteTest8>();
-            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
-            autocompletecomp.SetParam(x => x.DebounceInterval, 0);
-            autocompletecomp.SetParam(a => a.Text, "Alabama");
+            var autocompleteContainerComp = comp.FindComponent<AutoCompleteContainer>();
+            var autocompleteComp = autocompleteContainerComp.FindComponent<MudAutocomplete<string>>();
+            autocompleteComp.SetParam(a => a.Text, "Alabama");
             await Task.Delay(500);
-            comp.Instance.cancellationTokenSource.Cancel();
-            await Task.Delay(1000);
-            var items = comp.FindAll(".mud-list-item-text");
-            items.Count.Should().Be(0);
+            comp.Instance.mustBeShown = false;
+            await Task.Delay(500);
+            comp.Render();
+            await Task.Delay(500);
+            comp.Instance.HasBeenDisposed.Should().Be(true);
         }
 
         /// <summary>
