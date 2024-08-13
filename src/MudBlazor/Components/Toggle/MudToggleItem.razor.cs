@@ -86,6 +86,11 @@ namespace MudBlazor
             }
             else
             {
+                if (UnselectedIcon is null && Parent?.FixedContent == true)
+                {
+                    return Icons.Custom.Uncategorized.Empty;
+                }
+
                 return UnselectedIcon;
             }
         }
