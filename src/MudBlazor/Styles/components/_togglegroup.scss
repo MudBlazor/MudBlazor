@@ -57,14 +57,11 @@
     }
   }
 
-  &:has(>.mud-toggle-item-check-icon) {
-    min-width: auto;
-  }
-
   & > .mud-button-label {
     display: flex;
     align-items: center;
     justify-content: center;
+    min-width: auto;
   }
 }
 
