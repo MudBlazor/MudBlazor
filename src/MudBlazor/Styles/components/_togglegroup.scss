@@ -49,20 +49,22 @@
 
 .mud-toggle-item {
   border-style: none !important;
-
-  &.mud-button-outlined {
-    & > .mud-button-label {
-      // Outlined buttons have less padding
-      padding: 1px;
-    }
-  }
+  min-width: auto;
+  padding: 7.5px;
 
   & > .mud-button-label {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: auto;
   }
+}
+
+.mud-toggle-item-size-small {
+  padding: 6px;
+}
+
+.mud-toggle-item-size-large {
+  padding: 9px;
 }
 
 .mud-toggle-item-fixed > .mud-button-label:has(>.mud-toggle-item-check-icon) {
