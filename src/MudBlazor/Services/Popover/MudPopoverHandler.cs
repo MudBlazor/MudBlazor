@@ -13,7 +13,7 @@ using MudBlazor.Interop;
 
 namespace MudBlazor;
 
-[Obsolete($"Please use {nameof(IPopoverService)} in conjunction with {nameof(IMudPopoverHolder)}. This will be removed in v7.")]
+[Obsolete($"Please use {nameof(IPopoverService)} in conjunction with {nameof(IMudPopoverHolder)}. This will be removed in a future version.")]
 public class MudPopoverHandler : IMudPopoverHolder
 {
     private readonly SemaphoreSlim _semaphore = new(1, 1);
@@ -68,7 +68,7 @@ public class MudPopoverHandler : IMudPopoverHolder
         }
     }
 
-    [Obsolete($"Use {nameof(UpdateFragmentAsync)} instead. This method will be removed in v7.")]
+    [Obsolete($"Use {nameof(UpdateFragmentAsync)} instead. This method will be removed in a future version.")]
     public void UpdateFragment(RenderFragment fragment,
         MudComponentBase componentBase, string @class, string style, bool showContent)
     {

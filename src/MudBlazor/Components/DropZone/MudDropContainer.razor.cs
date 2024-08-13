@@ -224,23 +224,43 @@ namespace MudBlazor
         /// Gets the unique ID of the zone where the drag-and-drop started.
         /// </summary>
         /// <remarks>
-        /// Use the <see cref="GetTransactionOrignZoneIdentifier()"/> method instead.
+        /// Use the <see cref="GetTransactionOriginZoneIdentifier()"/> method with the corrected spelling instead.
         /// </remarks>
         /// <returns>The unique ID of the zone.</returns>
-        [Obsolete("Use the GetTransactionOrignZoneIdentifier method instead.  This will be removed in a future release.")]
-        public string GetTransactionOrignZoneIdentiifer() => GetTransactionOrignZoneIdentifier();
+        [Obsolete("Use the GetTransactionOriginZoneIdentifier method instead.  This will be removed in a future release.")]
+        public string GetTransactionOrignZoneIdentiifer() => GetTransactionOriginZoneIdentifier();
+
+        /// <summary>
+        /// Gets the unique ID of the zone where the drag-and-drop started.
+        /// </summary>
+        /// <remarks>
+        /// Use the <see cref="GetTransactionOriginZoneIdentifier()"/> method with the corrected spelling instead.
+        /// </remarks>
+        /// <returns>The unique ID of the zone.</returns>
+        [Obsolete("Use the GetTransactionOriginZoneIdentifier method instead.  This will be removed in a future release.")]
+        public string GetTransactionOrignZoneIdentifier() => GetTransactionOriginZoneIdentifier();
 
         /// <summary>
         /// Gets the unique ID of the zone where the drag-and-drop started.
         /// </summary>
         /// <returns>The unique ID of the zone.</returns>
-        public string GetTransactionOrignZoneIdentifier() => _transaction?.SourceZoneIdentifier ?? string.Empty;
+        public string GetTransactionOriginZoneIdentifier() => _transaction?.SourceZoneIdentifier ?? string.Empty;
+
+        /// <summary>
+        /// Gets the unique ID of the zone where the item is currently hovering.
+        /// </summary>
+        /// <remarks>
+        /// Use the <see cref="GetTransactionCurrentZoneIdentifier()"/> method with the corrected spelling instead.
+        /// </remarks>
+        /// <returns>The unique ID of the zone.</returns>
+        [Obsolete("Use the GetTransactionCurrentZoneIdentifier method instead.  This will be removed in a future release.")]
+        public string GetTransactionCurrentZoneIdentiifer() => GetTransactionCurrentZoneIdentifier();
 
         /// <summary>
         /// Gets the unique ID of the zone where the item is currently hovering.
         /// </summary>
         /// <returns>The unique ID of the zone.</returns>
-        public string GetTransactionCurrentZoneIdentiifer() => _transaction?.CurrentZone ?? string.Empty;
+        public string GetTransactionCurrentZoneIdentifier() => _transaction?.CurrentZone ?? string.Empty;
 
         /// <summary>
         /// Gets whether the item being dragged originated from the specified zone.

@@ -18,7 +18,7 @@ namespace MudBlazor
         public SnackBarMessageState(SnackbarOptions options)
         {
             Options = options;
-            AnimationId = $"snackbar-{Guid.NewGuid()}";
+            AnimationId = Identifier.Create();
             SnackbarState = SnackbarState.Init;
         }
         private string Opacity => ((decimal)Options.MaximumOpacity / 100).ToPercentage();
