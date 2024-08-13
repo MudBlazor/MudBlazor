@@ -4,9 +4,6 @@
   display: grid;
   overflow: hidden;
   box-sizing: border-box;
-  border-width: 1px;
-  border-style: none;
-  border-radius: var(--mud-default-borderradius);
 
   & > .mud-button-root {
     box-shadow: none;
@@ -21,7 +18,7 @@
   &:not(.mud-toggle-group-rtl) {
     > .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
       &.mud-toggle-item-delimiter {
-        border-left-style: solid;
+        border-left-style: solid !important;
       }
 
       margin-left: -1px;
@@ -31,7 +28,7 @@
   &.mud-toggle-group-rtl {
     > .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
       &.mud-toggle-item-delimiter {
-        border-left-style: solid;
+        border-left-style: solid !important;
       }
 
       margin-left: -1px;
@@ -42,7 +39,7 @@
 .mud-toggle-group-vertical {
   > .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
     &.mud-toggle-item-delimiter {
-      border-top-style: solid;
+      border-top-style: solid !important;
     }
 
     margin-top: -1px;
@@ -50,6 +47,8 @@
 }
 
 .mud-toggle-item {
+  border-style: none !important;
+
   &:has(>.mud-toggle-item-check-icon) {
     min-width: auto;
   }
