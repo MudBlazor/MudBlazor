@@ -97,6 +97,23 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// The autocomplete should stop loading data when it is disposed
+        /// </summary>
+        [Test]
+        public async Task AutocompleteCancelDisposeTest()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest8>();
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            autocompletecomp.SetParam(x => x.DebounceInterval, 0);
+            autocompletecomp.SetParam(a => a.Text, "Alabama");
+            await Task.Delay(500);
+            comp.Instance.cancellationTokenSource.Cancel();
+            await Task.Delay(1000);
+            var items = comp.FindAll(".mud-list-item-text");
+            items.Count.Should().Be(0);
+        }
+
+        /// <summary>
         /// Autocomplete id should propagate to label for attribute
         /// </summary>
         [Test]
