@@ -50,7 +50,7 @@
 .mud-toggle-item {
   border-style: none !important;
   min-width: auto;
-  padding: 7.5px;
+  padding: 6px;
 
   & > .mud-button-label {
     display: flex;
@@ -60,11 +60,11 @@
 }
 
 .mud-toggle-item-size-small {
-  padding: 6px;
+  padding: 4px;
 }
 
 .mud-toggle-item-size-large {
-  padding: 9px;
+  padding: 8px;
 }
 
 .mud-toggle-item-fixed > .mud-button-label:has(>.mud-toggle-item-check-icon) {
