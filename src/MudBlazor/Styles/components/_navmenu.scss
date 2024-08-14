@@ -317,3 +317,7 @@
 .mud-nav-group span:has(.active) {
   background-color: var(--mud-palette-action-default-hover) !important;
 }
+
+.MudNavGroupHref .mud-nav-link {
+  background: none !important;
+}
