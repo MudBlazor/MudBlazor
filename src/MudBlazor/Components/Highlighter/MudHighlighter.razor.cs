@@ -29,14 +29,14 @@ public partial class MudHighlighter : MudComponentBase
     public string? Text { get; set; }
 
     /// <summary>
-    /// The highlighted portion of the text.
+    /// The text to highlight within <see cref="Text" />.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Highlighter.Behavior)]
     public string? HighlightedText { get; set; }
 
     /// <summary>
-    /// The instances of highlighted text within the given <see cref="Text"/>.
+    /// The multiple text values to highlight within <see cref="Text" />.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Highlighter.Behavior)]
