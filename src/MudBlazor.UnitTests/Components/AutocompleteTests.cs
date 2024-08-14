@@ -15,6 +15,7 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
@@ -94,6 +95,24 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<AutocompleteTest3>();
             var autocomplete = comp.FindComponent<MudAutocomplete<AutocompleteTest3.State>>().Instance;
             autocomplete.Text.Should().Be("Assam");
+        }
+
+        /// <summary>
+        /// The autocomplete should stop loading data when it is disposed
+        /// </summary>
+        [Test]
+        public async Task AutocompleteCancelDisposeTest()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest8>();
+            var autocompleteContainerComp = comp.FindComponent<AutoCompleteContainer>();
+            var autocompleteComp = autocompleteContainerComp.FindComponent<MudAutocomplete<string>>();
+            autocompleteComp.SetParam(a => a.Text, "Alabama");
+            await Task.Delay(500);
+            comp.Instance.mustBeShown = false;
+            await Task.Delay(500);
+            comp.Render();
+            await Task.Delay(500);
+            comp.Instance.HasBeenDisposed.Should().Be(true);
         }
 
         /// <summary>
