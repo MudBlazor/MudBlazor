@@ -101,12 +101,12 @@
 .mud-table-cell {
   display: table-cell;
   padding: 16px;
-  font-size: 0.875rem;
+  font-size: inherit;
   text-align: start;
-  font-weight: 400;
-  line-height: 1.43;
+  font-weight: inherit;
+  line-height: inherit;
   border-bottom: 1px solid var(--mud-palette-table-lines);
-  letter-spacing: 0.01071em;
+  letter-spacing: inherit;
   vertical-align: inherit;
 
   & .mud-checkbox {
@@ -325,7 +325,7 @@
   & > .mud-input-control {
     & > div.mud-input.mud-input-text {
       color: var(--mud-theme-on-surface);
-      font-size: 0.875rem;
+      font-size: inherit;
       margin-top: -14px;
       margin-bottom: -8px;
     }
@@ -335,7 +335,7 @@
     & > .mud-input-control {
       & > div.mud-input.mud-input-text {
         color: var(--mud-theme-on-surface);
-        font-size: 0.875rem;
+        font-size: inherit;
         margin-top: -14px;
         margin-bottom: -8px;
       }
@@ -388,7 +388,7 @@
 .mud-table-pagination {
   color: var(--mud-theme-on-surface);
   overflow: auto;
-  font-size: 0.875rem;
+  font-size: inherit;
   display: initial;
 }
 
@@ -442,10 +442,10 @@
     cursor: pointer;
     margin-top: 2px;
     border: none;
-    font-size: .875rem;
-    font-weight: 400;
-    line-height: 1.43;
-    letter-spacing: .01071em;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    letter-spacing: inherit;
     color: var(--mud-theme-on-surface)
   }
 }
