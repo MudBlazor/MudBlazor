@@ -197,7 +197,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        [Obsolete("This property will be removed in a future release.")]
         public bool Inset { get; set; }
 
         /// <summary>
