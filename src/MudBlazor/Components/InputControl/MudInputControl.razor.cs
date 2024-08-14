@@ -6,7 +6,7 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// A base class for designing imput components.
+    /// A base class for designing input components.
     /// </summary>
     public partial class MudInputControl : MudComponentBase
     {
