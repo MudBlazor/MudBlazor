@@ -131,7 +131,8 @@ namespace MudBlazor.Utilities
         public StyleBuilder AddStyle(string prop, string? value) =>
             AddRaw(prop)
             .AddRaw(':')
-            .AddRaw(value);
+            .AddRaw(value)
+            .AddRaw(';');
 
         /// <summary>
         /// Adds a conditional in-line style to the builder with a space separator and closing semicolon.
