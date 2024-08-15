@@ -12,7 +12,7 @@ namespace MudBlazor.Utilities
     /// </summary>
     public struct CssBuilder
     {
-        private StringBuilder? _stringBuilder;
+        private StringBuilder _stringBuilder;
 
         /// <summary>
         /// Creates a new instance of CssBuilder with the specified initial value.
