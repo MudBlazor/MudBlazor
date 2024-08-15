@@ -71,7 +71,8 @@ namespace MudBlazor.Utilities
             _stringBuilder
                 .Append(prop)
                 .Append(':')
-                .Append(value);
+                .Append(value)
+                .Append(';');
 
         /// <summary>
         /// Adds a conditional in-line style to the builder with a space separator and closing semicolon.
