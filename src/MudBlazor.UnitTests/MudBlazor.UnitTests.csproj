@@ -48,7 +48,7 @@
     <PackageReference Include="nunit" Version="4.1.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
-    <PackageReference Include="ReportGenerator" Version="5.3.7" />
+    <PackageReference Include="ReportGenerator" Version="5.3.8" />
     <PackageReference Include="RichardSzalay.MockHttp" Version="7.0.0" />
   </ItemGroup>
 
