@@ -40,8 +40,10 @@ namespace MudBlazor.Utilities
         /// Call <see cref="Build"/> to return the completed CSS classes as a string. 
         /// </remarks>
         /// <returns>The <see cref="CssBuilder"/> instance.</returns>
-        public CssBuilder() : this(null)
-        { }
+        public CssBuilder()
+        {
+            _stringBuilder = StringBuilderCache.Acquire();
+        }
 
         /// <summary>
         /// Initializes a new instance of the CssBuilder class with the specified initial value.
@@ -51,9 +53,8 @@ namespace MudBlazor.Utilities
         /// </remarks>
         /// <param name="value">The initial CSS class value.</param>
         /// <returns>The <see cref="CssBuilder"/> instance.</returns>
-        public CssBuilder(string? value)
+        public CssBuilder(string? value) : this()
         {
-            _stringBuilder = StringBuilderCache.Acquire();
             if (value is not null)
             {
                 _stringBuilder.Append(value);
@@ -67,7 +68,6 @@ namespace MudBlazor.Utilities
         /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public CssBuilder AddValue(string? value)
         {
-            _stringBuilder ??= StringBuilderCache.Acquire();
             if (value is not null)
             {
                 _stringBuilder.Append(value);
