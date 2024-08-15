@@ -79,7 +79,7 @@ namespace MudBlazor.Utilities
         /// </summary>
         /// <param name="style">The style to add.</param>
         /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
-        public StyleBuilder AddStyle(string? style) => !string.IsNullOrWhiteSpace(style) ? AddRaw($"{style};") : this;
+        public StyleBuilder AddStyle(string? style) => !string.IsNullOrWhiteSpace(style) ? AddRaw(style).AddRaw(';') : this;
 
         /// <summary>
         /// Adds a conditional style to the builder with a space separator and closing semicolon.
