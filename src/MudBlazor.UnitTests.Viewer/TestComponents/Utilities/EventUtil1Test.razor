@@ -1,4 +1,6 @@
-﻿<h3>EventUtil1Test</h3>
+﻿@inherits MudComponentBase
+
+<h3>EventUtil1Test</h3>
 <p>
     Inspired from https://learn.microsoft.com/aspnet/core/blazor/performance?view=aspnetcore-6.0#avoid-rerendering-after-handling-events-without-state-changes
 </p>
@@ -10,19 +12,19 @@
     Select me (Rerenders)
 </button>
 
-<button id="btn2" @onclick="EventUtil.AsNonRenderingEventHandler(HandleClick2)">
+<button id="btn2" @onclick="this.AsNonRenderingEventHandler(HandleClick2)">
     Select me (Avoids Rerender)
 </button>
 
-<button id="btn3" @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(HandleClick3)">
+<button id="btn3" @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(HandleClick3)">
     Select me (Avoids Rerender and uses <code>MouseEventArgs</code>)
 </button>
 
-<button id="btn4" @onclick="EventUtil.AsNonRenderingEventHandler(HandleClick4)">
+<button id="btn4" @onclick="this.AsNonRenderingEventHandler(HandleClick4)">
     Select me (Avoids Rerender) with an async Func as Handler
 </button>
 
-<button id="btn5" @onclick="EventUtil.AsNonRenderingEventHandler(new Func<MouseEventArgs, Task>(HandleClick5))">
+<button id="btn5" @onclick="this.AsNonRenderingEventHandler(new Func<MouseEventArgs, Task>(HandleClick5))">
     Select me (Avoids Rerender) with an async TValue Func as Handler
 </button>
 

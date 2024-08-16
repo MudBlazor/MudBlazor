@@ -2,8 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.State.Builder;
 
@@ -13,7 +13,7 @@ namespace MudBlazor;
 /// <summary>
 /// Represents a base class for designing components which maintain state.
 /// </summary>
-public class ComponentBaseWithState : ComponentBase
+public class ComponentBaseWithState : ComponentBase, IComponentException
 {
     internal readonly ParameterContainer ParameterContainer = new() { AutoVerify = false };
 
@@ -50,4 +50,7 @@ public class ComponentBaseWithState : ComponentBase
 
         return parameterRegistrationBuilderScope;
     }
+
+    /// <inheritdoc />
+    Task IComponentException.DispatchExceptionAsync(Exception exception) => DispatchExceptionAsync(exception);
 }
