@@ -459,7 +459,7 @@ namespace MudBlazor
         {
             get => _open;
             // Note: the setter is protected because it was needed by a user who derived his own autocomplete from this class.
-            // Note: setting Open will not open or close it. Use OpenMenuAsync() for that.
+            // Note: setting Open will not open or close it. Use ToggleMenuAsync() for that.
             protected set
             {
                 if (_open == value)
@@ -905,14 +905,9 @@ namespace MudBlazor
 
         private async Task OnInputActivationAsync(bool openMenu)
         {
-            if (GetDisabledState() || GetReadOnlyState())
-            {
-                return;
-            }
-
             _isFocused = true;
 
-            if (Open)
+            if (Open || GetDisabledState() || GetReadOnlyState())
             {
                 return;
             }
