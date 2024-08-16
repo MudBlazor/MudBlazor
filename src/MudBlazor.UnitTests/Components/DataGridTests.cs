@@ -4337,6 +4337,44 @@ namespace MudBlazor.UnitTests.Components
             cells[28].TextContent.Should().Be("Calcium"); cells[29].TextContent.Should().Be("20");
         }
 
+        /// <summary>
+        /// Reproduce the bug from https://github.com/MudBlazor/MudBlazor/issues/9585
+        /// When a column is hiden by the menu and the precedent column is resized, then the app crash
+        /// </summary>
+        [Test]
+        public void DataGrid_ResizeColumn_WhenNeighboringColumnIsHidden()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<DataGridHideAndResizeTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHideAndResizeTest.Model>>();
+            var columns = dataGrid.FindComponents<Column<DataGridHideAndResizeTest.Model>>();
+
+            columns.Count.Should().Be(3);
+
+            var dg = dataGrid.Instance;
+
+            // Act
+
+            var columnMenu = comp.FindAll("th .mud-menu button").ElementAt(1);
+            columnMenu.Click();
+
+            comp.WaitForAssertion(() => comp.FindAll(".mud-list-item").ElementAt(1));
+            var hideMenuItem = comp.FindAll(".mud-list-item").ElementAt(1);
+            hideMenuItem.Click();
+
+            // Assert
+
+            var ddd = comp.Markup;
+            comp.FindAll("th").Count.Should().Be(2);
+
+            // Act
+
+            var resizer = comp.FindAll(".mud-resizer").ElementAt(0);
+            resizer.PointerDown();
+            resizer.MouseMove(10, 0);
+        }
+
         [Test]
         public void QueryFilterExtensionTest()
         {
