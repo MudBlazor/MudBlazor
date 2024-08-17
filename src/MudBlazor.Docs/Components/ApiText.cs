@@ -113,8 +113,8 @@ public partial class ApiText : ComponentBase
                     }
                     break;
                 case XmlNodeType.Text:
-                    // <MudText Typo="Typo.caption">{value}</MudText>
-                    builder.AddMudText(sequence++, Typo.caption, reader.Value);
+                    // <MudText Typo="Typo.subtitle1">{value}</MudText>
+                    builder.AddMudText(sequence++, Typo.subtitle1, reader.Value);
                     break;
             }
         }
