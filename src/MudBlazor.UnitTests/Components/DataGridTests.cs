@@ -4344,31 +4344,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGrid_HideColumn()
-        {
-            // Arrange : Init a datagrid with 3 columns
-
-            var comp = Context.RenderComponent<DataGridHideAndResizeTest>();
-            comp.FindAll("th").Count.Should().Be(3);
-
-            // Act : Hide 1 column
-
-            // Open column menu
-            var columnMenu = comp.FindAll("th .mud-menu button").ElementAt(1);
-            columnMenu.Click();
-            // Wait the context menu is opened
-            comp.WaitForAssertion(() => comp.FindAll(".mud-list-item").Should().NotBeNullOrEmpty());
-            // Click on 'Hide' menu item
-            var hideMenuItem = comp.FindAll(".mud-list-item").ElementAt(1);
-            hideMenuItem.InnerHtml.Contains("Hidde");
-            hideMenuItem.Click();
-
-            // Assert : Check only 2 columns are displayed
-
-            comp.FindAll("th").Count.Should().Be(2);
-        }
-
-        [Test]
         public async Task DataGrid_ResizeColumn()
         {
             // Arrange : Init a datagrid with 3 columns
@@ -4378,19 +4353,24 @@ namespace MudBlazor.UnitTests.Components
                 .SetResult(new Interop.BoundingClientRect { Width = 50 });
             var comp = Context.RenderComponent<DataGridHideAndResizeTest>();
             var dgComp = comp.FindComponent<MudDataGrid<DataGridHideAndResizeTest.Model>>();
+
+            // Assert
+
             {
-                // At init, <th> elements haven't width
                 var thElements = comp.FindAll("th");
-                thElements.Should().NotContain(e => e.GetStyle().Any(cssProp => cssProp.Name == "width"));
+                thElements.Should().NotContain(
+                    e => e.GetStyle().Any(cssProp => cssProp.Name == "width"),
+                    "At init, <th> elements haven't width"
+                );
             }
 
             // Act : Resize the column
 
-            // Mouse click down
+            // Press mouse bouton over resizer
             var resizer = comp.FindAll(".mud-resizer").ElementAt(0);
             await comp.InvokeAsync(async () => resizer.PointerDown());
 
-            // Mouse move and release
+            // Move the mouse and release button
             var resizeService = dgComp.Instance.ResizeService;
             var resizeServiceType = resizeService.GetType();
             var eventListener = (EventListener)resizeServiceType
@@ -4402,10 +4382,13 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () => await eventListener.OnEventOccur(upEventId, """{"ClientX":-10}"""));
 
             // Assert
+
             {
-                // Check the first column is resized (50 - 10 = 40)
                 var thElement = comp.Find("th");
-                thElement.GetStyle().Should().Contain(cssProp => cssProp.Name == "width" && cssProp.Value == "40px");
+                thElement.GetStyle().Should().Contain(
+                    cssProp => cssProp.Name == "width" && cssProp.Value == "40px",
+                    "First column is resized to 40 (50-10)"
+                );
             }
         }
 
@@ -4426,14 +4409,13 @@ namespace MudBlazor.UnitTests.Components
 
             // Act : Hide the middle column and resize the first column
 
-            // Open column menu
+            // Open column the second column header menu
             var columnMenu = comp.FindAll("th .mud-menu button").ElementAt(1);
             columnMenu.Click();
 
-            // Click on 'Hide' menu item
+            // Click on the menu item 'Hide'
             comp.WaitForAssertion(() => comp.FindAll(".mud-list-item").ElementAt(1));
             var hideMenuItem = comp.FindAll(".mud-list-item").ElementAt(1);
-            hideMenuItem.InnerHtml.Contains("Hidde");
             hideMenuItem.Click();
 
             // Mouse click down
@@ -4453,11 +4435,8 @@ namespace MudBlazor.UnitTests.Components
 
             // Assert
 
-            // Two columns are displayed
-            comp.FindAll("th").Count.Should().Be(2);
-            // The first column is resized
-            var thElement = comp.Find("th");
-            thElement.GetStyle().Should().Contain(cssProp => cssProp.Name == "width");
+            comp.FindAll("th").Count.Should().Be(2, "Two columns are displayed");
+            comp.Find("th").GetStyle().Should().Contain(cssProp => cssProp.Name == "width", "The first column is resized");
         }
 
         [Test]
