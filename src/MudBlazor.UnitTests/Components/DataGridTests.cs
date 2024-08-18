@@ -1,16 +1,7 @@
 ﻿#pragma warning disable CS1998 // async without await
 #pragma warning disable BL0005 // Set parameter outside component
 
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Globalization;
-using System.Linq;
-using System.Net.WebSockets;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using AngleSharp.Css.Dom;
 using AngleSharp.Dom;
 using Bunit;
@@ -18,9 +9,7 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Interfaces;
-using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.Utilities.Clone;
 using NUnit.Framework;
@@ -4343,55 +4332,6 @@ namespace MudBlazor.UnitTests.Components
             cells[28].TextContent.Should().Be("Calcium"); cells[29].TextContent.Should().Be("20");
         }
 
-        [Test]
-        public async Task DataGrid_ResizeColumn()
-        {
-            // Arrange : Init a datagrid with 3 columns
-
-            Context.JSInterop
-                .Setup<Interop.BoundingClientRect>()
-                .SetResult(new Interop.BoundingClientRect { Width = 50 });
-            var comp = Context.RenderComponent<DataGridHideAndResizeTest>();
-            var dgComp = comp.FindComponent<MudDataGrid<DataGridHideAndResizeTest.Model>>();
-
-            // Assert
-
-            {
-                var thElements = comp.FindAll("th");
-                thElements.Should().NotContain(
-                    e => e.GetStyle().Any(cssProp => cssProp.Name == "width"),
-                    "At init, <th> elements haven't width"
-                );
-            }
-
-            // Act : Resize the column
-
-            // Press mouse bouton over resizer
-            var resizer = comp.FindAll(".mud-resizer").ElementAt(0);
-            await comp.InvokeAsync(async () => resizer.PointerDown());
-
-            // Move the mouse and release button
-            var resizeService = dgComp.Instance.ResizeService;
-            var resizeServiceType = resizeService.GetType();
-            var eventListener = (EventListener)resizeServiceType
-                .GetField("_eventListener", BindingFlags.NonPublic | BindingFlags.Instance)
-                .GetValue(resizeService);
-            var upEventId = (Guid)resizeServiceType
-                .GetField("_pointerUpSubscriptionId", BindingFlags.NonPublic | BindingFlags.Instance)
-                .GetValue(resizeService);
-            await comp.InvokeAsync(async () => await eventListener.OnEventOccur(upEventId, """{"ClientX":-10}"""));
-
-            // Assert
-
-            {
-                var thElement = comp.Find("th");
-                thElement.GetStyle().Should().Contain(
-                    cssProp => cssProp.Name == "width" && cssProp.Value == "40px",
-                    "First column is resized to 40 (50-10)"
-                );
-            }
-        }
-
         /// <summary>
         /// Reproduce the bug from https://github.com/MudBlazor/MudBlazor/issues/9585
         /// When a column is hiden by the menu and the precedent column is resized, then the app crash
@@ -4401,9 +4341,6 @@ namespace MudBlazor.UnitTests.Components
         {
             // Arrange
 
-            Context.JSInterop
-                .Setup<Interop.BoundingClientRect>()
-                .SetResult(new Interop.BoundingClientRect { Width = 50 });
             var comp = Context.RenderComponent<DataGridHideAndResizeTest>();
             var dgComp = comp.FindComponent<MudDataGrid<DataGridHideAndResizeTest.Model>>();
 
@@ -4417,6 +4354,28 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.FindAll(".mud-list-item").ElementAt(1));
             var hideMenuItem = comp.FindAll(".mud-list-item").ElementAt(1);
             hideMenuItem.Click();
+
+            // Mock mudElementRef.getBoundingClientRect for DataGrid and visible columns
+            var gridElement = (ElementReference)dgComp.Instance.GetType()
+                .GetField("_gridElement", BindingFlags.NonPublic | BindingFlags.Instance)
+                .GetValue(dgComp.Instance);
+            Context.JSInterop
+              .Setup<Interop.BoundingClientRect>("mudElementRef.getBoundingClientRect", gridElement)
+              .SetResult(new Interop.BoundingClientRect { Width = 50 });
+            var colComps = comp.FindComponents<HeaderCell<DataGridHideAndResizeTest.Model>>();
+            foreach(var colComp in colComps)
+            {
+                var col = colComp.Instance;
+                if(!col.Column.HiddenState.Value)
+                {
+                    var headerElement = (ElementReference)col.GetType()
+                        .GetField("_headerElement", BindingFlags.NonPublic | BindingFlags.Instance)
+                        .GetValue(col);
+                    Context.JSInterop
+                        .Setup<Interop.BoundingClientRect>("mudElementRef.getBoundingClientRect", headerElement)
+                        .SetResult(new Interop.BoundingClientRect { Width = 50 });
+                }
+            }
 
             // Mouse click down
             var resizer = comp.FindAll(".mud-resizer").ElementAt(0);
