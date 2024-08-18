@@ -1,4 +1,3 @@
-
 <CascadingValue Value="this" IsFixed="true">
     <QueuedContent RenderImmediately="_renderImmediately">
         <div @attributes="UserAttributes" class="docs-page-section">
@@ -6,3 +5,23 @@
         </div>
     </QueuedContent>
 </CascadingValue>
+
+<DocsPageSection>
+    <SectionHeader Title="MudDialog - Submitting on Enter Key Press">
+        <Description>
+            MudDialog now supports submitting forms on Enter key press with focus anywhere inside DialogContent.
+            This feature allows you to trigger form submission by pressing the Enter key, similar to classic forms or Blazor's EditForm.
+        </Description>
+    </SectionHeader>
+</DocsPageSection>
+
+<DocsPageSection>
+    <SectionHeader Title="Example">
+        <Description>
+            Here is an example demonstrating the new Enter key press submission feature in MudDialog.
+        </Description>
+        <SectionContent Code="@nameof(DialogEnterKeyPressExample)">
+            <DialogEnterKeyPressExample />
+        </SectionContent>
+    </SectionHeader>
+</DocsPageSection>

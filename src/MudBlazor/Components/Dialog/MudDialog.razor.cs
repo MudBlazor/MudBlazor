@@ -280,5 +280,19 @@ namespace MudBlazor
                 DialogInstance?.Register(this);
             }
         }
+
+        /// <summary>
+        /// Handles the key down event for the dialog.
+        /// </summary>
+        /// <param name="args">The keyboard event arguments.</param>
+        private void OnKeyDown(KeyboardEventArgs args)
+        {
+            if (args.Key == "Enter")
+            {
+                // Trigger form submission or any other desired action
+                // You can customize this logic based on your requirements
+                Console.WriteLine("Enter key pressed within DialogContent");
+            }
+        }
     }
 }

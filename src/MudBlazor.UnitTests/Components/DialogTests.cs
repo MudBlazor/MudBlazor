@@ -864,7 +864,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
 
-            var service = Context.Services.GetService<IDialogService>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
 
             var dialogReferenceLazy = new Lazy<Task<IDialogReference>>(() => service?.ShowAsync<DialogOkCancel>());
 
@@ -1235,6 +1235,24 @@ namespace MudBlazor.UnitTests.Components
             dialogReference.Should().NotBeNull();
 
             comp.Find("div.mud-dialog-title").GetAttribute("class").Should().Be(expectedClassname);
+        }
+
+        [Test]
+        public async Task DialogShouldSubmitOnEnterKeyPress()
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBeNull();
+            IDialogReference dialogReference = null;
+
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithForm>());
+            dialogReference.Should().NotBeNull();
+
+            var input = comp.Find("input");
+            input.KeyDown(new KeyboardEventArgs { Key = "Enter" });
+
+            var result = await dialogReference.Result;
+            result.Canceled.Should().BeFalse();
         }
     }
 
