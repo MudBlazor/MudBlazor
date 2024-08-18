@@ -36,14 +36,14 @@ public partial class MudHighlighter : MudComponentBase
     public string? HighlightedText { get; set; }
 
     /// <summary>
-    /// The multiple text values to highlight within <see cref="Text" />.
+    /// The multiple text fragments to highlight within <see cref="Text" />.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Highlighter.Behavior)]
     public IEnumerable<string> HighlightedTexts { get; set; } = Enumerable.Empty<string>();
 
     /// <summary>
-    /// Performs case-sensitive checks for <see cref="HighlightedText"/> or <see cref="HighlightedTexts"/>.
+    /// Whether highlighted text is case sensitive.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.
