@@ -1586,7 +1586,7 @@ namespace MudBlazor.UnitTests.Components
         /// https://github.com/MudBlazor/MudBlazor/issues/9495
         /// With `ResetValueOnEmptyText`,
         /// when the input text is cleared,
-        /// then the value is setted with null and the search is called
+        /// then the value is set to null and the search func is called
         /// </summary>
         [Test]
         public void ResetValueOnEmptyText_WhenTextCleared_ThenSetNullAndTriggerSearch()
