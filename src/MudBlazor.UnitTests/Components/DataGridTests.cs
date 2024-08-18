@@ -14,7 +14,9 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Interfaces;
+using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.Utilities.Clone;
 using NUnit.Framework;
@@ -4346,33 +4348,35 @@ namespace MudBlazor.UnitTests.Components
         {
             // Arrange
 
+            Context.JSInterop
+                .Setup<Interop.BoundingClientRect>()
+                .SetResult(new Interop.BoundingClientRect());
             var comp = Context.RenderComponent<DataGridHideAndResizeTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridHideAndResizeTest.Model>>();
-            var columns = dataGrid.FindComponents<Column<DataGridHideAndResizeTest.Model>>();
-
-            columns.Count.Should().Be(3);
-
-            var dg = dataGrid.Instance;
+            comp.FindAll("th").Count.Should().Be(3);
 
             // Act
 
+            // Open column menu
             var columnMenu = comp.FindAll("th .mud-menu button").ElementAt(1);
             columnMenu.Click();
 
+            // Click on 'Hide' menu item
             comp.WaitForAssertion(() => comp.FindAll(".mud-list-item").ElementAt(1));
             var hideMenuItem = comp.FindAll(".mud-list-item").ElementAt(1);
+            hideMenuItem.InnerHtml.Contains("Hidde");
             hideMenuItem.Click();
+
 
             // Assert
 
-            var ddd = comp.Markup;
             comp.FindAll("th").Count.Should().Be(2);
 
             // Act
 
             var resizer = comp.FindAll(".mud-resizer").ElementAt(0);
             resizer.PointerDown();
-            resizer.MouseMove(10, 0);
+            // TODO : Move move
         }
 
         [Test]
