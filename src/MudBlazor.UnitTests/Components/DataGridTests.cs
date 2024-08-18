@@ -4363,10 +4363,10 @@ namespace MudBlazor.UnitTests.Components
               .Setup<Interop.BoundingClientRect>("mudElementRef.getBoundingClientRect", gridElement)
               .SetResult(new Interop.BoundingClientRect { Width = 50 });
             var colComps = comp.FindComponents<HeaderCell<DataGridHideAndResizeTest.Model>>();
-            foreach(var colComp in colComps)
+            foreach (var colComp in colComps)
             {
                 var col = colComp.Instance;
-                if(!col.Column.HiddenState.Value)
+                if (!col.Column.HiddenState.Value)
                 {
                     var headerElement = (ElementReference)col.GetType()
                         .GetField("_headerElement", BindingFlags.NonPublic | BindingFlags.Instance)
