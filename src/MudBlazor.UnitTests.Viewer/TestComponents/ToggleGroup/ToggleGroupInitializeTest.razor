@@ -12,8 +12,8 @@
     <MudToggleItem T="string" Value="@("Item Three")" Text="Item Three" />
 </MudToggleGroup>
 
-<MudButton OnClick="SetSingleValue">Set Single Value</MudButton>
-<MudButton OnClick="SetMultiValue">Set Multi Value</MudButton>
+<MudButton id="set-single-value" OnClick="SetSingleValue">Set Single Value</MudButton>
+<MudButton id="set-multi-value" OnClick="SetMultiValue">Set Multi Value</MudButton>
 
 @code {
     private string _value = "Item Two";
