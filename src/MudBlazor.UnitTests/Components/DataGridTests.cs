@@ -4357,8 +4357,8 @@ namespace MudBlazor.UnitTests.Components
 
             // Mock mudElementRef.getBoundingClientRect for DataGrid and visible columns
             var gridElement = (ElementReference)dgComp.Instance.GetType()
-                .GetField("_gridElement", BindingFlags.NonPublic | BindingFlags.Instance)
-                .GetValue(dgComp.Instance);
+                .GetField("_gridElement", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(dgComp.Instance)!;
             Context.JSInterop
               .Setup<Interop.BoundingClientRect>("mudElementRef.getBoundingClientRect", gridElement)
               .SetResult(new Interop.BoundingClientRect { Width = 50 });
@@ -4369,8 +4369,8 @@ namespace MudBlazor.UnitTests.Components
                 if (!col.Column.HiddenState.Value)
                 {
                     var headerElement = (ElementReference)col.GetType()
-                        .GetField("_headerElement", BindingFlags.NonPublic | BindingFlags.Instance)
-                        .GetValue(col);
+                        .GetField("_headerElement", BindingFlags.NonPublic | BindingFlags.Instance)!
+                        .GetValue(col)!;
                     Context.JSInterop
                         .Setup<Interop.BoundingClientRect>("mudElementRef.getBoundingClientRect", headerElement)
                         .SetResult(new Interop.BoundingClientRect { Width = 50 });
@@ -4385,12 +4385,12 @@ namespace MudBlazor.UnitTests.Components
             var resizeService = dgComp.Instance.ResizeService;
             var resizeServiceType = resizeService.GetType();
             var eventListener = (EventListener)resizeServiceType
-                .GetField("_eventListener", BindingFlags.NonPublic | BindingFlags.Instance)
+                .GetField("_eventListener", BindingFlags.NonPublic | BindingFlags.Instance)!
                 .GetValue(resizeService);
             var upEventId = (Guid)resizeServiceType
-                .GetField("_pointerUpSubscriptionId", BindingFlags.NonPublic | BindingFlags.Instance)
-                .GetValue(resizeService);
-            await comp.InvokeAsync(async () => await eventListener.OnEventOccur(upEventId, """{"ClientX":-10}"""));
+                .GetField("_pointerUpSubscriptionId", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(resizeService)!;
+            await comp.InvokeAsync(async () => await eventListener!.OnEventOccur(upEventId, """{"ClientX":-10}"""));
 
             // Assert
 
