@@ -1,8 +1,6 @@
 ﻿//Copyright(c) Alessandro Ghidini.All rights reserved.
 //Changes and improvements Copyright (c) The MudBlazor Team.
 
-using System;
-using System.Threading;
 using MudBlazor.Components.Snackbar;
 
 #nullable enable
@@ -14,7 +12,7 @@ namespace MudBlazor
         private bool _paused = false;
         private bool _transitionCancellable = true;
         private bool _hideOnResume = false;
-        private Timer Timer { get; set; }
+        private Timer Timer { get; }
         internal SnackBarMessageState State { get; }
         public string? Message => SnackbarMessage.Text;
         internal SnackbarMessage SnackbarMessage { get; }

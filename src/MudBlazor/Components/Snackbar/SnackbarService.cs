@@ -1,11 +1,7 @@
 ﻿//Copyright (c) 2019 Alessandro Ghidini.All rights reserved.
 //Copyright (c) 2020 Jonny Larson and Meinrad Recheis
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.Extensions.Options;
@@ -19,12 +15,13 @@ namespace MudBlazor
     /// <inheritdoc />
     public class SnackbarService : ISnackbar
     {
-        public SnackbarConfiguration Configuration { get; }
-        public event Action? OnSnackbarsUpdated;
+        private readonly NavigationManager _navigationManager;
+        private readonly ReaderWriterLockSlim _snackBarLock;
+        private readonly List<Snackbar> _snackBarList;
 
-        private NavigationManager _navigationManager;
-        private ReaderWriterLockSlim SnackBarLock { get; }
-        private List<Snackbar> SnackBarList { get; }
+        public SnackbarConfiguration Configuration { get; }
+
+        public event Action? OnSnackbarsUpdated;
 
         public SnackbarService(NavigationManager navigationManager, IOptions<SnackbarConfiguration>? configuration = null)
         {
@@ -33,22 +30,22 @@ namespace MudBlazor
             Configuration.OnUpdate += ConfigurationUpdated;
             navigationManager.LocationChanged += NavigationManager_LocationChanged;
 
-            SnackBarLock = new ReaderWriterLockSlim();
-            SnackBarList = new List<Snackbar>();
+            _snackBarLock = new ReaderWriterLockSlim();
+            _snackBarList = new List<Snackbar>();
         }
 
         public IEnumerable<Snackbar> ShownSnackbars
         {
             get
             {
-                SnackBarLock.EnterReadLock();
+                _snackBarLock.EnterReadLock();
                 try
                 {
-                    return SnackBarList.Take(Configuration.MaxDisplayedSnackbars);
+                    return _snackBarList.Take(Configuration.MaxDisplayedSnackbars);
                 }
                 finally
                 {
-                    SnackBarLock.ExitReadLock();
+                    _snackBarLock.ExitReadLock();
                 }
             }
         }
@@ -60,16 +57,16 @@ namespace MudBlazor
 
             var snackbar = new Snackbar(message, options);
 
-            SnackBarLock.EnterWriteLock();
+            _snackBarLock.EnterWriteLock();
             try
             {
                 if (ResolvePreventDuplicates(options) && SnackbarAlreadyPresent(snackbar)) return null;
                 snackbar.OnClose += Remove;
-                SnackBarList.Add(snackbar);
+                _snackBarList.Add(snackbar);
             }
             finally
             {
-                SnackBarLock.ExitWriteLock();
+                _snackBarLock.ExitWriteLock();
             }
 
             OnSnackbarsUpdated?.Invoke();
@@ -129,14 +126,14 @@ namespace MudBlazor
         /// <inheritdoc />
         public void Clear()
         {
-            SnackBarLock.EnterWriteLock();
+            _snackBarLock.EnterWriteLock();
             try
             {
-                RemoveAllSnackbars(SnackBarList);
+                RemoveAllSnackbars(_snackBarList);
             }
             finally
             {
-                SnackBarLock.ExitWriteLock();
+                _snackBarLock.ExitWriteLock();
             }
 
             OnSnackbarsUpdated?.Invoke();
@@ -148,16 +145,16 @@ namespace MudBlazor
             snackbar.OnClose -= Remove;
             snackbar.Dispose();
 
-            SnackBarLock.EnterWriteLock();
+            _snackBarLock.EnterWriteLock();
             try
             {
-                var index = SnackBarList.IndexOf(snackbar);
+                var index = _snackBarList.IndexOf(snackbar);
                 if (index < 0) return;
-                SnackBarList.RemoveAt(index);
+                _snackBarList.RemoveAt(index);
             }
             finally
             {
-                SnackBarLock.ExitWriteLock();
+                _snackBarLock.ExitWriteLock();
             }
 
             OnSnackbarsUpdated?.Invoke();
@@ -166,20 +163,20 @@ namespace MudBlazor
         /// <inheritdoc />
         public void RemoveByKey(string key)
         {
-            SnackBarLock.EnterWriteLock();
+            _snackBarLock.EnterWriteLock();
             try
             {
-                var snackbars = SnackBarList.Where(snackbar => snackbar.SnackbarMessage.Key == key).ToArray();
+                var snackbars = _snackBarList.Where(snackbar => snackbar.SnackbarMessage.Key == key).ToArray();
                 foreach (var snackbar in snackbars)
                 {
                     snackbar.OnClose -= Remove;
                     snackbar.Dispose();
-                    SnackBarList.Remove(snackbar);
+                    _snackBarList.Remove(snackbar);
                 }
             }
             finally
             {
-                SnackBarLock.ExitWriteLock();
+                _snackBarLock.ExitWriteLock();
             }
 
             OnSnackbarsUpdated?.Invoke();
@@ -201,7 +198,7 @@ namespace MudBlazor
 
         private bool SnackbarAlreadyPresent(Snackbar newSnackbar)
         {
-            return !string.IsNullOrEmpty(newSnackbar.SnackbarMessage.Key) && SnackBarList.Any(snackbar => newSnackbar.SnackbarMessage.Key == snackbar.SnackbarMessage.Key);
+            return !string.IsNullOrEmpty(newSnackbar.SnackbarMessage.Key) && _snackBarList.Any(snackbar => newSnackbar.SnackbarMessage.Key == snackbar.SnackbarMessage.Key);
         }
 
         private void ConfigurationUpdated()
@@ -228,7 +225,7 @@ namespace MudBlazor
 
         private void RemoveAllSnackbars(IEnumerable<Snackbar> snackbars)
         {
-            if (SnackBarList.Count == 0) return;
+            if (_snackBarList.Count == 0) return;
 
             foreach (var snackbar in snackbars)
             {
@@ -236,17 +233,17 @@ namespace MudBlazor
                 snackbar.Dispose();
             }
 
-            SnackBarList.Clear();
+            _snackBarList.Clear();
         }
 
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
-                SnackBarLock.Dispose();
+                _snackBarLock.Dispose();
                 Configuration.OnUpdate -= ConfigurationUpdated;
                 _navigationManager.LocationChanged -= NavigationManager_LocationChanged;
-                RemoveAllSnackbars(SnackBarList);
+                RemoveAllSnackbars(_snackBarList);
             }
         }
 
