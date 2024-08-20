@@ -1202,7 +1202,7 @@ namespace MudBlazor
         {
             get
             {
-                return RenderedColumns.Any(x => !x.Hidden && (x.FooterTemplate != null || x.AggregateDefinition != null));
+                return RenderedColumns.Any(x => !x.HiddenState.Value && (x.FooterTemplate != null || x.AggregateDefinition != null));
             }
         }
 

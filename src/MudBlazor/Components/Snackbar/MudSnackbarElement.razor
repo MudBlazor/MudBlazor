@@ -3,12 +3,16 @@
     Changes and improvements Copyright (c) The MudBlazor Team.
 *@
 
+@{
+#nullable enable
+}
+
 @namespace MudBlazor
 @using MudBlazor.Resources
 @inherits MudComponentBase
 @inject InternalMudLocalizer Localizer
 
-@Css
+@_css
 <div role="alert"
      aria-live="polite"
      class="@SnackbarClass"

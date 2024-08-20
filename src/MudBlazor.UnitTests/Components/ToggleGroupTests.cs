@@ -23,7 +23,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ToggleGroup_Bind_Test()
         {
-            var comp = Context.RenderComponent<ToggleBindTest>();
+            var comp = Context.RenderComponent<ToggleGroupBindTest>();
             var toggleFirst = comp.FindComponents<MudToggleGroup<string>>().First();
             var toggleSecond = comp.FindComponents<MudToggleGroup<string>>().Last();
             IElement ToggleItem() => comp.FindAll(".mud-toggle-item").GetItemByIndex(1);
@@ -38,7 +38,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ToggleGroup_CustomFragmentBind_Test()
         {
-            var comp = Context.RenderComponent<ToggleCustomFragmentTest>();
+            var comp = Context.RenderComponent<ToggleGroupCustomFragmentTest>();
             var toggleFirst = comp.FindComponents<MudToggleGroup<string>>().First();
             var toggleSecond = comp.FindComponents<MudToggleGroup<string>>().Last();
             IElement ToggleItem() => comp.FindAll(".mud-toggle-item").GetItemByIndex(1);
@@ -53,7 +53,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ToggleGroup_SelectionMode_Test()
         {
-            var comp = Context.RenderComponent<ToggleBindMultiSelectionTest>();
+            var comp = Context.RenderComponent<ToggleGroupBindMultiSelectionTest>();
             var group1 = comp.FindComponents<MudToggleGroup<string>>().First();
             var group2 = comp.FindComponents<MudToggleGroup<string>>().Last();
             IElement ToggleItemSecond() => comp.FindAll(".mud-toggle-item").GetItemByIndex(1);
@@ -75,7 +75,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ToggleGroup_Initialize_Test()
         {
-            var comp = Context.RenderComponent<ToggleInitializeTest>();
+            var comp = Context.RenderComponent<ToggleGroupInitializeTest>();
             var toggleFirst = comp.FindComponents<MudToggleGroup<string>>().First();
             var toggleSecond = comp.FindComponents<MudToggleGroup<string>>().Last();
 
@@ -92,7 +92,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ToggleGroup_ToggleSelection_Test()
         {
-            var comp = Context.RenderComponent<ToggleToggleSelectionTest>();
+            var comp = Context.RenderComponent<ToggleGroupToggleSelectionTest>();
             var toggle = comp.FindComponent<MudToggleGroup<string>>();
             IElement ToggleItem() => comp.FindAll(".mud-toggle-item").GetItemByIndex(0);
 
@@ -209,7 +209,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ToggleGroup_Disabled_Test()
         {
-            var comp = Context.RenderComponent<ToggleDisabledTest>();
+            var comp = Context.RenderComponent<ToggleGroupDisabledTest>();
             var toggleGroups = comp.FindComponents<MudToggleGroup<string>>();
             var disabledToggleGroup = toggleGroups[0];
             var enabledToggleGroup = toggleGroups[1];
