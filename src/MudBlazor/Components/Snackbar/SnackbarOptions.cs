@@ -68,7 +68,7 @@ namespace MudBlazor
                     Severity.Success => SuccessIcon,
                     Severity.Warning => WarningIcon,
                     Severity.Error => ErrorIcon,
-                    _ => throw new ArgumentOutOfRangeException(nameof(Severity)),
+                    _ => throw new ArgumentOutOfRangeException(nameof(severity)),
                 };
             }
         }

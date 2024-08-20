@@ -15,9 +15,9 @@ namespace MudBlazor
     /// <inheritdoc />
     public class SnackbarService : ISnackbar
     {
-        private readonly NavigationManager _navigationManager;
-        private readonly ReaderWriterLockSlim _snackBarLock;
         private readonly List<Snackbar> _snackBarList;
+        private readonly ReaderWriterLockSlim _snackBarLock;
+        private readonly NavigationManager _navigationManager;
 
         public SnackbarConfiguration Configuration { get; }
 
@@ -50,37 +50,13 @@ namespace MudBlazor
             }
         }
 
-        private Snackbar? Add(SnackbarMessage message, Severity severity = Severity.Normal, Action<SnackbarOptions>? configure = null)
-        {
-            var options = new SnackbarOptions(severity, Configuration);
-            configure?.Invoke(options);
-
-            var snackbar = new Snackbar(message, options);
-
-            _snackBarLock.EnterWriteLock();
-            try
-            {
-                if (ResolvePreventDuplicates(options) && SnackbarAlreadyPresent(snackbar)) return null;
-                snackbar.OnClose += Remove;
-                _snackBarList.Add(snackbar);
-            }
-            finally
-            {
-                _snackBarLock.ExitWriteLock();
-            }
-
-            OnSnackbarsUpdated?.Invoke();
-
-            return snackbar;
-        }
-
         /// <inheritdoc />
         public Snackbar? Add<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(Dictionary<string, object>? componentParameters = null, Severity severity = Severity.Normal, Action<SnackbarOptions>? configure = null, string? key = null) where T : IComponent
         {
             var type = typeof(T);
             var message = new SnackbarMessage(type, componentParameters, key);
 
-            return Add(message, severity, configure);
+            return AddCore(message, severity, configure);
         }
 
         /// <inheritdoc />
@@ -187,7 +163,31 @@ namespace MudBlazor
             var type = typeof(T);
             var message = new SnackbarMessage(type, componentParameters, key) { Text = text };
 
-            return Add(message, severity, configure);
+            return AddCore(message, severity, configure);
+        }
+
+        private Snackbar? AddCore(SnackbarMessage message, Severity severity = Severity.Normal, Action<SnackbarOptions>? configure = null)
+        {
+            var options = new SnackbarOptions(severity, Configuration);
+            configure?.Invoke(options);
+
+            var snackbar = new Snackbar(message, options);
+
+            _snackBarLock.EnterWriteLock();
+            try
+            {
+                if (ResolvePreventDuplicates(options) && SnackbarAlreadyPresent(snackbar)) return null;
+                snackbar.OnClose += Remove;
+                _snackBarList.Add(snackbar);
+            }
+            finally
+            {
+                _snackBarLock.ExitWriteLock();
+            }
+
+            OnSnackbarsUpdated?.Invoke();
+
+            return snackbar;
         }
 
         private bool ResolvePreventDuplicates(SnackbarOptions options)

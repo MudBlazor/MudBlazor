@@ -2,6 +2,7 @@
 //Changes and improvements Copyright (c) The MudBlazor Team.
 
 namespace MudBlazor;
+
 #nullable enable
 internal enum SnackbarState
 {
