@@ -2,9 +2,6 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // Changes and improvements Copyright (c) The MudBlazor Team
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -26,8 +23,8 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder(Class)
-            .AddClass(GetPositionClass())
-        .Build();
+                .AddClass(GetPositionClass())
+                .Build();
 
         private string GetPositionClass()
         {
