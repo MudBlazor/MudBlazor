@@ -1,0 +1,25 @@
+{
+    "extends": [
+        "config:recommended"
+    ],
+    "ignorePresets": [
+        ":ignoreModulesAndTests"
+    ],
+    "labels": [
+        "depdendency"
+    ],
+    "packageRules": [
+        {
+            "matchPackageNames": [
+                "Microsoft.CodeAnalysis.CSharp"
+            ],
+            "enabled": false
+        },
+        {
+            "matchPackageNames": [
+                "AspNetCore.SassCompiler"
+            ],
+            "allowedVersions": "1.72.0"
+        }
+    ]
+}
