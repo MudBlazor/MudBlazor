@@ -2,7 +2,7 @@
 @using MudBlazor
 
 <MudStack Row Class="justify-space-between mud-width-full">
-    <MudStack Style="flex: 0 0 33%">
+    <MudStack Style="width: 300px">
         @foreach (var variant in Enum.GetValues(typeof(Variant)).Cast<Variant>())
         {
             <MudSelect @bind-Value="@_value"
@@ -24,7 +24,7 @@
         }
     </MudStack>
 
-    <MudStack Style="flex: 0 0 auto">
+    <MudStack>
         <MudSelect @bind-Value="_margin" Label="Margin">
             @foreach (var margin in Enum.GetValues(typeof(Margin)).Cast<Margin>())
             {
