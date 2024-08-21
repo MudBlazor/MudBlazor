@@ -6,8 +6,8 @@
         @foreach (var variant in Enum.GetValues(typeof(Variant)).Cast<Variant>())
         {
             <MudAutocomplete @bind-Value="_value"
-                             SearchFunc="@Search"
-                             Variant="@variant"
+                             SearchFunc="Search"
+                             Variant="variant"
                              Label="@variant.ToString()"
                              Margin="_margin"
                              Dense="_dense"
@@ -24,17 +24,17 @@
         <MudSelect @bind-Value="_margin" Label="Margin">
             @foreach (var margin in Enum.GetValues(typeof(Margin)).Cast<Margin>())
             {
-                <MudSelectItem Value="@margin">@margin</MudSelectItem>
+                <MudSelectItem Value="margin">@margin</MudSelectItem>
             }
         </MudSelect>
 
-        <MudSwitch @bind-Value="@_dense" Label="Dense" />
-        <MudSwitch @bind-Value="@_readonly" Label="ReadOnly" />
-        <MudSwitch @bind-Value="@_disabled" Label="Disabled" />
-        <MudSwitch @bind-Value="@_placeholder" Label="Placeholder" />
-        <MudSwitch @bind-Value="@_helperText" Label="HelperText" />
-        <MudSwitch @bind-Value="@_helperTextOnFocus" Label="HelperTextOnFocus" />
-        <MudSwitch @bind-Value="@_clearable" Label="Clearable" />
+        <MudSwitch @bind-Value="_dense" Label="Dense" />
+        <MudSwitch @bind-Value="_readonly" Label="ReadOnly" />
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" />
+        <MudSwitch @bind-Value="_placeholder" Label="Placeholder" />
+        <MudSwitch @bind-Value="_helperText" Label="HelperText" />
+        <MudSwitch @bind-Value="_helperTextOnFocus" Label="HelperTextOnFocus" />
+        <MudSwitch @bind-Value="_clearable" Label="Clearable" />
     </MudStack>
 </MudStack>
 

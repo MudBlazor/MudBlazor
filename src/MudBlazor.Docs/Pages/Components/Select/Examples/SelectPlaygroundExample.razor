@@ -5,8 +5,8 @@
     <MudStack Style="width: 300px">
         @foreach (var variant in Enum.GetValues(typeof(Variant)).Cast<Variant>())
         {
-            <MudSelect @bind-Value="@_value"
-                       Variant="@variant"
+            <MudSelect @bind-Value="_value"
+                       Variant="variant"
                        Label="@variant.ToString()"
                        Margin="_margin"
                        Dense="_dense"
@@ -18,7 +18,7 @@
                        Clearable="_clearable">
                 @foreach (var state in _states)
                 {
-                    <MudSelectItem Value="@state">@state</MudSelectItem>
+                    <MudSelectItem Value="state">@state</MudSelectItem>
                 }
             </MudSelect>
         }
@@ -28,17 +28,17 @@
         <MudSelect @bind-Value="_margin" Label="Margin">
             @foreach (var margin in Enum.GetValues(typeof(Margin)).Cast<Margin>())
             {
-                <MudSelectItem Value="@margin">@margin</MudSelectItem>
+                <MudSelectItem Value="margin">@margin</MudSelectItem>
             }
         </MudSelect>
 
-        <MudSwitch @bind-Value="@_dense" Label="Dense" />
-        <MudSwitch @bind-Value="@_readonly" Label="ReadOnly" />
-        <MudSwitch @bind-Value="@_disabled" Label="Disabled" />
-        <MudSwitch @bind-Value="@_placeholder" Label="Placeholder" />
-        <MudSwitch @bind-Value="@_helperText" Label="HelperText" />
-        <MudSwitch @bind-Value="@_helperTextOnFocus" Label="HelperTextOnFocus" />
-        <MudSwitch @bind-Value="@_clearable" Label="Clearable" />
+        <MudSwitch @bind-Value="_dense" Label="Dense" />
+        <MudSwitch @bind-Value="_readonly" Label="ReadOnly" />
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" />
+        <MudSwitch @bind-Value="_placeholder" Label="Placeholder" />
+        <MudSwitch @bind-Value="_helperText" Label="HelperText" />
+        <MudSwitch @bind-Value="_helperTextOnFocus" Label="HelperTextOnFocus" />
+        <MudSwitch @bind-Value="_clearable" Label="Clearable" />
     </MudStack>
 </MudStack>
 
