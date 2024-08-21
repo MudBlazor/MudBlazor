@@ -1,0 +1,66 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="8">
+        <MudStack Spacing="2">
+            @foreach (var variant in Enum.GetValues(typeof(Variant)).Cast<Variant>())
+            {
+                <MudSelect @bind-SelectedValues="@_selectedValues"
+                           Variant="@variant"
+                           Label="@variant.ToString()"
+                           Dense="_dense"
+                           Disabled="_disabled"
+                           ReadOnly="_readonly"
+                           MultiSelection="@_multiSelection"
+                           Placeholder="@(_placeholder ? "Placeholder" : null)"
+                           HelperText="@(_helperText ? "Helper Text" : null)"
+                           HelperTextOnFocus="_helperTextOnFocus"
+                           Clearable="_clearable">
+                    @foreach (var state in _states)
+                    {
+                        <MudSelectItem Value="@state">@state</MudSelectItem>
+                    }
+                </MudSelect>
+            }
+        </MudStack>
+    </MudItem>
+
+    <MudItem xs="12" sm="4">
+        <MudStack Spacing="2">
+            <MudSwitch @bind-Value="@_dense" Label="Dense" />
+            <MudSwitch @bind-Value="@_readonly" Label="ReadOnly" />
+            <MudSwitch @bind-Value="@_disabled" Label="Disabled" />
+            <MudSwitch @bind-Value="@_multiSelection" Label="MultiSelection" />
+            <MudSwitch @bind-Value="@_placeholder" Label="Placeholder" />
+            <MudSwitch @bind-Value="@_helperText" Label="HelperText" />
+            <MudSwitch @bind-Value="@_helperTextOnFocus" Label="HelperTextOnFocus" />
+            <MudSwitch @bind-Value="@_clearable" Label="Clearable" />
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+    IEnumerable<string> _selectedValues;
+    bool _dense;
+    bool _disabled;
+    bool _readonly;
+    bool _multiSelection;
+    bool _placeholder;
+    bool _helperText;
+    bool _helperTextOnFocus;
+    bool _clearable;
+
+    private string[] _states =
+    {
+        "Alabama", "Alaska", "Arizona", "Arkansas", "California",
+        "Colorado", "Connecticut", "Delaware", "Florida", "Georgia",
+        "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas",
+        "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts",
+        "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana",
+        "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico",
+        "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma",
+        "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
+        "Tennessee", "Texas", "Utah", "Vermont", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming"
+    };
+}
