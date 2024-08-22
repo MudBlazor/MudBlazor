@@ -12,6 +12,12 @@
     "packageRules": [
         {
             "matchPackageNames": [
+                "Microsoft.CodeAnalysis**"
+            ],
+            "groupName": "code-analysis monorepo"
+        },
+        {
+            "matchPackageNames": [
                 "Microsoft.CodeAnalysis.CSharp"
             ],
             "enabled": false
