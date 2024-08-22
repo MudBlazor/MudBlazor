@@ -171,6 +171,7 @@ public static class MudGlobal
         /// <remarks>
         /// Defaults to Color.Primary
         /// </remarks>
+        public static Color Color { get; set; } = Color.Primary;
 
         /// <summary>
         /// The default typography variant for <see cref="MudLink"/>.
