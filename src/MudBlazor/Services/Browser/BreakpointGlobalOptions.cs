@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Options;
 using MudBlazor.Services;
 
 namespace MudBlazor;
@@ -33,15 +34,29 @@ internal class BreakpointGlobalOptions
     /// Otherwise, the default <see cref="DefaultBreakpointDefinitions"/> breakpoint definitions are returned.
     /// </summary>
     /// <param name="options">The resize options containing breakpoint definitions, if any.</param>
+    /// <param name="globalOptions">The global resize options containing breakpoint definitions, if any.</param>
     /// <returns>A dictionary containing the breakpoint definitions.</returns>
-    internal static Dictionary<Breakpoint, int> GetDefaultOrUserDefinedBreakpointDefinition(ResizeOptions options)
+    internal static Dictionary<Breakpoint, int> GetDefaultOrUserDefinedBreakpointDefinition(ResizeOptions options, ResizeOptions? globalOptions = null)
     {
+        // Priority of breakpoint definitions:
+        // 1. Component-defined breakpoints
+        // 2. Global breakpoints (if component breakpoints are null)
+        // 3. Default breakpoints (if both component and global breakpoints are null)
+
         if (options.BreakpointDefinitions is not null && options.BreakpointDefinitions.Count != 0)
         {
             // Copy as we don't want any unexpected modification
-            return options.BreakpointDefinitions.ToDictionary(entry => entry.Key, entry => entry.Value);
+            return CopyBreakpoints(options.BreakpointDefinitions);
         }
 
-        return DefaultBreakpointDefinitions.ToDictionary(entry => entry.Key, entry => entry.Value);
+        if (globalOptions?.BreakpointDefinitions is not null && globalOptions.BreakpointDefinitions.Count != 0)
+        {
+            return CopyBreakpoints(globalOptions.BreakpointDefinitions);
+        }
+
+        return CopyBreakpoints(DefaultBreakpointDefinitions);
     }
+
+    private static Dictionary<Breakpoint, int> CopyBreakpoints(Dictionary<Breakpoint, int> originalDictionary) => originalDictionary
+        .ToDictionary(entry => entry.Key, entry => entry.Value);
 }
