@@ -93,7 +93,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Color Color { get; set; } = Color.Default;
+        public Color Color { get; set; } = MudGlobal.ButtonDefaults.Color;
 
         /// <summary>
         /// The size of the button.
@@ -103,7 +103,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Size Size { get; set; } = Size.Medium;
+        public Size Size { get; set; } = MudGlobal.ButtonDefaults.Size;
 
         /// <summary>
         /// The display variation to use.
