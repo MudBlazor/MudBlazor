@@ -7,7 +7,7 @@
         ":ignoreModulesAndTests"
     ],
     "labels": [
-        "depdendency"
+        "dependency"
     ],
     "packageRules": [
         {
