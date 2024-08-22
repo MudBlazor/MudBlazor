@@ -17,7 +17,7 @@ public static class MudGlobal
         /// Defaults to Colour.Default
         /// </remarks>
         public static Color Color { get; set; } = Color.Default;
-        
+
         /// <summary>
         /// The default size for <see cref="MudButton"/>.
         /// </summary>
@@ -26,14 +26,14 @@ public static class MudGlobal
         /// </remarks>
         public static Size Size { get; set; } = Size.Medium;
     }
-    
+
     public static class CardDefaults
     {
         /// <summary>
         /// The default elevation level for <see cref="MudCard"/>.
         /// </summary>
         public static int Elevation { get; set; } = 1;
-        
+
         /// <summary>
         /// The default square setting for <see cref="MudCard"/>.
         /// </summary>
@@ -41,7 +41,7 @@ public static class MudGlobal
         /// Defaults to <c>false</c>. When <c>true</c>, disables rounded corners.
         /// </remarks>
         public static bool Square { get; set; }
-        
+
         /// <summary>
         /// The default outline setting for <see cref="MudCard"/>.
         /// </summary>
@@ -57,7 +57,7 @@ public static class MudGlobal
         /// The default elevation level for <see cref="MudDataGrid{T}"/>.
         /// </summary>
         public static int Elevation { set; get; } = 1;
-        
+
         /// <summary>
         /// The default square setting for <see cref="MudDataGrid{T}"/>.
         /// </summary>
@@ -65,7 +65,7 @@ public static class MudGlobal
         /// Defaults to <c>false</c>. When <c>true</c>, disables rounded corners.
         /// </remarks>
         public static bool Square { get; set; }
-        
+
         /// <summary>
         /// The default outlined setting for <see cref="MudDataGrid{T}"/>.
         /// </summary>
@@ -73,7 +73,7 @@ public static class MudGlobal
         /// Defaults to <c>false</c>. When <c>true</c>, shows an outline around this grid.
         /// </remarks>
         public static bool Outlined { get; set; }
-        
+
         /// <summary>
         /// The default bordered setting for <see cref="MudDataGrid{T}"/>.
         /// </summary>
@@ -81,7 +81,7 @@ public static class MudGlobal
         /// Defaults to <c>false</c>. When <c>true</c>, shows left and right borders for each column.
         /// </remarks>
         public static bool Bordered { get; set; }
-        
+
         /// <summary>
         /// The default dense setting for <see cref="MudDataGrid{T}"/>.
         /// </summary>
@@ -89,7 +89,7 @@ public static class MudGlobal
         /// Defaults to <c>false</c>. When <c>true</c>, uses compact padding.
         /// </remarks>
         public static bool Dense { get; set; }
-        
+
         /// <summary>
         /// The default hover setting for <see cref="MudDataGrid{T}"/>.
         /// </summary>
@@ -97,7 +97,7 @@ public static class MudGlobal
         /// Defaults to <c>false</c>. When <c>true</c>, highlights rows when hovering over them.
         /// </remarks>
         public static bool Hover { get; set; }
-        
+
         /// <summary>
         /// The default striped setting for <see cref="MudDataGrid{T}"/>.
         /// </summary>
@@ -105,7 +105,7 @@ public static class MudGlobal
         /// Defaults to <c>false</c>. When <c>true</c>, shows alternating row styles.
         /// </remarks>
         public static bool Striped { get; set; }
-        
+
         /// <summary>
         /// The default fixed header setting for <see cref="MudDataGrid{T}"/>.
         /// </summary>
@@ -113,7 +113,7 @@ public static class MudGlobal
         /// Defaults to <c>false</c>. When <c>true</c>, fixes the header in place even as the grid is scrolled.
         /// </remarks>
         public static bool FixedHeader { get; set; }
-        
+
         /// <summary>
         /// The default fixed footer setting for <see cref="MudDataGrid{T}"/>.
         /// </summary>
@@ -121,7 +121,7 @@ public static class MudGlobal
         /// Defaults to <c>false</c>. When <c>true</c>, fixes the footer in place even as the grid is scrolled.
         /// </remarks>
         public static bool FixedFooter { get; set; }
-        
+
         /// <summary>
         /// The default virtualize setting for <see cref="MudDataGrid{T}"/>.
         /// </summary>
@@ -130,7 +130,7 @@ public static class MudGlobal
         /// </remarks>
         public static bool Virtualize { get; set; }
     }
-    
+
     public static class DialogDefaults
     {
         /// <summary>
@@ -171,8 +171,7 @@ public static class MudGlobal
         /// <remarks>
         /// Defaults to Color.Primary
         /// </remarks>
-        public static Color Color { get; set; } = Color.Primary;
-        
+
         /// <summary>
         /// The default typography variant for <see cref="MudLink"/>.
         /// </summary>
@@ -180,7 +179,7 @@ public static class MudGlobal
         /// Defaults to Typo.body1
         /// </remarks>
         public static Typo Typo { get; set; } = Typo.body1;
-        
+
         /// <summary>
         /// The default underline setting for <see cref="MudLink"/>.
         /// </summary>
@@ -233,7 +232,7 @@ public static class MudGlobal
         /// Defaults to <c>false</c>. When <c>true</c>, items will be placed horizontally in a row instead of vertically.
         /// </remarks>
         public static bool Row { get; set; }
-        
+
         /// <summary>
         /// The default reverse setting for <see cref="MudStack"/>.
         /// </summary>
@@ -241,7 +240,7 @@ public static class MudGlobal
         /// Defaults to <c>false</c>. When <c>true</c>, order of the items will be reversed.
         /// </remarks>
         public static bool Reverse { get; set; }
-        
+
         /// <summary>
         /// The default gap between items for <see cref="MudStack"/>, measured in increments of <c>4px</c>..
         /// </summary>
@@ -261,7 +260,7 @@ public static class MudGlobal
         /// Defaults to <c>false</c>. When <c>true</c>, the tabs will be rounded.
         /// </remarks>
         public static bool Rounded { get; set; }
-        
+
         /// <summary>
         /// The default border setting for <see cref="MudTabs"/>.
         /// </summary>
@@ -269,15 +268,15 @@ public static class MudGlobal
         /// Defaults to <c>false</c>. When <c>true</c>, sets a border between the content and the tab header depending on the position.
         /// </remarks>
         public static bool Border { get; set; }
-        
+
         /// <summary>
-        /// The default outlined setting for <see cref="MudTabs"/>. 
+        /// The default outlined setting for <see cref="MudTabs"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>. When <c>true</c>, the tab header will be outlined.
         /// </remarks>
         public static bool Outlined { get; set; }
-        
+
         /// <summary>
         /// The default centered setting for <see cref="MudTabs"/>.
         /// </summary>
@@ -285,7 +284,7 @@ public static class MudGlobal
         /// Defaults to <c>false</c>. When <c>true</c>, the tab items will be centered.
         /// </remarks>
         public static bool Centered { get; set; }
-        
+
         /// <summary>
         /// The default hide slider setting for <see cref="MudTabs"/>.
         /// </summary>
@@ -293,7 +292,7 @@ public static class MudGlobal
         /// Defaults to <c>false</c>. When <c>true</c>, the slider will be hidden.
         /// </remarks>
         public static bool HideSlider { get; set; }
-        
+
         /// <summary>
         /// The default show scroll buttons setting for <see cref="MudTabs"/>.
         /// </summary>
@@ -301,7 +300,7 @@ public static class MudGlobal
         /// Defaults to <c>false</c>. When <c>true</c>, the scroll buttons will always be shown.
         /// </remarks>
         public static bool AlwaysShowScrollButtons { get; set; }
-        
+
         /// <summary>
         /// The default maximum tab height setting for <see cref="MudTabs"/>.
         /// </summary>
@@ -309,7 +308,7 @@ public static class MudGlobal
         /// Defaults to no maximum height.
         /// </remarks>
         public static int? MaxHeight { get; set; } = null;
-        
+
         /// <summary>
         /// The default minimum tab width setting for <see cref="MudTabs"/>.
         /// </summary>
@@ -322,7 +321,7 @@ public static class MudGlobal
         /// The default position for <see cref="MudTabs"/>.
         /// </summary>
         public static Position Position { get; set; } = Position.Top;
-        
+
         /// <summary>
         /// The default colour for <see cref="MudTabs"/>.
         /// </summary>
@@ -330,17 +329,17 @@ public static class MudGlobal
         /// Defaults to Color.Default.
         /// </remarks>
         public static Color Color { get; set; } = Color.Default;
-        
+
         /// <summary>
         /// The default slider color for <see cref="MudTabs"/>.
         /// </summary>
         public static Color SliderColor { get; set; } = Color.Inherit;
-        
+
         /// <summary>
         /// The default elevation setting for <see cref="MudTabs"/>.
         /// </summary>
         public static int Elevation { set; get; } = 0;
-        
+
         /// <summary>
         /// The default apply effects to container setting for <see cref="MudTabs"/>.
         /// </summary>

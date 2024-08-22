@@ -62,7 +62,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public bool Outlined { get; set; } = false; 
+        public bool Outlined { get; set; } = false;
 
         /// <summary>
         /// If true, centers the tabitems.
