@@ -203,7 +203,7 @@ public static class MudGlobal
         public static TimeSpan Duration { get; set; } = TransitionDefaults.Duration;
     }
 
-    public static class PickerDefauts
+    public static class PickerDefaults
     {
         /// <summary>
         /// The default transition delay for <see cref="MudOverlay"/> and <see cref="MudPicker{T}"/>.
