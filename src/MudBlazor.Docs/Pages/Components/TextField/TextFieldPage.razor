@@ -3,7 +3,7 @@
 @page "/components/MudTextField`1"
 
 <DocsPage>
-<DocsPageHeader Title="Text Field" SubTitle="Text field components are used for receiving user provided information."/>
+<DocsPageHeader Title="Text Field" SubTitle="Text field components allow users to enter and modify information."/>
 <DocsPageContent>
 
 <DocsPageSection>
@@ -44,7 +44,16 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TextFieldFormPropsHelperTextExample)" ShowCode="false">
-                <TextFieldFormPropsHelperTextExample/>
+                <TextFieldFormPropsHelperTextExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Helper Text On Focus">
+                <Description>With the <CodeInline>HelperTextOnFocus</CodeInline> property set to true, the helper text will only display on focus.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldHelperTextExample)" ShowCode="false">
+                <TextFieldHelperTextExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -79,15 +88,6 @@
 </DocsPageSection>
 
 <DocsPageSection>
-    <SectionHeader Title="Helper Text On Focus">
-        <Description>With the <CodeInline>HelperTextOnFocus</CodeInline> property set to true, the helper text will only display on focus.</Description>
-    </SectionHeader>
-    <SectionContent Code="@nameof(TextFieldHelperTextExample)" ShowCode="false">
-        <TextFieldHelperTextExample/>
-    </SectionContent>
-</DocsPageSection>
-
-<DocsPageSection>
     <SectionHeader Title="Counter">
         <Description>
             If you set the <CodeInline>Counter</CodeInline> prop to any int, the counter will be display at the bottom of the textfield.<br/>
@@ -105,16 +105,53 @@
         <Description>This can be used to add a prefix or a suffix. Text, Icon or Icon Button. For WCAG standards for buttons, an <CodeInline>AdornmentAriaLabel</CodeInline> can be added to use as the <CodeInline>aria-label</CodeInline>.</Description>
     </SectionHeader>
     <SectionContent Code="@nameof(TextFieldAdornmentsExample)" ShowCode="false" Block="true" FullWidth="true">
-        <TextFieldAdornmentsExample/>
+        <TextFieldAdornmentsExample />
     </SectionContent>
+    <SectionSubGroups>
+        <DocsPageSection>
+            <SectionHeader Title="Adornment Color">
+                <Description>The color of the adornment can be changed separately from the text field.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldAdornmentColorExample)" ShowCode="false">
+                <TextFieldAdornmentColorExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Focus">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldFocusExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TextFieldFocusExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Select">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldSelectExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TextFieldSelectExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Select Range">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldSelectRangeExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TextFieldSelectRangeExample />
+            </SectionContent>
+        </DocsPageSection>
+    </SectionSubGroups>
 </DocsPageSection>
 
 <DocsPageSection>
-    <SectionHeader Title="Adornment Color">
-        <Description>The color of the adornment can be changed separately from the textfield.</Description>
+    <SectionHeader Title="Clear Button">
+        <Description></Description>
     </SectionHeader>
-    <SectionContent Code="@nameof(TextFieldAdornmentColorExample)" ShowCode="false">
-        <TextFieldAdornmentColorExample/>
+    <SectionContent Code="@nameof(TextFieldClearableAndInputTypeExample)" ShowCode="false">
+        <TextFieldClearableAndInputTypeExample/>
     </SectionContent>
 </DocsPageSection>
 
@@ -157,15 +194,6 @@
 </DocsPageSection>
 
 <DocsPageSection>
-    <SectionHeader Title="Clear Button">
-        <Description></Description>
-    </SectionHeader>
-    <SectionContent Code="@nameof(TextFieldClearableAndInputTypeExample)" ShowCode="false">
-        <TextFieldClearableAndInputTypeExample/>
-    </SectionContent>
-</DocsPageSection>
-
-<DocsPageSection>
     <SectionHeader Title="Multiline">
         <Description></Description>
     </SectionHeader>
@@ -191,33 +219,6 @@
             </SectionContent>
         </DocsPageSection>
     </SectionSubGroups>
-</DocsPageSection>
-
-<DocsPageSection>
-    <SectionHeader Title="Focus">
-        <Description></Description>
-    </SectionHeader>
-    <SectionContent Code="@nameof(TextFieldFocusExample)" ShowCode="false" Block="true" FullWidth="true">
-        <TextFieldFocusExample/>
-    </SectionContent>
-</DocsPageSection>
-
-<DocsPageSection>
-    <SectionHeader Title="Select">
-        <Description></Description>
-    </SectionHeader>
-    <SectionContent Code="@nameof(TextFieldSelectExample)" ShowCode="false" Block="true" FullWidth="true">
-        <TextFieldSelectExample/>
-    </SectionContent>
-</DocsPageSection>
-
-<DocsPageSection>
-    <SectionHeader Title="Select Range">
-        <Description></Description>
-    </SectionHeader>
-    <SectionContent Code="@nameof(TextFieldSelectRangeExample)" ShowCode="false" Block="true" FullWidth="true">
-        <TextFieldSelectRangeExample/>
-    </SectionContent>
 </DocsPageSection>
 
 <DocsPageSection>
