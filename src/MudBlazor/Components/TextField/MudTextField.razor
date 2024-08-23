@@ -1,6 +1,7 @@
 ﻿@namespace MudBlazor
 @typeparam T
 @inherits MudDebouncedInput<T>
+@using Microsoft.JSInterop;
 
 <CascadingValue Name="SubscribeToParentForm" Value="@SubscribeToParentForm" IsFixed="true">
     <MudInputControl Label="@Label"
@@ -68,7 +69,7 @@
                               Pattern="@Pattern"
                               ShrinkLabel="@ShrinkLabel"
                               InputId="@InputElementId"
-                              Required="@Required"/>
+                              Required="@Required" />
                 }
                 else
                 {
@@ -107,9 +108,32 @@
                              ClearIcon="@ClearIcon"
                              OnClearButtonClick="@OnClearButtonClick"
                              InputId="@InputElementId"
-                             Required="@Required"/>
+                             Required="@Required" />
                 }
             </CascadingValue>
         </InputContent>
     </MudInputControl>
 </CascadingValue>
+
+@code {
+
+    [Parameter] public string idp { get; set; } = default!;
+    [Parameter] public bool IsForDate { get; set; }
+    [Inject] protected IJSRuntime _jsRuntime { get; set; } = default!;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && IsForDate && idp != string.Empty)
+        {
+            var options = new
+            {
+                date = true,
+                datePattern = new[] { "m", "d", "Y" },
+                delimiter = '/'
+            };
+
+            await _jsRuntime.InvokeVoidAsync("mudTextForDateMask", idp, options);
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}
