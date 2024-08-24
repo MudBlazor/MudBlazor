@@ -226,6 +226,7 @@ namespace MudBlazor
             }
 
             _items.Add(item);
+            StateHasChanged();
         }
 
         protected override void OnInitialized()
