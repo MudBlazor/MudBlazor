@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -19,7 +18,7 @@ namespace MudBlazor
             .AddClass($"mud-button-{Variant.ToDescriptionString()}")
             .AddClass($"mud-button-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
             .AddClass($"mud-button-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}")
-            .AddClass($"mud-width-full", FullWidth)
+            .AddClass($"mud-width-full", GetRealFullWith())
             .AddClass($"mud-ripple", Ripple)
             .AddClass($"mud-button-disable-elevation", !DropShadow)
             .AddClass(Class)
@@ -34,6 +33,12 @@ namespace MudBlazor
             .AddClass($"mud-button-icon-size-{(IconSize ?? Size).ToDescriptionString()}")
             .AddClass(IconClass)
             .Build();
+
+        /// <summary>
+        /// The buton group which owns this button.
+        /// </summary>
+        [CascadingParameter]
+        public MudButtonGroup? ButtonGroup { get; set; }
 
         /// <summary>
         /// The icon displayed before the text.
@@ -59,7 +64,7 @@ namespace MudBlazor
         /// The color of icons.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Inherit"/>.  
+        /// Defaults to <see cref="Color.Inherit"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
@@ -131,6 +136,38 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public RenderFragment? ChildContent { get; set; }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            if (ButtonGroup != null)
+            {
+                ButtonGroup.AddButton(this);
+            }
+        }
+
+        /// <summary>
+        /// Releases resources used by this button.
+        /// </summary>
+        public virtual void Dispose()
+        {
+            if (ButtonGroup != null)
+            {
+                ButtonGroup.RemoveButton(this);
+            }
+        }
+
+        internal bool GetRealFullWith()
+        {
+            if (FullWidth)
+            {
+                return true;
+            }
+            // If the button is in a group, the group is stretched and none button is stretched,
+            // then the button need to be streched
+            return ButtonGroup != null && ButtonGroup.FullWidth &&
+                !ButtonGroup.RenderedButtons.Any(b => b.FullWidth);
+        }
 
         /// <inheritdoc/>
         /// <remarks>

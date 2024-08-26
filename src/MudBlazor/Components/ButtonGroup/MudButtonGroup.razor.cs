@@ -101,5 +101,19 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.ButtonGroup.Appearance)]
         public bool FullWidth { get; set; }
+
+        private readonly List<MudButton> renderedButtons = new List<MudButton>();
+
+        internal IEnumerable<MudButton> RenderedButtons => renderedButtons.AsEnumerable();
+
+        internal void AddButton(MudButton button)
+        {
+            renderedButtons.Add(button);
+        }
+
+        internal void RemoveButton(MudButton button)
+        {
+            renderedButtons.Remove(button);
+        }
     }
 }
