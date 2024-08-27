@@ -34,7 +34,7 @@ jobs:
         dotnet-version: ${{ env.NETCORE_VERSION }}
         
     - name: Pack nuget package
-      run: dotnet pack -c Release --output nupkgs /p:Version=1.0.${{env.GitVersion_preReleaseNumber}}
+      run: dotnet pack -c Release --output nupkgs /p:Version=1.0.${{env.GitVersion_preReleaseNumber}} -IncludeReferencedProjects
       working-directory: ./src/MudBlazor
     - name: Publish nuget package
       run: dotnet nuget push nupkgs/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://nuget.pkg.github.com/pahousegop/index.json  --skip-duplicate
