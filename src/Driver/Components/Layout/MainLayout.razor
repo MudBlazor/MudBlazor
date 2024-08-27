@@ -1,0 +1,143 @@
+﻿@inherits LayoutComponentBase
+@inject IJSRuntime JSRuntime
+
+<MudThemeProvider Theme="_currentTheme" />
+<MudDialogProvider FullWidth="true" CloseButton="true" BackdropClick="false" Position="DialogPosition.TopCenter" />
+<MudSnackbarProvider />
+<MudPopoverProvider />
+
+<MudLayout RightToLeft="@_rightToLeft">
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert="true">
+            <MudText Typo="Typo.h5" Class="mudblazor-appbar-brand-text">RepnetMudblazor</MudText>
+        </MudHidden>
+        <MudSpacer />
+
+        <MudSpacer />
+        @userName
+        <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit" OnClick="@((e) => ViewSettings())" />
+
+    </MudAppBar>
+
+    <MudDrawer @bind-Open=_drawerOpen ClipMode="DrawerClipMode.Always" Elevation="25" Class="mudblazor-appbar-band">
+        <NavMenu />
+    </MudDrawer>
+    <MudMainContent Class="mudblazor-main-content">
+        <div style="display:flex; flex-wrap: wrap; margin: 0 10px 10px 10px">
+            @Body
+        </div>
+
+        <MudScrollToTop TopOffset="400">
+            <MudFab Icon="@Icons.Material.Filled.KeyboardArrowUp" Color="Color.Primary" />
+        </MudScrollToTop>
+    </MudMainContent>
+
+</MudLayout>
+
+@code
+{
+
+    private bool _drawerOpen = true;
+    private bool _rightToLeft = false;
+    private string searchValue = string.Empty;
+    string userName { get; set; } = "Unknown";
+
+    protected override Task OnInitializedAsync()
+    {
+
+        userName = "kwise";
+        return Task.CompletedTask;
+    }
+    private void OnMouseDown(MouseEventArgs e)
+    {
+
+        // Check if the middle mouse button is clicked (button value of 1)
+        if (e.Button == 1)
+        {
+            // Handle middle mouse button click
+            // Your custom logic here
+
+            Console.WriteLine("Middle mouse button clicked!");
+        }
+    }
+
+    private void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    private void RightToLeftToggle()
+    {
+        _rightToLeft = !_rightToLeft;
+    }
+
+    protected override void OnInitialized()
+    {
+        _currentTheme = _defaultTheme;
+
+    }
+
+    private void ViewSettings()
+    {
+
+    }
+    #region Theme
+
+    private void DarkMode()
+    {
+        if (_currentTheme == _defaultTheme)
+        {
+            _currentTheme = _darkTheme;
+        }
+        else
+        {
+            _currentTheme = _defaultTheme;
+        }
+    }
+
+    private MudTheme _currentTheme = new MudTheme();
+    private readonly MudTheme _defaultTheme =
+        new MudTheme()
+            {
+                PaletteLight = new PaletteLight()
+                {
+                    Black = "#272c34"
+                },
+                Typography = new Typography()
+                {
+                    Default = new Default()
+                    {
+                        FontSize = ".85rem"
+                    },
+                    Body1 = new Body1()
+                    {
+                        FontSize = ".85rem"
+                    }
+                }
+            };
+    private readonly MudTheme _darkTheme =
+        new MudTheme()
+            {
+                PaletteDark = new PaletteDark()
+                {
+                    Black = "#27272f",
+                    Background = "#32333d",
+                    BackgroundGray = "#27272f",
+                    Surface = "#373740",
+                    DrawerBackground = "#27272f",
+                    DrawerText = "rgba(255,255,255, 0.50)",
+                    AppbarBackground = "#27272f",
+                    AppbarText = "rgba(255,255,255, 0.70)",
+                    TextPrimary = "rgba(255,255,255, 0.70)",
+                    TextSecondary = "rgba(255,255,255, 0.50)",
+                    ActionDefault = "#adadb1",
+                    ActionDisabled = "rgba(255,255,255, 0.26)",
+                    ActionDisabledBackground = "rgba(255,255,255, 0.12)",
+                    DrawerIcon = "rgba(255,255,255, 0.50)"
+                }
+            };
+
+    #endregion
+
+}

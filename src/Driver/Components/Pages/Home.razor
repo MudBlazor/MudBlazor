@@ -1,0 +1,19 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+<MudGrid Class="justify-space-between" Style="max-width: 800px;">
+@* <MudTextField id="date1" Label="Month" idp="date1" @bind-Value="MyDate" Clearable /> *@
+<MudItem xs="12" sm="6">
+    <MudTextField id="date1"  Label="US" HelperText="@mask2.Mask" IsForDate="true" idp="date1"
+                  @bind-Value="usDate" Variant="@Variant.Text" Clearable />
+    US: <b>@usDate</b>
+</MudItem>
+</MudGrid>
+@code{
+    //string? MyDate;
+    string  usDate = "";
+
+    IMask mask2 = new DateMask("MM/dd/yyyy");
+
+}
+
