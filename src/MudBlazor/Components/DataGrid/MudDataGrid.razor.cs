@@ -2044,6 +2044,12 @@ namespace MudBlazor
             await InvokeAsync(StateHasChanged);
         }
 
+        internal async Task AddMultipleHierarchyVisibilityAsync(IEnumerable<T> items)
+        {
+            _openHierarchies.UnionWith(items);
+            await InvokeAsync(StateHasChanged);
+        }
+
         #region Resize feature
 
         [Inject] private IEventListener EventListener { get; set; }

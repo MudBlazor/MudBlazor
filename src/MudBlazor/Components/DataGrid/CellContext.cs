@@ -18,6 +18,7 @@ namespace MudBlazor
         private readonly HashSet<T> _selection;
 
         internal HashSet<T> OpenHierarchies { get; }
+        internal MudDataGrid<T> DataGrid { get; }
 
         /// <summary>
         /// The item displayed in the cell.
@@ -60,6 +61,7 @@ namespace MudBlazor
         {
             _selection = dataGrid.Selection;
             OpenHierarchies = dataGrid._openHierarchies;
+            DataGrid = dataGrid;
             Item = item;
             Actions = new CellActions
             {
