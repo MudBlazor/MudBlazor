@@ -25,6 +25,8 @@ public static class MudGlobal
         /// Defaults to <c>false</c>. When <c>true</c>, the label will not move into the input when the input is empty.
         /// </remarks>
         public static bool ShrinkLabel { get; set; }
+
+        public static Variant Variant { get; set; } = Variant.Text;
     }
 
     public static class OverlayDefaults
