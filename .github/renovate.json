@@ -26,7 +26,7 @@
             "matchPackageNames": [
                 "AspNetCore.SassCompiler"
             ],
-            "allowedVersions": "1.72.0"
+            "enabled": false
         }
     ]
 }
