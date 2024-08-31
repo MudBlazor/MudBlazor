@@ -2,12 +2,12 @@
 {
 #nullable enable
     /// <summary>
-    /// Represents the typography settings for different components.
+    /// Typography settings for <see cref="Typo"/> types used throughout the theme.
     /// </summary>
     public class Typography
     {
         /// <summary>
-        /// Gets or sets the default typography settings.
+        /// Gets or sets the typography settings for the default typo.
         /// </summary>
         /// <remarks>
         /// Defaults to the values from the <see cref="Default.Default()"/> constructor.
@@ -15,7 +15,7 @@
         public BaseTypography Default { get; set; } = new Default();
 
         /// <summary>
-        /// Gets or sets the typography settings for H1.
+        /// Gets or sets the typography settings for <see cref="Typo.h1"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to the values from the <see cref="H1.H1()"/> constructor.
@@ -23,7 +23,7 @@
         public BaseTypography H1 { get; set; } = new H1();
 
         /// <summary>
-        /// Gets or sets the typography settings for H2.
+        /// Gets or sets the typography settings for <see cref="Typo.h2"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to the values from the <see cref="H2.H2()"/> constructor.
@@ -31,7 +31,7 @@
         public BaseTypography H2 { get; set; } = new H2();
 
         /// <summary>
-        /// Gets or sets the typography settings for H3.
+        /// Gets or sets the typography settings for <see cref="Typo.h3"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to the values from the <see cref="H3.H3()"/> constructor.
@@ -39,7 +39,7 @@
         public BaseTypography H3 { get; set; } = new H3();
 
         /// <summary>
-        /// Gets or sets the typography settings for H4.
+        /// Gets or sets the typography settings for <see cref="Typo.h4"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to the values from the <see cref="H4.H4()"/> constructor.
@@ -47,7 +47,7 @@
         public BaseTypography H4 { get; set; } = new H4();
 
         /// <summary>
-        /// Gets or sets the typography settings for H5.
+        /// Gets or sets the typography settings for <see cref="Typo.h5"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to the values from the <see cref="H5.H5()"/> constructor.
@@ -55,7 +55,7 @@
         public BaseTypography H5 { get; set; } = new H5();
 
         /// <summary>
-        /// Gets or sets the typography settings for H6.
+        /// Gets or sets the typography settings for <see cref="Typo.h6"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to the values from the <see cref="H6.H6()"/> constructor.
@@ -63,7 +63,7 @@
         public BaseTypography H6 { get; set; } = new H6();
 
         /// <summary>
-        /// Gets or sets the typography settings for Subtitle1.
+        /// Gets or sets the typography settings for <see cref="Typo.subtitle1"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to the values from the <see cref="Subtitle1.Subtitle1()"/> constructor.
@@ -71,7 +71,7 @@
         public BaseTypography Subtitle1 { get; set; } = new Subtitle1();
 
         /// <summary>
-        /// Gets or sets the typography settings for Subtitle2.
+        /// Gets or sets the typography settings for <see cref="Typo.subtitle2"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to the values from the <see cref="Subtitle2.Subtitle2()"/> constructor.
@@ -79,7 +79,7 @@
         public BaseTypography Subtitle2 { get; set; } = new Subtitle2();
 
         /// <summary>
-        /// Gets or sets the typography settings for Body1.
+        /// Gets or sets the typography settings for <see cref="Typo.body1"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to the values from the <see cref="Body1.Body1()"/> constructor.
@@ -87,7 +87,7 @@
         public BaseTypography Body1 { get; set; } = new Body1();
 
         /// <summary>
-        /// Gets or sets the typography settings for Body2.
+        /// Gets or sets the typography settings for <see cref="Typo.body2"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to the values from the <see cref="Body2.Body2()"/> constructor.
@@ -95,7 +95,7 @@
         public BaseTypography Body2 { get; set; } = new Body2();
 
         /// <summary>
-        /// Gets or sets the typography settings for Input.
+        /// Gets or sets the typography settings for <see cref="Typo.input"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to the values from the <see cref="Input.Input()"/> constructor.
@@ -103,7 +103,7 @@
         public BaseTypography Input { get; set; } = new Input();
 
         /// <summary>
-        /// Gets or sets the typography settings for Button.
+        /// Gets or sets the typography settings for <see cref="Typo.button"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to the values from the <see cref="Button.Button()"/> constructor.
@@ -111,7 +111,7 @@
         public BaseTypography Button { get; set; } = new Button();
 
         /// <summary>
-        /// Gets or sets the typography settings for Caption.
+        /// Gets or sets the typography settings for <see cref="Typo.caption"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to the values from the <see cref="Caption.Caption()"/> constructor.
@@ -119,7 +119,7 @@
         public BaseTypography Caption { get; set; } = new Caption();
 
         /// <summary>
-        /// Gets or sets the typography settings for Overline.
+        /// Gets or sets the typography settings for <see cref="Typo.overline"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to the values from the <see cref="Overline.Overline()"/> constructor.
