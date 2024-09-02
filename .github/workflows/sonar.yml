@@ -3,8 +3,8 @@ name: sonar
 on:
   workflow_dispatch:
   push:
-    # branches:
-    #   - dev
+    branches:
+      - dev
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
