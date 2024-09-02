@@ -3,8 +3,8 @@ name: sonar
 on:
   workflow_dispatch:
   push:
-    branches:
-      - dev
+    # branches:
+    #   - dev
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -12,6 +12,7 @@ concurrency:
 
 jobs:
   analyze:
+    if: github.event.repository.fork == false
     name: Analyze solution
     uses: MudBlazor/Workflows/.github/workflows/template-sonar.yml@main
     secrets: inherit
