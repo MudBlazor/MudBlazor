@@ -1,14 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
 #nullable enable
+
     /// <summary>
-    /// Represents a container for a <see cref="MudDrawer"/> component.
+    /// A container for a <see cref="MudDrawer"/> component.
     /// </summary>
     /// <seealso cref="MudDrawer"/>
     /// <seealso cref="MudDrawerHeader"/>
