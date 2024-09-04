@@ -1,37 +1,17 @@
-﻿@namespace MudBlazor.Docs.Examples
+﻿@namespace MudBlazor.UnitTests.TestComponents
 @using System.Threading
 
-<MudGrid>
-    <MudItem xs="12" sm="6">
-        <div>
-            <MudCheckBox T="bool" ValueChanged="ChangeMargin" Color="Color.Primary" Label="@(" Margin: " + _margin)" />
-        </div>
-        <div>
-            <MudCheckBox @bind-Value="_dense" Color="Color.Primary" Label="@(" Dense: " + _dense)" />
-        </div>
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" Margin="@_margin" Dense="@_dense" Variant="Variant.Outlined" />
-    </MudItem>
-</MudGrid>
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudAutocomplete id="autocompleteLabelTest" T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" ResetValueOnEmptyText />
 
 @code {
-    Margin _margin = Margin.None;
-    bool _dense = false;
+    public static string __description__ = "Initial value should be shown and popup should not open.";
 
-    private void ChangeMargin()
-    {
-        if (_margin == Margin.None)
-        {
-            _margin = Margin.Dense;
-        }
-        else
-        {
-            _margin = Margin.None;
-        }
-    }
+    public int SearchCount { get; private set; }
 
-    private string value1;
+    private string value1 = "California";
+
     private string[] states =
     {
         "Alabama", "Alaska", "American Samoa", "Arizona",
@@ -52,8 +32,9 @@
 
     private async Task<IEnumerable<string>> Search1(string value, CancellationToken token)
     {
+        SearchCount++;
         // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(5, token);
+        await Task.Delay(50, token);
 
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))

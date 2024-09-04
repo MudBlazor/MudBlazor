@@ -1,13 +1,8 @@
 ﻿#pragma warning disable CS1998 // async without await
 #pragma warning disable BL0005 // Set parameter outside component
 
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Globalization;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Reflection;
+using AngleSharp.Css.Dom;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
@@ -4335,6 +4330,72 @@ namespace MudBlazor.UnitTests.Components
             cells[25].TextContent.Should().Be("Potassium"); cells[26].TextContent.Should().Be("19");
             cells[27].TextContent.Should().Be("Number: 20");
             cells[28].TextContent.Should().Be("Calcium"); cells[29].TextContent.Should().Be("20");
+        }
+
+        /// <summary>
+        /// Reproduce the bug from https://github.com/MudBlazor/MudBlazor/issues/9585
+        /// When a column is hiden by the menu and the precedent column is resized, then the app crash
+        /// </summary>
+        [Test]
+        public async Task DataGrid_ResizeColumn_WhenNeighboringColumnIsHidden()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<DataGridHideAndResizeTest>();
+            var dgComp = comp.FindComponent<MudDataGrid<DataGridHideAndResizeTest.Model>>();
+
+            // Act : Hide the middle column and resize the first column
+
+            // Open column the second column header menu
+            var columnMenu = comp.FindAll("th .mud-menu button").ElementAt(1);
+            columnMenu.Click();
+
+            // Click on the menu item 'Hide'
+            comp.WaitForAssertion(() => comp.FindAll(".mud-list-item").ElementAt(1));
+            var hideMenuItem = comp.FindAll(".mud-list-item").ElementAt(1);
+            hideMenuItem.Click();
+
+            // Mock mudElementRef.getBoundingClientRect for DataGrid and visible columns
+            var gridElement = (ElementReference)dgComp.Instance.GetType()
+                .GetField("_gridElement", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(dgComp.Instance)!;
+            Context.JSInterop
+              .Setup<Interop.BoundingClientRect>("mudElementRef.getBoundingClientRect", gridElement)
+              .SetResult(new Interop.BoundingClientRect { Width = 50 });
+            var colComps = comp.FindComponents<HeaderCell<DataGridHideAndResizeTest.Model>>();
+            foreach (var colComp in colComps)
+            {
+                var col = colComp.Instance;
+                if (!col.Column.HiddenState.Value)
+                {
+                    var headerElement = (ElementReference)col.GetType()
+                        .GetField("_headerElement", BindingFlags.NonPublic | BindingFlags.Instance)!
+                        .GetValue(col)!;
+                    Context.JSInterop
+                        .Setup<Interop.BoundingClientRect>("mudElementRef.getBoundingClientRect", headerElement)
+                        .SetResult(new Interop.BoundingClientRect { Width = 50 });
+                }
+            }
+
+            // Mouse click down
+            var resizer = comp.FindAll(".mud-resizer").ElementAt(0);
+            await comp.InvokeAsync(async () => resizer.PointerDown());
+
+            // Mouse move and release
+            var resizeService = dgComp.Instance.ResizeService;
+            var resizeServiceType = resizeService.GetType();
+            var eventListener = (EventListener)resizeServiceType
+                .GetField("_eventListener", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(resizeService);
+            var upEventId = (Guid)resizeServiceType
+                .GetField("_pointerUpSubscriptionId", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(resizeService)!;
+            await comp.InvokeAsync(async () => await eventListener!.OnEventOccur(upEventId, """{"ClientX":-10}"""));
+
+            // Assert
+
+            comp.FindAll("th").Count.Should().Be(2, "Two columns are displayed");
+            comp.Find("th").GetStyle().Should().Contain(cssProp => cssProp.Name == "width", "The first column is resized");
         }
 
         [Test]

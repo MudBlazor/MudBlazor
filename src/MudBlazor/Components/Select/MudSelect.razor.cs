@@ -930,15 +930,18 @@ namespace MudBlazor
                         if (!_open)
                         {
                             await OpenMenu();
-                            return;
+                            break;
                         }
-                        // this also closes the menu
-                        await SelectOption(index);
-                        break;
+                        else
+                        {
+                            // this also closes the menu
+                            await SelectOption(index);
+                            break;
+                        }
                     }
                     else
                     {
-                        if (_open == false)
+                        if (!_open)
                         {
                             await OpenMenu();
                             break;

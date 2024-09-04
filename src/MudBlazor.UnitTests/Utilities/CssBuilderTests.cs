@@ -42,6 +42,27 @@ namespace UtilityTests
         }
 
         [Test]
+        public void CssBuilder_And_StyleBuilder_Used_Together_Do_Not_Interfere()
+        {
+            // Arrange
+            var cssValue = "test-class";
+            var stylsProp = "color";
+            var styleValue = "red";
+
+            // Act
+            var cssBuilder = new CssBuilder();
+            var styleBuilder = new StyleBuilder();
+            cssBuilder.AddClass(cssValue);
+            styleBuilder.AddStyle(stylsProp, styleValue);
+            var css = cssBuilder.Build();
+            var style = styleBuilder.Build();
+
+            // Assert
+            style.Should().Be("color:red;");
+            css.Should().Be("test-class");
+        }
+
+        [Test]
         public void Empty_Returns_Instance_With_Empty_Value()
         {
             // Act
