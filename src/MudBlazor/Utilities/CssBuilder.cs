@@ -70,6 +70,7 @@ namespace MudBlazor.Utilities
         {
             if (value is not null)
             {
+                _stringBuilder ??= StringBuilderCache.Acquire();
                 _stringBuilder.Append(value);
             }
             return this;

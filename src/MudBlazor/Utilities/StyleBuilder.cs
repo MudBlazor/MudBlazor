@@ -106,6 +106,7 @@ namespace MudBlazor.Utilities
         {
             if (style is not null)
             {
+                _stringBuilder ??= StringBuilderCache.Acquire();
                 _stringBuilder.Append(style);
             }
             return this;
@@ -118,6 +119,7 @@ namespace MudBlazor.Utilities
         /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
         private StyleBuilder AddRaw(char c)
         {
+            _stringBuilder ??= StringBuilderCache.Acquire();
             _stringBuilder.Append(c);
             return this;
         }

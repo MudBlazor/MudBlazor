@@ -338,5 +338,18 @@ namespace UtilityTests
             // Assert
             classToRender.Should().Be("item-one");
         }
+
+        [Test]
+        public void DefaultCssBuilder_ShouldNotCrashHavingNoStringBuilder()
+        {
+            // Arrange
+            var styleBuilder = default(CssBuilder);
+
+            // Act
+            styleBuilder.AddClass("test-class");
+
+            // Assert
+            styleBuilder.Build().Should().Be("test-class");
+        }
     }
 }

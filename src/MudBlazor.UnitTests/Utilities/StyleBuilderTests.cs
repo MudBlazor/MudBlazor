@@ -316,5 +316,18 @@ namespace UtilityTests
             // Assert
             styleBuilder.Should().Be(string.Empty);
         }
+
+        [Test]
+        public void DefaultStyleBuilder_ShouldNotCrashHavingNoStringBuilder()
+        {
+            // Arrange
+            var styleBuilder = default(StyleBuilder);
+
+            // Act
+            styleBuilder.AddStyle("background-color", "green");
+
+            // Assert
+            styleBuilder.Build().Should().Be("background-color:green;");
+        }
     }
 }
