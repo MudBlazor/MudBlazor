@@ -316,6 +316,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task DisposeTest1()
         {
             await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!"));
+            _service.Clear();
             _service.Dispose();
 
             _service.ShownSnackbars.Count().Should().Be(0);
