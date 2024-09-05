@@ -5,7 +5,13 @@
 @namespace MudBlazor.Docs.Pages.Api
 
 <DocsPage>
-    @if (Type != null)
+    @if (IsLoading)
+    {
+        <DocsPageContent>
+            <MudProgressLinear Indeterminate="true" />
+        </DocsPageContent>
+    }
+    else if (Type != null)
     {
         <ApiBreadcrumbs Type="@Type" />
 

@@ -2,11 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
+using System.Xml;
+using System.Xml.XPath;
 using LoxSmoke.DocXml;
 using Microsoft.AspNetCore.Components;
 
@@ -20,7 +18,6 @@ namespace MudBlazor.Docs.Services.XmlDocs;
 public sealed class XmlDocsService : IXmlDocsService
 {
     private readonly Assembly mudBlazorAssembly;
-    private readonly string xmlDocumentationPath;
     private readonly DocXmlReader reader;
 
     /// <summary>
@@ -29,8 +26,9 @@ public sealed class XmlDocsService : IXmlDocsService
     public XmlDocsService()
     {
         mudBlazorAssembly = typeof(MudBlazor._Imports).Assembly;
-        xmlDocumentationPath = mudBlazorAssembly.Location.Replace(".dll", ".xml", StringComparison.OrdinalIgnoreCase);
-        reader = new(xmlDocumentationPath);
+        using var stream = typeof(XmlDocsService).Assembly!.GetManifestResourceStream("MudBlazor.Docs.Services.XmlDocs.MudBlazor.xml");
+        var document = new XPathDocument(stream!);
+        reader = new(document);
     }
 
     /// <inheritdoc />

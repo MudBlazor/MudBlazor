@@ -149,4 +149,8 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy /Y &quot;$(TargetDir)MudBlazor.xml&quot; &quot;$(SolutionDir)\MudBlazor.Docs\Services\XmlDocs&quot;" />
+  </Target>
+
 </Project>

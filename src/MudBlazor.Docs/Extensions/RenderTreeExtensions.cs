@@ -14,6 +14,29 @@ namespace MudBlazor.Docs.Extensions;
 public static class RenderTreeExtensions
 {
     /// <summary>
+    /// Adds a MudAlert to the render tree.
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <param name="sequence"></param>
+    /// <param name="severity"></param>
+    /// <param name="text"></param>
+    public static void AddMudAlert(this RenderTreeBuilder builder, int sequence, Severity severity = Severity.Info, string text = null)
+    {
+        if (!string.IsNullOrEmpty(text))
+        {
+            builder.OpenRegion(sequence);
+            builder.OpenComponent<MudAlert>(0);
+            builder.AddComponentParameter(1, "Severity", severity);
+            builder.AddComponentParameter(2, "ChildContent", (RenderFragment)(textContentBuilder =>
+            {
+                textContentBuilder.AddContent(3, text);
+            }));
+            builder.CloseComponent();
+            builder.CloseRegion();
+        }
+    }
+
+    /// <summary>
     /// Adds a MudText to the render tree.
     /// </summary>
     /// <param name="builder"></param>

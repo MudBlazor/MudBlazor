@@ -42,9 +42,19 @@ public partial class ApiText : ComponentBase
         }
 
         var sequence = 0;
+        XElement? xml = null;
 
-        // Convert XML documentation text, links, and HTML to MudBlazor equivalents
-        var xml = XElement.Parse("<xml>" + Comments.Summary + " " + Comments.Remarks + "</xml>");
+        try
+        {
+            // Convert XML documentation text, links, and HTML to MudBlazor equivalents
+            xml = XElement.Parse("<xml>" + Comments.Summary + " " + Comments.Remarks + "</xml>");
+        }
+        catch (Exception ex)
+        {
+            // The XML may be malformed.  If so, show an alert.
+            builder.AddMudAlert(0, Severity.Warning, "The XML documentation contains a malformed tag: " + ex.Message);
+            return;
+        }
 
         using var reader = xml.CreateReader();
         while (reader.Read())

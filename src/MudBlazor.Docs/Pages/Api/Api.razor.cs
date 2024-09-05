@@ -2,9 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using LoxSmoke.DocXml;
 using Microsoft.AspNetCore.Components;
@@ -73,51 +70,70 @@ public partial class Api
     /// </summary>
     public TypeComments? TypeComments { get; set; }
 
+    /// <summary>
+    /// Whether this page is loading data.
+    /// </summary>
+    public bool IsLoading { get; set; }
+
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
         // Do we have a name to look up?  And is there a need to find the type?
-        if (!string.IsNullOrEmpty(TypeName) && (Type == null || Type.Name != TypeName))
+        if (!IsLoading && !string.IsNullOrEmpty(TypeName) && (Type == null || Type.Name != TypeName))
         {
-            // Yes.  Get the type
-            Type = Docs!.GetType(TypeName);
-            // Was a type found?
-            if (Type == null)
+            try
             {
-                Title = $"{TypeName} Not Found";
-                TypeComments = null;
-                DerivedTypes = [];
-                Properties = [];
-                Fields = [];
-                Methods = [];
-                Events = [];
+                // Need a moment
+                IsLoading = true;
+                StateHasChanged();
+
+                // Yes.  Get the type
+                Type = Docs!.GetType(TypeName);
+                // Was a type found?
+                if (Type == null)
+                {
+                    Title = $"{TypeName} Not Found";
+                    TypeComments = null;
+                    DerivedTypes = [];
+                    Properties = [];
+                    Fields = [];
+                    Methods = [];
+                    Events = [];
+                }
+                else
+                {
+                    // Is this a component?  An enum?  A class?
+                    Title = Type.GetFriendlyName();
+                    if (Type.IsSubclassOf(typeof(MudComponentBase)))
+                    {
+                        Title += " Component";
+                    }
+                    else if (Type.IsEnum)
+                    {
+                        Title += " Enumeration";
+                    }
+                    else if (Type.IsClass)
+                    {
+                        Title += " Class";
+                    }
+                    // Load the type's comments
+                    TypeComments = Docs!.GetTypeComments(Type);
+                    // Get types inheriting from this one
+                    DerivedTypes = Type.Assembly.GetTypes().Where(type => type.IsSubclassOf(Type)).ToList();
+                    Properties = new(Docs!.GetProperties(Type));
+                    Fields = new(Docs!.GetFields(Type));
+                    Methods = new(Docs!.GetMethods(Type));
+                    Events = new(Docs!.GetEvents(Type));
+                }
             }
-            else
+            catch (Exception)
             {
-                // Is this a component?  An enum?  A class?
-                Title = Type.GetFriendlyName();
-                if (Type.IsSubclassOf(typeof(MudComponentBase)))
-                {
-                    Title += " Component";
-                }
-                else if (Type.IsEnum)
-                {
-                    Title += " Enumeration";
-                }
-                else if (Type.IsClass)
-                {
-                    Title += " Class";
-                }
-                // Load the type's comments
-                TypeComments = Docs!.GetTypeComments(Type);
-                // Get types inheriting from this one
-                DerivedTypes = Type.Assembly.GetTypes().Where(type => type.IsSubclassOf(Type)).ToList();
-                Properties = new(Docs!.GetProperties(Type));
-                Fields = new(Docs!.GetFields(Type));
-                Methods = new(Docs!.GetMethods(Type));
-                Events = new(Docs!.GetEvents(Type));
             }
-            StateHasChanged();
+            finally
+            {
+                IsLoading = false;
+                StateHasChanged();
+            }
         }
     }
 }

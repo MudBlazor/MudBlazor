@@ -6,7 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Services.Notifications;
+using MudBlazor.Docs.Services.XmlDocs;
 using MudBlazor.Docs.Wasm;
+using static System.Formats.Asn1.AsnWriter;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -32,5 +34,8 @@ if (notificationService is InMemoryNotificationService inMemoryService)
 {
     inMemoryService.Preload();
 }
+
+// Warm up the docs service
+var docsService = build.Services.GetService<IXmlDocsService>();
 
 await build.RunAsync();
