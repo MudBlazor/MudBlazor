@@ -34,6 +34,7 @@
 
 namespace System.Text
 {
+#nullable enable
     internal static class StringBuilderCache
     {
         // The value 360 was chosen in discussion with performance experts as a compromise between using
@@ -42,7 +43,7 @@ namespace System.Text
         private const int MaxBuilderSize = 360;
 
         [ThreadStatic]
-        private static StringBuilder _cachedInstance;
+        private static StringBuilder? _cachedInstance;
 
         public static StringBuilder Acquire(int capacity = MaxBuilderSize)
         {
