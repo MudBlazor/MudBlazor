@@ -340,7 +340,7 @@ namespace UtilityTests
         }
 
         [Test]
-        public void DefaultCssBuilder_ShouldNotCrashHavingNoStringBuilder()
+        public void AddClass_ShouldNotBeNullWithDefaultStruct()
         {
             // Arrange
             var cssBuilder = default(CssBuilder);
@@ -351,6 +351,16 @@ namespace UtilityTests
 
             // Assert
             cssBuilder.Build().Should().Be("test-class test-class-2");
+        }
+
+        [Test]
+        public void Build_ShouldNotBeNullWithDefaultStruct()
+        {
+            // Arrange
+            var cssBuilder = default(CssBuilder);
+
+            // Assert
+            cssBuilder.Build().Should().Be("");
         }
     }
 }
