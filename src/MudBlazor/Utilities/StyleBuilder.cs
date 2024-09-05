@@ -230,6 +230,7 @@ namespace MudBlazor.Utilities
         /// <inheritdoc />
         public override string ToString() => Build();
 
+        // TODO: v8, remove that and declare StyleBuilder as readonly struct, improve documentation to avoid default(StyleBuilder), add Breaking Change notes.
         private StringBuilder EnsureCreated() => _stringBuilder ??= StringBuilderCache.Acquire();
     }
 }

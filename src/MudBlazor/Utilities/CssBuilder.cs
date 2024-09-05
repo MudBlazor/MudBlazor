@@ -168,6 +168,7 @@ namespace MudBlazor.Utilities
         /// <inheritdoc />
         public override string ToString() => Build();
 
+        // TODO: v8, remove that and declare CssBuilder as readonly struct, improve documentation to avoid default(StringBuilder), add Breaking Change notes.
         private StringBuilder EnsureCreated() => _stringBuilder ??= StringBuilderCache.Acquire();
     }
 }
