@@ -313,6 +313,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DisposeTest1()
+        {
+            await _provider.InvokeAsync(() =>  _service.Add("Boom, big reveal. Im a pickle!"));
+            _service.Dispose();
+
+            _service.ShownSnackbars.Count().Should().Be(0);
+        }
+
+        [Test]
         public async Task TestSnackBarRemoveByKey()
         {
             const string TestText = "Boom, big reveal. Im a pickle!";
