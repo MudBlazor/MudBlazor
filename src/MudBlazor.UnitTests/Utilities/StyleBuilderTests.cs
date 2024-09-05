@@ -325,9 +325,10 @@ namespace UtilityTests
 
             // Act
             styleBuilder.AddStyle("background-color", "green");
+            styleBuilder.AddStyle("color", "red");
 
             // Assert
-            styleBuilder.Build().Should().Be("background-color:green;");
+            styleBuilder.Build().Should().Be("background-color:green;color:red;");
         }
     }
 }

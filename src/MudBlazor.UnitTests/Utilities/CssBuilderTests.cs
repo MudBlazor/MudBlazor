@@ -343,13 +343,14 @@ namespace UtilityTests
         public void DefaultCssBuilder_ShouldNotCrashHavingNoStringBuilder()
         {
             // Arrange
-            var styleBuilder = default(CssBuilder);
+            var cssBuilder = default(CssBuilder);
 
             // Act
-            styleBuilder.AddClass("test-class");
+            cssBuilder.AddClass("test-class");
+            cssBuilder.AddClass("test-class-2");
 
             // Assert
-            styleBuilder.Build().Should().Be("test-class");
+            cssBuilder.Build().Should().Be("test-class test-class-2");
         }
     }
 }
