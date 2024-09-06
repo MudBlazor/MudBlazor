@@ -1,4 +1,4 @@
-﻿namespace MudBlazor
+namespace MudBlazor
 {
 #nullable enable
     /// <summary>

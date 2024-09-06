@@ -1,12 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
 #nullable enable
+
+/// <summary>
+/// A clickable link which can navigate to a URL.
+/// </summary>
 public partial class MudLink : MudComponentBase, IHandleEvent
 {
     protected string Classname =>
@@ -63,7 +65,7 @@ public partial class MudLink : MudComponentBase, IHandleEvent
     public Color Color { get; set; } = Color.Primary;
 
     /// <summary>
-    /// Typography variant to use.
+    /// The typography variant to use.
     /// </summary>
     /// <remarks>
     /// Defaults to <see cref="Typo.body1"/>.
@@ -73,7 +75,7 @@ public partial class MudLink : MudComponentBase, IHandleEvent
     public Typo Typo { get; set; } = Typo.body1;
 
     /// <summary>
-    /// Applies a style of underline on the link.
+    /// Applies an underline to the link.
     /// </summary>
     /// <remarks>
     /// Defaults to <see cref="Underline.Hover"/>.
@@ -83,7 +85,7 @@ public partial class MudLink : MudComponentBase, IHandleEvent
     public Underline Underline { get; set; } = Underline.Hover;
 
     /// <summary>
-    /// The URL, which is the actual link.
+    /// The URL to navigate to upon click.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.
@@ -93,12 +95,10 @@ public partial class MudLink : MudComponentBase, IHandleEvent
     public string? Href { get; set; }
 
     /// <summary>
-    /// Specifies where to open the link if <see cref="Href"/> is specified.
+    /// The browser frame to open this link when <see cref="Href"/> is specified.
     /// </summary>
     /// <remarks>
-    /// <para>
-    /// Possible values: _blank | _self | _parent | _top | <i>framename</i>
-    /// </para>
+    /// Possible values include <c>_blank</c>, <c>_self</c>, <c>_parent</c>, <c>_top</c>, or a <i>frame name</i>. <br/>
     /// Defaults to <c>null</c>.
     /// </remarks>
     [Parameter]
@@ -106,7 +106,7 @@ public partial class MudLink : MudComponentBase, IHandleEvent
     public string? Target { get; set; }
 
     /// <summary>
-    /// Prevents user interaction with the link.
+    /// Prevents user interaction with this link.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.
@@ -116,14 +116,14 @@ public partial class MudLink : MudComponentBase, IHandleEvent
     public bool Disabled { get; set; }
 
     /// <summary>
-    /// Child content of the component.
+    /// The content within this component.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Link.Behavior)]
     public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
-    /// Occurs when the link has been clicked.
+    /// Occurs when this link has been clicked.
     /// </summary>
     [Parameter]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
@@ -140,7 +140,7 @@ public partial class MudLink : MudComponentBase, IHandleEvent
 
     /// <inheritdoc/>
     /// <remarks>
-    /// See: https://github.com/MudBlazor/MudBlazor/issues/8365
+    /// See: <see href="https://github.com/MudBlazor/MudBlazor/issues/8365"/>
     /// <para/>
     /// Since <see cref="MudLink"/> implements only single <see cref="EventCallback"/> <see cref="OnClick"/> this is safe to disable globally within the component.
     /// </remarks>

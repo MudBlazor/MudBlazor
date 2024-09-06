@@ -6,6 +6,13 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// A picture displayed via an SVG path or font.
+    /// </summary>
+    /// <remarks>
+    /// You can use the <see cref="Icons"/> class and <see href="https://mudblazor.com/features/icons#icons">Icons Reference</see> for SVG paths, or a <see href="https://fontawesome.com/icons">Font Awesome CSS Class</see>.
+    /// </remarks>
     public partial class MudIcon : MudComponentBase
     {
         protected string Classname =>
@@ -18,49 +25,67 @@ namespace MudBlazor
                 .Build();
 
         /// <summary>
-        /// Icon to be used can either be svg paths for font icons.
+        /// The SVG path or Font Awesome font icon to display.
         /// </summary>
+        /// <remarks>
+        /// You can use the <see cref="Icons"/> class and <see href="https://mudblazor.com/features/icons#icons">Icons Reference</see> for SVG paths, or a <see href="https://fontawesome.com/icons">Font Awesome CSS Class</see>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Icon.Behavior)]
         public string? Icon { get; set; }
 
         /// <summary>
-        /// Text for the <c>title</c> attribute which provides a basic tooltip.
+        /// The text to display for the tooltip.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Sets the <c>title</c> HTML attribute.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Icon.Behavior)]
         public string? Title { get; set; }
 
         /// <summary>
-        /// The Size of the icon.
+        /// The size of this icon.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Size.Medium"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Icon.Appearance)]
         public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
-        /// If true, will ignore custom color if set.
+        /// Ignores any custom color.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, a disabled color will be used instead of the <see cref="Color"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// The color of the component. It supports the theme colors.
+        /// The color of this icon.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Inherit"/>.  When <see cref="Disabled"/> is <c>true</c>, this value is ignored.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Icon.Appearance)]
         public Color Color { get; set; } = Color.Inherit;
 
         /// <summary>
-        /// The viewbox size of an svg element.
+        /// For SVG icons, the size of the SVG viewbox.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>"0 0 24 24"</c>.  Applies when using the <see cref="Icons"/> class to set the icon.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Icon.Behavior)]
         public string ViewBox { get; set; } = "0 0 24 24";
 
         /// <summary>
-        /// Child content of component.
+        /// The content within this icon.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Icon.Behavior)]

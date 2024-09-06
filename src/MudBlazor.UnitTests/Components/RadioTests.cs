@@ -206,6 +206,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void RadioTest_BindAfter()
+        {
+            var comp = Context.RenderComponent<RadioGroupTest5>();
+            // select elements needed for the test
+            var group = comp.FindComponent<MudRadioGroup<string>>();
+            var inputs = comp.FindAll("input").ToArray();
+
+            //Value should change on radio click and bind after should fire
+            inputs[1].Click();
+            group.Instance.Value.Should().Be("2");
+            comp.Instance.BindAfterCount.Should().Be(1);
+
+            //Value should change when reset via the button, but bind after should NOT fire
+            comp.Find("button").Click();
+            group.Instance.Value.Should().Be(null);
+            comp.Instance.BindAfterCount.Should().Be(1);
+        }
+
+        [Test]
         public void RadioTest_KeyboardInput()
         {
             var comp = Context.RenderComponent<RadioGroupTest1>();

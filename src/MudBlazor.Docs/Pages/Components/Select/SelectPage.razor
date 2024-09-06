@@ -5,51 +5,23 @@
 @page "/components/MudSelectItem`1"
 
 <DocsPage>
-    <DocsPageHeader Title="Select" SubTitle="Select fields allow users to provide information from a list of options." />
+    <DocsPageHeader Title="Select" SubTitle="Select fields allow users to provide information from a list of options.">
+        <Description>
+            <MudAlert Class="mt-4" Severity="Severity.Warning">
+                Note: Blazor static rendering is not supported.
+                <MudLink Href="/getting-started/installation#manual-install-add-components" Target="_blank">See install guide for more info</MudLink>.
+            </MudAlert>
+        </Description>
+    </DocsPageHeader>
     <DocsPageContent>
 
         <DocsPageSection>
-            <SectionHeader Title="Variants">
-                <Description>
-                    Select comes in the variants Text, Filled and Outline. Select is generic, meaning you can use values of any type with it. See the example code how that works.<br />
-                    <br />
-                    <MudAlert Severity="Severity.Info">
-                        <b>Note:</b> If you use custom types as values, make sure they override <CodeInline>Equals</CodeInline> and <CodeInline>GetHashCode</CodeInline> as well as <CodeInline>ToString</CodeInline>. See the example below.
-                    </MudAlert>
-                    <br />
-                    <br />
-                </Description>
+            <SectionHeader Title="Visual Playground">
+                <Description></Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="@nameof(SelectVariantsExample)">
-                <SelectVariantsExample />
+            <SectionContent ShowCode="false" Code="@nameof(SelectPlaygroundExample)">
+                <SelectPlaygroundExample />
             </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Props">
-                <Description>Select behaves and looks a lot like a regular textfield and takes all of the textfields different form props.</Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(SelectPropsExample)" ShowCode="false">
-                <SelectPropsExample />
-            </SectionContent>
-            <SectionSubGroups>
-                <DocsPageSection>
-                    <SectionHeader Title="Margin">
-                        <Description>With the <CodeInline>Margin</CodeInline> prop you can reduce the height of the component.</Description>
-                    </SectionHeader>
-                    <SectionContent Code="@nameof(SelectMarginExample)" ShowCode="false">
-                        <SelectMarginExample />
-                    </SectionContent>
-                </DocsPageSection>
-                <DocsPageSection>
-                    <SectionHeader Title="Dense">
-                        <Description>The <CodeInline>Dense</CodeInline> prop set to true the select list will be displayed with dense vertical padding.</Description>
-                    </SectionHeader>
-                    <SectionContent Code="@nameof(SelectDenseExample)" ShowCode="false">
-                        <SelectDenseExample />
-                    </SectionContent>
-                </DocsPageSection>
-            </SectionSubGroups>
         </DocsPageSection>
 
         <DocsPageSection>

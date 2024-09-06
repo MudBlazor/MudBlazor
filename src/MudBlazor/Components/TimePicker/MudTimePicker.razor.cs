@@ -522,7 +522,7 @@ namespace MudBlazor
 
         public async ValueTask DisposeAsync()
         {
-            if (IsJSRuntimeAvailable && ClockElementReference.Id != null)
+            if (IsJSRuntimeAvailable)
             {
                 await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.destroyPointerEvents", ClockElementReference);
             }

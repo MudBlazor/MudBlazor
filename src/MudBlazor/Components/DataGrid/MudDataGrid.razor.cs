@@ -1202,7 +1202,7 @@ namespace MudBlazor
         {
             get
             {
-                return RenderedColumns.Any(x => !x.Hidden && (x.FooterTemplate != null || x.AggregateDefinition != null));
+                return RenderedColumns.Any(x => !x.HiddenState.Value && (x.FooterTemplate != null || x.AggregateDefinition != null));
             }
         }
 
@@ -1633,7 +1633,7 @@ namespace MudBlazor
             _rowsPerPage = size;
 
             if (resetPage)
-                CurrentPage = 0;
+                _currentPage = 0;
 
             await RowsPerPageChanged.InvokeAsync(_rowsPerPage.Value);
 

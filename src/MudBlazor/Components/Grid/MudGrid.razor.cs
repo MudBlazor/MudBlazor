@@ -20,8 +20,11 @@ public partial class MudGrid : MudComponentBase
     /// <summary>
     /// The gap between items, measured in increments of <c>4px</c>.
     /// <br/>
-    /// Maximum is <c>20</c>.
+    /// Maximum is 20.
     /// </summary>
+    /// <remarks>
+    /// The increment was halved in v7, so the default is now 6 instead of 3.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Grid.Behavior)]
     public int Spacing { set; get; } = 6;

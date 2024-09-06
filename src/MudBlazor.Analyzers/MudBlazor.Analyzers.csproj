@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
@@ -9,7 +8,7 @@
   
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.10.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
