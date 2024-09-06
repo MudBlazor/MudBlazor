@@ -2,8 +2,6 @@
 // License: MIT
 // See https://github.com/EdCharbeneau
 
-using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace MudBlazor.Utilities
@@ -14,7 +12,7 @@ namespace MudBlazor.Utilities
     /// </summary>
     public struct StyleBuilder
     {
-        private StringBuilder _stringBuilder;
+        private StringBuilder? _stringBuilder;
 
         /// <summary>
         /// Creates a new instance of StyleBuilder with the specified property and value.
@@ -55,7 +53,7 @@ namespace MudBlazor.Utilities
         /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
         public StyleBuilder()
         {
-            _stringBuilder = StringBuilderCache.Acquire();
+            _stringBuilder = EnsureCreated();
         }
 
         /// <summary>
@@ -67,8 +65,8 @@ namespace MudBlazor.Utilities
         /// <param name="prop">The CSS property.</param>
         /// <param name="value">The value of the property.</param>
         /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
-        public StyleBuilder(string prop, string value) : this() =>
-            _stringBuilder
+        public StyleBuilder(string prop, string value) =>
+            EnsureCreated()
                 .Append(prop)
                 .Append(':')
                 .Append(value)
@@ -106,7 +104,7 @@ namespace MudBlazor.Utilities
         {
             if (style is not null)
             {
-                _stringBuilder.Append(style);
+                EnsureCreated().Append(style);
             }
             return this;
         }
@@ -118,7 +116,7 @@ namespace MudBlazor.Utilities
         /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
         private StyleBuilder AddRaw(char c)
         {
-            _stringBuilder.Append(c);
+            EnsureCreated().Append(c);
             return this;
         }
 
@@ -128,11 +126,10 @@ namespace MudBlazor.Utilities
         /// <param name="prop">The CSS property.</param>
         /// <param name="value">The value of the property.</param>
         /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
-        public StyleBuilder AddStyle(string prop, string? value) =>
-            AddRaw(prop)
-            .AddRaw(':')
-            .AddRaw(value)
-            .AddRaw(';');
+        public StyleBuilder AddStyle(string prop, string? value) => AddRaw(prop)
+                .AddRaw(':')
+                .AddRaw(value)
+                .AddRaw(';');
 
         /// <summary>
         /// Adds a conditional in-line style to the builder with a space separator and closing semicolon.
@@ -142,7 +139,6 @@ namespace MudBlazor.Utilities
         /// <param name="when">The condition in which the style is added.</param>
         /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
         public StyleBuilder AddStyle(string prop, string? value, bool when) => when ? AddStyle(prop, value) : this;
-
 
         /// <summary>
         /// Adds a conditional in-line style to the builder with a space separator and closing semicolon.
@@ -228,14 +224,13 @@ namespace MudBlazor.Utilities
         /// Finalizes the completed style as a string.
         /// </summary>
         /// <returns>The string representation of the style.</returns>
-        public string Build()
-        {
-            // String buffer finalization code
-            return StringBuilderCache.GetStringAndRelease(_stringBuilder).Trim();
-        }
+        public string Build() => StringBuilderCache.GetStringAndRelease(EnsureCreated()).Trim();
 
         // ToString should only and always call Build to finalize the rendered string.
         /// <inheritdoc />
         public override string ToString() => Build();
+
+        // TODO: v8, remove that and declare StyleBuilder as readonly struct, improve documentation to avoid default(StyleBuilder), add Breaking Change notes.
+        private StringBuilder EnsureCreated() => _stringBuilder ??= StringBuilderCache.Acquire();
     }
 }

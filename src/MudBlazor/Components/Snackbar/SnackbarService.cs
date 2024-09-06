@@ -240,7 +240,6 @@ namespace MudBlazor
         {
             if (disposing)
             {
-                _snackBarLock.Dispose();
                 Configuration.OnUpdate -= ConfigurationUpdated;
                 _navigationManager.LocationChanged -= NavigationManager_LocationChanged;
                 RemoveAllSnackbars(_snackBarList);
