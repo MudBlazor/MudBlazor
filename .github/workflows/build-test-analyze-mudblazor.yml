@@ -1,0 +1,18 @@
+name: build-test-mudblazor
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+jobs:
+  build-test:
+    name: Build and test mudblazor projects
+    uses: xC0dex/Workflows/.github/workflows/template-build-test.yml@feature/sonar
+    with:
+      check-eslint: 'MudBlazor/TScripts'
+  analyze:
+    if: ${{ github.repository_owner == 'MudBlazor' }}
+    name: Analyze solution
+    uses: xC0dex/Workflows/.github/workflows/template-sonar.yml@feature/sonar
+    secrets: inherit
