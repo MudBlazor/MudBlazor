@@ -13,6 +13,7 @@ jobs:
       check-eslint: 'MudBlazor/TScripts'
   analyze:
     if: ${{ github.repository_owner == 'MudBlazor' }}
+    needs: build-test
     name: Analyze solution
     uses: xC0dex/Workflows/.github/workflows/template-sonar.yml@feature/sonar
     secrets: inherit
