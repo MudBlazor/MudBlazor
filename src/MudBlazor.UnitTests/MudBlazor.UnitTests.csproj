@@ -35,10 +35,6 @@
 
   <ItemGroup>
     <PackageReference Include="bunit" Version="1.31.3" />
-    <PackageReference Include="coverlet.collector" Version="6.0.2">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="coverlet.msbuild" Version="6.0.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -52,6 +48,7 @@
     <PackageReference Include="nunit" Version="4.2.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="ReportGenerator" Version="5.3.9" />
     <PackageReference Include="RichardSzalay.MockHttp" Version="7.0.0" />
   </ItemGroup>
 
@@ -65,4 +62,8 @@
     <ProjectReference Include="..\MudBlazor\MudBlazor.csproj" />
   </ItemGroup>
 
+  <Target Name="GenerateHtmlCoverageReport" AfterTargets="GenerateCoverageResultAfterTest" Condition="'@(CoverletReport-&gt;Count())' != 0">
+    <ReportGenerator ReportFiles="@(CoverletReport)" TargetDirectory="./TestResults/Report" HistoryDirectory="./TestResults/ReportHistory" />
+  </Target>
+  
 </Project>
