@@ -1,4 +1,4 @@
-name: build-test-mudblazor
+name: build-test-analyze-mudblazor
 
 on:
   workflow_dispatch:
