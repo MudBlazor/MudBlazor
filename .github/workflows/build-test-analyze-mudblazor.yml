@@ -15,6 +15,7 @@ jobs:
     uses: xC0dex/Workflows/.github/workflows/template-build-test.yml@feature/sonar
     with:
       check-eslint: 'MudBlazor/TScripts'
+
   analyze:
     if: ${{ github.repository_owner == 'MudBlazor' }}
     needs: build-test
