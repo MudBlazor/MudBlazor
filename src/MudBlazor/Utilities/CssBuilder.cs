@@ -12,7 +12,7 @@ namespace MudBlazor.Utilities
     /// </summary>
     public struct CssBuilder
     {
-        private StringBuilder _stringBuilder;
+        private StringBuilder? _stringBuilder;
 
         /// <summary>
         /// Creates a new instance of CssBuilder with the specified initial value.
@@ -42,7 +42,7 @@ namespace MudBlazor.Utilities
         /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public CssBuilder()
         {
-            _stringBuilder = StringBuilderCache.Acquire();
+            _stringBuilder = EnsureCreated();
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace MudBlazor.Utilities
         {
             if (value is not null)
             {
-                _stringBuilder.Append(value);
+                EnsureCreated().Append(value);
             }
         }
 
@@ -70,7 +70,7 @@ namespace MudBlazor.Utilities
         {
             if (value is not null)
             {
-                _stringBuilder.Append(value);
+                EnsureCreated().Append(value);
             }
             return this;
         }
@@ -162,10 +162,13 @@ namespace MudBlazor.Utilities
         /// Finalizes the completed CSS classes as a string.
         /// </summary>
         /// <returns>The string representation of the CSS classes.</returns>
-        public string Build() => StringBuilderCache.GetStringAndRelease(_stringBuilder).Trim();
+        public string Build() => StringBuilderCache.GetStringAndRelease(EnsureCreated()).Trim();
 
         // ToString should only and always call Build to finalize the rendered string.
         /// <inheritdoc />
         public override string ToString() => Build();
+
+        // TODO: v8, remove that and declare CssBuilder as readonly struct, improve documentation to avoid default(StringBuilder), add Breaking Change notes.
+        private StringBuilder EnsureCreated() => _stringBuilder ??= StringBuilderCache.Acquire();
     }
 }
