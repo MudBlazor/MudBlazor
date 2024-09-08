@@ -12,7 +12,7 @@ concurrency:
 jobs:
   build-test:
     name: Build and test mudblazor projects
-    uses: xC0dex/Workflows/.github/workflows/template-build-test.yml@feature/sonar
+    uses: MudBlazor/Workflows/.github/workflows/template-build-test.yml@main
     with:
       check-eslint: 'MudBlazor/TScripts'
 
@@ -20,5 +20,5 @@ jobs:
     if: ${{ github.repository_owner == 'MudBlazor' }}
     needs: build-test
     name: Analyze solution
-    uses: xC0dex/Workflows/.github/workflows/template-sonar.yml@feature/sonar
+    uses: MudBlazor/Workflows/.github/workflows/template-sonar.yml@main
     secrets: inherit
