@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Components.Chart.Models;
-using MudBlazor.Extensions;
-using MudBlazor.Utilities;
+#nullable enable
 
 namespace MudBlazor
 {
@@ -30,5 +26,19 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
         public string TimeLabelFormat { get; set; } = "HH:mm";
+        
+        /// <summary>
+        /// Specifies the title for the X axis.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Chart.Behavior)]
+        public string? XAxisTitle { get; set; }
+        
+        /// <summary>
+        /// Specifies the title for the Y axis.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Chart.Behavior)]
+        public string? YAxisTitle { get; set; }
     }
 }
