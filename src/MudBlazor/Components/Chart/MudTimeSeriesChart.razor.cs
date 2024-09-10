@@ -26,14 +26,14 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
         public string TimeLabelFormat { get; set; } = "HH:mm";
-        
+
         /// <summary>
         /// Specifies the title for the X axis.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
         public string? XAxisTitle { get; set; }
-        
+
         /// <summary>
         /// Specifies the title for the Y axis.
         /// </summary>
