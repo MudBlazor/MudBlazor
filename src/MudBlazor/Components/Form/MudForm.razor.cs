@@ -242,7 +242,7 @@ namespace MudBlazor
 
         void IForm.Add(IFormComponent formControl)
         {
-            if (formControl.Required)
+            if (formControl.Required && !formControl.HasValue())
                 SetIsValid(false);
             _formControls.Add(formControl);
             SetDefaultControlValidation(formControl);
@@ -397,7 +397,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                var valid = _formControls.All(x => x.Required == false);
+                var valid = _formControls.All(x => x.Required == false || x.HasValue());
                 if (valid != IsValid)
                 {
                     // the user probably bound a variable to IsValid and it conflicts with our state.

@@ -287,6 +287,8 @@ namespace MudBlazor
             return execute();
         }
 
+        bool IFormComponent.HasValue() => HasValue(ReadValue());
+
         /// <summary>
         /// Causes validation to be performed for this input.
         /// </summary>
