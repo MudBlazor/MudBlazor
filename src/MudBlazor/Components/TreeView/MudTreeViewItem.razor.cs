@@ -110,6 +110,13 @@ namespace MudBlazor
         public string? EndTextClass { get; set; }
 
         /// <summary>
+        /// Indicates whether the tree view item and its children are visible.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Appearance)]
+        public bool Visible { get; set; } = true;
+
+        /// <summary>
         /// If true, TreeViewItem will be disabled.
         /// </summary>
         [Parameter]
