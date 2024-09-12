@@ -547,6 +547,7 @@ namespace MudBlazor.UnitTests.Components
             new TreeItemData<int>().Expanded.Should().Be(false);
             new TreeItemData<int>().Selected.Should().Be(false);
             new TreeItemData<int>().Expandable.Should().Be(true);
+            new TreeItemData<int>().Visible.Should().Be(true);
             new TreeItemData<int>().Text.Should().Be(null);
             new TreeItemData<int>().Icon.Should().Be(null);
             new TreeItemData<int>().HasChildren.Should().Be(false);
@@ -559,6 +560,7 @@ namespace MudBlazor.UnitTests.Components
                 Text = "t",
                 Expandable = false,
                 Expanded = true,
+                Visible = true,
                 Selected = true,
                 Children = [new TreeItemData<string>()]
             };
@@ -567,6 +569,7 @@ namespace MudBlazor.UnitTests.Components
             data.Text.Should().Be("t");
             data.Expandable.Should().Be(false);
             data.Expanded.Should().Be(true);
+            data.Visible.Should().Be(true);
             data.Selected.Should().Be(true);
             data.HasChildren.Should().Be(true);
             data.Children.Count.Should().Be(1);
