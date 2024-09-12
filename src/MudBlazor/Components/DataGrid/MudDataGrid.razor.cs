@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -1426,6 +1427,7 @@ namespace MudBlazor
         /// </summary>
         public Task ClearFiltersAsync()
         {
+            FilterDefinitions.ForEach(x => x.Value = null);
             FilterDefinitions.Clear();
             return InvokeServerLoadFunc();
         }
@@ -1444,6 +1446,9 @@ namespace MudBlazor
 
         internal async Task RemoveFilterAsync(Guid id)
         {
+            var filterDefinition = FilterDefinitions.Find(x => x.Id == id);
+            Debug.Assert(filterDefinition != null);
+            filterDefinition.Value = null;
             FilterDefinitions.RemoveAll(x => x.Id == id);
             await InvokeServerLoadFunc();
             GroupItems();
