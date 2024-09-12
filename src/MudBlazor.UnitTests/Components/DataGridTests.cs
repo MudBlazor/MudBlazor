@@ -609,6 +609,8 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("input")[0].IsChecked().Should().BeFalse(because: "select all checkbox should reflect 'not all selected' state");
             dataGrid.FindAll("tfoot input")[0].IsChecked().Should().BeFalse(because: "select all checkbox should reflect 'not all selected' state");
 
+            // ClearFiltersAsync() has cleared the value, so it needs to be set again
+            twoBFilter.Value = "B";
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(twoBFilter));
             dataGrid.FindAll("input[type=checkbox]")[0].IsChecked().Should().BeTrue(because: "select all checkbox should reflect 'all selected' state");
             dataGrid.FindAll("tfoot input[type=checkbox]")[0].IsChecked().Should().BeTrue(because: "select all checkbox should reflect 'all selected' state");
