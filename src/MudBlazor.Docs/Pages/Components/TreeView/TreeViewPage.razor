@@ -133,6 +133,18 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Filtering">
+                <Description>
+                    The tree nodes can be filtered using the property <CodeInline>Visible</CodeInline>. Implementing a function to determine whether a node is displayed according the filter options you can set the
+                    filtered nodes to invisible without having to reload the entire tree.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TreeViewFilteringExample)" ShowCode="false">
+                <TreeViewFilteringExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Custom Look and Behavior">
                 <Description>
                     When the <CodeInline>Content</CodeInline> property is used, it will completely replace the default rendering of the <CodeInline>MudTreeViewItem</CodeInline> to use your own. 
