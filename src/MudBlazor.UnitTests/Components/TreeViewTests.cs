@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -260,9 +255,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TreeViewItemVisible_RendersWhenVisibleIsTrue()
         {
-            var comp = Context.RenderComponent<ItemVisibleTreeViewTest>(element => 
-            { 
-                element.Add(x => x.IsElementVisible, true); 
+            var comp = Context.RenderComponent<ItemVisibleTreeViewTest>(element =>
+            {
+                element.Add(x => x.IsElementVisible, true);
             });
 
             comp.FindAll("li").Should().HaveCount(1);
