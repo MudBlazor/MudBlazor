@@ -2,7 +2,7 @@
 
 <MudPaper Width="300px" Elevation="0">
     <MudStack Spacing="5" AlignItems="AlignItems.Center">
-        <MudTextField T="string" Label="Search" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged="OnTextChanged" Immediate />
+        <MudTextField T="string" Label="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged="OnTextChanged" Immediate="true" Clearable="true" />
         <MudTreeView Items="@_treeItemData">
             <ItemTemplate>
                 <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value"
@@ -64,6 +64,6 @@
             return treeItemData.Text.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
         }
 
-        return treeItemData.Children.Any(i => i.Text.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+        return treeItemData.Children.Any(i => i.Text.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) || treeItemData.Text.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
     }
 }

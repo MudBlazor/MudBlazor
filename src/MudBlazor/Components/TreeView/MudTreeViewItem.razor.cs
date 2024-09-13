@@ -280,10 +280,13 @@ namespace MudBlazor
 
         private bool HasChildren()
         {
-            return ChildContent != null ||
-                   (MudTreeRoot != null && Items != null && Items.Count != 0) ||
-                   (MudTreeRoot?.ServerData != null && CanExpand && !_isServerLoaded && (Items == null || Items.Count == 0));
+            return ChildContent != null
+                || (MudTreeRoot != null && Items != null && Items.Count != 0)
+                || (MudTreeRoot?.ServerData != null && CanExpand && !_isServerLoaded && (Items == null 
+                || Items.Count == 0));
         }
+
+        private bool AreChildrenVisible() => Items?.Any(i => i.Visible) is true;
 
         internal T? GetValue()
         {
