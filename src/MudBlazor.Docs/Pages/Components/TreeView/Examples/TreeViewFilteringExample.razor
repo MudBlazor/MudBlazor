@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Width="300px" Elevation="0">
-    <MudStack Spacing="5" AlignItems="AlignItems.Center">
+    <MudStack AlignItems="AlignItems.Center">
         <MudTextField T="string" Label="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged="OnTextChanged" Immediate="true" Clearable="true" />
         <MudTreeView Items="@_treeItemData">
             <ItemTemplate>

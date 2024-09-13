@@ -258,6 +258,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void TreeViewItemVisible_RendersWhenVisibleIsTrue()
+        {
+            var comp = Context.RenderComponent<ItemVisibleTreeViewTest>(element => 
+            { 
+                element.Add(x => x.IsElementVisible, true); 
+            });
+
+            comp.FindAll("li").Should().HaveCount(1);
+        }
+
+        [Test]
+        public void TreeViewItemVisible_RendersNotWhenVisibleIsFalse()
+        {
+            var comp = Context.RenderComponent<ItemVisibleTreeViewTest>(element =>
+            {
+                element.Add(x => x.IsElementVisible, false);
+            });
+
+            comp.FindAll("li").Should().HaveCount(0);
+        }
+
+        [Test]
         public void InitialValueOfTreeViewItemSelected_Should_InfluenceSelectedValue_MultiSelection()
         {
             var comp = Context.RenderComponent<TreeViewItemSelectedBindingTest>(self => self
