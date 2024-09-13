@@ -27,6 +27,7 @@ public static class MudGlobal
         public static bool ShrinkLabel { get; set; }
 
         public static Variant Variant { get; set; } = Variant.Text;
+
     }
 
     public static class OverlayDefaults

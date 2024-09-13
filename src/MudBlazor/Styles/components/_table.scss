@@ -101,7 +101,7 @@
 .mud-table-cell {
   display: table-cell;
   padding: 16px;
-  font-size: 0.875rem;
+  /*font-size: 0.875rem;*/
   text-align: start;
   font-weight: 400;
   line-height: 1.43;
@@ -325,7 +325,7 @@
   & > .mud-input-control {
     & > div.mud-input.mud-input-text {
       color: var(--mud-theme-on-surface);
-      font-size: 0.875rem;
+      /*font-size: 0.875rem;*/
       margin-top: -14px;
       margin-bottom: -8px;
     }
