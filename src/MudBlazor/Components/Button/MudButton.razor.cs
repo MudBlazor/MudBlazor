@@ -140,10 +140,7 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            if (ButtonGroup != null)
-            {
-                ButtonGroup.AddButton(this);
-            }
+            ButtonGroup?.AddButton(this);
         }
 
         /// <summary>
@@ -151,10 +148,7 @@ namespace MudBlazor
         /// </summary>
         public virtual void Dispose()
         {
-            if (ButtonGroup != null)
-            {
-                ButtonGroup.RemoveButton(this);
-            }
+            ButtonGroup?.RemoveButton(this);
         }
 
         internal bool GetRealFullWith()
@@ -163,10 +157,10 @@ namespace MudBlazor
             {
                 return true;
             }
-            // If the button is in a group, the group is stretched and none button is stretched,
+            // If the button is in a group, the group is stretched and none button is explicitly stretched,
             // then the button need to be streched
-            return ButtonGroup != null && ButtonGroup.FullWidth &&
-                !ButtonGroup.RenderedButtons.Any(b => b.FullWidth);
+            // See https://github.com/MudBlazor/MudBlazor/issues/9710
+            return ButtonGroup != null && ButtonGroup.FullWidth && ButtonGroup.NoneButtonIsStreched();
         }
 
         /// <inheritdoc/>

@@ -102,18 +102,21 @@ namespace MudBlazor
         [Category(CategoryTypes.ButtonGroup.Appearance)]
         public bool FullWidth { get; set; }
 
-        private readonly List<MudButton> renderedButtons = new List<MudButton>();
-
-        internal IEnumerable<MudButton> RenderedButtons => renderedButtons.AsEnumerable();
+        private readonly List<MudButton> _renderedButtons = [];
 
         internal void AddButton(MudButton button)
         {
-            renderedButtons.Add(button);
+            _renderedButtons.Add(button);
         }
 
         internal void RemoveButton(MudButton button)
         {
-            renderedButtons.Remove(button);
+            _renderedButtons.Remove(button);
+        }
+
+        internal bool NoneButtonIsStreched()
+        {
+            return !_renderedButtons.Any(b => b.FullWidth);
         }
     }
 }
