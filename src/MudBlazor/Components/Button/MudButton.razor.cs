@@ -38,7 +38,7 @@ namespace MudBlazor
         /// The buton group which owns this button.
         /// </summary>
         [CascadingParameter]
-        public MudButtonGroup? ButtonGroup { get; set; }
+        private MudButtonGroup? ButtonGroup { get; set; }
 
         /// <summary>
         /// The icon displayed before the text.
