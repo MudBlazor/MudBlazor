@@ -277,6 +277,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Palette}-divider: {palette.Divider};");
         theme.AppendLine($"--{Palette}-divider-light: {palette.DividerLight};");
 
+        theme.AppendLine($"--{Palette}-skeleton: {palette.Skeleton};");
+
         theme.AppendLine($"--{Palette}-gray-default: {palette.GrayDefault};");
         theme.AppendLine($"--{Palette}-gray-light: {palette.GrayLight};");
         theme.AppendLine($"--{Palette}-gray-lighter: {palette.GrayLighter};");
