@@ -12,6 +12,9 @@ namespace MudBlazor
         public RenderFragment EditorContent { get; set; }
 
         [Parameter]
+        public string UniqueID { get; set; }
+
+        [Parameter]
         public RenderFragment ToolbarContent { get; set; }
 
         //[Parameter]
@@ -88,6 +91,7 @@ namespace MudBlazor
                 await TextEditorInterop.CreateQuill(
                     jsRuntime,
                     QuillElement,
+                    UniqueID,
                     ToolBar,
                     ReadOnly,
                     Placeholder,

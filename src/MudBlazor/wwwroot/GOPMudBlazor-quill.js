@@ -1,20 +1,22 @@
 ﻿(function () {
     window.QuillFunctions = {        
         createQuill: function (
-            quillElement, toolBar, readOnly,
+            quillElement, id, toolBar, readOnly,
             placeholder, theme, formats, debugLevel) {  
 
             Quill.register('modules/blotFormatter', QuillBlotFormatter.default);
-
+            const toolbarOptions = [['bold', 'italic', 'underline', 'strike'],
+                                [{ 'background': ["", "#FCC832"] }]];
             var options = {
                 debug: debugLevel,
                 modules: {
-                    toolbar: toolBar,
+                    toolbar: toolbarOptions,
                     blotFormatter: {}
                 },
                 placeholder: placeholder,
                 readOnly: readOnly,
-                theme: theme
+                theme: theme,
+                bounds: '#QuillEditor_' + id
             };
 
             if (formats) {

@@ -18,6 +18,7 @@ namespace MudBlazor.Interop
         internal static ValueTask<object> CreateQuill(
             IJSRuntime jsRuntime,
             ElementReference quillElement,
+            string Id,
             ElementReference toolbar,
             bool readOnly,
             string placeholder,
@@ -27,7 +28,7 @@ namespace MudBlazor.Interop
         {
             return jsRuntime.InvokeAsync<object>(
                 "QuillFunctions.createQuill",
-                quillElement, toolbar, readOnly,
+                quillElement, Id, toolbar, readOnly,
                 placeholder, theme, formats, debugLevel);
         }
 
