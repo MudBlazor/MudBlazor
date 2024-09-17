@@ -164,6 +164,10 @@
   <ItemGroup>
     <EmbeddedResource Include="wwwroot\**\*" />
   </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="wwwroot\Cancel.png" />
+  </ItemGroup>
   
   <ItemGroup>
     <EmbeddedResource Update="Resources\LanguageResource.resx">

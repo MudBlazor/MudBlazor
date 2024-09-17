@@ -9684,7 +9684,13 @@
                     key: 'buildItem',
                     value: function buildItem(option) {
                         var item = _get(ColorPicker.prototype.__proto__ || Object.getPrototypeOf(ColorPicker.prototype), 'buildItem', this).call(this, option);
-                        item.style.backgroundColor = option.getAttribute('value') || '';
+
+                        if (option.getAttribute('value') == '') {
+                            item.style.background = "#fff no-repeat url('_content/GOPMudBlazor/Cancel.png')  -5px -6px/25px";
+                        }
+                        else { 
+                            item.style.backgroundColor = option.getAttribute('value') || '';
+                        }
                         return item;
                     }
                 }, {
