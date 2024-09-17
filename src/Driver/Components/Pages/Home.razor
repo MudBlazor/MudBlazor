@@ -1,19 +1,34 @@
 ﻿@page "/"
 
 <PageTitle>Home</PageTitle>
-<MudGrid Class="justify-space-between" Style="max-width: 800px;">
-@* <MudTextField id="date1" Label="Month" idp="date1" @bind-Value="MyDate" Clearable /> *@
-<MudItem xs="12" sm="6">
-    <MudTextField id="date1"  Label="US" HelperText="@mask2.Mask" IsForDate="true" idp="date1"
-                  @bind-Value="usDate" Variant="@Variant.Text" Clearable />
-    US: <b>@usDate</b>
-</MudItem>
-</MudGrid>
-@code{
+<div style="display:block;">
+    <MudTextEditor @ref="@quill" Theme="bubble" Label="Notes" Variant="Variant.Outlined" Style="width: 400px; height: 400px;">
+        
+        <EditorContent>
+            @((MarkupString?)Content)
+        </EditorContent>
+    </MudTextEditor>
+</div><br />
+ <div>
+    <MudButton  OnClick="SaveItem" >button</MudButton>
+</div> 
+@code {
     //string? MyDate;
-    string  usDate = "";
+    //string  usDate = "";
 
-    IMask mask2 = new DateMask("MM/dd/yyyy");
+    //IMask mask2 = new DateMask("MM/dd/yyyy");
+    [Parameter] public string Content { get; set; } = "test content";
+    public string textFieldValue { get; set; } = "This is the field";
+    public MudTextEditor quill = new();
 
+    protected override void OnInitialized()
+    {
+        //MudGlobal.InputDefaults.Variant = Variant.Outlined;
+    }
+
+    private async void SaveItem()
+    {
+        var t = await quill.GetHTML();
+    }
 }
 

@@ -75,7 +75,8 @@
     protected override void OnInitialized()
     {
         _currentTheme = _defaultTheme;
-
+        MudGlobal.InputDefaults.Variant = Variant.Outlined;
+        MudGlobal.InputDefaults.ShrinkLabel = true;
     }
 
     private void ViewSettings()
