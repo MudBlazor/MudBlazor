@@ -18,11 +18,13 @@
 .mud-table-container {
   width: 100%;
   overflow-y: auto;
+  flex-grow: 1;
 }
 
 .mud-table-root {
   width: 100%;
   border-spacing: 0;
+  height: 100%;
 
   & .mud-table-head {
     display: table-header-group;
