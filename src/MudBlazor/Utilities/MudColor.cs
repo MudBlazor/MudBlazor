@@ -62,25 +62,21 @@ namespace MudBlazor.Utilities
         /// <summary>
         /// Gets the red component value of the color.
         /// </summary>
-        [JsonInclude]
         public byte R => _valuesAsByte[0];
 
         /// <summary>
         /// Gets the green component value of the color.
         /// </summary>
-        [JsonInclude]
         public byte G => _valuesAsByte[1];
 
         /// <summary>
         /// Gets the blue component value of the color.
         /// </summary>
-        [JsonInclude]
         public byte B => _valuesAsByte[2];
 
         /// <summary>
         /// Gets the alpha component value of the color.
         /// </summary>
-        [JsonInclude]
         public byte A => _valuesAsByte[3];
 
         /// <summary>
@@ -351,10 +347,10 @@ namespace MudBlazor.Utilities
 
                 _valuesAsByte = new[]
                 {
-                    GetByteFromValuePart(value,0),
-                    GetByteFromValuePart(value,2),
-                    GetByteFromValuePart(value,4),
-                    GetByteFromValuePart(value,6),
+                    MudColor.GetByteFromValuePart(value,0),
+                    MudColor.GetByteFromValuePart(value,2),
+                    MudColor.GetByteFromValuePart(value,4),
+                    MudColor.GetByteFromValuePart(value,6),
                 };
             }
 
@@ -563,7 +559,7 @@ namespace MudBlazor.Utilities
         /// <returns>The 32-bit unsigned integer representation of the color.</returns>
         public static explicit operator uint(MudColor mudColor) => mudColor.UInt32;
 
-        private byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
+        private static byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
 
         private static string[] SplitInputIntoParts(string value)
         {
