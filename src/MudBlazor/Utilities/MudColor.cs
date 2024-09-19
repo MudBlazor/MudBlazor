@@ -347,10 +347,10 @@ namespace MudBlazor.Utilities
 
                 _valuesAsByte = new[]
                 {
-                    MudColor.GetByteFromValuePart(value,0),
-                    MudColor.GetByteFromValuePart(value,2),
-                    MudColor.GetByteFromValuePart(value,4),
-                    MudColor.GetByteFromValuePart(value,6),
+                    GetByteFromValuePart(value,0),
+                    GetByteFromValuePart(value,2),
+                    GetByteFromValuePart(value,4),
+                    GetByteFromValuePart(value,6),
                 };
             }
 
