@@ -10,11 +10,17 @@ namespace MudBlazor.UnitTests.Components
     public class ButtonGroupTests : BunitTest
     {
         [Test]
-        public void WithFullWidth_ThenAllButtonsStreched()
+        public void WithFullWidthAndNoneButtonIsStreched_ThenAllButtonsStreched()
         {
             // Arrange
 
-            var comp = Context.RenderComponent<ButtonGroupFullWidth>();
+            var comp = Context.RenderComponent<ButtonGroupWithThreeButtons>(
+                parameters => parameters
+                    .Add(c => c.ButtonGroupFullWidth, true)
+                    .Add(c => c.Button1FullWidth, false)
+                    .Add(c => c.Button2FullWidth, false)
+                    .Add(c => c.Button3FullWidth, false)
+            );
 
             // Assert
 
@@ -23,11 +29,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void WithFullWidthAndHasOneButtonFullWidth_ThenOtherButtonsNotStreched()
+        public void WithFullWidthAndOneButtonIsStreched_ThenOtherButtonsNotStreched()
         {
             // Arrange
 
-            var comp = Context.RenderComponent<ButtonGroupFullWidthWithButtonFullWidth>();
+            var comp = Context.RenderComponent<ButtonGroupWithThreeButtons>(
+                parameters => parameters
+                    .Add(c => c.ButtonGroupFullWidth, true)
+                    .Add(c => c.Button1FullWidth, true)
+                    .Add(c => c.Button2FullWidth, false)
+                    .Add(c => c.Button3FullWidth, false)
+            );
 
             // Assert
 
@@ -39,14 +51,16 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void WhenButtonWithFullWidthIsRemoved_ThenOtherButtonsAreStreched()
+        public void WithFullWidth_WhenButtonWithFullWidthIsRemoved_ThenOtherButtonsAreStreched()
         {
             // Arrange
 
             var comp = Context.RenderComponent<ButtonGroupWithThreeButtons>(
                 parameters => parameters
-                .Add(c => c.ButtonGroupFullWidth, true)
-                .Add(c => c.Button1FullWidth, true)
+                    .Add(c => c.ButtonGroupFullWidth, true)
+                    .Add(c => c.Button1FullWidth, true)
+                    .Add(c => c.Button2FullWidth, false)
+                    .Add(c => c.Button3FullWidth, false)
             );
 
             // Act
