@@ -483,7 +483,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Zindex}-tooltip: {_theme.ZIndex.Tooltip};");
 
         // Native HTML control light/dark mode
-        theme.AppendLine("--mud-native-html-color-scheme: " + (IsDarkMode ? "dark" : "light") + ";");
+        theme.AppendLine($"--mud-native-html-color-scheme: {(IsDarkMode ? "dark" : "light")};");
     }
 
     public void Dispose()
