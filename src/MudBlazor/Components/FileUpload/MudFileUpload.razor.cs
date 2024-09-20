@@ -178,10 +178,6 @@ namespace MudBlazor
         private string GetInputId(int fileInputIndex) => $"{_id}-{fileInputIndex}";
         private string GetActiveInputId() => $"{_id}-{_numberOfActiveFileInputs}";
 
-        private string? GetHiddenState(int fileInputIndex) => fileInputIndex == _numberOfActiveFileInputs || Hidden
-            ? string.Empty
-            : null;
-
         public async Task ClearAsync()
         {
             _numberOfActiveFileInputs = 1;

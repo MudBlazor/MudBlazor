@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
+using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
@@ -393,10 +394,10 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.FindComponent<InputFile>().Instance.OnChange.InvokeAsync(new InputFileChangeEventArgs([defaultFile])));
 
             // 2 input elements should now be present
-            comp.FindAll("input").Should().HaveCount(2);
-            // one of which is no longer visible, and is hidden
+            // one should be visible
+            comp.FindAll("input:not(.d-none)").Should().HaveCount(1);
+            // and the other should no longer be visible
             comp.FindAll("input.d-none").Should().HaveCount(1);
-            comp.FindAll("input.d-none")[0].HasAttribute("hidden");
         }
     }
 }
