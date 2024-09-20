@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -108,6 +104,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public string? EndTextClass { get; set; }
+
+        /// <summary>
+        /// Indicates whether the tree view item and its children are visible.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Appearance)]
+        public bool Visible { get; set; } = true;
 
         /// <summary>
         /// If true, TreeViewItem will be disabled.
@@ -273,10 +276,12 @@ namespace MudBlazor
 
         private bool HasChildren()
         {
-            return ChildContent != null ||
-                   (MudTreeRoot != null && Items != null && Items.Count != 0) ||
-                   (MudTreeRoot?.ServerData != null && CanExpand && !_isServerLoaded && (Items == null || Items.Count == 0));
+            return ChildContent != null
+                || (MudTreeRoot != null && Items != null && Items.Count != 0)
+                || (MudTreeRoot?.ServerData != null && CanExpand && !_isServerLoaded && (Items == null || Items.Count == 0));
         }
+
+        private bool AreChildrenVisible() => Items is null || Items.Any(i => i.Visible);
 
         internal T? GetValue()
         {
