@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
@@ -374,6 +375,28 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("input").HasAttribute("required").Should().BeTrue();
             comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// FileUpload should generate new InputFile on file change.
+        /// </summary>
+        [Test]
+        public async Task Generate_new_InputFile_on_file_change()
+        {
+            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>();
+
+            // only 1 input element should be present
+            comp.FindAll("input").Should().HaveCount(1);
+
+            // trigger an OnChange on the internal InputFile
+            var defaultFile = new DummyBrowserFile("filename.jpg", DateTimeOffset.Now, 0, "image/jpeg", []);
+            await comp.InvokeAsync(() => comp.FindComponent<InputFile>().Instance.OnChange.InvokeAsync(new InputFileChangeEventArgs([defaultFile])));
+
+            // 2 input elements should now be present
+            comp.FindAll("input").Should().HaveCount(2);
+            // one of which is no longer visible, and is hidden
+            comp.FindAll("input.d-none").Should().HaveCount(1);
+            comp.FindAll("input.d-none")[0].HasAttribute("hidden");
         }
     }
 }

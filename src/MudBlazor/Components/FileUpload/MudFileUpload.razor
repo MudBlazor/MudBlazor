@@ -14,7 +14,7 @@
                        OnChange="OnChangeAsync"
                        class="@GetInputClass(localIndex)"
                        style="@InputStyle"
-                       hidden="@(Hidden ? "" : null)"
+                       hidden="@GetHiddenState(localIndex)"
                        multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)"
                        accept="@Accept"
                        disabled="@(GetDisabledState())"

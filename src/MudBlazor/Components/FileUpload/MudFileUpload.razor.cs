@@ -2,10 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
@@ -181,6 +177,10 @@ namespace MudBlazor
             : $"{InputClass} d-none";
         private string GetInputId(int fileInputIndex) => $"{_id}-{fileInputIndex}";
         private string GetActiveInputId() => $"{_id}-{_numberOfActiveFileInputs}";
+
+        private string? GetHiddenState(int fileInputIndex) => fileInputIndex == _numberOfActiveFileInputs || Hidden
+            ? string.Empty
+            : null;
 
         public async Task ClearAsync()
         {
