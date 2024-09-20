@@ -172,7 +172,7 @@ namespace MudBlazor
         protected bool GetDisabledState() => Disabled || ParentDisabled || ParentReadOnly;
 
         private int _numberOfActiveFileInputs = 1;
-        private string? GetInputClass(int fileInputIndex)=> fileInputIndex == _numberOfActiveFileInputs
+        private string? GetInputClass(int fileInputIndex) => fileInputIndex == _numberOfActiveFileInputs
             ? InputClass
             : $"{InputClass} d-none";
         private string GetInputId(int fileInputIndex) => $"{_id}-{fileInputIndex}";
