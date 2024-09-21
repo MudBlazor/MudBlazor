@@ -316,5 +316,29 @@ namespace UtilityTests
             // Assert
             styleBuilder.Should().Be(string.Empty);
         }
+
+        [Test]
+        public void AddStyle_ShouldNotBeNullWithDefaultStruct()
+        {
+            // Arrange
+            var styleBuilder = default(StyleBuilder);
+
+            // Act
+            styleBuilder.AddStyle("background-color", "green");
+            styleBuilder.AddStyle("color", "red");
+
+            // Assert
+            styleBuilder.Build().Should().Be("background-color:green;color:red;");
+        }
+
+        [Test]
+        public void Build_ShouldNotBeNullWithDefaultStruct()
+        {
+            // Arrange
+            var styleBuilder = default(StyleBuilder);
+
+            // Assert
+            styleBuilder.Build().Should().Be("");
+        }
     }
 }
