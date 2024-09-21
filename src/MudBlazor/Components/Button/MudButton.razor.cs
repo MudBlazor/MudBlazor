@@ -143,12 +143,22 @@ namespace MudBlazor
             ButtonGroup?.AddButton(this);
         }
 
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         /// <summary>
         /// Releases resources used by this button.
         /// </summary>
-        public virtual void Dispose()
+        protected virtual void Dispose(bool disposing)
         {
-            ButtonGroup?.RemoveButton(this);
+            if (disposing)
+            {
+                ButtonGroup?.RemoveButton(this);
+            }
         }
 
         internal bool GetRealFullWith()
