@@ -399,5 +399,31 @@ namespace MudBlazor.UnitTests.Components
             // and the other should no longer be visible
             comp.FindAll("input.d-none").Should().HaveCount(1);
         }
+
+        /// <summary>
+        /// FileUpload should trigger the FilesChanged and OnFilesChanged callbacks when appropriate.
+        /// </summary>
+        [Test]
+        public async Task Should_trigger_file_change_callbacks_as_expected()
+        {
+            var comp = Context.RenderComponent<FileUploadChangeCountTests>();
+
+            // first file change should trigger both callbacks
+            var fileContent = new byte[5];
+            new Random().NextBytes(fileContent);
+            var firstFile = new DummyBrowserFile("filename.jpg", DateTimeOffset.Now, 0, "image/jpeg", fileContent);
+            await comp.InvokeAsync(() => comp.FindComponents<InputFile>()[0].Instance.OnChange.InvokeAsync(new InputFileChangeEventArgs([firstFile])));
+
+            comp.Instance.FilesChangedCount.Should().Be(1);
+            comp.Instance.OnFilesChangedCount.Should().Be(1);
+
+            // new file reference => both file change callbacks should be triggered
+            new Random().NextBytes(fileContent);
+            var secondFile = new DummyBrowserFile("filename.jpg", DateTimeOffset.Now, 0, "image/jpeg", fileContent);
+            await comp.InvokeAsync(() => comp.FindComponents<InputFile>()[^1].Instance.OnChange.InvokeAsync(new InputFileChangeEventArgs([secondFile])));
+
+            comp.Instance.FilesChangedCount.Should().Be(2);
+            comp.Instance.OnFilesChangedCount.Should().Be(3);
+        }
     }
 }
