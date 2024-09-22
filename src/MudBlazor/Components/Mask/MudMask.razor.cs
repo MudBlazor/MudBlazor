@@ -88,10 +88,11 @@ namespace MudBlazor
         public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// The mark for this input.
+        /// The mask to apply to text values.
         /// </summary>
         /// <remarks>
-        /// Usually a <see cref="PatternMask"/>, <see cref="MultiMask"/>, <see cref="RegexMask"/>, or <see cref="BlockMask"/>.
+        /// Typically set to common masks such as <see cref="PatternMask"/>, <see cref="MultiMask"/>, <see cref="RegexMask"/>, and <see cref="BlockMask"/>.
+        /// When set, some properties will be ignored such as <see cref="MudInput{T}.MaxLines"/>, <see cref="MudInput{T}.AutoGrow"/>, and <see cref="MudInput{T}.HideSpinButtons"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.General.Data)]
