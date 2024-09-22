@@ -4,9 +4,9 @@
 
 using System.Buffers.Binary;
 using System.Globalization;
-using System.IO;
 using System.Text;
 using FluentAssertions;
+using MudBlazor.UnitTests.Dummy;
 using MudBlazor.Utilities;
 using NUnit.Framework;
 
@@ -15,6 +15,21 @@ namespace MudBlazor.UnitTests.Utilities
     [TestFixture]
     public class MudColorTests
     {
+        [Test]
+        public void MudColor_STJ_SourceGen_Serialization()
+        {
+            var originalMudColor = new MudColor("#f6f9fb");
+
+            var mudColorType = typeof(MudColor);
+            var context = new MudColorSerializerContext();
+
+            var jsonString = System.Text.Json.JsonSerializer.Serialize(originalMudColor, mudColorType, context);
+            var deserializeMudColor = System.Text.Json.JsonSerializer.Deserialize(jsonString, mudColorType, context);
+
+            jsonString.Should().Be("{\"R\":246,\"G\":249,\"B\":251,\"A\":255}");
+            deserializeMudColor.Should().Be(originalMudColor);
+        }
+
         [Test]
         public void MudColor_STJ_Serialization()
         {
