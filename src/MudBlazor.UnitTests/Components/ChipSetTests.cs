@@ -463,8 +463,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Should_provide_accessible_keyboard_navigation()
         {
+            var onCloseCount = 0;
             var comp = Context.RenderComponent<ChipSetKeyboardNavigationTests>(parameters => parameters
-                .Add(p => p.AreChipsClosable, false));
+                .Add(p => p.AreChipsClosable, false)
+                .Add(p => p.OnClose, () => onCloseCount++));
 
             // add two chips
             comp.Find("#add-chip-button").Click();
@@ -481,6 +483,7 @@ namespace MudBlazor.UnitTests.Components
             // pressing the Delete or Backspace keys should have no impact when the chips are not closable
             comp.Find("#chip-1").KeyDown("Delete");
             comp.Find("#chip-2").KeyDown("Backspace");
+            onCloseCount.Should().Be(0);
             comp.FindComponent<MudChipSet<string>>().Instance.SelectedValues.Should().HaveCount(2);
 
             // re-pressing a chip with Space or Enter should un-toggle their state
@@ -498,7 +501,55 @@ namespace MudBlazor.UnitTests.Components
             // pressing the Delete or Backspace keys should remove the chips from the chipset now that they are closable
             comp.Find("#chip-1").KeyDown("Delete");
             comp.Find("#chip-2").KeyDown("Backspace");
+            onCloseCount.Should().Be(2);
             comp.FindComponent<MudChipSet<string>>().Instance.SelectedValues.Should().BeNullOrEmpty();
+        }
+
+        [Test]
+        public void Should_not_accept_keyboard_inputs_when_disabled_or_readonly()
+        {
+            var onCloseCount = 0;
+            var comp = Context.RenderComponent<ChipSetKeyboardNavigationTests>(parameters => parameters
+                .Add(p => p.AreChipsClosable, true)
+                .Add(p => p.Disabled, true)
+                .Add(p => p.OnClose, () => onCloseCount++));
+
+            // add two chips
+            comp.Find("#add-chip-button").Click();
+            comp.Find("#add-chip-button").Click();
+
+            comp.FindComponent<MudChipSet<string>>().Instance.SelectedValues.Should().BeNullOrEmpty();
+            comp.FindComponents<MudChip<string>>().Should().HaveCount(2);
+
+            // pressing a chip using Space or Enter shouldn't toggle their state because the set is disabled
+            comp.Find("#chip-1").KeyDown(" ");
+            comp.Find("#chip-2").KeyDown("Enter");
+            comp.FindComponent<MudChipSet<string>>().Instance.SelectedValues.Should().HaveCount(0);
+
+            // pressing the Delete or Backspace keys should have no impact either
+            comp.Find("#chip-1").KeyDown("Delete");
+            comp.Find("#chip-2").KeyDown("Backspace");
+            onCloseCount.Should().Be(0);
+            comp.FindComponent<MudChipSet<string>>().Instance.SelectedValues.Should().HaveCount(0);
+
+            // toggle the chips again, then delete them (the chipset should no longer consider them part of its group, and remove them from selected values)
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Disabled, false)
+                .Add(p => p.ReadOnly, true));
+
+            comp.FindComponent<MudChipSet<string>>().Instance.SelectedValues.Should().BeNullOrEmpty();
+            comp.FindComponents<MudChip<string>>().Should().HaveCount(2);
+
+            // pressing a chip using Space or Enter shouldn't toggle their state because the set is readOnly
+            comp.Find("#chip-1").KeyDown(" ");
+            comp.Find("#chip-2").KeyDown("Enter");
+            comp.FindComponent<MudChipSet<string>>().Instance.SelectedValues.Should().HaveCount(0);
+
+            // pressing the Delete or Backspace keys should have no impact either
+            comp.Find("#chip-1").KeyDown("Delete");
+            comp.Find("#chip-2").KeyDown("Backspace");
+            onCloseCount.Should().Be(0);
+            comp.FindComponent<MudChipSet<string>>().Instance.SelectedValues.Should().HaveCount(0);
         }
     }
 }

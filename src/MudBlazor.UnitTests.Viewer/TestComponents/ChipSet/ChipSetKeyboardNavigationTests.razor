@@ -2,7 +2,10 @@
     <MudChipSet T="string"
                 SelectionMode="@SelectionMode.MultiSelection"
                 AllClosable="@AreChipsClosable"
-                @bind-SelectedValues="@_selectedValues">
+                Disabled="@Disabled"
+                ReadOnly="@ReadOnly"
+                @bind-SelectedValues="@_selectedValues"
+                OnClose="@OnClose">
         @for (var i = 0; i < _chips.Count; i++)
         {
             var localIndex = i;
@@ -21,6 +24,15 @@
 @code {
     [Parameter]
     public bool AreChipsClosable { get; set; }
+
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    [Parameter]
+    public bool ReadOnly { get; set; }
+
+    [Parameter]
+    public EventCallback<MudChip<string>> OnClose { get; set; }
 
     private readonly List<string> _chips = [];
     private IReadOnlyCollection<string> _selectedValues = [];
