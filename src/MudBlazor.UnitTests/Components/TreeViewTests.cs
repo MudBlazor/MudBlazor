@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -190,6 +185,40 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void TreeViewWith_MultiSelection_ShouldNotAutoSelectParent()
+        {
+            var comp = Context.RenderComponent<TreeViewAutoSelectParentTest>(self => self
+                .Add(x => x.SelectedValues, ["item1.2"])
+                .Add(x => x.AutoSelectParent, false));
+            // check initial selection
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1.2");
+
+            // select another value on tree1 and check parent is not selected
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1.1, item1.2");
+
+            // manually selecting a parent should still work
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").Click();
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.1, item1.2");
+
+            // removing selection of a child will keep the parent selected
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.2");
+        }
+
+        [Test]
         public void TreeViewItemSelected_ShouldBeInitializedCorrectly_SingleSelection()
         {
             var comp = Context.RenderComponent<TreeViewItemSelectedBindingTest>(self => self.Add(x => x.SelectedValue, "item1.2"));
@@ -221,6 +250,28 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p.item1-selected").TrimmedText().Should().Be("True");
             comp.Find("p.item1-1-selected").TrimmedText().Should().Be("False");
             comp.Find("p.item1-2-selected").TrimmedText().Should().Be("True");
+        }
+
+        [Test]
+        public void TreeViewItemVisible_RendersWhenVisibleIsTrue()
+        {
+            var comp = Context.RenderComponent<ItemVisibleTreeViewTest>(element =>
+            {
+                element.Add(x => x.IsElementVisible, true);
+            });
+
+            comp.FindAll("li").Should().HaveCount(1);
+        }
+
+        [Test]
+        public void TreeViewItemVisible_RendersNotWhenVisibleIsFalse()
+        {
+            var comp = Context.RenderComponent<ItemVisibleTreeViewTest>(element =>
+            {
+                element.Add(x => x.IsElementVisible, false);
+            });
+
+            comp.FindAll("li").Should().HaveCount(0);
         }
 
         [Test]
@@ -487,12 +538,33 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task TreeViewItem_ShouldBeAbleTo_ReloadInCollapsedState()
+        {
+            var comp = Context.RenderComponent<TreeViewServerTest2>();
+            var treeviewItem = comp.FindComponents<MudTreeViewItem<string>>().FirstOrDefault();
+            treeviewItem!.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded)).Should().Be(false);
+            comp.FindAll("div.mud-treeview-item-arrow button").Count.Should().Be(2);
+            // expand first tree
+            comp.Find("div.mud-treeview-item-arrow button").Click();
+            comp.FindAll("div.mud-treeview-item-arrow button").Count.Should().Be(3);
+            // collapse first tree again
+            comp.Find("div.mud-treeview-item-arrow button").Click();
+            treeviewItem.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded)).Should().Be(false);
+            // reload first tree in collapsed state
+            var reloadTask = Task.CompletedTask;
+            await comp.InvokeAsync(() => reloadTask = treeviewItem.Instance.ReloadAsync());
+            await reloadTask;
+            comp.FindAll("div.mud-treeview-item-arrow button").Count.Should().Be(3);
+        }
+
+        [Test]
         public void TreeViewTreeItemDataTest()
         {
             // test default values
             new TreeItemData<int>().Expanded.Should().Be(false);
             new TreeItemData<int>().Selected.Should().Be(false);
             new TreeItemData<int>().Expandable.Should().Be(true);
+            new TreeItemData<int>().Visible.Should().Be(true);
             new TreeItemData<int>().Text.Should().Be(null);
             new TreeItemData<int>().Icon.Should().Be(null);
             new TreeItemData<int>().HasChildren.Should().Be(false);
@@ -505,6 +577,7 @@ namespace MudBlazor.UnitTests.Components
                 Text = "t",
                 Expandable = false,
                 Expanded = true,
+                Visible = true,
                 Selected = true,
                 Children = [new TreeItemData<string>()]
             };
@@ -513,6 +586,7 @@ namespace MudBlazor.UnitTests.Components
             data.Text.Should().Be("t");
             data.Expandable.Should().Be(false);
             data.Expanded.Should().Be(true);
+            data.Visible.Should().Be(true);
             data.Selected.Should().Be(true);
             data.HasChildren.Should().Be(true);
             data.Children.Count.Should().Be(1);
@@ -1004,6 +1078,73 @@ namespace MudBlazor.UnitTests.Components
 #nullable disable
 
             exception.Message.Should().Be($"'{nameof(MudTreeView<string>)}.{nameof(nullInstanceTree.ServerData)}' requires '{nameof(nullInstanceTree.ItemTemplate)}.{nameof(MudTreeViewItem<string>)}.{nameof(nullInstanceItem.Value)}' to be supplied.");
+        }
+
+        [Test]
+        public void TreeView_ClickItemWhileActive_DoesChangeSelection()
+        {
+            var comp = Context.RenderComponent<ItemSelectableTreeViewTest>();
+
+            var parentItemButton = comp.Find(".parent-item button.mud-treeview-item-expand-button");
+            var parentItemContent = comp.Find(".parent-item > div.mud-treeview-item-content");
+
+            var GetSelectedValue = () => comp.Find("p.selected-value").TrimmedText();
+            var GetItemExpandedValue = () => comp
+                .FindComponent<MudTreeViewItem<string>>()
+                .Instance
+                .GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
+
+            parentItemContent.Click();
+
+            GetSelectedValue().Should().Be("content");
+
+            GetItemExpandedValue().Should().Be(false);
+            parentItemButton.Click();
+            GetItemExpandedValue().Should().Be(true);
+        }
+
+        [Test]
+        public void TreeView_ClickItemWhileReadOnly_DoesNotChangeSelection()
+        {
+            var comp = Context.RenderComponent<ItemSelectableTreeViewTest>(self => self.Add(x => x.ParentItemReadOnly, true));
+
+            var parentItemButton = comp.Find(".parent-item button.mud-treeview-item-expand-button");
+            var parentItemContent = comp.Find(".parent-item > div.mud-treeview-item-content");
+
+            var GetSelectedValue = () => comp.Find("p.selected-value").TrimmedText();
+            var GetItemExpandedValue = () => comp
+                .FindComponent<MudTreeViewItem<string>>()
+                .Instance
+                .GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
+
+            parentItemContent.Click();
+            GetSelectedValue().Should().BeNullOrWhiteSpace();
+
+            GetItemExpandedValue().Should().Be(false);
+            parentItemButton.Click();
+            GetItemExpandedValue().Should().Be(true);
+        }
+
+        [Test]
+        public void TreeView_ClickItemWhileDisabled_DoesNotChangeSelectionAndExpanded()
+        {
+            var comp = Context.RenderComponent<ItemSelectableTreeViewTest>(self => self.Add(x => x.ParentItemDisabled, true));
+
+            var parentItemButton = comp.Find(".parent-item button.mud-treeview-item-expand-button");
+            var parentItemContent = comp.Find(".parent-item > div.mud-treeview-item-content");
+
+            var GetSelectedValue = () => comp.Find("p.selected-value").TrimmedText();
+            var GetItemExpandedValue = () => comp
+                .FindComponent<MudTreeViewItem<string>>()
+                .Instance
+                .GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
+
+            parentItemContent.Click();
+            GetSelectedValue().Should().BeNullOrWhiteSpace();
+
+            GetItemExpandedValue().Should().Be(false);
+            parentItemButton.Click();
+            GetItemExpandedValue().Should().Be(false);
         }
     }
 }

@@ -163,6 +163,19 @@ namespace MudBlazor
         public bool Overlay { get; set; } = true;
 
         /// <summary>
+        /// Sets a value indicating whether the overlay should automatically close when clicked.
+        /// </summary>
+        /// <remarks>
+        /// If the <see cref="Variant"/> is set to <see cref="DrawerVariant.Temporary"/>, an overlay will be displayed. 
+        /// When this property is <c>true</c>, clicking on the overlay will close it automatically. 
+        /// When this property is <c>false</c>, the overlay will not close automatically.
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Drawer.Behavior)]
+        public bool OverlayAutoClose { get; set; } = true;
+
+        /// <summary>
         /// For mini drawers, opens this drawer when the pointer hovers over it.
         /// </summary>
         /// <remarks>

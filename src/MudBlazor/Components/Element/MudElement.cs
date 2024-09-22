@@ -68,23 +68,14 @@ namespace MudBlazor
             base.BuildRenderTree(builder);
 
             // Initialize the sequence number.
-            // https://learn.microsoft.com/en-us/aspnet/core/blazor/advanced-scenarios.
+            // https://learn.microsoft.com/aspnet/core/blazor/advanced-scenarios.
             var seq = 0;
 
             // Open element.
             builder.OpenElement(seq++, HtmlTag);
 
             // Splatted attributes.
-            foreach (var attribute in UserAttributes)
-            {
-                // Check if the attribute value is not null before adding it to the builder.
-                // This avoids adding null event handlers, such as `@onmouseenter=@(Open ? HandleEnter : null)`.
-                // This is useful because Blazor always adds the attribute value and creates an EventCallback in normal HTML elements.
-                if (attribute.Value is not null)
-                {
-                    builder.AddAttribute(seq++, attribute.Key, attribute.Value);
-                }
-            }
+            builder.AddMultipleAttributes(seq++, UserAttributes!);
 
             // Add class and style attributes.
             builder.AddAttribute(seq++, "class", Class);

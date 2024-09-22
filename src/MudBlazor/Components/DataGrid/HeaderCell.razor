@@ -16,7 +16,7 @@ else if (Column != null && !Column.HiddenState.Value)
     <th @ref=@_headerElement scope="col" class="@_classname" style="@_style" colspan="@Column.HeaderColSpan" @attributes="@UserAttributes">
         @if (DataGrid.DragDropColumnReordering)
         {
-            <MudDropZone CanDrop="@((item) => (Column.DragAndDropEnabled ?? true))" ItemDisabled="@((item) => !item.DragAndDropEnabled ?? false)" T="Column<T>" Identifier="@(Column.PropertyName ?? $"mud-header-cell-{_id}")">
+            <MudDropZone CanDrop="@((item) => (Column.DragAndDropEnabled ?? true))" ItemDisabled="@((item) => !item.DragAndDropEnabled ?? false)" T="Column<T>" Identifier="@(Column.PropertyName ?? _id)">
 
             </MudDropZone>
         }
@@ -133,7 +133,7 @@ else if (Column != null && !Column.HiddenState.Value)
         </span>
         @if (filterable && DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
         {
-            <MudOverlay Visible="@_filtersMenuVisible" OnClick="@(() => _filtersMenuVisible = false)" />
+        <MudOverlay @bind-Visible="@_filtersMenuVisible" AutoClose />
             <MudPopover Open="@_filtersMenuVisible" AnchorOrigin="@Origin.BottomRight" TransformOrigin="@Origin.TopRight" Class="pa-4 column-filter-popup">
                 @if (Column.FilterTemplate != null)
                 {

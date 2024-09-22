@@ -8,17 +8,6 @@
   position: relative;
   flex-direction: column;
   vertical-align: top;
-  margin-top: 6px;
-
-  &.mud-input-control-margin-normal {
-    margin-top: 16px;
-    margin-bottom: 8px;
-  }
-
-  &.mud-input-control-margin-dense {
-    margin-top: 3px;
-    margin-bottom: 2px;
-  }
 
   &.mud-input-control-full-width {
     width: 100%;
@@ -27,6 +16,29 @@
   &.mud-input-control-boolean-input {
     flex: none;
     margin: 0;
+  }
+
+  &.mud-input-outlined-with-label {
+    margin-top: 8px;
+    margin-bottom: 4px;
+  }
+
+  &.mud-input-control-margin-dense {
+    margin: 4px 0px;
+
+    &.mud-input-outlined-with-label {
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+  }
+
+  &.mud-input-control-margin-normal {
+    margin: 8px 0px;
+
+    &.mud-input-outlined-with-label {
+      margin-top: 16px;
+      margin-bottom: 8px;
+    }
   }
 
   & > .mud-input-control-input-container {
@@ -42,12 +54,12 @@
       }
 
       &.mud-input.mud-input-filled {
-        &.mud-input-text-with-label {
+        &.mud-input-filled-with-label {
         }
       }
 
       &.mud-input.mud-input-outlined {
-        &.mud-input-text-with-label {
+        &.mud-input-outlined-with-label {
         }
       }
     }

@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudRadioGroup @bind-Value="@option">
+<MudRadioGroup @bind-Value="@option" @bind-Value:after="BindAfter">
     <MudRadio Value="@("1")" />
     <MudRadio Value="@("2")" />
     <MudRadio Value="@("3")" />
@@ -17,4 +17,7 @@
     {
         option = null;
     }
+
+    private void BindAfter() => BindAfterCount++;
+    public int BindAfterCount { get; private set; }
 }
