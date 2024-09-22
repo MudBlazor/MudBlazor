@@ -410,6 +410,7 @@ namespace MudBlazor.UnitTests.Components
 
             // first file change should trigger both callbacks
             var fileContent = new byte[5];
+            // fill file content with random bytes
             new Random().NextBytes(fileContent);
             var firstFile = new DummyBrowserFile("filename.jpg", DateTimeOffset.Now, 0, "image/jpeg", fileContent);
             await comp.InvokeAsync(() => comp.FindComponents<InputFile>()[0].Instance.OnChange.InvokeAsync(new InputFileChangeEventArgs([firstFile])));
@@ -417,13 +418,14 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.FilesChangedCount.Should().Be(1);
             comp.Instance.OnFilesChangedCount.Should().Be(1);
 
-            // new file reference => both file change callbacks should be triggered
+            // since a new InputFile is generated with each upload, we can get the last InputFile in the render chain to emulate a new upload
+            // so when a new file reference is uploaded, both file change callbacks should be triggered
             new Random().NextBytes(fileContent);
             var secondFile = new DummyBrowserFile("filename.jpg", DateTimeOffset.Now, 0, "image/jpeg", fileContent);
             await comp.InvokeAsync(() => comp.FindComponents<InputFile>()[^1].Instance.OnChange.InvokeAsync(new InputFileChangeEventArgs([secondFile])));
 
             comp.Instance.FilesChangedCount.Should().Be(2);
-            comp.Instance.OnFilesChangedCount.Should().Be(3);
+            comp.Instance.OnFilesChangedCount.Should().Be(2);
         }
     }
 }
