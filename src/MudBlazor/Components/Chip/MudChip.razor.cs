@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.State;
@@ -70,8 +68,11 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         .AddClass(Class)
         .Build();
 
-    private bool IsClickable => (GetDisabled() is false || GetReadonly() is false)
+    private bool IsClickable => GetDisabled() is false
+                                && GetReadonly() is false
                                 && (ChipSet is not null || OnClick.HasDelegate || !string.IsNullOrEmpty(Href));
+
+    private bool IsClosable => OnClose.HasDelegate || ChipSet?.AllClosable == true;
 
     private string? RoleAttribute => IsClickable ? "button" : null;
 
@@ -395,7 +396,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     protected async Task OnCloseAsync(MouseEventArgs ev)
     {
-        if (ChipSet?.ReadOnly == true)
+        if (GetReadonly() || IsClosable is false)
         {
             return;
         }
@@ -437,13 +438,15 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
                 return;
             await ChipSet.RemoveAsync(this);
 
-            if (_keyInterceptor != null)
+            if (_keyInterceptor is null)
             {
-                _keyInterceptor.KeyDown -= HandleKeyDown;
-                if (IsJSRuntimeAvailable)
-                {
-                    _keyInterceptor.Dispose();
-                }
+                return;
+            }
+
+            _keyInterceptor.KeyDown -= HandleKeyDown;
+            if (IsJSRuntimeAvailable)
+            {
+                _keyInterceptor.Dispose();
             }
         }
         catch (Exception)

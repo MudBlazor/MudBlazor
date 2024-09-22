@@ -41,7 +41,7 @@
             {
                 @ChildContent
             }
-            @if (OnClose.HasDelegate || ChipSet?.AllClosable == true)
+            @if (IsClosable)
             {
                 <MudIconButton Class="mud-chip-close-button"
                                Icon="@GetCloseIcon()"
