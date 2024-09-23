@@ -448,10 +448,6 @@
     letter-spacing: .01071em;
     color: var(--mud-theme-on-surface);
   }
-
-  & .mud-input:focus-within {
-    background-color: var(--mud-palette-action-default-hover);
-  }
 }
 
 .mud-table-pagination-actions {
