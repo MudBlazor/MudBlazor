@@ -11,7 +11,7 @@ public abstract class BaseMask : IMask
 {
     protected bool _initialized;
     protected Dictionary<char, MaskChar> _maskDict;
-    
+
     protected MaskChar[] _maskChars = new MaskChar[]
     {
         MaskChar.Letter('a'), MaskChar.Digit('0'), MaskChar.LetterOrDigit('*'),
