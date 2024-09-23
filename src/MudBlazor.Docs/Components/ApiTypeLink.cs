@@ -47,11 +47,11 @@ public class ApiTypeLink : ComponentBase
     /// </summary>
     public TypeComments? TypeComments { get; set; }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         if (!string.IsNullOrWhiteSpace(TypeFullName) && (Type == null || TypeFriendlyName == null || TypeComments == null || Type.Name != TypeFullName))
         {
-            Type = Docs?.GetType(TypeFullName);
+            Type = await Docs!.GetTypeAsync(TypeFullName);
             if (Type == null)
             {
                 TypeComments = null;
@@ -76,7 +76,7 @@ public class ApiTypeLink : ComponentBase
             }
             else
             {
-                TypeComments = Docs?.GetTypeComments(Type);
+                TypeComments = await Docs!.GetTypeCommentsAsync(Type);
                 TypeFriendlyName = Type.GetFriendlyName();
             }
         }

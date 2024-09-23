@@ -148,9 +148,15 @@
       <AsConstants>true</AsConstants>
     </EmbeddedResource>
   </ItemGroup>
+  
+  <!-- Allows the usage of $(SolutionDir) during a GitHub build -->
+  <PropertyGroup Label="BasePath">
+    <SolutionDir Condition="'$(SolutionDir)'==''">$(MSBuildThisFileDirectory)</SolutionDir>
+  </PropertyGroup>
 
+  <!-- Copies MudBlazor.xml documentation to wwwroot for loading via LoxSmoke -->
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy /Y &quot;$(TargetDir)MudBlazor.xml&quot; &quot;$(SolutionDir)\MudBlazor.Docs\Services\XmlDocs&quot;" />
+    <Exec Command="copy /Y &quot;$(TargetDir)MudBlazor.xml&quot; &quot;$(SolutionDir)\MudBlazor.Docs\wwwroot\xml&quot;" />
   </Target>
 
 </Project>

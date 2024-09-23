@@ -48,7 +48,7 @@ namespace MudBlazor.Docs.Extensions
             services.AddSingleton<IPeriodicTableService, PeriodicTableService>();
             services.AddSingleton<IRenderQueueService, RenderQueueService>();
             services.AddScoped<LayoutService>();
-            services.AddSingleton<IXmlDocsService, XmlDocsService>();
+            services.AddScoped<IXmlDocsService, XmlDocsService>();
             services.AddGoogleAnalytics("G-PRYNCB61NV");
             services.AddCookieConsent(options =>
             {

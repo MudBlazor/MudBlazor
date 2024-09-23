@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Reflection;
-using System.Xml;
 using System.Xml.XPath;
 using LoxSmoke.DocXml;
 using Microsoft.AspNetCore.Components;
@@ -17,22 +16,33 @@ namespace MudBlazor.Docs.Services.XmlDocs;
 /// </summary>
 public sealed class XmlDocsService : IXmlDocsService
 {
-    private readonly Assembly mudBlazorAssembly;
-    private readonly DocXmlReader reader;
+    private HttpClient client;
+    static readonly Assembly mudBlazorAssembly;
+    static DocXmlReader? reader;
 
-    /// <summary>
-    /// Creates a new instance.
-    /// </summary>
-    public XmlDocsService()
+    static XmlDocsService()
     {
         mudBlazorAssembly = typeof(MudBlazor._Imports).Assembly;
-        using var stream = typeof(XmlDocsService).Assembly!.GetManifestResourceStream("MudBlazor.Docs.Services.XmlDocs.MudBlazor.xml");
-        var document = new XPathDocument(stream!);
-        reader = new(document);
+    }
+
+    public XmlDocsService(HttpClient client)
+    {
+        this.client = client;
     }
 
     /// <inheritdoc />
-    public Type? GetType(string typeName)
+    public async Task InitializeAsync()
+    {
+        if (reader == null)
+        {
+            using var stream = await client.GetStreamAsync("/_content/MudBlazor.Docs/xml/MudBlazor.xml");
+            var document = new XPathDocument(stream!);
+            reader = new(document);
+        }
+    }
+
+    /// <inheritdoc />
+    public Task<Type?> GetTypeAsync(string typeName)
     {
         // Is this a legacy links? (e.g. "alert" instead of "MudAlert")
         if (LegacyToModernTypeNames.TryGetValue(typeName.ToLowerInvariant(), out var newTypeName))
@@ -42,15 +52,15 @@ public sealed class XmlDocsService : IXmlDocsService
         }
 
         var type = mudBlazorAssembly.GetType(typeName)
-        ?? mudBlazorAssembly.GetType("MudBlazor." + typeName)
-        ?? typeof(string).Assembly.GetType(typeName)
-        ?? typeof(RenderFragment).Assembly.GetType(typeName);
+            ?? mudBlazorAssembly.GetType("MudBlazor." + typeName)
+            ?? typeof(string).Assembly.GetType(typeName)
+            ?? typeof(RenderFragment).Assembly.GetType(typeName);
 
-        return type;
+        return Task.FromResult(type);
     }
 
     /// <inheritdoc />
-    public MemberInfo? GetMember(string memberName)
+    public async Task<MemberInfo?> GetMemberAsync(string memberName)
     {
         // Assume the last part of the name is a member
         var parameterIndex = memberName.IndexOf('(');
@@ -61,14 +71,15 @@ public sealed class XmlDocsService : IXmlDocsService
         var typePortion = memberName.Substring(0, memberName.LastIndexOf('.'));
         var memberPortion = memberName.Substring(memberName.LastIndexOf('.') + 1);
 
-        var type = GetType(typePortion);
+        var type = await GetTypeAsync(typePortion);
         var member = type?.GetMember(memberPortion);
         return member?.FirstOrDefault();
     }
 
     /// <inheritdoc />
-    public IEnumerable<PropertyInfo> GetProperties(Type type)
+    public Task<List<PropertyInfo>> GetPropertiesAsync(Type type)
     {
+        var properties = new List<PropertyInfo>();
         foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
         {
             // Exclude event callbacks
@@ -85,13 +96,15 @@ public sealed class XmlDocsService : IXmlDocsService
             {
                 continue;
             }
-            yield return property;
+            properties.Add(property);
         }
+        return Task.FromResult(properties);
     }
 
     /// <inheritdoc />
-    public IEnumerable<FieldInfo> GetFields(Type type)
+    public Task<List<FieldInfo>> GetFieldsAsync(Type type)
     {
+        var fields = new List<FieldInfo>();
         foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
         {
             // Exclude event callbacks
@@ -108,13 +121,15 @@ public sealed class XmlDocsService : IXmlDocsService
             {
                 continue;
             }
-            yield return field;
+            fields.Add(field);
         }
+        return Task.FromResult(fields);
     }
 
     /// <inheritdoc />
-    public IEnumerable<MethodInfo> GetMethods(Type type)
+    public Task<List<MethodInfo>> GetMethodsAsync(Type type)
     {
+        var methods = new List<MethodInfo>();
         foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
         {
             if (method.Name.StartsWith("get_") || method.Name.StartsWith("set_"))
@@ -130,19 +145,21 @@ public sealed class XmlDocsService : IXmlDocsService
             {
                 continue;
             }
-            yield return method;
+            methods.Add(method);
         }
+        return Task.FromResult(methods);
     }
 
     /// <inheritdoc />
-    public IEnumerable<MemberInfo> GetEvents(Type type)
+    public Task<List<MemberInfo>> GetEventsAsync(Type type)
     {
+        var events = new List<MemberInfo>();
         foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
         {
             // Include event callbacks
             if (field.FieldType.Name == "EventCallback`1")
             {
-                yield return field;
+                events.Add(field);
             }
         }
         foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
@@ -150,7 +167,7 @@ public sealed class XmlDocsService : IXmlDocsService
             // Include event callbacks
             if (property.PropertyType.Name == "EventCallback`1")
             {
-                yield return property;
+                events.Add(property);
             }
         }
         foreach (var eventItem in type.GetEvents())
@@ -164,39 +181,53 @@ public sealed class XmlDocsService : IXmlDocsService
             {
                 continue;
             }
-            yield return eventItem;
+            events.Add(eventItem);
         }
+        return Task.FromResult(events);
     }
 
     /// <inheritdoc />
-    public IEnumerable<Type> GetTypes()
+    public Task<List<Type>> GetTypesAsync()
     {
-        return mudBlazorAssembly.ExportedTypes;
+        var types = new List<Type>(mudBlazorAssembly.ExportedTypes);
+        return Task.FromResult(types);
     }
 
     /// <inheritdoc />
-    public TypeComments? GetTypeComments(string typeName)
+    public async Task<TypeComments?> GetTypeCommentsAsync(string typeName)
     {
-        return GetTypeComments(GetType(typeName));
+        var type = await GetTypeAsync(typeName);
+        return await GetTypeCommentsAsync(type);
     }
 
     /// <inheritdoc />
-    public TypeComments? GetTypeComments(Type? type)
+    public Task<TypeComments?> GetTypeCommentsAsync(Type? type)
     {
-        return type == null ? null : reader.GetTypeComments(type);
+        var comments = type == null ? null : reader!.GetTypeComments(type);
+        return Task.FromResult(comments);
     }
 
     /// <inheritdoc />
-    public IEnumerable<CommonComments> GetPropertyComments(Type type)
+    public Task<List<CommonComments>> GetPropertyCommentsAsync(Type type)
     {
+        var comments = new List<CommonComments>();
         foreach (var property in type.GetProperties(BindingFlags.Public))
         {
-            yield return reader.GetMemberComments(property);
+            comments.Add(reader!.GetMemberComments(property));
         }
+        return Task.FromResult(comments);
     }
 
     /// <inheritdoc />
-    public CommonComments GetMemberComments(MemberInfo memberInfo) => reader.GetMemberComments(memberInfo);
+    public Task<CommonComments> GetMemberCommentsAsync(MemberInfo? memberInfo)
+    {
+        if (memberInfo == null)
+        {
+            return null!;
+        }
+        var comments = reader!.GetMemberComments(memberInfo);
+        return Task.FromResult(comments);
+    }
 
     /// <summary>
     /// A dictionary that maps legacy api links to the new format.

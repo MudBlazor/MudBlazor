@@ -76,7 +76,7 @@ public partial class ApiMemberTable
         // Do we have to look up a new type?
         if (!string.IsNullOrEmpty(TypeName) && (Type == null || Type.Name != TypeName))
         {
-            Type = Docs!.GetType(TypeName);
+            Type = await Docs!.GetTypeAsync(TypeName);
             if (Table != null)
             {
                 await Table.ReloadServerData();
@@ -158,9 +158,9 @@ public partial class ApiMemberTable
                                             : members.ThenByDescending(member => ((FieldInfo)member).FieldType.GetFriendlyName()),
                 _ => members,
             },
-            "Description" => state.SortDirection == SortDirection.Ascending
-                                    ? members.ThenBy(member => Docs!.GetMemberComments(member)!.Summary ?? "")
-                                    : members.ThenByDescending(member => Docs!.GetMemberComments(member)!.Summary ?? ""),
+            //"Description" => state.SortDirection == SortDirection.Ascending
+            //                        ? members.ThenBy(member => Docs!.GetMemberCommentsAsync(member)!.Summary ?? "")
+            //                        : members.ThenByDescending(member => Docs!.GetMemberCommentsAsync(member)!.Summary ?? ""),
             _ => members,
         };
     }

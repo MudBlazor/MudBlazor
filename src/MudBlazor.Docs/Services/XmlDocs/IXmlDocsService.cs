@@ -15,78 +15,83 @@ namespace MudBlazor.Docs.Services.XmlDocs;
 public interface IXmlDocsService
 {
     /// <summary>
+    /// Loads XML documentation for use by documentation pages.
+    /// </summary>
+    Task InitializeAsync();
+
+    /// <summary>
     /// Gets the comments for a type's member.
     /// </summary>
     /// <param name="memberInfo">The member to find.</param>
     /// <returns>The set of comments for the member, or <c>null</c>.</returns>
-    public CommonComments GetMemberComments(MemberInfo memberInfo);
+    Task<CommonComments> GetMemberCommentsAsync(MemberInfo? memberInfo);
 
     /// <summary>
     /// Gets a type by its name.
     /// </summary>
     /// <param name="typeName">The type to find.</param>
     /// <returns>The type or <c>null</c> if none was found.</returns>
-    Type? GetType(string typeName);
+    Task<Type?> GetTypeAsync(string typeName);
 
     /// <summary>
     /// Gets a member by its name.
     /// </summary>
     /// <param name="memberName">The member to find.</param>
     /// <returns>The member or <c>null</c> if none was found.</returns>
-    MemberInfo? GetMember(string memberName);
+    Task<MemberInfo?> GetMemberAsync(string memberName);
 
     /// <summary>
     /// Gets all public MudBlazor types.
     /// </summary>
     /// <returns>All public MudBlazor types.</returns>
-    IEnumerable<Type> GetTypes();
+    Task<List<Type>> GetTypesAsync();
 
     /// <summary>
     /// Gets the XML documentation for a type.
     /// </summary>
     /// <param name="typeName">The type to find.</param>
     /// <returns>The comments for the type.</returns>
-    TypeComments? GetTypeComments(string typeName);
+    Task<TypeComments?> GetTypeCommentsAsync(string typeName);
 
     /// <summary>
     /// Gets the XML documentation for a type.
     /// </summary>
     /// <param name="typeName">The type to find.</param>
     /// <returns>The comments for the type.</returns>
-    TypeComments? GetTypeComments(Type type);
+    Task<TypeComments?> GetTypeCommentsAsync(Type type);
 
     /// <summary>
     /// Gets the XML documentation for a type's properties.
     /// </summary>
     /// <param name="type">The type to find properties for.</param>
     /// <returns>The comments for the type's properties.</returns>
-    IEnumerable<CommonComments> GetPropertyComments(Type type);
+    Task<List<CommonComments>> GetPropertyCommentsAsync(Type type);
 
     /// <summary>
     /// Gets the public properties for the type.
     /// </summary>
     /// <param name="type">The type to search.</param>
     /// <returns>Public properties declared in MudBlazor types, except for <c>EventCallback</c> properties (which are considered events).</returns>
-    IEnumerable<PropertyInfo> GetProperties(Type type);
+    Task<List<PropertyInfo>> GetPropertiesAsync(Type type);
 
     /// <summary>
     /// Gets the public methods for the type.
     /// </summary>
     /// <param name="type">The type to search.</param>
     /// <returns>Public methods declared in MudBlazor types.</returns>
-    IEnumerable<MethodInfo> GetMethods(Type type);
+    Task<List<MethodInfo>> GetMethodsAsync(Type type);
 
     /// <summary>
     /// Gets the public fields for the type.
     /// </summary>
     /// <param name="type">The type to search.</param>
     /// <returns>Public fields declared in MudBlazor types.</returns>
-    IEnumerable<FieldInfo> GetFields(Type type);
+    Task<List<FieldInfo>> GetFieldsAsync(Type type);
 
     /// <summary>
     /// Gets the public events (and EventCallback properties) for the type.
     /// </summary>
     /// <param name="type">The type to search.</param>
     /// <returns>Public events and <c>EventCallback</c> properties declared in MudBlazor types.</returns>
-    IEnumerable<MemberInfo> GetEvents(Type type);
+    Task<List<MemberInfo>> GetEventsAsync(Type type);
 }

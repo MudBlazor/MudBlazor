@@ -59,12 +59,12 @@ public class ApiMemberLink : ComponentBase
     [Parameter]
     public bool ShowTooltip { get; set; } = true;
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         if (!string.IsNullOrWhiteSpace(MemberName) && (Member == null || Member.Name != MemberName))
         {
-            Member = Docs?.GetMember(MemberName);
-            MemberComments = Member == null ? null : Docs?.GetMemberComments(Member);
+            Member = await Docs!.GetMemberAsync(MemberName);
+            MemberComments = await Docs!.GetMemberCommentsAsync(Member);
             Type = Member?.DeclaringType;
         }
     }

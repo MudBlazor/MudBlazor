@@ -49,7 +49,7 @@ public partial class ApiTypeTable
     {
         if (BaseTypeName != null && Table != null && (BaseType == null || BaseType.Name != BaseTypeName))
         {
-            BaseType = Docs!.GetType(BaseTypeName);
+            BaseType = await Docs!.GetTypeAsync(BaseTypeName);
             await Table!.ReloadServerData();
         }
     }
@@ -74,15 +74,16 @@ public partial class ApiTypeTable
     /// <param name="state">The current table state.</param>
     /// <param name="token">A <see cref="CancellationToken"/> for aborting ongoing requests.</param>
     /// <returns></returns>
-    public Task<TableData<Type>> GetData(TableState state, CancellationToken token)
+    public async Task<TableData<Type>> GetData(TableState state, CancellationToken token)
     {
         // Get properties which are in the selected categories
-        var types = Docs?.GetTypes().AsQueryable();
+        var rawTypes = await Docs!.GetTypesAsync();
+        var types = rawTypes.AsQueryable();
 
         // Anything found?
         if (types == null)
         {
-            return Task.FromResult(new TableData<Type>() { });
+            return new TableData<Type>() { };
         }
 
         // Are we filtering by base types?
@@ -109,10 +110,10 @@ public partial class ApiTypeTable
         var results = types.ToList();
 
         // What categories are selected?
-        return Task.FromResult(new TableData<Type>()
+        return new TableData<Type>()
         {
             Items = results,
             TotalItems = results.Count,
-        });
+        };
     }
 }

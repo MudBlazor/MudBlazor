@@ -76,7 +76,7 @@ public partial class Api
     public bool IsLoading { get; set; }
 
     /// <inheritdoc />
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         // Do we have a name to look up?  And is there a need to find the type?
         if (!IsLoading && !string.IsNullOrEmpty(TypeName) && (Type == null || Type.Name != TypeName))
@@ -88,7 +88,7 @@ public partial class Api
                 StateHasChanged();
 
                 // Yes.  Get the type
-                Type = Docs!.GetType(TypeName);
+                Type = await Docs!.GetTypeAsync(TypeName);
                 // Was a type found?
                 if (Type == null)
                 {
@@ -117,13 +117,13 @@ public partial class Api
                         Title += " Class";
                     }
                     // Load the type's comments
-                    TypeComments = Docs!.GetTypeComments(Type);
+                    TypeComments = await Docs!.GetTypeCommentsAsync(Type);
                     // Get types inheriting from this one
                     DerivedTypes = Type.Assembly.GetTypes().Where(type => type.IsSubclassOf(Type)).ToList();
-                    Properties = new(Docs!.GetProperties(Type));
-                    Fields = new(Docs!.GetFields(Type));
-                    Methods = new(Docs!.GetMethods(Type));
-                    Events = new(Docs!.GetEvents(Type));
+                    Properties = new(await Docs!.GetPropertiesAsync(Type));
+                    Fields = new(await Docs!.GetFieldsAsync(Type));
+                    Methods = new(await Docs!.GetMethodsAsync(Type));
+                    Events = new(await Docs!.GetEventsAsync(Type));
                 }
             }
             catch (Exception)

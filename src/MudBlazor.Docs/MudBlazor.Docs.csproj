@@ -118,9 +118,6 @@
     <None Remove="Services\XmlDocs\MudBlazor.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Services\XmlDocs\MudBlazor.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Models\Generated\" />
   </ItemGroup>
 
