@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -1447,7 +1446,6 @@ namespace MudBlazor
         internal async Task RemoveFilterAsync(Guid id)
         {
             var index = FilterDefinitions.FindIndex(x => x.Id == id);
-            Debug.Assert(index != -1);
             FilterDefinitions[index].Value = null;
             FilterDefinitions.RemoveAt(index);
             await InvokeServerLoadFunc();
