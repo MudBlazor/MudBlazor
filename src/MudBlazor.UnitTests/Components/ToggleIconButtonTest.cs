@@ -26,6 +26,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.DropShadow.Should().BeTrue();
             comp.Instance.Disabled.Should().BeFalse();
             comp.Instance.ClickPropagation.Should().BeFalse();
+            comp.Instance.FullWidth.Should().BeFalse();
         }
 
         [Test]
@@ -170,6 +171,46 @@ namespace MudBlazor.UnitTests.Components
 
             // Check toggled state
             comp.Instance.GetVariant().Should().Be(expectedToggledVariant);
+        }
+
+        [Test]
+        public void WithFullWidth_ThenStretched_AfterwardsWithoutFullWidth_ThenNotStretched()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<MudToggleIconButton>(parameters => parameters.Add(c => c.FullWidth, true));
+
+            // Assert
+
+            comp.Find("button").ClassList.Should().Contain("mud-width-full");
+
+            // Act
+
+            comp.SetParametersAndRender(parameters => parameters.Add(c => c.FullWidth, false));
+
+            // Assert
+
+            comp.Find("button").ClassList.Should().NotContain("mud-width-full");
+        }
+
+        [Test]
+        public void WithoutFullWidth_ThenNotStretched_AfterwardsWithFullWidth_ThenStretched()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<MudToggleIconButton>(parameters => parameters.Add(c => c.FullWidth, false));
+
+            // Assert
+
+            comp.Find("button").ClassList.Should().NotContain("mud-width-full");
+
+            // Act
+
+            comp.SetParametersAndRender(parameters => parameters.Add(c => c.FullWidth, true));
+
+            // Assert
+
+            comp.Find("button").ClassList.Should().Contain("mud-width-full");
         }
     }
 }

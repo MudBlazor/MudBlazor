@@ -143,6 +143,16 @@ public partial class MudToggleIconButton : MudComponentBase
     public bool ClickPropagation { get; set; }
 
     /// <summary>
+    /// Expands the button to 100% of the container width.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Button.Appearance)]
+    public bool FullWidth { get; set; }
+
+    /// <summary>
     /// Gets the icon to display based on the toggled state.
     /// </summary>
     /// <returns>
