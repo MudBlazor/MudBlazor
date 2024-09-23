@@ -22,6 +22,9 @@ public class PatternMask : BaseMask
     /// Creates a new mask.
     /// </summary>
     /// <param name="mask">The characters which define the accepted input.</param>
+    /// <remarks>
+    /// By default, the mask characters are: <c>a</c> (letter), <c>0</c> (digit), and <c>*</c> (letter or digit)
+    /// </remarks>
     public PatternMask(string mask)
     {
         Mask = mask;

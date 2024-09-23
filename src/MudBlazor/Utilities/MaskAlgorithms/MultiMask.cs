@@ -35,6 +35,10 @@ namespace MudBlazor
         /// </summary>
         /// <param name="defaultMask">The starting mask to use for input values.</param>
         /// <param name="options">The list of masks to use depending on the input so far.</param>
+        /// <remarks>
+        /// A multi-mask consists of multiple <see cref="MaskOption"/> values which define when a particular mask is used.<br />
+        /// For example: a credit card number can be from any card provider, yet each provider has their own numbering rules.  A multi-mask would allow each provider's rules to be used together in a single mask.
+        /// </remarks>
         public MultiMask(string defaultMask, params MaskOption[] options) : base(defaultMask)
         {
             _defaultMask = defaultMask;

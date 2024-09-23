@@ -36,6 +36,9 @@ public class BlockMask : RegexMask
     /// Creates a new block mask.
     /// </summary>
     /// <param name="blocks">The blocks which define this mask.</param>
+    /// <remarks>
+    /// This mask is typically used for text which consists of blocks of letters and numbers, such as a flight number (e.g. <c>LH4234</c>) or product code (e.g. <c>SKU1920</c>).
+    /// </remarks>
     public BlockMask(params Block[] blocks) : base(null)
     {
         if (blocks.Length == 0)
@@ -49,6 +52,9 @@ public class BlockMask : RegexMask
     /// </summary>
     /// <param name="delimiters">The characters which are skipped over when entering new characters.</param>
     /// <param name="blocks">The blocks which define this mask.</param>
+    /// <remarks>
+    /// This mask is typically used for text which consists of blocks of letters and numbers, such as a flight number (e.g. <c>LH4234</c>) or product code (e.g. <c>SKU1920</c>).
+    /// </remarks>
     public BlockMask(string delimiters, params Block[] blocks) : this(blocks)
     {
         Delimiters = delimiters ?? "";

@@ -140,9 +140,10 @@ public class RegexMask : BaseMask
     }
 
     /// <summary>
-    /// Applies the mask to the given text starting at the given offset and returns the masked text. 
+    /// Applies an input to the mask.
     /// </summary>
-    /// <param name="text"></param>
+    /// <param name="text">The text to apply to the mask.</param>
+    /// <returns>The text input with any delimiters and placeholders applied.</returns>
     protected virtual string AlignAgainstMask(string text)
     {
         text ??= "";
@@ -170,6 +171,7 @@ public class RegexMask : BaseMask
         return alignedText;
     }
 
+    /// <inheritdoc />
     public override void UpdateFrom(IMask other)
     {
         base.UpdateFrom(other);
@@ -184,14 +186,10 @@ public class RegexMask : BaseMask
     }
 
     /// <summary>
-    /// Creates a predefined RegexMask for an IPv4 Address with or without port masking.
+    /// Gets a mask for IPv4 addresses with optional port masking.
     /// </summary>
-    /// <param name="includePort">
-    /// Set to true to include port to the mask.
-    /// </param>
-    /// <param name="maskChar">
-    /// Set the IPv4 maskChar. Default is '0'
-    /// </param>
+    /// <param name="includePort">Defaults to <c>false</c>.  When <c>true</c>, a port number (from <c>0</c> to <c>65535</c>) is allowed.</param>
+    /// <param name="maskChar">Defaults to <c>0</c>.  The mask character for address digits.</param>
     public static RegexMask IPv4(bool includePort = false, char maskChar = '0')
     {
         const string Octet = "25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{0,2}";
@@ -215,17 +213,11 @@ public class RegexMask : BaseMask
     }
 
     /// <summary>
-    /// Creates a predefined RegexMask for an IPv6 Address with or without port masking.
+    /// Gets a mask for IPv6 addresses with optional port masking.
     /// </summary>
-    /// <param name="includePort">
-    /// Set to true to include port to the mask.
-    /// </param>
-    /// <param name="maskChar">
-    /// Set the IPv6 maskChar. Default is 'X'
-    /// </param>
-    /// <param name="portMaskChar">
-    /// Set the IPv6 portMask. Default is '0'
-    /// </param>
+    /// <param name="includePort">Defaults to <c>false</c>.  When <c>true</c>, a port number (from <c>0</c> to <c>65535</c>) is allowed.</param>
+    /// <param name="maskChar">Defaults to <c>X</c>.  The mask character for address digits.</param>
+    /// <param name="portMaskChar">Defaults to <c>0</c>.  The mask character for port digits.</param>
     public static RegexMask IPv6(bool includePort = false, char maskChar = 'X', char portMaskChar = '0')
     {
         const string Hex = "[0-9A-Fa-f]{0,4}";
@@ -249,11 +241,9 @@ public class RegexMask : BaseMask
     }
 
     /// <summary>
-    /// Creates a predefined RegexMask for Email Address.
+    /// Gets a mask for email addresses.
     /// </summary>
-    /// <param name="mask">
-    /// Set the email mask. Default is "Ex. user@domain.com"
-    /// </param>
+    /// <param name="mask">Defaults to <c>Ex. user@domain.com</c>.  The mask to display.</param>
     public static RegexMask Email(string mask = "Ex. user@domain.com")
     {
         const string Regex = $"^(?>[\\w\\-\\+]+\\.?)+(?>@?|@)(?<!(\\.@))(?>\\w+\\.)*(\\w+)?{WhiteSpaceFilter}$";
