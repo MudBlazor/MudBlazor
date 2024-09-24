@@ -169,7 +169,6 @@ public partial class DateMask : PatternMask
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error in ModifyFinalText: " + e.Message);
             return text;
         }
         return text;
