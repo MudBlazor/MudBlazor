@@ -1,8 +1,6 @@
 ﻿// Copyright (c) 2019 Blazored
 // Copyright (c) 2020 Adapted by Jonny Larsson, Meinrad Recheis and Contributors
 
-using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
@@ -174,7 +172,7 @@ namespace MudBlazor
         /// <remarks>
         /// Use this method to change the title while a dialog is open, such as when the title reflects a value within this dialog.  Has no effect when <see cref="TitleContent"/> is set.
         /// </remarks>
-        public void SetTitle(string title)
+        public void SetTitle(string? title)
         {
             Title = title;
             StateHasChanged();

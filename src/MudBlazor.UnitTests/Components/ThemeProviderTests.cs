@@ -247,6 +247,7 @@ namespace MudBlazor.UnitTests.Components
                 "--mud-zindex-popover: 1200;",
                 "--mud-zindex-snackbar: 1500;",
                 "--mud-zindex-tooltip: 1600;",
+                "--mud-native-html-color-scheme: light;",
                 "}"
             };
 

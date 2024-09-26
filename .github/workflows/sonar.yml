@@ -12,6 +12,7 @@ concurrency:
 
 jobs:
   analyze:
+    if: ${{ github.repository_owner == 'MudBlazor' }}
     name: Analyze solution
     uses: MudBlazor/Workflows/.github/workflows/template-sonar.yml@main
     secrets: inherit

@@ -39,16 +39,16 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="FluentAssertions" Version="6.12.0" />
+    <PackageReference Include="FluentAssertions" Version="6.12.1" />
     <PackageReference Include="FluentValidation" Version="11.9.2" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Language" Version="6.0.33" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.11.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.11.0" />
-    <PackageReference Include="Moq" Version="4.20.70" />
-    <PackageReference Include="nunit" Version="4.2.1" />
+    <PackageReference Include="Moq" Version="4.20.71" />
+    <PackageReference Include="nunit" Version="4.2.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.0" />
-    <PackageReference Include="ReportGenerator" Version="5.3.8" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="ReportGenerator" Version="5.3.9" />
     <PackageReference Include="RichardSzalay.MockHttp" Version="7.0.0" />
   </ItemGroup>
 
