@@ -45,7 +45,7 @@
                      @bind-Value:set="@(x => OnCheckboxChangedAsync())" />
     }
 
-    <div class="mud-list-item-text @(Inset ? "mud-list-item-text-inset" : "")">
+    <div class="mud-list-item-text@(Inset ? " mud-list-item-text-inset" : string.Empty)">
         <MudText Typo="@TextTypo">
             @if (ChildContent != null)
             {
