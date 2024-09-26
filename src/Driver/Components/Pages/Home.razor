@@ -2,10 +2,10 @@
 
 <PageTitle>Home</PageTitle>
 <div style="display:block;">
-    <MudTextEditor @ref="@quill" Theme="bubble" Label="Notes" Variant="Variant.Outlined" Style="width: 400px; height: 400px;">
+    <MudTextEditor @ref="@quill" Theme="bubble" Label="Notes" Variant="Variant.Outlined" Style="width: 400px; height: 400px;" UniqueID="testbox">
         
         <EditorContent>
-            @((MarkupString?)Content)
+            @(Content)
         </EditorContent>
     </MudTextEditor>
 </div><br />
@@ -29,6 +29,10 @@
     private async void SaveItem()
     {
         var t = await quill.GetHTML();
+        Content = "";
+
+         await this.quill.LoadHTMLContent(Content);
+         //StateHasChanged();
     }
 }
 

@@ -16,7 +16,7 @@
                 placeholder: placeholder,
                 readOnly: readOnly,
                 theme: theme,
-                bounds: '#QuillEditor_' + id
+                bounds: id
             };
 
             if (formats) {
