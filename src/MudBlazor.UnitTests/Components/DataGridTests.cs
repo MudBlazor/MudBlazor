@@ -2752,6 +2752,37 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridHierarchyInitiallyExpandedFuncRendersExpandedRowsTest()
+        {
+            // Underlying data
+            // new Model("Sam", 56, Severity.Normal), 
+            // new Model("Alicia", 54, Severity.Info), 
+            // new Model("Ira", 27, Severity.Success),
+            // new Model("John", 32, Severity.Warning),
+            // new Model("Anders", 24, Severity.Error)
+
+            // Arrange
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            // Act
+            // Wait for the asynchronous expansion to complete
+            await comp.InvokeAsync(() => Task.CompletedTask);
+            comp.Render(); // Ensure the component has re-rendered
+
+            // Assert
+            // Verify that the expanded content is present for "Ira" and "Anders"
+            comp.Markup.Should().Contain("uid = Ira|27|Success|");
+            comp.Markup.Should().Contain("uid = Anders|24|Error|");
+
+            // Verify that the expanded content is not present for "Sam" and "Alicia"
+            comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
+            comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
+            comp.Markup.Should().NotContain("uid = John|32|Warning|");
+        }
+
+
+        [Test]
         public async Task DataGridChildRowContentTest()
         {
             var comp = Context.RenderComponent<DataGridChildRowContentTest>();
@@ -4489,5 +4520,7 @@ namespace MudBlazor.UnitTests.Components
             var query = source.OrderBy([]);
             query.Should().BeSameAs(source);
         }
+
+
     }
 }
