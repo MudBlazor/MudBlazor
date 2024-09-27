@@ -1202,7 +1202,7 @@ namespace MudBlazor
         {
             get
             {
-                return RenderedColumns.Any(x => !x.Hidden && (x.FooterTemplate != null || x.AggregateDefinition != null));
+                return RenderedColumns.Any(x => !x.HiddenState.Value && (x.FooterTemplate != null || x.AggregateDefinition != null));
             }
         }
 
@@ -1426,6 +1426,7 @@ namespace MudBlazor
         /// </summary>
         public Task ClearFiltersAsync()
         {
+            FilterDefinitions.ForEach(x => x.Value = null);
             FilterDefinitions.Clear();
             return InvokeServerLoadFunc();
         }
@@ -1444,7 +1445,9 @@ namespace MudBlazor
 
         internal async Task RemoveFilterAsync(Guid id)
         {
-            FilterDefinitions.RemoveAll(x => x.Id == id);
+            var index = FilterDefinitions.FindIndex(x => x.Id == id);
+            FilterDefinitions[index].Value = null;
+            FilterDefinitions.RemoveAt(index);
             await InvokeServerLoadFunc();
             GroupItems();
         }

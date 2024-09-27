@@ -2,83 +2,128 @@
 {
 #nullable enable
     /// <summary>
-    /// Represents the typography settings for different components.
+    /// Typography settings for <see cref="Typo"/> types used throughout the theme.
     /// </summary>
     public class Typography
     {
         /// <summary>
-        /// Gets or sets the default typography settings.
+        /// Gets or sets the typography settings for the default typo.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="MudBlazor.Default"/> constructor.
+        /// </remarks>
         public Default Default { get; set; } = new();
 
         /// <summary>
-        /// Gets or sets the typography settings for H1.
+        /// Gets or sets the typography settings for <see cref="Typo.h1"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="MudBlazor.H1"/> constructor.
+        /// </remarks>
         public H1 H1 { get; set; } = new();
 
         /// <summary>
-        /// Gets or sets the typography settings for H2.
+        /// Gets or sets the typography settings for <see cref="Typo.h2"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="MudBlazor.H2"/> constructor.
+        /// </remarks>
         public H2 H2 { get; set; } = new();
 
         /// <summary>
-        /// Gets or sets the typography settings for H3.
+        /// Gets or sets the typography settings for <see cref="Typo.h3"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="MudBlazor.H3"/> constructor.
+        /// </remarks>
         public H3 H3 { get; set; } = new();
 
         /// <summary>
-        /// Gets or sets the typography settings for H4.
+        /// Gets or sets the typography settings for <see cref="Typo.h4"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="MudBlazor.H4"/> constructor.
+        /// </remarks>
         public H4 H4 { get; set; } = new();
 
         /// <summary>
-        /// Gets or sets the typography settings for H5.
+        /// Gets or sets the typography settings for <see cref="Typo.h5"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="MudBlazor.H5"/> constructor.
+        /// </remarks>
         public H5 H5 { get; set; } = new();
 
         /// <summary>
-        /// Gets or sets the typography settings for H6.
+        /// Gets or sets the typography settings for <see cref="Typo.h6"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="MudBlazor.H6"/> constructor.
+        /// </remarks>
         public H6 H6 { get; set; } = new();
 
         /// <summary>
-        /// Gets or sets the typography settings for H7.
+        /// Gets or sets the typography settings for <see cref="Typo.subtitle1"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="MudBlazor.Subtitle1"/> constructor.
+        /// </remarks>
         public Subtitle1 Subtitle1 { get; set; } = new();
 
         /// <summary>
-        /// Gets or sets the typography settings for H8.
+        /// Gets or sets the typography settings for <see cref="Typo.subtitle2"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="MudBlazor.Subtitle2"/> constructor.
+        /// </remarks>
         public Subtitle2 Subtitle2 { get; set; } = new();
 
         /// <summary>
-        /// Gets or sets the typography settings for H9.
+        /// Gets or sets the typography settings for <see cref="Typo.body1"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="MudBlazor.Body1"/> constructor.
+        /// </remarks>
         public Body1 Body1 { get; set; } = new();
 
         /// <summary>
-        /// Gets or sets the typography settings for Body2.
+        /// Gets or sets the typography settings for <see cref="Typo.body2"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="MudBlazor.Body2"/> constructor.
+        /// </remarks>
         public Body2 Body2 { get; set; } = new();
 
         /// <summary>
-        /// Gets or sets the typography settings for Input.
+        /// Gets or sets the typography settings for <see cref="Typo.input"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="MudBlazor.Input"/> constructor.
+        /// </remarks>
         public Input Input { get; set; } = new();
 
         /// <summary>
-        /// Gets or sets the typography settings for Button.
+        /// Gets or sets the typography settings for <see cref="Typo.button"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="MudBlazor.Button"/> constructor.
+        /// </remarks>
         public Button Button { get; set; } = new();
 
         /// <summary>
-        /// Gets or sets the typography settings for Caption.
+        /// Gets or sets the typography settings for <see cref="Typo.caption"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="MudBlazor.Caption"/> constructor.
+        /// </remarks>
         public Caption Caption { get; set; } = new();
 
         /// <summary>
-        /// Gets or sets the typography settings for Overline.
+        /// Gets or sets the typography settings for <see cref="Typo.overline"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to the values from the <see cref="MudBlazor.Overline"/> constructor.
+        /// </remarks>
         public Overline Overline { get; set; } = new();
     }
 
@@ -92,7 +137,7 @@
         /// </summary>
         public Default()
         {
-            FontFamily = new[] { "Roboto", "Helvetica", "Arial", "sans-serif" };
+            FontFamily = ["Roboto", "Helvetica", "Arial", "sans-serif"];
             FontSize = ".875rem";
             FontWeight = 400;
             LineHeight = 1.43;

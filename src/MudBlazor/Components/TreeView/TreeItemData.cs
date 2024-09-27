@@ -30,6 +30,8 @@ public class TreeItemData<T> : IEquatable<TreeItemData<T>>
 
     public virtual bool Selected { get; set; }
 
+    public virtual bool Visible { get; set; } = true;
+
     public virtual List<TreeItemData<T>>? Children { get; set; }
 
     public virtual bool HasChildren => Children is not null && Children.Count > 0;

@@ -11,7 +11,7 @@ namespace MudBlazor
     /// after the component's event handlers are invoked. In some cases, it might be unnecessary or
     /// undesirable to trigger a rerender after an event handler is invoked. For example, an event
     /// handler might not modify the component state.
-    /// https://learn.microsoft.com/en-us/aspnet/core/blazor/performance?view=aspnetcore-6.0#avoid-rerendering-after-handling-events-without-state-changes
+    /// https://learn.microsoft.com/aspnet/core/blazor/performance?view=aspnetcore-6.0#avoid-rerendering-after-handling-events-without-state-changes
     /// </summary>
     public static class EventUtil
     {

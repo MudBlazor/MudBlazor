@@ -12,49 +12,62 @@ using static MudBlazor.Components.Highlighter.Splitter;
 namespace MudBlazor;
 
 #nullable enable
+
+/// <summary>
+/// A component which highlights words or phrases within text.
+/// </summary>
 public partial class MudHighlighter : MudComponentBase
 {
     private Memory<string> _fragments;
     private string? _regex;
 
     /// <summary>
-    /// The whole text in which a fragment will be highlighted
+    /// The text to consider for highlighting.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Highlighter.Behavior)]
     public string? Text { get; set; }
 
     /// <summary>
-    /// The fragment of text to be highlighted
+    /// The text to highlight within <see cref="Text" />.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Highlighter.Behavior)]
     public string? HighlightedText { get; set; }
 
     /// <summary>
-    /// The fragments of text to be highlighted
+    /// The multiple text fragments to highlight within <see cref="Text" />.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Highlighter.Behavior)]
     public IEnumerable<string> HighlightedTexts { get; set; } = Enumerable.Empty<string>();
 
     /// <summary>
-    /// Whether or not the highlighted text is case sensitive
+    /// Whether highlighted text is case sensitive.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Highlighter.Behavior)]
     public bool CaseSensitive { get; set; }
 
     /// <summary>
-    /// If true, highlights the text until the next regex boundary
+    /// Highlights text until the next RegEx boundary.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Highlighter.Behavior)]
     public bool UntilNextBoundary { get; set; }
 
     /// <summary>
-    /// If true, renders text as a <see cref="RenderFragment"/>.
+    /// Renders text as a <see cref="RenderFragment"/>.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Highlighter.Appearance)]
     public bool Markup { get; set; }

@@ -7,6 +7,10 @@ using System.Threading;
 namespace MudBlazor.Components.Highlighter
 {
 #nullable enable
+
+    /// <summary>
+    /// Splits text into fragments based on text to be highlighted.
+    /// </summary>
     public static class Splitter
     {
         private const string NextBoundary = ".*?\\b";
@@ -14,16 +18,15 @@ namespace MudBlazor.Components.Highlighter
         private static StringBuilder? s_stringBuilderCached;
 
         /// <summary>
-        /// Splits the text into fragments, according to the
-        /// text to be highlighted
+        /// Splits text into fragments based on text to be highlighted.
         /// </summary>
-        /// <param name="text">The whole text</param>
-        /// <param name="highlightedText">The text to be highlighted</param>
-        /// <param name="highlightedTexts">The texts to be highlighted</param>
-        /// <param name="regex">Regex expression that was used to split fragments.</param>
-        /// <param name="caseSensitive">Whether it's case sensitive or not</param>
-        /// <param name="untilNextBoundary">If true, splits until the next regex boundary</param>
-        /// <returns></returns>
+        /// <param name="text">The text to examine.</param>
+        /// <param name="highlightedText">The text to be highlighted.</param>
+        /// <param name="highlightedTexts">The multiple texts to be highlighted.</param>
+        /// <param name="regex">The regular expression used to split text into fragments.</param>
+        /// <param name="caseSensitive">Uses a case-sensitive check for highlighted text.</param>
+        /// <param name="untilNextBoundary">Highlights text until the next regular expression boundary.</param>
+        /// <returns>A block of memory with the matched text to highlight.</returns>
         public static Memory<string> GetFragments(string? text,
                                                        string? highlightedText,
                                                        IEnumerable<string>? highlightedTexts,
