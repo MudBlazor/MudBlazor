@@ -39,7 +39,7 @@ public class RegexMask : BaseMask
     protected Regex _regex;
 
     /// <summary>
-    /// The characters which which are jumped over when adding an input character.
+    /// The characters which are jumped over when adding an input character.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.  For example: for a delimiter of <c>.</c>, a mask of <c>^[0-9].[0-9].[0-9]$</c>, and characters typed of <c>012</c>, the resulting text would be <c>0.1.2</c>

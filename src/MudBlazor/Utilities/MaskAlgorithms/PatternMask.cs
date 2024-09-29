@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 namespace MudBlazor;
 
 /// <summary>
-/// An simple input mask consisting of characters.
+/// A simple input mask consisting of characters.
 /// </summary>
 /// <remarks>
 /// By default, the mask characters are: <c>a</c> (letter), <c>0</c> (digit), and <c>*</c> (letter or digit)
@@ -144,7 +144,6 @@ public class PatternMask : BaseMask
             return text;
         // fill the rest with placeholder
         // don't fill if text is still empty
-        // TODO: Convert to a StringBuilder
         var filledText = text;
         var len = text.Length;
         var mask = Mask ?? "";
@@ -171,7 +170,6 @@ public class PatternMask : BaseMask
     {
         text ??= "";
         var mask = Mask ?? "";
-        // TODO: Convert to a StringBuilder
         var alignedText = "";
         var maskIndex = maskOffset; // index in mask
         var textIndex = 0; // index in text
@@ -235,7 +233,7 @@ public class PatternMask : BaseMask
     public bool CleanDelimiters { get; set; }
 
     /// <summary>
-    /// The current text in the input, excluding delimeter or placeholder characters.
+    /// The current text in the input, excluding delimiter or placeholder characters.
     /// </summary>
     /// <remarks>
     /// When <see cref="CleanDelimiters"/> is <c>true</c>, any undefined characters will be removed.  

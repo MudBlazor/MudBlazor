@@ -163,7 +163,7 @@ public abstract class BaseMask : IMask
     }
 
     /// <summary>
-    /// Reapplies paarameters after they change, while preserving <see cref="Text"/>, <see cref="CaretPos"/>, and <see cref="Selection"/>.
+    /// Reapplies parameters after they change, while preserving <see cref="Text"/>, <see cref="CaretPos"/>, and <see cref="Selection"/>.
     /// </summary>
     protected virtual void Refresh()
     {

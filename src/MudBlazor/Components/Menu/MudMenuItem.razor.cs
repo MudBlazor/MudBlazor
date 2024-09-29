@@ -7,7 +7,7 @@ namespace MudBlazor
     /// <summary>
     /// A choice displayed as part of a list within a <see cref="MudMenu"/> component.
     /// </summary>
-    /// <seealso cref="MudMenuItem" />
+    /// <seealso cref="MudMenu" />
     public partial class MudMenuItem : MudComponentBase
     {
         [Inject]

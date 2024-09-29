@@ -103,7 +103,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Type of the input received.
+        /// The type of the underlying input. 
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="InputType.Text"/>.

@@ -20,7 +20,7 @@ namespace MudBlazor
         string Text { get; }
 
         /// <summary>
-        /// The current text in the input, excluding delimeter or placeholder characters.
+        /// The current text in the input, excluding delimiter or placeholder characters.
         /// </summary>
         string GetCleanText() => Text;
 
