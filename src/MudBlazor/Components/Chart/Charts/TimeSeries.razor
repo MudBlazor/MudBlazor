@@ -26,6 +26,14 @@
         {
             @((MarkupString)$"<text x='{horizontalLineValue.X.ToString(CultureInfo.InvariantCulture)}' y='{horizontalLineValue.Y.ToString(CultureInfo.InvariantCulture)}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value.ToString(CultureInfo.InvariantCulture)}</text>")
         }
+        @if (YAxisTitle is not null)
+        {
+            <g transform="translate(10, @(BoundHeight / 2))">
+                <text transform="rotate(-90)" font-size="14px" text-anchor="middle" dominant-baseline="hanging">
+                    @YAxisTitle
+                </text>
+            </g>
+        }
     </g>
     <g class="mud-charts-xaxis">
         @foreach (var verticalLineValue in _verticalValues)
@@ -51,6 +59,12 @@
 
     @MudChartParent?.CustomGraphics
 </svg>
+@if (XAxisTitle is not null)
+{
+    <MudStack Class="mt-2" Row="true" Justify="Justify.Center">
+        <MudText Typo="Typo.body2">@XAxisTitle</MudText>
+    </MudStack>
+}
 <Legend Data="@_legends" />
 
 @code {
