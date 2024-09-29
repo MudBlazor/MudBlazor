@@ -209,6 +209,82 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task CoerceValueAndNotCoerceTextAndNotImmediate_ValueSetOnBlur()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<MudAutocomplete<string>>(parameters =>
+            {
+                parameters.Add(a => a.CoerceValue, true);
+                parameters.Add(a => a.CoerceText, false);
+                parameters.Add(a => a.Immediate, false);
+                parameters.Add(a => a.DebounceInterval, 0);
+            });
+            var ccc = comp.FindComponent<MudInput<string>>();
+
+            // Assert : Initial
+
+            comp.Instance.Text.Should().BeNull();
+            comp.Instance.Value.Should().BeNull();
+
+            // Act
+
+            comp.Find("input").Input("ABC");
+
+            // Assert : Immediate false, so value isn't set
+
+            comp.Instance.Text.Should().Be("ABC");
+            comp.Instance.Value.Should().BeNull();
+
+            // Act
+
+            comp.Find("input").Blur();
+
+            // Assert : Focus lost, so value is set
+
+            comp.Instance.Text.Should().Be("ABC");
+            comp.Instance.Value.Should().Be("ABC");
+        }
+
+        [Test]
+        public async Task CoerceValueAndNotCoerceTextAndNotImmediate_ValueSetOnEnter()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<MudAutocomplete<string>>(parameters =>
+            {
+                parameters.Add(a => a.CoerceValue, true);
+                parameters.Add(a => a.CoerceText, false);
+                parameters.Add(a => a.Immediate, false);
+                parameters.Add(a => a.DebounceInterval, 0);
+            });
+            var ccc = comp.FindComponent<MudInput<string>>();
+
+            // Assert : Initial
+
+            comp.Instance.Text.Should().BeNull();
+            comp.Instance.Value.Should().BeNull();
+
+            // Act
+
+            comp.Find("input").Input("ABC");
+
+            // Assert : Immediate false, so value isn't set
+
+            comp.Instance.Text.Should().Be("ABC");
+            comp.Instance.Value.Should().BeNull();
+
+            // Act
+
+            comp.Find("input").KeyUp("Enter");
+
+            // Assert : Enter pressed, so value is set
+
+            comp.Instance.Text.Should().Be("ABC");
+            comp.Instance.Value.Should().Be("ABC");
+        }
+
+        [Test]
         public async Task AutocompleteCoercionOffTest()
         {
             var comp = Context.RenderComponent<AutocompleteTest1>();
