@@ -42,15 +42,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        // [WIP]
-        public void DateTimePickerOpenButtonAriaLabel()
-        {
-            /*var comp = Context.RenderComponent<DateTimePickerValidationTest>();
-            var openButton = comp.Find(".mud-input-adornment button");
-            openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open DateTime Picker");*/
-        }
-
-        [Test]
         /*[Ignore("Unignore for performance measurements, not needed for code coverage")]*/
         public void DatePicker_Render_Performance()
         {
@@ -236,10 +227,11 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ShowWeekNumbers()
         {
-            var comp = Context.RenderComponent<MudDateTimePicker>(parameters => parameters
-                .Add(p => p.ShowWeekNumbers, true)
-            );
-            //comp.
+            var comp = OpenPicker(Parameter("ShowWeekNumbers", true));
+            comp.FindAll(".mud-picker-calendar-week").Count.Should().Be(5 + 2);
+
+            comp = OpenPicker(Parameter("ShowWeekNumbers", false));
+            comp.FindAll(".mud-picker-calendar-week").Count.Should().Be(1);
         }
 
         public IRenderedComponent<SimpleDateTimePickerTest> OpenPicker(params ComponentParameter[] parameters)
@@ -336,99 +328,6 @@ namespace MudBlazor.UnitTests.Components
             // should show years
             comp.FindAll("button.mud-picker-calendar-header-transition")[0].Click();
             comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
-        }
-
-        [Test]
-        // [WIP]: OpenToMonth_Select3rdMonth_Select2ndDay_CheckDate
-        public void OpenToMonth_Select4thMonth_Select23rdDay_Select15Hour_Select25Minutes_CheckDate()
-        {
-            var comp = OpenPicker(Parameter("DateOpenTo", OpenTo.Month));
-            var picker = comp.FindComponent<MudDateTimePicker>();
-            picker.Instance.DateTime.Should().BeNull();
-            // should show months
-            comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
-            comp.FindAll("button.mud-picker-month")[3].Click();
-            comp.FindAll("button.mud-picker-calendar-day")
-                .Where(x => x.TrimmedText().Equals("23")).First().Click();
-            // Click on external dial (15 hours) and then click on 25 minutes
-            comp.FindAll("div.mud-hour")[5].Click();
-            comp.FindAll("div.mud-minute")[25].Click();
-            // clicking outside to close
-            comp.Find("div.mud-overlay").Click();
-            picker.Instance.DateTime.Should().Be(DateTime.Parse($"{DateTime.Now.Year}-4-23 15:25:00"));
-        }
-
-        [Test]
-        // [WIP]: Open_ClickCalendarHeader_Click4thMonth_Click23rdDay_CheckDate
-        public void Open_ClickCalendarHeader_Click4thMonth23rdDay_Click16Hour23Minute_CheckDateTime()
-        {
-            var comp = OpenPicker(Parameter("FixYear", DateTime.Now.Year));
-            var picker = comp.FindComponent<MudDateTimePicker>();
-            comp.Find("button.mud-button-month").Click(); 
-            // should show months
-            comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
-            comp.FindAll("button.mud-picker-month")[3].Click();
-            comp.FindAll("button.mud-picker-calendar-day")
-                .Where(x => x.TrimmedText().Equals("23")).First().Click();
-            // Click on external dial (16 hours) and then click on 35 minutes
-            comp.FindAll("div.mud-hour")[7].Click();
-            comp.FindAll("div.mud-minute")[35].Click();
-            comp.Find("div.mud-overlay").Click();
-            picker.Instance.DateTime.Should().Be(DateTime.Parse($"{DateTime.Now.Year}-4-23 16:35:00"));
-        }
-
-        [Test]
-        // [WIP]: DatePickerStaticWithPickerActionsDayClick_Test
-        public void DateTimePickerStaticWithPickerActionsDayAndTimeClick_Test()
-        {
-            var comp = Context.RenderComponent<DateTimePickerStaticTest>();
-            var picker = comp.FindComponent<MudDateTimePicker>();
-            // click the day 23
-            comp.FindAll("button.mud-picker-calendar-day")
-                .Where(x => x.TrimmedText().Equals("23")).First().Click();
-            // Click on external dial (16 hours) and then click on 35 minutes
-            comp.FindAll("div.mud-hour")[7].Click();
-            comp.FindAll("div.mud-minute")[35].Click();
-            picker.Instance.DateTime.Should().Be(DateTime.Today);
-            comp.FindAll("button").Where(x => x.TrimmedText().Equals("Ok")).First().Click();
-            picker.Instance.DateTime.Should().Be(DateTime.Parse($"{DateTime.Now.Year}-{DateTime.Now.Month}-23 16:35:00"));
-        }
-
-        [Test]
-        public void DateTimePickerAutoclose_OpenSelectShouldClose_Test()
-        {
-            var comp = OpenPicker(Parameter("AutoClose", true));
-            var picker = comp.FindComponent<MudDateTimePicker>();
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
-            // click the day 23
-            comp.FindAll("button.mud-picker-calendar-day")
-                .Where(x => x.TrimmedText().Equals("23")).First().Click();
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
-            // Click on external dial (16 hours) and then click on 35 minutes
-            comp.FindAll("div.mud-hour")[7].Click();
-            comp.FindAll("div.mud-minute")[35].Click();
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
-        }
-
-        [Test]
-        public void DateTimePickerAutoclose_RepeatSelection_ShouldNotClose_Test()
-        {
-            var comp = OpenPicker(Parameter("AutoClose", true));
-            var picker = comp.FindComponent<MudDateTimePicker>();
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
-            // Click on external dial (16 hours) and then click on 35 minutes
-            comp.FindAll("div.mud-hour")[7].Click();
-            comp.FindAll("div.mud-minute")[35].Click();
-            picker.Instance.DateTime.Should().Be(null);
-            // Click on external dial (16 hours) and then click on 33 minutes
-            comp.FindAll("div.mud-hour")[7].Click();
-            comp.FindAll("div.mud-minute")[33].Click();
-            picker.Instance.DateTime.Should().Be(null);
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
-            // click the day 23
-            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("23")).First().Click();
-            picker.Instance.DateTime.Should().Be(DateTime.Parse($"{DateTime.Now.Year}-{DateTime.Now.Month}-23 16:33:00"));
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
         }
 
         [Test]

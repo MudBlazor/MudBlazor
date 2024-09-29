@@ -220,6 +220,16 @@ namespace MudBlazor
             await base.OnPickerOpenedAsync();
         }
 
+        protected override Task OnOpenedAsync()
+        {
+            if (_value is not null)
+            {
+                _datePicked = _value?.Date;
+                _timePicked = _value?.TimeOfDay;
+            }
+            return base.OnOpenedAsync();
+        }
+
         protected string OnSet(DateTime? value)
         {
             return value?.ToString(GetDateTimeFormat()) ?? null;
