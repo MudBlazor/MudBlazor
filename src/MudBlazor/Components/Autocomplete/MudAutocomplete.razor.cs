@@ -490,6 +490,7 @@ namespace MudBlazor
         {
             Adornment = Adornment.End;
             IconSize = Size.Medium;
+            Immediate = true;
         }
 
         /// <summary>
@@ -878,14 +879,20 @@ namespace MudBlazor
 
         internal async Task OnEnterKeyAsync()
         {
-            if (!Open)
+            if (!Open || _items == null || _items.Length == 0)
+            {
+                if (!Immediate)
+                {
+                    _debounceTimer?.Dispose();
+
+                    var value = Converter.Get(Text);
+                    await SetValueAsync(value, updateText: false);
+                }
                 return;
+            }
 
             try
             {
-                if (_items == null || _items.Length == 0)
-                    return;
-
                 if (_selectedListItemIndex >= 0 && _selectedListItemIndex < _items.Length)
                     await SelectOptionAsync(_items[_selectedListItemIndex]);
             }
@@ -931,8 +938,15 @@ namespace MudBlazor
         {
             _isFocused = false;
 
-            return OnBlur.InvokeAsync(args);
+            if (!Immediate)
+            {
+                _debounceTimer?.Dispose();
 
+                var value = Converter.Get(Text);
+                return SetValueAsync(value, updateText: false);
+            }
+
+            return OnBlur.InvokeAsync(args);
             // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value,
             // resulting in a premature validation. thus, don't call base
             //base.OnBlurred(args);
@@ -966,13 +980,15 @@ namespace MudBlazor
 
         private Task CoerceValueToTextAsync()
         {
-            if (!CoerceValue)
-                return Task.CompletedTask;
+            if (Immediate && CoerceValue)
+            {
+                _debounceTimer?.Dispose();
 
-            _debounceTimer?.Dispose();
+                var value = Converter.Get(Text);
+                return SetValueAsync(value, updateText: false);
+            }
 
-            var value = Converter.Get(Text);
-            return SetValueAsync(value, updateText: false);
+            return Task.CompletedTask;
         }
 
         protected override void Dispose(bool disposing)
