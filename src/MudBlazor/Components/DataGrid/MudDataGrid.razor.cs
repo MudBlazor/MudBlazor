@@ -2,14 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
@@ -1854,6 +1849,11 @@ namespace MudBlazor
         {
             _filtersMenuVisible = true;
             StateHasChanged();
+        }
+
+        private void CloseFilters()
+        {
+            FilterDefinitions.RemoveAll(p => p.Value == null);
         }
 
         internal async Task HideAllColumnsAsync()
