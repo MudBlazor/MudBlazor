@@ -20,9 +20,9 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// A form component for uploading one or more files.  For <c>T</c>, use either <c>IBrowserFile</c> for a single file or <c>IReadOnlyCollection&lt;IBrowserFile&gt;</c> for multiple files.
+    /// A form component for uploading one or more files.  For <c>T</c>, use either <c>IBrowserFile</c> for a single file or <c>IReadOnlyList&lt;IBrowserFile&gt;</c> for multiple files.
     /// </summary>
-    /// <typeparam name="T">Either <see cref="IBrowserFile"/> for a single file or <see cref="IReadOnlyCollection{IBrowserFile}">IReadOnlyCollection&lt;IBrowserFile&gt;</see> for multiple files.</typeparam>
+    /// <typeparam name="T">Either <see cref="IBrowserFile"/> for a single file or <see cref="IReadOnlyList{IBrowserFile}">IReadOnlyList&lt;IBrowserFile&gt;</see> for multiple files.</typeparam>
     public partial class MudFileUpload<T> : MudFormComponent<T, string>, IActivatable
     {
         private readonly ParameterState<T?> _filesState;
@@ -53,7 +53,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// When <c>T</c> is <see cref="IBrowserFile" />, a single file is returned.<br />
-        /// When <c>T</c> is <see cref="IReadOnlyCollection{IBrowserFile}">IReadOnlyCollection&lt;IBrowserFile&gt;</see>, multiple files are returned.
+        /// When <c>T</c> is <see cref="IReadOnlyList{IBrowserFile}">IReadOnlyList&lt;IBrowserFile&gt;</see>, multiple files are returned.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
@@ -77,7 +77,7 @@ namespace MudBlazor
         /// Appends additional files to the existing list.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>. This applies when <c>T</c> is <see cref="IReadOnlyCollection{IBrowserFile}">IReadOnlyCollection&lt;IBrowserFile&gt;</see>.
+        /// Defaults to <c>false</c>. This applies when <c>T</c> is <see cref="IReadOnlyList{IBrowserFile}">IReadOnlyList&lt;IBrowserFile&gt;</see>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
