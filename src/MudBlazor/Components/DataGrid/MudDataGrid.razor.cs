@@ -1851,9 +1851,12 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private void CloseFilters()
+        internal void CloseFilters()
         {
-            FilterDefinitions.RemoveAll(p => p.Value == null);
+            FilterDefinitions.RemoveAll(p =>
+                p.Value == null
+                && (p.Operator != FilterOperator.String.Empty || p.Operator != FilterOperator.Number.Empty || p.Operator != FilterOperator.DateTime.Empty)
+            );
         }
 
         internal async Task HideAllColumnsAsync()
