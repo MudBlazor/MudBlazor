@@ -271,7 +271,7 @@ namespace MudBlazor
                         // prevent dead keys like ^ ` ´ etc
                         KeyOptions.Of(key: "Dead", preventDown: "key+any"),
                         // prevent input of all other characters except allowed, like [0-9.,-+]
-                        KeyOptions.Of(key: $"/^(?!{(Pattern ?? "[0-9]").TrimEnd('*')}).$/",preventDown: "key+none|key+shift|key+alt")
+                        KeyOptions.Of(key: $"/^(?!{(Pattern ?? "[0-9]").TrimEnd('*')}).$/", preventDown: "key+none|key+shift|key+alt")
                     ]);
                 await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
             }
