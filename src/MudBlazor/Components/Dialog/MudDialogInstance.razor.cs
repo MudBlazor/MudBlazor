@@ -23,11 +23,11 @@ namespace MudBlazor
     /// <seealso cref="DialogService"/>
     public partial class MudDialogInstance : MudComponentBase, IDisposable
     {
-        private DialogOptions _options = new();
+        private DialogOptions? _options = new();
         private readonly string _elementId = Identifier.Create("dialog");
 
         [Inject]
-        private IKeyInterceptorService KeyInterceptorService { get; set; }
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
