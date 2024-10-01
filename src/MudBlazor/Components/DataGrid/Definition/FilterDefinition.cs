@@ -7,25 +7,45 @@ using System;
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// Represents the logic of a filter applied to <see cref="MudGrid"/> data.
+    /// </summary>
+    /// <typeparam name="T">The type of object being filtered.</typeparam>
     public class FilterDefinition<T> : IFilterDefinition<T>
     {
         private int _cachedExpressionHashCode;
         private Func<T, bool>? _cachedFilterFunction;
 
+        /// <inheritdoc />
         public Guid Id { get; set; } = Guid.NewGuid();
 
+        /// <inheritdoc />
         public Column<T>? Column { get; set; }
 
+        /// <inheritdoc />
         public string? Title { get; set; }
 
+        /// <inheritdoc />
         public string? Operator { get; set; }
 
+        /// <inheritdoc />
         public object? Value { get; set; }
 
+        /// <summary>
+        /// The function which performs the filter.
+        /// </summary>
         public Func<T, bool>? FilterFunction { get; set; }
 
+        /// <summary>
+        /// The type of column being filtered.
+        /// </summary>
         public FieldType FieldType => FieldType.Identify(Column?.PropertyType);
 
+        /// <summary>
+        /// Generates a function which performs the filter.
+        /// </summary>
+        /// <param name="filterOptions">Any options for generation, such as case sensitivity.</param>
+        /// <returns>A function which performs the filter.</returns>
         public Func<T, bool> GenerateFilterFunction(FilterOptions? filterOptions = null)
         {
             if (FilterFunction is not null)

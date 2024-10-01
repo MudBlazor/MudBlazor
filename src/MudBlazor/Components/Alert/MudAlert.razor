@@ -3,7 +3,7 @@
 @inherits MudComponentBase
 @inject InternalMudLocalizer Localizer
 
-<div role="alert" aria-live="assertive" @attributes="UserAttributes" class="@Classname" Style="@Style" @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)">
+<div @attributes="UserAttributes" class="@Classname" Style="@Style" @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)">
 <div class="@ClassPosition">
     @if (!NoIcon)
     {
@@ -19,7 +19,7 @@
 {
     <div class="mud-alert-close">
         <MudIconButton Class="mud-alert-close-button" Icon="@CloseIcon" @onclick="OnCloseIconClickAsync" Size="Size.Small"
-                        aria-label="@Localizer[nameof(LanguageResource.MudAlert_Close)]" />
+                        aria-label="@Localizer[LanguageResource.MudAlert_Close]" />
     </div>
 }
 </div>

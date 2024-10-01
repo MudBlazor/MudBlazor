@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.JSInterop;
@@ -41,7 +42,7 @@ namespace MudBlazor.UnitTests.Components
 
         private BrowserViewportService AddBrowserViewportService(int height = 640, int width = 960) => AddBrowserViewportService(new BrowserWindowSize { Height = height, Width = width });
 
-        private BrowserWindowSize BreakpointBrowserAssociatedSize(Breakpoint breakpoint)
+        private static BrowserWindowSize BreakpointBrowserAssociatedSize(Breakpoint breakpoint)
         {
             return breakpoint switch
             {
@@ -68,6 +69,44 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("button").Click();
             comp.FindAll("aside.mud-drawer--closed.mud-drawer-temporary").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeFalse();
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task Temporary_OverlayAutoClose(bool overlayAutoClose)
+        {
+            _ = AddBrowserViewportService();
+            var comp = Context.RenderComponent<DrawerTest1>(parameters => parameters
+                .Add(parameter => parameter.Variant, DrawerVariant.Temporary)
+                .Add(parameter => parameter.OverlayAutoClose, overlayAutoClose));
+
+            // Open the drawer
+            comp.Find("button").Click();
+
+            comp.FindAll("aside.mud-drawer--open.mud-drawer-temporary").Count.Should().Be(1);
+            comp.FindAll("aside+.mud-overlay-drawer").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeTrue();
+
+            // Clicking on the overlay
+            await comp.Find("div.mud-overlay").ClickAsync(new MouseEventArgs());
+
+            if (overlayAutoClose)
+            {
+                // Drawer should close
+                comp.FindAll("aside.mud-drawer--open.mud-drawer-temporary").Count.Should().Be(0);
+                comp.FindAll("aside.mud-drawer--closed.mud-drawer-temporary").Count.Should().Be(1);
+                comp.FindAll("aside+.mud-overlay-drawer").Count.Should().Be(0);
+                comp.Instance.Drawer.Open.Should().BeFalse();
+            }
+            else
+            {
+                // Drawer should stay open
+                comp.FindAll("aside.mud-drawer--open.mud-drawer-temporary").Count.Should().Be(1);
+                comp.FindAll("aside.mud-drawer--closed.mud-drawer-temporary").Count.Should().Be(0);
+                comp.FindAll("aside+.mud-overlay-drawer").Count.Should().Be(1);
+                comp.Instance.Drawer.Open.Should().BeTrue();
+            }
         }
 
         [Test]

@@ -13,6 +13,8 @@ namespace MudBlazor
     /// <summary>
     /// Represents a navigation panel docked to the side of the page.
     /// </summary>
+    /// <seealso cref="MudDrawerContainer"/>
+    /// <seealso cref="MudDrawerHeader"/>
     public partial class MudDrawer : MudComponentBase, INavigationEventReceiver, IBrowserViewportObserver, IDisposable
     {
         private double _height;
@@ -22,12 +24,15 @@ namespace MudBlazor
         private readonly ParameterState<Breakpoint> _breakpointState;
         private readonly ParameterState<DrawerClipMode> _clipModeState;
         private ElementReference _contentRef;
-        private bool _closeOnMouseLeave = false;
+        private bool _closeOnPointerLeave = false;
         private bool _isRendered;
         private bool _initial = true;
         private bool _keepInitialState;
         private Breakpoint _lastUpdatedBreakpoint = Breakpoint.None;
 
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
         public MudDrawer()
         {
             using var registerScope = CreateRegisterScope();
@@ -104,7 +109,7 @@ namespace MudBlazor
         /// The size of the drop shadow.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>4</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
+        /// Defaults to <c>1</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Appearance)]
@@ -124,21 +129,24 @@ namespace MudBlazor
         /// The color of the drawer.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
+        /// Defaults to <see cref="Color.Default"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Appearance)]
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// Variant of the drawer. It specifies how the drawer will be displayed.
+        /// The display variant of this drawer.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="DrawerVariant.Responsive"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public DrawerVariant Variant { get; set; } = DrawerVariant.Responsive;
 
         /// <summary>
-        /// The content within this component.
+        /// The content within this drawer.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
@@ -155,7 +163,20 @@ namespace MudBlazor
         public bool Overlay { get; set; } = true;
 
         /// <summary>
-        /// For mini drawers, opens this drawer when the mouse hovers over it.
+        /// Sets a value indicating whether the overlay should automatically close when clicked.
+        /// </summary>
+        /// <remarks>
+        /// If the <see cref="Variant"/> is set to <see cref="DrawerVariant.Temporary"/>, an overlay will be displayed. 
+        /// When this property is <c>true</c>, clicking on the overlay will close it automatically. 
+        /// When this property is <c>false</c>, the overlay will not close automatically.
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Drawer.Behavior)]
+        public bool OverlayAutoClose { get; set; } = true;
+
+        /// <summary>
+        /// For mini drawers, opens this drawer when the pointer hovers over it.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  Applies when <see cref="Variant" /> is set to <see cref="DrawerVariant.Mini" />.
@@ -400,20 +421,20 @@ namespace MudBlazor
 
         internal bool IsFixed => Fixed && DrawerContainer is MudLayout;
 
-        private async Task OnMouseEnterAsync()
+        private async Task OnPointerEnterAsync()
         {
             if (Variant == DrawerVariant.Mini && !_openState.Value && OpenMiniOnHover)
             {
-                _closeOnMouseLeave = true;
+                _closeOnPointerLeave = true;
                 await _openState.SetValueAsync(true);
             }
         }
 
-        private async Task OnMouseLeaveAsync()
+        private async Task OnPointerLeaveAsync()
         {
-            if (Variant == DrawerVariant.Mini && _openState.Value && _closeOnMouseLeave)
+            if (Variant == DrawerVariant.Mini && _openState.Value && _closeOnPointerLeave)
             {
-                _closeOnMouseLeave = false;
+                _closeOnPointerLeave = false;
                 await _openState.SetValueAsync(false);
             }
         }

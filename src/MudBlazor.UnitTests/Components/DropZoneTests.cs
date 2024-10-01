@@ -110,7 +110,7 @@ namespace MudBlazor.UnitTests.Components
 
             Context.Services.AddSingleton(typeof(IJSRuntime), jsRuntimeMock.Object);
 
-            jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudDragAndDrop.initDropZone", It.Is<object[]>(y => y.Length == 1 && Guid.Parse(y[0].ToString()) != Guid.Empty)))
+            jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudDragAndDrop.initDropZone", It.Is<object[]>(y => y.Length == 1)))
                 .ReturnsAsync(Mock.Of<IJSVoidResult>(), TimeSpan.FromMilliseconds(200)).Verifiable();
 
             var comp = Context.RenderComponent<DropzoneBasicTest>();
@@ -1253,6 +1253,54 @@ namespace MudBlazor.UnitTests.Components
             secondDropItemText = secondDropItem.Children[0].TextContent;
 
             secondDropItemText.Should().Be("Second Item");
+        }
+
+
+        [Test]
+        public async Task DropZone_IsOriginTest()
+        {
+            var comp = Context.RenderComponent<DropzoneBasicTest>();
+
+            var container = comp.Find(".mud-drop-container");
+            container.Children.Should().HaveCount(2);
+
+            var firstDropZone = container.Children[0];
+            firstDropZone.Children.Should().HaveCount(2);
+
+            var firstDropItem = firstDropZone.Children[1];
+
+            firstDropItem.TextContent.Should().Be("First Item");
+            await firstDropItem.DragStartAsync(new DragEventArgs());
+
+            var containerComponent = comp.FindComponent<MudDropContainer<TestComponents.DropzoneBasicTest.SimpleDropItem>>();
+            containerComponent.Instance.IsOrigin(0, "Column 1").Should().Be(true);
+#pragma warning disable CS0618 // Type or member is obsolete
+            containerComponent.Instance.IsOrign(0, "Column 1").Should().Be(true);
+#pragma warning restore CS0618 // Type or member is obsolete
+        }
+
+        [Test]
+        public async Task DropZone_GetTransactionOriginZoneIdentifierTest()
+        {
+            var comp = Context.RenderComponent<DropzoneBasicTest>();
+
+            var container = comp.Find(".mud-drop-container");
+            container.Children.Should().HaveCount(2);
+
+            var firstDropZone = container.Children[0];
+            firstDropZone.Children.Should().HaveCount(2);
+
+            var firstDropItem = firstDropZone.Children[1];
+
+            firstDropItem.TextContent.Should().Be("First Item");
+            await firstDropItem.DragStartAsync(new DragEventArgs());
+
+            var containerComponent = comp.FindComponent<MudDropContainer<TestComponents.DropzoneBasicTest.SimpleDropItem>>();
+            containerComponent.Instance.GetTransactionOriginZoneIdentifier().Should().Be("Column 1");
+#pragma warning disable CS0618 // Type or member is obsolete
+            containerComponent.Instance.GetTransactionOrignZoneIdentifier().Should().Be("Column 1");
+            containerComponent.Instance.GetTransactionOrignZoneIdentiifer().Should().Be("Column 1");
+#pragma warning restore CS0618 // Type or member is obsolete
         }
     }
 }

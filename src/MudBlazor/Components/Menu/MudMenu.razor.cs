@@ -10,9 +10,9 @@ namespace MudBlazor
 #nullable enable
     public partial class MudMenu : MudComponentBase, IActivatable
     {
-        private bool _open;
         private string? _popoverStyle;
-        private bool _isMouseOver = false;
+        private bool _isTemporary;
+        private bool _isPointerOver;
 
         protected string Classname =>
             new CssBuilder("mud-menu")
@@ -29,8 +29,11 @@ namespace MudBlazor
         public string? Label { get; set; }
 
         /// <summary>
-        /// Sets the aria-label of the menu button when <see cref="ActivatorContent"/> is not set.
+        /// The <c>aria-label</c> for the menu button when <see cref="ActivatorContent"/> is not set.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.Behavior)]
         public string? AriaLabel { get; set; }
@@ -201,36 +204,40 @@ namespace MudBlazor
         /// <summary>
         /// Gets a value indicating whether the menu is currently open or not.
         /// </summary>
-        public bool Open
-        {
-            get { return _open; }
-        }
+        public bool Open { get; private set; }
 
         /// <summary>
         /// Closes the menu.
         /// </summary>
         public Task CloseMenuAsync()
         {
-            _open = false;
-            _isMouseOver = false;
+            Open = false;
+            _isPointerOver = false;
             _popoverStyle = null;
             StateHasChanged();
 
-            return OpenChanged.InvokeAsync(_open);
+            return OpenChanged.InvokeAsync(Open);
         }
 
         /// <summary>
         /// Opens the menu.
         /// </summary>
-        /// <param name="args">The arguments of the calling mouse event. If
-        /// <see cref="PositionAtCursor"/> is true, the menu will be positioned using the
-        /// coordinates in this parameter.</param>
-        public Task OpenMenuAsync(EventArgs args)
+        /// <param name="args">
+        /// The arguments of the calling mouse/pointer event.
+        /// If <see cref="PositionAtCursor"/> is true, the menu will be positioned using the coordinates in this parameter.
+        /// </param>
+        /// <param name="temporary">
+        /// If the menu is temporary, an overlay won't be applied.
+        /// This is relevant for a menu that is only open while the cursor is over it.
+        /// </param>
+        public Task OpenMenuAsync(EventArgs args, bool temporary = false)
         {
             if (Disabled)
             {
                 return Task.CompletedTask;
             }
+
+            _isTemporary = temporary;
 
             if (PositionAtCursor)
             {
@@ -240,10 +247,16 @@ namespace MudBlazor
                 }
             }
 
-            _open = true;
+            // Don't open if already open, but let the stuff above get updated.
+            if (Open)
+            {
+                return Task.CompletedTask;
+            }
+
+            Open = true;
             StateHasChanged();
 
-            return OpenChanged.InvokeAsync(_open);
+            return OpenChanged.InvokeAsync(Open);
         }
 
         /// <summary>
@@ -258,57 +271,74 @@ namespace MudBlazor
         /// <summary>
         /// Toggle the visibility of the menu.
         /// </summary>
-        /// <param name="args">Either <see cref="MouseEventArgs"/> or <see cref="TouchEventArgs"/></param>
-        public async Task ToggleMenuAsync(EventArgs args)
+        /// <param name="args">The arguments from the event that called this.</param>
+        public Task ToggleMenuAsync(EventArgs args)
         {
             if (Disabled)
+            {
+                return Task.CompletedTask;
+            }
+
+            if (args is MouseEventArgs mouseEventArgs)
+            {
+                var leftClick = ActivationEvent == MouseEvent.LeftClick && mouseEventArgs.Button == 0;
+                var rightClick = ActivationEvent == MouseEvent.RightClick && (mouseEventArgs.Button is -1 or 2); // oncontextmenu is -1, right click is 2.
+
+                // Only allow valid left or right conditions, except MouseOver activation which should always be allowed to toggle.
+                if (!leftClick && !rightClick && ActivationEvent != MouseEvent.MouseOver)
+                {
+                    return Task.CompletedTask;
+                }
+            }
+
+            if (Open)
+            {
+                return CloseMenuAsync();
+            }
+            else
+            {
+                return OpenMenuAsync(args);
+            }
+        }
+
+        private async Task PointerEnterAsync(PointerEventArgs args)
+        {
+            // The Enter event will be interfere with the Click event on devices that can't hover.
+            if (args.PointerType is "touch" or "pen")
             {
                 return;
             }
 
-            // oncontextmenu turns a touch event into MouseEventArgs but with a button of -1.
-            if (args is MouseEventArgs mouseEventArgs && mouseEventArgs.Button != -1)
-            {
-                if (ActivationEvent == MouseEvent.LeftClick && mouseEventArgs.Button != 0 && !_open)
-                {
-                    return;
-                }
+            _isPointerOver = true;
 
-                if (ActivationEvent == MouseEvent.RightClick && mouseEventArgs.Button != 2 && !_open)
-                {
-                    return;
-                }
+            if (Open || ActivationEvent != MouseEvent.MouseOver)
+            {
+                return;
             }
 
-            if (_open)
-            {
-                await CloseMenuAsync();
-            }
-            else
-            {
-                await OpenMenuAsync(args);
-            }
+            await OpenMenuAsync(args, true);
         }
 
-        private async Task MouseEnterAsync(MouseEventArgs args)
+        private async Task PointerLeaveAsync()
         {
-            _isMouseOver = true;
-
-            if (ActivationEvent == MouseEvent.MouseOver)
+            // There's no reason to handle the leave event if the pointer never entered the menu.
+            if (!_isPointerOver)
             {
-                await OpenMenuAsync(args);
+                return;
             }
-        }
 
-        private async Task MouseLeaveAsync()
-        {
-            _isMouseOver = false;
+            _isPointerOver = false;
 
-            await Task.Delay(100);
-
-            if (ActivationEvent == MouseEvent.MouseOver && !_isMouseOver)
+            if (_isTemporary && ActivationEvent == MouseEvent.MouseOver)
             {
-                await CloseMenuAsync();
+                // Wait a bit to allow the cursor to move from the activator to the items popover.
+                await Task.Delay(100);
+
+                // Close the menu if, since the delay, the pointer hasn't re-entered the menu or the overlay was made persistent (because the activator was clicked).
+                if (!_isPointerOver && _isTemporary)
+                {
+                    await CloseMenuAsync();
+                }
             }
         }
 

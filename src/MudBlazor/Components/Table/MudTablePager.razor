@@ -1,5 +1,7 @@
 ﻿@namespace MudBlazor
+@using MudBlazor.Resources
 @inherits MudComponentBase
+@inject InternalMudLocalizer Localizer
 
 <MudToolBar @attributes="UserAttributes" Class="@Classname" Style="@Style">
     @if (HorizontalAlignment == HorizontalAlignment.End ||
@@ -41,10 +43,10 @@
     @if (!HidePagination)
     {
         <div class="mud-table-pagination-actions">
-            <MudIconButton Class="mud-flip-x-rtl" Icon="@FirstIcon" Disabled="@BackButtonsDisabled" @onclick="@(() => Table?.NavigateTo(Page.First))" aria-label="First page" />
-            <MudIconButton Class="mud-flip-x-rtl" Icon="@BeforeIcon" Disabled="@BackButtonsDisabled" @onclick="@(() => Table?.NavigateTo(Page.Previous))" aria-label="Previous page" />
-            <MudIconButton Class="mud-flip-x-rtl" Icon="@NextIcon" Disabled="@ForwardButtonsDisabled" @onclick="@(() => Table?.NavigateTo(Page.Next))" aria-label="Next page" />
-            <MudIconButton Class="mud-flip-x-rtl" Icon="@LastIcon" Disabled="@ForwardButtonsDisabled" @onclick="@(() => Table?.NavigateTo(Page.Last))" aria-label="Last page" />
+            <MudIconButton Class="mud-flip-x-rtl" Icon="@FirstIcon" Disabled="@BackButtonsDisabled" @onclick="@(() => Table?.NavigateTo(Page.First))" aria-label="@Localizer[LanguageResource.MudTablePager_FirstPage]" />
+            <MudIconButton Class="mud-flip-x-rtl" Icon="@BeforeIcon" Disabled="@BackButtonsDisabled" @onclick="@(() => Table?.NavigateTo(Page.Previous))" aria-label="@Localizer[LanguageResource.MudTablePager_PreviousPage]" />
+            <MudIconButton Class="mud-flip-x-rtl" Icon="@NextIcon" Disabled="@ForwardButtonsDisabled" @onclick="@(() => Table?.NavigateTo(Page.Next))" aria-label="@Localizer[LanguageResource.MudTablePager_NextPage]" />
+            <MudIconButton Class="mud-flip-x-rtl" Icon="@LastIcon" Disabled="@ForwardButtonsDisabled" @onclick="@(() => Table?.NavigateTo(Page.Last))" aria-label="@Localizer[LanguageResource.MudTablePager_LastPage]" />
         </div>
     }
     @if (HorizontalAlignment == HorizontalAlignment.Start ||

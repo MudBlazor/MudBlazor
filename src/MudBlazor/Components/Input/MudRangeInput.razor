@@ -1,7 +1,9 @@
 ﻿@namespace MudBlazor
+@using MudBlazor.Internal
+@using MudBlazor.Resources
 @typeparam T
 @inherits MudBaseInput<Range<T>>
-@using MudBlazor.Internal
+@inject InternalMudLocalizer Localizer
 
 <div class="@Classname" style="@Style">
     @if (Adornment == Adornment.Start)
@@ -28,7 +30,7 @@
            @onblur="@OnBlurredAsync"
            @onkeydown="@InvokeKeyDownAsync"
            @onkeyup="@InvokeKeyUpAsync"
-           inputmode="@InputMode.ToString()"
+           inputmode="@InputMode.ToDescriptionString()"
            pattern="@Pattern"
            required="@Required"
            aria-required="@Required.ToString().ToLowerInvariant()" />
@@ -39,7 +41,7 @@
            class="@InputClassname"
            @bind-value="@TextEnd"
            @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
-           inputmode="@InputMode.ToString()"
+           inputmode="@InputMode.ToDescriptionString()"
            pattern="@Pattern"
            placeholder="@PlaceholderEnd"
            disabled=@GetDisabledState()
@@ -57,7 +59,7 @@
                        Icon="@Icons.Material.Filled.Clear"
                        Size="@Size.Small"
                        OnClick="@ClearButtonClickHandlerAsync"
-                       aria-label="Clear"
+                       aria-label="@Localizer[LanguageResource.MudInput_Clear]"
                        tabindex="-1" />
     }
 

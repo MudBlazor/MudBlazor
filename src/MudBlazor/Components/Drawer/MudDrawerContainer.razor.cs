@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
 #nullable enable
+
     /// <summary>
-    /// Represents a container for a <see cref="MudDrawer"/> component.
+    /// A container for a <see cref="MudDrawer"/> component.
     /// </summary>
+    /// <seealso cref="MudDrawer"/>
+    /// <seealso cref="MudDrawerHeader"/>
     public partial class MudDrawerContainer : MudComponentBase
     {
         protected bool Fixed { get; set; } = false;
@@ -35,7 +36,7 @@ namespace MudBlazor
         public bool RightToLeft { get; set; }
 
         /// <summary>
-        /// Custom content within this component.
+        /// The custom content inside this drawer.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]

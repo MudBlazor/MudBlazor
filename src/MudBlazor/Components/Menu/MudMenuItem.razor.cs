@@ -39,10 +39,16 @@ namespace MudBlazor
         [Category(CategoryTypes.Button.ClickAction)]
         public string? Target { get; set; }
 
+        /// <summary>
+        /// If true in combination with <see cref="Href"/>, bypasses client-side routing 
+        /// and forces the browser to load the new page from the server, whether
+        /// the URI would normally be handled by the client-side router.
+        /// <see cref="NavigationManager.NavigateTo(string, bool, bool)"/>
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.ClickAction)]
-
         public bool ForceLoad { get; set; }
+
         /// <summary>
         /// Icon to be used for this menu entry
         /// </summary>
@@ -75,6 +81,9 @@ namespace MudBlazor
         /// Raised when the menu item is activated by either the mouse or touch.
         /// Won't be raised if Href is also set.
         /// </summary>
+        /// <remarks>
+        /// This is equivalent to <c>OnAction</c> from previous versions and replaces <c>OnTouch</c>.
+        /// </remarks>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 

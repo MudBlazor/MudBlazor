@@ -2,7 +2,7 @@
 @implements IDisposable
 @inherits MudComponentBase
 
-<tr class="@Classname" @onclick="@OnRowClickedAsync" @onmouseenter="@RowMouseEnterEventCallback" @onmouseleave="@RowMouseLeaveEventCallback" style="@Style" @attributes="@UserAttributes">
+<tr class="@Classname" @onclick="@OnRowClickedAsync" @onpointerenter="@RowMouseEnterEventCallback" @onpointerleave="@RowMouseLeaveEventCallback" style="@Style" @attributes="@UserAttributes">
     @if (Context?.Table?.Editable == true && ((Context?.Table.EditButtonPosition.DisplayEditButtonAtStart() == true && Context?.Table.EditTrigger == TableEditTrigger.EditButton) || Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtStart() == true))
     {
         @* Add datalabel as a placeholder to avoid jumps on small viewports *@
@@ -40,7 +40,7 @@
             <div class="d-flex" style="@ActionsStylename">
                 @if (Checkable)
                 {
-                    <MudCheckBox @bind-Value="Checked" StopClickPropagation="true" Class="mud-table-cell-checkbox"></MudCheckBox>
+                    <MudCheckBox @bind-Value="Checked" ReadOnly="!SelectionChangeable" Disabled="!SelectionChangeable" StopClickPropagation="true" Class="mud-table-cell-checkbox"></MudCheckBox>
                 }
             </div>
         </MudElement>

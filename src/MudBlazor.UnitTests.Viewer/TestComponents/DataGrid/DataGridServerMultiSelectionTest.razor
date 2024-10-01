@@ -3,7 +3,7 @@
 <MudDataGrid MultiSelection="true" @bind-SelectedItems="_selectedItems"
     ServerData="@(new Func<GridState<Item>, Task<GridData<Item>>>(ServerReload))">
     <Columns>
-        <SelectColumn T="Item"/>
+        <SelectColumn T="Item" ShowInFooter="true"/>
         <PropertyColumn Property="x => x.Name" />
     </Columns>
 </MudDataGrid>

@@ -9,6 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -254,13 +255,13 @@ namespace MudBlazor
         {
             Func<Task> execute = async () =>
             {
-                var value = _value;
+                var value = ReadValue();
 
                 await task;
 
                 // we validate only if the value hasn't changed while we waited for task.
                 // if it has in fact changed, another validate call will follow anyway
-                if (EqualityComparer<T>.Default.Equals(value, _value))
+                if (EqualityComparer<T>.Default.Equals(value, ReadValue()))
                 {
                     await BeginValidateAsync();
                 }
@@ -273,11 +274,11 @@ namespace MudBlazor
         {
             Func<Task> execute = async () =>
             {
-                var value = _value;
+                var value = ReadValue();
 
                 await ValidateValue();
 
-                if (EqualityComparer<T>.Default.Equals(value, _value))
+                if (EqualityComparer<T>.Default.Equals(value, ReadValue()))
                 {
                     EditFormValidate();
                 }
@@ -303,6 +304,12 @@ namespace MudBlazor
 
         protected virtual async Task ValidateValue()
         {
+            // if there is an EditContext, there is no need for internal validation as it will get overwritten by 'OnValidationStateChanged'
+            if (EditContext is not null)
+            {
+                return;
+            }
+
             var changed = false;
             var errors = new List<string>();
             try
@@ -315,19 +322,19 @@ namespace MudBlazor
                 // validation errors
                 if (Validation is ValidationAttribute validationAttribute)
                 {
-                    ValidateWithAttribute(validationAttribute, _value, errors);
+                    ValidateWithAttribute(validationAttribute, ReadValue(), errors);
                 }
                 else if (Validation is Func<T?, bool> funcBooleanValidation)
                 {
-                    ValidateWithFunc(funcBooleanValidation, _value, errors);
+                    ValidateWithFunc(funcBooleanValidation, ReadValue(), errors);
                 }
                 else if (Validation is Func<T?, string?> funcStringValidation)
                 {
-                    ValidateWithFunc(funcStringValidation, _value, errors);
+                    ValidateWithFunc(funcStringValidation, ReadValue(), errors);
                 }
                 else if (Validation is Func<T?, IEnumerable<string?>> funcEnumerableValidation)
                 {
-                    ValidateWithFunc(funcEnumerableValidation, _value, errors);
+                    ValidateWithFunc(funcEnumerableValidation, ReadValue(), errors);
                 }
                 else if (Validation is Func<object, string, IEnumerable<string?>> funcModelWithFullPathOfMember)
                 {
@@ -335,26 +342,26 @@ namespace MudBlazor
                 }
                 else
                 {
-                    var value = _value;
+                    var value = ReadValue();
 
                     if (Validation is Func<T?, Task<bool>> funcTaskBooleanValidation)
                     {
-                        await ValidateWithFunc(funcTaskBooleanValidation, _value, errors);
+                        await ValidateWithFunc(funcTaskBooleanValidation, ReadValue(), errors);
                     }
                     else if (Validation is Func<T?, Task<string?>> funcTaskStringValidation)
                     {
-                        await ValidateWithFunc(funcTaskStringValidation, _value, errors);
+                        await ValidateWithFunc(funcTaskStringValidation, ReadValue(), errors);
                     }
                     else if (Validation is Func<T?, Task<IEnumerable<string?>>> funcTaskEnumerableValidation)
                     {
-                        await ValidateWithFunc(funcTaskEnumerableValidation, _value, errors);
+                        await ValidateWithFunc(funcTaskEnumerableValidation, ReadValue(), errors);
                     }
                     else if (Validation is Func<object, string, Task<IEnumerable<string?>>> funcTaskModelWithFullPathOfMember)
                     {
                         await ValidateModelWithFullPathOfMember(funcTaskModelWithFullPathOfMember, errors);
                     }
 
-                    changed = !EqualityComparer<T>.Default.Equals(value, _value);
+                    changed = !EqualityComparer<T>.Default.Equals(value, ReadValue());
                 }
 
                 // Run each validation attributes of the property targeted with `For`
@@ -362,14 +369,14 @@ namespace MudBlazor
                 {
                     foreach (var attr in _validationAttrsFor)
                     {
-                        ValidateWithAttribute(attr, _value, errors);
+                        ValidateWithAttribute(attr, ReadValue(), errors);
                     }
                 }
 
                 // required error (must be last, because it is least important!)
                 if (Required)
                 {
-                    if (Touched && !HasValue(_value))
+                    if (Touched && !HasValue(ReadValue()))
                     {
                         errors.Add(RequiredError);
                     }
@@ -408,9 +415,10 @@ namespace MudBlazor
         {
             try
             {
-                // The validation context is applied either on the `EditContext.Model`, '_fieldIdentifier.Model', or `this` as a stub subject.
+                // The validation context is applied either on the '_fieldIdentifier.Model', `EditContext.Model`, or `this` as a stub subject.
                 // Complex validation with fields references (like `CompareAttribute`) should use an EditContext or For when not using EditContext.
-                var validationContextSubject = EditContext?.Model ?? _fieldIdentifier.Model ?? this;
+                // Prioritize more specific validation context of the input component (_fieldIdentifier) over the one from the more general, surrounding form (EditContext).
+                var validationContextSubject = _fieldIdentifier.Model ?? EditContext?.Model ?? this;
                 var validationContext = new ValidationContext(validationContextSubject);
                 if (validationContext.MemberName is null && !IsNullOrEmpty(_fieldIdentifier.FieldName))
                 {
@@ -613,13 +621,12 @@ namespace MudBlazor
             ResetValidation();
         }
 
-        protected virtual Task ResetValueAsync()
+        protected virtual async Task ResetValueAsync()
         {
             /* to be overridden */
-            _value = default;
+            await WriteValueAsync(default);
             Touched = false;
             StateHasChanged();
-            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -713,19 +720,24 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
+            base.OnParametersSet();
             if (For is not null && For != _currentFor)
             {
-                // Extract validation attributes
-                // Sourced from https://stackoverflow.com/a/43076222/4839162
-                // and also https://stackoverflow.com/questions/59407225/getting-a-custom-attribute-from-a-property-using-an-expression
-                var expression = (MemberExpression)For.Body;
+                // if there is an EditContext, there is no need for internal validation as it will get overwritten by 'OnValidationStateChanged'
+                if (EditContext is null)
+                {
+                    // Extract validation attributes
+                    // Sourced from https://stackoverflow.com/a/43076222/4839162
+                    // and also https://stackoverflow.com/questions/59407225/getting-a-custom-attribute-from-a-property-using-an-expression
+                    var expression = (MemberExpression)For.Body;
 
-                // Currently we have no solution for this which is trimming incompatible
-                // A possible solution is to use source gen
+                    // Currently we have no solution for this which is trimming incompatible
+                    // A possible solution is to use source gen
 #pragma warning disable IL2075
-                var propertyInfo = expression.Expression?.Type.GetProperty(expression.Member.Name);
-#pragma warning restore IL2075                
-                _validationAttrsFor = propertyInfo?.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
+                    var propertyInfo = expression.Expression?.Type.GetProperty(expression.Member.Name);
+#pragma warning restore IL2075
+                    _validationAttrsFor = propertyInfo?.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
+                }
 
                 _fieldIdentifier = FieldIdentifier.Create(For);
                 _currentFor = For;
@@ -761,6 +773,15 @@ namespace MudBlazor
             {
                 Form?.Add(this);
             }
+        }
+
+        protected virtual T? ReadValue() => _value;
+
+        protected virtual Task WriteValueAsync(T? value)
+        {
+            _value = value;
+
+            return Task.CompletedTask;
         }
 
         /// <summary>

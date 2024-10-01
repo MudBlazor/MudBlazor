@@ -107,15 +107,16 @@ namespace MudBlazor
         }
 
         protected string Classname =>
-            new CssBuilder("mud-input-input-control mud-input-number-control " +
-                           (HideSpinButtons ? "mud-input-nospin" : "mud-input-showspin"))
+            new CssBuilder("mud-input-input-control mud-input-number-control")
+                .AddClass(HideSpinButtons ? "mud-input-nospin" : "mud-input-showspin")
+                .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
                 .AddClass(Class)
                 .Build();
 
 
         [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
 
-        private string _elementId = "numericField_" + Guid.NewGuid().ToString().Substring(0, 8);
+        private string _elementId = Identifier.Create("numericField");
 
         private MudInput<string> _elementReference;
 
@@ -172,6 +173,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Clearable { get; set; } = false;
+
+        /// <summary>
+        /// Custom clear icon when <see cref="Clearable"/> is enabled.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 
         /// <summary>
         /// Decrements or increments depending on factor

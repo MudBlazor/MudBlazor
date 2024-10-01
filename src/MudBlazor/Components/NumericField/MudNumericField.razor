@@ -6,17 +6,19 @@
     <MudInputControl id="@_elementId"
                      Label="@Label"
                      Variant="@Variant"
+                     HelperId="@GetHelperId()"
                      HelperText="@HelperText"
                      HelperTextOnFocus="@HelperTextOnFocus"
                      FullWidth="@FullWidth"
                      Class="@Classname"
                      Error="@HasErrors"
+                     ErrorId="@ErrorId"
                      ErrorText="@GetErrorText()"
                      Disabled="@GetDisabledState()"
                      Margin="@Margin"
                      Required="@Required"
                      CounterText="@GetCounterText()"
-                     ForId="@InputIdState.Value">
+                     ForId="@InputElementId">
         <InputContent>
             <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
                 <MudInput T="string"
@@ -25,6 +27,7 @@
                           InputType="@InputType.Text"
                           Style="@Style"
                           Variant="@Variant"
+                          Typo="@Typo"
                           Label="@Label"
                           TextUpdateSuppression="@TextUpdateSuppression"
                           Value="@Text"
@@ -37,9 +40,13 @@
                           AdornmentText="@AdornmentText"
                           AdornmentIcon="@AdornmentIcon"
                           AdornmentColor="@AdornmentColor"
+                          AdornmentAriaLabel="@AdornmentAriaLabel"
                           IconSize="@IconSize"
                           Error="@Error"
-                          Immediate="@(Immediate)"
+                          ErrorId="@ErrorId"
+                          HelperId="@GetHelperId()"
+                          HelperText="@HelperText"
+                          Immediate="@Immediate"
                           Margin="@Margin"
                           MaxLength="@MaxLength"
                           HideSpinButtons="@HideSpinButtons"
@@ -56,8 +63,9 @@
                           OnDecrement="@Decrement"
                           OnMouseWheel="@OnMouseWheel"
                           Clearable="@Clearable"
+                          ClearIcon="@ClearIcon"
                           ShrinkLabel="@ShrinkLabel"
-                          InputId="@InputIdState.Value"
+                          InputId="@InputElementId"
                           Required="@Required" />
             </CascadingValue>
         </InputContent>

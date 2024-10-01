@@ -12,7 +12,7 @@ namespace MudBlazor.Charts
     /// <summary>
     /// Represents a chart which displays series values as connected lines.
     /// </summary>
-    partial class Line : MudChartBase
+    partial class Line : MudCategoryChartBase
     {
         private const double BoundWidth = 650.0;
         private const double BoundHeight = 350.0;
@@ -41,7 +41,11 @@ namespace MudBlazor.Charts
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
+            RebuildChart();
+        }
 
+        private void RebuildChart()
+        {
             if (MudChartParent != null)
                 _series = MudChartParent.ChartSeries;
 
@@ -235,7 +239,7 @@ namespace MudBlazor.Charts
             if (series != null)
             {
                 series.Visible = legend.Visible;
-                OnParametersSet();
+                RebuildChart();
             }
         }
     }

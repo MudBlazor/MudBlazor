@@ -45,7 +45,7 @@
                         }
                         else
                         {
-                            <MudTHeadRow Checkable="MultiSelection" Expandable="@(GroupBy?.Expandable ?? false)">
+                            <MudTHeadRow Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" Expandable="@(GroupBy?.Expandable ?? false)">
                                 @if (HeaderContent != null)
                                 {
                                     @HeaderContent
@@ -82,7 +82,7 @@
                     {
                         @foreach (var group in GroupItemsPage)
                         {
-                            <MudTableGroupRow GroupDefinition="GroupBy" Items="group" Checkable="MultiSelection" 
+                            <MudTableGroupRow GroupDefinition="GroupBy" Items="group" Checkable="MultiSelection" SelectionChangeable="SelectionChangeable"
                                               HeaderClass="@GroupHeaderClass" HeaderStyle="@GroupHeaderStyle" 
                                               FooterClass="@GroupFooterClass" FooterStyle="@GroupFooterStyle"
                                               HeaderTemplate="@GroupHeaderTemplate" FooterTemplate="@GroupFooterTemplate" T="T"  />
@@ -96,7 +96,8 @@
                                 <MudVirtualize Enabled="@Virtualize" Items="@CurrentPageItems?.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
                                @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
                                @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
-                               <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" Checkable="MultiSelection" Editable="IsItemEditable(item)"
+                               <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item"
+                                      Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" Editable="IsItemEditable(item)"
                                       Checked="@(IsCheckedRow(item))"
                                       CheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
 
@@ -162,7 +163,7 @@
                         }
                         else
                         {
-                            <MudTFootRow Checkable="MultiSelection" Expandable="@(GroupBy?.Expandable ?? false)">
+                            <MudTFootRow Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" Expandable="@(GroupBy?.Expandable ?? false)">
                                 @if (FooterContent != null)
                                 {
                                     @FooterContent
@@ -205,9 +206,8 @@
                 var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).AddClass(customClass, !string.IsNullOrEmpty(customClass)).Build();
                 var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build();
              } 
-             <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" Checkable="MultiSelection" Editable="IsItemEditable(item)" Expandable="expandable"
-                        Checked="Context.Selection.Contains(item)" CheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
-
+             <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" Editable="IsItemEditable(item)" Expandable="expandable"
+                    Checked="Context.Selection.Contains(item)" CheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
                     @if ((!ReadOnly) && Editable && Equals(_editingItem, item))
                     {
                         <CascadingValue Value="@Validator" IsFixed="true">

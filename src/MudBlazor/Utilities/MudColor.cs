@@ -47,31 +47,36 @@ namespace MudBlazor.Utilities
         private const double Epsilon = 0.000000000000001;
         private readonly byte[] _valuesAsByte;
 
+        /// <summary>
+        /// Gets the hexadecimal representation of the color.
+        /// </summary>
         [JsonIgnore]
         public string Value => $"#{R:x2}{G:x2}{B:x2}{A:x2}";
 
         /// <summary>
+        /// Gets the 32-bit unsigned integer representation of the color.
+        /// </summary>
+        [JsonIgnore]
+        public uint UInt32 => (uint)(R << 24 | G << 16 | B << 8 | A);
+
+        /// <summary>
         /// Gets the red component value of the color.
         /// </summary>
-        [JsonInclude]
         public byte R => _valuesAsByte[0];
 
         /// <summary>
         /// Gets the green component value of the color.
         /// </summary>
-        [JsonInclude]
         public byte G => _valuesAsByte[1];
 
         /// <summary>
         /// Gets the blue component value of the color.
         /// </summary>
-        [JsonInclude]
         public byte B => _valuesAsByte[2];
 
         /// <summary>
         /// Gets the alpha component value of the color.
         /// </summary>
-        [JsonInclude]
         public byte A => _valuesAsByte[3];
 
         /// <summary>
@@ -219,6 +224,15 @@ namespace MudBlazor.Utilities
             H = h;
             S = s;
             L = l;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MudColor"/> class with the specified color.
+        /// </summary>
+        /// <param name="rgba">the four bytes of this 32-bit unsigned integer contain the red, green, blue and alpha components</param>
+        public MudColor(uint rgba)
+            : this(r: (byte)(rgba >> 24), g: (byte)(rgba >> 16), b: (byte)(rgba >> 8), a: (byte)rgba)
+        {
         }
 
         /// <summary>
@@ -538,7 +552,14 @@ namespace MudBlazor.Utilities
         /// <returns>The string representation of the color.</returns>
         public static explicit operator string(MudColor? color) => color == null ? string.Empty : color.Value;
 
-        private byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
+        /// <summary>
+        /// Converts a <see cref="MudColor"/> instance to a 32-bit unsigned integer.
+        /// </summary>
+        /// <param name="mudColor">The MudColor instance to convert.</param>
+        /// <returns>The 32-bit unsigned integer representation of the color.</returns>
+        public static explicit operator uint(MudColor mudColor) => mudColor.UInt32;
+
+        private static byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
 
         private static string[] SplitInputIntoParts(string value)
         {

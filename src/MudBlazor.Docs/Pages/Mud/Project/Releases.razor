@@ -46,7 +46,7 @@
 
 @code {
     private GitHubReleases[] _githubReleases;
-    private DateTime _oldReleases = DateTime.Parse("2022-11-09");
+    private readonly DateTime _oldReleases = DateTime.Parse("2022-11-09");
 
     protected override async Task OnInitializedAsync()
     {
@@ -54,18 +54,18 @@
         StateHasChanged();
     }
 
-    private string GetBody(string value)
+    private static string GetBody(string value)
     {
         value = Regex.Replace(value, @"((###\s)(?<subtitle>.+))(?<items>.*(?:\r?\n[*] .*)*)", "<h6 class=\"mud-typography mud-typography-h6\">${subtitle}</h6><ul class=\"mt-3 mb-6 px-6\">${items}</ul>");
         value = Regex.Replace(value, @"((##\s)(?<title>.+))(?<items>.*(?:\r?\n[*] .*)*)", "<h5 class=\"mud-typography mud-typography-h5\">${title}</h5><ul class=\"mt-3 mb-6 px-6\">${items}</ul>");
         value = Regex.Replace(value, @"(([*]\s)(?<row>.+))", "<li>${row}</li>");
         value = Regex.Replace(value, @"(@)(\S+)", "<a target=\"_blank\" href=\"https://github.com/$2\" class=\"mud-link mud-default-text mud-link-underline-hover\"><b>@$2</b></a>");
-        value = Regex.Replace(value, @"https://github.com/MudBlazor/MudBlazor/pull/([0-9]{4})", "<a target=\"_blank\" href=\"\" class=\"mud-link mud-primary-text mud-link-underline-hover\"><b>#$1</b></a>");
+        value = Regex.Replace(value, @"https://github.com/MudBlazor/MudBlazor/pull/([0-9]{4})", "<a target=\"_blank\" href=\"$0\" class=\"mud-link mud-primary-text mud-link-underline-hover\"><b>#$1</b></a>");
         value = Regex.Replace(value, @"([*][*]Full Changelog[*][*]: )(https://github.com/MudBlazor/MudBlazor/compare/)(.+)", "<p class=\"mud-typography mud-typography-body1\">Full Changelog: <a target=\"_blank\" href=\"$2$3\" class=\"docs-code docs-code-primary\">$3</a></p>");
         return value;
     }
 
-    private string GetOldBody(string value)
+    private static string GetOldBody(string value)
     {
         value = Regex.Replace(value, @"((###\s)(?<subtitle>.+))(?<items>.*(?:\r?\n-\s[*][*].*)*)", "<h6 class=\"mud-typography mud-typography-h6\">${subtitle}</h6><ul class=\"mt-3 mb-6 px-6\">${items}</ul>");
         value = Regex.Replace(value, @"^(#\s)(?<title>.+)", "<h5 class=\"mud-typography mud-typography-h5 mud-inherit-text\">${title}</h5>");

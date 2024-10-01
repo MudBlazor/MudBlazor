@@ -2,10 +2,11 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Buffers.Binary;
 using System.Globalization;
-using System.IO;
 using System.Text;
 using FluentAssertions;
+using MudBlazor.UnitTests.Dummy;
 using MudBlazor.Utilities;
 using NUnit.Framework;
 
@@ -14,6 +15,21 @@ namespace MudBlazor.UnitTests.Utilities
     [TestFixture]
     public class MudColorTests
     {
+        [Test]
+        public void MudColor_STJ_SourceGen_Serialization()
+        {
+            var originalMudColor = new MudColor("#f6f9fb");
+
+            var mudColorType = typeof(MudColor);
+            var context = new MudColorSerializerContext();
+
+            var jsonString = System.Text.Json.JsonSerializer.Serialize(originalMudColor, mudColorType, context);
+            var deserializeMudColor = System.Text.Json.JsonSerializer.Deserialize(jsonString, mudColorType, context);
+
+            jsonString.Should().Be("{\"R\":246,\"G\":249,\"B\":251,\"A\":255}");
+            deserializeMudColor.Should().Be(originalMudColor);
+        }
+
         [Test]
         public void MudColor_STJ_Serialization()
         {
@@ -736,6 +752,33 @@ namespace MudBlazor.UnitTests.Utilities
             Palette palette = new PaletteLight();
 
             palette.Should().NotBeNull();
+        }
+
+        [Test]
+        [TestCase(0x000000FFu)]//Black
+        [TestCase(0xFF0000FFu)]//Red
+        [TestCase(0x00FF00FFu)]//Green
+        [TestCase(0x0000FFFFu)]//Blue
+        public void UInt32(uint rgba)
+        {
+            MudColor mudColor = new(rgba);
+
+            mudColor.Value.Should().BeEquivalentTo($"#{rgba:X8}");
+            ((uint)mudColor).Should().Be(rgba);
+            mudColor.UInt32.Should().Be(rgba);
+        }
+
+        [Test]
+        public void UInt32_CheckAgainstBinaryPrimitive()
+        {
+            const byte R = 255, G = 128, B = 64, A = 192;
+            var mudColor = new MudColor(R, G, B, A);
+            var expectedUint = BinaryPrimitives.ReadUInt32BigEndian([mudColor.R, mudColor.G, mudColor.B, mudColor.A]);
+
+            var actualUint = (uint)mudColor;
+
+            actualUint.Should().Be(expectedUint);
+            mudColor.UInt32.Should().Be(mudColor.UInt32);
         }
     }
 }

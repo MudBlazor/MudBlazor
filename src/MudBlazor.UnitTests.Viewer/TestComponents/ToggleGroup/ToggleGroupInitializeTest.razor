@@ -1,0 +1,31 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudToggleGroup @bind-Value="_value" T="string" Color="Color.Primary">
+    <MudToggleItem T="string" Value="@("Item One")" Text="Item One" />
+    <MudToggleItem T="string" Value="@("Item Two")" Text="Item Two" />
+    <MudToggleItem T="string" Value="@("Item Three")" Text="Item Three" />
+</MudToggleGroup>
+
+<MudToggleGroup @bind-Values="_values" T="string" Color="Color.Primary" SelectionMode="SelectionMode.MultiSelection">
+    <MudToggleItem T="string" Value="@("Item One")" Text="Item One" />
+    <MudToggleItem T="string" Value="@("Item Two")" Text="Item Two" />
+    <MudToggleItem T="string" Value="@("Item Three")" Text="Item Three" />
+</MudToggleGroup>
+
+<MudButton id="set-single-value" OnClick="SetSingleValue">Set Single Value</MudButton>
+<MudButton id="set-multi-value" OnClick="SetMultiValue">Set Multi Value</MudButton>
+
+@code {
+    private string _value = "Item Two";
+    private IEnumerable<string> _values = new List<string> { "Item One", "Item Three" };
+
+    private void SetSingleValue()
+    {
+        _value = "Item One";
+    }
+
+    private void SetMultiValue()
+    {
+        _values = new List<string>() { "Item Two", "Item Three" };
+    }
+}

@@ -7,19 +7,14 @@
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'MudBlazor.UnitTests.Viewer' " />
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="11.9.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.5" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.5" PrivateAssets="all" />
+    <PackageReference Include="FluentValidation" Version="11.9.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.8" PrivateAssets="all" />
     <PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MudBlazor.Examples.Data\MudBlazor.Examples.Data.csproj" />
     <ProjectReference Include="..\MudBlazor\MudBlazor.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="TestComponents\RadioGroup\RadioGroupExceptionTest.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
   </ItemGroup>
 
 </Project>

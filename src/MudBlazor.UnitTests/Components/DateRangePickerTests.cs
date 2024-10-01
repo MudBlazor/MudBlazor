@@ -729,7 +729,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task OnMouseOver_ShouldCallJavaScriptFunction()
+        public async Task OnPointerOver_ShouldCallJavaScriptFunction()
         {
             var comp = OpenPicker();
 
@@ -737,7 +737,7 @@ namespace MudBlazor.UnitTests.Components
                 .FindAll(".mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-picker-calendar-day.mud-day")
                 .Single(x => x.GetAttribute("style") == "--day-id: 5;");
 
-            await button.MouseOverAsync(new());
+            await button.PointerOverAsync(new());
 
             Context.JSInterop.VerifyInvoke("mudWindow.updateStyleProperty", 1);
             Context.JSInterop.Invocations["mudWindow.updateStyleProperty"].Single()
@@ -873,6 +873,40 @@ namespace MudBlazor.UnitTests.Components
                 // Check that the component is open
                 comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             }
+        }
+
+        [Test]
+        public void Should_respect_underline_parameter()
+        {
+            var underlinedComp = Context.RenderComponent<MudDateRangePicker>(parameters
+                => parameters.Add(p => p.Underline, true));
+            var notUnderlinedComp = Context.RenderComponent<MudDateRangePicker>(parameters
+                => parameters.Add(p => p.Underline, false));
+
+            underlinedComp.FindAll(".mud-input-underline").Should().HaveCount(1);
+            notUnderlinedComp.FindAll(".mud-input-underline").Should().HaveCount(0);
+        }
+
+        [Test]
+        public void StrictCaptureRange_ShouldCaptureDisabledDates_WhenFalse()
+        {
+            var today = DateTime.Today;
+            var yesterday = DateTime.Today.Subtract(TimeSpan.FromDays(1));
+            var twoDaysAgo = DateTime.Today.Subtract(TimeSpan.FromDays(2));
+            var wasEventCallbackCalled = false;
+
+            var range = new DateRange(twoDaysAgo, today);
+            Func<DateTime, bool> isDisabledFunc = date => date == yesterday;
+            var comp = Context.RenderComponent<MudDateRangePicker>(
+                Parameter(nameof(MudDateRangePicker.AllowDisabledDatesInRange), true),
+                Parameter(nameof(MudDateRangePicker.IsDateDisabledFunc), isDisabledFunc),
+                EventCallback("DateRangeChanged", (DateRange _) => wasEventCallbackCalled = true)
+            );
+
+            comp.SetParam(picker => picker.DateRange, new DateRange(twoDaysAgo, today));
+
+            comp.Instance.DateRange.Should().Be(range);
+            wasEventCallbackCalled.Should().BeTrue();
         }
     }
 }

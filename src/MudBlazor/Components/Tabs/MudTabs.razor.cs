@@ -321,6 +321,8 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
+            base.OnParametersSet();
+
             if (_resizeObserver == null)
             {
                 _resizeObserver = _resizeObserverFactory.Create();
@@ -582,6 +584,13 @@ namespace MudBlazor
             .Build();
 
             return tabStyle;
+        }
+
+        private Color GetPanelIconColor(MudTabPanel panel)
+        {
+            var iconColor = panel.Disabled ? Color.Inherit : panel.IconColor != default ? panel.IconColor : IconColor;
+
+            return iconColor;
         }
 
         #endregion

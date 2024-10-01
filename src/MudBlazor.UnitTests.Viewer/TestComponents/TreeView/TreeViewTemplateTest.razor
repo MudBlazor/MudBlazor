@@ -3,51 +3,40 @@
 <MudTreeView SelectionMode="SelectionMode.MultiSelection" Items="TreeItems" Style="width: 500px;">
     <ItemTemplate>
         <MudTreeViewItem @bind-Selected="@context.Selected" @bind-Expanded="@context.Expanded" Icon="@context.Icon"
-                         Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" Items="@context.TreeItems" />
+                         Text="@context.Text" EndText="@((context as TreeItemData).Number?.ToString())" EndTextTypo="@Typo.caption" Items="@context.Children" />
     </ItemTemplate>
 </MudTreeView>
 
-@code { 
+@code {
+    private List<TreeItemData> TreeItems { get; set; } = new();
 
-    class TreeItemData
+    public class TreeItemData : TreeItemData<string>
     {
-        public string Title { get; set; }
+        public int? Number { get; set; }
 
-        public string Icon { get; set; }
+        public List<TreeItemData> TreeItems { get; set; }
 
-        public int? Number { get; set; } = null;
-
-        public bool Selected { get; set; }
-
-        public bool Expanded { get; set; }
-
-        public HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
-
-        public TreeItemData(string title, string icon, int? number = null)
+        public TreeItemData(string title, string icon, int? number = null, bool canExpand = true) : base(title)
         {
-            Title = title;
             Icon = icon;
             Number = number;
+            Expandable = canExpand;
         }
     }
 
-    HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
-
-    public TreeViewTemplateTest()
+    protected override void OnInitialized()
     {
         TreeItems.Add(new TreeItemData("All Mail", Icons.Material.Filled.Email));
         TreeItems.Add(new TreeItemData("Trash", Icons.Material.Filled.Delete));
-        TreeItems.Add(new TreeItemData("Categories", Icons.Material.Filled.Label)
-        {
-            Expanded = true,
-            TreeItems = new HashSet<TreeItemData>()
-            {
-                new TreeItemData("Social", Icons.Material.Filled.Group, 90),
-                new TreeItemData("Updates", Icons.Material.Filled.Info, 2294),
-                new TreeItemData("Forums", Icons.Material.Filled.QuestionAnswer, 3566),
-                new TreeItemData("Promotions", Icons.Material.Filled.LocalOffer, 733)
-            }
-        });
-        TreeItems.Add(new TreeItemData("History", Icons.Material.Filled.Label));
+        TreeItems.Add(new TreeItemData("Categories", Icons.Material.Filled.Label) {
+                Children = new()
+                {
+                    new TreeItemData("Social", Icons.Material.Filled.Group, 90),
+                    new TreeItemData("Updates", Icons.Material.Filled.Info, 2294),
+                    new TreeItemData("Forums", Icons.Material.Filled.QuestionAnswer, 3566),
+                    new TreeItemData("Promotions", Icons.Material.Filled.LocalOffer, 733)
+                }
+            });
+        TreeItems.Add(new TreeItemData("History", Icons.Material.Filled.Label, null, false));
     }
 }

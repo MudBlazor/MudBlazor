@@ -1,8 +1,17 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<MudListItem T="object" @attributes="UserAttributes" @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandlerAsync)"
-             Href="@Href" Target="@Target" ForceLoad="@ForceLoad" Disabled="@Disabled"
-             Class="@Class" Style="@Style" Icon="@Icon" IconColor="@IconColor" IconSize="@IconSize">
+<MudListItem T="object"
+             @attributes="UserAttributes"
+             @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandlerAsync)"
+             Href="@Href"
+             Target="@Target"
+             ForceLoad="@ForceLoad"
+             Disabled="@Disabled"
+             Class="@Class"
+             Style="@Style"
+             Icon="@Icon"
+             IconColor="@IconColor"
+             IconSize="@IconSize">
     @ChildContent
 </MudListItem>

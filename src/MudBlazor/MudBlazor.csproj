@@ -46,6 +46,13 @@
     <None Include="..\..\content\Nuget.png" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
 
+  <!--Analyzer Config-->
+  <PropertyGroup>
+    <MudAllowedAttributePattern>LowerCase</MudAllowedAttributePattern>
+    <MudIllegalParameters>V7IgnoreCase</MudIllegalParameters>
+    <MudDebugAnalyzer>false</MudDebugAnalyzer>
+  </PropertyGroup>
+
   <!--Is this a rebuild - Dont clean generated files as this breaks rebuild behaviour-->
   <Target Name="ShouldCleanGeneratedFiles" BeforeTargets="BeforeRebuild">
     <PropertyGroup>
@@ -64,15 +71,15 @@
   </Target>
   
   <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.19" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.19" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.19" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.20" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.20" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.20" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.5" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.8" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -83,11 +90,33 @@
     <PackageReference Include="AspNetCore.SassCompiler" Version="1.72.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.ResxSourceGenerator" Version="3.11.0-beta1.24415.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="MudBlazor.JSCompiler" Version="1.0.15">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
-
+  
+  <ItemGroup>
+    <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="true" OutputItemType="Analyzer" />
+  </ItemGroup>
+  
+  <PropertyGroup>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddAnalyzersToOutput</TargetsForTfmSpecificContentInPackage>
+  </PropertyGroup>
+  
+  <!--Add analyzer to build output so it works transitively -->
+  <Target Name="_AddAnalyzersToOutput">
+    <!--Limit to one copy (MudBlazor is multi targeted) analyzers are .net standard 2.0 -->
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
+      <TfmSpecificPackageFile Include="$(OutputPath)\$(AssemblyName).Analyzers.dll" PackagePath="analyzers/dotnet/cs" />
+      <!-- Add compiler visible properties to nuget for analyzers -->
+      <TfmSpecificPackageFile Include="..\Directory.Build.targets" Pack="true" PackagePath="build\$(PackageId).targets" />
+    </ItemGroup>
+  </Target>
+  
   <!--Dont Include in build output-->
   <ItemGroup>
     <Content Remove="compilerconfig.json" />
@@ -110,22 +139,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MudBlazor.SourceCodeGenerator\MudBlazor.SourceCodeGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../MudBlazor.SourceGenerator/MudBlazor.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Update="Resources\LanguageResource.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>LanguageResource.Designer.cs</LastGenOutput>
+      <Public>false</Public>
+      <AsConstants>true</AsConstants>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Resources\LanguageResource.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>LanguageResource.resx</DependentUpon>
-    </Compile>
   </ItemGroup>
 
 </Project>

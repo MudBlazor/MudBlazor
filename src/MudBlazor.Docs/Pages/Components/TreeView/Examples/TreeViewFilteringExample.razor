@@ -1,0 +1,69 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Width="300px" Elevation="0">
+    <MudStack AlignItems="AlignItems.Center">
+        <MudTextField T="string" Label="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged="OnTextChanged" Immediate="true" Clearable="true" />
+        <MudTreeView Items="@_treeItemData">
+            <ItemTemplate>
+                <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value"
+                                 Icon="@context.Icon" Text="@context.Text" Visible="@context.Visible" />
+            </ItemTemplate>
+        </MudTreeView>
+    </MudStack>
+</MudPaper>
+
+@code {
+    private List<TreeItemData<string>> _treeItemData = [];
+
+    public class TreeItemPresenter : TreeItemData<string>
+    {
+        public TreeItemPresenter(string text, string icon) : base(text)
+        {
+            Text = text;
+            Icon = icon;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        _treeItemData.Add(new TreeItemPresenter("All Mail", Icons.Material.Filled.Email));
+        _treeItemData.Add(new TreeItemPresenter("Trash", Icons.Material.Filled.Delete));
+        _treeItemData.Add(new TreeItemPresenter("Categories", Icons.Material.Filled.Label)
+            {
+                Expanded = true,
+                Children = 
+                [
+                    new TreeItemPresenter("Social", Icons.Material.Filled.Group),
+                    new TreeItemPresenter("Updates", Icons.Material.Filled.Info),
+                    new TreeItemPresenter("Forums", Icons.Material.Filled.QuestionAnswer),
+                    new TreeItemPresenter("Promotions", Icons.Material.Filled.LocalOffer)
+                ]
+            });
+        _treeItemData.Add(new TreeItemPresenter("History", Icons.Material.Filled.Label));
+    }
+
+    private void OnTextChanged(string searchTerm) => Filter(_treeItemData, searchTerm);
+
+    private void Filter(IEnumerable<TreeItemData<string>> treeItemData, string text)
+    {
+        foreach (TreeItemData<string> itemData in treeItemData)
+        {
+            if (itemData.HasChildren)
+            {
+                Filter(itemData.Children, text);
+            }
+
+            itemData.Visible = IsVisible(itemData, text);
+        }
+    }
+
+    private bool IsVisible(TreeItemData<string> treeItemData, string searchTerm)
+    {
+        if (!treeItemData.HasChildren)
+        {
+            return treeItemData.Text.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
+        }
+
+        return treeItemData.Children.Any(i => i.Text.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) || treeItemData.Text.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
+    }
+}

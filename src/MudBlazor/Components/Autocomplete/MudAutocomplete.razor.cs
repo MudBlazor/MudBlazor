@@ -19,11 +19,8 @@ namespace MudBlazor
         /// <summary>
         /// We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
         /// </summary>
-        private readonly string _componentId = Guid.NewGuid().ToString();
+        private readonly string _componentId = Identifier.Create();
 
-        /// <summary>
-        /// This boolean will keep track if the clear function is called too keep the set text function to be called.
-        /// </summary>
         private bool _isCleared;
         private bool _isClearing;
         private bool _isProcessingValue;
@@ -31,13 +28,12 @@ namespace MudBlazor
         private int _elementKey = 0;
         private int _returnedItemsCount;
         private bool _open;
-        private bool _doNotOpenMenuOnNextFocus;
         private MudInput<string> _elementReference;
         private CancellationTokenSource _cancellationTokenSrc;
         private Task _currentSearchTask;
         private Timer _debounceTimer;
         private T[] _items;
-        private IList<int> _enabledItemIndices = new List<int>();
+        private List<int> _enabledItemIndices = [];
         private Func<T, string> _toStringFunc;
 
         [Inject]
@@ -45,6 +41,7 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-select")
+            .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
             .AddClass(Class)
             .Build();
 
@@ -245,6 +242,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
+        /// Previously known as <c>SelectOnClick</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
@@ -397,7 +395,7 @@ namespace MudBlazor
         public EventCallback<bool> OpenChanged { get; set; }
 
         /// <summary>
-        /// Updates the Value to the currently selected item when pressing the <c>Tab</c> key.
+        /// Updates the Value to the currently selected item when pressing the Tab key.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -405,6 +403,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public bool SelectValueOnTab { get; set; }
+
+        /// <summary>
+        /// Additionally opens the list when focus is received on the input element; otherwise only opens on click.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool OpenOnFocus { get; set; } = true;
 
         /// <summary>
         /// Displays the Clear icon button.
@@ -415,6 +423,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Clearable { get; set; }
+
+        /// <summary>
+        /// Custom clear icon when <see cref="Clearable"/> is enabled.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 
         /// <summary>
         /// Occurs when the Clear button has been clicked.
@@ -459,6 +474,19 @@ namespace MudBlazor
 
         private string CurrentIcon => !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _open ? CloseIcon : OpenIcon;
 
+        /// <summary>
+        /// Returns a value for the <c>autocomplete</c> attribute, either supplied by default or the one specified in the attribute overrides.
+        /// </summary>
+        protected object GetAutocomplete()
+        {
+            if (UserAttributes.TryGetValue("autocomplete", out var userAutocomplete))
+            {
+                return userAutocomplete;
+            }
+
+            return "off";
+        }
+
         public MudAutocomplete()
         {
             Adornment = Adornment.End;
@@ -485,7 +513,6 @@ namespace MudBlazor
                     await SetTextAsync(optionText, false);
 
                 _debounceTimer?.Dispose();
-                Open = false;
 
                 await BeginValidateAsync();
 
@@ -496,9 +523,10 @@ namespace MudBlazor
                         await _elementReference.SetText(optionText);
                     }
 
-                    _doNotOpenMenuOnNextFocus = true;
                     await FocusAsync();
                 }
+
+                Open = false;
 
                 StateHasChanged();
             }
@@ -537,8 +565,6 @@ namespace MudBlazor
 
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
-            _debounceTimer?.Dispose();
-
             // This keeps the text from being set when ClearAsync() was called
             if (_isCleared)
                 return Task.CompletedTask;
@@ -588,7 +614,7 @@ namespace MudBlazor
         /// </remarks>
         public Task ToggleMenuAsync()
         {
-            if ((GetDisabledState() || GetReadOnlyState()) && !Open)
+            if (!Open && (GetDisabledState() || GetReadOnlyState()))
             {
                 return Task.CompletedTask;
             }
@@ -763,7 +789,7 @@ namespace MudBlazor
                     }
                     else
                     {
-                        await ToggleMenuAsync();
+                        await OpenMenuAsync();
                     }
                     break;
                 case "ArrowUp":
@@ -773,7 +799,7 @@ namespace MudBlazor
                     }
                     else if (!Open)
                     {
-                        await ToggleMenuAsync();
+                        await OpenMenuAsync();
                     }
                     else
                     {
@@ -798,7 +824,7 @@ namespace MudBlazor
                     }
                     else
                     {
-                        await ToggleMenuAsync();
+                        await OpenMenuAsync();
                     }
                     break;
                 case "Escape":
@@ -871,18 +897,16 @@ namespace MudBlazor
             }
         }
 
-        private Task OnInputClickedAsync()
-        {
-            return _isFocused ? OnInputFocusedAsync() : Task.CompletedTask;
-        }
+        private Task OnInputClickedAsync() => OnInputActivationAsync(true);
 
-        private async Task OnInputFocusedAsync()
+        private Task OnInputFocusedAsync() => OnInputActivationAsync(OpenOnFocus);
+
+        private async Task OnInputActivationAsync(bool openMenu)
         {
             _isFocused = true;
 
-            if (_doNotOpenMenuOnNextFocus || Open || GetDisabledState() || GetReadOnlyState())
+            if (Open || GetDisabledState() || GetReadOnlyState())
             {
-                _doNotOpenMenuOnNextFocus = false;
                 return;
             }
 
@@ -891,8 +915,10 @@ namespace MudBlazor
                 await SelectAsync();
             }
 
-            // Open the menu.
-            await OpenMenuAsync();
+            if (openMenu)
+            {
+                await OpenMenuAsync();
+            }
         }
 
         private async Task AdornmentClickHandlerAsync()
@@ -913,9 +939,9 @@ namespace MudBlazor
             //base.OnBlurred(args);
         }
 
-        private Task OnOverlayVisibleChangedAsync(bool willBeVisible)
+        private Task OnOverlayClosedAsync()
         {
-            if (!willBeVisible && Open)
+            if (Open)
             {
                 return CloseMenuAsync();
             }
@@ -956,6 +982,11 @@ namespace MudBlazor
 
             if (_cancellationTokenSrc != null)
             {
+                try
+                {
+                    _cancellationTokenSrc.Cancel();
+                }
+                catch { /*ignored*/ }
                 try
                 {
                     _cancellationTokenSrc.Dispose();
