@@ -592,15 +592,15 @@ namespace MudBlazor
             _keyInterceptorObserving = true;
             var keyInterceptorOptions = KeyInterceptorOptions.Create(
                 targetClass: "mud-input-slot",
-                keys: new[]
-                {
+                keys:
+                [
                     KeyOptions.Of(key: " ", preventDown: "key+none"),
                     KeyOptions.Of(key: "ArrowUp", preventDown: "key+none"),
                     KeyOptions.Of(key: "ArrowDown", preventDown: "key+none"),
                     KeyOptions.Of(key: "Enter", preventDown: "key+none"),
                     KeyOptions.Of(key: "NumpadEnter", preventDown: "key+none"),
-                    KeyOptions.Of(key: "/./", subscribeDown: true, subscribeUp: true),
-                });
+                    KeyOptions.Of(key: "/./", subscribeDown: true, subscribeUp: true)
+                ]);
 
             await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, keyDown: OnHandleKeyDownAsync);
         }

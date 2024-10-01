@@ -125,7 +125,7 @@ namespace MudBlazor
                 {
                     var keyInterceptorOptions = KeyInterceptorOptions.Create(
                         targetClass: "mud-dialog",
-                        keys: KeyOptions.Of(key: "Escape", subscribeDown: true));
+                        keys: [KeyOptions.Of(key: "Escape", subscribeDown: true)]);
                     await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, keyDown: HandleKeyDown);
                 }
             }
@@ -393,7 +393,8 @@ namespace MudBlazor
                 {
                     if (IsJSRuntimeAvailable)
                     {
-                        KeyInterceptorService.UnsubscribeAsync(_elementId);
+                        // TODO: Replace with IAsyncDisposable
+                        KeyInterceptorService.UnsubscribeAsync(_elementId).CatchAndLog();
                     }
                 }
 
