@@ -17,7 +17,6 @@ namespace MudBlazor
 {
     public partial class MudNumericField<T> : MudDebouncedInput<T>
     {
-        private IKeyInterceptor _keyInterceptor;
         private Comparer _comparer = new(CultureInfo.InvariantCulture);
 
         public MudNumericField()
@@ -114,7 +113,8 @@ namespace MudBlazor
                 .Build();
 
 
-        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         private string _elementId = Identifier.Create("numericField");
 
@@ -260,18 +260,20 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                _keyInterceptor = _keyInterceptorFactory.Create();
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
-                {
-                    //EnableLogging = true,
-                    TargetClass = "mud-input-slot",
-                    Keys = {
-                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead increment
-                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead decrement
-                        new KeyOptions { Key="Dead", PreventDown = "key+any" }, // prevent dead keys like ^ ` ´ etc
-                        new KeyOptions { Key="/^(?!"+(Pattern ?? "[0-9]").TrimEnd('*')+").$/", PreventDown = "key+none|key+shift|key+alt" }, // prevent input of all other characters except allowed, like [0-9.,-+]
-                    },
-                });
+                var keyInterceptorOptions = KeyInterceptorOptions.Create(
+                    targetClass: "mud-input-slot",
+                    keys:
+                    [
+                        // prevent scrolling page, instead increment
+                        KeyOptions.Of(key: "ArrowUp", preventDown: "key+none"),
+                        // prevent scrolling page, instead decrement
+                        KeyOptions.Of(key: "ArrowDown", preventDown: "key+none"),
+                        // prevent dead keys like ^ ` ´ etc
+                        KeyOptions.Of(key: "Dead", preventDown: "key+any"),
+                        // prevent input of all other characters except allowed, like [0-9.,-+]
+                        KeyOptions.Of(key: $"/^(?!{(Pattern ?? "[0-9]").TrimEnd('*')}).$/",preventDown: "key+none|key+shift|key+alt")
+                    ]);
+                await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
             }
             await base.OnAfterRenderAsync(firstRender);
         }
@@ -442,7 +444,11 @@ namespace MudBlazor
 
             if (disposing)
             {
-                _keyInterceptor?.Dispose();
+                if (IsJSRuntimeAvailable)
+                {
+                    // TODO: Replace with IAsyncDisposable
+                    KeyInterceptorService.UnsubscribeAsync(_elementId).CatchAndLog();
+                }
             }
         }
     }
