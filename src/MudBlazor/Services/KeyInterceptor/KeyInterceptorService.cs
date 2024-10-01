@@ -2,9 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
@@ -161,6 +159,8 @@ internal class KeyInterceptorService : IKeyInterceptorService
 
                 foreach (var elementId in _observerManager.Observers.Keys)
                 {
+                    // https://github.com/MudBlazor/MudBlazor/pull/5367#issuecomment-1258649968
+                    // Fixed in NET8
                     _ = _keyInterceptorInterop.Disconnect(elementId);
                 }
 
