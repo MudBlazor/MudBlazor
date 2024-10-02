@@ -277,6 +277,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Palette}-divider: {palette.Divider};");
         theme.AppendLine($"--{Palette}-divider-light: {palette.DividerLight};");
 
+        theme.AppendLine($"--{Palette}-skeleton: {palette.Skeleton};");
+
         theme.AppendLine($"--{Palette}-gray-default: {palette.GrayDefault};");
         theme.AppendLine($"--{Palette}-gray-light: {palette.GrayLight};");
         theme.AppendLine($"--{Palette}-gray-lighter: {palette.GrayLighter};");
@@ -481,6 +483,9 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Zindex}-popover: {_theme.ZIndex.Popover};");
         theme.AppendLine($"--{Zindex}-snackbar: {_theme.ZIndex.Snackbar};");
         theme.AppendLine($"--{Zindex}-tooltip: {_theme.ZIndex.Tooltip};");
+
+        // Native HTML control light/dark mode
+        theme.AppendLine($"--mud-native-html-color-scheme: {(IsDarkMode ? "dark" : "light")};");
     }
 
     public void Dispose()

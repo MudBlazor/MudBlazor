@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -255,6 +250,28 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p.item1-selected").TrimmedText().Should().Be("True");
             comp.Find("p.item1-1-selected").TrimmedText().Should().Be("False");
             comp.Find("p.item1-2-selected").TrimmedText().Should().Be("True");
+        }
+
+        [Test]
+        public void TreeViewItemVisible_RendersWhenVisibleIsTrue()
+        {
+            var comp = Context.RenderComponent<ItemVisibleTreeViewTest>(element =>
+            {
+                element.Add(x => x.IsElementVisible, true);
+            });
+
+            comp.FindAll("li").Should().HaveCount(1);
+        }
+
+        [Test]
+        public void TreeViewItemVisible_RendersNotWhenVisibleIsFalse()
+        {
+            var comp = Context.RenderComponent<ItemVisibleTreeViewTest>(element =>
+            {
+                element.Add(x => x.IsElementVisible, false);
+            });
+
+            comp.FindAll("li").Should().HaveCount(0);
         }
 
         [Test]
@@ -547,6 +564,7 @@ namespace MudBlazor.UnitTests.Components
             new TreeItemData<int>().Expanded.Should().Be(false);
             new TreeItemData<int>().Selected.Should().Be(false);
             new TreeItemData<int>().Expandable.Should().Be(true);
+            new TreeItemData<int>().Visible.Should().Be(true);
             new TreeItemData<int>().Text.Should().Be(null);
             new TreeItemData<int>().Icon.Should().Be(null);
             new TreeItemData<int>().HasChildren.Should().Be(false);
@@ -559,6 +577,7 @@ namespace MudBlazor.UnitTests.Components
                 Text = "t",
                 Expandable = false,
                 Expanded = true,
+                Visible = true,
                 Selected = true,
                 Children = [new TreeItemData<string>()]
             };
@@ -567,6 +586,7 @@ namespace MudBlazor.UnitTests.Components
             data.Text.Should().Be("t");
             data.Expandable.Should().Be(false);
             data.Expanded.Should().Be(true);
+            data.Visible.Should().Be(true);
             data.Selected.Should().Be(true);
             data.HasChildren.Should().Be(true);
             data.Children.Count.Should().Be(1);

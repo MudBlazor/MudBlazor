@@ -82,12 +82,12 @@ Add the following to the `MainLayout.razor` or `App.razor`
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 ```
-Add the following to `index.html` (client-side) or `_Host.cshtml` (server-side) in the `head`
+Add the following to your HTML `head` section, it's either `index.html` or `_Layout.cshtml`/`_Host.cshtml`/`App.razor` depending on whether you're running WebAssembly or Server
 ```razor
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
 <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
 ```
-Add the following to `index.html` or `_Host.cshtml` in the `body`
+Next, add the following to the default Blazor script at the end of the `body`
 ```razor
 <script src="_content/MudBlazor/MudBlazor.min.js"></script>
 ```
