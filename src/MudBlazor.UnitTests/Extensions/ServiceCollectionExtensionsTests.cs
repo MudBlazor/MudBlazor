@@ -223,7 +223,9 @@ public class ServiceCollectionExtensionsTests
         services.AddMudBlazorKeyInterceptor();
         var serviceProvider = services.BuildServiceProvider();
         var keyInterceptor = serviceProvider.GetService<IKeyInterceptor>();
+#pragma warning disable CS0618 // Type or member is obsolete
         var keyInterceptorFactory = serviceProvider.GetService<IKeyInterceptorFactory>();
+#pragma warning restore CS0618 // Type or member is obsolete
         var keyInterceptorService = serviceProvider.GetService<IKeyInterceptorService>();
 
         // Assert
@@ -430,7 +432,9 @@ public class ServiceCollectionExtensionsTests
         var resizeObserver = serviceProvider.GetService<IResizeObserver>();
         var resizeObserverFactory = serviceProvider.GetService<IResizeObserverFactory>();
         var keyInterceptor = serviceProvider.GetService<IKeyInterceptor>();
+#pragma warning disable CS0618 // Type or member is obsolete
         var keyInterceptorFactory = serviceProvider.GetService<IKeyInterceptorFactory>();
+#pragma warning restore CS0618 // Type or member is obsolete
         var jsEvent = serviceProvider.GetService<IJsEvent>();
         var jsEventFactory = serviceProvider.GetService<IJsEventFactory>();
         var scrollManager = serviceProvider.GetService<IScrollManager>();
@@ -532,7 +536,9 @@ public class ServiceCollectionExtensionsTests
         var resizeObserver = serviceProvider.GetService<IResizeObserver>();
         var resizeObserverFactory = serviceProvider.GetService<IResizeObserverFactory>();
         var keyInterceptor = serviceProvider.GetService<IKeyInterceptor>();
+#pragma warning disable CS0618 // Type or member is obsolete
         var keyInterceptorFactory = serviceProvider.GetService<IKeyInterceptorFactory>();
+#pragma warning restore CS0618 // Type or member is obsolete
         var keyInterceptorService = serviceProvider.GetService<IKeyInterceptorService>();
         var jsEvent = serviceProvider.GetService<IJsEvent>();
         var jsEventFactory = serviceProvider.GetService<IJsEventFactory>();

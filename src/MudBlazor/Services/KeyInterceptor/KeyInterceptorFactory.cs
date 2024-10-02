@@ -10,6 +10,7 @@ namespace MudBlazor.Services;
 /// <summary>
 /// Represents a factory for creating instances of <see cref="KeyInterceptor"/>.
 /// </summary>
+[Obsolete($"Use {nameof(IKeyInterceptorService)} instead. This will be removed in MudBlazor 8.")]
 public class KeyInterceptorFactory : IKeyInterceptorFactory
 {
     private readonly IServiceProvider _provider;
