@@ -1,0 +1,10 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTreeView T="string">
+    <MudTreeViewItem T="string" Value="@("World")" Visible="@IsElementVisible"/>
+</MudTreeView>
+
+@code {
+    [Parameter]
+    public bool IsElementVisible { get; set; }
+}

@@ -132,12 +132,13 @@ public class TextTests : BunitTest
         comp.Find(expectedTag).Should().NotBeNull();
     }
 
-    [TestCase(Typo.h1, null, "h1")]
-    [TestCase(Typo.h1, "span", "span")]
-    [TestCase(Typo.body1, null, "p")]
-    [TestCase(Typo.body1, "span", "span")]
-    [TestCase(Typo.caption, null, "span")]
-    [TestCase(Typo.caption, "p", "p")]
+    [TestCase(Typo.h1, null, "h1")] // Null defaults to h1
+    [TestCase(Typo.h1, "span", "span")] // span instead of h1
+    [TestCase(Typo.body1, null, "p")] // Null defaults to p
+    [TestCase(Typo.body1, "span", "span")] // span instead of p
+    [TestCase(Typo.caption, null, "span")] // Null defaults to span
+    [TestCase(Typo.caption, "", "span")] // Empty string defaults to span
+    [TestCase(Typo.caption, "p", "p")] // p instead of span
     public void ActualTag_With_TypoProperty_Or_HtmlTagProperty(Typo typo, string htmlTag, string expectedTag)
     {
         // Arrange

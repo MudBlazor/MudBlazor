@@ -1,0 +1,32 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "config:recommended"
+    ],
+    "ignorePresets": [
+        ":ignoreModulesAndTests"
+    ],
+    "labels": [
+        "dependency"
+    ],
+    "packageRules": [
+        {
+            "matchPackageNames": [
+                "Microsoft.CodeAnalysis**"
+            ],
+            "groupName": "code-analysis monorepo"
+        },
+        {
+            "matchPackageNames": [
+                "Microsoft.CodeAnalysis.CSharp"
+            ],
+            "enabled": false
+        },
+        {
+            "matchPackageNames": [
+                "AspNetCore.SassCompiler"
+            ],
+            "enabled": false
+        }
+    ]
+}

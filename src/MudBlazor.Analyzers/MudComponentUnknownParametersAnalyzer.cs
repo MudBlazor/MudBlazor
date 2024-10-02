@@ -32,7 +32,9 @@ namespace MudBlazor.Analyzers
         public static readonly DiagnosticDescriptor ParameterDescriptor = new(DiagnosticId1, _title, _parameterMessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: _description, helpLinkUri: _url.ToString());
         public static readonly DiagnosticDescriptor AttributeDescriptor = new(DiagnosticId2, _title, _attributeMessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: _description, helpLinkUri: _url.ToString());
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get => [ParameterDescriptor, AttributeDescriptor]; }
+        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics = new[] { ParameterDescriptor, AttributeDescriptor }.ToImmutableArray();
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => _supportedDiagnostics;
 
         public override void Initialize(AnalysisContext context)
         {
