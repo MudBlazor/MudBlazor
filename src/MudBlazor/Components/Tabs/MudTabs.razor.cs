@@ -335,18 +335,13 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                if (_resizeObserver is null)
-                {
-                    throw new InvalidOperationException("ResizeObserver is not initialized");
-                }
-
                 var items = _panels.Where(x => x.PanelRef is not null).Select(x => x.PanelRef!.Value).ToList();
                 items.Add(_tabsContentSize);
 
                 if (_activePanelIndex != -1 && _panels.Count > 0)
                     ActivePanel = _panels[_activePanelIndex];
 
-                await _resizeObserver.Observe(items);
+                await _resizeObserver!.Observe(items);
 
                 _resizeObserver.OnResized += OnResized;
 
@@ -359,15 +354,10 @@ namespace MudBlazor
 
         public async ValueTask DisposeAsync()
         {
-            if (_resizeObserver is null)
-            {
-                throw new InvalidOperationException("ResizeObserver is not initialized");
-            }
-
             if (_isDisposed)
                 return;
             _isDisposed = true;
-            _resizeObserver.OnResized -= OnResized;
+            _resizeObserver!.OnResized -= OnResized;
             if (IsJSRuntimeAvailable)
             {
                 await _resizeObserver.DisposeAsync();
@@ -388,11 +378,7 @@ namespace MudBlazor
 
         internal async Task SetPanelRef(ElementReference reference)
         {
-            if (_resizeObserver is null)
-            {
-                throw new InvalidOperationException("ResizeObserver is not initialized");
-            }
-            if (_isRendered && _resizeObserver.IsElementObserved(reference) == false)
+            if (_isRendered && _resizeObserver!.IsElementObserved(reference) == false)
             {
                 await _resizeObserver.Observe(reference);
                 Rerender();
@@ -404,16 +390,6 @@ namespace MudBlazor
         {
             if (_isDisposed)
                 return;
-
-            if (_resizeObserver is null)
-            {
-                throw new InvalidOperationException("ResizeObserver is not initialized");
-            }
-
-            if (tabPanel.PanelRef is null)
-            {
-                throw new InvalidOperationException("PanelRef is not initialized");
-            }
 
             var index = _panels.IndexOf(tabPanel);
 
@@ -436,7 +412,7 @@ namespace MudBlazor
             }
 
             _panels.Remove(tabPanel);
-            await _resizeObserver.Unobserve(tabPanel.PanelRef.Value);
+            await _resizeObserver!.Unobserve(tabPanel.PanelRef!.Value);
             Rerender();
             StateHasChanged();
         }
@@ -673,20 +649,10 @@ namespace MudBlazor
 
         private double GetRelevantSize(ElementReference? reference)
         {
-            if (_resizeObserver is null)
-            {
-                throw new InvalidOperationException("ResizeObserver is not initialized");
-            }
-
-            if (reference is null)
-            {
-                return 0.0;
-            }
-
             return Position switch
             {
-                Position.Top or Position.Bottom => _resizeObserver.GetWidth(reference.Value),
-                _ => _resizeObserver.GetHeight(reference.Value)
+                Position.Top or Position.Bottom => _resizeObserver!.GetWidth(reference!.Value),
+                _ => _resizeObserver!.GetHeight(reference!.Value)
             };
         }
 
