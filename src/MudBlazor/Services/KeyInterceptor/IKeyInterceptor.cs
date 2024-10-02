@@ -4,6 +4,7 @@
 
 namespace MudBlazor.Services;
 
+#nullable enable
 /// <summary>
 /// This transient service binds itself to a parent element to observe the keys of one of its children.
 /// It can call preventDefault or stopPropagation directly on the JavaScript side for single keystrokes / key combinations as per configuration.

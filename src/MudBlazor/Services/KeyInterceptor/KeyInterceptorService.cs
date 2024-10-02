@@ -113,6 +113,7 @@ internal class KeyInterceptorService : IKeyInterceptorService
     /// <remarks>
     /// This method is not exposed in the public API of the <see cref="IKeyInterceptorService"/> interface and is intended to be used internally.
     /// </remarks>
+    [JSInvokable]
     public Task OnKeyDown(string elementId, KeyboardEventArgs args)
     {
         return _observerManager.NotifyAsync(
