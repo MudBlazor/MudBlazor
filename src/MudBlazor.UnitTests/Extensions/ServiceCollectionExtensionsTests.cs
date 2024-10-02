@@ -222,8 +222,8 @@ public class ServiceCollectionExtensionsTests
         // Act
         services.AddMudBlazorKeyInterceptor();
         var serviceProvider = services.BuildServiceProvider();
-        var keyInterceptor = serviceProvider.GetService<IKeyInterceptor>();
 #pragma warning disable CS0618 // Type or member is obsolete
+        var keyInterceptor = serviceProvider.GetService<IKeyInterceptor>();
         var keyInterceptorFactory = serviceProvider.GetService<IKeyInterceptorFactory>();
 #pragma warning restore CS0618 // Type or member is obsolete
         var keyInterceptorService = serviceProvider.GetService<IKeyInterceptorService>();
@@ -431,10 +431,11 @@ public class ServiceCollectionExtensionsTests
         var browserViewportService = serviceProvider.GetService<IBrowserViewportService>();
         var resizeObserver = serviceProvider.GetService<IResizeObserver>();
         var resizeObserverFactory = serviceProvider.GetService<IResizeObserverFactory>();
-        var keyInterceptor = serviceProvider.GetService<IKeyInterceptor>();
 #pragma warning disable CS0618 // Type or member is obsolete
+        var keyInterceptor = serviceProvider.GetService<IKeyInterceptor>();
         var keyInterceptorFactory = serviceProvider.GetService<IKeyInterceptorFactory>();
 #pragma warning restore CS0618 // Type or member is obsolete
+        var keyInterceptorService = serviceProvider.GetService<IKeyInterceptorService>();
         var jsEvent = serviceProvider.GetService<IJsEvent>();
         var jsEventFactory = serviceProvider.GetService<IJsEventFactory>();
         var scrollManager = serviceProvider.GetService<IScrollManager>();
@@ -460,6 +461,7 @@ public class ServiceCollectionExtensionsTests
         resizeObserverFactory.Should().NotBeNull();
         keyInterceptor.Should().NotBeNull();
         keyInterceptorFactory.Should().NotBeNull();
+        keyInterceptorService.Should().NotBeNull();
         jsEvent.Should().NotBeNull();
         jsEventFactory.Should().NotBeNull();
         scrollManager.Should().NotBeNull();
@@ -535,8 +537,8 @@ public class ServiceCollectionExtensionsTests
         var browserViewportService = serviceProvider.GetService<IBrowserViewportService>();
         var resizeObserver = serviceProvider.GetService<IResizeObserver>();
         var resizeObserverFactory = serviceProvider.GetService<IResizeObserverFactory>();
-        var keyInterceptor = serviceProvider.GetService<IKeyInterceptor>();
 #pragma warning disable CS0618 // Type or member is obsolete
+        var keyInterceptor = serviceProvider.GetService<IKeyInterceptor>();
         var keyInterceptorFactory = serviceProvider.GetService<IKeyInterceptorFactory>();
 #pragma warning restore CS0618 // Type or member is obsolete
         var keyInterceptorService = serviceProvider.GetService<IKeyInterceptorService>();

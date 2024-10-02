@@ -9,6 +9,7 @@ namespace MudBlazor.Services;
 /// It can call preventDefault or stopPropagation directly on the JavaScript side for single keystrokes / key combinations as per configuration.
 /// Furthermore, you can precisely subscribe single keystrokes or combinations and only the subscribed ones will be forwarded into .NET
 /// </summary>
+[Obsolete($"Use {nameof(IKeyInterceptorService)} instead. This will be removed in MudBlazor 8.")]
 public interface IKeyInterceptor : IDisposable
 {
     /// <summary>
