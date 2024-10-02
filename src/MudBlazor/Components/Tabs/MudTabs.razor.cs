@@ -335,7 +335,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                var items = _panels.Where(x => x.PanelRef is not null).Select(x => x.PanelRef!.Value).ToList();
+                var items = _panels.Select(x => x.PanelRef!.Value).ToList();
                 items.Add(_tabsContentSize);
 
                 if (_activePanelIndex != -1 && _panels.Count > 0)
@@ -647,14 +647,12 @@ namespace MudBlazor
             _allTabsSize = totalTabsSize;
         }
 
-        private double GetRelevantSize(ElementReference? reference)
-        {
-            return Position switch
+        private double GetRelevantSize(ElementReference? reference) =>
+            Position switch
             {
                 Position.Top or Position.Bottom => _resizeObserver!.GetWidth(reference!.Value),
                 _ => _resizeObserver!.GetHeight(reference!.Value)
             };
-        }
 
         private double GetLengthOfPanelItems(MudTabPanel panel, bool inclusive = false)
         {
