@@ -83,6 +83,9 @@ internal class KeyInterceptorService : IKeyInterceptorService
     }
 
     /// <inheritdoc />
+    public Task UpdateKeyAsync(IKeyInterceptorObserver observer, KeyOptions option) => UpdateKeyAsync(observer.ElementId, option);
+
+    /// <inheritdoc />
     public async Task UpdateKeyAsync(string elementId, KeyOptions option) => await _keyInterceptorInterop.UpdateKey(elementId, option);
 
     /// <inheritdoc />

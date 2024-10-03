@@ -32,6 +32,8 @@ public class MockKeyInterceptorService : IKeyInterceptor, IKeyInterceptorService
 
     public Task SubscribeAsync(string elementId, KeyInterceptorOptions options, Func<KeyboardEventArgs, Task> keyDown = null, Func<KeyboardEventArgs, Task> keyUp = null) => Task.CompletedTask;
 
+    public Task UpdateKeyAsync(IKeyInterceptorObserver observer, KeyOptions option) => Task.CompletedTask;
+
     public Task UpdateKeyAsync(string elementId, KeyOptions option) => Task.CompletedTask;
 
     public Task UnsubscribeAsync(IKeyInterceptorObserver observer) => Task.CompletedTask;

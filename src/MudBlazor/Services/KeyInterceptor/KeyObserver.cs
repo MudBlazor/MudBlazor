@@ -10,7 +10,7 @@ namespace MudBlazor;
 /// <summary>
 /// Represents a key observer that handles key down and key up events for a specific HTML element.
 /// </summary>
-public class KeyObserver : IKeyInterceptorObserver
+public class KeyObserver : IKeyInterceptorObserver, IEquatable<KeyObserver>
 {
     private readonly string _elementId;
     private readonly IKeyDownObserver _keyDownObserver;
@@ -78,6 +78,28 @@ public class KeyObserver : IKeyInterceptorObserver
     /// </summary>
     /// <returns>An instance of <see cref="IKeyDownObserver"/> that ignores key down events.</returns>
     public static IKeyDownObserver KeyDownIgnore() => _keyObserverIgnore;
+
+    /// <inheritdoc />
+    public bool Equals(KeyObserver? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return _elementId == other._elementId;
+    }
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj) => obj is KeyObserver keyObserver && Equals(keyObserver);
+
+    /// <inheritdoc />
+    public override int GetHashCode() => _elementId.GetHashCode();
 
     private class KeyDownLambdaObserver : IKeyDownObserver
     {

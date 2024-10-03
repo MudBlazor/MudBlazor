@@ -18,6 +18,9 @@ public interface IKeyInterceptorService : IAsyncDisposable
     /// </summary>
     /// <param name="observer">The observer that will receive key events.</param>
     /// <param name="options">The options for key interception.</param>
+    /// <remarks>
+    /// If you re-subscribe with the same observer and different <see cref="KeyInterceptorOptions"/> settings, the new <see cref="KeyInterceptorOptions"/> will not have any effect.
+    /// </remarks>
     /// <returns>A task that represents the asynchronous operation.</returns>
     Task SubscribeAsync(IKeyInterceptorObserver observer, KeyInterceptorOptions options);
 
@@ -28,6 +31,9 @@ public interface IKeyInterceptorService : IAsyncDisposable
     /// <param name="options">The options for key interception.</param>
     /// <param name="keyDown">The observer for key down events.</param>
     /// <param name="keyUp">The observer for key up events.</param>
+    /// <remarks>
+    /// If you re-subscribe with the same elementId and different <see cref="KeyInterceptorOptions"/> settings, the new <see cref="KeyInterceptorOptions"/> will not have any effect.
+    /// </remarks>
     /// <returns>A task that represents the asynchronous operation.</returns>
     Task SubscribeAsync(string elementId, KeyInterceptorOptions options, IKeyDownObserver? keyDown = null, IKeyUpObserver? keyUp = null);
 
@@ -38,6 +44,9 @@ public interface IKeyInterceptorService : IAsyncDisposable
     /// <param name="options">The options for key interception.</param>
     /// <param name="keyDown">The lambda action to invoke on key down events.</param>
     /// <param name="keyUp">The lambda action to invoke on key up events.</param>
+    /// <remarks>
+    /// If you re-subscribe with the same elementId and different <see cref="KeyInterceptorOptions"/> settings, the new <see cref="KeyInterceptorOptions"/> will not have any effect.
+    /// </remarks>
     /// <returns>A task that represents the asynchronous operation.</returns>
     Task SubscribeAsync(string elementId, KeyInterceptorOptions options, Action<KeyboardEventArgs>? keyDown = null, Action<KeyboardEventArgs>? keyUp = null);
 
@@ -48,8 +57,19 @@ public interface IKeyInterceptorService : IAsyncDisposable
     /// <param name="options">The options for key interception.</param>
     /// <param name="keyDown">The asynchronous lambda function to invoke on key down events.</param>
     /// <param name="keyUp">The asynchronous lambda function to invoke on key up events.</param>
+    /// <remarks>
+    /// If you re-subscribe with the same elementId and different <see cref="KeyInterceptorOptions"/> settings, the new <see cref="KeyInterceptorOptions"/> will not have any effect.
+    /// </remarks>
     /// <returns>A task that represents the asynchronous operation.</returns>
     Task SubscribeAsync(string elementId, KeyInterceptorOptions options, Func<KeyboardEventArgs, Task>? keyDown = null, Func<KeyboardEventArgs, Task>? keyUp = null);
+
+    /// <summary>
+    /// Updates the key options for a specified element.
+    /// </summary>
+    /// <param name="observer">The observer.</param>
+    /// <param name="option">The key options to update.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    Task UpdateKeyAsync(IKeyInterceptorObserver observer, KeyOptions option);
 
     /// <summary>
     /// Updates the key options for a specified element.
