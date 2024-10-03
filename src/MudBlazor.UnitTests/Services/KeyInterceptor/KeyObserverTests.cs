@@ -13,6 +13,41 @@ namespace MudBlazor.UnitTests.Services.KeyInterceptor;
 public class KeyObserverTests
 {
     [Test]
+    public async Task KeyObserver_Ignore()
+    {
+        // Arrange
+        var keyboardDownEventArgsExpected = new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown" };
+        var keyboardUpEventArgsExpected = new KeyboardEventArgs { Key = "ArrowUp", Type = "keyup" };
+        var keyNotification = new List<(string elemendId, KeyboardEventArgs keyboardEventArgs)>();
+        IKeyInterceptorObserver observer1 = new KeyObserver("observer1", KeyObserver.KeyDown(args => keyNotification.Add(("observer1", args))), KeyObserver.KeyUp(null));
+        IKeyInterceptorObserver observer2 = new KeyObserver("observer2", KeyObserver.KeyDown(null), KeyObserver.KeyUp(args => keyNotification.Add(("observer2", args))));
+        IKeyInterceptorObserver observer3 = new KeyObserver("observer3", KeyObserver.KeyDown(args => keyNotification.Add(("observer3", args))), KeyObserver.KeyUp((Action<KeyboardEventArgs>?)null));
+        IKeyInterceptorObserver observer4 = new KeyObserver("observer4", KeyObserver.KeyDown((Action<KeyboardEventArgs>?)null), KeyObserver.KeyUp(args => keyNotification.Add(("observer4", args))));
+        IKeyInterceptorObserver observer5 = new KeyObserver("observer5", KeyObserver.KeyDown(args => keyNotification.Add(("observer5", args))), null);
+        IKeyInterceptorObserver observer6 = new KeyObserver("observer6", null, KeyObserver.KeyUp(args => keyNotification.Add(("observer6", args))));
+        var observers = new List<IKeyInterceptorObserver> { observer1, observer2, observer3, observer4, observer5, observer6 };
+
+        // Act
+        foreach (var observer in observers)
+        {
+            await observer.NotifyOnKeyDownAsync(keyboardDownEventArgsExpected);
+            await observer.NotifyOnKeyUpAsync(keyboardUpEventArgsExpected);
+        }
+
+        // Assert
+        keyNotification.Count.Should().Be(6);
+        keyNotification.Should().BeEquivalentTo(new List<(string elemendId, KeyboardEventArgs keyboardEventArgs)>
+        {
+            ("observer1", keyboardDownEventArgsExpected),
+            ("observer2", keyboardUpEventArgsExpected),
+            ("observer3", keyboardDownEventArgsExpected),
+            ("observer4", keyboardUpEventArgsExpected),
+            ("observer5", keyboardDownEventArgsExpected),
+            ("observer6", keyboardUpEventArgsExpected)
+        });
+    }
+
+    [Test]
     public async Task KeyDownObserverTask_ShouldNotify()
     {
         // Arrange

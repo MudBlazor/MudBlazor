@@ -65,7 +65,7 @@ public class KeyInterceptorServiceTests
         var observer1 = new KeyInterceptorObserverMock("observer1");
         var observer2 = new KeyInterceptorObserverMock("observer2");
         var service = new KeyInterceptorService(NullLogger<KeyInterceptorService>.Instance, jsRuntimeMock.Object);
-        
+
         await service.SubscribeAsync(observer1, new KeyInterceptorOptions());
         await service.SubscribeAsync(observer2, new KeyInterceptorOptions());
 
