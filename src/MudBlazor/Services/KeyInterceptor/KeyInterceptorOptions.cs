@@ -26,7 +26,7 @@ public class KeyInterceptorOptions
     /// <summary>
     /// A list of key options that define the keys to intercept and their respective configurations.
     /// </summary>
-    public IReadOnlyList<KeyOptions> Keys { get; init; } = new List<KeyOptions>();
+    public IReadOnlyList<KeyOptions> Keys { get; init; } = [];
 
     public KeyInterceptorOptions()
     {
