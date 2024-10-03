@@ -92,5 +92,8 @@ namespace MudBlazor
 
         /// <inheritdoc />
         public override MudColor DividerLight { get; set; } = "rgba(255,255,255, 0.06)";
+
+        /// <inheritdoc />
+        public override MudColor Skeleton { get; set; } = "rgba(255,255,255, 0.11)";
     }
 }
