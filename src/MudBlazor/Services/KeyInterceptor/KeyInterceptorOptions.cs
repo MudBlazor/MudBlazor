@@ -36,6 +36,6 @@ public class KeyInterceptorOptions
     {
         TargetClass = targetClass;
         EnableLogging = enableLogging;
-        Keys = keys.ToList();
+        Keys = keys;
     }
 }
