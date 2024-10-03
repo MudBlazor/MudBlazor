@@ -79,7 +79,7 @@ public class KeyInterceptorServiceTests
         observer2.Notifications.Should().ContainSingle().Which.Should().BeEquivalentTo((observer2.ElementId, expectedEventArgs));
     }
 
-[Test]
+    [Test]
     public async Task UpdateKeyAsync_ShouldCallJavaScript()
     {
         // Arrange
