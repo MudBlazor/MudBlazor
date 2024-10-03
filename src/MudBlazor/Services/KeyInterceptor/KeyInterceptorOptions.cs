@@ -16,35 +16,26 @@ public class KeyInterceptorOptions
     /// <remarks>
     /// Note: This must be a single class name.
     /// </remarks>
-    public string? TargetClass { get; set; }
+    public string? TargetClass { get; init; }
 
     /// <summary>
     /// Specifies whether resize events should be logged in the browser's console.
     /// </summary>
-    public bool EnableLogging { get; set; }
+    public bool EnableLogging { get; init; }
 
     /// <summary>
     /// A list of key options that define the keys to intercept and their respective configurations.
     /// </summary>
-    public List<KeyOptions> Keys { get; set; } = new();
+    public IReadOnlyList<KeyOptions> Keys { get; init; } = new List<KeyOptions>();
 
-    /// <summary>
-    /// Creates a new instance of <see cref="KeyInterceptorOptions"/> with the specified parameters.
-    /// </summary>
-    /// <param name="targetClass">The CSS class of the target HTML element.</param>
-    /// <param name="enableLogging">Specifies whether to enable logging of resize events in the browser's console.</param>
-    /// <param name="keys">An array of <see cref="KeyOptions"/> defining the keys to intercept and their configurations.</param>
-    /// <returns>A new instance of <see cref="KeyInterceptorOptions"/>.</returns>
-    public static KeyInterceptorOptions Create(
-        string? targetClass = null,
-        bool enableLogging = false,
-        params KeyOptions[] keys)
+    public KeyInterceptorOptions()
     {
-        return new KeyInterceptorOptions
-        {
-            TargetClass = targetClass,
-            EnableLogging = enableLogging,
-            Keys = keys.ToList()
-        };
+    }
+
+    public KeyInterceptorOptions(string? targetClass = null, bool enableLogging = false, params KeyOptions[] keys)
+    {
+        TargetClass = targetClass;
+        EnableLogging = enableLogging;
+        Keys = keys.ToList();
     }
 }

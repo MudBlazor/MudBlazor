@@ -123,7 +123,7 @@ namespace MudBlazor
                 //Since CloseOnEscapeKey is the only thing to be handled, turn interceptor off
                 if (CloseOnEscapeKey)
                 {
-                    var keyInterceptorOptions = KeyInterceptorOptions.Create(
+                    var keyInterceptorOptions = new KeyInterceptorOptions(
                         targetClass: "mud-dialog",
                         keys: [KeyOptions.Of(key: "Escape", subscribeDown: true)]);
                     await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, keyDown: HandleKeyDown);

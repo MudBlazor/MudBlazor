@@ -163,7 +163,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                var keyInterceptorOptions = KeyInterceptorOptions.Create(
+                var keyInterceptorOptions = new KeyInterceptorOptions(
                     targetClass: "mud-switch-base",
                     keys:
                     [

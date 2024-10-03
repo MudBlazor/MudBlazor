@@ -158,7 +158,7 @@ namespace MudBlazor
                 _jsEvent.Paste += OnPaste;
                 _jsEvent.Select += OnSelect;
 
-                var keyInterceptorOptions = KeyInterceptorOptions.Create(
+                var keyInterceptorOptions = new KeyInterceptorOptions(
                     targetClass: "mud-input-slot",
                     keys:
                     [
