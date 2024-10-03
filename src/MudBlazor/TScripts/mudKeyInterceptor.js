@@ -190,9 +190,6 @@ class MudKeyInterceptor {
         if (invoke) {
             var eventArgs = self.toKeyboardEventArgs(args);
             eventArgs.Type = "keydown";
-            // we'd like to pass a reference to the child element back to dotnet but we can't
-            // https://github.com/dotnet/aspnetcore/issues/16110
-            // if we ever need it we'll pass the id up and users need to id the observed elements
             self._dotNetRef.invokeMethodAsync('OnKeyDown', self._element.id, eventArgs);
         }
     }
@@ -225,9 +222,6 @@ class MudKeyInterceptor {
         if (invoke) {
             var eventArgs = self.toKeyboardEventArgs(args);
             eventArgs.Type = "keyup";
-            // we'd like to pass a reference to the child element back to dotnet but we can't
-            // https://github.com/dotnet/aspnetcore/issues/16110
-            // if we ever need it we'll pass the id up and users need to id the observed elements
             self._dotNetRef.invokeMethodAsync('OnKeyUp', self._element.id, eventArgs);
         }
     }
