@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor.UnitTests.Services.KeyInterceptor.Mocks;
 
-public class KeyInterceptorObserverMock : IKeyInterceptorObserver
+public class KeyInterceptorObserverMock : IKeyInterceptorObserver, IEquatable<KeyInterceptorObserverMock>
 {
     public string ElementId { get; }
 
@@ -30,4 +30,23 @@ public class KeyInterceptorObserverMock : IKeyInterceptorObserver
 
         return Task.CompletedTask;
     }
+
+    public bool Equals(KeyInterceptorObserverMock other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return ElementId == other.ElementId;
+    }
+
+    public override bool Equals(object obj) => obj is KeyInterceptorObserverMock keyObserver && Equals(keyObserver);
+
+    public override int GetHashCode() => ElementId.GetHashCode();
 }

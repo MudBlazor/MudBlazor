@@ -5,7 +5,6 @@
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
@@ -58,6 +57,29 @@ public class KeyInterceptorServiceTests
     }
 
     [Test]
+    public async Task SubscribeAsync_MultipleObservers_ShouldNotifyCorrectObserver()
+    {
+        // Arrange
+        var expectedEventArgs = new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown" };
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var observer1 = new KeyInterceptorObserverMock("observer1");
+        var observer2 = new KeyInterceptorObserverMock("observer2");
+        var service = new KeyInterceptorService(NullLogger<KeyInterceptorService>.Instance, jsRuntimeMock.Object);
+        
+        await service.SubscribeAsync(observer1, new KeyInterceptorOptions());
+        await service.SubscribeAsync(observer2, new KeyInterceptorOptions());
+
+        // Act
+        await service.OnKeyDown(observer2.ElementId, expectedEventArgs);
+
+        // Assert
+        service.ObserversCount.Should().Be(2);
+        observer1.Notifications.Count.Should().Be(0);
+        observer2.Notifications.Count.Should().Be(1);
+        observer2.Notifications.Should().ContainSingle().Which.Should().BeEquivalentTo((observer2.ElementId, expectedEventArgs));
+    }
+
+[Test]
     public async Task UpdateKeyAsync_ShouldCallJavaScript()
     {
         // Arrange
@@ -76,12 +98,12 @@ public class KeyInterceptorServiceTests
     public async Task OnKeyDown_ShouldNotifyObservers()
     {
         // Arrange
+        var expectedEventArgs = new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown" };
         var jsRuntimeMock = new Mock<IJSRuntime>();
         var observer = new KeyInterceptorObserverMock("observer1");
         var options = new KeyInterceptorOptions();
         var service = new KeyInterceptorService(NullLogger<KeyInterceptorService>.Instance, jsRuntimeMock.Object);
         await service.SubscribeAsync(observer, options);
-        var expectedEventArgs = new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown" };
 
         // Act
         await service.OnKeyDown(observer.ElementId, expectedEventArgs);
