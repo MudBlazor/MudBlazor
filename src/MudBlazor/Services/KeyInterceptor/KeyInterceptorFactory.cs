@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 
@@ -11,6 +12,7 @@ namespace MudBlazor.Services;
 /// <summary>
 /// Represents a factory for creating instances of <see cref="KeyInterceptor"/>.
 /// </summary>
+[ExcludeFromCodeCoverage]
 [Obsolete($"Use {nameof(IKeyInterceptorService)} instead. This will be removed in MudBlazor 8.")]
 public class KeyInterceptorFactory : IKeyInterceptorFactory
 {

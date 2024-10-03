@@ -151,7 +151,5 @@ public class KeyObserver : IKeyInterceptorObserver, IEquatable<KeyObserver>
         public Task NotifyOnKeyUpAsync(KeyboardEventArgs args) => _lambda is null ? Task.CompletedTask : _lambda(args);
     }
 
-    private class KeyObserverIgnore : IKeyDownObserver, IKeyUpObserver
-    {
-    }
+    private class KeyObserverIgnore : IKeyDownObserver, IKeyUpObserver;
 }
