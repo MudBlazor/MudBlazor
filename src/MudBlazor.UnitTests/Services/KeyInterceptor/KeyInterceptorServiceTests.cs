@@ -5,6 +5,7 @@
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
@@ -109,5 +110,48 @@ public class KeyInterceptorServiceTests
         service.ObserversCount.Should().Be(1);
         observer.Notifications.Count.Should().Be(1);
         observer.Notifications.Should().ContainSingle().Which.Should().BeEquivalentTo((observer.ElementId, expectedEventArgs));
+    }
+
+    [Test]
+    public async Task UnsubscribeAsync_UnsubscribeObserver()
+    {
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var observer = new KeyInterceptorObserverMock("observer1");
+        var options = new KeyInterceptorOptions();
+        var service = new KeyInterceptorService(NullLogger<KeyInterceptorService>.Instance, jsRuntimeMock.Object);
+        await service.SubscribeAsync(observer, options);
+
+        // Act
+        await service.UnsubscribeAsync(observer);
+
+        // Assert
+        service.ObserversCount.Should().Be(0);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudKeyInterceptor.connect", It.IsAny<object[]>()), Times.Once);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudKeyInterceptor.disconnect", It.IsAny<object[]>()), Times.Once);
+    }
+
+    [Test]
+    public async Task DisposeAsync_ShouldClearAllObservers()
+    {
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var service = new KeyInterceptorService(NullLogger<KeyInterceptorService>.Instance, jsRuntimeMock.Object);
+        await service.SubscribeAsync(new KeyInterceptorObserverMock("observer1"), new KeyInterceptorOptions());
+        await service.SubscribeAsync(new KeyInterceptorObserverMock("observer2"), new KeyInterceptorOptions());
+        await service.SubscribeAsync(new KeyInterceptorObserverMock("observer3"), new KeyInterceptorOptions());
+        await service.SubscribeAsync(new KeyInterceptorObserverMock("observer4"), new KeyInterceptorOptions());
+        await service.SubscribeAsync(new KeyInterceptorObserverMock("observer5"), new KeyInterceptorOptions());
+        var beforeObserversCount = service.ObserversCount;
+
+        // Act
+        await service.DisposeAsync();
+        var afterObserversCount = service.ObserversCount;
+
+        // Assert
+        beforeObserversCount.Should().Be(5);
+        afterObserversCount.Should().Be(0);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudKeyInterceptor.connect", It.IsAny<object[]>()), Times.Exactly(5));
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudKeyInterceptor.disconnect", It.IsAny<object[]>()), Times.Exactly(5));
     }
 }
