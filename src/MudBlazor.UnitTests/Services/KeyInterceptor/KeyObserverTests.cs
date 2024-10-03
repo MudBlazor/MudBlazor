@@ -103,6 +103,19 @@ public class KeyObserverTests
     }
 
     [Test]
+    public void Equals_ReturnsTrueForSameInstance()
+    {
+        // Arrange
+        var observer1 = new KeyObserver("observer1", null, null);
+
+        // Act
+        var result = observer1.Equals(observer1);
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Test]
     public void Equals_ReturnsTrueForEqualObjects()
     {
         // Arrange
