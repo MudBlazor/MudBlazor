@@ -13,13 +13,13 @@ namespace MudBlazor.UnitTests.Services.KeyInterceptor;
 public class KeyObserverTests
 {
     [Test]
-    public async Task KeyDownObserver_ShouldNotify()
+    public async Task KeyDownObserverTask_ShouldNotify()
     {
         // Arrange
         var keyNotification = new List<KeyboardEventArgs>();
-        IKeyDownObserver observer = new KeyObserver("observer1", KeyObserver.KeyDown(KeyDownNotify), KeyObserver.KeyUpIgnore());
+        IKeyDownObserver observer = new KeyObserver("observer1", KeyObserver.KeyDown(KeyDownNotifyAsync), KeyObserver.KeyUpIgnore());
 
-        Task KeyDownNotify(KeyboardEventArgs args)
+        Task KeyDownNotifyAsync(KeyboardEventArgs args)
         {
             keyNotification.Add(args);
 
@@ -27,7 +27,60 @@ public class KeyObserverTests
         }
 
         // Act
-        await observer.NotifyOnKeyDownAsync(new KeyboardEventArgs());
+        await observer.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown" });
+
+        // Assert
+        keyNotification.Count.Should().Be(1);
+    }
+
+    [Test]
+    public async Task KeyUpObserverTask_ShouldNotify()
+    {
+        // Arrange
+        var keyNotification = new List<KeyboardEventArgs>();
+        IKeyUpObserver observer = new KeyObserver("observer1", KeyObserver.KeyDownIgnore(), KeyObserver.KeyUp(KeyUpNotifyAsync));
+
+        Task KeyUpNotifyAsync(KeyboardEventArgs args)
+        {
+            keyNotification.Add(args);
+
+            return Task.CompletedTask;
+        }
+
+        // Act
+        await observer.NotifyOnKeyUpAsync(new KeyboardEventArgs { Key = "ArrowUp", Type = "keyup" });
+
+        // Assert
+        keyNotification.Count.Should().Be(1);
+    }
+
+    [Test]
+    public async Task KeyDownObserver_ShouldNotify()
+    {
+        // Arrange
+        var keyNotification = new List<KeyboardEventArgs>();
+        IKeyDownObserver observer = new KeyObserver("observer1", KeyObserver.KeyDown(KeyDownNotify), KeyObserver.KeyUpIgnore());
+
+        void KeyDownNotify(KeyboardEventArgs args) => keyNotification.Add(args);
+
+        // Act
+        await observer.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown" });
+
+        // Assert
+        keyNotification.Count.Should().Be(1);
+    }
+
+    [Test]
+    public async Task KeyUpObserver_ShouldNotify()
+    {
+        // Arrange
+        var keyNotification = new List<KeyboardEventArgs>();
+        IKeyUpObserver observer = new KeyObserver("observer1", KeyObserver.KeyDownIgnore(), KeyObserver.KeyUp(KeyUpNotify));
+
+        void KeyUpNotify(KeyboardEventArgs args) => keyNotification.Add(args);
+
+        // Act
+        await observer.NotifyOnKeyUpAsync(new KeyboardEventArgs { Key = "ArrowUp", Type = "keyup" });
 
         // Assert
         keyNotification.Count.Should().Be(1);

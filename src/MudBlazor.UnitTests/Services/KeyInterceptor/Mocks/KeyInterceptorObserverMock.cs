@@ -10,7 +10,7 @@ public class KeyInterceptorObserverMock : IKeyInterceptorObserver
 {
     public string ElementId { get; }
 
-    public List<KeyboardEventArgs> Notifications { get; } = new();
+    public List<(string elemendId, KeyboardEventArgs keyboardEventArgs)> Notifications { get; } = new();
 
     public KeyInterceptorObserverMock(string elementId)
     {
@@ -19,14 +19,14 @@ public class KeyInterceptorObserverMock : IKeyInterceptorObserver
 
     public Task NotifyOnKeyDownAsync(KeyboardEventArgs args)
     {
-        Notifications.Add(args);
+        Notifications.Add((ElementId, args));
 
         return Task.CompletedTask;
     }
 
     public Task NotifyOnKeyUpAsync(KeyboardEventArgs args)
     {
-        Notifications.Add(args);
+        Notifications.Add((ElementId, args));
 
         return Task.CompletedTask;
     }

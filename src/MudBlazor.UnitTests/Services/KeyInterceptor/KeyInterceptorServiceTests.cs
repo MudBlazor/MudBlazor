@@ -88,7 +88,7 @@ public class KeyInterceptorServiceTests
         // Assert
         service.ObserversCount.Should().Be(1);
         observer.Notifications.Count.Should().Be(1);
-        observer.Notifications.Should().ContainSingle().Which.Should().BeEquivalentTo(expectedEventArgs);
+        observer.Notifications.Should().ContainSingle().Which.Should().BeEquivalentTo((observer.ElementId, expectedEventArgs));
     }
 
     [Test]
@@ -108,6 +108,6 @@ public class KeyInterceptorServiceTests
         // Assert
         service.ObserversCount.Should().Be(1);
         observer.Notifications.Count.Should().Be(1);
-        observer.Notifications.Should().ContainSingle().Which.Should().BeEquivalentTo(expectedEventArgs);
+        observer.Notifications.Should().ContainSingle().Which.Should().BeEquivalentTo((observer.ElementId, expectedEventArgs));
     }
 }
