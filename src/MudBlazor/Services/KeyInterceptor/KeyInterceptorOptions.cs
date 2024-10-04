@@ -28,14 +28,33 @@ public class KeyInterceptorOptions
     /// </summary>
     public IReadOnlyList<KeyOptions> Keys { get; init; } = [];
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="KeyInterceptorOptions"/> class.
+    /// </summary>
     public KeyInterceptorOptions()
     {
     }
 
-    public KeyInterceptorOptions(string? targetClass = null, bool enableLogging = false, params KeyOptions[] keys)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="KeyInterceptorOptions"/> class with the specified target class and key options.
+    /// </summary>
+    /// <param name="targetClass">The CSS class of the target HTML element.</param>
+    /// <param name="keys">The key options to intercept.</param>
+    public KeyInterceptorOptions(string targetClass, params KeyOptions[] keys)
     {
         TargetClass = targetClass;
-        EnableLogging = enableLogging;
         Keys = keys;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="KeyInterceptorOptions"/> class with the specified target class, key options, and logging option.
+    /// </summary>
+    /// <param name="targetClass">The CSS class of the target HTML element.</param>
+    /// <param name="keys">The key options to intercept.</param>
+    /// <param name="enableLogging">Specifies whether resize events should be logged in the browser's console.</param>
+    public KeyInterceptorOptions(string targetClass, bool enableLogging = false, params KeyOptions[] keys)
+        : this(targetClass, keys)
+    {
+        EnableLogging = enableLogging;
     }
 }

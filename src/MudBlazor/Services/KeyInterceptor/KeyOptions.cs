@@ -37,6 +37,8 @@ namespace MudBlazor.Services;
 /// </summary>
 public class KeyOptions
 {
+    //TODO: Make immutable in v8.
+
     /// <summary>
     /// <para>JavaScript keyboard event.key</para>
     /// <para>
@@ -77,7 +79,25 @@ public class KeyOptions
     /// </summary>
     public string StopUp { get; set; } = "none";
 
-    public static KeyOptions Of(string? key = null,
+    /// <summary>
+    /// Initializes a new instance of the <see cref="KeyOptions"/> class.
+    /// </summary>
+    public KeyOptions()
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="KeyOptions"/> class with specified parameters.
+    /// </summary>
+    /// <param name="key">The JavaScript keyboard event key.</param>
+    /// <param name="subscribeDown">Whether to subscribe to key down events.</param>
+    /// <param name="subscribeUp">Whether to subscribe to key up events.</param>
+    /// <param name="preventDown">Configuration for preventDefault() on key down events.</param>
+    /// <param name="preventUp">Configuration for preventDefault() on key up events.</param>
+    /// <param name="stopDown">Configuration for stopPropagation() on key down events.</param>
+    /// <param name="stopUp">Configuration for stopPropagation() on key up events.</param>
+    public KeyOptions(
+        string? key,
         bool subscribeDown = false,
         bool subscribeUp = false,
         string preventDown = "none",
@@ -85,15 +105,12 @@ public class KeyOptions
         string stopDown = "none",
         string stopUp = "none")
     {
-        return new KeyOptions
-        {
-            Key = key,
-            PreventDown = preventDown,
-            PreventUp = preventUp,
-            SubscribeDown = subscribeDown,
-            SubscribeUp = subscribeUp,
-            StopDown = stopDown,
-            StopUp = stopUp
-        };
+        Key = key;
+        PreventDown = preventDown;
+        PreventUp = preventUp;
+        SubscribeDown = subscribeDown;
+        SubscribeUp = subscribeUp;
+        StopDown = stopDown;
+        StopUp = stopUp;
     }
 }

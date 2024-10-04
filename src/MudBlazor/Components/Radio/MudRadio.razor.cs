@@ -242,10 +242,10 @@ namespace MudBlazor
                     keys:
                     [
                         // prevent scrolling page
-                        KeyOptions.Of(key: " ", preventDown: "key+none", preventUp: "key+none"),
-                        KeyOptions.Of(key: "Enter", preventDown: "key+none"),
-                        KeyOptions.Of(key: "NumpadEnter", preventDown: "key+none"),
-                        KeyOptions.Of(key: "Backspace", preventDown: "key+none")
+                        new(key: " ", preventDown: "key+none", preventUp: "key+none"),
+                        new(key: "Enter", preventDown: "key+none"),
+                        new(key: "NumpadEnter", preventDown: "key+none"),
+                        new(key: "Backspace", preventDown: "key+none")
                     ]);
                 await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
             }

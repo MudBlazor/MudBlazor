@@ -702,7 +702,7 @@ namespace MudBlazor
                 }
             }
             //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
-            await KeyInterceptorService.UpdateKeyAsync(_elementId, KeyOptions.Of(key: "Escape", stopDown: "key+none"));
+            await KeyInterceptorService.UpdateKeyAsync(_elementId, new(key: "Escape", stopDown: "key+none"));
 
             await OnOpen.InvokeAsync();
         }
@@ -720,7 +720,7 @@ namespace MudBlazor
             }
 
             //enable escape propagation: the select popover was closed, now underlying components are allowed to handle escape key
-            await KeyInterceptorService.UpdateKeyAsync(_elementId, KeyOptions.Of(key: "Escape", stopDown: "none"));
+            await KeyInterceptorService.UpdateKeyAsync(_elementId, new(key: "Escape", stopDown: "none"));
 
             await OnClose.InvokeAsync();
         }
@@ -752,22 +752,22 @@ namespace MudBlazor
                     keys:
                     [
                         // prevent scrolling page, toggle open/close
-                        KeyOptions.Of(key: " ", preventDown: "key+none"),
+                        new(key: " ", preventDown: "key+none"),
                         // prevent scrolling page, instead highlight previous item
-                        KeyOptions.Of(key: "ArrowUp", preventDown: "key+none"),
+                        new(key: "ArrowUp", preventDown: "key+none"),
                         // prevent scrolling page, instead highlight next item
-                        KeyOptions.Of(key: "ArrowDown", preventDown: "key+none"),
-                        KeyOptions.Of(key: "Home", preventDown: "key+none"),
-                        KeyOptions.Of(key: "End", preventDown: "key+none"),
-                        KeyOptions.Of(key: "Escape"),
-                        KeyOptions.Of(key: "Enter", preventDown: "key+none"),
-                        KeyOptions.Of(key: "NumpadEnter", preventDown: "key+none"),
+                        new(key: "ArrowDown", preventDown: "key+none"),
+                        new(key: "Home", preventDown: "key+none"),
+                        new(key: "End", preventDown: "key+none"),
+                        new(key: "Escape"),
+                        new(key: "Enter", preventDown: "key+none"),
+                        new(key: "NumpadEnter", preventDown: "key+none"),
                         // select all items instead of all page text
-                        KeyOptions.Of(key: "a", preventDown: "key+ctrl"),
+                        new(key: "a", preventDown: "key+ctrl"),
                         // select all items instead of all page text
-                        KeyOptions.Of(key: "A", preventDown: "key+ctrl"),
+                        new(key: "A", preventDown: "key+ctrl"),
                         // for our users
-                        KeyOptions.Of(key: "/./", subscribeDown: true, subscribeUp: true)
+                        new(key: "/./", subscribeDown: true, subscribeUp: true)
                     ]);
 
                 await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, keyDown: HandleKeyDownAsync, keyUp: HandleKeyUpAsync);

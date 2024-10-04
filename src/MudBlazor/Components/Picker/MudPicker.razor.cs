@@ -594,12 +594,12 @@ namespace MudBlazor
                 targetClass: "mud-input-slot",
                 keys:
                 [
-                    KeyOptions.Of(key: " ", preventDown: "key+none"),
-                    KeyOptions.Of(key: "ArrowUp", preventDown: "key+none"),
-                    KeyOptions.Of(key: "ArrowDown", preventDown: "key+none"),
-                    KeyOptions.Of(key: "Enter", preventDown: "key+none"),
-                    KeyOptions.Of(key: "NumpadEnter", preventDown: "key+none"),
-                    KeyOptions.Of(key: "/./", subscribeDown: true, subscribeUp: true)
+                    new(key: " ", preventDown: "key+none"),
+                    new(key: "ArrowUp", preventDown: "key+none"),
+                    new(key: "ArrowDown", preventDown: "key+none"),
+                    new(key: "Enter", preventDown: "key+none"),
+                    new(key: "NumpadEnter", preventDown: "key+none"),
+                    new(key: "/./", subscribeDown: true, subscribeUp: true)
                 ]);
 
             await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, keyDown: OnHandleKeyDownAsync);
@@ -655,7 +655,7 @@ namespace MudBlazor
             }
 
             await EnsureKeyInterceptorAsync();
-            await KeyInterceptorService.UpdateKeyAsync(_elementId, KeyOptions.Of(key: "Escape", stopDown: "key+none"));
+            await KeyInterceptorService.UpdateKeyAsync(_elementId, new(key: "Escape", stopDown: "key+none"));
         }
 
         protected virtual async Task OnClosedAsync()
@@ -663,7 +663,7 @@ namespace MudBlazor
             await OnPickerClosedAsync();
 
             await EnsureKeyInterceptorAsync();
-            await KeyInterceptorService.UpdateKeyAsync(_elementId, KeyOptions.Of(key: "Escape", stopDown: "none"));
+            await KeyInterceptorService.UpdateKeyAsync(_elementId, new(key: "Escape", stopDown: "none"));
         }
 
         protected virtual Task OnPickerOpenedAsync() => PickerOpened.InvokeAsync(this);

@@ -163,23 +163,23 @@ namespace MudBlazor
                     keys:
                     [
                         // prevent scrolling page, toggle open/close
-                        KeyOptions.Of(key: " ", preventDown: "key+none"),
+                        new(key: " ", preventDown: "key+none"),
                         // prevent scrolling page, instead increment
-                        KeyOptions.Of(key: "ArrowUp", preventDown: "key+none"),
+                        new(key: "ArrowUp", preventDown: "key+none"),
                         // prevent scrolling page, instead decrement
-                        KeyOptions.Of(key: "ArrowDown", preventDown: "key+none"),
+                        new(key: "ArrowDown", preventDown: "key+none"),
                         // prevent scrolling page
-                        KeyOptions.Of(key: "PageUp", preventDown: "key+none"),
+                        new(key: "PageUp", preventDown: "key+none"),
                         // prevent scrolling page
-                        KeyOptions.Of(key: "PageDown", preventDown: "key+none"),
+                        new(key: "PageDown", preventDown: "key+none"),
                         // prevent input of all other characters except allowed, like [0-9.,-+]
-                        KeyOptions.Of(key: @"/^.$/", preventDown: "key+none|key+shift"),
+                        new(key: @"/^.$/", preventDown: "key+none|key+shift"),
                         // subscribe to all key down events
-                        KeyOptions.Of(key: "/./", subscribeDown: true),
+                        new(key: "/./", subscribeDown: true),
                         // prevent backspace key
-                        KeyOptions.Of(key: "Backspace", preventDown: "key+none"),
+                        new(key: "Backspace", preventDown: "key+none"),
                         // prevent delete key
-                        KeyOptions.Of(key: "Delete", preventDown: "key+none")
+                        new(key: "Delete", preventDown: "key+none")
                     ]);
                 await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, keyDown: HandleKeyDown);
             }

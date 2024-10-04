@@ -265,13 +265,13 @@ namespace MudBlazor
                     keys:
                     [
                         // prevent scrolling page, instead increment
-                        KeyOptions.Of(key: "ArrowUp", preventDown: "key+none"),
+                        new(key: "ArrowUp", preventDown: "key+none"),
                         // prevent scrolling page, instead decrement
-                        KeyOptions.Of(key: "ArrowDown", preventDown: "key+none"),
+                        new(key: "ArrowDown", preventDown: "key+none"),
                         // prevent dead keys like ^ ` ´ etc
-                        KeyOptions.Of(key: "Dead", preventDown: "key+any"),
+                        new(key: "Dead", preventDown: "key+any"),
                         // prevent input of all other characters except allowed, like [0-9.,-+]
-                        KeyOptions.Of(key: $"/^(?!{(Pattern ?? "[0-9]").TrimEnd('*')}).$/", preventDown: "key+none|key+shift|key+alt")
+                        new(key: $"/^(?!{(Pattern ?? "[0-9]").TrimEnd('*')}).$/", preventDown: "key+none|key+shift|key+alt")
                     ]);
                 await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
             }

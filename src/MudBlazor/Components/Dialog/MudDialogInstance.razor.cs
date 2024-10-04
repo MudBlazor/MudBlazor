@@ -125,7 +125,7 @@ namespace MudBlazor
                 {
                     var keyInterceptorOptions = new KeyInterceptorOptions(
                         targetClass: "mud-dialog",
-                        keys: [KeyOptions.Of(key: "Escape", subscribeDown: true)]);
+                        keys: [new(key: "Escape", subscribeDown: true)]);
                     await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, keyDown: HandleKeyDown);
                 }
             }
