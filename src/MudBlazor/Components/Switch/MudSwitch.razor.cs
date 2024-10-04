@@ -35,7 +35,7 @@ namespace MudBlazor
         protected string SwitchClassname =>
             new CssBuilder("mud-button-root mud-icon-button mud-switch-base")
                 .AddClass($"mud-ripple mud-ripple-switch", Ripple && !GetReadOnlyState() && !GetDisabledState())
-                .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == true)
+                .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetDisabledState() && BoolValue == true)
                 .AddClass($"mud-{UncheckedColor.ToDescriptionString()}-text hover:mud-{UncheckedColor.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == false)
                 .AddClass($"mud-switch-disabled", GetDisabledState())
                 .AddClass($"mud-readonly", GetReadOnlyState())
