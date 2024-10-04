@@ -192,7 +192,7 @@ namespace MudBlazor
 
         protected internal async Task HandleKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
         {
-            if (GetDisabledState() || (GetReadOnlyState())
+            if (GetDisabledState() || GetReadOnlyState())
             {
                 return;
             }
