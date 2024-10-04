@@ -136,8 +136,11 @@ namespace MudBlazor.Services
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudBlazorKeyInterceptor(this IServiceCollection services)
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             services.TryAddTransient<IKeyInterceptor, KeyInterceptor>();
             services.TryAddScoped<IKeyInterceptorFactory, KeyInterceptorFactory>();
+#pragma warning restore CS0618 // Type or member is obsolete
+            services.TryAddScoped<IKeyInterceptorService, KeyInterceptorService>();
 
             return services;
         }

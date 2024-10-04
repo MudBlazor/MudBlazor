@@ -17,7 +17,6 @@ namespace MudBlazor
         private bool _dense;
         private string multiSelectionText;
         private bool? _selectAllChecked;
-        private IKeyInterceptor _keyInterceptor;
 
         protected string OuterClassname =>
             new CssBuilder("mud-select")
@@ -35,8 +34,11 @@ namespace MudBlazor
                 .AddClass(InputClass)
                 .Build();
 
-        [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
-        [Inject] IScrollManager ScrollManager { get; set; }
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
+
+        [Inject]
+        private IScrollManager ScrollManager { get; set; }
 
         private string _elementId = Identifier.Create("select");
 
@@ -700,7 +702,7 @@ namespace MudBlazor
                 }
             }
             //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
-            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "Key+none" });
+            await KeyInterceptorService.UpdateKeyAsync(_elementId, new(key: "Escape", stopDown: "key+none"));
 
             await OnOpen.InvokeAsync();
         }
@@ -718,7 +720,7 @@ namespace MudBlazor
             }
 
             //enable escape propagation: the select popover was closed, now underlying components are allowed to handle escape key
-            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
+            await KeyInterceptorService.UpdateKeyAsync(_elementId, new(key: "Escape", stopDown: "none"));
 
             await OnClose.InvokeAsync();
         }
@@ -744,28 +746,31 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                _keyInterceptor = KeyInterceptorFactory.Create();
+                var keyInterceptorOptions = new KeyInterceptorOptions(
+                    targetClass: "mud-input-control",
+                    enableLogging: true,
+                    keys:
+                    [
+                        // prevent scrolling page, toggle open/close
+                        new(key: " ", preventDown: "key+none"),
+                        // prevent scrolling page, instead highlight previous item
+                        new(key: "ArrowUp", preventDown: "key+none"),
+                        // prevent scrolling page, instead highlight next item
+                        new(key: "ArrowDown", preventDown: "key+none"),
+                        new(key: "Home", preventDown: "key+none"),
+                        new(key: "End", preventDown: "key+none"),
+                        new(key: "Escape"),
+                        new(key: "Enter", preventDown: "key+none"),
+                        new(key: "NumpadEnter", preventDown: "key+none"),
+                        // select all items instead of all page text
+                        new(key: "a", preventDown: "key+ctrl"),
+                        // select all items instead of all page text
+                        new(key: "A", preventDown: "key+ctrl"),
+                        // for our users
+                        new(key: "/./", subscribeDown: true, subscribeUp: true)
+                    ]);
 
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
-                {
-                    //EnableLogging = true,
-                    TargetClass = "mud-input-control",
-                    Keys = {
-                        new KeyOptions { Key=" ", PreventDown = "key+none" }, //prevent scrolling page, toggle open/close
-                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead hilight previous item
-                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead hilight next item
-                        new KeyOptions { Key="Home", PreventDown = "key+none" },
-                        new KeyOptions { Key="End", PreventDown = "key+none" },
-                        new KeyOptions { Key="Escape" },
-                        new KeyOptions { Key="Enter", PreventDown = "key+none" },
-                        new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
-                        new KeyOptions { Key="a", PreventDown = "key+ctrl" }, // select all items instead of all page text
-                        new KeyOptions { Key="A", PreventDown = "key+ctrl" }, // select all items instead of all page text
-                        new KeyOptions { Key="/./", SubscribeDown = true, SubscribeUp = true }, // for our users
-                    },
-                });
-                _keyInterceptor.KeyDown += HandleKeyDown;
-                _keyInterceptor.KeyUp += HandleKeyUp;
+                await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, keyDown: HandleKeyDownAsync, keyUp: HandleKeyUpAsync);
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -863,7 +868,7 @@ namespace MudBlazor
             }
         }
 
-        internal async void HandleKeyDown(KeyboardEventArgs obj)
+        internal async Task HandleKeyDownAsync(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
@@ -970,13 +975,13 @@ namespace MudBlazor
                     }
                     break;
             }
-            OnKeyDown.InvokeAsync(obj).CatchAndLog();
 
+            await OnKeyDown.InvokeAsync(obj);
         }
 
-        internal void HandleKeyUp(KeyboardEventArgs obj)
+        internal Task HandleKeyUpAsync(KeyboardEventArgs obj)
         {
-            OnKeyUp.InvokeAsync(obj).CatchAndLog();
+            return OnKeyUp.InvokeAsync(obj);
         }
 
         /// <summary>
@@ -1067,15 +1072,10 @@ namespace MudBlazor
 
             if (disposing)
             {
-                if (_keyInterceptor != null)
+                if (IsJSRuntimeAvailable)
                 {
-                    _keyInterceptor.KeyDown -= HandleKeyDown;
-                    _keyInterceptor.KeyUp -= HandleKeyUp;
-
-                    if (IsJSRuntimeAvailable)
-                    {
-                        _keyInterceptor.Dispose();
-                    }
+                    // TODO: Replace with IAsyncDisposable
+                    KeyInterceptorService.UnsubscribeAsync(_elementId).CatchAndLog();
                 }
             }
         }
