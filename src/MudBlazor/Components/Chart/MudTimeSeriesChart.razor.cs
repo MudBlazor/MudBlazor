@@ -11,7 +11,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
-        public List<TimeSeriesChartSeries> ChartSeries { get; set; } = new();
+        public List<TimeSeriesChartSeries> ChartSeries { get; set; } = [];
 
         /// <summary>
         /// A way to have minimum spacing between timestamp labels, default of 5 minutes.
