@@ -10,7 +10,7 @@ class MudKeyInterceptorFactory {
             throw "elementId: expected element id!";
         var element = document.getElementById(elementId);
         if (!element)
-            throw "no element found for id: " +elementId;
+            throw "no element found for id: " + elementId;
         if (!element.mudKeyInterceptor)
             element.mudKeyInterceptor = new MudKeyInterceptor(dotNetRef, options);
         element.mudKeyInterceptor.connect(element);
@@ -32,7 +32,6 @@ class MudKeyInterceptorFactory {
 }
 window.mudKeyInterceptor = new MudKeyInterceptorFactory();
 
-
 class MudKeyInterceptor {
 
     constructor(dotNetRef, options) {
@@ -42,7 +41,6 @@ class MudKeyInterceptor {
         this.logger('[MudBlazor | KeyInterceptor] Interceptor initialized', { options });
     }
 
-    
     connect(element) {
         if (!this._options)
             return;
@@ -150,7 +148,7 @@ class MudKeyInterceptor {
     }
 
     matchesKeyCombination(option, args) {
-        if (!option || option=== "none")
+        if (!option || option === "none")
             return false;
         if (option === "any")
             return true;
@@ -192,10 +190,7 @@ class MudKeyInterceptor {
         if (invoke) {
             var eventArgs = self.toKeyboardEventArgs(args);
             eventArgs.Type = "keydown";
-            // we'd like to pass a reference to the child element back to dotnet but we can't
-            // https://github.com/dotnet/aspnetcore/issues/16110
-            // if we ever need it we'll pass the id up and users need to id the observed elements
-            self._dotNetRef.invokeMethodAsync('OnKeyDown', eventArgs);
+            self._dotNetRef.invokeMethodAsync('OnKeyDown', self._element.id, eventArgs);
         }
     }
 
@@ -227,10 +222,7 @@ class MudKeyInterceptor {
         if (invoke) {
             var eventArgs = self.toKeyboardEventArgs(args);
             eventArgs.Type = "keyup";
-            // we'd like to pass a reference to the child element back to dotnet but we can't
-            // https://github.com/dotnet/aspnetcore/issues/16110
-            // if we ever need it we'll pass the id up and users need to id the observed elements
-            self._dotNetRef.invokeMethodAsync('OnKeyUp', eventArgs);
+            self._dotNetRef.invokeMethodAsync('OnKeyUp', self._element.id, eventArgs);
         }
     }
 

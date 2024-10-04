@@ -25,10 +25,9 @@ namespace MudBlazor
     {
         private DialogOptions? _options = new();
         private readonly string _elementId = Identifier.Create("dialog");
-        private IKeyInterceptor? _keyInterceptor;
 
         [Inject]
-        private IKeyInterceptorFactory KeyInterceptorFactory { get; set; } = null!;
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
@@ -114,23 +113,17 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             ConfigureInstance();
+            base.OnInitialized();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
-                _keyInterceptor = KeyInterceptorFactory.Create();
-
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
-                {
-                    TargetClass = "mud-dialog",
-                    Keys = {
-                        new KeyOptions { Key="/./", SubscribeDown = true, SubscribeUp = true },
-                    },
-                });
-                _keyInterceptor.KeyDown += HandleKeyDown;
-                _keyInterceptor.KeyUp += HandleKeyUp;
+                var keyInterceptorOptions = new KeyInterceptorOptions(
+                    targetClass: "mud-dialog",
+                    keys: [new(key: "/./", subscribeDown: true, subscribeDown: true)]);
+                await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, keyDown: HandleKeyDown, keyUp: HandleKeyUp);
             }
             await base.OnAfterRenderAsync(firstRender);
         }
@@ -412,14 +405,10 @@ namespace MudBlazor
             {
                 if (disposing)
                 {
-                    if (_keyInterceptor != null)
+                    if (IsJSRuntimeAvailable)
                     {
-                        _keyInterceptor.KeyDown -= HandleKeyDown;
-                        _keyInterceptor.KeyUp -= HandleKeyUp;
-                        if (IsJSRuntimeAvailable)
-                        {
-                            _keyInterceptor.Dispose();
-                        }
+                        // TODO: Replace with IAsyncDisposable
+                        KeyInterceptorService.UnsubscribeAsync(_elementId).CatchAndLog();
                     }
                 }
 
