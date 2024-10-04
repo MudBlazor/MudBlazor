@@ -120,25 +120,22 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                //Since CloseOnEscapeKey is the only thing to be handled, turn interceptor off
-                if (CloseOnEscapeKey)
-                {
-                    _keyInterceptor = KeyInterceptorFactory.Create();
+                _keyInterceptor = KeyInterceptorFactory.Create();
 
-                    await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
-                    {
-                        TargetClass = "mud-dialog",
-                        Keys = {
-                            new KeyOptions { Key="Escape", SubscribeDown = true },
-                        },
-                    });
-                    _keyInterceptor.KeyDown += HandleKeyDown;
-                }
+                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
+                {
+                    TargetClass = "mud-dialog",
+                    Keys = {
+                        new KeyOptions { Key="/./", SubscribeDown = true, SubscribeUp = true },
+                    },
+                });
+                _keyInterceptor.KeyDown += HandleKeyDown;
+                _keyInterceptor.KeyUp += HandleKeyUp;
             }
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        internal void HandleKeyDown(KeyboardEventArgs args)
+        internal async void HandleKeyDown(KeyboardEventArgs args)
         {
             switch (args.Key)
             {
@@ -148,6 +145,24 @@ namespace MudBlazor
                         Cancel();
                     }
                     break;
+            }
+            if (_dialog is not null && _dialog.OnKeyDown.HasDelegate)
+            {
+                await _dialog.OnKeyDown.InvokeAsync(args);
+                // Note: we need to force a render here because the user will expect this blazor standard functionality.
+                // Since the event originates from KeyInterceptor it will not cause a render automatically.
+                StateHasChanged();
+            }
+        }
+
+        internal async void HandleKeyUp(KeyboardEventArgs args)
+        {
+            if (_dialog is not null && _dialog.OnKeyUp.HasDelegate)
+            {
+                await _dialog.OnKeyUp.InvokeAsync(args);
+                // note: we need to force a render here because the user will expect this blazor standard functionality
+                // Since the event originates from KeyInterceptor it will not cause a render automatically.
+                StateHasChanged();
             }
         }
 
@@ -400,6 +415,7 @@ namespace MudBlazor
                     if (_keyInterceptor != null)
                     {
                         _keyInterceptor.KeyDown -= HandleKeyDown;
+                        _keyInterceptor.KeyUp -= HandleKeyUp;
                         if (IsJSRuntimeAvailable)
                         {
                             _keyInterceptor.Dispose();
