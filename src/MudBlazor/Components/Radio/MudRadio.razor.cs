@@ -26,8 +26,10 @@ namespace MudBlazor
         protected string ButtonClassname =>
             new CssBuilder("mud-button-root mud-icon-button")
                 .AddClass("mud-ripple mud-ripple-radio", Ripple && !GetDisabledState() && !GetReadOnlyState())
-                .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetDisabledState() && (UncheckedColor == null || (UncheckedColor != null && Checked)))
-                .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetDisabledState() && UncheckedColor != null && Checked == false)
+                .AddClass($"mud-{Color.ToDescriptionString()}-text", !GetDisabledState() && (UncheckedColor == null || (UncheckedColor != null && Checked)))
+                .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text", !GetDisabledState() && UncheckedColor != null && Checked == false)
+                .AddClass($"hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && (UncheckedColor == null || (UncheckedColor != null && Checked)))
+                .AddClass($"hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && Checked == false)
                 .AddClass("mud-radio-dense", Dense)
                 .AddClass("mud-disabled", GetDisabledState())
                 .AddClass("mud-readonly", GetReadOnlyState())
