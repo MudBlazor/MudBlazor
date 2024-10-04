@@ -122,7 +122,7 @@ namespace MudBlazor
             {
                 var keyInterceptorOptions = new KeyInterceptorOptions(
                     targetClass: "mud-dialog",
-                    keys: [new(key: "/./", subscribeDown: true, subscribeDown: true)]);
+                    keys: [new(key: "/./", subscribeDown: true, subscribeUp: true)]);
                 await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, keyDown: HandleKeyDown, keyUp: HandleKeyUp);
             }
             await base.OnAfterRenderAsync(firstRender);
