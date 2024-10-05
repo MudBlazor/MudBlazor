@@ -4,6 +4,7 @@
 
 #nullable enable
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,11 +19,16 @@ public partial class MudStepper : MudComponentBase
 {
     public MudStepper()
     {
-        _activeIndex = RegisterParameter(nameof(ActiveIndex), () => ActiveIndex, () => ActiveIndexChanged, async args => await SetActiveIndexAsync(args.Value));
+        using var registerScope = CreateRegisterScope();
+        _activeIndex = registerScope.RegisterParameter<int>(nameof(ActiveIndex))
+            .WithParameter(() => ActiveIndex)
+            .WithEventCallback(() => ActiveIndexChanged)
+            .WithChangeHandler(async args => await SetActiveIndexAsync(args.Value));
     }
 
+    private readonly ParameterState<int> _activeIndex;
+
     private List<MudStep> _steps = new();
-    private IParameterState<int> _activeIndex;
     private HashSet<MudStep> _skippedSteps = new();
 
     /// <summary>

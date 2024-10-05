@@ -14,15 +14,25 @@ public class MudStep : MudComponentBase, IAsyncDisposable
 {
     public MudStep()
     {
-        CompletedState = RegisterParameter(nameof(Completed), () => Completed, () => CompletedChanged, OnParameterChanged);
-        DisabledState = RegisterParameter(nameof(Disabled), () => Disabled, () => DisabledChanged, OnParameterChanged);
-        HasErrorState = RegisterParameter(nameof(HasError), () => HasError, () => HasErrorChanged, OnParameterChanged);
+        using var registerScope = CreateRegisterScope();
+        CompletedState = registerScope.RegisterParameter<bool>(nameof(Completed))
+            .WithParameter(() => Completed)
+            .WithEventCallback(() => CompletedChanged)
+            .WithChangeHandler(OnParameterChanged);
+        DisabledState = registerScope.RegisterParameter<bool>(nameof(Disabled))
+            .WithParameter(() => Disabled)
+            .WithEventCallback(() => DisabledChanged)
+            .WithChangeHandler(OnParameterChanged);
+        HasErrorState = registerScope.RegisterParameter<bool>(nameof(HasError))
+            .WithParameter(() => HasError)
+            .WithEventCallback(() => HasErrorChanged)
+            .WithChangeHandler(OnParameterChanged);
     }
 
     private bool _disposed;
-    internal IParameterState<bool> CompletedState { get; private set; }
-    internal IParameterState<bool> DisabledState { get; private set; }
-    internal IParameterState<bool> HasErrorState { get; private set; }
+    internal ParameterState<bool> CompletedState { get; private set; }
+    internal ParameterState<bool> DisabledState { get; private set; }
+    internal ParameterState<bool> HasErrorState { get; private set; }
 
     internal string Styles => new StyleBuilder()
         .AddStyle(Parent?.StepStyle)
