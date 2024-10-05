@@ -6,7 +6,7 @@
 
 <div class="mud-chip-container"
      id="@_chipContainerId"
-     @onkeydown="@HandleKeyDown">
+     @onkeydown="@HandleKeyDownAsync">
     <div tabindex="@(IsClickable ? 0 : -1)"
          role="@RoleAttribute"
          @attributes="UserAttributes"

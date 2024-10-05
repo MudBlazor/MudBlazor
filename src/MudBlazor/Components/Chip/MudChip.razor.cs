@@ -15,9 +15,8 @@ namespace MudBlazor;
 public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 {
     [Inject]
-    private IKeyInterceptorFactory KeyInterceptorFactory { get; set; } = null!;
+    private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
-    private IKeyInterceptor? _keyInterceptor;
     private string _chipContainerId = $"chip-container-{Guid.NewGuid()}";
 
     public MudChip()
@@ -353,20 +352,17 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     {
         await base.OnAfterRenderAsync(firstRender);
 
-        _keyInterceptor = KeyInterceptorFactory.Create();
+        var keyInterceptorOptions = new KeyInterceptorOptions(
+            targetClass: "mud-chip",
+            keys:
+            [
+                new KeyOptions(key: "Enter", preventDown: "key+none"),
+                new KeyOptions(key: " ", preventDown: "key+none", preventUp: "key+none"),
+                new KeyOptions(key: "Backspace", preventDown: "key+none"),
+                new KeyOptions(key: "Delete", preventDown: "key+none")
+            ]);
 
-        await _keyInterceptor.Connect(_chipContainerId, new KeyInterceptorOptions
-        {
-            TargetClass = "mud-chip",
-            Keys = {
-                new KeyOptions { Key="Enter", PreventDown = "key+none" },
-                new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" },
-                new KeyOptions { Key="Backspace", PreventDown = "key+none" },
-                new KeyOptions { Key="Delete", PreventDown = "key+none" }
-            },
-        });
-
-        _keyInterceptor.KeyDown += HandleKeyDown;
+        await KeyInterceptorService.SubscribeAsync(_chipContainerId, keyInterceptorOptions, keyDown: HandleKeyDownAsync);
     }
 
     protected internal async Task OnClickAsync(MouseEventArgs ev)
@@ -409,7 +405,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         StateHasChanged();
     }
 
-    private void HandleKeyDown(KeyboardEventArgs args)
+    private async Task HandleKeyDownAsync(KeyboardEventArgs args)
     {
         if (GetDisabled() || GetReadonly())
         {
@@ -419,10 +415,10 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         switch (args.Key)
         {
             case "Enter" or "NumpadEnter" or " ":
-                OnClickAsync(new MouseEventArgs()).CatchAndLog();
+                await OnClickAsync(new MouseEventArgs());
                 break;
             case "Backspace" or "Delete":
-                OnCloseAsync(new MouseEventArgs()).CatchAndLog();
+                await OnCloseAsync(new MouseEventArgs());
                 break;
         }
     }
@@ -438,15 +434,9 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
                 return;
             await ChipSet.RemoveAsync(this);
 
-            if (_keyInterceptor is null)
-            {
-                return;
-            }
-
-            _keyInterceptor.KeyDown -= HandleKeyDown;
             if (IsJSRuntimeAvailable)
             {
-                _keyInterceptor.Dispose();
+                await KeyInterceptorService.UnsubscribeAsync(_chipContainerId);
             }
         }
         catch (Exception)
