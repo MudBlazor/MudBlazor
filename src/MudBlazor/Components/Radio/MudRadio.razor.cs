@@ -238,8 +238,7 @@ namespace MudBlazor
             if (firstRender)
             {
                 var keyInterceptorOptions = new KeyInterceptorOptions(
-                    targetClass: "mud-button-root",
-                    keys:
+                    "mud-button-root",
                     [
                         // prevent scrolling page
                         new(" ", preventDown: "key+none", preventUp: "key+none"),
@@ -247,8 +246,10 @@ namespace MudBlazor
                         new("NumpadEnter", preventDown: "key+none"),
                         new("Backspace", preventDown: "key+none")
                     ]);
+
                 await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
             }
+
             await base.OnAfterRenderAsync(firstRender);
         }
     }

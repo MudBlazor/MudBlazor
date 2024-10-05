@@ -47,7 +47,7 @@ class MudKeyInterceptor {
         if (!this._options.keys) 
             throw "_options.keys: array of KeyOptions expected";
         if (!this._options.targetClass)
-            throw "_options.targetClass: css class name expected";
+            throw "_options.css class name expected";
         if (this._observer) {
             // don't do double registration
             return;

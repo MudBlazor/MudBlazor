@@ -747,9 +747,8 @@ namespace MudBlazor
             if (firstRender)
             {
                 var keyInterceptorOptions = new KeyInterceptorOptions(
-                    targetClass: "mud-input-control",
+                    "mud-input-control",
                     enableLogging: true,
-                    keys:
                     [
                         // prevent scrolling page, toggle open/close
                         new(" ", preventDown: "key+none"),
