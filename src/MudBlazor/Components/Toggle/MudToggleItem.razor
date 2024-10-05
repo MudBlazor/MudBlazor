@@ -9,7 +9,7 @@
            Style="@Style"
            OnClick="HandleOnClickAsync"
            Size="@(Parent?.Size ?? Size.Medium)"
-           Color="@(Parent?.Color ?? Color.Default)"
+           Color="@(Color ?? Parent?.Color ?? MudBlazor.Color.Default)"
            Variant="@(Selected ? Variant.Filled : Variant.Outlined)"
            Disabled="Disabled || (Parent?.Disabled ?? false)"
            Ripple="Parent?.Ripple == true"

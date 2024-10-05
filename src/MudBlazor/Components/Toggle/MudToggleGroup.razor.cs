@@ -13,6 +13,8 @@ namespace MudBlazor
 #nullable enable
     public partial class MudToggleGroup<T> : MudComponentBase
     {
+        private Color? _overrideColor;
+
         public MudToggleGroup()
         {
             using var registerScope = CreateRegisterScope();
@@ -77,7 +79,7 @@ namespace MudBlazor
             .AddClass("rounded", !Rounded)
             .AddClass("rounded-xl", Rounded)
             .AddClass("mud-toggle-group-rtl", RightToLeft)
-            .AddClass($"border mud-border-{Color.ToDescriptionString()} border-solid", Outlined)
+            .AddClass($"border mud-border-{(_overrideColor ?? Color).ToDescriptionString()} border-solid", Outlined)
             .AddClass("mud-disabled", Disabled)
             .AddClass(Class)
             .Build();
@@ -335,6 +337,7 @@ namespace MudBlazor
         protected internal async Task ToggleItemAsync(MudToggleItem<T> item)
         {
             var itemValue = item.Value;
+
             if (SelectionMode == SelectionMode.MultiSelection)
             {
                 var selectedValues = new HashSet<T?>(_values.Value ?? Array.Empty<T?>());
@@ -370,6 +373,22 @@ namespace MudBlazor
                 DeselectAllItems();
                 item.SetSelected(true);
                 await _value.SetValueAsync(itemValue);
+            }
+
+            // Override the set color if the item has its own color and was the last one selected.
+            if (item.Color is not null && item.Selected)
+            {
+                _overrideColor = item.Color;
+                StateHasChanged();
+            }
+            else
+            {
+                // Reset the override color if the item was deselected.
+                if (_overrideColor != null)
+                {
+                    _overrideColor = null;
+                    StateHasChanged();
+                }
             }
         }
 

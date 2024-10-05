@@ -57,6 +57,13 @@ namespace MudBlazor
         public string? SelectedIcon { get; set; } = Icons.Material.Filled.Check;
 
         /// <summary>
+        /// The color of the toggle item. Affects borders and selection color. Default is to inherit from the parent.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public Color? Color { get; set; }
+
+        /// <summary>
         /// The text to show. You need to set this only if you want a text that differs from the Value. If null,
         /// show Value?.ToString().
         /// Note: the Text is only shown if you haven't defined your own child content.
