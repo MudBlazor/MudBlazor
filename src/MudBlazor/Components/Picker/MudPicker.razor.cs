@@ -590,7 +590,7 @@ namespace MudBlazor
             }
 
             _keyInterceptorObserving = true;
-            var keyInterceptorOptions = new KeyInterceptorOptions(
+            var options = new KeyInterceptorOptions(
                 "mud-input-slot",
                 [
                     new(" ", preventDown: "key+none"),
@@ -601,7 +601,7 @@ namespace MudBlazor
                     new("/./", subscribeDown: true, subscribeUp: true)
                 ]);
 
-            await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, keyDown: OnHandleKeyDownAsync);
+            await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: OnHandleKeyDownAsync);
         }
 
         private async Task OnClickAsync(MouseEventArgs args)

@@ -260,7 +260,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                var keyInterceptorOptions = new KeyInterceptorOptions(
+                var options = new KeyInterceptorOptions(
                     "mud-input-slot",
                     [
                         // prevent scrolling page, instead increment
@@ -273,7 +273,7 @@ namespace MudBlazor
                         new($"/^(?!{(Pattern ?? "[0-9]").TrimEnd('*')}).$/", preventDown: "key+none|key+shift|key+alt")
                     ]);
 
-                await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
             }
 
             await base.OnAfterRenderAsync(firstRender);

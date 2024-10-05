@@ -158,7 +158,7 @@ namespace MudBlazor
                 _jsEvent.Paste += OnPaste;
                 _jsEvent.Select += OnSelect;
 
-                var keyInterceptorOptions = new KeyInterceptorOptions(
+                var options = new KeyInterceptorOptions(
                     "mud-input-slot",
                     [
                         // prevent scrolling page, toggle open/close
@@ -181,7 +181,7 @@ namespace MudBlazor
                         new("Delete", preventDown: "key+none")
                     ]);
 
-                await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, keyDown: HandleKeyDown);
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDown);
             }
 
             if (_isFocused && Mask.Selection == null)
