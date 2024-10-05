@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudDialog OnKeyDown="OnKeyDown">
+<MudDialog OnKeyDown="OnKeyDownAsync">
     <DialogContent>
         <MudText>Select your favourite coffee. Hit Enter to accept or Escape to cancel.</MudText>
         <MudSelect T="string" Label="Favorite Coffee" AnchorOrigin="Origin.BottomCenter" @bind-Value="_returnValue">
@@ -29,13 +29,17 @@
 
     private void Cancel() => MudDialog.Cancel();
 
-    private async void OnKeyDown(KeyboardEventArgs args)
+    private async Task OnKeyDownAsync(KeyboardEventArgs args)
     {
         switch(args.Key) {
             case "Enter":
             case "NumpadEnter":
                 if (string.IsNullOrEmpty(_returnValue)) {
-                    await DialogService.ShowMessageBox("Sorry",@"You must select a coffee to close with Enter or cancel with Escape!", yesText:"Got it");
+                    await DialogService.ShowMessageBox(
+                        "Sorry",
+                        @"You must either select a coffee and close with Enter or cancel with Escape!", 
+                        yesText:"Got it", 
+                        options: new DialogOptions() { CloseOnEscapeKey = true, MaxWidth = MaxWidth.ExtraSmall });
                     return;
                 }
                 Submit();

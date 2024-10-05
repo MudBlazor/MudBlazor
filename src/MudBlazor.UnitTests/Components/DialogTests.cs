@@ -448,14 +448,14 @@ namespace MudBlazor.UnitTests.Components
             dialogReference.Should().NotBe(null);
             var dialog1 = (DialogOkCancel)dialogReference.Dialog;
             comp.Markup.Trim().Should().NotBeEmpty();
-            await comp.InvokeAsync(() => dialog1.MudDialog.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            await comp.InvokeAsync(() => dialog1.MudDialog.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             comp.Markup.Trim().Should().BeEmpty();
             //dialog with disabled backdrop click
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>(string.Empty, new DialogOptions() { CloseOnEscapeKey = false }));
             dialogReference.Should().NotBe(null);
             var dialog2 = (DialogOkCancel)dialogReference.Dialog;
             comp.Markup.Trim().Should().NotBeEmpty();
-            await comp.InvokeAsync(() => dialog2.MudDialog.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            await comp.InvokeAsync(() => dialog2.MudDialog.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             comp.Markup.Trim().Should().NotBeEmpty();
         }
 
@@ -803,7 +803,7 @@ namespace MudBlazor.UnitTests.Components
             var dialogReference = await dialogReferenceLazy.Value;
             var dialog1 = (DialogOkCancel)dialogReference.Dialog;
             comp.Markup.Trim().Should().NotBeEmpty();
-            await comp.InvokeAsync(() => dialog1.MudDialog.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            await comp.InvokeAsync(() => dialog1.MudDialog.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             comp.Markup.Trim().Should().BeEmpty();
             //dialog with disabled backdrop click
             dialogReferenceLazy = new Lazy<Task<IDialogReference>>(() => service?.ShowAsync<DialogOkCancel>(string.Empty, new DialogOptions() { CloseOnEscapeKey = false }));
@@ -812,7 +812,7 @@ namespace MudBlazor.UnitTests.Components
             dialogReference.Should().NotBe(null);
             var dialog2 = (DialogOkCancel)dialogReference.Dialog;
             comp.Markup.Trim().Should().NotBeEmpty();
-            await comp.InvokeAsync(() => dialog2.MudDialog.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            await comp.InvokeAsync(() => dialog2.MudDialog.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             comp.Markup.Trim().Should().NotBeEmpty();
         }
 
