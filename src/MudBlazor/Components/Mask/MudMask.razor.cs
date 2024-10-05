@@ -12,6 +12,10 @@ namespace MudBlazor
 {
     /// <summary>
     /// A text input which conforms user input to a specific format while typing. 
+    /// <remarks>
+    /// Note that MudMask is recommended to be used in WASM projects only because it has known problems
+    /// in BSS, especiall with high network latency.
+    /// </remarks>
     /// </summary>
     public partial class MudMask : MudBaseInput<string>
     {
