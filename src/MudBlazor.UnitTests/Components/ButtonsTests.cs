@@ -58,7 +58,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup
                 .Should()
                 .Contain("rel=\"noopener\"");
-            //it is an anchor and not contains stopPropagation 
+            //it is an anchor and not contains stopPropagation
             comp.Markup
                 .Replace(" ", string.Empty)
                 .Should()
@@ -479,6 +479,40 @@ namespace MudBlazor.UnitTests.Components
             alertTextFunc().InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
             await comp.InvokeAsync(comp.Instance.Recover);
             alertTextFunc.Should().Throw<ComponentNotFoundException>();
+        }
+
+        [Test]
+        public void Buttons_should_activate_parent_activatables_when_click_propagation_is_enabled()
+        {
+            var comp = Context.RenderComponent<ButtonActivationTest>(parameters => parameters
+                .Add(param => param.ClickPropagation, true));
+            var dummyActivatable = comp.FindComponent<DummyActivatable>();
+
+            comp.Find("#fab-button").Click();
+            dummyActivatable.Instance.ActivationCount.Should().Be(1);
+
+            comp.Find("#button-button").Click();
+            dummyActivatable.Instance.ActivationCount.Should().Be(2);
+
+            comp.Find("#icon-button").Click();
+            dummyActivatable.Instance.ActivationCount.Should().Be(3);
+        }
+
+        [Test]
+        public void Buttons_should_not_activate_parent_activatables_when_click_propagation_is_disabled()
+        {
+            var comp = Context.RenderComponent<ButtonActivationTest>(parameters => parameters
+                .Add(param => param.ClickPropagation, false));
+            var dummyActivatable = comp.FindComponent<DummyActivatable>();
+
+            comp.Find("#fab-button").Click();
+            dummyActivatable.Instance.ActivationCount.Should().Be(0);
+
+            comp.Find("#button-button").Click();
+            dummyActivatable.Instance.ActivationCount.Should().Be(0);
+
+            comp.Find("#icon-button").Click();
+            dummyActivatable.Instance.ActivationCount.Should().Be(0);
         }
     }
 }

@@ -1,0 +1,13 @@
+<DummyActivatable>
+    <MudFab id="fab-button"
+            ClickPropagation="@ClickPropagation" />
+    <MudButton id="button-button"
+               ClickPropagation="@ClickPropagation" />
+    <MudIconButton id="icon-button"
+                   Icon="Icon.Material.Filled.Add" ClickPropagation="@ClickPropagation" />
+</DummyActivatable>
+
+@code {
+    [Parameter]
+    public bool ClickPropagation { get; set; }
+}
