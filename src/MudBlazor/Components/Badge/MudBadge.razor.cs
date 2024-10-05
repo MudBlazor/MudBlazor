@@ -172,6 +172,8 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
+            base.OnParametersSet();
+
             if (Content is string stringContent)
             {
                 _content = stringContent;

@@ -74,19 +74,21 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     }
 
     /// <inheritdoc/>
-    public override Task SetValueAsync(T value)
+    public override Task SetValueAsync(T value, ParameterStateValueChangeTiming parameterStateValueChangeTiming = ParameterStateValueChangeTiming.Immediate)
     {
-        if (!_comparer.Equals(Value, value))
+        if (_comparer.Equals(Value, value))
         {
-            _value = value;
-            var eventCallback = _eventCallbackFunc();
-            if (eventCallback.HasDelegate)
-            {
-                return eventCallback.InvokeAsync(value);
-            }
+            return Task.CompletedTask;
         }
 
-        return Task.CompletedTask;
+        var eventCallback = _eventCallbackFunc();
+        if (parameterStateValueChangeTiming is ParameterStateValueChangeTiming.Immediate
+            || eventCallback.HasDelegate is false)
+        {
+            _value = value;
+        }
+
+        return eventCallback.InvokeAsync(value);
     }
 
     /// <inheritdoc />
@@ -161,7 +163,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     ///  Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's ParameterState framework.
     /// <para />
     ///  <b>NB!</b> Usually you don't need to call this directly. Instead, use the RegisterParameter method (<see cref="MudComponentBase"/>) from within the
-    ///  component's constructor.  
+    ///  component's constructor.
     ///  </summary>
     ///  <param name="metadata">The parameter's metadata.</param>
     ///  <param name="getParameterValueFunc">A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>

@@ -2,7 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using MudBlazor.Services;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -19,6 +21,9 @@ namespace MudBlazor
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; } = null!;
+
         protected string Classname => new CssBuilder("mud-input-control-boolean-input")
             .AddClass(Class)
             .Build();
@@ -32,13 +37,13 @@ namespace MudBlazor
         protected string CheckBoxClassname => new CssBuilder("mud-button-root mud-icon-button")
             .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor == null || (UncheckedColor != null && BoolValue == true))
             .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && BoolValue == false)
-            .AddClass($"mud-checkbox-dense", Dense)
-            .AddClass($"mud-ripple mud-ripple-checkbox", Ripple && !GetReadOnlyState() && !GetDisabledState())
-            .AddClass($"mud-disabled", GetDisabledState())
-            .AddClass($"mud-readonly", GetReadOnlyState())
-            .AddClass($"mud-checkbox-true", BoolValue == true)
-            .AddClass($"mud-checkbox-false", BoolValue == false)
-            .AddClass($"mud-checkbox-null", BoolValue is null)
+            .AddClass("mud-checkbox-dense", Dense)
+            .AddClass("mud-ripple mud-ripple-checkbox", Ripple && !GetReadOnlyState() && !GetDisabledState())
+            .AddClass("mud-disabled", GetDisabledState())
+            .AddClass("mud-readonly", GetReadOnlyState())
+            .AddClass("mud-checkbox-true", BoolValue == true)
+            .AddClass("mud-checkbox-false", BoolValue == false)
+            .AddClass("mud-checkbox-null", BoolValue is null)
             .Build();
 
         /// <summary>
@@ -59,7 +64,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
-        public Color? UncheckedColor { get; set; } = null;
+        public Color? UncheckedColor { get; set; }
 
         /// <summary>
         /// The text to display next to the checkbox.
@@ -162,7 +167,7 @@ namespace MudBlazor
         /// Allows the checkbox to have an indeterminate state.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, the checkbox can support an indeterminate state such as a <c>null</c> value, in addition to <c>true</c> and <c>false</c>.
+        /// Defaults to <c>false</c>.  When <c>true</c>, the checkbox can support an indeterminate state such as a <c>null</c> value, in addition to <c>true</c> and <c>false</c>, but will not support
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
@@ -180,22 +185,12 @@ namespace MudBlazor
 
         protected override Task OnChange(ChangeEventArgs args)
         {
-            // Apply only when TriState parameter is set to true and T is bool?
-            if (TriState && typeof(T) == typeof(bool?))
+            if (TriState is false || typeof(T) != typeof(bool?))
             {
-                // The cycle is forced with the following steps: true, false, indeterminate, true, false, indeterminate...
-                var boolValue = (bool?)(object?)_value;
-                if (!boolValue.HasValue)
-                {
-                    return SetBoolValueAsync(true, true);
-                }
-
-                return boolValue.Value
-                    ? SetBoolValueAsync(false, true)
-                    : SetBoolValueAsync(default, true);
+                return SetBoolValueAsync((bool?)args.Value, true);
             }
 
-            return SetBoolValueAsync((bool?)args.Value, true);
+            return ApplyTriStateLogicAsync();
         }
 
         [Obsolete($"Use {nameof(HandleKeyDownAsync)} instead. This will be removed in v8.")]
@@ -227,22 +222,14 @@ namespace MudBlazor
 
                     break;
                 case " ":
-                    switch (BoolValue)
+                    if (TriState)
                     {
-                        case null:
-                            await SetBoolValueAsync(true, true);
-                            break;
-                        case true:
-                            await SetBoolValueAsync(false, true);
-                            break;
-                        case false when TriState:
-                            await SetBoolValueAsync(null, true);
-                            break;
-                        case false:
-                            await SetBoolValueAsync(true, true);
-                            break;
+                        await ApplyTriStateLogicAsync();
                     }
-
+                    else
+                    {
+                        await SetBoolValueAsync(BoolValue is false, true);
+                    }
                     break;
             }
         }
@@ -272,6 +259,8 @@ namespace MudBlazor
                         new(key: "Backspace", preventDown: "key+none")
                     ]);
                 await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, keyDown: HandleKeyDownAsync);
+
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInput.setIndeterminateState", FieldId, BoolValue is null);
             }
             await base.OnAfterRenderAsync(firstRender);
         }
@@ -288,6 +277,25 @@ namespace MudBlazor
                     KeyInterceptorService.UnsubscribeAsync(_elementId).CatchAndLog();
                 }
             }
+        }
+
+        protected override async Task OnValueChangedAsync(ParameterChangedEventArgs<T?> args)
+        {
+            await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInput.setIndeterminateState", FieldId, BoolValue is null);
+            await base.OnValueChangedAsync(args);
+        }
+
+        private Task ApplyTriStateLogicAsync()
+        {
+            // tri-state handling with the following repeating pattern: true -> false -> null
+            if (BoolValue.HasValue is false)
+            {
+                return SetBoolValueAsync(true, true);
+            }
+
+            return BoolValue.Value
+                ? SetBoolValueAsync(false, true)
+                : SetBoolValueAsync(default, true);
         }
     }
 }

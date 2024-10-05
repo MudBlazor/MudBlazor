@@ -1,0 +1,64 @@
+﻿@using MudBlazor.Utilities
+
+<MudDialogProvider />
+
+<MudForm FieldChanged="OnFormFieldChanged">
+    <MudSwitch id="no-value-and-no-callback"
+               T="bool"
+               Label="Without value and without callback"/>
+    <MudSwitch id="value-but-no-callback"
+               T="bool"
+               Value="@OneWayBoundValue"
+               Label="With value but without callback"/>
+    <MudSwitch id="no-value-but-callback"
+               T="bool"
+               ValueChanged="@(_ => Task.CompletedTask)"
+               Label="No value but with callback" />
+    <MudSwitch id="value-and-callback"
+               T="bool"
+               Value="@OneWayBoundValueWithCallback"
+               ValueChanged="@OpenDialogAsync"
+               Label="With value and callback"/>
+    <MudSwitch id="two-way-bound"
+               T="bool"
+               @bind-Value="TwoWayBoundValue"
+               Label="Two-way bound"/>
+</MudForm>
+
+<MudText>
+    @NewValueText
+</MudText>
+
+@code {
+    [Inject]
+    IDialogService DialogService { get; set; }
+
+    [Parameter]
+    public bool LatestFormFieldValue { get; set; }
+
+    [Parameter]
+    public bool TwoWayBoundValue { get; set; }
+
+    [Parameter]
+    public bool OneWayBoundValue { get; set; }
+
+    [Parameter]
+    public bool OneWayBoundValueWithCallback { get; set; }
+
+    private string NewValueText => LatestFormFieldValue.ToString();
+
+    private async Task OpenDialogAsync(bool _)
+    {
+        var dialog = await DialogService.ShowAsync<SwitchConfirmationDialog>("Simple Dialog");
+        if (!(await dialog.Result)?.Canceled ?? false)
+        {
+            OneWayBoundValueWithCallback = !OneWayBoundValueWithCallback;
+        }
+    }
+
+    private Task OnFormFieldChanged(FormFieldChangedEventArgs formFieldChangedEventArgs)
+    {
+        LatestFormFieldValue = formFieldChangedEventArgs.NewValue as bool? ?? false;
+        return InvokeAsync(StateHasChanged);
+    }
+}

@@ -2,9 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.State;
 
 namespace MudBlazor
 {
@@ -13,9 +13,18 @@ namespace MudBlazor
     /// Represents a form input component which stores a boolean value.
     /// </summary>
     /// <typeparam name="T">The type of item managed by this component.</typeparam>
-    public class MudBooleanInput<T> : MudFormComponent<T?, bool?>
+    public abstract class MudBooleanInput<T> : MudFormComponent<T?, bool?>
     {
-        public MudBooleanInput() : base(new BoolConverter<T?>()) { }
+        private readonly ParameterState<T?> _valueState;
+
+        protected MudBooleanInput() : base(new BoolConverter<T?>())
+        {
+            using var registerScope = CreateRegisterScope();
+            _valueState = registerScope.RegisterParameter<T?>(nameof(Value))
+                .WithParameter(() => Value)
+                .WithEventCallback(() => ValueChanged)
+                .WithChangeHandler(OnValueChangedAsync);
+        }
 
         /// <summary>
         /// Prevents the user from interacting with this input.
@@ -52,15 +61,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
-        public T? Value
-        {
-            get => _value;
-            set
-            {
-                _value = value;
-
-            }
-        }
+        public T? Value { get; set; }
 
         /// <summary>
         /// Prevents the parent component from receiving click events.
@@ -78,36 +79,21 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<T?> ValueChanged { get; set; }
 
-        protected bool? BoolValue => Converter.Set(Value);
+        protected bool? BoolValue => Converter.Set(_valueState.Value);
+
 
         protected virtual Task OnChange(ChangeEventArgs args)
-        {
-            return SetBoolValueAsync((bool?)args.Value, true);
-        }
+            => SetBoolValueAsync((bool?)args.Value, true);
 
         protected Task SetBoolValueAsync(bool? value, bool? markAsTouched = null)
         {
-            if (markAsTouched is true)
+            if (GetReadOnlyState() is false
+                && GetDisabledState() is false
+                && markAsTouched is true)
             {
                 Touched = true;
             }
             return SetCheckedAsync(Converter.Get(value));
-        }
-
-        protected async Task SetCheckedAsync(T? value)
-        {
-            if (GetDisabledState())
-            {
-                return;
-            }
-
-            if (!EqualityComparer<T>.Default.Equals(Value, value))
-            {
-                Value = value;
-                await ValueChanged.InvokeAsync(value);
-                await BeginValidateAsync();
-                FieldChanged(Value);
-            }
         }
 
         protected override bool SetConverter(Converter<T?, bool?> value)
@@ -115,7 +101,7 @@ namespace MudBlazor
             var changed = base.SetConverter(value);
             if (changed)
             {
-                SetBoolValueAsync(Converter.Set(Value)).CatchAndLog();
+                SetBoolValueAsync(Converter.Set(_valueState.Value)).CatchAndLog();
             }
 
             return changed;
@@ -127,6 +113,41 @@ namespace MudBlazor
         protected override bool HasValue(T? value)
         {
             return BoolValue == true;
+        }
+
+        protected override async Task ResetValueAsync()
+        {
+            await _valueState.SetValueAsync(default, ParameterStateValueChangeTiming.AfterEventCallback);
+            await base.ResetValueAsync();
+        }
+
+        protected virtual Task OnValueChangedAsync(ParameterChangedEventArgs<T?> args)
+            => UpdateFormValueAsync(args.Value);
+
+        protected override T? ReadValue() => _valueState.Value;
+
+        protected override Task WriteValueAsync(T? value) => _valueState.SetValueAsync(value);
+
+        private async Task SetCheckedAsync(T? value)
+        {
+            if (GetReadOnlyState() || GetDisabledState())
+            {
+                return;
+            }
+
+            // let parameter state handle the value, then update the input state
+            await _valueState.SetValueAsync(value, ParameterStateValueChangeTiming.AfterEventCallback);
+            // ParameterState won't call ChangeHandler without ValueChanged, so we have to update the form value manually
+            if (ValueChanged.HasDelegate is false)
+            {
+                await UpdateFormValueAsync(value);
+            }
+        }
+
+        private async Task UpdateFormValueAsync(T? value)
+        {
+            await BeginValidateAsync();
+            FieldChanged(value);
         }
     }
 }

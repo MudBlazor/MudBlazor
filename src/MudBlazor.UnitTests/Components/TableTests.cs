@@ -619,13 +619,21 @@ namespace MudBlazor.UnitTests.Components
         public void TableMultiSelection_CheckboxAndRowClickTest()
         {
             var comp = Context.RenderComponent<TableMultiSelection_CheckboxAndRowClickTest>();
-            var checkboxes = comp.FindComponent<MudTable<int>>().FindAll("input").ToArray();
+
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>();
+
             var table = comp.FindComponent<MudTable<int>>().Instance;
 
-            foreach (var cbx in checkboxes) cbx.Change(true);
+            foreach (var checkbox in checkboxes)
+            {
+                checkbox.Find("input").Change(true);
+            }
             table.SelectedItems.Count.Should().Be(3);
 
-            foreach (var cbx in checkboxes) cbx.Change(false);
+            foreach (var checkbox in checkboxes)
+            {
+                checkbox.Find("input").Change(false);
+            }
             table.SelectedItems.Count.Should().Be(0);
         }
 
@@ -877,40 +885,53 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
-            var tr = comp.FindAll("tr").ToArray();
-            tr.Length.Should().Be(4); // <-- one header, three rows
-            var th = comp.FindAll("th").ToArray();
-            th.Length.Should().Be(2); //  one for the checkbox, one for the header
-            var td = comp.FindAll("td").ToArray();
-            td.Length.Should().Be(6); // two td per row for multi selection
-            var inputs = comp.FindAll("input").ToArray();
-            inputs.Length.Should().Be(5); // one checkbox per row + one for the header
+
+            Tr().Length.Should().Be(4); // <-- one header, three rows
+
+            Th().Length.Should().Be(2); //  one for the checkbox, one for the header
+
+            Td().Length.Should().Be(6); // two td per row for multi selection
+
+            Inputs().Length.Should().Be(5); // one checkbox per row + one for the header
             table.SelectedItems.Count.Should().Be(0); // selected items should be empty
 
-            inputs[4].Change("1"); // search for 1
+            Inputs()[^1].Change("1"); // search for 1
             checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
 
             // click header checkbox and verify selection text
-            inputs[0].Change(true);
+            Inputs()[0].Change(true);
             table.SelectedItems.Count.Should().Be(1);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 1 }"); // only "1" should be present
             checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(1);
-            inputs[0].Change(false);
+            Inputs()[0].Change(false);
             table.SelectedItems.Count.Should().Be(0);
             comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
 
-            inputs[4].Change(""); // reset to default
+            Inputs()[^1].Change(""); // reset to default
             checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
 
             // click header checkbox and verify selection text
-            inputs[0].Change(true);
+            Inputs()[0].Change(true);
             table.SelectedItems.Count.Should().Be(3);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2 }"); // we reset search, so all three numbers should be searched
             checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(3);
-            inputs[0].Change(false);
+            Inputs()[0].Change(false);
             table.SelectedItems.Count.Should().Be(0);
             comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
             checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(0);
+            return;
+
+            IElement[] Tr()
+                => comp.FindAll("tr").ToArray();
+
+            IElement[] Th()
+                => comp.FindAll("th").ToArray();
+
+            IElement[] Td()
+                => comp.FindAll("td").ToArray();
+
+            IElement[] Inputs()
+                => comp.FindAll("input").ToArray();
         }
 
         /// <summary>
@@ -1031,10 +1052,10 @@ namespace MudBlazor.UnitTests.Components
             var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
 
             // Skip first two inputs (date filters)
-            var inputs = comp.FindAll("input").Skip(3);
-            foreach (var input in inputs)
+            var inputIds = comp.FindAll("input").Skip(3).Select(input => input.Attributes["id"]!.Value).ToList();
+            foreach (var inputId in inputIds)
             {
-                input.Change(true);
+                comp.Find($"#{inputId}").Change(true);
             }
             table.SelectedItems.Count.Should().Be(10);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
@@ -1052,8 +1073,8 @@ namespace MudBlazor.UnitTests.Components
             var td = comp.FindAll("td").ToArray();
             td.Length.Should().Be(10 * 6); // six td per row for multi selection
             // Find checkboxes, and skip date filter and table header checkbox
-            var inputs2 = comp.FindAll("input").Skip(3);
-            inputs2.Count().Should().Be(10); // one checkbox per row + one for the header + two date filters
+            inputIds = comp.FindAll("input").Skip(3).Select(input => input.Attributes["id"]!.Value).ToList();
+            inputIds.Count.Should().Be(10); // one checkbox per row + one for the header + two date filters
 
             // verify selection - All items should remain selected
             table.SelectedItems.Count.Should().Be(10);
@@ -1062,7 +1083,7 @@ namespace MudBlazor.UnitTests.Components
             checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(0);
 
             // Click the checkbox of the row with id 12
-            inputs2.ElementAt(1).Change(true);
+            comp.Find($"#{inputIds[1]}").Change(true);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12 }");
             // One checkbox of the current page should be checked
             checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(1);
@@ -1080,10 +1101,10 @@ namespace MudBlazor.UnitTests.Components
             var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
 
             // Skip first two inputs (date filters)
-            var inputs = comp.FindAll("input").Skip(3);
-            foreach (var input in inputs)
+            var inputIds = comp.FindAll("input").Skip(3).Select(input => input.Attributes["id"]!.Value);
+            foreach (var inputId in inputIds)
             {
-                input.Change(true);
+                comp.Find($"#{inputId}").Change(true);
             }
             table.SelectedItems.Count.Should().Be(10);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
@@ -1097,8 +1118,8 @@ namespace MudBlazor.UnitTests.Components
             checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
 
             // Find checkboxes, and skip date filter and table header checkbox
-            inputs = comp.FindAll("input").Skip(3);
-            inputs.Count().Should().Be(5); // one checkbox per row + one for the header + two date filters
+            inputIds = comp.FindAll("input").Skip(3).Select(input => input.Attributes["id"]!.Value);
+            inputIds.Count().Should().Be(5); // one checkbox per row + one for the header + two date filters
             checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(2);
             // Selection should remain intact
             comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
@@ -1111,8 +1132,8 @@ namespace MudBlazor.UnitTests.Components
             checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
 
             // Find checkboxes, and skip date filter and table header checkbox
-            inputs = comp.FindAll("input").Skip(3);
-            inputs.Count().Should().Be(10); // one checkbox per row + one for the header + two date filters
+            inputIds = comp.FindAll("input").Skip(3).Select(input => input.Attributes["id"]!.Value);
+            inputIds.Count().Should().Be(10); // one checkbox per row + one for the header + two date filters
             checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(10);
             // Selection should remain intact
             comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
@@ -2403,34 +2424,37 @@ namespace MudBlazor.UnitTests.Components
 
             var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
 
-            var inputs = comp.FindAll("input").ToArray();
-            inputs.Length.Should().Be(4); // one checkbox per row + one for the header
+            Checkboxes().Count.Should().Be(4); // one checkbox per row + one for the header
             table.SelectedItems.Count.Should().Be(0); // selected items should be empty
             // click header checkbox
-            inputs[0].Change(true);
+            Checkboxes()[0].Change(true);
             table.SelectedItems.Count.Should().Be(3);
 
             checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(3); //there should be 3 items
             comp.Find("p").TextContent.Should().Be("Elements { A, B, C }");
 
             // Click on the second row
-            var trs = comp.FindAll("tr");
-            trs[2].Click();
+            Trs()[2].Click();
 
             // Change row two data
-            var input = comp.Find("#Id2");
-            input.Change("Change");
-
+            comp.Find("#Id2").Change("Change");
             table.SelectedItems.Count.Should().Be(3);
 
             checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(3); //there should be 3 items
             comp.Find("p").TextContent.Should().Be("Elements { A, Change, C }");
 
             // Uncheck and verify that all items are removed
-            inputs[0].Change(false);
+            Checkboxes()[0].Change(false);
             table.SelectedItems.Count.Should().Be(0);
             checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(0); //there should be 4 items
             comp.Find("p").TextContent.Should().Be("Elements {  }");
+            return;
+
+            IRefreshableElementCollection<IElement> Trs()
+                => comp.FindAll("tr");
+
+            IRefreshableElementCollection<IElement> Checkboxes()
+                => comp.FindAll("input[type='checkbox']");
         }
 
         /// <summary>

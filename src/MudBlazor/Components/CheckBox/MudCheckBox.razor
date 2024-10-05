@@ -7,7 +7,20 @@
         <label class="@LabelClassname" id="@_elementId" @onkeydown="HandleKeyDownAsync" @onclick:stopPropagation="@StopClickPropagation">
             <span tabindex="0" class="@CheckBoxClassname">
                 @*note: stopping the click propagation is important here. otherwise checking the checkbox results in click events on its parent (i.e. table row), which is generally not what you would want*@
-                <input tabindex="-1" @attributes="UserAttributes" type="checkbox" class="mud-checkbox-input" aria-checked="@(BoolValue.ToString().ToLower())" checked="@BoolValue" @onchange="@OnChange" disabled="@GetDisabledState()" @onclick:preventDefault="@GetReadOnlyState()" required="@Required" aria-required="@Required.ToString().ToLowerInvariant()" />
+                <input tabindex="-1"
+                       id="@FieldId"
+                       @attributes="@UserAttributes"
+                       type="checkbox"
+                       class="mud-checkbox-input"
+                       aria-checked="@(BoolValue?.ToString().ToLower() ?? "mixed")"
+                       aria-readonly="@(GetReadOnlyState().ToString().ToLower())"
+                       @bind:get="BoolValue is true"
+                       @bind:set="@(value => OnChange(new ChangeEventArgs { Value = value }))"
+                       disabled="@GetDisabledState()"
+                       @onclick:preventDefault="@GetReadOnlyState()"
+                       required="@Required"
+                       aria-required="@Required.ToString().ToLowerInvariant()"/>
+
                 <MudIcon Disabled="@Disabled" Icon="@GetIcon()" Color="HasErrors ? Color.Error : Color.Inherit" Size="@Size" />
             </span>
             @if (!string.IsNullOrEmpty(Label))

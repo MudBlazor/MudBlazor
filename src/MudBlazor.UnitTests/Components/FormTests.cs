@@ -1480,7 +1480,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<FormShouldRegisterOnlyTopSubscribeToParentFormFormControlsTest>();
             var form = comp.FindComponent<MudFormTestable>().Instance;
 
-            form.FormControls.Count.Should().Be(14);
+            form.FormControls.Count.Should().Be(13);
         }
 
         /// <summary>

@@ -1,0 +1,34 @@
+﻿@inherits MudComponentBase
+@namespace MudBlazor.UnitTests
+
+<h3>AfterEventCallback</h3>
+
+<MudGrid Class="ma-2 rounded-lg border-2 mud-border-default-lines">
+    <MudItem xs="12">
+        <MudButton Variant="Variant.Filled"
+                   OnClick="ToggleValueAsync">
+            Toggle value
+        </MudButton>
+    </MudItem>
+    <MudItem xs="12">
+        <h4>State:</h4>
+
+        Value: @Value - ValueState: @_valueState.Value
+    </MudItem>
+    <MudItem xs="12">
+        <h4>Parameter changes:</h4>
+
+        <div>
+            @foreach (var parameterChange in _parameterChanges)
+            {
+            <p>@parameterChange</p>
+            }
+        </div>
+    </MudItem>
+</MudGrid>
+
+@code
+{
+    public static string __description__ = "A generic test component for the ParameterState Framework";
+}
+

@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
@@ -15,31 +16,31 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SwitchTest_KeyboardNavigation()
         {
-            var comp = Context.RenderComponent<MudSwitch<bool>>();
+            var comp = Context.RenderComponent<SwitchWithTwoWayBindingTest>();
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.Switch.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(true));
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Delete", Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.Switch.HandleKeyDown(new KeyboardEventArgs() { Key = "Delete", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(false));
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.Switch.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(true));
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.Switch.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(false));
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.Switch.HandleKeyDown(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(true));
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.Switch.HandleKeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(false));
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.Switch.HandleKeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(true));
 
             comp.SetParam("Disabled", true);
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.Switch.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(true));
         }
 
@@ -55,7 +56,9 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Dark, Color.Primary)]
         public void SwitchColorTest(Color color, Color uncheckedcolor)
         {
-            var comp = Context.RenderComponent<MudSwitch<bool>>(x => x.Add(c => c.Color, color).Add(b => b.UncheckedColor, uncheckedcolor));
+            var comp = Context.RenderComponent<SwitchWithTwoWayBindingTest>(x => x
+                .Add(c => c.Color, color)
+                .Add(b => b.UncheckedColor, uncheckedcolor));
 
             var box = comp.Instance;
 
@@ -177,6 +180,96 @@ namespace MudBlazor.UnitTests.Components
             Context.RenderComponent<MudSwitch<bool>>(self => self.Add(x => x.Disabled, false)).Find("span.mud-button-root").ClassList.Should().Contain("hover:mud-default-hover");
             Context.RenderComponent<MudSwitch<bool>>(self => self.Add(x => x.Disabled, true).Add(x => x.ReadOnly, false)).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
             Context.RenderComponent<MudSwitch<bool>>(self => self.Add(x => x.Disabled, true).Add(x => x.ReadOnly, true)).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
+        }
+
+        [Test]
+        public void Switch_inputs_checked_value_should_match_parameter_value()
+        {
+            var comp = Context.RenderComponent<SwitchWithTwoWayBindingTest>();
+
+            // change value using parameter
+            comp.Instance.Value.Should().BeFalse();
+            SwitchInput().HasAttribute("checked").Should().BeFalse();
+            comp.SetParam(x => x.Value, true);
+            comp.Instance.Value.Should().BeTrue();
+            SwitchInput().HasAttribute("checked").Should().BeTrue();
+            comp.SetParam(x => x.Value, false);
+            comp.Instance.Value.Should().BeFalse();
+            SwitchInput().HasAttribute("checked").Should().BeFalse();
+
+            // change value using input
+            SwitchInput().Change(true);
+            comp.Instance.Value.Should().BeTrue();
+            SwitchInput().HasAttribute("checked").Should().BeTrue();
+            SwitchInput().Change(false);
+            comp.Instance.Value.Should().BeFalse();
+            SwitchInput().HasAttribute("checked").Should().BeFalse();
+            return;
+
+            IElement SwitchInput()
+                => comp.Find("input");
+        }
+
+        [Test]
+        public void Should_pass_value_binding_tests()
+        {
+            var comp = Context.RenderComponent<SwitchValueBindingTest>();
+
+            // SwitchWithNoValueOrCallback should maintain correct internal state
+            SwitchWithNoValueOrCallback().Change(true);
+            SwitchWithNoValueOrCallback().HasAttribute("checked").Should().BeTrue();
+            comp.Instance.LatestFormFieldValue.Should().BeTrue();
+            SwitchWithNoValueOrCallback().Change(false);
+            SwitchWithNoValueOrCallback().HasAttribute("checked").Should().BeFalse();
+            comp.Instance.LatestFormFieldValue.Should().BeFalse();
+
+            // SwitchWithValueButNoCallback should maintain correct internal state but not update the one-way bound value
+            SwitchWithValueButNoCallback().Change(true);
+            SwitchWithValueButNoCallback().HasAttribute("checked").Should().BeTrue();
+            comp.Instance.LatestFormFieldValue.Should().BeTrue();
+            comp.Instance.OneWayBoundValue.Should().BeFalse();
+            SwitchWithValueButNoCallback().Change(false);
+            SwitchWithValueButNoCallback().HasAttribute("checked").Should().BeFalse();
+            comp.Instance.LatestFormFieldValue.Should().BeFalse();
+            comp.Instance.OneWayBoundValue.Should().BeFalse();
+
+            // SwitchWithNoValueButWithCallback should not change (empty callback prevents changes)
+            SwitchWithNoValueButWithCallback().Change(true);
+            SwitchWithNoValueButWithCallback().HasAttribute("checked").Should().BeFalse();
+            comp.Instance.LatestFormFieldValue.Should().BeFalse();
+            SwitchWithNoValueButWithCallback().Change(false);
+            SwitchWithNoValueButWithCallback().HasAttribute("checked").Should().BeFalse();
+            comp.Instance.LatestFormFieldValue.Should().BeFalse();
+
+            // SwitchWithValueAndCallback should maintain the correct internal and external state
+            SwitchWithValueAndCallback().Change(true);
+            ConfirmDialogButton().Click();
+            SwitchWithValueAndCallback().HasAttribute("checked").Should().BeTrue();
+            comp.Instance.LatestFormFieldValue.Should().BeTrue();
+            comp.Instance.OneWayBoundValueWithCallback.Should().BeTrue();
+            SwitchWithValueAndCallback().Change(false);
+            ConfirmDialogButton().Click();
+            SwitchWithValueAndCallback().HasAttribute("checked").Should().BeFalse();
+            comp.Instance.LatestFormFieldValue.Should().BeFalse();
+            comp.Instance.OneWayBoundValueWithCallback.Should().BeFalse();
+
+            // SwitchWithTwoWayBinding should maintain the correct internal and external state
+            SwitchWithTwoWayBinding().Change(true);
+            SwitchWithTwoWayBinding().HasAttribute("checked").Should().BeTrue();
+            comp.Instance.LatestFormFieldValue.Should().BeTrue();
+            comp.Instance.TwoWayBoundValue.Should().BeTrue();
+            SwitchWithTwoWayBinding().Change(false);
+            SwitchWithTwoWayBinding().HasAttribute("checked").Should().BeFalse();
+            comp.Instance.LatestFormFieldValue.Should().BeFalse();
+            comp.Instance.TwoWayBoundValue.Should().BeFalse();
+
+            return;
+            IElement SwitchWithNoValueOrCallback() => comp.Find("#no-value-and-no-callback");
+            IElement SwitchWithValueButNoCallback() => comp.Find("#value-but-no-callback");
+            IElement SwitchWithNoValueButWithCallback() => comp.Find("#no-value-but-callback");
+            IElement SwitchWithValueAndCallback() => comp.Find("#value-and-callback");
+            IElement SwitchWithTwoWayBinding() => comp.Find("#two-way-bound");
+            IElement ConfirmDialogButton() => comp.Find("#submit-button");
         }
     }
 }
