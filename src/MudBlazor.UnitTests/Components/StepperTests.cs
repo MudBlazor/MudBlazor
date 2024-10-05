@@ -456,8 +456,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void StepOnClick_ShouldFireForNonLinearStepper()
         {
-            int aClick=0;
-            int bClick=0;
+            int aClick = 0;
+            int bClick = 0;
             var stepper = Context.RenderComponent<MudStepper>(self =>
             {
                 self.Add(x => x.NonLinear, true);

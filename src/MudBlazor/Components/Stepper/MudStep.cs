@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
-using MudBlazor.Utilities;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
+using MudBlazor.Utilities;
 
 #nullable enable
 namespace MudBlazor;
@@ -167,7 +167,7 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     /// <summary>
     /// Sets HasError
     /// </summary>
-    public async Task SetHasErrorAsync(bool value, bool refreshParent=true)
+    public async Task SetHasErrorAsync(bool value, bool refreshParent = true)
     {
         await HasErrorState.SetValueAsync(value);
         if (refreshParent)
@@ -177,7 +177,7 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     /// <summary>
     /// Sets Completed
     /// </summary>
-    public async Task SetCompletedAsync(bool value, bool refreshParent=true)
+    public async Task SetCompletedAsync(bool value, bool refreshParent = true)
     {
         await CompletedState.SetValueAsync(value);
         if (refreshParent)
@@ -187,7 +187,7 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     /// <summary>
     /// Sets Disabled
     /// </summary>
-    public async Task SetDisabledAsync(bool value, bool refreshParent=true)
+    public async Task SetDisabledAsync(bool value, bool refreshParent = true)
     {
         await DisabledState.SetValueAsync(value);
         if (refreshParent)

@@ -11,6 +11,6 @@ public class StepperControls
     public bool CanGoToNextStep { get; set; }
 
     public bool PreviousStepEnabled { get; set; }
-    
+
     public bool IsCompleted { get; set; }
 }
