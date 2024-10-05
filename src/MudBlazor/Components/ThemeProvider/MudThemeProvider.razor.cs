@@ -15,6 +15,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
 {
     // private const string Breakpoint = "mud-breakpoint";
     private bool _disposed;
+    private bool _observing;
     private const string Palette = "mud-palette";
     private const string Ripple = "mud-ripple";
     private const string Elevation = "mud-elevation";
@@ -24,6 +25,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
 
     private MudTheme? _theme;
     private readonly ParameterState<bool> _isDarkModeState;
+    private readonly ParameterState<bool> _observeSystemThemeChangeState;
     private readonly Lazy<DotNetObjectReference<MudThemeProvider>> _lazyDotNetRef;
 
     private event Func<bool, Task>? _darkLightModeChanged;
@@ -44,6 +46,13 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     public bool DefaultScrollbar { get; set; }
 
     /// <summary>
+    /// Sets a value indicating whether to observe changes in the system theme preference.
+    /// Default is <c>true</c>.
+    /// </summary>
+    [Parameter]
+    public bool ObserveSystemThemeChange { get; set; } = true;
+
+    /// <summary>
     /// The active palette of the theme.
     /// </summary>
     [Parameter]
@@ -62,6 +71,10 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         _isDarkModeState = registerScope.RegisterParameter<bool>(nameof(IsDarkMode))
             .WithParameter(() => IsDarkMode)
             .WithEventCallback(() => IsDarkModeChanged);
+        _observeSystemThemeChangeState = registerScope
+            .RegisterParameter<bool>(nameof(ObserveSystemThemeChange))
+            .WithParameter(() => ObserveSystemThemeChange)
+            .WithChangeHandler(OnObserveSystemThemeChangeChanged);
         _lazyDotNetRef = new Lazy<DotNetObjectReference<MudThemeProvider>>(CreateDotNetObjectReference);
     }
 
@@ -98,7 +111,11 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     {
         if (firstRender)
         {
-            await JsRuntime.InvokeVoidAsyncIgnoreErrors("watchDarkThemeMedia", _lazyDotNetRef.Value);
+            if (_observeSystemThemeChangeState.Value && !_observing)
+            {
+                _observing = true;
+                await WatchDarkThemeMedia();
+            }
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -259,6 +276,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
 
         theme.AppendLine($"--{Palette}-divider: {palette.Divider};");
         theme.AppendLine($"--{Palette}-divider-light: {palette.DividerLight};");
+
+        theme.AppendLine($"--{Palette}-skeleton: {palette.Skeleton};");
 
         theme.AppendLine($"--{Palette}-gray-default: {palette.GrayDefault};");
         theme.AppendLine($"--{Palette}-gray-light: {palette.GrayLight};");
@@ -464,6 +483,9 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Zindex}-popover: {_theme.ZIndex.Popover};");
         theme.AppendLine($"--{Zindex}-snackbar: {_theme.ZIndex.Snackbar};");
         theme.AppendLine($"--{Zindex}-tooltip: {_theme.ZIndex.Tooltip};");
+
+        // Native HTML control light/dark mode
+        theme.AppendLine($"--mud-native-html-color-scheme: {(IsDarkMode ? "dark" : "light")};");
     }
 
     public void Dispose()
@@ -476,13 +498,38 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
             {
                 _lazyDotNetRef.Value.Dispose();
                 // When .NET7 is dropped we can use async Dispose, but for now MAUI has bug https://github.com/MudBlazor/MudBlazor/pull/5367#issuecomment-1258649968.
-                _ = JsRuntime.InvokeVoidAsyncIgnoreErrors("stopWatchingDarkThemeMedia");
+                _ = StopWatchingDarkThemeMedia();
             }
         }
     }
 
-    private DotNetObjectReference<MudThemeProvider> CreateDotNetObjectReference()
+    private async Task OnObserveSystemThemeChangeChanged(ParameterChangedEventArgs<bool> arg)
     {
-        return DotNetObjectReference.Create(this);
+        // The _observing flag prevents attempting to stop observation when it hasn't been started.
+        // For example, ObserveSystemThemeChange is true by default, and if it's set to false in the initial component setup 
+        // like <MudThemeProvider ObserveSystemThemeChange="false" />, the ChangeHandler of ParameterState will be invoked.
+        // Therefore, it's not desirable to stop an observation that hasn't been started.
+        if (arg.Value)
+        {
+            if (!_observing)
+            {
+                _observing = true;
+                await WatchDarkThemeMedia();
+            }
+        }
+        else
+        {
+            if (_observing)
+            {
+                _observing = false;
+                await StopWatchingDarkThemeMedia();
+            }
+        }
     }
+
+    private ValueTask WatchDarkThemeMedia() => JsRuntime.InvokeVoidAsyncIgnoreErrors("watchDarkThemeMedia", _lazyDotNetRef.Value);
+
+    private ValueTask StopWatchingDarkThemeMedia() => JsRuntime.InvokeVoidAsyncIgnoreErrors("stopWatchingDarkThemeMedia");
+
+    private DotNetObjectReference<MudThemeProvider> CreateDotNetObjectReference() => DotNetObjectReference.Create(this);
 }

@@ -73,7 +73,7 @@ namespace MudBlazor.Docs.Extensions
                         new CookieCategoryService
                         {
                             Identifier = "necessary",
-                            PolicyUrl = "https://privacy.microsoft.com/en-us/privacystatementy",
+                            PolicyUrl = "https://privacy.microsoft.com/privacystatement",
                             TitleText = new()
                             {
                                 ["en"] = "Azure App Service",

@@ -15,7 +15,7 @@ namespace MudBlazor
     /// <seealso cref="MudPickerToolbar" />
     public partial class MudPicker<T> : MudFormComponent<T, string>
     {
-        protected IKeyInterceptor _keyInterceptor;
+        private bool _keyInterceptorObserving = false;
 
         /// <summary>
         /// Creates a new instance.
@@ -25,9 +25,9 @@ namespace MudBlazor
         protected MudPicker(Converter<T, string> converter) : base(converter) { }
 
         [Inject]
-        private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
+        private IKeyInterceptorService KeyInterceptorService { get; set; }
 
-        private string _elementId = "picker" + Guid.NewGuid().ToString().Substring(0, 8);
+        private string _elementId = Identifier.Create("picker");
 
         protected string PickerClassname =>
             new CssBuilder("mud-picker")
@@ -584,26 +584,25 @@ namespace MudBlazor
 
         private async Task EnsureKeyInterceptorAsync()
         {
-            if (_keyInterceptor == null)
+            if (_keyInterceptorObserving)
             {
-                _keyInterceptor = KeyInterceptorFactory.Create();
-
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
-                {
-                    //EnableLogging = true,
-                    TargetClass = "mud-input-slot",
-                    Keys =
-                    {
-                        new KeyOptions { Key = " ", PreventDown = "key+none" },
-                        new KeyOptions { Key = "ArrowUp", PreventDown = "key+none" },
-                        new KeyOptions { Key = "ArrowDown", PreventDown = "key+none" },
-                        new KeyOptions { Key = "Enter", PreventDown = "key+none" },
-                        new KeyOptions { Key = "NumpadEnter", PreventDown = "key+none" },
-                        new KeyOptions { Key = "/./", SubscribeDown = true, SubscribeUp = true }, // for our users
-                    },
-                });
-                _keyInterceptor.KeyDown += HandleKeyDown;
+                return;
             }
+
+            _keyInterceptorObserving = true;
+            var keyInterceptorOptions = new KeyInterceptorOptions(
+                targetClass: "mud-input-slot",
+                keys:
+                [
+                    new(key: " ", preventDown: "key+none"),
+                    new(key: "ArrowUp", preventDown: "key+none"),
+                    new(key: "ArrowDown", preventDown: "key+none"),
+                    new(key: "Enter", preventDown: "key+none"),
+                    new(key: "NumpadEnter", preventDown: "key+none"),
+                    new(key: "/./", subscribeDown: true, subscribeUp: true)
+                ]);
+
+            await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, keyDown: OnHandleKeyDownAsync);
         }
 
         private async Task OnClickAsync(MouseEventArgs args)
@@ -617,20 +616,6 @@ namespace MudBlazor
             {
                 await OnClick.InvokeAsync(args);
             }
-        }
-
-        /// <summary>
-        /// 'HandleKeyDown' needed to be async in order to call other async methods. Because
-        /// the HandleKeyDown is virtual and the base needs to be called from overriden methods
-        /// we can't use 'async void'. This would break the synchronous behavior of those
-        /// overriden methods. The KeyInterceptor does not support async behavior, so we have to
-        /// add this hook method for handling the KeyDown event.
-        /// This method can be removed when the KeyInterceptor supports async behavior.
-        /// </summary>
-        /// <param name="args"></param>
-        private async void HandleKeyDown(KeyboardEventArgs args)
-        {
-            await OnHandleKeyDownAsync(args);
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -670,7 +655,7 @@ namespace MudBlazor
             }
 
             await EnsureKeyInterceptorAsync();
-            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "key+none" });
+            await KeyInterceptorService.UpdateKeyAsync(_elementId, new(key: "Escape", stopDown: "key+none"));
         }
 
         protected virtual async Task OnClosedAsync()
@@ -678,7 +663,7 @@ namespace MudBlazor
             await OnPickerClosedAsync();
 
             await EnsureKeyInterceptorAsync();
-            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
+            await KeyInterceptorService.UpdateKeyAsync(_elementId, new(key: "Escape", stopDown: "none"));
         }
 
         protected virtual Task OnPickerOpenedAsync() => PickerOpened.InvokeAsync(this);
@@ -713,13 +698,10 @@ namespace MudBlazor
 
             if (disposing)
             {
-                if (_keyInterceptor != null)
+                if (IsJSRuntimeAvailable)
                 {
-                    _keyInterceptor.KeyDown -= HandleKeyDown;
-                    if (IsJSRuntimeAvailable)
-                    {
-                        _keyInterceptor.Dispose();
-                    }
+                    // TODO: Replace with IAsyncDisposable
+                    KeyInterceptorService.UnsubscribeAsync(_elementId).CatchAndLog();
                 }
             }
         }

@@ -1,0 +1,43 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@typeparam T
+
+<MudStack>
+    <MudTextField @bind-Value="_filterValue" Placeholder="Search" />
+    <MudStack Row>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@ApplyAsync" Class="apply-filter-button">Apply</MudButton>
+        <MudButton Color="Color.Default" Variant="Variant.Filled" OnClick="@ResetAsync" Class="reset-filter-button">Reset</MudButton>
+    </MudStack>
+</MudStack>
+
+@code {
+    [Parameter]
+    public FilterContext<T> FilterContext { get; set; }
+
+    private string _filterValue;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        FilterContext.FilterDefinition.Operator = FilterOperator.String.Contains;
+
+        if (FilterContext.FilterDefinition.Value is string stringValue)
+        {
+            _filterValue = stringValue;
+        }
+    }
+
+    private async Task ApplyAsync()
+    {
+        FilterContext.FilterDefinition.Value = _filterValue;
+
+        await FilterContext.Actions.ApplyFilterAsync(FilterContext.FilterDefinition);
+    }
+
+    private async Task ResetAsync()
+    {
+        FilterContext.FilterDefinition.Value = null;
+
+        await FilterContext.Actions.ClearFilterAsync(FilterContext.FilterDefinition);
+    }
+}

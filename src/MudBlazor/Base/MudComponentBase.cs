@@ -73,7 +73,7 @@ namespace MudBlazor
         /// </remarks>
         protected bool IsJSRuntimeAvailable { get; set; }
 
-        private readonly string _id = $"mudinput-{Guid.NewGuid()}";
+        private readonly string _id = Identifier.Create("mudinput");
         /// <summary>
         /// If the UserAttributes contain an ID make it accessible for WCAG labelling of input fields
         /// </summary>

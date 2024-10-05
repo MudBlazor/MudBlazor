@@ -1,8 +1,6 @@
 ﻿// Copyright (c) 2019 Blazored
 // Copyright (c) 2020 Adapted by Jonny Larsson, Meinrad Recheis and Contributors
 
-using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
@@ -26,11 +24,10 @@ namespace MudBlazor
     public partial class MudDialogInstance : MudComponentBase, IDisposable
     {
         private DialogOptions? _options = new();
-        private readonly string _elementId = "dialog_" + Guid.NewGuid().ToString().Substring(0, 8);
-        private IKeyInterceptor? _keyInterceptor;
+        private readonly string _elementId = Identifier.Create("dialog");
 
         [Inject]
-        private IKeyInterceptorFactory KeyInterceptorFactory { get; set; } = null!;
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
@@ -116,6 +113,7 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             ConfigureInstance();
+            base.OnInitialized();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -125,16 +123,10 @@ namespace MudBlazor
                 //Since CloseOnEscapeKey is the only thing to be handled, turn interceptor off
                 if (CloseOnEscapeKey)
                 {
-                    _keyInterceptor = KeyInterceptorFactory.Create();
-
-                    await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
-                    {
-                        TargetClass = "mud-dialog",
-                        Keys = {
-                            new KeyOptions { Key="Escape", SubscribeDown = true },
-                        },
-                    });
-                    _keyInterceptor.KeyDown += HandleKeyDown;
+                    var keyInterceptorOptions = new KeyInterceptorOptions(
+                        targetClass: "mud-dialog",
+                        keys: [new(key: "Escape", subscribeDown: true)]);
+                    await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, keyDown: HandleKeyDown);
                 }
             }
             await base.OnAfterRenderAsync(firstRender);
@@ -174,7 +166,7 @@ namespace MudBlazor
         /// <remarks>
         /// Use this method to change the title while a dialog is open, such as when the title reflects a value within this dialog.  Has no effect when <see cref="TitleContent"/> is set.
         /// </remarks>
-        public void SetTitle(string title)
+        public void SetTitle(string? title)
         {
             Title = title;
             StateHasChanged();
@@ -399,13 +391,10 @@ namespace MudBlazor
             {
                 if (disposing)
                 {
-                    if (_keyInterceptor != null)
+                    if (IsJSRuntimeAvailable)
                     {
-                        _keyInterceptor.KeyDown -= HandleKeyDown;
-                        if (IsJSRuntimeAvailable)
-                        {
-                            _keyInterceptor.Dispose();
-                        }
+                        // TODO: Replace with IAsyncDisposable
+                        KeyInterceptorService.UnsubscribeAsync(_elementId).CatchAndLog();
                     }
                 }
 

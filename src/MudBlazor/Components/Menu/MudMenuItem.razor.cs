@@ -81,6 +81,9 @@ namespace MudBlazor
         /// Raised when the menu item is activated by either the mouse or touch.
         /// Won't be raised if Href is also set.
         /// </summary>
+        /// <remarks>
+        /// This is equivalent to <c>OnAction</c> from previous versions and replaces <c>OnTouch</c>.
+        /// </remarks>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 

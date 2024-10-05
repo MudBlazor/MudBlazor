@@ -17,9 +17,12 @@ namespace MudBlazor
     {
         private readonly MudDataGrid<T> _dataGrid;
 
-        internal IFilterDefinition<T>? FilterDefinition { get; set; }
-
         internal HeaderCell<T>? HeaderCell { get; set; }
+
+        /// <summary>
+        /// The definition of this filter.
+        /// </summary>
+        public IFilterDefinition<T>? FilterDefinition { get; set; }
 
         /// <summary>
         /// The items to filter.

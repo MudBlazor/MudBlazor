@@ -16,11 +16,10 @@ namespace MudBlazor
     /// <typeparam name="T">The type of item managed by this checkbox.</typeparam>
     public partial class MudCheckBox<T> : MudBooleanInput<T>
     {
-        private IKeyInterceptor? _keyInterceptor;
-        private string _elementId = "checkbox" + Guid.NewGuid().ToString().Substring(0, 8);
+        private string _elementId = Identifier.Create("checkbox");
 
         [Inject]
-        private IKeyInterceptorFactory KeyInterceptorFactory { get; set; } = null!;
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         [Inject]
         private IJSRuntime JsRuntime { get; set; } = null!;
@@ -194,7 +193,13 @@ namespace MudBlazor
             return ApplyTriStateLogicAsync();
         }
 
-        protected void HandleKeyDown(KeyboardEventArgs obj)
+        [Obsolete($"Use {nameof(HandleKeyDownAsync)} instead. This will be removed in v8.")]
+        protected async void HandleKeyDown(KeyboardEventArgs obj)
+        {
+            await HandleKeyDownAsync(obj);
+        }
+
+        protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState() || !KeyboardEnabled)
             {
@@ -204,26 +209,26 @@ namespace MudBlazor
             switch (obj.Key)
             {
                 case "Delete":
-                    SetBoolValueAsync(false, true);
+                    await SetBoolValueAsync(false, true);
                     break;
                 case "Enter" or "NumpadEnter":
-                    SetBoolValueAsync(true, true);
+                    await SetBoolValueAsync(true, true);
                     break;
                 case "Backspace":
                     if (TriState)
                     {
-                        SetBoolValueAsync(null, true);
+                        await SetBoolValueAsync(null, true);
                     }
 
                     break;
                 case " ":
                     if (TriState)
                     {
-                        ApplyTriStateLogicAsync();
+                        await ApplyTriStateLogicAsync();
                     }
                     else
                     {
-                        SetBoolValueAsync(BoolValue is false, true);
+                        await SetBoolValueAsync(BoolValue is false, true);
                     }
                     break;
             }
@@ -243,21 +248,17 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                _keyInterceptor = KeyInterceptorFactory.Create();
-
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions
-                {
-                    //EnableLogging = true,
-                    TargetClass = "mud-button-root",
-                    Keys =
-                    {
-                        new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" }, // prevent scrolling page
-                        new KeyOptions { Key="Enter", PreventDown = "key+none" },
-                        new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
-                        new KeyOptions { Key="Backspace", PreventDown = "key+none" },
-                    },
-                });
-                _keyInterceptor.KeyDown += HandleKeyDown;
+                var keyInterceptorOptions = new KeyInterceptorOptions(
+                    targetClass: "mud-button-root",
+                    keys:
+                    [
+                        // prevent scrolling page
+                        new(key: " ", preventDown: "key+none", preventUp: "key+none"),
+                        new(key: "Enter", preventDown: "key+none"),
+                        new(key: "NumpadEnter", preventDown: "key+none"),
+                        new(key: "Backspace", preventDown: "key+none")
+                    ]);
+                await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, keyDown: HandleKeyDownAsync);
 
                 await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInput.setIndeterminateState", FieldId, BoolValue is null);
             }
@@ -270,13 +271,10 @@ namespace MudBlazor
 
             if (disposing)
             {
-                if (_keyInterceptor is not null)
+                if (IsJSRuntimeAvailable)
                 {
-                    _keyInterceptor.KeyDown -= HandleKeyDown;
-                    if (IsJSRuntimeAvailable)
-                    {
-                        _keyInterceptor.Dispose();
-                    }
+                    // TODO: Replace with IAsyncDisposable
+                    KeyInterceptorService.UnsubscribeAsync(_elementId).CatchAndLog();
                 }
             }
         }

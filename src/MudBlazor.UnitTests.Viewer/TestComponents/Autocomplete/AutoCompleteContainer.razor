@@ -1,38 +1,15 @@
-﻿@namespace MudBlazor.Docs.Examples
+﻿@namespace MudBlazor.UnitTests.TestComponents
 @using System.Threading
+<MudPopoverProvider></MudPopoverProvider>
 
-<MudGrid>
-    <MudItem xs="12" sm="6">
-        <div>
-            <MudCheckBox T="bool" ValueChanged="ChangeMargin" Color="Color.Primary" Label="@(" Margin: " + _margin)" />
-        </div>
-        <div>
-            <MudCheckBox @bind-Value="_dense" Color="Color.Primary" Label="@(" Dense: " + _dense)" />
-        </div>
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" Margin="@_margin" Dense="@_dense" Variant="Variant.Outlined" />
-    </MudItem>
-</MudGrid>
-
+ <MudAutocomplete id="autocompleteLabelTest" T="string" Label="US States" @bind-Value="value1"
+    SearchFunc="@Search1" DebounceInterval="10" PopoverClass="autocomplete-popover-class" />
 @code {
-    Margin _margin = Margin.None;
-    bool _dense = false;
+    [Parameter] public bool HasBeenDisposed  { get; set; }
+    [Parameter] public EventCallback<bool> HasBeenDisposedChanged { get; set; }
+    private string value1 = "Alabama";
 
-    private void ChangeMargin()
-    {
-        if (_margin == Margin.None)
-        {
-            _margin = Margin.Dense;
-        }
-        else
-        {
-            _margin = Margin.None;
-        }
-    }
-
-    private string value1;
-    private string[] states =
+    private List<string> states = new List<string>
     {
         "Alabama", "Alaska", "American Samoa", "Arizona",
         "Arkansas", "California", "Colorado", "Connecticut",
@@ -52,10 +29,15 @@
 
     private async Task<IEnumerable<string>> Search1(string value, CancellationToken token)
     {
-        // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(5, token);
+        try
+        {
+            await Task.Delay(2000, token);
+        }
+        catch (TaskCanceledException)
+        {
+            await HasBeenDisposedChanged.InvokeAsync(true);
+        }
 
-        // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
             return states;
         return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));

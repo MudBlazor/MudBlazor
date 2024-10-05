@@ -20,7 +20,7 @@
                     <SectionHeader Title="Drop Shadow">
                         <Description>The drop shadow, sometimes also called elevation, can be controlled with the <CodeInline>DropShadow</CodeInline> bool.<CodeInline>Color</CodeInline> property only applies to the text.</Description>
                     </SectionHeader>
-                    <SectionContent Code="@nameof(ButtonDropShadowExample)">
+                    <SectionContent Code="@nameof(ButtonDropShadowExample)" ShowCode="false">
                         <ButtonDropShadowExample/>
                     </SectionContent>
                 </DocsPageSection>
@@ -46,32 +46,36 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="FullWidth">
-                <Description>FullWidth buttons extend to 100% of available width.</Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(ButtonFullWidthExample)">
-                <ButtonFullWidthExample/>
-            </SectionContent>
-        </DocsPageSection>
-        
-        <DocsPageSection>
-            <SectionHeader Title="Icons and labels">
-                <Description></Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(ButtonIconLabelExample)">
-                <ButtonIconLabelExample/>
-            </SectionContent>
-        </DocsPageSection>
-        
-        <DocsPageSection>
-            <SectionHeader Title="Sizes">
+            <SectionHeader Title="Size">
                 <Description>
                     The default button size is <CodeInline>Size.Medium</CodeInline> and, by default, the icon size uses the button size.
-                    <br />Use <CodeInline>IconSize</CodeInline> to set a different icon size.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(ButtonSizeExample)" ShowCode="false">
-                <ButtonSizeExample/>
+                <ButtonSizeExample />
+            </SectionContent>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="FullWidth">
+                        <Description>Buttons that have <CodeInline>FullWidth=true</CodeInline> extend to 100% of available width.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ButtonFullWidthExample)" ShowCode="false">
+                        <ButtonFullWidthExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Icons">
+                <Description>
+                    You can define an icon for either the start or the end.
+                    <br/>
+                    Use <CodeInline>IconSize</CodeInline> to set a different icon size.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ButtonIconLabelExample)">
+                <ButtonIconLabelExample/>
             </SectionContent>
         </DocsPageSection>
 
@@ -79,9 +83,32 @@
             <SectionHeader Title="Customized Buttons">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="@nameof(ButtonCustomizedExample)" ShowCode="false">
-                <ButtonCustomizedExample/>
-            </SectionContent>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Styled Button">
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ButtonCustomizedExample)" ShowCode="false">
+                        <ButtonCustomizedExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Loading Button">
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ButtonLoadingExample)" ShowCode="false">
+                        <ButtonLoadingExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Split Button">
+                        <Description>A <CodeInline>MudMenu</CodeInline> and <CodeInline>MudButtonGroup</CodeInline> can be used to create a split button.</Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="@nameof(ButtonGroupSplitButtonExample)">
+                        <ButtonGroupSplitButtonExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
         </DocsPageSection>
 
         <DocsPageSection>
@@ -93,25 +120,19 @@
             <SectionContent Code="@nameof(ButtonLinkExample)" ShowCode="false">
                 <ButtonLinkExample/>
             </SectionContent>
-        </DocsPageSection>
 
-        <DocsPageSection>
-            <SectionHeader Title="Custom Rel Content">
-                <Description>If you set a non-null string to <CodeInline>Rel</CodeInline> parameter, the component will add <CodeInline>rel</CodeInline> to the rendered button with the value you specified. This overrides the automatic addition of <CodeInline>rel="noopener"</CodeInline> when setting <CodeInline>Target</CodeInline> to <CodeInline>_blank</CodeInline>. If you want to preserve <CodeInline>noopener</CodeInline>, add it manually along with your custom <CodeInline>Rel</CodeInline> value, for example <CodeInline>rel="nofollow noopener"</CodeInline>.
-                </Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(ButtonNofollowExample)" ShowCode="false">
-                <ButtonNofollowExample/>
-            </SectionContent>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Custom Rel Content">
+                        <Description>
+                            If you set a non-null string to <CodeInline>Rel</CodeInline> parameter, the component will add <CodeInline>rel</CodeInline> to the rendered button with the value you specified. This overrides the automatic addition of <CodeInline>rel="noopener"</CodeInline> when setting <CodeInline>Target</CodeInline> to <CodeInline>_blank</CodeInline>. If you want to preserve <CodeInline>noopener</CodeInline>, add it manually along with your custom <CodeInline>Rel</CodeInline> value, for example <CodeInline>rel="nofollow noopener"</CodeInline>.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ButtonNofollowExample)" ShowCode="false">
+                        <ButtonNofollowExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
         </DocsPageSection>
-        
-        <DocsPageSection>
-            <SectionHeader Title="Loading Button">
-            </SectionHeader>
-            <SectionContent Code="@nameof(ButtonLoadingExample)" ShowCode="false">
-                <ButtonLoadingExample/>
-            </SectionContent>
-        </DocsPageSection>
-        
     </DocsPageContent>
 </DocsPage>

@@ -54,7 +54,7 @@ namespace MudBlazor
                 if (headerCell.Column is not null)
                 {
                     var nextResizableColumn = columns.Skip(columns.IndexOf(headerCell.Column) + (rightToLeft ? -1 : 1))
-                        .FirstOrDefault(c => (c.Resizable ?? true) && !c.Hidden);
+                        .FirstOrDefault(c => (c.Resizable ?? true) && !c.HiddenState.Value);
                     if (nextResizableColumn == null)
                         return false;
 

@@ -68,14 +68,14 @@ namespace MudBlazor
         private ElementReference _elementReference;
         private ElementReference _elementReference1;
         private IJsEvent _jsEvent;
-        private IKeyInterceptor _keyInterceptor;
 
-        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         [Inject] private IJsEventFactory _jsEventFactory { get; set; }
         [Inject] private IJsApiService _jsApiService { get; set; }
 
-        private string _elementId = "mask_" + Guid.NewGuid().ToString().Substring(0, 8);
+        private string _elementId = Identifier.Create("mask");
 
         private IMask _mask = new PatternMask("** **-** **");
 
@@ -158,39 +158,35 @@ namespace MudBlazor
                 _jsEvent.Paste += OnPaste;
                 _jsEvent.Select += OnSelect;
 
-                _keyInterceptor = _keyInterceptorFactory.Create();
-
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
-                {
-                    //EnableLogging = true,
-                    TargetClass = "mud-input-slot",
-                    Keys =
-                    {
-                        new KeyOptions
-                        {
-                            Key = " ", PreventDown = "key+none"
-                        }, //prevent scrolling page, toggle open/close
-                        new KeyOptions { Key = "ArrowUp", PreventDown = "key+none" }, // prevent scrolling page
-                        new KeyOptions { Key = "ArrowDown", PreventDown = "key+none" }, // prevent scrolling page
-                        new KeyOptions { Key = "PageUp", PreventDown = "key+none" }, // prevent scrolling page
-                        new KeyOptions { Key = "PageDown", PreventDown = "key+none" }, // prevent scrolling page
-                        new KeyOptions { Key = @"/^.$/", PreventDown = "key+none|key+shift" },
-                        new KeyOptions { Key = "/./", SubscribeDown = true },
-                        new KeyOptions { Key = "Backspace", PreventDown = "key+none" },
-                        new KeyOptions { Key = "Delete", PreventDown = "key+none" },
-                    },
-                });
-                _keyInterceptor.KeyDown += HandleKeyDownInternally;
+                var keyInterceptorOptions = new KeyInterceptorOptions(
+                    targetClass: "mud-input-slot",
+                    keys:
+                    [
+                        // prevent scrolling page, toggle open/close
+                        new(key: " ", preventDown: "key+none"),
+                        // prevent scrolling page, instead increment
+                        new(key: "ArrowUp", preventDown: "key+none"),
+                        // prevent scrolling page, instead decrement
+                        new(key: "ArrowDown", preventDown: "key+none"),
+                        // prevent scrolling page
+                        new(key: "PageUp", preventDown: "key+none"),
+                        // prevent scrolling page
+                        new(key: "PageDown", preventDown: "key+none"),
+                        // prevent input of all other characters except allowed, like [0-9.,-+]
+                        new(key: @"/^.$/", preventDown: "key+none|key+shift"),
+                        // subscribe to all key down events
+                        new(key: "/./", subscribeDown: true),
+                        // prevent backspace key
+                        new(key: "Backspace", preventDown: "key+none"),
+                        // prevent delete key
+                        new(key: "Delete", preventDown: "key+none")
+                    ]);
+                await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, keyDown: HandleKeyDown);
             }
 
             if (_isFocused && Mask.Selection == null)
                 await SetCaretPositionAsync(Mask.CaretPos, _selection, render: false);
             await base.OnAfterRenderAsync(firstRender);
-        }
-
-        private async void HandleKeyDownInternally(KeyboardEventArgs args)
-        {
-            await HandleKeyDown(args);
         }
 
         protected internal async Task HandleKeyDown(KeyboardEventArgs e)
@@ -438,15 +434,10 @@ namespace MudBlazor
 
             if (disposing)
             {
-                if (_keyInterceptor != null)
-                {
-                    _keyInterceptor.KeyDown -= HandleKeyDownInternally;
-                }
-
                 if (IsJSRuntimeAvailable)
                 {
-                    _jsEvent?.Dispose();
-                    _keyInterceptor?.Dispose();
+                    // TODO: Replace with IAsyncDisposable
+                    KeyInterceptorService.UnsubscribeAsync(_elementId).CatchAndLog();
                 }
             }
         }

@@ -1,0 +1,19 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudThemeProvider ObserveSystemThemeChange="@_observeSystemThemeChange" />
+
+@code {
+    private bool _observeSystemThemeChange;
+
+    public void EnableObserve()
+    {
+        _observeSystemThemeChange = true;
+        StateHasChanged();
+    }
+
+    public void DisableObserve()
+    {
+        _observeSystemThemeChange = false;
+        StateHasChanged();
+    }
+}
