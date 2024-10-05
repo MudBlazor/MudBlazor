@@ -168,10 +168,10 @@ namespace MudBlazor
                     keys:
                     [
                         // prevent scrolling page, instead increment
-                        new(key: "ArrowUp", preventDown: "key+none"),
+                        new("ArrowUp", preventDown: "key+none"),
                         // prevent scrolling page, instead decrement
-                        new(key: "ArrowDown", preventDown: "key+none"),
-                        new(key: " ", preventDown: "key+none", preventUp: "key+none")
+                        new("ArrowDown", preventDown: "key+none"),
+                        new(" ", preventDown: "key+none", preventUp: "key+none")
                     ]);
                 await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, keyDown: HandleKeyDown);
             }

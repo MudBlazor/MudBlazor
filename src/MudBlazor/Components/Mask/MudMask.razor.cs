@@ -163,23 +163,23 @@ namespace MudBlazor
                     keys:
                     [
                         // prevent scrolling page, toggle open/close
-                        new(key: " ", preventDown: "key+none"),
+                        new(" ", preventDown: "key+none"),
                         // prevent scrolling page, instead increment
-                        new(key: "ArrowUp", preventDown: "key+none"),
+                        new("ArrowUp", preventDown: "key+none"),
                         // prevent scrolling page, instead decrement
-                        new(key: "ArrowDown", preventDown: "key+none"),
+                        new("ArrowDown", preventDown: "key+none"),
                         // prevent scrolling page
-                        new(key: "PageUp", preventDown: "key+none"),
+                        new("PageUp", preventDown: "key+none"),
                         // prevent scrolling page
-                        new(key: "PageDown", preventDown: "key+none"),
+                        new("PageDown", preventDown: "key+none"),
                         // prevent input of all other characters except allowed, like [0-9.,-+]
-                        new(key: @"/^.$/", preventDown: "key+none|key+shift"),
+                        new(@"/^.$/", preventDown: "key+none|key+shift"),
                         // subscribe to all key down events
-                        new(key: "/./", subscribeDown: true),
+                        new("/./", subscribeDown: true),
                         // prevent backspace key
-                        new(key: "Backspace", preventDown: "key+none"),
+                        new("Backspace", preventDown: "key+none"),
                         // prevent delete key
-                        new(key: "Delete", preventDown: "key+none")
+                        new("Delete", preventDown: "key+none")
                     ]);
                 await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, keyDown: HandleKeyDown);
             }
