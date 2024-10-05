@@ -2,7 +2,6 @@
 
 .mud-chip {
   border: none;
-  cursor: default;
   display: inline-flex;
   max-width: 100%;
   outline: 0;
@@ -260,12 +259,6 @@
         &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
           background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
         }
-      }
-    }
-  }
-}
-      &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-        background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
       }
     }
   }
