@@ -3,8 +3,9 @@
  *  http://www.mosismath.com/AngleSplines/EndSlopeSplines.html
  */
 
-using System;
+using System.Diagnostics;
 
+#nullable enable
 namespace MudBlazor.Components.Chart
 {
     public class EndSlopeSpline : SplineInterpolator
@@ -28,6 +29,14 @@ namespace MudBlazor.Components.Chart
 
         public void CalcParameters(double alpha, double beta)
         {
+            Debug.Assert(m != null);
+            Debug.Assert(gauss != null);
+            Debug.Assert(a != null);
+            Debug.Assert(b != null);
+            Debug.Assert(c != null);
+            Debug.Assert(d != null);
+            Debug.Assert(h != null);
+
             for (var i = 0; i < n; i++)
                 a[i] = GivenYs[i];
 
