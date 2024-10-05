@@ -11,7 +11,6 @@ namespace MudBlazor
     public partial class MudRadio<T> : MudComponentBase, IDisposable
     {
         private IMudRadioGroup? _parent;
-        private IKeyInterceptor? _keyInterceptor;
         private string _elementId = Identifier.Create("radio");
 
         protected string Classname =>
@@ -56,7 +55,7 @@ namespace MudBlazor
                 .Build();
 
         [Inject]
-        private IKeyInterceptorFactory KeyInterceptorFactory { get; set; } = null!;
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
@@ -229,7 +228,8 @@ namespace MudBlazor
             MudRadioGroup?.UnregisterRadio(this);
             if (IsJSRuntimeAvailable)
             {
-                _keyInterceptor?.Dispose();
+                // TODO: Replace with IAsyncDisposable
+                KeyInterceptorService.UnsubscribeAsync(_elementId).CatchAndLog();
             }
         }
 
@@ -237,18 +237,17 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                _keyInterceptor = KeyInterceptorFactory.Create();
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions
-                {
-                    //EnableLogging = true,
-                    TargetClass = "mud-button-root",
-                    Keys = {
-                        new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" }, // prevent scrolling page
-                        new KeyOptions { Key="Enter", PreventDown = "key+none" },
-                        new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
-                        new KeyOptions { Key="Backspace", PreventDown = "key+none" },
-                    },
-                });
+                var keyInterceptorOptions = new KeyInterceptorOptions(
+                    targetClass: "mud-button-root",
+                    keys:
+                    [
+                        // prevent scrolling page
+                        new(key: " ", preventDown: "key+none", preventUp: "key+none"),
+                        new(key: "Enter", preventDown: "key+none"),
+                        new(key: "NumpadEnter", preventDown: "key+none"),
+                        new(key: "Backspace", preventDown: "key+none")
+                    ]);
+                await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
             }
             await base.OnAfterRenderAsync(firstRender);
         }
