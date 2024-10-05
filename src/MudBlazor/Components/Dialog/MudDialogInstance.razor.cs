@@ -28,16 +28,6 @@ namespace MudBlazor
         private MudDialog? _dialog;
         private bool _disposedValue;
 
-        // set via dialog options 
-        private string _position { get; set; } = null!;
-        private string _dialogMaxWidth { get; set; } = null!;
-        private bool _backdropClick { get; set; } = true;
-        private bool _closeOnEscapeKey { get; set; }
-        private bool _noHeader { get; set; }
-        private bool _closeButton { get; set; }
-        private bool _fullScreen { get; set; }
-        private bool _fullWidth { get; set; }
-
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
@@ -136,7 +126,7 @@ namespace MudBlazor
             switch (args.Key)
             {
                 case "Escape":
-                    if (_closeOnEscapeKey)
+                    if (GetCloseOnEscapeKey())
                     {
                         Cancel();
                     }
@@ -227,14 +217,6 @@ namespace MudBlazor
 
         private void ConfigureInstance()
         {
-            _position = GetPosition();
-            _dialogMaxWidth = GetMaxWidth();
-            _noHeader = GetHideHeader();
-            _closeButton = GetCloseButton();
-            _fullWidth = GetFullWidth();
-            _fullScreen = GetFullScreen();
-            _backdropClick = GetBackdropClick();
-            _closeOnEscapeKey = GetCloseOnEscapeKey();
             Class = Classname;
             BackgroundClassname = new CssBuilder("mud-overlay-dialog").AddClass(Options.BackgroundClass).Build();
         }
@@ -306,9 +288,9 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-dialog")
-                .AddClass(_dialogMaxWidth, !_fullScreen)
-                .AddClass("mud-dialog-width-full", _fullWidth && !_fullScreen)
-                .AddClass("mud-dialog-fullscreen", _fullScreen)
+                .AddClass(GetMaxWidth(), !GetFullScreen())
+                .AddClass("mud-dialog-width-full", GetFullWidth() && !GetFullScreen())
+                .AddClass("mud-dialog-fullscreen", GetFullScreen())
                 .AddClass("mud-dialog-rtl", RightToLeft)
                 .AddClass(_dialog?.Class)
             .Build();
@@ -361,7 +343,7 @@ namespace MudBlazor
 
         private async Task HandleBackgroundClickAsync(MouseEventArgs args)
         {
-            if (!_backdropClick)
+            if (!GetBackdropClick())
                 return;
 
             if (_dialog is null || !_dialog.OnBackdropClick.HasDelegate)
