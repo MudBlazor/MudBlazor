@@ -590,19 +590,18 @@ namespace MudBlazor
             }
 
             _keyInterceptorObserving = true;
-            var keyInterceptorOptions = new KeyInterceptorOptions(
-                targetClass: "mud-input-slot",
-                keys:
+            var options = new KeyInterceptorOptions(
+                "mud-input-slot",
                 [
-                    new(key: " ", preventDown: "key+none"),
-                    new(key: "ArrowUp", preventDown: "key+none"),
-                    new(key: "ArrowDown", preventDown: "key+none"),
-                    new(key: "Enter", preventDown: "key+none"),
-                    new(key: "NumpadEnter", preventDown: "key+none"),
-                    new(key: "/./", subscribeDown: true, subscribeUp: true)
+                    new(" ", preventDown: "key+none"),
+                    new("ArrowUp", preventDown: "key+none"),
+                    new("ArrowDown", preventDown: "key+none"),
+                    new("Enter", preventDown: "key+none"),
+                    new("NumpadEnter", preventDown: "key+none"),
+                    new("/./", subscribeDown: true, subscribeUp: true)
                 ]);
 
-            await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, keyDown: OnHandleKeyDownAsync);
+            await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: OnHandleKeyDownAsync);
         }
 
         private async Task OnClickAsync(MouseEventArgs args)
@@ -655,7 +654,7 @@ namespace MudBlazor
             }
 
             await EnsureKeyInterceptorAsync();
-            await KeyInterceptorService.UpdateKeyAsync(_elementId, new(key: "Escape", stopDown: "key+none"));
+            await KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "key+none"));
         }
 
         protected virtual async Task OnClosedAsync()
@@ -663,7 +662,7 @@ namespace MudBlazor
             await OnPickerClosedAsync();
 
             await EnsureKeyInterceptorAsync();
-            await KeyInterceptorService.UpdateKeyAsync(_elementId, new(key: "Escape", stopDown: "none"));
+            await KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "none"));
         }
 
         protected virtual Task OnPickerOpenedAsync() => PickerOpened.InvokeAsync(this);
