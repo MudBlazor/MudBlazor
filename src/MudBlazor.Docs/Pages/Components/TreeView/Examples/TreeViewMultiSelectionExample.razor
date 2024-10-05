@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Width="300px" Elevation="0">
-    <MudTreeView Hover ReadOnly="@ReadOnly" TriState="@TriState" @bind-SelectedValues="SelectedValues" SelectionMode="SelectionMode.MultiSelection"
+    <MudTreeView Hover ReadOnly="@ReadOnly" TriState="@TriState" AutoSelectParent="@AutoSelectParent" @bind-SelectedValues="SelectedValues" SelectionMode="SelectionMode.MultiSelection"
                  CheckBoxColor="Color.Info">
         <MudTreeViewItem Text="bundle.zip" Expanded Icon="@Icons.Material.Filled.FolderZip">
             <MudTreeViewItem Text="config" Expanded Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen">
@@ -25,6 +25,7 @@
         <MudChip Text="logo.png"/>
     </MudChipSet>
     <MudSwitch @bind-Value="TriState" Color="Color.Info">TriState</MudSwitch>
+    <MudSwitch @bind-Value="AutoSelectParent" Color="Color.Info">AutoSelectParent</MudSwitch>
     <MudSwitch @bind-Value="ReadOnly" Color="Color.Info">ReadOnly</MudSwitch>    
 </MudStack>
 
@@ -32,4 +33,5 @@
     public IReadOnlyCollection<string> SelectedValues = ["tasks.json", "launch.json"];
     public bool ReadOnly = false;
     public bool TriState = true;
+    public bool AutoSelectParent = true;
 }

@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts.SVG.Models;
 using MudBlazor.Components.Chart.Models;
 
+#nullable enable
 namespace MudBlazor.Charts
 {
     partial class TimeSeries : MudTimeSeriesChartBase
@@ -18,19 +16,19 @@ namespace MudBlazor.Charts
         private const double VerticalEndSpace = 25.0;
 
         [CascadingParameter]
-        public MudTimeSeriesChartBase MudChartParent { get; set; }
+        public MudTimeSeriesChartBase? MudChartParent { get; set; }
 
-        private List<SvgPath> _horizontalLines = new();
-        private List<SvgText> _horizontalValues = new();
+        private List<SvgPath> _horizontalLines = [];
+        private List<SvgText> _horizontalValues = [];
 
-        private List<SvgPath> _verticalLines = new();
-        private List<SvgText> _verticalValues = new();
+        private List<SvgPath> _verticalLines = [];
+        private List<SvgText> _verticalValues = [];
 
-        private List<SvgLegend> _legends = new();
-        private List<TimeSeriesChartSeries> _series = new();
+        private List<SvgLegend> _legends = [];
+        private List<TimeSeriesChartSeries> _series = [];
 
-        private List<SvgPath> _chartLines = new();
-        private Dictionary<int, SvgPath> _chartAreas = new();
+        private List<SvgPath> _chartLines = [];
+        private Dictionary<int, SvgPath> _chartAreas = [];
 
         protected override void OnParametersSet()
         {
@@ -185,7 +183,7 @@ namespace MudBlazor.Charts
                 if (data.Count <= 0)
                     continue;
 
-                var seriesMinDateTime = data.Min(x => x.DateTime);
+                var seriesMinDateTime = data.Min(x => x.DateTime); // Warning: Variable is never used
                 var seriesMaxDateTime = data.Max(x => x.DateTime);
 
                 // TODO the x should be based on the datetime relative to the min and max datetime in the series
@@ -194,7 +192,7 @@ namespace MudBlazor.Charts
                     var dateTime = data[index].DateTime;
 
                     var diffFromMin = dateTime - allSeriesMinDateTime;
-                    var diffFromMax = seriesMaxDateTime - dateTime;
+                    var diffFromMax = seriesMaxDateTime - dateTime; // Warning: Variable is never used
 
                     var gridValue = (data[index].Value / gridYUnits - lowestHorizontalLine) * verticalSpace;
                     var y = BoundHeight - VerticalStartSpace - gridValue;
@@ -308,11 +306,8 @@ namespace MudBlazor.Charts
         private void HandleLegendVisibilityChanged(SvgLegend legend)
         {
             var series = _series[legend.Index];
-            if (series != null)
-            {
-                series.IsVisible = legend.Visible;
-                RebuildChart();
-            }
+            series.IsVisible = legend.Visible;
+            RebuildChart();
         }
     }
 }

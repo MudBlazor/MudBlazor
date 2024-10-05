@@ -194,10 +194,22 @@ public class BrowserViewportServiceTests
         var observerId = Guid.NewGuid();
         var observerNotifications = new List<BrowserViewportEventArgs>();
         var jsRuntimeMock = new Mock<IJSRuntime>();
-        var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
+        var globalOptions = new ResizeOptions
+        {
+            BreakpointDefinitions = new Dictionary<Breakpoint, int>
+            {
+                { Breakpoint.Xs, 0 },
+                { Breakpoint.Sm, 576 },
+                { Breakpoint.Md, 768 },
+                { Breakpoint.Lg, 992 },
+                { Breakpoint.Xl, 1200 },
+                { Breakpoint.Xxl, 1400 }
+            }
+        };
         var options1 = new ResizeOptions { ReportRate = 1, EnableLogging = true };
         var options2 = new ResizeOptions { ReportRate = 2, SuppressInitEvent = false };
         var options3 = new ResizeOptions { ReportRate = 3, NotifyOnBreakpointOnly = false };
+        var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object, new OptionsWrapper<ResizeOptions>(globalOptions));
         void Lambda(BrowserViewportEventArgs args) => observerNotifications.Add(args);
 
         // Act
@@ -210,7 +222,7 @@ public class BrowserViewportServiceTests
         firstNotification.IsImmediate.Should().BeTrue();
         var options1Mutated = options1.Clone();
         // This is the "real" options that goes inside "mudResizeListenerFactory.listenForResize"
-        options1Mutated.BreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(options1Mutated);
+        options1Mutated.BreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(options1Mutated, globalOptions);
         // BrowserViewportSubscription holds this information on what was the real options that were passed to the "mudResizeListenerFactory.listenForResize"
         var innerObserverOptions = service.GetInternalSubscription(observerId)?.Options;
         observerNotifications.Count.Should().Be(1);
@@ -218,6 +230,46 @@ public class BrowserViewportServiceTests
         innerObserverOptions.Should().Be(options1Mutated);
         jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()), Times.Exactly(2));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()), Times.Once);
+    }
+
+    [Test]
+    public void GetDefaultOrUserDefinedBreakpointDefinition_Priority()
+    {
+        // Arrange
+        var globalOptions = new ResizeOptions
+        {
+            BreakpointDefinitions = new Dictionary<Breakpoint, int>
+            {
+                { Breakpoint.Xs, 0 },
+                { Breakpoint.Sm, 576 },
+                { Breakpoint.Md, 768 },
+                { Breakpoint.Lg, 992 },
+                { Breakpoint.Xl, 1200 },
+                { Breakpoint.Xxl, 1400 }
+            }
+        };
+        var componentOptions = new ResizeOptions
+        {
+            BreakpointDefinitions = new Dictionary<Breakpoint, int>
+            {
+                { Breakpoint.Xs, 0 },
+                { Breakpoint.Sm, 1576 },
+                { Breakpoint.Md, 1768 },
+                { Breakpoint.Lg, 1992 },
+                { Breakpoint.Xl, 2200 },
+                { Breakpoint.Xxl, 2400 }
+            }
+        };
+
+        // Act
+        var componentOptionsDominate = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(componentOptions, globalOptions);
+        var globalOptionsDominate = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(new ResizeOptions(), globalOptions);
+        var defaultOptionsDominate = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(new ResizeOptions());
+
+        // Assert
+        componentOptionsDominate.Should().BeEquivalentTo(componentOptions.BreakpointDefinitions);
+        globalOptionsDominate.Should().BeEquivalentTo(globalOptions.BreakpointDefinitions);
+        defaultOptionsDominate.Should().BeEquivalentTo(BreakpointGlobalOptions.DefaultBreakpointDefinitions);
     }
 
     [Test]

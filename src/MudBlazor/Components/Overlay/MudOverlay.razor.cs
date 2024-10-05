@@ -136,7 +136,9 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     /// <summary>
     /// Occurs when the overlay is clicked.
     /// </summary>
-    [Obsolete("The OnClosed event with AutoClose enabled should be preferred as it can handle other types of interaction in the future. Otherwise you can still use the @onclick event.")]
+    /// <remarks>
+    /// If you need to close the overlay automatically, you can use <see cref="AutoClose"/> and <see cref="OnClosed"/> instead. 
+    /// </remarks>
     [Parameter]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
 
@@ -179,9 +181,7 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
             await OnClosed.InvokeAsync();
         }
 
-#pragma warning disable CS0618 // Type or member is obsolete
         await OnClick.InvokeAsync(ev);
-#pragma warning restore CS0618 // Type or member is obsolete
     }
 
     /// <summary>

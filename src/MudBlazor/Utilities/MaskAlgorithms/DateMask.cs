@@ -167,9 +167,8 @@ public partial class DateMask : PatternMask
                 text = text.Remove(dayIndex, 2).Insert(dayIndex, $"{d1:D2}");
             }
         }
-        catch (Exception e)
+        catch (Exception)
         {
-            Console.WriteLine("Error in ModifyFinalText: " + e.Message);
             return text;
         }
         return text;

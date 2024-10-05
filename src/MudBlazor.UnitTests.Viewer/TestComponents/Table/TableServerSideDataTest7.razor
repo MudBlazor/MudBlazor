@@ -1,0 +1,35 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
+
+<MudTable ServerData="ServerReload">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortLabel="No." T="int">Nr</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    #pragma warning disable CS1998 // async without await
+    public static string __description__ = "The server loading should be canceled when the Table is disposed.";
+    private IEnumerable<int> pagedData;
+    private int totalItems;
+
+    private async Task<TableData<int>> ServerReload(TableState state, CancellationToken token)
+    {
+        IEnumerable<int> data = [];
+        try
+        {
+            await Task.Delay(1000, token);
+            data = new List<int>() { 1, 2, 3 };
+        }
+        catch (TaskCanceledException)
+        {
+            // ignored
+        }
+        totalItems = data.Count();
+        pagedData = data.ToArray();
+        return new TableData<int>() { TotalItems = totalItems, Items = pagedData };
+    }
+}
