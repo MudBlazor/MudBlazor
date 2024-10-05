@@ -13,9 +13,9 @@
 
 <MudDivider/>
 
-<MudSwitch @bind-Checked="@_error" Color="Color.Primary" Label="Step 1 error"></MudSwitch>
-<MudSwitch @bind-Checked="@_completed" Color="Color.Primary" Label="Step 2 completed"></MudSwitch>
-<MudSwitch @bind-Checked="@_disabled" Color="Color.Primary" Label="Step 3 disabled" />
+<MudSwitch @bind-Value="@_error" Color="Color.Primary" Label="Step 1 error"></MudSwitch>
+<MudSwitch @bind-Value="@_completed" Color="Color.Primary" Label="Step 2 completed"></MudSwitch>
+<MudSwitch @bind-Value="@_disabled" Color="Color.Primary" Label="Step 3 disabled" />
 
 <MudNumericField @bind-Value="_index" Label="Current index" Variant="Variant.Text" Min="0" Max="5" />
 
