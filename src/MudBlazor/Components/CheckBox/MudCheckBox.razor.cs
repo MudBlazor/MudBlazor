@@ -198,12 +198,6 @@ namespace MudBlazor
             return SetBoolValueAsync((bool?)args.Value, true);
         }
 
-        [Obsolete($"Use {nameof(HandleKeyDownAsync)} instead. This will be removed in v8.")]
-        protected async void HandleKeyDown(KeyboardEventArgs obj)
-        {
-            await HandleKeyDownAsync(obj);
-        }
-
         protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState() || !KeyboardEnabled)
