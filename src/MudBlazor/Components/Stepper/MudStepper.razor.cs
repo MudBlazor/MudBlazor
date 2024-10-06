@@ -44,7 +44,7 @@ public partial class MudStepper : MudComponentBase
     protected string Classname => new CssBuilder("mud-stepper")
         .AddClass("mud-stepperHorizontal", Vertical == false)
         .AddClass("mud-stepperVertical", Vertical)
-        .AddClass("mud-stepperAlternateLabel", AlternateLabel && !Vertical)
+        .AddClass("mud-stepperCenterLabel", CenterLabel && !Vertical)
         .AddClass(Class)
         .Build();
 
@@ -136,7 +136,7 @@ public partial class MudStepper : MudComponentBase
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
-    public bool AlternateLabel { get; set; }
+    public bool CenterLabel { get; set; }
 
     /// <summary>
     /// If there is too many steps, the navigation becomes scrollable.

@@ -2,20 +2,21 @@
 
 <DocsPage>
     <DocsPageHeader Title="Stepper" SubTitle="A wizard that guides the user through a series of steps to complete a transaction.">
+        <Description>
+            <DocsPageSection>
+                <MudAlert Class="mt-4" Severity="Severity.Warning">
+                    <b>Warning experimental component!</b>
+                </MudAlert>
+                <MudAlert Class="mt-4" Severity="Severity.Error">
+                    This component is still under development and breaking changes may occur even in minor patch releases.<br />
+                    Please <b>ONLY</b> use this component if you are prepared to update your code and adapt to possible API changes.<br />
+                    There might also be changes to the look and feel or to the CSS classes and variable names.
+                </MudAlert>
+            </DocsPageSection>
+        </Description>
     </DocsPageHeader>
 
     <DocsPageContent>
-
-        <DocsPageSection>
-            <MudAlert Severity="Severity.Warning">
-                <b>Warning experimental component!</b>
-            </MudAlert>
-            <MudAlert Class="mt-4" Severity="Severity.Error">
-                This component is still under development and breaking changes may occur even in minor patch releases.<br />
-                Please <b>ONLY</b> use this component if you are prepared to update your code and adapt to possible API changes.<br />
-                There might also be changes to the look and feel or to the CSS classes and variable names.
-            </MudAlert>
-        </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Horizontal stepper">
@@ -36,8 +37,8 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Alternate Label">
-                <Description><CodeInline>@nameof(MudStepper.AlternateLabel)</CodeInline> centers the labels in the navigation bar below the circle. It affects only horizontal steppers.</Description>
+            <SectionHeader Title="Centered Labels">
+                <Description><CodeInline>@nameof(MudStepper.CenterLabels)</CodeInline> centers the labels in the navigation bar below the circle. It affects only horizontal steppers.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(StepperBasicAlternativeLabelExample)" ShowCode="false">
                 <StepperBasicAlternativeLabelExample />
@@ -61,8 +62,8 @@
             <SectionHeader Title="Step binding">
                 <Description>Each step can also show an error via <CodeInline>@nameof(MudStep.HasError)</CodeInline> be disabled via <CodeInline>@nameof(MudStep.Disabled)</CodeInline> or be completed via <CodeInline>@nameof(MudStep.Completed)</CodeInline>.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="@nameof(StepperBindedStepExample)" ShowCode="false">
-                <StepperBindedStepExample />
+            <SectionContent DarkenBackground="true" Code="@nameof(StepperStepBindingExample)" ShowCode="false">
+                <StepperStepBindingExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -81,15 +82,6 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(StepperBasicVerticalExample)" ShowCode="false">
                 <StepperBasicVerticalExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Non-linear vertical stepper">
-                <Description>The vertical stepper has all the options as the horizontal.</Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="@nameof(StepperBasicVerticalNonlinearExample)" ShowCode="false">
-                <StepperBasicVerticalNonlinearExample />
             </SectionContent>
         </DocsPageSection>
 
