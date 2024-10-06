@@ -6,23 +6,23 @@
 
     <DocsPageContent>
 
-        <DocsPageSection>           
+        <DocsPageSection>
             <MudAlert Severity="Severity.Warning">
                 <b>Warning experimental component!</b>
             </MudAlert>
             <MudAlert Class="mt-4" Severity="Severity.Error">
-                This component is under active development and breaking changes may occur even in minor patch releases.<br/>
-                <b>DO NOT</b> use this component if you are not prepared to update your code and adapt to new changes.<br />
-                The finished component might not have the same name, might not have the features it has now, or look the same.
+                This component is still under development and breaking changes may occur even in minor patch releases.<br />
+                Please <b>ONLY</b> use this component if you are prepared to update your code and adapt to possible API changes.<br />
+                There might also be changes to the look and feel or to the CSS classes and variable names.
             </MudAlert>
         </DocsPageSection>
-        
+
         <DocsPageSection>
             <SectionHeader Title="Horizontal stepper">
                 <Description>Stepper needs <CodeInline>@nameof(MudStep)</CodeInline> in its child content. Each step can have <CodeInline>@nameof(MudStep.Title)</CodeInline> and <CodeInline>@nameof(MudStep.SecondaryText)</CodeInline> so the component can be displayed properly.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="StepperBasicExample" ShowCode="true">
-                <StepperBasicExample/>
+            <SectionContent DarkenBackground="true" Code="@nameof(StepperBasicExample)" ShowCode="true">
+                <StepperBasicExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -30,8 +30,8 @@
             <SectionHeader Title="Non-linear version">
                 <Description>If you need to jump between the steps, parameter <CodeInline>@nameof(MudStepper.NonLinear)</CodeInline> is there for that.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="StepperNonLinearExample" ShowCode="false">
-                <StepperNonLinearExample/>
+            <SectionContent DarkenBackground="true" Code="@nameof(StepperNonLinearExample)" ShowCode="false">
+                <StepperNonLinearExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -39,18 +39,21 @@
             <SectionHeader Title="Alternate Label">
                 <Description><CodeInline>@nameof(MudStepper.AlternateLabel)</CodeInline> centers the labels in the navigation bar below the circle. It affects only horizontal steppers.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="StepperBasicAlternativeLabelExample" ShowCode="false">
-                <StepperBasicAlternativeLabelExample/>
+            <SectionContent DarkenBackground="true" Code="@nameof(StepperBasicAlternativeLabelExample)" ShowCode="false">
+                <StepperBasicAlternativeLabelExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Customization">
-                <Description>The component can be customized via <CodeInline>@nameof(MudStepper.TitleTemplate)</CodeInline>, <CodeInline>@nameof(MudStepper.LabelTemplate)</CodeInline> and <CodeInline>@nameof(MudStepper.ConnectorTemplate)</CodeInline>. 
-                    You can also add a success message after the last step thanks to the <CodeInline>@nameof(MudStepper.CompletedContent)</CodeInline> fragment.</Description>
+                <Description>
+                    The component can be customized via <CodeInline>@nameof(MudStepper.TitleTemplate)</CodeInline>, <CodeInline>@nameof(MudStepper.LabelTemplate)</CodeInline> and <CodeInline>@nameof(MudStepper.ConnectorTemplate)</CodeInline>.
+                    You can also add a success message after the last step thanks to the <CodeInline>@nameof(MudStepper.CompletedContent)</CodeInline> fragment.<br />
+                    You can also replace the step action buttons (previous, skip and next) by providing alternative buttons via the<CodeInline>@nameof(MudStepper.ActionContent)</CodeInline> template.
+                </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="StepperCustomLabelExample" ShowCode="false">
-                <StepperCustomLabelExample/>
+            <SectionContent DarkenBackground="true" Code="@nameof(StepperCustomizationExample)" ShowCode="false">
+                <StepperCustomizationExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -58,17 +61,17 @@
             <SectionHeader Title="Step binding">
                 <Description>Each step can also show an error via <CodeInline>@nameof(MudStep.HasError)</CodeInline> be disabled via <CodeInline>@nameof(MudStep.Disabled)</CodeInline> or be completed via <CodeInline>@nameof(MudStep.Completed)</CodeInline>.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="StepperBindedStepExample" ShowCode="false">
-                <StepperBindedStepExample/>
+            <SectionContent DarkenBackground="true" Code="@nameof(StepperBindedStepExample)" ShowCode="false">
+                <StepperBindedStepExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Dynamically adding or removing steps">
-                    <Description>By maintaining a list of steps you can easily add or remove steps programmatically. In this example we also set a custom <CodeInline>@nameof(MudStepper.CompletedContent)</CodeInline> that shows after the final step has been completed. </Description>
+                <Description>By maintaining a list of steps you can easily add or remove steps programmatically. In this example we also set a custom <CodeInline>@nameof(MudStepper.CompletedContent)</CodeInline> that shows after the final step has been completed. </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="StepperDynamicExample" ShowCode="false">
-                <StepperDynamicExample/>
+            <SectionContent DarkenBackground="true" Code="@nameof(StepperDynamicExample)" ShowCode="false">
+                <StepperDynamicExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -76,8 +79,8 @@
             <SectionHeader Title="Vertical stepper">
                 <Description>Stepper also has a vertical version enabled by parameter <CodeInline>@nameof(MudStepper.Vertical).</CodeInline></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="StepperBasicVerticalExample" ShowCode="false">
-                <StepperBasicVerticalExample/>
+            <SectionContent DarkenBackground="true" Code="@nameof(StepperBasicVerticalExample)" ShowCode="false">
+                <StepperBasicVerticalExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -85,8 +88,8 @@
             <SectionHeader Title="Non-linear vertical stepper">
                 <Description>The vertical stepper has all the options as the horizontal.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="StepperBasicVerticalNonlinearExample" ShowCode="false">
-                <StepperBasicVerticalNonlinearExample/>
+            <SectionContent DarkenBackground="true" Code="@nameof(StepperBasicVerticalNonlinearExample)" ShowCode="false">
+                <StepperBasicVerticalNonlinearExample />
             </SectionContent>
         </DocsPageSection>
 

@@ -9,8 +9,10 @@ using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Stepper;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -478,6 +480,73 @@ namespace MudBlazor.UnitTests.Components
             stepper.FindAll(".mud-stepper-nav-step")[1].Click();
             aClick.Should().Be(1);
             bClick.Should().Be(1);
+        }
+
+        [Test]
+        public void ActionContentTemplate_ShouldReplaceTheNavButtons()
+        {
+            var stepper = Context.RenderComponent<MudStepper>();
+            stepper.FindAll(".mud-card-actions .mud-button").Count.Should().Be(3);
+            stepper = Context.RenderComponent<MudStepper>(self =>
+            {
+                self.Add(x => x.Tag, "je ne sais pas");
+                // this replaces the action buttons prev, skip and next with just text
+                self.Add(x => x.ActionContent, stepperRef => (string)stepperRef.Tag);
+            });
+            stepper.FindAll(".mud-card-actions .mud-button").Count.Should().Be(0);
+            stepper.Find(".mud-card-actions").InnerHtml?.Trim().Should().Be("je ne sais pas");
+        }
+
+        [Test]
+        public void ShowReset_ShouldControlResetButtonVisibilty()
+        {
+            var stepper = Context.RenderComponent<MudStepper>(self =>
+            {
+                self.Add(x => x.ShowResetButton, true);
+            });
+            stepper.FindAll(".mud-card-actions .mud-button").Count.Should().Be(4);
+            stepper.FindAll(".mud-card-actions .mud-stepper-button-reset").Count.Should().Be(1);
+            stepper = Context.RenderComponent<MudStepper>(self =>
+            {
+                self.Add(x => x.ShowResetButton, false);
+            });
+            stepper.FindAll(".mud-card-actions .mud-button").Count.Should().Be(3);
+            stepper.FindAll(".mud-card-actions .mud-stepper-button-reset").Count.Should().Be(0);
+        }
+
+        [Test]
+        public void ResetButton_ShouldResetActiveStep()
+        {
+            var stepper = Context.RenderComponent<MudStepper>(self =>
+            {
+                self.Add(x => x.ShowResetButton, true);
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "A");
+                    step.AddChildContent(text => text.AddMarkupContent(0, "step 1"));
+                });
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "B");
+                    step.AddChildContent(text => text.AddMarkupContent(0, "step 2"));
+                });
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "C");
+                    step.AddChildContent(text => text.AddMarkupContent(0, "step 3"));
+                });
+            });
+            stepper.Instance.GetState(x => x.ActiveIndex).Should().Be(0);
+            stepper.Instance.ActiveStep?.Title.Should().Be("A");
+            stepper.Instance.Steps[0].GetState(x => x.Completed).Should().Be(false);
+            stepper.InvokeAsync(async () => await stepper.Instance.NextStepAsync());
+            stepper.Instance.ActiveStep?.Title.Should().Be("B");
+            stepper.Instance.Steps[0].GetState(x => x.Completed).Should().Be(true);
+            stepper.Instance.GetState(x => x.ActiveIndex).Should().Be(1);
+            stepper.Find(".mud-stepper-button-reset").Click();
+            stepper.Instance.ActiveStep?.Title.Should().Be("A");
+            stepper.Instance.Steps[0].GetState(x => x.Completed).Should().Be(false);
+            stepper.Instance.GetState(x => x.ActiveIndex).Should().Be(0);
         }
     }
 }

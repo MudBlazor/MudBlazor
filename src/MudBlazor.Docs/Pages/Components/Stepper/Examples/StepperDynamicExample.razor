@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 <MudPaper Style="width: 800px">
-    <MudStepper @bind-ActiveIndex="_index">
+    <MudStepper @bind-ActiveIndex="_index" ShowResetButton>
         <ChildContent>
             @foreach (var step in _steps)
             {

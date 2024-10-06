@@ -384,4 +384,7 @@
   <data name="MudStepper_Skip" xml:space="preserve">
     <value>Skip</value>
   </data>
+  <data name="MudStepper_Reset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
 </root>

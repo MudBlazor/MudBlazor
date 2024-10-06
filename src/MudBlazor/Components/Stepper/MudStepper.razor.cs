@@ -84,7 +84,7 @@ public partial class MudStepper : MudComponentBase
     public Color CurrentStepColor { get; set; } = Color.Primary;
 
     /// <summary>
-    /// The color of the error step. Sets the color globaly for the whole stepper. It supports the theme colors.
+    /// The color of the error step. Sets the color globally for the whole stepper. It supports the theme colors.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
@@ -97,9 +97,19 @@ public partial class MudStepper : MudComponentBase
     [Category(CategoryTypes.List.Appearance)]
     public string? NavClass { get; set; }
 
+    /// <summary>
+    /// Set this true to allow users to move between steps arbitrarily.
+    /// </summary>
     [Parameter]
     [Category(CategoryTypes.List.Behavior)]
     public bool NonLinear { get; set; }
+
+    /// <summary>
+    /// Set this to show the reset button which sets the stepper back into the initial state.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Link.Appearance)]
+    public bool ShowResetButton { get; set; } = false;
 
     /// <summary>
     /// Renders the component in vertical manner. Each step is collapsible
@@ -180,6 +190,13 @@ public partial class MudStepper : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
     public RenderFragment? CompletedContent { get; set; }
+
+    /// <summary>
+    /// Use this to override the default action buttons of the stepper
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
+    public RenderFragment<MudStepper>? ActionContent { get; set; }
 
     internal async Task AddStepAsync(MudStep step)
     {
@@ -320,6 +337,8 @@ public partial class MudStepper : MudComponentBase
 
         await UpdateStepAsync(_steps[0], new MouseEventArgs(), StepAction.Activate);
     }
+
+    private bool CanReset => _steps.Any(x => x.CompletedState || x.HasErrorState) || _activeIndex > 0;
 
     private async Task OnStepClickAsync(MudStep step, MouseEventArgs e)
     {

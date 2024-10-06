@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 <MudPaper Style="width: 800px">
-    <MudStepper @ref="_mudStepper" @bind-ActiveIndex="_index">
+    <MudStepper @bind-ActiveIndex="_index" ShowResetButton>
         <MudStep Title="Select campaign settings" HasError="_error">Select campaign settings content</MudStep>
         <MudStep Title="Create an ad group" @bind-Completed="_completed">Create an ad group content</MudStep>
         <MudStep Title="Create an ad" Disabled="_disabled">Create an ad content</MudStep>
@@ -20,8 +20,6 @@
 <MudNumericField @bind-Value="_index" Label="Current index" Variant="Variant.Text" Min="0" Max="5" />
 
 @code {
-    MudStepper _mudStepper = new();
-
     private bool _error;
     private bool _completed;
     private bool _disabled;
