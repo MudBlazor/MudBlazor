@@ -18,10 +18,10 @@
                 .AddClass("mud-stepper-nav-step-completed", step.CompletedState.Value)
                 .Build();
 
-            <div class="@stepClassname" role="tab" aria-controls="@step.Title" aria-selected="@(isActive ? "true" : "false")"
+            <button class="@stepClassname" role="tab" aria-controls="@step.Title" aria-selected="@(isActive.ToString().ToLower())"
                  @onclick="@(async e => await OnStepClickAsync(step, e))">
                 @RenderStepLabel(step, isActive)
-            </div>
+            </button>
 
             if (Vertical) {
                 @StepContent(step)
