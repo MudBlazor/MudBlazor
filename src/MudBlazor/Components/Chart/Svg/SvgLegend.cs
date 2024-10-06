@@ -8,7 +8,7 @@ namespace MudBlazor
     /// Represents a series of series labels as an SVG path.
     /// </summary>
     [DebuggerDisplay("{Index} = {Labels}")]
-    internal class SvgLegend
+    public class SvgLegend
     {
         /// <summary>
         /// The position of this path within a list.
