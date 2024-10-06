@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
-namespace MudBlazor
-{
+namespace MudBlazor;
     /// <summary>
     /// Represents a graphic display of data values in a line, bar, stacked bar, pie, or donut shape.
     /// </summary>
@@ -226,5 +222,4 @@ namespace MudBlazor
         /// Data is displayed as connecting lines or as areas.
         /// </summary>
         Timeseries
-    }
 }
