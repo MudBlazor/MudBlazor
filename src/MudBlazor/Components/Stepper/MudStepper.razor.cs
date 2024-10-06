@@ -41,7 +41,6 @@ public partial class MudStepper : MudComponentBase
     /// </summary>
     public MudStep? ActiveStep { get; private set; }
 
-
     protected string Classname => new CssBuilder("mud-stepper")
         .AddClass("mud-stepperHorizontal", Vertical == false)
         .AddClass("mud-stepperVertical", Vertical)
@@ -307,17 +306,17 @@ public partial class MudStepper : MudComponentBase
     /// <summary>
     /// Completes the current step and goes to the next step
     /// </summary>
-    public async Task NextStepAsync()
+    public Task NextStepAsync()
     {
-        await UpdateStepAsync(ActiveStep, new MouseEventArgs(), StepAction.Complete);
+        return UpdateStepAsync(ActiveStep, new MouseEventArgs(), StepAction.Complete);
     }
 
     /// <summary>
     /// Goes to the next step without completing the current one
     /// </summary>
-    public async Task SkipCurrentStepAsync()
+    public Task SkipCurrentStepAsync()
     {
-        await UpdateStepAsync(ActiveStep, new MouseEventArgs(), StepAction.Skip);
+        return UpdateStepAsync(ActiveStep, new MouseEventArgs(), StepAction.Skip);
     }
 
     /// <summary>
