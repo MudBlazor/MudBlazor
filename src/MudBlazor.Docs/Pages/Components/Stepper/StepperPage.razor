@@ -20,7 +20,10 @@
 
         <DocsPageSection>
             <SectionHeader Title="Horizontal stepper">
-                <Description>Stepper needs <CodeInline>@nameof(MudStep)</CodeInline> in its child content. Each step can have <CodeInline>@nameof(MudStep.Title)</CodeInline> and <CodeInline>@nameof(MudStep.SecondaryText)</CodeInline> so the component can be displayed properly.</Description>
+                <Description>Stepper needs <CodeInline>@nameof(MudStep)</CodeInline> in its child content. Each step can have <CodeInline>@nameof(MudStep.Title)</CodeInline> and <CodeInline>@nameof(MudStep.SecondaryText)</CodeInline> 
+                    so the component can be displayed properly. The reset button is only shown if <CodeInline>@nameof(MudStepper.ShowResetButton)</CodeInline> is set. You might not need it in a real world example but in the docs it is important to be able 
+                    to reset the stepper so we enabled it everywhere.
+                </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(StepperBasicExample)" ShowCode="true">
                 <StepperBasicExample />

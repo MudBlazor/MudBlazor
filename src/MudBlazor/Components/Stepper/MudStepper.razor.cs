@@ -44,7 +44,7 @@ public partial class MudStepper : MudComponentBase
     protected string Classname => new CssBuilder("mud-stepper")
         .AddClass("mud-stepperHorizontal", Vertical == false)
         .AddClass("mud-stepperVertical", Vertical)
-        .AddClass("mud-stepperCenterLabel", CenterLabel && !Vertical)
+        .AddClass("mud-stepperCenterLabel", CenterLabels && !Vertical)
         .AddClass(Class)
         .Build();
 
@@ -136,7 +136,7 @@ public partial class MudStepper : MudComponentBase
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
-    public bool CenterLabel { get; set; }
+    public bool CenterLabels { get; set; }
 
     /// <summary>
     /// If there is too many steps, the navigation becomes scrollable.
@@ -152,9 +152,6 @@ public partial class MudStepper : MudComponentBase
     [Category(CategoryTypes.Tabs.Behavior)]
     public Func<StepperInteractionEventArgs, Task>? OnPreviewInteraction { get; set; }
 
-    //TODO: Stepper controls
-    public StepperControls StepperControls { get; set; } = new();
-
     public bool IsCurrentStepSkippable => _steps.Any() && ActiveStep is not null && ActiveStep.Skippable;
 
     public bool CanGoToNextStep =>
@@ -163,6 +160,11 @@ public partial class MudStepper : MudComponentBase
 
     public bool PreviousStepEnabled => _steps.Any() && _activeIndex.Value > 0;
     public bool IsCompleted => _steps.Any() && _steps.Where(x => !x.Skippable).All(x => x.CompletedState.Value);
+
+    public bool ShowCompleteInsteadOfNext => _steps.Any() && 
+                                             _steps.Count(x => !x.Skippable && !x.CompletedState.Value) == 1 && 
+                                             ActiveStep !=null && 
+                                             _steps.First(x => !x.Skippable && !x.CompletedState.Value) == ActiveStep;
 
     /// <summary>
     /// Space for all the MudSteps
