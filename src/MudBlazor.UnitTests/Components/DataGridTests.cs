@@ -7,6 +7,7 @@ using AngleSharp.Css.Dom;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
+using Bunit.Rendering;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Components;
@@ -990,6 +991,19 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td")[8].Html().Trim().Should().Be("snakex64");
 
             //if no crash occurs, we know the datagrid is properly filtering out the GetOnly property when calling set
+        }
+
+        [Test(Description = "Checks if there is no NRE exception when nested property has a null value somewhere in the middle.")]
+        public async Task DataGridNoNullExceptionWhenNestedPropertyNullValue()
+        {
+            var comp = Context.RenderComponent<DataGridNestedNullPropertyTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridNestedNullPropertyTest.Model>>();
+            dataGrid.FindAll("td")[0].Html().Trim().Should().Be("Class A");
+            dataGrid.FindAll("td")[1].Html().Trim().Should().Be(string.Empty);
+
+            var alertTextFunc = () => MudAlert().Find("div.mud-alert-message");
+            IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
+            alertTextFunc.Should().Throw<ComponentNotFoundException>();
         }
 
         [Test(Description = "Checks if clone strategy is working, if we used default one it would fail as STJ doesn't support abstract classes without additional configuration.")]
