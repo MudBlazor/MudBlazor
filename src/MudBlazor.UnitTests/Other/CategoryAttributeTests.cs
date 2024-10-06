@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using NUnit.Framework;
 
@@ -13,9 +13,9 @@ namespace MudBlazor.UnitTests.Other
         [Test]
         public void CategoryTypesClassConstantsAreCorrect()
         {
-            foreach (Type component in typeof(CategoryTypes).GetNestedTypes())
+            foreach (var component in typeof(CategoryTypes).GetNestedTypes())
             {
-                foreach (FieldInfo category in component.GetFields())
+                foreach (var category in component.GetFields())
                 {
                     var categoryName = (string)category.GetRawConstantValue();
                     new CategoryAttribute(categoryName);
@@ -33,7 +33,6 @@ namespace MudBlazor.UnitTests.Other
                 typeof(FilterHeaderCell<>),
                 typeof(Column<>),
                 typeof(PropertyColumn<,>),
-                typeof(Row),
                 typeof(HeaderCell<>),
                 typeof(FooterCell<>),
                 typeof(Cell<>),
@@ -62,20 +61,19 @@ namespace MudBlazor.UnitTests.Other
                 typeof(MudPageContentNavigation),
                 typeof(MudSnackbarElement),
                 typeof(MudBlazor.Charts.Legend),
-                typeof(MudSparkLine),
 
                 typeof(MudRatingItem),  // TODO: remove it later; see also: https://github.com/MudBlazor/MudBlazor/discussions/3452
             };
 
-            bool isTestOK = true;
+            var isTestOK = true;
 
-            IEnumerable<Type> components = typeof(MudElement).Assembly.GetTypes()
+            var components = typeof(MudElement).Assembly.GetTypes()
                                                                       .Where(type => type.IsSubclassOf(typeof(MudComponentBase)))
                                                                       .Except(exceptions);
 
-            foreach (Type component in components)
+            foreach (var component in components)
             {
-                foreach (PropertyInfo property in component.GetProperties())
+                foreach (var property in component.GetProperties())
                 {
                     if (GetBaseDefinitionClass(property) == component &&              // property isn't inherited
                         !property.PropertyType.Name.Contains("EventCallback") &&      // property isn't an event callback
@@ -88,7 +86,8 @@ namespace MudBlazor.UnitTests.Other
                 }
             }
 
-            Assert.True(isTestOK, "Some component properties don't have categories.");
+            // If this fails some component properties don't have categories.
+            isTestOK.Should().BeTrue();
         }
 
         // Returns the class that declares the specified method.

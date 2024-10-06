@@ -1,61 +1,62 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudSwitch<T> : MudBooleanInput<T>
     {
+        private string _elementId = Identifier.Create("switch");
+
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
+
         protected string Classname =>
-        new CssBuilder("mud-input-control-boolean-input")
-            .AddClass(Class)
-            .Build();
-        
+            new CssBuilder("mud-input-control-boolean-input")
+                .AddClass(Class)
+                .Build();
+
         protected string LabelClassname =>
-        new CssBuilder("mud-switch")
-            .AddClass("mud-disabled", GetDisabledState())
-            .AddClass("mud-readonly", GetReadOnlyState())
-            .AddClass(LabelPosition == LabelPosition.End ? "" : "flex-row-reverse", true)
-        .Build();
+            new CssBuilder("mud-switch")
+                .AddClass("mud-disabled", GetDisabledState())
+                .AddClass("mud-readonly", GetReadOnlyState())
+                .AddClass(LabelPosition == LabelPosition.End ? "" : "flex-row-reverse", true)
+                .Build();
 
         protected string SwitchLabelClassname =>
-        new CssBuilder($"mud-switch-label-{Size.ToDescriptionString()}")
-        .Build();
+            new CssBuilder($"mud-switch-label-{Size.ToDescriptionString()}")
+                .Build();
+
         protected string SwitchClassname =>
-        new CssBuilder("mud-button-root mud-icon-button mud-switch-base")
-            .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple && !GetReadOnlyState() && !GetDisabledState())
-            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", BoolValue == true)
-            .AddClass($"mud-{UnCheckedColor.ToDescriptionString()}-text hover:mud-{UnCheckedColor.ToDescriptionString()}-hover", BoolValue == false)
-            .AddClass($"mud-switch-disabled", GetDisabledState())
-            .AddClass($"mud-readonly", GetReadOnlyState())
-            .AddClass($"mud-checked", BoolValue)
-            .AddClass($"mud-switch-base-{Size.ToDescriptionString()}")
-        .Build();
+            new CssBuilder("mud-button-root mud-icon-button mud-switch-base")
+                .AddClass($"mud-ripple mud-ripple-switch", Ripple && !GetReadOnlyState() && !GetDisabledState())
+                .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == true)
+                .AddClass($"mud-{UncheckedColor.ToDescriptionString()}-text hover:mud-{UncheckedColor.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == false)
+                .AddClass($"mud-switch-disabled", GetDisabledState())
+                .AddClass($"mud-readonly", GetReadOnlyState())
+                .AddClass($"mud-checked", BoolValue)
+                .AddClass($"mud-switch-base-{Size.ToDescriptionString()}")
+                .Build();
 
         protected string TrackClassname =>
-        new CssBuilder("mud-switch-track")
-            .AddClass($"mud-{Color.ToDescriptionString()}", BoolValue == true)
-            .AddClass($"mud-{UnCheckedColor.ToDescriptionString()}", BoolValue == false)
-        .Build();
+            new CssBuilder("mud-switch-track")
+                .AddClass($"mud-{Color.ToDescriptionString()}", BoolValue == true)
+                .AddClass($"mud-{UncheckedColor.ToDescriptionString()}", BoolValue == false)
+                .Build();
 
         protected string ThumbClassname =>
             new CssBuilder($"mud-switch-thumb-{Size.ToDescriptionString()}")
-            .AddClass("d-flex align-center justify-center")
-        .Build();
-            
-        protected string SpanClassname =>
-        new CssBuilder("mud-switch-span mud-flip-x-rtl")
-            .AddClass($"mud-switch-span-{Size.ToDescriptionString()}")
-        .Build();
+                .AddClass("d-flex align-center justify-center")
+                .Build();
 
-        private IKeyInterceptor _keyInterceptor;
-        [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
+        protected string SpanClassname =>
+            new CssBuilder("mud-switch-span mud-flip-x-rtl")
+                .AddClass($"mud-switch-span-{Size.ToDescriptionString()}")
+                .Build();
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
@@ -69,14 +70,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
-        public Color UnCheckedColor { get; set; } = Color.Default;
+        public Color UncheckedColor { get; set; } = Color.Default;
 
         /// <summary>
         /// The text/label will be displayed next to the switch if set.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string Label { get; set; }
+        public string? Label { get; set; }
 
         /// <summary>
         /// The position of the text/label.
@@ -90,7 +91,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public string ThumbIcon { get; set; }
+        public string? ThumbIcon { get; set; }
 
         /// <summary>
         /// The color of the thumb icon. Supports the theme colors.
@@ -100,11 +101,11 @@ namespace MudBlazor
         public Color ThumbIconColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// If true, disables ripple effect.
+        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public bool DisableRipple { get; set; }
+        public bool Ripple { get; set; } = true;
 
         /// <summary>
         /// The Size of the switch.
@@ -113,63 +114,68 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Size Size { get; set; } = Size.Medium;
 
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public RenderFragment? ChildContent { get; set; }
+
+        // TODO: Make async
         protected internal void HandleKeyDown(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState())
+            {
                 return;
+            }
+
             switch (obj.Key)
             {
-                case "ArrowLeft":
-                case "Delete":
-                    SetBoolValueAsync(false);
+                case "ArrowLeft" or "Delete":
+                    SetBoolValueAsync(false, true);
                     break;
-                case "ArrowRight":
-                case "Enter":
-                case "NumpadEnter":
-                    SetBoolValueAsync(true);
+                case "ArrowRight" or "Enter" or "NumpadEnter":
+                    SetBoolValueAsync(true, true);
                     break;
                 case " ":
-                    if (BoolValue == true)
+                    switch (BoolValue)
                     {
-                        SetBoolValueAsync(false);
+                        case true:
+                            SetBoolValueAsync(false, true);
+                            break;
+                        default:
+                            SetBoolValueAsync(true, true);
+                            break;
                     }
-                    else
-                    {
-                        SetBoolValueAsync(true);
-                    }
+
                     break;
             }
         }
-
-        private string _elementId = "switch_" + Guid.NewGuid().ToString().Substring(0, 8);
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
 
-            if (Label == null && For != null)
+            if (Label is null && For is not null)
+            {
                 Label = For.GetLabelString();
+            }
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
-                _keyInterceptor = KeyInterceptorFactory.Create();
+                var options = new KeyInterceptorOptions(
+                    "mud-switch-base",
+                    [
+                        // prevent scrolling page, instead increment
+                        new("ArrowUp", preventDown: "key+none"),
+                        // prevent scrolling page, instead decrement
+                        new("ArrowDown", preventDown: "key+none"),
+                        new(" ", preventDown: "key+none", preventUp: "key+none")
+                    ]);
 
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
-                {
-                    //EnableLogging = true,
-                    TargetClass = "mud-switch-base",
-                    Keys = {
-                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead increment
-                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead decrement
-                        new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" },
-                    },
-                });
-
-                _keyInterceptor.KeyDown += HandleKeyDown;
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDown);
             }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -177,12 +183,12 @@ namespace MudBlazor
         {
             base.Dispose(disposing);
 
-            if (disposing == true)
+            if (disposing)
             {
-                if(_keyInterceptor != null)
+                if (IsJSRuntimeAvailable)
                 {
-                    _keyInterceptor.KeyDown -= HandleKeyDown;
-                    _keyInterceptor.Dispose();
+                    // TODO: Replace with IAsyncDisposable
+                    KeyInterceptorService.UnsubscribeAsync(_elementId).CatchAndLog();
                 }
             }
         }

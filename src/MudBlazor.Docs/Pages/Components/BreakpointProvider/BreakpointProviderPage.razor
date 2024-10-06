@@ -1,4 +1,5 @@
 ﻿@page "/components/breakpointProvider"
+@page "/components/MudBreakpointProvider"
 
 <DocsPage>
     <DocsPageHeader Title="Breakpoint Provider" SubTitle="Exposing the current breakpoint to multiple components" />
@@ -17,7 +18,7 @@
 					</MudText>
 				</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="BreakpointProviderPageHiddenExample" ShowCode="false">
+            <SectionContent DarkenBackground="true" Code="@nameof(BreakpointProviderPageHiddenExample)" ShowCode="false">
                 <BreakpointProviderPageHiddenExample />
             </SectionContent>
         </DocsPageSection>
@@ -25,10 +26,10 @@
         <DocsPageSection>
             <SectionHeader Title="Listening to browser window breakpoint changes">
                 <Description>
-                    <MudText>The <strong> IBreakpointListenerService</strong> is the service that powers the MudBreakpoint Provider. It can be used in own components </MudText>
+                    <MudText>The <strong> IBrowserViewportService</strong> is the service that powers the MudBreakpoint Provider. It can be used in own components </MudText>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="BreakpointListenerExample">
+            <SectionContent DarkenBackground="true" Code="@nameof(BreakpointListenerExample)">
                 <BreakpointListenerExample />
             </SectionContent>
         </DocsPageSection>

@@ -1,7 +1,8 @@
 ﻿@page "/components/swipearea"
+@page "/components/MudSwipeArea"
 
 <DocsPage>
-    <DocsPageHeader Title="Swipe area">
+    <DocsPageHeader Title="Swipe Area">
         <Description>Note: these examples only work on devices where touch events are supported.</Description>
     </DocsPageHeader>
     <DocsPageContent>
@@ -10,7 +11,7 @@
             <SectionHeader Title="Swipe directions">
                 <Description>Swipe your finger in different directions to see how the component works.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="SwipeDirectionsExample">
+            <SectionContent DarkenBackground="true" Code="@nameof(SwipeDirectionsExample)">
                 <SwipeDirectionsExample />
             </SectionContent>
         </DocsPageSection>
@@ -19,7 +20,7 @@
             <SectionHeader Title="Prevent default browser behavior">
                 <Description>Browser will not scroll when <CodeInline>PreventDefault</CodeInline> is set to <CodeInline>true</CodeInline>.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="SwipeDirectionsPreventDefaultExample">
+            <SectionContent DarkenBackground="true" Code="@nameof(SwipeDirectionsPreventDefaultExample)">
                 <SwipeDirectionsPreventDefaultExample />
             </SectionContent>
         </DocsPageSection>
@@ -28,7 +29,7 @@
             <SectionHeader Title="Drawer Example">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="SwipeDrawerExample" ShowCode="false">
+            <SectionContent DarkenBackground="true" Code="@nameof(SwipeDrawerExample)" ShowCode="false">
                 <SwipeDrawerExample />
             </SectionContent>
         </DocsPageSection>
@@ -37,7 +38,7 @@
             <SectionHeader Title="DatePicker Example">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="SwipeDatePickerExample" ShowCode="false">
+            <SectionContent DarkenBackground="true" Code="@nameof(SwipeDatePickerExample)" ShowCode="false">
                 <SwipeDatePickerExample />
             </SectionContent>
         </DocsPageSection>

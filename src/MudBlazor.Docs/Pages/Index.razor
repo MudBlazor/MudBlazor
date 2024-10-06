@@ -11,16 +11,16 @@
         <MudGrid Class="mb-16 mb-sm-0">
             <MudItem Class="relative" xs="12" md="7" lg="6">
                 <MudText Typo="Typo.h1">The Blazor</MudText>
-                <MudText Typo="Typo.h1" Inline="true" Class="landing-h1-gradient">Component </MudText>
-                <MudText Typo="Typo.h1" Inline="true">Library</MudText>
+                <MudText Typo="Typo.h1" HtmlTag="span" Class="landing-h1-gradient">Component </MudText>
+                <MudText Typo="Typo.h1" HtmlTag="span">Library</MudText>
                 <MudText Typo="Typo.h1">You always wanted</MudText>
                 <div class="pl-1 my-4">
                     <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">
-                        Trusted by thousands of users, from hobby developers to large enterprises. Use MudBlazor to rapidly build amazing web applications without leaving your loved C# language and toolchain.
+                        With millions of downloads, from hobby developers to large enterprises, MudBlazor enables you to rapidly build amazing web applications without leaving your beloved C# language and toolchain.
                     </MudText>
                 </div>
                 <div class="d-flex py-4 mb-16 mb-md-0">
-                    <MudButton Color="Color.Primary" Variant="Variant.Filled" DisableElevation="true" Class="mud-button-gradient-primary" Size="Size.Large" Href="/getting-started/installation">Get started</MudButton>
+                    <MudButton Color="Color.Primary" Variant="Variant.Filled" DropShadow="false" Class="mud-button-gradient-primary" Size="Size.Large" Href="/getting-started/installation">Get started</MudButton>
                     <MudButton Color="Color.Default" Variant="Variant.Outlined" StartIcon="@Icons.Custom.Brands.GitHub" Size="Size.Large" Class="ms-4" Href="https://github.com/MudBlazor/MudBlazor/" Target="_blank">Star on GitHub</MudButton>
                 </div>
                 <div class="graphic-wrapper">
@@ -40,17 +40,14 @@
     <MudText Typo="Typo.subtitle2" Align="Align.Center" Class="mb-16" Style="color: #8898aa;">
         The continued development and maintenance of MudBlazor is secured by our sponsors
     </MudText>
-    <MudGrid Spacing="5" Justify="Justify.Center">
-        <MudItem xs="6" md="3">
-            <Sponsor LandingPage="true" Name="TimeStatement" Image="TimeStatement.png" Website="https://timestatement.com/"/>
-        </MudItem>
+    <MudGrid Spacing="10" Justify="Justify.Center">
         <MudItem xs="6" md="4">
-            <Sponsor LandingPage="true" Name="AlexanderHagemann" Image="AlexanderHagemann.png" Website="https://alexanderhagemann.de/"/>
-        </MudItem>
-        <MudItem xs="6" md="3">
             <Sponsor LandingPage="true" Name="Adaris" Image="Adaris.png" Website="https://www.adaris.ch/"/>
         </MudItem>
-        <MudItem xs="6" md="3">
+        <MudItem xs="6" md="4">
+            <Sponsor LandingPage="true" Name="Balesio" Image="Balesio.png" Website="https://blazor-agentur.ch/agency.html" />
+        </MudItem>
+        <MudItem xs="6" md="4">
             <Sponsor LandingPage="true" Name="Lithe Software Consulting" Image="Lithe.png"/>
         </MudItem>
         <MudItem xs="6" md="3">
@@ -71,12 +68,12 @@
     <MudGrid>
         <MudItem xs="12" sm="6">
             <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">
-                We bring together everything that's required to build amazing Blazor applications that scale from desktop to mobile. Apart from the library itself we also provide <MudText Typo="Typo.subtitle1" Inline="true" Color="Color.Primary">templates, a learning platform, theme manager, demo and example projects as well as an online code editor</MudText> integrated with our documentation and issue tracking. With more to come.
+                We bring together everything that's required to build amazing Blazor applications that scale from desktop to mobile. Apart from the library itself we also provide <MudText Typo="Typo.subtitle1" HtmlTag="span" Color="Color.Primary">templates, a learning platform, theme manager, demo and example projects as well as an online code editor</MudText> integrated with our documentation and issue tracking. With more to come.
             </MudText>
         </MudItem>
         <MudItem xs="12" sm="6">
             <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">
-                We help companies build <MudText Typo="Typo.subtitle1" Inline="true" Color="Color.Primary">amazing apps in record time</MudText> and let them focus on their business instead of buttons, <MudText Typo="Typo.subtitle1" Inline="true" Color="Color.Primary">MudBlazor is battle-tested and one of the fastest-improving platforms</MudText>, and much more.
+                We help companies build <MudText Typo="Typo.subtitle1" HtmlTag="span" Color="Color.Primary">amazing apps in record time</MudText> and let them focus on their business instead of buttons, <MudText Typo="Typo.subtitle1" HtmlTag="span" Color="Color.Primary">MudBlazor is battle-tested and one of the fastest-improving platforms</MudText>, and much more.
             </MudText>
         </MudItem>
     </MudGrid>
@@ -84,9 +81,9 @@
     <div class="@GetTestimonialClass()">
         <MudText Typo="Typo.h3" Align="Align.Center" Class="mt-16 mb-8">“Never had such a good time making a site“</MudText>
         <div class="absolute z-20 d-flex justify-center align-end mud-width-full mud-height-full">
-            <MudButton OnClick="ToggleTestimonials" Color="Color.Primary" Variant="Variant.Filled" DisableElevation="true" Size="Size.Large" Class="mb-12">@(_showTestimonials? "Show less" : "Show more")</MudButton>
+            <MudButton OnClick="ToggleTestimonials" Color="Color.Primary" Variant="Variant.Filled" DropShadow="false" Size="Size.Large" Class="mb-12">@(_showTestimonials? "Show less" : "Show more")</MudButton>
         </div>
-        <MudGrid Spacing="4">
+        <MudGrid Spacing="8">
             <MudItem md="5">
                 <MudCard Elevation="24">
                     <MudCardHeader Class="px-6 pt-6">
@@ -205,14 +202,14 @@
                     <MudIcon Icon="@lpIconCode" Size="Size.Large"/>
                     <MudText Typo="Typo.subtitle2" Class="white-text my-2">TryMudBlazor</MudText>
                     <MudText>Use the full power of Blazor directly in your browser with TryMudBlazor.</MudText>
-                    <MudText>Full fetched editor with intellisense, multiple files and save your code.</MudText>
-                    <MudLink Class="landing-link my-4" Href="https://try.mudblazor.com/" Taget="_blank">Test online<MudIcon Icon="@Icons.Material.Rounded.KeyboardArrowRight" Size="Size.Small"/></MudLink>
+                    <MudText>Fully-fledged editor with IntelliSense, multiple files and ability to save your code.</MudText>
+                    <MudLink Class="landing-link my-4" Href="https://try.mudblazor.com/" Target="_blank">Test online<MudIcon Icon="@Icons.Material.Rounded.KeyboardArrowRight" Size="Size.Small"/></MudLink>
                 </MudItem>
                 <MudItem xs="12" sm="12" md="6">
                     <MudIcon Icon="@lpIconTemplates" Size="Size.Large"/>
                     <MudText Typo="Typo.subtitle2" Class="white-text my-2">Templates</MudText>
                     <MudText>We provide all the default Blazor templates but pre configured with MudBlazor to help you get started faster.</MudText>
-                    <MudLink Class="landing-link my-4" Href="https://github.com/MudBlazor/Templates" Taget="_blank">Explore templates<MudIcon Icon="@Icons.Material.Rounded.KeyboardArrowRight" Size="Size.Small"/></MudLink>
+                    <MudLink Class="landing-link my-4" Href="https://github.com/MudBlazor/Templates" Target="_blank">Explore templates<MudIcon Icon="@Icons.Material.Rounded.KeyboardArrowRight" Size="Size.Small"/></MudLink>
                 </MudItem>
             </MudGrid>
         </MudItem>
@@ -335,7 +332,7 @@
                 Ready to build amazing things? there are several ways to get started. If you are new to web development or blazor in general, the Getting Started section is a great place to start.
             </MudText>
             <div>
-                <MudButton Color="Color.Primary" Variant="Variant.Filled" DisableElevation="true" Class="mud-button-gradient-primary" Size="Size.Large" Link="/getting-started/installation">Get started</MudButton>
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" DropShadow="false" Class="mud-button-gradient-primary" Size="Size.Large" Href="/getting-started/installation">Get started</MudButton>
             </div>
         </div>
         <div class="lp-grid-item">
@@ -344,7 +341,7 @@
                 <MudText Typo="Typo.subtitle2">TryMudBlazor</MudText>
             </div>
             <MudText>Test MudBlazor directly in your browser, no software or installation needed.</MudText>
-            <MudLink Class="landing-link" Href="https://try.mudblazor.com/" Taget="_blank">Test online<MudIcon Icon="@Icons.Material.Rounded.KeyboardArrowRight" Size="Size.Small"/></MudLink>
+            <MudLink Class="landing-link" Href="https://try.mudblazor.com/" Target="_blank">Test online<MudIcon Icon="@Icons.Material.Rounded.KeyboardArrowRight" Size="Size.Small"/></MudLink>
         </div>
         <div class="lp-grid-item">
             <MudIcon Icon="@lpIconTemplatesFilled"/>
@@ -352,7 +349,7 @@
                 <MudText Typo="Typo.subtitle2">Templates</MudText>
             </div>
             <MudText>Install our pre configured .NET Templates with MudBlazor.</MudText>
-            <MudLink Class="landing-link" Href="https://github.com/MudBlazor/Templates" Taget="_blank">Explore templates<MudIcon Icon="@Icons.Material.Rounded.KeyboardArrowRight" Size="Size.Small"/></MudLink>
+            <MudLink Class="landing-link" Href="https://github.com/MudBlazor/Templates" Target="_blank">Explore templates<MudIcon Icon="@Icons.Material.Rounded.KeyboardArrowRight" Size="Size.Small"/></MudLink>
         </div>
     </div>
 </LandingSection>

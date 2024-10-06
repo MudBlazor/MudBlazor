@@ -1,21 +1,28 @@
-﻿@namespace MudBlazor
+@namespace MudBlazor
 @typeparam T
 
 <TemplateColumn T="T" Tag="@("select-column")" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderStyle="width:0%"
-    Filterable="false">
+                Hideable="Hideable" Hidden="Hidden" HiddenChanged="HiddenChanged"
+                Filterable="false" Editable="false" DragAndDropEnabled="@DragAndDropEnabled" FooterTemplate="@GetFooterTemplate()">
     <HeaderTemplate>
         @if (ShowInHeader)
         {
-            <MudCheckBox T="bool" Size="@Size" Checked="@context.IsAllSelected" CheckedChanged="@context.Actions.SetSelectAllAsync" />
+            <MudCheckBox T="bool?" Size="@Size" Value="@context.IsAllSelected" ValueChanged="@context.Actions.SetSelectAllAsync" />
         }
     </HeaderTemplate>
     <CellTemplate>
-        <MudCheckBox T="bool" Size="@Size" Checked="@context.IsSelected" CheckedChanged="@context.Actions.SetSelectedItemAsync" />
+        <MudCheckBox T="bool" Size="@Size" Value="@context.Selected" ValueChanged="@context.Actions.SetSelectedItemAsync" />
     </CellTemplate>
-    <FooterTemplate>
-        @if (ShowInFooter)
-        {
-            <MudCheckBox T="bool" Size="@Size" Checked="@context.IsAllSelected" CheckedChanged="@context.Actions.SetSelectAllAsync" />
-        }
-    </FooterTemplate>
 </TemplateColumn>
+
+@code {
+#nullable enable
+    private RenderFragment<FooterContext<T>>? GetFooterTemplate()
+        => ShowInFooter ? FooterTemplate : null;
+
+    private RenderFragment<FooterContext<T>> FooterTemplate => context =>
+        @<MudCheckBox T="bool?"
+                      Size="@Size"
+                      Value="@context.IsAllSelected"
+                      ValueChanged="@context.Actions.SetSelectAllAsync"/>;
+}

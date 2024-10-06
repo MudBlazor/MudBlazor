@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
 <MudPopoverProvider></MudPopoverProvider>
 
 <MudGrid>
@@ -21,7 +22,7 @@
         "Alabama", "Alaska", "American Samoa", "Arizona"
     };
 
-    private async Task<IEnumerable<string>> Search(string value)
+    private async Task<IEnumerable<string>> Search(string value, CancellationToken token)
     {
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))

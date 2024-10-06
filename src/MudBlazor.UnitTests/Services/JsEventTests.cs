@@ -10,8 +10,6 @@ using Moq;
 using MudBlazor.Services;
 using NUnit.Framework;
 
-#pragma warning disable CS1998 // async without await
-
 namespace MudBlazor.UnitTests.Services
 {
     [TestFixture]

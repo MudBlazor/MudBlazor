@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Models.Context;
@@ -26,8 +27,10 @@ namespace MudBlazor.Docs.Services
                 BaseAddress = new Uri("https://api.github.com:443/")
             };
             _http.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 Mobile Safari/537.36");
-            _jsonSerializerOptions = new JsonSerializerOptions();
-            _jsonSerializerOptions.AddContext<GithubApiJsonSerializerContext>();
+            _jsonSerializerOptions = new JsonSerializerOptions
+            {
+                TypeInfoResolver = JsonTypeInfoResolver.Combine(GithubApiJsonSerializerContext.Default)
+            };
         }
 
         public async Task<GithubContributors[]> GetContributorsAsync()
@@ -43,7 +46,7 @@ namespace MudBlazor.Docs.Services
                 return Array.Empty<GithubContributors>();
             }
         }
-        
+
         public async Task<GitHubReleases[]> GetReleasesAsync()
         {
             try

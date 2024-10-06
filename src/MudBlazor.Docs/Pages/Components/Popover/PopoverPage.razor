@@ -1,4 +1,8 @@
 ﻿@page "/components/popover"
+@page "/components/MudPopover"
+@page "/components/MudPopoverBase"
+@page "/components/MudPopoverHandler"
+@page "/components/MudPopoverProvider"
 
 <DocsPage>
 	<DocsPageHeader Title="Popover" SubTitle="A Popover can be used to display some content on top of another." />
@@ -12,7 +16,7 @@
 			<SectionHeader Title="Simple Popover">
 				<Description>The popover's open state is completely up to you, as well as the content of it.</Description>
 			</SectionHeader>
-			<SectionContent Code="PopoverSimpleExample">
+			<SectionContent Code="@nameof(PopoverSimpleExample)">
 				<PopoverSimpleExample />
 			</SectionContent>
 		</DocsPageSection>
@@ -24,7 +28,7 @@
 					Control where the popover should start from relative to the parent. Offset the popover to be located outside of the parent.
 				</Description>
 			</SectionHeader>
-			<SectionContent Code="PopoverLocationExample" ShowCode="false">
+			<SectionContent Code="@nameof(PopoverLocationExample)" ShowCode="false">
 				<PopoverLocationExample />
 			</SectionContent>
 		</DocsPageSection>
@@ -36,7 +40,7 @@
                     Resize your browser window slowly so the popover wont fit to see result in flip mode.
 				</Description>
 			</SectionHeader>
-			<SectionContent Code="PopoverOverflowBehaviorExample" ShowCode="false">
+			<SectionContent Code="@nameof(PopoverOverflowBehaviorExample)" ShowCode="false">
                 <PopoverOverflowBehaviorExample />
 			</SectionContent>
 		</DocsPageSection>
@@ -58,7 +62,7 @@
 					Popovers can be placed within elements that are using popover for itself. Like tooltips that are placed inside a menu.
 				</Description>
 			</SectionHeader>
-			<SectionContent Code="PopoverInceptionExampleExample">
+			<SectionContent Code="@nameof(PopoverInceptionExampleExample)">
 				<PopoverInceptionExampleExample />
 			</SectionContent>
 		</DocsPageSection>

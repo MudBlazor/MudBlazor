@@ -3,12 +3,8 @@
 @inherits MudComponentBase
 @typeparam T
 
-@{
-	var width = CalculatePosition().ToString(CultureInfo.InvariantCulture);
-}
-
 <div class="@Classname" style="@Style">
-	@if (ChildContent != null)
+	@if (ChildContent is not null)
 	{
 		<MudText Typo="Typo.body1">@ChildContent</MudText>
 	}
@@ -16,10 +12,10 @@
 		@if (Variant == Variant.Filled)
 		{
 			<div class="mud-slider-inner-container">
-				<div class="mud-slider-filled" style="@($"width:{width}%;")"></div>
+				<div class="mud-slider-filled" style="@($"width:{Width}%;")"></div>
 			</div>
 		}
-		@if (TickMarks == true)
+		@if (TickMarks)
 		{
 			<div class="mud-slider-inner-container">
 				<div class="mud-slider-tickmarks">
@@ -38,12 +34,20 @@
 				</div>
 			</div>
 		}
-		<input class="mud-slider-input" aria-valuenow="@Value" aria-valuemin="@_min" aria-valuemax="@_max" role="slider" @attributes="UserAttributes" type="range" min="@_min" max="@_max" step="@_step" disabled="@Disabled"
-			   @bind-value="@Text" @bind-value:event="@((Immediate == true ? "oninput" : "onchange"))" />
+        
+        <input type="range" class="mud-slider-input" min="@Min.ToString(null, CultureInfo.InvariantCulture)" max="@Max.ToString(null, CultureInfo.InvariantCulture)" step="@Step.ToString(null, CultureInfo.InvariantCulture)" aria-valuenow="@Value" aria-valuemin="@Min.ToString(null, CultureInfo.InvariantCulture)" aria-valuemax="@Max.ToString(null, CultureInfo.InvariantCulture)" role="slider" @attributes="UserAttributes" disabled="@Disabled"
+               @bind-value:get="@GetValueText" @bind-value:set="@SetValueTextAsync" @bind-value:event="@(Immediate ? "oninput" : "onchange")" />
         @if (ValueLabel)
         {
-            <div class="mud-slider-value-label" style="@($"left:{width}%;")">
-                @Value.ToString()
+            <div class="mud-slider-value-label" style="@($"left:{Width}%;")">
+                @if (ValueLabelContent is null)
+                {
+                    @_valueState.Value.ToString(ValueLabelFormat, Culture)
+                }
+                else
+                {
+                    @ValueLabelContent(new SliderContext<T>(_valueState.Value, _nullableValueState.Value))
+                }
             </div>
         }
 	</div>

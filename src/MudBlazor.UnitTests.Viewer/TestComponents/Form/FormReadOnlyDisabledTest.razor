@@ -8,8 +8,8 @@
                 <MudTextField T="string" Mask="@(new DateMask(" yyyy-MM-dd"))" ReadOnly="CompReadOnly" Disabled="CompDisabled" />
                 <MudCheckBox T="bool" ReadOnly="CompReadOnly" Disabled="CompDisabled" />
                 <MudRadioGroup T="string" ReadOnly="CompReadOnly" Disabled="CompDisabled">
-                    <MudRadio Option="@("1")" />
-                    <MudRadio Option="@("2")" />
+                    <MudRadio Value="@("1")" />
+                    <MudRadio Value="@("2")" />
                 </MudRadioGroup>
                 <MudSelect T="string" ReadOnly="CompReadOnly" Disabled="CompDisabled"></MudSelect>
                 <MudSwitch T="bool" ReadOnly="CompReadOnly" Disabled="CompDisabled" />
@@ -20,22 +20,20 @@
                 <MudAutocomplete T="string" ReadOnly="CompReadOnly" Disabled="CompDisabled" />
                 <MudNumericField T="int" ReadOnly="CompReadOnly" Disabled="CompDisabled" />
                 <MudFileUpload T="IBrowserFile" Disabled="CompDisabled">
-                    <ButtonTemplate>
-                        <MudButton HtmlTag="label"
-                                   Variant="Variant.Filled"
-                                   Color="Color.Primary"
-                                   for="@context">
+                    <ActivatorContent>
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary">
                             Disabled Button
                         </MudButton>
-                    </ButtonTemplate>
+                    </ActivatorContent>
                 </MudFileUpload>
             </MudForm>
         </MudCardContent>
         <MudCardActions>
-            <MudCheckBox @bind-Checked="FormReadOnly">Form ReadOnly</MudCheckBox>
-            <MudCheckBox @bind-Checked="CompReadOnly">Comp ReadOnly</MudCheckBox>
-            <MudCheckBox @bind-Checked="FormDisabled">Form Disabled</MudCheckBox>
-            <MudCheckBox @bind-Checked="CompDisabled">Comp Disabled</MudCheckBox>
+            <MudCheckBox @bind-Value="FormReadOnly">Form ReadOnly</MudCheckBox>
+            <MudCheckBox @bind-Value="CompReadOnly">Comp ReadOnly</MudCheckBox>
+            <MudCheckBox @bind-Value="FormDisabled">Form Disabled</MudCheckBox>
+            <MudCheckBox @bind-Value="CompDisabled">Comp Disabled</MudCheckBox>
         </MudCardActions>
     </MudCard>
 </div>

@@ -1,9 +1,10 @@
 ﻿@page "/components/paper"
+@page "/components/MudPaper"
 
 <DocsPage>
     <DocsPageHeader Title="Paper" SubTitle="Paper is a useful and flexible way to shape other components without needing css or style">
         <Description>
-            It is generally used for foregrounds but can also be combined with <MudLink Href="/features/flex">Flex</MudLink> for layout.
+            It is generally used for foregrounds but can also be combined with <MudLink Href="/utilities/flex">Flex</MudLink> for layout.
         </Description>
     </DocsPageHeader>
 
@@ -20,7 +21,7 @@
             <SectionHeader Title="Component">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="PaperComponentExample">
+            <SectionContent DarkenBackground="true" Code="@nameof(PaperComponentExample)">
                 <PaperComponentExample />
             </SectionContent>
         </DocsPageSection>
@@ -29,7 +30,7 @@
             <SectionHeader Title="Variants">
                 <Description>If you need an outlined or square surface, use the <CodeInline>Outlined</CodeInline> or <CodeInline>Square</CodeInline> properties respectively.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="PaperVariantsExample">
+            <SectionContent DarkenBackground="true" Code="@nameof(PaperVariantsExample)">
                 <PaperVariantsExample />
             </SectionContent>
         </DocsPageSection>

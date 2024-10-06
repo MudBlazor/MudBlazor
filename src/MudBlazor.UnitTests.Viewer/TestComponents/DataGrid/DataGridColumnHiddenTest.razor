@@ -2,44 +2,28 @@
 
 <MudPopoverProvider />
 
-<MudDataGrid ShowMenuIcon="true" Hideable="true" Items="@_items" >
+<MudDataGrid ShowMenuIcon="true" Hideable="true" Items="@_items">
     <Columns>
-        @foreach(var columnProp in _columnProps)
-        {
-            <PropertyColumn
-                    Property="x => columnProp.Field"
-                    @bind-Hidden="columnProp.IsHidden"
-                    Title="@columnProp.Label"/>
-        }
+        <PropertyColumn Property="x => x.Name" Hidden="false" />
+        <PropertyColumn Property="x => x.Age" Hidden=@hiddenAge />
+        <PropertyColumn Property="x => x.Prop1" @bind-Hidden=@hiddenProp1 />
+        <PropertyColumn Property="x => x.Prop2" Hidden="false" Hideable="false" />
+        <PropertyColumn Property="x => x.Prop3" Hidden=@hiddenProp3 Hideable="false" />
+        <PropertyColumn Property="x => x.Prop4" @bind-Hidden=@hiddenProp4 Hideable="false" />
     </Columns>
 </MudDataGrid>
 
 
 @code {
-    public record Model(string Name, int Age);
-    public class ColumnProps
+    private bool hiddenAge = true;
+    private bool hiddenProp1;
+    private bool hiddenProp3 = false;
+    private bool hiddenProp4;
+    private readonly IEnumerable<Model> _items = new List<Model>()
     {
-        public bool IsHidden{ get; set; }
-        public string Field{ get; set; }
-        public string Label{ get; set; }
-
-        public ColumnProps(bool isHidden, string field, string label)
-        {
-            IsHidden = isHidden;
-            Field = field;
-            Label = label;
-        }
-    }
-    private IEnumerable<Model> _items = new List<Model>()
-    {
-        new Model("John", 45), 
-        new Model("Johanna", 23), 
-        new Model("Steve", 32)
+        new Model("John", 45, true, true, true, true),
+        new Model("Johanna", 23, true, true, true, true),
+        new Model("Steve", 32, true, true, true, true)
     };
-
-    private IEnumerable<ColumnProps> _columnProps = new List<ColumnProps>()
-    {
-        new ColumnProps(false, nameof(Model.Name), "First Name"),
-        new ColumnProps(true, nameof(Model.Age), "Age"),
-    };
+    public record Model(string Name, int Age, bool Prop1, bool Prop2, bool Prop3, bool Prop4);
 }

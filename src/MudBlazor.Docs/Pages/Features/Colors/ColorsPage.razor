@@ -1,4 +1,7 @@
 ﻿@page "/features/colors"
+@page "/components/color"
+@page "/components/MudColor"
+
 @using System.Reflection
 @using System.Text.RegularExpressions
 
@@ -21,9 +24,9 @@
             <SectionSubGroups>
                 <DocsPageSection>
                     <SectionHeader Title="CSS and Theme colors">
-                        <Description>Here we add each class to the divs to change the background color, text color and both background and text color with one class only one class.</Description>
+                        <Description>Here we add each class to the divs to change the background color, text color and both background and text color with one class only.</Description>
                     </SectionHeader>
-                    <SectionContent DarkenBackground="true" ShowCode="true" Code="ColorsMudBlazorExample">
+                    <SectionContent DarkenBackground="true" ShowCode="true" Code="@nameof(ColorsMudBlazorExample)">
                         <ColorsMudBlazorExample />
                     </SectionContent>
                 </DocsPageSection>
@@ -31,7 +34,7 @@
                     <SectionHeader Title="CSharp and Theme colors">
                         <Description>You can also access the colors with blazor directly like we do in this example.</Description>
                     </SectionHeader>
-                    <SectionContent DarkenBackground="true" ShowCode="true" Code="ColorsMudBlazorCodeExample">
+                    <SectionContent DarkenBackground="true" ShowCode="true" Code="@nameof(ColorsMudBlazorCodeExample)">
                         <ColorsMudBlazorCodeExample />
                     </SectionContent>
                 </DocsPageSection>
@@ -48,9 +51,9 @@
                 
                 <DocsPageSection>
                     <SectionHeader Title="CSS and Material colors">
-                        <Description>Here we add each class to the divs to change the background color, text color and both background and text color with one class only one class.</Description>
+                        <Description>Here we add each class to the divs to change the background color, text color and both background and text color with one class only.</Description>
                     </SectionHeader>
-                    <SectionContent DarkenBackground="true" ShowCode="false" Code="ColorsMaterialExample">
+                    <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(ColorsMaterialExample)">
                         <ColorsMaterialExample/>
                     </SectionContent>
                 </DocsPageSection>
@@ -59,7 +62,7 @@
                     <SectionHeader Title="CSharp and Material colors">
                         <Description>You can also access the material colors with blazor directly like we did above with the MudBlazor palette colors.</Description>
                     </SectionHeader>
-                    <SectionContent DarkenBackground="true" ShowCode="true" Code="ColorsMaterialCodeExample">
+                    <SectionContent DarkenBackground="true" ShowCode="true" Code="@nameof(ColorsMaterialCodeExample)">
                         <ColorsMaterialCodeExample/>
                     </SectionContent>
                 </DocsPageSection>
@@ -68,7 +71,7 @@
                     <SectionHeader Title="List of Material Colors">
                         <Description>Below is a list of the Material design color palette grouped by primary color</Description>
                     </SectionHeader>
-                    <MudGrid Spacing="4">
+                    <MudGrid Spacing="8">
                         @foreach (var color in MaterialColors)
                         {
                             <MudItem md="6" lg="4" xs="12">
@@ -82,7 +85,7 @@
                                     {
                                         IsLightColor = true;
                                     }
-                                    <MudPaper Square="true" Elevation="0" Class="@($"pa-4 d-flex align-center justify-space-between {GetColorClass(color.Color.ToLowerInvariant())} {GetShadeClass(shade.Name.ToLowerInvariant())} {(IsLightColor ? "grey-text text-darken-3" : "shades-text text-white")}")">
+                                    <MudPaper Square="true" Elevation="0" Class="@($"pa-4 d-flex align-center justify-space-between {GetColorClass(color.Color.ToLowerInvariant())} {GetShadeClass(shade.Name.ToLowerInvariant())} {(IsLightColor ? "gray-text text-darken-3" : "shades-text text-white")}")">
                                         <MudText>@shade.Name</MudText>
                                         <MudText>@shade.Value</MudText>
                                     </MudPaper>
@@ -118,9 +121,9 @@
         {
             return value.Replace("light", "light-");
         }
-        else if(value.StartsWith("bluegrey"))
+        else if(value.StartsWith("bluegray"))
         {
-            return value.Replace("bluegrey", "blue-grey");
+            return value.Replace("bluegray", "blue-gray");
         }
         else if(value.StartsWith("shades"))
         {

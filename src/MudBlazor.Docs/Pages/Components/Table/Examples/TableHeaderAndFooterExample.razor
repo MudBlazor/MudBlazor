@@ -24,7 +24,7 @@
             <MudTh colspan="2">Basic</MudTh>
             <MudTh colspan="3">Extended</MudTh>
         </MudTHeadRow>
-        <MudTHeadRow IsCheckable="true">
+        <MudTHeadRow Checkable="true">
             <MudTh>Nr</MudTh> 
             <MudTh>Sign</MudTh>
             <MudTh>Name</MudTh>
@@ -47,12 +47,12 @@
             <MudTd>Position</MudTd>
             <MudTd>Molar mass</MudTd>
         </MudTFootRow>
-        <MudTFootRow IsCheckable="true">
+        <MudTFootRow Checkable="true">
             <MudTd colspan="5">Selected: @selectedItems.Count</MudTd>
         </MudTFootRow>
     </FooterContent>
 </MudTable>
-<MudSwitch @bind-Checked="_hidePosition">Hide <b>position</b> when Breakpoint=Xs</MudSwitch>
+<MudSwitch @bind-Value="_hidePosition" Color="Color.Primary">Hide <b>position</b> when Breakpoint=Xs</MudSwitch>
 
 @code {
     private bool _hidePosition;

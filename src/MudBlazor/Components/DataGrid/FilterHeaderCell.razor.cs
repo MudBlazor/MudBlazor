@@ -7,50 +7,49 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Interfaces;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Represents a column filter shown when <see cref="MudDataGrid{T}.FilterMode"/> is <see cref="DataGridFilterMode.ColumnFilterRow"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of value managed by the <see cref="MudDataGrid{T}"/></typeparam>
     public partial class FilterHeaderCell<T> : MudComponentBase
     {
-        [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
+        /// <summary>
+        /// The <see cref="MudDataGrid{T}"/> containing this filter cell.
+        /// </summary>
+        [CascadingParameter]
+        public MudDataGrid<T> DataGrid { get; set; }
 
-        [Parameter] public Column<T> Column { get; set; }
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        /// <summary>
+        /// The column associated with this filter cell.
+        /// </summary>
+        [Parameter]
+        public Column<T> Column { get; set; }
+
+        /// <summary>
+        /// The content within this filter cell.
+        /// </summary>
+        [Parameter]
+        public RenderFragment ChildContent { get; set; }
 
         private string _classname =>
             new CssBuilder(Column?.HeaderClass)
                 .AddClass(Column?.headerClassname)
                 .AddClass(Class)
                 .AddClass("filter-header-cell")
-            .Build();
+                .Build();
 
         private string _style =>
             new StyleBuilder()
                 .AddStyle(Column?.HeaderStyle)
                 .AddStyle(Style)
-            .Build();
-
-        private string _valueString;
-        private double? _valueNumber;
-        private Enum _valueEnum = null;
-        private bool? _valueBool;
-        private DateTime? _valueDate;
-        private TimeSpan? _valueTime;
+                .Build();
 
         #region Computed Properties and Functions
-
-        private bool hasFilter
-        {
-            get
-            {
-                if (DataGrid == null)
-                    return false;
-
-                return false;
-                //return DataGrid.FilterDefinitions.Any(x => x.Field == Column.Field && x.Operator != null && x.Value != null);
-            }
-        }
 
         private Type dataType
         {
@@ -60,6 +59,8 @@ namespace MudBlazor
             }
         }
 
+        private FieldType fieldType => FieldType.Identify(dataType);
+
         private string[] operators
         {
             get
@@ -68,98 +69,70 @@ namespace MudBlazor
             }
         }
 
-        private string _operator;
+        private string valueString => fieldType.IsString && Column.FilterContext.FilterDefinition.Value is not null ? (string)Column.FilterContext.FilterDefinition.Value : default;
+        private double? valueNumber => fieldType.IsNumber ? (double?)Column.FilterContext.FilterDefinition.Value : default;
+        private bool? valueBool => fieldType.IsBoolean && Column.FilterContext.FilterDefinition.Value is not null ? (bool?)Column.FilterContext.FilterDefinition.Value : default;
+        private Enum valueEnum => fieldType.IsEnum && Column.FilterContext.FilterDefinition.Value is not null ? (Enum)Column.FilterContext.FilterDefinition.Value : default;
+        private DateTime? valueDate => fieldType.IsDateTime ? (DateTime?)Column.FilterContext.FilterDefinition.Value : default;
+        private TimeSpan? valueTime => fieldType.IsDateTime && Column.FilterContext.FilterDefinition.Value is not null ? ((DateTime?)Column.FilterContext.FilterDefinition.Value).Value.TimeOfDay : null;
+        private string @operator => Column.FilterContext.FilterDefinition.Operator ?? operators.FirstOrDefault();
 
         private string chosenOperatorStyle(string o)
         {
-            return o == _operator ? "color:var(--mud-palette-primary-text);background-color:var(--mud-palette-primary)" : "";
-        }
-
-        private bool isNumber
-        {
-            get
-            {
-                return TypeIdentifier.IsNumber(dataType);
-            }
-        }
-
-        private bool isEnum
-        {
-            get
-            {
-                return TypeIdentifier.IsEnum(dataType);
-            }
+            return o == @operator ? "color:var(--mud-palette-primary-text);background-color:var(--mud-palette-primary)" : "";
         }
 
         #endregion
-
-        protected override void OnInitialized()
-        {
-            _operator = operators.FirstOrDefault();
-        }
 
         #region Events
 
         private async Task ChangeOperatorAsync(string o)
         {
-            _operator = o;
-            Column.FilterContext.FilterDefinition.Operator = _operator;
+            Column.FilterContext.FilterDefinition.Operator = o;
             await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
 
         internal async Task StringValueChangedAsync(string value)
         {
-            _valueString = value;
-            Column.FilterContext.FilterDefinition.Operator = _operator;
             Column.FilterContext.FilterDefinition.Value = value;
             await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
 
         internal async Task NumberValueChangedAsync(double? value)
         {
-            _valueNumber = value;
-            Column.FilterContext.FilterDefinition.Operator = _operator;
             Column.FilterContext.FilterDefinition.Value = value;
             await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
 
         internal async Task EnumValueChangedAsync(Enum value)
         {
-            _valueEnum = value;
-            Column.FilterContext.FilterDefinition.Operator = _operator;
             Column.FilterContext.FilterDefinition.Value = value;
             await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
 
         internal async Task BoolValueChangedAsync(bool? value)
         {
-            _valueBool = value;
-            Column.FilterContext.FilterDefinition.Operator = _operator;
             Column.FilterContext.FilterDefinition.Value = value;
             await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
 
         internal async Task DateValueChangedAsync(DateTime? value)
         {
-            _valueDate = value;
-
             if (value != null)
             {
                 var date = value.Value.Date;
 
                 // get the time component and add it to the date.
-                if (_valueTime != null)
+                if (valueTime != null)
                 {
-                    date.Add(_valueTime.Value);
+                    date.Add(valueTime.Value);
                 }
 
-                Column.FilterContext.FilterDefinition.Operator = _operator;
                 Column.FilterContext.FilterDefinition.Value = date;
                 await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
             }
             else
             {
-                Column.FilterContext.FilterDefinition.Operator = _operator;
                 Column.FilterContext.FilterDefinition.Value = value;
                 await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
             }
@@ -167,29 +140,27 @@ namespace MudBlazor
 
         internal async Task TimeValueChangedAsync(TimeSpan? value)
         {
-            _valueTime = value;
-
-            if (_valueDate != null)
+            if (valueDate != null)
             {
-                var date = _valueDate.Value.Date;
+                var date = valueDate.Value.Date;
 
                 // get the time component and add it to the date.
-                if (_valueTime != null)
+                if (valueTime != null)
                 {
-                    date = date.Add(_valueTime.Value);
+                    date = date.Add(valueTime.Value);
                 }
 
-                Column.FilterContext.FilterDefinition.Operator = _operator;
                 Column.FilterContext.FilterDefinition.Value = date;
                 await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
             }
         }
 
-        internal async Task ApplyFilterAsync(FilterDefinition<T> filterDefinition)
+        internal async Task ApplyFilterAsync(IFilterDefinition<T> filterDefinition)
         {
-            if (!DataGrid.FilterDefinitions.Any(x => x.Id == filterDefinition.Id))
+            if (DataGrid.FilterDefinitions.All(x => x.Id != filterDefinition.Id))
                 DataGrid.FilterDefinitions.Add(filterDefinition);
-            if (DataGrid.ServerData is not null) await DataGrid.ReloadServerData();
+            if (DataGrid.HasServerData)
+                await DataGrid.ReloadServerData();
 
             DataGrid.GroupItems();
             ((IMudStateHasChanged)DataGrid).StateHasChanged();
@@ -198,23 +169,9 @@ namespace MudBlazor
         private async Task ClearFilterAsync()
         {
             await ClearFilterAsync(Column.FilterContext.FilterDefinition);
-
-            if (dataType == typeof(string))
-                _valueString = null;
-            else if (isNumber)
-                _valueNumber = null;
-            else if (isEnum)
-                _valueEnum = null;
-            else if (dataType == typeof(bool))
-                _valueBool = null;
-            else if (dataType == typeof(DateTime) || dataType == typeof(DateTime?))
-            {
-                _valueDate = null;
-                _valueTime = null;
-            }
         }
 
-        internal async Task ClearFilterAsync(FilterDefinition<T> filterDefinition)
+        internal async Task ClearFilterAsync(IFilterDefinition<T> filterDefinition)
         {
             await DataGrid.RemoveFilterAsync(filterDefinition.Id);
         }

@@ -1,4 +1,7 @@
 ﻿@page "/components/tabs"
+@page "/components/MudDynamicTabs"
+@page "/components/MudTabPanel"
+@page "/components/MudTabs"
 
 <DocsPage>
     <DocsPageHeader Title="Tabs" />
@@ -8,7 +11,7 @@
             <SectionHeader Title="Simple Tab">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="TabsSimpleExample" ShowCode="false"  Block="true">
+            <SectionContent Code="@nameof(TabsSimpleExample)" ShowCode="false"  Block="true">
                 <TabsSimpleExample />
             </SectionContent>
         </DocsPageSection>
@@ -17,7 +20,7 @@
             <SectionHeader Title="Centered">
                 <Description>Use the <CodeInline>Centered</CodeInline> prop to keep your tabs in the middle.</Description>
             </SectionHeader>
-            <SectionContent Code="TabsCenteredExample" ShowCode="false"  Block="true">
+            <SectionContent Code="@nameof(TabsCenteredExample)" ShowCode="false"  Block="true">
                 <TabsCenteredExample />
             </SectionContent>
         </DocsPageSection>
@@ -26,7 +29,7 @@
             <SectionHeader Title="Scrolling Tabs">
                 <Description>If the total size of all tabs exceeds the total size of the tabs container, buttons will be added for scrolling.<br />With the <CodeInline>AlwaysShowScrollButtons</CodeInline> prop, you can display the scroll buttons at all time.</Description>
             </SectionHeader>
-            <SectionContent Code="TabsScrollExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent Code="@nameof(TabsScrollExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TabsScrollExample />
             </SectionContent>
         </DocsPageSection>
@@ -35,16 +38,16 @@
             <SectionHeader Title="Custom Scroll Icons">
                 <Description>The icons can be changed with the <CodeInline>PrevIcon</CodeInline> and <CodeInline>NextIcon</CodeInline> properties.</Description>
             </SectionHeader>
-            <SectionContent Code="TabsCustomScrollIconsExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent Code="@nameof(TabsCustomScrollIconsExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TabsCustomScrollIconsExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Tabs Position">
-                <Description>The position of the tab toolbar can be changed with the <CodeInline>Position</CodeInline> property.</Description>
+                <Description>The position of the tab bar can be changed with the <CodeInline>Position</CodeInline> property.</Description>
             </SectionHeader>
-            <SectionContent Code="TabsPositionExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent Code="@nameof(TabsPositionExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TabsPositionExample />
             </SectionContent>
         </DocsPageSection>
@@ -53,7 +56,7 @@
             <SectionHeader Title="Icon Tabs">
                 <Description>Icons can be used in addition to regular text in the tabs.</Description>
             </SectionHeader>
-            <SectionContent Code="TabsIconAndTextExample" ShowCode="false">
+            <SectionContent Code="@nameof(TabsIconAndTextExample)" ShowCode="false">
                 <TabsIconAndTextExample />
             </SectionContent>
         </DocsPageSection>
@@ -62,7 +65,7 @@
             <SectionHeader Title="Minimum Tab Width">
                 <Description>The minimum tab width can be set by specifying a css width against the <CodeInline>MinimumTabWidth</CodeInline> property.</Description>
             </SectionHeader>
-            <SectionContent Code="TabsMinimumTabWidthExample" ShowCode="false">
+            <SectionContent Code="@nameof(TabsMinimumTabWidthExample)" ShowCode="false">
                 <TabsMinimumTabWidthExample/>
             </SectionContent>
         </DocsPageSection>
@@ -72,7 +75,7 @@
             <SectionHeader Title="Badges">
                 <Description>Badges can be be applied to both icons and texts in the same way.</Description>
             </SectionHeader>
-            <SectionContent Code="TabsWithBagdesExample" ShowCode="false">
+            <SectionContent Code="@nameof(TabsWithBagdesExample)" ShowCode="false">
                 <TabsWithBagdesExample />
             </SectionContent>
         </DocsPageSection>
@@ -80,16 +83,16 @@
         <DocsPageSection>
             <SectionHeader Title="Tooltip Tabs">
             </SectionHeader>
-            <SectionContent Code="TabsToolTipExample">
+            <SectionContent Code="@nameof(TabsToolTipExample)">
                 <TabsToolTipExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Tab Content">
-                <Description>Custom tab header content can be provided for special scenarios. Specify only <CodeInline>TabContent</CodeInline> to customize the tab content, or specify <CodeInline>TabWrapperContent</CodeInline> to provide a wrapper around the entire tab header.</Description>
+            <SectionHeader Title="Customization">
+                <Description>Custom tab header content can be provided for special scenarios. Specify only <CodeInline>TabContent</CodeInline> to customize the tab content, or specify <CodeInline>TabWrapperContent</CodeInline> to provide a wrapper around the entire tab header. The header of the active tab can be customized using <CodeInline>ActiveTabClass</CodeInline>.</Description>
             </SectionHeader>
-            <SectionContent Code="TabsContentExample" ShowCode="false" HighLight="TabContent,TabWrapperContent">
+            <SectionContent Code="@nameof(TabsContentExample)" ShowCode="false" HighLight="TabContent,TabWrapperContent">
                 <TabsContentExample />
             </SectionContent>
         </DocsPageSection>
@@ -97,7 +100,7 @@
         <DocsPageSection>
             <SectionHeader Title="Set Active Panel">
             </SectionHeader>
-            <SectionContent Code="TabsSetActiveExample" ShowCode="false"  Block="true">
+            <SectionContent Code="@nameof(TabsSetActiveExample)" ShowCode="false"  Block="true">
                 <TabsSetActiveExample />
             </SectionContent>
         </DocsPageSection>
@@ -105,7 +108,7 @@
         <DocsPageSection>
             <SectionHeader Title="Binding Selected Panel">
             </SectionHeader>
-            <SectionContent Code="TabsBindingExample" ShowCode="false"  Block="true">
+            <SectionContent Code="@nameof(TabsBindingExample)" ShowCode="false"  Block="true">
                 <TabsBindingExample />
             </SectionContent>
         </DocsPageSection>
@@ -117,7 +120,7 @@
                     <br /> To hide the close icon, set <CodeInline>ShowCloseIcon = false</CodeInline>
                 </Description>
             </SectionHeader>
-            <SectionContent Code="DynamicTabsSimpleExample" ShowCode="false"  Block="true">
+            <SectionContent Code="@nameof(DynamicTabsSimpleExample)" ShowCode="false"  Block="true">
                 <DynamicTabsSimpleExample />
             </SectionContent>
         </DocsPageSection>
@@ -126,15 +129,15 @@
             <SectionHeader Title="Advanced Dynamic Tabs">
                 <Description>
 					<MudText Typo="Typo.body2">
-						Allthough MudDynamicTabs allows a basic browser like tab experience, the way the style can be influenced is limited 
+						Although MudDynamicTabs allows a basic browser like tab experience, the way the style can be influenced is limited 
 					</MudText>
 					<MudText Typo="Typo.body2">
-						 The Property Header and TabPanelHeader allows you to add any RenderFragement to the tab (Header) 
+						 The Property Header and TabPanelHeader allows you to add any RenderFragment to the tab (Header) 
 						 and to each tab panel (TabPanelHeader). The placement can be influenced by setting values to HeaderPosition or TabPanelHeaderPosition
 					</MudText>
 				</Description>
             </SectionHeader>
-            <SectionContent Code="CustomDynamicTabsExample" ShowCode="false"  Block="true">
+            <SectionContent Code="@nameof(CustomDynamicTabsExample)" ShowCode="false"  Block="true">
                 <CustomDynamicTabsExample />
             </SectionContent>
         </DocsPageSection>

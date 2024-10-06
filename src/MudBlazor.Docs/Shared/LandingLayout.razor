@@ -3,26 +3,24 @@
 
 <MudLayout Class="mudblazor-landingpage">
     <MudAppBar Class="landing-appbar" Elevation="0">
-        <Appbar DrawerToggleCallback="ToggleDrawer" />
+        <Appbar DrawerToggleCallback="ToggleDrawer" DisplaySearchBar="false" />
     </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen" Elevation="25" Variant="@DrawerVariant.Temporary">
-        <MudToolBar Dense="true" DisableGutters="true" Class="px-1 docs-gray-bg">
-            <MudIconButton Icon="@Icons.Material.Rounded.Close" Color="Color.Inherit" OnClick="@ToggleDrawer"/>
+    <MudDrawer @bind-Open="@_drawerOpen" Elevation="25" Variant="@DrawerVariant.Temporary" aria-label="Navigation Drawer">
+        <MudToolBar Dense="true" Gutters="false" Class="px-1 docs-gray-bg">
+            <MudIconButton Icon="@Icons.Material.Rounded.Close" Color="Color.Inherit" OnClick="@ToggleDrawer" aria-label="Toggle drawer" />
             <MudSpacer/>
             <AppbarButtons/>
         </MudToolBar>
         <MudNavMenu Color="Color.Primary" Margin="Margin.Dense" Rounded="true" Class="pa-2">
+            <MudNavLink Href="/getting-started/installation">Get Started</MudNavLink>
             <MudNavLink Href="/docs/overview">Docs</MudNavLink>
-            <MudNavLink Href="/getting-started/installation">Getting Started</MudNavLink>
-            <MudNavLink Href="/mud/introduction" Match="NavLinkMatch.All">Discover More</MudNavLink>
+            <MudNavLink Href="/mud/introduction" Match="NavLinkMatch.All">Learn More</MudNavLink>
             <MudNavGroup Title="Products" ExpandIcon="@Icons.Material.Filled.ExpandMore">
                 <MudNavLink Href="https://mudblazor.com/">MudBlazor</MudNavLink>
                 <MudNavLink Href="https://try.mudblazor.com/">TryMudBlazor</MudNavLink>
                 <MudNavLink Href="https://github.com/MudBlazor/ThemeManager">ThemeManager</MudNavLink>
                 <MudNavLink Href="https://github.com/MudBlazor/Templates">Templates</MudNavLink>
                 <MudListSubheader Class="mt-4 pl-8 pb-2"><b>Coming soon</b></MudListSubheader>
-                <MudNavLink Disabled="true">MudStore</MudNavLink>
-                <MudNavLink Disabled="true">MudAcademy</MudNavLink>
                 <MudNavLink Disabled="true">MudExtensions</MudNavLink>
             </MudNavGroup>
         </MudNavMenu>

@@ -1,0 +1,28 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid Items="@_items">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager PageSizeSelector="@PageSizeDropDown" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    [Parameter]
+    public bool PageSizeDropDown { get; set; } = true;
+
+    private List<Item> _items = new List<Item>();
+
+    public class Item
+    {
+        public string Name { get; set; }
+
+        public Item(string name)
+        {
+            Name = name;
+        }
+    }
+
+}

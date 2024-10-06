@@ -3,8 +3,9 @@
  *  http://www.mosismath.com/AngleSplines/EndSlopeSplines.html
  */
 
-using System;
+using System.Diagnostics;
 
+#nullable enable
 namespace MudBlazor.Components.Chart
 {
     public class EndSlopeSpline : SplineInterpolator
@@ -23,23 +24,30 @@ namespace MudBlazor.Components.Chart
             h = new double[n];
 
             CalcParameters(firstSlopeDegrees, lastSlopeDegrees);
-            Integrate();
             Interpolate();
         }
 
         public void CalcParameters(double alpha, double beta)
         {
-            for (int i = 0; i < n; i++)
+            Debug.Assert(m != null);
+            Debug.Assert(gauss != null);
+            Debug.Assert(a != null);
+            Debug.Assert(b != null);
+            Debug.Assert(c != null);
+            Debug.Assert(d != null);
+            Debug.Assert(h != null);
+
+            for (var i = 0; i < n; i++)
                 a[i] = GivenYs[i];
 
-            for (int i = 0; i < n - 1; i++)
+            for (var i = 0; i < n - 1; i++)
                 h[i] = GivenXs[i + 1] - GivenXs[i];
 
             m.a[0, 0] = 2.0 * h[0];
             m.a[0, 1] = h[0];
-            m.y[0] = 3 * ((a[1] - a[0]) / h[0] - Math.Tan(alpha * Math.PI / 180));
+            m.y[0] = 3 * (((a[1] - a[0]) / h[0]) - Math.Tan(alpha * Math.PI / 180));
 
-            for (int i = 0; i < n - 2; i++)
+            for (var i = 0; i < n - 2; i++)
             {
                 m.a[i + 1, i] = h[i];
                 m.a[i + 1, i + 1] = 2.0 * (h[i] + h[i + 1]);
@@ -47,30 +55,30 @@ namespace MudBlazor.Components.Chart
                     m.a[i + 1, i + 2] = h[i + 1];
 
                 if ((h[i] != 0.0) && (h[i + 1] != 0.0))
-                    m.y[i + 1] = ((a[i + 2] - a[i + 1]) / h[i + 1] - (a[i + 1] - a[i]) / h[i]) * 3.0;
+                    m.y[i + 1] = (((a[i + 2] - a[i + 1]) / h[i + 1]) - ((a[i + 1] - a[i]) / h[i])) * 3.0;
                 else
                     m.y[i + 1] = 0.0;
             }
 
             m.a[n - 1, n - 2] = h[n - 2];
             m.a[n - 1, n - 1] = 2.0 * h[n - 2];
-            m.y[n - 1] = 3.0 * (Math.Tan(beta * Math.PI / 180) - (a[n - 1] - a[n - 2]) / h[n - 2]);
+            m.y[n - 1] = 3.0 * (Math.Tan(beta * Math.PI / 180) - ((a[n - 1] - a[n - 2]) / h[n - 2]));
 
             if (gauss.Eliminate() == false)
                 throw new InvalidOperationException();
 
             gauss.Solve();
 
-            for (int i = 0; i < n; i++)
+            for (var i = 0; i < n; i++)
             {
                 c[i] = m.x[i];
             }
-            for (int i = 0; i < n; i++)
+            for (var i = 0; i < n; i++)
             {
                 if (h[i] != 0.0)
                 {
                     d[i] = 1.0 / 3.0 / h[i] * (c[i + 1] - c[i]);
-                    b[i] = 1.0 / h[i] * (a[i + 1] - a[i]) - h[i] / 3.0 * (c[i + 1] + 2 * c[i]);
+                    b[i] = (1.0 / h[i] * (a[i + 1] - a[i])) - (h[i] / 3.0 * (c[i + 1] + (2 * c[i])));
                 }
             }
         }

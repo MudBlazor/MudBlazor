@@ -1,14 +1,12 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudFileUpload T="IBrowserFile">
-    <ButtonTemplate>
-        <MudButton HtmlTag="label"
-                   Variant="Variant.Filled"
-                   Color="Color.Primary"
-                   for="@context">
+    <ActivatorContent>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary">
             Single File
         </MudButton>
-    </ButtonTemplate>
+    </ActivatorContent>
     <SelectedTemplate>
         @if (context != null)
         {
@@ -21,15 +19,13 @@
     </SelectedTemplate>
 </MudFileUpload>
 
-<MudFileUpload T="IReadOnlyList<IBrowserFile>" Multiple>
-    <ButtonTemplate>
-        <MudButton HtmlTag="label"
-                   Variant="Variant.Filled"
-                   Color="Color.Secondary"
-                   for="@context">
+<MudFileUpload T="IReadOnlyList<IBrowserFile>" multiple>
+    <ActivatorContent>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Secondary">
             Multiple Files
         </MudButton>
-    </ButtonTemplate>
+    </ActivatorContent>
     <SelectedTemplate>
         @if (context != null)
         {

@@ -1,4 +1,6 @@
 ﻿@page "/components/switch"
+@page "/components/MudSwitch"
+@page "/components/MudSwitch`1"
 
 <DocsPage>
     <DocsPageHeader Title="Switch" SubTitle="Similar to a checkbox but visually different, the switch lets the user switch between two values with the tap of a button." />
@@ -8,7 +10,7 @@
             <SectionHeader Title="Basic switches">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="SwitchBasicExample">
+            <SectionContent Code="@nameof(SwitchBasicExample)">
                 <SwitchBasicExample />
             </SectionContent>
         </DocsPageSection>
@@ -17,7 +19,7 @@
             <SectionHeader Title="Color">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="SwitchColorExample">
+            <SectionContent Code="@nameof(SwitchColorExample)">
                 <SwitchColorExample />
             </SectionContent>
         </DocsPageSection>
@@ -29,7 +31,7 @@
                     position can be specified using the <CodeInline>LabelPosition</CodeInline> property
                 </Description>
             </SectionHeader>
-            <SectionContent Code="SwitchWithLabelExample">
+            <SectionContent Code="@nameof(SwitchWithLabelExample)">
                 <SwitchWithLabelExample />
             </SectionContent>
         </DocsPageSection>
@@ -40,7 +42,7 @@
                     An icon can be determined with <CodeInline>ThumbIcon</CodeInline> parameter.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="SwitchWithIconExample" ShowCode="false">
+            <SectionContent Code="@nameof(SwitchWithIconExample)" ShowCode="false">
                 <SwitchWithIconExample />
             </SectionContent>
         </DocsPageSection>
@@ -49,7 +51,7 @@
             <SectionHeader Title="Different data types">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="SwitchConversionExample" ShowCode="false">
+            <SectionContent Code="@nameof(SwitchConversionExample)" ShowCode="false">
                 <SwitchConversionExample />
             </SectionContent>
         </DocsPageSection>
@@ -58,7 +60,7 @@
             <SectionHeader Title="ReadOnly mode">
                 <Description>Setting <CodeInline>ReadOnly="true"</CodeInline> will make the switch control stop listening to user inputs.</Description>
             </SectionHeader>
-            <SectionContent Code="SwitchReadOnlyExample" Block="true">
+            <SectionContent Code="@nameof(SwitchReadOnlyExample)" Block="true">
                 <SwitchReadOnlyExample />
             </SectionContent>
         </DocsPageSection>
@@ -74,7 +76,7 @@
                     <MudText>*Disabled or ReadOnly switches cannot be changed by keys.</MudText>
                 </Description>
             </SectionHeader>
-            <SectionContent Code="SwitchKeyboardNavigationExample" ShowCode="false">
+            <SectionContent Code="@nameof(SwitchKeyboardNavigationExample)" ShowCode="false">
                 <SwitchKeyboardNavigationExample />
             </SectionContent>
         </DocsPageSection>
@@ -85,7 +87,7 @@
                     <MudText>MudSwitch size can be changed with the <CodeInline>Size</CodeInline> parameter.</MudText>          
                 </Description>
             </SectionHeader>
-            <SectionContent Code="SwitchSizeExample" ShowCode="false">
+            <SectionContent Code="@nameof(SwitchSizeExample)" ShowCode="false">
                 <SwitchSizeExample />
             </SectionContent>
         </DocsPageSection>

@@ -2,13 +2,13 @@
 @using MudBlazor.Utilities
 @inherits MudComponentBase
 
-@if (Items == null || Items.Count == 0)
+@if (Items is null || Items.Count == 0)
 {
     return;
 }
 
 <CascadingValue Value="this" IsFixed="true">
-    <ul @attributes="UserAttributes" class=@Classname style="@Style">
+    <ul @attributes="UserAttributes" class="@Classname" style="@Style">
         @if (MaxItems != null && Collapsed && Items.Count > MaxItems)
         {
             <BreadcrumbLink Item="Items[0]"></BreadcrumbLink>
@@ -17,7 +17,7 @@
                 <MudIcon Icon="@ExpanderIcon" Size="Size.Small"></MudIcon>
             </li>
             <BreadcrumbSeparator></BreadcrumbSeparator>
-            <BreadcrumbLink Item="Items[Items.Count - 1]"></BreadcrumbLink>
+            <BreadcrumbLink Item="Items[^1]"></BreadcrumbLink>
         }
         else
         {
@@ -34,10 +34,3 @@
         }
     </ul>
 </CascadingValue>
-
-@code {
-    private string Classname => new CssBuilder("mud-breadcrumbs")
-        .AddClass("mud-typography-body1")
-        .AddClass(Class)
-        .Build();
-}

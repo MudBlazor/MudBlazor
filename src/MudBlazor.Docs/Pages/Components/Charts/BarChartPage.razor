@@ -1,5 +1,8 @@
 ﻿@page "/components/barchart"
 @page "/components/chart-types/barchart"
+@page "/components/bar"
+@page "/components/MudCategoryChartBase"
+@page "/components/MudChartBase"
 
 <DocsPage>
     <DocsPageHeader Title="Bar Chart" />
@@ -10,7 +13,7 @@
             <SectionHeader>
                 <Description></Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="BarExample1">
+            <SectionContent ShowCode="false" Code="@nameof(BarExample1)">
                 <BarExample1 />
             </SectionContent>
         </DocsPageSection>
@@ -19,7 +22,7 @@
             <SectionHeader Title="Custom SVG Content">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="BarCustomGraphicsExample">
+            <SectionContent Code="@nameof(BarCustomGraphicsExample)">
                 <BarCustomGraphicsExample/>
             </SectionContent>
         </DocsPageSection>

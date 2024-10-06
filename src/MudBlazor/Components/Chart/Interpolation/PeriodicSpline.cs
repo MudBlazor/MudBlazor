@@ -3,7 +3,8 @@
  *  http://www.mosismath.com/PeriodicSplines/PeriodicSplines.html
  */
 
-using System;
+#nullable enable
+using System.Diagnostics;
 
 namespace MudBlazor.Components.Chart
 {
@@ -21,30 +22,37 @@ namespace MudBlazor.Components.Chart
             h = new double[n];
 
             CalcParameters();
-            Integrate();
             Interpolate();
         }
 
         public void CalcParameters()
         {
-            for (int i = 0; i < n; i++)
+            Debug.Assert(a != null);
+            Debug.Assert(b != null);
+            Debug.Assert(c != null);
+            Debug.Assert(d != null);
+            Debug.Assert(h != null);
+            Debug.Assert(m != null);
+            Debug.Assert(gauss != null);
+
+            for (var i = 0; i < n; i++)
                 a[i] = GivenYs[i];
 
-            for (int i = 0; i < n - 1; i++)
+            for (var i = 0; i < n - 1; i++)
                 h[i] = GivenXs[i + 1] - GivenXs[i];
 
             a[n] = GivenYs[1];
             h[n - 1] = h[0];
 
-            for (int i = 0; i < n - 1; i++)
-                for (int k = 0; k < n - 1; k++)
+            for (var i = 0; i < n - 1; i++)
+                for (var k = 0; k < n - 1; k++)
                 {
                     m.a[i, k] = 0.0;
                     m.y[i] = 0.0;
                     m.x[i] = 0.0;
                 }
 
-            for (int i = 0; i < n - 1; i++)
+            for (var i = 0; i < n - 1; i++)
             {
                 if (i == 0)
                 {
@@ -59,7 +67,7 @@ namespace MudBlazor.Components.Chart
                         m.a[i, i + 1] = h[i + 1];
                 }
                 if ((h[i] != 0.0) && (h[i + 1] != 0.0))
-                    m.y[i] = ((a[i + 2] - a[i + 1]) / h[i + 1] - (a[i + 1] - a[i]) / h[i]) * 3.0;
+                    m.y[i] = (((a[i + 2] - a[i + 1]) / h[i + 1]) - ((a[i + 1] - a[i]) / h[i])) * 3.0;
                 else
                     m.y[i] = 0.0;
             }
@@ -72,16 +80,16 @@ namespace MudBlazor.Components.Chart
 
             gauss.Solve();
 
-            for (int i = 1; i < n; i++)
+            for (var i = 1; i < n; i++)
                 c[i] = m.x[i - 1];
             c[0] = c[n - 1];
 
-            for (int i = 0; i < n; i++)
+            for (var i = 0; i < n; i++)
             {
                 if (h[i] != 0.0)
                 {
                     d[i] = 1.0 / 3.0 / h[i] * (c[i + 1] - c[i]);
-                    b[i] = 1.0 / h[i] * (a[i + 1] - a[i]) - h[i] / 3.0 * (c[i + 1] + 2 * c[i]);
+                    b[i] = (1.0 / h[i] * (a[i + 1] - a[i])) - (h[i] / 3.0 * (c[i + 1] + (2 * c[i])));
                 }
             }
         }

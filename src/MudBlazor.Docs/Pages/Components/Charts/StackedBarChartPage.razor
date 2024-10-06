@@ -1,0 +1,29 @@
+﻿@page "/components/stackedbarchart"
+@page "/components/StackedBar"
+@page "/components/chart-types/stackedbarchart"
+
+<DocsPage>
+    <DocsPageHeader Title="Stacked Bar Chart" />
+    
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(StackedBarExample1)">
+                <StackedBarExample1 />
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Custom SVG Content">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(StackedBarCustomGraphicsExample)">
+                <StackedBarCustomGraphicsExample/>
+            </SectionContent>
+        </DocsPageSection>
+        
+    </DocsPageContent>
+</DocsPage>

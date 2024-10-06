@@ -1,4 +1,6 @@
 ﻿@page "/components/progress"
+@page "/components/MudProgressCircular"
+@page "/components/MudProgressLinear"
 
 <DocsPage>
     <DocsPageHeader Title="Progress" SubTitle="Progress indicators that either show the length of a process or unspecified wait time, also known as indeterminate state. The animation is done with SVGs and CSS.">
@@ -37,7 +39,7 @@
                     <SectionHeader Title="Indeterminate">
                         <Description></Description>
                     </SectionHeader>
-                    <SectionContent Code="ProgressCircularInterminateExample">
+                    <SectionContent Code="@nameof(ProgressCircularInterminateExample)">
                         <ProgressCircularInterminateExample/>
                     </SectionContent>
                 </DocsPageSection>
@@ -46,7 +48,7 @@
                     <SectionHeader Title="Determinate">
                         <Description></Description>
                     </SectionHeader>
-                    <SectionContent Code="ProgressCircularDeterminateExample" ShowCode="false">
+                    <SectionContent Code="@nameof(ProgressCircularDeterminateExample)" ShowCode="false">
                         <ProgressCircularDeterminateExample/>
                     </SectionContent>
                 </DocsPageSection>
@@ -55,7 +57,7 @@
                     <SectionHeader Title="Sizes">
                         <Description>You can change the size with the pre-defined <CodeInline>Size</CodeInline> prop or change the <CodeInline>Width</CodeInline> and <CodeInline>Height</CodeInline> in css.</Description>
                     </SectionHeader>
-                    <SectionContent Code="ProgressCircularSizesExample">
+                    <SectionContent Code="@nameof(ProgressCircularSizesExample)">
                         <ProgressCircularSizesExample />
                     </SectionContent>
                 </DocsPageSection>
@@ -71,7 +73,7 @@
                     <SectionHeader Title="Indeterminate">
                         <Description></Description>
                     </SectionHeader>
-                    <SectionContent Code="ProgressLinearInterminateExample">
+                    <SectionContent Code="@nameof(ProgressLinearInterminateExample)">
                         <ProgressLinearInterminateExample/>
                     </SectionContent>
                 </DocsPageSection>
@@ -80,7 +82,7 @@
                     <SectionHeader Title="Determinate">
                         <Description></Description>
                     </SectionHeader>
-                    <SectionContent Code="ProgressLinearDeterminateExample" ShowCode="false">
+                    <SectionContent Code="@nameof(ProgressLinearDeterminateExample)" ShowCode="false">
                         <ProgressLinearDeterminateExample />
                     </SectionContent>
                 </DocsPageSection>
@@ -89,7 +91,7 @@
                     <SectionHeader Title="Sizes">
                         <Description></Description>
                     </SectionHeader>
-                    <SectionContent Code="ProgressLinearSizeExample" ShowCode="false">
+                    <SectionContent Code="@nameof(ProgressLinearSizeExample)" ShowCode="false">
                         <ProgressLinearSizeExample />
                     </SectionContent>
                 </DocsPageSection>
@@ -100,7 +102,7 @@
                             By default, the value range is between 0 and 100. If you have a custom range, set <CodeInline>Min</CodeInline> and <CodeInline>Max</CodeInline> accordingly.
                         </Description>
                     </SectionHeader>
-                    <SectionContent Code="ProgressLinearMinMaxExample" ShowCode="false">
+                    <SectionContent Code="@nameof(ProgressLinearMinMaxExample)" ShowCode="false">
                         <ProgressLinearMinMaxExample />
                     </SectionContent>
                 </DocsPageSection>
@@ -111,7 +113,7 @@
                             When setting <CodeInline>Buffer</CodeInline> to true you also have to give it a <CodeInline>BufferValue</CodeInline>. You can use any combination of buffer-value and value to achieve your design.
                         </Description>
                     </SectionHeader>
-                    <SectionContent Code="ProgressLinearBufferExample" ShowCode="false">
+                    <SectionContent Code="@nameof(ProgressLinearBufferExample)" ShowCode="false">
                         <ProgressLinearBufferExample />
                     </SectionContent>
                 </DocsPageSection>
@@ -120,7 +122,7 @@
                     <SectionHeader Title="Rounded">
                         <Description>Sets the border radius on the progress linear to the set theme value.</Description>
                     </SectionHeader>
-                    <SectionContent Code="ProgressLinearRoundedExample" ShowCode="false">
+                    <SectionContent Code="@nameof(ProgressLinearRoundedExample)" ShowCode="false">
                         <ProgressLinearRoundedExample />
                     </SectionContent>
                 </DocsPageSection>
@@ -129,7 +131,7 @@
                     <SectionHeader Title="Striped">
                         <Description>Applies a striped background over the progress bar.</Description>
                     </SectionHeader>
-                    <SectionContent Code="ProgressLinearStripedExample" ShowCode="false">
+                    <SectionContent Code="@nameof(ProgressLinearStripedExample)" ShowCode="false">
                         <ProgressLinearStripedExample />
                     </SectionContent>
                 </DocsPageSection>
@@ -138,7 +140,7 @@
                     <SectionHeader Title="Labels">
                         <Description>While using the <CodeInline>ChildContent</CodeInline> of the component you can add a text to display current value.</Description>
                     </SectionHeader>
-                    <SectionContent Code="ProgressLinearLabelsExample" ShowCode="false">
+                    <SectionContent Code="@nameof(ProgressLinearLabelsExample)" ShowCode="false">
                         <ProgressLinearLabelsExample />
                     </SectionContent>
                 </DocsPageSection>
@@ -147,7 +149,7 @@
                     <SectionHeader Title="Vertical">
                         <Description>Vertical progress bars works exactly the same way as the default horizontal ones.</Description>
                     </SectionHeader>
-                    <SectionContent Code="ProgressLinearVerticalExample" ShowCode="false">
+                    <SectionContent Code="@nameof(ProgressLinearVerticalExample)" ShowCode="false">
                         <ProgressLinearVerticalExample />
                     </SectionContent>
                 </DocsPageSection>

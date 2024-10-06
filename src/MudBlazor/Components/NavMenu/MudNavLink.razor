@@ -3,34 +3,37 @@
 @using Microsoft.AspNetCore.Components.Routing
 
 <div @attributes="UserAttributes" class="@Classname" disabled="@Disabled" style="@Style">
-    @if (!OnClick.HasDelegate && Command == null)
-    { 
-        <NavLink @onclick="@HandleNavigation" 
-                 class="@LinkClassname" 
-                 @attributes="@Attributes"
-                 Match="@Match" 
-                 ActiveClass="@ActiveClass">
-            @if (!string.IsNullOrEmpty(Icon))
-            {
-                <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname"/>
-            }
-            <div class="mud-nav-link-text">
-                @ChildContent
+    @{
+        if (!OnClick.HasDelegate)
+        {
+            <NavLink @onclick="HandleNavigation"
+                    class="@LinkClassname"
+                    @attributes="@Attributes"
+                    tabindex="@TabIndex"
+                    Match="@Match"
+                    ActiveClass="@ActiveClass">
+                @if (!string.IsNullOrEmpty(Icon))
+                {
+                    <MudIcon Disabled="@Disabled" Icon="@Icon" Color="@IconColor" Class="@IconClassname"/>
+                }
+                <div class="mud-nav-link-text">
+                    @ChildContent
+                </div>
+            </NavLink>
+        }
+        else
+        {
+            <div @onclick="OnClickHandler"
+                 class="@LinkClassname"
+                 tabindex="@TabIndex">
+                @if (!string.IsNullOrEmpty(Icon))
+                {
+                    <MudIcon Disabled="@Disabled" Icon="@Icon" Color="@IconColor" Class="@IconClassname" />
+                }
+                <div class="mud-nav-link-text">
+                    @ChildContent
+                </div>
             </div>
-        </NavLink>
-    }
-    else
-    {
-        <div @onclick="OnClickHandler"
-             class="@LinkClassname"
-             ActiveClass="@ActiveClass">
-            @if (!string.IsNullOrEmpty(Icon))
-            {
-                <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname" />
-            }
-            <div Class="mud-nav-link-text">
-                @ChildContent
-            </div>
-        </div>
+        }
     }
 </div>

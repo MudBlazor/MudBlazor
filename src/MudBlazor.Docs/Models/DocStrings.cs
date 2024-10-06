@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace MudBlazor.Docs.Models
 {
-    // this is needed for the api docs 
+    [Obsolete("This has been replaced by the ApiDocumentation class.")]
     public static partial class DocStrings
     {
         /* To speed up the method, run it in this way:
@@ -28,8 +28,14 @@ namespace MudBlazor.Docs.Models
             return (string)field.GetValue(null);
         }
 
-        public static string GetSaveTypename(Type t) => Regex.Replace(t.ConvertToCSharpSource(), @"[\.]", "_").Replace("<T>", "").TrimEnd('_');
+        public static string GetSaveTypename(Type t) => PeriodRegularExpression().Replace(t.ConvertToCSharpSource(), "_").Replace("<T>", "").TrimEnd('_');
 
-        private static string GetSaveMethodIdentifier(MethodInfo method) => Regex.Replace(method.ToString().Replace("MudBlazor.Docs.Models.T", "T"), "[^A-Za-z0-9_]", "_");  // method signature
+        private static string GetSaveMethodIdentifier(MethodInfo method) => LetterDigitOrUnderscoreRegularExpression().Replace(method.ToString().Replace("MudBlazor.Docs.Models.T", "T"), "_");  // method signature
+
+        [GeneratedRegex(@"[\.]")]
+        private static partial Regex PeriodRegularExpression();
+
+        [GeneratedRegex("[^A-Za-z0-9_]")]
+        private static partial Regex LetterDigitOrUnderscoreRegularExpression();
     }
 }

@@ -1,4 +1,5 @@
-﻿namespace MudBlazor.Components.Chart.Interpolation
+﻿#nullable enable
+namespace MudBlazor.Components.Chart.Interpolation
 {
     public interface ILineInterpolator
     {
@@ -6,7 +7,5 @@
         public double[] GivenXs { get; set; }
         public double[] InterpolatedXs { get; set; }
         public double[] InterpolatedYs { get; set; }
-        public bool InterpolationRequired { get; set; }
-
     }
 }

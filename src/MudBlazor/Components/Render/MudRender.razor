@@ -10,25 +10,13 @@
 @ChildContent
 
 @code {
-
+#nullable enable
     /// <summary>
     /// The content to render
     /// </summary>
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
-
-    /// <summary>
-    /// Re-render the content
-    /// </summary>
-    [Obsolete($"Use {nameof(StateHasChanged)} instead. This method will be removed in v7.")]
-    public void ForceRender()
-    {
-        StateHasChanged();
-    }
+    public RenderFragment? ChildContent { get; set; }
 
     /// <inheritdoc />
-    public new void StateHasChanged()
-    {
-        base.StateHasChanged();
-    }
+    void IMudStateHasChanged.StateHasChanged() => StateHasChanged();
 }

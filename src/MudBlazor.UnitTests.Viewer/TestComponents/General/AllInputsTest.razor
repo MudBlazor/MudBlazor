@@ -1,0 +1,196 @@
+﻿
+@* MODE SELECTORS *@
+
+<MudStack Row AlignItems="AlignItems.End">
+    <MudSelect T="Margin" Label="Margin size" @bind-Value="Margin" Variant="Variant.Outlined" Margin="Margin.Dense">
+        @foreach (Margin margin in Enum.GetValues(typeof(Margin))) { <MudSelectItem Value="@margin">@margin</MudSelectItem> }
+    </MudSelect>
+    <MudSelect T="AlignItems" Label="Align" @bind-Value="Align" Variant="Variant.Outlined" Margin="Margin.Dense">
+        @foreach (AlignItems align in Enum.GetValues(typeof(AlignItems)))
+        {
+            <MudSelectItem Value="@align">@align</MudSelectItem>
+        }
+    </MudSelect>
+</MudStack>
+
+@* INPUT EXAMPLES FOR EACH VARIANT *@
+
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">MudField</MudText>
+<MudStack Row AlignItems="@Align">
+    <MudField Variant="Variant.Text" Margin="@Margin">Field value</MudField>
+    <MudField Variant="Variant.Filled" Margin="@Margin">Field value</MudField>
+    <MudField Variant="Variant.Outlined" Margin="@Margin">Field value</MudField>
+</MudStack>
+<MudStack Row AlignItems="@Align">
+    <MudField Label="With Label" Variant="Variant.Text" Margin="@Margin">Field value</MudField>
+    <MudField Label="With Label" Variant="Variant.Filled" Margin="@Margin">Field value</MudField>
+    <MudField Label="With Label" Variant="Variant.Outlined" Margin="@Margin">Field value</MudField>
+</MudStack>
+<MudStack Row AlignItems="@Align">
+    <MudField HelperText="With Helper" Variant="Variant.Text" Margin="@Margin">Field value</MudField>
+    <MudField HelperText="With Helper" Variant="Variant.Filled" Margin="@Margin">Field value</MudField>
+    <MudField HelperText="With Helper" Variant="Variant.Outlined" Margin="@Margin">Field value</MudField>
+</MudStack>
+
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">MudTextField</MudText>
+<MudStack Row AlignItems="@Align">
+    <MudTextField T="string" Variant="Variant.Text" Margin="@Margin" />
+    <MudTextField T="string" Variant="Variant.Filled" Margin="@Margin" />
+    <MudTextField T="string" Variant="Variant.Outlined" Margin="@Margin" />
+</MudStack>
+<MudStack Row AlignItems="@Align">
+    <MudTextField T="string" Label="With Label" Variant="Variant.Text" Margin="@Margin" />
+    <MudTextField T="string" Label="With Label" Variant="Variant.Filled" Margin="@Margin" />
+    <MudTextField T="string" Label="With Label" Variant="Variant.Outlined" Margin="@Margin" />
+</MudStack>
+<MudStack Row AlignItems="@Align">
+    <MudTextField T="string" HelperText="With Helper" Variant="Variant.Text" Margin="@Margin" />
+    <MudTextField T="string" HelperText="With Helper" Variant="Variant.Filled" Margin="@Margin" />
+    <MudTextField T="string" HelperText="With Helper" Variant="Variant.Outlined" Margin="@Margin" />
+</MudStack>
+
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">MudDatePicker</MudText>
+<MudStack Row AlignItems="@Align">
+    <MudDatePicker Variant="Variant.Text" Margin="@Margin" />
+    <MudDatePicker Variant="Variant.Filled" Margin="@Margin" />
+    <MudDatePicker Variant="Variant.Outlined" Margin="@Margin" />
+</MudStack>
+<MudStack Row AlignItems="@Align">
+    <MudDatePicker Label="With Label" Variant="Variant.Text" Margin="@Margin" />
+    <MudDatePicker Label="With Label" Variant="Variant.Filled" Margin="@Margin" />
+    <MudDatePicker Label="With Label" Variant="Variant.Outlined" Margin="@Margin" />
+</MudStack>
+<MudStack Row AlignItems="@Align">
+    <MudDatePicker HelperText="With Helper" Variant="Variant.Text" Margin="@Margin" />
+    <MudDatePicker HelperText="With Helper" Variant="Variant.Filled" Margin="@Margin" />
+    <MudDatePicker HelperText="With Helper" Variant="Variant.Outlined" Margin="@Margin" />
+</MudStack>
+
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">MudTimePicker</MudText>
+<MudStack Row AlignItems="@Align">
+    <MudTimePicker Variant="Variant.Text" Margin="@Margin" />
+    <MudTimePicker Variant="Variant.Filled" Margin="@Margin" />
+    <MudTimePicker Variant="Variant.Outlined" Margin="@Margin" />
+</MudStack>
+<MudStack Row AlignItems="@Align">
+    <MudTimePicker Label="With Label" Variant="Variant.Text" Margin="@Margin" />
+    <MudTimePicker Label="With Label" Variant="Variant.Filled" Margin="@Margin" />
+    <MudTimePicker Label="With Label" Variant="Variant.Outlined" Margin="@Margin" />
+</MudStack>
+<MudStack Row AlignItems="@Align">
+    <MudTimePicker HelperText="With Helper" Variant="Variant.Text" Margin="@Margin" />
+    <MudTimePicker HelperText="With Helper" Variant="Variant.Filled" Margin="@Margin" />
+    <MudTimePicker HelperText="With Helper" Variant="Variant.Outlined" Margin="@Margin" />
+</MudStack>
+
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">MudNumericField</MudText>
+<MudStack Row AlignItems="@Align">
+    <MudNumericField T="int" Variant="Variant.Text" Margin="@Margin" />
+    <MudNumericField T="int" Variant="Variant.Filled" Margin="@Margin" />
+    <MudNumericField T="int" Variant="Variant.Outlined" Margin="@Margin" />
+</MudStack>
+<MudStack Row AlignItems="@Align">
+    <MudNumericField T="int" Label="With Label" Variant="Variant.Text" Margin="@Margin" />
+    <MudNumericField T="int" Label="With Label" Variant="Variant.Filled" Margin="@Margin" />
+    <MudNumericField T="int" Label="With Label" Variant="Variant.Outlined" Margin="@Margin" />
+</MudStack>
+<MudStack Row AlignItems="@Align">
+    <MudNumericField T="int" HelperText="With Helper" Variant="Variant.Text" Margin="@Margin" />
+    <MudNumericField T="int" HelperText="With Helper" Variant="Variant.Filled" Margin="@Margin" />
+    <MudNumericField T="int" HelperText="With Helper" Variant="Variant.Outlined" Margin="@Margin" />
+</MudStack>
+
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">MudSelect</MudText>
+<MudStack Row AlignItems="@Align">
+    <MudSelect T="string" Variant="Variant.Text" Margin="@Margin"></MudSelect>
+    <MudSelect T="string" Variant="Variant.Filled" Margin="@Margin"></MudSelect>
+    <MudSelect T="string" Variant="Variant.Outlined" Margin="@Margin"></MudSelect>
+</MudStack>
+<MudStack Row AlignItems="@Align">
+    <MudSelect T="string" Label="With Label" Variant="Variant.Text" Margin="@Margin"></MudSelect>
+    <MudSelect T="string" Label="With Label" Variant="Variant.Filled" Margin="@Margin"></MudSelect>
+    <MudSelect T="string" Label="With Label" Variant="Variant.Outlined" Margin="@Margin"></MudSelect>
+</MudStack>
+<MudStack Row AlignItems="@Align">
+    <MudSelect T="string" HelperText="With Helper" Variant="Variant.Text" Margin="@Margin"></MudSelect>
+    <MudSelect T="string" HelperText="With Helper" Variant="Variant.Filled" Margin="@Margin"></MudSelect>
+    <MudSelect T="string" HelperText="With Helper" Variant="Variant.Outlined" Margin="@Margin"></MudSelect>
+</MudStack>
+
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">MudColorPicker</MudText>
+<MudStack Row AlignItems="@Align">
+    <MudColorPicker Variant="Variant.Text" Margin="@Margin" />
+    <MudColorPicker Variant="Variant.Filled" Margin="@Margin" />
+    <MudColorPicker Variant="Variant.Outlined" Margin="@Margin" />
+</MudStack>
+<MudStack Row AlignItems="@Align">
+    <MudColorPicker Label="With Label" Variant="Variant.Text" Margin="@Margin" />
+    <MudColorPicker Label="With Label" Variant="Variant.Filled" Margin="@Margin" />
+    <MudColorPicker Label="With Label" Variant="Variant.Outlined" Margin="@Margin" />
+</MudStack>
+<MudStack Row AlignItems="@Align">
+    <MudColorPicker HelperText="With Helper" Variant="Variant.Text" Margin="@Margin" />
+    <MudColorPicker HelperText="With Helper" Variant="Variant.Filled" Margin="@Margin" />
+    <MudColorPicker HelperText="With Helper" Variant="Variant.Outlined" Margin="@Margin" />
+</MudStack>
+
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">MudAutocomplete</MudText>
+<MudStack Row AlignItems="@Align">
+    <MudAutocomplete T="string" Variant="Variant.Text" Margin="@Margin" />
+    <MudAutocomplete T="string" Variant="Variant.Filled" Margin="@Margin" />
+    <MudAutocomplete T="string" Variant="Variant.Outlined" Margin="@Margin" />
+</MudStack>
+<MudStack Row AlignItems="@Align">
+    <MudAutocomplete T="string" Label="With Label" Variant="Variant.Text" Margin="@Margin" />
+    <MudAutocomplete T="string" Label="With Label" Variant="Variant.Filled" Margin="@Margin" />
+    <MudAutocomplete T="string" Label="With Label" Variant="Variant.Outlined" Margin="@Margin" />
+</MudStack>
+<MudStack Row AlignItems="@Align">
+    <MudAutocomplete T="string" HelperText="With Helper" Variant="Variant.Text" Margin="@Margin" />
+    <MudAutocomplete T="string" HelperText="With Helper" Variant="Variant.Filled" Margin="@Margin" />
+    <MudAutocomplete T="string" HelperText="With Helper" Variant="Variant.Outlined" Margin="@Margin" />
+</MudStack>
+
+@* CHECKBOX, RADIOBUTTONS, SWITCHES *@
+
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">MudCheckBox</MudText>
+<MudCheckBox T="bool" />
+<MudCheckBox T="bool" Label="With Label" />
+
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">MudRadio</MudText>
+<MudRadioGroup T="string" Class="some-main-class" InputClass="some-input-class">
+    <MudRadio Value="@("1")" Placement="Placement.Left" />
+    <MudRadio Value="@("2")" Placement="Placement.Top" />
+    <MudRadio Value="@("3")" />
+</MudRadioGroup>
+<MudRadioGroup T="string" Class="some-main-class" InputClass="some-input-class">
+    <MudRadio Value="@("1")" Placement="Placement.Left">With Content</MudRadio>
+    <MudRadio Value="@("2")" Placement="Placement.Top">With Content</MudRadio>
+    <MudRadio Value="@("3")">With Content</MudRadio>
+</MudRadioGroup>
+
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">MudSwitch</MudText>
+<MudSwitch T="bool" />
+<MudSwitch T="bool" Label="With Label" />
+
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">Using a MudStack to align items that have no label</MudText>
+<MudStack Row AlignItems="AlignItems.Center">
+    <MudTextField T="string" />
+    <MudDatePicker />
+    <MudNumericField T="int" />
+    <MudSelect T="string"></MudSelect>
+    <MudColorPicker />
+    <MudCheckBox T="bool" />
+    <MudRadio Value="@("1")" Placement="Placement.Left" />
+    <MudSwitch T="bool" />
+    <MudButton Variant="Variant.Filled">Text</MudButton>
+</MudStack>
+
+@code {
+    [Parameter]
+    public Margin Margin { get; set; } = Margin.Dense;
+    [Parameter]
+    public AlignItems Align { get; set; } = AlignItems.End;
+
+    public static string __description__ = "Test used to validate any inputs leyout in a single place.";
+}

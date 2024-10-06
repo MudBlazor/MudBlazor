@@ -2,12 +2,13 @@
 
 using System.ComponentModel;
 
+#nullable enable
 namespace MudBlazor
 {
     public enum TabHeaderPosition
     {
         /// <summary>
-        /// Additional content is placed after the the first tab
+        /// Additional content is placed after the first tab
         /// </summary>
         [Description("after")]
         After,

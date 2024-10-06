@@ -20,45 +20,45 @@
 
 
 input.docs-width-slider {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    position: relative;
-    display: block;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  position: relative;
+  display: block;
+  width: 100%;
+  background-color: transparent;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+  }
+
+  @include slider-track {
     width: 100%;
-    background-color: transparent;
-    cursor: pointer;
+    height: 0;
+  }
 
-    &:focus {
-      outline: none;
+  @include slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    border-radius: 2px;
+    height: 64px;
+    width: 10px;
+    transition: box-shadow 0.2s;
+    box-shadow: var(--mud-elevation-25);
+  }
+
+  @include slider-track {
+    background-color: rgba(0,0,0,0);
+  }
+
+  @include slider-thumb {
+    background-color: var(--mud-palette-surface);
+  }
+
+  @include slider-thumb {
+    &:hover {
+      cursor: col-resize;
     }
-
-    @include slider-track {
-      width: 100%;
-      height: 0;
-    }
-
-    @include slider-thumb {
-      appearance: none;
-      -webkit-appearance: none;
-      border: none;
-      border-radius: 2px;
-      height: 64px;
-      width: 10px;
-      transition: box-shadow 0.2s;
-      box-shadow: var(--mud-elevation-25);
-    }
-  
-      @include slider-track {
-        background-color: rgba(0,0,0,0);
-      }
-
-      @include slider-thumb {
-        background-color: var(--mud-palette-surface);
-      }
-
-      @include slider-thumb {
-        &:hover {
-          cursor:col-resize;
-        }
-      }
+  }
 }

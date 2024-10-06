@@ -15,6 +15,7 @@ using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.NumericField;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
@@ -254,7 +255,7 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// An unstable converter should not cause an infinite update loop. This test must complete in under 1 sec!
         /// </summary>
-        [Test, Timeout(1000)]
+        [Test, CancelAfter(1000)]
         public async Task NumericFieldUpdateLoopProtectionTest()
         {
             var comp = Context.RenderComponent<MudNumericField<int>>();
@@ -708,6 +709,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [TestCaseSource(nameof(TypeCases))]
+        public async Task NumericFieldNullable_NoMinMax_Increment_Decrement<T>(T value) where T : struct
+        {
+            var comp = Context.RenderComponent<MudNumericField<T?>>();
+            comp.SetParam(x => x.Step, value);
+
+            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
+            comp.Instance.Value.Should().Be(value);
+
+            comp.Find("input").Change("");
+
+            if (typeof(T) == typeof(byte) || typeof(T) == typeof(ushort) || typeof(T) == typeof(uint) || typeof(T) == typeof(ulong))
+                value = Num.To<T>(0);
+            else
+                value = (T)Convert.ChangeType(-Convert.ToDouble(value), typeof(T));
+
+            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            comp.Instance.Value.Should().Be(value);
+        }
+
+        [TestCaseSource(nameof(TypeCases))]
         public async Task NumericField_Increment_Decrement_OverflowHandled<T>(T value)
         {
             var comp = Context.RenderComponent<MudNumericField<T>>();
@@ -812,5 +833,269 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => numericField.Text.Should().Be("1000"));
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1000));
         }
+
+        /// <summary>
+        /// Validate that a re-render of a debounced numeric field does not cause a loss of uncommitted text.
+        /// </summary>
+        [Test]
+        public async Task DebouncedNumericFieldRerenderTest()
+        {
+            var comp = Context.RenderComponent<DebouncedNumericFieldRerenderTest>();
+            var numericField = comp.FindComponent<MudNumericField<int>>().Instance;
+            var delayedRerenderButton = comp.Find("button#re-render");
+            var converter = new DefaultConverter<int>();
+            comp.Find("input").Input(new ChangeEventArgs { Value = "1" });
+            // trigger first value change
+            await Task.Delay(comp.Instance.DebounceInterval);
+            // trigger delayed re-render
+            delayedRerenderButton.Click();
+            // imitate "typing in progress" by extending the debounce interval until component re-renders
+            var elapsedTime = 0;
+            var currentText = "1";
+            while (elapsedTime < comp.Instance.RerenderDelay)
+            {
+                var delay = comp.Instance.DebounceInterval / 2;
+                currentText += "2";
+                comp.Find("input").Input(new ChangeEventArgs { Value = currentText });
+                await Task.Delay(delay);
+                elapsedTime += delay;
+            }
+            // after the final debounce, the value should be updated without swallowing any user input
+            await Task.Delay(comp.Instance.DebounceInterval);
+            comp.Instance.Value.Should().Be(converter.Get(currentText));
+            numericField.Text.Should().Be(currentText);
+        }
+
+        [Test]
+        public async Task DebouncedNumericField_Should_RenderDefaultValueTextOnFirstRender()
+        {
+            var defaultValue = 1;
+            var converter = new DefaultConverter<int>();
+            var comp = Context.RenderComponent<DebouncedNumericFieldRerenderTest>(
+                Parameter(nameof(MudNumericField<int>.Value), defaultValue));
+            var textfield = comp.FindComponent<MudNumericField<int>>().Instance;
+            textfield.Text.Should().Be(converter.Set(defaultValue));
+        }
+
+        /// <summary>
+        /// Validate that a re-render of a debounced numeric field does not cause a loss of uncommitted text while changing culture.
+        /// </summary>
+        [Test]
+        public async Task DebouncedNumericFieldCultureChangeRerenderTest()
+        {
+            var comp = Context.RenderComponent<DebouncedNumericFieldCultureChangeRerenderTest>();
+            var numericField = comp.FindComponent<MudNumericField<double>>().Instance;
+            var delayedCultureChange = comp.Find("button#culture-change");
+            // ensure text is updated on initialize
+            numericField.Text.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture));
+            // trigger first value change
+            await Task.Delay(comp.Instance.DebounceInterval);
+            // trigger the culture change
+            delayedCultureChange.Click();
+            // imitate "typing in progress" by extending the debounce interval until component re-renders
+            var elapsedTime = 0;
+            var currentText = comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture);
+            while (elapsedTime < comp.Instance.RerenderDelay)
+            {
+                var delay = comp.Instance.DebounceInterval / 2;
+                currentText += "2";
+                comp.Find("input").Input(new ChangeEventArgs { Value = currentText });
+                await Task.Delay(delay);
+                elapsedTime += delay;
+            }
+            // after the culture change delay has elapsed, the uncommitted text is retained (with the old culture)
+            numericField.Text.Should().Be(currentText);
+            // once debounce occurs, both value and text are translated into the new culture
+            // e.g. 1.00222222 (one comma something in en-US) turns into 100.222.222 (hundred million something in de-DE)
+            await Task.Delay(comp.Instance.DebounceInterval * 2);
+            numericField.Text.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture));
+        }
+
+        /// <summary>
+        /// A numeric field with a label should auto-generate an id and use that id on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void NumericFieldWithLabel_Should_GenerateIdForInputAndAccompanyingLabel()
+        {
+            var comp = Context.RenderComponent<MudNumericField<int>>(parameters
+                => parameters.Add(p => p.Label, "Test Label"));
+
+            comp.Find("input").Id.Should().NotBeNullOrEmpty();
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(comp.Find("input").Id);
+        }
+
+        /// <summary>
+        /// A numeric field with a label and UserAttributesId should use the UserAttributesId on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void NumericFieldWithLabelAndUserAttributesId_Should_UseUserAttributesIdForInputAndAccompanyingLabel()
+        {
+            var expectedId = "userattributes-id";
+            var comp = Context.RenderComponent<MudNumericField<int>>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        { "Id", expectedId }
+                    }));
+
+            comp.Find("input").Id.Should().Be(expectedId);
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
+        }
+
+        /// <summary>
+        /// A numeric field with a label, a UserAttributesId, and an InputId should use the InputId on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void NumericFieldWithLabelAndUserAttributesIdAndInputId_Should_UseInputIdForInputAndAccompanyingLabel()
+        {
+            var expectedId = "input-id";
+            var comp = Context.RenderComponent<MudNumericField<int>>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        { "Id", "userattributes-id" }
+                    })
+                    .Add(p => p.InputId, expectedId));
+
+            comp.Find("input").Id.Should().Be(expectedId);
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
+        }
+
+        /// <summary>
+        /// Optional NumericField should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalNumericField_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudNumericField<int>>();
+
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required NumericField should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredNumericField_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudNumericField<int>>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required NumericField attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredNumericFieldAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudNumericField<int>>();
+
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        [Test]
+        public void Should_render_conversion_error_message()
+        {
+            var comp = Context.RenderComponent<MudNumericField<int>>(parameters => parameters
+                .Add(p => p.ErrorId, "error-id")
+                .Add(p => p.Text, "not a number")
+                .Add(p => p.Converter, new DummyErrorConverter()));
+
+            comp.Instance.ConversionErrorMessage.Should().NotBeNullOrEmpty();
+            comp.Find("#error-id").InnerHtml.Should().Be(comp.Instance.ConversionErrorMessage);
+        }
+
+        [TestCase(Adornment.Start)]
+        [TestCase(Adornment.End)]
+        public void Should_render_aria_label_for_adornment_if_provided(Adornment adornment)
+        {
+            var ariaLabel = "the aria label";
+            var comp = Context.RenderComponent<MudNumericField<int>>(parameters => parameters
+                .Add(p => p.Adornment, adornment)
+                .Add(p => p.AdornmentIcon, Icons.Material.Filled.Accessibility)
+                .Add(p => p.AdornmentAriaLabel, ariaLabel));
+
+            comp.Find(".mud-input-adornment-icon").Attributes.GetNamedItem("aria-label")!.Value.Should().Be(ariaLabel);
+        }
+
+#nullable enable
+        /// <summary>
+        /// Verifies that a numeric field with various configurations renders the expected <c>aria-describedby</c> attribute.
+        /// </summary>
+        // no helpers, validates error id is present when error is present
+        [TestCase(false, false)]
+        // with helper text, helper element should only be present when there is no error
+        [TestCase(false, true)]
+        // with user helper id, helper id should always be present
+        [TestCase(true, false)]
+        // with user helper id and helper text, should always favour user helper id
+        [TestCase(true, true)]
+        public void Should_pass_various_aria_describedby_tests(
+            bool withUserHelperId,
+            bool withHelperText)
+        {
+            var inputId = "input-id";
+            var helperId = withUserHelperId ? "user-helper-id" : null;
+            var helperText = withHelperText ? "helper text" : null;
+            var errorId = "error-id";
+            var errorText = "error text";
+            var inputSelector = "input";
+            var firstExpectedAriaDescribedBy = withUserHelperId
+                ? helperId
+                : withHelperText
+                    ? $"{inputId}-helper-text"
+                    : null;
+
+            var comp = Context.RenderComponent<MudNumericField<string>>(parameters => parameters
+                .Add(p => p.InputId, inputId)
+                .Add(p => p.HelperId, helperId)
+                .Add(p => p.HelperText, helperText)
+                .Add(p => p.Error, false)
+                .Add(p => p.ErrorId, errorId)
+                .Add(p => p.ErrorText, errorText));
+
+            // verify helper text is rendered
+            if (withUserHelperId is false && withHelperText)
+            {
+                var action = () => comp.Find($"#{inputId}-helper-text");
+                action.Should().NotThrow();
+            }
+
+            if (firstExpectedAriaDescribedBy is null)
+            {
+                comp.Find(inputSelector).HasAttribute("aria-describedby").Should().BeFalse();
+            }
+            else
+            {
+                comp.Find(inputSelector).GetAttribute("aria-describedby").Should().Be(firstExpectedAriaDescribedBy);
+            }
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Error, true));
+            var secondExpectedAriaDescribedBy = withUserHelperId ? $"{errorId} {helperId}" : errorId;
+
+            // verify error text is rendered
+            var errorAction = () => comp.Find($"#{errorId}");
+            errorAction.Should().NotThrow();
+
+            comp.Find(inputSelector).GetAttribute("aria-describedby").Should().Be(secondExpectedAriaDescribedBy);
+        }
+#nullable disable
     }
 }

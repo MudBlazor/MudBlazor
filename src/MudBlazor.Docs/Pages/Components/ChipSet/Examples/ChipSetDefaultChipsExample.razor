@@ -1,18 +1,18 @@
 ﻿@namespace MudBlazor.Docs.Examples
-<MudChipSet @bind-SelectedChips="selected" MultiSelection="true" Filter="true">
-    <MudChip Text="Milk" Default="true"></MudChip>
-    <MudChip Text="Eggs"></MudChip>
-    <MudChip Text="Soap"></MudChip>
-    <MudChip Text="Cornflakes" Default="true"></MudChip>
-    <MudChip Text="Salad"></MudChip>
-    <MudChip Text="Apples"></MudChip>
-    <MudChip Text="Red wine"></MudChip>
+<MudChipSet @bind-SelectedValues="_selected" SelectionMode="SelectionMode.MultiSelection" CheckMark>
+    <MudChip Value="@("Milk")" />
+    <MudChip Value="@("Eggs")" />
+    <MudChip Value="@("Soap")" />
+    <MudChip Value="@("Cornflakes")" />
+    <MudChip Value="@("Salad")" />
+    <MudChip Value="@("Apples")" />
+    <MudChip Value="@("Red wine")" />
 </MudChipSet>
 
 <div class="d-flex justify-center">
-    @if (selected != null && selected.Length>0)
+    @if (_selected is { Count: > 0 })
     {
-        <MudText>You selected @string.Join(", ", selected.Select(chip=>chip.Text)).</MudText>
+        <MudText>You selected @string.Join(", ", _selected).</MudText>
     }
     else
     {
@@ -22,6 +22,6 @@
 
 @code
 {
-    MudChip[] selected;
+    private IReadOnlyCollection<string> _selected = ["Milk", "Cornflakes"];
 }
 

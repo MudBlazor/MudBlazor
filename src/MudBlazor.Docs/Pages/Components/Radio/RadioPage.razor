@@ -1,4 +1,8 @@
 ﻿@page "/components/radio"
+@page "/components/MudRadio"
+@page "/components/MudRadio`1"
+@page "/components/MudRadioGroup"
+@page "/components/MudRadioGroup`1"
 
 <DocsPage>
     <DocsPageHeader Title="Radio" SubTitle="Radio buttons allow the user to select a single choice from a group of options." />
@@ -8,7 +12,7 @@
             <SectionHeader Title="RadioGroup">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="RadioGroupExample" ShowCode="false">
+            <SectionContent Code="@nameof(RadioGroupExample)" ShowCode="false">
                 <RadioGroupExample />
             </SectionContent>
         </DocsPageSection>
@@ -17,7 +21,7 @@
             <SectionHeader Title="Color">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="RadioGroupColorExample" ShowCode="false">
+            <SectionContent Code="@nameof(RadioGroupColorExample)" ShowCode="false">
                 <RadioGroupColorExample />
             </SectionContent>
         </DocsPageSection>
@@ -26,7 +30,7 @@
             <SectionHeader Title="Dense">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="RadioDenseExample">
+            <SectionContent Code="@nameof(RadioDenseExample)">
                 <RadioDenseExample />
             </SectionContent>
         </DocsPageSection>
@@ -35,7 +39,7 @@
             <SectionHeader Title="Sizes">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="RadioSizeExample">
+            <SectionContent Code="@nameof(RadioSizeExample)">
                 <RadioSizeExample />
             </SectionContent>
         </DocsPageSection>
@@ -44,7 +48,7 @@
             <SectionHeader Title="Content Placement">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="RadioContentPlacementExample" ShowCode="false">
+            <SectionContent Code="@nameof(RadioContentPlacementExample)" ShowCode="false">
                 <RadioContentPlacementExample />
             </SectionContent>
         </DocsPageSection>
@@ -55,7 +59,7 @@
                     <MudText>All child <CodeInline>MudRadio</CodeInline> components can be <CodeInline>Disabled</CodeInline> or set as <CodeInline>ReadOnly</CodeInline> from the parent <CodeInline>MudRadioGroup</CodeInline>.</MudText>
                 </Description>
             </SectionHeader>
-            <SectionContent Code="RadioReadOnlyDisabledExample">
+            <SectionContent Code="@nameof(RadioReadOnlyDisabledExample)">
                 <RadioReadOnlyDisabledExample />
             </SectionContent>
         </DocsPageSection>
@@ -71,7 +75,7 @@
                     <MudText>*Disabled radios cannot be changed by keys.</MudText>
                 </Description>
             </SectionHeader>
-            <SectionContent Code="RadioKeyboardNavigationExample" ShowCode="false">
+            <SectionContent Code="@nameof(RadioKeyboardNavigationExample)" ShowCode="false">
                 <RadioKeyboardNavigationExample />
             </SectionContent>
         </DocsPageSection>

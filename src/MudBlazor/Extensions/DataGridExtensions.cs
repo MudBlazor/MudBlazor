@@ -19,21 +19,29 @@ namespace MudBlazor
             var sourceArray = source as T[] ?? source.ToArray();
 
             if (sourceArray.Length == 0)
+            {
                 return sourceArray;
+            }
 
             if (sortDefinitions.Count == 0)
+            {
                 return sourceArray;
+            }
 
             IOrderedEnumerable<T>? orderedEnumerable = null;
 
             foreach (var sortDefinition in sortDefinitions)
             {
                 if (orderedEnumerable is null)
+                {
                     orderedEnumerable = sortDefinition.Descending ? sourceArray.OrderByDescending(sortDefinition.SortFunc)
                         : sourceArray.OrderBy(sortDefinition.SortFunc);
+                }
                 else
+                {
                     orderedEnumerable = sortDefinition.Descending ? orderedEnumerable.ThenByDescending(sortDefinition.SortFunc)
                         : orderedEnumerable.ThenBy(sortDefinition.SortFunc);
+                }
             }
 
             return orderedEnumerable ?? source;

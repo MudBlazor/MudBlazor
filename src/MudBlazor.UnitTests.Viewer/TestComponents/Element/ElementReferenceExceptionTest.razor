@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+@* https://github.com/MudBlazor/MudBlazor/issues/9544 *@
+
+<MudButton id="element-button"
+           Variant="@Variant.Filled"
+           Color="@Color.Primary"
+           OnClick="@ButtonOnClick"
+           tabindex="@_tabindex">
+    Error
+</MudButton>
+
+@code {
+    private string _tabindex = "-1";
+
+    void ButtonOnClick()
+    {
+        _tabindex = null;
+    }
+}

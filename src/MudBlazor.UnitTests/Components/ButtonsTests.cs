@@ -4,9 +4,12 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
+using Bunit.Rendering;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Button;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -69,6 +72,74 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// MudButton should render with value of Rel property
+        /// </summary>
+        [Test]
+        public void MudButtonShouldRenderRelIfSet()
+        {
+            var link = Parameter(nameof(MudButton.Href), "https://www.google.com");
+            var rel = Parameter(nameof(MudButton.Rel), "nofollow");
+            var comp = Context.RenderComponent<MudButton>(link, rel);
+            comp
+                .Find("a")
+                .GetAttribute("rel")
+                .Should()
+                .Be("nofollow");
+        }
+
+        /// <summary>
+        /// MudButton should have rel="nofollow" if Rel is set to "nofollow", even if Target is _blank
+        /// </summary>
+        [Test]
+        public void MudButtonShouldHaveNoopenerOverridenByRel()
+        {
+            var link = Parameter(nameof(MudButton.Href), "https://www.google.com");
+            // setting target to _blank by default sets rel to noopener
+            var target = Parameter(nameof(MudButton.Target), "_blank");
+            var rel = Parameter(nameof(MudButton.Rel), "nofollow");
+            var comp = Context.RenderComponent<MudButton>(link, target, rel);
+            comp
+                .Find("a")
+                .GetAttribute("rel")
+                .Should()
+                .Be("nofollow");
+        }
+
+        /// <summary>
+        /// MudButton should have rel="" Rel is explicitly set to empty, even if Target is _blank
+        /// </summary>
+        [Test]
+        public void MudButtonShouldHaveHaveNoRelWhenSetToEmpty()
+        {
+            var link = Parameter(nameof(MudButton.Href), "https://www.google.com");
+            var rel = Parameter(nameof(MudButton.Rel), "");
+            var target = Parameter(nameof(MudButton.Target), "_blank");
+            var comp = Context.RenderComponent<MudButton>(link, rel, target);
+            comp
+                .Find("a")
+                .GetAttribute("rel")
+                .Should()
+                .Be("");
+        }
+
+        /// <summary>
+        /// MudButton should not render rel if it's null and target is not _blank
+        /// </summary>
+        [Test]
+        public void MudButtonShouldNotRenderRelIfNullAndTargetNotBlank()
+        {
+            var link = Parameter(nameof(MudButton.Href), "https://www.google.com");
+            var rel = Parameter(nameof(MudButton.Rel), null);
+            var target = Parameter(nameof(MudButton.Target), "_notblank");
+            var comp = Context.RenderComponent<MudButton>(link, rel, target);
+            comp
+                .Find("a")
+                .HasAttribute("rel")
+                .Should()
+                .BeFalse();
+        }
+
+        /// <summary>
         /// MudButton whithout specifying HtmlTag, renders a button
         /// </summary>
         [Test]
@@ -111,6 +182,75 @@ namespace MudBlazor.UnitTests.Components
                 .Replace(" ", string.Empty)
                 .Should()
                 .StartWith("<a");
+        }
+
+        /// <summary>
+        /// MudIconButton should render with value of Rel property
+        /// </summary>
+        [Test]
+        public void MudIconButtonShouldRenderRelIfSet()
+        {
+            var link = Parameter(nameof(MudIconButton.Href), "https://www.google.com");
+            var rel = Parameter(nameof(MudIconButton.Rel), "nofollow");
+            var comp = Context.RenderComponent<MudIconButton>(link, rel);
+            comp
+                .Find("a")
+                .GetAttribute("rel")
+                .Should()
+                .Be("nofollow");
+        }
+
+        /// <summary>
+        /// MudIconButton should have rel="nofollow" if Rel is set to "nofollow", even if Target is _blank
+        /// </summary>
+        [Test]
+        public void MudIconButtonShouldHaveNoopenerOverridenByRel()
+        {
+            var link = Parameter(nameof(MudIconButton.Href), "https://www.google.com");
+            // setting target to _blank by default sets rel to noopener
+            var target = Parameter(nameof(MudIconButton.Target), "_blank");
+            var rel = Parameter(nameof(MudIconButton.Rel), "nofollow");
+            var comp = Context.RenderComponent<MudIconButton>(link, target, rel);
+            comp
+                .Find("a")
+                .GetAttribute("rel")
+                .Should()
+                .Be("nofollow");
+        }
+
+        /// <summary>
+        /// MudButton should have rel="" Rel is explicitly set to empty, even if Target is _blank
+        /// </summary>
+        [Test]
+        public void MudIconButtonShouldHaveHaveNoRelWhenSetToEmpty()
+        {
+            var link = Parameter(nameof(MudIconButton.Href), "https://www.google.com");
+            // setting target to _blank by default sets rel to noopener
+            var target = Parameter(nameof(MudIconButton.Target), "_blank");
+            var rel = Parameter(nameof(MudIconButton.Rel), "");
+            var comp = Context.RenderComponent<MudIconButton>(link, rel, target);
+            comp
+                .Find("a")
+                .GetAttribute("rel")
+                .Should()
+                .Be("");
+        }
+
+        /// <summary>
+        /// MudIconButton should not render rel if it's null and target is not _blank
+        /// </summary>
+        [Test]
+        public void MudIconButtonShouldNotRenderRelIfNullAndTargetNotBlank()
+        {
+            var link = Parameter(nameof(MudIconButton.Href), "https://www.google.com");
+            var rel = Parameter(nameof(MudIconButton.Rel), null);
+            var target = Parameter(nameof(MudIconButton.Target), "_notblank");
+            var comp = Context.RenderComponent<MudIconButton>(link, rel, target);
+            comp
+                .Find("a")
+                .HasAttribute("rel")
+                .Should()
+                .BeFalse();
         }
 
         /// <summary>
@@ -170,28 +310,81 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// MudIconButton should have a title tag/attribute if specified
+        /// MudFab should render with value of Rel property
         /// </summary>
         [Test]
-        public void ShouldRenderTitle()
+        public void MudFabShouldRenderRelIfSet()
         {
-            var title = "Title and tooltip";
-            var icon = Parameter(nameof(MudIconButton.Icon), Icons.Material.Filled.Add);
-            var titleParam = Parameter(nameof(MudIconButton.Title), title);
-            var comp = Context.RenderComponent<MudIconButton>(icon, titleParam);
-            comp.Find($"button[title=\"{title}\"]");
+            var link = Parameter(nameof(MudFab.Href), "https://www.google.com");
+            var rel = Parameter(nameof(MudFab.Rel), "nofollow");
+            var comp = Context.RenderComponent<MudFab>(link, rel);
+            comp
+                .Find("a")
+                .GetAttribute("rel")
+                .Should()
+                .Be("nofollow");
+        }
 
-            icon = Parameter(nameof(MudIconButton.Icon), "customicon");
-            comp.SetParametersAndRender(icon, titleParam);
-            comp.Find($"button[title=\"{title}\"]");
+        /// <summary>
+        /// MudFab should have rel="nofollow" if Rel is set to "nofollow", even if Target is _blank
+        /// </summary>
+        [Test]
+        public void MudFabShouldHaveNoopenerOverridenByRel()
+        {
+            var link = Parameter(nameof(MudFab.Href), "https://www.google.com");
+            // setting target to _blank by default sets rel to noopener
+            var target = Parameter(nameof(MudFab.Target), "_blank");
+            var rel = Parameter(nameof(MudFab.Rel), "nofollow");
+            var comp = Context.RenderComponent<MudFab>(link, target, rel);
+            comp
+                .Find("a")
+                .GetAttribute("rel")
+                .Should()
+                .Be("nofollow");
+        }
+
+        /// <summary>
+        /// MudFab should have rel="" Rel is explicitly set to empty, even if Target is _blank
+        /// </summary>
+        [Test]
+        public void MudFabShouldHaveHaveNoRelWhenSetToEmpty()
+        {
+            var link = Parameter(nameof(MudFab.Href), "https://www.google.com");
+            // setting target to _blank by default sets rel to noopener
+            var target = Parameter(nameof(MudFab.Target), "_blank");
+            var rel = Parameter(nameof(MudFab.Rel), "");
+            var comp = Context.RenderComponent<MudFab>(link, target, rel);
+            comp
+                .Find("a")
+                .GetAttribute("rel")
+                .Should()
+                .Be("");
+        }
+
+        /// <summary>
+        /// MudFab should not render rel if it's null and target is not _blank
+        /// </summary>
+        [Test]
+        public void MudFabShouldNotRenderRelIfNullAndTargetNotBlank()
+        {
+            var link = Parameter(nameof(MudFab.Href), "https://www.google.com");
+            var rel = Parameter(nameof(MudFab.Rel), null);
+            var target = Parameter(nameof(MudFab.Target), "_notblank");
+            var comp = Context.RenderComponent<MudFab>(link, rel, target);
+            comp
+                .Find("a")
+                .HasAttribute("rel")
+                .Should()
+                .BeFalse();
         }
 
         [Test]
         public async Task MudToggleIconTest()
         {
             var comp = Context.RenderComponent<MudToggleIconButton>();
-#pragma warning disable BL0005
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             await comp.InvokeAsync(() => comp.Instance.Disabled = true);
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
             await comp.InvokeAsync(() => comp.Instance.SetToggledAsync(true));
             comp.WaitForAssertion(() => comp.Instance.Toggled.Should().BeFalse());
         }
@@ -256,6 +449,36 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponent<MudButton>().Find("button").HasAttribute("disabled").Should().BeTrue();
             comp.FindComponent<MudFab>().Find("button").HasAttribute("disabled").Should().BeTrue();
             comp.FindComponent<MudIconButton>().Find("button").HasAttribute("disabled").Should().BeTrue();
+        }
+
+        [Test]
+        public async Task ButtonsOnClickErrorContentCaughtException()
+        {
+            var comp = Context.RenderComponent<ButtonErrorContenCaughtException>();
+            var alertTextFunc = () => MudAlert().Find("div.mud-alert-message");
+            IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
+            IRefreshableElementCollection<IElement> Buttons() => comp.FindAll("button.mud-button-root");
+            IElement MudButton() => Buttons()[0];
+            IElement MudFab() => Buttons()[1];
+            IElement MudIconButton() => Buttons()[2];
+
+            // MudButton
+            await MudButton().ClickAsync(new MouseEventArgs());
+            alertTextFunc().InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+            await comp.InvokeAsync(comp.Instance.Recover);
+            alertTextFunc.Should().Throw<ComponentNotFoundException>();
+
+            // MudFab
+            await MudFab().ClickAsync(new MouseEventArgs());
+            alertTextFunc().InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+            await comp.InvokeAsync(comp.Instance.Recover);
+            alertTextFunc.Should().Throw<ComponentNotFoundException>();
+
+            // MudIconButton
+            await MudIconButton().ClickAsync(new MouseEventArgs());
+            alertTextFunc().InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+            await comp.InvokeAsync(comp.Instance.Recover);
+            alertTextFunc.Should().Throw<ComponentNotFoundException>();
         }
     }
 }

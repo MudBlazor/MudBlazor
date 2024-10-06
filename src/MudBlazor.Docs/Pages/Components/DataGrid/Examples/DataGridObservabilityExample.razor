@@ -40,6 +40,9 @@
 
     void RemoveItem()
     {
-        _items.RemoveAt(0);
+        if (_items.Any())
+        {
+            _items.RemoveAt(0);
+        }
     }
 }

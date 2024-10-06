@@ -1,112 +1,101 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using MudBlazor.Services;
+﻿using Microsoft.AspNetCore.Components;
+using MudBlazor.State;
 
 namespace MudBlazor
 {
+#nullable enable
 
-    public partial class MudHidden : MudComponentBase, IAsyncDisposable
+    /// <summary>
+    /// A component which conditionally renders content depending on the screen size.
+    /// </summary>
+    /// <remarks>
+    /// This component uses JavaScript to listen for browser window size changes.  If you want a solution using only CSS, you can use the <see href="https://mudblazor.com/features/display#class-reference">responsive display classes</see>.
+    /// </remarks>
+    public partial class MudHidden : MudComponentBase, IBrowserViewportObserver, IAsyncDisposable
     {
-        private Breakpoint _currentBreakpoint = Breakpoint.None;
+        private readonly ParameterState<bool> _hiddenState;
         private bool _serviceIsReady = false;
-        private Guid _breakpointServiceSubscriptionId;
+        private Breakpoint _currentBreakpoint = Breakpoint.None;
 
-        [Inject] public IBreakpointService BreakpointService { get; set; }
-
-        [CascadingParameter] public Breakpoint CurrentBreakpointFromProvider { get; set; } = Breakpoint.None;
+        [Inject]
+        protected IBrowserViewportService BrowserViewportService { get; set; } = null!;
 
         /// <summary>
-        /// The screen size(s) depending on which the ChildContent should not be rendered (or should be, if Invert is true)
+        /// The current breakpoint.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Breakpoint.None"/>.
+        /// </remarks>
+        [CascadingParameter]
+        public Breakpoint CurrentBreakpointFromProvider { get; set; } = Breakpoint.None;
+
+        /// <summary>
+        /// The breakpoint at which component is not rendered, when <see cref="Invert"/> is <c>false</c>.
+        /// </summary>
+        /// <remarks>
+        /// When <see cref="Invert"/> is <c>true</c>, this property controls when the content is shown.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Hidden.Behavior)]
         public Breakpoint Breakpoint { get; set; }
 
         /// <summary>
-        /// Inverts the Breakpoint, so that the ChildContent is only rendered when the breakpoint matches the screen size.
+        /// Causes the <see cref="Breakpoint"/> to control when content is displayed.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Hidden.Behavior)]
         public bool Invert { get; set; }
 
-        private bool _isHidden = true;
+        /// <summary>
+        /// Hides the content within this component.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Hidden.Behavior)]
+        public bool Hidden { get; set; } = true;
 
         /// <summary>
-        /// True if the component is not visible (two-way bindable)
+        /// Occurs when <see cref="Hidden"/> has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<bool> HiddenChanged { get; set; }
+
+        /// <summary>
+        /// The content within this component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Hidden.Behavior)]
-        public bool IsHidden
-        {
-            get => _isHidden;
-            set
-            {
-                if (_isHidden != value)
-                {
-                    _isHidden = value;
-                    IsHiddenChanged.InvokeAsync(_isHidden);
+        public RenderFragment? ChildContent { get; set; }
 
-                }
-            }
+        public MudHidden()
+        {
+            using var registerScope = CreateRegisterScope();
+            _hiddenState = registerScope.RegisterParameter<bool>(nameof(Hidden))
+                .WithParameter(() => Hidden)
+                .WithEventCallback(() => HiddenChanged);
         }
 
-        /// <summary>
-        /// Fires when the breakpoint changes visibility of the component
-        /// </summary>
-        [Parameter] public EventCallback<bool> IsHiddenChanged { get; set; }
-
-        /// <summary>
-        /// Child content of component.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Hidden.Behavior)]
-        public RenderFragment ChildContent { get; set; }
-
-        protected void Update(Breakpoint currentBreakpoint)
+        protected override async Task OnParametersSetAsync()
         {
-            if (CurrentBreakpointFromProvider != Breakpoint.None)
-            {
-                currentBreakpoint = CurrentBreakpointFromProvider;
-            }
-            else if (_serviceIsReady == false) { return; }
-
-            if (currentBreakpoint == Breakpoint.None) { return; }
-
-            _currentBreakpoint = currentBreakpoint;
-
-            var hidden = BreakpointService.IsMediaSize(Breakpoint, currentBreakpoint);
-            if (Invert == true)
-            {
-                hidden = !hidden;
-            }
-
-            IsHidden = hidden;
-        }
-
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
-            Update(_currentBreakpoint);
+            await base.OnParametersSetAsync();
+            await UpdateAsync(_currentBreakpoint);
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
-            if (firstRender == true)
+
+            if (firstRender)
             {
                 if (CurrentBreakpointFromProvider == Breakpoint.None)
                 {
-                    var attachResult = await BreakpointService.Subscribe((x) =>
-                    {
-                        Update(x);
-                        InvokeAsync(StateHasChanged);
-                    });
-
                     _serviceIsReady = true;
-                    _breakpointServiceSubscriptionId = attachResult.SubscriptionId;
-                    Update(attachResult.Breakpoint);
-                    StateHasChanged();
+                    await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
                 }
                 else
                 {
@@ -115,6 +104,53 @@ namespace MudBlazor
             }
         }
 
-        public async ValueTask DisposeAsync() => await BreakpointService.Unsubscribe(_breakpointServiceSubscriptionId);
+        /// <summary>
+        /// Releases resources used by this component.
+        /// </summary>
+        public async ValueTask DisposeAsync()
+        {
+            if (IsJSRuntimeAvailable)
+            {
+                await BrowserViewportService.UnsubscribeAsync(this);
+            }
+        }
+
+        Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();
+
+        async Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
+        {
+            await UpdateAsync(browserViewportEventArgs.Breakpoint);
+            await InvokeAsync(StateHasChanged);
+        }
+
+        protected async Task UpdateAsync(Breakpoint currentBreakpoint)
+        {
+            if (CurrentBreakpointFromProvider != Breakpoint.None)
+            {
+                currentBreakpoint = CurrentBreakpointFromProvider;
+            }
+            else
+            {
+                if (!_serviceIsReady)
+                {
+                    return;
+                }
+            }
+
+            if (currentBreakpoint == Breakpoint.None)
+            {
+                return;
+            }
+
+            _currentBreakpoint = currentBreakpoint;
+
+            var hidden = await BrowserViewportService.IsBreakpointWithinReferenceSizeAsync(Breakpoint, currentBreakpoint);
+            if (Invert)
+            {
+                hidden = !hidden;
+            }
+
+            await _hiddenState.SetValueAsync(hidden);
+        }
     }
 }

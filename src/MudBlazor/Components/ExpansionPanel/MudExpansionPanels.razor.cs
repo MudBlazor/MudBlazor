@@ -1,85 +1,105 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
+    /// <summary>
+    /// A container which manages <see cref="MudExpansionPanel"/> components such that when one panel is expanded the others are collapsed automatically.
+    /// </summary>
     public partial class MudExpansionPanels : MudComponentBase
     {
+        private List<MudExpansionPanel> _panels = new();
+
         protected string Classname =>
-        new CssBuilder("mud-expansion-panels")
-            .AddClass($"mud-expansion-panels-square", Square)
-            .AddClass(Class)
-        .Build();
+            new CssBuilder("mud-expansion-panels")
+                .AddClass("mud-expansion-panels-square", Square)
+                .AddClass(Class)
+                .Build();
 
         /// <summary>
-        /// If true, border-radius is set to 0.
+        /// Uses square corners for the panel.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
         public bool Square { get; set; }
 
         /// <summary>
-        /// If true, multiple panels can be expanded at the same time.
+        /// Allows multiple panels to be expanded at the same time.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
         public bool MultiExpansion { get; set; }
 
         /// <summary>
-        /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
+        /// The size of the drop shadow.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>1</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
         public int Elevation { set; get; } = 1;
 
         /// <summary>
-        /// If true, removes vertical padding from all panels' childcontent.
+        /// Uses compact padding for all panels.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
         public bool Dense { get; set; }
 
         /// <summary>
-        /// If true, the left and right padding is removed from all panels' childcontent.
+        /// Adds left and right padding to all panels.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
-        public bool DisableGutters { get; set; }
+        public bool Gutters { get; set; } = true;
 
         /// <summary>
-        /// If true, the borders around each panel will be removed.
+        /// Shows borders around each panel.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
-        public bool DisableBorders { get; set; }
+        public bool Outlined { get; set; } = true;
 
         /// <summary>
-        /// Child content of component.
+        /// The content within this component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
-        private List<MudExpansionPanel> _panels = new();
-
-        internal void AddPanel(MudExpansionPanel panel)
+        internal async Task AddPanelAsync(MudExpansionPanel panel)
         {
-            if (MultiExpansion == false && _panels.Any(p => p.IsExpanded))
+            if (!MultiExpansion && _panels.Any(p => p._expandedState.Value))
             {
-                panel.Collapse(update_parent: false);
+                await panel.CollapseAsync();
             }
 
-            panel.NotifyIsExpandedChanged += UpdatePanelsOnPanelsChanged;
             _panels.Add(panel);
         }
 
-        public void RemovePanel(MudExpansionPanel panel)
+        internal void RemovePanel(MudExpansionPanel panel)
         {
-            panel.NotifyIsExpandedChanged -= UpdatePanelsOnPanelsChanged;
             _panels.Remove(panel);
             try
             {
@@ -88,73 +108,77 @@ namespace MudBlazor
             catch (InvalidOperationException) { /* this happens on page reload, probably a Blazor bug */ }
         }
 
-        internal void UpdatePanelsOnPanelsChanged(MudExpansionPanel panel)
+        internal async Task NotifyPanelsChanged(MudExpansionPanel panel)
         {
-            if(MultiExpansion == false && panel.IsExpanded)
+            if (!MultiExpansion && panel._expandedState.Value)
             {
-                CollapseAllExcept(panel);
+                await CollapseAllExceptAsync(panel);
                 return;
             }
 
-            UpdateAll();
+            await UpdateAllAsync();
         }
 
-        public void UpdateAll()
+        /// <summary>
+        /// Refreshes the expansion state of all panels.
+        /// </summary>
+        public Task UpdateAllAsync()
         {
-            MudExpansionPanel last = null;
+            MudExpansionPanel? last = null;
             foreach (var panel in _panels)
             {
-                if (last != null)
-                    last.NextPanelExpanded = panel.IsExpanded;
+                if (last is not null)
+                {
+                    last.NextPanelExpanded = panel._expandedState.Value;
+                }
+
                 last = panel;
             }
             StateHasChanged();
-        }
 
-        [Obsolete("Use CollapseAllExcept instead.")]
-        [ExcludeFromCodeCoverage]
-        public void CloseAllExcept(MudExpansionPanel panel)
-        {
-            CollapseAllExcept(panel);
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Collapses all panels except the given one.
         /// </summary>
-        /// <param name="panel">The panel not to collapse.</param>
-        public void CollapseAllExcept(MudExpansionPanel panel)
+        /// <param name="panel">The panel to keep expanded.</param>
+        public async Task CollapseAllExceptAsync(MudExpansionPanel panel)
         {
-            foreach (var p in _panels)
+            foreach (var expansionPanel in _panels)
             {
-                if (p == panel)
+                if (expansionPanel == panel)
+                {
                     continue;
-                p.Collapse(update_parent: false);
+                }
+
+                await expansionPanel.CollapseAsync();
             }
-            this.InvokeAsync(UpdateAll);
+            await InvokeAsync(UpdateAllAsync);
         }
 
         /// <summary>
-        /// Collapses all panels.
+        /// Hides the content of all panels.
         /// </summary>
-        public void CollapseAll()
+        public async Task CollapseAllAsync()
         {
-            foreach (var p in _panels)
+            foreach (var expansionPanel in _panels)
             {
-                p.Collapse(update_parent: false);
+                await expansionPanel.CollapseAsync();
             }
-            this.InvokeAsync(UpdateAll);
+            await InvokeAsync(UpdateAllAsync);
         }
 
         /// <summary>
-        /// Expands all panels.
+        /// Shows the content of all panels.
         /// </summary>
-        public void ExpandAll()
+        public async Task ExpandAllAsync()
         {
-            foreach (var p in _panels)
+            foreach (var expansionPanel in _panels)
             {
-                p.Expand(update_parent: false);
+                await expansionPanel.ExpandAsync();
             }
-            this.InvokeAsync(UpdateAll);
+            await InvokeAsync(UpdateAllAsync);
         }
     }
 }

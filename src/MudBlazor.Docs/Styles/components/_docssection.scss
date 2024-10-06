@@ -1,10 +1,10 @@
-﻿
+
 .docs-page-section {
 
   .docs-section-header {
     .mud-typography-h5 {
-      margin-top: 60px;
-      margin-bottom: 20px;
+      margin-top: 40px;
+      margin-bottom: 12px;
     }
 
     .mud-typography-h6 {
@@ -25,54 +25,55 @@
       height: unset;
       padding: 0;
       border-radius: 8px 8px 0 0;
-      
+
       .mud-button {
         text-transform: none;
         font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
         font-size: 14px;
         border-radius: 0;
         padding: 4px 8px;
-        
-        &.file-button{
+
+        &.file-button {
           border-color: var(--mud-palette-lines-default);
           letter-spacing: normal;
           margin-top: -1px;
-          &:first-child{
+
+          &:first-child {
             border-top-left-radius: 8px;
           }
         }
-        
-        &:last-child:not(.file-button){
+
+        &:last-child:not(.file-button) {
           border-top-right-radius: 8px;
         }
       }
-      
-      &.outlined{
-        .file-button{
-          &:not(.active){
+
+      &.outlined {
+        .file-button {
+          &:not(.active) {
             border: 1px solid var(--mud-palette-lines-default);
             border-top: none;
             border-radius: 0 0 4px 4px;
-            
-            &:first-child{
+
+            &:first-child {
               border-top-left-radius: 8px;
               border-bottom-left-radius: 0px;
               border-left: none;
             }
           }
 
-          &.active{
+          &.active {
             color: var(--mud-palette-primary);
           }
         }
       }
-      
-      &.darken {
-        background-color: var(--mud-palette-grey-light);
 
-        .file-button{
-          &.active{
-            background-color: var(--mud-palette-background-grey);
+      &.darken {
+        background-color: var(--mud-palette-gray-light);
+
+        .file-button {
+          &.active {
+            background-color: var(--mud-palette-background-gray);
           }
         }
       }
@@ -85,7 +86,7 @@
     }
 
     &.darken {
-      background: linear-gradient(0deg, var(--mud-palette-grey-lighter) 0%, var(--mud-palette-background-grey) 50%);
+      background: linear-gradient(0deg, var(--mud-palette-gray-lighter) 0%, var(--mud-palette-background-gray) 50%);
     }
 
     &.outlined {
@@ -115,21 +116,29 @@
     position: relative;
     overflow: hidden;
     border-radius: 8px;
-    background-color: var(--mud-palette-background-grey);
+    background-color: var(--mud-palette-background-gray);
     transition: border-radius 250ms cubic-bezier(.4, 0, .2, 1);
 
     .copy-code-button {
       position: absolute;
       bottom: 8px;
       right: 8px;
-      color: rgba(5, 0, 51, 0.0);
-      transition: color 250ms cubic-bezier(.4, 0, .2, 1) 0ms;
+      background-color: transparent;
     }
-
-    &:hover {
+    /*Show only on hover if on desktop*/
+    /*TODO: Show if code is focused*/
+    @media(hover: hover) and (pointer: fine) {
       .copy-code-button {
-        color: var(--mud-palette-text-secondary) !important;
-        background-color: transparent;
+        color: rgba(5, 0, 51, 0.0);
+        transition: color 250ms cubic-bezier(.4, 0, .2, 1) 0ms;
+        background-color: unset;
+      }
+
+      &:hover {
+        .copy-code-button {
+          color: var(--mud-palette-text-secondary) !important;
+          background-color: transparent;
+        }
       }
     }
 
@@ -138,8 +147,8 @@
       overflow: hidden;
       transition: max-height 0.15s ease-out;
     }
-    
-    &.show-code{
+
+    &.show-code {
       .docs-section-source-container {
         overflow: auto;
         max-height: 500px;
@@ -153,9 +162,8 @@
   }
 }
 
-
 .docs-content-api {
-  .docs-section-content-inner{
+  .docs-section-content-inner {
     padding: 0 !important;
   }
 }

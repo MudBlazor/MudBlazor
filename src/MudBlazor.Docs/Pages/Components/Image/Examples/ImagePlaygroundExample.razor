@@ -24,14 +24,14 @@
             </MudSelect>
             <div class="d-flex justify-space-between align-center mt-4">
                 <MudText>Width: @(SetWidth ? $"{ImageWidth}px" : "Auto")</MudText>
-                <MudSwitch @bind-Checked="@SetWidth" Color="Color.Primary" Class="mr-0" />
+                <MudSwitch @bind-Value="SetWidth" Color="Color.Primary" Class="mr-0" />
             </div>
-            <MudSlider @bind-Value="@ImageWidth" Disabled="@(!SetWidth)" Max="400" Color="Color.Primary"/>
+            <MudSlider @bind-Value="ImageWidth" Disabled="@(!SetWidth)" Max="400" Color="Color.Primary"/>
             <div class="d-flex justify-space-between align-center mt-4">
                 <MudText>Height: @(SetHeight ? $"{ImageHeight}px" : "Auto")</MudText>
-                <MudSwitch @bind-Checked="@SetHeight" Color="Color.Secondary" Class="mr-0" />
+                <MudSwitch @bind-Value="SetHeight" Color="Color.Secondary" Class="mr-0" />
             </div>
-            <MudSlider @bind-Value="@ImageHeight" Disabled="@(!SetHeight)" Max="350" Color="Color.Secondary"/>
+            <MudSlider @bind-Value="ImageHeight" Disabled="@(!SetHeight)" Max="350" Color="Color.Secondary"/>
         </MudPaper>
     </MudItem>
 </MudGrid>

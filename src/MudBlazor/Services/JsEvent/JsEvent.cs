@@ -84,7 +84,7 @@ namespace MudBlazor.Services
                 return;
             try
             {
-                _jsRuntime.InvokeVoidAsync("mudJsEvent.subscribe", _elementId, eventName).AndForget();
+                _jsRuntime.InvokeVoidAsync("mudJsEvent.subscribe", _elementId, eventName).CatchAndLog();
                 _subscribedEvents.Add(eventName);
             }
             catch (JSDisconnectedException) { }
@@ -138,8 +138,8 @@ namespace MudBlazor.Services
                     return;
                 if (_caretPositionChangedHandlers.Count == 1)
                 {
-                    Unsubscribe("click").AndForget();
-                    Unsubscribe("keyup").AndForget();
+                    Unsubscribe("click").CatchAndLog();
+                    Unsubscribe("keyup").CatchAndLog();
                 }
                 _caretPositionChangedHandlers.Remove(value);
             }
@@ -175,7 +175,7 @@ namespace MudBlazor.Services
                 if (_pasteHandlers.Count == 0)
                     return;
                 if (_pasteHandlers.Count == 1)
-                    Unsubscribe("paste").AndForget();
+                    Unsubscribe("paste").CatchAndLog();
                 _pasteHandlers.Remove(value);
             }
         }
@@ -210,7 +210,7 @@ namespace MudBlazor.Services
                 if (_selectHandlers.Count == 0)
                     return;
                 if (_selectHandlers.Count == 1)
-                    Unsubscribe("select").AndForget();
+                    Unsubscribe("select").CatchAndLog();
                 _selectHandlers.Remove(value);
             }
         }
@@ -232,7 +232,7 @@ namespace MudBlazor.Services
             if (!disposing || _isDisposed)
                 return;
             _isDisposed = true;
-            Disconnect().AndForget();
+            Disconnect().CatchAndLog();
             _dotNetRef.Dispose();
         }
 

@@ -4,28 +4,31 @@
 
 namespace MudBlazor
 {
+#nullable enable
     public class PseudoCss
     {
-        private string scope = ":root";
+        private string _scope = ":root";
 
         /// <summary>
         /// Set different scopes for the generated Theme
         /// </summary>
         /// <remarks>
-        /// Ensure you use a valid CSS scope <see href="https://developer.mozilla.org/en-US/docs/Web/CSS/:root">Pseudo-classes Mozilla</see> for a list of valid ones
+        /// Ensure you use a valid CSS scope <see href="https://developer.mozilla.org/docs/Web/CSS/:root">Pseudo-classes Mozilla</see> for a list of valid ones
         /// Defaults to :root
         /// </remarks>
         public string Scope
         {
-            get => scope; 
+            get => _scope;
             set
             {
                 if (string.IsNullOrEmpty(value))
-                    scope = ":root";
+                {
+                    _scope = ":root";
+                }
                 else
                 {
                     var trimmed = value.Trim(':');
-                    scope = $":{trimmed}";
+                    _scope = $":{trimmed}";
                 }
             }
         }

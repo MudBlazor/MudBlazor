@@ -1,32 +1,39 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="UploadFiles">
-    <ButtonTemplate>
-        <MudButton HtmlTag="label"
-                   Variant="Variant.Filled"
+    <ActivatorContent>
+        <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
-                   StartIcon="@Icons.Material.Filled.CloudUpload"
-                   for="@context">
+                   StartIcon="@Icons.Material.Filled.CloudUpload">
             Multiple Files
         </MudButton>
-    </ButtonTemplate>
+    </ActivatorContent>
 </MudFileUpload>
 
 <MudFileUpload T="IBrowserFile" Accept=".pdf" FilesChanged="UploadFiles2" MaximumFileCount="100">
-    <ButtonTemplate>
-        <MudButton HtmlTag="label"
-                   Variant="Variant.Filled"
+    <ActivatorContent>
+        <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
-                   StartIcon="@Icons.Material.Filled.CloudUpload"
-                   for="@context">
+                   StartIcon="@Icons.Material.Filled.CloudUpload">
             Only .pdf files
         </MudButton>
-    </ButtonTemplate>
+    </ActivatorContent>
+</MudFileUpload>
+
+
+<MudFileUpload T="IBrowserFile" Accept=".png, .jpg" FilesChanged="UploadFiles2" MaximumFileCount="100">
+    <ActivatorContent>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload">
+            Only image files
+        </MudButton>
+    </ActivatorContent>
 </MudFileUpload>
 
 @if (files != null)
 {
-    <MudList>
+    <MudList T="string">
         @foreach (var file in files)
         {
             <MudListItem Icon="@Icons.Material.Filled.AttachFile">

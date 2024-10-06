@@ -1,6 +1,4 @@
-﻿#pragma warning disable BL0005 // Set parameter outside component
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -100,7 +98,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.fake-class-item3").Count.Should().Be(1);
             //// Forcing SelectedIndex value by setter (for binding purposes)
             last = carousel.SelectedContainer;
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             await comp.InvokeAsync(() => carousel.SelectedIndex = 0);
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
             carousel.SelectedIndex.Should().Be(0);
             carousel.SelectedContainer.Should().Be(carousel.Items[0]);
             carousel.SelectedItem.Should().Be(carousel.Items[0]);
@@ -250,13 +250,26 @@ namespace MudBlazor.UnitTests.Components
 
             var mudSwipeArea = comp.FindComponent<MudSwipeArea>().Instance;
 
+            var initialTouchPoints = new TouchPoint[]
+            {
+                new() {ClientX = 200, ClientY = 0},
+            };
+            var touchPoints = new TouchPoint[]
+            {
+                new() {ClientX = 100, ClientY = 0},
+            };
+
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             comp.Instance.EnableSwipeGesture = false;
-            await comp.InvokeAsync(() => mudSwipeArea.OnSwipe(SwipeDirection.RightToLeft));
+            await comp.InvokeAsync(() => mudSwipeArea.OnTouchStart(new TouchEventArgs() { Touches = initialTouchPoints }));
+            await comp.InvokeAsync(async () => await mudSwipeArea.OnTouchEnd(new TouchEventArgs() { ChangedTouches = touchPoints }));
             comp.Instance.SelectedIndex.Should().Be(0);
 
             comp.Instance.EnableSwipeGesture = true;
-            await comp.InvokeAsync(() => mudSwipeArea.OnSwipe(SwipeDirection.RightToLeft));
+            await comp.InvokeAsync(() => mudSwipeArea.OnTouchStart(new TouchEventArgs() { Touches = initialTouchPoints }));
+            await comp.InvokeAsync(async () => await mudSwipeArea.OnTouchEnd(new TouchEventArgs() { ChangedTouches = touchPoints }));
             comp.Instance.SelectedIndex.Should().Be(1);
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
         }
 
         /// <summary>

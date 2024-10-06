@@ -1,0 +1,9 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudText>The text after here is: <MudText Inline="@_inline" Color="Color.Primary">@(_inline ? "inline." : "block.")</MudText></MudText>
+
+<MudSwitch @bind-Value="_inline" Color="Color.Primary" Label="Inline" />
+
+@code {
+    bool _inline;
+}

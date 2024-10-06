@@ -1,5 +1,6 @@
 ﻿@page "/components/NumericField"
-
+@page "/components/MudNumericField"
+@page "/components/MudNumericField`1"
 
 <DocsPage>
 	<DocsPageHeader Title="Numeric Field" SubTitle="Numeric field components are used for receiving user provided numbers." />
@@ -16,7 +17,7 @@
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: check out <MudLink Href="/components/textfield">MudTextField</MudLink> for examples regarding Adornments, Usage in a Form, Select and Focus etc.</MudAlert>
                 </Description>
             </SectionHeader>
-            <SectionContent Code="NumericFieldBasicExample">
+            <SectionContent Code="@nameof(NumericFieldBasicExample)">
                 <NumericFieldBasicExample/>
             </SectionContent>
         </DocsPageSection>
@@ -28,7 +29,7 @@
                     It can still be changed with the keyboard up/down keys, or manually.
                 </Description>
             </SectionHeader>
-            <SectionContent Class="demo-numericfield" Code="NumericFieldHideButtonsExample" ShowCode="false">
+            <SectionContent Class="demo-numericfield" Code="@nameof(NumericFieldHideButtonsExample)" ShowCode="false">
                 <NumericFieldHideButtonsExample/>
             </SectionContent>
         </DocsPageSection>
@@ -39,7 +40,7 @@
                     You can set a custom culture and format which will be used for parsing the numeric value from the input string as well as for presentation.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="NumericFieldCultureExample">
+            <SectionContent Code="@nameof(NumericFieldCultureExample)">
                 <NumericFieldCultureExample/>
             </SectionContent>
         </DocsPageSection>
@@ -53,7 +54,7 @@
                     Do not assign null values to <CodeInline>Min</CodeInline>, <CodeInline>Max</CodeInline> and <CodeInline>Step</CodeInline>.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="NumericFieldBindingValueTypesExample" ShowCode="false">
+            <SectionContent Code="@nameof(NumericFieldBindingValueTypesExample)" ShowCode="false">
                 <NumericFieldBindingValueTypesExample/>
             </SectionContent>
         </DocsPageSection>
@@ -67,7 +68,7 @@
                     <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-3">Warning: Pressing Arrow Up/Down or Shift + MouseWheel are not debounced.</MudAlert>
                 </Description>
             </SectionHeader>
-            <SectionContent Code="DebouncedNumericFieldExample" ShowCode="false">
+            <SectionContent Code="@nameof(DebouncedNumericFieldExample)" ShowCode="false">
                 <DebouncedNumericFieldExample/>
             </SectionContent>
         </DocsPageSection>
@@ -79,7 +80,7 @@
                     You can also set the <CodeInline>InvertMouseWheel</CodeInline> parameter to reverse the mouse wheel up and down event.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="ChangeTheValueWithTheMouseWheelExample" ShowCode="false">
+            <SectionContent Code="@nameof(ChangeTheValueWithTheMouseWheelExample)" ShowCode="false">
                 <ChangeTheValueWithTheMouseWheelExample/>
             </SectionContent>
         </DocsPageSection>

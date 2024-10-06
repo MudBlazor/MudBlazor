@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -14,17 +13,50 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Represents a cell displayed at the top of a <see cref="MudDataGrid{T}"/> column.
+    /// </summary>
+    /// <typeparam name="T">The kind of item managed by the grid.</typeparam>
     public partial class HeaderCell<T> : MudComponentBase, IDisposable
     {
-        [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
-        [CascadingParameter(Name = "IsOnlyHeader")] public bool IsOnlyHeader { get; set; } = false;
+        private string _id = Identifier.Create();
 
-        [Parameter] public Column<T> Column { get; set; }
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        /// <summary>
+        /// The <see cref="MudDataGrid{T}"/> which contains this header cell.
+        /// </summary>
+        [CascadingParameter]
+        public MudDataGrid<T> DataGrid { get; set; }
+
+        /// <summary>
+        /// Shows this cell only in the header area.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, the header cell display in the header area and will not display cells with data like a normal column.  This property is set automatically when adding a header to the grid manually.
+        /// </remarks>
+        [CascadingParameter(Name = "IsOnlyHeader")]
+        public bool IsOnlyHeader { get; set; } = false;
+
+        /// <summary>
+        /// The column associated with this header cell.
+        /// </summary>
+        [Parameter]
+        public Column<T> Column { get; set; }
+
+        /// <summary>
+        /// The content within this header cell.
+        /// </summary>
+        [Parameter]
+        public RenderFragment ChildContent { get; set; }
 
         private SortDirection _initialDirection;
-        private bool _isSelected;
+        private bool _selected;
 
+        /// <summary>
+        /// The direction to sort values in this column.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="SortDirection.None"/>.
+        /// </remarks>
         [Parameter]
         public SortDirection SortDirection
         {
@@ -37,14 +69,16 @@ namespace MudBlazor
 
         private string _classname =>
             new CssBuilder(Column?.HeaderClass)
+                .AddClass(Column?.HeaderClassFunc?.Invoke(DataGrid?.CurrentPageItems ?? Enumerable.Empty<T>()))
                 .AddClass(Column?.headerClassname)
                 .AddClass(Class)
             .Build();
 
         private string _style =>
             new StyleBuilder()
+                .AddStyle(Column?.HeaderStyleFunc?.Invoke(DataGrid?.CurrentPageItems ?? Enumerable.Empty<T>()))
                 .AddStyle(Column?.HeaderStyle)
-                .AddStyle("width", _width?.ToPx(), when: _width.HasValue)
+                .AddStyle("width", Width?.ToPx(), when: Width.HasValue)
                 .AddStyle(Style)
             .Build();
 
@@ -74,7 +108,14 @@ namespace MudBlazor
 
         private ElementReference _headerElement;
 
-        private double? _width;
+        /// <summary>
+        /// The width for this header cell, in pixels.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        public double? Width { get; internal set; }
+
         private double? _resizerHeight;
         private bool _isResizing;
         private bool _filtersMenuVisible;
@@ -121,7 +162,7 @@ namespace MudBlazor
                     return false;
 
                 return Column?.ShowFilterIcon ?? DataGrid?.ShowFilterIcons ?? true;
-            }              
+            }
         }
 
         private bool hideable
@@ -146,45 +187,56 @@ namespace MudBlazor
             {
                 if (!sortable && !filterable && !groupable)
                     return false;
+                if (!sortable && DataGrid.FilterMode == DataGridFilterMode.ColumnFilterRow)
+                    return false;
 
                 return Column?.ShowColumnOptions ?? DataGrid?.ShowColumnOptions ?? true;
             }
         }
 
-        private string sortIconClass
+        internal string sortIconClass
         {
             get
             {
-                if (_initialDirection == SortDirection.Descending)
+                return _initialDirection switch
                 {
-                    return "sort-direction-icon mud-direction-desc";
-                }
-                else if (_initialDirection == SortDirection.Ascending)
-                {
-                    return "sort-direction-icon mud-direction-asc";
-                }
-                else
-                {
-                    return "sort-direction-icon";
-                }
+                    SortDirection.Descending => "sort-direction-icon mud-direction-desc",
+                    SortDirection.Ascending => "sort-direction-icon mud-direction-asc",
+                    _ => "sort-direction-icon"
+                };
             }
         }
 
-        private bool hasFilter
+        internal bool hasFilter
         {
             get
             {
                 if (DataGrid == null)
                     return false;
 
-                return DataGrid.FilterDefinitions.Any(x => x.Column?.PropertyName == Column?.PropertyName && x.Operator != null && x.Value != null);
+                return DataGrid.FilterDefinitions.Any(x => x.Column?.PropertyName == Column?.PropertyName && x.Operator != null);
             }
         }
 
         #endregion
+        protected override async Task OnParametersSetAsync()
+        {
+            if (Column != null)
+            {
+                Column.HeaderCell = this;
+
+                if (Column.filterable)
+                {
+                    Column.FilterContext.HeaderCell = this;
+                }
+
+            }
+            await base.OnParametersSetAsync();
+        }
 
         protected override async Task OnInitializedAsync()
         {
+            await base.OnInitializedAsync();
             _initialDirection = Column?.InitialDirection ?? SortDirection.None;
 
             if (_initialDirection != SortDirection.None)
@@ -199,16 +251,6 @@ namespace MudBlazor
                 DataGrid.SelectedAllItemsChangedEvent += OnSelectedAllItemsChanged;
                 DataGrid.SelectedItemsChangedEvent += OnSelectedItemsChanged;
             }
-
-            if (null != Column)
-            {
-                Column.HeaderCell = this;
-
-                if (Column.filterable)
-                {
-                    Column.FilterContext.HeaderCell = this;
-                }
-            }
         }
 
         #region Events
@@ -221,7 +263,7 @@ namespace MudBlazor
         /// <param name="removedSorts">The removed sorts.</param>
         private void OnGridSortChanged(Dictionary<string, SortDefinition<T>> activeSorts, HashSet<string> removedSorts)
         {
-            if ((Column.Sortable.HasValue && !Column.Sortable.Value) || string.IsNullOrWhiteSpace(Column.PropertyName))
+            if (Column == null || (Column.Sortable.HasValue && !Column.Sortable.Value) || string.IsNullOrWhiteSpace(Column.PropertyName))
                 return;
 
             if (null != removedSorts && removedSorts.Contains(Column.PropertyName))
@@ -236,37 +278,42 @@ namespace MudBlazor
 
         private void OnSelectedAllItemsChanged(bool value)
         {
-            _isSelected = value;
+            _selected = value;
             StateHasChanged();
         }
 
         private void OnSelectedItemsChanged(HashSet<T> items)
         {
-            _isSelected = items.Count == DataGrid.GetFilteredItemsCount();
+            _selected = items.Count == DataGrid.GetFilteredItemsCount();
             StateHasChanged();
         }
 
-        private async Task OnResizerMouseDown(MouseEventArgs args)
+        private async Task OnResizerPointerDown(PointerEventArgs args)
         {
             if (!resizable)
                 return;
 
             if (args.Detail > 1) // Double click clears the width, hence setting it to minimum size.
             {
-                _width = null;
+                Width = null;
                 return;
             }
 
             _isResizing = await DataGrid.StartResizeColumn(this, args.ClientX);
         }
 
-        private async Task OnResizerMouseOver()
+        private async Task OnResizerPointerOver()
         {
             if (!_isResizing)
-                _resizerHeight = await DataGrid?.GetActualHeight();
+            {
+                if (DataGrid is not null)
+                {
+                    _resizerHeight = await DataGrid.GetActualHeight();
+                }
+            }
         }
 
-        private void OnResizerMouseLeave()
+        private void OnResizerPointerLeave()
         {
             if (!_isResizing)
                 _resizerHeight = null;
@@ -277,7 +324,7 @@ namespace MudBlazor
             if (targetWidth > 0)
             {
                 _resizerHeight = gridHeight;
-                _width = targetWidth;
+                Width = targetWidth;
                 await InvokeAsync(StateHasChanged);
             }
 
@@ -312,6 +359,8 @@ namespace MudBlazor
                 _ => SortDirection.Ascending
             };
 
+            DataGrid.DropContainerHasChanged();
+
             if (args.CtrlKey && DataGrid.SortMode == SortMode.Multiple)
                 await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.PropertyName, _initialDirection, Column.GetLocalSortFunc(), Column.Comparer));
             else
@@ -322,16 +371,25 @@ namespace MudBlazor
         {
             await InvokeAsync(() => DataGrid.RemoveSortAsync(Column.PropertyName));
             MarkAsUnsorted();
+            DataGrid.DropContainerHasChanged();
         }
 
-        internal async Task AddFilterAsync()
+        internal void AddFilter()
         {
-            if (DataGrid.FilterMode == DataGridFilterMode.Simple && Column != null)
+            var filterDefinition = Column?.FilterContext.FilterDefinition;
+            if (DataGrid.FilterMode == DataGridFilterMode.Simple && filterDefinition != null)
             {
-                await DataGrid.AddFilterAsync(Column.FilterContext.FilterDefinition.Clone());
+                if (DataGrid.FilterDefinitions.All(x => x.Title != filterDefinition.Title))
+                {
+                    DataGrid.FilterDefinitions.Add(filterDefinition.Clone());
+                }
+                DataGrid.OpenFilters();
             }
             else if (DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
+            {
                 _filtersMenuVisible = true;
+                DataGrid.DropContainerHasChanged();
+            }
         }
 
         internal void OpenFilters()
@@ -339,78 +397,126 @@ namespace MudBlazor
             if (DataGrid.FilterMode == DataGridFilterMode.Simple)
                 DataGrid.OpenFilters();
             else if (DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
+            {
                 _filtersMenuVisible = true;
+                DataGrid.DropContainerHasChanged();
+            }
         }
 
         internal async Task ApplyFilterAsync()
         {
             DataGrid.FilterDefinitions.Add(Column.FilterContext.FilterDefinition);
-            if (DataGrid.ServerData is not null) await DataGrid.ReloadServerData();
-            else ((IMudStateHasChanged)DataGrid).StateHasChanged();
+            if (DataGrid.HasServerData)
+            {
+                await DataGrid.ReloadServerData();
+            }
+            else
+            {
+                ((IMudStateHasChanged)DataGrid).StateHasChanged();
+            }
             _filtersMenuVisible = false;
+            DataGrid.DropContainerHasChanged();
         }
 
-        internal async Task ApplyFilterAsync(FilterDefinition<T> filterDefinition)
+        internal async Task ApplyFilterAsync(IFilterDefinition<T> filterDefinition)
         {
             DataGrid.FilterDefinitions.Add(filterDefinition);
-            if (DataGrid.ServerData is not null) await DataGrid.ReloadServerData();
-            else ((IMudStateHasChanged)DataGrid).StateHasChanged();
+            if (DataGrid.HasServerData)
+            {
+                await DataGrid.ReloadServerData();
+            }
+            else
+            {
+                ((IMudStateHasChanged)DataGrid).StateHasChanged();
+            }
             _filtersMenuVisible = false;
+            DataGrid.DropContainerHasChanged();
         }
 
-        internal async Task ApplyFiltersAsync(IEnumerable<FilterDefinition<T>> filterDefinitions)
+        internal async Task ApplyFiltersAsync(IEnumerable<IFilterDefinition<T>> filterDefinitions)
         {
             DataGrid.FilterDefinitions.AddRange(filterDefinitions);
-            if (DataGrid.ServerData is not null) await DataGrid.ReloadServerData();
-            else ((IMudStateHasChanged)DataGrid).StateHasChanged();
+            if (DataGrid.HasServerData)
+            {
+                await DataGrid.ReloadServerData();
+            }
+            else
+            {
+                ((IMudStateHasChanged)DataGrid).StateHasChanged();
+            }
             _filtersMenuVisible = false;
+            DataGrid.DropContainerHasChanged();
         }
 
         internal async Task ClearFilterAsync()
         {
             Column.FilterContext.FilterDefinition.Value = null;
             await DataGrid.RemoveFilterAsync(Column.FilterContext.FilterDefinition.Id);
-            if (DataGrid.ServerData is null) ((IMudStateHasChanged)DataGrid).StateHasChanged();
+            if (!DataGrid.HasServerData)
+                ((IMudStateHasChanged)DataGrid).StateHasChanged();
             _filtersMenuVisible = false;
+            DataGrid.DropContainerHasChanged();
         }
 
-        internal async Task ClearFilterAsync(FilterDefinition<T> filterDefinition)
+        internal async Task ClearFilterAsync(IFilterDefinition<T> filterDefinition)
         {
             await DataGrid.RemoveFilterAsync(filterDefinition.Id);
-            if (DataGrid.ServerData is null) ((IMudStateHasChanged)DataGrid).StateHasChanged();
+            if (!DataGrid.HasServerData)
+                ((IMudStateHasChanged)DataGrid).StateHasChanged();
             _filtersMenuVisible = false;
+            DataGrid.DropContainerHasChanged();
         }
 
-        internal async Task ClearFiltersAsync(IEnumerable<FilterDefinition<T>> filterDefinitions)
+        internal async Task ClearFiltersAsync(IEnumerable<IFilterDefinition<T>> filterDefinitions)
         {
             DataGrid.FilterDefinitions.RemoveAll(x => filterDefinitions.Any(y => y.Id == x.Id));
-            if (DataGrid.ServerData != null) await DataGrid.ReloadServerData();
-            else ((IMudStateHasChanged)DataGrid).StateHasChanged();
+            if (DataGrid.HasServerData)
+            {
+                await DataGrid.ReloadServerData();
+            }
+            else
+            {
+                ((IMudStateHasChanged)DataGrid).StateHasChanged();
+            }
             _filtersMenuVisible = false;
+            DataGrid.DropContainerHasChanged();
         }
 
         private async Task CheckedChangedAsync(bool value)
         {
-            await DataGrid?.SetSelectAllAsync(value);
+            if (DataGrid is not null)
+            {
+                await DataGrid.SetSelectAllAsync(value);
+            }
         }
 
         internal async Task HideColumnAsync()
         {
-            if (Column != null)
+            if (Column is not null)
             {
                 await Column.HideAsync();
                 ((IMudStateHasChanged)DataGrid).StateHasChanged();
             }
         }
 
-        internal void GroupColumn()
+        internal async Task GroupColumnAsync()
         {
-            Column?.SetGrouping(true);
+            if (Column is not null)
+            {
+                await Column.SetGroupingAsync(true);
+            }
+
+            DataGrid.DropContainerHasChanged();
         }
 
-        internal void UngroupColumn()
+        internal async Task UngroupColumnAsync()
         {
-            Column?.SetGrouping(false);
+            if (Column is not null)
+            {
+                await Column.SetGroupingAsync(false);
+            }
+
+            DataGrid.DropContainerHasChanged();
         }
 
         private void MarkAsUnsorted()
@@ -421,9 +527,12 @@ namespace MudBlazor
 
         #endregion
 
+        /// <summary>
+        /// Releases resources used by this header cell.
+        /// </summary>
         public void Dispose()
         {
-            if (DataGrid != null)
+            if (DataGrid is not null)
             {
                 DataGrid.SortChangedEvent -= OnGridSortChanged;
                 DataGrid.SelectedAllItemsChangedEvent -= OnSelectedAllItemsChanged;

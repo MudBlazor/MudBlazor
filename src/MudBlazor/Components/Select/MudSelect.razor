@@ -3,47 +3,95 @@
 @inherits MudBaseInput<T>
 
 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
-	<div class="mud-select" id="@_elementId">
-		<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" HelperTextOnFocus="@HelperTextOnFocus" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
-						 Error="@Error" ErrorText="@ErrorText" ErrorId="@ErrorId" Disabled="@GetDisabledState()" @onclick="@ToggleMenu" Required="@Required" ForId="@FieldId">
-			<InputContent>
-                <MudInput @ref="_elementReference" InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)"
-                          Class="mud-select-input" Margin="@Margin" Placeholder="@Placeholder"
+    <div class="@OuterClassname" id="@_elementId" @onfocusout="@OnFocusOutAsync">
+        <MudInputControl Label="@Label"
+                         Variant="@Variant"
+                         HelperId="@GetHelperId()"
+                         HelperText="@HelperText"
+                         HelperTextOnFocus="@HelperTextOnFocus"
+                         FullWidth="@FullWidth"
+                         Margin="@Margin"
+                         Class="@Classname"
+                         Style="@Style"
+                         Error="@HasErrors"
+                         ErrorId="@ErrorId"
+                         ErrorText="@GetErrorText()"
+                         Disabled="@GetDisabledState()"
+                         Required="@Required"
+                         ForId="@(InputElementId ?? string.Empty)"
+                         @onclick="@ToggleMenu">
+            <InputContent>
+                <MudInput @ref="_elementReference"
+                          InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)"
+                          Class="@InputClassname"
+                          Margin="@Margin"
+                          Placeholder="@Placeholder"
+                          Label="@Label"
                           Variant="@Variant"
+                          Typo="@Typo"
                           TextUpdateSuppression="false"
-                          Value="@(Strict && !IsValueInList ? null : Text)" DisableUnderLine="@DisableUnderLine"
-                          Disabled="@GetDisabledState()" ReadOnly="true" Error="@Error" ErrorId="@ErrorId"
-                          OnAdornmentClick="@OnAdornmentClick" AdornmentIcon="@_currentIcon" Adornment="@Adornment"
-                          AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
-                          Clearable="@Clearable" OnClearButtonClick="(async (e) => await SelectClearButtonClickHandlerAsync(e))"
-                          @attributes="UserAttributes" OnBlur="@OnLostFocus">
-                    @if (CanRenderValue)
-                    {
+                          Value="@(Strict && !IsValueInList ? null : Text)"
+                          Underline="@Underline"
+                          Disabled="@GetDisabledState()"
+                          ReadOnly="true"
+                          Error="@Error"
+                          ErrorId="@ErrorId"
+                          HelperId="@GetHelperId()"
+                          HelperText="@HelperText"
+                          AdornmentText="@AdornmentText"
+                          AdornmentIcon="@_currentIcon"
+                          Adornment="@Adornment"
+                          AdornmentColor="@AdornmentColor"
+                          IconSize="@IconSize"
+                          AdornmentAriaLabel="@AdornmentAriaLabel"
+                          OnAdornmentClick="@OnAdornmentClick"
+                          Clearable="@Clearable"
+                          ClearIcon="@ClearIcon"
+                          OnClearButtonClick="@(async (e) => await SelectClearButtonClickHandlerAsync(e))"
+                          @attributes="UserAttributes"
+                          OnBlur="@OnBlurAsync"
+                          ShrinkLabel="@ShrinkLabel"
+                          InputId="@InputElementId"
+                          Required="@Required">
+                    @if (CanRenderValue) {
                         @GetSelectedValuePresenter()
                     }
                 </MudInput>
-				<MudPopover Open=@(_isOpen) MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
-					<CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
-						<MudList Class="@ListClass" Clickable="true" Dense="@Dense" @bind-SelectedValue="_activeItemId">
-                            @if (MultiSelection && SelectAll)
-							{
-								<MudListItem Icon="@SelectAllCheckBoxIcon" Text="@SelectAllText" OnClick="SelectAllClickAsync" OnClickHandlerPreventDefault="true" Dense="@Dense" Class="mb-2" />
+                <MudPopover Open=@(_open)
+                            MaxHeight="@MaxHeight"
+                            AnchorOrigin="@AnchorOrigin"
+                            TransformOrigin="@TransformOrigin"
+                            Class="@PopoverClass"
+                            RelativeWidth="true">
+                    <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
+                        <MudList T="string"
+                                 Class="@ListClass"
+                                 Dense="@Dense"
+                                 @bind-SelectedValue="_activeItemId">
+                            @if (MultiSelection && SelectAll) {
+                                <MudListItem Value="@("__SelectAll__")"
+                                             Icon="@SelectAllCheckBoxIcon"
+                                             Text="@SelectAllText"
+                                             OnClick="SelectAllClickAsync"
+                                             OnClickPreventDefault="true"
+                                             Dense="@Dense"
+                                             Class="mb-2" />
                                 <MudDivider />
-							}
-							@ChildContent
-						</MudList>
-					</CascadingValue>
-				</MudPopover>
-			</InputContent>
-		</MudInputControl>
-	</div>
+                            }
+                            @ChildContent
+                        </MudList>
+                    </CascadingValue>
+                </MudPopover>
+            </InputContent>
+        </MudInputControl>
+    </div>
     @*Shadow select items for IsValueInList and CanRenderValue*@
     <CascadingValue Value="@((IMudShadowSelect)this)" IsFixed="true">
         <CascadingValue Name="HideContent" Value="true">
-			@ChildContent
-		</CascadingValue>
-	</CascadingValue>
+            @ChildContent
+        </CascadingValue>
+    </CascadingValue>
 
 </CascadingValue>
-<!-- mousedown instead of click needed to close the menu before OnLostFocus runs -->
-<MudOverlay Visible="_isOpen" @onmousedown="@(() => CloseMenu(false))" LockScroll="@LockScroll" />
+<!-- pointerdown instead of click needed to close the menu before OnLostFocus runs -->
+<MudOverlay Visible="_open" @onpointerdown="@(() => CloseMenu(false))" LockScroll="@LockScroll" />

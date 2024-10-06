@@ -1,5 +1,4 @@
 ﻿@page "/features/icons"
-@using System.Reflection
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 
 <DocsPage>
@@ -21,7 +20,7 @@
                 <MudItem xs="12" Class="relative">
                     @if(SelectedIconOrigin == IconOrigin.Material)
                     {
-                        <MudChipSet Filter="true" Mandatory="true">
+                        <MudChipSet T="string" CheckMark>
                             <MudChip Default="true" Text="Filled" OnClick="@(() => ChangeIconCategory(IconType.Filled))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
                             <MudChip Text="Outlined" OnClick="@(() => ChangeIconCategory(IconType.Outlined))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
                             <MudChip Text="Rounded" OnClick="@(() => ChangeIconCategory(IconType.Rounded))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
@@ -31,7 +30,7 @@
                     }
                     else if(SelectedIconOrigin == IconOrigin.Custom)
                     {
-                        <MudChipSet Filter="true" Mandatory="true">
+                        <MudChipSet T="string" CheckMark>
                             <MudChip Default="true" Text="All" OnClick="@(() => ChangeIconCategory(IconType.All))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
                             <MudChip Text="Brands" OnClick="@(() => ChangeIconCategory(IconType.Brands))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
                             <MudChip Text="FileFormats" OnClick="@(() => ChangeIconCategory(IconType.FileFormats))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
@@ -43,9 +42,9 @@
             
             <div class="relative">
                 <div class="absolute" style="top:0px;width:100%;">
-                    <div @ref="killZone" style="@GetKillZoneStyle(false)"></div>
+                    <div @ref="_killZone" style="@GetKillZoneStyle()"></div>
                 </div>
-                <Virtualize Items="@SelectedIcons" ItemSize="@_iconCardHeight">
+                <Virtualize Items="@SelectedIcons" ItemSize="@IconCardHeight">
                     <div class="d-flex mud-width-full">
                         @foreach(var icon in context.RowIcons)
                         {
@@ -64,8 +63,8 @@
     </DocsPageContent>
 </DocsPage>
 
-<MudDrawer @bind-Open="@iconDrawerOpen" ClipMode="DrawerClipMode.Always" Anchor="Anchor.End" DisableOverlay="true" Elevation="0" Width="260px" Class="mud-icondrawer" Variant="@DrawerVariant.Temporary">
-    <MudToolBar Dense="true" DisableGutters="true" Class="pl-4 py-8">
+<MudDrawer @bind-Open="@_iconDrawerOpen" ClipMode="DrawerClipMode.Always" Anchor="Anchor.End" Overlay="false" Elevation="0" Width="260px" Class="mud-icondrawer" Variant="@DrawerVariant.Temporary">
+    <MudToolBar Dense="true" Gutters="false" Class="pl-4 py-8">
         <MudIcon Size="Size.Large" Icon="@SelectedIcon.Code" Class="mr-4"/>
         <MudText Typo="Typo.subtitle1">@SelectedIcon.Name</MudText>
         <MudSpacer/>
@@ -84,7 +83,7 @@
             <MudIcon Size="@PreviewIconSize" Color="@PreviewIconColor" Icon="@SelectedIcon.Code" />
         </MudPaper>
 
-        <MudSelect T="Color" @bind-Value="@PreviewIconColor" Label="Color" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Class="my-4">
+        <MudSelect T="Color" @bind-Value="PreviewIconColor" Label="Color" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Class="my-4">
             <DocsColorSelect Color="Color.Dark" />
             <DocsColorSelect Color="Color.Default" />
             <DocsColorSelect Color="Color.Primary" />
@@ -95,7 +94,7 @@
             <DocsColorSelect Color="Color.Warning" />
             <DocsColorSelect Color="Color.Error" />
         </MudSelect>
-        <MudSelect T="Size" @bind-Value="@PreviewIconSize" Label="Size" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Class="my-4">
+        <MudSelect T="Size" @bind-Value="PreviewIconSize" Label="Size" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Class="my-4">
             <MudSelectItem Value="Size.Small">Small</MudSelectItem>
             <MudSelectItem Value="Size.Medium">Medium</MudSelectItem>
             <MudSelectItem Value="Size.Large">Large</MudSelectItem>

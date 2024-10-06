@@ -19,21 +19,23 @@
         <meta Property="og:description" Content="@SubTitle" />
         <meta Name="twitter:description" Content="@SubTitle" />
     }
+    <link rel="canonical" href="@GetCanonicalUri()" />
 </HeadContent>
 
 @if (SpecialHeaderContent != null)
 {
     <div class="docs-page-header my-16">
         @SpecialHeaderContent
-        <DocsRenderBenchmark/>
+        <DocsRenderBenchmark />
     </div>
 }
 else
 {
-    <div class="docs-page-header mt-6 mb-12">
-        <MudText Typo="@Typo.h3">@Title</MudText>
-        <MudText>@GetSubTitle() @Description</MudText>
-        <DocsRenderBenchmark/>
+    <div class="docs-page-header">
+        <MudText Typo="@Typo.h4">@Title</MudText>
+        <MudText Typo="@Typo.subtitle1">@GetSubTitle()</MudText>
+        <MudText Typo="@Typo.body1">@Description</MudText>
+        <DocsRenderBenchmark />
     </div>
 }
 
@@ -44,7 +46,7 @@ else
         <div class="docs-page-apilinks">
             <ul class="my-2">
                 <li>
-                    <MudLink Href="@_apiLink">
+                    <MudLink Href="@($"api/{_componentType.Name}")">
                         <CodeInline>@($"<{_componentTypeName}>")</CodeInline>
                     </MudLink>
                 </li>
@@ -53,7 +55,7 @@ else
                     @foreach (var childType in _component.ChildTypes)
                     {
                         <li>
-                            <MudLink Href="@($"api/{childType.Name.Replace("`1", "").ToLowerInvariant().Replace("mud","")}")" Class="ms-1">
+                            <MudLink Href="@($"api/{childType.Name}")" Class="ms-1">
                                 - <CodeInline>@($"<{childType.Name.Replace("`1", "")}>")</CodeInline>
                             </MudLink>
                         </li>
@@ -65,7 +67,6 @@ else
 }
 @if (_isApiPage && !string.IsNullOrEmpty(ComponentLink))
 {
-    <link Rel="canonical" Href="@($"https://mudblazor.com/{ComponentLink}")" />
     <DocsPageSection api-link-section>
         <SectionHeader Title="Pages" />
         <div class="docs-page-apilinks">
@@ -105,14 +106,14 @@ else
     {
         base.OnParametersSet();
         _isApiPage = NavigationManager.Uri.ToString().Contains("/api/");
-        _componentName = NavigationManager.Uri.ToString().Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+        _componentName = NavigationManager.GetComponentLink();
         _componentType = ApiLink.GetTypeFromComponentLink(_componentName);
         _component = MenuService.GetComponent(_componentType);
         _parentComponent = MenuService.GetParent(_componentType);
         _componentTypeName = _componentType?.Name.Replace("`1", "");
         _apiLink = $"api/{_componentName}";
         _componentPage = (_component?.Type == null) ? _parentComponent?.Name : _component?.Name;
-    }   
+    }
 
     private string GetComponentLink()
     {
@@ -121,16 +122,16 @@ else
         return $"components/{_parentComponent?.Link}";
     }
 
-    string GetTitle() => $"{Title} - MudBlazor";
+    private string GetTitle() => $"{Title} - MudBlazor";
 
-    string GetSubTitle()
+    private string GetSubTitle()
     {
         if (string.IsNullOrEmpty(SubTitle))
             return "";
         return SubTitle.TrimEnd('.') + ".";
     }
 
-    string GetKeywords()
+    private string GetKeywords()
     {
         var keywords = new HashSet<string>(Regex.Split(Keywords ?? "", @",\s"));
         keywords.Add(Title);
@@ -143,5 +144,10 @@ else
         keywords.Remove("");
         keywords.Remove(null);
         return string.Join(", ", keywords);
+    }
+
+    private string GetCanonicalUri()
+    {
+        return NavigationManager.Uri.Replace(NavigationManager.BaseUri, "https://mudblazor.com/");
     }
 }

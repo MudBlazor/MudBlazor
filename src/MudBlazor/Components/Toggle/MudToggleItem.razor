@@ -1,0 +1,28 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@typeparam T
+
+<MudButton role="checkbox"
+           aria-checked="@(Selected.ToString().ToLower())"
+           @attributes="UserAttributes"
+           Class="@Classname"
+           Style="@Style"
+           OnClick="HandleOnClickAsync"
+           Size="@(Parent?.Size ?? Size.Medium)"
+           Color="@(Parent?.Color ?? Color.Default)"
+           Variant="@(Selected ? Variant.Filled : Variant.Outlined)"
+           Disabled="Disabled || (Parent?.Disabled ?? false)"
+           Ripple="Parent?.Ripple == true"
+           StartIcon="@GetCurrentIcon()"
+           IconClass="@CheckMarkClassname">
+    @if (ChildContent is not null)
+    {
+        <div class="mud-toggle-item-content">
+            @ChildContent(Selected)
+        </div>
+    }
+    else
+    {
+        @(Text == null ? Value : Text)
+    }
+</MudButton>

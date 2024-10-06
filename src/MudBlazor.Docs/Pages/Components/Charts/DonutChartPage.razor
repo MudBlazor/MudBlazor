@@ -1,4 +1,5 @@
 ﻿@page "/components/donutchart"
+@page "/components/donut"
 @page "/components/chart-types/donutchart"
 
 <DocsPage>
@@ -10,7 +11,7 @@
             <SectionHeader Title="Basic Donut">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="DonutExample1" ShowCode="false" Block="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(DonutExample1)" ShowCode="false" Block="true">
                 <DonutExample1 />
             </SectionContent>
         </DocsPageSection>
@@ -19,7 +20,7 @@
             <SectionHeader Title="Legend Position">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="DonutExample2" ShowCode="false" Block="true">
+            <SectionContent Code="@nameof(DonutExample2)" ShowCode="false" Block="true">
                 <DonutExample2 />
             </SectionContent>
         </DocsPageSection>
@@ -27,7 +28,7 @@
             <SectionHeader Title="Custom SVG Content">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="DonutCustomGraphicsExample" Block="true">
+            <SectionContent Code="@nameof(DonutCustomGraphicsExample)" Block="true">
                 <DonutCustomGraphicsExample />
             </SectionContent>
          </DocsPageSection>

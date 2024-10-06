@@ -1,5 +1,5 @@
 ﻿@page "/components/field"
-
+@page "/components/MudField"
 
 <DocsPage>
     <DocsPageHeader Title="Field" SubTitle="A component that inherits the same look and behaviour as Textfield. It has no input, but you can add your own content." />
@@ -9,7 +9,7 @@
             <SectionHeader Title="Example Fields">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="FieldBasicExample" ShowCode="false">
+            <SectionContent Code="@nameof(FieldBasicExample)" ShowCode="false">
                 <FieldBasicExample />
             </SectionContent>
         </DocsPageSection>
@@ -21,7 +21,7 @@
                     It does not remove the full inner padding, but it is minimized to the absolute necessary value, to not concur with the label.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="FieldMinimizePaddingExample" ShowCode="false">
+            <SectionContent Code="@nameof(FieldMinimizePaddingExample)" ShowCode="false">
                 <FieldMinimizePaddingExample />
             </SectionContent>
         </DocsPageSection>
@@ -29,14 +29,14 @@
         <DocsPageSection>
             <SectionHeader Title="Advanced Usage">
                 <Description>
-                    Ulitmately you could build your own custom input controls with <CodeInline Tag>MudField</CodeInline>. One step in that 
+                    Ultimately you could build your own custom input controls with <CodeInline Tag>MudField</CodeInline>. One step in that 
                     direction is to define the content as a <CodeInline>RenderFragment</CodeInline>. This allows to set the 
                     <CodeInline>ChildContent</CodeInline> to null which results in the label becoming a placeholder automatically. 
                     Of course it makes a lot of sense to add some kind of input in the content like we did in this example with a
                     native color picker.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="FieldLabelPlaceholderExample" ShowCode="false">
+            <SectionContent Code="@nameof(FieldLabelPlaceholderExample)" ShowCode="false">
                 <FieldLabelPlaceholderExample />
             </SectionContent>
         </DocsPageSection>

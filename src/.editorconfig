@@ -38,6 +38,14 @@ indent_size = 2
 end_of_line = lf
 indent_size = 2
 
+# Sassy CSS - CSS preprocessor
+[*.scss]
+charset = utf-8
+indent_size = 2
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
 # Dotnet code style settings:
 [*.{cs,vb}]
 
@@ -96,7 +104,7 @@ dotnet_naming_symbols.constants.required_modifiers = const
 
 dotnet_naming_style.constant_style.capitalization = pascal_case
 
-# Static fields are camelCase and start with s_
+# Static fields are camelCase and start with _
 dotnet_naming_rule.static_fields_should_be_camel_case.severity = suggestion
 dotnet_naming_rule.static_fields_should_be_camel_case.symbols = static_fields
 dotnet_naming_rule.static_fields_should_be_camel_case.style = static_field_style
@@ -105,7 +113,7 @@ dotnet_naming_symbols.static_fields.applicable_kinds = field
 dotnet_naming_symbols.static_fields.required_modifiers = static
 
 dotnet_naming_style.static_field_style.capitalization = camel_case
-dotnet_naming_style.static_field_style.required_prefix = s_
+dotnet_naming_style.static_field_style.required_prefix = _
 
 # Instance fields are camelCase and start with _
 dotnet_naming_rule.instance_fields_should_be_camel_case.severity = suggestion
@@ -300,6 +308,8 @@ dotnet_diagnostic.IDE0056.severity = none
 dotnet_diagnostic.IDE0057.severity = none
 # BL0007 Component Parameters must be auto props
 dotnet_diagnostic.BL0007.severity = suggestion
+# IDE0290 Use primary constructor
+dotnet_diagnostic.IDE0290.severity = none
 
 [*]
 end_of_line = lf

@@ -1,0 +1,37 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
+
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudAutocomplete T="string"
+                 Label="US States"
+                 @bind-Value="value"
+                 SearchFunc="@Search1"
+                 PopoverClass="autocomplete-popover-class"
+                 OpenOnFocus="@OpenOnFocus" />
+
+@code {
+    public static string __description__ = "Initial value should be shown and popup should not open.";
+
+    private string value = "Alabama";
+
+    private readonly string[] states =
+    {
+        "Alabama", "Alaska", "American Samoa", "Arizona",
+        "Arkansas", "California", "Colorado", "Connecticut",
+    };
+
+    [Parameter]
+    public bool OpenOnFocus { get; set; } = true;
+
+    private async Task<IEnumerable<string>> Search1(string value, CancellationToken token)
+    {
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(50, token);
+
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return states;
+        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+}

@@ -1,4 +1,5 @@
 ﻿@page "/components/highlighter"
+@page "/components/MudHighlighter"
 
 <DocsPage>
     <DocsPageHeader Title="Highlighter">
@@ -17,7 +18,7 @@
                     <SectionHeader Title="MudList">
                         <Description></Description>
                     </SectionHeader>
-                    <SectionContent DarkenBackground="true" Code="HighlighterWithListExample" ShowCode="false">
+                    <SectionContent DarkenBackground="true" Code="@nameof(HighlighterWithListExample)" ShowCode="false">
                         <HighlighterWithListExample />
                     </SectionContent>
                 </DocsPageSection>
@@ -25,36 +26,60 @@
                     <SectionHeader Title="MudTable">
                         <Description></Description>
                     </SectionHeader>
-                    <SectionContent DarkenBackground="true" Code="HighlighterWithTableExample" ShowCode="false">
+                    <SectionContent DarkenBackground="true" Code="@nameof(HighlighterWithTableExample)" ShowCode="false">
                         <HighlighterWithTableExample/>
                     </SectionContent>
                 </DocsPageSection>
+         </SectionSubGroups>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Search, appearance">
+                <Description></Description>
+            </SectionHeader>
+            <SectionSubGroups>
+               <DocsPageSection>
+                  <SectionHeader Title="UntilNextBoundary">
+                     <Description>Set the <code class="docs-code docs-code-primary">UntilNextBoundary</code> property to true if you want to highlight the text until the next regex boundary occurs.</Description>
+                  </SectionHeader>
+               </DocsPageSection>
             </SectionSubGroups>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Style">
-                <Description>Style it with the Class or Style properties:</Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="HighlighterWithCustomStyleExample" ShowCode="false">
-                <HighlighterWithCustomStyleExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Case sensitivity">
-                <Description>Set the <code class="docs-code docs-code-primary">UntilNextBoundary</code> property to true if you want to highlight the text until the next regex boundary occurs, or the <code class="docs-code docs-code-primary">CaseSensitive</code> property to decide if you want to perform a case-sensitive highlight.</Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="HighlighterUntilNextBoundaryExample" ShowCode="false">
-                <HighlighterUntilNextBoundaryExample />
-            </SectionContent>
+            <SectionSubGroups>
+               <DocsPageSection>
+                  <SectionHeader Title="CaseSensitive">
+                     <Description>Set the <code class="docs-code docs-code-primary">CaseSensitive</code> property to true to perform a case-sensitive highlight.</Description>
+                  </SectionHeader>
+               </DocsPageSection>
+            </SectionSubGroups>
+            <SectionSubGroups>
+               <DocsPageSection>
+                  <SectionHeader Title="Markup">
+                     <Description>
+                        Set the <code class="docs-code docs-code-primary">Markup</code> property to true to render markup content as a <code class="docs-code docs-code-primary">RenderFragment</code>.
+                     </Description>
+                  </SectionHeader>
+                  <SectionContent DarkenBackground="true" Code="@nameof(HighlighterUntilNextBoundaryExample)" ShowCode="false">
+                     <HighlighterUntilNextBoundaryExample />
+                  </SectionContent>
+               </DocsPageSection>
+         </SectionSubGroups>
+         <SectionSubGroups>
+            <DocsPageSection>
+               <SectionHeader Title="Style">
+                  <Description>Style it with the <code class="docs-code docs-code-primary">Class</code> or <code class="docs-code docs-code-primary">Style</code> properties.</Description>
+               </SectionHeader>
+               <SectionContent DarkenBackground="true" Code="@nameof(HighlighterWithCustomStyleExample)" ShowCode="false">
+                   <HighlighterWithCustomStyleExample />
+               </SectionContent>
+            </DocsPageSection>
+         </SectionSubGroups>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Multiple Highlights">
                 <Description>In addition to <code class="docs-code docs-code-primary">HighlightedText</code> property which accepts a single text fragment in the form of an string, the <code class="docs-code docs-code-primary">HighlightedTexts</code> property accepts an enumerable of strings which can be used to highlight several text fragments.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="HighlighterWithListMultipleExample" ShowCode="false">
+            <SectionContent DarkenBackground="true" Code="@nameof(HighlighterWithListMultipleExample)" ShowCode="false">
                 <HighlighterWithListMultipleExample />
             </SectionContent>
         </DocsPageSection>

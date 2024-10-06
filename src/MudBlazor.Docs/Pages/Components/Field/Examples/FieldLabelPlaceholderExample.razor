@@ -6,7 +6,7 @@
                   Variant="Variant.Outlined">            
         </MudField>
         <br/>
-        <MudSwitch T="bool" Color="Color.Primary" CheckedChanged="@((b) => content=b?rf1:null)"/> Switch between Label and Placeholder
+        <MudSwitch T="bool" Color="Color.Primary" ValueChanged="@((b) => content=b?rf1:null)" /> Switch between Label and Placeholder
     </MudItem>
     <MudItem xs="12" md="6" lg="4">       
         <MudField Label="Pick a color" Variant="Variant.Outlined">

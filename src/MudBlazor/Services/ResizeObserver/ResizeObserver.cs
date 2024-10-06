@@ -10,31 +10,26 @@ using MudBlazor.Interop;
 
 namespace MudBlazor.Services
 {
-    public class ResizeObserver : IResizeObserver, IDisposable, IAsyncDisposable
+    public class ResizeObserver : IResizeObserver, IAsyncDisposable
     {
-        private Boolean _isDisposed = false;
+        private bool _isDisposed = false;
 
-        private readonly DotNetObjectReference<ResizeObserver> _dotNetRef;
         private readonly IJSRuntime _jsRuntime;
-
+        private readonly Guid _id = Guid.NewGuid();
+        private readonly ResizeObserverOptions _options;
+        private readonly DotNetObjectReference<ResizeObserver> _dotNetRef;
         private readonly Dictionary<Guid, ElementReference> _cachedValueIds = new();
         private readonly Dictionary<ElementReference, BoundingClientRect> _cachedValues = new();
 
-        private Guid _id = Guid.NewGuid();
-        private ResizeObserverOptions _options;
 
         [DynamicDependency(nameof(OnSizeChanged))]
         [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(SizeChangeUpdateInfo))]
         [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(BoundingClientRect))]
-        public ResizeObserver(IJSRuntime jsRuntime, ResizeObserverOptions options)
+        public ResizeObserver(IJSRuntime jsRuntime, IOptions<ResizeObserverOptions> options = null)
         {
             _dotNetRef = DotNetObjectReference.Create(this);
             _jsRuntime = jsRuntime;
-            _options = options;
-        }
-
-        public ResizeObserver(IJSRuntime jsRuntime, IOptions<ResizeObserverOptions> options = null) : this(jsRuntime, options?.Value ?? new ResizeObserverOptions())
-        {
+            _options = options?.Value ?? new ResizeObserverOptions();
         }
 
         public async Task<BoundingClientRect> Observe(ElementReference element) => (await Observe(new[] { element })).FirstOrDefault();
@@ -89,11 +84,11 @@ namespace MudBlazor.Services
             Dictionary<ElementReference, BoundingClientRect> parsedChanges = new();
             foreach (var item in changes)
             {
-                if (_cachedValueIds.ContainsKey(item.Id) == false) { continue; }
-
-                var elementRef = _cachedValueIds[item.Id];
-                _cachedValues[elementRef] = item.Size;
-                parsedChanges.Add(elementRef, item.Size);
+                if (_cachedValueIds.TryGetValue(item.Id, out var elementRef))
+                {
+                    _cachedValues[elementRef] = item.Size;
+                    parsedChanges.Add(elementRef, item.Size);
+                }
             }
 
             OnResized?.Invoke(parsedChanges);
@@ -103,12 +98,7 @@ namespace MudBlazor.Services
 
         public BoundingClientRect GetSizeInfo(ElementReference reference)
         {
-            if (_cachedValues.ContainsKey(reference) == false)
-            {
-                return null;
-            }
-
-            return _cachedValues[reference];
+            return _cachedValues.TryGetValue(reference, out var existing) ? existing : null;
         }
 
         public double GetHeight(ElementReference reference) => GetSizeInfo(reference)?.Height ?? 0.0;
@@ -136,7 +126,7 @@ namespace MudBlazor.Services
 
         public async ValueTask DisposeAsync()
         {
-            if (_isDisposed == true) { return; }
+            if (_isDisposed) { return; }
 
             _isDisposed = true;
 

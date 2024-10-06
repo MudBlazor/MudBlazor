@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-@if (!_isHidden)
+@if (!_hiddenState.Value)
 {
     @ChildContent
 }
