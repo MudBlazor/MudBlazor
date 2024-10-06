@@ -4,7 +4,7 @@
 
   .mud-stepper-nav {
 
-    .mud-stepper-nav-step {
+    .mud-step {
       padding: 8px;
       margin: 16px;
       position: relative;
@@ -21,26 +21,26 @@
         }
       }
 
-      &.mud-stepper-nav-step-disabled {
+      &.mud-step-disabled {
 
-        .mud-stepper-nav-step-label-icon {
+        .mud-step-label-icon {
           background-color: var(--mud-palette-lines-default) !important;
           color: var(--mud-palette-text-disabled) !important;
         }
 
-        .mud-stepper-nav-step-label-content {
+        .mud-step-label-content {
           color: var(--mud-palette-text-disabled) !important;
         }
       }
 
-      .mud-stepper-nav-step-label {
+      .mud-step-label {
         display: flex;
         align-items: center;
         flex-direction: row;
         height: 100%;
         gap: 8px;
 
-        .mud-stepper-nav-step-label-icon {
+        .mud-step-label-icon {
           display: flex;
           flex-shrink: 0;
           color: var(--mud-palette-white);
@@ -57,7 +57,7 @@
           white-space: nowrap;
         }
 
-        .mud-stepper-nav-step-label-content {
+        .mud-step-label-content {
           width: 100%;
           color: var(--mud-palette-text-secondary);
         }
@@ -65,7 +65,7 @@
 
       &.active {
 
-        .mud-stepper-nav-step-label-content {
+        .mud-step-label-content {
           color: var(--mud-palette-text-primary);
         }
       }
@@ -74,7 +74,7 @@
     &.mud-stepper-nav-scrollable {
       overflow: auto;
 
-      .mud-stepper-nav-step {
+      .mud-step {
         min-width: fit-content;
       }
 
@@ -107,21 +107,21 @@
 
     &.mud-stepperCenterLabel {
 
-      .mud-stepper-nav-step {
+      .mud-step {
         flex-basis: 175px;
       }
 
-      .mud-stepper-nav-step-label {
+      .mud-step-label {
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
 
-        .mud-stepper-nav-step-label-icon {
+        .mud-step-label-icon {
           //margin-right: 0px !important;
           margin-inline-end: 0px !important;
         }
 
-        .mud-stepper-nav-step-label-content {
+        .mud-step-label-content {
           margin-top: 12px;
           text-align: center;
         }
@@ -150,10 +150,10 @@
       padding: 8px 0px;
     }
 
-    .mud-stepper-nav-step {
+    .mud-step {
       padding: 0 16px;
 
-      .mud-stepper-nav-step-label {
+      .mud-step-label {
         padding: 8px 0px;
       }
     }
