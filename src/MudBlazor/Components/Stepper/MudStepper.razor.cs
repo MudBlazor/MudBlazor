@@ -161,9 +161,9 @@ public partial class MudStepper : MudComponentBase
     public bool PreviousStepEnabled => _steps.Any() && _activeIndex.Value > 0;
     public bool IsCompleted => _steps.Any() && _steps.Where(x => !x.Skippable).All(x => x.CompletedState.Value);
 
-    public bool ShowCompleteInsteadOfNext => _steps.Any() && 
-                                             _steps.Count(x => !x.Skippable && !x.CompletedState.Value) == 1 && 
-                                             ActiveStep !=null && 
+    public bool ShowCompleteInsteadOfNext => _steps.Any() &&
+                                             _steps.Count(x => !x.Skippable && !x.CompletedState.Value) == 1 &&
+                                             ActiveStep != null &&
                                              _steps.First(x => !x.Skippable && !x.CompletedState.Value) == ActiveStep;
 
     /// <summary>
