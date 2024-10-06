@@ -7,7 +7,7 @@ namespace MudBlazor
     /// Represents a piece of text as an SVG path.
     /// </summary>
     [DebuggerDisplay("X={X}, Y={Y}, Value={Value}")]
-    public class SvgText
+    internal class SvgText
     {
         /// <summary>
         /// The horizontal position of the text.
