@@ -7,7 +7,7 @@ using System.Reflection.Metadata;
 using Bunit;
 using FluentAssertions;
 using Moq;
-using MudBlazor.Charts;
+using MudBlazor;
 using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
 

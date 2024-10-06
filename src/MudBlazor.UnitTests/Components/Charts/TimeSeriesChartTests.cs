@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Bunit;
 using FluentAssertions;
-using MudBlazor.Charts;
+using MudBlazor;
 using MudBlazor.Components.Chart.Models;
 using MudBlazor.UnitTests.Components;
 using NUnit.Framework;

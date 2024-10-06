@@ -8,7 +8,7 @@ using System.Linq;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
-using MudBlazor.Charts;
+using MudBlazor;
 using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
 
