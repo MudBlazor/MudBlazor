@@ -3,11 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 #nullable enable
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
@@ -27,9 +22,27 @@ public partial class MudStepper : MudComponentBase
     }
 
     private readonly ParameterState<int> _activeIndex;
+    private List<MudStep> _steps = [];
+    private HashSet<MudStep> _skippedSteps = [];
 
-    private List<MudStep> _steps = new();
-    private HashSet<MudStep> _skippedSteps = new();
+    protected string Classname =>
+        new CssBuilder("mud-stepper")
+        .AddClass("mud-stepperHorizontal", Vertical == false)
+        .AddClass("mud-stepperVertical", Vertical)
+        .AddClass("mud-stepperCenterLabel", CenterLabels && !Vertical)
+        .AddClass(Class)
+        .Build();
+
+    internal string StepClassname =>
+        new CssBuilder("mud-stepper-content")
+        .AddClass(StepClass)
+        .Build();
+
+    protected string NavClassname =>
+        new CssBuilder("mud-stepper-nav")
+        .AddClass("mud-stepper-nav-scrollable", ScrollableNavigation)
+        .AddClass(NavClass)
+        .Build();
 
     /// <summary>
     /// The steps that have been defined in razor.
@@ -37,25 +50,9 @@ public partial class MudStepper : MudComponentBase
     public IReadOnlyList<MudStep> Steps => _steps;
 
     /// <summary>
-    /// Active step of the Stepper, can be not selected
+    /// The actively selected step. Can be not selected.
     /// </summary>
     public MudStep? ActiveStep { get; private set; }
-
-    protected string Classname => new CssBuilder("mud-stepper")
-        .AddClass("mud-stepperHorizontal", Vertical == false)
-        .AddClass("mud-stepperVertical", Vertical)
-        .AddClass("mud-stepperCenterLabel", CenterLabels && !Vertical)
-        .AddClass(Class)
-        .Build();
-
-    internal string StepClassname => new CssBuilder("mud-stepper-content")
-        .AddClass(StepClass)
-        .Build();
-
-    protected string NavClassname => new CssBuilder("mud-stepper-nav")
-        .AddClass("mud-stepper-nav-scrollable", ScrollableNavigation)
-        .AddClass(NavClass)
-        .Build();
 
     /// <summary>
     /// Index of the currently shown step. If set, it doesn't save the position into the history
@@ -154,6 +151,8 @@ public partial class MudStepper : MudComponentBase
 
     public bool IsCurrentStepSkippable => _steps.Any() && ActiveStep is not null && ActiveStep.Skippable;
 
+    private bool CanReset => _steps.Any(x => x.CompletedState || x.HasErrorState) || _activeIndex > 0;
+
     public bool CanGoToNextStep =>
         _steps.Any() && ActiveStep is not null && (_steps.Count - 1 == _activeIndex.Value ||
                                                    !_steps[_activeIndex.Value + 1].DisabledState.Value);
@@ -205,9 +204,13 @@ public partial class MudStepper : MudComponentBase
         if (ActiveStep is null)
         {
             if (_afterFirstRender)
+            {
                 await ConsolidateActiveIndexAsync();
+            }
             else
+            {
                 ConsolidateActiveStep();
+            }
         }
     }
 
@@ -217,9 +220,14 @@ public partial class MudStepper : MudComponentBase
     private void ConsolidateActiveStep()
     {
         if (ActiveStep is not null)
+        {
             return;
+        }
+
         if (_activeIndex.Value >= 0 && _activeIndex.Value < _steps.Count)
+        {
             ActiveStep = _steps[_activeIndex.Value];
+        }
     }
 
     internal async Task RemoveStepAsync(MudStep step)
@@ -238,32 +246,42 @@ public partial class MudStepper : MudComponentBase
 
     private async Task UpdateStepAsync(MudStep? step, MouseEventArgs ev, StepAction stepAction, bool ignoreDisabledState = false)
     {
-        if (step == null || step.DisabledState.Value && !ignoreDisabledState)
+        if (step == null || (step.DisabledState.Value && !ignoreDisabledState))
+        {
             return;
+        }
 
         var index = _steps.IndexOf(step);
 
-        var previewArgs =
-            new StepperInteractionEventArgs() { StepIndex = index, Action = stepAction };
+        var previewArgs =new StepperInteractionEventArgs() { StepIndex = index, Action = stepAction };
 
         if (OnPreviewInteraction != null)
+        {
             await OnPreviewInteraction.Invoke(previewArgs);
+        }
 
-        if (previewArgs.Cancel) return;
+        if (previewArgs.Cancel)
+        {
+            return;
+        }
 
         switch (previewArgs.Action)
         {
             case StepAction.Complete:
-                {
-                    await step.SetCompletedAsync(true);
+                await step.SetCompletedAsync(true);
 
-                    if (_steps.Count - 1 != index)
-                        index++;
-                    break;
+                if (_steps.Count - 1 != index)
+                {
+                    index++;
                 }
+
+                break;
             case StepAction.Skip:
                 if (step.Skippable)
+                {
                     index++;
+                }
+
                 break;
         }
 
@@ -275,7 +293,10 @@ public partial class MudStepper : MudComponentBase
     private async Task SetActiveIndexAsync(int value)
     {
         if (!_afterFirstRender)
+        {
             return;
+        }
+
         var validIndex = Math.Min(Math.Max(0, value), _steps.Count - 1);
         ActiveStep = validIndex >= 0 ? _steps[validIndex] : null;
         await _activeIndex.SetValueAsync(validIndex);
@@ -283,7 +304,7 @@ public partial class MudStepper : MudComponentBase
     }
 
     // Keeps track of initialization
-    // before the first render, inital params are set.
+    // before the first render, initial params are set.
     // during first render the steps are added from the child content
     // after first render active step is activated resulting in a second render.
     private bool _afterFirstRender;
@@ -293,7 +314,9 @@ public partial class MudStepper : MudComponentBase
         base.OnAfterRender(firstRender);
         _afterFirstRender = true;
         if (firstRender)
+        {
             await SetActiveIndexAsync(_activeIndex.Value);
+        }
     }
 
     /// <summary>
@@ -302,7 +325,9 @@ public partial class MudStepper : MudComponentBase
     public async Task PreviousStepAsync()
     {
         if (PreviousStepEnabled)
+        {
             await UpdateStepAsync(_steps[_activeIndex.Value - 1], new MouseEventArgs(), StepAction.Activate);
+        }
     }
 
     /// <summary>
@@ -322,28 +347,32 @@ public partial class MudStepper : MudComponentBase
     }
 
     /// <summary>
-    /// Reset the completed status of all steps and set the first step as the active one.
+    /// Resets the completed status of all steps and set the first step as the active one.
     /// </summary>
     public async Task ResetAsync(bool resetErrors = false)
     {
         if (!_steps.Any())
+        {
             return;
+        }
 
         foreach (var step in _steps)
         {
             await step.SetCompletedAsync(false, refreshParent: false);
             if (resetErrors)
+            {
                 await step.SetHasErrorAsync(false, refreshParent: false);
+            }
         }
 
         await UpdateStepAsync(_steps[0], new MouseEventArgs(), StepAction.Activate);
     }
 
-    private bool CanReset => _steps.Any(x => x.CompletedState || x.HasErrorState) || _activeIndex > 0;
-
     private async Task OnStepClickAsync(MudStep step, MouseEventArgs e)
     {
         if (NonLinear)
+        {
             await UpdateStepAsync(step, e, StepAction.Activate);
+        }
     }
 }
