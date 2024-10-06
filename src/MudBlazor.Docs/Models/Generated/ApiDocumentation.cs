@@ -244,7 +244,7 @@ public static partial class ApiDocumentation
         { "dialogprovider", "MudBlazor.MudDialogProvider" },
         { "divider", "MudBlazor.MudDivider" },
         { "donut", "MudBlazor.Donut" },
-        { "donutchart", "MudBlazor..Donut" },
+        { "donutchart", "MudBlazor.Donut" },
         { "drawer", "MudBlazor.MudDrawer" },
         { "drawercontainer", "MudBlazor.MudDrawerContainer" },
         { "drawerheader", "MudBlazor.MudDrawerHeader" },
