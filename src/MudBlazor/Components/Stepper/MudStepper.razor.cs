@@ -253,7 +253,7 @@ public partial class MudStepper : MudComponentBase
 
         var index = _steps.IndexOf(step);
 
-        var previewArgs =new StepperInteractionEventArgs() { StepIndex = index, Action = stepAction };
+        var previewArgs = new StepperInteractionEventArgs() { StepIndex = index, Action = stepAction };
 
         if (OnPreviewInteraction != null)
         {
