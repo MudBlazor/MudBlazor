@@ -1,6 +1,6 @@
 ﻿namespace MudBlazor;
 
-public class Matrix
+internal class Matrix
 {
     public double[,] a;
     public double[] y;

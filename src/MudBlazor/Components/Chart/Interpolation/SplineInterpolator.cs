@@ -1,9 +1,9 @@
 ﻿namespace MudBlazor;
 
-public abstract class SplineInterpolator : ILineInterpolator
+internal abstract class SplineInterpolator : ILineInterpolator
 {
-    protected Matrix m;
-    protected MatrixSolver gauss;
+    protected Matrix _matrix;
+    protected MatrixSolver _gauss;
 
     protected readonly int n;
     protected double[] a, b, c, d, h;
@@ -35,7 +35,7 @@ public abstract class SplineInterpolator : ILineInterpolator
         InterpolatedXs = new double[n * resolution];
         InterpolatedYs = new double[n * resolution];
     }
-    public void Interpolate()
+    internal void Interpolate()
     {
         var resolution = InterpolatedXs.Length / n;
         for (var i = 0; i < h.Length; i++)
@@ -66,8 +66,7 @@ public abstract class SplineInterpolator : ILineInterpolator
         InterpolatedXs[pointsToKeep - 1] = GivenXs[n - 1];
         InterpolatedYs[pointsToKeep - 1] = GivenYs[n - 1];
     }
-
-    public double Integrate()
+    internal double Integrate()
     {
         double integral = 0;
         for (var i = 0; i < h.Length; i++)

@@ -7,7 +7,7 @@
 namespace MudBlazor;
 
 // Matrix equation solver using the Gaussian elimination algorithm
-public class MatrixSolver
+internal class MatrixSolver
 {
     public readonly Matrix m;
     public readonly int maxOrder;
@@ -19,7 +19,7 @@ public class MatrixSolver
         m = mi;
     }
 
-    void SwitchRows(int n)
+    private void SwitchRows(int n)
     {
         double tempD;
         int i, j;
@@ -37,7 +37,7 @@ public class MatrixSolver
         }
     }
 
-    public bool Eliminate()
+    internal bool Eliminate()
     {
         int i, k, l;
         calcError = false;
@@ -71,7 +71,7 @@ public class MatrixSolver
         return !calcError;
     }
 
-    public void Solve()
+    internal void Solve()
     {
         int k, l;
         for (k = maxOrder - 1; k >= 0; k--)

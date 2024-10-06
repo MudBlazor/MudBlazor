@@ -17,9 +17,3 @@ public class TimeSeriesChartSeries
     public double FillOpacity { get; set; } = 0.4;
     public double StrokeOpacity { get; set; } = 1;
 }
-
-public enum TimeSeriesDiplayType
-{
-    Line,
-    Area,
-}
