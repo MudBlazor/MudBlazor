@@ -1,4 +1,5 @@
-﻿namespace MudBlazor.Components.Chart
+﻿#nullable enable
+namespace MudBlazor.Components.Chart
 {
     public class Matrix
     {
