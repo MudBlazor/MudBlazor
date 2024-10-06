@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using MudBlazor.Charts;
-
-namespace MudBlazor.Docs.Models
+﻿namespace MudBlazor.Docs.Models
 {
 #nullable enable
     public static class ApiLink

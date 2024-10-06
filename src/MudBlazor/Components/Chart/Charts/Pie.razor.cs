@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Charts.SVG.Models;
 
 #nullable enable
-namespace MudBlazor.Charts
+namespace MudBlazor
 {
     /// <summary>
     /// Represents a chart which displays values as a percentage of a circle.

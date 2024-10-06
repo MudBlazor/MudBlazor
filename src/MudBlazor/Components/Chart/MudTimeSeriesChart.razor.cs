@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Components.Chart.Models;
 #nullable enable
 
 namespace MudBlazor

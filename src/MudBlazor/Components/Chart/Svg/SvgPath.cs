@@ -1,5 +1,5 @@
 ﻿#nullable enable
-namespace MudBlazor.Charts.SVG.Models
+namespace MudBlazor
 {
     /// <summary>
     /// Represents an arbitrary SVG path.

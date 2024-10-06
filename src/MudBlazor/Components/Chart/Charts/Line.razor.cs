@@ -1,11 +1,8 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Charts.SVG.Models;
-using MudBlazor.Components.Chart;
-using MudBlazor.Components.Chart.Interpolation;
 
 #nullable enable
-namespace MudBlazor.Charts
+namespace MudBlazor
 {
     /// <summary>
     /// Represents a chart which displays series values as connected lines.

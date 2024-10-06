@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 
 #nullable enable
-namespace MudBlazor.Charts.SVG.Models
+namespace MudBlazor
 {
     /// <summary>
     /// Represents a piece of text as an SVG path.
