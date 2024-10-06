@@ -1,27 +1,28 @@
 ﻿using Microsoft.AspNetCore.Components;
 
-namespace MudBlazor;
-
-/// <summary>
-/// Represents a set of text labels which describe data values in a <see cref="MudChart"/>.
-/// </summary>
-public partial class Legend : MudChartBase
+namespace MudBlazor
 {
     /// <summary>
-    /// The chart, if any, containing this component.
+    /// Represents a set of text labels which describe data values in a <see cref="MudChart"/>.
     /// </summary>
-    [CascadingParameter]
-    public MudChartBase MudChartParent { get; set; }
-
-    /// <summary>
-    /// The data labels for this legend.
-    /// </summary>
-    [Parameter]
-    public List<SvgLegend> Data { get; set; } = new List<SvgLegend>();
-
-    private string GetCheckBoxStyle(int index)
+    public partial class Legend : MudChartBase
     {
-        var color = MudChartParent.ChartOptions.ChartPalette.GetValue(index % ChartOptions.ChartPalette.Length);
-        return $"--checkbox-color: {color};";
+        /// <summary>
+        /// The chart, if any, containing this component.
+        /// </summary>
+        [CascadingParameter]
+        public MudChartBase MudChartParent { get; set; }
+
+        /// <summary>
+        /// The data labels for this legend.
+        /// </summary>
+        [Parameter]
+        public List<SvgLegend> Data { get; set; } = new List<SvgLegend>();
+
+        private string GetCheckBoxStyle(int index)
+        {
+            var color = MudChartParent.ChartOptions.ChartPalette.GetValue(index % ChartOptions.ChartPalette.Length);
+            return $"--checkbox-color: {color};";
+        }
     }
 }

@@ -1,17 +1,18 @@
-﻿namespace MudBlazor;
-
-/// <summary>
-/// Represents an arbitrary SVG path.
-/// </summary>
-public class SvgPath
+﻿namespace MudBlazor
 {
     /// <summary>
-    /// The position of this path within a list.
+    /// Represents an arbitrary SVG path.
     /// </summary>
-    public int Index { get; set; }
+    public class SvgPath
+    {
+        /// <summary>
+        /// The position of this path within a list.
+        /// </summary>
+        public int Index { get; set; }
 
-    /// <summary>
-    /// The SVG path to draw.
-    /// </summary>
-    public string Data { get; set; }
+        /// <summary>
+        /// The SVG path to draw.
+        /// </summary>
+        public string Data { get; set; }
+    }
 }
