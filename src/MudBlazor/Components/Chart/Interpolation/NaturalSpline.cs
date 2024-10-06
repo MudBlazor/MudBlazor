@@ -2,6 +2,10 @@
  *  Work in this file is derived from code originally written by Hans-Peter Moser:
  *  http://www.mosismath.com/NaturalSplines/NaturalSplines.html
  */
+
+#nullable enable
+using System.Diagnostics;
+
 namespace MudBlazor
 {
     internal class NaturalSpline : SplineInterpolator
@@ -26,6 +30,14 @@ namespace MudBlazor
         }
         private void CalcParameters()
         {
+            Debug.Assert(m != null);
+            Debug.Assert(gauss != null);
+            Debug.Assert(a != null);
+            Debug.Assert(b != null);
+            Debug.Assert(c != null);
+            Debug.Assert(d != null);
+            Debug.Assert(h != null);
+
             for (var i = 0; i < n; i++)
                 a[i] = GivenYs[i];
 

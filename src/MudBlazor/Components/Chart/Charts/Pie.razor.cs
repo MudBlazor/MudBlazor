@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -11,10 +12,10 @@ namespace MudBlazor
         /// The chart, if any, containing this component.
         /// </summary>
         [CascadingParameter]
-        public MudChart MudChartParent { get; set; }
+        public MudChart? MudChartParent { get; set; }
 
-        private List<SvgPath> _paths = new();
-        private List<SvgLegend> _legends = new();
+        private List<SvgPath> _paths = [];
+        private List<SvgLegend> _legends = [];
 
         protected override void OnParametersSet()
         {

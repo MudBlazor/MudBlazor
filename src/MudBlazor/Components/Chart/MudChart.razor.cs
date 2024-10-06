@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
+using System.Globalization;
+using Microsoft.AspNetCore.Components;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -22,7 +24,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
-        public double[] InputData { get; set; } = Array.Empty<double>();
+        public double[] InputData { get; set; } = [];
 
         /// <summary>
         /// The labels describing data values.
@@ -32,7 +34,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
-        public string[] InputLabels { get; set; } = Array.Empty<string>();
+        public string[] InputLabels { get; set; } = [];
 
         /// <summary>
         /// The labels applied to the horizontal axis.
@@ -42,24 +44,23 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
-        public string[] XAxisLabels { get; set; } = Array.Empty<string>();
+        public string[] XAxisLabels { get; set; } = [];
 
         /// <summary>
         /// The series of values to display.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
-        public List<ChartSeries> ChartSeries { get; set; } = new();
+        public List<ChartSeries> ChartSeries { get; set; } = [];
 
         /// <summary>
         /// Scales the input data to the range between 0 and 1
         /// </summary>
         protected double[] GetNormalizedData()
         {
-            if (InputData == null)
-                return Array.Empty<double>();
+            if (InputData.Length == 0)
+                return [];
             var total = InputData.Sum();
             return InputData.Select(x => Math.Abs(x) / total).ToArray();
         }
-    }
 }

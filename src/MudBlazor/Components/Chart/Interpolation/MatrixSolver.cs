@@ -4,6 +4,7 @@
  *  http://www.mosismath.com/Matrix_Gauss/MatrixGauss.html
  */
 
+#nullable enable
 namespace MudBlazor
 {
     // Matrix equation solver using the Gaussian elimination algorithm

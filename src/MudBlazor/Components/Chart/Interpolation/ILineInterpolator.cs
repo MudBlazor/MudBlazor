@@ -1,4 +1,5 @@
-﻿namespace MudBlazor
+#nullable enable
+namespace MudBlazor
 {
     internal interface ILineInterpolator
     {

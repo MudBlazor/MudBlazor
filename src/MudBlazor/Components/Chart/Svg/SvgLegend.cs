@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Components;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -17,12 +18,12 @@ namespace MudBlazor
         /// <summary>
         /// The series labels to display.
         /// </summary>
-        public string Labels { get; set; }
+        public string Labels { get; set; } = string.Empty;
 
         /// <summary>
         /// The data values to display.
         /// </summary>
-        public string Data { get; set; }
+        public string? Data { get; set; }
 
         /// <summary>
         /// Whether the legend is displayed.

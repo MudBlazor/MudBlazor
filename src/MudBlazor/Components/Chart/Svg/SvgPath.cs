@@ -1,4 +1,5 @@
-﻿namespace MudBlazor
+#nullable enable
+namespace MudBlazor
 {
     /// <summary>
     /// Represents an arbitrary SVG path.
@@ -13,6 +14,6 @@
         /// <summary>
         /// The SVG path to draw.
         /// </summary>
-        public string Data { get; set; }
+        public string? Data { get; set; }
     }
 }

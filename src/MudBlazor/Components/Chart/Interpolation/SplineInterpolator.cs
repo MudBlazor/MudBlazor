@@ -1,12 +1,17 @@
-﻿namespace MudBlazor
+using System;
+using System.Diagnostics;
+using MudBlazor.Components.Chart.Interpolation;
+
+#nullable enable
+namespace MudBlazor
 {
     internal abstract class SplineInterpolator : ILineInterpolator
     {
-        protected Matrix _matrix;
-        protected MatrixSolver _gauss;
+        protected Matrix? _matrix;
+        protected MatrixSolver? _gauss;
 
         protected readonly int n;
-        protected double[] a, b, c, d, h;
+        protected double[]? a, b, c, d, h;
 
         public double[] GivenYs { get; set; }
         public double[] GivenXs { get; set; }
@@ -16,9 +21,6 @@
 
         public SplineInterpolator(double[] xs, double[] ys, int resolution = 10)
         {
-            if (xs is null || ys is null)
-                throw new ArgumentException("xs and ys cannot be null");
-
             if (xs.Length != ys.Length)
                 throw new ArgumentException("xs and ys must have the same length");
 
@@ -37,6 +39,14 @@
         }
         internal void Interpolate()
         {
+            Debug.Assert(m != null);
+            Debug.Assert(gauss != null);
+            Debug.Assert(a != null);
+            Debug.Assert(b != null);
+            Debug.Assert(c != null);
+            Debug.Assert(d != null);
+            Debug.Assert(h != null);
+
             var resolution = InterpolatedXs.Length / n;
             for (var i = 0; i < h.Length; i++)
             {
@@ -68,6 +78,14 @@
         }
         internal double Integrate()
         {
+            Debug.Assert(m != null);
+            Debug.Assert(gauss != null);
+            Debug.Assert(a != null);
+            Debug.Assert(b != null);
+            Debug.Assert(c != null);
+            Debug.Assert(d != null);
+            Debug.Assert(h != null);
+
             double integral = 0;
             for (var i = 0; i < h.Length; i++)
             {

@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.Components;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -19,18 +20,18 @@ namespace MudBlazor
         /// The chart, if any, containing this component.
         /// </summary>
         [CascadingParameter]
-        public MudChart MudChartParent { get; set; }
+        public MudChart? MudChartParent { get; set; }
 
-        private List<SvgPath> _horizontalLines = new();
-        private List<SvgText> _horizontalValues = new();
+        private List<SvgPath> _horizontalLines = [];
+        private List<SvgText> _horizontalValues = [];
 
-        private List<SvgPath> _verticalLines = new();
-        private List<SvgText> _verticalValues = new();
+        private List<SvgPath> _verticalLines = [];
+        private List<SvgText> _verticalValues = [];
 
-        private List<SvgLegend> _legends = new();
-        private List<ChartSeries> _series = new();
+        private List<SvgLegend> _legends = [];
+        private List<ChartSeries> _series = [];
 
-        private List<SvgPath> _chartLines = new();
+        private List<SvgPath> _chartLines = [];
 
         protected override void OnParametersSet()
         {
@@ -230,11 +231,8 @@ namespace MudBlazor
         private void HandleLegendVisibilityChanged(SvgLegend legend)
         {
             var series = _series[legend.Index];
-            if (series != null)
-            {
-                series.Visible = legend.Visible;
-                RebuildChart();
-            }
+            series.Visible = legend.Visible;
+            RebuildChart();
         }
     }
 }

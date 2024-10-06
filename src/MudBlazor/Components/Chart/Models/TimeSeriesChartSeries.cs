@@ -1,4 +1,5 @@
-﻿namespace MudBlazor
+#nullable enable
+namespace MudBlazor
 {
     public class TimeSeriesChartSeries
     {
@@ -6,7 +7,7 @@
 
         public string Name { get; set; } = string.Empty;
 
-        public List<TimeValue> Data { get; set; } = new();
+        public List<TimeValue> Data { get; set; } = [];
 
         public bool IsVisible { get; set; } = true;
 

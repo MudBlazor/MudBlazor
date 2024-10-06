@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -11,17 +12,17 @@ namespace MudBlazor
         /// The chart, if any, containing this component.
         /// </summary>
         [CascadingParameter]
-        public MudChartBase MudChartParent { get; set; }
+        public MudChartBase? MudChartParent { get; set; }
 
         /// <summary>
         /// The data labels for this legend.
         /// </summary>
         [Parameter]
-        public List<SvgLegend> Data { get; set; } = new List<SvgLegend>();
+        public List<SvgLegend> Data { get; set; } = [];
 
         private string GetCheckBoxStyle(int index)
         {
-            var color = MudChartParent.ChartOptions.ChartPalette.GetValue(index % ChartOptions.ChartPalette.Length);
+            var color = MudChartParent?.ChartOptions.ChartPalette.GetValue(index % ChartOptions.ChartPalette.Length);
             return $"--checkbox-color: {color};";
         }
     }
