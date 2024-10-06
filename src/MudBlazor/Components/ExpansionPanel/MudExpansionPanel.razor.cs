@@ -32,7 +32,7 @@ namespace MudBlazor
                 .Build();
 
         protected string HeaderClassname =>
-            new CssBuilder("mud-expand-panel-header")           
+            new CssBuilder("mud-expand-panel-header")
                 .AddClass(HeaderClass)
                 .Build();
 
