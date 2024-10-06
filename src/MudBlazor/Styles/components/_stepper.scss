@@ -38,10 +38,11 @@
         align-items: center;
         flex-direction: row;
         height: 100%;
+        gap: 8px;
 
         .mud-stepper-nav-step-label-icon {
-          flex-shrink: 0;
           display: flex;
+          flex-shrink: 0;
           color: var(--mud-palette-white);
           border-radius: 50%;
           background-color: var(--mud-palette-text-disabled);
@@ -49,10 +50,11 @@
           width: 24px;
           align-items: center;
           justify-content: center;
-          //horizontal has this margin
-          //margin-right: 8px;
-          margin-inline-end: 8px;
-          margin-inline-start: 0px;
+          font-size: 12px;
+          letter-spacing: 0;
+          line-height: 1;
+          text-indent: 0;
+          white-space: nowrap;
         }
 
         .mud-stepper-nav-step-label-content {
