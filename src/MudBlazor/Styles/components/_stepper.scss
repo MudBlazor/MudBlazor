@@ -60,11 +60,18 @@
         .mud-step-label-content {
           width: 100%;
           color: var(--mud-palette-text-secondary);
+          text-align: start;
+        }
+
+        .mud-step-label-content-title {
+          line-height: var(--mud-typography-body2-lineheight)
         }
       }
 
-      &.active {
+      .mud-step-label-active {
+      }
 
+      &.active {
         .mud-step-label-content {
           color: var(--mud-palette-text-primary);
         }
@@ -88,8 +95,6 @@
     padding: 0 24px;
   }
 
-
-
   .mud-stepper-nav-connector {
     flex: 1 1 auto;
 
@@ -99,13 +104,13 @@
     }
   }
 
-  &.mud-stepperHorizontal {
+  &.mud-stepper__horizontal {
 
     .mud-stepper-nav {
       display: flex;
     }
 
-    &.mud-stepperCenterLabel {
+    &.mud-stepper__center-labels {
 
       .mud-step {
         flex-basis: 175px;
@@ -144,7 +149,7 @@
     }
   }
 
-  &.mud-stepperVertical {
+  &.mud-stepper__vertical {
 
     .mud-stepper-nav {
       padding: 8px 0px;

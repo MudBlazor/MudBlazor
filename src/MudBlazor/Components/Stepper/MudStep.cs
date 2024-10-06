@@ -1,8 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -38,6 +35,11 @@ public class MudStep : MudComponentBase, IAsyncDisposable
         .AddStyle(Parent?.StepStyle)
         .AddStyle(Style)
         .Build();
+
+    internal string LabelClassname =>
+        new CssBuilder("mud-step-label")
+            .AddClass("mud-step-label-active", IsActive)
+            .Build();
 
     internal string LabelIconClassname =>
         new CssBuilder("mud-step-label-icon")

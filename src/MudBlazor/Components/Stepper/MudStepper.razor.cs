@@ -27,9 +27,9 @@ public partial class MudStepper : MudComponentBase
 
     protected string Classname =>
         new CssBuilder("mud-stepper")
-        .AddClass("mud-stepperHorizontal", Vertical == false)
-        .AddClass("mud-stepperVertical", Vertical)
-        .AddClass("mud-stepperCenterLabel", CenterLabels && !Vertical)
+        .AddClass("mud-stepper__horizontal", Vertical == false)
+        .AddClass("mud-stepper__vertical", Vertical)
+        .AddClass("mud-stepper__center-labels", CenterLabels && !Vertical)
         .AddClass(Class)
         .Build();
 
