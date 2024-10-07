@@ -15,8 +15,8 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-radio")
-                .AddClass("mud-disabled", GetDisabled())
-                .AddClass("mud-readonly", GetReadOnly())
+                .AddClass("mud-disabled", GetDisabledState())
+                .AddClass("mud-readonly", GetReadOnlyState())
                 .AddClass($"mud-radio-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
                 .AddClass("mud-radio-with-content", ChildContent is not null)
                 .AddClass(Class)
@@ -24,12 +24,14 @@ namespace MudBlazor
 
         protected string ButtonClassname =>
             new CssBuilder("mud-button-root mud-icon-button")
-                .AddClass("mud-ripple mud-ripple-radio", Ripple && !GetDisabled() && !GetReadOnly())
-                .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnly() && !GetDisabled() && (UncheckedColor == null || (UncheckedColor != null && Checked)))
-                .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnly() && !GetDisabled() && UncheckedColor != null && Checked == false)
+                .AddClass("mud-ripple mud-ripple-radio", Ripple && !GetDisabledState() && !GetReadOnlyState())
+                .AddClass($"mud-{Color.ToDescriptionString()}-text", !GetDisabledState() && (UncheckedColor == null || (UncheckedColor != null && Checked)))
+                .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text", !GetDisabledState() && UncheckedColor != null && Checked == false)
+                .AddClass($"hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && (UncheckedColor == null || (UncheckedColor != null && Checked)))
+                .AddClass($"hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && Checked == false)
                 .AddClass("mud-radio-dense", Dense)
-                .AddClass("mud-disabled", GetDisabled())
-                .AddClass("mud-readonly", GetReadOnly())
+                .AddClass("mud-disabled", GetDisabledState())
+                .AddClass("mud-readonly", GetReadOnlyState())
                 .AddClass("mud-checked", Checked)
                 .AddClass("mud-error-text", MudRadioGroup?.HasErrors)
                 .Build();
@@ -137,9 +139,9 @@ namespace MudBlazor
         [Category(CategoryTypes.Radio.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
-        private bool GetDisabled() => Disabled || MudRadioGroup?.GetDisabledState() == true;
+        private bool GetDisabledState() => Disabled || MudRadioGroup?.GetDisabledState() == true;
 
-        private bool GetReadOnly() => MudRadioGroup?.GetReadOnlyState() == true;
+        private bool GetReadOnlyState() => MudRadioGroup?.GetReadOnlyState() == true;
 
         internal bool Checked { get; private set; }
 
@@ -176,7 +178,7 @@ namespace MudBlazor
 
         internal Task OnClickAsync()
         {
-            if (GetDisabled() || (MudRadioGroup?.GetReadOnlyState() ?? false))
+            if (GetDisabledState() || (GetReadOnlyState()))
             {
                 return Task.CompletedTask;
             }
@@ -191,7 +193,7 @@ namespace MudBlazor
 
         protected internal async Task HandleKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
         {
-            if (GetDisabled() || (MudRadioGroup?.GetReadOnlyState() ?? false))
+            if (GetDisabledState() || GetReadOnlyState())
             {
                 return;
             }
