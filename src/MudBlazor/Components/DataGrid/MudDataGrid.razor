@@ -168,7 +168,7 @@
                                 }
                                 @if (_filtersMenuVisible && FilterMode == DataGridFilterMode.Simple)
                                 {
-                                    <MudOverlay ZIndex="12" @bind-Visible="@_filtersMenuVisible" AutoClose></MudOverlay>
+                                    <MudOverlay ZIndex="12" @bind-Visible="@_filtersMenuVisible" AutoClose OnClosed="@CloseFilters"></MudOverlay>
                                     <MudPopover Open="@_filtersMenuVisible" Paper="true" Class="filters-panel pa-2" OverflowBehavior="OverflowBehavior.FlipAlways" AnchorOrigin="Origin.TopLeft"
                                                 TransformOrigin="Origin.TopLeft" Elevation="4" Style="width:700px;max-width:700px;z-index:13;" MaxHeight="400">
                                         @if (FilterTemplate == null)

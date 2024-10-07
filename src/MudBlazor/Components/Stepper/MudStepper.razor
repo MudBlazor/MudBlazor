@@ -1,0 +1,161 @@
+@namespace MudBlazor
+@using MudBlazor.Utilities
+@inherits MudComponentBase
+
+@inject InternalMudLocalizer Localizer
+
+<div @attributes="@UserAttributes" class="@Classname" style="@Style">
+    <div class="@NavClassname" role="tablist">
+        @foreach (var step in _steps)
+        {
+            bool isActive = ActiveStep == step;
+            string stepClassname = new CssBuilder()
+                .AddClass("mud-step")
+                .AddClass("active", isActive)
+                .AddClass("mud-ripple", NonLinear && !step.DisabledState.Value)
+                .AddClass("mud-step-disabled", step.DisabledState.Value)
+                .AddClass("mud-step-error", step.HasErrorState.Value)
+                .AddClass("mud-step-completed", step.CompletedState.Value)
+                .Build();
+
+            <button class="@stepClassname" role="tab" aria-controls="@step.Title" aria-selected="@(isActive.ToString().ToLower())"
+                    @onclick="@(async e => await OnStepClickAsync(step, e))">
+                @RenderStepLabel(step, isActive)
+            </button>
+
+            @if (Vertical)
+            {
+                @StepContent(step)
+            }
+
+            @if (_steps[^1] != step)
+            {
+                @if (ConnectorTemplate is not null)
+                {
+                    @ConnectorTemplate(step)
+                }
+                else
+                {
+                    <div class="mud-stepper-nav-connector">
+                        <div class="mud-stepper-nav-connector-line"></div>
+                    </div>
+                }
+            }
+        }
+    </div>
+
+    @if (!Vertical && ActiveStep is not null)
+    {
+        @if (IsCompleted && CompletedContent is not null)
+        {
+            <div class="@StepClassname" style="@StepStyle">
+                @CompletedContent
+            </div>
+        }
+        else
+        {
+            @StepContent(ActiveStep)
+        }
+    }
+
+    <CascadingValue Value="this" IsFixed="true">
+        @ChildContent
+    </CascadingValue>
+
+    <MudCardActions Class="mud-stepper-actions">
+        @if (ActionContent == null)
+        {
+            @if (ShowResetButton)
+            {
+                <MudButton StartIcon="@Icons.Material.Filled.FirstPage" Class="mud-stepper-button-reset" Disabled="@(!CanReset)" OnClick="@(async () => await ResetAsync())">
+                    @Localizer["MudStepper_Reset"]
+                </MudButton>
+            }
+
+            @if (!IsCompleted)
+            {
+                <MudButton StartIcon="@Icons.Material.Filled.NavigateBefore" Class="mud-stepper-button-previous" OnClick="PreviousStepAsync" Disabled="@(!PreviousStepEnabled)">
+                    @Localizer["MudStepper_Previous"]
+                </MudButton>
+            }
+
+            <MudSpacer/>
+
+            @if (!IsCompleted)
+            {
+                <MudButton StartIcon="@_skipIcon" Class="mud-stepper-button-skip" OnClick="SkipCurrentStepAsync" Disabled="@(!IsCurrentStepSkippable)">
+                    @Localizer["MudStepper_Skip"]
+                </MudButton>
+
+                <MudButton StartIcon="@Icons.Material.Filled.NavigateNext" Class="mud-stepper-button-next" OnClick="NextStepAsync" Color="Color.Primary" Disabled="@(!CanGoToNextStep)">
+                    @(ShowCompleteInsteadOfNext ? Localizer["MudStepper_Complete"] : Localizer["MudStepper_Next"])
+                </MudButton>
+            }
+        }
+        else
+        {
+            @ActionContent(this)
+        }
+    </MudCardActions>
+</div>
+
+@code {
+    string _skipIcon = @"<svg style=""width:24px;height:24px"" viewBox=""0 0 24 24""><path fill=""currentColor"" d=""M12,14A2,2 0 0,1 14,16A2,2 0 0,1 12,18A2,2 0 0,1 10,16A2,2 0 0,1 12,14M23.46,8.86L21.87,15.75L15,14.16L18.8,11.78C17.39,9.5 14.87,8 12,8C8.05,8 4.77,10.86 4.12,14.63L2.15,14.28C2.96,9.58 7.06,6 12,6C15.58,6 18.73,7.89 20.5,10.72L23.46,8.86Z"" /></svg>";
+
+    RenderFragment RenderStepLabel(MudStep step, bool isActive) =>
+        @<div class="@step.LabelClassname">
+            @if (LabelTemplate is not null)
+            {
+                @LabelTemplate(step)
+            }
+            else
+            {
+                <div class="@step.LabelIconClassname">
+                    @if (step.CompletedState.Value)
+                    {
+                        <MudIcon Size="Size.Small" Icon="@Icons.Material.Outlined.Done"/>
+                    }
+                    else if (step.HasErrorState.Value)
+                    {
+                        <MudIcon Size="Size.Small" Icon="@Icons.Material.Outlined.PriorityHigh"/>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.caption">@(_steps.IndexOf(step) + 1)</MudText>
+                    }
+                </div>
+            }
+
+            @if (TitleTemplate is not null)
+            {
+                @TitleTemplate(step)
+            }
+            else
+            {
+                <div class="@step.LabelContentClassname">
+                    <MudText Typo="@(isActive ? Typo.subtitle2 : Typo.body2)" Class="mud-step-label-content-title">
+                        @step.Title
+                    </MudText>
+
+                    @if (!string.IsNullOrEmpty(step.SecondaryText))
+                    {
+                        <MudText Typo="Typo.caption" Class="mud-step-label-content-secondary-text">@step.SecondaryText</MudText>
+                    }
+                </div>
+            }
+        </div>;
+
+    RenderFragment StepContent(MudStep step) =>
+        @<div @attributes="@step.UserAttributes" class="@step.Classname" style="@step.Styles" role="tabpanel" aria-labelledby="@step.Title" tabindex="0">
+            @if (Vertical)
+            {
+                <MudCollapse Expanded="step == ActiveStep">
+                    @step.ChildContent
+                </MudCollapse>
+            }
+            else
+            {
+                @step.ChildContent
+            }
+        </div>;
+}

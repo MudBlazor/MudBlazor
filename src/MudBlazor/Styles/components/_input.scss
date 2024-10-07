@@ -5,6 +5,7 @@
   display: inline-flex;
   box-sizing: border-box;
   align-items: center;
+  color-scheme: var(--mud-native-html-color-scheme);
 
   &.mud-input-full-width {
     width: 100%;
