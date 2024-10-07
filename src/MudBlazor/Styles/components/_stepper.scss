@@ -48,11 +48,16 @@
           width: 24px;
           align-items: center;
           justify-content: center;
+          text-align: center;
           font-size: 12px;
           letter-spacing: 0;
           line-height: 1;
           text-indent: 0;
           white-space: nowrap;
+
+          .mud-typography {
+            line-height: 24px;
+          }
         }
 
         .mud-step-label-content {
