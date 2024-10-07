@@ -288,7 +288,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Note: in this test the trees are synchronized solely via their item's Selected parameter 
+        /// Note: in this test the trees are synchronized solely via their item's Selected parameter
         /// </summary>
         [Test]
         public void TreeViewItem_Selected_TwoWayBindingTest_SingleSelection()
@@ -769,7 +769,7 @@ namespace MudBlazor.UnitTests.Components
 
         /// <summary>
         /// This test checks that when multiple values are selected and the compare parameter is updated,
-        /// selected values are updated correctly. 
+        /// selected values are updated correctly.
         /// </summary>
         [Test]
         public void TreeView_SelectedValues_ShouldUseComparer()
@@ -932,7 +932,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TreeViewAutoExpandTest>(self => self.Add(x => x.AutoExpand, true));
             var isExpanded = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
                 .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
-            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("div").Click();
+            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("div.mud-chip").Click();
             isExpanded("C:").Should().Be(false);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);
@@ -972,7 +972,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TreeViewAutoExpandTest>(self => self.Add(x => x.AutoExpand, true).Add(x => x.ConfigCanExpand, false));
             var isExpanded = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
                 .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
-            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("div").Click();
+            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("div.mud-chip").Click();
             isExpanded("C:").Should().Be(false);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);
@@ -1072,7 +1072,7 @@ namespace MudBlazor.UnitTests.Components
                 comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
             });
 
-#nullable enable 
+#nullable enable
             MudTreeView<string>? nullInstanceTree = null;
             MudTreeViewItem<string>? nullInstanceItem = null;
 #nullable disable

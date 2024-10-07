@@ -88,7 +88,7 @@ public class KeyInterceptorServiceTests
         var service = new KeyInterceptorService(NullLogger<KeyInterceptorService>.Instance, jsRuntimeMock.Object);
 
         // Act
-        await service.UpdateKeyAsync(observer, new(key: "Escape", stopDown: "key+none"));
+        await service.UpdateKeyAsync(observer, new("Escape", stopDown: "key+none"));
 
         // Assert
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudKeyInterceptor.updatekey", It.IsAny<object[]>()), Times.Once);

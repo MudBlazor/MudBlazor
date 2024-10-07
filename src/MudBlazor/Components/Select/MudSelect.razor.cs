@@ -25,7 +25,6 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-select")
-                .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
                 .AddClass(Class)
                 .Build();
 
@@ -702,7 +701,7 @@ namespace MudBlazor
                 }
             }
             //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
-            await KeyInterceptorService.UpdateKeyAsync(_elementId, new(key: "Escape", stopDown: "key+none"));
+            await KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "key+none"));
 
             await OnOpen.InvokeAsync();
         }
@@ -720,7 +719,7 @@ namespace MudBlazor
             }
 
             //enable escape propagation: the select popover was closed, now underlying components are allowed to handle escape key
-            await KeyInterceptorService.UpdateKeyAsync(_elementId, new(key: "Escape", stopDown: "none"));
+            await KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "none"));
 
             await OnClose.InvokeAsync();
         }
@@ -746,31 +745,30 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                var keyInterceptorOptions = new KeyInterceptorOptions(
-                    targetClass: "mud-input-control",
+                var options = new KeyInterceptorOptions(
+                    "mud-input-control",
                     enableLogging: true,
-                    keys:
                     [
                         // prevent scrolling page, toggle open/close
-                        new(key: " ", preventDown: "key+none"),
+                        new(" ", preventDown: "key+none"),
                         // prevent scrolling page, instead highlight previous item
-                        new(key: "ArrowUp", preventDown: "key+none"),
+                        new("ArrowUp", preventDown: "key+none"),
                         // prevent scrolling page, instead highlight next item
-                        new(key: "ArrowDown", preventDown: "key+none"),
-                        new(key: "Home", preventDown: "key+none"),
-                        new(key: "End", preventDown: "key+none"),
-                        new(key: "Escape"),
-                        new(key: "Enter", preventDown: "key+none"),
-                        new(key: "NumpadEnter", preventDown: "key+none"),
+                        new("ArrowDown", preventDown: "key+none"),
+                        new("Home", preventDown: "key+none"),
+                        new("End", preventDown: "key+none"),
+                        new("Escape"),
+                        new("Enter", preventDown: "key+none"),
+                        new("NumpadEnter", preventDown: "key+none"),
                         // select all items instead of all page text
-                        new(key: "a", preventDown: "key+ctrl"),
+                        new("a", preventDown: "key+ctrl"),
                         // select all items instead of all page text
-                        new(key: "A", preventDown: "key+ctrl"),
+                        new("A", preventDown: "key+ctrl"),
                         // for our users
-                        new(key: "/./", subscribeDown: true, subscribeUp: true)
+                        new("/./", subscribeDown: true, subscribeUp: true)
                     ]);
 
-                await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, keyDown: HandleKeyDownAsync, keyUp: HandleKeyUpAsync);
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync, keyUp: HandleKeyUpAsync);
             }
 
             await base.OnAfterRenderAsync(firstRender);

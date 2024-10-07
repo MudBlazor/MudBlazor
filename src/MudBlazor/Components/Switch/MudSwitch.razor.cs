@@ -163,18 +163,19 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                var keyInterceptorOptions = new KeyInterceptorOptions(
-                    targetClass: "mud-switch-base",
-                    keys:
+                var options = new KeyInterceptorOptions(
+                    "mud-switch-base",
                     [
                         // prevent scrolling page, instead increment
-                        new(key: "ArrowUp", preventDown: "key+none"),
+                        new("ArrowUp", preventDown: "key+none"),
                         // prevent scrolling page, instead decrement
-                        new(key: "ArrowDown", preventDown: "key+none"),
-                        new(key: " ", preventDown: "key+none", preventUp: "key+none")
+                        new("ArrowDown", preventDown: "key+none"),
+                        new(" ", preventDown: "key+none", preventUp: "key+none")
                     ]);
-                await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, keyDown: HandleKeyDown);
+
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDown);
             }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 

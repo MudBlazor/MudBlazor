@@ -2,16 +2,43 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
 namespace MudBlazor;
 
+/// <summary>
+/// A set of contiguous characters used to build a <see cref="BlockMask"/>.
+/// </summary>
+/// <remarks>
+/// Example: a mask character of <c>a</c>, <c>Min</c> of <c>2</c>, and <c>Max</c> of <c>3</c>, would allow <c>ABC</c> as a valid value.<br />
+/// Example: a mask character of <c>0</c>, <c>Min</c> of <c>5</c>, and <c>Max</c> of <c>7</c>, would allow <c>09123</c> as a valid value.<br />
+/// Example: a mask character of <c>*</c>, <c>Min</c> of <c>1</c>, and <c>Max</c> of <c>4</c>, would allow <c>B2A7</c> as a valid value.<br />
+/// </remarks>
+/// <param name="MaskChar">The mask character.</param>
+/// <param name="Min">The minimum required number of characters.</param>
+/// <param name="Max">The maximum allowed number of characters.</param>
 public record struct Block(char MaskChar, int Min = 1, int Max = 1);
 
+/// <summary>
+/// A mask consisting of contiguous sets of characters.
+/// </summary>
+/// <remarks>
+/// This mask is typically used for text which consists of blocks of letters and numbers, such as a flight number (e.g. <c>LH4234</c>) or product code (e.g. <c>SKU1920</c>).
+/// </remarks>
+/// <seealso cref="DateMask" />
+/// <seealso cref="MultiMask" />
+/// <seealso cref="PatternMask" />
+/// <seealso cref="RegexMask" />
 public class BlockMask : RegexMask
 {
+    /// <summary>
+    /// Creates a new block mask.
+    /// </summary>
+    /// <param name="blocks">The blocks which define this mask.</param>
+    /// <remarks>
+    /// This mask is typically used for text which consists of blocks of letters and numbers, such as a flight number (e.g. <c>LH4234</c>) or product code (e.g. <c>SKU1920</c>).
+    /// </remarks>
     public BlockMask(params Block[] blocks) : base(null)
     {
         if (blocks.Length == 0)
@@ -20,13 +47,25 @@ public class BlockMask : RegexMask
         Delimiters = "";
     }
 
+    /// <summary>
+    /// Creates a new block mask.
+    /// </summary>
+    /// <param name="delimiters">The characters which are skipped over when entering new characters.</param>
+    /// <param name="blocks">The blocks which define this mask.</param>
+    /// <remarks>
+    /// This mask is typically used for text which consists of blocks of letters and numbers, such as a flight number (e.g. <c>LH4234</c>) or product code (e.g. <c>SKU1920</c>).
+    /// </remarks>
     public BlockMask(string delimiters, params Block[] blocks) : this(blocks)
     {
         Delimiters = delimiters ?? "";
     }
 
+    /// <summary>
+    /// The sets of characters used to build this mask.
+    /// </summary>
     public Block[] Blocks { get; protected set; }
 
+    /// <inheritdoc />
     protected override void InitInternals()
     {
         base.InitInternals();
@@ -35,6 +74,7 @@ public class BlockMask : RegexMask
         _regex = new Regex(Mask);
     }
 
+    /// <inheritdoc />
     protected override void InitRegex()
     {
         // BlockMask inits regex itself (but after base init), no need to do it twice
@@ -43,11 +83,10 @@ public class BlockMask : RegexMask
     }
 
     /// <summary>
-    /// Build the progressive working regex from the block and delimiter definitions
-    /// Note: a progressive regex must match partial input!!!!
+    /// Creates a regular expression from the specified blocks.
     /// </summary>
-    /// <param name="blocks"></param>
-    /// <returns></returns>
+    /// <param name="blocks">The list of blocks to combine into an expression.</param>
+    /// <returns>A progressive regular expression which represents all of the blocks.</returns>
     protected virtual string BuildRegex(Block[] blocks)
     {
         var regexBuilder = new StringBuilder();
@@ -128,7 +167,7 @@ public class BlockMask : RegexMask
             regexBuilder.Append(")?");
     }
 
-
+    /// <inheritdoc />
     public override void UpdateFrom(IMask other)
     {
         base.UpdateFrom(other);

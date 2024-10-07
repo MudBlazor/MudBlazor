@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 
+#nullable enable
 namespace MudBlazor.Charts.SVG.Models
 {
     /// <summary>
@@ -31,7 +32,7 @@ namespace MudBlazor.Charts.SVG.Models
         /// <summary>
         /// The pattern of dashes and gaps used to paint the outline of the circle.
         /// </summary>
-        public string StrokeDashArray { get; set; }
+        public string? StrokeDashArray { get; set; }
 
         /// <summary>
         /// The offset applied to the <see cref="StrokeDashArray"/>.
