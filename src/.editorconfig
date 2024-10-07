@@ -311,7 +311,7 @@ dotnet_diagnostic.BL0007.severity = suggestion
 # IDE0290 Use primary constructor
 dotnet_diagnostic.IDE0290.severity = none
 
-[*.{cs,razor}]
+[src/MudBlazor/**/*.{cs,razor}]
 dotnet_style_namespace_match_folder = false
 resharper_check_namespace_highlighting = none
 
