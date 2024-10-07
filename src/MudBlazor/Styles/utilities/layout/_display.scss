@@ -17,6 +17,10 @@
     display: block !important;
   }
 
+  .d-#{$breakpoint}contents {
+    display: contents !important;
+  }
+
   .d-#{$breakpoint}table {
     display: table !important;
   }

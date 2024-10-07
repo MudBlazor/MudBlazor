@@ -111,4 +111,23 @@ internal static class CollectionExtensions
     {
         return list.Count > 0 ? list[0] : default;
     }
+
+    /// <summary>
+    /// Returns the index of the item in the list, or -1 if the item isn't found.
+    /// </summary>
+    /// <param name="list">The list to search in.</param>
+    /// <param name="item">The item to search for.</param>
+    /// <typeparam name="T">The type of the items in the list.</typeparam>
+    /// <returns>The index of the item if found, or -1.</returns>
+    internal static int IndexOf<T>(this IReadOnlyList<T> list, T item) where T : notnull {
+        for (var i = 0; i < list.Count; i++)
+        {
+            if (list[i].Equals(item))
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
 }
