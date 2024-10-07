@@ -276,9 +276,46 @@ window.mudpopoverHelper = {
                 offsetX += window.scrollX;
                 offsetY += window.scrollY
             }
+            // ensure popover top and left are at least x pixels from the edge of the screen
+            // Get minDistance (x) from CSS variable, fallback to 0 if not defined
+            const minDistance = 0;
+            const fixedTopAppBar = document.querySelector('.mud-appbar-fixed-top');
+            const fixedBottomAppBar = document.querySelector('.mud-appbar-fixed-bottom');
+            const minTopDistance = fixedTopAppBar ? parseInt(getComputedStyle(document.documentElement)
+                .getPropertyValue('--mud-appbar-height')) || minDistance : minDistance;
+            const minBottomDistance = fixedBottomAppBar ? parseInt(getComputedStyle(document.documentElement)
+                .getPropertyValue('--mud-appbar-height')) || minDistance : minDistance;
 
-            popoverContentNode.style['left'] = (left + offsetX) + 'px';
-            popoverContentNode.style['top'] = (top + offsetY) + 'px';
+            let finalLeft = left + offsetX;
+            let finalTop = top + offsetY;
+
+            const popoverWidth = selfRect.width;
+            const popoverHeight = selfRect.height;
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+
+            // check if popover extends beyond the bottom of the window
+            if ((finalTop + popoverHeight) > (windowHeight - minBottomDistance)) {
+                // adjust up but no higher than minTopDistance
+                finalTop = Math.max(minTopDistance, windowHeight - minBottomDistance - popoverHeight);
+            }
+            // ensure popover starts in vertical bounds on top
+            finalTop = Math.max(minTopDistance, finalTop);
+
+            // check if popover extends beyond the right of the window
+            if ((finalLeft + popoverWidth) > windowWidth) {
+                // adjust left but no further than minDistance
+                finalLeft = Math.max(minDistance, windowWidth - popoverWidth);
+            }
+            // ensure popover starts in horizontal bounds on left
+            finalLeft = Math.max(finalLeft, minDistance);
+
+            //console.log(`{popoverWidth} ${popoverWidth} {popoverHeight} ${popoverHeight} {windowWidth} ${windowWidth} {windowHeight} ${windowHeight}`)
+            //console.log(`{finalLeft}: ${finalLeft} {finalTop}: ${finalTop} {left}: ${left} {top}: ${top}`);
+            //console.log(`{offsetX}: ${offsetX} {offsetY}: ${offsetY}`);
+
+            popoverContentNode.style['left'] = `${finalLeft}px`;
+            popoverContentNode.style['top'] = `${finalTop}px`;
 
             if (window.getComputedStyle(popoverNode).getPropertyValue('z-index') != 'auto') {
                 popoverContentNode.style['z-index'] = window.getComputedStyle(popoverNode).getPropertyValue('z-index');
