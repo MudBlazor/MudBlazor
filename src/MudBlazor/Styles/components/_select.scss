@@ -69,7 +69,7 @@
       cursor: default;
     }
 
-    &:not(.mud-input-underline).mud-input.mud-input-text {
+    &:not(.mud-input-underline).mud-input-text {
       border-radius: var(--mud-default-borderradius);
       border-color: transparent;
       border-width: 2px;
@@ -78,6 +78,10 @@
 
       &:focus-within {
         border-color: var(--mud-palette-primary);
+      }
+
+      &:hover {
+        background-color: var(--mud-palette-action-default-hover);
       }
     }
   }
