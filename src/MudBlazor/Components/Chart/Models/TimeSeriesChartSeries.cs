@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
+﻿#nullable enable
 namespace MudBlazor.Components.Chart.Models
 {
     public class TimeSeriesChartSeries
@@ -9,7 +7,7 @@ namespace MudBlazor.Components.Chart.Models
 
         public string Name { get; set; } = string.Empty;
 
-        public List<TimeValue> Data { get; set; } = new();
+        public List<TimeValue> Data { get; set; } = [];
 
         public bool IsVisible { get; set; } = true;
 
@@ -21,6 +19,7 @@ namespace MudBlazor.Components.Chart.Models
         public double StrokeOpacity { get; set; } = 1;
     }
 
+    // TODO: v8 rename to TimeSeriesDisplayType (typo)
     public enum TimeSeriesDiplayType
     {
         Line,

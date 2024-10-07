@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-
+﻿#nullable enable
 namespace MudBlazor.Charts.SVG.Models
 {
     /// <summary>
@@ -15,6 +14,6 @@ namespace MudBlazor.Charts.SVG.Models
         /// <summary>
         /// The SVG path to draw.
         /// </summary>
-        public string Data { get; set; }
+        public string? Data { get; set; }
     }
 }

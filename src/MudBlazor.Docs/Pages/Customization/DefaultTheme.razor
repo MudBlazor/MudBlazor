@@ -333,6 +333,10 @@
         {
             return value.Replace("TextTransform", "-Text-Transform").ToLowerInvariant();
         }
+        else if (value.Contains("BorderRadius"))
+        {
+            return value.Replace("BorderRadius", "-BorderRadius").ToLowerInvariant();
+        }
         else
         {
             return Regex.Replace(value, @"\B[A-Z]", "-$&").ToLowerInvariant();

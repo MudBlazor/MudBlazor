@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 
+#nullable enable
 namespace MudBlazor.Charts.SVG.Models
 {
     /// <summary>
@@ -21,6 +22,6 @@ namespace MudBlazor.Charts.SVG.Models
         /// <summary>
         /// The text to display.
         /// </summary>
-        public string Value { get; set; }
+        public string? Value { get; set; }
     }
 }
