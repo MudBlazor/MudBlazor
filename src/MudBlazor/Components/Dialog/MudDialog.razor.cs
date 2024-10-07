@@ -10,6 +10,7 @@ using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -23,7 +24,7 @@ namespace MudBlazor
     /// <seealso cref="DialogService"/>
     public partial class MudDialog : MudComponentBase
     {
-        private IDialogReference _reference;
+        private IDialogReference? _reference;
         private readonly ParameterState<bool> _visibleState;
 
         /// <summary>
@@ -47,13 +48,13 @@ namespace MudBlazor
             .Build();
 
         [CascadingParameter]
-        private MudDialogInstance DialogInstance { get; set; }
+        private MudDialogInstance? DialogInstance { get; set; }
 
         [CascadingParameter(Name = "IsNested")]
         private bool IsNested { get; set; }
 
         [Inject]
-        protected IDialogService DialogService { get; set; }
+        protected IDialogService DialogService { get; set; } = null!;
 
         /// <summary>
         /// The custom content for this dialog's title.
@@ -63,21 +64,21 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
-        public RenderFragment TitleContent { get; set; }
+        public RenderFragment? TitleContent { get; set; }
 
         /// <summary>
         /// The main content for this dialog.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
-        public RenderFragment DialogContent { get; set; }
+        public RenderFragment? DialogContent { get; set; }
 
         /// <summary>
         /// The custom actions for this dialog.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
-        public RenderFragment DialogActions { get; set; }
+        public RenderFragment? DialogActions { get; set; }
 
         /// <summary>
         /// The default options for this dialog.
@@ -87,7 +88,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Misc)]  // Behavior and Appearance
-        public DialogOptions Options { get; set; }
+        public DialogOptions? Options { get; set; }
 
         /// <summary>
         /// Occurs when the area outside the dialog has been clicked if <see cref="DialogOptions.BackdropClick"/> is <c>true</c>.
@@ -98,6 +99,18 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
         public EventCallback<MouseEventArgs> OnBackdropClick { get; set; }
+
+        /// <summary>
+        /// Occurs when a key has been pressed down.
+        /// </summary>
+        [Parameter]
+        public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
+
+        /// <summary>
+        /// Occurs when a pressed key has been released.
+        /// </summary>
+        [Parameter]
+        public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
 
         /// <summary>
         /// Adds padding to the sides of this dialog.
@@ -117,7 +130,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Appearance)]
-        public string TitleClass { get; set; }
+        public string? TitleClass { get; set; }
 
         /// <summary>
         /// The CSS classes applied to the main dialog content.
@@ -127,7 +140,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Appearance)]
-        public string ContentClass { get; set; }
+        public string? ContentClass { get; set; }
 
         /// <summary>
         /// The CSS classes applied to the action buttons content.
@@ -137,14 +150,14 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Appearance)]
-        public string ActionsClass { get; set; }
+        public string? ActionsClass { get; set; }
 
         /// <summary>
         /// The CSS styles applied to the main dialog content.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Appearance)]
-        public string ContentStyle { get; set; }
+        public string? ContentStyle { get; set; }
 
         /// <summary>
         /// For inline dialogs, shows this dialog.
@@ -181,7 +194,7 @@ namespace MudBlazor
         /// <param name="title">The title of this dialog.</param>
         /// <param name="options">The options for this dialog.</param>
         /// <returns>The reference to the displayed instance of this dialog.</returns>
-        public async Task<IDialogReference> ShowAsync(string title = null, DialogOptions options = null)
+        public async Task<IDialogReference> ShowAsync(string? title = null, DialogOptions? options = null)
         {
             if (!IsInline)
             {
@@ -230,7 +243,7 @@ namespace MudBlazor
         /// For inlined dialogs, hides this dialog.
         /// </summary>
         /// <param name="result">The optional data to include.</param>
-        public async Task CloseAsync(DialogResult result = null)
+        public async Task CloseAsync(DialogResult? result = null)
         {
             if (!IsInline || _reference is null)
             {

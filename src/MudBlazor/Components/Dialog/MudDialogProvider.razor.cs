@@ -6,8 +6,6 @@
 // License: MIT
 // See https://github.com/Blazored
 
-#nullable enable
-
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -15,6 +13,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -114,12 +113,12 @@ namespace MudBlazor
         [Category(CategoryTypes.Dialog.Appearance)]
         public string? BackgroundClass { get; set; }
 
-        private readonly Collection<IDialogReference> _dialogs = new();
+        private readonly List<IDialogReference> _dialogs = new();
         private readonly DialogOptions _globalDialogOptions = new();
 
         protected override void OnInitialized()
         {
-            DialogService.OnDialogInstanceAdded += AddInstance;
+            DialogService.DialogInstanceAddedAsync += AddInstanceAsync;
             DialogService.OnDialogCloseRequested += DismissInstance;
             NavigationManager.LocationChanged += LocationChanged;
 
@@ -153,10 +152,11 @@ namespace MudBlazor
                 DismissInstance(reference, result);
         }
 
-        private void AddInstance(IDialogReference dialog)
+        private Task AddInstanceAsync(IDialogReference dialog)
         {
             _dialogs.Add(dialog);
-            StateHasChanged();
+
+            return InvokeAsync(StateHasChanged);
         }
 
         /// <summary>
@@ -168,7 +168,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private void DismissInstance(IDialogReference dialog, DialogResult result)
+        private void DismissInstance(IDialogReference dialog, DialogResult? result)
         {
             if (!dialog.Dismiss(result)) return;
 
@@ -178,7 +178,7 @@ namespace MudBlazor
 
         private IDialogReference? GetDialogReference(Guid id)
         {
-            return _dialogs.SingleOrDefault(x => x.Id == id);
+            return _dialogs.FirstOrDefault(x => x.Id == id);
         }
 
         private void LocationChanged(object? sender, LocationChangedEventArgs args)
@@ -186,19 +186,20 @@ namespace MudBlazor
             DismissAll();
         }
 
-        /// <summary>
-        /// Releases resources used by this provider.
-        /// </summary>
-        public void Dispose()
+        protected virtual void Dispose(bool disposing)
         {
-            if (NavigationManager != null)
-                NavigationManager.LocationChanged -= LocationChanged;
-
-            if (DialogService != null)
+            if (disposing)
             {
-                DialogService.OnDialogInstanceAdded -= AddInstance;
+                NavigationManager.LocationChanged -= LocationChanged;
+                DialogService.DialogInstanceAddedAsync -= AddInstanceAsync;
                 DialogService.OnDialogCloseRequested -= DismissInstance;
             }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

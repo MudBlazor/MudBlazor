@@ -13,12 +13,6 @@ namespace MudBlazor.State;
 internal interface IParameterStatesReader
 {
     /// <summary>
-    /// Sets the owner of the parameter states reader.
-    /// </summary>
-    /// <param name="owner">The owner to be set.</param>
-    void SetOwner(IParameterStatesReaderOwner owner);
-
-    /// <summary>
     /// Reads and returns a collection of parameter states.
     /// </summary>
     /// <returns>The collection of parameter states read from the reader.</returns>

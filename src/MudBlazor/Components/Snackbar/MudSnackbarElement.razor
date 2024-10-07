@@ -3,12 +3,16 @@
     Changes and improvements Copyright (c) The MudBlazor Team.
 *@
 
+@{
+#nullable enable
+}
+
 @namespace MudBlazor
 @using MudBlazor.Resources
 @inherits MudComponentBase
 @inject InternalMudLocalizer Localizer
 
-@Css
+@_css
 <div role="alert"
      aria-live="polite"
      class="@SnackbarClass"
@@ -48,7 +52,7 @@
             @if (ShowCloseIcon)
             {
                 <MudIconButton Class="mud-snackbar-close-button ms-2" Icon="@CloseIcon" Size="Size.Small" OnClick="CloseIconClicked"
-                               aria-label="@Localizer[nameof(LanguageResource.MudSnackbar_Close)]" />
+                               aria-label="@Localizer[LanguageResource.MudSnackbar_Close]" />
             }
         </div>
     }

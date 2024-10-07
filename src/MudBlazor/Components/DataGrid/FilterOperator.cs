@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using MudBlazor.Resources;
 
 namespace MudBlazor
 {
@@ -275,5 +276,41 @@ namespace MudBlazor
             // default
             return Array.Empty<string>();
         }
+
+        internal static string GetTranslationKeyByOperatorName(string operatorName) => operatorName switch
+        {
+            // All these operator constants should be refactored to be enums, this is a temporary solution.
+            // The commented lines are duplicate constants.
+            String.Contains => LanguageResource.MudDataGrid_Contains,
+            String.NotContains => LanguageResource.MudDataGrid_NotContains,
+            String.Equal => LanguageResource.MudDataGrid_Equals,
+            String.NotEqual => LanguageResource.MudDataGrid_NotEquals,
+            String.StartsWith => LanguageResource.MudDataGrid_StartsWith,
+            String.EndsWith => LanguageResource.MudDataGrid_EndsWith,
+            String.Empty => LanguageResource.MudDataGrid_IsEmpty,
+            String.NotEmpty => LanguageResource.MudDataGrid_IsNotEmpty,
+            Number.Equal => LanguageResource.MudDataGrid_EqualSign,
+            Number.NotEqual => LanguageResource.MudDataGrid_NotEqualSign,
+            Number.GreaterThan => LanguageResource.MudDataGrid_GreaterThanSign,
+            Number.GreaterThanOrEqual => LanguageResource.MudDataGrid_GreaterThanOrEqualSign,
+            Number.LessThan => LanguageResource.MudDataGrid_LessThanSign,
+            Number.LessThanOrEqual => LanguageResource.MudDataGrid_LessThanOrEqualSign,
+            //Number.Empty => LanguageResource.MudDataGrid_IsEmpty,
+            //Number.NotEmpty => LanguageResource.MudDataGrid_IsNotEmpty,
+            Enum.Is => LanguageResource.MudDataGrid_Is,
+            Enum.IsNot => LanguageResource.MudDataGrid_IsNot,
+            //Boolean.Is => LanguageResource.MudDataGrid_Is,
+            //DateTime.Is => LanguageResource.MudDataGrid_Is,
+            //DateTime.IsNot => LanguageResource.MudDataGrid_IsNot,
+            DateTime.After => LanguageResource.MudDataGrid_IsAfter,
+            DateTime.OnOrAfter => LanguageResource.MudDataGrid_IsOnOrAfter,
+            DateTime.Before => LanguageResource.MudDataGrid_IsBefore,
+            DateTime.OnOrBefore => LanguageResource.MudDataGrid_IsOnOrBefore,
+            //DateTime.Empty => LanguageResource.MudDataGrid_IsEmpty,
+            //DateTime.NotEmpty => LanguageResource.MudDataGrid_IsNotEmpty,
+            //Guid.Equal => LanguageResource.MudDataGrid_Equals,
+            //Guid.NotEqual => LanguageResource.MudDataGrid_NotEquals,
+            _ => throw new ArgumentOutOfRangeException(nameof(operatorName), operatorName, "Unknown operator name.")
+        };
     }
 }

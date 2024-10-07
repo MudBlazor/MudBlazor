@@ -11,13 +11,12 @@ namespace MudBlazor
     public partial class MudRadio<T> : MudComponentBase, IDisposable
     {
         private IMudRadioGroup? _parent;
-        private IKeyInterceptor? _keyInterceptor;
-        private string _elementId = "radio" + Guid.NewGuid().ToString().Substring(0, 8);
+        private string _elementId = Identifier.Create("radio");
 
         protected string Classname =>
             new CssBuilder("mud-radio")
-                .AddClass("mud-disabled", GetDisabled())
-                .AddClass("mud-readonly", GetReadOnly())
+                .AddClass("mud-disabled", GetDisabledState())
+                .AddClass("mud-readonly", GetReadOnlyState())
                 .AddClass($"mud-radio-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
                 .AddClass("mud-radio-with-content", ChildContent is not null)
                 .AddClass(Class)
@@ -25,12 +24,14 @@ namespace MudBlazor
 
         protected string ButtonClassname =>
             new CssBuilder("mud-button-root mud-icon-button")
-                .AddClass("mud-ripple mud-ripple-radio", Ripple && !GetDisabled() && !GetReadOnly())
-                .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnly() && !GetDisabled() && (UncheckedColor == null || (UncheckedColor != null && Checked)))
-                .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnly() && !GetDisabled() && UncheckedColor != null && Checked == false)
+                .AddClass("mud-ripple mud-ripple-radio", Ripple && !GetDisabledState() && !GetReadOnlyState())
+                .AddClass($"mud-{Color.ToDescriptionString()}-text", !GetDisabledState() && (UncheckedColor == null || (UncheckedColor != null && Checked)))
+                .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text", !GetDisabledState() && UncheckedColor != null && Checked == false)
+                .AddClass($"hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && (UncheckedColor == null || (UncheckedColor != null && Checked)))
+                .AddClass($"hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && Checked == false)
                 .AddClass("mud-radio-dense", Dense)
-                .AddClass("mud-disabled", GetDisabled())
-                .AddClass("mud-readonly", GetReadOnly())
+                .AddClass("mud-disabled", GetDisabledState())
+                .AddClass("mud-readonly", GetReadOnlyState())
                 .AddClass("mud-checked", Checked)
                 .AddClass("mud-error-text", MudRadioGroup?.HasErrors)
                 .Build();
@@ -56,7 +57,7 @@ namespace MudBlazor
                 .Build();
 
         [Inject]
-        private IKeyInterceptorFactory KeyInterceptorFactory { get; set; } = null!;
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
@@ -138,9 +139,9 @@ namespace MudBlazor
         [Category(CategoryTypes.Radio.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
-        private bool GetDisabled() => Disabled || MudRadioGroup?.GetDisabledState() == true;
+        private bool GetDisabledState() => Disabled || MudRadioGroup?.GetDisabledState() == true;
 
-        private bool GetReadOnly() => MudRadioGroup?.GetReadOnlyState() == true;
+        private bool GetReadOnlyState() => MudRadioGroup?.GetReadOnlyState() == true;
 
         internal bool Checked { get; private set; }
 
@@ -177,7 +178,7 @@ namespace MudBlazor
 
         internal Task OnClickAsync()
         {
-            if (GetDisabled() || (MudRadioGroup?.GetReadOnlyState() ?? false))
+            if (GetDisabledState() || (GetReadOnlyState()))
             {
                 return Task.CompletedTask;
             }
@@ -192,7 +193,7 @@ namespace MudBlazor
 
         protected internal async Task HandleKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
         {
-            if (GetDisabled() || (MudRadioGroup?.GetReadOnlyState() ?? false))
+            if (GetDisabledState() || GetReadOnlyState())
             {
                 return;
             }
@@ -229,7 +230,8 @@ namespace MudBlazor
             MudRadioGroup?.UnregisterRadio(this);
             if (IsJSRuntimeAvailable)
             {
-                _keyInterceptor?.Dispose();
+                // TODO: Replace with IAsyncDisposable
+                KeyInterceptorService.UnsubscribeAsync(_elementId).CatchAndLog();
             }
         }
 
@@ -237,19 +239,19 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                _keyInterceptor = KeyInterceptorFactory.Create();
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions
-                {
-                    //EnableLogging = true,
-                    TargetClass = "mud-button-root",
-                    Keys = {
-                        new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" }, // prevent scrolling page
-                        new KeyOptions { Key="Enter", PreventDown = "key+none" },
-                        new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
-                        new KeyOptions { Key="Backspace", PreventDown = "key+none" },
-                    },
-                });
+                var options = new KeyInterceptorOptions(
+                    "mud-button-root",
+                    [
+                        // prevent scrolling page
+                        new(" ", preventDown: "key+none", preventUp: "key+none"),
+                        new("Enter", preventDown: "key+none"),
+                        new("NumpadEnter", preventDown: "key+none"),
+                        new("Backspace", preventDown: "key+none")
+                    ]);
+
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
             }
+
             await base.OnAfterRenderAsync(firstRender);
         }
     }

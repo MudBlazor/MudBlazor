@@ -1,13 +1,12 @@
 ﻿// Copyright (c) 2019 Blazored
 // Copyright (c) 2020 Adapted by Jonny Larsson, Meinrad Recheis and Contributors
 
-using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -24,21 +23,22 @@ namespace MudBlazor
     /// <seealso cref="DialogService"/>
     public partial class MudDialogInstance : MudComponentBase, IDisposable
     {
-        private DialogOptions _options = new();
-        private string _elementId = "dialog_" + Guid.NewGuid().ToString().Substring(0, 8);
-        private IKeyInterceptor _keyInterceptor;
+        private DialogOptions? _options = new();
+        private readonly string _elementId = Identifier.Create("dialog");
+        private MudDialog? _dialog;
+        private bool _disposedValue;
 
         [Inject]
-        private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
         [CascadingParameter]
-        private MudDialogProvider Parent { get; set; }
+        private MudDialogProvider Parent { get; set; } = null!;
 
         [CascadingParameter]
-        private DialogOptions GlobalDialogOptions { get; set; } = new DialogOptions();
+        private DialogOptions GlobalDialogOptions { get; set; } = DialogOptions.Default;
 
         /// <summary>
         /// The options used for this dialog.
@@ -64,7 +64,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         /// <summary>
         /// The custom content at the top of this dialog.
@@ -74,7 +74,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
-        public RenderFragment TitleContent { get; set; }
+        public RenderFragment? TitleContent { get; set; }
 
         /// <summary>
         /// The content within this dialog.
@@ -84,7 +84,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
-        public RenderFragment Content { get; set; }
+        public RenderFragment? Content { get; set; }
 
         /// <summary>
         /// The unique ID for this instance.
@@ -103,52 +103,55 @@ namespace MudBlazor
         [Category(CategoryTypes.Dialog.Appearance)]
         public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
 
-        private string Position { get; set; }
-        private string DialogMaxWidth { get; set; }
-        private bool BackdropClick { get; set; } = true;
-        private bool CloseOnEscapeKey { get; set; }
-        private bool NoHeader { get; set; }
-        private bool CloseButton { get; set; }
-        private bool FullScreen { get; set; }
-        private bool FullWidth { get; set; }
-
         protected override void OnInitialized()
         {
             ConfigureInstance();
+            base.OnInitialized();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
-                //Since CloseOnEscapeKey is the only thing to be handled, turn interceptor off
-                if (CloseOnEscapeKey)
-                {
-                    _keyInterceptor = _keyInterceptorFactory.Create();
+                var options = new KeyInterceptorOptions(
+                    "mud-dialog",
+                    [
+                        new("/./", subscribeDown: true, subscribeUp: true)
+                    ]);
 
-                    await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
-                    {
-                        TargetClass = "mud-dialog",
-                        Keys = {
-                            new KeyOptions { Key="Escape", SubscribeDown = true },
-                        },
-                    });
-                    _keyInterceptor.KeyDown += HandleKeyDown;
-                }
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync, keyUp: HandleKeyUpAsync);
             }
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        internal void HandleKeyDown(KeyboardEventArgs args)
+        internal async Task HandleKeyDownAsync(KeyboardEventArgs args)
         {
             switch (args.Key)
             {
                 case "Escape":
-                    if (CloseOnEscapeKey)
+                    if (GetCloseOnEscapeKey())
                     {
                         Cancel();
                     }
                     break;
+            }
+            if (_dialog is not null && _dialog.OnKeyDown.HasDelegate)
+            {
+                await _dialog.OnKeyDown.InvokeAsync(args);
+                // Note: we need to force a render here because the user will expect this blazor standard functionality.
+                // Since the event originates from KeyInterceptor it will not cause a render automatically.
+                StateHasChanged();
+            }
+        }
+
+        internal async Task HandleKeyUpAsync(KeyboardEventArgs args)
+        {
+            if (_dialog is not null && _dialog.OnKeyUp.HasDelegate)
+            {
+                await _dialog.OnKeyUp.InvokeAsync(args);
+                // note: we need to force a render here because the user will expect this blazor standard functionality
+                // Since the event originates from KeyInterceptor it will not cause a render automatically.
+                StateHasChanged();
             }
         }
 
@@ -173,7 +176,7 @@ namespace MudBlazor
         /// <remarks>
         /// Use this method to change the title while a dialog is open, such as when the title reflects a value within this dialog.  Has no effect when <see cref="TitleContent"/> is set.
         /// </remarks>
-        public void SetTitle(string title)
+        public void SetTitle(string? title)
         {
             Title = title;
             StateHasChanged();
@@ -184,7 +187,7 @@ namespace MudBlazor
         /// </summary>
         public void Close()
         {
-            Close(DialogResult.Ok<object>(null));
+            Close(DialogResult.Ok<object?>(null));
         }
 
         /// <summary>
@@ -217,19 +220,11 @@ namespace MudBlazor
 
         private void ConfigureInstance()
         {
-            Position = SetPosition();
-            DialogMaxWidth = SetMaxWidth();
-            NoHeader = SetHideHeader();
-            CloseButton = SetCloseButton();
-            FullWidth = SetFullWidth();
-            FullScreen = SetFulScreen();
-            BackdropClick = SetBackdropClick();
-            CloseOnEscapeKey = SetCloseOnEscapeKey();
             Class = Classname;
             BackgroundClassname = new CssBuilder("mud-overlay-dialog").AddClass(Options.BackgroundClass).Build();
         }
 
-        private string SetPosition()
+        private string GetPosition()
         {
             DialogPosition position;
 
@@ -248,7 +243,7 @@ namespace MudBlazor
             return $"mud-dialog-{position.ToDescriptionString()}";
         }
 
-        private string SetMaxWidth()
+        private string GetMaxWidth()
         {
             MaxWidth maxWidth;
 
@@ -267,7 +262,7 @@ namespace MudBlazor
             return $"mud-dialog-width-{maxWidth.ToDescriptionString()}";
         }
 
-        private bool SetFullWidth()
+        private bool GetFullWidth()
         {
             if (Options.FullWidth.HasValue)
                 return Options.FullWidth.Value;
@@ -278,7 +273,7 @@ namespace MudBlazor
             return false;
         }
 
-        private bool SetFulScreen()
+        private bool GetFullScreen()
         {
             if (Options.FullScreen.HasValue)
                 return Options.FullScreen.Value;
@@ -296,16 +291,16 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-dialog")
-                .AddClass(DialogMaxWidth, !FullScreen)
-                .AddClass("mud-dialog-width-full", FullWidth && !FullScreen)
-                .AddClass("mud-dialog-fullscreen", FullScreen)
+                .AddClass(GetMaxWidth(), !GetFullScreen())
+                .AddClass("mud-dialog-width-full", GetFullWidth() && !GetFullScreen())
+                .AddClass("mud-dialog-fullscreen", GetFullScreen())
                 .AddClass("mud-dialog-rtl", RightToLeft)
                 .AddClass(_dialog?.Class)
             .Build();
 
         protected string BackgroundClassname { get; set; } = "mud-overlay-dialog";
 
-        private bool SetHideHeader()
+        private bool GetHideHeader()
         {
             if (Options.NoHeader.HasValue)
                 return Options.NoHeader.Value;
@@ -316,7 +311,7 @@ namespace MudBlazor
             return false;
         }
 
-        private bool SetCloseButton()
+        private bool GetCloseButton()
         {
             if (Options.CloseButton.HasValue)
                 return Options.CloseButton.Value;
@@ -327,7 +322,7 @@ namespace MudBlazor
             return false;
         }
 
-        private bool SetBackdropClick()
+        private bool GetBackdropClick()
         {
             if (Options.BackdropClick.HasValue)
                 return Options.BackdropClick.Value;
@@ -338,7 +333,7 @@ namespace MudBlazor
             return true;
         }
 
-        private bool SetCloseOnEscapeKey()
+        private bool GetCloseOnEscapeKey()
         {
             if (Options.CloseOnEscapeKey.HasValue)
                 return Options.CloseOnEscapeKey.Value;
@@ -351,7 +346,7 @@ namespace MudBlazor
 
         private async Task HandleBackgroundClickAsync(MouseEventArgs args)
         {
-            if (!BackdropClick)
+            if (!GetBackdropClick())
                 return;
 
             if (_dialog is null || !_dialog.OnBackdropClick.HasDelegate)
@@ -363,9 +358,6 @@ namespace MudBlazor
             await _dialog.OnBackdropClick.InvokeAsync(args);
         }
 
-        private MudDialog _dialog;
-        private bool _disposedValue;
-
         /// <summary>
         /// Links a dialog with this instance.
         /// </summary>
@@ -375,8 +367,6 @@ namespace MudBlazor
         /// </remarks>
         public void Register(MudDialog dialog)
         {
-            if (dialog == null)
-                return;
             _dialog = dialog;
             Class = dialog.Class;
             Style = dialog.Style;
@@ -396,22 +386,19 @@ namespace MudBlazor
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    if (_keyInterceptor != null)
-                    {
-                        _keyInterceptor.KeyDown -= HandleKeyDown;
-                        if (IsJSRuntimeAvailable)
-                        {
-                            _keyInterceptor.Dispose();
-                        }
-                    }
-                }
+            if (_disposedValue)
+                return;
 
-                _disposedValue = true;
+            if (disposing)
+            {
+                if (IsJSRuntimeAvailable)
+                {
+                    // TODO: Replace with IAsyncDisposable
+                    KeyInterceptorService.UnsubscribeAsync(_elementId).CatchAndLog();
+                }
             }
+
+            _disposedValue = true;
         }
 
         /// <summary>

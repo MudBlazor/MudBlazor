@@ -25,8 +25,6 @@ namespace MudBlazor
         internal ParameterState<bool> HiddenState { get; }
         internal ParameterState<bool> GroupingState { get; }
 
-        internal readonly Guid uid = Guid.NewGuid();
-
         /// <summary>
         /// The data grid which owns this column.
         /// </summary>
@@ -161,13 +159,13 @@ namespace MudBlazor
         /// Defaults to <c>null</c>.  When set, this overrides the <see cref="MudDataGrid{T}.SortMode"/> property.
         /// </remarks>
         [Parameter]
-        public bool? Sortable { get; set; }
+        public virtual bool? Sortable { get; set; }
 
         /// <summary>
         /// Allows this column's width to be changed.
         /// </summary>
         [Parameter]
-        public bool? Resizable { get; set; }
+        public virtual bool? Resizable { get; set; }
 
         /// <summary>
         /// Allows this column to be reordered via drag-and-drop operations.
@@ -176,7 +174,7 @@ namespace MudBlazor
         /// Defaults to <c>null</c>.  When set, this overrides the <see cref="MudDataGrid{T}.DragDropColumnReordering"/> property.
         /// </remarks>
         [Parameter]
-        public bool? DragAndDropEnabled { get; set; }
+        public virtual bool? DragAndDropEnabled { get; set; }
 
         /// <summary>
         /// Allows filters to be used on this column.
@@ -185,7 +183,7 @@ namespace MudBlazor
         /// Defaults to <c>null</c>.  When set, this overrides the <see cref="MudDataGrid{T}.Filterable"/> property.
         /// </remarks>
         [Parameter]
-        public bool? Filterable { get; set; }
+        public virtual bool? Filterable { get; set; }
 
         /// <summary>
         /// Shows the filter icon.
@@ -226,7 +224,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>.  When set, this overrides the <see cref="MudDataGrid{T}.ShowColumnOptions"/> property.
         /// </remarks>
-        [Parameter] public bool? ShowColumnOptions { get; set; }
+        [Parameter] public virtual bool? ShowColumnOptions { get; set; }
 
         /// <summary>
         /// The comparison used for values in this column.
@@ -628,12 +626,14 @@ namespace MudBlazor
         }
 
         // Allows child components to change column grouping.
-        internal async Task SetGrouping(bool g)
+        internal async Task SetGroupingAsync(bool group)
         {
-            await GroupingState.SetValueAsync(g);
+            await GroupingState.SetValueAsync(group);
 
-            if (GroupingState.Value)
-                await DataGrid?.ChangedGrouping(this);
+            if (DataGrid is not null)
+            {
+                await DataGrid.ChangedGrouping(this);
+            }
         }
 
         /// <summary>

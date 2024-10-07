@@ -6,6 +6,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// A row of data within a <see cref="MudTable{T}"/>.
+    /// </summary>
     public partial class MudTr : MudComponentBase
     {
         private bool _checked;
@@ -21,27 +25,69 @@ namespace MudBlazor
             .AddStyle("padding-left", "34px", Expandable)
             .Build();
 
+        /// <summary>
+        /// The current state of the <see cref="MudTable{T}"/> containing this data row.
+        /// </summary>
         [CascadingParameter]
         public TableContext? Context { get; set; }
 
+        /// <summary>
+        /// The content within this data row.
+        /// </summary>
         [Parameter]
         public RenderFragment? ChildContent { get; set; }
 
+        /// <summary>
+        /// The data being displayed for this row.
+        /// </summary>
         [Parameter]
         public object? Item { get; set; }
 
+        /// <summary>
+        /// Displays a checkbox at the start of this row.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  Managed automatically by the parent <see cref="MudTable{T}"/>.
+        /// </remarks>
         [Parameter]
         public bool Checkable { get; set; }
 
+        /// <summary>
+        /// Prevents the change of the current selection.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  Requires <see cref="Checkable"/> to be <c>true</c>.  Managed automatically by the parent <see cref="MudTable{T}"/>.
+        /// </remarks>
+        [Parameter]
+        public bool SelectionChangeable { get; set; } = true;
+
+        /// <summary>
+        /// Allows this row to be edited.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  Managed automatically by the parent <see cref="MudTable{T}"/>.
+        /// </remarks>
         [Parameter]
         public bool Editable { get; set; }
 
+        /// <summary>
+        /// Allows this row to expand to display nested content.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  Managed automatically by the parent <see cref="MudTable{T}"/>.
+        /// </remarks>
         [Parameter]
         public bool Expandable { get; set; }
 
+        /// <summary>
+        /// Occurs when <see cref="Checked"/> has changed.
+        /// </summary>
         [Parameter]
         public EventCallback<bool> CheckedChanged { get; set; }
 
+        /// <summary>
+        /// The state of the checkbox when <see cref="Checkable"/> is <c>true</c>.
+        /// </summary>
         [Parameter]
         public bool Checked
         {
@@ -56,6 +102,10 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Occurs when this row is clicked.
+        /// </summary>
+        /// <param name="args">The mouse coordinates of the click.</param>
         public async Task OnRowClickedAsync(MouseEventArgs args)
         {
             var table = Context?.Table;
@@ -66,7 +116,7 @@ namespace MudBlazor
 
             table.SetSelectedItem(Item);
             StartEditingItem(buttonClicked: false);
-            if (table is { MultiSelection: true, SelectOnRowClick: true, Editable: false })
+            if (table is { MultiSelection: true, SelectionChangeable: true, SelectOnRowClick: true, Editable: false })
             {
                 Checked = !Checked;
             }
@@ -74,6 +124,10 @@ namespace MudBlazor
             await table.FireRowClickEventAsync(args, this, Item);
         }
 
+        /// <summary>
+        /// Occurs when the pointer enters this row.
+        /// </summary>
+        /// <param name="args">The coordinates of the pointer.</param>
         public async Task OnRowMouseEnterAsync(PointerEventArgs args)
         {
             var table = Context?.Table;
@@ -85,6 +139,10 @@ namespace MudBlazor
             await table.FireRowMouseEnterEventAsync(args, this, Item);
         }
 
+        /// <summary>
+        /// Occurs when the pointer leaves this row.
+        /// </summary>
+        /// <param name="args">The coordinates of the pointer.</param>
         public async Task OnRowMouseLeaveAsync(PointerEventArgs args)
         {
             var table = Context?.Table;
@@ -174,11 +232,19 @@ namespace MudBlazor
             return base.OnInitializedAsync();
         }
 
+        /// <summary>
+        /// Releases resources used by this row.
+        /// </summary>
         public void Dispose()
         {
             Context?.Remove(this, Item);
         }
 
+        /// <summary>
+        /// Sets <see cref="Checked"/> to the specified value.
+        /// </summary>
+        /// <param name="checkedState">The new checked state.</param>
+        /// <param name="notify">When <c>true</c>, the table's <see cref="MudTable{T}.OnHeaderCheckboxClicked(bool)"/> event occurs.</param>
         public void SetChecked(bool checkedState, bool notify)
         {
             if (_checked != checkedState)
@@ -241,6 +307,12 @@ namespace MudBlazor
             _hasBeenClickedFirstTime = false;
         }
 
+        /// <summary>
+        /// Resets this row's editing state.
+        /// </summary>
+        /// <remarks>
+        /// Typically occurs when another row has been selected.  Managed automatically by the parent table.
+        /// </remarks>
         public void ManagePreviousEdition()
         {
             // Reset the item to its original value if no cancellation and no commit has been done

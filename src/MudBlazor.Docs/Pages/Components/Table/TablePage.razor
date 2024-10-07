@@ -1,4 +1,17 @@
 ﻿@page "/components/table"
+@page "/components/MudTable"
+@page "/components/MudTable`1"
+@page "/components/MudTableBase"
+@page "/components/MudTableGroupRow"
+@page "/components/MudTableGroupRow`1"
+@page "/components/MudTablePager"
+@page "/components/MudTableSortLabel"
+@page "/components/MudTableSortLabel`1"
+@page "/components/MudTd"
+@page "/components/MudTFootRow"
+@page "/components/MudTh"
+@page "/components/MudTHeadRow"
+@page "/components/MudTr"
 
 <DocsPage>
     <DocsPageHeader Title="Table" SubTitle="A sortable, filterable table with multiselection and pagination" />
@@ -98,7 +111,8 @@
             <SectionHeader Title="Multi-Selection">
                 <Description>
                     To enable multiselection of rows using checkboxes, set <CodeInline>MultiSelection="true"</CodeInline>.<br />
-                    To disable toggling the checkbox state on row-click, set <CodeInline>SelectOnRowClick="false"</CodeInline>.
+                    To disable toggling the checkbox state on row-click, set <CodeInline>SelectOnRowClick="false"</CodeInline>.<br />
+                    To prevent editing the current selection, set <CodeInline>SelectionChangeable="false"</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(TableMultiSelectExample)" ShowCode="false" Block="true" FullWidth="true">

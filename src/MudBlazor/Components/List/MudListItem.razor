@@ -5,10 +5,10 @@
 <MudElement HtmlTag="@HtmlTag"
             Class="@Classname"
             Style="@Style"
+            tabindex="0"
             @attributes="UserAttributes"
             @onclick="OnClickHandlerAsync"
             href="@Href"
-            tabindex="0"
             target="@Target"
             PreventDefault="@GetPreventDefault()"
             ClickPropagation="@GetClickPropagation()">
@@ -45,7 +45,7 @@
                      @bind-Value:set="@(x => OnCheckboxChangedAsync())" />
     }
 
-    <div class="mud-list-item-text @(Inset ? "mud-list-item-text-inset" : "")">
+    <div class="mud-list-item-text@(Inset ? " mud-list-item-text-inset" : string.Empty)">
         <MudText Typo="@TextTypo">
             @if (ChildContent != null)
             {

@@ -52,7 +52,7 @@
             }
             @if (PickerVariant == PickerVariant.Inline)
             {
-				<MudPopover Open="@Open" Fixed="true" AnchorOrigin="@(AnchorOrigin)" TransformOrigin="@(TransformOrigin)" OverflowBehavior="OverflowBehavior.FlipOnOpen" Paper="false">
+				<MudPopover Open="@Open" Fixed="true" AnchorOrigin="@(AnchorOrigin)" TransformOrigin="@(TransformOrigin)" OverflowBehavior="@(OverflowBehavior)" Paper="false">
 				   <div @ref="_pickerInlineRef" class="@PickerInlineClassname">
 					   <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Elevation="@_pickerElevation" Square="@_pickerSquare">
 						   <div class="@PickerContainerClassname">

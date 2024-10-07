@@ -3,9 +3,14 @@
 @typeparam T
 
 <TemplateColumn T="T" Tag="@("hierarchy-column")" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderStyle="width:0%"
-    Filterable="false" Editable="false">
+    Hideable="Hideable" Hidden="Hidden" HiddenChanged="HiddenChanged"
+    Filterable="false" Editable="false" DragAndDropEnabled="@DragAndDropEnabled">
     <CellTemplate>
-         <MudIconButton 
+        @if (!_finishedInitialExpanded && InitiallyExpandedFunc.Invoke(context.Item))
+        {
+            context.OpenHierarchies.Add(context.Item);
+        }
+        <MudIconButton 
             Class="ma-n3 pa-1"
             Icon="@(context.OpenHierarchies.Contains(context.Item) ?  OpenIcon : ClosedIcon)" 
             OnClick="context.Actions.ToggleHierarchyVisibilityForItemAsync"

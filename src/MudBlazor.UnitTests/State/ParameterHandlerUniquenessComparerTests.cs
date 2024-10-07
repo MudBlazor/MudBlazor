@@ -5,6 +5,7 @@
 using FluentAssertions;
 using MudBlazor.State;
 using MudBlazor.State.Builder;
+using MudBlazor.State.Comparer;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.State;

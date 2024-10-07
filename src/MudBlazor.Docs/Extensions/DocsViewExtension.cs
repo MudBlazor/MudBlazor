@@ -50,6 +50,7 @@ namespace MudBlazor.Docs.Extensions
             services.AddGoogleAnalytics("G-PRYNCB61NV");
             services.AddCookieConsent(options =>
             {
+                options.ImportJsAutomatically = false;
                 options.Revision = 1;
                 options.PolicyUrl = "/mud/cookie-policy";
 
@@ -72,7 +73,7 @@ namespace MudBlazor.Docs.Extensions
                         new CookieCategoryService
                         {
                             Identifier = "necessary",
-                            PolicyUrl = "https://privacy.microsoft.com/en-us/privacystatementy",
+                            PolicyUrl = "https://privacy.microsoft.com/privacystatement",
                             TitleText = new()
                             {
                                 ["en"] = "Azure App Service",

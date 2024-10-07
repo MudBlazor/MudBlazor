@@ -3,13 +3,11 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudSwitch @bind-Value="_selectOnRowClick">SelectOnRowClick: @_selectOnRowClick</MudSwitch>
 <MudText HtmlTag="span">Item: @_selectedItemText</MudText>
 <MudText>Selected items (@selectedItems?.Count): @(selectedItems == null ? "" : string.Join(", ", selectedItems.OrderBy(x => x.Sign).Select(x => x.Sign)))</MudText>
 
-
-<MudTable @ref="_table" T="Element" Items="@Elements" MultiSelection="true" @bind-SelectedItems="selectedItems" Hover="true"
-          OnRowClick="@OnRowClick" @bind-SelectOnRowClick="@_selectOnRowClick">
+<MudTable @ref="_table" T="Element" Items="@Elements" MultiSelection="true" SelectionChangeable="_selectionChangeable" Hover="true"
+          @bind-SelectedItems="selectedItems" OnRowClick="@OnRowClick" SelectOnRowClick="@_selectOnRowClick">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -31,12 +29,14 @@
         <MudTd colspan="5">Select All</MudTd>
     </FooterContent>
 </MudTable>
-
+<MudSwitch @bind-Value="_selectOnRowClick" Color="Color.Primary">Select on row click</MudSwitch>
+<MudSwitch @bind-Value="_selectionChangeable" Color="Color.Primary">Selection is changeable</MudSwitch>
 
 @code {
     private HashSet<Element> selectedItems = new HashSet<Element>();
     private IEnumerable<Element> Elements = new List<Element>();
     private bool _selectOnRowClick = true;
+    private bool _selectionChangeable = true;
     private MudTable<Element> _table;
     private string _selectedItemText = "No row clicked";
 

@@ -13,6 +13,7 @@ using System.Xml;
 
 namespace MudBlazor.Docs.Models
 {
+    [Obsolete("This generator has been replaced by the ApiDocumentationBuilder class.")]
     public static partial class XmlDocumentation
     {
 

@@ -16,7 +16,7 @@ namespace MudBlazor
             .Build();
 
         private IMudSelect _parent;
-        internal string ItemId { get; } = "_" + Guid.NewGuid().ToString().Substring(0, 8);
+        internal string ItemId { get; } = Identifier.Create();
 
         /// <summary>
         /// The parent select component

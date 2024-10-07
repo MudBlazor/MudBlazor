@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿#nullable enable
 namespace MudBlazor.Components.Chart.Interpolation
 {
     public interface ILineInterpolator

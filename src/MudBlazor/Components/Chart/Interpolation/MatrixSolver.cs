@@ -4,8 +4,7 @@
  *  http://www.mosismath.com/Matrix_Gauss/MatrixGauss.html
  */
 
-using System;
-
+#nullable enable
 namespace MudBlazor.Components.Chart
 {
     // Matrix equation solver using the Gaussian elimination algorithm

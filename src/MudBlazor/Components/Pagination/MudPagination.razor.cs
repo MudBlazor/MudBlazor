@@ -182,6 +182,14 @@ namespace MudBlazor
         public bool ShowNextButton { get; set; } = true;
 
         /// <summary>
+        /// If true, the page buttons are shown.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Pagination.Behavior)]
+        public bool ShowPageButtons { get; set; } = true;
+
+
+        /// <summary>
         /// Invokes the callback when a control button is clicked.
         /// </summary>
         [Parameter]

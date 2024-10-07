@@ -17,15 +17,3 @@
         }
     }
 </div>
-
-@code {
-    [Parameter] public string Class { get; set; }
-    [Parameter] public string Text { get; set; }
-    [Parameter] public string Icon { get; set; }
-    [Parameter] public Edge Edge { get; set; }
-    [Parameter] public Size Size { get; set; } = Size.Medium;
-    [Parameter] public Color Color { get; set; } = Color.Default;
-    [Parameter] public string AriaLabel { get; set; }
-
-    [Parameter] public EventCallback<MouseEventArgs> AdornmentClick { get; set; }
-}

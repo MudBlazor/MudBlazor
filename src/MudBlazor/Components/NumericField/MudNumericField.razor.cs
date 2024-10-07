@@ -17,7 +17,6 @@ namespace MudBlazor
 {
     public partial class MudNumericField<T> : MudDebouncedInput<T>
     {
-        private IKeyInterceptor _keyInterceptor;
         private Comparer _comparer = new(CultureInfo.InvariantCulture);
 
         public MudNumericField()
@@ -107,15 +106,16 @@ namespace MudBlazor
         }
 
         protected string Classname =>
-            new CssBuilder("mud-input-input-control mud-input-number-control " +
-                           (HideSpinButtons ? "mud-input-nospin" : "mud-input-showspin"))
+            new CssBuilder("mud-input-input-control mud-input-number-control")
+                .AddClass(HideSpinButtons ? "mud-input-nospin" : "mud-input-showspin")
                 .AddClass(Class)
                 .Build();
 
 
-        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
-        private string _elementId = "numericField_" + Guid.NewGuid().ToString().Substring(0, 8);
+        private string _elementId = Identifier.Create("numericField");
 
         private MudInput<string> _elementReference;
 
@@ -172,6 +172,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Clearable { get; set; } = false;
+
+        /// <summary>
+        /// Custom clear icon when <see cref="Clearable"/> is enabled.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 
         /// <summary>
         /// Decrements or increments depending on factor
@@ -252,19 +259,22 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                _keyInterceptor = _keyInterceptorFactory.Create();
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
-                {
-                    //EnableLogging = true,
-                    TargetClass = "mud-input-slot",
-                    Keys = {
-                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead increment
-                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead decrement
-                        new KeyOptions { Key="Dead", PreventDown = "key+any" }, // prevent dead keys like ^ ` ´ etc
-                        new KeyOptions { Key="/^(?!"+(Pattern ?? "[0-9]").TrimEnd('*')+").$/", PreventDown = "key+none|key+shift|key+alt" }, // prevent input of all other characters except allowed, like [0-9.,-+]
-                    },
-                });
+                var options = new KeyInterceptorOptions(
+                    "mud-input-slot",
+                    [
+                        // prevent scrolling page, instead increment
+                        new("ArrowUp", preventDown: "key+none"),
+                        // prevent scrolling page, instead decrement
+                        new("ArrowDown", preventDown: "key+none"),
+                        // prevent dead keys like ^ ` ´ etc
+                        new("Dead", preventDown: "key+any"),
+                        // prevent input of all other characters except allowed, like [0-9.,-+]
+                        new($"/^(?!{(Pattern ?? "[0-9]").TrimEnd('*')}).$/", preventDown: "key+none|key+shift|key+alt")
+                    ]);
+
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
             }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -434,7 +444,11 @@ namespace MudBlazor
 
             if (disposing)
             {
-                _keyInterceptor?.Dispose();
+                if (IsJSRuntimeAvailable)
+                {
+                    // TODO: Replace with IAsyncDisposable
+                    KeyInterceptorService.UnsubscribeAsync(_elementId).CatchAndLog();
+                }
             }
         }
     }

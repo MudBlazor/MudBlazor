@@ -5,18 +5,19 @@
 <CascadingValue Name="SubscribeToParentForm" Value="@SubscribeToParentForm" IsFixed="true">
     <MudInputControl Label="@Label"
                      Variant="@Variant"
+                     HelperId="@GetHelperId()"
                      HelperText="@HelperText"
                      HelperTextOnFocus="@HelperTextOnFocus"
                      CounterText="@GetCounterText()"
                      FullWidth="@FullWidth"
                      Class="@Classname"
                      Error="@HasErrors"
-                     ErrorText="@GetErrorText()"
                      ErrorId="@ErrorId"
+                     ErrorText="@GetErrorText()"
                      Disabled="@GetDisabledState()"
                      Margin="@Margin"
                      Required="@Required"
-                     ForId="@InputIdState.Value">
+                     ForId="@InputElementId">
         <InputContent>
             <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
                 @if (_mask == null)
@@ -50,6 +51,8 @@
                               OnAdornmentClick="@OnAdornmentClick"
                               Error="@Error"
                               ErrorId="@ErrorId"
+                              HelperId="@GetHelperId()"
+                              HelperText="@HelperText"
                               Immediate="@Immediate"
                               Margin="@Margin"
                               OnBlur="@OnBlurredAsync"
@@ -60,10 +63,11 @@
                               KeyUpPreventDefault="KeyUpPreventDefault"
                               HideSpinButtons="true"
                               Clearable="@Clearable"
+                              ClearIcon="@ClearIcon"
                               OnClearButtonClick="@OnClearButtonClick"
                               Pattern="@Pattern"
                               ShrinkLabel="@ShrinkLabel"
-                              InputId="@InputIdState.Value"
+                              InputId="@InputElementId"
                               Required="@Required"/>
                 }
                 else
@@ -90,14 +94,19 @@
                              AdornmentText="@AdornmentText"
                              AdornmentIcon="@AdornmentIcon"
                              AdornmentColor="@AdornmentColor"
+                             AdornmentAriaLabel="@AdornmentAriaLabel"
                              IconSize="@IconSize"
                              OnAdornmentClick="@OnAdornmentClick"
                              Error="@Error"
+                             ErrorId="@ErrorId"
+                             HelperId="@HelperId"
+                             HelperText="@HelperText"
                              Immediate="@Immediate"
                              Margin="@Margin" OnBlur="@OnBlurredAsync"
                              Clearable="@Clearable"
+                             ClearIcon="@ClearIcon"
                              OnClearButtonClick="@OnClearButtonClick"
-                             InputId="@InputIdState.Value"
+                             InputId="@InputElementId"
                              Required="@Required"/>
                 }
             </CascadingValue>

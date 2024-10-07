@@ -4,9 +4,7 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -112,11 +110,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MenuPointerLeave_CheckClosed()
+        public async Task MouseOver_PointerLeave_ShouldClose()
         {
             var comp = Context.RenderComponent<MenuTestMouseOver>();
             var pop = comp.FindComponent<MudPopover>();
-            comp.FindAll("button.mud-button-root")[0].Click();
+
+            // Briefly hover over the button which will open the popover while leaving a small delay to allow the user to move the pointer to the menu.
+            comp.FindAll("div.mud-menu")[0].PointerEnter();
+            comp.FindAll("div.mud-menu")[0].PointerLeave();
 
             IElement List() => comp.FindAll("div.mud-list")[0];
 
@@ -128,7 +129,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MenuPointerLeave_MenuPointerEnter_CheckOpen()
+        public async Task MouseOver_Hover_ShouldOpenMenu()
         {
             var comp = Context.RenderComponent<MenuTestMouseOver>();
             IRenderedComponent<MudPopover> Popover() => comp.FindComponent<MudPopover>();
@@ -148,6 +149,42 @@ namespace MudBlazor.UnitTests.Components
             // Pointer moves to menu, still need to open
             await Menu().TriggerEventAsync("onpointerenter", new PointerEventArgs());
             comp.WaitForAssertion(() => Popover().Instance.Open.Should().BeTrue());
+        }
+
+        [Test]
+        public async Task MouseOver_Click_ShouldKeepOpen()
+        {
+            var comp = Context.RenderComponent<MenuTestMouseOver>();
+            var pop = comp.FindComponent<MudPopover>();
+
+            // Enter opens the menu.
+            comp.FindAll("div.mud-menu")[0].PointerEnter();
+
+            // Clicking the button should close the menu.
+            comp.FindAll("button.mud-button-root")[0].Click();
+            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeFalse());
+
+            // Clicking the button again should open the menu permanently.
+            comp.FindAll("button.mud-button-root")[0].Click();
+            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeTrue());
+
+            // Leaving the menu should not close it.
+            comp.FindAll("div.mud-menu")[0].PointerLeave();
+            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeTrue());
+
+            IElement List() => comp.FindAll("div.mud-list")[0];
+
+            // Hover over the list shouldn't change anything.
+            await List().TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeTrue());
+
+            // Leave the list shouldn't change anything.
+            await List().TriggerEventAsync("onpointerleave", new PointerEventArgs());
+            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeTrue());
+
+            // Clicking the button should now close the menu.
+            comp.FindAll("button.mud-button-root")[0].Click();
+            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeFalse());
         }
 
         [Test]

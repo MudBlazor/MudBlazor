@@ -25,7 +25,7 @@
                 @ref="ElementReference"
                 rows="@Lines"
                 @attributes="UserAttributes"
-                id="@InputIdState.Value"
+                id="@InputElementId"
                 type="@InputTypeString"
                 placeholder="@Placeholder"
                 disabled=@GetDisabledState()
@@ -43,9 +43,9 @@
                 @onkeyup:preventDefault="@KeyUpPreventDefault"
                 @onmousewheel="@OnMouseWheel"
                 @onwheel="@OnMouseWheel"
+                aria-describedby="@GetAriaDescribedByString()"
+                aria-invalid="@Error.ToString().ToLowerInvariant()"
                 required="@Required"
-                aria-invalid="@Error.ToString().ToLower()"
-                aria-describedby="@ErrorId"
                 aria-required="@Required.ToString().ToLowerInvariant()">
             @Text
         </textarea>
@@ -57,7 +57,7 @@
         <input class="@InputClassname"
                 @ref="ElementReference"
                 @attributes="UserAttributes"
-                id="@InputIdState.Value"
+                id="@InputElementId"
                 type="@InputTypeString"
                 value="@_internalText"
                 @oninput="OnInput"
@@ -75,10 +75,10 @@
                 @onkeyup:preventDefault="@KeyUpPreventDefault"
                 @onmousewheel="@OnMouseWheel"
                 @onwheel="@OnMouseWheel"
+                aria-describedby="@GetAriaDescribedByString()"
+                aria-invalid="@Error.ToString().ToLowerInvariant()"
                 required="@Required"
-                aria-invalid="@Error.ToString().ToLower()"
-                aria-describedby="@ErrorId"
-                aria-required="@Required.ToString().ToLowerInvariant()" />
+                aria-required="@Required.ToString().ToLowerInvariant()">
 
         @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
 
@@ -113,7 +113,7 @@
                     Icon="@ClearIcon"
                     Size="@Size.Small"
                     OnClick="@ClearButtonClickHandlerAsync"
-                    aria-label="@Localizer[nameof(LanguageResource.MudInput_Clear)]"
+                    aria-label="@Localizer[LanguageResource.MudInput_Clear]"
                     tabindex="-1"
                 />
     }
@@ -143,7 +143,7 @@
                        @onclick="OnIncrement"
                        Disabled="@(GetDisabledState() || GetReadOnlyState())"
                        tabindex="-1"
-                       aria-label="@Localizer[nameof(LanguageResource.MudInput_Increment)]">
+                       aria-label="@Localizer[LanguageResource.MudInput_Increment]">
                 <MudIcon Icon="@NumericUpIcon" Size="@GetButtonSize()" />
             </MudButton>
 
@@ -151,7 +151,7 @@
                        @onclick="OnDecrement"
                        Disabled="@(GetDisabledState() || GetReadOnlyState())"
                        tabindex="-1"
-                       aria-label="@Localizer[nameof(LanguageResource.MudInput_Decrement)]">
+                       aria-label="@Localizer[LanguageResource.MudInput_Decrement]">
                 <MudIcon Icon="@NumericDownIcon" Size="@GetButtonSize()" />
             </MudButton>
         </div>

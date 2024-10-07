@@ -13,7 +13,8 @@
                            Size="@IconSize"
                            Text="@AdornmentText"
                            Edge="@Edge.Start"
-                           AdornmentClick="@OnAdornmentClick"/>
+                           AdornmentClick="@OnAdornmentClick"
+                           AriaLabel="@AdornmentAriaLabel" />
     }
 
     @if (Lines > 1)
@@ -21,7 +22,7 @@
         <textarea class="@InputClassname"
                   @ref="_elementReference"
                   @attributes="UserAttributes"
-                  id="@InputIdState.Value"
+                  id="@InputElementId"
                   type="@InputType.ToDescriptionString()"
                   value="@Text"
                   placeholder="@Placeholder"
@@ -32,6 +33,8 @@
                   @oncut="OnCut"
                   @oncopy="OnCopy"
                   inputmode="@InputMode.ToDescriptionString()"
+                  aria-describedby="@GetAriaDescribedByString()"
+                  aria-invalid="@Error.ToString().ToLowerInvariant()"
                   required="@Required"
                   aria-required="@Required.ToString().ToLowerInvariant()">
             @Text
@@ -42,7 +45,7 @@
         <input class="@InputClassname"
                @ref="_elementReference"
                @attributes="UserAttributes"
-               id="@InputIdState.Value"
+               id="@InputElementId"
                type="@InputType.ToDescriptionString()"
                value="@Text"
                placeholder="@Placeholder"
@@ -53,6 +56,8 @@
                @oncut="OnCut"
                @oncopy="OnCopy"
                inputmode="@InputMode.ToDescriptionString()"
+               aria-describedby="@GetAriaDescribedByString()"
+               aria-invalid="@Error.ToString().ToLowerInvariant()"
                required="@Required"
                aria-required="@Required.ToString().ToLowerInvariant()">
     }
@@ -87,7 +92,7 @@
                        Icon="@ClearIcon"
                        Size="@Size.Small"
                        OnClick="@HandleClearButtonAsync"
-                       aria-label="@Localizer[nameof(LanguageResource.MudInput_Clear)]" />
+                       aria-label="@Localizer[LanguageResource.MudInput_Clear]" />
     }
 
     @if (Adornment == Adornment.End)
@@ -98,7 +103,8 @@
                            Size="@IconSize"
                            Text="@AdornmentText"
                            Edge="@Edge.End"
-                           AdornmentClick="@OnAdornmentClick"/>
+                           AdornmentClick="@OnAdornmentClick"
+                           AriaLabel="@AdornmentAriaLabel" />
     }
 
     @if (Variant == Variant.Outlined)

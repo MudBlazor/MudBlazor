@@ -2,101 +2,155 @@
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
-namespace MudBlazor.UnitTests.Components
+namespace MudBlazor.UnitTests.Components;
+
+[TestFixture]
+public class OverlayTests : BunitTest
 {
-    [TestFixture]
-    public class OverlayTests : BunitTest
+    [Test]
+    public void ShouldNotRenderByDefault()
     {
-        /// <summary>
-        /// Should not render by default
-        /// </summary>
-        [Test]
-        public void MarkupShouldBeEmptyTest()
+        var comp = Context.RenderComponent<MudOverlay>();
+        comp.Markup.Should().BeEmpty();
+    }
+
+    [Test]
+    public void ShouldRenderWhenVisibleIsTrue()
+    {
+        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, true)
+        );
+
+        comp.Markup.Should().NotBeEmpty();
+    }
+
+    [Test]
+    [TestCase(true)]
+    [TestCase(false)]
+    public async Task AutoClose_OnClick(bool autoClose)
+    {
+        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, true)
+            .Add(p => p.AutoClose, autoClose)
+        );
+
+        await comp.Find("div.mud-overlay").ClickAsync(new());
+
+        if (autoClose)
         {
-            var comp = Context.RenderComponent<MudOverlay>();
             comp.Markup.Should().BeEmpty();
         }
-
-        /// <summary>
-        /// Should render when Visible is "true"
-        /// </summary>
-        [Test]
-        public void MarkupShouldNotBeEmptyTest()
+        else
         {
-            var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
-                .Add(p => p.Visible, true)
-            );
-
             comp.Markup.Should().NotBeEmpty();
         }
+    }
 
-        /// <summary>
-        /// Should close on click when AutoClose is "true"
-        /// </summary>
-        [Test]
-        public async Task OverlayShouldCloseOnClickTest()
+    [Test]
+    public async Task AutoClose_OnClosedEvent()
+    {
+        var counter = 0;
+        void CloseHandler() => counter++;
+
+        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, true)
+            .Add(p => p.AutoClose, true)
+            .Add(p => p.OnClosed, CloseHandler)
+        );
+
+        await comp.Find("div.mud-overlay").ClickAsync(new());
+        comp.Markup.Trim().Should().BeEmpty();
+        counter.Should().Be(1);
+    }
+
+    [Test]
+    public async Task AutoClose_VisibleBinding()
+    {
+        var comp = Context.RenderComponent<OverlayVisibleBindingWithAutoCloseTest>();
+        IElement Button() => comp.Find("#showBtn");
+
+        comp.Instance.Visible.Should().BeFalse();
+
+        await Button().ClickAsync(new());
+        comp.Instance.Visible.Should().BeTrue();
+
+        await comp.Find("div.mud-overlay").ClickAsync(new());
+        comp.Instance.Visible.Should().BeFalse();
+    }
+
+    [Test]
+    public void ShouldApplyCorrectZIndex()
+    {
+        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, true)
+            .Add(p => p.ZIndex, 10)
+        );
+
+        comp.Find("div.mud-overlay").Attributes["style"].Value.Should().Contain("z-index:10");
+    }
+
+    [Test]
+    [TestCase(true, true)]
+    [TestCase(true, false)]
+    [TestCase(false, true)]
+    [TestCase(false, false)]
+    public void ShouldApplyBackgroundColor(bool darkBackground, bool lightBackground)
+    {
+        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, true)
+            .Add(p => p.DarkBackground, darkBackground)
+            .Add(p => p.LightBackground, lightBackground)
+        );
+
+        if (darkBackground || lightBackground)
         {
-            var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
-                .Add(p => p.Visible, true)
-                .Add(p => p.AutoClose, true)
-            );
+            if (darkBackground)
+            {
+                comp.Find("div.mud-overlay-scrim").ClassList.Should().Contain("mud-overlay-dark");
+            }
 
-            await comp.Find("div.mud-overlay").ClickAsync(new MouseEventArgs());
-            comp.Markup.Should().BeEmpty();
+            if (lightBackground)
+            {
+                comp.Find("div.mud-overlay-scrim").ClassList.Should().Contain("mud-overlay-light");
+            }
         }
-
-        /// <summary>
-        /// Should not close on click when AutoClose is default ("false")
-        /// </summary>
-        [Test]
-        public async Task OverlayShouldNotCloseOnClickTest()
+        else
         {
-            var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
-                .Add(p => p.Visible, true)
-            );
-
-            await comp.Find("div.mud-overlay").ClickAsync(new MouseEventArgs());
-            comp.Markup.Should().NotBeEmpty();
-
-            comp.SetParam(nameof(MudOverlay.AutoClose), false);
-            await comp.Find("div.mud-overlay").ClickAsync(new MouseEventArgs());
-            comp.Markup.Should().NotBeEmpty();
+            comp.FindAll("div.mud-overlay-scrim").Count.Should().Be(0);
         }
+    }
 
-        /// <summary>
-        /// Should invoke OnClick event
-        /// </summary>
-        [Test]
-        public async Task LifetimeTest()
+    [Test]
+    [TestCase(true)]
+    [TestCase(false)]
+    public void ShouldApplyAbsoluteClass(bool absolute)
+    {
+        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, true)
+            .Add(p => p.Absolute, absolute)
+        );
+
+        if (absolute)
         {
-            var counter = 0;
-            void OnClickHandler(MouseEventArgs args) => counter++;
-
-            var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
-                .Add(p => p.Visible, true)
-                .Add(p => p.OnClick, OnClickHandler)
-            );
-
-            await comp.Find("div.mud-overlay").ClickAsync(new MouseEventArgs());
-            comp.Markup.Trim().Should().NotBeEmpty();
-            counter.Should().Be(1);
+            comp.Find("div.mud-overlay").ClassList.Should().Contain("mud-overlay-absolute");
         }
-
-        [Test]
-        public async Task VisibleBindingWithAutoCloseTest()
+        else
         {
-            var comp = Context.RenderComponent<OverlayVisibleBindingWithAutoCloseTest>();
-            IElement Button() => comp.Find("#showBtn");
-
-            comp.Instance.Visible.Should().BeFalse();
-            await Button().ClickAsync(new MouseEventArgs());
-            comp.Instance.Visible.Should().BeTrue();
-            await comp.Find("div.mud-overlay").ClickAsync(new MouseEventArgs());
-            comp.Instance.Visible.Should().BeFalse();
+            comp.Find("div.mud-overlay").ClassList.Should().NotContain("mud-overlay-absolute");
         }
+    }
+
+    [Test]
+    public void ShouldRenderChildContent()
+    {
+        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, true)
+            .AddChildContent("<div class='child-content'>Hello World</div>")
+        );
+
+        comp.Find("div.child-content").TextContent.Should().Be("Hello World");
     }
 }

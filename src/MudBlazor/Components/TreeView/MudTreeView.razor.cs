@@ -106,6 +106,15 @@ namespace MudBlazor
         public bool TriState { get; set; } = true;
 
         /// <summary>
+        /// If true, selecting all children will result in the parent being automatically selected.
+        /// Unselecting a children will still unselect the parent.
+        /// Note: This only has an effect in SelectionMode.MultiSelection.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public bool AutoSelectParent { get; set; } = true;
+
+        /// <summary>
         /// If true, clicking anywhere on the item will expand it, if it has children.
         /// </summary>
         [Parameter]
@@ -177,9 +186,12 @@ namespace MudBlazor
         [Category(CategoryTypes.TreeView.Appearance)]
         public bool Ripple { get; set; } = true;
 
+        /// <summary>
+        /// Tree items that will be rendered using the Item
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public IReadOnlyCollection<T>? Items { get; set; } = Array.Empty<T>();
+        public IReadOnlyCollection<TreeItemData<T>>? Items { get; set; } = Array.Empty<TreeItemData<T>>();
 
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
@@ -213,7 +225,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public RenderFragment<T>? ItemTemplate { get; set; }
+        public RenderFragment<TreeItemData<T>>? ItemTemplate { get; set; }
 
         /// <summary>
         /// Comparer is used to check if two tree items are equal
@@ -227,7 +239,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public Func<T?, Task<IReadOnlyCollection<T>>>? ServerData { get; set; }
+        public Func<T?, Task<IReadOnlyCollection<TreeItemData<T?>>>>? ServerData { get; set; }
 
         /// <summary>
         /// If true, the selection of the tree view can not be changed by clicking its items.
@@ -355,7 +367,10 @@ namespace MudBlazor
                         _selection.Add(item.GetValue()!);
                     }
                 }
-                UpdateParentItem(clickedItem.Parent);
+                if (AutoSelectParent)
+                {
+                    UpdateParentItem(clickedItem.Parent);
+                }
                 await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
                 await UpdateItemsAsync();
                 return;

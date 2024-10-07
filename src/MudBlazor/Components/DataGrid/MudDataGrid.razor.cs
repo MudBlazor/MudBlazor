@@ -1202,7 +1202,7 @@ namespace MudBlazor
         {
             get
             {
-                return RenderedColumns.Any(x => !x.Hidden && (x.FooterTemplate != null || x.AggregateDefinition != null));
+                return RenderedColumns.Any(x => !x.HiddenState.Value && (x.FooterTemplate != null || x.AggregateDefinition != null));
             }
         }
 
@@ -1280,6 +1280,8 @@ namespace MudBlazor
             {
                 if (_mudVirtualize != null)
                 {
+                    // Cancel any prior request
+                    CancelServerDataToken();
                     await _mudVirtualize.RefreshDataAsync();
                     StateHasChanged();
                 }
@@ -1331,6 +1333,7 @@ namespace MudBlazor
                 StateHasChanged();
                 PagerStateHasChangedEvent?.Invoke();
             }
+            GroupItems();
         }
 
         internal void AddColumn(Column<T> column)
@@ -1423,6 +1426,7 @@ namespace MudBlazor
         /// </summary>
         public Task ClearFiltersAsync()
         {
+            FilterDefinitions.ForEach(x => x.Value = null);
             FilterDefinitions.Clear();
             return InvokeServerLoadFunc();
         }
@@ -1441,7 +1445,9 @@ namespace MudBlazor
 
         internal async Task RemoveFilterAsync(Guid id)
         {
-            FilterDefinitions.RemoveAll(x => x.Id == id);
+            var index = FilterDefinitions.FindIndex(x => x.Id == id);
+            FilterDefinitions[index].Value = null;
+            FilterDefinitions.RemoveAt(index);
             await InvokeServerLoadFunc();
             GroupItems();
         }
@@ -1630,7 +1636,7 @@ namespace MudBlazor
             _rowsPerPage = size;
 
             if (resetPage)
-                CurrentPage = 0;
+                _currentPage = 0;
 
             await RowsPerPageChanged.InvokeAsync(_rowsPerPage.Value);
 
@@ -1739,16 +1745,28 @@ namespace MudBlazor
 
             VirtualItemsProvider = async request =>
             {
-                var state = new GridStateVirtualize<T>
+                var stateFunc = (int startIndex, int count) => new GridStateVirtualize<T>
                 {
-                    StartIndex = request.StartIndex,
-                    Count = request.Count,
+                    StartIndex = startIndex,
+                    Count = count,
                     SortDefinitions = SortDefinitions.Values.OrderBy(sd => sd.Index).ToList(),
                     // Additional ToList() here to decouple clients from internal list avoiding runtime issues
                     FilterDefinitions = FilterDefinitions.ToList()
                 };
 
-                _server_data = await VirtualizeServerData(state, request.CancellationToken);
+                _server_data = await VirtualizeServerData(
+                    stateFunc(request.StartIndex, request.Count),
+                    request.CancellationToken
+                );
+
+                if (request.StartIndex > 0 && _server_data.TotalItems < request.StartIndex + request.Count)
+                {
+                    _server_data = await VirtualizeServerData(
+                        stateFunc(0, request.Count),
+                        request.CancellationToken
+                    );
+                }
+
                 _currentRenderFilteredItemsCache = null;
 
                 return new ItemsProviderResult<T>(
@@ -1994,6 +2012,7 @@ namespace MudBlazor
                 group.Expanded = true;
                 _groupExpansionsDict[group.Grouping.Key] = true;
             }
+            GroupItems();
         }
 
         /// <summary>
@@ -2009,6 +2028,7 @@ namespace MudBlazor
                 group.Expanded = false;
                 _groupExpansionsDict[group.Grouping.Key] = false;
             }
+            GroupItems();
         }
 
         #endregion

@@ -16,7 +16,7 @@ public class SourceCodeBuilderTest
     public void Build_ShouldReturnValidSwitchStatement_WhenMembersGiven()
     {
         // Arrange
-        var enumMembers = new[] { new EnumMember("One", "Description") };
+        var enumMembers = new[] { new EnumMember("One", "\"Description\"") };
         var enumData = new EnumData("ClassName", "EnumName", "EnumNamespace", "public", enumMembers);
 
         // Act

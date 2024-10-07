@@ -1,13 +1,13 @@
 ﻿#pragma warning disable CS1998 // async without await
 #pragma warning disable BL0005 // Set parameter outside component
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Globalization;
+using System.Reflection;
+using AngleSharp.Css.Dom;
 using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
 using Bunit;
+using Bunit.Rendering;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Components;
@@ -610,6 +610,8 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("input")[0].IsChecked().Should().BeFalse(because: "select all checkbox should reflect 'not all selected' state");
             dataGrid.FindAll("tfoot input")[0].IsChecked().Should().BeFalse(because: "select all checkbox should reflect 'not all selected' state");
 
+            // ClearFiltersAsync() has cleared the value, so it needs to be set again
+            twoBFilter.Value = "B";
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(twoBFilter));
             dataGrid.FindAll("input[type=checkbox]")[0].IsChecked().Should().BeTrue(because: "select all checkbox should reflect 'all selected' state");
             dataGrid.FindAll("tfoot input[type=checkbox]")[0].IsChecked().Should().BeTrue(because: "select all checkbox should reflect 'all selected' state");
@@ -745,7 +747,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridPaginationTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationTest.Item>>();
             // check that the page size dropdown is shown
-            comp.FindComponents<MudSelect<string>>().Count.Should().Be(1);
+            comp.FindComponents<MudSelect<int>>().Count.Should().Be(1);
 
             dataGrid.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20");
 
@@ -789,6 +791,42 @@ namespace MudBlazor.UnitTests.Components
 
             // page size drop-down is not shown
             comp.FindComponents<MudSelect<string>>().Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Tests that the "All" data grid pager option shows all items
+        /// </summary>
+        [Test]
+        public async Task DataGridPagingAllTest()
+        {
+            var comp = Context.RenderComponent<DataGridPaginationAllItemsTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationAllItemsTest.Item>>();
+            var pager = comp.FindComponent<MudSelect<int>>().Instance;
+
+            dataGrid.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20"); //check initial value
+            // change page size
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetRowsPerPageAsync(int.MaxValue));
+            pager.Value.Should().Be(int.MaxValue);
+            dataGrid.Instance.RowsPerPage.Should().Be(int.MaxValue);
+            comp.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-20 of 20");
+
+            comp.FindAll(".mud-table-pagination-actions button")[0].IsDisabled().Should().Be(true); //buttons are disabled
+            comp.FindAll(".mud-table-pagination-actions button")[1].IsDisabled().Should().Be(true);
+            comp.FindAll(".mud-table-pagination-actions button")[2].IsDisabled().Should().Be(true);
+            comp.FindAll(".mud-table-pagination-actions button")[3].IsDisabled().Should().Be(true);
+
+            comp.FindAll(".mud-table-pagination-select")[^1].TextContent.Trim().Should().Be("All");
+        }
+
+        [Test]
+        public async Task DataGridPaginationNoItemsTest()
+        {
+            var comp = Context.RenderComponent<DataGridPaginationNoItemsTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationNoItemsTest.Item>>();
+            // check that the page size dropdown is shown
+            comp.FindComponents<MudSelect<int>>().Count.Should().Be(1);
+
+            dataGrid.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("0-0 of 0");
         }
 
         [Test]
@@ -953,6 +991,19 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td")[8].Html().Trim().Should().Be("snakex64");
 
             //if no crash occurs, we know the datagrid is properly filtering out the GetOnly property when calling set
+        }
+
+        [Test(Description = "Checks if there is no NRE exception when nested property has a null value somewhere in the middle.")]
+        public async Task DataGridNoNullExceptionWhenNestedPropertyNullValue()
+        {
+            var comp = Context.RenderComponent<DataGridNestedNullPropertyTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridNestedNullPropertyTest.Model>>();
+            dataGrid.FindAll("td")[0].Html().Trim().Should().Be("Class A");
+            dataGrid.FindAll("td")[1].Html().Trim().Should().Be(string.Empty);
+
+            var alertTextFunc = () => MudAlert().Find("div.mud-alert-message");
+            IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
+            alertTextFunc.Should().Throw<ComponentNotFoundException>();
         }
 
         [Test(Description = "Checks if clone strategy is working, if we used default one it would fail as STJ doesn't support abstract classes without additional configuration.")]
@@ -2700,6 +2751,21 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridRowDetailInitiallyExpandedMultipleTest()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            var item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Ira");
+
+            dataGrid.Instance._openHierarchies.Should().Contain(item);
+
+            item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Anders");
+
+            dataGrid.Instance._openHierarchies.Should().Contain(item);
+        }
+
+        [Test]
         public async Task DataGridChildRowContentTest()
         {
             var comp = Context.RenderComponent<DataGridChildRowContentTest>();
@@ -2753,6 +2819,34 @@ namespace MudBlazor.UnitTests.Components
 
             // test reloading server side results programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.ReloadServerData());
+        }
+
+        /// <summary>
+        /// https://github.com/MudBlazor/MudBlazor/issues/8298
+        /// </summary>
+        [Test]
+        public async Task SetRowsPerPageAsync_CallOneTimeServerData()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<DataGridServerPaginationTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerPaginationTest.Model>>();
+            dataGrid.Instance.CurrentPage = 2;
+            var serverDataCallCount = 0;
+            var originalServerDataFunc = dataGrid.Instance.ServerData;
+            dataGrid.Instance.ServerData = (state) =>
+            {
+                serverDataCallCount++;
+                return originalServerDataFunc(state);
+            };
+
+            // Act
+
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.SetRowsPerPageAsync(25));
+
+            // Assert
+
+            serverDataCallCount.Should().Be(1);
         }
 
         [Test]
@@ -3072,6 +3166,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridCustomPropertyFilterTemplateTest()
+        {
+            var comp = Context.RenderComponent<DataGridCustomPropertyFilterTemplateTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCustomPropertyFilterTemplateTest.Model>>();
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4);
+
+            comp.Find(".filter-button").Click();
+            var input = comp.FindComponent<MudTextField<string>>();
+            await comp.InvokeAsync(async () => await input.Instance.ValueChanged.InvokeAsync("Ira"));
+            comp.Find(".apply-filter-button").Click();
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+
+            comp.Find(".filter-button").Click();
+            comp.Find(".reset-filter-button").Click();
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4);
+        }
+
+        [Test]
         public async Task DataGridShowFilterIconTest()
         {
             var comp = Context.RenderComponent<DataGridCustomFilteringTest>();
@@ -3145,6 +3260,43 @@ namespace MudBlazor.UnitTests.Components
             Assert.DoesNotThrow(() => comp.FindComponent<MudSelect<Enum>>());
             Assert.DoesNotThrow(() => comp.FindComponent<MudSelect<bool?>>());
             Assert.DoesNotThrow(() => comp.FindComponent<MudDatePicker>());
+        }
+
+        [Test]
+        public async Task DataGridColumnFilterRowPropertyClearTest()
+        {
+            var comp = Context.RenderComponent<DataGridColumnFilterRowPropertyTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnFilterRowPropertyTest.Model>>();
+
+            var inputsBefore = dataGrid.FindAll("input").OfType<IHtmlInputElement>().Select(e => e.Value).ToList();
+            var hireDate = new DateTime(2011, 1, 2).ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern, CultureInfo.CurrentCulture);
+            inputsBefore.Should().BeEquivalentTo("Ira", "27", "Success", "True", hireDate, "00:00");
+
+            var clearButtons = dataGrid.FindAll(".align-self-center");
+            clearButtons.Should().HaveCount(5);
+            foreach (var clearButton in clearButtons)
+            {
+                clearButton.Click();
+            }
+
+            var inputsAfter = dataGrid.FindAll("input").OfType<IHtmlInputElement>().Select(e => e.Value).ToList();
+            inputsAfter.Should().HaveCount(6).And.AllBe("", because: "clicking the clear buttons should reset all filters");
+        }
+
+        [Test]
+        public async Task DataGridColumnFilterRowPropertyClearAllTest()
+        {
+            var comp = Context.RenderComponent<DataGridColumnFilterRowPropertyTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnFilterRowPropertyTest.Model>>();
+
+            var inputsBefore = dataGrid.FindAll("input").OfType<IHtmlInputElement>().Select(e => e.Value).ToList();
+            var hireDate = new DateTime(2011, 1, 2).ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern, CultureInfo.CurrentCulture);
+            inputsBefore.Should().BeEquivalentTo("Ira", "27", "Success", "True", hireDate, "00:00");
+
+            dataGrid.Find(".clear-all-filters").Click();
+
+            var inputsAfter = dataGrid.FindAll("input").OfType<IHtmlInputElement>().Select(e => e.Value).ToList();
+            inputsAfter.Should().HaveCount(6).And.AllBe("", because: "clicking the clear button should reset all filters");
         }
 
         [Test]
@@ -3601,7 +3753,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedTest.Fruit>>();
 
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(7);
-            comp.Instance.CollapseAllGroups();
+            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
             dataGrid.Render();
             // after all groups are collapsed
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
@@ -3619,7 +3771,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedAsyncTest.Fruit>>();
 
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
-            comp.Instance.CollapseAllGroups();
+            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
             dataGrid.Render();
             // after all groups are collapsed
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
@@ -3637,7 +3789,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedServerDataTest.Fruit>>();
 
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
-            comp.Instance.CollapseAllGroups();
+            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
             dataGrid.Render();
             // after all groups are collapsed
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
@@ -3654,7 +3806,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseTest.Fruit>>();
 
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
-            comp.Instance.ExpandAllGroups();
+            await comp.InvokeAsync(async () => dataGrid.Instance.ExpandAllGroups());
             dataGrid.Render();
             // after all groups are expanded
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(7);
@@ -3672,7 +3824,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseAsyncTest.Fruit>>();
 
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
-            dataGrid.Instance.ExpandAllGroups();
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
             dataGrid.Render();
             // after all groups are expanded
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
@@ -3690,7 +3842,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseServerDataTest.Fruit>>();
 
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
-            dataGrid.Instance.ExpandAllGroups();
+            await comp.InvokeAsync(async () => dataGrid.Instance.ExpandAllGroups());
             dataGrid.Render();
             // after all groups are expanded
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
@@ -3707,10 +3859,10 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupCollapseAllTest.TestObject>>();
 
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
-            comp.Instance.ExpandAllGroups();
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
             comp.Render();
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(15);
-            comp.Instance.CollapseAllGroups();
+            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
             comp.Render();
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
             comp.Instance.RefreshList();
@@ -3726,13 +3878,13 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandAllCollapseAllTest.Element>>();
 
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
-            comp.Instance.ExpandAllGroups();
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
             comp.Render();
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(14);
             await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
             await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.Next));
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(18);
-            comp.Instance.CollapseAllGroups();
+            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
             await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
             comp.Instance.RefreshList();
@@ -4035,6 +4187,54 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [SetCulture("en-US")]
+        public async Task DataGridServerGroupUngroupingTest()
+        {
+            var comp = Context.RenderComponent<DataGridServerDataColumnGroupingTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<Examples.Data.Models.Element>>();
+            var popoverProvider = comp.FindComponent<MudPopoverProvider>();
+
+            //click name grouping in grid
+            var headerOption = comp.Find("th.name .mud-menu button");
+            headerOption.Click();
+            var listItems = popoverProvider.FindComponents<MudListItem<object>>();
+            listItems.Count.Should().Be(4);
+            var clickablePopover = listItems[3].Find(".mud-list-item");
+            clickablePopover.Click();
+            var cells = dataGrid.FindAll("td");
+
+            //checking cell content is the most reliable way to verify grouping
+            cells[0].TextContent.Should().Be("Name: Hydrogen");
+            cells[1].TextContent.Should().Be("Name: Helium");
+            cells[2].TextContent.Should().Be("Name: Lithium");
+            cells[3].TextContent.Should().Be("Name: Beryllium");
+            cells[4].TextContent.Should().Be("Name: Boron");
+            cells[5].TextContent.Should().Be("Name: Carbon");
+            cells[6].TextContent.Should().Be("Name: Nitrogen");
+            cells[7].TextContent.Should().Be("Name: Oxygen");
+            cells[8].TextContent.Should().Be("Name: Fluorine");
+            cells[9].TextContent.Should().Be("Name: Neon");
+            dataGrid.Instance.GroupedColumn.Should().NotBeNull();
+
+            //click name ungrouping in grid
+            headerOption = comp.Find("th.name .mud-menu button");
+            headerOption.Click();
+            listItems = popoverProvider.FindComponents<MudListItem<object>>();
+            listItems.Count.Should().Be(4);
+            clickablePopover = listItems[3].Find(".mud-list-item");
+            clickablePopover.Click();
+            cells = dataGrid.FindAll("td");
+            // We do not need check all 10 rows as it's clear that it's ungrouped if first row pass
+            cells[0].TextContent.Should().Be("1");
+            cells[1].TextContent.Should().Be("H");
+            cells[2].TextContent.Should().Be("Hydrogen");
+            cells[3].TextContent.Should().Be("0");
+            cells[4].TextContent.Should().Be("1.00794");
+            cells[5].TextContent.Should().Be("Other");
+            dataGrid.Instance.GroupedColumn.Should().BeNull();
+        }
+
+        [Test]
         public async Task DataGridGroupingTestBoundAndUnboundScenarios()
         {
             var comp = Context.RenderComponent<DataGridColumnGroupingTest>();
@@ -4121,5 +4321,187 @@ namespace MudBlazor.UnitTests.Components
             statusHeaderCell.Instance.hasFilter.Should().BeFalse();
         }
 
+        [Test]
+        public async Task DataGridGroupedWithServerDataPaginationTest()
+        {
+            var comp = Context.RenderComponent<DataGridGroupableServerDataTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupableServerDataTest.Item>>();
+            var rows = dataGrid.FindAll("tr");
+            rows.Count.Should().Be(12, because: "1 header row + 10 data rows + 1 footer row");
+            var cells = dataGrid.FindAll("td");
+            cells.Count.Should().Be(10, because: "We have 10 data rows with one group collapsed");
+            await comp.InvokeAsync(async () => dataGrid.Instance.ExpandAllGroups());
+            rows = dataGrid.FindAll("tr");
+            rows.Count.Should().Be(32, because: "1 header row + 10 data rows + 1 footer row + 10 group rows + 10 footer group rows");
+            cells = dataGrid.FindAll("td");
+            cells.Count.Should().Be(30, because: "We have 10 data rows with one group + 10*2 cells inside groups");
+            //check cells
+            cells[0].TextContent.Should().Be("Number: 1");
+            cells[1].TextContent.Should().Be("Hydrogen"); cells[2].TextContent.Should().Be("1");
+            cells[3].TextContent.Should().Be("Number: 2");
+            cells[4].TextContent.Should().Be("Helium"); cells[5].TextContent.Should().Be("2");
+            cells[6].TextContent.Should().Be("Number: 3");
+            cells[7].TextContent.Should().Be("Lithium"); cells[8].TextContent.Should().Be("3");
+            cells[9].TextContent.Should().Be("Number: 4");
+            cells[10].TextContent.Should().Be("Beryllium"); cells[11].TextContent.Should().Be("4");
+            cells[12].TextContent.Should().Be("Number: 5");
+            cells[13].TextContent.Should().Be("Boron"); cells[14].TextContent.Should().Be("5");
+            cells[15].TextContent.Should().Be("Number: 6");
+            cells[16].TextContent.Should().Be("Carbon"); cells[17].TextContent.Should().Be("6");
+            cells[18].TextContent.Should().Be("Number: 7");
+            cells[19].TextContent.Should().Be("Nitrogen"); cells[20].TextContent.Should().Be("7");
+            cells[21].TextContent.Should().Be("Number: 8");
+            cells[22].TextContent.Should().Be("Oxygen"); cells[23].TextContent.Should().Be("8");
+            cells[24].TextContent.Should().Be("Number: 9");
+            cells[25].TextContent.Should().Be("Fluorine"); cells[26].TextContent.Should().Be("9");
+            cells[27].TextContent.Should().Be("Number: 10");
+            cells[28].TextContent.Should().Be("Neon"); cells[29].TextContent.Should().Be("10");
+            //get next page
+            dataGrid.Instance.CurrentPage = 1;
+            await comp.InvokeAsync(async () => await dataGrid.Instance.ReloadServerData());
+            cells = dataGrid.FindAll("td");
+            cells.Count.Should().Be(10, because: "We have 10 data rows with one group collapsed from next page");
+            await comp.InvokeAsync(async () => dataGrid.Instance.ExpandAllGroups());
+            cells = dataGrid.FindAll("td");
+            cells.Count.Should().Be(30, because: "We have next 10 data rows with one group + 10*2 cells inside groups");
+            //cells should have data from next page
+            cells[0].TextContent.Should().Be("Number: 11");
+            cells[1].TextContent.Should().Be("Sodium"); cells[2].TextContent.Should().Be("11");
+            cells[3].TextContent.Should().Be("Number: 12");
+            cells[4].TextContent.Should().Be("Magnesium"); cells[5].TextContent.Should().Be("12");
+            cells[6].TextContent.Should().Be("Number: 13");
+            cells[7].TextContent.Should().Be("Aluminium"); cells[8].TextContent.Should().Be("13");
+            cells[9].TextContent.Should().Be("Number: 14");
+            cells[10].TextContent.Should().Be("Silicon"); cells[11].TextContent.Should().Be("14");
+            cells[12].TextContent.Should().Be("Number: 15");
+            cells[13].TextContent.Should().Be("Phosphorus"); cells[14].TextContent.Should().Be("15");
+            cells[15].TextContent.Should().Be("Number: 16");
+            cells[16].TextContent.Should().Be("Sulfur"); cells[17].TextContent.Should().Be("16");
+            cells[18].TextContent.Should().Be("Number: 17");
+            cells[19].TextContent.Should().Be("Chlorine"); cells[20].TextContent.Should().Be("17");
+            cells[21].TextContent.Should().Be("Number: 18");
+            cells[22].TextContent.Should().Be("Argon"); cells[23].TextContent.Should().Be("18");
+            cells[24].TextContent.Should().Be("Number: 19");
+            cells[25].TextContent.Should().Be("Potassium"); cells[26].TextContent.Should().Be("19");
+            cells[27].TextContent.Should().Be("Number: 20");
+            cells[28].TextContent.Should().Be("Calcium"); cells[29].TextContent.Should().Be("20");
+        }
+
+        /// <summary>
+        /// Reproduce the bug from https://github.com/MudBlazor/MudBlazor/issues/9585
+        /// When a column is hiden by the menu and the precedent column is resized, then the app crash
+        /// </summary>
+        [Test]
+        public async Task DataGrid_ResizeColumn_WhenNeighboringColumnIsHidden()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<DataGridHideAndResizeTest>();
+            var dgComp = comp.FindComponent<MudDataGrid<DataGridHideAndResizeTest.Model>>();
+
+            // Act : Hide the middle column and resize the first column
+
+            // Open column the second column header menu
+            var columnMenu = comp.FindAll("th .mud-menu button").ElementAt(1);
+            columnMenu.Click();
+
+            // Click on the menu item 'Hide'
+            comp.WaitForAssertion(() => comp.FindAll(".mud-list-item").ElementAt(1));
+            var hideMenuItem = comp.FindAll(".mud-list-item").ElementAt(1);
+            hideMenuItem.Click();
+
+            // Mock mudElementRef.getBoundingClientRect for DataGrid and visible columns
+            var gridElement = (ElementReference)dgComp.Instance.GetType()
+                .GetField("_gridElement", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(dgComp.Instance)!;
+            Context.JSInterop
+              .Setup<Interop.BoundingClientRect>("mudElementRef.getBoundingClientRect", gridElement)
+              .SetResult(new Interop.BoundingClientRect { Width = 50 });
+            var colComps = comp.FindComponents<HeaderCell<DataGridHideAndResizeTest.Model>>();
+            foreach (var colComp in colComps)
+            {
+                var col = colComp.Instance;
+                if (!col.Column.HiddenState.Value)
+                {
+                    var headerElement = (ElementReference)col.GetType()
+                        .GetField("_headerElement", BindingFlags.NonPublic | BindingFlags.Instance)!
+                        .GetValue(col)!;
+                    Context.JSInterop
+                        .Setup<Interop.BoundingClientRect>("mudElementRef.getBoundingClientRect", headerElement)
+                        .SetResult(new Interop.BoundingClientRect { Width = 50 });
+                }
+            }
+
+            // Mouse click down
+            var resizer = comp.FindAll(".mud-resizer").ElementAt(0);
+            await comp.InvokeAsync(async () => resizer.PointerDown());
+
+            // Mouse move and release
+            var resizeService = dgComp.Instance.ResizeService;
+            var resizeServiceType = resizeService.GetType();
+            var eventListener = (EventListener)resizeServiceType
+                .GetField("_eventListener", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(resizeService);
+            var upEventId = (Guid)resizeServiceType
+                .GetField("_pointerUpSubscriptionId", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(resizeService)!;
+            await comp.InvokeAsync(async () => await eventListener!.OnEventOccur(upEventId, """{"ClientX":-10}"""));
+
+            // Assert
+
+            comp.FindAll("th").Count.Should().Be(2, "Two columns are displayed");
+            comp.Find("th").GetStyle().Should().Contain(cssProp => cssProp.Name == "width", "The first column is resized");
+        }
+
+        [Test]
+        public void QueryFilterExtensionTest()
+        {
+            var comp = Context.RenderComponent<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            var nameFilter = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("Name"),
+                Operator = FilterOperator.String.Contains,
+                Value = "Sam",
+            };
+            var ageFilter = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("Age"),
+                Operator = FilterOperator.Number.GreaterThan,
+                Value = 42,
+            };
+
+            var query = Array.Empty<DataGridFiltersTest.Model>().AsQueryable().Where([nameFilter, ageFilter]);
+            query.ToString().Should().Match("*x.Name.Contains(*x.Age > Convert(42*");
+        }
+
+        [Test]
+        public void QuerySortExtensionTest()
+        {
+            var nameSort = new SortDefinition<DataGridFiltersTest.Model>("Name", Descending: true, 0, default!);
+            var ageSort = new SortDefinition<DataGridFiltersTest.Model>("Age", Descending: false, 1, default!);
+
+            var query = Array.Empty<DataGridFiltersTest.Model>().AsQueryable().OrderBy([nameSort, ageSort]);
+            query.ToString().Should().Be("MudBlazor.UnitTests.TestComponents.DataGridFiltersTest+Model[].OrderByDescending(x => x.Name).ThenBy(x => x.Age)");
+        }
+
+        [Test]
+        public void QuerySortExtensionTestAscendingThenDescending()
+        {
+            var nameSort = new SortDefinition<DataGridFiltersTest.Model>("Name", Descending: false, 0, default!);
+            var ageSort = new SortDefinition<DataGridFiltersTest.Model>("Age", Descending: true, 1, default!);
+
+            var query = Array.Empty<DataGridFiltersTest.Model>().AsQueryable().OrderBy([nameSort, ageSort]);
+            query.ToString().Should().Be("MudBlazor.UnitTests.TestComponents.DataGridFiltersTest+Model[].OrderBy(x => x.Name).ThenByDescending(x => x.Age)");
+        }
+
+        [Test]
+        public void QuerySortExtensionTestEmptyDefinitions()
+        {
+            var source = Array.Empty<DataGridFiltersTest.Model>().AsQueryable();
+            var query = source.OrderBy([]);
+            query.Should().BeSameAs(source);
+        }
     }
 }
