@@ -1,4 +1,4 @@
-namespace MudBlazor
+﻿namespace MudBlazor
 {
 #nullable enable
     /// <summary>
@@ -10,9 +10,9 @@ namespace MudBlazor
         /// Gets or sets the typography settings for the default typo.
         /// </summary>
         /// <remarks>
-        /// Defaults to the values from the <see cref="MudBlazor.Default"/> constructor.
+        /// Defaults to the values from the <see cref="MudBlazor.DefaultTypography"/> constructor.
         /// </remarks>
-        public BaseTypography Default { get; set; } = new Default();
+        public BaseTypography Default { get; set; } = new DefaultTypography();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.h1"/>.
@@ -130,12 +130,12 @@ namespace MudBlazor
     /// <summary>
     /// Represents the default typography settings.
     /// </summary>
-    public class Default : BaseTypography
+    public class DefaultTypography : BaseTypography
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Default"/> class with default values.
+        /// Initializes a new instance of the <see cref="DefaultTypography"/> class with default values.
         /// </summary>
-        public Default()
+        public DefaultTypography()
         {
             FontFamily = ["Roboto", "Helvetica", "Arial", "sans-serif"];
             FontSize = ".875rem";
