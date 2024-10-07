@@ -1,8 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -39,15 +36,20 @@ public class MudStep : MudComponentBase, IAsyncDisposable
         .AddStyle(Style)
         .Build();
 
+    internal string LabelClassname =>
+        new CssBuilder("mud-step-label")
+            .AddClass("mud-step-label-active", IsActive)
+            .Build();
+
     internal string LabelIconClassname =>
-        new CssBuilder("mud-stepper-nav-step-label-icon")
+        new CssBuilder("mud-step-label-icon")
             .AddClass($"mud-{(CompletedStepColor.HasValue ? CompletedStepColor.Value.ToDescriptionString() : Parent?.CompletedStepColor.ToDescriptionString())}", CompletedState.Value && Parent?.CompletedStepColor != Color.Default && Parent?.ActiveStep != this)
             .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToDescriptionString() : Parent?.ErrorStepColor.ToDescriptionString())}", !CompletedState.Value && HasErrorState.Value)
             .AddClass($"mud-{Parent?.CurrentStepColor.ToDescriptionString()}", Parent?.ActiveStep == this)
             .Build();
 
     internal string LabelContentClassname =>
-        new CssBuilder("mud-stepper-nav-step-label-content")
+        new CssBuilder("mud-step-label-content")
             .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToDescriptionString() : Parent?.ErrorStepColor.ToDescriptionString())}-text", !CompletedState.Value && HasErrorState.Value)
             .Build();
 
