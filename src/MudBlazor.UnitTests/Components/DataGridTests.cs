@@ -3187,6 +3187,32 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridCustomPropertyFilterTemplateApplyFilterTwiceTest()
+        {
+            var comp = Context.RenderComponent<DataGridCustomPropertyFilterTemplateTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCustomPropertyFilterTemplateTest.Model>>();
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4);
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
+
+            // Apply the filter the first time
+            comp.Find(".filter-button").Click();
+            var input = comp.FindComponent<MudTextField<string>>();
+            await comp.InvokeAsync(async () => await input.Instance.ValueChanged.InvokeAsync("Ira"));
+            comp.Find(".apply-filter-button").Click();
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+
+            // Apply the filter a second time
+            comp.Find(".filter-button").Click();
+            comp.Find(".apply-filter-button").Click();
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+        }
+
+        [Test]
         public async Task DataGridShowFilterIconTest()
         {
             var comp = Context.RenderComponent<DataGridCustomFilteringTest>();
@@ -3228,6 +3254,32 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".clear-filter-button").Click();
             callCountText.Markup.Should().Contain("Server call count: 3");
             dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
+        }
+
+        [Test]
+        public async Task DataGridServerDataColumnFilterMenuApplyTwiceTest()
+        {
+            var comp = Context.RenderComponent<DataGridServerDataColumnFilterMenuTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataColumnFilterMenuTest.Model>>();
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
+
+            // Apply the filter the first time
+            comp.Find(".filter-button").Click();
+            var input = comp.FindComponent<MudTextField<string>>();
+            await comp.InvokeAsync(async () => await input.Instance.ValueChanged.InvokeAsync("Sam"));
+            comp.Find(".apply-filter-button").Click();
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+
+            // Apply the filter a second time
+            comp.Find(".filter-button").Click();
+            comp.Find(".apply-filter-button").Click();
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
         }
 
         [Test]

@@ -1437,7 +1437,10 @@ namespace MudBlazor
         /// <param name="definition">The filter to add.</param>
         public async Task AddFilterAsync(IFilterDefinition<T> definition)
         {
-            FilterDefinitions.Add(definition);
+            if (FilterDefinitions.All(x => x.Id != definition.Id))
+            {
+                FilterDefinitions.Add(definition);
+            }
             _filtersMenuVisible = true;
             await InvokeServerLoadFunc();
             if (!HasServerData) StateHasChanged();
