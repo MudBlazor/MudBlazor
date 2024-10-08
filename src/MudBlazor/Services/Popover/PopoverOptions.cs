@@ -64,6 +64,7 @@ namespace MudBlazor
         /// <remarks>
         /// For more info please visit: <see href="https://github.com/MarkCiliaVincenti/AsyncKeyedLock/wiki/How-to-use-AsyncKeyedLocker#pooling">AsyncKeyedLocker</see>.
         /// </remarks>
+        [Obsolete("Will be removed in v8. Popover is lock free and doesn't requires this anymore.")]
         public int PoolSize { get; set; } = 3000;
 
         /// <summary>
@@ -75,6 +76,7 @@ namespace MudBlazor
         /// <remarks>
         /// For more info please visit: <see href="https://github.com/MarkCiliaVincenti/AsyncKeyedLock/wiki/How-to-use-AsyncKeyedLocker#pooling">AsyncKeyedLocker</see>.
         /// </remarks>
+        [Obsolete("Will be removed in v8. Popover is lock free and doesn't requires this anymore.")]
         public int PoolInitialFill { get; set; } = 100;
     }
 }
