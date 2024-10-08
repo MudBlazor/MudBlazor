@@ -50,9 +50,12 @@
           justify-content: center;
           font-size: 12px;
           letter-spacing: 0;
-          line-height: 1;
           text-indent: 0;
           white-space: nowrap;
+
+          .mud-typography {
+            line-height: 1;
+          }
         }
 
         .mud-step-label-content {
