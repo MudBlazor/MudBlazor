@@ -306,8 +306,10 @@ public class ServiceCollectionExtensionsTests
             options.FlipMargin = 100;
             options.ThrowOnDuplicateProvider = false;
             options.Mode = PopoverMode.Legacy;
+#pragma warning disable CS0618 // Type or member is obsolete
             options.PoolSize = 200;
             options.PoolInitialFill = 10;
+#pragma warning restore CS0618 // Type or member is obsolete
             expectedOptions = options;
         });
         var serviceProvider = services.BuildServiceProvider();
@@ -526,8 +528,10 @@ public class ServiceCollectionExtensionsTests
             options.PopoverOptions.FlipMargin = 100;
             options.PopoverOptions.ThrowOnDuplicateProvider = false;
             options.PopoverOptions.Mode = PopoverMode.Legacy;
+#pragma warning disable CS0618 // Type or member is obsolete
             options.PopoverOptions.PoolSize = 300;
             options.PopoverOptions.PoolInitialFill = 5;
+#pragma warning restore CS0618 // Type or member is obsolete
 
             expectedOptions = options;
         });
@@ -597,8 +601,10 @@ public class ServiceCollectionExtensionsTests
         actualPopoverOptions.FlipMargin.Should().Be(expectedOptions.PopoverOptions.FlipMargin);
         actualPopoverOptions.ThrowOnDuplicateProvider.Should().Be(expectedOptions.PopoverOptions.ThrowOnDuplicateProvider);
         actualPopoverOptions.Mode.Should().Be(expectedOptions.PopoverOptions.Mode);
+#pragma warning disable CS0618 // Type or member is obsolete
         actualPopoverOptions.PoolSize.Should().Be(expectedOptions.PopoverOptions.PoolSize);
         actualPopoverOptions.PoolInitialFill.Should().Be(expectedOptions.PopoverOptions.PoolInitialFill);
+#pragma warning restore CS0618 // Type or member is obsolete
 
         actualResizeObserverOptions.EnableLogging.Should().Be(expectedOptions.ResizeObserverOptions.EnableLogging);
         actualResizeObserverOptions.ReportRate.Should().Be(expectedOptions.ResizeObserverOptions.ReportRate);
