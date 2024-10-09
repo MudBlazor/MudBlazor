@@ -1,7 +1,8 @@
 ﻿using System.Globalization;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Utilities;
 using MudBlazor.Charts;
+using MudBlazor.Utilities;
+
 #nullable enable
 namespace MudBlazor
 {
