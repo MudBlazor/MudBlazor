@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 
 #nullable enable
-namespace MudBlazor
+namespace MudBlazor.Interpolation
 {
     internal abstract class SplineInterpolator : ILineInterpolator
     {

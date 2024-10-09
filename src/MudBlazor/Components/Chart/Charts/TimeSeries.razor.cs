@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components;
 
 #nullable enable
-namespace MudBlazor
+namespace MudBlazor.Charts
 {
     partial class TimeSeries : MudTimeSeriesChartBase
     {

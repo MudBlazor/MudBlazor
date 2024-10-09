@@ -1,4 +1,5 @@
-﻿namespace MudBlazor.Docs.Models
+﻿using MudBlazor.Charts;
+namespace MudBlazor.Docs.Models
 {
 #nullable enable
     public static class ApiLink

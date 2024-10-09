@@ -6,7 +6,7 @@
 using System.Diagnostics;
 
 #nullable enable
-namespace MudBlazor
+namespace MudBlazor.Interpolation
 {
     internal class EndSlopeSpline : SplineInterpolator
     {

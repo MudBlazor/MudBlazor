@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 
 #nullable enable
-namespace MudBlazor
+namespace MudBlazor.Charts
 {
     /// <summary>
     /// Represents a chart which displays series values as portions of vertical rectangles.

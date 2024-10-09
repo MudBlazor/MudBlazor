@@ -1,4 +1,5 @@
 ﻿using MudBlazor.Docs.Models;
+using MudBlazor.Charts;
 
 namespace MudBlazor.Docs.Services
 {
