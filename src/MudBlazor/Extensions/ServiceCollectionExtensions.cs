@@ -136,8 +136,11 @@ namespace MudBlazor.Services
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudBlazorKeyInterceptor(this IServiceCollection services)
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             services.TryAddTransient<IKeyInterceptor, KeyInterceptor>();
             services.TryAddScoped<IKeyInterceptorFactory, KeyInterceptorFactory>();
+#pragma warning restore CS0618 // Type or member is obsolete
+            services.TryAddScoped<IKeyInterceptorService, KeyInterceptorService>();
 
             return services;
         }
@@ -366,8 +369,10 @@ namespace MudBlazor.Services
                     popoverOptions.QueueDelay = options.PopoverOptions.QueueDelay;
                     popoverOptions.ThrowOnDuplicateProvider = options.PopoverOptions.ThrowOnDuplicateProvider;
                     popoverOptions.Mode = options.PopoverOptions.Mode;
+#pragma warning disable CS0618 // Type or member is obsolete
                     popoverOptions.PoolSize = options.PopoverOptions.PoolSize;
                     popoverOptions.PoolInitialFill = options.PopoverOptions.PoolInitialFill;
+#pragma warning restore CS0618 // Type or member is obsolete
                 })
                 .AddMudBlazorScrollSpy()
                 .AddMudEventManager()

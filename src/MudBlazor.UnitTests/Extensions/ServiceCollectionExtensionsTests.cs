@@ -216,17 +216,22 @@ public class ServiceCollectionExtensionsTests
     {
         // Arrange
         var services = new ServiceCollection()
+            .AddLogging()
             .AddSingleton<IJSRuntime, MockJsRuntime>();
 
         // Act
         services.AddMudBlazorKeyInterceptor();
         var serviceProvider = services.BuildServiceProvider();
+#pragma warning disable CS0618 // Type or member is obsolete
         var keyInterceptor = serviceProvider.GetService<IKeyInterceptor>();
         var keyInterceptorFactory = serviceProvider.GetService<IKeyInterceptorFactory>();
+#pragma warning restore CS0618 // Type or member is obsolete
+        var keyInterceptorService = serviceProvider.GetService<IKeyInterceptorService>();
 
         // Assert
         keyInterceptor.Should().NotBeNull();
         keyInterceptorFactory.Should().NotBeNull();
+        keyInterceptorService.Should().NotBeNull();
     }
 
     [Test]
@@ -301,8 +306,10 @@ public class ServiceCollectionExtensionsTests
             options.FlipMargin = 100;
             options.ThrowOnDuplicateProvider = false;
             options.Mode = PopoverMode.Legacy;
+#pragma warning disable CS0618 // Type or member is obsolete
             options.PoolSize = 200;
             options.PoolInitialFill = 10;
+#pragma warning restore CS0618 // Type or member is obsolete
             expectedOptions = options;
         });
         var serviceProvider = services.BuildServiceProvider();
@@ -426,8 +433,11 @@ public class ServiceCollectionExtensionsTests
         var browserViewportService = serviceProvider.GetService<IBrowserViewportService>();
         var resizeObserver = serviceProvider.GetService<IResizeObserver>();
         var resizeObserverFactory = serviceProvider.GetService<IResizeObserverFactory>();
+#pragma warning disable CS0618 // Type or member is obsolete
         var keyInterceptor = serviceProvider.GetService<IKeyInterceptor>();
         var keyInterceptorFactory = serviceProvider.GetService<IKeyInterceptorFactory>();
+#pragma warning restore CS0618 // Type or member is obsolete
+        var keyInterceptorService = serviceProvider.GetService<IKeyInterceptorService>();
         var jsEvent = serviceProvider.GetService<IJsEvent>();
         var jsEventFactory = serviceProvider.GetService<IJsEventFactory>();
         var scrollManager = serviceProvider.GetService<IScrollManager>();
@@ -453,6 +463,7 @@ public class ServiceCollectionExtensionsTests
         resizeObserverFactory.Should().NotBeNull();
         keyInterceptor.Should().NotBeNull();
         keyInterceptorFactory.Should().NotBeNull();
+        keyInterceptorService.Should().NotBeNull();
         jsEvent.Should().NotBeNull();
         jsEventFactory.Should().NotBeNull();
         scrollManager.Should().NotBeNull();
@@ -517,8 +528,10 @@ public class ServiceCollectionExtensionsTests
             options.PopoverOptions.FlipMargin = 100;
             options.PopoverOptions.ThrowOnDuplicateProvider = false;
             options.PopoverOptions.Mode = PopoverMode.Legacy;
+#pragma warning disable CS0618 // Type or member is obsolete
             options.PopoverOptions.PoolSize = 300;
             options.PopoverOptions.PoolInitialFill = 5;
+#pragma warning restore CS0618 // Type or member is obsolete
 
             expectedOptions = options;
         });
@@ -528,8 +541,11 @@ public class ServiceCollectionExtensionsTests
         var browserViewportService = serviceProvider.GetService<IBrowserViewportService>();
         var resizeObserver = serviceProvider.GetService<IResizeObserver>();
         var resizeObserverFactory = serviceProvider.GetService<IResizeObserverFactory>();
+#pragma warning disable CS0618 // Type or member is obsolete
         var keyInterceptor = serviceProvider.GetService<IKeyInterceptor>();
         var keyInterceptorFactory = serviceProvider.GetService<IKeyInterceptorFactory>();
+#pragma warning restore CS0618 // Type or member is obsolete
+        var keyInterceptorService = serviceProvider.GetService<IKeyInterceptorService>();
         var jsEvent = serviceProvider.GetService<IJsEvent>();
         var jsEventFactory = serviceProvider.GetService<IJsEventFactory>();
         var scrollManager = serviceProvider.GetService<IScrollManager>();
@@ -563,6 +579,7 @@ public class ServiceCollectionExtensionsTests
         resizeObserverFactory.Should().NotBeNull();
         keyInterceptor.Should().NotBeNull();
         keyInterceptorFactory.Should().NotBeNull();
+        keyInterceptorService.Should().NotBeNull();
         jsEvent.Should().NotBeNull();
         jsEventFactory.Should().NotBeNull();
         scrollManager.Should().NotBeNull();
@@ -584,8 +601,10 @@ public class ServiceCollectionExtensionsTests
         actualPopoverOptions.FlipMargin.Should().Be(expectedOptions.PopoverOptions.FlipMargin);
         actualPopoverOptions.ThrowOnDuplicateProvider.Should().Be(expectedOptions.PopoverOptions.ThrowOnDuplicateProvider);
         actualPopoverOptions.Mode.Should().Be(expectedOptions.PopoverOptions.Mode);
+#pragma warning disable CS0618 // Type or member is obsolete
         actualPopoverOptions.PoolSize.Should().Be(expectedOptions.PopoverOptions.PoolSize);
         actualPopoverOptions.PoolInitialFill.Should().Be(expectedOptions.PopoverOptions.PoolInitialFill);
+#pragma warning restore CS0618 // Type or member is obsolete
 
         actualResizeObserverOptions.EnableLogging.Should().Be(expectedOptions.ResizeObserverOptions.EnableLogging);
         actualResizeObserverOptions.ReportRate.Should().Be(expectedOptions.ResizeObserverOptions.ReportRate);

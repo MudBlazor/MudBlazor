@@ -50,7 +50,8 @@ namespace MudBlazor
             if (_lastAssignedProperty != Property)
             {
                 _lastAssignedProperty = Property;
-                var compiledPropertyExpression = Property.Compile();
+                var safePropertyExpression = ExpressionNull.AddNullChecks(Property);
+                var compiledPropertyExpression = safePropertyExpression.Compile();
                 _cellContentFunc = item => compiledPropertyExpression(item);
             }
 

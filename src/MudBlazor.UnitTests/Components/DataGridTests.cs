@@ -1,4 +1,8 @@
-﻿#pragma warning disable CS1998 // async without await
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+#pragma warning disable CS1998 // async without await
 #pragma warning disable BL0005 // Set parameter outside component
 
 using System.Globalization;
@@ -7,6 +11,7 @@ using AngleSharp.Css.Dom;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
+using Bunit.Rendering;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Components;
@@ -990,6 +995,19 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td")[8].Html().Trim().Should().Be("snakex64");
 
             //if no crash occurs, we know the datagrid is properly filtering out the GetOnly property when calling set
+        }
+
+        [Test(Description = "Checks if there is no NRE exception when nested property has a null value somewhere in the middle.")]
+        public async Task DataGridNoNullExceptionWhenNestedPropertyNullValue()
+        {
+            var comp = Context.RenderComponent<DataGridNestedNullPropertyTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridNestedNullPropertyTest.Model>>();
+            dataGrid.FindAll("td")[0].Html().Trim().Should().Be("Class A");
+            dataGrid.FindAll("td")[1].Html().Trim().Should().Be(string.Empty);
+
+            var alertTextFunc = () => MudAlert().Find("div.mud-alert-message");
+            IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
+            alertTextFunc.Should().Throw<ComponentNotFoundException>();
         }
 
         [Test(Description = "Checks if clone strategy is working, if we used default one it would fail as STJ doesn't support abstract classes without additional configuration.")]
@@ -3105,6 +3123,33 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridColumnPopupFilteringEmptyTest()
+        {
+            var comp = Context.RenderComponent<DataGridColumnPopupFilteringTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnPopupFilteringTest.Model>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter());
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.CloseFilters());
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task DataGridColumnPopupFilteringIntentionalEmptyTest()
+        {
+            var comp = Context.RenderComponent<DataGridColumnPopupFilteringTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnPopupFilteringTest.Model>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter());
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions[0].Operator = FilterOperator.String.Empty;
+
+            await comp.InvokeAsync(() => dataGrid.Instance.CloseFilters());
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+        }
+
+        [Test]
         public async Task DataGridFilterableFalseTest()
         {
             var comp = Context.RenderComponent<DataGridFilterableFalseTest>();
@@ -3173,6 +3218,32 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridCustomPropertyFilterTemplateApplyFilterTwiceTest()
+        {
+            var comp = Context.RenderComponent<DataGridCustomPropertyFilterTemplateTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCustomPropertyFilterTemplateTest.Model>>();
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4);
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
+
+            // Apply the filter the first time
+            comp.Find(".filter-button").Click();
+            var input = comp.FindComponent<MudTextField<string>>();
+            await comp.InvokeAsync(async () => await input.Instance.ValueChanged.InvokeAsync("Ira"));
+            comp.Find(".apply-filter-button").Click();
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+
+            // Apply the filter a second time
+            comp.Find(".filter-button").Click();
+            comp.Find(".apply-filter-button").Click();
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+        }
+
+        [Test]
         public async Task DataGridShowFilterIconTest()
         {
             var comp = Context.RenderComponent<DataGridCustomFilteringTest>();
@@ -3214,6 +3285,32 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".clear-filter-button").Click();
             callCountText.Markup.Should().Contain("Server call count: 3");
             dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
+        }
+
+        [Test]
+        public async Task DataGridServerDataColumnFilterMenuApplyTwiceTest()
+        {
+            var comp = Context.RenderComponent<DataGridServerDataColumnFilterMenuTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataColumnFilterMenuTest.Model>>();
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
+
+            // Apply the filter the first time
+            comp.Find(".filter-button").Click();
+            var input = comp.FindComponent<MudTextField<string>>();
+            await comp.InvokeAsync(async () => await input.Instance.ValueChanged.InvokeAsync("Sam"));
+            comp.Find(".apply-filter-button").Click();
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+
+            // Apply the filter a second time
+            comp.Find(".filter-button").Click();
+            comp.Find(".apply-filter-button").Click();
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
         }
 
         [Test]
