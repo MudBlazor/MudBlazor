@@ -316,25 +316,23 @@
   }
 }
 
-.mud-input > textarea {
+.mud-input > textarea, div.mud-input-slot {
   &.mud-input-root {
     font: inherit;
     color: currentColor;
     width: 100%;
     border: 0;
     height: auto;
-    margin: 6px 0 7px;
-    padding: 0;
+    margin: 0;
     display: block;
+    padding: 6px 0 7px;
     min-width: 0;
     background: none;
     position: relative;
     box-sizing: content-box;
     letter-spacing: inherit;
     -webkit-tap-highlight-color: transparent;
-    height: auto;
     resize: none;
-    cursor: auto;
 
     @include inputplaceholder {
       color: currentColor;
@@ -343,7 +341,7 @@
     }
 
     &.mud-input-root-margin-dense {
-      margin-top: 3px;
+      padding-top: 3px;
     }
 
     &.mud-input-root-type-search {
@@ -364,11 +362,11 @@
     }
 
     &.mud-input-root-filled {
-      margin: 27px 12px 10px;
+      padding: 27px 12px 10px;
 
       &.mud-input-root-margin-dense {
-        margin-top: 23px;
-        margin-bottom: 6px;
+        padding-top: 23px;
+        padding-bottom: 6px;
       }
 
       &:-webkit-autofill {
@@ -377,25 +375,25 @@
       }
 
       &.mud-input-root-hidden-label {
-        margin-top: 18px;
-        margin-bottom: 19px;
+        padding-top: 18px;
+        padding-bottom: 19px;
 
         &.mud-input-root-margin-dense {
-          margin-top: 10px;
-          margin-bottom: 11px;
+          padding-top: 10px;
+          padding-bottom: 11px;
         }
       }
 
       &.mud-input-root-adorned-start {
-        margin-left: 0;
-        margin-inline-start: 0;
-        margin-inline-end: 12px;
+        padding-left: 0;
+        padding-inline-start: 0;
+        padding-inline-end: 12px;
       }
 
       &.mud-input-root-adorned-end {
-        margin-right: 0;
-        margin-inline-end: unset;
-        margin-inline-start: 12px;
+        padding-right: 0;
+        padding-inline-end: unset;
+        padding-inline-start: 12px;
       }
     }
 
@@ -417,7 +415,7 @@
   }
 
   &.mud-input-root-outlined {
-    margin: 18.5px 14px;
+    padding: 18.5px 14px;
 
 
     &.mud-input-root:-webkit-autofill {
@@ -425,20 +423,20 @@
     }
 
     &.mud-input-root-margin-dense {
-      margin-top: 10.5px;
-      margin-bottom: 10.5px;
+      padding-top: 10.5px;
+      padding-bottom: 10.5px;
     }
 
     &.mud-input-root-adorned-start {
-      margin-left: 0;
-      margin-inline-start: 0;
-      margin-inline-end: 14px;
+      padding-left: 0;
+      padding-inline-start: 0;
+      padding-inline-end: 14px;
     }
 
     &.mud-input-root-adorned-end {
-      margin-right: 0;
-      margin-inline-end: 0;
-      margin-inline-start: 14px;
+      padding-right: 0;
+      padding-inline-end: 0;
+      padding-inline-start: 14px;
     }
   }
 }
