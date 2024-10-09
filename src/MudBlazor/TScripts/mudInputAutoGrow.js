@@ -5,7 +5,8 @@ window.mudInputAutoGrow = {
     initAutoGrow: (elem, maxLines) => {
         const compStyle = getComputedStyle(elem);
         const lineHeight = parseFloat(compStyle.getPropertyValue('line-height'));
-
+        const offsetY = parseFloat(compStyle.getPropertyValue('padding-top')) + parseFloat(compStyle.getPropertyValue('padding-bottom'));
+        // get initial offset Y values to add to the height when we calculate lines
         let maxHeight = 0;
 
         // Update parameters that effect the functionality and visuals of the auto-growing input.
@@ -36,9 +37,12 @@ window.mudInputAutoGrow = {
                 elem.style.textAlign = null;
             }
 
-            let minHeight = lineHeight * elem.rows;
-            let newHeight = Math.max(minHeight, elem.scrollHeight);
             let initialOverflowY = elem.style.overflowY;
+
+            // simply set the height to auto and get the scrollHeight - the offset to set the correct height
+            elem.style.height = 'auto';
+            let newHeight = elem.scrollHeight - offsetY;
+
             if (maxHeight > 0 && newHeight > maxHeight) {
                 // Content height exceeds the max height so we'll see a scrollbar.
                 elem.style.overflowY = 'auto';
