@@ -170,10 +170,6 @@ namespace MudBlazor.Services
         /// <param name="services">IServiceCollection</param>
         public static IServiceCollection AddMudPopoverService(this IServiceCollection services)
         {
-#pragma warning disable CS0618
-            //TODO: Remove in a future major version.
-            services.TryAddScoped<IMudPopoverService, MudPopoverService>();
-#pragma warning restore CS0618
             services.TryAddScoped<IPopoverService, PopoverService>();
 
             return services;
@@ -364,10 +360,6 @@ namespace MudBlazor.Services
                     popoverOptions.QueueDelay = options.PopoverOptions.QueueDelay;
                     popoverOptions.ThrowOnDuplicateProvider = options.PopoverOptions.ThrowOnDuplicateProvider;
                     popoverOptions.Mode = options.PopoverOptions.Mode;
-#pragma warning disable CS0618 // Type or member is obsolete
-                    popoverOptions.PoolSize = options.PopoverOptions.PoolSize;
-                    popoverOptions.PoolInitialFill = options.PopoverOptions.PoolInitialFill;
-#pragma warning restore CS0618 // Type or member is obsolete
                 })
                 .AddMudBlazorScrollSpy()
                 .AddMudEventManager()
