@@ -118,8 +118,7 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
-        // TODO: Make async
-        protected internal void HandleKeyDown(KeyboardEventArgs obj)
+        protected internal async Task HandleKeyDownAsync(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState())
             {
@@ -129,19 +128,19 @@ namespace MudBlazor
             switch (obj.Key)
             {
                 case "ArrowLeft" or "Delete":
-                    SetBoolValueAsync(false, true);
+                    await SetBoolValueAsync(false, true);
                     break;
                 case "ArrowRight" or "Enter" or "NumpadEnter":
-                    SetBoolValueAsync(true, true);
+                    await SetBoolValueAsync(true, true);
                     break;
                 case " ":
                     switch (BoolValue)
                     {
                         case true:
-                            SetBoolValueAsync(false, true);
+                            await SetBoolValueAsync(false, true);
                             break;
                         default:
-                            SetBoolValueAsync(true, true);
+                            await SetBoolValueAsync(true, true);
                             break;
                     }
 
@@ -173,7 +172,7 @@ namespace MudBlazor
                         new(" ", preventDown: "key+none", preventUp: "key+none")
                     ]);
 
-                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDown);
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync);
             }
 
             await base.OnAfterRenderAsync(firstRender);

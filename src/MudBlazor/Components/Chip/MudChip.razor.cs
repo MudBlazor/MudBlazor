@@ -105,6 +105,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     private Size GetSize() => Size ?? ChipSet?.Size ?? MudBlazor.Size.Medium;
 
     private bool GetDisabled() => Disabled || (ChipSet?.Disabled ?? false);
+
     private bool GetReadonly() => ChipSet?.ReadOnly ?? false;
 
     private bool GetRipple() => Ripple ?? ChipSet?.Ripple ?? true;
@@ -352,17 +353,16 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     {
         await base.OnAfterRenderAsync(firstRender);
 
-        var keyInterceptorOptions = new KeyInterceptorOptions(
-            targetClass: "mud-chip",
-            keys:
+        var options = new KeyInterceptorOptions(
+            "mud-chip",
             [
-                new KeyOptions(key: "Enter", preventDown: "key+none"),
-                new KeyOptions(key: " ", preventDown: "key+none", preventUp: "key+none"),
-                new KeyOptions(key: "Backspace", preventDown: "key+none"),
-                new KeyOptions(key: "Delete", preventDown: "key+none")
+                new("Enter", preventDown: "key+none"),
+                new(" ", preventDown: "key+none", preventUp: "key+none"),
+                new("Backspace", preventDown: "key+none"),
+                new("Delete", preventDown: "key+none")
             ]);
 
-        await KeyInterceptorService.SubscribeAsync(_chipContainerId, keyInterceptorOptions, keyDown: HandleKeyDownAsync);
+        await KeyInterceptorService.SubscribeAsync(_chipContainerId, options, keyDown: HandleKeyDownAsync);
     }
 
     protected internal async Task OnClickAsync(MouseEventArgs ev)

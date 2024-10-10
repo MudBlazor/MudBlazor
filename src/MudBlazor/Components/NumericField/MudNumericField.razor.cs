@@ -226,7 +226,7 @@ namespace MudBlazor
         public Task Increment() => Change(factor: 1);
 
         /// <summary>
-        /// Substracts a Step from the Value
+        /// Subtracts a Step from the Value
         /// </summary>
         public Task Decrement() => Change(factor: -1);
 
@@ -278,10 +278,11 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        protected async Task HandleKeydown(KeyboardEventArgs obj)
+        protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
+
             switch (obj.Key)
             {
                 case "ArrowUp":
@@ -291,17 +292,19 @@ namespace MudBlazor
                     await Decrement();
                     break;
             }
+
             await OnKeyDown.InvokeAsync(obj);
         }
 
-        protected Task HandleKeyUp(KeyboardEventArgs obj)
+        protected Task HandleKeyUpAsync(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return Task.CompletedTask;
+
             return OnKeyUp.InvokeAsync(obj);
         }
 
-        protected async Task OnMouseWheel(WheelEventArgs obj)
+        protected async Task OnMouseWheelAsync(WheelEventArgs obj)
         {
             if (!obj.ShiftKey || GetDisabledState() || GetReadOnlyState())
                 return;
