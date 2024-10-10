@@ -10,11 +10,10 @@ namespace MudBlazor
 #nullable enable
     public partial class MudSwitch<T> : MudBooleanInput<T>
     {
-        private string _elementId = "switch_" + Guid.NewGuid().ToString().Substring(0, 8);
-        private IKeyInterceptor? _keyInterceptor;
+        private string _elementId = Identifier.Create("switch");
 
         [Inject]
-        private IKeyInterceptorFactory KeyInterceptorFactory { get; set; } = null!;
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         protected override string Classname => new CssBuilder("mud-input-control-boolean-input")
             .AddClass(Class)
@@ -81,19 +80,19 @@ namespace MudBlazor
             switch (obj.Key)
             {
                 case "ArrowLeft" or "Delete":
-                    SetBoolValueAsync(false, true);
+                    await SetBoolValueAsync(false, true);
                     break;
                 case "ArrowRight" or "Enter" or "NumpadEnter":
-                    SetBoolValueAsync(true, true);
+                    await SetBoolValueAsync(true, true);
                     break;
                 case " ":
                     switch (BoolValue)
                     {
                         case true:
-                            SetBoolValueAsync(false, true);
+                            await SetBoolValueAsync(false, true);
                             break;
                         default:
-                            SetBoolValueAsync(true, true);
+                            await SetBoolValueAsync(true, true);
                             break;
                     }
 
@@ -115,21 +114,19 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                _keyInterceptor = KeyInterceptorFactory.Create();
+                var options = new KeyInterceptorOptions(
+                    "mud-switch-base",
+                    [
+                        // prevent scrolling page, instead increment
+                        new("ArrowUp", preventDown: "key+none"),
+                        // prevent scrolling page, instead decrement
+                        new("ArrowDown", preventDown: "key+none"),
+                        new(" ", preventDown: "key+none", preventUp: "key+none")
+                    ]);
 
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions
-                {
-                    //EnableLogging = true,
-                    TargetClass = "mud-switch-base",
-                    Keys = {
-                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead increment
-                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead decrement
-                        new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" },
-                    },
-                });
-
-                _keyInterceptor.KeyDown += HandleKeyDown;
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync);
             }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -139,13 +136,10 @@ namespace MudBlazor
 
             if (disposing)
             {
-                if (_keyInterceptor != null)
+                if (IsJSRuntimeAvailable)
                 {
-                    _keyInterceptor.KeyDown -= HandleKeyDown;
-                    if (IsJSRuntimeAvailable)
-                    {
-                        _keyInterceptor.Dispose();
-                    }
+                    // TODO: Replace with IAsyncDisposable
+                    KeyInterceptorService.UnsubscribeAsync(_elementId).CatchAndLog();
                 }
             }
         }

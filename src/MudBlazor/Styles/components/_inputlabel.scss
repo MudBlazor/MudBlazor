@@ -1,6 +1,10 @@
 .mud-input-label {
   display: block;
   transform-origin: top left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .mud-input-label-inputcontrol {
@@ -26,6 +30,7 @@
 .mud-input-label-filled {
   z-index: 1;
   transform: translate(12px, 20px) scale(1);
+  max-width: calc(100% - 12px);
   pointer-events: none;
 
   &.mud-input-label-margin-dense {
@@ -36,6 +41,7 @@
 
 .mud-input-label-outlined {
   transform: translate(14px, 20px) scale(1);
+  max-width: calc(100% - 14px);
   pointer-events: none;
   background-color: var(--mud-palette-surface);
   padding: 0px 5px !important;
@@ -62,6 +68,7 @@ label.mud-input-label.mud-input-label-inputcontrol {
 
     &.mud-input-label-filled {
       transform: translate(12px, 10px) scale(0.75);
+      max-width: calc(100% - 12px);
 
       &.mud-input-label-margin-dense {
         transform: translate(12px, 7px) scale(0.75);
@@ -70,6 +77,7 @@ label.mud-input-label.mud-input-label-inputcontrol {
 
     &.mud-input-label-outlined {
       transform: translate(14px, -6px) scale(0.75);
+      max-width: calc(100% - 14px);
     }
   }
 

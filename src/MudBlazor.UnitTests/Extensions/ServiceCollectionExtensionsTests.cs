@@ -216,17 +216,16 @@ public class ServiceCollectionExtensionsTests
     {
         // Arrange
         var services = new ServiceCollection()
+            .AddLogging()
             .AddSingleton<IJSRuntime, MockJsRuntime>();
 
         // Act
         services.AddMudBlazorKeyInterceptor();
         var serviceProvider = services.BuildServiceProvider();
-        var keyInterceptor = serviceProvider.GetService<IKeyInterceptor>();
-        var keyInterceptorFactory = serviceProvider.GetService<IKeyInterceptorFactory>();
+        var keyInterceptorService = serviceProvider.GetService<IKeyInterceptorService>();
 
         // Assert
-        keyInterceptor.Should().NotBeNull();
-        keyInterceptorFactory.Should().NotBeNull();
+        keyInterceptorService.Should().NotBeNull();
     }
 
     [Test]
@@ -274,13 +273,9 @@ public class ServiceCollectionExtensionsTests
         // Act
         services.AddMudPopoverService();
         var serviceProvider = services.BuildServiceProvider();
-#pragma warning disable CS0618
-        var mudPopoverService = serviceProvider.GetService<IMudPopoverService>();
-#pragma warning restore CS0618
         var popoverService = serviceProvider.GetService<IPopoverService>();
 
         // Assert
-        mudPopoverService.Should().NotBeNull();
         popoverService.Should().NotBeNull();
     }
 
@@ -300,21 +295,15 @@ public class ServiceCollectionExtensionsTests
             options.ContainerClass = "container_class";
             options.FlipMargin = 100;
             options.ThrowOnDuplicateProvider = false;
-            options.Mode = PopoverMode.Legacy;
-            options.PoolSize = 200;
-            options.PoolInitialFill = 10;
+            options.Mode = PopoverMode.Default;
             expectedOptions = options;
         });
         var serviceProvider = services.BuildServiceProvider();
-#pragma warning disable CS0618
-        var mudPopoverService = serviceProvider.GetService<IMudPopoverService>();
-#pragma warning restore CS0618
         var popoverService = serviceProvider.GetService<IPopoverService>();
         var options = serviceProvider.GetRequiredService<IOptions<PopoverOptions>>();
         var actualOptions = options.Value;
 
         // Assert
-        mudPopoverService.Should().NotBeNull();
         popoverService.Should().NotBeNull();
         expectedOptions.Should().NotBeNull();
         actualOptions.Should().BeSameAs(expectedOptions);
@@ -426,14 +415,10 @@ public class ServiceCollectionExtensionsTests
         var browserViewportService = serviceProvider.GetService<IBrowserViewportService>();
         var resizeObserver = serviceProvider.GetService<IResizeObserver>();
         var resizeObserverFactory = serviceProvider.GetService<IResizeObserverFactory>();
-        var keyInterceptor = serviceProvider.GetService<IKeyInterceptor>();
-        var keyInterceptorFactory = serviceProvider.GetService<IKeyInterceptorFactory>();
+        var keyInterceptorService = serviceProvider.GetService<IKeyInterceptorService>();
         var jsEvent = serviceProvider.GetService<IJsEvent>();
         var jsEventFactory = serviceProvider.GetService<IJsEventFactory>();
         var scrollManager = serviceProvider.GetService<IScrollManager>();
-#pragma warning disable CS0618
-        var mudPopoverService = serviceProvider.GetService<IMudPopoverService>();
-#pragma warning restore CS0618
         var popoverService = serviceProvider.GetService<IPopoverService>();
         var scrollListener = serviceProvider.GetService<IScrollListener>();
         var scrollListenerFactory = serviceProvider.GetService<IScrollListenerFactory>();
@@ -451,12 +436,10 @@ public class ServiceCollectionExtensionsTests
         browserViewportService.Should().NotBeNull();
         resizeObserver.Should().NotBeNull();
         resizeObserverFactory.Should().NotBeNull();
-        keyInterceptor.Should().NotBeNull();
-        keyInterceptorFactory.Should().NotBeNull();
+        keyInterceptorService.Should().NotBeNull();
         jsEvent.Should().NotBeNull();
         jsEventFactory.Should().NotBeNull();
         scrollManager.Should().NotBeNull();
-        mudPopoverService.Should().NotBeNull();
         popoverService.Should().NotBeNull();
         scrollListener.Should().NotBeNull();
         scrollListenerFactory.Should().NotBeNull();
@@ -516,9 +499,7 @@ public class ServiceCollectionExtensionsTests
             options.PopoverOptions.ContainerClass = "container_class";
             options.PopoverOptions.FlipMargin = 100;
             options.PopoverOptions.ThrowOnDuplicateProvider = false;
-            options.PopoverOptions.Mode = PopoverMode.Legacy;
-            options.PopoverOptions.PoolSize = 300;
-            options.PopoverOptions.PoolInitialFill = 5;
+            options.PopoverOptions.Mode = PopoverMode.Default;
 
             expectedOptions = options;
         });
@@ -528,14 +509,10 @@ public class ServiceCollectionExtensionsTests
         var browserViewportService = serviceProvider.GetService<IBrowserViewportService>();
         var resizeObserver = serviceProvider.GetService<IResizeObserver>();
         var resizeObserverFactory = serviceProvider.GetService<IResizeObserverFactory>();
-        var keyInterceptor = serviceProvider.GetService<IKeyInterceptor>();
-        var keyInterceptorFactory = serviceProvider.GetService<IKeyInterceptorFactory>();
+        var keyInterceptorService = serviceProvider.GetService<IKeyInterceptorService>();
         var jsEvent = serviceProvider.GetService<IJsEvent>();
         var jsEventFactory = serviceProvider.GetService<IJsEventFactory>();
         var scrollManager = serviceProvider.GetService<IScrollManager>();
-#pragma warning disable CS0618
-        var mudPopoverService = serviceProvider.GetService<IMudPopoverService>();
-#pragma warning restore CS0618
         var popoverService = serviceProvider.GetService<IPopoverService>();
         var scrollListener = serviceProvider.GetService<IScrollListener>();
         var scrollListenerFactory = serviceProvider.GetService<IScrollListenerFactory>();
@@ -561,12 +538,10 @@ public class ServiceCollectionExtensionsTests
         browserViewportService.Should().NotBeNull();
         resizeObserver.Should().NotBeNull();
         resizeObserverFactory.Should().NotBeNull();
-        keyInterceptor.Should().NotBeNull();
-        keyInterceptorFactory.Should().NotBeNull();
+        keyInterceptorService.Should().NotBeNull();
         jsEvent.Should().NotBeNull();
         jsEventFactory.Should().NotBeNull();
         scrollManager.Should().NotBeNull();
-        mudPopoverService.Should().NotBeNull();
         popoverService.Should().NotBeNull();
         scrollListener.Should().NotBeNull();
         scrollListenerFactory.Should().NotBeNull();
@@ -584,8 +559,6 @@ public class ServiceCollectionExtensionsTests
         actualPopoverOptions.FlipMargin.Should().Be(expectedOptions.PopoverOptions.FlipMargin);
         actualPopoverOptions.ThrowOnDuplicateProvider.Should().Be(expectedOptions.PopoverOptions.ThrowOnDuplicateProvider);
         actualPopoverOptions.Mode.Should().Be(expectedOptions.PopoverOptions.Mode);
-        actualPopoverOptions.PoolSize.Should().Be(expectedOptions.PopoverOptions.PoolSize);
-        actualPopoverOptions.PoolInitialFill.Should().Be(expectedOptions.PopoverOptions.PoolInitialFill);
 
         actualResizeObserverOptions.EnableLogging.Should().Be(expectedOptions.ResizeObserverOptions.EnableLogging);
         actualResizeObserverOptions.ReportRate.Should().Be(expectedOptions.ResizeObserverOptions.ReportRate);

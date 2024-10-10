@@ -1,28 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
     /// Represents an option of a select or multi-select. To be used inside MudSelect.
     /// </summary>
     public partial class MudSelectItem<T> : MudBaseSelectItem, IDisposable
     {
+        private IMudSelect? _parent;
+        private IMudShadowSelect? _shadowParent;
+
         private string GetCssClasses() => new CssBuilder()
             .AddClass(Class)
             .Build();
 
-        private IMudSelect _parent;
-        internal string ItemId { get; } = "_" + Guid.NewGuid().ToString().Substring(0, 8);
+        internal string ItemId { get; } = Identifier.Create();
 
         /// <summary>
         /// The parent select component
         /// </summary>
         [CascadingParameter]
-        internal IMudSelect IMudSelect
+        internal IMudSelect? IMudSelect
         {
             get => _parent;
             set
@@ -46,17 +46,14 @@ namespace MudBlazor
             }
         }
 
-        private IMudShadowSelect _shadowParent;
-        private bool _selected;
-
         [CascadingParameter]
-        internal IMudShadowSelect IMudShadowSelect
+        internal IMudShadowSelect? IMudShadowSelect
         {
             get => _shadowParent;
             set
             {
                 _shadowParent = value;
-                ((MudSelect<T>)_shadowParent)?.RegisterShadowItem(this);
+                ((MudSelect<T>?)_shadowParent)?.RegisterShadowItem(this);
             }
         }
 
@@ -67,15 +64,15 @@ namespace MudBlazor
         [CascadingParameter(Name = "HideContent")]
         internal bool HideContent { get; set; }
 
-        internal MudSelect<T> MudSelect => (MudSelect<T>)IMudSelect;
+        internal MudSelect<T>? MudSelect => (MudSelect<T>?)IMudSelect;
 
-        private void OnUpdateSelectionStateFromOutside(IEnumerable<T> selection)
+        private void OnUpdateSelectionStateFromOutside(IEnumerable<T?>? selection)
         {
             if (selection == null)
                 return;
-            var old_selected = Selected;
+            var oldSelected = Selected;
             Selected = selection.Contains(Value);
-            if (old_selected != Selected)
+            if (oldSelected != Selected)
                 InvokeAsync(StateHasChanged);
         }
 
@@ -84,7 +81,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public T Value { get; set; }
+        public T? Value { get; set; }
 
         /// <summary>
         /// Mirrors the MultiSelection status of the parent select
@@ -102,19 +99,12 @@ namespace MudBlazor
         /// <summary>
         /// Selected state of the option. Only works if the parent is a mulit-select
         /// </summary>
-        internal bool Selected
-        {
-            get => _selected;
-            set
-            {
-                _selected = value;
-            }
-        }
+        internal bool Selected { get; set; }
 
         /// <summary>
         /// The checkbox icon reflects the multi-select option's state
         /// </summary>
-        protected string CheckBoxIcon
+        protected string? CheckBoxIcon
         {
             get
             {
@@ -124,7 +114,7 @@ namespace MudBlazor
             }
         }
 
-        protected string DisplayString
+        protected string? DisplayString
         {
             get
             {
@@ -149,9 +139,12 @@ namespace MudBlazor
             try
             {
                 MudSelect?.Remove(this);
-                ((MudSelect<T>)_shadowParent)?.UnregisterShadowItem(this);
+                ((MudSelect<T>?)_shadowParent)?.UnregisterShadowItem(this);
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
     }
 }

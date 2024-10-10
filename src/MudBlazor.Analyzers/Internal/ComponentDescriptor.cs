@@ -23,7 +23,7 @@ namespace MudBlazor.Analyzers.Internal
                 {
                     if (member is IPropertySymbol property)
                     {
-                        // https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.components.parameterattribute?view=aspnetcore-6.0&WT.mc_id=DT-MVP-5003978
+                        // https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.parameterattribute?view=aspnetcore-6.0&WT.mc_id=DT-MVP-5003978
                         var parameterAttribute = property.GetAttribute(parameterSymbol, inherits: false); // the attribute is sealed
                         if (parameterAttribute is null)
                             continue;

@@ -7,10 +7,10 @@
 #nullable enable
 }
 
-<div @attributes="UserAttributes" id="@_elementId" class="mud-dialog-container @Position">
+<div @attributes="UserAttributes" id="@_elementId" class="mud-dialog-container @GetPosition()">
     <MudOverlay Visible="true" OnClick="HandleBackgroundClickAsync" Class="@BackgroundClassname" DarkBackground="true" />
     <div id="_@Id.ToString("N")" role="dialog" class="@Classname" style="@Style">
-        @if (!NoHeader)
+        @if (!GetHideHeader())
         {
             <div class="@TitleClassname">
                 @if (TitleContent == null)
@@ -21,7 +21,7 @@
                 {
                     @TitleContent
                 }
-                @if (CloseButton)
+                @if (GetCloseButton())
                 {
                     <MudIconButton aria-label="@Localizer[LanguageResource.MudDialog_Close]" Icon="@CloseIcon" @onclick="Cancel" class="mud-button-close" />
                 }

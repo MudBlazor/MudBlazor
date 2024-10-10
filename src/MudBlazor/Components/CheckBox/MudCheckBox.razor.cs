@@ -14,11 +14,10 @@ namespace MudBlazor
     /// <typeparam name="T">The type of item managed by this checkbox.</typeparam>
     public partial class MudCheckBox<T> : MudBooleanInput<T>
     {
-        private IKeyInterceptor? _keyInterceptor;
-        private string _elementId = "checkbox" + Guid.NewGuid().ToString().Substring(0, 8);
+        private string _elementId = Identifier.Create("checkbox");
 
         [Inject]
-        private IKeyInterceptorFactory KeyInterceptorFactory { get; set; } = null!;
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         protected override string Classname => new CssBuilder("mud-input-control-boolean-input")
             .AddClass($"mud-disabled", GetDisabledState())
@@ -145,7 +144,7 @@ namespace MudBlazor
             return SetBoolValueAsync((bool?)args.Value, true);
         }
 
-        protected void HandleKeyDown(KeyboardEventArgs obj)
+        protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState() || !KeyboardEnabled)
             {
@@ -155,15 +154,15 @@ namespace MudBlazor
             switch (obj.Key)
             {
                 case "Delete":
-                    SetBoolValueAsync(false, true);
+                    await SetBoolValueAsync(false, true);
                     break;
                 case "Enter" or "NumpadEnter":
-                    SetBoolValueAsync(true, true);
+                    await SetBoolValueAsync(true, true);
                     break;
                 case "Backspace":
                     if (TriState)
                     {
-                        SetBoolValueAsync(null, true);
+                        await SetBoolValueAsync(null, true);
                     }
 
                     break;
@@ -171,16 +170,16 @@ namespace MudBlazor
                     switch (BoolValue)
                     {
                         case null:
-                            SetBoolValueAsync(true, true);
+                            await SetBoolValueAsync(true, true);
                             break;
                         case true:
-                            SetBoolValueAsync(false, true);
+                            await SetBoolValueAsync(false, true);
                             break;
                         case false when TriState:
-                            SetBoolValueAsync(null, true);
+                            await SetBoolValueAsync(null, true);
                             break;
                         case false:
-                            SetBoolValueAsync(true, true);
+                            await SetBoolValueAsync(true, true);
                             break;
                     }
 
@@ -202,21 +201,17 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                _keyInterceptor = KeyInterceptorFactory.Create();
+                var options = new KeyInterceptorOptions(
+                    "mud-button-root",
+                    [
+                        // prevent scrolling page
+                        new(" ", preventDown: "key+none", preventUp: "key+none"),
+                        new("Enter", preventDown: "key+none"),
+                        new("NumpadEnter", preventDown: "key+none"),
+                        new("Backspace", preventDown: "key+none")
+                    ]);
 
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions
-                {
-                    //EnableLogging = true,
-                    TargetClass = "mud-button-root",
-                    Keys =
-                    {
-                        new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" }, // prevent scrolling page
-                        new KeyOptions { Key="Enter", PreventDown = "key+none" },
-                        new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
-                        new KeyOptions { Key="Backspace", PreventDown = "key+none" },
-                    },
-                });
-                _keyInterceptor.KeyDown += HandleKeyDown;
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync);
             }
             await base.OnAfterRenderAsync(firstRender);
         }
@@ -227,13 +222,10 @@ namespace MudBlazor
 
             if (disposing)
             {
-                if (_keyInterceptor is not null)
+                if (IsJSRuntimeAvailable)
                 {
-                    _keyInterceptor.KeyDown -= HandleKeyDown;
-                    if (IsJSRuntimeAvailable)
-                    {
-                        _keyInterceptor.Dispose();
-                    }
+                    // TODO: Replace with IAsyncDisposable
+                    KeyInterceptorService.UnsubscribeAsync(_elementId).CatchAndLog();
                 }
             }
         }

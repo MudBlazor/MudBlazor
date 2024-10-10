@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -8,13 +9,13 @@ namespace MudBlazor
     /// <remarks>
     /// This class is typically used to display multiple sets of values in a line, bar, or stacked bar chart.
     /// </remarks>
-    [DebuggerDisplay("{Index} = {Name} (Visible={IsVisible})")]
+    [DebuggerDisplay("{Index} = {Name} (Visible={Visible})")]
     public class ChartSeries
     {
         /// <summary>
         /// The legend label for this series.
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// The values to display.
@@ -22,7 +23,7 @@ namespace MudBlazor
         /// <remarks>
         /// The number of values in this array is typically equal to the number of values in the <see cref="MudChart"/> <c>XAxisLabels</c> property.
         /// </remarks>
-        public double[] Data { get; set; }
+        public double[] Data { get; set; } = [];
 
         /// <summary>
         /// Displays this series in the chart.

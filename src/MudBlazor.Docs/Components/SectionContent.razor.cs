@@ -50,7 +50,7 @@ public partial class SectionContent
             .AddClass("show-code", _hasCode && ShowCode)
             .Build();
 
-    private string _snippetId = "_" + Guid.NewGuid().ToString()[..8];
+    private string _snippetId = Identifier.Create();
 
     [Parameter] public string Class { get; set; }
     [Parameter] public bool DarkenBackground { get; set; }
@@ -120,6 +120,9 @@ public partial class SectionContent
             using (var reader = new StreamReader(stream))
             {
                 var read = reader.ReadToEnd();
+
+                // Ensure the code uses spaces for identation regardless of the formatting within the source code.
+                read = read.Replace("\t", "    ");
 
                 if (!string.IsNullOrEmpty(HighLight))
                 {

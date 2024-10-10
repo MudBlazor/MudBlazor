@@ -142,7 +142,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-message-box__no-button").TrimmedText().Should().Be("Whatever");
             comp.Find(".mud-message-box__yes-button").TrimmedText().Should().Be("Great");
 
-            await comp.InvokeAsync(() => dialog.DialogInstance?.HandleKeyDown(new KeyboardEventArgs { Key = "Escape" }));
+            await comp.InvokeAsync(() => dialog.DialogInstance?.HandleKeyDownAsync(new KeyboardEventArgs { Key = "Escape" }));
 
             comp.FindAll("button").Count.Should().Be(3);
 
@@ -207,7 +207,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-message-box__no-button").TrimmedText().Should().Be("Whatever");
             comp.Find(".mud-message-box__yes-button").TrimmedText().Should().Be("Great");
 
-            await comp.InvokeAsync(() => dialog.DialogInstance?.HandleKeyDown(new KeyboardEventArgs { Key = "Escape" }));
+            await comp.InvokeAsync(() => dialog.DialogInstance?.HandleKeyDownAsync(new KeyboardEventArgs { Key = "Escape" }));
 
             comp.FindAll("button").Should().BeEmpty();
 
@@ -267,7 +267,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-message-box__no-button").TrimmedText().Should().Be("Whatever");
             comp.Find(".mud-message-box__yes-button").TrimmedText().Should().Be("Great");
 
-            await comp.InvokeAsync(() => dialog.DialogInstance.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape" }));
+            await comp.InvokeAsync(() => dialog.DialogInstance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape" }));
 
             comp.FindAll("button").Should().BeEmpty();
 

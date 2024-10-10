@@ -60,7 +60,8 @@ namespace MudBlazor
         /// <summary>
         /// Occurs when <see cref="DateRange"/> has changed.
         /// </summary>
-        [Parameter] public EventCallback<DateRange> DateRangeChanged { get; set; }
+        [Parameter]
+        public EventCallback<DateRange> DateRangeChanged { get; set; }
 
         /// <summary>
         /// The currently selected date range.
@@ -73,11 +74,21 @@ namespace MudBlazor
             set => SetDateRangeAsync(value, true).CatchAndLog();
         }
 
+        /// <summary>
+        /// Enables capture for disabled dates within the selected date range.
+        /// </summary>
+        /// <remarks>
+        /// By default, it will always ignore disabled dates. This parameter will take effect when <see cref="MudBaseDatePicker.IsDateDisabledFunc"/> is set.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public bool AllowDisabledDatesInRange { get; set; } = false;
+
         protected async Task SetDateRangeAsync(DateRange range, bool updateValue)
         {
             if (_dateRange != range)
             {
-                var doesRangeContainDisabledDates = range?.Start != null && range?.End != null && Enumerable
+                var doesRangeContainDisabledDates = !AllowDisabledDatesInRange && range is { Start: not null, End: not null } && Enumerable
                     .Range(0, int.MaxValue)
                     .Select(index => range.Start.Value.AddDays(index))
                     .TakeWhile(date => date <= range.End.Value)

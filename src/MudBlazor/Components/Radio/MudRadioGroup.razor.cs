@@ -73,7 +73,7 @@ namespace MudBlazor
         public T? Value
         {
             get => _value;
-            set => SetSelectedOptionAsync(value, true).CatchAndLog();
+            set => SetSelectedOptionAsync(value, true, updateValue: false).CatchAndLog();
         }
 
         [Parameter]
@@ -83,7 +83,7 @@ namespace MudBlazor
 
         internal bool GetReadOnlyState() => ReadOnly || ParentReadOnly; //internal because the MudRadio reads this value directly
 
-        protected async Task SetSelectedOptionAsync(T? option, bool updateRadio)
+        protected async Task SetSelectedOptionAsync(T? option, bool updateRadio, bool updateValue = true)
         {
             if (!OptionEquals(_value, option))
             {
@@ -95,7 +95,8 @@ namespace MudBlazor
                     await SetSelectedRadioAsync(radio, false);
                 }
 
-                await ValueChanged.InvokeAsync(_value);
+                if (updateValue)
+                    await ValueChanged.InvokeAsync(_value);
 
                 await BeginValidateAsync();
                 FieldChanged(_value);

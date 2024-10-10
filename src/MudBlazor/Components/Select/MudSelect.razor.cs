@@ -2,11 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
@@ -15,34 +10,39 @@ using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudSelect<T> : MudBaseInput<T>, IMudSelect, IMudShadowSelect
     {
-        private HashSet<T> _selectedValues = new HashSet<T>();
-        private IEqualityComparer<T> _comparer;
-        private bool _dense;
-        private string multiSelectionText;
+        private string? _activeItemId;
         private bool? _selectAllChecked;
-        private IKeyInterceptor _keyInterceptor;
+        private string? _multiSelectionText;
+        private IEqualityComparer<T?>? _comparer;
+        private TaskCompletionSource? _renderComplete;
+        private MudInput<string> _elementReference = null!;
+        private HashSet<T?> _selectedValues = new HashSet<T?>();
+        protected internal List<MudSelectItem<T>> _items = new();
+        private string _elementId = Identifier.Create("select");
 
         protected string OuterClassname =>
             new CssBuilder("mud-select")
-            .AddClass(OuterClass)
-            .Build();
+                .AddClass(OuterClass)
+                .Build();
 
         protected string Classname =>
             new CssBuilder("mud-select")
-            .AddClass(Class)
-            .Build();
+                .AddClass(Class)
+                .Build();
 
         protected string InputClassname =>
             new CssBuilder("mud-select-input")
-            .AddClass(InputClass)
-            .Build();
+                .AddClass(InputClass)
+                .Build();
 
-        [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
-        [Inject] IScrollManager ScrollManager { get; set; }
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
-        private string _elementId = "select_" + Guid.NewGuid().ToString().Substring(0, 8);
+        [Inject]
+        private IScrollManager ScrollManager { get; set; } = null!;
 
         private Task SelectNextItem() => SelectAdjacentItem(+1);
 
@@ -50,12 +50,12 @@ namespace MudBlazor
 
         private async Task SelectAdjacentItem(int direction)
         {
-            if (_items == null || _items.Count == 0)
+            if (_items.Count == 0)
                 return;
-            var index = _items.FindIndex(x => x.ItemId == (string)_activeItemId);
+            var index = _items.FindIndex(x => x.ItemId == _activeItemId);
             if (direction < 0 && index < 0)
                 index = 0;
-            MudSelectItem<T> item = null;
+            MudSelectItem<T>? item = null;
             // the loop allows us to jump over disabled items until we reach the next non-disabled one
             for (var i = 0; i < _items.Count; i++)
             {
@@ -72,32 +72,30 @@ namespace MudBlazor
                     _selectedValues.Clear();
                     _selectedValues.Add(item.Value);
                     await SetValueAsync(item.Value, updateText: true);
-                    HilightItem(item);
+                    HighlightItem(item);
                     break;
                 }
-                else
-                {
-                    // in multiselect mode don't select anything, just hilight.
-                    // selecting is done by Enter
-                    HilightItem(item);
-                    break;
-                }
+
+                // in multiselect mode don't select anything, just highlight.
+                // selecting is done by Enter
+                HighlightItem(item);
+                break;
             }
             await _elementReference.SetText(Text);
             await ScrollToItemAsync(item);
         }
-        private ValueTask ScrollToItemAsync(MudSelectItem<T> item)
+        private ValueTask ScrollToItemAsync(MudSelectItem<T>? item)
             => item != null ? ScrollManager.ScrollToListItemAsync(item.ItemId) : ValueTask.CompletedTask;
-        private async Task SelectFirstItem(string startChar = null)
+
+        private async Task SelectFirstItem(string? startChar = null)
         {
-            if (_items == null || _items.Count == 0)
+            if (_items.Count == 0)
                 return;
             var items = _items.Where(x => !x.Disabled);
-            var firstItem = items.FirstOrDefault();
             if (!string.IsNullOrWhiteSpace(startChar))
             {
                 // find first item that starts with the letter
-                var currentItem = items.FirstOrDefault(x => x.ItemId == (string)_activeItemId);
+                var currentItem = items.FirstOrDefault(x => x.ItemId == _activeItemId);
                 if (currentItem != null &&
                     Converter.Set(currentItem.Value)?.ToLowerInvariant().StartsWith(startChar) == true)
                 {
@@ -114,11 +112,11 @@ namespace MudBlazor
                 _selectedValues.Clear();
                 _selectedValues.Add(item.Value);
                 await SetValueAsync(item.Value, updateText: true);
-                HilightItem(item);
+                HighlightItem(item);
             }
             else
             {
-                HilightItem(item);
+                HighlightItem(item);
             }
             await _elementReference.SetText(Text);
             await ScrollToItemAsync(item);
@@ -126,7 +124,7 @@ namespace MudBlazor
 
         private async Task SelectLastItem()
         {
-            if (_items == null || _items.Count == 0)
+            if (_items.Count == 0)
                 return;
             var item = _items.LastOrDefault(x => !x.Disabled);
             if (item == null)
@@ -136,11 +134,11 @@ namespace MudBlazor
                 _selectedValues.Clear();
                 _selectedValues.Add(item.Value);
                 await SetValueAsync(item.Value, updateText: true);
-                HilightItem(item);
+                HighlightItem(item);
             }
             else
             {
-                HilightItem(item);
+                HighlightItem(item);
             }
             await _elementReference.SetText(Text);
             await ScrollToItemAsync(item);
@@ -150,57 +148,57 @@ namespace MudBlazor
         /// The outer div's classnames, seperated by space.
         /// </summary>
         [Category(CategoryTypes.FormComponent.Appearance)]
-        [Parameter] public string OuterClass { get; set; }
+        [Parameter]
+        public string? OuterClass { get; set; }
 
         /// <summary>
         /// Input's classnames, seperated by space.
         /// </summary>
         [Category(CategoryTypes.FormComponent.Appearance)]
-        [Parameter] public string InputClass { get; set; }
+        [Parameter]
+        public string? InputClass { get; set; }
 
         /// <summary>
         /// Fired when dropdown opens.
         /// </summary>
         [Category(CategoryTypes.FormComponent.Behavior)]
-        [Parameter] public EventCallback OnOpen { get; set; }
+        [Parameter]
+        public EventCallback OnOpen { get; set; }
 
         /// <summary>
         /// Fired when dropdown closes.
         /// </summary>
         [Category(CategoryTypes.FormComponent.Behavior)]
-        [Parameter] public EventCallback OnClose { get; set; }
+        [Parameter]
+        public EventCallback OnClose { get; set; }
 
         /// <summary>
         /// Add the MudSelectItems here
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// User class names for the popover, separated by space
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public string PopoverClass { get; set; }
+        public string? PopoverClass { get; set; }
 
         /// <summary>
         /// User class names for the internal list, separated by space
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public string ListClass { get; set; }
+        public string? ListClass { get; set; }
 
         /// <summary>
         /// If true, compact vertical padding will be applied to all Select items.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public bool Dense
-        {
-            get { return _dense; }
-            set { _dense = value; }
-        }
+        public bool Dense { get; set; }
 
         /// <summary>
         /// The Open Select Icon
@@ -233,14 +231,15 @@ namespace MudBlazor
         /// <summary>
         /// Fires when SelectedValues changes.
         /// </summary>
-        [Parameter] public EventCallback<IEnumerable<T>> SelectedValuesChanged { get; set; }
+        [Parameter]
+        public EventCallback<IEnumerable<T?>?> SelectedValuesChanged { get; set; }
 
         /// <summary>
         /// Function to define a customized multiselection text.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public Func<List<string>, string> MultiSelectionTextFunc { get; set; }
+        public Func<List<string?>?, string>? MultiSelectionTextFunc { get; set; }
 
         /// <summary>
         /// Parameter to define the delimited string separator.
@@ -254,20 +253,19 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
-        public IEnumerable<T> SelectedValues
+        public IEnumerable<T?>? SelectedValues
         {
             get
             {
-                if (_selectedValues == null)
-                    _selectedValues = new HashSet<T>(_comparer);
                 return _selectedValues;
             }
             set
             {
-                var set = value ?? new HashSet<T>(_comparer);
-                if (SelectedValues.Count() == set.Count() && _selectedValues.All(x => set.Contains(x)))
+                var set = value ?? new HashSet<T?>(_comparer);
+                var selectedValues = SelectedValues ?? new HashSet<T>(_comparer);
+                if (selectedValues.Count() == set.Count() && _selectedValues.All(x => set.Contains(x)))
                     return;
-                _selectedValues = new HashSet<T>(set, _comparer);
+                _selectedValues = new HashSet<T?>(set, _comparer);
                 SelectionChangedFromOutside?.Invoke(_selectedValues);
                 if (!MultiSelection)
                     SetValueAsync(_selectedValues.FirstOrDefault()).CatchAndLog();
@@ -276,18 +274,18 @@ namespace MudBlazor
                     //Warning. Here the Converter was not set yet
                     if (MultiSelectionTextFunc != null)
                     {
-                        SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
-                            selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
+                        SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(Converter.Set)),
+                            selectedConvertedValues: _selectedValues.Select(Converter.Set).ToList(),
                             multiSelectionTextFunc: MultiSelectionTextFunc).CatchAndLog();
                     }
                     else
                     {
-                        SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue: false).CatchAndLog();
+                        SetTextAsync(string.Join(Delimiter, _selectedValues.Select(Converter.Set)), updateValue: false).CatchAndLog();
                     }
                 }
-                SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues, _comparer));
+                SelectedValuesChanged.InvokeAsync(new HashSet<T?>(_selectedValues, _comparer));
                 if (MultiSelection && typeof(T) == typeof(string))
-                    SetValueAsync((T)(object)Text, updateText: false).CatchAndLog();
+                    SetValueAsync((T?)(object?)Text, updateText: false).CatchAndLog();
             }
         }
 
@@ -296,28 +294,26 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public IEqualityComparer<T> Comparer
+        public IEqualityComparer<T?>? Comparer
         {
             get => _comparer;
             set
             {
                 _comparer = value;
                 // Apply comparer and refresh selected values
-                _selectedValues = new HashSet<T>(_selectedValues, _comparer);
+                _selectedValues = new HashSet<T?>(_selectedValues, _comparer);
                 SelectedValues = _selectedValues;
             }
         }
 
-        private Func<T, string> _toStringFunc = x => x?.ToString();
-
-        private MudInput<string> _elementReference;
+        private Func<T?, string?>? _toStringFunc = x => x?.ToString();
 
         /// <summary>
         /// Defines how values are displayed in the drop-down list
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public Func<T, string> ToStringFunc
+        public Func<T?, string?>? ToStringFunc
         {
             get => _toStringFunc;
             set
@@ -359,10 +355,9 @@ namespace MudBlazor
             }
         }
 
-
         private Task WaitForRender()
         {
-            Task t = null;
+            Task? t;
             lock (this)
             {
                 if (_renderComplete != null)
@@ -373,8 +368,6 @@ namespace MudBlazor
             StateHasChanged();
             return t;
         }
-
-        private TaskCompletionSource _renderComplete;
 
         /// <summary>
         /// Returns whether or not the Value can be found in items. If not, the Select will display it as a string.
@@ -397,11 +390,11 @@ namespace MudBlazor
             {
                 if (Value == null)
                     return false;
-                return _shadowLookup.TryGetValue(Value, out var _);
+                return _shadowLookup.TryGetValue(Value, out _);
             }
         }
 
-        protected RenderFragment GetSelectedValuePresenter()
+        protected RenderFragment? GetSelectedValuePresenter()
         {
             if (Value == null)
                 return null;
@@ -425,20 +418,18 @@ namespace MudBlazor
             if (MultiSelectionTextFunc != null)
             {
                 return MultiSelection
-                    ? SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
-                        selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
+                    ? SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues!.Select(Converter.Set)),
+                        selectedConvertedValues: SelectedValues!.Select(Converter.Set).ToList(),
                         multiSelectionTextFunc: MultiSelectionTextFunc)
                     : base.UpdateTextPropertyAsync(updateValue);
             }
-            else
-            {
-                return MultiSelection
-                    ? SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))))
-                    : base.UpdateTextPropertyAsync(updateValue);
-            }
+
+            return MultiSelection
+                ? SetTextAsync(string.Join(Delimiter, SelectedValues!.Select(Converter.Set)))
+                : base.UpdateTextPropertyAsync(updateValue);
         }
 
-        internal event Action<ICollection<T>> SelectionChangedFromOutside;
+        internal event Action<ICollection<T?>>? SelectionChangedFromOutside;
 
         private bool _multiSelection;
         /// <summary>
@@ -451,7 +442,7 @@ namespace MudBlazor
             get => _multiSelection;
             set
             {
-                if (value != _multiSelection)
+                if (_multiSelection != value)
                 {
                     _multiSelection = value;
                     UpdateTextPropertyAsync(false).CatchAndLog();
@@ -464,13 +455,12 @@ namespace MudBlazor
         /// </summary>
         public IReadOnlyList<MudSelectItem<T>> Items => _items;
 
-        protected internal List<MudSelectItem<T>> _items = new();
+#nullable disable
         protected Dictionary<T, MudSelectItem<T>> _valueLookup = new();
         protected Dictionary<T, MudSelectItem<T>> _shadowLookup = new();
+#nullable enable
 
-        private string _activeItemId;
-
-        internal bool Add(MudSelectItem<T> item)
+        internal bool Add(MudSelectItem<T>? item)
         {
             if (item == null)
                 return false;
@@ -555,11 +545,12 @@ namespace MudBlazor
         /// <summary>
         /// Button click event for clear button. Called after text and value has been cleared.
         /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         internal bool _open;
 
-        public string _currentIcon { get; set; }
+        public string? _currentIcon { get; set; }
 
         public async Task SelectOption(int index)
         {
@@ -572,26 +563,24 @@ namespace MudBlazor
             await SelectOption(_items[index].Value);
         }
 
-        public async Task SelectOption(object obj)
+        public async Task SelectOption(object? obj)
         {
-            var value = (T)obj;
+            var value = (T?)obj;
             if (MultiSelection)
             {
                 // multi-selection: menu stays open
-                if (!_selectedValues.Contains(value))
-                    _selectedValues.Add(value);
-                else
+                if (!_selectedValues.Add(value))
                     _selectedValues.Remove(value);
 
                 if (MultiSelectionTextFunc != null)
                 {
-                    await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
-                        selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
+                    await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues!.Select(Converter.Set)),
+                        selectedConvertedValues: SelectedValues!.Select(Converter.Set).ToList(),
                         multiSelectionTextFunc: MultiSelectionTextFunc);
                 }
                 else
                 {
-                    await SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue: false);
+                    await SetTextAsync(string.Join(Delimiter, SelectedValues!.Select(Converter.Set)), updateValue: false);
                 }
 
                 UpdateSelectAllChecked();
@@ -615,51 +604,50 @@ namespace MudBlazor
                 _selectedValues.Add(value);
             }
 
-            HilightItemForValueAsync(value);
+            HighlightItemForValueAsync(value);
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
-                await SetValueAsync((T)(object)Text, updateText: false);
+                await SetValueAsync((T?)(object?)Text, updateText: false);
             await InvokeAsync(StateHasChanged);
         }
 
-        private async void HilightItemForValueAsync(T value)
+        private async void HighlightItemForValueAsync(T? value)
         {
             if (value == null)
             {
-                HilightItem(null);
+                HighlightItem(null);
                 return;
             }
             await WaitForRender();
             _valueLookup.TryGetValue(value, out var item);
-            HilightItem(item);
+            HighlightItem(item);
         }
 
-        private async void HilightItem(MudSelectItem<T> item)
+        private async void HighlightItem(MudSelectItem<T>? item)
         {
             _activeItemId = item?.ItemId;
             // we need to make sure we are just after a render here or else there will be race conditions
             await WaitForRender();
-            // Note: this is a hack but I found no other way to make the list hilight the currently hilighted item
-            // without the delay it always shows the previously hilighted item because the popup items don't exist yet
+            // Note: this is a hack, but I found no other way to make the list highlight the currently highlighted item
+            // without the delay it always shows the previously highlighted item because the popup items don't exist yet
             // they are only registered after they are rendered, so we need to render again!
             await Task.Delay(1);
             StateHasChanged();
         }
 
-        private async Task HilightSelectedValue()
+        private async Task HighlightSelectedValue()
         {
             await WaitForRender();
             if (MultiSelection)
-                HilightItem(_items.FirstOrDefault(x => !x.Disabled));
+                HighlightItem(_items.FirstOrDefault(x => !x.Disabled));
             else
-                HilightItemForValueAsync(Value);
+                HighlightItemForValueAsync(Value);
         }
 
         private void UpdateSelectAllChecked()
         {
             if (MultiSelection && SelectAll)
             {
-                var oldState = _selectAllChecked;
                 if (_selectedValues.Count == 0)
                 {
                     _selectAllChecked = false;
@@ -692,11 +680,11 @@ namespace MudBlazor
             _open = true;
             UpdateIcon();
             StateHasChanged();
-            await HilightSelectedValue();
+            await HighlightSelectedValue();
             //Scroll the active item on each opening
             if (_activeItemId != null)
             {
-                var index = _items.FindIndex(x => x.ItemId == (string)_activeItemId);
+                var index = _items.FindIndex(x => x.ItemId == _activeItemId);
                 if (index > 0)
                 {
                     var item = _items[index];
@@ -704,7 +692,7 @@ namespace MudBlazor
                 }
             }
             //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
-            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "Key+none" });
+            await KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "key+none"));
 
             await OnOpen.InvokeAsync();
         }
@@ -722,7 +710,7 @@ namespace MudBlazor
             }
 
             //enable escape propagation: the select popover was closed, now underlying components are allowed to handle escape key
-            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
+            await KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "none"));
 
             await OnClose.InvokeAsync();
         }
@@ -748,36 +736,38 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                _keyInterceptor = KeyInterceptorFactory.Create();
+                var options = new KeyInterceptorOptions(
+                    "mud-input-control",
+                    enableLogging: true,
+                    [
+                        // prevent scrolling page, toggle open/close
+                        new(" ", preventDown: "key+none"),
+                        // prevent scrolling page, instead highlight previous item
+                        new("ArrowUp", preventDown: "key+none"),
+                        // prevent scrolling page, instead highlight next item
+                        new("ArrowDown", preventDown: "key+none"),
+                        new("Home", preventDown: "key+none"),
+                        new("End", preventDown: "key+none"),
+                        new("Escape"),
+                        new("Enter", preventDown: "key+none"),
+                        new("NumpadEnter", preventDown: "key+none"),
+                        // select all items instead of all page text
+                        new("a", preventDown: "key+ctrl"),
+                        // select all items instead of all page text
+                        new("A", preventDown: "key+ctrl"),
+                        // for our users
+                        new("/./", subscribeDown: true, subscribeUp: true)
+                    ]);
 
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
-                {
-                    //EnableLogging = true,
-                    TargetClass = "mud-input-control",
-                    Keys = {
-                        new KeyOptions { Key=" ", PreventDown = "key+none" }, //prevent scrolling page, toggle open/close
-                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead hilight previous item
-                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead hilight next item
-                        new KeyOptions { Key="Home", PreventDown = "key+none" },
-                        new KeyOptions { Key="End", PreventDown = "key+none" },
-                        new KeyOptions { Key="Escape" },
-                        new KeyOptions { Key="Enter", PreventDown = "key+none" },
-                        new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
-                        new KeyOptions { Key="a", PreventDown = "key+ctrl" }, // select all items instead of all page text
-                        new KeyOptions { Key="A", PreventDown = "key+ctrl" }, // select all items instead of all page text
-                        new KeyOptions { Key="/./", SubscribeDown = true, SubscribeUp = true }, // for our users
-                    },
-                });
-                _keyInterceptor.KeyDown += HandleKeyDown;
-                _keyInterceptor.KeyUp += HandleKeyUp;
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync, keyUp: HandleKeyUpAsync);
             }
 
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        public void CheckGenericTypeMatch(object select_item)
+        public void CheckGenericTypeMatch(object selectItem)
         {
-            var itemT = select_item.GetType().GenericTypeArguments[0];
+            var itemT = selectItem.GetType().GenericTypeArguments[0];
             if (itemT != typeof(T))
                 throw new GenericTypeMismatchException("MudSelect", "MudSelectItem", typeof(T), itemT);
         }
@@ -817,21 +807,21 @@ namespace MudBlazor
         }
 
         protected async Task SetCustomizedTextAsync(string text, bool updateValue = true,
-            List<string> selectedConvertedValues = null,
-            Func<List<string>, string> multiSelectionTextFunc = null)
+            List<string?>? selectedConvertedValues = null,
+            Func<List<string?>?, string>? multiSelectionTextFunc = null)
         {
             // The Text property of the control is updated
             Text = multiSelectionTextFunc?.Invoke(selectedConvertedValues);
 
             // The comparison is made on the multiSelectionText variable
-            if (multiSelectionText != text)
+            if (_multiSelectionText != text)
             {
-                multiSelectionText = text;
-                if (!string.IsNullOrWhiteSpace(multiSelectionText))
+                _multiSelectionText = text;
+                if (!string.IsNullOrWhiteSpace(_multiSelectionText))
                     Touched = true;
                 if (updateValue)
                     await UpdateValuePropertyAsync(false);
-                await TextChanged.InvokeAsync(multiSelectionText);
+                await TextChanged.InvokeAsync(_multiSelectionText);
             }
         }
 
@@ -861,13 +851,10 @@ namespace MudBlazor
         /// </summary>
         protected string SelectAllCheckBoxIcon
         {
-            get
-            {
-                return _selectAllChecked.HasValue ? _selectAllChecked.Value ? CheckedIcon : UncheckedIcon : IndeterminateIcon;
-            }
+            get => _selectAllChecked.HasValue ? _selectAllChecked.Value ? CheckedIcon : UncheckedIcon : IndeterminateIcon;
         }
 
-        internal async void HandleKeyDown(KeyboardEventArgs obj)
+        internal async Task HandleKeyDownAsync(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
@@ -888,32 +875,30 @@ namespace MudBlazor
                         await CloseMenu();
                         break;
                     }
-                    else if (_open == false)
+
+                    if (_open == false)
                     {
                         await OpenMenu();
                         break;
                     }
-                    else
-                    {
-                        await SelectPreviousItem();
-                        break;
-                    }
+
+                    await SelectPreviousItem();
+                    break;
                 case "ArrowDown":
                     if (obj.AltKey)
                     {
                         await OpenMenu();
                         break;
                     }
-                    else if (_open == false)
+
+                    if (_open == false)
                     {
                         await OpenMenu();
                         break;
                     }
-                    else
-                    {
-                        await SelectNextItem();
-                        break;
-                    }
+
+                    await SelectNextItem();
+                    break;
                 case " ":
                     await ToggleMenu();
                     break;
@@ -928,32 +913,29 @@ namespace MudBlazor
                     break;
                 case "Enter":
                 case "NumpadEnter":
-                    var index = _items.FindIndex(x => x.ItemId == (string)_activeItemId);
+                    var index = _items.FindIndex(x => x.ItemId == _activeItemId);
                     if (!MultiSelection)
                     {
                         if (!_open)
                         {
                             await OpenMenu();
-                            return;
+                            break;
                         }
+
                         // this also closes the menu
                         await SelectOption(index);
                         break;
                     }
-                    else
+
+                    if (!_open)
                     {
-                        if (_open == false)
-                        {
-                            await OpenMenu();
-                            break;
-                        }
-                        else
-                        {
-                            await SelectOption(index);
-                            await _elementReference.SetText(Text);
-                            break;
-                        }
+                        await OpenMenu();
+                        break;
                     }
+
+                    await SelectOption(index);
+                    await _elementReference.SetText(Text);
+                    break;
                 case "a":
                 case "A":
                     if (obj.CtrlKey)
@@ -971,13 +953,13 @@ namespace MudBlazor
                     }
                     break;
             }
-            OnKeyDown.InvokeAsync(obj).CatchAndLog();
 
+            await OnKeyDown.InvokeAsync(obj);
         }
 
-        internal void HandleKeyUp(KeyboardEventArgs obj)
+        internal Task HandleKeyUpAsync(KeyboardEventArgs obj)
         {
-            OnKeyUp.InvokeAsync(obj).CatchAndLog();
+            return OnKeyUp.InvokeAsync(obj);
         }
 
         /// <summary>
@@ -1013,34 +995,34 @@ namespace MudBlazor
         {
             if (!MultiSelection)
                 return;
-            var selectedValues = new HashSet<T>(_items.Where(x => !x.Disabled && x.Value != null).Select(x => x.Value), _comparer);
-            _selectedValues = new HashSet<T>(selectedValues, _comparer);
+            var selectedValues = new HashSet<T?>(_items.Where(x => !x.Disabled && x.Value != null).Select(x => x.Value), _comparer);
+            _selectedValues = new HashSet<T?>(selectedValues, _comparer);
             if (MultiSelectionTextFunc != null)
             {
-                await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
-                    selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
+                await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues!.Select(Converter.Set)),
+                    selectedConvertedValues: SelectedValues!.Select(Converter.Set).ToList(),
                     multiSelectionTextFunc: MultiSelectionTextFunc);
             }
             else
             {
-                await SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue: false);
+                await SetTextAsync(string.Join(Delimiter, SelectedValues!.Select(Converter.Set)), updateValue: false);
             }
             UpdateSelectAllChecked();
             _selectedValues = selectedValues; // need to force selected values because Blazor overwrites it under certain circumstances due to changes of Text or Value
             await BeginValidateAsync();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
-                SetValueAsync((T)(object)Text, updateText: false).CatchAndLog();
+                SetValueAsync((T?)(object?)Text, updateText: false).CatchAndLog();
         }
 
-        public void RegisterShadowItem(MudSelectItem<T> item)
+        public void RegisterShadowItem(MudSelectItem<T>? item)
         {
             if (item == null || item.Value == null)
                 return;
             _shadowLookup[item.Value] = item;
         }
 
-        public void UnregisterShadowItem(MudSelectItem<T> item)
+        public void UnregisterShadowItem(MudSelectItem<T>? item)
         {
             if (item == null || item.Value == null)
                 return;
@@ -1068,15 +1050,10 @@ namespace MudBlazor
 
             if (disposing)
             {
-                if (_keyInterceptor != null)
+                if (IsJSRuntimeAvailable)
                 {
-                    _keyInterceptor.KeyDown -= HandleKeyDown;
-                    _keyInterceptor.KeyUp -= HandleKeyUp;
-
-                    if (IsJSRuntimeAvailable)
-                    {
-                        _keyInterceptor.Dispose();
-                    }
+                    // TODO: Replace with IAsyncDisposable
+                    KeyInterceptorService.UnsubscribeAsync(_elementId).CatchAndLog();
                 }
             }
         }
@@ -1087,12 +1064,11 @@ namespace MudBlazor
         /// </summary>
         /// <param name="value"></param>
         /// <returns>True when component has a value</returns>
-        protected override bool HasValue(T value)
+        protected override bool HasValue(T? value)
         {
             if (MultiSelection)
                 return SelectedValues?.Any() ?? false;
-            else
-                return base.HasValue(value);
+            return base.HasValue(value);
         }
 
         public override async Task ForceUpdate()
@@ -1100,13 +1076,12 @@ namespace MudBlazor
             await base.ForceUpdate();
             if (MultiSelection == false)
             {
-                SelectedValues = new HashSet<T>(_comparer) { Value };
+                SelectedValues = new HashSet<T?>(_comparer) { Value };
             }
             else
             {
-                await SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues, _comparer));
+                await SelectedValuesChanged.InvokeAsync(new HashSet<T?>(SelectedValues!, _comparer));
             }
         }
-
     }
 }

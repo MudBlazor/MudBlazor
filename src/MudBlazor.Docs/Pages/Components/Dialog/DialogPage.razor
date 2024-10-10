@@ -152,11 +152,13 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Keyboard Navigation">
+            <SectionHeader Title="Keyboard Accessibility">
                 <Description>
-                    <MudText>MudDialog accepts keys to keyboard navigation.</MudText>
+                    <MudText>Out of the box MudDialog supports the <CodeInline>Escape</CodeInline> key to close a dialog if you set option <CodeInline>@(nameof(DialogOptions.CloseOnEscapeKey))</CodeInline>.</MudText>
+                    <MudAlert Class="my-3" Severity="Severity.Info">Note that <CodeInline>@(nameof(DialogOptions.CloseOnEscapeKey))</CodeInline> will close the dialog with <CodeInline>DialogResult.Cancel()</CodeInline>.</MudAlert>
                     <br />
-                    <MudText><CodeInline>Escape</CodeInline> key to close dialog. Closing a dialog by pressing escape has to be enabled by setting option <CodeInline>CloseOnEscapekey=true</CodeInline></MudText>
+                    <MudText> If you need more than that or a different behavior you can define your own event handlers with <CodeInline>OnKeyDown</CodeInline> and <CodeInline>OnKeyUp</CodeInline></MudText>. 
+                    In this example we return the selected value on Enter only if a value has been selected.
                 </Description>
             </SectionHeader>
             <SectionContent Codes="@(new[] {new CodeFile("Page.razor", nameof(DialogKeyboardNavigationExample)), new CodeFile("Dialog.razor", nameof(DialogKeyboardNavigationExample_Dialog))})">

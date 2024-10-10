@@ -17,7 +17,6 @@ namespace MudBlazor
 {
     public partial class MudNumericField<T> : MudDebouncedInput<T>
     {
-        private IKeyInterceptor _keyInterceptor;
         private Comparer _comparer = new(CultureInfo.InvariantCulture);
 
         public MudNumericField()
@@ -107,15 +106,16 @@ namespace MudBlazor
         }
 
         protected string Classname =>
-            new CssBuilder("mud-input-input-control mud-input-number-control " +
-                           (HideSpinButtons ? "mud-input-nospin" : "mud-input-showspin"))
+            new CssBuilder("mud-input-input-control mud-input-number-control")
+                .AddClass(HideSpinButtons ? "mud-input-nospin" : "mud-input-showspin")
                 .AddClass(Class)
                 .Build();
 
 
-        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
-        private string _elementId = "numericField_" + Guid.NewGuid().ToString().Substring(0, 8);
+        private string _elementId = Identifier.Create("numericField");
 
         private MudInput<string> _elementReference;
 
@@ -226,7 +226,7 @@ namespace MudBlazor
         public Task Increment() => Change(factor: 1);
 
         /// <summary>
-        /// Substracts a Step from the Value
+        /// Subtracts a Step from the Value
         /// </summary>
         public Task Decrement() => Change(factor: -1);
 
@@ -259,26 +259,30 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                _keyInterceptor = _keyInterceptorFactory.Create();
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
-                {
-                    //EnableLogging = true,
-                    TargetClass = "mud-input-slot",
-                    Keys = {
-                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead increment
-                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead decrement
-                        new KeyOptions { Key="Dead", PreventDown = "key+any" }, // prevent dead keys like ^ ` ´ etc
-                        new KeyOptions { Key="/^(?!"+(Pattern ?? "[0-9]").TrimEnd('*')+").$/", PreventDown = "key+none|key+shift|key+alt" }, // prevent input of all other characters except allowed, like [0-9.,-+]
-                    },
-                });
+                var options = new KeyInterceptorOptions(
+                    "mud-input-slot",
+                    [
+                        // prevent scrolling page, instead increment
+                        new("ArrowUp", preventDown: "key+none"),
+                        // prevent scrolling page, instead decrement
+                        new("ArrowDown", preventDown: "key+none"),
+                        // prevent dead keys like ^ ` ´ etc
+                        new("Dead", preventDown: "key+any"),
+                        // prevent input of all other characters except allowed, like [0-9.,-+]
+                        new($"/^(?!{(Pattern ?? "[0-9]").TrimEnd('*')}).$/", preventDown: "key+none|key+shift|key+alt")
+                    ]);
+
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
             }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        protected async Task HandleKeydown(KeyboardEventArgs obj)
+        protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
+
             switch (obj.Key)
             {
                 case "ArrowUp":
@@ -288,17 +292,19 @@ namespace MudBlazor
                     await Decrement();
                     break;
             }
+
             await OnKeyDown.InvokeAsync(obj);
         }
 
-        protected Task HandleKeyUp(KeyboardEventArgs obj)
+        protected Task HandleKeyUpAsync(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return Task.CompletedTask;
+
             return OnKeyUp.InvokeAsync(obj);
         }
 
-        protected async Task OnMouseWheel(WheelEventArgs obj)
+        protected async Task OnMouseWheelAsync(WheelEventArgs obj)
         {
             if (!obj.ShiftKey || GetDisabledState() || GetReadOnlyState())
                 return;
@@ -441,7 +447,11 @@ namespace MudBlazor
 
             if (disposing)
             {
-                _keyInterceptor?.Dispose();
+                if (IsJSRuntimeAvailable)
+                {
+                    // TODO: Replace with IAsyncDisposable
+                    KeyInterceptorService.UnsubscribeAsync(_elementId).CatchAndLog();
+                }
             }
         }
     }

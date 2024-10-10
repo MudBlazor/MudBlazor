@@ -103,7 +103,7 @@ internal class BrowserViewportService : IBrowserViewportService
             // Only the user should be allowed to modify these settings, and the service should not directly modify the reference to prevent potential bugs.
             var optionsClone = (observer.ResizeOptions ?? ResizeOptions).Clone();
             // Safe to modify now
-            optionsClone.BreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(optionsClone);
+            optionsClone.BreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(optionsClone, ResizeOptions);
 
             var subscription = await CreateJavaScriptListener(optionsClone, observer.Id);
             if (_observerManager.Observers.ContainsKey(subscription))

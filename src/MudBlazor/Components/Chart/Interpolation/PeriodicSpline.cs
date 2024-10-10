@@ -3,7 +3,8 @@
  *  http://www.mosismath.com/PeriodicSplines/PeriodicSplines.html
  */
 
-using System;
+#nullable enable
+using System.Diagnostics;
 
 namespace MudBlazor.Components.Chart
 {
@@ -26,6 +27,14 @@ namespace MudBlazor.Components.Chart
 
         public void CalcParameters()
         {
+            Debug.Assert(a != null);
+            Debug.Assert(b != null);
+            Debug.Assert(c != null);
+            Debug.Assert(d != null);
+            Debug.Assert(h != null);
+            Debug.Assert(m != null);
+            Debug.Assert(gauss != null);
+
             for (var i = 0; i < n; i++)
                 a[i] = GivenYs[i];
 

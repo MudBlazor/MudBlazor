@@ -19,7 +19,7 @@ namespace MudBlazor
     /// <typeparam name="T">The kind of item managed by the grid.</typeparam>
     public partial class HeaderCell<T> : MudComponentBase, IDisposable
     {
-        private Guid _id = Guid.NewGuid();
+        private string _id = Identifier.Create();
 
         /// <summary>
         /// The <see cref="MudDataGrid{T}"/> which contains this header cell.
@@ -405,7 +405,10 @@ namespace MudBlazor
 
         internal async Task ApplyFilterAsync()
         {
-            DataGrid.FilterDefinitions.Add(Column.FilterContext.FilterDefinition);
+            if (DataGrid.FilterDefinitions.All(x => x.Id != Column.FilterContext.FilterDefinition.Id))
+            {
+                DataGrid.FilterDefinitions.Add(Column.FilterContext.FilterDefinition);
+            }
             if (DataGrid.HasServerData)
             {
                 await DataGrid.ReloadServerData();
@@ -420,7 +423,10 @@ namespace MudBlazor
 
         internal async Task ApplyFilterAsync(IFilterDefinition<T> filterDefinition)
         {
-            DataGrid.FilterDefinitions.Add(filterDefinition);
+            if (DataGrid.FilterDefinitions.All(x => x.Id != filterDefinition.Id))
+            {
+                DataGrid.FilterDefinitions.Add(filterDefinition);
+            }
             if (DataGrid.HasServerData)
             {
                 await DataGrid.ReloadServerData();
@@ -435,7 +441,8 @@ namespace MudBlazor
 
         internal async Task ApplyFiltersAsync(IEnumerable<IFilterDefinition<T>> filterDefinitions)
         {
-            DataGrid.FilterDefinitions.AddRange(filterDefinitions);
+            var filterDefinitionsToApply = filterDefinitions.Where(x => DataGrid.FilterDefinitions.All(y => y.Id != x.Id)).ToArray();
+            DataGrid.FilterDefinitions.AddRange(filterDefinitionsToApply);
             if (DataGrid.HasServerData)
             {
                 await DataGrid.ReloadServerData();

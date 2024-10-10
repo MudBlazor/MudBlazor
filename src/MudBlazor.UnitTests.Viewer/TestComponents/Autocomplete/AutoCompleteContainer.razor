@@ -1,0 +1,45 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
+<MudPopoverProvider></MudPopoverProvider>
+
+ <MudAutocomplete id="autocompleteLabelTest" T="string" Label="US States" @bind-Value="value1"
+    SearchFunc="@Search1" DebounceInterval="10" PopoverClass="autocomplete-popover-class" />
+@code {
+    [Parameter] public bool HasBeenDisposed  { get; set; }
+    [Parameter] public EventCallback<bool> HasBeenDisposedChanged { get; set; }
+    private string value1 = "Alabama";
+
+    private List<string> states = new List<string>
+    {
+        "Alabama", "Alaska", "American Samoa", "Arizona",
+        "Arkansas", "California", "Colorado", "Connecticut",
+        "Delaware", "District of Columbia", "Federated States of Micronesia",
+        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
+        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+        "Louisiana", "Maine", "Marshall Islands", "Maryland",
+        "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+        "Missouri", "Montana", "Nebraska", "Nevada",
+        "New Hampshire", "New Jersey", "New Mexico", "New York",
+        "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
+        "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
+        "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
+        "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming",
+    };
+
+    private async Task<IEnumerable<string>> Search1(string value, CancellationToken token)
+    {
+        try
+        {
+            await Task.Delay(2000, token);
+        }
+        catch (TaskCanceledException)
+        {
+            await HasBeenDisposedChanged.InvokeAsync(true);
+        }
+
+        if (string.IsNullOrEmpty(value))
+            return states;
+        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+}

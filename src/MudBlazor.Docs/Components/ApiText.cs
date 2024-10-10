@@ -76,7 +76,7 @@ public partial class ApiText : ComponentBase
                                         }
                                         else if (linkRef != null && (linkRef.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase) || linkRef.StartsWith("System", StringComparison.OrdinalIgnoreCase)))
                                         {
-                                            builder.AddMudLink(0, $"https://learn.microsoft.com/en-us/dotnet/api/{linkRef}", linkRef, "docs-link docs-code docs-code-primary", "_external");
+                                            builder.AddMudLink(0, $"https://learn.microsoft.com/dotnet/api/{linkRef}", linkRef, "docs-link docs-code docs-code-primary", "_external");
                                         }
                                         else
                                         {

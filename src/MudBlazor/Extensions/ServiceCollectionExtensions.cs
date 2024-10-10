@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -136,8 +135,7 @@ namespace MudBlazor.Services
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudBlazorKeyInterceptor(this IServiceCollection services)
         {
-            services.TryAddTransient<IKeyInterceptor, KeyInterceptor>();
-            services.TryAddScoped<IKeyInterceptorFactory, KeyInterceptorFactory>();
+            services.TryAddScoped<IKeyInterceptorService, KeyInterceptorService>();
 
             return services;
         }
@@ -172,10 +170,6 @@ namespace MudBlazor.Services
         /// <param name="services">IServiceCollection</param>
         public static IServiceCollection AddMudPopoverService(this IServiceCollection services)
         {
-#pragma warning disable CS0618
-            //TODO: Remove in v7.
-            services.TryAddScoped<IMudPopoverService, MudPopoverService>();
-#pragma warning restore CS0618
             services.TryAddScoped<IPopoverService, PopoverService>();
 
             return services;
@@ -366,8 +360,6 @@ namespace MudBlazor.Services
                     popoverOptions.QueueDelay = options.PopoverOptions.QueueDelay;
                     popoverOptions.ThrowOnDuplicateProvider = options.PopoverOptions.ThrowOnDuplicateProvider;
                     popoverOptions.Mode = options.PopoverOptions.Mode;
-                    popoverOptions.PoolSize = options.PopoverOptions.PoolSize;
-                    popoverOptions.PoolInitialFill = options.PopoverOptions.PoolInitialFill;
                 })
                 .AddMudBlazorScrollSpy()
                 .AddMudEventManager()
