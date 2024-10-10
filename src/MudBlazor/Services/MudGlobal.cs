@@ -96,16 +96,6 @@ public static class MudGlobal
     public static Action<Exception> UnhandledExceptionHandler { get; set; } = OnDefaultExceptionHandler;
 
     /// <summary>
-    /// Gets or sets whether old parameters that were renamed in v7.0.0 should cause a runtime exception.
-    /// </summary>
-    /// <remarks>
-    /// Razor silently ignores parameters which don't exist. Since v7.0.0 renamed so many parameters we want
-    /// to help our users find old parameters they missed by throwing a runtime exception.
-    /// </remarks>
-    [Obsolete("This field is obsolete and has no function due to the new Analyzer. It will be removed in a future version.", true)]
-    public static bool EnableIllegalRazorParameterDetection = true;
-
-    /// <summary>
     /// Note: the user can overwrite this default handler with their own implementation. The default implementation
     /// makes sure that the unhandled exceptions don't go unnoticed
     /// </summary>
