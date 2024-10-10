@@ -523,7 +523,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
-        public RenderFragment<MudBlazorFix.EditButtonContext>? EditButtonContent { get; set; }
+        public RenderFragment<EditButtonContext>? EditButtonContent { get; set; }
 
         /// <summary>
         /// Occurs before inline editing begins for a row.
