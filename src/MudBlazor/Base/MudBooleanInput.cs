@@ -34,7 +34,7 @@ namespace MudBlazor
         [CascadingParameter(Name = "ParentDisabled")]
         private bool ParentDisabled { get; set; }
 
-        protected bool GetDisabled() => Disabled || ParentDisabled;
+        protected bool GetDisabledState() => Disabled || ParentDisabled;
 
         /// <summary>
         /// Prevents the user from changing the input.
@@ -49,7 +49,7 @@ namespace MudBlazor
         [CascadingParameter(Name = "ParentReadOnly")]
         private bool ParentReadOnly { get; set; }
 
-        protected bool GetReadOnly() => ReadOnly || ParentReadOnly;
+        protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
         /// <summary>
         /// The currently selected value.
@@ -142,7 +142,7 @@ namespace MudBlazor
 
         protected async Task SetCheckedAsync(T? value)
         {
-            if (GetDisabled())
+            if (GetDisabledState())
             {
                 return;
             }

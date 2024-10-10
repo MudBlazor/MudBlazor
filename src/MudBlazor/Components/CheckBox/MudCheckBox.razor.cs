@@ -21,25 +21,25 @@ namespace MudBlazor
         private IKeyInterceptorFactory KeyInterceptorFactory { get; set; } = null!;
 
         protected override string Classname => new CssBuilder("mud-input-control-boolean-input")
-            .AddClass($"mud-disabled", GetDisabled())
-            .AddClass($"mud-readonly", GetReadOnly())
+            .AddClass($"mud-disabled", GetDisabledState())
+            .AddClass($"mud-readonly", GetReadOnlyState())
             .AddClass("mud-input-with-content", ChildContent is not null)
             .AddClass(Class)
             .Build();
 
         protected override string LabelClassname => new CssBuilder("mud-checkbox")
-            .AddClass($"mud-disabled", GetDisabled())
-            .AddClass($"mud-readonly", GetReadOnly())
+            .AddClass($"mud-disabled", GetDisabledState())
+            .AddClass($"mud-readonly", GetReadOnlyState())
             .AddClass($"mud-input-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
             .Build();
 
         protected override string IconClassname => new CssBuilder("mud-button-root mud-icon-button")
-            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnly() && !GetDisabled() && UncheckedColor == null || (UncheckedColor != null && BoolValue == true))
-            .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnly() && !GetDisabled() && UncheckedColor != null && BoolValue == false)
+            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor == null || (UncheckedColor != null && BoolValue == true))
+            .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && BoolValue == false)
             .AddClass($"mud-checkbox-dense", Dense)
-            .AddClass($"mud-ripple mud-ripple-checkbox", Ripple && !GetReadOnly() && !GetDisabled())
-            .AddClass($"mud-disabled", GetDisabled())
-            .AddClass($"mud-readonly", GetReadOnly())
+            .AddClass($"mud-ripple mud-ripple-checkbox", Ripple && !GetReadOnlyState() && !GetDisabledState())
+            .AddClass($"mud-disabled", GetDisabledState())
+            .AddClass($"mud-readonly", GetReadOnlyState())
             .AddClass($"mud-checkbox-true", BoolValue == true)
             .AddClass($"mud-checkbox-false", BoolValue == false)
             .AddClass($"mud-checkbox-null", BoolValue is null)
@@ -147,7 +147,7 @@ namespace MudBlazor
 
         protected void HandleKeyDown(KeyboardEventArgs obj)
         {
-            if (GetDisabled() || GetReadOnly() || !KeyboardEnabled)
+            if (GetDisabledState() || GetReadOnlyState() || !KeyboardEnabled)
             {
                 return;
             }

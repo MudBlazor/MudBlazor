@@ -21,18 +21,18 @@ namespace MudBlazor
             .Build();
 
         protected override string LabelClassname => new CssBuilder("mud-switch")
-            .AddClass("mud-disabled", GetDisabled())
-            .AddClass("mud-readonly", GetReadOnly())
+            .AddClass("mud-disabled", GetDisabledState())
+            .AddClass("mud-readonly", GetReadOnlyState())
             .AddClass($"mud-switch-label-{Size.ToDescriptionString()}")
             .AddClass($"mud-input-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
             .Build();
 
         protected string SwitchClassname => new CssBuilder("mud-button-root mud-icon-button mud-switch-base")
-            .AddClass($"mud-ripple mud-ripple-switch", Ripple && !GetReadOnly() && !GetDisabled())
-            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnly() && !GetDisabled() && BoolValue == true)
-            .AddClass($"mud-{UncheckedColor.ToDescriptionString()}-text hover:mud-{UncheckedColor.ToDescriptionString()}-hover", !GetReadOnly() && !GetDisabled() && BoolValue == false)
-            .AddClass($"mud-switch-disabled", GetDisabled())
-            .AddClass($"mud-readonly", GetReadOnly())
+            .AddClass($"mud-ripple mud-ripple-switch", Ripple && !GetReadOnlyState() && !GetDisabledState())
+            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == true)
+            .AddClass($"mud-{UncheckedColor.ToDescriptionString()}-text hover:mud-{UncheckedColor.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == false)
+            .AddClass($"mud-switch-disabled", GetDisabledState())
+            .AddClass($"mud-readonly", GetReadOnlyState())
             .AddClass($"mud-checked", BoolValue)
             .AddClass($"mud-switch-base-{Size.ToDescriptionString()}")
             .Build();
@@ -73,7 +73,7 @@ namespace MudBlazor
 
         protected internal void HandleKeyDown(KeyboardEventArgs obj)
         {
-            if (GetDisabled() || GetReadOnly())
+            if (GetDisabledState() || GetReadOnlyState())
             {
                 return;
             }
