@@ -3,25 +3,8 @@ using MudBlazor.Services;
 
 namespace MudBlazor.UnitTests.Mocks;
 
-#pragma warning disable CS0618 // Type or member is obsolete
-public class MockKeyInterceptorService : IKeyInterceptor, IKeyInterceptorService
-#pragma warning restore CS0618 // Type or member is obsolete
+public class MockKeyInterceptorService : IKeyInterceptorService
 {
-    public void Dispose()
-    {
-    }
-
-    public Task Connect(string element, KeyInterceptorOptions options) => Task.CompletedTask;
-
-    public Task Disconnect() => Task.CompletedTask;
-
-    public Task UpdateKey(KeyOptions option) => Task.CompletedTask;
-
-#pragma warning disable CS0067
-    public event KeyboardEvent KeyDown;
-    public event KeyboardEvent KeyUp;
-#pragma warning restore CS0067
-
     public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
     public Task SubscribeAsync(IKeyInterceptorObserver observer, KeyInterceptorOptions options) => Task.CompletedTask;

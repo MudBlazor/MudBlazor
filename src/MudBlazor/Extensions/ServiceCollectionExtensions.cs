@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -136,10 +135,6 @@ namespace MudBlazor.Services
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudBlazorKeyInterceptor(this IServiceCollection services)
         {
-#pragma warning disable CS0618 // Type or member is obsolete
-            services.TryAddTransient<IKeyInterceptor, KeyInterceptor>();
-            services.TryAddScoped<IKeyInterceptorFactory, KeyInterceptorFactory>();
-#pragma warning restore CS0618 // Type or member is obsolete
             services.TryAddScoped<IKeyInterceptorService, KeyInterceptorService>();
 
             return services;
