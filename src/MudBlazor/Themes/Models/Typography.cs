@@ -139,8 +139,8 @@
         {
             FontFamily = ["Roboto", "Helvetica", "Arial", "sans-serif"];
             FontSize = ".875rem";
-            FontWeight = 400;
-            LineHeight = 1.43;
+            FontWeight = "400";
+            LineHeight = "1.43";
             LetterSpacing = ".01071em";
         }
     }
@@ -156,8 +156,8 @@
         public H1()
         {
             FontSize = "6rem";
-            FontWeight = 300;
-            LineHeight = 1.167;
+            FontWeight = "300";
+            LineHeight = "1.167";
             LetterSpacing = "-.01562em";
         }
     }
@@ -173,8 +173,8 @@
         public H2()
         {
             FontSize = "3.75rem";
-            FontWeight = 300;
-            LineHeight = 1.2;
+            FontWeight = "300";
+            LineHeight = "1.2";
             LetterSpacing = "-.00833em";
         }
     }
@@ -190,8 +190,8 @@
         public H3()
         {
             FontSize = "3rem";
-            FontWeight = 400;
-            LineHeight = 1.167;
+            FontWeight = "400";
+            LineHeight = "1.167";
             LetterSpacing = "0";
         }
     }
@@ -207,8 +207,8 @@
         public H4()
         {
             FontSize = "2.125rem";
-            FontWeight = 400;
-            LineHeight = 1.235;
+            FontWeight = "400";
+            LineHeight = "1.235";
             LetterSpacing = ".00735em";
         }
     }
@@ -224,8 +224,8 @@
         public H5()
         {
             FontSize = "1.5rem";
-            FontWeight = 400;
-            LineHeight = 1.334;
+            FontWeight = "400";
+            LineHeight = "1.334";
             LetterSpacing = "0";
         }
     }
@@ -241,8 +241,8 @@
         public H6()
         {
             FontSize = "1.25rem";
-            FontWeight = 500;
-            LineHeight = 1.6;
+            FontWeight = "500";
+            LineHeight = "1.6";
             LetterSpacing = ".0075em";
         }
     }
@@ -258,8 +258,8 @@
         public Subtitle1()
         {
             FontSize = "1rem";
-            FontWeight = 400;
-            LineHeight = 1.75;
+            FontWeight = "400";
+            LineHeight = "1.75";
             LetterSpacing = ".00938em";
         }
     }
@@ -275,8 +275,8 @@
         public Subtitle2()
         {
             FontSize = ".875rem";
-            FontWeight = 500;
-            LineHeight = 1.57;
+            FontWeight = "500";
+            LineHeight = "1.57";
             LetterSpacing = ".00714em";
         }
     }
@@ -292,8 +292,8 @@
         public Body1()
         {
             FontSize = "1rem";
-            FontWeight = 400;
-            LineHeight = 1.5;
+            FontWeight = "400";
+            LineHeight = "1.5";
             LetterSpacing = ".00938em";
         }
     }
@@ -309,8 +309,8 @@
         public Body2()
         {
             FontSize = ".875rem";
-            FontWeight = 400;
-            LineHeight = 1.43;
+            FontWeight = "400";
+            LineHeight = "1.43";
             LetterSpacing = ".01071em";
         }
     }
@@ -326,8 +326,8 @@
         public Input()
         {
             FontSize = "1rem";
-            FontWeight = 400;
-            LineHeight = 1.1876;
+            FontWeight = "400";
+            LineHeight = "1.1876";
             LetterSpacing = ".00938em";
         }
     }
@@ -343,8 +343,8 @@
         public Button()
         {
             FontSize = ".875rem";
-            FontWeight = 500;
-            LineHeight = 1.75;
+            FontWeight = "500";
+            LineHeight = "1.75";
             LetterSpacing = ".02857em";
             TextTransform = "uppercase";
         }
@@ -361,8 +361,8 @@
         public Caption()
         {
             FontSize = ".75rem";
-            FontWeight = 400;
-            LineHeight = 1.66;
+            FontWeight = "400";
+            LineHeight = "1.66";
             LetterSpacing = ".03333em";
         }
     }
@@ -378,8 +378,8 @@
         public Overline()
         {
             FontSize = ".75rem";
-            FontWeight = 400;
-            LineHeight = 2.66;
+            FontWeight = "400";
+            LineHeight = "2.66";
             LetterSpacing = ".08333em";
         }
     }
@@ -397,7 +397,7 @@
         /// <summary>
         /// Gets or sets the font weight.
         /// </summary>
-        public int FontWeight { get; set; }
+        public string? FontWeight { get; set; }
 
         /// <summary>
         /// Gets or sets the font size.
@@ -407,7 +407,7 @@
         /// <summary>
         /// Gets or sets the line height.
         /// </summary>
-        public double LineHeight { get; set; }
+        public string? LineHeight { get; set; }
 
         /// <summary>
         /// Gets or sets the letter spacing.
