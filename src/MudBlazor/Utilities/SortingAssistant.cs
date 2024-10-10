@@ -2,17 +2,12 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MudBlazor.Utilities
 {
-    public static class SortingAssistent
+    public static class SortingAssistant
     {
         public static void UpdateOrder<T>(this IEnumerable<T> items, MudItemDropInfo<T> dropInfo, Expression<Func<T, int>> valueUpdater, int zoneOffset = 0)
         {

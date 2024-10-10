@@ -2,18 +2,13 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
 using MudBlazor.Utilities;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities
 {
-    public class SortingAssistentTests
+    public class SortingAssistantTests
     {
 
         public class ItemsWithOrder

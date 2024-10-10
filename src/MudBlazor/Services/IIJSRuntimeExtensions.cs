@@ -2,15 +2,12 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
-    public static class IIJSRuntimeExtentions
+    public static class IIJSRuntimeExtensions
     {
         /// <summary>
         /// Invokes the specified JavaScript function asynchronously and catches JSException, JSDisconnectedException and TaskCanceledException
