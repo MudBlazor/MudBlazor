@@ -30,13 +30,13 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-list-item")
-                .AddClass("mud-list-item-dense", GetDense())
+                .AddClass("mud-list-item-dense", GetDenseState())
                 .AddClass("mud-list-item-gutters", Gutters || MudList?.Gutters == true)
-                .AddClass("mud-list-item-clickable", GetClickable())
-                .AddClass("mud-ripple", Ripple && GetClickable())
-                .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text", !MultiSelection && _selected && !GetDisabled())
-                .AddClass($"mud-{MudList?.Color.ToDescriptionString()}-hover", !MultiSelection && _selected && !GetDisabled())
-                .AddClass("mud-list-item-disabled", GetDisabled())
+                .AddClass("mud-list-item-clickable", GetClickableState())
+                .AddClass("mud-ripple", Ripple && GetClickableState())
+                .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text", !MultiSelection && _selected && !GetDisabledState())
+                .AddClass($"mud-{MudList?.Color.ToDescriptionString()}-hover", !MultiSelection && _selected && !GetDisabledState())
+                .AddClass("mud-list-item-disabled", GetDisabledState())
                 .AddClass(Class)
                 .Build();
 
@@ -265,9 +265,9 @@ namespace MudBlazor
 
         private SelectionMode SelectionMode => TopLevelList?.SelectionMode ?? SelectionMode.SingleSelection;
 
-        private Typo TextTypo => GetDense() ? Typo.body2 : Typo.body1;
+        private Typo TextTypo => GetDenseState() ? Typo.body2 : Typo.body1;
 
-        private bool GetClickable()
+        private bool GetClickableState()
         {
             if (Disabled)
             {
@@ -277,7 +277,7 @@ namespace MudBlazor
             {
                 return true;
             }
-            return !GetReadOnly();
+            return !GetReadOnlyState();
         }
 
         protected override async Task OnInitializedAsync()
@@ -291,7 +291,7 @@ namespace MudBlazor
 
         protected async Task OnClickHandlerAsync(MouseEventArgs eventArgs)
         {
-            if (GetDisabled())
+            if (GetDisabledState())
             {
                 return;
             }
@@ -305,7 +305,7 @@ namespace MudBlazor
                 await _expandedState.SetValueAsync(!_expandedState.Value);
                 return;
             }
-            if (TopLevelList is not null && !GetReadOnly())
+            if (TopLevelList is not null && !GetReadOnlyState())
             {
                 var value = GetValue();
                 if (MultiSelection)
@@ -336,7 +336,7 @@ namespace MudBlazor
 
         internal void SetSelected(bool selected)
         {
-            if (GetDisabled() || _selected == selected)
+            if (GetDisabledState() || _selected == selected)
             {
                 return;
             }
@@ -353,17 +353,17 @@ namespace MudBlazor
             return Value;
         }
 
-        private bool GetDisabled() => Disabled || MudList?.GetDisabled() == true || TopLevelList?.GetDisabled() == true;
+        private bool GetDisabledState() => Disabled || MudList?.GetDisabledState() == true || TopLevelList?.GetDisabledState() == true;
 
-        private bool GetReadOnly() => MudList?.ReadOnly == true || TopLevelList?.GetReadOnly() == true;
+        private bool GetReadOnlyState() => MudList?.ReadOnly == true || TopLevelList?.GetReadOnlyState() == true;
 
-        private bool GetDense() => Dense ?? MudList?.Dense == true;
+        private bool GetDenseState() => Dense ?? MudList?.Dense == true;
 
         private bool? GetCheckBoxState() => _selected;
 
         private async Task OnCheckboxChangedAsync()
         {
-            if (TopLevelList is null || ReadOnly || GetDisabled())
+            if (TopLevelList is null || ReadOnly || GetDisabledState())
             {
                 return;
             }
@@ -397,7 +397,7 @@ namespace MudBlazor
         /// </summary>        
         private string HtmlTag => string.IsNullOrEmpty(Href) || OnClickPreventDefault ? "div" : "a";
 
-        private bool GetPreventDefault() => GetDisabled();
+        private bool GetPreventDefault() => GetDisabledState();
 
         private bool GetClickPropagation() => false;
 

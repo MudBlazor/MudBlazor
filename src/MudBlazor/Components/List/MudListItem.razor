@@ -23,7 +23,7 @@
     {
         <div class="mud-list-item-icon">
             <MudIcon Icon="@Icon"
-                     Disabled="@GetDisabled()"
+                     Disabled="@GetDisabledState()"
                      Color="@IconColor"
                      Size="@IconSize" />
         </div>
@@ -35,7 +35,7 @@
                      TriState
                      ReadOnly="@ReadOnly"
                      Class="mud-list-item-checkbox my-n2 ms-n2"
-                     Disabled="@GetDisabled()"
+                     Disabled="@GetDisabledState()"
                      CheckedIcon="@GetCheckedIcon()"
                      UncheckedIcon="@GetUncheckedIcon()"
                      IndeterminateIcon="@GetIndeterminateIcon()"
@@ -67,7 +67,7 @@
 
     @if (NestedList != null)
     {
-        <MudIcon Disabled="@GetDisabled()"
+        <MudIcon Disabled="@GetDisabledState()"
                  Icon="@($"{(_expandedState.Value ? ExpandLessIcon : ExpandMoreIcon)}")"
                  Size="@IconSize"
                  Color="@ExpandIconColor" />
@@ -85,8 +85,8 @@
                  ReadOnly="@ReadOnly"
                  Color="@(MudList?.Color ?? Color.Primary)"
                  Padding="false"
-                 Disabled="@GetDisabled()"
-                 Dense="@GetDense()">
+                 Disabled="@GetDisabledState()"
+                 Dense="@GetDenseState()">
             @NestedList
         </MudList>
     </MudCollapse>

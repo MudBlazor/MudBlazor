@@ -317,9 +317,9 @@ namespace MudBlazor
             _childLists.Remove(child);
         }
 
-        internal bool GetDisabled() => Disabled || (ParentList?.Disabled ?? false);
+        internal bool GetDisabledState() => Disabled || (ParentList?.Disabled ?? false);
 
-        internal bool GetReadOnly() => ReadOnly || (ParentList?.ReadOnly ?? false);
+        internal bool GetReadOnlyState() => ReadOnly || (ParentList?.ReadOnly ?? false);
 
         internal async Task SetSelectedValueAsync(T? value)
         {

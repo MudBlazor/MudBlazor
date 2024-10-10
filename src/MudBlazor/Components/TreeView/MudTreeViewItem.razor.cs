@@ -31,16 +31,16 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-treeview-item")
-                .AddClass("mud-treeview-select-none", GetExpandOnDoubleClick)
-                .AddClass("mud-treeview-item-disabled", GetDisabled())
+                .AddClass("mud-treeview-select-none", GetExpandOnDoubleClickState)
+                .AddClass("mud-treeview-item-disabled", GetDisabledState())
                 .AddClass(Class)
                 .Build();
 
         protected string ContentClassname =>
             new CssBuilder("mud-treeview-item-content")
-                .AddClass("cursor-pointer", !GetDisabled() && (!GetReadOnly() || GetExpandOnClick() && HasChildren()))
-                .AddClass("mud-ripple", GetRipple() && !GetDisabled() && !GetExpandOnDoubleClick() && (!GetReadOnly() || GetExpandOnClick() && HasChildren()))
-                .AddClass("mud-treeview-item-selected", !GetDisabled() && !MultiSelection && _selectedState)
+                .AddClass("cursor-pointer", !GetDisabledState() && (!GetReadOnlyState() || GetExpandOnClickState() && HasChildren()))
+                .AddClass("mud-ripple", GetRippleState() && !GetDisabledState() && !GetExpandOnDoubleClickState() && (!GetReadOnlyState() || GetExpandOnClickState() && HasChildren()))
+                .AddClass("mud-treeview-item-selected", !GetDisabledState() && !MultiSelection && _selectedState)
                 .Build();
 
         public string TextClassname =>
@@ -294,7 +294,7 @@ namespace MudBlazor
 
         private string? GetText() => string.IsNullOrEmpty(Text) ? _converter.Set(Value) : Text;
 
-        private bool GetDisabled() => Disabled || MudTreeRoot?.Disabled == true;
+        private bool GetDisabledState() => Disabled || MudTreeRoot?.Disabled == true;
 
         private bool? GetCheckBoxStateTriState()
         {
@@ -396,29 +396,29 @@ namespace MudBlazor
             return MudTreeRoot.UnselectAsync(value);
         }
 
-        private bool GetReadOnly() => ReadOnly || MudTreeRoot?.ReadOnly == true;
+        private bool GetReadOnlyState() => ReadOnly || MudTreeRoot?.ReadOnly == true;
 
-        private bool GetExpandOnClick() => MudTreeRoot?.ExpandOnClick == true;
+        private bool GetExpandOnClickState() => MudTreeRoot?.ExpandOnClick == true;
 
-        private bool GetExpandOnDoubleClick() => MudTreeRoot?.ExpandOnDoubleClick == true;
+        private bool GetExpandOnDoubleClickState() => MudTreeRoot?.ExpandOnDoubleClick == true;
 
-        private bool GetRipple() => MudTreeRoot?.Ripple == true;
+        private bool GetRippleState() => MudTreeRoot?.Ripple == true;
 
-        private bool GetAutoExpand() => MudTreeRoot?.AutoExpand == true;
+        private bool GetAutoExpandState() => MudTreeRoot?.AutoExpand == true;
 
         private async Task OnItemClickedAsync(MouseEventArgs ev)
         {
             // note: when both click and doubleClick are enabled, doubleClick wins
-            if (HasChildren() && GetExpandOnClick() && !GetExpandOnDoubleClick())
+            if (HasChildren() && GetExpandOnClickState() && !GetExpandOnDoubleClickState())
             {
                 await _expandedState.SetValueAsync(!_expandedState);
                 await TryInvokeServerLoadFunc();
             }
-            if (GetDisabled())
+            if (GetDisabledState())
             {
                 return;
             }
-            if (!GetReadOnly())
+            if (!GetReadOnlyState())
             {
                 Debug.Assert(MudTreeRoot != null);
                 await MudTreeRoot.OnItemClickAsync(this);
@@ -428,16 +428,16 @@ namespace MudBlazor
 
         private async Task OnItemDoubleClickedAsync(MouseEventArgs ev)
         {
-            if (HasChildren() && GetExpandOnDoubleClick())
+            if (HasChildren() && GetExpandOnDoubleClickState())
             {
                 await _expandedState.SetValueAsync(!_expandedState);
                 await TryInvokeServerLoadFunc();
             }
-            if (GetDisabled())
+            if (GetDisabledState())
             {
                 return;
             }
-            if (!GetReadOnly())
+            if (!GetReadOnlyState())
             {
                 Debug.Assert(MudTreeRoot != null);
                 await MudTreeRoot.OnItemClickAsync(this);
@@ -542,7 +542,7 @@ namespace MudBlazor
                 var becameTrue = await child.UpdateSelectionStateAsync(selectedValues);
                 childSelectedBecameTrue = childSelectedBecameTrue || becameTrue;
             }
-            if (GetAutoExpand() && CanExpand && childSelectedBecameTrue && !_expandedState)
+            if (GetAutoExpandState() && CanExpand && childSelectedBecameTrue && !_expandedState)
             {
                 await _expandedState.SetValueAsync(true);
             }

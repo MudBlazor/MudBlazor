@@ -60,15 +60,15 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         .AddClass($"mud-chip-size-{GetSize().ToDescriptionString()}")
         .AddClass($"mud-chip-color-{GetColor().ToDescriptionString()}")
         .AddClass("mud-clickable", IsClickable)
-        .AddClass("mud-ripple", IsClickable && GetRipple())
-        .AddClass("mud-chip-label", GetLabel())
-        .AddClass("mud-disabled", GetDisabled())
+        .AddClass("mud-ripple", IsClickable && GetRippleState())
+        .AddClass("mud-chip-label", GetLabelState())
+        .AddClass("mud-disabled", GetDisabledState())
         .AddClass("mud-chip-selected", SelectedState.Value)
         .AddClass(Class)
         .Build();
 
-    private bool IsClickable => GetDisabled() is false
-                                && GetReadonly() is false
+    private bool IsClickable => GetDisabledState() is false
+                                && GetReadOnlyState() is false
                                 && (ChipSet is not null || OnClick.HasDelegate || !string.IsNullOrEmpty(Href));
 
     private bool IsClosable => OnClose.HasDelegate || ChipSet?.AllClosable == true;
@@ -104,13 +104,13 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     private Size GetSize() => Size ?? ChipSet?.Size ?? MudBlazor.Size.Medium;
 
-    private bool GetDisabled() => Disabled || (ChipSet?.Disabled ?? false);
+    private bool GetDisabledState() => Disabled || (ChipSet?.Disabled ?? false);
 
-    private bool GetReadonly() => ChipSet?.ReadOnly ?? false;
+    private bool GetReadOnlyState() => ChipSet?.ReadOnly ?? false;
 
-    private bool GetRipple() => Ripple ?? ChipSet?.Ripple ?? true;
+    private bool GetRippleState() => Ripple ?? ChipSet?.Ripple ?? true;
 
-    private bool GetLabel() => Label ?? ChipSet?.Label ?? false;
+    private bool GetLabelState() => Label ?? ChipSet?.Label ?? false;
 
     private string GetCheckedIcon() => CheckedIcon ?? ChipSet?.CheckedIcon ?? Icons.Material.Filled.Check;
 
@@ -392,7 +392,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     protected async Task OnCloseAsync(MouseEventArgs ev)
     {
-        if (GetReadonly() || IsClosable is false)
+        if (GetReadOnlyState() || IsClosable is false)
         {
             return;
         }
@@ -407,7 +407,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     private async Task HandleKeyDownAsync(KeyboardEventArgs args)
     {
-        if (GetDisabled() || GetReadonly())
+        if (GetDisabledState() || GetReadOnlyState())
         {
             return;
         }
