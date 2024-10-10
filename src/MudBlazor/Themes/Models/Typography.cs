@@ -10,9 +10,9 @@
         /// Gets or sets the typography settings for the default typo.
         /// </summary>
         /// <remarks>
-        /// Defaults to the values from the <see cref="MudBlazor.Default"/> constructor.
+        /// Defaults to the values from the <see cref="MudBlazor.DefaultTypography"/> constructor.
         /// </remarks>
-        public Default Default { get; set; } = new();
+        public BaseTypography Default { get; set; } = new DefaultTypography();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.h1"/>.
@@ -20,7 +20,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.H1"/> constructor.
         /// </remarks>
-        public H1 H1 { get; set; } = new();
+        public BaseTypography H1 { get; set; } = new H1();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.h2"/>.
@@ -28,7 +28,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.H2"/> constructor.
         /// </remarks>
-        public H2 H2 { get; set; } = new();
+        public BaseTypography H2 { get; set; } = new H2();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.h3"/>.
@@ -36,7 +36,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.H3"/> constructor.
         /// </remarks>
-        public H3 H3 { get; set; } = new();
+        public BaseTypography H3 { get; set; } = new H3();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.h4"/>.
@@ -44,7 +44,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.H4"/> constructor.
         /// </remarks>
-        public H4 H4 { get; set; } = new();
+        public BaseTypography H4 { get; set; } = new H4();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.h5"/>.
@@ -52,7 +52,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.H5"/> constructor.
         /// </remarks>
-        public H5 H5 { get; set; } = new();
+        public BaseTypography H5 { get; set; } = new H5();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.h6"/>.
@@ -60,7 +60,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.H6"/> constructor.
         /// </remarks>
-        public H6 H6 { get; set; } = new();
+        public BaseTypography H6 { get; set; } = new H6();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.subtitle1"/>.
@@ -68,7 +68,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.Subtitle1"/> constructor.
         /// </remarks>
-        public Subtitle1 Subtitle1 { get; set; } = new();
+        public BaseTypography Subtitle1 { get; set; } = new Subtitle1();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.subtitle2"/>.
@@ -76,7 +76,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.Subtitle2"/> constructor.
         /// </remarks>
-        public Subtitle2 Subtitle2 { get; set; } = new();
+        public BaseTypography Subtitle2 { get; set; } = new Subtitle2();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.body1"/>.
@@ -84,7 +84,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.Body1"/> constructor.
         /// </remarks>
-        public Body1 Body1 { get; set; } = new();
+        public BaseTypography Body1 { get; set; } = new Body1();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.body2"/>.
@@ -92,7 +92,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.Body2"/> constructor.
         /// </remarks>
-        public Body2 Body2 { get; set; } = new();
+        public BaseTypography Body2 { get; set; } = new Body2();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.input"/>.
@@ -100,7 +100,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.Input"/> constructor.
         /// </remarks>
-        public Input Input { get; set; } = new();
+        public BaseTypography Input { get; set; } = new Input();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.button"/>.
@@ -108,7 +108,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.Button"/> constructor.
         /// </remarks>
-        public Button Button { get; set; } = new();
+        public BaseTypography Button { get; set; } = new Button();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.caption"/>.
@@ -116,7 +116,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.Caption"/> constructor.
         /// </remarks>
-        public Caption Caption { get; set; } = new();
+        public BaseTypography Caption { get; set; } = new Caption();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.overline"/>.
@@ -124,18 +124,18 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.Overline"/> constructor.
         /// </remarks>
-        public Overline Overline { get; set; } = new();
+        public BaseTypography Overline { get; set; } = new Overline();
     }
 
     /// <summary>
     /// Represents the default typography settings.
     /// </summary>
-    public class Default : BaseTypography
+    public class DefaultTypography : BaseTypography
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Default"/> class with default values.
+        /// Initializes a new instance of the <see cref="DefaultTypography"/> class with default values.
         /// </summary>
-        public Default()
+        public DefaultTypography()
         {
             FontFamily = ["Roboto", "Helvetica", "Arial", "sans-serif"];
             FontSize = ".875rem";
@@ -387,7 +387,7 @@
     /// <summary>
     /// Represents the base typography settings.
     /// </summary>
-    public class BaseTypography
+    public abstract class BaseTypography
     {
         /// <summary>
         /// Gets or sets the font family.

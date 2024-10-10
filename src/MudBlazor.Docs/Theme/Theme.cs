@@ -88,7 +88,7 @@ namespace MudBlazor.Docs
         };
         private static readonly Typography LandingPageTypography = new()
         {
-            Default = new Default()
+            Default = new DefaultTypography()
             {
                 FontFamily = new[] { "Public Sans", "Roboto", "Arial", "sans-serif" },
                 LetterSpacing = "normal"
