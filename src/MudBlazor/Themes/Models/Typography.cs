@@ -1,4 +1,6 @@
-﻿namespace MudBlazor
+﻿using System.Text.Json.Serialization;
+
+namespace MudBlazor
 {
 #nullable enable
     /// <summary>
@@ -387,6 +389,21 @@
     /// <summary>
     /// Represents the base typography settings.
     /// </summary>
+    [JsonDerivedType(typeof(DefaultTypography), nameof(DefaultTypography))]
+    [JsonDerivedType(typeof(H1), nameof(H1))]
+    [JsonDerivedType(typeof(H2), nameof(H2))]
+    [JsonDerivedType(typeof(H3), nameof(H3))]
+    [JsonDerivedType(typeof(H4), nameof(H4))]
+    [JsonDerivedType(typeof(H5), nameof(H5))]
+    [JsonDerivedType(typeof(H6), nameof(H6))]
+    [JsonDerivedType(typeof(Subtitle1), nameof(Subtitle1))]
+    [JsonDerivedType(typeof(Subtitle2), nameof(Subtitle2))]
+    [JsonDerivedType(typeof(Body1), nameof(Body1))]
+    [JsonDerivedType(typeof(Body2), nameof(Body2))]
+    [JsonDerivedType(typeof(Input), nameof(Input))]
+    [JsonDerivedType(typeof(Button), nameof(Button))]
+    [JsonDerivedType(typeof(Caption), nameof(Caption))]
+    [JsonDerivedType(typeof(Overline), nameof(Overline))]
     public abstract class BaseTypography
     {
         /// <summary>
