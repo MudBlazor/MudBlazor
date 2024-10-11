@@ -393,7 +393,10 @@ namespace MudBlazor
                     ValidationErrors = errors;
                     Error = errors.Count > 0;
                     ErrorText = errors.FirstOrDefault();
-                    ErrorId = HasErrors ? Guid.NewGuid().ToString() : null;
+                    if(HasErrors && ErrorId is null)
+                    {
+                        ErrorId = Guid.NewGuid().ToString();
+                    }
                     Form?.Update(this);
                     StateHasChanged();
                 }
