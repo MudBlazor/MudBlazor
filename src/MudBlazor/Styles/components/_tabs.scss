@@ -70,16 +70,14 @@
     .mud-tabs-tabbar-inner {
       flex-direction: column;
 
-      .mud-tabs-scroll-button {
-        .mud-button-root {
-          width: 100%;
-          border-radius: 0px;
-          height: 32px;
+      .mud-tabs-scroll-button.mud-button-root {
+        width: 100%;
+        border-radius: 0;
+        height: 32px;
 
-          .mud-icon-button-label {
-            .mud-icon-root {
-              transform: rotate(90deg);
-            }
+        .mud-icon-button-label {
+          .mud-icon-root {
+            transform: rotate(90deg);
           }
         }
       }

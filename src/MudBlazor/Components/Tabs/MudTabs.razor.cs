@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
 using MudBlazor.Interop;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
@@ -24,7 +19,7 @@ namespace MudBlazor
         private bool _prevButtonDisabled;
         private bool _nextButtonDisabled;
         private bool _showScrollButtons;
-        private ElementReference _tabsContentSize;
+        private ElementReference _tabsContentRef;
         private double _sliderSize;
         private double _sliderPosition;
         private double _tabBarContentSize;
@@ -96,21 +91,21 @@ namespace MudBlazor
         public string NextIcon { get; set; } = Icons.Material.Filled.ChevronRight;
 
         /// <summary>
-        /// If true, always display the scroll buttons even if the tabs are smaller than the required with, buttons will be disabled if there is nothing to scroll.
+        /// If true, always display the scroll buttons even if the tabs are smaller than the required width, buttons will be disabled if there is nothing to scroll.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public bool AlwaysShowScrollButtons { get; set; }
 
         /// <summary>
-        /// Sets the maxheight the component can have.
+        /// Sets the max-height the component can have.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public int? MaxHeight { get; set; } = null;
+        public int? MaxHeight { get; set; }
 
         /// <summary>
-        /// Sets the min-wdth of the tabs. 160px by default.
+        /// Sets the min-width of the tabs. 160px by default.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
@@ -187,9 +182,9 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// This fragment is placed between tabHeader and panels. 
+        /// This fragment is placed between tabHeader and panels.
         /// It can be used to display additional content like an address line in a browser.
-        /// The active tab will be the content of this RenderFragement
+        /// The active tab will be the content of this RenderFragment
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
@@ -336,7 +331,7 @@ namespace MudBlazor
             if (firstRender)
             {
                 var items = _panels.Select(x => x.PanelRef!.Value).ToList();
-                items.Add(_tabsContentSize);
+                items.Add(_tabsContentRef);
 
                 if (_activePanelIndex != -1 && _panels.Count > 0)
                     ActivePanel = _panels[_activePanelIndex];
@@ -472,75 +467,75 @@ namespace MudBlazor
         #region Style and classes
         protected string TabsClassnames =>
             new CssBuilder("mud-tabs")
-            .AddClass($"mud-tabs-rounded", ApplyEffectsToContainer && Rounded)
-            .AddClass($"mud-paper-outlined", ApplyEffectsToContainer && Outlined)
-            .AddClass($"mud-elevation-{Elevation}", ApplyEffectsToContainer && Elevation != 0)
-            .AddClass($"mud-tabs-reverse", Position == Position.Bottom)
-            .AddClass($"mud-tabs-vertical", IsVerticalTabs())
-            .AddClass($"mud-tabs-vertical-reverse", Position == Position.Right && !RightToLeft || (Position == Position.Left) && RightToLeft || Position == Position.End)
-            .AddClass(InternalClassName)
-            .AddClass(Class)
-            .Build();
+                .AddClass($"mud-tabs-rounded", ApplyEffectsToContainer && Rounded)
+                .AddClass($"mud-paper-outlined", ApplyEffectsToContainer && Outlined)
+                .AddClass($"mud-elevation-{Elevation}", ApplyEffectsToContainer && Elevation != 0)
+                .AddClass($"mud-tabs-reverse", Position == Position.Bottom)
+                .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+                .AddClass($"mud-tabs-vertical-reverse", Position == Position.Right && !RightToLeft || (Position == Position.Left) && RightToLeft || Position == Position.End)
+                .AddClass(InternalClassName)
+                .AddClass(Class)
+                .Build();
 
         protected string TabBarClassnames =>
             new CssBuilder("mud-tabs-tabbar")
-            .AddClass($"mud-tabs-rounded", !ApplyEffectsToContainer && Rounded)
-            .AddClass($"mud-tabs-vertical", IsVerticalTabs())
-            .AddClass($"mud-tabs-tabbar-{Color.ToDescriptionString()}", Color != Color.Default)
-            .AddClass($"mud-tabs-border-{ConvertPosition(Position).ToDescriptionString()}", Border)
-            .AddClass($"mud-paper-outlined", !ApplyEffectsToContainer && Outlined)
-            .AddClass($"mud-elevation-{Elevation}", !ApplyEffectsToContainer && Elevation != 0)
-            .AddClass(TabHeaderClass)
-            .Build();
+                .AddClass($"mud-tabs-rounded", !ApplyEffectsToContainer && Rounded)
+                .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+                .AddClass($"mud-tabs-tabbar-{Color.ToDescriptionString()}", Color != Color.Default)
+                .AddClass($"mud-tabs-border-{ConvertPosition(Position).ToDescriptionString()}", Border)
+                .AddClass($"mud-paper-outlined", !ApplyEffectsToContainer && Outlined)
+                .AddClass($"mud-elevation-{Elevation}", !ApplyEffectsToContainer && Elevation != 0)
+                .AddClass(TabHeaderClass)
+                .Build();
 
         protected string WrapperClassnames =>
             new CssBuilder("mud-tabs-tabbar-wrapper")
-            .AddClass($"mud-tabs-centered", Centered)
-            .AddClass($"mud-tabs-vertical", IsVerticalTabs())
-            .Build();
+                .AddClass($"mud-tabs-centered", Centered)
+                .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+                .Build();
 
         protected string WrapperScrollStyle =>
-        new StyleBuilder()
-            .AddStyle("transform", $"translateX({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", Position is Position.Top or Position.Bottom)
-            .AddStyle("transform", $"translateY({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", IsVerticalTabs())
-            .Build();
+            new StyleBuilder()
+                .AddStyle("transform", $"translateX({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", Position is Position.Top or Position.Bottom)
+                .AddStyle("transform", $"translateY({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", IsVerticalTabs())
+                .Build();
 
         protected string PanelsClassnames =>
             new CssBuilder("mud-tabs-panels")
-            .AddClass($"mud-tabs-vertical", IsVerticalTabs())
-            .AddClass(PanelClass)
-            .Build();
+                .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+                .AddClass(PanelClass)
+                .Build();
 
         protected string SliderClass =>
             new CssBuilder("mud-tab-slider")
-            .AddClass($"mud-{SliderColor.ToDescriptionString()}", SliderColor != Color.Inherit)
-            .AddClass($"mud-tab-slider-horizontal", Position is Position.Top or Position.Bottom)
-            .AddClass($"mud-tab-slider-vertical", IsVerticalTabs())
-            .AddClass($"mud-tab-slider-horizontal-reverse", Position == Position.Bottom)
-            .AddClass($"mud-tab-slider-vertical-reverse", Position == Position.Right || Position == Position.Start && RightToLeft || Position == Position.End && !RightToLeft)
-            .Build();
+                .AddClass($"mud-{SliderColor.ToDescriptionString()}", SliderColor != Color.Inherit)
+                .AddClass($"mud-tab-slider-horizontal", Position is Position.Top or Position.Bottom)
+                .AddClass($"mud-tab-slider-vertical", IsVerticalTabs())
+                .AddClass($"mud-tab-slider-horizontal-reverse", Position == Position.Bottom)
+                .AddClass($"mud-tab-slider-vertical-reverse", Position == Position.Right || Position == Position.Start && RightToLeft || Position == Position.End && !RightToLeft)
+                .Build();
 
         protected string MaxHeightStyles =>
             new StyleBuilder()
-            .AddStyle("max-height", MaxHeight.ToPx(), MaxHeight != null)
-            .Build();
+                .AddStyle("max-height", MaxHeight.ToPx(), MaxHeight != null)
+                .Build();
 
         protected string SliderStyle => RightToLeft ?
             new StyleBuilder()
-            .AddStyle("width", _sliderSize.ToPx(), Position is Position.Top or Position.Bottom)
-            .AddStyle("right", _sliderPosition.ToPx(), Position is Position.Top or Position.Bottom)
-            .AddStyle("transition", SliderAnimation ? "right .3s cubic-bezier(.64,.09,.08,1);" : "none", Position is Position.Top or Position.Bottom)
-            .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", IsVerticalTabs())
-            .AddStyle("height", _sliderSize.ToPx(), IsVerticalTabs())
-            .AddStyle("top", _sliderPosition.ToPx(), IsVerticalTabs())
-            .Build() : new StyleBuilder()
-            .AddStyle("width", _sliderSize.ToPx(), Position is Position.Top or Position.Bottom)
-            .AddStyle("left", _sliderPosition.ToPx(), Position is Position.Top or Position.Bottom)
-            .AddStyle("transition", SliderAnimation ? "left .3s cubic-bezier(.64,.09,.08,1);" : "none", Position is Position.Top or Position.Bottom)
-            .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", IsVerticalTabs())
-            .AddStyle("height", _sliderSize.ToPx(), IsVerticalTabs())
-            .AddStyle("top", _sliderPosition.ToPx(), IsVerticalTabs())
-            .Build();
+                .AddStyle("width", _sliderSize.ToPx(), Position is Position.Top or Position.Bottom)
+                .AddStyle("right", _sliderPosition.ToPx(), Position is Position.Top or Position.Bottom)
+                .AddStyle("transition", SliderAnimation ? "right .3s cubic-bezier(.64,.09,.08,1);" : "none", Position is Position.Top or Position.Bottom)
+                .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", IsVerticalTabs())
+                .AddStyle("height", _sliderSize.ToPx(), IsVerticalTabs())
+                .AddStyle("top", _sliderPosition.ToPx(), IsVerticalTabs())
+                .Build() : new StyleBuilder()
+                .AddStyle("width", _sliderSize.ToPx(), Position is Position.Top or Position.Bottom)
+                .AddStyle("left", _sliderPosition.ToPx(), Position is Position.Top or Position.Bottom)
+                .AddStyle("transition", SliderAnimation ? "left .3s cubic-bezier(.64,.09,.08,1);" : "none", Position is Position.Top or Position.Bottom)
+                .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", IsVerticalTabs())
+                .AddStyle("height", _sliderSize.ToPx(), IsVerticalTabs())
+                .AddStyle("top", _sliderPosition.ToPx(), IsVerticalTabs())
+                .Build();
 
         private bool IsVerticalTabs()
         {
@@ -557,16 +552,19 @@ namespace MudBlazor
             };
         }
 
+        private string GetAriaOrientation()
+            => IsVerticalTabs() ? "vertical" : "horizontal";
+
         string GetTabClass(MudTabPanel panel)
         {
             var tabClass = new CssBuilder("mud-tab")
-              .AddClass($"mud-tab-active", when: () => panel == ActivePanel)
-              .AddClass($"mud-disabled", panel.Disabled)
-              .AddClass($"mud-ripple", Ripple)
-              .AddClass(ActiveTabClass, when: () => panel == ActivePanel)
-              .AddClass(TabPanelClass)
-              .AddClass(panel.Class)
-              .Build();
+                .AddClass($"mud-tab-active", when: () => panel == ActivePanel)
+                .AddClass($"mud-disabled", panel.Disabled)
+                .AddClass($"mud-ripple", Ripple)
+                .AddClass(ActiveTabClass, when: () => panel == ActivePanel)
+                .AddClass(TabPanelClass)
+                .AddClass(panel.Class)
+                .Build();
 
             return tabClass;
         }
@@ -586,9 +584,9 @@ namespace MudBlazor
         string GetTabStyle(MudTabPanel panel)
         {
             var tabStyle = new StyleBuilder()
-            .AddStyle("min-width", MinimumTabWidth)
-            .AddStyle(panel.Style)
-            .Build();
+                .AddStyle("min-width", MinimumTabWidth)
+                .AddStyle(panel.Style)
+                .Build();
 
             return tabStyle;
         }
@@ -633,7 +631,7 @@ namespace MudBlazor
         private bool IsSliderPositionDetermined => _activePanelIndex > 0 && _sliderPosition > 0 ||
                                                    _activePanelIndex <= 0;
 
-        private void GetTabBarContentSize() => _tabBarContentSize = GetRelevantSize(_tabsContentSize);
+        private void GetTabBarContentSize() => _tabBarContentSize = GetRelevantSize(_tabsContentRef);
 
         private void GetAllTabsSize()
         {
@@ -712,7 +710,7 @@ namespace MudBlazor
             var x = 0D;
             var count = 0;
 
-            var toolbarContentSize = GetRelevantSize(_tabsContentSize);
+            var toolbarContentSize = GetRelevantSize(_tabsContentRef);
 
             foreach (var panel in _panels)
             {
@@ -841,5 +839,24 @@ namespace MudBlazor
         }
 
         #endregion
+
+        internal string? GetTabId(MudTabPanel panel)
+        {
+            var panelIndex = Panels.IndexOf(panel);
+            return panelIndex is -1
+                ? null
+                : $"tab-{panelIndex + 1}-{FieldId}";
+        }
+
+        internal string? GetTabPanelId(MudTabPanel panel)
+        {
+            var panelIndex = Panels.IndexOf(panel);
+            return panelIndex is -1
+                ? null
+                : $"tab-panel-{panelIndex + 1}-{FieldId}";
+        }
+
+        private int GetTabindexForTab(MudTabPanel panel)
+            => panel == ActivePanel ? 0 : -1;
     }
 }

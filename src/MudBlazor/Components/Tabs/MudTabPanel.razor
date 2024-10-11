@@ -1,45 +1,42 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
+@using MudBlazor.Utilities
 @implements IAsyncDisposable
 
-@if (Parent?.KeepPanelsAlive == true)
+@if (Parent?.KeepPanelsAlive == true || Parent?.ActivePanel == this)
 {
-    <div @attributes="UserAttributes" class="@Class" style="display:@(Parent?.ActivePanel == this ? "contents" : "none");@Style">
+    <div aria-labelledby="@GetTabId()"
+         @attributes="UserAttributes"
+         id="@GetTabPanelId()"
+         class="@PanelClasses"
+         role="tabpanel"
+         style="@Style">
         @ChildContent
     </div>
-}
-else
-{
-    @if (Parent?.ActivePanel == this)
-    {
-        @ChildContent
-    }
 }
 
 @code {
 #nullable enable
-    private Boolean _disposed;
-
-    [CascadingParameter] private MudTabs? Parent { get; set; }
+    [CascadingParameter]
+    private MudTabs? Parent { get; set; }
 
     /// <summary>
     /// Reference to the underlying panel element.
     /// </summary>
     public ElementReference? PanelRef;
 
-
     /// <summary>
     /// Text will be displayed in the TabPanel as TabTitle. Text is no longer rendered
     /// as a MarkupString, so use the TabContent RenderFragment instead for HTML content.
     /// </summary>
-    [Parameter] 
+    [Parameter]
     [Category(CategoryTypes.Tabs.Behavior)]
     public string? Text { get; set; }
 
     /// <summary>
     /// Icon placed before the text if set.
     /// </summary>
-    [Parameter] 
+    [Parameter]
     [Category(CategoryTypes.Tabs.Behavior)]
     public string? Icon { get; set; }
 
@@ -70,7 +67,7 @@ else
     /// <summary>
     /// Optional information to be showed into a badge
     /// </summary>
-    [Parameter] 
+    [Parameter]
     [Category(CategoryTypes.Tabs.Behavior)]
     public object? BadgeData { get; set; }
 
@@ -91,7 +88,7 @@ else
     /// <summary>
     /// Unique TabPanel ID. Useful for activation when Panels are dynamically generated.
     /// </summary>
-    [Parameter] 
+    [Parameter]
     [Category(CategoryTypes.Tabs.Behavior)]
     public object? ID { get; set; }
 
@@ -103,23 +100,23 @@ else
     /// <summary>
     /// Child content of component.
     /// </summary>
-    [Parameter] 
+    [Parameter]
     [Category(CategoryTypes.Tabs.Behavior)]
     public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
     /// Tab content of component.
     /// </summary>
-    [Parameter] 
+    [Parameter]
     [Category(CategoryTypes.Tabs.Behavior)]
     public RenderFragment? TabContent { get; set; }
 
     /// <summary>
-    /// Tab content wrapper of component. It is used to wrap the content of a tab heading in a user supplied div or component. 
-    /// Use @context in the TabWrapperContent to render the tab header within your custom wrapper. 
+    /// Tab content wrapper of component. It is used to wrap the content of a tab heading in a user supplied div or component.
+    /// Use @context in the TabWrapperContent to render the tab header within your custom wrapper.
     /// This is most useful with tooltips, which must wrap the entire content they refer to.
     /// </summary>
-    [Parameter] 
+    [Parameter]
     [Category(CategoryTypes.Tabs.Behavior)]
     public RenderFragment<RenderFragment>? TabWrapperContent { get; set; }
 
@@ -130,11 +127,20 @@ else
     [Category(CategoryTypes.Tabs.Behavior)]
     public string? ToolTip { get; set; }
 
+    private bool _disposed;
+
+    private string PanelClasses =>
+        new CssBuilder("mud-tabs")
+            .AddClass("d-contents", when: () => Parent?.ActivePanel == this)
+            .AddClass("d-none", when: () => Parent?.ActivePanel != this)
+            .AddClass(Class)
+            .Build();
+
     /// <inheritdoc/>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
-        if(firstRender == true && Parent is not null)
+        if(firstRender && Parent is not null)
         {
             await Parent.SetPanelRef(PanelRef!.Value);
         }
@@ -151,13 +157,24 @@ else
         Parent?.AddPanel(this);
     }
 
+    private string? GetTabId()
+        => Parent?.GetTabId(this);
+
+    private string? GetTabPanelId()
+        => Parent?.GetTabPanelId(this);
+
     /// <inheritdoc/>
     public async ValueTask DisposeAsync()
     {
-        if(_disposed == true) { return;  }
+        if (_disposed)
+        {
+            return;
+        }
 
         _disposed = true;
         if (Parent is not null)
+        {
             await Parent.RemovePanel(this);
+        }
     }
 }
