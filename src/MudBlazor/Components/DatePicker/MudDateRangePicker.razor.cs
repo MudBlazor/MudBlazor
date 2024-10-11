@@ -105,6 +105,10 @@ namespace MudBlazor
 
                 _dateRange = range;
                 _value = range?.End;
+                if (range.End == null)
+                {
+                    _firstDate = range.Start;
+                }
 
                 if (updateValue)
                 {
