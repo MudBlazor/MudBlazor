@@ -335,7 +335,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                var items = _panels.Select(x => x.PanelRef!.Value).ToList();
+                var items = _panels.Select(x => x.PanelRef).ToList();
                 items.Add(_tabsContentSize);
 
                 if (_activePanelIndex != -1 && _panels.Count > 0)
@@ -412,7 +412,7 @@ namespace MudBlazor
             }
 
             _panels.Remove(tabPanel);
-            await _resizeObserver!.Unobserve(tabPanel.PanelRef!.Value);
+            await _resizeObserver!.Unobserve(tabPanel.PanelRef);
             Rerender();
             StateHasChanged();
         }
@@ -624,7 +624,10 @@ namespace MudBlazor
 
         private void SetSliderState()
         {
-            if (ActivePanel?.PanelRef is null) { return; }
+            if (ActivePanel is null)
+            {
+                return;
+            }
 
             _sliderPosition = GetLengthOfPanelItems(ActivePanel);
             _sliderSize = GetRelevantSize(ActivePanel.PanelRef);
@@ -647,11 +650,11 @@ namespace MudBlazor
             _allTabsSize = totalTabsSize;
         }
 
-        private double GetRelevantSize(ElementReference? reference) =>
+        private double GetRelevantSize(ElementReference reference) =>
             Position switch
             {
-                Position.Top or Position.Bottom => _resizeObserver!.GetWidth(reference!.Value),
-                _ => _resizeObserver!.GetHeight(reference!.Value)
+                Position.Top or Position.Bottom => _resizeObserver!.GetWidth(reference),
+                _ => _resizeObserver!.GetHeight(reference)
             };
 
         private double GetLengthOfPanelItems(MudTabPanel panel, bool inclusive = false)
