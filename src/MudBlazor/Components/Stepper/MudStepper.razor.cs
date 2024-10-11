@@ -201,16 +201,13 @@ public partial class MudStepper : MudComponentBase
     internal async Task AddStepAsync(MudStep step)
     {
         _steps.Add(step);
-        if (ActiveStep is null)
+        if (_afterFirstRender)
         {
-            if (_afterFirstRender)
-            {
-                await ConsolidateActiveIndexAsync();
-            }
-            else
-            {
-                ConsolidateActiveStep();
-            }
+            await ConsolidateActiveIndexAsync();
+        }
+        else
+        {
+            ConsolidateActiveStep();
         }
     }
 
