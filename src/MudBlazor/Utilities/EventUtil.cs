@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Interfaces;
+﻿using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor;
 
@@ -20,7 +20,7 @@ public static class EventUtil
     /// <param name="component">The component that handles exceptions.</param>
     /// <param name="callback">The action callback to be converted.</param>
     /// <returns>A non-rendering event handler.</returns>
-    public static Action AsNonRenderingEventHandler(this IComponentException component, Action callback)
+    public static Action AsNonRenderingEventHandler(this ComponentBase component, Action callback)
         => new SyncReceiver(component, callback).Invoke;
 
     /// <summary>
@@ -30,7 +30,7 @@ public static class EventUtil
     /// <param name="callback">The action callback to be converted.</param>
     /// <param name="component">The component that handles exceptions.</param>
     /// <returns>A non-rendering event handler.</returns>
-    public static Action<TValue> AsNonRenderingEventHandler<TValue>(this IComponentException component, Action<TValue> callback)
+    public static Action<TValue> AsNonRenderingEventHandler<TValue>(this ComponentBase component, Action<TValue> callback)
         => new SyncReceiver<TValue>(component, callback).Invoke;
 
     /// <summary>
@@ -39,7 +39,7 @@ public static class EventUtil
     /// <param name="callback">The asynchronous callback to be converted.</param>
     /// <param name="component">The component that handles exceptions.</param>
     /// <returns>A non-rendering event handler.</returns>
-    public static Func<Task> AsNonRenderingEventHandler(this IComponentException component, Func<Task> callback)
+    public static Func<Task> AsNonRenderingEventHandler(this ComponentBase component, Func<Task> callback)
         => new AsyncReceiver(component, callback).Invoke;
 
     /// <summary>
@@ -49,31 +49,34 @@ public static class EventUtil
     /// <param name="callback">The asynchronous callback to be converted.</param>
     /// <param name="component">The component that handles exceptions.</param>
     /// <returns>A non-rendering event handler.</returns>
-    public static Func<TValue, Task> AsNonRenderingEventHandler<TValue>(this IComponentException component, Func<TValue, Task> callback)
+    public static Func<TValue, Task> AsNonRenderingEventHandler<TValue>(this ComponentBase component, Func<TValue, Task> callback)
         => new AsyncReceiver<TValue>(component, callback).Invoke;
 
-    private sealed class SyncReceiver(IComponentException component, Action callback) : ReceiverBase(component)
+    private sealed class SyncReceiver(ComponentBase component, Action callback) : ReceiverBase(component)
     {
         public void Invoke() => callback();
     }
 
-    private sealed class SyncReceiver<T>(IComponentException component, Action<T> callback) : ReceiverBase(component)
+    private sealed class SyncReceiver<T>(ComponentBase component, Action<T> callback) : ReceiverBase(component)
     {
         public void Invoke(T arg) => callback(arg);
     }
 
-    private sealed class AsyncReceiver(IComponentException component, Func<Task> callback) : ReceiverBase(component)
+    private sealed class AsyncReceiver(ComponentBase component, Func<Task> callback) : ReceiverBase(component)
     {
         public Task Invoke() => callback();
     }
 
-    private sealed class AsyncReceiver<T>(IComponentException component, Func<T, Task> callback) : ReceiverBase(component)
+    private sealed class AsyncReceiver<T>(ComponentBase component, Func<T, Task> callback) : ReceiverBase(component)
     {
         public Task Invoke(T arg) => callback(arg);
     }
 
-    private abstract class ReceiverBase(IComponentException component) : IHandleEvent
+    private abstract class ReceiverBase(ComponentBase component) : IHandleEvent
     {
+        [UnsafeAccessor(UnsafeAccessorKind.Method, Name = "DispatchExceptionAsync")]
+        private static extern Task DispatchExceptionAsync(ComponentBase component, Exception exception);
+
         public async Task HandleEventAsync(EventCallbackWorkItem item, object? arg)
         {
             try
@@ -82,7 +85,7 @@ public static class EventUtil
             }
             catch (Exception ex)
             {
-                await component.DispatchExceptionAsync(ex);
+                await DispatchExceptionAsync(component, ex);
             }
         }
     }

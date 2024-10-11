@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.State.Builder;
 
@@ -13,7 +12,7 @@ namespace MudBlazor;
 /// <summary>
 /// Represents a base class for designing components which maintain state.
 /// </summary>
-public class ComponentBaseWithState : ComponentBase, IComponentException
+public class ComponentBaseWithState : ComponentBase
 {
     internal readonly ParameterContainer ParameterContainer = new() { AutoVerify = false };
 
@@ -50,7 +49,4 @@ public class ComponentBaseWithState : ComponentBase, IComponentException
 
         return parameterRegistrationBuilderScope;
     }
-
-    /// <inheritdoc />
-    Task IComponentException.DispatchExceptionAsync(Exception exception) => DispatchExceptionAsync(exception);
 }
