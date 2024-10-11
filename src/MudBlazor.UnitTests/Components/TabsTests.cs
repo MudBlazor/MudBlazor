@@ -141,8 +141,8 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button").Count.Should().Be(1);
             // only the first panel should be rendered first
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br></p>");
-            // no child divs in div.mud-tabs-panels
-            comp.FindAll("div.mud-tabs-panels > div").Count.Should().Be(0);
+            // one child divs in div.mud-tabs-panels
+            comp.FindAll("div.mud-tabs-panels > div").Count.Should().Be(1);
             // click first button and show button click counters
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=0");
             comp.FindAll("button")[0].Click();
