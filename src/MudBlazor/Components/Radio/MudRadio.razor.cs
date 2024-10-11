@@ -132,7 +132,7 @@ namespace MudBlazor
 
         internal Task OnClickAsync()
         {
-            if (GetDisabledState() || (MudRadioGroup?.GetReadOnlyState() ?? false))
+            if (GetDisabledState() || GetReadOnlyState() || (MudRadioGroup?.GetReadOnlyState() ?? false))
             {
                 return Task.CompletedTask;
             }
@@ -147,7 +147,7 @@ namespace MudBlazor
 
         protected internal async Task HandleKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
         {
-            if (GetDisabledState() || (MudRadioGroup?.GetReadOnlyState() ?? false))
+            if (GetDisabledState() || GetReadOnlyState() || (MudRadioGroup?.GetReadOnlyState() ?? false))
             {
                 return;
             }
