@@ -141,6 +141,45 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void Stepper_ShouldBeginWithFirstEnabledStep()
+        {
+            var stepper = Context.RenderComponent<MudStepper>(self =>
+            {
+                self.AddChildContent<MudStep>(step => step.Add(x => x.Disabled, true));
+                self.AddChildContent<MudStep>(step => step.Add(x => x.Disabled, true));
+                self.AddChildContent<MudStep>(step => step.Add(x => x.Disabled, false));
+                self.AddChildContent<MudStep>(step => step.Add(x => x.Disabled, false));
+            });
+            stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(2);
+        }
+
+        [Test]
+        public void PreviousAndNext_ShouldCorrectlyHandleDisabledSteps()
+        {
+            var stepper = Context.RenderComponent<MudStepper>(self =>
+            {
+                self.Add(x => x.NonLinear, true);
+                self.AddChildContent<MudStep>(step => step.Add(x => x.Disabled, true));
+                self.AddChildContent<MudStep>(step => step.Add(x => x.Disabled, false));
+                self.AddChildContent<MudStep>(step => step.Add(x => x.Disabled, true));
+                self.AddChildContent<MudStep>(step => step.Add(x => x.Disabled, false));
+            });
+
+            stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(1);
+            stepper.Find(".mud-stepper-button-next").HasAttribute("disabled").Should().Be(false);
+            stepper.Find(".mud-stepper-button-next").Click(); // next
+
+            stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(3);
+            stepper.Find(".mud-stepper-button-next").HasAttribute("disabled").Should().Be(true);
+            stepper.Find(".mud-stepper-button-previous").HasAttribute("disabled").Should().Be(false);
+            stepper.Find(".mud-stepper-button-previous").Click(); // prev
+
+            stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(1);
+            stepper.Find(".mud-stepper-button-previous").HasAttribute("disabled").Should().Be(true);
+            stepper.Find(".mud-stepper-button-previous").Click(); // prev
+        }
+
+        [Test]
         public void Stepper_ShouldBeAbleToSkipSkippableSteps()
         {
             var stepper = Context.RenderComponent<MudStepper>(self =>
