@@ -4,7 +4,7 @@ namespace MudBlazor;
 
 #nullable enable
 /// <summary>
-/// Provides extension methods for sorting.
+/// Provides extension methods for sorting and for <see cref="MudTable{T}"/>.
 /// </summary>
 public static class TableExtensions
 {
@@ -40,5 +40,5 @@ public static class TableExtensions
             : source.OrderBy(keySelector);
     }
 
-    internal static bool EditButtonDisabled<T>(this TableContext? context, T item) => (context?.Table?.IsEditRowSwitchingBlocked ?? false) && context.Table._editingItem is not null && !ReferenceEquals(context.Table._editingItem, item);
+    public static bool EditButtonDisabled<T>(this TableContext? context, T item) => (context?.Table?.IsEditRowSwitchingBlocked ?? false) && context.Table._editingItem is not null && !ReferenceEquals(context.Table._editingItem, item);
 }

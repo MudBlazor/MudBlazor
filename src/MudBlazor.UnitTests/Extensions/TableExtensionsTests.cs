@@ -4,6 +4,7 @@
 
 using System.Linq.Expressions;
 using FluentAssertions;
+using Moq;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Extensions;
@@ -12,6 +13,11 @@ namespace MudBlazor.UnitTests.Extensions;
 [TestFixture]
 public class TableExtensionsTests
 {
+    internal class TestItem(string name)
+    {
+        public string Name { get; } = name;
+    }
+
     private readonly IReadOnlyList<TestItem> _testData =
     [
         new TestItem("B"),
@@ -77,8 +83,46 @@ public class TableExtensionsTests
         result.Should().BeInDescendingOrder(item => item.Name);
     }
 
-    private class TestItem(string name)
+    [Test]
+    public void EditButtonDisabled_ShouldReturnFalse_WhenContextIsNull()
     {
-        public string Name { get; } = name;
+        // Arrange
+        TableContext? context = null;
+        var item = new TestItem("A");
+
+        // Act
+        var result = context.EditButtonDisabled(item);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Test]
+    public void EditButtonDisabled_ShouldReturnFalse_WhenTableIsNull()
+    {
+        // Arrange
+        var context = new TableContext<TestItem> { Table = null };
+        var item = new TestItem("B");
+
+        // Act
+        var result = context.EditButtonDisabled(item);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Test]
+    public void EditButtonDisabled_ShouldReturnFalse_WhenIsEditRowSwitchingBlockedIsFalse()
+    {
+        // Arrange
+        var tableMock = new Mock<MudTable<TestItem>>();
+        var context = new TableContext<TestItem> { Table = tableMock.Object };
+        var item = new TestItem("B");
+
+        // Act
+        var result = context.EditButtonDisabled(item);
+
+        // Assert
+        result.Should().BeFalse();
     }
 }
