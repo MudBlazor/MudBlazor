@@ -210,8 +210,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         if (!_disposed)
         {
             _disposed = true;
-            // ReSharper disable once MethodHasAsyncOverload - not available in .NET6 & .NET7
-            _cancellationTokenSource.Cancel();
+            await _cancellationTokenSource.CancelAsync();
             await DestroyPopoversQuick();
 
             _batchExecutor.Dispose();
@@ -219,12 +218,8 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
             // In case someone has custom implementation and didn't unsubscribe
             _observerManager.Clear();
 
-            // https://github.com/MudBlazor/MudBlazor/pull/5367#issuecomment-1258649968
-            // Fixed in NET8
-            // Do not send CancellationToken as it was cancelled.
-#pragma warning disable CA2012 // Use ValueTasks correctly
-            _ = _popoverJsInterop.Dispose();
-#pragma warning restore CA2012 // Use ValueTasks correctly
+            // Do not send our CancellationTokenSource as it was cancelled.
+            await _popoverJsInterop.Dispose(CancellationToken.None);
 
             _cancellationTokenSource.Dispose();
         }
