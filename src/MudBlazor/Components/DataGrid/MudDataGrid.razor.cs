@@ -281,16 +281,6 @@ namespace MudBlazor
         public EventCallback<T> CanceledEditingItem { get; set; }
 
         /// <summary>
-        /// (Obsolete) Occurs when editing of an item has been canceled.
-        /// </summary>
-        /// <remarks>
-        /// This has been deprecated.  Use <see cref="CanceledEditingItem"/> instead.
-        /// </remarks>
-        [Obsolete("Use CanceledEditingItem instead", false)]
-        [Parameter]
-        public EventCallback<T> CancelledEditingItem { get => CanceledEditingItem; set => CanceledEditingItem = value; }
-
-        /// <summary>
         /// Occurs when the user saved changes to an item.
         /// </summary>
         [Parameter]
