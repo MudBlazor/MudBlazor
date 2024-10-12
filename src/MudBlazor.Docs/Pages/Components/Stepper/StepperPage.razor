@@ -40,7 +40,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Centered Labels">
+            <SectionHeader Title="Centered labels">
                 <Description><CodeInline>@nameof(MudStepper.CenterLabels)</CodeInline> centers the labels in the navigation bar below the circle. It affects only horizontal steppers.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(StepperBasicAlternativeLabelExample)" ShowCode="false">
@@ -67,6 +67,23 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(StepperStepBindingExample)" ShowCode="false">
                 <StepperStepBindingExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Controlling navigation">
+                <Description>
+                    If you want to restrict navigation depending on certain conditions, i.e. completion of a form etc. you can do this using the <CodeInline>@nameof(MudStepper.OnPreviewInteraction)</CodeInline> event. By setting the 
+                    <CodeInline>@nameof(StepperInteractionEventArgs.Cancel)</CodeInline> property in the <CodeInline>@nameof(StepperInteractionEventArgs)</CodeInline> you have total control over which steps can be navigated to and 
+                    which can't.<br />
+                    <br />
+                    When the user clicks the Next-button, the stepper will try to set the current step completed and the <CodeInline>@nameof(StepperInteractionEventArgs).@nameof(StepperInteractionEventArgs.Action)</CodeInline> will be 
+                    <CodeInline>@nameof(StepAction.Complete)</CodeInline>. When the user clicks previous or any other step header, the stepper will try to activate that step and the <CodeInline>@nameof(StepperInteractionEventArgs).@nameof(StepperInteractionEventArgs.Action)</CodeInline> 
+                    will be <CodeInline>@nameof(StepAction.Activate)</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(StepperControlledNavigationExample)" ShowCode="false">
+                <StepperControlledNavigationExample />
             </SectionContent>
         </DocsPageSection>
 
