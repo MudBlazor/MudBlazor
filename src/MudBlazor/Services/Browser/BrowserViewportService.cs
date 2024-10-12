@@ -156,6 +156,11 @@ internal class BrowserViewportService : IBrowserViewportService
     /// <inheritdoc />
     public async Task UnsubscribeAsync(Guid observerId)
     {
+        if (_disposed)
+        {
+            return;
+        }
+
         try
         {
             await _semaphore.WaitAsync();
