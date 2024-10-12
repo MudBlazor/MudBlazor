@@ -125,13 +125,13 @@
             else
             {
                 <div class="@step.LabelIconClassname">
-                    @if (step.CompletedState.Value)
+                    @if(step.HasErrorState.Value)
                     {
-                        <MudIcon Size="Size.Small" Icon="@StepCompleteIcon"/>
+                        <MudIcon Size="Size.Small" Icon="@StepErrorIcon" />
                     }
-                    else if (step.HasErrorState.Value)
+                    else if (step.CompletedState.Value)
                     {
-                        <MudIcon Size="Size.Small" Icon="@StepErrorIcon"/>
+                        <MudIcon Size="Size.Small" Icon="@StepCompleteIcon" />
                     }
                     else
                     {
