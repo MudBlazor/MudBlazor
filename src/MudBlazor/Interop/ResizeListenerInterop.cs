@@ -35,6 +35,7 @@ internal class ResizeListenerInterop
         return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudResizeListenerFactory.cancelListener", cancellationToken, javaScriptListerId);
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Not used in the core for now.")]
     public ValueTask<bool> CancelListeners(Guid[] jsListenerIds, CancellationToken cancellationToken = default)
     {
         return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudResizeListenerFactory.cancelListeners", cancellationToken, jsListenerIds);
