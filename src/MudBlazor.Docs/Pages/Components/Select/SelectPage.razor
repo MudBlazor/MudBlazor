@@ -67,6 +67,17 @@
                         <MultiSelectSelectAllExample />
                     </SectionContent>
                 </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Complex Object">
+                        <Description>
+                            To handle complex objects, you should implement either <CodeInline>IEquatable</CodeInline> on a type or <CodeInline>IEqualityComparer</CodeInline> and pass it to the <CodeInline>Comparer</CodeInline> parameter.
+                            For displaying the selected values, you can override the <CodeInline>ToString</CodeInline> method or use the <CodeInline>ToStringFunc</CodeInline> parameter.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="@nameof(MultiSelectComplexExample)">
+                        <MultiSelectComplexExample />
+                    </SectionContent>
+                </DocsPageSection>
             </SectionSubGroups>
         </DocsPageSection>
 
