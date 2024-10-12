@@ -6,6 +6,7 @@ using FluentAssertions;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
+using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests
@@ -146,6 +147,20 @@ namespace MudBlazor.UnitTests
 
             await exception.Should().ThrowAsync<InvalidOperationException>().WithMessage("mhh that is odd");
             runtimeMock.Verify();
+        }
+
+        [Test]
+        public async Task InvokeAsyncWithErrorHandling_ShouldReturnFallbackValue_WhenUnsupportedJavaScriptRuntime()
+        {
+            // Arrange
+            var jsRuntime = new UnsupportedJavaScriptRuntime();
+
+            // Act
+            var result = await jsRuntime.InvokeAsyncWithErrorHandling("fallback", "myMethod", 42, "blub");
+
+            // Assert
+            result.success.Should().BeFalse();
+            result.value.Should().Be("fallback");
         }
     }
 }
