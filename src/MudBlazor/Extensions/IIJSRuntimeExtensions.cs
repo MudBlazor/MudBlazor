@@ -10,7 +10,7 @@ namespace MudBlazor
     /// <summary>
     /// Provides extension methods for <see cref="IJSRuntime"/> to handle JavaScript interop calls with error handling.
     /// </summary>
-    public static class IIJSRuntimeExtensions
+    public static class IJSRuntimeExtensions
     {
         /// <summary>
         /// Invokes the specified JavaScript function asynchronously and catches JSException, JSDisconnectedException and TaskCanceledException
@@ -25,7 +25,7 @@ namespace MudBlazor
             {
                 await jsRuntime.InvokeVoidAsync(identifier, args);
             }
-#if !DEBUG
+#if DEBUG
             catch (JSException)
             {
             }
