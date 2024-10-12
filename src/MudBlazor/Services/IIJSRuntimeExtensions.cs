@@ -271,8 +271,7 @@ namespace MudBlazor
             }
 #endif
             // catch prerending errors since there is no browser at this point.
-            catch (InvalidOperationException ex) when (ex.Message.Contains("prerender",
-                                                           StringComparison.InvariantCultureIgnoreCase))
+            catch (InvalidOperationException ex) when (ex.Message.Contains("prerender", StringComparison.InvariantCultureIgnoreCase))
             {
                 return (false, fallbackValue);
             }
