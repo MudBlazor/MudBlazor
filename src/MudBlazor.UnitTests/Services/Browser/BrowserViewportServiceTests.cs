@@ -2,10 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -38,8 +35,8 @@ public class BrowserViewportServiceTests
         // Assert
         observer.Notifications.Count.Should().Be(0);
         service.ObserversCount.Should().Be(1);
-        jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()), Times.Never);
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()), Times.Once);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Never);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
     }
 
     [Test]
@@ -58,8 +55,8 @@ public class BrowserViewportServiceTests
         // Assert
         lambdaInvokedCount.Should().Be(0);
         service.ObserversCount.Should().Be(1);
-        jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()), Times.Never);
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()), Times.Once);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Never);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
     }
 
     [Test]
@@ -85,8 +82,8 @@ public class BrowserViewportServiceTests
         // Assert
         observerNotifications.Count.Should().Be(0);
         service.ObserversCount.Should().Be(1);
-        jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()), Times.Never);
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()), Times.Once);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Never);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
     }
 
     [Test]
@@ -105,8 +102,8 @@ public class BrowserViewportServiceTests
         firstNotification.IsImmediate.Should().BeTrue();
         observer.Notifications.Count.Should().Be(1);
         service.ObserversCount.Should().Be(1);
-        jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()), Times.Exactly(2));
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()), Times.Once);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Exactly(2));
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
     }
 
     [Test]
@@ -127,8 +124,8 @@ public class BrowserViewportServiceTests
         firstNotification.IsImmediate.Should().BeTrue();
         observerNotifications.Count.Should().Be(1);
         service.ObserversCount.Should().Be(1);
-        jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()), Times.Exactly(2));
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()), Times.Once);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Exactly(2));
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
     }
 
     [Test]
@@ -156,8 +153,8 @@ public class BrowserViewportServiceTests
         firstNotification.IsImmediate.Should().BeTrue();
         observerNotifications.Count.Should().Be(1);
         service.ObserversCount.Should().Be(1);
-        jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()), Times.Exactly(2));
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()), Times.Once);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Exactly(2));
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
     }
 
     [Test]
@@ -178,8 +175,8 @@ public class BrowserViewportServiceTests
         firstNotification.IsImmediate.Should().BeTrue();
         observer.Notifications.Count.Should().Be(1);
         service.ObserversCount.Should().Be(1);
-        jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()), Times.Exactly(2));
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()), Times.Once);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Exactly(2));
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
     }
 
     [Test]
@@ -228,8 +225,8 @@ public class BrowserViewportServiceTests
         observerNotifications.Count.Should().Be(1);
         service.ObserversCount.Should().Be(1);
         innerObserverOptions.Should().Be(options1Mutated);
-        jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()), Times.Exactly(2));
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()), Times.Once);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Exactly(2));
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
     }
 
     [Test]
@@ -318,7 +315,7 @@ public class BrowserViewportServiceTests
 
         // Assert
         service.ObserversCount.Should().Be(2);
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()), Times.Once);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
     }
 
     [Test]
@@ -338,7 +335,7 @@ public class BrowserViewportServiceTests
 
         // Assert
         service.ObserversCount.Should().Be(2);
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()), Times.Exactly(2));
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Exactly(2));
     }
 
     [Test]
@@ -462,7 +459,7 @@ public class BrowserViewportServiceTests
 
         // Assert
         service.ObserversCount.Should().Be(0);
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListener", It.IsAny<object[]>()), Times.Once);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListener", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
     }
 
     [Test]
@@ -484,7 +481,7 @@ public class BrowserViewportServiceTests
 
         // Assert
         service.ObserversCount.Should().Be(0);
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListener", It.IsAny<object[]>()), Times.Exactly(2));
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListener", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Exactly(2));
     }
 
     [Test]
@@ -500,7 +497,7 @@ public class BrowserViewportServiceTests
         var jsRuntimeMock = new Mock<IJSRuntime>();
         var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
         jsRuntimeMock
-            .Setup(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()))
+            .Setup(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
             .ReturnsAsync(new BrowserWindowSize { Width = width, Height = height });
 
         // Act
@@ -540,7 +537,7 @@ public class BrowserViewportServiceTests
         var jsRuntimeMock = new Mock<IJSRuntime>();
         var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
         jsRuntimeMock
-            .Setup(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()))
+            .Setup(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
             .ReturnsAsync(new BrowserWindowSize
             {
                 // This will return Sm size
@@ -562,8 +559,8 @@ public class BrowserViewportServiceTests
         var jsRuntimeMock = new Mock<IJSRuntime>();
         var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
         jsRuntimeMock
-            .Setup(x => x.InvokeAsync<bool>("mudResizeListener.matchMedia", It.IsAny<object[]>()))
-            .ReturnsAsync((string _, object[] args) =>
+            .Setup(x => x.InvokeAsync<bool>("mudResizeListener.matchMedia", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
+            .ReturnsAsync((string _, CancellationToken _, object[] args) =>
             {
                 var mediaQuery = args[0] as string;
 
@@ -599,7 +596,7 @@ public class BrowserViewportServiceTests
         await service.DisposeAsync();
 
         // Assert
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.dispose", It.IsAny<object[]>()), Times.Once);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.dispose", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
     }
 
     [Test]
@@ -620,7 +617,7 @@ public class BrowserViewportServiceTests
         await service.DisposeAsync();
 
         // Assert
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.dispose", It.IsAny<object[]>()), Times.Once);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.dispose", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
     }
 
     [Test]
