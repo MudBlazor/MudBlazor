@@ -16,6 +16,7 @@ namespace MudBlazor.Interfaces
         public object Validation { get; set; }
         public bool IsForNull { get; }
         public List<string> ValidationErrors { get; set; }
+        public bool HasValue();
         public Task Validate();
         public Task ResetAsync();
         public void ResetValidation();
