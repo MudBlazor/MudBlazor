@@ -1136,7 +1136,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [Obsolete]
         public async Task DataGridEventCallbacksTest()
         {
             var comp = Context.RenderComponent<DataGridEventCallbacksTest>();
