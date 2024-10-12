@@ -38,6 +38,11 @@ namespace MudBlazor
             catch (TaskCanceledException)
             {
             }
+#if !DEBUG
+            catch (ObjectDisposedException)
+            {
+            }
+#endif
         }
 
         /// <summary>
@@ -73,6 +78,11 @@ namespace MudBlazor
             catch (TaskCanceledException)
             {
             }
+#if !DEBUG
+            catch (ObjectDisposedException)
+            {
+            }
+#endif
         }
 
         /// <summary>
@@ -109,6 +119,12 @@ namespace MudBlazor
             {
                 return false;
             }
+#if !DEBUG
+            catch (ObjectDisposedException)
+            {
+                return false;
+            }
+#endif
         }
 
         /// <summary>
@@ -149,6 +165,12 @@ namespace MudBlazor
             {
                 return false;
             }
+#if !DEBUG
+            catch (ObjectDisposedException)
+            {
+                return false;
+            }
+#endif
         }
 
         /// <summary>
@@ -213,6 +235,12 @@ namespace MudBlazor
             {
                 return (false, fallbackValue);
             }
+#if !DEBUG
+            catch (ObjectDisposedException)
+            {
+                return (false, fallbackValue);
+            }
+#endif
         }
 
         /// <summary>
@@ -255,6 +283,12 @@ namespace MudBlazor
             {
                 return (false, fallbackValue);
             }
+#if !DEBUG
+            catch (ObjectDisposedException)
+            {
+                return (false, fallbackValue);
+            }
+#endif
         }
     }
 }
