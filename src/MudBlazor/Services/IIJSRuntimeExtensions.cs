@@ -41,7 +41,6 @@ namespace MudBlazor
 #if !DEBUG
             catch (ObjectDisposedException)
             {
-                return (false, fallbackValue);
             }
 #endif
         }
@@ -82,7 +81,6 @@ namespace MudBlazor
 #if !DEBUG
             catch (ObjectDisposedException)
             {
-                return (false, fallbackValue);
             }
 #endif
         }
@@ -124,7 +122,7 @@ namespace MudBlazor
 #if !DEBUG
             catch (ObjectDisposedException)
             {
-                return (false, fallbackValue);
+                return false;
             }
 #endif
         }
@@ -170,7 +168,7 @@ namespace MudBlazor
 #if !DEBUG
             catch (ObjectDisposedException)
             {
-                return (false, fallbackValue);
+                return false;
             }
 #endif
         }
