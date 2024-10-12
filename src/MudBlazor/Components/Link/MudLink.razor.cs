@@ -62,7 +62,7 @@ public partial class MudLink : MudComponentBase, IHandleEvent
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Link.Appearance)]
-    public Color Color { get; set; } = Color.Primary;
+    public Color Color { get; set; } = MudGlobal.LinkDefaults.Color;
 
     /// <summary>
     /// The typography variant to use.
@@ -72,7 +72,7 @@ public partial class MudLink : MudComponentBase, IHandleEvent
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Link.Appearance)]
-    public Typo Typo { get; set; } = Typo.body1;
+    public Typo Typo { get; set; } = MudGlobal.LinkDefaults.Typo;
 
     /// <summary>
     /// Applies an underline to the link.
@@ -82,7 +82,7 @@ public partial class MudLink : MudComponentBase, IHandleEvent
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Link.Appearance)]
-    public Underline Underline { get; set; } = Underline.Hover;
+    public Underline Underline { get; set; } = MudGlobal.LinkDefaults.Underline;
 
     /// <summary>
     /// The URL to navigate to upon click.

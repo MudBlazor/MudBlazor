@@ -427,7 +427,7 @@ namespace MudBlazor
         /// Defaults to <c>1</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
         /// </remarks>
         [Parameter]
-        public int Elevation { set; get; } = 1;
+        public int Elevation { set; get; } = MudGlobal.DataGridDefaults.Elevation;
 
         /// <summary>
         /// Disables rounded corners.
@@ -436,7 +436,7 @@ namespace MudBlazor
         /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
-        public bool Square { get; set; }
+        public bool Square { get; set; } = MudGlobal.DataGridDefaults.Square;
 
         /// <summary>
         /// Shows an outline around this grid.
@@ -445,7 +445,7 @@ namespace MudBlazor
         /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
-        public bool Outlined { get; set; }
+        public bool Outlined { get; set; } = MudGlobal.DataGridDefaults.Outlined;
 
         /// <summary>
         /// Shows left and right borders for each column.
@@ -454,7 +454,7 @@ namespace MudBlazor
         /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
-        public bool Bordered { get; set; }
+        public bool Bordered { get; set; } = MudGlobal.DataGridDefaults.Bordered;
 
         /// <summary>
         /// The content for any column groupings.
@@ -484,7 +484,7 @@ namespace MudBlazor
         /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
-        public bool Dense { get; set; }
+        public bool Dense { get; set; } = MudGlobal.DataGridDefaults.Dense;
 
         /// <summary>
         /// Highlights rows when hovering over them.
@@ -493,7 +493,7 @@ namespace MudBlazor
         /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
-        public bool Hover { get; set; }
+        public bool Hover { get; set; } = MudGlobal.DataGridDefaults.Hover;
 
         /// <summary>
         /// Shows alternating row styles.
@@ -502,7 +502,7 @@ namespace MudBlazor
         /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
-        public bool Striped { get; set; }
+        public bool Striped { get; set; } = MudGlobal.DataGridDefaults.Striped;
 
         /// <summary>
         /// Fixes the header in place even as the grid is scrolled.
@@ -511,7 +511,7 @@ namespace MudBlazor
         /// Set the <see cref="Height"/> property to make this grid scrollable.
         /// </remarks>
         [Parameter]
-        public bool FixedHeader { get; set; }
+        public bool FixedHeader { get; set; } = MudGlobal.DataGridDefaults.FixedHeader;
 
         /// <summary>
         /// Fixes the footer in place even as the grid is scrolled.
@@ -520,7 +520,7 @@ namespace MudBlazor
         /// Set the <see cref="Height"/> property to make this grid scrollable.
         /// </remarks>
         [Parameter]
-        public bool FixedFooter { get; set; }
+        public bool FixedFooter { get; set; } = MudGlobal.DataGridDefaults.FixedFooter;
 
         /// <summary>
         /// Shows icons for each column filter.
@@ -580,7 +580,7 @@ namespace MudBlazor
         /// Defaults to <c>false</c>.  Only works when <see cref="Height"/> is set.  This feature can improve performance for large data sets.
         /// </remarks>
         [Parameter]
-        public bool Virtualize { get; set; }
+        public bool Virtualize { get; set; } = MudGlobal.DataGridDefaults.Virtualize;
 
         /// <summary>
         /// A RenderFragment that will be used as a placeholder when the Virtualize component is asynchronously loading data.
