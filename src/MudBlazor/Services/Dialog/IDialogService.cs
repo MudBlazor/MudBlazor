@@ -4,9 +4,7 @@
 // See https://github.com/Blazored
 // License: MIT
 
-using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 #nullable enable
@@ -20,32 +18,12 @@ namespace MudBlazor
     /// </remarks>
     public interface IDialogService
     {
-        /// <summary>
-        /// Occurs when a new dialog instance is created.
-        /// </summary>
-        [Obsolete($"Please use {nameof(DialogInstanceAddedAsync)} instead!")]
-        event Action<IDialogReference>? OnDialogInstanceAdded;
 
         /// <summary>
         /// Occurs when a new dialog instance is created.
         /// </summary>
-        public event Func<IDialogReference, Task> DialogInstanceAddedAsync
-        {
-            // TODO: Remove default implementation in next major
-            add
-            {
-#pragma warning disable CS0618 // Type or member is obsolete
-                OnDialogInstanceAdded += dialogReference => value(dialogReference);
-            }
-            // ReSharper disable ValueParameterNotUsed
-            remove
-            // ReSharper restore ValueParameterNotUsed
-            {
-                // Removing the event handler requires keeping track of the added handlers
-                // which is complex. Hence, this part is left out.
-#pragma warning restore CS0618 // Type or member is obsolete
-            }
-        }
+        event Func<IDialogReference, Task> DialogInstanceAddedAsync;
+
         /// <summary>
         /// Occurs when a request is made to close a dialog.
         /// </summary>

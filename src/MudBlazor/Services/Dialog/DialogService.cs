@@ -59,10 +59,6 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        [Obsolete($"Please use {nameof(DialogInstanceAddedAsync)} instead!")]
-        public event Action<IDialogReference>? OnDialogInstanceAdded;
-
-        /// <inheritdoc />
         public event Func<IDialogReference, Task>? DialogInstanceAddedAsync;
 
         /// <inheritdoc />
@@ -157,8 +153,7 @@ namespace MudBlazor
                 builder.CloseComponent();
             });
             dialogReference.InjectRenderFragment(dialogInstance);
-            OnDialogInstanceAdded?.Invoke(dialogReference);
-            //TODO: drop sync Show as it was planned in future and make this awaitable;
+            //TODO: drop sync Show as it was planned in future and make this awaitable (next PR);
             DialogInstanceAddedAsync?.Invoke(dialogReference);
 
             return dialogReference;
