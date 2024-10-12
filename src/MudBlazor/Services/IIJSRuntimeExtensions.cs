@@ -38,6 +38,12 @@ namespace MudBlazor
             catch (TaskCanceledException)
             {
             }
+#if !DEBUG
+            catch (ObjectDisposedException)
+            {
+                return (false, fallbackValue);
+            }
+#endif
         }
 
         /// <summary>
@@ -73,6 +79,12 @@ namespace MudBlazor
             catch (TaskCanceledException)
             {
             }
+#if !DEBUG
+            catch (ObjectDisposedException)
+            {
+                return (false, fallbackValue);
+            }
+#endif
         }
 
         /// <summary>
@@ -109,6 +121,12 @@ namespace MudBlazor
             {
                 return false;
             }
+#if !DEBUG
+            catch (ObjectDisposedException)
+            {
+                return (false, fallbackValue);
+            }
+#endif
         }
 
         /// <summary>
@@ -149,6 +167,12 @@ namespace MudBlazor
             {
                 return false;
             }
+#if !DEBUG
+            catch (ObjectDisposedException)
+            {
+                return (false, fallbackValue);
+            }
+#endif
         }
 
         /// <summary>
@@ -213,6 +237,12 @@ namespace MudBlazor
             {
                 return (false, fallbackValue);
             }
+#if !DEBUG
+            catch (ObjectDisposedException)
+            {
+                return (false, fallbackValue);
+            }
+#endif
         }
 
         /// <summary>
@@ -243,7 +273,8 @@ namespace MudBlazor
             }
 #endif
             // catch prerending errors since there is no browser at this point.
-            catch (InvalidOperationException ex) when (ex.Message.Contains("prerender", StringComparison.InvariantCultureIgnoreCase))
+            catch (InvalidOperationException ex) when (ex.Message.Contains("prerender",
+                                                           StringComparison.InvariantCultureIgnoreCase))
             {
                 return (false, fallbackValue);
             }
@@ -255,6 +286,12 @@ namespace MudBlazor
             {
                 return (false, fallbackValue);
             }
+#if !DEBUG
+            catch (ObjectDisposedException)
+            {
+                return (false, fallbackValue);
+            }
+#endif
         }
     }
 }
