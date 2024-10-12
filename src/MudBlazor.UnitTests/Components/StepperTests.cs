@@ -107,30 +107,27 @@ namespace MudBlazor.UnitTests.Components
             });
             // check the stepper content
             stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("step 1");
-            stepper.FindAll(".mud-stepper-actions button")[0].HasAttribute("disabled").Should().Be(true); // previous
-            stepper.FindAll(".mud-stepper-actions button")[1].HasAttribute("disabled").Should().Be(true); // skip
-            stepper.FindAll(".mud-stepper-actions button")[2].HasAttribute("disabled").Should().Be(false); // next
+            stepper.Find(".mud-stepper-button-previous").HasAttribute("disabled").Should().Be(true); // previous
+            stepper.Find(".mud-stepper-button-next").HasAttribute("disabled").Should().Be(false); // next
             // step 1 icon should be "1", step 2 icon should be "2"
             stepper.FindAll(".mud-step-label-icon")[0].TextContent.Trimmed().Should().Be("1");
             stepper.FindAll(".mud-step-label-icon")[1].TextContent.Trimmed().Should().Be("2");
-            stepper.FindAll(".mud-stepper-actions button")[2].Click(); // next
+            stepper.Find(".mud-stepper-button-next").Click(); // next
             stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("step 2");
-            stepper.FindAll(".mud-stepper-actions button")[0].HasAttribute("disabled").Should().Be(false); // previous
-            stepper.FindAll(".mud-stepper-actions button")[1].HasAttribute("disabled").Should().Be(true); // skip
-            stepper.FindAll(".mud-stepper-actions button")[2].HasAttribute("disabled").Should().Be(false); // next
+            stepper.Find(".mud-stepper-button-previous").HasAttribute("disabled").Should().Be(false); // previous
+            stepper.Find(".mud-stepper-button-next").HasAttribute("disabled").Should().Be(false); // complete
             // step 1 icon should be a check mark, step 2 icon should be "2"
             stepper.FindAll(".mud-step-label-icon")[0].QuerySelectorAll("path").Last().GetAttribute("d").Should().Be("M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z");
             stepper.FindAll(".mud-step-label-icon")[1].TextContent.Trimmed().Should().Be("2");
-            stepper.FindAll(".mud-stepper-actions button")[0].Click(); // prev
+            stepper.Find(".mud-stepper-button-previous").Click(); // prev
             stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("step 1");
-            stepper.FindAll(".mud-stepper-actions button")[0].HasAttribute("disabled").Should().Be(true); // previous
-            stepper.FindAll(".mud-stepper-actions button")[1].HasAttribute("disabled").Should().Be(true); // skip
-            stepper.FindAll(".mud-stepper-actions button")[2].HasAttribute("disabled").Should().Be(false); // next
+            stepper.Find(".mud-stepper-button-previous").HasAttribute("disabled").Should().Be(true); // previous
+            stepper.Find(".mud-stepper-button-next").HasAttribute("disabled").Should().Be(false); // next
             // step 1 icon should be a check mark, step 2 icon should be "2"
             stepper.FindAll(".mud-step-label-icon")[0].QuerySelectorAll("path").Last().GetAttribute("d").Should().Be("M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z");
             stepper.FindAll(".mud-step-label-icon")[1].TextContent.Trimmed().Should().Be("2");
-            stepper.FindAll(".mud-stepper-actions button")[2].Click(); // next
-            stepper.FindAll(".mud-stepper-actions button")[2].Click(); // next
+            stepper.Find(".mud-stepper-button-next").Click(); // next
+            stepper.Find(".mud-stepper-button-next").Click(); // next
             // step 1 and 2 icon should be check marks
             stepper.FindAll(".mud-step-label-icon")[0].QuerySelectorAll("path").Last().GetAttribute("d").Should().Be("M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z");
             stepper.FindAll(".mud-step-label-icon")[1].QuerySelectorAll("path").Last().GetAttribute("d").Should().Be("M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z");
@@ -156,19 +153,19 @@ namespace MudBlazor.UnitTests.Components
             });
             // check the stepper content
             stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("step 1");
-            stepper.FindAll(".mud-stepper-actions button")[0].HasAttribute("disabled").Should().Be(true); // previous
-            stepper.FindAll(".mud-stepper-actions button")[1].HasAttribute("disabled").Should().Be(false); // skip
-            stepper.FindAll(".mud-stepper-actions button")[2].HasAttribute("disabled").Should().Be(false); // next
-            stepper.FindAll(".mud-stepper-actions button")[1].Click(); // skip
+            stepper.Find(".mud-stepper-button-previous").HasAttribute("disabled").Should().Be(true); // previous
+            stepper.Find(".mud-stepper-button-skip").HasAttribute("disabled").Should().Be(false); // skippable step
+            stepper.Find(".mud-stepper-button-next").HasAttribute("disabled").Should().Be(false); // next
+            stepper.Find(".mud-stepper-button-skip").Click(); // skip
             stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("step 2");
-            stepper.FindAll(".mud-stepper-actions button")[0].HasAttribute("disabled").Should().Be(false); // previous
-            stepper.FindAll(".mud-stepper-actions button")[1].HasAttribute("disabled").Should().Be(true); // skip
-            stepper.FindAll(".mud-stepper-actions button")[2].HasAttribute("disabled").Should().Be(false); // next
-            stepper.FindAll(".mud-stepper-actions button")[0].Click(); // prev
+            stepper.Find(".mud-stepper-button-previous").HasAttribute("disabled").Should().Be(false); // previous
+            stepper.FindAll(".mud-stepper-button-skip").Count.Should().Be(0); // non-skippable step
+            stepper.Find(".mud-stepper-button-next").HasAttribute("disabled").Should().Be(false); // next
+            stepper.Find(".mud-stepper-button-previous").Click(); // prev
             stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("step 1");
-            stepper.FindAll(".mud-stepper-actions button")[0].HasAttribute("disabled").Should().Be(true); // previous
-            stepper.FindAll(".mud-stepper-actions button")[1].HasAttribute("disabled").Should().Be(false); // skip
-            stepper.FindAll(".mud-stepper-actions button")[2].HasAttribute("disabled").Should().Be(false); // next
+            stepper.Find(".mud-stepper-button-previous").HasAttribute("disabled").Should().Be(true); // previous
+            stepper.Find(".mud-stepper-button-skip").HasAttribute("disabled").Should().Be(false); // skippable step
+            stepper.Find(".mud-stepper-button-next").HasAttribute("disabled").Should().Be(false); // next
         }
 
         [Test]
@@ -347,25 +344,22 @@ namespace MudBlazor.UnitTests.Components
             });
             // check the stepper content
             stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("step 1");
-            stepper.FindAll(".mud-stepper-actions button")[0].HasAttribute("disabled").Should().Be(true); // previous
-            stepper.FindAll(".mud-stepper-actions button")[1].HasAttribute("disabled").Should().Be(true); // skip
-            stepper.FindAll(".mud-stepper-actions button")[2].HasAttribute("disabled").Should().Be(false); // next
+            stepper.Find(".mud-stepper-button-previous").HasAttribute("disabled").Should().Be(true); // previous
+            stepper.Find(".mud-stepper-button-next").HasAttribute("disabled").Should().Be(false); // next
             // step 1 icon should be "1", step 2 icon should be "2"
             stepper.FindAll(".mud-step-label-icon")[0].TextContent.Trimmed().Should().Be("1");
             stepper.FindAll(".mud-step-label-icon")[1].TextContent.Trimmed().Should().Be("2");
             await stepper.InvokeAsync(async () => await stepper.Instance.NextStepAsync()); // next
             stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("step 2");
-            stepper.FindAll(".mud-stepper-actions button")[0].HasAttribute("disabled").Should().Be(false); // previous
-            stepper.FindAll(".mud-stepper-actions button")[1].HasAttribute("disabled").Should().Be(true); // skip
-            stepper.FindAll(".mud-stepper-actions button")[2].HasAttribute("disabled").Should().Be(false); // next
+            stepper.Find(".mud-stepper-button-previous").HasAttribute("disabled").Should().Be(false); // previous
+            stepper.Find(".mud-stepper-button-next").HasAttribute("disabled").Should().Be(false); // next
             // step 1 icon should be a check mark, step 2 icon should be "2"
             stepper.FindAll(".mud-step-label-icon")[0].QuerySelectorAll("path").Last().GetAttribute("d").Should().Be("M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z");
             stepper.FindAll(".mud-step-label-icon")[1].TextContent.Trimmed().Should().Be("2");
             await stepper.InvokeAsync(async () => await stepper.Instance.PreviousStepAsync());  // prev
             stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("step 1");
-            stepper.FindAll(".mud-stepper-actions button")[0].HasAttribute("disabled").Should().Be(true); // previous
-            stepper.FindAll(".mud-stepper-actions button")[1].HasAttribute("disabled").Should().Be(true); // skip
-            stepper.FindAll(".mud-stepper-actions button")[2].HasAttribute("disabled").Should().Be(false); // next
+            stepper.Find(".mud-stepper-button-previous").HasAttribute("disabled").Should().Be(true); // previous
+            stepper.Find(".mud-stepper-button-next").HasAttribute("disabled").Should().Be(false); // next
             // step 1 icon should be a check mark, step 2 icon should be "2"
             stepper.FindAll(".mud-step-label-icon")[0].QuerySelectorAll("path").Last().GetAttribute("d").Should().Be("M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z");
             stepper.FindAll(".mud-step-label-icon")[1].TextContent.Trimmed().Should().Be("2");
@@ -475,14 +469,14 @@ namespace MudBlazor.UnitTests.Components
         public void ActionContentTemplate_ShouldReplaceTheNavButtons()
         {
             var stepper = Context.RenderComponent<MudStepper>();
-            stepper.FindAll(".mud-card-actions .mud-button").Count.Should().Be(3);
+            stepper.FindAll(".mud-card-actions .mud-button").Count.Should().Be(2, "because no action content defined"); // prev, next
             stepper = Context.RenderComponent<MudStepper>(self =>
             {
                 self.Add(x => x.Tag, "je ne sais pas");
                 // this replaces the action buttons prev, skip and next with just text
-                self.Add(x => x.ActionContent, stepperRef => (string)stepperRef.Tag);
+                self.Add(x => x.ActionContent, stepperRef => (string)stepperRef.Tag); // <-- here we simulate using the passed in stepper context
             });
-            stepper.FindAll(".mud-card-actions .mud-button").Count.Should().Be(0);
+            stepper.FindAll(".mud-card-actions .mud-button").Count.Should().Be(0, "because the action content replaces them");
             stepper.Find(".mud-card-actions").InnerHtml?.Trim().Should().Be("je ne sais pas");
         }
 
@@ -493,13 +487,13 @@ namespace MudBlazor.UnitTests.Components
             {
                 self.Add(x => x.ShowResetButton, true);
             });
-            stepper.FindAll(".mud-card-actions .mud-button").Count.Should().Be(4);
+            stepper.FindAll(".mud-card-actions .mud-button").Count.Should().Be(3); // reset, previous, next
             stepper.FindAll(".mud-card-actions .mud-stepper-button-reset").Count.Should().Be(1);
             stepper = Context.RenderComponent<MudStepper>(self =>
             {
                 self.Add(x => x.ShowResetButton, false);
             });
-            stepper.FindAll(".mud-card-actions .mud-button").Count.Should().Be(3);
+            stepper.FindAll(".mud-card-actions .mud-button").Count.Should().Be(2); // previous, next
             stepper.FindAll(".mud-card-actions .mud-stepper-button-reset").Count.Should().Be(0);
         }
 

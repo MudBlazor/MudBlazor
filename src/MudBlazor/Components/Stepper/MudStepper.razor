@@ -83,10 +83,12 @@
 
             @if (!IsCompleted)
             {
-                <MudButton StartIcon="@_skipIcon" Class="mud-stepper-button-skip" OnClick="SkipCurrentStepAsync" Disabled="@(!IsCurrentStepSkippable)">
-                    @Localizer["MudStepper_Skip"]
-                </MudButton>
-
+                @if (IsCurrentStepSkippable)
+                {
+                    <MudButton StartIcon="@_skipIcon" Class="mud-stepper-button-skip" OnClick="SkipCurrentStepAsync">
+                        @Localizer["MudStepper_Skip"]
+                    </MudButton>
+                }
                 <MudButton StartIcon="@Icons.Material.Filled.NavigateNext" Class="mud-stepper-button-next" OnClick="NextStepAsync" Color="Color.Primary" Disabled="@(!CanGoToNextStep)">
                     @(ShowCompleteInsteadOfNext ? Localizer["MudStepper_Complete"] : Localizer["MudStepper_Next"])
                 </MudButton>
