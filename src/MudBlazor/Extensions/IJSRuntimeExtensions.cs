@@ -7,7 +7,10 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
-    public static class IIJSRuntimeExtensions
+    /// <summary>
+    /// Provides extension methods for <see cref="IJSRuntime"/> to handle JavaScript interop calls with error handling.
+    /// </summary>
+    public static class IJSRuntimeExtensions
     {
         /// <summary>
         /// Invokes the specified JavaScript function asynchronously and catches JSException, JSDisconnectedException and TaskCanceledException
@@ -23,13 +26,12 @@ namespace MudBlazor
                 await jsRuntime.InvokeVoidAsync(identifier, args);
             }
 #if DEBUG
-#else
             catch (JSException)
             {
             }
 #endif
-            // catch prerending errors since there is no browser at this point.
-            catch (InvalidOperationException ex) when (ex.Message.Contains("prerender", StringComparison.InvariantCultureIgnoreCase))
+            // Catch pre-rending errors since there is no browser at this point.
+            catch (InvalidOperationException) when (IsUnsupportedJavaScriptRuntime(jsRuntime))
             {
             }
             catch (JSDisconnectedException)
@@ -62,14 +64,13 @@ namespace MudBlazor
             {
                 await jsRuntime.InvokeVoidAsync(identifier, cancellationToken, args);
             }
-#if DEBUG
-#else
+#if !DEBUG
             catch (JSException)
             {
             }
 #endif
-            // catch prerending errors since there is no browser at this point.
-            catch (InvalidOperationException ex) when (ex.Message.Contains("prerender", StringComparison.InvariantCultureIgnoreCase))
+            // Catch pre-rending errors since there is no browser at this point.
+            catch (InvalidOperationException) when (IsUnsupportedJavaScriptRuntime(jsRuntime))
             {
             }
             catch (JSDisconnectedException)
@@ -99,15 +100,14 @@ namespace MudBlazor
                 await jsRuntime.InvokeVoidAsync(identifier, args);
                 return true;
             }
-#if DEBUG
-#else
+#if !DEBUG
             catch (JSException)
             {
                 return false;
             }
 #endif
-            // catch prerending errors since there is no browser at this point.
-            catch (InvalidOperationException ex) when (ex.Message.Contains("prerender", StringComparison.InvariantCultureIgnoreCase))
+            // Catch pre-rending errors since there is no browser at this point.
+            catch (InvalidOperationException) when (IsUnsupportedJavaScriptRuntime(jsRuntime))
             {
                 return false;
             }
@@ -145,15 +145,14 @@ namespace MudBlazor
                 await jsRuntime.InvokeVoidAsync(identifier, cancellationToken, args);
                 return true;
             }
-#if DEBUG
-#else
+#if !DEBUG
             catch (JSException)
             {
                 return false;
             }
 #endif
-            // catch prerending errors since there is no browser at this point.
-            catch (InvalidOperationException ex) when (ex.Message.Contains("prerender", StringComparison.InvariantCultureIgnoreCase))
+            // Catch pre-rending errors since there is no browser at this point.
+            catch (InvalidOperationException) when (IsUnsupportedJavaScriptRuntime(jsRuntime))
             {
                 return false;
             }
@@ -215,15 +214,14 @@ namespace MudBlazor
                 var result = await jsRuntime.InvokeAsync<TValue>(identifier: identifier, args: args);
                 return (true, result);
             }
-#if DEBUG
-#else
+#if !DEBUG
             catch (JSException)
             {
                 return (false, fallbackValue);
             }
 #endif
-            // catch prerending errors since there is no browser at this point.
-            catch (InvalidOperationException ex) when (ex.Message.Contains("prerender", StringComparison.InvariantCultureIgnoreCase))
+            // Catch pre-rending errors since there is no browser at this point.
+            catch (InvalidOperationException) when (IsUnsupportedJavaScriptRuntime(jsRuntime))
             {
                 return (false, fallbackValue);
             }
@@ -263,15 +261,14 @@ namespace MudBlazor
                 var result = await jsRuntime.InvokeAsync<TValue>(identifier: identifier, cancellationToken, args: args);
                 return (true, result);
             }
-#if DEBUG
-#else
+#if !DEBUG
             catch (JSException)
             {
                 return (false, fallbackValue);
             }
 #endif
-            // catch prerending errors since there is no browser at this point.
-            catch (InvalidOperationException ex) when (ex.Message.Contains("prerender", StringComparison.InvariantCultureIgnoreCase))
+            // Catch pre-rending errors since there is no browser at this point.
+            catch (InvalidOperationException) when (IsUnsupportedJavaScriptRuntime(jsRuntime))
             {
                 return (false, fallbackValue);
             }
@@ -290,5 +287,12 @@ namespace MudBlazor
             }
 #endif
         }
+
+        /// <summary>
+        /// Checks if the IJSRuntime instance is of type UnsupportedJavaScriptRuntime.
+        /// </summary>
+        /// <param name="jsRuntime">The IJSRuntime instance to check.</param>
+        /// <returns>True if the instance is of type UnsupportedJavaScriptRuntime; otherwise, false.</returns>
+        private static bool IsUnsupportedJavaScriptRuntime(this IJSRuntime jsRuntime) => jsRuntime.GetType().Name == "UnsupportedJavaScriptRuntime";
     }
 }
