@@ -117,7 +117,7 @@ namespace MudBlazor.UnitTests.Components
             stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("step 2");
             stepper.Find(".mud-stepper-button-previous").HasAttribute("disabled").Should().Be(false); // previous
             stepper.FindAll(".mud-stepper-button-next").Count.Should().Be(0); // no next button when completable
-            stepper.FindAll(".mud-stepper-button-complete").Count.Should().Be(1); 
+            stepper.FindAll(".mud-stepper-button-complete").Count.Should().Be(1);
             // step 1 icon should be a check mark, step 2 icon should be "2"
             stepper.FindAll(".mud-step-label-icon")[0].QuerySelectorAll("path").Last().GetAttribute("d").Should().Be("M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z");
             stepper.FindAll(".mud-step-label-icon")[1].TextContent.Trimmed().Should().Be("2");
@@ -582,6 +582,75 @@ namespace MudBlazor.UnitTests.Components
             stepper.Instance.ActiveStep?.Title.Should().Be("A");
             stepper.Instance.Steps[0].GetState(x => x.Completed).Should().Be(false);
             stepper.Instance.GetState(x => x.ActiveIndex).Should().Be(0);
+        }
+
+
+        [Test]
+        public void Stepper_ControlledNavigationTest()
+        {
+            var cancel = false;
+            var action = StepAction.Reset;
+            var index = -1;
+            Task OnPreviewInteraction(StepperInteractionEventArgs args)
+            {
+                action = args.Action;
+                index = args.StepIndex;
+                // ReSharper disable once AccessToModifiedClosure
+                args.Cancel = cancel;
+                return Task.CompletedTask;
+            }
+            var stepper = Context.RenderComponent<MudStepper>(self =>
+            {
+                self.Add(x => x.OnPreviewInteraction, OnPreviewInteraction);
+                self.Add(x => x.ShowResetButton, true);
+                self.Add(x => x.NonLinear, true);
+                self.AddChildContent<MudStep>(step => { });
+                self.AddChildContent<MudStep>(step => { });
+                self.AddChildContent<MudStep>(step => { });
+            });
+
+            // check that clicking next sends Complete action requests
+            stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(0);
+            stepper.Find(".mud-stepper-button-next").Click();
+            index.Should().Be(0);
+            action.Should().Be(StepAction.Complete);
+            stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(1);
+            stepper.Find(".mud-stepper-button-next").Click();
+            index.Should().Be(1);
+            action.Should().Be(StepAction.Complete);
+            stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(2);
+            stepper.Find(".mud-stepper-button-complete").Click();
+            index.Should().Be(2);
+            action.Should().Be(StepAction.Complete);
+            stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(2);
+
+            // cancel next
+            stepper.Find(".mud-stepper-button-reset").Click();
+            stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(0);
+            cancel = true; // this should cancel the completion of step 1
+            stepper.Find(".mud-stepper-button-next").Click();
+            stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(0);
+
+            // cancel previous
+            cancel = false;
+            stepper.Find(".mud-stepper-button-next").Click(); // go to step2
+            stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(1);
+            cancel = true; // this should cancel the activation of step 1
+            stepper.Find(".mud-stepper-button-previous").Click(); // try to go to step1
+            index.Should().Be(0);
+            action.Should().Be(StepAction.Activate);
+            stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(1);
+
+            // cancel jumping via header click
+            cancel = false;
+            stepper.Find(".mud-stepper-button-reset").Click();
+            stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(0);
+            cancel = true; // this should cancel the activation of step 3
+            stepper.FindAll(".mud-step")[2].Click(); // try to go to step3
+            index.Should().Be(2);
+            action.Should().Be(StepAction.Activate);
+            stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(0);
+
         }
     }
 }
