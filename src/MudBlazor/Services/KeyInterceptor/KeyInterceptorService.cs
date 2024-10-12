@@ -152,7 +152,7 @@ internal class KeyInterceptorService : IKeyInterceptorService
         return DisposeAsyncCore(true);
     }
 
-    private ValueTask DisposeAsyncCore(bool disposing)
+    private async ValueTask DisposeAsyncCore(bool disposing)
     {
         if (!_disposed)
         {
@@ -167,16 +167,12 @@ internal class KeyInterceptorService : IKeyInterceptorService
 
                 foreach (var elementId in _observerManager.Observers.Keys)
                 {
-                    // https://github.com/MudBlazor/MudBlazor/pull/5367#issuecomment-1258649968
-                    // Fixed in NET8
-                    _ = _keyInterceptorInterop.Disconnect(elementId);
+                    await _keyInterceptorInterop.Disconnect(elementId);
                 }
 
                 _observerManager.Clear();
             }
         }
-
-        return ValueTask.CompletedTask;
     }
 
     private DotNetObjectReference<KeyInterceptorService> CreateDotNetObjectReference() => DotNetObjectReference.Create(this);
