@@ -3355,10 +3355,11 @@ namespace MudBlazor.UnitTests.Components
             var hireDate = new DateTime(2011, 1, 2).ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern, CultureInfo.CurrentCulture);
             inputsBefore.Should().BeEquivalentTo("Ira", "27", "Success", "True", hireDate, "00:00");
 
-            var clearButtons = dataGrid.FindAll(".align-self-center");
-            clearButtons.Should().HaveCount(5);
-            foreach (var clearButton in clearButtons)
+            IRefreshableElementCollection<IElement> ClearButtons() => dataGrid.FindAll(".align-self-center");
+            ClearButtons().Should().HaveCount(5);
+            for (var index = 0; index < ClearButtons().Count; index++)
             {
+                var clearButton = ClearButtons()[index];
                 clearButton.Click();
             }
 

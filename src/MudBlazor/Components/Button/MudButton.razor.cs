@@ -12,7 +12,7 @@ namespace MudBlazor
     /// or <see href="https://developer.mozilla.org/docs/Web/HTML/Element/a">anchor</see> if <c>Href</c> is set.<br/>
     /// You can directly add attributes like <c>title</c> or <c>aria-label</c>.
     /// </remarks>
-    public partial class MudButton : MudBaseButton, IHandleEvent, IDisposable
+    public partial class MudButton : MudBaseButton, IDisposable
     {
         protected string Classname => new CssBuilder("mud-button-root mud-button")
             .AddClass($"mud-button-{Variant.ToDescriptionString()}")
@@ -172,13 +172,5 @@ namespace MudBlazor
             // See https://github.com/MudBlazor/MudBlazor/issues/9710
             return ButtonGroup != null && ButtonGroup.FullWidth && ButtonGroup.NoneButtonIsStreched();
         }
-
-        /// <inheritdoc/>
-        /// <remarks>
-        /// See: https://github.com/MudBlazor/MudBlazor/issues/8365
-        /// <para/>
-        /// Since <see cref="MudButton"/> implements only single <see cref="EventCallback"/> <see cref="MudBaseButton.OnClick"/> this is safe to disable globally within the component.
-        /// </remarks>
-        Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg) => callback.InvokeAsync(arg);
     }
 }
