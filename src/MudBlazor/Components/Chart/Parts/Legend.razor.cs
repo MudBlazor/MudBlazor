@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 
 #nullable enable
-namespace MudBlazor
+namespace MudBlazor.Charts
 {
     /// <summary>
     /// Represents a set of text labels which describe data values in a <see cref="MudChart"/>.

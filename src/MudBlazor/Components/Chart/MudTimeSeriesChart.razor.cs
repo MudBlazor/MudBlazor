@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
-#nullable enable
 
+#nullable enable
 namespace MudBlazor
 {
     public abstract class MudTimeSeriesChartBase : MudChartBase

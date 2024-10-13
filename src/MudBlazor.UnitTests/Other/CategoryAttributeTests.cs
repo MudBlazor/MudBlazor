@@ -60,7 +60,7 @@ namespace MudBlazor.UnitTests.Other
                 typeof(MudCollapse),
                 typeof(MudPageContentNavigation),
                 typeof(MudSnackbarElement),
-                typeof(MudBlazor.Legend),
+                typeof(MudBlazor.Charts.Legend),
 
                 typeof(MudRatingItem),  // TODO: remove it later; see also: https://github.com/MudBlazor/MudBlazor/discussions/3452
             };
