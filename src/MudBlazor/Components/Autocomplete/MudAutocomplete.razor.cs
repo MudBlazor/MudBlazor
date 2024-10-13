@@ -21,9 +21,6 @@ namespace MudBlazor
         /// </summary>
         private readonly string _componentId = Identifier.Create();
 
-        /// <summary>
-        /// This boolean will keep track if the clear function is called too keep the set text function to be called.
-        /// </summary>
         private bool _isCleared;
         private bool _isClearing;
         private bool _isProcessingValue;
@@ -31,7 +28,6 @@ namespace MudBlazor
         private int _elementKey = 0;
         private int _returnedItemsCount;
         private bool _open;
-        private bool _doNotOpenMenuOnNextFocus; // TODO: Remove and refactor to avoid race conditions.
         private MudInput<string> _elementReference;
         private CancellationTokenSource _cancellationTokenSrc;
         private Task _currentSearchTask;
@@ -245,6 +241,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
+        /// Previously known as <c>SelectOnClick</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
@@ -407,7 +404,7 @@ namespace MudBlazor
         public bool SelectValueOnTab { get; set; }
 
         /// <summary>
-        /// Opens the list when focus is received on the input element; otherwise only opens on click.
+        /// Additionally opens the list when focus is received on the input element; otherwise only opens on click.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -515,7 +512,6 @@ namespace MudBlazor
                     await SetTextAsync(optionText, false);
 
                 _debounceTimer?.Dispose();
-                Open = false;
 
                 await BeginValidateAsync();
 
@@ -526,9 +522,10 @@ namespace MudBlazor
                         await _elementReference.SetText(optionText);
                     }
 
-                    _doNotOpenMenuOnNextFocus = true;
                     await FocusAsync();
                 }
+
+                Open = false;
 
                 StateHasChanged();
             }
@@ -567,8 +564,6 @@ namespace MudBlazor
 
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
-            _debounceTimer?.Dispose();
-
             // This keeps the text from being set when ClearAsync() was called
             if (_isCleared)
                 return Task.CompletedTask;
@@ -618,7 +613,7 @@ namespace MudBlazor
         /// </remarks>
         public Task ToggleMenuAsync()
         {
-            if ((GetDisabledState() || GetReadOnlyState()) && !Open)
+            if (!Open && (GetDisabledState() || GetReadOnlyState()))
             {
                 return Task.CompletedTask;
             }
@@ -793,7 +788,7 @@ namespace MudBlazor
                     }
                     else
                     {
-                        await ToggleMenuAsync();
+                        await OpenMenuAsync();
                     }
                     break;
                 case "ArrowUp":
@@ -803,7 +798,7 @@ namespace MudBlazor
                     }
                     else if (!Open)
                     {
-                        await ToggleMenuAsync();
+                        await OpenMenuAsync();
                     }
                     else
                     {
@@ -828,7 +823,7 @@ namespace MudBlazor
                     }
                     else
                     {
-                        await ToggleMenuAsync();
+                        await OpenMenuAsync();
                     }
                     break;
                 case "Escape":
@@ -901,17 +896,16 @@ namespace MudBlazor
             }
         }
 
-        private Task OnInputClickedAsync() => _isFocused ? ActivateByFocusAsync(true) : Task.CompletedTask;
+        private Task OnInputClickedAsync() => OnInputActivationAsync(true);
 
-        private Task OnInputFocusedAsync() => ActivateByFocusAsync(false);
+        private Task OnInputFocusedAsync() => OnInputActivationAsync(OpenOnFocus);
 
-        private async Task ActivateByFocusAsync(bool fromPointer)
+        private async Task OnInputActivationAsync(bool openMenu)
         {
             _isFocused = true;
 
-            if (_doNotOpenMenuOnNextFocus || Open || GetDisabledState() || GetReadOnlyState())
+            if (Open || GetDisabledState() || GetReadOnlyState())
             {
-                _doNotOpenMenuOnNextFocus = false;
                 return;
             }
 
@@ -920,8 +914,7 @@ namespace MudBlazor
                 await SelectAsync();
             }
 
-            // Open the menu on focus if configured to, or always by pointer.
-            if (OpenOnFocus || fromPointer)
+            if (openMenu)
             {
                 await OpenMenuAsync();
             }
@@ -988,6 +981,11 @@ namespace MudBlazor
 
             if (_cancellationTokenSrc != null)
             {
+                try
+                {
+                    _cancellationTokenSrc.Cancel();
+                }
+                catch { /*ignored*/ }
                 try
                 {
                     _cancellationTokenSrc.Dispose();

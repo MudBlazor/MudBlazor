@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -9,17 +8,17 @@ namespace MudBlazor
     /// Represents a button for actions, links, and commands.
     /// </summary>
     /// <remarks>
-    /// Creates a <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Button">button</see> element,
-    /// or <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a">anchor</see> if <c>Href</c> is set.<br/>
+    /// Creates a <see href="https://developer.mozilla.org/docs/Web/HTML/Element/Button">button</see> element,
+    /// or <see href="https://developer.mozilla.org/docs/Web/HTML/Element/a">anchor</see> if <c>Href</c> is set.<br/>
     /// You can directly add attributes like <c>title</c> or <c>aria-label</c>.
     /// </remarks>
-    public partial class MudButton : MudBaseButton, IHandleEvent
+    public partial class MudButton : MudBaseButton, IDisposable
     {
         protected string Classname => new CssBuilder("mud-button-root mud-button")
             .AddClass($"mud-button-{Variant.ToDescriptionString()}")
             .AddClass($"mud-button-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
             .AddClass($"mud-button-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}")
-            .AddClass($"mud-width-full", FullWidth)
+            .AddClass($"mud-width-full", GetRealFullWith())
             .AddClass($"mud-ripple", Ripple)
             .AddClass($"mud-button-disable-elevation", !DropShadow)
             .AddClass(Class)
@@ -34,6 +33,12 @@ namespace MudBlazor
             .AddClass($"mud-button-icon-size-{(IconSize ?? Size).ToDescriptionString()}")
             .AddClass(IconClass)
             .Build();
+
+        /// <summary>
+        /// The buton group which owns this button.
+        /// </summary>
+        [CascadingParameter]
+        private MudButtonGroup? ButtonGroup { get; set; }
 
         /// <summary>
         /// The icon displayed before the text.
@@ -59,7 +64,7 @@ namespace MudBlazor
         /// The color of icons.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Inherit"/>.  
+        /// Defaults to <see cref="Color.Inherit"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
@@ -93,7 +98,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Color Color { get; set; } = Color.Default;
+        public Color Color { get; set; } = MudGlobal.ButtonDefaults.Color;
 
         /// <summary>
         /// The size of the button.
@@ -103,7 +108,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Size Size { get; set; } = Size.Medium;
+        public Size Size { get; set; } = MudGlobal.ButtonDefaults.Size;
 
         /// <summary>
         /// The display variation to use.
@@ -132,12 +137,40 @@ namespace MudBlazor
         [Category(CategoryTypes.Button.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
-        /// <inheritdoc/>
-        /// <remarks>
-        /// See: https://github.com/MudBlazor/MudBlazor/issues/8365
-        /// <para/>
-        /// Since <see cref="MudButton"/> implements only single <see cref="EventCallback"/> <see cref="MudBaseButton.OnClick"/> this is safe to disable globally within the component.
-        /// </remarks>
-        Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg) => callback.InvokeAsync(arg);
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            ButtonGroup?.AddButton(this);
+        }
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by this button.
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                ButtonGroup?.RemoveButton(this);
+            }
+        }
+
+        internal bool GetRealFullWith()
+        {
+            if (FullWidth)
+            {
+                return true;
+            }
+            // If the button is in a group, the group is stretched and none button is explicitly stretched,
+            // then the button need to be streched
+            // See https://github.com/MudBlazor/MudBlazor/issues/9710
+            return ButtonGroup != null && ButtonGroup.FullWidth && ButtonGroup.NoneButtonIsStreched();
+        }
     }
 }

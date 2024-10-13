@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using MudBlazor.Charts;
+﻿using MudBlazor.Charts;
 using MudBlazor.Docs.Models;
+
 
 namespace MudBlazor.Docs.Services
 {
@@ -76,6 +74,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Stack", typeof(MudStack))
             .AddItem("Spacer", typeof(MudSpacer))
             .AddItem("Collapse", typeof(MudCollapse))
+            .AddItem("Stepper", typeof(MudStepper), typeof(MudStep))
 
             //GROUPS
 

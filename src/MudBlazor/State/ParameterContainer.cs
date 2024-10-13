@@ -2,15 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections;
-#if NET8_0_OR_GREATER
 using System.Collections.Frozen;
-#endif
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State.Comparer;
 
@@ -93,15 +87,9 @@ internal class ParameterContainer : IParameterContainer
 
         VerifyOnAuto();
 
-#if NET8_0_OR_GREATER
         var parametersHandlerShouldFire = _parameterScopeContainers.SelectMany(parameter => parameter)
             .Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters))
             .ToFrozenSet(ParameterHandlerUniquenessComparer.Default);
-#else
-        var parametersHandlerShouldFire = _parameterScopeContainers.SelectMany(parameter => parameter)
-            .Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters))
-            .ToHashSet(ParameterHandlerUniquenessComparer.Default);
-#endif
 
         await baseSetParametersAsync(parameters);
 

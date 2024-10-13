@@ -3,7 +3,7 @@
 @page "/components/MudTextField`1"
 
 <DocsPage>
-<DocsPageHeader Title="Text Field" SubTitle="Text field components are used for receiving user provided information."/>
+<DocsPageHeader Title="Text Field" SubTitle="Text field components allow users to enter and modify information."/>
 <DocsPageContent>
 
 <DocsPageSection>
@@ -44,7 +44,16 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TextFieldFormPropsHelperTextExample)" ShowCode="false">
-                <TextFieldFormPropsHelperTextExample/>
+                <TextFieldFormPropsHelperTextExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Helper Text On Focus">
+                <Description>With the <CodeInline>HelperTextOnFocus</CodeInline> property set to true, the helper text will only display on focus.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldHelperTextExample)" ShowCode="false">
+                <TextFieldHelperTextExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -79,15 +88,6 @@
 </DocsPageSection>
 
 <DocsPageSection>
-    <SectionHeader Title="Helper Text On Focus">
-        <Description>With the <CodeInline>HelperTextOnFocus</CodeInline> property set to true, the helper text will only display on focus.</Description>
-    </SectionHeader>
-    <SectionContent Code="@nameof(TextFieldHelperTextExample)" ShowCode="false">
-        <TextFieldHelperTextExample/>
-    </SectionContent>
-</DocsPageSection>
-
-<DocsPageSection>
     <SectionHeader Title="Counter">
         <Description>
             If you set the <CodeInline>Counter</CodeInline> prop to any int, the counter will be display at the bottom of the textfield.<br/>
@@ -105,55 +105,45 @@
         <Description>This can be used to add a prefix or a suffix. Text, Icon or Icon Button. For WCAG standards for buttons, an <CodeInline>AdornmentAriaLabel</CodeInline> can be added to use as the <CodeInline>aria-label</CodeInline>.</Description>
     </SectionHeader>
     <SectionContent Code="@nameof(TextFieldAdornmentsExample)" ShowCode="false" Block="true" FullWidth="true">
-        <TextFieldAdornmentsExample/>
+        <TextFieldAdornmentsExample />
     </SectionContent>
-</DocsPageSection>
+    <SectionSubGroups>
+        <DocsPageSection>
+            <SectionHeader Title="Adornment Color">
+                <Description>The color of the adornment can be changed separately from the text field.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldAdornmentColorExample)" ShowCode="false">
+                <TextFieldAdornmentColorExample />
+            </SectionContent>
+        </DocsPageSection>
 
-<DocsPageSection>
-    <SectionHeader Title="Adornment Color">
-        <Description>The color of the adornment can be changed separately from the textfield.</Description>
-    </SectionHeader>
-    <SectionContent Code="@nameof(TextFieldAdornmentColorExample)" ShowCode="false">
-        <TextFieldAdornmentColorExample/>
-    </SectionContent>
-</DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Focus">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldFocusExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TextFieldFocusExample />
+            </SectionContent>
+        </DocsPageSection>
 
-<DocsPageSection>
-    <SectionHeader Title="Binding Properties of a POCO">
-        <Description>
-            The following text fields are bound against the properties of a POCO (Plain old C-Sharp Object). Edit them to see the model change. Reset the model and see the textfields change.
-            <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: always use two-way bindings (<CodeInline>@("@bind-Value")</CodeInline>) with textfields.</MudAlert>
-        </Description>
-    </SectionHeader>
-    <SectionContent Code="@nameof(TextFieldBindingExample)" ShowCode="false">
-        <TextFieldBindingExample/>
-    </SectionContent>
-</DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Select">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldSelectExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TextFieldSelectExample />
+            </SectionContent>
+        </DocsPageSection>
 
-<DocsPageSection>
-    <SectionHeader Title="Binding Value Types vs Nullables">
-        <Description>
-            When you bind value types, the text field will not be empty even if the user hasn't entered a value yet because a value type always has a value, even when unassigned.
-            The two-way-bindable <CodeInline>Value</CodeInline> property will automatically assume the default value of that type (i.e. <CodeInline>0</CodeInline> for <CodeInline>int</CodeInline>).<br/>
-            So if you want your text fields to be empty as long as nothing has been entered yet, use the nullable version of that type (i.e. <CodeInline>int?</CodeInline>).
-        </Description>
-    </SectionHeader>
-    <SectionContent Code="@nameof(TextFieldBindingValueTypesExample)" ShowCode="false">
-        <TextFieldBindingValueTypesExample/>
-    </SectionContent>
-</DocsPageSection>
-
-<DocsPageSection>
-    <SectionHeader Title="Immediate vs Debounced">
-        <Description>
-            By default, <CodeInline>MudTextField</CodeInline> updates the bound value on Enter or when it loses focus. Set <CodeInline>Immediate="true"</CodeInline> to update the value whenever the user types.<br/>
-            You can also set the <CodeInline>DebounceInterval</CodeInline> parameter to the number of milliseconds you want to wait before updating the bound value. If you need to know when the interval elapses, you can pass an <CodeInline>OnDebounceIntervalElapsed</CodeInline> EventCallback.
-            Notice how in this example the debounced text only updates 500 ms after you stop typing.
-        </Description>
-    </SectionHeader>
-    <SectionContent Code="@nameof(DebouncedTextFieldExample)" ShowCode="false">
-        <DebouncedTextFieldExample/>
-    </SectionContent>
+        <DocsPageSection>
+            <SectionHeader Title="Select Range">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldSelectRangeExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TextFieldSelectRangeExample />
+            </SectionContent>
+        </DocsPageSection>
+    </SectionSubGroups>
 </DocsPageSection>
 
 <DocsPageSection>
@@ -163,6 +153,52 @@
     <SectionContent Code="@nameof(TextFieldClearableAndInputTypeExample)" ShowCode="false">
         <TextFieldClearableAndInputTypeExample/>
     </SectionContent>
+</DocsPageSection>
+
+<DocsPageSection>
+    <SectionHeader Title="Binding">
+        <Description></Description>
+    </SectionHeader>
+
+    <SectionSubGroups>
+        <DocsPageSection>
+            <SectionHeader Title="Properties of a POCO">
+                <Description>
+                    The following text fields are bound against the properties of a POCO (Plain old C-Sharp Object). Edit them to see the model change. Reset the model and see the textfields change.
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: always use two-way bindings (<CodeInline>@("@bind-Value")</CodeInline>) with textfields.</MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldBindingExample)" ShowCode="false">
+                <TextFieldBindingExample/>
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Value Types vs Nullables">
+                <Description>
+                    When you bind value types, the text field will not be empty even if the user hasn't entered a value yet because a value type always has a value, even when unassigned.
+                    The two-way-bindable <CodeInline>Value</CodeInline> property will automatically assume the default value of that type (i.e. <CodeInline>0</CodeInline> for <CodeInline>int</CodeInline>).<br/>
+                    So if you want your text fields to be empty as long as nothing has been entered yet, use the nullable version of that type (i.e. <CodeInline>int?</CodeInline>).
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldBindingValueTypesExample)" ShowCode="false">
+                <TextFieldBindingValueTypesExample/>
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Immediate vs Debounced">
+                <Description>
+                    By default, <CodeInline>MudTextField</CodeInline> updates the bound value on Enter or when it loses focus. Set <CodeInline>Immediate="true"</CodeInline> to update the value whenever the user types.<br/>
+                    You can also set the <CodeInline>DebounceInterval</CodeInline> parameter to the number of milliseconds you want to wait before updating the bound value. If you need to know when the interval elapses, you can pass an <CodeInline>OnDebounceIntervalElapsed</CodeInline> EventCallback.
+                    Notice how in this example the debounced text only updates 500 ms after you stop typing.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(DebouncedTextFieldExample)" ShowCode="false">
+                <DebouncedTextFieldExample/>
+            </SectionContent>
+        </DocsPageSection>
+    </SectionSubGroups>
 </DocsPageSection>
 
 <DocsPageSection>
@@ -194,43 +230,16 @@
 </DocsPageSection>
 
 <DocsPageSection>
-    <SectionHeader Title="Focus">
-        <Description></Description>
-    </SectionHeader>
-    <SectionContent Code="@nameof(TextFieldFocusExample)" ShowCode="false" Block="true" FullWidth="true">
-        <TextFieldFocusExample/>
-    </SectionContent>
-</DocsPageSection>
-
-<DocsPageSection>
-    <SectionHeader Title="Select">
-        <Description></Description>
-    </SectionHeader>
-    <SectionContent Code="@nameof(TextFieldSelectExample)" ShowCode="false" Block="true" FullWidth="true">
-        <TextFieldSelectExample/>
-    </SectionContent>
-</DocsPageSection>
-
-<DocsPageSection>
-    <SectionHeader Title="Select Range">
-        <Description></Description>
-    </SectionHeader>
-    <SectionContent Code="@nameof(TextFieldSelectRangeExample)" ShowCode="false" Block="true" FullWidth="true">
-        <TextFieldSelectRangeExample/>
-    </SectionContent>
-</DocsPageSection>
-
-<DocsPageSection>
     <SectionHeader Title="Input Types">
         <Description>
             You can change the InputType of MudTextField to use the native browser implementation of the
-            <MudLink Href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input">HTML input element</MudLink>.
+            <MudLink Href="https://developer.mozilla.org/docs/Web/HTML/Element/input">HTML input element</MudLink>.
             Note that any Placeholder will be ignored where the browser provides a default placeholder.
             <br/>
             <br/>
             All inputs can be bound to <CodeInline>string</CodeInline> types; alternatively, input types <CodeInline>Date</CodeInline> and <CodeInline>DateTimeLocal</CodeInline>
             can be bound to a nullable <CodeInline>DateTime?</CodeInline>. When binding to a <CodeInline>DateTime?</CodeInline> you <strong>must</strong> set the <CodeInline>Format</CodeInline> property to <CodeInline>yyyy-MM-dd</CodeInline> for input type <CodeInline>Date</CodeInline>, and you
-            <strong>must</strong> set the <CodeInline>Format</CodeInline> property to <CodeInline>s</CodeInline> (<MudLink Href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings#Sortable">ISO 8601</MudLink>) for input type <CodeInline>DateTimeLocal</CodeInline>.
+            <strong>must</strong> set the <CodeInline>Format</CodeInline> property to <CodeInline>s</CodeInline> (<MudLink Href="https://docs.microsoft.com/dotnet/standard/base-types/standard-date-and-time-format-strings#Sortable">ISO 8601</MudLink>) for input type <CodeInline>DateTimeLocal</CodeInline>.
 
         </Description>
     </SectionHeader>

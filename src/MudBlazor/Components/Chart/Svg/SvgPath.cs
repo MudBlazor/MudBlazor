@@ -1,11 +1,10 @@
-﻿using System.Diagnostics;
-
-namespace MudBlazor.Charts.SVG.Models
+﻿#nullable enable
+namespace MudBlazor
 {
     /// <summary>
     /// Represents an arbitrary SVG path.
     /// </summary>
-    public class SvgPath
+    internal class SvgPath
     {
         /// <summary>
         /// The position of this path within a list.
@@ -15,6 +14,6 @@ namespace MudBlazor.Charts.SVG.Models
         /// <summary>
         /// The SVG path to draw.
         /// </summary>
-        public string Data { get; set; }
+        public string? Data { get; set; }
     }
 }

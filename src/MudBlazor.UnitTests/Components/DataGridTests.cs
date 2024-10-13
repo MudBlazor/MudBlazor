@@ -1,15 +1,17 @@
-﻿#pragma warning disable CS1998 // async without await
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+#pragma warning disable CS1998 // async without await
 #pragma warning disable BL0005 // Set parameter outside component
 
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
 using System.Globalization;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Reflection;
+using AngleSharp.Css.Dom;
 using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
 using Bunit;
+using Bunit.Rendering;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Components;
@@ -612,6 +614,8 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("input")[0].IsChecked().Should().BeFalse(because: "select all checkbox should reflect 'not all selected' state");
             dataGrid.FindAll("tfoot input")[0].IsChecked().Should().BeFalse(because: "select all checkbox should reflect 'not all selected' state");
 
+            // ClearFiltersAsync() has cleared the value, so it needs to be set again
+            twoBFilter.Value = "B";
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(twoBFilter));
             dataGrid.FindAll("input[type=checkbox]")[0].IsChecked().Should().BeTrue(because: "select all checkbox should reflect 'all selected' state");
             dataGrid.FindAll("tfoot input[type=checkbox]")[0].IsChecked().Should().BeTrue(because: "select all checkbox should reflect 'all selected' state");
@@ -993,6 +997,19 @@ namespace MudBlazor.UnitTests.Components
             //if no crash occurs, we know the datagrid is properly filtering out the GetOnly property when calling set
         }
 
+        [Test(Description = "Checks if there is no NRE exception when nested property has a null value somewhere in the middle.")]
+        public async Task DataGridNoNullExceptionWhenNestedPropertyNullValue()
+        {
+            var comp = Context.RenderComponent<DataGridNestedNullPropertyTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridNestedNullPropertyTest.Model>>();
+            dataGrid.FindAll("td")[0].Html().Trim().Should().Be("Class A");
+            dataGrid.FindAll("td")[1].Html().Trim().Should().Be(string.Empty);
+
+            var alertTextFunc = () => MudAlert().Find("div.mud-alert-message");
+            IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
+            alertTextFunc.Should().Throw<ComponentNotFoundException>();
+        }
+
         [Test(Description = "Checks if clone strategy is working, if we used default one it would fail as STJ doesn't support abstract classes without additional configuration.")]
         public async Task DataGridDialogEditCloneStrategyTest1()
         {
@@ -1119,7 +1136,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [Obsolete]
         public async Task DataGridEventCallbacksTest()
         {
             var comp = Context.RenderComponent<DataGridEventCallbacksTest>();
@@ -1131,24 +1147,25 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.SelectedItemChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.CommittedItemChanges.HasDelegate.Should().Be(true);
             dataGrid.Instance.StartedEditingItem.HasDelegate.Should().Be(true);
-            dataGrid.Instance.CancelledEditingItem.HasDelegate.Should().Be(true);
-            dataGrid.Instance.CancelledEditingItem.Should().Be(dataGrid.Instance.CancelledEditingItem);
+            dataGrid.Instance.CanceledEditingItem.HasDelegate.Should().Be(true);
+            dataGrid.Instance.CanceledEditingItem.Should().Be(dataGrid.Instance.CanceledEditingItem);
 
             // we test to make sure that we can set and get the cancelCallback via the CancelledEditingItem property
-            var cancelCallback = dataGrid.Instance.CancelledEditingItem;
-            dataGrid.SetCallback(dg => dg.CancelledEditingItem, x => { return; });
-            dataGrid.Instance.CancelledEditingItem.Should().NotBe(cancelCallback);
-            dataGrid.Instance.CancelledEditingItem = cancelCallback;
-            dataGrid.Instance.CancelledEditingItem.Should().Be(cancelCallback);
-
+            var cancelCallback = dataGrid.Instance.CanceledEditingItem;
+            dataGrid.SetCallback(dg => dg.CanceledEditingItem, x => { });
+            dataGrid.Instance.CanceledEditingItem.Should().NotBe(cancelCallback);
+            dataGrid.Instance.CanceledEditingItem = cancelCallback;
+            dataGrid.Instance.CanceledEditingItem.Should().Be(cancelCallback);
 
             // Set some parameters manually so that they are covered.
-            var parameters = new List<ComponentParameter>();
-            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.MultiSelection), true));
-            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.ReadOnly), false));
-            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.EditMode), DataGridEditMode.Cell));
-            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.EditTrigger), DataGridEditTrigger.OnRowClick));
-            dataGrid.SetParametersAndRender(parameters.ToArray());
+            var parameters = new[]
+            {
+                ComponentParameter.CreateParameter(nameof(dataGrid.Instance.MultiSelection), true),
+                ComponentParameter.CreateParameter(nameof(dataGrid.Instance.ReadOnly), false),
+                ComponentParameter.CreateParameter(nameof(dataGrid.Instance.EditMode), DataGridEditMode.Cell),
+                ComponentParameter.CreateParameter(nameof(dataGrid.Instance.EditTrigger), DataGridEditTrigger.OnRowClick)
+            };
+            dataGrid.SetParametersAndRender(parameters);
 
             // Make sure that the callbacks have not been fired yet.
             comp.Instance.RowClicked.Should().Be(false);
@@ -3106,6 +3123,33 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridColumnPopupFilteringEmptyTest()
+        {
+            var comp = Context.RenderComponent<DataGridColumnPopupFilteringTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnPopupFilteringTest.Model>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter());
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.CloseFilters());
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task DataGridColumnPopupFilteringIntentionalEmptyTest()
+        {
+            var comp = Context.RenderComponent<DataGridColumnPopupFilteringTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnPopupFilteringTest.Model>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter());
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions[0].Operator = FilterOperator.String.Empty;
+
+            await comp.InvokeAsync(() => dataGrid.Instance.CloseFilters());
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+        }
+
+        [Test]
         public async Task DataGridFilterableFalseTest()
         {
             var comp = Context.RenderComponent<DataGridFilterableFalseTest>();
@@ -3174,6 +3218,32 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridCustomPropertyFilterTemplateApplyFilterTwiceTest()
+        {
+            var comp = Context.RenderComponent<DataGridCustomPropertyFilterTemplateTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCustomPropertyFilterTemplateTest.Model>>();
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4);
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
+
+            // Apply the filter the first time
+            comp.Find(".filter-button").Click();
+            var input = comp.FindComponent<MudTextField<string>>();
+            await comp.InvokeAsync(async () => await input.Instance.ValueChanged.InvokeAsync("Ira"));
+            comp.Find(".apply-filter-button").Click();
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+
+            // Apply the filter a second time
+            comp.Find(".filter-button").Click();
+            comp.Find(".apply-filter-button").Click();
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+        }
+
+        [Test]
         public async Task DataGridShowFilterIconTest()
         {
             var comp = Context.RenderComponent<DataGridCustomFilteringTest>();
@@ -3218,6 +3288,32 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridServerDataColumnFilterMenuApplyTwiceTest()
+        {
+            var comp = Context.RenderComponent<DataGridServerDataColumnFilterMenuTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataColumnFilterMenuTest.Model>>();
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
+
+            // Apply the filter the first time
+            comp.Find(".filter-button").Click();
+            var input = comp.FindComponent<MudTextField<string>>();
+            await comp.InvokeAsync(async () => await input.Instance.ValueChanged.InvokeAsync("Sam"));
+            comp.Find(".apply-filter-button").Click();
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+
+            // Apply the filter a second time
+            comp.Find(".filter-button").Click();
+            comp.Find(".apply-filter-button").Click();
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+        }
+
+        [Test]
         public async Task DataGridServerDataColumnFilterRowTest()
         {
             var comp = Context.RenderComponent<DataGridServerDataColumnFilterRowTest>();
@@ -3247,6 +3343,44 @@ namespace MudBlazor.UnitTests.Components
             Assert.DoesNotThrow(() => comp.FindComponent<MudSelect<Enum>>());
             Assert.DoesNotThrow(() => comp.FindComponent<MudSelect<bool?>>());
             Assert.DoesNotThrow(() => comp.FindComponent<MudDatePicker>());
+        }
+
+        [Test]
+        public async Task DataGridColumnFilterRowPropertyClearTest()
+        {
+            var comp = Context.RenderComponent<DataGridColumnFilterRowPropertyTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnFilterRowPropertyTest.Model>>();
+
+            var inputsBefore = dataGrid.FindAll("input").OfType<IHtmlInputElement>().Select(e => e.Value).ToList();
+            var hireDate = new DateTime(2011, 1, 2).ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern, CultureInfo.CurrentCulture);
+            inputsBefore.Should().BeEquivalentTo("Ira", "27", "Success", "True", hireDate, "00:00");
+
+            IRefreshableElementCollection<IElement> ClearButtons() => dataGrid.FindAll(".align-self-center");
+            ClearButtons().Should().HaveCount(5);
+            for (var index = 0; index < ClearButtons().Count; index++)
+            {
+                var clearButton = ClearButtons()[index];
+                clearButton.Click();
+            }
+
+            var inputsAfter = dataGrid.FindAll("input").OfType<IHtmlInputElement>().Select(e => e.Value).ToList();
+            inputsAfter.Should().HaveCount(6).And.AllBe("", because: "clicking the clear buttons should reset all filters");
+        }
+
+        [Test]
+        public async Task DataGridColumnFilterRowPropertyClearAllTest()
+        {
+            var comp = Context.RenderComponent<DataGridColumnFilterRowPropertyTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnFilterRowPropertyTest.Model>>();
+
+            var inputsBefore = dataGrid.FindAll("input").OfType<IHtmlInputElement>().Select(e => e.Value).ToList();
+            var hireDate = new DateTime(2011, 1, 2).ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern, CultureInfo.CurrentCulture);
+            inputsBefore.Should().BeEquivalentTo("Ira", "27", "Success", "True", hireDate, "00:00");
+
+            dataGrid.Find(".clear-all-filters").Click();
+
+            var inputsAfter = dataGrid.FindAll("input").OfType<IHtmlInputElement>().Select(e => e.Value).ToList();
+            inputsAfter.Should().HaveCount(6).And.AllBe("", because: "clicking the clear button should reset all filters");
         }
 
         [Test]
@@ -4335,6 +4469,72 @@ namespace MudBlazor.UnitTests.Components
             cells[25].TextContent.Should().Be("Potassium"); cells[26].TextContent.Should().Be("19");
             cells[27].TextContent.Should().Be("Number: 20");
             cells[28].TextContent.Should().Be("Calcium"); cells[29].TextContent.Should().Be("20");
+        }
+
+        /// <summary>
+        /// Reproduce the bug from https://github.com/MudBlazor/MudBlazor/issues/9585
+        /// When a column is hiden by the menu and the precedent column is resized, then the app crash
+        /// </summary>
+        [Test]
+        public async Task DataGrid_ResizeColumn_WhenNeighboringColumnIsHidden()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<DataGridHideAndResizeTest>();
+            var dgComp = comp.FindComponent<MudDataGrid<DataGridHideAndResizeTest.Model>>();
+
+            // Act : Hide the middle column and resize the first column
+
+            // Open column the second column header menu
+            var columnMenu = comp.FindAll("th .mud-menu button").ElementAt(1);
+            columnMenu.Click();
+
+            // Click on the menu item 'Hide'
+            comp.WaitForAssertion(() => comp.FindAll(".mud-list-item").ElementAt(1));
+            var hideMenuItem = comp.FindAll(".mud-list-item").ElementAt(1);
+            hideMenuItem.Click();
+
+            // Mock mudElementRef.getBoundingClientRect for DataGrid and visible columns
+            var gridElement = (ElementReference)dgComp.Instance.GetType()
+                .GetField("_gridElement", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(dgComp.Instance)!;
+            Context.JSInterop
+              .Setup<Interop.BoundingClientRect>("mudElementRef.getBoundingClientRect", gridElement)
+              .SetResult(new Interop.BoundingClientRect { Width = 50 });
+            var colComps = comp.FindComponents<HeaderCell<DataGridHideAndResizeTest.Model>>();
+            foreach (var colComp in colComps)
+            {
+                var col = colComp.Instance;
+                if (!col.Column.HiddenState.Value)
+                {
+                    var headerElement = (ElementReference)col.GetType()
+                        .GetField("_headerElement", BindingFlags.NonPublic | BindingFlags.Instance)!
+                        .GetValue(col)!;
+                    Context.JSInterop
+                        .Setup<Interop.BoundingClientRect>("mudElementRef.getBoundingClientRect", headerElement)
+                        .SetResult(new Interop.BoundingClientRect { Width = 50 });
+                }
+            }
+
+            // Mouse click down
+            var resizer = comp.FindAll(".mud-resizer").ElementAt(0);
+            await comp.InvokeAsync(async () => resizer.PointerDown());
+
+            // Mouse move and release
+            var resizeService = dgComp.Instance.ResizeService;
+            var resizeServiceType = resizeService.GetType();
+            var eventListener = (EventListener)resizeServiceType
+                .GetField("_eventListener", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(resizeService);
+            var upEventId = (Guid)resizeServiceType
+                .GetField("_pointerUpSubscriptionId", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(resizeService)!;
+            await comp.InvokeAsync(async () => await eventListener!.OnEventOccur(upEventId, """{"ClientX":-10}"""));
+
+            // Assert
+
+            comp.FindAll("th").Count.Should().Be(2, "Two columns are displayed");
+            comp.Find("th").GetStyle().Should().Contain(cssProp => cssProp.Name == "width", "The first column is resized");
         }
 
         [Test]

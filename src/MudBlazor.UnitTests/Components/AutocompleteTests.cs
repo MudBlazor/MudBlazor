@@ -15,6 +15,7 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
@@ -94,6 +95,24 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<AutocompleteTest3>();
             var autocomplete = comp.FindComponent<MudAutocomplete<AutocompleteTest3.State>>().Instance;
             autocomplete.Text.Should().Be("Assam");
+        }
+
+        /// <summary>
+        /// The autocomplete should stop loading data when it is disposed
+        /// </summary>
+        [Test]
+        public async Task AutocompleteCancelDisposeTest()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest8>();
+            var autocompleteContainerComp = comp.FindComponent<AutoCompleteContainer>();
+            var autocompleteComp = autocompleteContainerComp.FindComponent<MudAutocomplete<string>>();
+            autocompleteComp.SetParam(a => a.Text, "Alabama");
+            await Task.Delay(500);
+            comp.Instance.mustBeShown = false;
+            await Task.Delay(500);
+            comp.Render();
+            await Task.Delay(500);
+            comp.Instance.HasBeenDisposed.Should().Be(true);
         }
 
         /// <summary>
@@ -1580,6 +1599,31 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.UserAttributes, new() { ["autocomplete"] = "on" }));
 
             comp.Find("input.mud-input-root").GetAttribute("autocomplete").Should().Be("on");
+        }
+
+        /// <summary>
+        /// https://github.com/MudBlazor/MudBlazor/issues/9495
+        /// With `ResetValueOnEmptyText`,
+        /// when the input text is cleared,
+        /// then the value is set to null and the search func is called
+        /// </summary>
+        [Test]
+        public void ResetValueOnEmptyText_WhenTextCleared_ThenSetNullAndTriggerSearch()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<AutocompleteResetValueOnEmptyText>();
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+
+            // Act
+
+            autocompletecomp.Find("input").Input("");
+
+            // Assert
+
+            autocomplete.Value.Should().Be(null);
+            comp.WaitForAssertion(() => comp.Instance.SearchCount.Should().Be(1));
         }
     }
 }

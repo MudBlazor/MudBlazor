@@ -26,17 +26,10 @@ namespace MudBlazor.UnitTests.Services
         {
             _runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
             _service = new EventListener(_runtimeMock.Object);
-#if NET7_0_OR_GREATER
             _expectedProperties = new[] {
-             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
-             "movementX", "movementY", "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
+                "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
+                "movementX", "movementY", "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
             };
-#else
-            _expectedProperties  = new[] {
-            "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
-            "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
-            };
-#endif
         }
 
         private bool ContainsEqual(IEnumerable<string> firstColl, IEnumerable<string> secondColl)

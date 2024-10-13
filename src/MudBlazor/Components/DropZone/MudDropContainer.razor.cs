@@ -223,24 +223,14 @@ namespace MudBlazor
         /// <summary>
         /// Gets the unique ID of the zone where the drag-and-drop started.
         /// </summary>
-        /// <remarks>
-        /// Use the <see cref="GetTransactionOrignZoneIdentifier()"/> method instead.
-        /// </remarks>
         /// <returns>The unique ID of the zone.</returns>
-        [Obsolete("Use the GetTransactionOrignZoneIdentifier method instead.  This will be removed in a future release.")]
-        public string GetTransactionOrignZoneIdentiifer() => GetTransactionOrignZoneIdentifier();
-
-        /// <summary>
-        /// Gets the unique ID of the zone where the drag-and-drop started.
-        /// </summary>
-        /// <returns>The unique ID of the zone.</returns>
-        public string GetTransactionOrignZoneIdentifier() => _transaction?.SourceZoneIdentifier ?? string.Empty;
+        public string GetTransactionOriginZoneIdentifier() => _transaction?.SourceZoneIdentifier ?? string.Empty;
 
         /// <summary>
         /// Gets the unique ID of the zone where the item is currently hovering.
         /// </summary>
         /// <returns>The unique ID of the zone.</returns>
-        public string GetTransactionCurrentZoneIdentiifer() => _transaction?.CurrentZone ?? string.Empty;
+        public string GetTransactionCurrentZoneIdentifier() => _transaction?.CurrentZone ?? string.Empty;
 
         /// <summary>
         /// Gets whether the item being dragged originated from the specified zone.
@@ -280,18 +270,6 @@ namespace MudBlazor
 
             return capturedTransaction.Index != capturedTransaction.SourceIndex;
         }
-
-        /// <summary>
-        /// Gets whether the specified zone is where the drag-and-drop transaction started.
-        /// </summary>
-        /// <param name="index">The index of the zone to find.</param>
-        /// <param name="identifier">The unique ID of the zone to fine.</param>
-        /// <remarks>
-        /// Use the <see cref="IsOrigin(int, string)"/> method instead.
-        /// </remarks>
-        /// <returns>When <c>true</c>, the zone is where the drag-and-drop transaction started.</returns>
-        [Obsolete("Use the IsOrigin method instead.  This will be removed in a future release.")]
-        public bool IsOrign(int index, string identifier) => IsOrigin(index, identifier);
 
         /// <summary>
         /// Gets whether the specified zone is where the drag-and-drop transaction started.

@@ -1362,6 +1362,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// The table should stop loading data when it is disposed
+        /// </summary>
+        [Test]
+        public async Task StopLoadingDataWhenDisposedTest()
+        {
+            var comp = Context.RenderComponent<TableServerSideDataTest7>();
+            var table = comp.FindComponent<MudTable<int>>();
+            table.Instance.Dispose();
+            await Task.Delay(2000);
+            var tds = comp.FindAll("td");
+            tds.Count.Should().Be(0);
+        }
+
+        /// <summary>
         /// The table should not render its NoContent fragment prior to loading server data
         /// </summary>
         [Test]
@@ -1891,14 +1905,14 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TableCustomEditButtonItemContextRenderTest>();
 
-            var buttons = comp.FindAll("button");
-            buttons[0].Click();
+            IRefreshableElementCollection<IElement> Buttons() => comp.FindAll("button");
+            Buttons()[0].Click();
             comp.Instance.LatestButtonClickItem.Should().Be("A");
 
-            buttons[1].Click();
+            Buttons()[1].Click();
             comp.Instance.LatestButtonClickItem.Should().Be("B");
 
-            buttons[2].Click();
+            Buttons()[2].Click();
             comp.Instance.LatestButtonClickItem.Should().Be("C");
         }
 

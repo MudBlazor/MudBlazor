@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -9,6 +6,13 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// An item within a <see cref="MudList{T}"/> component.
+    /// </summary>
+    /// <typeparam name="T">The type of item being listed.</typeparam>
+    /// <seealso cref="MudList{T}"/>
+    /// <seealso cref="MudListSubheader"/>
     public partial class MudListItem<T> : MudComponentBase, IDisposable
     {
         private bool _selected;
@@ -45,129 +49,172 @@ namespace MudBlazor
         private MudList<T>? TopLevelList => MudList?.TopLevelList;
 
         /// <summary>
-        /// The text to display
+        /// The text to display.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public string? Text { get; set; }
 
         /// <summary>
-        /// The secondary text to display
+        /// The secondary text displayed.
         /// </summary>
+        /// <remarks>
+        /// This text is displayed under <see cref="Text"/>, in a smaller size.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public string? SecondaryText { get; set; }
 
+        /// <summary>
+        /// The value associated with this item.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Selecting)]
         public T? Value { get; set; }
 
         /// <summary>
-        /// Add an Avatar or custom icon content here. When this is set, Icon will be ignored
+        /// The custom <see cref="MudAvatar" /> to display to the left of <see cref="Text"/>.
         /// </summary>
+        /// <remarks>
+        /// When a value is set, <see cref="Icon"/> is ignored.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Chip.Appearance)]
         public RenderFragment? AvatarContent { get; set; }
 
         /// <summary>
-        /// Link to a URL when clicked.
+        /// The URL to navigate to upon click.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.ClickAction)]
         public string? Href { get; set; }
 
         /// <summary>
-        /// The target attribute specifies where to open the link, if Href is specified.
-        /// Possible values: _blank | _self | _parent | _top | <i>framename</i>
+        /// The browser frame to open this link when <see cref="Href"/> is specified.
         /// </summary>
+        /// <remarks>
+        /// Possible values include <c>_blank</c>, <c>_self</c>, <c>_parent</c>, <c>_top</c>, or a <i>frame name</i>. <br/>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]
         public string? Target { get; set; }
 
         /// <summary>
-        /// If true in combination with <see cref="Href"/>, bypasses client-side routing 
-        /// and forces the browser to load the new page from the server, whether or not 
-        /// the URI would normally be handled by the client-side router.
-        /// <see cref="NavigationManager.NavigateTo(string, bool, bool)"/>
+        /// Causes a full page refresh when this list item is clicked and <see cref="Href"/> is set.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, bypasses client-side routing and forces the browser to load the 
+        /// new page from the server, whether or not the URI would normally be handled by the client-side router.
+        /// See: <see cref="NavigationManager.NavigateTo(string, bool, bool)"/>
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.ClickAction)]
         public bool ForceLoad { get; set; }
 
         /// <summary>
-        /// If true, will disable the list item if it has <see cref="OnClick"/>.
-        /// The value can be overridden by the parent list.
+        /// Prevents this list item from being clicked.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  This value can be overridden by <see cref="MudList{T}.Disabled"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
+        /// Shows a ripple effect when this item is clicked.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool Ripple { get; set; } = true;
 
         /// <summary>
-        /// Icon to use if set.
+        /// The icon to display for this list item.
         /// </summary>
+        /// <remarks>
+        /// When <see cref="AvatarContent"/> is set, this property is ignored.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public string? Icon { get; set; }
 
         /// <summary>
-        /// The color of the icon.
+        /// The color of the <see cref="Icon"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Inherit"/>.  When <see cref="AvatarContent"/> is set, this property is ignored.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public Color IconColor { get; set; } = Color.Inherit;
 
         /// <summary>
-        /// Sets the Icon Size.
+        /// The size of the <see cref="Icon"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Size.Medium"/>.  When <see cref="AvatarContent"/> is set, this property is ignored.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
-        /// The color of the ExpandLessIcon and ExpandMoreIcon. It supports the theme colors.
+        /// The color of the <see cref="ExpandLessIcon"/> and <see cref="ExpandMoreIcon"/> icons.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Expanding)]
         public Color ExpandIconColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// Custom expand less icon.
+        /// The icon displayed when <see cref="Expanded"/> is <c>true</c>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ExpandLess"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Expanding)]
         public string ExpandLessIcon { get; set; } = Icons.Material.Filled.ExpandLess;
 
         /// <summary>
-        /// Custom expand more icon.
+        /// The icon displayed when <see cref="Expanded"/> is <c>false</c>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ExpandMore"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Expanding)]
         public string ExpandMoreIcon { get; set; } = Icons.Material.Filled.ExpandMore;
 
         /// <summary>
-        /// If true, the List Sub-header will be indented.
+        /// Applies an indent to this list item.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool Inset { get; set; }
 
         /// <summary>
-        /// If true, compact vertical padding will be used.
+        /// Uses less vertical padding between items.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool? Dense { get; set; }
 
         /// <summary>
-        /// If true, left and right padding is added. Default is true
+        /// Applies left and right padding to all list items.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  Can be overridden by <see cref="MudList{T}.Gutters"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool Gutters { get; set; } = true;

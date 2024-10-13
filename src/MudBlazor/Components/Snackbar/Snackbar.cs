@@ -1,10 +1,9 @@
 ﻿//Copyright(c) Alessandro Ghidini.All rights reserved.
 //Changes and improvements Copyright (c) The MudBlazor Team.
 
-using System;
-using System.Threading;
 using MudBlazor.Components.Snackbar;
-using MudBlazor.Components.Snackbar.InternalComponents;
+
+#nullable enable
 
 namespace MudBlazor
 {
@@ -13,12 +12,12 @@ namespace MudBlazor
         private bool _paused = false;
         private bool _transitionCancellable = true;
         private bool _hideOnResume = false;
-        private Timer Timer { get; set; }
+        private Timer Timer { get; }
         internal SnackBarMessageState State { get; }
-        public string Message => SnackbarMessage.Text;
+        public string? Message => SnackbarMessage.Text;
         internal SnackbarMessage SnackbarMessage { get; }
-        public event Action<Snackbar> OnClose;
-        public event Action OnUpdate;
+        public event Action<Snackbar>? OnClose;
+        public event Action? OnUpdate;
         public Severity Severity => State.Options.Severity;
 
         internal Snackbar(SnackbarMessage message, SnackbarOptions options)
@@ -139,7 +138,7 @@ namespace MudBlazor
             }
         }
 
-        private void TimerElapsed(object _)
+        private void TimerElapsed(object? _)
         {
             // Let the transition be triggered after the pause is ended.
             if (_paused)
@@ -176,7 +175,7 @@ namespace MudBlazor
                 return false;
 
             State.Stopwatch.Restart();
-            Timer?.Change(duration, Timeout.Infinite);
+            Timer.Change(duration, Timeout.Infinite);
 
             return true;
         }
@@ -184,7 +183,7 @@ namespace MudBlazor
         private void StopTimer()
         {
             State.Stopwatch.Stop();
-            Timer?.Change(Timeout.Infinite, Timeout.Infinite);
+            Timer.Change(Timeout.Infinite, Timeout.Infinite);
         }
 
         public void Dispose()
@@ -200,10 +199,7 @@ namespace MudBlazor
 
             StopTimer();
 
-            var timer = Timer;
-            Timer = null;
-
-            timer?.Dispose();
+            Timer.Dispose();
         }
     }
 }

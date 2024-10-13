@@ -121,6 +121,9 @@ public partial class SectionContent
             {
                 var read = reader.ReadToEnd();
 
+                // Ensure the code uses spaces for identation regardless of the formatting within the source code.
+                read = read.Replace("\t", "    ");
+
                 if (!string.IsNullOrEmpty(HighLight))
                 {
                     if (HighLight.Contains(','))

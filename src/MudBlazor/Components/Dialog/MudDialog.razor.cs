@@ -101,6 +101,18 @@ namespace MudBlazor
         public EventCallback<MouseEventArgs> OnBackdropClick { get; set; }
 
         /// <summary>
+        /// Occurs when a key has been pressed down.
+        /// </summary>
+        [Parameter]
+        public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
+
+        /// <summary>
+        /// Occurs when a pressed key has been released.
+        /// </summary>
+        [Parameter]
+        public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
+
+        /// <summary>
         /// Adds padding to the sides of this dialog.
         /// </summary>
         /// <remarks>
@@ -214,9 +226,7 @@ namespace MudBlazor
 
             await _visibleState.SetValueAsync(true);
 
-            // ReSharper disable MethodHasAsyncOverload ignore for now
-            _reference = DialogService.Show<MudDialog>(title, parameters, options ?? Options);
-            // ReSharper restore MethodHasAsyncOverload
+            _reference = await DialogService.ShowAsync<MudDialog>(title, parameters, options ?? Options);
 
             // Do not await this!
             _reference.Result.ContinueWith(t =>

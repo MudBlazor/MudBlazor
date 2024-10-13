@@ -16,7 +16,7 @@ namespace MudBlazor
     public class GridState<T>
     {
         /// <summary>
-        /// The current page being displayed.
+        /// The current page being displayed. The page index is zero-based.
         /// </summary>
         public int Page { get; set; }
 

@@ -2,15 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections;
-#if NET8_0_OR_GREATER
 using System.Collections.Frozen;
-#endif
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State.Comparer;
 
@@ -28,11 +22,7 @@ internal class ParameterScopeContainer : IParameterScopeContainer
 {
     private readonly IParameterStatesReader _parameterStatesReader;
 
-#if NET8_0_OR_GREATER
     private readonly Lazy<FrozenDictionary<string, IParameterComponentLifeCycle>> _parameters;
-#else
-    private readonly Lazy<Dictionary<string, IParameterComponentLifeCycle>> _parameters;
-#endif
 
     /// <inheritdoc/>
     public bool IsLocked { get; private set; }
@@ -70,14 +60,9 @@ internal class ParameterScopeContainer : IParameterScopeContainer
     public ParameterScopeContainer(IParameterStatesReader parameterStatesReader)
     {
         _parameterStatesReader = parameterStatesReader;
-#if NET8_0_OR_GREATER
         _parameters = new Lazy<FrozenDictionary<string, IParameterComponentLifeCycle>>(ParametersFactory);
-#else
-        _parameters = new Lazy<Dictionary<string, IParameterComponentLifeCycle>>(ParametersFactory);
-#endif
     }
 
-#if NET8_0_OR_GREATER
     private FrozenDictionary<string, IParameterComponentLifeCycle> ParametersFactory()
     {
         IsLocked = true;
@@ -87,17 +72,6 @@ internal class ParameterScopeContainer : IParameterScopeContainer
 
         return dictionary;
     }
-#else
-    private Dictionary<string, IParameterComponentLifeCycle> ParametersFactory()
-    {
-        IsLocked = true;
-        var parameters = _parameterStatesReader.ReadParameters();
-        var dictionary = parameters.ToDictionary(parameter => parameter.Metadata.ParameterName, parameter => parameter);
-        _parameterStatesReader.Complete();
-
-        return dictionary;
-    }
-#endif
 
     /// <summary>
     /// Forces the attachment of the collection of <seealso cref="IParameterComponentLifeCycle"/> immediately and initializes the inner dictionary.
@@ -137,15 +111,9 @@ internal class ParameterScopeContainer : IParameterScopeContainer
     /// <param name="parameters">The ParameterView coming from Blazor's <see cref="ComponentBase.SetParametersAsync"/>.</param>
     public async Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
     {
-#if NET8_0_OR_GREATER
-        var parametersHandlerShouldFire = _parameters.Value.Values
-            .Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters))
-            .ToFrozenSet(ParameterHandlerUniquenessComparer.Default);
-#else
         var parametersHandlerShouldFire = _parameters.Value.Values
             .Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters))
             .ToHashSet(ParameterHandlerUniquenessComparer.Default);
-#endif
 
         await baseSetParametersAsync(parameters);
 

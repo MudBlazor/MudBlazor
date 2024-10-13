@@ -88,7 +88,7 @@ public partial class MudText : MudComponentBase
     /// <remarks>
     /// <para>
     /// This can be used to
-    /// <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element#text_content">
+    /// <see href="https://developer.mozilla.org/docs/Web/HTML/Element#text_content">
     /// specify the type of content for accessibility and SEO more accurately
     /// </see>.
     /// </para>
@@ -98,7 +98,7 @@ public partial class MudText : MudComponentBase
     [Category(CategoryTypes.Text.Behavior)]
     public string? HtmlTag { get; set; }
 
-    private string GetActualTag() => HtmlTag ?? GetTagName(Typo);
+    private string GetActualTag() => string.IsNullOrEmpty(HtmlTag) ? GetTagName(Typo) : HtmlTag;
 
     private static string GetTagName(Typo typo) => typo switch
     {
