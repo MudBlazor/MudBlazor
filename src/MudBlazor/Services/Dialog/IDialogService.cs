@@ -34,6 +34,7 @@ namespace MudBlazor
         /// </summary>
         /// <typeparam name="TComponent">The type of dialog to display.</typeparam>
         /// <returns>A reference to the dialog.</returns>
+        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
         IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>() where TComponent : IComponent;
 
         /// <summary>
@@ -42,6 +43,7 @@ namespace MudBlazor
         /// <typeparam name="TComponent">The type of dialog to display.</typeparam>
         /// <param name="title">The text at the top of the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
+        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
         IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string? title) where TComponent : IComponent;
 
         /// <summary>
@@ -51,6 +53,7 @@ namespace MudBlazor
         /// <param name="title">The text at the top of the dialog.</param>
         /// <param name="options">The custom display options for the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
+        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
         IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string? title, DialogOptions options) where TComponent : IComponent;
 
         /// <summary>
@@ -60,6 +63,7 @@ namespace MudBlazor
         /// <param name="title">The text at the top of the dialog.</param>
         /// <param name="parameters">The custom parameters to set within the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
+        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
         IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string? title, DialogParameters parameters) where TComponent : IComponent;
 
         /// <summary>
@@ -70,6 +74,7 @@ namespace MudBlazor
         /// <param name="parameters">The custom parameters to set within the dialog.</param>
         /// <param name="options">The custom display options for the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
+        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
         IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string? title, DialogParameters parameters, DialogOptions? options) where TComponent : IComponent;
 
         /// <summary>
@@ -77,6 +82,7 @@ namespace MudBlazor
         /// </summary>
         /// <param name="component">The type of dialog to display.</param>
         /// <returns>A reference to the dialog.</returns>
+        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
         IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component);
 
         /// <summary>
@@ -85,6 +91,7 @@ namespace MudBlazor
         /// <param name="component">The type of dialog to display.</param>
         /// <param name="title">The text at the top of the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
+        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
         IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title);
 
         /// <summary>
@@ -94,6 +101,7 @@ namespace MudBlazor
         /// <param name="title">The text at the top of the dialog.</param>
         /// <param name="options">The custom display options for the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
+        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
         IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title, DialogOptions options);
 
         /// <summary>
@@ -103,6 +111,7 @@ namespace MudBlazor
         /// <param name="title">The text at the top of the dialog.</param>
         /// <param name="parameters">The custom parameters to set within the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
+        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
         IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title, DialogParameters parameters);
 
         /// <summary>
@@ -113,6 +122,7 @@ namespace MudBlazor
         /// <param name="parameters">The custom parameters to set within the dialog.</param>
         /// <param name="options">The custom display options for the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
+        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
         IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title, DialogParameters parameters, DialogOptions options);
 
         /// <summary>

@@ -226,9 +226,7 @@ namespace MudBlazor
 
             await _visibleState.SetValueAsync(true);
 
-            // ReSharper disable MethodHasAsyncOverload ignore for now
-            _reference = DialogService.Show<MudDialog>(title, parameters, options ?? Options);
-            // ReSharper restore MethodHasAsyncOverload
+            _reference = await DialogService.ShowAsync<MudDialog>(title, parameters, options ?? Options);
 
             // Do not await this!
             _reference.Result.ContinueWith(t =>
