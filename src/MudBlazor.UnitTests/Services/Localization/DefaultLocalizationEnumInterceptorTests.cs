@@ -49,13 +49,13 @@ public class DefaultLocalizationEnumInterceptorTests
     public void Handle_ShouldReturnLocalizedDisplayName_WhenDisplayAttributeIsPresent_AndLanguageResourceNotFound()
     {
         // Arrange
-        var enumValue = TestEnum.ValueWithDisplay;
+        const TestEnum EnumValue = TestEnum.ValueWithDisplay;
         var localizationInterceptorMock = new Mock<ILocalizationInterceptor>();
         var enumInterceptor = new DefaultLocalizationEnumInterceptor(localizationInterceptorMock.Object);
         localizationInterceptorMock.Setup(i => i.Handle(It.IsAny<string>())).Returns(new LocalizedString("xxx", "random", resourceNotFound: true));
 
         // Act
-        var result = enumInterceptor.Handle(enumValue);
+        var result = enumInterceptor.Handle(EnumValue);
 
         // Assert
         result.Should().Be("Enum value is localized");
@@ -65,13 +65,13 @@ public class DefaultLocalizationEnumInterceptorTests
     public void Handle_ShouldLanguageResourceLocalization_WhenDisplayAttributeIsPresent_AndLanguageResourceFound()
     {
         // Arrange
-        var enumValue = TestEnum.ValueWithDisplayLanguageResource;
+        const TestEnum EnumValue = TestEnum.ValueWithDisplayLanguageResource;
         var localizationInterceptorMock = new Mock<ILocalizationInterceptor>();
         var enumInterceptor = new DefaultLocalizationEnumInterceptor(localizationInterceptorMock.Object);
         localizationInterceptorMock.Setup(i => i.Handle(LanguageResource.MudDataGrid_IsEmpty)).Returns(new LocalizedString(LanguageResource.MudDataGrid_IsEmpty, "Is Empty", resourceNotFound: false));
 
         // Act
-        var result = enumInterceptor.Handle(enumValue);
+        var result = enumInterceptor.Handle(EnumValue);
 
         // Assert
         result.Should().Be("Is Empty");
@@ -81,12 +81,12 @@ public class DefaultLocalizationEnumInterceptorTests
     public void Handle_ShouldReturnEnumName_WhenDisplayAttributeIsNotPresent()
     {
         // Arrange
-        var enumValue = TestEnum.ValueWithoutDisplay;
+        const TestEnum EnumValue = TestEnum.ValueWithoutDisplay;
         var localizationInterceptorMock = new Mock<ILocalizationInterceptor>();
         var enumInterceptor = new DefaultLocalizationEnumInterceptor(localizationInterceptorMock.Object);
 
         // Act
-        var result = enumInterceptor.Handle(enumValue);
+        var result = enumInterceptor.Handle(EnumValue);
 
         // Assert
         result.Should().Be(nameof(TestEnum.ValueWithoutDisplay));
@@ -96,12 +96,12 @@ public class DefaultLocalizationEnumInterceptorTests
     public void Handle_ShouldReturnEnumName_WhenDisplayAttributeNameIsNull()
     {
         // Arrange
-        var enumValue = TestEnum.ValueWithNullDisplayName;
+        const TestEnum EnumValue = TestEnum.ValueWithNullDisplayName;
         var localizationInterceptorMock = new Mock<ILocalizationInterceptor>();
         var enumInterceptor = new DefaultLocalizationEnumInterceptor(localizationInterceptorMock.Object);
 
         // Act
-        var result = enumInterceptor.Handle(enumValue);
+        var result = enumInterceptor.Handle(EnumValue);
 
         // Assert
         result.Should().Be(nameof(TestEnum.ValueWithNullDisplayName));
@@ -111,12 +111,12 @@ public class DefaultLocalizationEnumInterceptorTests
     public void Handle_ShouldReturnEmpty_WhenDisplayAttributeNameIsEmpty()
     {
         // Arrange
-        var enumValue = TestEnum.ValueWithEmptyDisplayName;
+        const TestEnum EnumValue = TestEnum.ValueWithEmptyDisplayName;
         var localizationInterceptorMock = new Mock<ILocalizationInterceptor>();
         var enumInterceptor = new DefaultLocalizationEnumInterceptor(localizationInterceptorMock.Object);
 
         // Act
-        var result = enumInterceptor.Handle(enumValue);
+        var result = enumInterceptor.Handle(EnumValue);
 
         // Assert
         result.Should().BeEmpty();
@@ -126,12 +126,12 @@ public class DefaultLocalizationEnumInterceptorTests
     public void Handle_ShouldReturnEmpty_WhenEnumNotExist()
     {
         // Arrange
-        var enumValue = (TestEnum)999;
+        const TestEnum EnumValue = (TestEnum)999;
         var localizationInterceptorMock = new Mock<ILocalizationInterceptor>();
         var enumInterceptor = new DefaultLocalizationEnumInterceptor(localizationInterceptorMock.Object);
 
         // Act
-        var result = enumInterceptor.Handle(enumValue);
+        var result = enumInterceptor.Handle(EnumValue);
 
         // Assert
         result.Should().BeEmpty();
