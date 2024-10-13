@@ -1,5 +1,4 @@
 ﻿@namespace MudBlazor.Charts
-@using MudBlazor.Components.Chart.Models
 @using System.Globalization;
 @inherits MudTimeSeriesChartBase
 
@@ -49,7 +48,7 @@
 
             <path class="mud-chart-line" @onclick="() => SelectedIndex = chartLine.Index" fill="none" stroke="@colour" stroke-opacity="@series.StrokeOpacity" stroke-width="@MudChartParent?.ChartOptions.LineStrokeWidth" d="@chartLine.Data"></path>
 
-            if (series.Type == TimeSeriesDiplayType.Area)
+            if (series.Type == TimeSeriesDisplayType.Area)
             {
                 var chartArea = _chartAreas[chartLine.Index];
                 <path class="mud-chart-line" @onclick="() => SelectedIndex = chartLine.Index" fill="@colour" fill-opacity="@series.FillOpacity" d="@chartArea.Data"></path>

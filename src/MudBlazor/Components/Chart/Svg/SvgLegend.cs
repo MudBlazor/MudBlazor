@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components;
 
 #nullable enable
-namespace MudBlazor.Charts.SVG.Models
+namespace MudBlazor
 {
     /// <summary>
     /// Represents a series of series labels as an SVG path.

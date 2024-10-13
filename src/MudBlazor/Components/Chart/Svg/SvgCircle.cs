@@ -1,13 +1,13 @@
 ﻿using System.Diagnostics;
 
 #nullable enable
-namespace MudBlazor.Charts.SVG.Models
+namespace MudBlazor
 {
     /// <summary>
     /// Represents a circular shape drawn as an SVG path.
     /// </summary>
     [DebuggerDisplay("{Index} = {CX},{CY}, R={Radius}")]
-    public class SvgCircle
+    internal class SvgCircle
     {
         /// <summary>
         /// The position of this path within a list.

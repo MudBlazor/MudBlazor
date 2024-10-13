@@ -5,12 +5,11 @@
         <Description>
             <DocsPageSection>
                 <MudAlert Class="mt-4" Severity="Severity.Warning">
-                    <b>Warning experimental component!</b>
-                </MudAlert>
-                <MudAlert Class="mt-4" Severity="Severity.Error">
-                    This component is still under development and breaking changes may occur even in minor patch releases.<br />
-                    Please <b>ONLY</b> use this component if you are prepared to update your code and adapt to possible API changes.<br />
-                    There might also be changes to the look and feel or to the CSS classes and variable names.
+                    <b>Warning:</b> This component is currently under development.
+                    <br />
+                    <br />
+                    Breaking changes such as updates to the API, look and feel, or CSS classes, may occur even in minor patch releases.
+                    Please use it only if you are prepared to adapt your code accordingly and provide feedback or contribute code.
                 </MudAlert>
             </DocsPageSection>
         </Description>
@@ -20,8 +19,9 @@
 
         <DocsPageSection>
             <SectionHeader Title="Horizontal stepper">
-                <Description>Stepper needs <CodeInline>@nameof(MudStep)</CodeInline> in its child content. Each step can have <CodeInline>@nameof(MudStep.Title)</CodeInline> and <CodeInline>@nameof(MudStep.SecondaryText)</CodeInline> 
-                    so the component can be displayed properly. The reset button is only shown if <CodeInline>@nameof(MudStepper.ShowResetButton)</CodeInline> is set. You might not need it in a real world example but in the docs it is important to be able 
+                <Description>
+                    Stepper needs <CodeInline>@nameof(MudStep)</CodeInline> in its child content. Each step can have <CodeInline>@nameof(MudStep.Title)</CodeInline> and <CodeInline>@nameof(MudStep.SecondaryText)</CodeInline>
+                    so the component can be displayed properly. The reset button is only shown if <CodeInline>@nameof(MudStepper.ShowResetButton)</CodeInline> is set. You might not need it in a real world example but in the docs it is important to be able
                     to reset the stepper so we enabled it everywhere.
                 </Description>
             </SectionHeader>
@@ -40,7 +40,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Centered Labels">
+            <SectionHeader Title="Centered labels">
                 <Description><CodeInline>@nameof(MudStepper.CenterLabels)</CodeInline> centers the labels in the navigation bar below the circle. It affects only horizontal steppers.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(StepperBasicAlternativeLabelExample)" ShowCode="false">
@@ -67,6 +67,24 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(StepperStepBindingExample)" ShowCode="false">
                 <StepperStepBindingExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Controlling navigation">
+                <Description>
+                    If you want to restrict navigation depending on certain conditions, i.e. completion of a form etc. you can do this using the <CodeInline>@nameof(MudStepper.OnPreviewInteraction)</CodeInline> event.<br />
+                    <br />
+                    When the user clicks the Next-button, the stepper will try to set the current step completed when the user clicks previous or any other step header, the stepper will try to activate that step. Depending on the user action
+                    the <CodeInline>@nameof(StepperInteractionEventArgs).@nameof(StepperInteractionEventArgs.Action)</CodeInline> will be either
+                    <CodeInline>@nameof(StepAction.Complete)</CodeInline> or <CodeInline>@nameof(StepAction.Activate)</CodeInline>. The <CodeInline>@nameof(StepperInteractionEventArgs).@nameof(StepperInteractionEventArgs.StepIndex)</CodeInline>
+                    indicates which step the user wants to complete or activate (navigate to). By setting the
+                    <CodeInline>@nameof(StepperInteractionEventArgs).@nameof(StepperInteractionEventArgs.Cancel)</CodeInline> property you can selectively prevent user actions and thus you have total control over which steps can be navigated to and
+                    which can't. In this example we also open a message box to notify the user about the required actions to be able to take the desired action.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(StepperControlledNavigationExample)" ShowCode="false">
+                <StepperControlledNavigationExample />
             </SectionContent>
         </DocsPageSection>
 

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
@@ -8,7 +6,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudNavLink : MudBaseSelectItem, IHandleEvent
+    public partial class MudNavLink : MudBaseSelectItem
     {
         protected string Classname =>
             new CssBuilder("mud-nav-item")
@@ -82,13 +80,5 @@ namespace MudBlazor
 
             return Task.CompletedTask;
         }
-
-        /// <inheritdoc/>
-        /// <remarks>
-        /// See: https://github.com/MudBlazor/MudBlazor/issues/8365
-        /// <para/>
-        /// Since <see cref="MudLink"/> implements only single <see cref="EventCallback"/> <see cref="MudBaseSelectItem.OnClick"/> this is safe to disable globally within the component.
-        /// </remarks>
-        Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg) => callback.InvokeAsync(arg);
     }
 }

@@ -1,11 +1,7 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.Docs.Examples;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Charts;
 using NUnit.Framework;
 
