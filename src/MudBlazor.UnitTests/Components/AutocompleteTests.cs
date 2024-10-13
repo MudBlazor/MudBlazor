@@ -892,11 +892,12 @@ namespace MudBlazor.UnitTests.Components
                 await comp.InvokeAsync(() => autocompletecomp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
                 comp.WaitForAssertion(() => autocomplete.Open.Should().BeTrue());
                 await comp.InvokeAsync(() => autocomplete.OnEnterKeyAsync());
-                autocompletecomp.Find("input").Input("abc");
+                await autocompletecomp.Find("input").InputAsync(new ChangeEventArgs() { Value = "abc" });
                 await comp.InvokeAsync(async () => await autocomplete.SelectAsync());
                 await comp.InvokeAsync(async () => await autocomplete.SelectRangeAsync(0, 1));
-                autocompletecomp.Find("input").Input("");
-                await comp.InvokeAsync(() => autocomplete.ToggleMenuAsync());
+                comp.WaitForAssertion(() => autocomplete.Open.Should().BeTrue());
+
+                await autocompletecomp.Find("input").InputAsync(new ChangeEventArgs() { Value = "" });
                 comp.WaitForAssertion(() => autocomplete.Open.Should().BeTrue());
 
                 await comp.InvokeAsync(() => autocomplete.OnEnterKeyAsync());
