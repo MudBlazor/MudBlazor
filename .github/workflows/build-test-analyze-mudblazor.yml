@@ -1,18 +1,24 @@
-name: sonar
+name: build-test-analyze-mudblazor
 
 on:
   workflow_dispatch:
   push:
-    branches:
-      - dev
+  pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  build-test:
+    name: Build and test mudblazor projects
+    uses: MudBlazor/Workflows/.github/workflows/template-build-test.yml@main
+    with:
+      check-eslint: 'MudBlazor/TScripts'
+
   analyze:
     if: ${{ github.repository_owner == 'MudBlazor' }}
+    needs: build-test
     name: Analyze solution
     uses: MudBlazor/Workflows/.github/workflows/template-sonar.yml@main
     secrets: inherit
