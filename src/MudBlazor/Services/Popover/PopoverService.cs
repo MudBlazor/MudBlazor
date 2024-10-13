@@ -2,15 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using MudBlazor.Interop;
-using MudBlazor.Utilities.AsyncKeyedLock;
 using MudBlazor.Utilities.Background.Batch;
 using MudBlazor.Utilities.ObserverManager;
 
@@ -25,7 +20,6 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     private bool _disposed;
     private bool _isInitializing;
     private readonly PopoverJsInterop _popoverJsInterop;
-    private readonly AsyncKeyedLocker<Guid> _popoverSemaphore;
     private readonly Dictionary<Guid, MudPopoverHolder> _holders;
     private readonly CancellationTokenSource _cancellationTokenSource;
     private readonly BatchPeriodicQueue<MudPopoverHolder> _batchExecutor;
@@ -65,11 +59,6 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     public PopoverService(ILogger<PopoverService> logger, IJSRuntime jsInterop, IOptions<PopoverOptions>? options = null)
     {
         PopoverOptions = options?.Value ?? new PopoverOptions();
-        _popoverSemaphore = new AsyncKeyedLocker<Guid>(lockOptions =>
-        {
-            lockOptions.PoolSize = PopoverOptions.PoolSize;
-            lockOptions.PoolInitialFill = PopoverOptions.PoolInitialFill;
-        });
         _holders = new Dictionary<Guid, MudPopoverHolder>();
         _cancellationTokenSource = new CancellationTokenSource();
         _popoverJsInterop = new PopoverJsInterop(jsInterop);
@@ -158,20 +147,17 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         // Do not put after the semaphore as it can cause deadlock
         await InitializePopoverIfNeededAsync(holder);
 
-        using (await _popoverSemaphore.LockAsync(popover.Id, _cancellationTokenSource.Token))
-        {
-            holder
-                .SetFragment(popover.ChildContent)
-                .SetClass(popover.PopoverClass)
-                .SetStyle(popover.PopoverStyles)
-                .SetShowContent(popover.Open)
-                .SetTag(popover.Tag)
-                .SetUserAttributes(popover.UserAttributes);
+        holder
+            .SetFragment(popover.ChildContent)
+            .SetClass(popover.PopoverClass)
+            .SetStyle(popover.PopoverStyles)
+            .SetShowContent(popover.Open)
+            .SetTag(popover.Tag)
+            .SetUserAttributes(popover.UserAttributes);
 
-            await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotificationAsync(new PopoverHolderContainer(PopoverHolderOperation.Update, new[] { holder }), _cancellationTokenSource.Token));
+        await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotificationAsync(new PopoverHolderContainer(PopoverHolderOperation.Update, new[] { holder }), _cancellationTokenSource.Token));
 
-            return true;
-        }
+        return true;
     }
 
     /// <inheritdoc />
@@ -224,8 +210,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         if (!_disposed)
         {
             _disposed = true;
-            // ReSharper disable once MethodHasAsyncOverload - not available in .NET6 & .NET7
-            _cancellationTokenSource.Cancel();
+            await _cancellationTokenSource.CancelAsync();
             await DestroyPopoversQuick();
 
             _batchExecutor.Dispose();
@@ -233,14 +218,8 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
             // In case someone has custom implementation and didn't unsubscribe
             _observerManager.Clear();
 
-            _popoverSemaphore.Dispose();
-
-            // https://github.com/MudBlazor/MudBlazor/pull/5367#issuecomment-1258649968
-            // Fixed in NET8
-            // Do not send CancellationToken as it was cancelled.
-#pragma warning disable CA2012 // Use ValueTasks correctly
-            _ = _popoverJsInterop.Dispose();
-#pragma warning restore CA2012 // Use ValueTasks correctly
+            // Do not send our CancellationTokenSource as it was cancelled.
+            await _popoverJsInterop.Dispose(CancellationToken.None);
 
             _cancellationTokenSource.Dispose();
         }
@@ -292,45 +271,38 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
                 return;
             }
 
-            using (await _popoverSemaphore.LockAsync(holder.Id, _cancellationTokenSource.Token))
+            try
             {
-                try
+                holder.IsDetached = true;
+                if (holder.IsConnected)
                 {
-                    holder.IsDetached = true;
-                    if (holder.IsConnected)
-                    {
-                        await _popoverJsInterop.Disconnect(holder.Id, _cancellationTokenSource.Token);
-                    }
+                    await _popoverJsInterop.Disconnect(holder.Id, _cancellationTokenSource.Token);
                 }
-                finally
-                {
-                    holder.IsConnected = false;
-                }
+            }
+            finally
+            {
+                holder.IsConnected = false;
             }
         }
     }
 
     private async Task InitializePopoverIfNeededAsync(MudPopoverHolder holder)
     {
-        if (holder.IsConnected)
+        if (_disposed || holder.IsConnected || holder.IsDetached)
         {
             return;
         }
 
-        using (await _popoverSemaphore.LockAsync(holder.Id, _cancellationTokenSource.Token))
-        {
-            // Double-check if IsConnected has been completed by another thread.
-            if (holder.IsConnected || holder.IsDetached)
-            {
-                return;
-            }
-
-            holder.IsConnected = await _popoverJsInterop.Connect(holder.Id, _cancellationTokenSource.Token);
-        }
+        holder.IsConnected = await _popoverJsInterop.Connect(holder.Id, _cancellationTokenSource.Token);
     }
 
     private async Task InitializeServiceIfNeededAsync()
     {
+        if (_disposed)
+        {
+            return;
+        }
+
         if (IsInitialized)
         {
             return;

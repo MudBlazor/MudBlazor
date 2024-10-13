@@ -1,0 +1,57 @@
+﻿@namespace MudBlazor.Docs.Examples
+<MudPaper Style="width: 800px">
+    <MudStepper @bind-ActiveIndex="_index" CompletedStepColor="Color.Success" CurrentStepColor="Color.Primary" NavClass="border-b mud-border-lines-default" StepClass="pt-4" ShowResetButton>
+        <TitleTemplate>@*This empty template prevents rendering the title*@</TitleTemplate>
+        <ConnectorTemplate Context="step">
+            <div class="mud-stepper-nav-connector">
+                @{
+                    int value = step.Completed ? 100 : 0;
+                    <MudProgressLinear Indeterminate="@(step.IsActive)" Striped Value="value" Min="0" Max="100" Color="Color.Success" Style="height: 2px; background-color: #d4ddeb; border-radius: 2px;" />
+                }
+            </div>
+        </ConnectorTemplate>
+        <LabelTemplate>
+            @if (context.IsActive) {
+                <MudIcon Icon="@Icons.Material.Filled.AirplanemodeActive" Style="rotate: 90deg;" Color="context.Completed ? Color.Success : Color.Primary"></MudIcon>
+            }
+            else if (context.Completed) {
+                <div style="height: 10px; width:10px; background-color: var(--mud-palette-success); border-radius: 50%;"></div>
+            }
+            else {
+                <div style="height: 10px; width:10px; background-color: #d4ddeb; border-radius: 50%;"></div>
+            }
+        </LabelTemplate>
+        <ChildContent>
+            <MudStep Title="Verify passenger data">Check-in Step 1: Verify passenger data</MudStep>
+            <MudStep Title="Upgrade to first class" Skippable="true">Check-in Step 2: Upgrade to first class (optional)</MudStep>
+            <MudStep Title="Select seat">Check-in Step 3: Select seat</MudStep>
+            <MudStep Title="Complete check-in" @bind-Completed="_completed">Check-in Final Step: Complete check-in</MudStep>
+        </ChildContent>
+        <CompletedContent>
+            <MudStack Row Class="ma-3">
+                <MudIcon Icon="@Icons.Material.Filled.Done" Color="Color.Success"/>
+                <MudText>
+                    You are checked-in, your ticket will be sent by email.
+                </MudText>
+            </MudStack>
+        </CompletedContent>
+        <ActionContent Context="stepper">
+            <MudButton OnClick="@(() => stepper.ResetAsync())">Reset</MudButton>
+            @if (!_completed) {
+                <MudIconButton OnClick="@(() => stepper.PreviousStepAsync())" Icon="@Icons.Material.Filled.ArrowBack" Color="Color.Primary" Disabled="@(_index <= 0)" />
+                <MudSpacer />
+                @if (stepper.Steps[_index].Skippable == true)
+                {
+                    <MudIconButton OnClick="@(() => stepper.SkipCurrentStepAsync())" Icon="@stepper.SkipButtonIcon" Color="Color.Primary" />
+                }
+                <MudIconButton OnClick="@(() => stepper.NextStepAsync())" Icon="@Icons.Material.Filled.ArrowForward" Color="Color.Primary" />
+            }
+        </ActionContent>
+    </MudStepper>
+</MudPaper>
+
+
+@code {
+    private int _index;
+    private bool _completed;
+}

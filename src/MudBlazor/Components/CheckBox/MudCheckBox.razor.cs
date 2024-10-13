@@ -30,8 +30,10 @@ namespace MudBlazor
             .Build();
 
         protected string CheckBoxClassname => new CssBuilder("mud-button-root mud-icon-button")
-            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor == null || (UncheckedColor != null && BoolValue == true))
-            .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && BoolValue == false)
+            .AddClass($"mud-{Color.ToDescriptionString()}-text", !GetDisabledState() && UncheckedColor == null || (UncheckedColor != null && BoolValue == true))
+            .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text", !GetDisabledState() && UncheckedColor != null && BoolValue == false)
+            .AddClass($"hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor == null || (UncheckedColor != null && BoolValue == true))
+            .AddClass($"hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && BoolValue == false)
             .AddClass($"mud-checkbox-dense", Dense)
             .AddClass($"mud-ripple mud-ripple-checkbox", Ripple && !GetReadOnlyState() && !GetDisabledState())
             .AddClass($"mud-disabled", GetDisabledState())
@@ -196,12 +198,6 @@ namespace MudBlazor
             }
 
             return SetBoolValueAsync((bool?)args.Value, true);
-        }
-
-        [Obsolete($"Use {nameof(HandleKeyDownAsync)} instead. This will be removed in v8.")]
-        protected async void HandleKeyDown(KeyboardEventArgs obj)
-        {
-            await HandleKeyDownAsync(obj);
         }
 
         protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)

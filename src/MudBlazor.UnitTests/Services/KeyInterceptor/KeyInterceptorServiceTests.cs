@@ -101,7 +101,7 @@ public class KeyInterceptorServiceTests
         var expectedEventArgs = new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown" };
         var jsRuntimeMock = new Mock<IJSRuntime>();
         var observer = new KeyInterceptorObserverMock("observer1");
-        var options = new KeyInterceptorOptions();
+        var options = new KeyInterceptorOptions("target", enableLogging: true);
         var service = new KeyInterceptorService(NullLogger<KeyInterceptorService>.Instance, jsRuntimeMock.Object);
         await service.SubscribeAsync(observer, options);
 

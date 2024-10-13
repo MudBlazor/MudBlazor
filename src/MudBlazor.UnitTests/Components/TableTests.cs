@@ -1905,14 +1905,14 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TableCustomEditButtonItemContextRenderTest>();
 
-            var buttons = comp.FindAll("button");
-            buttons[0].Click();
+            IRefreshableElementCollection<IElement> Buttons() => comp.FindAll("button");
+            Buttons()[0].Click();
             comp.Instance.LatestButtonClickItem.Should().Be("A");
 
-            buttons[1].Click();
+            Buttons()[1].Click();
             comp.Instance.LatestButtonClickItem.Should().Be("B");
 
-            buttons[2].Click();
+            Buttons()[2].Click();
             comp.Instance.LatestButtonClickItem.Should().Be("C");
         }
 

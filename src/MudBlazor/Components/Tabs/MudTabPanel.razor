@@ -25,7 +25,7 @@ else
     /// <summary>
     /// Reference to the underlying panel element.
     /// </summary>
-    public ElementReference? PanelRef;
+    public ElementReference PanelRef;
 
 
     /// <summary>
@@ -134,9 +134,9 @@ else
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
-        if(firstRender == true && Parent is not null)
+        if(firstRender && Parent is not null)
         {
-            await Parent.SetPanelRef(PanelRef!.Value);
+            await Parent.SetPanelRef(PanelRef);
         }
     }
 
@@ -154,7 +154,7 @@ else
     /// <inheritdoc/>
     public async ValueTask DisposeAsync()
     {
-        if(_disposed == true) { return;  }
+        if(_disposed) { return;  }
 
         _disposed = true;
         if (Parent is not null)

@@ -12,7 +12,7 @@
          @attributes="UserAttributes"
          class="@Classname"
          style="@Style"
-         @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnClickAsync)">
+         @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickAsync)">
         @{
             if (AvatarContent is not null)
             {

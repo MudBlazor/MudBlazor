@@ -74,6 +74,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Stack", typeof(MudStack))
             .AddItem("Spacer", typeof(MudSpacer))
             .AddItem("Collapse", typeof(MudCollapse))
+            .AddItem("Stepper", typeof(MudStepper), typeof(MudStep))
 
             //GROUPS
 

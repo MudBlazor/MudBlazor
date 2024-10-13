@@ -1,4 +1,6 @@
-﻿namespace MudBlazor
+﻿using System.Text.Json.Serialization;
+
+namespace MudBlazor
 {
 #nullable enable
     /// <summary>
@@ -10,9 +12,9 @@
         /// Gets or sets the typography settings for the default typo.
         /// </summary>
         /// <remarks>
-        /// Defaults to the values from the <see cref="MudBlazor.Default"/> constructor.
+        /// Defaults to the values from the <see cref="MudBlazor.DefaultTypography"/> constructor.
         /// </remarks>
-        public Default Default { get; set; } = new();
+        public BaseTypography Default { get; set; } = new DefaultTypography();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.h1"/>.
@@ -20,7 +22,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.H1"/> constructor.
         /// </remarks>
-        public H1 H1 { get; set; } = new();
+        public BaseTypography H1 { get; set; } = new H1();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.h2"/>.
@@ -28,7 +30,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.H2"/> constructor.
         /// </remarks>
-        public H2 H2 { get; set; } = new();
+        public BaseTypography H2 { get; set; } = new H2();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.h3"/>.
@@ -36,7 +38,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.H3"/> constructor.
         /// </remarks>
-        public H3 H3 { get; set; } = new();
+        public BaseTypography H3 { get; set; } = new H3();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.h4"/>.
@@ -44,7 +46,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.H4"/> constructor.
         /// </remarks>
-        public H4 H4 { get; set; } = new();
+        public BaseTypography H4 { get; set; } = new H4();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.h5"/>.
@@ -52,7 +54,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.H5"/> constructor.
         /// </remarks>
-        public H5 H5 { get; set; } = new();
+        public BaseTypography H5 { get; set; } = new H5();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.h6"/>.
@@ -60,7 +62,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.H6"/> constructor.
         /// </remarks>
-        public H6 H6 { get; set; } = new();
+        public BaseTypography H6 { get; set; } = new H6();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.subtitle1"/>.
@@ -68,7 +70,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.Subtitle1"/> constructor.
         /// </remarks>
-        public Subtitle1 Subtitle1 { get; set; } = new();
+        public BaseTypography Subtitle1 { get; set; } = new Subtitle1();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.subtitle2"/>.
@@ -76,7 +78,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.Subtitle2"/> constructor.
         /// </remarks>
-        public Subtitle2 Subtitle2 { get; set; } = new();
+        public BaseTypography Subtitle2 { get; set; } = new Subtitle2();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.body1"/>.
@@ -84,7 +86,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.Body1"/> constructor.
         /// </remarks>
-        public Body1 Body1 { get; set; } = new();
+        public BaseTypography Body1 { get; set; } = new Body1();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.body2"/>.
@@ -92,7 +94,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.Body2"/> constructor.
         /// </remarks>
-        public Body2 Body2 { get; set; } = new();
+        public BaseTypography Body2 { get; set; } = new Body2();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.input"/>.
@@ -100,7 +102,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.Input"/> constructor.
         /// </remarks>
-        public Input Input { get; set; } = new();
+        public BaseTypography Input { get; set; } = new Input();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.button"/>.
@@ -108,7 +110,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.Button"/> constructor.
         /// </remarks>
-        public Button Button { get; set; } = new();
+        public BaseTypography Button { get; set; } = new Button();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.caption"/>.
@@ -116,7 +118,7 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.Caption"/> constructor.
         /// </remarks>
-        public Caption Caption { get; set; } = new();
+        public BaseTypography Caption { get; set; } = new Caption();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.overline"/>.
@@ -124,23 +126,23 @@
         /// <remarks>
         /// Defaults to the values from the <see cref="MudBlazor.Overline"/> constructor.
         /// </remarks>
-        public Overline Overline { get; set; } = new();
+        public BaseTypography Overline { get; set; } = new Overline();
     }
 
     /// <summary>
     /// Represents the default typography settings.
     /// </summary>
-    public class Default : BaseTypography
+    public class DefaultTypography : BaseTypography
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Default"/> class with default values.
+        /// Initializes a new instance of the <see cref="DefaultTypography"/> class with default values.
         /// </summary>
-        public Default()
+        public DefaultTypography()
         {
             FontFamily = ["Roboto", "Helvetica", "Arial", "sans-serif"];
             FontSize = ".875rem";
-            FontWeight = 400;
-            LineHeight = 1.43;
+            FontWeight = "400";
+            LineHeight = "1.43";
             LetterSpacing = ".01071em";
         }
     }
@@ -156,8 +158,8 @@
         public H1()
         {
             FontSize = "6rem";
-            FontWeight = 300;
-            LineHeight = 1.167;
+            FontWeight = "300";
+            LineHeight = "1.167";
             LetterSpacing = "-.01562em";
         }
     }
@@ -173,8 +175,8 @@
         public H2()
         {
             FontSize = "3.75rem";
-            FontWeight = 300;
-            LineHeight = 1.2;
+            FontWeight = "300";
+            LineHeight = "1.2";
             LetterSpacing = "-.00833em";
         }
     }
@@ -190,8 +192,8 @@
         public H3()
         {
             FontSize = "3rem";
-            FontWeight = 400;
-            LineHeight = 1.167;
+            FontWeight = "400";
+            LineHeight = "1.167";
             LetterSpacing = "0";
         }
     }
@@ -207,8 +209,8 @@
         public H4()
         {
             FontSize = "2.125rem";
-            FontWeight = 400;
-            LineHeight = 1.235;
+            FontWeight = "400";
+            LineHeight = "1.235";
             LetterSpacing = ".00735em";
         }
     }
@@ -224,8 +226,8 @@
         public H5()
         {
             FontSize = "1.5rem";
-            FontWeight = 400;
-            LineHeight = 1.334;
+            FontWeight = "400";
+            LineHeight = "1.334";
             LetterSpacing = "0";
         }
     }
@@ -241,8 +243,8 @@
         public H6()
         {
             FontSize = "1.25rem";
-            FontWeight = 500;
-            LineHeight = 1.6;
+            FontWeight = "500";
+            LineHeight = "1.6";
             LetterSpacing = ".0075em";
         }
     }
@@ -258,8 +260,8 @@
         public Subtitle1()
         {
             FontSize = "1rem";
-            FontWeight = 400;
-            LineHeight = 1.75;
+            FontWeight = "400";
+            LineHeight = "1.75";
             LetterSpacing = ".00938em";
         }
     }
@@ -275,8 +277,8 @@
         public Subtitle2()
         {
             FontSize = ".875rem";
-            FontWeight = 500;
-            LineHeight = 1.57;
+            FontWeight = "500";
+            LineHeight = "1.57";
             LetterSpacing = ".00714em";
         }
     }
@@ -292,8 +294,8 @@
         public Body1()
         {
             FontSize = "1rem";
-            FontWeight = 400;
-            LineHeight = 1.5;
+            FontWeight = "400";
+            LineHeight = "1.5";
             LetterSpacing = ".00938em";
         }
     }
@@ -309,8 +311,8 @@
         public Body2()
         {
             FontSize = ".875rem";
-            FontWeight = 400;
-            LineHeight = 1.43;
+            FontWeight = "400";
+            LineHeight = "1.43";
             LetterSpacing = ".01071em";
         }
     }
@@ -326,8 +328,8 @@
         public Input()
         {
             FontSize = "1rem";
-            FontWeight = 400;
-            LineHeight = 1.1876;
+            FontWeight = "400";
+            LineHeight = "1.1876";
             LetterSpacing = ".00938em";
         }
     }
@@ -343,8 +345,8 @@
         public Button()
         {
             FontSize = ".875rem";
-            FontWeight = 500;
-            LineHeight = 1.75;
+            FontWeight = "500";
+            LineHeight = "1.75";
             LetterSpacing = ".02857em";
             TextTransform = "uppercase";
         }
@@ -361,8 +363,8 @@
         public Caption()
         {
             FontSize = ".75rem";
-            FontWeight = 400;
-            LineHeight = 1.66;
+            FontWeight = "400";
+            LineHeight = "1.66";
             LetterSpacing = ".03333em";
         }
     }
@@ -378,8 +380,8 @@
         public Overline()
         {
             FontSize = ".75rem";
-            FontWeight = 400;
-            LineHeight = 2.66;
+            FontWeight = "400";
+            LineHeight = "2.66";
             LetterSpacing = ".08333em";
         }
     }
@@ -387,7 +389,22 @@
     /// <summary>
     /// Represents the base typography settings.
     /// </summary>
-    public class BaseTypography
+    [JsonDerivedType(typeof(DefaultTypography), nameof(DefaultTypography))]
+    [JsonDerivedType(typeof(H1), nameof(H1))]
+    [JsonDerivedType(typeof(H2), nameof(H2))]
+    [JsonDerivedType(typeof(H3), nameof(H3))]
+    [JsonDerivedType(typeof(H4), nameof(H4))]
+    [JsonDerivedType(typeof(H5), nameof(H5))]
+    [JsonDerivedType(typeof(H6), nameof(H6))]
+    [JsonDerivedType(typeof(Subtitle1), nameof(Subtitle1))]
+    [JsonDerivedType(typeof(Subtitle2), nameof(Subtitle2))]
+    [JsonDerivedType(typeof(Body1), nameof(Body1))]
+    [JsonDerivedType(typeof(Body2), nameof(Body2))]
+    [JsonDerivedType(typeof(Input), nameof(Input))]
+    [JsonDerivedType(typeof(Button), nameof(Button))]
+    [JsonDerivedType(typeof(Caption), nameof(Caption))]
+    [JsonDerivedType(typeof(Overline), nameof(Overline))]
+    public abstract class BaseTypography
     {
         /// <summary>
         /// Gets or sets the font family.
@@ -397,7 +414,7 @@
         /// <summary>
         /// Gets or sets the font weight.
         /// </summary>
-        public int FontWeight { get; set; }
+        public string? FontWeight { get; set; }
 
         /// <summary>
         /// Gets or sets the font size.
@@ -407,7 +424,7 @@
         /// <summary>
         /// Gets or sets the line height.
         /// </summary>
-        public double LineHeight { get; set; }
+        public string? LineHeight { get; set; }
 
         /// <summary>
         /// Gets or sets the letter spacing.

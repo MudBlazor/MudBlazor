@@ -1,6 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using Bunit;
+﻿using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Services;
@@ -33,11 +31,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddTransient<IEventListener, MockEventListener>();
             ctx.Services.AddSingleton<IKeyInterceptorService, MockKeyInterceptorService>();
             ctx.Services.AddTransient<IJsEventFactory, MockJsEventFactory>();
-#pragma warning disable CS0618
-            //TODO: Remove in v7
-            ctx.Services.AddSingleton<IMudPopoverService, MockPopoverService>();
-#pragma warning restore CS0618
-            ctx.Services.AddSingleton<IPopoverService, MockPopoverServiceV2>();
+            ctx.Services.AddSingleton<IPopoverService, MockPopoverService>();
             ctx.Services.AddScoped<IRenderQueueService, RenderQueueService>();
             ctx.Services.AddTransient<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
             ctx.Services.AddTransient<InternalMudLocalizer>();

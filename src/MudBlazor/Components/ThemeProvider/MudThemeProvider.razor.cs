@@ -346,7 +346,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-default-size: {_theme.Typography.Default.FontSize};");
         theme.AppendLine($"--{Typography}-default-weight: {_theme.Typography.Default.FontWeight};");
         theme.AppendLine(
-            $"--{Typography}-default-lineheight: {_theme.Typography.Default.LineHeight.ToString(CultureInfo.InvariantCulture)};");
+            $"--{Typography}-default-lineheight: {_theme.Typography.Default.LineHeight};");
         theme.AppendLine($"--{Typography}-default-letterspacing: {_theme.Typography.Default.LetterSpacing};");
         theme.AppendLine($"--{Typography}-default-text-transform: {_theme.Typography.Default.TextTransform};");
 
@@ -355,7 +355,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-h1-size: {_theme.Typography.H1.FontSize};");
         theme.AppendLine($"--{Typography}-h1-weight: {_theme.Typography.H1.FontWeight};");
         theme.AppendLine(
-            $"--{Typography}-h1-lineheight: {_theme.Typography.H1.LineHeight.ToString(CultureInfo.InvariantCulture)};");
+            $"--{Typography}-h1-lineheight: {_theme.Typography.H1.LineHeight};");
         theme.AppendLine($"--{Typography}-h1-letterspacing: {_theme.Typography.H1.LetterSpacing};");
         theme.AppendLine($"--{Typography}-h1-text-transform: {_theme.Typography.H1.TextTransform};");
 
@@ -364,7 +364,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-h2-size: {_theme.Typography.H2.FontSize};");
         theme.AppendLine($"--{Typography}-h2-weight: {_theme.Typography.H2.FontWeight};");
         theme.AppendLine(
-            $"--{Typography}-h2-lineheight: {_theme.Typography.H2.LineHeight.ToString(CultureInfo.InvariantCulture)};");
+            $"--{Typography}-h2-lineheight: {_theme.Typography.H2.LineHeight};");
         theme.AppendLine($"--{Typography}-h2-letterspacing: {_theme.Typography.H2.LetterSpacing};");
         theme.AppendLine($"--{Typography}-h2-text-transform: {_theme.Typography.H2.TextTransform};");
 
@@ -373,7 +373,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-h3-size: {_theme.Typography.H3.FontSize};");
         theme.AppendLine($"--{Typography}-h3-weight: {_theme.Typography.H3.FontWeight};");
         theme.AppendLine(
-            $"--{Typography}-h3-lineheight: {_theme.Typography.H3.LineHeight.ToString(CultureInfo.InvariantCulture)};");
+            $"--{Typography}-h3-lineheight: {_theme.Typography.H3.LineHeight};");
         theme.AppendLine($"--{Typography}-h3-letterspacing: {_theme.Typography.H3.LetterSpacing};");
         theme.AppendLine($"--{Typography}-h3-text-transform: {_theme.Typography.H3.TextTransform};");
 
@@ -382,7 +382,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-h4-size: {_theme.Typography.H4.FontSize};");
         theme.AppendLine($"--{Typography}-h4-weight: {_theme.Typography.H4.FontWeight};");
         theme.AppendLine(
-            $"--{Typography}-h4-lineheight: {_theme.Typography.H4.LineHeight.ToString(CultureInfo.InvariantCulture)};");
+            $"--{Typography}-h4-lineheight: {_theme.Typography.H4.LineHeight};");
         theme.AppendLine($"--{Typography}-h4-letterspacing: {_theme.Typography.H4.LetterSpacing};");
         theme.AppendLine($"--{Typography}-h4-text-transform: {_theme.Typography.H4.TextTransform};");
 
@@ -391,7 +391,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-h5-size: {_theme.Typography.H5.FontSize};");
         theme.AppendLine($"--{Typography}-h5-weight: {_theme.Typography.H5.FontWeight};");
         theme.AppendLine(
-            $"--{Typography}-h5-lineheight: {_theme.Typography.H5.LineHeight.ToString(CultureInfo.InvariantCulture)};");
+            $"--{Typography}-h5-lineheight: {_theme.Typography.H5.LineHeight};");
         theme.AppendLine($"--{Typography}-h5-letterspacing: {_theme.Typography.H5.LetterSpacing};");
         theme.AppendLine($"--{Typography}-h5-text-transform: {_theme.Typography.H5.TextTransform};");
 
@@ -400,7 +400,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-h6-size: {_theme.Typography.H6.FontSize};");
         theme.AppendLine($"--{Typography}-h6-weight: {_theme.Typography.H6.FontWeight};");
         theme.AppendLine(
-            $"--{Typography}-h6-lineheight: {_theme.Typography.H6.LineHeight.ToString(CultureInfo.InvariantCulture)};");
+            $"--{Typography}-h6-lineheight: {_theme.Typography.H6.LineHeight};");
         theme.AppendLine($"--{Typography}-h6-letterspacing: {_theme.Typography.H6.LetterSpacing};");
         theme.AppendLine($"--{Typography}-h6-text-transform: {_theme.Typography.H6.TextTransform};");
 
@@ -409,7 +409,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-subtitle1-size: {_theme.Typography.Subtitle1.FontSize};");
         theme.AppendLine($"--{Typography}-subtitle1-weight: {_theme.Typography.Subtitle1.FontWeight};");
         theme.AppendLine(
-            $"--{Typography}-subtitle1-lineheight: {_theme.Typography.Subtitle1.LineHeight.ToString(CultureInfo.InvariantCulture)};");
+            $"--{Typography}-subtitle1-lineheight: {_theme.Typography.Subtitle1.LineHeight};");
         theme.AppendLine($"--{Typography}-subtitle1-letterspacing: {_theme.Typography.Subtitle1.LetterSpacing};");
         theme.AppendLine($"--{Typography}-subtitle1-text-transform: {_theme.Typography.Subtitle1.TextTransform};");
 
@@ -418,7 +418,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-subtitle2-size: {_theme.Typography.Subtitle2.FontSize};");
         theme.AppendLine($"--{Typography}-subtitle2-weight: {_theme.Typography.Subtitle2.FontWeight};");
         theme.AppendLine(
-            $"--{Typography}-subtitle2-lineheight: {_theme.Typography.Subtitle2.LineHeight.ToString(CultureInfo.InvariantCulture)};");
+            $"--{Typography}-subtitle2-lineheight: {_theme.Typography.Subtitle2.LineHeight};");
         theme.AppendLine($"--{Typography}-subtitle2-letterspacing: {_theme.Typography.Subtitle2.LetterSpacing};");
         theme.AppendLine($"--{Typography}-subtitle2-text-transform: {_theme.Typography.Subtitle2.TextTransform};");
 
@@ -427,7 +427,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-body1-size: {_theme.Typography.Body1.FontSize};");
         theme.AppendLine($"--{Typography}-body1-weight: {_theme.Typography.Body1.FontWeight};");
         theme.AppendLine(
-            $"--{Typography}-body1-lineheight: {_theme.Typography.Body1.LineHeight.ToString(CultureInfo.InvariantCulture)};");
+            $"--{Typography}-body1-lineheight: {_theme.Typography.Body1.LineHeight};");
         theme.AppendLine($"--{Typography}-body1-letterspacing: {_theme.Typography.Body1.LetterSpacing};");
         theme.AppendLine($"--{Typography}-body1-text-transform: {_theme.Typography.Body1.TextTransform};");
 
@@ -436,7 +436,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-body2-size: {_theme.Typography.Body2.FontSize};");
         theme.AppendLine($"--{Typography}-body2-weight: {_theme.Typography.Body2.FontWeight};");
         theme.AppendLine(
-            $"--{Typography}-body2-lineheight: {_theme.Typography.Body2.LineHeight.ToString(CultureInfo.InvariantCulture)};");
+            $"--{Typography}-body2-lineheight: {_theme.Typography.Body2.LineHeight};");
         theme.AppendLine($"--{Typography}-body2-letterspacing: {_theme.Typography.Body2.LetterSpacing};");
         theme.AppendLine($"--{Typography}-body2-text-transform: {_theme.Typography.Body2.TextTransform};");
 
@@ -445,7 +445,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-input-size: {_theme.Typography.Input.FontSize};");
         theme.AppendLine($"--{Typography}-input-weight: {_theme.Typography.Input.FontWeight};");
         theme.AppendLine(
-            $"--{Typography}-input-lineheight: {_theme.Typography.Input.LineHeight.ToString(CultureInfo.InvariantCulture)};");
+            $"--{Typography}-input-lineheight: {_theme.Typography.Input.LineHeight};");
         theme.AppendLine($"--{Typography}-input-letterspacing: {_theme.Typography.Input.LetterSpacing};");
         theme.AppendLine($"--{Typography}-input-text-transform: {_theme.Typography.Input.TextTransform};");
 
@@ -454,7 +454,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-button-size: {_theme.Typography.Button.FontSize};");
         theme.AppendLine($"--{Typography}-button-weight: {_theme.Typography.Button.FontWeight};");
         theme.AppendLine(
-            $"--{Typography}-button-lineheight: {_theme.Typography.Button.LineHeight.ToString(CultureInfo.InvariantCulture)};");
+            $"--{Typography}-button-lineheight: {_theme.Typography.Button.LineHeight};");
         theme.AppendLine($"--{Typography}-button-letterspacing: {_theme.Typography.Button.LetterSpacing};");
         theme.AppendLine($"--{Typography}-button-text-transform: {_theme.Typography.Button.TextTransform};");
 
@@ -463,7 +463,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-caption-size: {_theme.Typography.Caption.FontSize};");
         theme.AppendLine($"--{Typography}-caption-weight: {_theme.Typography.Caption.FontWeight};");
         theme.AppendLine(
-            $"--{Typography}-caption-lineheight: {_theme.Typography.Caption.LineHeight.ToString(CultureInfo.InvariantCulture)};");
+            $"--{Typography}-caption-lineheight: {_theme.Typography.Caption.LineHeight};");
         theme.AppendLine($"--{Typography}-caption-letterspacing: {_theme.Typography.Caption.LetterSpacing};");
         theme.AppendLine($"--{Typography}-caption-text-transform: {_theme.Typography.Caption.TextTransform};");
 
@@ -472,7 +472,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-overline-size: {_theme.Typography.Overline.FontSize};");
         theme.AppendLine($"--{Typography}-overline-weight: {_theme.Typography.Overline.FontWeight};");
         theme.AppendLine(
-            $"--{Typography}-overline-lineheight: {_theme.Typography.Overline.LineHeight.ToString(CultureInfo.InvariantCulture)};");
+            $"--{Typography}-overline-lineheight: {_theme.Typography.Overline.LineHeight};");
         theme.AppendLine($"--{Typography}-overline-letterspacing: {_theme.Typography.Overline.LetterSpacing};");
         theme.AppendLine($"--{Typography}-overline-text-transform: {_theme.Typography.Overline.TextTransform};");
 

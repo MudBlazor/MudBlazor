@@ -11,7 +11,7 @@
             {
                 @if (Context?.Table.EditButtonContent != null)
                 {
-                    @Context?.Table.EditButtonContent(new MudBlazorFix.EditButtonContext(StartEditingItem, Context.EditButtonDisabled(Item), Item))
+                    @Context?.Table.EditButtonContent(new EditButtonContext(StartEditingItem, Context.EditButtonDisabled(Item), Item))
                 }
                 else
                 {
@@ -54,7 +54,7 @@
             {
                 @if (Context?.Table.EditButtonContent != null)
                 {
-                    @Context?.Table.EditButtonContent(new MudBlazorFix.EditButtonContext(StartEditingItem, Context.EditButtonDisabled(Item), Item))
+                    @Context?.Table.EditButtonContent(new EditButtonContext(StartEditingItem, Context.EditButtonDisabled(Item), Item))
                 }
                 else
                 {

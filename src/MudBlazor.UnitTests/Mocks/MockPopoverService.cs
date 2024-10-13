@@ -1,35 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-using Moq;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
 namespace MudBlazor.UnitTests.Mocks
 {
     /// <summary>
     /// Mock for popover
     /// </summary>
-    [Obsolete($"Use {nameof(MockPopoverServiceV2)}. This will be removed in a future version.")]
-    public class MockPopoverService : IMudPopoverService
+    internal class MockPopoverService : IPopoverService
     {
-        private List<MudPopoverHandler> _handlers = new();
-        private static RenderFragment DefaultFragment = (builder) => { };
-        public IEnumerable<MudPopoverHandler> Handlers => _handlers;
+        public PopoverOptions PopoverOptions { get; } = new();
 
-        public bool ThrowOnDuplicateProvider => false;
+        public IEnumerable<IMudPopoverHolder> ActivePopovers { get; } = [];
 
-        public event EventHandler FragmentsChanged;
+        public bool IsInitialized => false;
 
-        public Task InitializeIfNeeded() => Task.FromResult(true);
-
-        public MudPopoverHandler Register(RenderFragment fragment) => new MudPopoverHandler(fragment ?? DefaultFragment, Mock.Of<IJSRuntime>(), () =>
+        public void Subscribe(IPopoverObserver observer)
         {
-            FragmentsChanged?.Invoke(this, EventArgs.Empty);
-        });
+        }
 
-        public Task<bool> Unregister(MudPopoverHandler handler) => Task.FromResult(true);
+        public void Unsubscribe(IPopoverObserver observer)
+        {
+        }
 
-        public ValueTask<int> CountProviders() => ValueTask.FromResult(0);
+        public Task CreatePopoverAsync(IPopover popover) => Task.CompletedTask;
+
+        public Task<bool> UpdatePopoverAsync(IPopover popover) => Task.FromResult(true);
+
+        public Task<bool> DestroyPopoverAsync(IPopover popover) => Task.FromResult(true);
+
+        public ValueTask<int> GetProviderCountAsync() => ValueTask.FromResult(0);
+
+        public ValueTask DisposeAsync() => ValueTask.CompletedTask;
     }
 }

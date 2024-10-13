@@ -253,10 +253,20 @@ window.mudpopoverHelper = {
                     top = newPosition.top;
                     offsetX = newPosition.offsetX;
                     offsetY = newPosition.offsetY;
-
                     popoverContentNode.setAttribute('data-mudpopover-flip', 'flipped');
                 }
                 else {
+                    // did not flip, ensure the left and top are inside bounds
+                    if (left + offsetX < 0) {
+                        left = Math.max(0, left + offsetX);
+                        // set offsetX to 0 to avoid double offset
+                        offsetX = 0;
+                    }
+                    if (top + offsetY < appBarOffset) {
+                        top = Math.max(appBarOffset, top + offsetY);
+                        // set offsetY to 0 to avoid double offset
+                        offsetY = 0;
+                    }
                     popoverContentNode.removeAttribute('data-mudpopover-flip');
                 }
 

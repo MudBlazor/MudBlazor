@@ -86,9 +86,10 @@ namespace MudBlazor.Docs
         {
             DefaultBorderRadius = "6px"
         };
+
         private static readonly Typography LandingPageTypography = new()
         {
-            Default = new Default()
+            Default = new DefaultTypography()
             {
                 FontFamily = new[] { "Public Sans", "Roboto", "Arial", "sans-serif" },
                 LetterSpacing = "normal"
@@ -96,52 +97,53 @@ namespace MudBlazor.Docs
             H1 = new H1()
             {
                 FontSize = "4rem",
-                FontWeight = 700,
+                FontWeight = "700",
             },
             H3 = new H3()
             {
                 FontSize = "3rem",
-                FontWeight = 600,
-                LineHeight = 1.8,
+                FontWeight = "600",
+                LineHeight = "1.8",
             },
             H4 = new H4()
             {
                 FontSize = "1.8rem",
-                FontWeight = 700,
+                FontWeight = "700",
             },
             H5 = new H5()
             {
                 FontSize = "1.8rem",
-                FontWeight = 700,
-                LineHeight = 2,
+                FontWeight = "700",
+                LineHeight = "2",
             },
             H6 = new H6()
             {
                 FontSize = "1.125rem",
-                FontWeight = 700,
-                LineHeight = 2,
+                FontWeight = "700",
+                LineHeight = "2",
             },
             Subtitle1 = new Subtitle1()
             {
                 FontSize = "1.1rem",
-                FontWeight = 500
+                FontWeight = "500"
             },
             Subtitle2 = new Subtitle2()
             {
                 FontSize = "1rem",
-                FontWeight = 600,
-                LineHeight = 1.8,
+                FontWeight = "600",
+                LineHeight = "1.8",
             },
             Body1 = new Body1()
             {
                 FontSize = "1rem",
-                FontWeight = 400
+                FontWeight = "400"
             },
             Button = new Button()
             {
                 TextTransform = "none"
             }
         };
+
         private static readonly PaletteLight LandingPageLightPalette = new()
         {
             AppbarText = "#424242",

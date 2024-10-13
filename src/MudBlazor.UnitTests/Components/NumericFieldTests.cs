@@ -383,7 +383,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Keydown disabled, should not do anything
+        /// KeyDown disabled, should not do anything
         /// </summary>
         [Test]
         public async Task NumericFieldTest_KeyboardInput_Disabled()
@@ -402,7 +402,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Keydown readonly, should not do anything
+        /// KeyDown readonly, should not do anything
         /// </summary>
         [Test]
         public async Task NumericFieldTest_KeyboardInput_Readonly()
