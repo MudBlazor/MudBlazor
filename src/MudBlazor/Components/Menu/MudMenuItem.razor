@@ -3,7 +3,7 @@
 
 <MudListItem T="object"
              @attributes="UserAttributes"
-             @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandlerAsync)"
+             @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandlerAsync)"
              Href="@Href"
              Target="@Target"
              ForceLoad="@ForceLoad"

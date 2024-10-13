@@ -6,17 +6,17 @@
 #nullable enable
 using System.Diagnostics;
 
-namespace MudBlazor.Components.Chart.Interpolation
+namespace MudBlazor.Interpolation
 {
-    public class NaturalSpline : SplineInterpolator
+    internal class NaturalSpline : SplineInterpolator
     {
         /// <summary>
         /// Natural Spline data interpolator
         /// </summary>  
         public NaturalSpline(double[] xs, double[] ys, int resolution = 10) : base(xs, ys, resolution)
         {
-            m = new Matrix(n - 2);
-            gauss = new MatrixSolver(n - 2, m);
+            _matrix = new Matrix(n - 2);
+            _gauss = new MatrixSolver(n - 2, _matrix);
 
             a = new double[n];
             b = new double[n];
@@ -28,10 +28,10 @@ namespace MudBlazor.Components.Chart.Interpolation
             Integrate();
             Interpolate();
         }
-        public void CalcParameters()
+        private void CalcParameters()
         {
-            Debug.Assert(m != null);
-            Debug.Assert(gauss != null);
+            Debug.Assert(_matrix != null);
+            Debug.Assert(_gauss != null);
             Debug.Assert(a != null);
             Debug.Assert(b != null);
             Debug.Assert(c != null);
@@ -48,9 +48,9 @@ namespace MudBlazor.Components.Chart.Interpolation
             {
                 for (var k = 0; k < n - 2; k++)
                 {
-                    m.a[i, k] = 0.0;
-                    m.y[i] = 0.0;
-                    m.x[i] = 0.0;
+                    _matrix.a[i, k] = 0.0;
+                    _matrix.y[i] = 0.0;
+                    _matrix.x[i] = 0.0;
                 }
             }
 
@@ -58,33 +58,33 @@ namespace MudBlazor.Components.Chart.Interpolation
             {
                 if (i == 0)
                 {
-                    m.a[i, 0] = 2.0 * (h[0] + h[1]);
-                    m.a[i, 1] = h[1];
+                    _matrix.a[i, 0] = 2.0 * (h[0] + h[1]);
+                    _matrix.a[i, 1] = h[1];
                 }
                 else
                 {
-                    m.a[i, i - 1] = h[i];
-                    m.a[i, i] = 2.0 * (h[i] + h[i + 1]);
+                    _matrix.a[i, i - 1] = h[i];
+                    _matrix.a[i, i] = 2.0 * (h[i] + h[i + 1]);
                     if (i < n - 3)
-                        m.a[i, i + 1] = h[i + 1];
+                        _matrix.a[i, i + 1] = h[i + 1];
                 }
 
                 if ((h[i] != 0.0) && (h[i + 1] != 0.0))
-                    m.y[i] = (((a[i + 2] - a[i + 1]) / h[i + 1]) - ((a[i + 1] - a[i]) / h[i])) * 3.0;
+                    _matrix.y[i] = (((a[i + 2] - a[i + 1]) / h[i + 1]) - ((a[i + 1] - a[i]) / h[i])) * 3.0;
                 else
-                    m.y[i] = 0.0;
+                    _matrix.y[i] = 0.0;
             }
 
-            if (gauss.Eliminate() == false)
+            if (_gauss.Eliminate() == false)
                 throw new InvalidOperationException("error in matrix calculation");
 
-            gauss.Solve();
+            _gauss.Solve();
 
             c[0] = 0.0;
             c[n - 1] = 0.0;
 
             for (var i = 1; i < n - 1; i++)
-                c[i] = m.x[i - 1];
+                c[i] = _matrix.x[i - 1];
 
             for (var i = 0; i < n - 1; i++)
             {

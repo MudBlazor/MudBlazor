@@ -105,7 +105,6 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            ConfigureInstance();
             base.OnInitialized();
         }
 
@@ -165,7 +164,6 @@ namespace MudBlazor
         public void SetOptions(DialogOptions options)
         {
             Options = options;
-            ConfigureInstance();
             StateHasChanged();
         }
 
@@ -216,12 +214,6 @@ namespace MudBlazor
         public void Cancel()
         {
             Close(DialogResult.Cancel());
-        }
-
-        private void ConfigureInstance()
-        {
-            Class = Classname;
-            BackgroundClassname = new CssBuilder("mud-overlay-dialog").AddClass(Options.BackgroundClass).Build();
         }
 
         private string GetPosition()
@@ -298,7 +290,7 @@ namespace MudBlazor
                 .AddClass(_dialog?.Class)
             .Build();
 
-        protected string BackgroundClassname { get; set; } = "mud-overlay-dialog";
+        protected string BackgroundClassname => new CssBuilder("mud-overlay-dialog").AddClass(Options.BackgroundClass).Build();
 
         private bool GetHideHeader()
         {
