@@ -77,7 +77,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SwitchLabelPositionTest()
+        public void SwitchLabelPlacementTest()
         {
             var comp = Context.RenderComponent<SwitchWithLabelExample>();
 

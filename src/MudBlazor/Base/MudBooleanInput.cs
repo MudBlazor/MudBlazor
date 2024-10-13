@@ -80,17 +80,17 @@ namespace MudBlazor
         public bool RightToLeft { get; set; }
 
         /// <summary>
-        /// The position of the child content.
+        /// The location of the label relative to the input icon.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.Radio.Behavior)]
-        public Placement Placement { get; set; } = Placement.End;
+        [Category(CategoryTypes.Radio.Appearance)]
+        public Placement LabelPlacement { get; set; } = Placement.End;
 
         /// <summary>
         /// The text/label will be displayed next to the switch if set.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
+        [Category(CategoryTypes.FormComponent.Appearance)]
         public string? Label { get; set; }
 
         /// <summary>

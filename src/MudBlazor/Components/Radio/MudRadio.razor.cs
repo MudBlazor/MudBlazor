@@ -23,7 +23,7 @@ namespace MudBlazor
         protected override string LabelClassname => new CssBuilder("mud-radio")
             .AddClass($"mud-disabled", GetDisabledState())
             .AddClass($"mud-readonly", GetReadOnlyState())
-            .AddClass($"mud-input-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
+            .AddClass($"mud-input-content-placement-{ConvertPlacement(LabelPlacement).ToDescriptionString()}")
             .Build();
 
         protected override string IconClassname => new CssBuilder("mud-button-root mud-icon-button")

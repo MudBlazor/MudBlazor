@@ -335,7 +335,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CheckBoxLabelPositionTest()
+        public void CheckBoxLabelPlacementTest()
         {
             var comp = Context.RenderComponent<CheckboxLabelExample>();
 
