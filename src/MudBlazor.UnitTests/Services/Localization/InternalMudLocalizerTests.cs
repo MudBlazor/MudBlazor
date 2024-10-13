@@ -132,23 +132,6 @@ public class InternalMudLocalizerTests
     }
 
     [Test]
-    [SetUICulture("en-US")]
-    public void RenamedKey_ShouldFallbackToLegacyKey()
-    {
-        // Arrange
-        var interceptorMock = new Mock<ILocalizationInterceptor>();
-        interceptorMock.Setup(mock => mock.Handle(LanguageResource.MudDataGrid_GreaterThanSign)).Returns(new LocalizedString(LanguageResource.MudDataGrid_GreaterThanSign, "", true));
-        interceptorMock.Setup(mock => mock.Handle("MudDataGrid.>")).Returns(new LocalizedString("MudDataGrid.>", ">", false));
-        var internalMudLocalizer = new InternalMudLocalizer(interceptorMock.Object);
-
-        // Act
-        var result = internalMudLocalizer[LanguageResource.MudDataGrid_GreaterThanSign];
-
-        // Assert
-        result.Should().BeEquivalentTo(new LocalizedString("MudDataGrid.>", ">", false));
-    }
-
-    [Test]
     public void DefaultLocalizationInterceptor_IStringLocalizerThis()
     {
         // Arrange

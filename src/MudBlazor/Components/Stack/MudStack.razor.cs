@@ -26,14 +26,14 @@ public partial class MudStack : MudComponentBase
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
-    public bool Row { get; set; }
+    public bool Row { get; set; } = MudGlobal.StackDefaults.Row;
 
     /// <summary>
     /// Reverses the order of its items.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
-    public bool Reverse { get; set; }
+    public bool Reverse { get; set; } = MudGlobal.StackDefaults.Reverse;
 
     /// <summary>
     /// The gap between items, measured in increments of <c>4px</c>.
@@ -44,7 +44,7 @@ public partial class MudStack : MudComponentBase
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
-    public int Spacing { get; set; } = 3;
+    public int Spacing { get; set; } = MudGlobal.StackDefaults.Spacing;
 
     /// <summary>
     /// Defines the distribution of children along the main axis within a <see cref="MudStack"/> component.

@@ -9,7 +9,7 @@ namespace MudBlazor;
 /// <summary>
 /// A clickable link which can navigate to a URL.
 /// </summary>
-public partial class MudLink : MudComponentBase, IHandleEvent
+public partial class MudLink : MudComponentBase
 {
     protected string Classname =>
         new CssBuilder("mud-typography mud-link")
@@ -62,7 +62,7 @@ public partial class MudLink : MudComponentBase, IHandleEvent
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Link.Appearance)]
-    public Color Color { get; set; } = Color.Primary;
+    public Color Color { get; set; } = MudGlobal.LinkDefaults.Color;
 
     /// <summary>
     /// The typography variant to use.
@@ -72,7 +72,7 @@ public partial class MudLink : MudComponentBase, IHandleEvent
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Link.Appearance)]
-    public Typo Typo { get; set; } = Typo.body1;
+    public Typo Typo { get; set; } = MudGlobal.LinkDefaults.Typo;
 
     /// <summary>
     /// Applies an underline to the link.
@@ -82,7 +82,7 @@ public partial class MudLink : MudComponentBase, IHandleEvent
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Link.Appearance)]
-    public Underline Underline { get; set; } = Underline.Hover;
+    public Underline Underline { get; set; } = MudGlobal.LinkDefaults.Underline;
 
     /// <summary>
     /// The URL to navigate to upon click.
@@ -137,12 +137,4 @@ public partial class MudLink : MudComponentBase, IHandleEvent
 
         await OnClick.InvokeAsync(ev);
     }
-
-    /// <inheritdoc/>
-    /// <remarks>
-    /// See: <see href="https://github.com/MudBlazor/MudBlazor/issues/8365"/>
-    /// <para/>
-    /// Since <see cref="MudLink"/> implements only single <see cref="EventCallback"/> <see cref="OnClick"/> this is safe to disable globally within the component.
-    /// </remarks>
-    Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg) => callback.InvokeAsync(arg);
 }

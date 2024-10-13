@@ -1,14 +1,12 @@
-﻿using System;
-using System.Diagnostics;
-using MudBlazor.Components.Chart.Interpolation;
+﻿using System.Diagnostics;
 
 #nullable enable
-namespace MudBlazor.Components.Chart
+namespace MudBlazor.Interpolation
 {
-    public abstract class SplineInterpolator : ILineInterpolator
+    internal abstract class SplineInterpolator : ILineInterpolator
     {
-        protected Matrix? m;
-        protected MatrixSolver? gauss;
+        protected Matrix? _matrix;
+        protected MatrixSolver? _gauss;
 
         protected readonly int n;
         protected double[]? a, b, c, d, h;
@@ -39,8 +37,8 @@ namespace MudBlazor.Components.Chart
         }
         public void Interpolate()
         {
-            Debug.Assert(m != null);
-            Debug.Assert(gauss != null);
+            Debug.Assert(_matrix != null);
+            Debug.Assert(_gauss != null);
             Debug.Assert(a != null);
             Debug.Assert(b != null);
             Debug.Assert(c != null);
@@ -79,8 +77,8 @@ namespace MudBlazor.Components.Chart
 
         public double Integrate()
         {
-            Debug.Assert(m != null);
-            Debug.Assert(gauss != null);
+            Debug.Assert(_matrix != null);
+            Debug.Assert(_gauss != null);
             Debug.Assert(a != null);
             Debug.Assert(b != null);
             Debug.Assert(c != null);
