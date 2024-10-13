@@ -265,7 +265,7 @@ public static partial class ApiDocumentation
         { "inputcontrol", "MudBlazor.MudInputControl" },
         { "inputlabel", "MudBlazor.MudInputLabel" },
         { "item", "MudBlazor.MudItem" },
-        { "legend", "MudBlazor.Legend" },
+        { "legend", "MudBlazor.Charts.Legend" },
         { "line", "MudBlazor.Charts.Line" },
         { "linechart", "MudBlazor.Charts.Line" },
         { "link", "MudBlazor.MudLink" },
