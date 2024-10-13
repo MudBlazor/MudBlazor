@@ -881,7 +881,9 @@ namespace MudBlazor
         {
             if (!Open || _items == null || _items.Length == 0)
             {
-                if (!Immediate)
+                // When Immediate is enabled, then the CoerceValue is set by TextChanged
+                // So only coerce the value on enter when Immediate is disabled
+                if (CoerceValue && !Immediate)
                 {
                     _debounceTimer?.Dispose();
 
@@ -938,7 +940,9 @@ namespace MudBlazor
         {
             _isFocused = false;
 
-            if (!Immediate)
+            // When Immediate is enabled, then the CoerceValue is set by TextChanged
+            // So only coerce the value on blur when Immediate is disabled
+            if (CoerceValue && !Immediate)
             {
                 _debounceTimer?.Dispose();
 

@@ -231,7 +231,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("input").Input("ABC");
 
-            // Assert : Immediate false, so value isn't set
+            // Assert : Immediate false, so value is not set on text changed
 
             comp.Instance.Text.Should().Be("ABC");
             comp.Instance.Value.Should().BeNull();
@@ -240,10 +240,48 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("input").Blur();
 
-            // Assert : Focus lost, so value is set
+            // Assert : CoercedValue disabled, so value is set on focus lost
 
             comp.Instance.Text.Should().Be("ABC");
             comp.Instance.Value.Should().Be("ABC");
+        }
+
+        [Test]
+        public async Task NotCoerceValueAndNotCoerceTextAndNotImmediate_ValueSetOnBlur()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<MudAutocomplete<string>>(parameters =>
+            {
+                parameters.Add(a => a.CoerceValue, false);
+                parameters.Add(a => a.CoerceText, false);
+                parameters.Add(a => a.Immediate, false);
+                parameters.Add(a => a.DebounceInterval, 0);
+            });
+            var ccc = comp.FindComponent<MudInput<string>>();
+
+            // Assert : Initial
+
+            comp.Instance.Text.Should().BeNull();
+            comp.Instance.Value.Should().BeNull();
+
+            // Act
+
+            comp.Find("input").Input("ABC");
+
+            // Assert : Immediate false, so value is not set on text changed
+
+            comp.Instance.Text.Should().Be("ABC");
+            comp.Instance.Value.Should().BeNull();
+
+            // Act
+
+            comp.Find("input").Blur();
+
+            // Assert : CoercedValue disabled, so value is not set on focus lost
+
+            comp.Instance.Text.Should().Be("ABC");
+            comp.Instance.Value.Should().BeNull();
         }
 
         [Test]
@@ -269,7 +307,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("input").Input("ABC");
 
-            // Assert : Immediate false, so value isn't set
+            // Assert : Immediate false, so value is not set
 
             comp.Instance.Text.Should().Be("ABC");
             comp.Instance.Value.Should().BeNull();
@@ -278,10 +316,48 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("input").KeyUp("Enter");
 
-            // Assert : Enter pressed, so value is set
+            // Assert : CoercedValue enabled, so value is set on key enter pressed
 
             comp.Instance.Text.Should().Be("ABC");
             comp.Instance.Value.Should().Be("ABC");
+        }
+
+        [Test]
+        public async Task NotCoerceValueAndNotCoerceTextAndNotImmediate_ValueNotSetOnEnter()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<MudAutocomplete<string>>(parameters =>
+            {
+                parameters.Add(a => a.CoerceValue, false);
+                parameters.Add(a => a.CoerceText, false);
+                parameters.Add(a => a.Immediate, false);
+                parameters.Add(a => a.DebounceInterval, 0);
+            });
+            var ccc = comp.FindComponent<MudInput<string>>();
+
+            // Assert : Initial
+
+            comp.Instance.Text.Should().BeNull();
+            comp.Instance.Value.Should().BeNull();
+
+            // Act
+
+            comp.Find("input").Input("ABC");
+
+            // Assert : Immediate false, so value is not set
+
+            comp.Instance.Text.Should().Be("ABC");
+            comp.Instance.Value.Should().BeNull();
+
+            // Act
+
+            comp.Find("input").KeyUp("Enter");
+
+            // Assert : CoercedValue disabled, so value is not set on key enter pressed
+
+            comp.Instance.Text.Should().Be("ABC");
+            comp.Instance.Value.Should().BeNull();
         }
 
         [Test]
