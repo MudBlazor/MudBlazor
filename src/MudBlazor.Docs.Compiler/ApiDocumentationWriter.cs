@@ -2,11 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace MudBlazor.Docs.Compiler;
@@ -167,7 +162,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// </summary>
     /// <param name="code"></param>
     /// <returns></returns>
-    public static string Escape(string code) => code?.Replace("\"", "\\\"");
+    public static string Escape(string code) => code?.Replace("\"", "\"\"");
 
     /// <summary>
     /// Writes the category for the member.
@@ -201,19 +196,19 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     {
         if (!string.IsNullOrEmpty(summary))
         {
-            Write($"Summary = \"{Escape(summary)}\", ");
+            Write($"Summary = @\"{Escape(summary)}\", ");
         }
     }
 
     /// <summary>
     /// Serializes an XML summary for a member.
     /// </summary>
-    /// <param name="remarks"></param>
-    public void WriteSummaryIndented(string remarks)
+    /// <param name="summary"></param>
+    public void WriteSummaryIndented(string summary)
     {
-        if (!string.IsNullOrEmpty(remarks))
+        if (!string.IsNullOrEmpty(summary))
         {
-            WriteLineIndented($"Summary = \"{Escape(remarks)}\", ");
+            WriteLineIndented($"Summary = @\"{Escape(summary)}\", ");
         }
     }
 
@@ -225,7 +220,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     {
         if (!string.IsNullOrEmpty(remarks))
         {
-            WriteLine($"Remarks = \"{Escape(remarks)}\", ");
+            WriteLine($"Remarks = @\"{Escape(remarks)}\", ");
         }
     }
 
@@ -237,7 +232,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     {
         if (!string.IsNullOrEmpty(remarks))
         {
-            WriteLineIndented($"Remarks = \"{Escape(remarks)}\", ");
+            WriteLineIndented($"Remarks = @\"{Escape(remarks)}\", ");
         }
     }
 
@@ -366,10 +361,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
 
         foreach (var property in properties)
         {
-            if (!ApiDocumentationBuilder.IsExcluded(property.Value.Type))
-            {
-                WriteProperty(property.Value);
-            }
+            WriteProperty(property.Value);
         }
 
         WriteLine();
@@ -424,7 +416,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
 
         foreach (var property in type.Properties)
         {
-            WriteProperty(type, property.Value);
+            WriteTypeProperty(property.Value);
         }
 
         Outdent();
@@ -459,7 +451,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
 
         foreach (var property in type.GlobalSettings)
         {
-            WriteProperty(type, property.Value);
+            WriteTypeProperty(property.Value);
         }
 
         Outdent();
@@ -471,7 +463,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// </summary>
     /// <param name="type">The current type being serialized.</param>
     /// <param name="property">The property to serialize.</param>
-    public void WriteProperty(DocumentedType type, DocumentedProperty property)
+    public void WriteTypeProperty(DocumentedProperty property)
     {
         WriteIndented("{ ");
         Write($"\"{property.Name}\", Properties[\"{property.Key}\"]");
@@ -483,7 +475,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// </summary>
     /// <param name="type">The current type being serialized.</param>
     /// <param name="field">The property to serialize.</param>
-    public void WriteField(DocumentedType type, DocumentedField field)
+    public void WriteTypeField(DocumentedField field)
     {
         WriteIndented("{ ");
         Write($"\"{field.Name}\", Fields[\"{field.Key}\"]");
@@ -502,7 +494,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         foreach (var method in methods)
         {
             // Skip excluded methods and internally generated methods
-            if (!ApiDocumentationBuilder.ExcludedMethods.Contains(method.Value.Name) && !method.Value.Name.StartsWith('<'))
+            if (!ApiDocumentationBuilder.ExcludedMembers.Contains(method.Value.Name) && !method.Value.Name.StartsWith('<'))
             {
                 WriteMethod(method.Value);
             }
@@ -535,9 +527,9 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         foreach (var method in type.Methods)
         {
             // Skip excluded methods and internally generated methods
-            if (!ApiDocumentationBuilder.ExcludedMethods.Contains(method.Value.Name) && !method.Value.Name.StartsWith('<'))
+            if (!ApiDocumentationBuilder.ExcludedMembers.Contains(method.Value.Name) && !method.Value.Name.StartsWith('<'))
             {
-                WriteMethod(type, method.Value);
+                WriteTypeMethod(method.Value);
             }
         }
 
@@ -569,7 +561,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// </summary>
     /// <param name="type">The current type being serialized.</param>
     /// <param name="method">The method to serialize.</param>
-    public void WriteMethod(DocumentedType type, DocumentedMethod method)
+    public void WriteTypeMethod(DocumentedMethod method)
     {
         WriteIndented("{ ");
         Write($"\"{method.Name}\", Methods[\"{method.Key}\"]");
@@ -677,7 +669,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
 
         foreach (var field in type.Fields)
         {
-            WriteField(type, field.Value);
+            WriteTypeField(field.Value);
         }
 
         Outdent();

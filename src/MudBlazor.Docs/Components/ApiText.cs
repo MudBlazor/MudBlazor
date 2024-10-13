@@ -2,17 +2,12 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Models;
-using MudBlazor.State;
 
 namespace MudBlazor.Docs.Components;
 
@@ -92,9 +87,17 @@ public partial class ApiText : ComponentBase
                         case "c": // Constant
                             builder.OpenElement(sequence++, "code");
                             builder.AddAttribute(sequence++, "class", "docs-code docs-code-primary");
+                            if (reader.IsEmptyElement)
+                            {
+                                builder.CloseElement();
+                            }
                             break;
                         case "para": // Paragraph
                             builder.OpenElement(sequence++, "p");
+                            if (reader.IsEmptyElement)
+                            {
+                                builder.CloseElement();
+                            }
                             break;
                     }
 

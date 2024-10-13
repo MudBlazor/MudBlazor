@@ -54,11 +54,6 @@ public abstract class DocumentedMember
     public string? Key { get; set; }
 
     /// <summary>
-    /// The unique key for this member in XML documentation.
-    /// </summary>
-    public string? XmlKey { get; set; }
-
-    /// <summary>
     /// The detailed description for this member, and any related information.
     /// </summary>
     public string? Summary { get; set; }

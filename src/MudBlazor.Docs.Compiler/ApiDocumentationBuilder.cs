@@ -2,14 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Xml;
+using LoxSmoke.DocXml;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.Docs.Compiler;
@@ -30,7 +25,12 @@ public partial class ApiDocumentationBuilder()
     /// <summary>
     /// The assembly to document.
     /// </summary>
-    public Assembly Assembly { get; private set; } = typeof(_Imports).Assembly;
+    public List<Assembly> Assemblies { get; private set; } = [typeof(_Imports).Assembly];
+
+    /// <summary>
+    /// The reader for XML documentation.
+    /// </summary>
+    private DocXmlReader _xmlDocs;
 
     /// <summary>
     /// The types in the assembly.
@@ -107,44 +107,28 @@ public partial class ApiDocumentationBuilder()
     /// </summary>
     public static List<string> ExcludedTypes { get; private set; } =
     [
+        "ActivatableCallback",
+        "AbstractLocalizationInterceptor",
+        "CloneableCloneStrategy`1",
+        "CssBuilder",
         "MudBlazor._Imports",
+        "MudBlazor.CategoryAttribute",
         "MudBlazor.CategoryTypes",
         "MudBlazor.CategoryTypes+",
         "MudBlazor.Colors",
         "MudBlazor.Colors+",
-        "MudBlazor.Resources.LanguageResource",
         "MudBlazor.Icons",
         "MudBlazor.Icons+",
+        "MudBlazor.LabelAttribute",
+        "MudBlazor.Resources.LanguageResource",
+        "object",
         "string"
     ];
 
     /// <summary>
-    /// Gets whether a type is excluded from documentation.
-    /// </summary>
-    /// <param name="type">The type to check.</param>
-    /// <returns>When <c>true</c>, the type is excluded from documentation.</returns>
-    public static bool IsExcluded(Type type)
-    {
-        if (ExcludedTypes.Contains(type.Name))
-        {
-            return true;
-        }
-        if (type.FullName != null && ExcludedTypes.Contains(type.FullName))
-        {
-            return true;
-        }
-        if (type.FullName != null && ExcludedTypes.Any(excludedType => type.FullName.StartsWith(excludedType)))
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    /// <summary>
     /// Any methods to exclude from documentation.
     /// </summary>
-    public static List<string> ExcludedMethods { get; private set; } =
+    public static List<string> ExcludedMembers { get; private set; } =
     [
         // Object methods
         "ToString",
@@ -180,21 +164,64 @@ public partial class ApiDocumentationBuilder()
         "DisposeAsync",
         "Finalize",
         // Internal MudBlazor methods
+        "FieldId",
+        "Logger",
+        "IsJSRuntimeAvailable",
         "SetParametersAsync",
         "DispatchExceptionAsync",
         "CreateRegisterScope",
         "DetectIllegalRazorParametersV7",
         "MudBlazor.Interfaces.IMudStateHasChanged.StateHasChanged",
+        "ParameterContainer",
+        "InputIdState",
     ];
+
+    /// <summary>
+    /// Gets whether a type is excluded from documentation.
+    /// </summary>
+    /// <param name="type">The type to check.</param>
+    /// <returns>When <c>true</c>, the type is excluded from documentation.</returns>
+    public static bool IsExcluded(Type type)
+    {
+        if (ExcludedTypes.Contains(type.Name))
+        {
+            return true;
+        }
+        if (type.FullName != null && ExcludedTypes.Contains(type.FullName))
+        {
+            return true;
+        }
+        if (type.FullName != null && ExcludedTypes.Any(excludedType => type.FullName.StartsWith(excludedType)))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Gets whether a type is excluded from documentation.
+    /// </summary>
+    /// <param name="member">The type to check.</param>
+    /// <returns>When <c>true</c>, the type is excluded from documentation.</returns>
+    public static bool IsExcluded(MemberInfo member)
+    {
+        if (ExcludedMembers.Contains(member.Name))
+        {
+            return true;
+        }
+
+        return false;
+    }
 
     /// <summary>
     /// Generates documentation for all types.
     /// </summary>
     public bool Execute()
     {
+        _xmlDocs = new(Assemblies);
         AddTypesToDocument();
         AddGlobalsToDocument();
-        MergeXmlDocumentation();
         ExportApiDocumentation();
         CalculateDocumentationCoverage();
         return true;
@@ -205,11 +232,31 @@ public partial class ApiDocumentationBuilder()
     /// </summary>
     public void AddTypesToDocument()
     {
-        // Get all MudBlazor public types
-        PublicTypes = new(Assembly.GetTypes().Where(type => type.IsPublic).ToDictionary(r => r.Name, v => v));
-        foreach (var type in PublicTypes)
+        foreach (var assembly in Assemblies)
         {
-            AddTypeToDocument(type.Value);
+            // Document all public types
+            var typesToDocument = assembly.GetTypes()
+                .Where(type =>
+                    // Include public types
+                    type.IsPublic
+                    // ... which aren't excluded
+                    && !IsExcluded(type)
+                    // ... which aren't interfaces
+                    && !type.IsInterface
+                    // ... which aren't source generators
+                    && !type.Name.Contains("SourceGenerator")
+                    // ... which aren't extension classes
+                    && !type.Name.Contains("Extensions"))
+                .ToList();
+            foreach (var type in typesToDocument)
+            {
+                PublicTypes.Add(type.Name, type);
+            }
+        }
+        // Now build all public members
+        foreach (var pair in PublicTypes)
+        {
+            AddTypeToDocument(pair.Value);
         }
     }
 
@@ -219,24 +266,22 @@ public partial class ApiDocumentationBuilder()
     /// <param name="type">The type to add.</param>
     public DocumentedType AddTypeToDocument(Type type)
     {
-        // Is this type excluded?
-        if (IsExcluded(type))
-        {
-            return null;
-        }
-
         // Is the type already documented?
         if (!Types.TryGetValue(type.FullName, out var documentedType))
         {
-            // No.
+            // Look up the XML documentation
+            var typeXmlDocs = _xmlDocs.GetTypeComments(type);
+
+            // No.  Add it
             documentedType = new DocumentedType()
             {
                 BaseType = type.BaseType,
                 IsPublic = type.IsPublic,
                 IsAbstract = type.IsNestedFamORAssem,
                 Key = type.FullName,
-                XmlKey = GetXmlKey(type.FullName),
                 Name = type.Name,
+                Remarks = typeXmlDocs.Remarks?.Replace("\r\n", "").Trim(),
+                Summary = typeXmlDocs.Summary?.Replace("\r\n", "").Trim(),
                 Type = type,
             };
 
@@ -260,92 +305,6 @@ public partial class ApiDocumentationBuilder()
     }
 
     /// <summary>
-    /// Gets the XML member key for the specified type and member.
-    /// </summary>
-    /// <param name="typeFullName">The <see cref="Type.FullName"/> of the type containing the member.</param>
-    /// <param name="memberName">The fully qualified name of the member.</param>
-    /// <returns>The member key for looking up documentation.</returns>
-    public static string GetXmlKey(string typeFullName, string memberName = null)
-    {
-        // See: https://learn.microsoft.com/archive/msdn-magazine/2019/october/csharp-accessing-xml-documentation-via-reflection
-
-        // Get the key for the type
-        var key = TypeFullNameRegEx().Replace(typeFullName, string.Empty).Replace('+', '.');
-        return (memberName != null) ? key + "." + memberName : key;
-    }
-
-    /// <summary>
-    /// Gets the XML member key for the specified type and method.
-    /// </summary>
-    /// <param name="typeFullName">The <see cref="Type.FullName"/> of the type containing the member.</param>
-    /// <param name="memberName">The fully qualified name of the member.</param>
-    /// <returns>The member key for looking up documentation.</returns>
-    public static string GetXmlKey(string typeFullNameString, MethodInfo methodInfo)
-    {
-        if (methodInfo.Name == "GetOrAdd")
-        {
-            Debugger.Break();
-        }
-
-        var typeGenericMap = new Dictionary<string, int>();
-        var tempTypeGeneric = 0;
-        Array.ForEach(methodInfo.DeclaringType.GetGenericArguments(), x => typeGenericMap[x.Name] = tempTypeGeneric++);
-        var methodGenericMap = new Dictionary<string, int>();
-        var tempMethodGeneric = 0;
-        Array.ForEach(methodInfo.GetGenericArguments(), x => methodGenericMap.Add(x.Name, tempMethodGeneric++));
-        var parameterInfos = methodInfo.GetParameters().ToList();
-
-        var key = typeFullNameString + "." + methodInfo.Name;
-
-        if (parameterInfos.Count > 0)
-        {
-            key += "(";
-            for (var index = 0; index < parameterInfos.Count; index++)
-            {
-                var parameterInfo = parameterInfos[index];
-                if (index > 0)
-                {
-                    key += ",";
-                }
-                key += parameterInfo.ParameterType.FullName;
-
-                if (parameterInfo.ParameterType.HasElementType)
-                {
-                    //Debugger.Break();
-                    // The type is either an array, pointer, or reference
-                    if (parameterInfo.ParameterType.IsArray)
-                    {
-                        // Append the "[]" array brackets onto the element type
-                        key += "[]";
-                    }
-                    else if (parameterInfo.ParameterType.IsPointer)
-                    {
-                        // Append the "*" pointer symbol to the element type
-                    }
-                    else if (parameterInfo.ParameterType.IsByRef)
-                    {
-                        // Append the "@" symbol to the element type
-                    }
-                }
-                else if (parameterInfo.ParameterType.IsGenericParameter)
-                {
-                    // Look up the index of the generic from the
-                    // dictionaries in Figure 5, appending "`" if
-                    // the parameter is from a type or "``" if the
-                    // parameter is from a method
-                    //Debugger.Break();
-                }
-                else
-                {
-                    // Nothing fancy, just convert the type to a string
-                }
-            }
-            key += ")";
-        }
-        return key;
-    }
-
-    /// <summary>
     /// Adds public properties for the specified type.
     /// </summary>
     /// <param name="type"></param>
@@ -355,6 +314,8 @@ public partial class ApiDocumentationBuilder()
         var properties = type.GetProperties().ToList();
         // Add protected methods
         properties.AddRange(type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic));
+        // Remove private and backing fields
+        properties.RemoveAll(property => property.GetMethod.IsPrivate || IsExcluded(property));
         // Remove duplicates
         properties = properties.DistinctBy(property => property.Name).ToList();
         // Go through each property
@@ -367,7 +328,10 @@ public partial class ApiDocumentationBuilder()
             // Has this property been documented before?
             if (!Properties.TryGetValue(key, out var documentedProperty))
             {
-                // No.
+                // No.  Get the XML documentation
+                var xmlDocs = _xmlDocs.GetMemberComments(property);
+
+                // Record this property                
                 documentedProperty = new DocumentedProperty()
                 {
                     Category = category?.Name,
@@ -378,8 +342,9 @@ public partial class ApiDocumentationBuilder()
                     Key = key,
                     Name = property.Name,
                     Order = category?.Order,
+                    Remarks = xmlDocs.Remarks?.Replace("\r\n", "").Trim(),
+                    Summary = xmlDocs.Summary?.Replace("\r\n", "").Trim(),
                     Type = property.PropertyType,
-                    XmlKey = GetXmlKey(GetTypeFullName(property.DeclaringType), property.Name),
                 };
                 Properties.Add(key, documentedProperty);
             }
@@ -399,7 +364,7 @@ public partial class ApiDocumentationBuilder()
         // Add protected methods
         fields.AddRange(type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic));
         // Remove private and backing fields
-        fields.RemoveAll(field => field.Name.Contains("k__BackingField") || field.Name == "value__" || field.Name.StartsWith('_'));
+        fields.RemoveAll(field => field.Name.Contains("k__BackingField") || field.Name == "value__" || field.Name.StartsWith('_') || field.IsPrivate || IsExcluded(field));
         // Remove duplicates
         fields = fields.DistinctBy(property => property.Name).ToList();
         // Go through each property
@@ -412,7 +377,10 @@ public partial class ApiDocumentationBuilder()
             // Has this property been documented before?
             if (!Fields.TryGetValue(key, out var documentedField))
             {
-                // No.
+                // No.  Get the XML documentation
+                var xmlDocs = _xmlDocs.GetMemberComments(field);
+
+                // Record this property
                 documentedField = new DocumentedField()
                 {
                     Category = category?.Name,
@@ -421,8 +389,9 @@ public partial class ApiDocumentationBuilder()
                     Key = key,
                     Name = field.Name,
                     Order = category?.Order,
+                    Remarks = xmlDocs.Remarks?.Replace("\r\n", "").Trim(),
+                    Summary = xmlDocs.Summary?.Replace("\r\n", "").Trim(),
                     Type = field.FieldType,
-                    XmlKey = GetXmlKey(GetTypeFullName(field.DeclaringType), field.Name),
                 };
                 Fields.Add(key, documentedField);
             }
@@ -462,7 +431,6 @@ public partial class ApiDocumentationBuilder()
                     Name = eventItem.Name,
                     Order = category?.Order,
                     Type = eventItem.EventHandlerType,
-                    XmlKey = GetXmlKey(GetTypeFullName(eventItem.DeclaringType), eventItem.Name),
                 };
                 Events.Add(key, documentedEvent);
             }
@@ -574,42 +542,32 @@ public partial class ApiDocumentationBuilder()
         var methods = type.GetMethods().ToList();
         // Add protected methods
         methods.AddRange(type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic));
-        methods = methods
-            // Remove duplicates
-            .DistinctBy(method => method.Name)
-            .Where(method =>
-                // Exclude getter and setter methods
-                !method.Name.StartsWith("get_")
-                && !method.Name.StartsWith("set_")
-                // Exclude inherited .NET methods
-                && !method.Name.StartsWith("Microsoft")
-                && !method.Name.StartsWith("System")
-            )
-            .OrderBy(method => method.Name)
-            .ToList();
+        // Remove private and backing fields
+        methods.RemoveAll(method => method.IsPrivate || IsExcluded(method) || method.Name.StartsWith("get_") || method.Name.StartsWith("set_") || method.Name.StartsWith("Microsoft") || method.Name.StartsWith("System"));
+        // Remove duplicates
+        methods = methods.DistinctBy(method => method.Name).ToList();
         // Look for methods and add related types
         foreach (var method in methods)
         {
-            //if (method.Name.Contains("ToDescriptionString"))
-            //{
-            //    Debugger.Break();
-            //}
-
             // Get the key for this method
             var key = GetMethodFullName(method);
 
             // Has this been documented before?
             if (!Methods.TryGetValue(key, out var documentedMethod))
             {
-                // No.
+                // No.  Get the XML documentation
+                var xmlDocs = _xmlDocs.GetMethodComments(method);
+
+                // Record this property          
                 documentedMethod = new DocumentedMethod()
                 {
                     DeclaringType = method.DeclaringType,
                     IsProtected = method.IsFamily,
                     Key = key,
                     Name = method.Name,
+                    Remarks = xmlDocs.Remarks?.Replace("\r\n", "").Trim(),
+                    Summary = xmlDocs.Summary?.Replace("\r\n", "").Trim(),
                     Type = method.ReturnType,
-                    XmlKey = GetXmlKey(GetTypeFullName(method.DeclaringType), method)
                 };
                 // Reach out and document types mentioned in these methods
                 foreach (var parameter in method.GetParameters())
@@ -628,127 +586,6 @@ public partial class ApiDocumentationBuilder()
             }
             // Add the method to the type
             documentedType.Methods.Add(documentedMethod.Key, documentedMethod);
-        }
-    }
-
-    /// <summary>
-    /// Merges XML documentation with existing documentation types.
-    /// </summary>
-    /// <exception cref="FileNotFoundException"></exception>
-    public void MergeXmlDocumentation()
-    {
-        // Open the XML documentation file
-        var path = Assembly.Location.Replace(".dll", ".xml", StringComparison.OrdinalIgnoreCase);
-        using var reader = new XmlTextReader(path);
-        reader.WhitespaceHandling = WhitespaceHandling.None;
-        reader.DtdProcessing = DtdProcessing.Ignore;
-        // Move to the first member
-        reader.ReadToFollowing("member");
-        // Read each "<member name=...>" element
-        while (!reader.EOF)
-        {
-            var memberTypeAndName = reader.GetAttribute("name").Split(":");
-            var content = reader.ReadInnerXml();
-            switch (memberTypeAndName[0])
-            {
-                case "T": // Type
-                    DocumentType(memberTypeAndName[1], content);
-                    break;
-                case "P": // Property
-                    DocumentProperty(memberTypeAndName[1], content);
-                    break;
-                case "M": // Method
-                    DocumentMethod(memberTypeAndName[1], content);
-                    break;
-                case "F": // Field (or Enum)
-                    DocumentField(memberTypeAndName[1], content);
-                    break;
-                case "E": // Event
-                    DocumentEvent(memberTypeAndName[1], content);
-                    break;
-            }
-            // Are we at the end of the document?
-            if (reader.NodeType == XmlNodeType.EndElement && reader.Name == "members")
-            {
-                break;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Adds HTML documentation for the specified type.
-    /// </summary>
-    /// <param name="memberFullName">The namespace and class of the member.</param>
-    /// <param name="xmlContent">The raw XML documentation for the member.</param>
-    public void DocumentType(string memberFullName, string xmlContent)
-    {
-        var type = Types.FirstOrDefault(type => type.Value.XmlKey == memberFullName);
-        if (type.Value != null)
-        {
-            type.Value.Remarks = GetRemarks(xmlContent);
-            type.Value.Summary = GetSummary(xmlContent);
-        }
-        else
-        {
-            UnresolvedTypes.Add(memberFullName);
-        }
-    }
-
-    /// <summary>
-    /// Adds HTML documentation for the specified property.
-    /// </summary>
-    /// <param name="memberFullName">The namespace and class of the member.</param>
-    /// <param name="xmlContent">The raw XML documentation for the member.</param>
-    public void DocumentProperty(string memberFullName, string xmlContent)
-    {
-        var property = Properties.FirstOrDefault(type => type.Value.XmlKey == memberFullName);
-        if (property.Value != null)
-        {
-            property.Value.Summary = GetSummary(xmlContent);
-            property.Value.Remarks = GetRemarks(xmlContent);
-        }
-        else
-        {
-            UnresolvedProperties.Add(memberFullName);
-        }
-    }
-
-    /// <summary>
-    /// Adds HTML documentation for the specified field.
-    /// </summary>
-    /// <param name="memberFullName">The namespace and class of the member.</param>
-    /// <param name="xmlContent">The raw XML documentation for the member.</param>
-    public void DocumentField(string memberFullName, string xmlContent)
-    {
-        var field = Fields.FirstOrDefault(type => type.Value.XmlKey == memberFullName);
-        if (field.Value != null)
-        {
-            field.Value.Summary = GetSummary(xmlContent);
-            field.Value.Remarks = GetRemarks(xmlContent);
-        }
-        else
-        {
-            UnresolvedFields.Add(memberFullName);
-        }
-    }
-
-    /// <summary>
-    /// Adds HTML documentation for the specified field.
-    /// </summary>
-    /// <param name="memberFullName">The namespace and class of the member.</param>
-    /// <param name="xmlContent">The raw XML documentation for the member.</param>
-    public void DocumentMethod(string memberFullName, string xmlContent)
-    {
-        var method = Methods.FirstOrDefault(method => method.Value.XmlKey == memberFullName);
-        if (method.Value != null)
-        {
-            method.Value.Summary = GetSummary(xmlContent);
-            method.Value.Remarks = GetRemarks(xmlContent);
-        }
-        else
-        {
-            // No.  It should be documented
-            UnresolvedMethods.Add(memberFullName);
         }
     }
 
@@ -779,46 +616,6 @@ public partial class ApiDocumentationBuilder()
     public static string GetMethodName(string xmlMethodName)
     {
         return xmlMethodName.Substring(xmlMethodName.LastIndexOf('.') + 1);
-    }
-
-    /// <summary>
-    /// Adds HTML documentation for the specified field.
-    /// </summary>
-    /// <param name="memberFullName">The namespace and class of the member.</param>
-    /// <param name="xmlContent">The raw XML documentation for the member.</param>
-    public void DocumentEvent(string memberFullName, string xmlContent)
-    {
-        if (Events.TryGetValue(memberFullName, out var documentedType))
-        {
-            documentedType.Summary = GetSummary(xmlContent);
-            documentedType.Remarks = GetRemarks(xmlContent);
-        }
-        else
-        {
-            UnresolvedEvents.Add(memberFullName);
-        }
-    }
-
-    /// <summary>
-    /// Gets the content of the "summary" element as HTML.
-    /// </summary>
-    /// <param name="xml">The member XML to search.</param>
-    /// <returns>The HTML content of the member.</returns>
-    public static string GetSummary(string xml)
-    {
-        var summary = SummaryRegEx().Match(xml).Groups.GetValueOrDefault("1");
-        return summary?.Value;
-    }
-
-    /// <summary>
-    /// Gets the content of the "remarks" element as HTML.
-    /// </summary>
-    /// <param name="xml">The member XML to search.</param>
-    /// <returns>The HTML content of the member.</returns>
-    public static string GetRemarks(string xml)
-    {
-        var remarks = RemarksRegEx().Match(xml).Groups.GetValueOrDefault("1");
-        return remarks?.Value;
     }
 
     /// <summary>
@@ -896,29 +693,4 @@ public partial class ApiDocumentationBuilder()
     /// </summary>
     [GeneratedRegex(@"MudBlazor\.MudGlobal\+([ \S]*)Defaults\.")]
     private static partial Regex GlobalComponentNameRegEx();
-
-    /// <summary>
-    /// The regular expression used to extract XML documentation summaries.
-    /// </summary>
-    [GeneratedRegex(@"<summary>\s*([ \S]*)\s*<\/summary>")]
-    private static partial Regex SummaryRegEx();
-
-    /// <summary>
-    /// The regular expression used to extract XML documentation remarks.
-    /// </summary>
-    [GeneratedRegex(@"<remarks>\s*([ \S]*)\s*<\/remarks>")]
-    private static partial Regex RemarksRegEx();
-
-    /// <summary>
-    /// The regular expression used to extract XML documentation return values.
-    /// </summary>
-    [GeneratedRegex(@"<returns>\s*([ \S]*)\s*<\/returns>")]
-    private static partial Regex ReturnsRegEx();
-
-    /// <summary>
-    /// The regular expression used to calculate the XML member key.
-    /// </summary>
-    /// <returns></returns>
-    [GeneratedRegex(@"\[.*\]")]
-    private static partial Regex TypeFullNameRegEx();
 }

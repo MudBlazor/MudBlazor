@@ -25,11 +25,6 @@ public class DocumentedType
     public string Key { get; set; }
 
     /// <summary>
-    /// The key for this type for XML documentation.
-    /// </summary>
-    public string XmlKey { get; set; }
-
-    /// <summary>
     /// The XML documentation summary for this type.
     /// </summary>
     public string Summary { get; set; }
