@@ -27,6 +27,20 @@ public class InternalMudLocalizerTests
     }
 
     [Test]
+    public void Constructor_WithNullEnumInterceptor_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        var interceptorMock = new Mock<ILocalizationInterceptor>();
+        ILocalizationEnumInterceptor? enumInterceptor = null;
+
+        // Act
+        var construct = () => new InternalMudLocalizer(interceptorMock.Object, enumInterceptor!);
+
+        // Assert
+        construct.Should().Throw<ArgumentNullException>();
+    }
+
+    [Test]
     public void Constructor_WithValidInterceptor_ShouldNotThrowException()
     {
         // Arrange

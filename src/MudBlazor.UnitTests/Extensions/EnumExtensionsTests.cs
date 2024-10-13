@@ -1,8 +1,5 @@
-﻿using System;
-using System.Linq;
-using FluentAssertions;
+﻿using FluentAssertions;
 using MudBlazor.Extensions;
-using MudBlazor.UnitTests.TestData;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Extensions
@@ -11,6 +8,7 @@ namespace MudBlazor.UnitTests.Extensions
     public class EnumExtensionsTests
     {
         [Test]
+        [TestCase(null, new string[0])]
         [TestCase(typeof(Adornment), new[] { "None", "Start", "End" })]
         [TestCase(typeof(Adornment?), new[] { "None", "Start", "End" })]
         [TestCase(typeof(string), new string[0])]

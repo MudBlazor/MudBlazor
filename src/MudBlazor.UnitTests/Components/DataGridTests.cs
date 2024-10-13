@@ -4604,10 +4604,11 @@ namespace MudBlazor.UnitTests.Components
 
             var items = comp.FindAll("div.mud-list-item").ToArray();
 
-            items.Length.Should().Be(3);
+            items.Length.Should().Be(4);
             items[0].TextContent.Should().BeEmpty();
             items[1].TextContent.Should().Be("Free education");
             items[2].TextContent.Should().Be("Paid training");
+            items[3].TextContent.Should().Be("Untranslated");
         }
     }
 }

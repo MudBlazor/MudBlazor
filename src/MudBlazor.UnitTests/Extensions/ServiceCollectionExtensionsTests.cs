@@ -2,14 +2,11 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
-using MudBlazor.Localization;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
@@ -393,12 +390,12 @@ public class ServiceCollectionExtensionsTests
         var serviceProvider = services.BuildServiceProvider();
         var mudLocalizer = serviceProvider.GetService<InternalMudLocalizer>();
         var localizationInterceptor = serviceProvider.GetService<ILocalizationInterceptor>();
-        var enumLocalizer = serviceProvider.GetService<IEnumLocalizer>();
+        var localizationEnumInterceptor = serviceProvider.GetService<ILocalizationEnumInterceptor>();
 
         // Assert
         mudLocalizer.Should().NotBeNull();
         localizationInterceptor.Should().NotBeNull();
-        enumLocalizer.Should().NotBeNull();
+        localizationEnumInterceptor.Should().NotBeNull();
     }
 
     [Test]
@@ -432,7 +429,7 @@ public class ServiceCollectionExtensionsTests
         var eventListenerFactory = serviceProvider.GetService<IEventListenerFactory>();
         var mudLocalizer = serviceProvider.GetService<InternalMudLocalizer>();
         var localizationInterceptor = serviceProvider.GetService<ILocalizationInterceptor>();
-        var enumLocalizer = serviceProvider.GetService<IEnumLocalizer>();
+        var localizationEnumInterceptor = serviceProvider.GetService<ILocalizationEnumInterceptor>();
 
         // Assert
         dialogService.Should().NotBeNull();
@@ -454,7 +451,7 @@ public class ServiceCollectionExtensionsTests
         eventListenerFactory.Should().NotBeNull();
         mudLocalizer.Should().NotBeNull();
         localizationInterceptor.Should().NotBeNull();
-        enumLocalizer.Should().NotBeNull();
+        localizationEnumInterceptor.Should().NotBeNull();
     }
 
     [Test]
@@ -528,7 +525,7 @@ public class ServiceCollectionExtensionsTests
         var eventListenerFactory = serviceProvider.GetService<IEventListenerFactory>();
         var mudLocalizer = serviceProvider.GetService<InternalMudLocalizer>();
         var localizationInterceptor = serviceProvider.GetService<ILocalizationInterceptor>();
-        var enumLocalizer = serviceProvider.GetService<IEnumLocalizer>();
+        var localizationEnumInterceptor = serviceProvider.GetService<ILocalizationEnumInterceptor>();
         var snackBarOptions = serviceProvider.GetRequiredService<IOptions<SnackbarConfiguration>>();
         var resizeOptions = serviceProvider.GetRequiredService<IOptions<ResizeOptions>>();
         var resizeObserverOptions = serviceProvider.GetRequiredService<IOptions<ResizeObserverOptions>>();
@@ -558,7 +555,7 @@ public class ServiceCollectionExtensionsTests
         eventListenerFactory.Should().NotBeNull();
         mudLocalizer.Should().NotBeNull();
         localizationInterceptor.Should().NotBeNull();
-        enumLocalizer.Should().NotBeNull();
+        localizationEnumInterceptor.Should().NotBeNull();
 
         // We can't check reference here, instead we need to check each value
         actualPopoverOptions.QueueDelay.Should().Be(expectedOptions!.PopoverOptions.QueueDelay);
