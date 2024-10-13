@@ -20,6 +20,13 @@
         <MudTh><MudTableSortLabel T="DocumentedMember" SortLabel="Type">Type</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel T="DocumentedMember" SortLabel="Description">Description</MudTableSortLabel></MudTh>
     </HeaderContent>
+    <ToolBarContent>
+        <MudButtonGroup OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="@GetGroupingVariant(ApiMemberGrouping.None)" OnClick="@(() => OnGroupingChanged(ApiMemberGrouping.None))">None</MudButton>
+            <MudButton Color="Color.Primary" Variant="@GetGroupingVariant(ApiMemberGrouping.Categories)" OnClick="@(() => OnGroupingChanged(ApiMemberGrouping.Categories))">Category</MudButton>
+            <MudButton Color="Color.Primary" Variant="@GetGroupingVariant(ApiMemberGrouping.Inheritance)" OnClick="@(() => OnGroupingChanged(ApiMemberGrouping.Inheritance))">Inheritance</MudButton>
+        </MudButtonGroup>
+    </ToolBarContent>
     <RowTemplate>
         <MudTd id="@context.Name" DataLabel="Name">
             @if (context.DeclaringType != null && context.DeclaringType.Name != Type.Name)

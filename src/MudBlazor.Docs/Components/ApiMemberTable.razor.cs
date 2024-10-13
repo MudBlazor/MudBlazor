@@ -116,6 +116,23 @@ public partial class ApiMemberTable
     }
 
     /// <summary>
+    /// Occurs when the table grouping has changed.
+    /// </summary>
+    /// <param name="grouping"></param>
+    public void OnGroupingChanged(ApiMemberGrouping grouping)
+    {
+        CurrentGrouping = grouping;
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Occurs when the table grouping has changed.
+    /// </summary>
+    /// <param name="grouping"></param>
+    public Variant GetGroupingVariant(ApiMemberGrouping grouping)
+        => CurrentGrouping == grouping ? Variant.Filled : Variant.Outlined;
+
+    /// <summary>
     /// The current groups.
     /// </summary>
     public TableGroupDefinition<DocumentedMember> CurrentGroups

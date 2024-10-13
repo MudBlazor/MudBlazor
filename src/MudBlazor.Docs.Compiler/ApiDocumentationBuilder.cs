@@ -866,27 +866,6 @@ public partial class ApiDocumentationBuilder()
         Console.WriteLine($"Fields:     {summarizedFields} of {Fields.Count} ({fieldCoverage:P0}) fields/enums");
         Console.WriteLine($"Events:     {summarizedEvents} of {Events.Count} ({eventCoverage:P0}) events");
         Console.WriteLine();
-
-        if (UnresolvedTypes.Count > 0)
-        {
-            Console.WriteLine($"API Builder: WARNING: {UnresolvedTypes.Count} types have XML documentation which couldn't be matched to a type.");
-        }
-        if (UnresolvedProperties.Count > 0)
-        {
-            Console.WriteLine($"API Builder: WARNING: {UnresolvedProperties.Count} properties have XML documentation which couldn't be matched to a property.");
-        }
-        if (UnresolvedMethods.Count > 0)
-        {
-            Console.WriteLine($"API Builder: WARNING: {UnresolvedMethods.Count} methods have XML documentation which couldn't be matched to a method.");
-        }
-        if (UnresolvedEvents.Count > 0)
-        {
-            Console.WriteLine($"API Builder: WARNING: {UnresolvedEvents.Count} events have XML documentation which couldn't be matched to an event.");
-        }
-        if (UnresolvedFields.Count > 0)
-        {
-            Console.WriteLine($"API Builder: WARNING: {UnresolvedFields.Count} fields have XML documentation which couldn't be matched to a field.");
-        }
     }
 
     /// <summary>
