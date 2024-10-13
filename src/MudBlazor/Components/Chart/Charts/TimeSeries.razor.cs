@@ -1,7 +1,5 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Charts.SVG.Models;
-using MudBlazor.Components.Chart.Models;
 
 #nullable enable
 namespace MudBlazor.Charts
