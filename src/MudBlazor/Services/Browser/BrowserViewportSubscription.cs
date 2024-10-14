@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using MudBlazor.Services;
@@ -51,8 +50,5 @@ internal class BrowserViewportSubscription : IEquatable<BrowserViewportSubscript
     public override int GetHashCode() => HashCode.Combine(JavaScriptListenerId, ObserverId);
 
     [ExcludeFromCodeCoverage]
-    private string DebuggerToString()
-    {
-        return $"JavaScript Listener Id = {JavaScriptListenerId}, Observer Id = {ObserverId}";
-    }
+    private string DebuggerToString() => $"JavaScript Listener Id = {JavaScriptListenerId}, Observer Id = {ObserverId}";
 }

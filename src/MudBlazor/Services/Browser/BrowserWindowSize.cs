@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MudBlazor.Services;
+﻿namespace MudBlazor.Services;
 
 #nullable enable
 /// <summary>
