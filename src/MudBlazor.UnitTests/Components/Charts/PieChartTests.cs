@@ -41,6 +41,7 @@ namespace MudBlazor.UnitTests.Charts
         {
             var comp = Context.RenderComponent<Pie>();
             comp.Markup.Should().Contain("mud-chart-pie");
+            comp.Instance.InputData.Should().BeNull();
         }
 
         [Theory]
