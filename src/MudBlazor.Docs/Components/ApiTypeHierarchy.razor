@@ -11,7 +11,7 @@
                 {
                     <MudTreeViewItemToggleButton @bind-Expanded="@context.Expanded" Visible="@(context.Children.Count > 0)" />
 
-                    @if (context.Value.Name == Type.NameFriendly)
+                    @if (context.Value.NameFriendly == Type.NameFriendly)
                     {
                         <MudIcon Icon="@Icons.Custom.Brands.MudBlazor" Color="Color.Primary" Class="mr-2" />
                         <MudText>@context.Text</MudText>

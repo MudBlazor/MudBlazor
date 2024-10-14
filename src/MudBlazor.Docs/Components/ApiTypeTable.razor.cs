@@ -34,29 +34,14 @@ public partial class ApiTypeTable
     /// </summary>
     public string Keyword { get; set; } = "";
 
-    /// <inheritdoc />
-    protected override async Task OnParametersSetAsync()
-    {
-        await base.OnParametersSetAsync();
-        if (Table != null)
-        {
-            await Table.ReloadServerData();
-            StateHasChanged();
-        }
-    }
-
     /// <summary>
     /// Occurs when <see cref="Keyword"/> has changed.
     /// </summary>
     /// <param name="keyword">The text to search for.</param>
-    public async Task OnKeywordChanged(string keyword)
+    public Task OnKeywordChanged(string keyword)
     {
         Keyword = keyword;
-        if (Table != null)
-        {
-            await Table.ReloadServerData();
-            StateHasChanged();
-        }
+        return Table!.ReloadServerData();
     }
 
     /// <summary>

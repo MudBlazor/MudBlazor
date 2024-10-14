@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using LoxSmoke.DocXml;
@@ -221,6 +222,7 @@ public partial class ApiDocumentationBuilder()
     {
         _xmlDocs = new(Assemblies);
         AddTypesToDocument();
+        FindDeclaringTypes();
         AddGlobalsToDocument();
         ExportApiDocumentation();
         CalculateDocumentationCoverage();
@@ -294,6 +296,9 @@ public partial class ApiDocumentationBuilder()
             AddFieldsToDocument(type, documentedType);
             AddEventsToDocument(type, documentedType);
 
+            // Look for binable properties
+            FindBindableProperties(documentedType);
+
             // Also add nested types            
             foreach (var nestedType in type.GetNestedTypes(BindingFlags.Public))
             {
@@ -325,31 +330,61 @@ public partial class ApiDocumentationBuilder()
             var blazorParameter = property.GetCustomAttribute<ParameterAttribute>();
             var key = GetPropertyFullName(property);
 
-            // Has this property been documented before?
-            if (!Properties.TryGetValue(key, out var documentedProperty))
+            // Is this an event?
+            if (property.PropertyType.Name.StartsWith("EventCallback"))
             {
-                // No.  Get the XML documentation
-                var xmlDocs = _xmlDocs.GetMemberComments(property);
-
-                // Record this property                
-                documentedProperty = new DocumentedProperty()
+                // Has this event been documented before?
+                if (!Events.TryGetValue(key, out var documentedEvent))
                 {
-                    Category = category?.Name,
-                    DeclaringType = property.DeclaringType,
-                    DeclaringTypeFullName = GetTypeFullName(property.DeclaringType),
-                    IsProtected = property.GetMethod.IsFamily,
-                    IsParameter = blazorParameter != null,
-                    Key = key,
-                    Name = property.Name,
-                    Order = category?.Order,
-                    Remarks = xmlDocs.Remarks?.Replace("\r\n", "").Trim(),
-                    Summary = xmlDocs.Summary?.Replace("\r\n", "").Trim(),
-                    Type = property.PropertyType,
-                };
-                Properties.Add(key, documentedProperty);
+                    // No.  Get the XML documentation
+                    var xmlDocs = _xmlDocs.GetMemberComments(property);
+
+                    // Record this event
+                    documentedEvent = new DocumentedEvent()
+                    {
+                        Category = category?.Name,
+                        DeclaringType = property.DeclaringType,
+                        IsProtected = property.GetMethod.IsFamily,
+                        IsParameter = blazorParameter != null,
+                        Key = key,
+                        Name = property.Name,
+                        Order = category?.Order,
+                        Remarks = xmlDocs.Remarks?.Replace("\r\n", "").Trim(),
+                        Summary = xmlDocs.Summary?.Replace("\r\n", "").Trim(),
+                        Type = property.PropertyType,
+                    };
+                    Events.Add(key, documentedEvent);
+                }
+                // Link the event to the type
+                documentedType.Events.Add(documentedEvent.Key, documentedEvent);
             }
-            // Link the property to the type
-            documentedType.Properties.Add(documentedProperty.Key, documentedProperty);
+            else
+            {
+                // Has this property been documented before?
+                if (!Properties.TryGetValue(key, out var documentedProperty))
+                {
+                    // No.  Get the XML documentation
+                    var xmlDocs = _xmlDocs.GetMemberComments(property);
+
+                    // Record this property                
+                    documentedProperty = new DocumentedProperty()
+                    {
+                        Category = category?.Name,
+                        DeclaringType = property.DeclaringType,
+                        IsProtected = property.GetMethod.IsFamily,
+                        IsParameter = blazorParameter != null,
+                        Key = key,
+                        Name = property.Name,
+                        Order = category?.Order,
+                        Remarks = xmlDocs.Remarks?.Replace("\r\n", "").Trim(),
+                        Summary = xmlDocs.Summary?.Replace("\r\n", "").Trim(),
+                        Type = property.PropertyType,
+                    };
+                    Properties.Add(key, documentedProperty);
+                }
+                // Link the property to the type
+                documentedType.Properties.Add(documentedProperty.Key, documentedProperty);
+            }
         }
     }
 
@@ -371,7 +406,6 @@ public partial class ApiDocumentationBuilder()
         foreach (var field in fields)
         {
             var category = field.GetCustomAttribute<CategoryAttribute>();
-            var blazorParameter = field.GetCustomAttribute<ParameterAttribute>();
             var key = GetFieldFullName(field);
 
             // Has this property been documented before?
@@ -436,6 +470,61 @@ public partial class ApiDocumentationBuilder()
             }
             // Link the property to the type
             documentedType.Events.Add(documentedEvent.Name, documentedEvent);
+        }
+    }
+
+    /// <summary>
+    /// Looks for properties with an associated "____Changed" event.
+    /// </summary>
+    /// <param name="type">The documented type to search.</param>
+    public static void FindBindableProperties(DocumentedType type)
+    {
+        // Look for "[Property]Changed" event callbacks
+        var changedEvents = type.Events.Where(eventItem => eventItem.Value.Name.EndsWith("Changed", StringComparison.OrdinalIgnoreCase));
+        foreach (var eventItem in changedEvents)
+        {
+            // Look for a property for this event callback
+            var property = type.Properties.SingleOrDefault(property => property.Value.Name.Equals(eventItem.Value.Name.Replace("Changed", "", StringComparison.OrdinalIgnoreCase)));
+            if (property.Value != null)
+            {
+                property.Value.ChangeEvent = eventItem.Value;
+                eventItem.Value.Property = property.Value;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Calculates the types in which all members are declared.
+    /// </summary>
+    public void FindDeclaringTypes()
+    {
+        foreach (var property in Properties)
+        {
+            if (Types.TryGetValue(GetTypeFullName(property.Value.DeclaringType), out var documentedType))
+            {
+                property.Value.DeclaringDocumentedType = documentedType;
+            }
+        }
+        foreach (var field in Fields)
+        {
+            if (Types.TryGetValue(GetTypeFullName(field.Value.DeclaringType), out var documentedType))
+            {
+                field.Value.DeclaringDocumentedType = documentedType;
+            }
+        }
+        foreach (var method in Methods)
+        {
+            if (Types.TryGetValue(GetTypeFullName(method.Value.DeclaringType), out var documentedType))
+            {
+                method.Value.DeclaringDocumentedType = documentedType;
+            }
+        }
+        foreach (var eventItem in Events)
+        {
+            if (Types.TryGetValue(GetTypeFullName(eventItem.Value.DeclaringType), out var documentedType))
+            {
+                eventItem.Value.DeclaringDocumentedType = documentedType;
+            }
         }
     }
 
@@ -542,8 +631,15 @@ public partial class ApiDocumentationBuilder()
         var methods = type.GetMethods().ToList();
         // Add protected methods
         methods.AddRange(type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic));
-        // Remove private and backing fields
-        methods.RemoveAll(method => method.IsPrivate || IsExcluded(method) || method.Name.StartsWith("get_") || method.Name.StartsWith("set_") || method.Name.StartsWith("Microsoft") || method.Name.StartsWith("System"));
+        // Remove internal methods
+        methods.RemoveAll(method => method.IsPrivate // Remove private methods
+            || IsExcluded(method)                    // Remove some internal methods
+            || method.Name.StartsWith("add_")        // Remove event subscribers
+            || method.Name.StartsWith("remove_")     // Remove event unsubscribers 
+            || method.Name.StartsWith("get_")        // Remove property getters
+            || method.Name.StartsWith("set_")        // Remove property setters
+            || method.Name.StartsWith("Microsoft")   // Remove object methods
+            || method.Name.StartsWith("System"));
         // Remove duplicates
         methods = methods.DistinctBy(method => method.Name).ToList();
         // Look for methods and add related types
@@ -633,6 +729,10 @@ public partial class ApiDocumentationBuilder()
         writer.WriteFields(Fields);
         writer.WriteEvents(Events);
         writer.WriteTypes(Types);
+        writer.LinkDocumentedTypes(Properties);
+        writer.LinkDocumentedTypes(Methods);
+        writer.LinkDocumentedTypes(Fields);
+        writer.LinkDocumentedTypes(Events);
         writer.WriteConstructorEnd();
         writer.WriteClassEnd();
     }

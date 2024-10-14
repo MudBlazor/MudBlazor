@@ -29,9 +29,9 @@ public abstract class DocumentedMember
     public Type? DeclaringType { get; set; }
 
     /// <summary>
-    /// The name of the type which defines this member.
+    /// The type which defines this member.
     /// </summary>
-    public string? DeclaringTypeFullName { get; set; }
+    public DocumentedType? DeclaringDocumentedType { get; set; }
 
     /// <summary>
     /// Whether this member is only visible to inheritors.

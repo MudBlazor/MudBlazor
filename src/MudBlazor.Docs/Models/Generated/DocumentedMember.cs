@@ -27,32 +27,7 @@ public abstract class DocumentedMember
     /// <summary>
     /// The type which defines this member.
     /// </summary>
-    public string? DeclaringTypeName { get; set; }
-
-    /// <summary>
-    /// The declaring type for this member.
-    /// </summary>
-    public DocumentedType? DeclaringType
-    {
-        get
-        {
-            if (string.IsNullOrEmpty(DeclaringTypeName))
-            {
-                return null;
-            }
-            var key = DeclaringTypeName;
-            var genericsStart = DeclaringTypeName.IndexOf('[');
-            if (genericsStart != -1)
-            {
-                key = DeclaringTypeName.Substring(0, genericsStart);
-            }
-            if (ApiDocumentation.Types.TryGetValue(key, out var type))
-            {
-                return type;
-            }
-            return null;
-        }
-    }
+    public DocumentedType? DeclaringType { get; set; }
 
     /// <summary>
     /// Whether this member is only visible to inheritors.

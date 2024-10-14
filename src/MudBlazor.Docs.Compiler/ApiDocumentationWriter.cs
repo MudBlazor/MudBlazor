@@ -129,7 +129,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     public void WriteConstructorEnd()
     {
         Outdent();
-        WriteLine("}");
+        WriteLineIndented("}");
     }
 
     /// <summary>
@@ -220,6 +220,18 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     {
         if (!string.IsNullOrEmpty(remarks))
         {
+            Write($"Remarks = @\"{Escape(remarks)}\", ");
+        }
+    }
+
+    /// <summary>
+    /// Serializes an XML remarks for a member.
+    /// </summary>
+    /// <param name="remarks"></param>
+    public void WriteLineRemarks(string remarks)
+    {
+        if (!string.IsNullOrEmpty(remarks))
+        {
             WriteLine($"Remarks = @\"{Escape(remarks)}\", ");
         }
     }
@@ -243,11 +255,96 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     public void WriteTypes(IDictionary<string, DocumentedType> types)
     {
         WriteLineIndented("// Build all of the documented types");
-        WriteLineIndented($"Types = new Dictionary<string, DocumentedType>();");
+        WriteLineIndented($"Types = new()");
+        WriteLineIndented("{");
+        Indent();
 
         foreach (var type in types)
         {
             WriteType(type.Value);
+        }
+
+        Outdent();
+        WriteLineIndented("};");
+
+        WriteLine();
+    }
+
+    /// <summary>
+    /// Links all properties to their declaring types.
+    /// </summary>
+    public void LinkDocumentedTypes(IDictionary<string, DocumentedProperty> properties)
+    {
+        WriteLineIndented("// Link properties to their declaring types");
+
+        foreach (var property in properties)
+        {
+            if (property.Value.DeclaringDocumentedType != null)
+            {
+                WriteLineIndented($"Properties[\"{property.Key}\"].DeclaringType = Types[\"{property.Value.DeclaringDocumentedType.Key}\"];");
+            }
+            if (property.Value.ChangeEvent != null)
+            {
+                WriteLineIndented($"Properties[\"{property.Key}\"].ChangeEvent = Events[\"{property.Value.ChangeEvent.Key}\"];");
+            }
+        }
+
+        WriteLine();
+    }
+
+    /// <summary>
+    /// Links all properties to their declaring types.
+    /// </summary>
+    public void LinkDocumentedTypes(IDictionary<string, DocumentedField> fields)
+    {
+        WriteLineIndented("// Link fields to their declaring types");
+
+        foreach (var field in fields)
+        {
+            if (field.Value.DeclaringDocumentedType != null)
+            {
+                WriteLineIndented($"Fields[\"{field.Key}\"].DeclaringType = Types[\"{field.Value.DeclaringDocumentedType.Key}\"];");
+            }
+        }
+
+        WriteLine();
+    }
+
+    /// <summary>
+    /// Links all events to their declaring types.
+    /// </summary>
+    public void LinkDocumentedTypes(IDictionary<string, DocumentedEvent> events)
+    {
+        WriteLineIndented("// Link events to their declaring types");
+
+        foreach (var eventItem in events)
+        {
+            if (eventItem.Value.DeclaringDocumentedType != null)
+            {
+                WriteLineIndented($"Events[\"{eventItem.Key}\"].DeclaringType = Types[\"{eventItem.Value.DeclaringDocumentedType.Key}\"];");
+            }
+            if (eventItem.Value.Property != null)
+            {
+                WriteLineIndented($"Events[\"{eventItem.Key}\"].Property = Properties[\"{eventItem.Value.Property.Key}\"];");
+            }
+        }
+
+        WriteLine();
+    }
+
+    /// <summary>
+    /// Links all events to their declaring types.
+    /// </summary>
+    public void LinkDocumentedTypes(IDictionary<string, DocumentedMethod> methods)
+    {
+        WriteLineIndented("// Link methods to their declaring types");
+
+        foreach (var method in methods)
+        {
+            if (method.Value.DeclaringDocumentedType != null)
+            {
+                WriteLineIndented($"Methods[\"{method.Key}\"].DeclaringType = Types[\"{method.Value.DeclaringDocumentedType.Key}\"];");
+            }
         }
 
         WriteLine();
@@ -259,11 +356,12 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <param name="type">The type to serialize.</param>
     public void WriteType(DocumentedType type)
     {
-        WriteIndented($"Types.Add(\"{type.Key}\", new()");
+        WriteIndented("{ ");
+        Write($"\"{type.Key}\", new()");
         WriteLine(" {");
         Indent();
         WriteLineIndented($"Name = \"{type.Name}\", ");
-        WriteLineIndented($"NameFriendly = \"{GetFriendlyTypeName(type.Type)}\", ");
+        WriteLineIndented($"NameFriendly = \"{type.Type.GetFriendlyName()}\", ");
         WriteBaseTypeIndented(type.BaseType);
         WriteIsComponentIndented(type.Type.IsSubclassOf(typeof(MudComponentBase)));
         WriteSummaryIndented(type.Summary);
@@ -272,8 +370,10 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         WriteGlobalSettings(type);
         WriteFields(type);
         WriteMethods(type);
+        WriteEvents(type);
         Outdent();
-        WriteLineIndented("});");
+        WriteIndented("}");
+        WriteLine("},");
     }
 
     /// <summary>
@@ -283,12 +383,17 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     public void WriteEvents(IDictionary<string, DocumentedEvent> events)
     {
         WriteLineIndented("// Build all of the documented events");
-        WriteLineIndented($"Events = new Dictionary<string, DocumentedEvent>();");
+        WriteLineIndented($"Events = new()");
+        WriteLineIndented("{");
+        Indent();
 
         foreach (var documentedEvent in events)
         {
             WriteEvent(documentedEvent.Value);
         }
+
+        Outdent();
+        WriteLineIndented("};");
 
         WriteLine();
     }
@@ -299,18 +404,19 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <param name="documentedEvent">The event to serialize.</param>
     public void WriteEvent(DocumentedEvent documentedEvent)
     {
-        WriteIndented($"Events.Add(\"{documentedEvent.Key}\", new()");
+        WriteIndented("{ ");
+        Write($"\"{documentedEvent.Key}\", new()");
         Write(" { ");
         Write($"Name = \"{documentedEvent.Name}\", ");
         Write($"TypeName = \"{documentedEvent.Type.FullName}\", ");
-        Write($"TypeFriendlyName = \"{GetFriendlyTypeName(documentedEvent.Type)}\", ");
-        WriteDeclaringType(documentedEvent);
+        Write($"TypeFriendlyName = \"{documentedEvent.Type.GetFriendlyName()}\", ");
         WriteCategory(documentedEvent.Category);
         WriteOrder(documentedEvent.Order);
+        WriteIsParameter(documentedEvent.IsParameter);
         WriteSummary(documentedEvent.Summary);
         WriteRemarks(documentedEvent.Remarks);
-        Write(" }");
-        WriteLine(");");
+        Write("}");
+        WriteLine("},");
     }
 
     /// <summary>
@@ -320,12 +426,17 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     public void WriteFields(IDictionary<string, DocumentedField> fields)
     {
         WriteLineIndented("// Build all of the documented fields");
-        WriteLineIndented($"Fields = new Dictionary<string, DocumentedField>();");
+        WriteLineIndented($"Fields = new()");
+        WriteLineIndented("{");
+        Indent();
 
         foreach (var field in fields)
         {
             WriteField(field.Value);
         }
+
+        Outdent();
+        WriteLineIndented("};");
 
         WriteLine();
     }
@@ -336,18 +447,18 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <param name="field">The field to serialize.</param>
     public void WriteField(DocumentedField field)
     {
-        WriteIndented($"Fields.Add(\"{field.Key}\", new()");
+        WriteIndented("{ ");
+        Write($"\"{field.Key}\", new()");
         Write(" { ");
         Write($"Name = \"{field.Name}\", ");
         Write($"TypeName = \"{field.Type.FullName}\", ");
-        Write($"TypeFriendlyName = \"{GetFriendlyTypeName(field.Type)}\", ");
-        WriteDeclaringType(field);
+        Write($"TypeFriendlyName = \"{field.Type.GetFriendlyName()}\", ");
         WriteCategory(field.Category);
         WriteOrder(field.Order);
         WriteSummary(field.Summary);
         WriteRemarks(field.Remarks);
-        Write(" }");
-        WriteLine(");");
+        Write("}");
+        WriteLine("},");
     }
 
     /// <summary>
@@ -357,12 +468,17 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     public void WriteProperties(IDictionary<string, DocumentedProperty> properties)
     {
         WriteLineIndented("// Build all of the documented properties");
-        WriteLineIndented($"Properties = new Dictionary<string, DocumentedProperty>();");
+        WriteLineIndented("Properties = new()");
+        WriteLineIndented("{");
+        Indent();
 
         foreach (var property in properties)
         {
             WriteProperty(property.Value);
         }
+
+        Outdent();
+        WriteLineIndented("};");
 
         WriteLine();
     }
@@ -373,19 +489,19 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <param name="property">the property to serialize.</param>
     public void WriteProperty(DocumentedProperty property)
     {
-        WriteIndented($"Properties.Add(\"{property.Key}\", new()");
+        WriteIndented("{ ");
+        Write($"\"{property.Key}\", new()");
         Write(" { ");
         Write($"Name = \"{property.Name}\", ");
         Write($"TypeName = \"{property.Type.FullName}\", ");
-        Write($"TypeFriendlyName = \"{GetFriendlyTypeName(property.Type)}\", ");
-        WriteDeclaringType(property);
+        Write($"TypeFriendlyName = \"{property.Type.GetFriendlyName()}\", ");
         WriteCategory(property.Category);
         WriteOrder(property.Order);
         WriteIsParameter(property.IsParameter);
         WriteSummary(property.Summary);
         WriteRemarks(property.Remarks);
-        Write(" }");
-        WriteLine(");");
+        Write("}");
+        WriteLine("},");
     }
 
     /// <summary>
@@ -461,7 +577,6 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <summary>
     /// Serializes the specified property.
     /// </summary>
-    /// <param name="type">The current type being serialized.</param>
     /// <param name="property">The property to serialize.</param>
     public void WriteTypeProperty(DocumentedProperty property)
     {
@@ -471,14 +586,36 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     }
 
     /// <summary>
+    /// Serializes the specified event.
+    /// </summary>
+    /// <param name="eventItem">The event to serialize.</param>
+    public void WriteTypeEvent(DocumentedEvent eventItem)
+    {
+        WriteIndented("{ ");
+        Write($"\"{eventItem.Name}\", Events[\"{eventItem.Key}\"]");
+        WriteLine(" },");
+    }
+
+    /// <summary>
     /// Serializes the specified field.
     /// </summary>
-    /// <param name="type">The current type being serialized.</param>
-    /// <param name="field">The property to serialize.</param>
+    /// <param name="field">The field to serialize.</param>
     public void WriteTypeField(DocumentedField field)
     {
         WriteIndented("{ ");
         Write($"\"{field.Name}\", Fields[\"{field.Key}\"]");
+        WriteLine(" },");
+    }
+
+    /// <summary>
+    /// Serializes the specified method.
+    /// </summary>
+    /// <param name="type">The current type being serialized.</param>
+    /// <param name="method">The method to serialize.</param>
+    public void WriteTypeMethod(DocumentedMethod method)
+    {
+        WriteIndented("{ ");
+        Write($"\"{method.Name}\", Methods[\"{method.Key}\"]");
         WriteLine(" },");
     }
 
@@ -489,16 +626,17 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     public void WriteMethods(IDictionary<string, DocumentedMethod> methods)
     {
         WriteLineIndented("// Build all of the documented methods");
-        WriteLineIndented($"Methods = new Dictionary<string, DocumentedMethod>();");
+        WriteLineIndented($"Methods = new()");
+        WriteLineIndented("{");
+        Indent();
 
         foreach (var method in methods)
         {
-            // Skip excluded methods and internally generated methods
-            if (!ApiDocumentationBuilder.ExcludedMembers.Contains(method.Value.Name) && !method.Value.Name.StartsWith('<'))
-            {
-                WriteMethod(method.Value);
-            }
+            WriteMethod(method.Value);
         }
+
+        Outdent();
+        WriteLineIndented("};");
 
         WriteLine();
     }
@@ -521,16 +659,18 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
 
         */
 
+        // Anything to do?
+        if (type.Methods.Count == 0)
+        {
+            return;
+        }
+
         WriteLineIndented("Methods = { ");
         Indent();
 
         foreach (var method in type.Methods)
         {
-            // Skip excluded methods and internally generated methods
-            if (!ApiDocumentationBuilder.ExcludedMembers.Contains(method.Value.Name) && !method.Value.Name.StartsWith('<'))
-            {
-                WriteTypeMethod(method.Value);
-            }
+            WriteTypeMethod(method.Value);
         }
 
         Outdent();
@@ -543,29 +683,17 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <param name="method"></param>
     public void WriteMethod(DocumentedMethod method)
     {
-        WriteIndented($"Methods.Add(\"{method.Key}\", new()");
+        WriteIndented("{ ");
+        Write($"\"{method.Key}\", new()");
         Write(" { ");
         Write($"Name = \"{method.Name}\", ");
         WriteReturnType(method);
-        WriteDeclaringType(method);
         WriteCategory(method.Category);
         WriteOrder(method.Order);
         WriteSummary(method.Summary);
         WriteRemarks(method.Remarks);
-        Write(" }");
-        WriteLine(");");
-    }
-
-    /// <summary>
-    /// Serializes the specified method.
-    /// </summary>
-    /// <param name="type">The current type being serialized.</param>
-    /// <param name="method">The method to serialize.</param>
-    public void WriteTypeMethod(DocumentedMethod method)
-    {
-        WriteIndented("{ ");
-        Write($"\"{method.Name}\", Methods[\"{method.Key}\"]");
-        WriteLine(" },");
+        Write("}");
+        WriteLine("},");
     }
 
     /// <summary>
@@ -589,7 +717,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     public void WriteReturnType(DocumentedMethod method)
     {
         Write($"TypeName = \"{Escape(method.Type.Name)}\", ");
-        Write($"TypeFriendlyName = \"{GetFriendlyTypeName(method.Type)}\", ");
+        Write($"TypeFriendlyName = \"{method.Type.GetFriendlyName()}\", ");
     }
 
     /// <summary>
@@ -617,40 +745,26 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     }
 
     /// <summary>
-    /// Writes the declaring type of an event.
+    /// Serializes all fields for the specified type.
     /// </summary>
-    /// <param name="documentedEvent">The event to serialize.</param>
-    public void WriteDeclaringType(DocumentedEvent documentedEvent)
+    /// <param name="type">The type being serialized.</param>
+    public void WriteEvents(DocumentedType type)
     {
-        Write($"DeclaringTypeName = \"{Escape(documentedEvent.DeclaringTypeFullName)}\", ");
-    }
+        if (type.Events.Count == 0)
+        {
+            return;
+        }
 
-    /// <summary>
-    /// Writes the declaring type of a property.
-    /// </summary>
-    /// <param name="property">The property to serialize.</param>
-    public void WriteDeclaringType(DocumentedProperty property)
-    {
-        Write($"DeclaringTypeName = \"{Escape(property.DeclaringTypeFullName)}\", ");
-    }
+        WriteLineIndented("Events = { ");
+        Indent();
 
-    /// <summary>
-    /// Writes the declaring type of a property.
-    /// </summary>
-    /// <param name="field">The property to serialize.</param>
-    public void WriteDeclaringType(DocumentedField field)
-    {
-        Write($"DeclaringTypeName = \"{Escape(field.DeclaringTypeFullName)}\", ");
-    }
+        foreach (var field in type.Events)
+        {
+            WriteTypeEvent(field.Value);
+        }
 
-    /// <summary>
-    /// Writes the type in which the property was declared, if it's another type.
-    /// </summary>
-    /// <param name="type">The type containing the property.</param>
-    /// <param name="method">The property being described.</param>
-    public void WriteDeclaringType(DocumentedMethod method)
-    {
-        Write($"DeclaringTypeName = \"{Escape(method.DeclaringTypeFullName)}\", ");
+        Outdent();
+        WriteLineIndented("},");
     }
 
     /// <summary>
@@ -676,66 +790,4 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         WriteLineIndented("},");
     }
 
-    /// <summary>
-    /// Gets the C# equivalent of the specified XML type.
-    /// </summary>
-    /// <param name="fullName">The type name to convert.</param>
-    /// <returns></returns>
-    public static string GetFriendlyTypeName(Type type)
-    {
-        // Replace value types
-        var name = type.FullName switch
-        {
-            "System.Boolean" => "bool",
-            "System.Boolean[]" => "bool[]",
-            "System.Int32" => "int",
-            "System.Int32[]" => "int[]",
-            "System.Int64" => "long",
-            "System.Int64[]" => "long[]",
-            "System.String" => "string",
-            "System.String[]" => "string[]",
-            "System.Double" => "double",
-            "System.Double[]" => "double[]",
-            "System.Single" => "float",
-            "System.Single[]" => "float[]",
-            "System.Object" => "object",
-            "System.Void" => "",
-            _ => type.Name
-        };
-
-        // Replace generics
-        if (type.IsGenericType)
-        {
-            // Get the parameters
-            var parameters = type.GetGenericArguments();
-            // Shave off the `1
-            name = string.Concat(name.AsSpan(0, name.Length - 2), "<");
-            // Simplify all generic parameter
-            for (var index = 0; index < parameters.Length; index++)
-            {
-                if (index > 0)
-                {
-                    name += ", ";
-                }
-
-                name += GetFriendlyTypeName(parameters[index]);
-            }
-            name += ">";
-        }
-
-        // Simplify Nullable<T> to T?
-        foreach (var match in NullableRegEx().Matches(name).Cast<Match>())
-        {
-            name = name.Replace(match.Groups[0].Value, match.Groups[1].Value + "?");
-        }
-
-        return name;
-    }
-
-    /// <summary>
-    /// The regular expression for Nullable<T>
-    /// </summary>
-    /// <returns></returns>
-    [GeneratedRegex("Nullable<([\\S]*)>")]
-    private static partial Regex NullableRegEx();
 }

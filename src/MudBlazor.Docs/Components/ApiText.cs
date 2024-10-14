@@ -122,6 +122,4 @@ public partial class ApiText : ComponentBase
             }
         }
     }
-
-    protected override bool ShouldRender() => !string.IsNullOrEmpty(Text);
 }
