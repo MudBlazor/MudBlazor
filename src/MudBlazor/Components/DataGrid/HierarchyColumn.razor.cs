@@ -88,14 +88,4 @@ public partial class HierarchyColumn<T> : MudComponentBase
     /// </remarks>
     [Parameter]
     public Func<T, bool> InitiallyExpandedFunc { get; set; } = _ => false;
-
-    /// <inheritdoc/>
-    protected override void OnAfterRender(bool firstRender)
-    {
-        base.OnAfterRender(firstRender);
-        if (firstRender)
-        {
-            _finishedInitialExpanded = true;
-        }
-    }
 }
