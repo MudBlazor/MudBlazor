@@ -2,8 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-
 namespace MudBlazor;
 
 public static class MudGlobal
@@ -14,7 +12,7 @@ public static class MudGlobal
         /// The default color for <see cref="MudButton"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to Colour.Default
+        /// Defaults to Color.Default
         /// </remarks>
         public static Color Color { get; set; } = Color.Default;
 
@@ -25,6 +23,14 @@ public static class MudGlobal
         /// Defaults to Size.Medium
         /// </remarks>
         public static Size Size { get; set; } = Size.Medium;
+
+        /// <summary>
+        /// The default variant for <see cref="MudButton"/>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to Variant.Text
+        /// </remarks>
+        public static Variant Variant { get; set; } = Variant.Text;
     }
 
     public static class CardDefaults
@@ -161,6 +167,22 @@ public static class MudGlobal
         /// Defaults to <c>false</c>. When <c>true</c>, the label will not move into the input when the input is empty.
         /// </remarks>
         public static bool ShrinkLabel { get; set; }
+
+        /// <summary>
+        /// The default variant for <see cref="MudBaseInput{T}.Value"/>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to Variant.Text
+        /// </remarks>
+        public static Variant Variant { get; set; } = Variant.Text;
+
+        /// <summary>
+        /// The default margin for <see cref="MudBaseInput{T}.Value"/>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to Margin.None
+        /// </remarks>
+        public static Margin Margin { get; set; } = Margin.None;
     }
 
     public static class LinkDefaults
@@ -324,7 +346,7 @@ public static class MudGlobal
         public static Position Position { get; set; } = Position.Top;
 
         /// <summary>
-        /// The default colour for <see cref="MudTabs"/>.
+        /// The default Color for <see cref="MudTabs"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to Color.Default.
