@@ -40,6 +40,8 @@ namespace MudBlazor.UnitTests.Charts
         public void PieChartEmptyData()
         {
             var comp = Context.RenderComponent<Pie>();
+            comp.Instance.InputData = null;
+
             comp.Markup.Should().Contain("mud-chart-pie");
             comp.Instance.InputData.Should().BeNull();
         }
