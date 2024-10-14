@@ -109,8 +109,12 @@
   letter-spacing: 0.01071em;
   vertical-align: inherit;
 
-  & .mud-checkbox > .mud-icon-button {
-    padding: 0px;
+  & .mud-checkbox {
+    margin: -4px;
+
+    > .mud-icon-button {
+      padding: 4px;
+    }
   }
 }
 
