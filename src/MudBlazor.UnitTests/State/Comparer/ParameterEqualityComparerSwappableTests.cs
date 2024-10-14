@@ -49,6 +49,19 @@ public class ParameterEqualityComparerSwappableTests
     }
 
     [Test]
+    public void Constructor_ShouldInitializeWithNullFunc()
+    {
+        // Arrange
+        Func<IEqualityComparer<int>>? comparerFunc = null;
+
+        // Act
+        var swappableComparer = new ParameterEqualityComparerSwappable<int>(comparerFunc);
+
+        // Assert
+        swappableComparer.UnderlyingComparer().Should().Be(EqualityComparer<int>.Default);
+    }
+
+    [Test]
     public void Equals_ShouldReturnTrueForEqualValues()
     {
         // Arrange
