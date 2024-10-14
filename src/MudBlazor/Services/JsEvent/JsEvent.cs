@@ -57,14 +57,7 @@ namespace MudBlazor.Services
             }
 
             await UnsubscribeAll();
-            try
-            {
-                await _jsRuntime.InvokeVoidAsync("mudJsEvent.disconnect", _elementId);
-            }
-            catch (Exception)
-            {
-                // Ignore exceptions
-            }
+            await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudJsEvent.disconnect", _elementId);
 
             _isObserving = false;
         }
@@ -85,13 +78,8 @@ namespace MudBlazor.Services
                 return;
             }
 
-            try
-            {
-                _jsRuntime.InvokeVoidAsync("mudJsEvent.subscribe", _elementId, eventName).CatchAndLog();
-                _subscribedEvents.Add(eventName);
-            }
-            catch (JSDisconnectedException) { }
-            catch (TaskCanceledException) { }
+            _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudJsEvent.subscribe", _elementId, eventName).CatchAndLog();
+            _subscribedEvents.Add(eventName);
         }
 
         /// <summary>
@@ -105,14 +93,7 @@ namespace MudBlazor.Services
                 return;
             }
 
-            try
-            {
-                await _jsRuntime.InvokeVoidAsync("mudJsEvent.unsubscribe", _elementId, eventName);
-            }
-            catch (Exception)
-            {
-                // Ignore exceptions
-            }
+            await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudJsEvent.unsubscribe", _elementId, eventName);
             _subscribedEvents.Remove(eventName);
         }
 
@@ -126,16 +107,9 @@ namespace MudBlazor.Services
                 return;
             }
 
-            try
+            foreach (var eventName in _subscribedEvents)
             {
-                foreach (var eventName in _subscribedEvents)
-                {
-                    await _jsRuntime.InvokeVoidAsync("mudJsEvent.unsubscribe", _elementId, eventName);
-                }
-            }
-            catch (Exception)
-            {
-                // Ignore exceptions
+                await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudJsEvent.unsubscribe", _elementId, eventName);
             }
 
             _subscribedEvents.Clear();

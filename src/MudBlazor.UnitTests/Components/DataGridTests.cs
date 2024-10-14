@@ -4587,5 +4587,28 @@ namespace MudBlazor.UnitTests.Components
             var query = source.OrderBy([]);
             query.Should().BeSameAs(source);
         }
+
+        [Test]
+        public void DataGridEnumLocalization()
+        {
+            var comp = Context.RenderComponent<DataGridFilterEnumLocalizationTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterEnumLocalizationTest.Item>>();
+
+            IElement FilterButton() => dataGrid.FindAll(".filter-button")[0];
+
+            // click on the filter button
+            FilterButton().Click();
+
+            IElement SelectElement() => comp.Find("div.mud-select.filter-input");
+            SelectElement().Click();
+
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+
+            items.Length.Should().Be(4);
+            items[0].TextContent.Should().BeEmpty();
+            items[1].TextContent.Should().Be("Free education");
+            items[2].TextContent.Should().Be("Paid training");
+            items[3].TextContent.Should().Be("Untranslated");
+        }
     }
 }
