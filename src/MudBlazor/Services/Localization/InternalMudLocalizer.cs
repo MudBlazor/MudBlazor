@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace MudBlazor;
 
@@ -9,11 +8,10 @@ namespace MudBlazor;
 /// The <see cref="InternalMudLocalizer"/> service forwards translations to the <see cref="ILocalizationInterceptor"/> service.
 /// By default, the <see cref="DefaultLocalizationInterceptor"/> is used, though custom implementations can be provided.
 /// </summary>
-internal sealed class InternalMudLocalizer : IStringLocalizer
+internal sealed class InternalMudLocalizer
 {
     private readonly ILocalizationInterceptor _interceptor;
     private readonly ILocalizationEnumInterceptor _enumInterceptor;
-    private readonly Lazy<IStringLocalizer> _defaultLocalizationInterceptor;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="InternalMudLocalizer"/> class.
@@ -37,25 +35,7 @@ internal sealed class InternalMudLocalizer : IStringLocalizer
 
         _interceptor = interceptor;
         _enumInterceptor = enumInterceptor;
-        // This is necessary in case the interceptor is replaced, and creating a ResourceManagerStringLocalizer involves a heavy operation using reflection.
-        // Logging is not required for this operation.
-        _defaultLocalizationInterceptor = new Lazy<IStringLocalizer>(() => AbstractLocalizationInterceptor.DefaultLanguageResourceReader(NullLoggerFactory.Instance));
     }
-
-    /// <inheritdoc />
-    IEnumerable<LocalizedString> IStringLocalizer.GetAllStrings(bool includeParentCultures)
-    {
-        // We already have access to our IStringLocalizer pointing at LanguageResource.
-        if (_interceptor is AbstractLocalizationInterceptor abstractLocalizationInterceptor)
-        {
-            return abstractLocalizationInterceptor.Localizer.GetAllStrings(includeParentCultures);
-        }
-
-        return _defaultLocalizationInterceptor.Value.GetAllStrings(includeParentCultures);
-    }
-
-    /// <inheritdoc />
-    LocalizedString IStringLocalizer.this[string key] => _interceptor.Handle(key);
 
     /// <summary>
     /// Gets the string resource with the given name.
