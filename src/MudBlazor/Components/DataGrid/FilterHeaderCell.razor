@@ -30,7 +30,7 @@
                         <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
                         @foreach (var item in EnumExtensions.GetSafeEnumValues(fieldType.InnerType))
                         {
-                            <MudSelectItem T="Enum" Value="@((Enum)item)">@item</MudSelectItem>
+                            <MudSelectItem T="Enum" Value="@item">@Localizer[item]</MudSelectItem>
                         }
                     </MudSelect>
                 }
