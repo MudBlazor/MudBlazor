@@ -25,7 +25,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
-        public double[] InputData { get; set; } = [];
+        public double[]? InputData { get; set; } = [];
 
         /// <summary>
         /// The labels describing data values.
@@ -59,7 +59,7 @@ namespace MudBlazor
         /// </summary>
         protected double[] GetNormalizedData()
         {
-            if (InputData.Length == 0)
+            if (InputData == null || InputData.Length == 0)
                 return [];
             var total = InputData.Sum();
             return InputData.Select(x => Math.Abs(x) / total).ToArray();
