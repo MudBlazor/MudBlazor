@@ -86,7 +86,7 @@ public class KeyInterceptorServiceTests
         var jsRuntimeMock = new Mock<IJSRuntime>();
         var service = new KeyInterceptorService(NullLogger<KeyInterceptorService>.Instance, jsRuntimeMock.Object);
         void OnKeyDownAction(KeyboardEventArgs args) { }
-        void OnKeyUpAction(KeyboardEventArgs args) {}
+        void OnKeyUpAction(KeyboardEventArgs args) { }
         Task OnKeyDownTask(KeyboardEventArgs args) => Task.CompletedTask;
         Task OnKeyUpTask(KeyboardEventArgs args) => Task.CompletedTask;
 
