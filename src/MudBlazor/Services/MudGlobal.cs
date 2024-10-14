@@ -346,7 +346,7 @@ public static class MudGlobal
         public static Position Position { get; set; } = Position.Top;
 
         /// <summary>
-        /// The default Color for <see cref="MudTabs"/>.
+        /// The default color for <see cref="MudTabs"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to Color.Default.
