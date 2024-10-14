@@ -80,6 +80,27 @@ public class KeyInterceptorServiceTests
     }
 
     [Test]
+    public async Task SubscribeAsync_Overloads()
+    {
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var service = new KeyInterceptorService(NullLogger<KeyInterceptorService>.Instance, jsRuntimeMock.Object);
+        void OnKeyDownAction(KeyboardEventArgs args) { }
+        void OnKeyUpAction(KeyboardEventArgs args) { }
+        Task OnKeyDownTask(KeyboardEventArgs args) => Task.CompletedTask;
+        Task OnKeyUpTask(KeyboardEventArgs args) => Task.CompletedTask;
+
+        // Act
+        await service.SubscribeAsync("observer1", new KeyInterceptorOptions(), OnKeyDownAction, OnKeyUpAction);
+        await service.SubscribeAsync("observer2", new KeyInterceptorOptions(), OnKeyDownTask, OnKeyUpTask);
+        await service.SubscribeAsync("observer3", new KeyInterceptorOptions(), KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
+        await service.SubscribeAsync(new KeyInterceptorObserverMock("observer4"), new KeyInterceptorOptions());
+
+        // Assert
+        service.ObserversCount.Should().Be(4);
+    }
+
+    [Test]
     public async Task UpdateKeyAsync_ShouldCallJavaScript()
     {
         // Arrange
