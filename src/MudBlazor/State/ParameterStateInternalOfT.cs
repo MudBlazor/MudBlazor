@@ -21,7 +21,7 @@ namespace MudBlazor.State;
 /// </remarks>
 /// <typeparam name="T">The type of the component's property value.</typeparam>
 [DebuggerDisplay("ParameterName = {Metadata.ParameterName}, Value = {_value}")]
-internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponentLifeCycle, IEquatable<ParameterStateInternal<T>>
+internal class ParameterStateInternal<T> : ParameterState<T>, IParameterStateUnsafe<T>, IParameterComponentLifeCycle, IEquatable<ParameterStateInternal<T>>
 {
     private T? _value;
     private T? _lastValue;
@@ -59,6 +59,15 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     /// </summary>
     public IParameterEqualityComparerSwappable<T> Comparer => _comparer;
 
+    /// <inheritdoc />
+    IEqualityComparer<T> IParameterStateUnsafe<T>.Comparer => _comparer;
+
+    /// <inheritdoc />
+    EventCallback<T> IParameterStateUnsafe<T>.ValueChanged => _eventCallbackFunc();
+
+    /// <inheritdoc />
+    T? IParameterStateUnsafe<T>.Value { get => _value; set { _value = value; } }
+
     private ParameterStateInternal(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, IParameterEqualityComparerSwappable<T>? comparer = null)
     {
         Metadata = metadata;
@@ -70,7 +79,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
         _value = default;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc cref="ParameterState{T}.SetValueAsync" />
     public override Task SetValueAsync(T value)
     {
         if (!_comparer.Equals(Value, value))
