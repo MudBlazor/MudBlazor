@@ -24,7 +24,7 @@ namespace MudBlazor
     /// </summary>
     /// <typeparam name="T">The complex type managed by this input.</typeparam>
     /// <typeparam name="U">The value type managed by this input.</typeparam>
-    public abstract class MudFormComponent<T, U> : MudComponentBase, IFormComponent, IDisposable
+    public abstract class MudFormComponent<T, U> : MudComponentBase, IFormComponent, IAsyncDisposable
     {
         private Converter<T, U> _converter;
 
@@ -787,21 +787,23 @@ namespace MudBlazor
         /// <summary>
         /// Called to dispose this instance.
         /// </summary>
-        /// <param name="disposing"><see langword="true"/> if called within <see cref="IDisposable.Dispose"/>.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-        }
+        /// <param name="disposing"><see langword="true"/> if called within <see cref="IAsyncDisposable.DisposeAsync"/>.</param>
+        protected virtual ValueTask DisposeAsync(bool disposing) => ValueTask.CompletedTask;
 
-        void IDisposable.Dispose()
+        /// <inheritdoc />
+        ValueTask IAsyncDisposable.DisposeAsync()
         {
             try
             {
                 Form?.Remove(this);
             }
-            catch { /* ignore */ }
+            catch
+            {
+                // ignored
+            }
 
             DetachValidationStateChangedListener();
-            Dispose(disposing: true);
+            return DisposeAsync(disposing: true);
         }
     }
 }
