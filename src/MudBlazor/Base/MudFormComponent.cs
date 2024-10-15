@@ -790,7 +790,7 @@ namespace MudBlazor
         protected virtual ValueTask DisposeAsyncCore() => ValueTask.CompletedTask;
 
         /// <inheritdoc />
-        ValueTask IAsyncDisposable.DisposeAsync()
+        async ValueTask IAsyncDisposable.DisposeAsync()
         {
             try
             {
@@ -802,8 +802,8 @@ namespace MudBlazor
             }
 
             DetachValidationStateChangedListener();
-
-            return DisposeAsyncCore();
+            await DisposeAsyncCore();
+            GC.SuppressFinalize(this);
         }
     }
 }
