@@ -97,14 +97,6 @@ namespace MudBlazor
         public BaseTypography Body2 { get; set; } = new Body2Typography();
 
         /// <summary>
-        /// Gets or sets the typography settings for <see cref="Typo.input"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to the values from the <see cref="InputTypography"/> constructor.
-        /// </remarks>
-        public BaseTypography Input { get; set; } = new InputTypography();
-
-        /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.button"/>.
         /// </summary>
         /// <remarks>
@@ -318,23 +310,6 @@ namespace MudBlazor
     }
 
     /// <summary>
-    /// Represents the Input typography settings.
-    /// </summary>
-    public class InputTypography : BaseTypography
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="InputTypography"/> class with default values.
-        /// </summary>
-        public InputTypography()
-        {
-            FontSize = "1rem";
-            FontWeight = "400";
-            LineHeight = "1.1876";
-            LetterSpacing = ".00938em";
-        }
-    }
-
-    /// <summary>
     /// Represents the Button typography settings.
     /// </summary>
     public class ButtonTypography : BaseTypography
@@ -400,7 +375,6 @@ namespace MudBlazor
     [JsonDerivedType(typeof(Subtitle2Typography), nameof(Subtitle2Typography))]
     [JsonDerivedType(typeof(Body1Typography), nameof(Body1Typography))]
     [JsonDerivedType(typeof(Body2Typography), nameof(Body2Typography))]
-    [JsonDerivedType(typeof(InputTypography), nameof(InputTypography))]
     [JsonDerivedType(typeof(ButtonTypography), nameof(ButtonTypography))]
     [JsonDerivedType(typeof(CaptionTypography), nameof(CaptionTypography))]
     [JsonDerivedType(typeof(OverlineTypography), nameof(OverlineTypography))]
