@@ -68,7 +68,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Field.Appearance)]
-        public Typo Typo { get; set; } = Typo.input;
+        public Typo Typo { get; set; } = Typo.subtitle1;
 
         /// <summary>
         /// Displays the error in <see cref="ErrorText"/>.
