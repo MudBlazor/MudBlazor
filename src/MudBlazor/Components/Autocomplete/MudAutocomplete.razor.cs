@@ -712,14 +712,14 @@ namespace MudBlazor
                 Open = true;
             }
 
-            if (_items?.Length == 0)
+            if (Immediate && _items?.Length == 0)
             {
                 await CoerceValueToTextAsync();
                 StateHasChanged();
                 return;
             }
 
-            if (!CoerceText && CoerceValue)
+            if (Immediate && !CoerceText)
             {
                 await CoerceValueToTextAsync();
             }
@@ -883,12 +883,9 @@ namespace MudBlazor
             {
                 // When Immediate is enabled, then the CoerceValue is set by TextChanged
                 // So only coerce the value on enter when Immediate is disabled
-                if (CoerceValue && !Immediate)
+                if (!Immediate)
                 {
-                    _debounceTimer?.Dispose();
-
-                    var value = Converter.Get(Text);
-                    await SetValueAsync(value, updateText: false);
+                    await CoerceValueToTextAsync();
                 }
                 return;
             }
@@ -942,12 +939,9 @@ namespace MudBlazor
 
             // When Immediate is enabled, then the CoerceValue is set by TextChanged
             // So only coerce the value on blur when Immediate is disabled
-            if (CoerceValue && !Immediate)
+            if (!Immediate)
             {
-                _debounceTimer?.Dispose();
-
-                var value = Converter.Get(Text);
-                return SetValueAsync(value, updateText: false);
+                return CoerceValueToTextAsync();
             }
 
             return OnBlur.InvokeAsync(args);
@@ -984,7 +978,7 @@ namespace MudBlazor
 
         private Task CoerceValueToTextAsync()
         {
-            if (Immediate && CoerceValue)
+            if (CoerceValue)
             {
                 _debounceTimer?.Dispose();
 
