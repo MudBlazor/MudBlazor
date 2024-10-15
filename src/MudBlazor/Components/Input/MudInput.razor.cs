@@ -11,7 +11,7 @@ namespace MudBlazor
     /// A component for collecting an input value.
     /// </summary>
     /// <typeparam name="T">The type of object managed by this input.</typeparam>
-    public partial class MudInput<T> : MudBaseInput<T>, IAsyncDisposable
+    public partial class MudInput<T> : MudBaseInput<T>
     {
         protected string Classname =>
            new CssBuilder(
@@ -323,16 +323,15 @@ namespace MudBlazor
                 or InputType.Time or InputType.Week;
         }
 
-        /// <summary>
-        /// Releases resources used by this component.
-        /// </summary>
-        /// <returns></returns>
-        public async ValueTask DisposeAsync()
+        /// <inheritdoc />
+        protected override async ValueTask DisposeAsyncCore()
         {
             if (AutoGrow && IsJSRuntimeAvailable)
             {
                 await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
             }
+
+            await base.DisposeAsyncCore();
         }
     }
 
