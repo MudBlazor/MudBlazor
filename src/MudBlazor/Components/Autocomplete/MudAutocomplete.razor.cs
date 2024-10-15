@@ -978,15 +978,13 @@ namespace MudBlazor
 
         private Task CoerceValueToTextAsync()
         {
-            if (CoerceValue)
-            {
-                _debounceTimer?.Dispose();
+            if (!CoerceValue)
+                return Task.CompletedTask;
 
-                var value = Converter.Get(Text);
-                return SetValueAsync(value, updateText: false);
-            }
+            _debounceTimer?.Dispose();
 
-            return Task.CompletedTask;
+            var value = Converter.Get(Text);
+            return SetValueAsync(value, updateText: false);
         }
 
         protected override void Dispose(bool disposing)
