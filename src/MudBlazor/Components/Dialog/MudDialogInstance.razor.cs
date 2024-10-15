@@ -376,25 +376,26 @@ namespace MudBlazor
             Parent?.DismissAll();
         }
 
-        protected virtual async ValueTask DisposeAsync(bool disposing)
+        protected virtual async ValueTask DisposeAsyncCore()
         {
             if (_disposed)
             {
                 return;
             }
 
-            if (disposing)
+            _disposed = true;
+            if (IsJSRuntimeAvailable)
             {
-                _disposed = true;
-                if (IsJSRuntimeAvailable)
-                {
-                    await KeyInterceptorService.UnsubscribeAsync(_elementId);
-                }
+                await KeyInterceptorService.UnsubscribeAsync(_elementId);
             }
         }
 
 
         /// <inheritdoc />
-        public ValueTask DisposeAsync() => DisposeAsync(disposing: true);
+        public async ValueTask DisposeAsync()
+        {
+            await DisposeAsyncCore();
+            GC.SuppressFinalize(this);
+        }
     }
 }
