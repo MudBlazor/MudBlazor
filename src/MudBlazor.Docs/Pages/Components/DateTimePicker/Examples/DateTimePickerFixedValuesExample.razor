@@ -1,0 +1,17 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudDateTimePicker Label="Year-Month Picker (Fixed Day)" HelperText="@_yearMonth?.ToShortDateString()" @bind-DateTime="_yearMonth" DateOpenTo="OpenTo.Year" FixDay="1" DateTimeFormat="yyyy/MM" />
+<MudDateTimePicker Label="Month-Day Picker (Fixed Year)" HelperText="@_monthDay?.ToShortDateString()" @bind-DateTime="_monthDay" DateOpenTo="OpenTo.Month" FixYear="2021" DateTimeFormat="MM/dd" />
+<MudDateTimePicker Label="Year-Day Picker (Fixed Month)" HelperText="@_yearDay?.ToShortDateString()" @bind-DateTime="_yearDay" DateOpenTo="OpenTo.Year" FixMonth="10" />
+<MudDateTimePicker Label="Year Picker (Fixed Month and Day)" HelperText="@_year?.ToShortDateString()" @bind-DateTime="_year" DateOpenTo="OpenTo.Year" FixMonth="@DateTime.Today.Month" FixDay="@DateTime.Today.Day" DateTimeFormat="yyyy" />
+<MudDateTimePicker Label="Month Picker (Fixed Year and Day)" HelperText="@_month?.ToShortDateString()" @bind-DateTime="_month" DateOpenTo="OpenTo.Month" FixYear="@DateTime.Today.Year" FixDay="@DateTime.Today.Day" DateTimeFormat="MMM" />
+<MudDateTimePicker Label="Day Picker (Fixed Year and Month)" HelperText="@_day?.ToShortDateString()" @bind-DateTime="_day" FixYear="@DateTime.Today.Year" FixMonth="@DateTime.Today.Month" DateTimeFormat="dd" />
+
+@code { 
+    DateTime? _yearMonth;
+    DateTime? _monthDay;
+    DateTime? _yearDay;
+    DateTime? _year;
+    DateTime? _month;
+    DateTime? _day;
+}

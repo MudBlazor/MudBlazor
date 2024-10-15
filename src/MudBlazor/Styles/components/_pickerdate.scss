@@ -398,3 +398,17 @@
     }
   }
 }
+
+.mud-picker-datetime-layout {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    @media(max-width: $breakpoint-sm - 1px) {
+        flex-direction: column !important;
+    }
+
+    @media(min-width: $breakpoint-sm) {
+        flex-direction: row !important;
+    }
+}
