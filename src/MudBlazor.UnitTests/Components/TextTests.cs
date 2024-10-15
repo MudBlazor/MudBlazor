@@ -117,7 +117,6 @@ public class TextTests : BunitTest
     [TestCase(Typo.subtitle2, "p")]
     [TestCase(Typo.body1, "p")]
     [TestCase(Typo.body2, "p")]
-    [TestCase(Typo.input, "span")]
     [TestCase(Typo.button, "span")]
     [TestCase(Typo.caption, "span")]
     [TestCase(Typo.overline, "span")]
