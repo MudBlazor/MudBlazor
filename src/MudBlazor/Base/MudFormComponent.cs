@@ -787,8 +787,7 @@ namespace MudBlazor
         /// <summary>
         /// Called to dispose this instance.
         /// </summary>
-        /// <param name="disposing"><see langword="true"/> if called within <see cref="IAsyncDisposable.DisposeAsync"/>.</param>
-        protected virtual ValueTask DisposeAsync(bool disposing) => ValueTask.CompletedTask;
+        protected virtual ValueTask DisposeAsyncCore() => ValueTask.CompletedTask;
 
         /// <inheritdoc />
         ValueTask IAsyncDisposable.DisposeAsync()
@@ -803,7 +802,8 @@ namespace MudBlazor
             }
 
             DetachValidationStateChangedListener();
-            return DisposeAsync(disposing: true);
+
+            return DisposeAsyncCore();
         }
     }
 }

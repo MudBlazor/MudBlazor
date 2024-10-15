@@ -976,7 +976,7 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        protected override async ValueTask DisposeAsync(bool disposing)
+        protected override async ValueTask DisposeAsyncCore()
         {
             if (_debounceTimer is not null)
             {
@@ -997,7 +997,7 @@ namespace MudBlazor
                 catch { /*ignored*/ }
             }
 
-            await base.DisposeAsync(disposing);
+            await base.DisposeAsyncCore();
         }
 
         /// <summary>

@@ -1044,16 +1044,13 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        protected override async ValueTask DisposeAsync(bool disposing)
+        protected override async ValueTask DisposeAsyncCore()
         {
-            await base.DisposeAsync(disposing);
+            await base.DisposeAsyncCore();
 
-            if (disposing)
+            if (IsJSRuntimeAvailable)
             {
-                if (IsJSRuntimeAvailable)
-                {
-                    await KeyInterceptorService.UnsubscribeAsync(_elementId);
-                }
+                await KeyInterceptorService.UnsubscribeAsync(_elementId);
             }
         }
 
