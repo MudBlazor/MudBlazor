@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,6 +39,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddScoped<IRenderQueueService, RenderQueueService>();
             ctx.Services.AddTransient<InternalMudLocalizer>();
             ctx.Services.AddTransient<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
+            ctx.Services.AddTransient<ILocalizationEnumInterceptor, DefaultLocalizationEnumInterceptor>();
             ctx.Services.AddScoped(sp => new HttpClient());
         }
 

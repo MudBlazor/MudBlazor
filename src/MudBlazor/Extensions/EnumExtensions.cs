@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace MudBlazor.Extensions
+﻿namespace MudBlazor.Extensions
 {
 #nullable enable
     public static class EnumExtensions
@@ -16,7 +12,7 @@ namespace MudBlazor.Extensions
         {
             if (type is null)
             {
-                return Enumerable.Empty<Enum>();
+                return [];
             }
 
             if (type.IsEnum)
@@ -30,7 +26,7 @@ namespace MudBlazor.Extensions
                 return Enum.GetValues(actualType).Cast<Enum>();
             }
 
-            return Enumerable.Empty<Enum>();
+            return [];
         }
     }
 }
