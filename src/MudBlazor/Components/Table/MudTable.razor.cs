@@ -672,7 +672,7 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
             if (firstRender)
                 await InvokeServerLoadFunc();
-            TableContext.UpdateRowCheckBoxes(updateGroups: false);
+            TableContext.UpdateRowCheckBoxes();
         }
 
         /// <summary>
