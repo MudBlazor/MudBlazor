@@ -987,15 +987,19 @@ namespace MudBlazor
             return SetValueAsync(value, updateText: false);
         }
 
-        protected override void Dispose(bool disposing)
+        /// <inheritdoc />
+        protected override async ValueTask DisposeAsyncCore()
         {
-            _debounceTimer?.Dispose();
+            if (_debounceTimer is not null)
+            {
+                await _debounceTimer.DisposeAsync();
+            }
 
-            if (_cancellationTokenSrc != null)
+            if (_cancellationTokenSrc is not null)
             {
                 try
                 {
-                    _cancellationTokenSrc.Cancel();
+                    await _cancellationTokenSrc.CancelAsync();
                 }
                 catch { /*ignored*/ }
                 try
@@ -1005,7 +1009,7 @@ namespace MudBlazor
                 catch { /*ignored*/ }
             }
 
-            base.Dispose(disposing);
+            await base.DisposeAsyncCore();
         }
 
         /// <summary>

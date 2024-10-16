@@ -16,7 +16,7 @@ namespace MudBlazor;
 /// <summary>
 /// Represents a service that intercepts key events for specified HTML elements.
 /// </summary>
-internal class KeyInterceptorService : IKeyInterceptorService
+internal sealed class KeyInterceptorService : IKeyInterceptorService
 {
     private bool _disposed;
     private readonly KeyInterceptorInterop _keyInterceptorInterop;
@@ -147,31 +147,23 @@ internal class KeyInterceptorService : IKeyInterceptorService
     }
 
     /// <inheritdoc />
-    public ValueTask DisposeAsync()
-    {
-        return DisposeAsyncCore(true);
-    }
-
-    private async ValueTask DisposeAsyncCore(bool disposing)
+    public async ValueTask DisposeAsync()
     {
         if (!_disposed)
         {
-            if (disposing)
+            _disposed = true;
+
+            if (_dotNetReferenceLazy.IsValueCreated)
             {
-                _disposed = true;
-
-                if (_dotNetReferenceLazy.IsValueCreated)
-                {
-                    _dotNetReferenceLazy.Value.Dispose();
-                }
-
-                foreach (var elementId in _observerManager.Observers.Keys)
-                {
-                    await _keyInterceptorInterop.Disconnect(elementId);
-                }
-
-                _observerManager.Clear();
+                _dotNetReferenceLazy.Value.Dispose();
             }
+
+            foreach (var elementId in _observerManager.Observers.Keys)
+            {
+                await _keyInterceptorInterop.Disconnect(elementId);
+            }
+
+            _observerManager.Clear();
         }
     }
 
