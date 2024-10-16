@@ -390,7 +390,6 @@ namespace MudBlazor
             }
         }
 
-
         /// <inheritdoc />
         public async ValueTask DisposeAsync()
         {

@@ -243,14 +243,20 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        /// <inheritdoc />
-        public async ValueTask DisposeAsync()
+        protected virtual async ValueTask DisposeAsyncCore()
         {
             MudRadioGroup?.UnregisterRadio(this);
             if (IsJSRuntimeAvailable)
             {
                 await KeyInterceptorService.UnsubscribeAsync(_elementId);
             }
+        }
+
+        /// <inheritdoc />
+        public async ValueTask DisposeAsync()
+        {
+            await DisposeAsyncCore();
+            GC.SuppressFinalize(this);
         }
     }
 }

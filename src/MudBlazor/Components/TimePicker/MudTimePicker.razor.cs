@@ -521,14 +521,14 @@ namespace MudBlazor
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()
         {
+            await base.DisposeAsyncCore();
+
             if (IsJSRuntimeAvailable)
             {
                 await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.destroyPointerEvents", ClockElementReference);
             }
 
             _dotNetRef?.Dispose();
-
-            await base.DisposeAsyncCore();
         }
 
         private void UpdateTimeSetFromTime()
