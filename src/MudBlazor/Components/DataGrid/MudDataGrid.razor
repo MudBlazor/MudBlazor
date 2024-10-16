@@ -377,6 +377,11 @@
                 <MudForm @ref="_editForm" FieldChanged="FormFieldChanged">
                     @foreach (var column in RenderedColumns)
                     {
+                        if (column.HiddenState.Value)
+                        {
+                            continue;
+                        }
+                        
                         var cell = new Cell<T>(this, column, _editingItem);
 
                         if (column.EditTemplate != null)
