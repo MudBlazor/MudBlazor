@@ -8,7 +8,7 @@ namespace MudBlazor
 #nullable enable
     public partial class MudSwipeArea : MudComponentBase
     {
-        private static readonly string[] _preventDefaultEventNames = { "touchstart", "touchend", "touchcancel" };
+        private static readonly string[] _preventDefaultEventNames = ["onpointerdown", "onpointerup", "onpointercancel"];
 
         private double? _swipeDelta;
         internal int[]? _listenerIds;
@@ -77,21 +77,21 @@ namespace MudBlazor
             }
         }
 
-        internal void OnTouchStart(TouchEventArgs arg)
+        internal void OnPointerDown(PointerEventArgs arg)
         {
-            _xDown = arg.Touches[0].ClientX;
-            _yDown = arg.Touches[0].ClientY;
+            _xDown = arg.ClientX;
+            _yDown = arg.ClientY;
         }
 
-        internal async Task OnTouchEnd(TouchEventArgs arg)
+        internal async Task OnPointerUp(PointerEventArgs arg)
         {
             if (_xDown is null || _yDown is null)
             {
                 return;
             }
 
-            var xDiff = _xDown.Value - arg.ChangedTouches[0].ClientX;
-            var yDiff = _yDown.Value - arg.ChangedTouches[0].ClientY;
+            var xDiff = _xDown.Value - arg.ClientX;
+            var yDiff = _yDown.Value - arg.ClientY;
 
             if (Math.Abs(xDiff) < Sensitivity && Math.Abs(yDiff) < Sensitivity)
             {
@@ -116,7 +116,7 @@ namespace MudBlazor
             _xDown = _yDown = null;
         }
 
-        internal void OnTouchCancel(TouchEventArgs arg)
+        internal void OnPointerCancel(PointerEventArgs arg)
         {
             _xDown = _yDown = null;
         }
