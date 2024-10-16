@@ -35,7 +35,7 @@ public class DocumentedType : IComparable<DocumentedType>
     /// <summary>
     /// The link to examples related to this type.
     /// </summary>
-    public string? ComponentUrl => "/components/" + Name;
+    public string ComponentUrl => "/components/" + Name;
 
     /// <summary>
     /// Whether this type is a Blazor component.
@@ -45,7 +45,7 @@ public class DocumentedType : IComparable<DocumentedType>
     /// <summary>
     /// The detailed description for this member, and any related information.
     /// </summary>
-    public string? Summary { get; set; }
+    public string Summary { get; set; } = "";
 
     /// <summary>
     /// The brief summary of this member as plain text.
@@ -55,17 +55,17 @@ public class DocumentedType : IComparable<DocumentedType>
     /// <summary>
     /// The brief summary of this member.
     /// </summary>
-    public string? Remarks { get; set; }
+    public string Remarks { get; set; } = "";
 
     /// <summary>
     /// The Reflection name of this type's base type.
     /// </summary>
-    public string? BaseTypeName { get; set; }
+    public string BaseTypeName { get; set; } = "";
 
     /// <summary>
-    /// The documentation for the base class.
+    /// The type this type inherits from.
     /// </summary>
-    public DocumentedType BaseType => ApiDocumentation.GetType(BaseTypeName);
+    public DocumentedType? BaseType => ApiDocumentation.GetType(BaseTypeName);
 
     /// <summary>
     /// The documented types inheriting from this class.

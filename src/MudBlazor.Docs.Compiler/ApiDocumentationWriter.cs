@@ -2,8 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Text.RegularExpressions;
-
 namespace MudBlazor.Docs.Compiler;
 
 /// <summary>
@@ -237,7 +235,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     }
 
     /// <summary>
-    /// Serializes an XML remarks for a member.
+    /// Serializes the XML remarks for a member.
     /// </summary>
     /// <param name="remarks"></param>
     public void WriteRemarksIndented(string remarks)
@@ -245,6 +243,18 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         if (!string.IsNullOrEmpty(remarks))
         {
             WriteLineIndented($"Remarks = @\"{Escape(remarks)}\", ");
+        }
+    }
+
+    /// <summary>
+    /// Serializes the XML remarks for a method return value.
+    /// </summary>
+    /// <param name="returns">The XML docs for the method's return value.</param>
+    public void WriteReturns(string returns)
+    {
+        if (!string.IsNullOrEmpty(returns))
+        {
+            Write($"Returns = @\"{Escape(returns)}\", ");
         }
     }
 
@@ -496,12 +506,40 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         Write($"TypeName = \"{property.Type.FullName}\", ");
         Write($"TypeFriendlyName = \"{property.Type.GetFriendlyName()}\", ");
         WriteCategory(property.Category);
-        WriteOrder(property.Order);
         WriteIsParameter(property.IsParameter);
-        WriteSummary(property.Summary);
+        WriteOrder(property.Order);
         WriteRemarks(property.Remarks);
+        WriteSummary(property.Summary);
         Write("}");
         WriteLine("},");
+    }
+
+    /// <summary>
+    /// Serializes the parameters of methods.
+    /// </summary>
+    /// <param name="method"></param>
+    public void WriteMethodParameters(List<DocumentedParameter> parameters)
+    {
+        if (parameters.Count == 0)
+        {
+            return;
+        }
+
+        WriteLine("Parameters = ");
+
+        Indent();
+        WriteLineIndented("[");
+        Indent();
+
+        foreach (var parameter in parameters)
+        {
+            WriteMethodParameter(parameter);
+        }
+
+        Outdent();
+        WriteLineIndented("],");
+        Outdent();
+        WriteIndent();
     }
 
     /// <summary>
@@ -530,9 +568,9 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         WriteLineIndented("Properties = { ");
         Indent();
 
-        foreach (var property in type.Properties)
+        foreach (var pair in type.Properties)
         {
-            WriteTypeProperty(property.Value);
+            WriteTypeProperty(pair.Value);
         }
 
         Outdent();
@@ -637,7 +675,6 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
 
         Outdent();
         WriteLineIndented("};");
-
         WriteLine();
     }
 
@@ -692,8 +729,24 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         WriteOrder(method.Order);
         WriteSummary(method.Summary);
         WriteRemarks(method.Remarks);
+        WriteReturns(method.Returns);
+        WriteMethodParameters(method.Parameters);
         Write("}");
         WriteLine("},");
+    }
+
+    /// <summary>
+    /// Serializes the specified property.
+    /// </summary>
+    /// <param name="parameter">The property to serialize.</param>
+    public void WriteMethodParameter(DocumentedParameter parameter)
+    {
+        WriteIndented("new() { ");
+        Write($"Name = \"{parameter.Name}\", ");
+        Write($"TypeName = \"{parameter.Type.FullName}\", ");
+        Write($"TypeFriendlyName = \"{parameter.Type.GetFriendlyName()}\", ");
+        WriteSummary(parameter.Summary);
+        WriteLine("}, ");
     }
 
     /// <summary>

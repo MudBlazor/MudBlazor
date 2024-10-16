@@ -64,46 +64,6 @@ public partial class ApiDocumentationBuilder()
     public SortedDictionary<string, DocumentedMethod> Methods { get; private set; } = [];
 
     /// <summary>
-    /// The types which have documentation but could not be linked to a reflected type.
-    /// </summary>
-    /// <remarks>
-    /// When items exist in this list, the code may need to be improved to find the reflected type.
-    /// </remarks>
-    public List<string> UnresolvedTypes { get; private set; } = [];
-
-    /// <summary>
-    /// The properties which have documentation but could not be linked to a reflected property.
-    /// </summary>
-    /// <remarks>
-    /// When items exist in this list, the code may need to be improved to find the reflected property.
-    /// </remarks>
-    public List<string> UnresolvedProperties { get; private set; } = [];
-
-    /// <summary>
-    /// The types which have documentation but could not be linked to a reflected field.
-    /// </summary>
-    /// <remarks>
-    /// When items exist in this list, the code may need to be improved to find the reflected field.
-    /// </remarks>
-    public List<string> UnresolvedFields { get; private set; } = [];
-
-    /// <summary>
-    /// The types which have documentation but could not be linked to a reflected method.
-    /// </summary>
-    /// <remarks>
-    /// When items exist in this list, the code may need to be improved to find the reflected method.
-    /// </remarks>
-    public List<string> UnresolvedMethods { get; private set; } = [];
-
-    /// <summary>
-    /// The types which have documentation but could not be linked to a reflected event.
-    /// </summary>
-    /// <remarks>
-    /// When items exist in this list, the code may need to be improved to find the reflected event.
-    /// </remarks>
-    public List<string> UnresolvedEvents { get; private set; } = [];
-
-    /// <summary>
     /// Any types to exclude from documentation.
     /// </summary>
     public static List<string> ExcludedTypes { get; private set; } =
@@ -661,6 +621,7 @@ public partial class ApiDocumentationBuilder()
                     IsProtected = method.IsFamily,
                     Key = key,
                     Name = method.Name,
+                    Returns = xmlDocs.Returns?.Replace("\r\n", "").Trim(),
                     Remarks = xmlDocs.Remarks?.Replace("\r\n", "").Trim(),
                     Summary = xmlDocs.Summary?.Replace("\r\n", "").Trim(),
                     Type = method.ReturnType,
@@ -668,14 +629,14 @@ public partial class ApiDocumentationBuilder()
                 // Reach out and document types mentioned in these methods
                 foreach (var parameter in method.GetParameters())
                 {
+                    var (name, text) = xmlDocs.Parameters.SingleOrDefault(docParameter => docParameter.Name == parameter.Name);
                     var documentedParameter = new DocumentedParameter()
                     {
                         Name = parameter.Name,
                         Type = parameter.ParameterType,
-                        TypeFullName = parameter.ParameterType.FullName,
-                        TypeName = parameter.ParameterType.Name
+                        Summary = text,
                     };
-                    documentedMethod.Parameters.Add(parameter.Name, documentedParameter);
+                    documentedMethod.Parameters.Add(documentedParameter);
                 }
                 // Add to the list
                 Methods.Add(key, documentedMethod);
