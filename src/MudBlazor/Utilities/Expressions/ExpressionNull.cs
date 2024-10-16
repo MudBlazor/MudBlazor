@@ -32,7 +32,7 @@ internal static class ExpressionNull
     {
         if (expression is MemberExpression { Expression: not null } memberExpression)
         {
-            var nullCheck = Expression.Equal(memberExpression.Expression, Expression.Constant(null));
+            var nullCheck = CreateNullCheck(memberExpression.Expression);
             var defaultValue = Expression.Default(memberExpression.Type);
             var memberAccess = Expression.MakeMemberAccess(AddNullChecks(memberExpression.Expression), memberExpression.Member);
             return Expression.Condition(nullCheck, defaultValue, memberAccess);
@@ -40,12 +40,31 @@ internal static class ExpressionNull
 
         if (expression is MethodCallExpression { Object: not null } methodCallExpression)
         {
-            var nullCheck = Expression.Equal(methodCallExpression.Object, Expression.Constant(null));
+            var nullCheck = CreateNullCheck(methodCallExpression.Object);
             var defaultValue = Expression.Default(methodCallExpression.Type);
             var methodCall = Expression.Call(AddNullChecks(methodCallExpression.Object), methodCallExpression.Method, methodCallExpression.Arguments);
             return Expression.Condition(nullCheck, defaultValue, methodCall);
         }
 
         return expression;
+    }
+
+    /// <summary>
+    /// Creates a null check expression for the given expression.
+    /// </summary>
+    /// <param name="expression">The expression to check for null.</param>
+    /// <returns>A null check expression.</returns>
+    private static BinaryExpression CreateNullCheck(Expression expression)
+    {
+        var type = expression.Type;
+        if (type.IsValueType && Nullable.GetUnderlyingType(type) is null)
+        {
+            // If the type is a non-nullable value type, convert it to its nullable equivalent.
+            var nullableType = typeof(Nullable<>).MakeGenericType(type);
+            var convertedExpression = Expression.Convert(expression, nullableType);
+            return Expression.Equal(convertedExpression, Expression.Constant(null, nullableType));
+        }
+
+        return Expression.Equal(expression, Expression.Constant(null, expression.Type));
     }
 }
