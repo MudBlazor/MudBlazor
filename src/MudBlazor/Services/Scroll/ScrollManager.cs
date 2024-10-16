@@ -2,27 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel;
-using System.Threading.Tasks;
 using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
-    /// <summary>
-    /// Inject with the AddMudBlazorScrollServices extension.
-    /// </summary>
-    public interface IScrollManager
-    {
-        ValueTask ScrollToAsync(string id, int left, int top, ScrollBehavior scrollBehavior);
-        ValueTask ScrollIntoViewAsync(string selector, ScrollBehavior behavior);
-        ValueTask ScrollToTopAsync(string id, ScrollBehavior scrollBehavior = ScrollBehavior.Auto);
-        ValueTask ScrollToYearAsync(string elementId);
-        ValueTask ScrollToListItemAsync(string elementId);
-        ValueTask LockScrollAsync(string selector = "body", string cssClass = "scroll-locked");
-        ValueTask UnlockScrollAsync(string selector = "body", string cssClass = "scroll-locked");
-        ValueTask ScrollToBottomAsync(string elementId, ScrollBehavior scrollBehavior = ScrollBehavior.Auto);
-    }
-
     public class ScrollManager : IScrollManager
     {
         private readonly IJSRuntime _jSRuntime;
@@ -81,17 +64,5 @@ namespace MudBlazor
 
         public ValueTask UnlockScrollAsync(string selector = "body", string cssClass = "scroll-locked") =>
             _jSRuntime.InvokeVoidAsyncIgnoreErrors("mudScrollManager.unlockScroll", selector, cssClass);
-    }
-
-    /// <summary>
-    /// Smooth: scrolls in a smooth fashion;
-    /// Auto: is immediate
-    /// </summary>
-    public enum ScrollBehavior
-    {
-        [Description("smooth")]
-        Smooth,
-        [Description("auto")]
-        Auto
     }
 }

@@ -1,23 +1,8 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
+﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
-
-
-    public interface IScrollListener : IDisposable
-    {
-        /// <summary>
-        /// The CSS selector to which the scroll event will be attached
-        /// </summary>
-        string Selector { get; set; }
-
-        event EventHandler<ScrollEventArgs> OnScroll;
-    }
-
     internal class ScrollListener : IScrollListener
     {
         private readonly IJSRuntime _js;
