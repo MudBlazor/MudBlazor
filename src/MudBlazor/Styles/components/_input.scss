@@ -497,3 +497,9 @@
 .mud-picker .mud-shrink .mud-range-input-separator {
   visibility: visible;
 }
+
+.mud-input-adornment--no-interaction > button {
+  background-color: rgba(0, 0, 0, 0);
+  cursor: default;
+  pointer-events: none;
+}

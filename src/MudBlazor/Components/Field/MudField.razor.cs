@@ -178,16 +178,6 @@ namespace MudBlazor
         public Color AdornmentColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// The size of the icon.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Size.Medium"/>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Field.Appearance)]
-        public Size IconSize { get; set; } = Size.Medium;
-
-        /// <summary>
         /// Occurs when the adornment text or icon has been clicked.
         /// </summary>
         [Parameter]

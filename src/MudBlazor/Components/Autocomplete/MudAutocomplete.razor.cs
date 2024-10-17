@@ -489,7 +489,6 @@ namespace MudBlazor
         public MudAutocomplete()
         {
             Adornment = Adornment.End;
-            IconSize = Size.Medium;
             Immediate = true;
         }
 

@@ -332,7 +332,6 @@ namespace MudBlazor
         public MudSelect()
         {
             Adornment = Adornment.End;
-            IconSize = Size.Medium;
         }
 
         protected override void OnAfterRender(bool firstRender)
