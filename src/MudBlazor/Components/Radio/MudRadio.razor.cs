@@ -6,7 +6,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudRadio<T> : MudBooleanInput<T>, IAsyncDisposable
+    public partial class MudRadio<T> : MudBooleanInput<T>
     {
         private IMudRadioGroup? _parent;
         private string _elementId = Identifier.Create("radio");
@@ -199,18 +199,12 @@ namespace MudBlazor
 
         protected override async ValueTask DisposeAsyncCore()
         {
+            await base.DisposeAsyncCore();
             MudRadioGroup?.UnregisterRadio(this);
             if (IsJSRuntimeAvailable)
             {
                 await KeyInterceptorService.UnsubscribeAsync(_elementId);
             }
-        }
-
-        /// <inheritdoc />
-        public override async ValueTask DisposeAsync()
-        {
-            await DisposeAsyncCore();
-            GC.SuppressFinalize(this);
         }
     }
 }
