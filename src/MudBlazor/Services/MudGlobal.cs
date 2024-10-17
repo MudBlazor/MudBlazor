@@ -2,8 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-
 namespace MudBlazor;
 
 public static class MudGlobal
@@ -14,7 +12,7 @@ public static class MudGlobal
         /// The default color for <see cref="MudButton"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to Colour.Default
+        /// Defaults to <see cref="Color.Default"/>.
         /// </remarks>
         public static Color Color { get; set; } = Color.Default;
 
@@ -22,9 +20,17 @@ public static class MudGlobal
         /// The default size for <see cref="MudButton"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to Size.Medium
+        /// Defaults to <see cref="Size.Medium"/>.
         /// </remarks>
         public static Size Size { get; set; } = Size.Medium;
+
+        /// <summary>
+        /// The default variant for <see cref="MudButton"/>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Variant.Text"/>.
+        /// </remarks>
+        public static Variant Variant { get; set; } = Variant.Text;
     }
 
     public static class CardDefaults
@@ -136,6 +142,9 @@ public static class MudGlobal
         /// <summary>
         /// The default <see cref="MudDialog.DefaultFocus"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="DefaultFocus.Element"/>.
+        /// </remarks>
         public static DefaultFocus DefaultFocus { get; set; } = DefaultFocus.Element;
     }
 
@@ -161,6 +170,22 @@ public static class MudGlobal
         /// Defaults to <c>false</c>. When <c>true</c>, the label will not move into the input when the input is empty.
         /// </remarks>
         public static bool ShrinkLabel { get; set; }
+
+        /// <summary>
+        /// The default variant for <see cref="MudBaseInput{T}.Value"/>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Variant.Text"/>.
+        /// </remarks>
+        public static Variant Variant { get; set; } = Variant.Text;
+
+        /// <summary>
+        /// The default margin for <see cref="MudBaseInput{T}.Value"/>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Margin.None"/>.
+        /// </remarks>
+        public static Margin Margin { get; set; } = Margin.None;
     }
 
     public static class LinkDefaults
@@ -169,7 +194,7 @@ public static class MudGlobal
         /// The default color for <see cref="MudLink"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to Color.Primary
+        /// Defaults to <see cref="Color.Primary"/>.
         /// </remarks>
         public static Color Color { get; set; } = Color.Primary;
 
@@ -177,7 +202,7 @@ public static class MudGlobal
         /// The default typography variant for <see cref="MudLink"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to Typo.body1
+        /// Defaults to <see cref="Typo.body1"/>.
         /// </remarks>
         public static Typo Typo { get; set; } = Typo.body1;
 
@@ -185,7 +210,7 @@ public static class MudGlobal
         /// The default underline setting for <see cref="MudLink"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to underline on hover.
+        /// Defaults to <see cref="Underline.Hover"/>.
         /// </remarks>
         public static Underline Underline { get; set; } = Underline.Hover;
     }
@@ -321,19 +346,25 @@ public static class MudGlobal
         /// <summary>
         /// The default position for <see cref="MudTabs"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Position.Top"/>.
+        /// </remarks>
         public static Position Position { get; set; } = Position.Top;
 
         /// <summary>
-        /// The default colour for <see cref="MudTabs"/>.
+        /// The default color for <see cref="MudTabs"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to Color.Default.
+        /// Defaults to <see cref=" Color.Default"/>.
         /// </remarks>
         public static Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The default slider color for <see cref="MudTabs"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref=" Color.Inherit"/>.
+        /// </remarks>
         public static Color SliderColor { get; set; } = Color.Inherit;
 
         /// <summary>

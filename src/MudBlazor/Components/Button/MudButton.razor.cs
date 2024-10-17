@@ -118,7 +118,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
+        public Variant Variant { get; set; } = MudGlobal.ButtonDefaults.Variant;
 
         /// <summary>
         /// Expands the button to 100% of the container width.
