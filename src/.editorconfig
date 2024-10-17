@@ -287,14 +287,14 @@ csharp_style_var_elsewhere = true:warning
 dotnet_diagnostic.CA1822.severity = suggestion
 
 # MudBlazor Team Overrides
-# Settings in editorconfig are last in wins so add overides here
+# Settings in editorconfig are last in wins so add overrides here
 
 [*.cs]
 # CS1591 Missing XML comment for publicly visible type or member
 # We should try and finish the documentation and remove this
 # For now its too noisy
 dotnet_diagnostic.CS1591.severity = none
-# IDE0071 Require file header 
+# IDE0071 Require file header
 dotnet_diagnostic.IDE0073.severity = none
 # IDE0055: Fix formatting
 dotnet_diagnostic.IDE0055.severity = suggestion
@@ -310,6 +310,10 @@ dotnet_diagnostic.IDE0057.severity = none
 dotnet_diagnostic.BL0007.severity = suggestion
 # IDE0290 Use primary constructor
 dotnet_diagnostic.IDE0290.severity = none
+
+[src/MudBlazor/**/*.{cs,razor}]
+dotnet_style_namespace_match_folder = false
+resharper_check_namespace_highlighting = none
 
 [*]
 end_of_line = lf
