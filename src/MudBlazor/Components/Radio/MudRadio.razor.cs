@@ -197,7 +197,7 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        protected virtual async ValueTask DisposeAsyncCore()
+        protected override async ValueTask DisposeAsyncCore()
         {
             MudRadioGroup?.UnregisterRadio(this);
             if (IsJSRuntimeAvailable)
@@ -207,7 +207,7 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        public async ValueTask DisposeAsync()
+        public override async ValueTask DisposeAsync()
         {
             await DisposeAsyncCore();
             GC.SuppressFinalize(this);

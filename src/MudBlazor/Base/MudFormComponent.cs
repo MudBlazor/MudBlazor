@@ -790,7 +790,7 @@ namespace MudBlazor
         protected virtual ValueTask DisposeAsyncCore() => ValueTask.CompletedTask;
 
         /// <inheritdoc />
-        public async ValueTask DisposeAsync()
+        public virtual async ValueTask DisposeAsync()
         {
             try
             {

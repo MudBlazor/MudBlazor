@@ -81,7 +81,7 @@ namespace MudBlazor
         /// The location of the label relative to the input icon.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.Radio.Appearance)]
+        [Category(CategoryTypes.FormComponent.Appearance)]
         public Placement LabelPlacement { get; set; } = Placement.End;
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace MudBlazor
         /// The Size of the component.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.Radio.Appearance)]
+        [Category(CategoryTypes.FormComponent.Appearance)]
         public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
