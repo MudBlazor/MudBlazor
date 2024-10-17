@@ -435,4 +435,7 @@
   <data name="MudDataGridPager_LastPage" xml:space="preserve">
     <value>LastPage</value>
   </data>
+  <data name="MudDataGrid_ShowColumnOptions" xml:space="preserve">
+    <value>Show Column Options</value>
+  </data>
 </root>

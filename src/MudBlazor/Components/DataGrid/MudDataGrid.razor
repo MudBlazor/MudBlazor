@@ -215,7 +215,7 @@
                                         <td class="mud-table-cell @groupClass" colspan="1000" style="background-color:var(--mud-palette-background-gray);@groupStyle">
                                             <MudIconButton Class="mud-table-row-expander"
                                            Icon="@(g.Expanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)"
-                                           OnClick="@(() => ToggleGroupExpansion(g))" aria-label="@Localizer[LanguageResource.MudDataGrid_CollapseAllGroups]" />
+                                           OnClick="@(() => ToggleGroupExpansion(g))" aria-label="@Localizer[LanguageResource.MudDataGrid_ToggleGroupExpansion]" />
 
                                             @if (GroupedColumn.GroupTemplate == null)
                                             {
