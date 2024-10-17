@@ -335,11 +335,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CheckBoxLabelPositionTest()
+        public void CheckBoxLabelPlacementTest()
         {
             var comp = Context.RenderComponent<CheckboxLabelExample>();
 
-            comp.FindAll("label.mud-checkbox")[2].ClassList.Should().Contain("flex-row-reverse"); // 3rd checkbox: LabelPosition.Start
+            comp.FindAll("label.mud-checkbox")[2].ClassList.Should().Contain("mud-input-content-placement-start"); // 3rd checkbox: Placement.Start
         }
 
         [Test]

@@ -134,3 +134,43 @@ label.mud-input-label.mud-input-label-inputcontrol {
     }
   }
 }
+
+.mud-input-content-placement- {
+  &start {
+    flex-direction: row-reverse;
+
+    &.mud-input-with-content {
+      margin-left: 16px;
+      margin-inline-start: 16px;
+    }
+  }
+
+  &end {
+    flex-direction: row;
+
+    &.mud-input-with-content {
+      margin-right: 16px;
+      margin-inline-end: 16px;
+    }
+  }
+
+  &top {
+    margin-inline-end: unset;
+    flex-direction: column-reverse;
+
+    &.mud-input-with-content {
+      margin-left: 16px;
+      margin-inline-start: 16px;
+    }
+  }
+
+  &bottom {
+    margin-inline-end: unset;
+    flex-direction: column;
+
+    &.mud-input-with-content {
+      margin-left: 16px;
+      margin-inline-start: 16px;
+    }
+  }
+}

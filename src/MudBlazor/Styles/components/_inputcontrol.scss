@@ -16,6 +16,13 @@
   &.mud-input-control-boolean-input {
     flex: none;
     margin: 0;
+
+    & .mud-radio-group {
+      display: inherit;
+      flex-direction: row;
+      align-items: center;
+      flex-wrap: wrap;
+    }
   }
 
   &.mud-input-outlined-with-label {

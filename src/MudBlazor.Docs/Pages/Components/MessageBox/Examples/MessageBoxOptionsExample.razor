@@ -7,7 +7,7 @@
 <MudButton OnClick="@(() => OpenDialogAsync(_fullScreen))" Color="Color.Info">Full Screen Dialog</MudButton>
 <MudButton OnClick="@(() => OpenDialogAsync(_topCenter))" Color="Color.Success">Top Center Dialog</MudButton>
 <br />
-<MudSwitch @bind-Value="_isInline" Label="Inline" LabelPosition="LabelPosition.End" Color="Color.Primary" />
+<MudSwitch @bind-Value="_isInline" Label="Inline" LabelPlacement="Placement.End" Color="Color.Primary" />
 <MudChip T="string">@_state</MudChip>
 <br />
 

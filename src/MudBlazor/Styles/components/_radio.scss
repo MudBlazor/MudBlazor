@@ -6,7 +6,6 @@
   align-items: center;
   vertical-align: middle;
   -webkit-tap-highlight-color: transparent;
-  color: var(--mud-palette-action-default);
 
   & > .mud-radio-content {
     color: var(--mud-palette-text-primary);
@@ -62,13 +61,7 @@
   }
 }
 
-.mud-radio-button {
-  width: 100%;
-  display: flex;
-  align-items: inherit;
-  justify-content: inherit;
-
-  & .mud-radio-input {
+.mud-radio-input {
     top: 0;
     left: 0;
     width: 100%;
@@ -79,14 +72,12 @@
     padding: 0;
     z-index: 1;
     position: absolute;
-  }
-
-  & .mud-radio-icons {
-    display: flex;
-    position: relative;
-  }
 }
 
+.mud-radio-icons {
+    display: flex;
+    position: relative;
+}
 
 .mud-radio-icons.mud-checked .mud-radio-icon-checked {
   transform: scale(1);
@@ -98,48 +89,4 @@
   position: absolute;
   transform: scale(0);
   transition: transform 150ms cubic-bezier(0.4, 0, 1, 1) 0ms;
-}
-
-.mud-radio-content-placement- {
-  &start {
-    margin-right: -11px;
-    margin-inline-end: -11px;
-    flex-direction: row-reverse;
-
-    &.mud-radio-with-content {
-      margin-left: 16px;
-      margin-inline-start: 16px;
-    }
-  }
-
-  &end {
-    margin-left: -11px;
-    margin-inline-start: -11px;
-    flex-direction: row;
-
-    &.mud-radio-with-content {
-      margin-right: 16px;
-      margin-inline-end: 16px;
-    }
-  }
-
-  &top {
-    margin-inline-end: unset;
-    flex-direction: column-reverse;
-
-    &.mud-radio-with-content {
-      margin-left: 16px;
-      margin-inline-start: 16px;
-    }
-  }
-
-  &bottom {
-    margin-inline-end: unset;
-    flex-direction: column;
-
-    &.mud-radio-with-content {
-      margin-left: 16px;
-      margin-inline-start: 16px;
-    }
-  }
 }
