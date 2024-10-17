@@ -4,7 +4,7 @@
 
 @if (!HideContent)
 {
-	<MudListItem @attributes="UserAttributes" Value="@ItemId" id="@ItemId" OnClick="@OnClicked" OnClickPreventDefault="true" Icon="@CheckBoxIcon" Disabled="@Disabled" Class="@GetCssClasses()" Style="@Style">
+    <MudListItem @attributes="UserAttributes" Value="@ItemId" id="@ItemId" OnClick="@OnClickHandleAsync" OnClickPreventDefault="true" Icon="@CheckBoxIcon" Disabled="@Disabled" Class="@GetCssClasses()" Style="@Style">
 		@if (ChildContent != null)
 		{
 			@ChildContent
