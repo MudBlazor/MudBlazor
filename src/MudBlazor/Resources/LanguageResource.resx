@@ -390,4 +390,49 @@
   <data name="MudStepper_Complete" xml:space="preserve">
     <value>Complete</value>
   </data>
+  <data name="MudDataGrid_ApplyFilter" xml:space="preserve">
+    <value>Apply Filter</value>
+  </data>
+  <data name="MudDataGrid_ApplyFilters" xml:space="preserve">
+    <value>Apply Filters</value>
+  </data>
+  <data name="MudDataGrid_CancelEditingItem" xml:space="preserve">
+    <value>Cancel Editing Item</value>
+  </data>
+  <data name="MudDataGrid_ClearFilter" xml:space="preserve">
+    <value>Clear Filter</value>
+  </data>
+  <data name="MudDataGrid_ClearFilters" xml:space="preserve">
+    <value>Clear Filters</value>
+  </data>
+  <data name="MudDataGrid_CommitItemChanges" xml:space="preserve">
+    <value>Commit Item Changes</value>
+  </data>
+  <data name="MudDataGrid_HideAllColumns" xml:space="preserve">
+    <value>Hide All Columns</value>
+  </data>
+  <data name="MudDataGrid_OpenFilters" xml:space="preserve">
+    <value>Open Filters</value>
+  </data>
+  <data name="MudDataGrid_ShowAllColumns" xml:space="preserve">
+    <value>Show All Columns</value>
+  </data>
+  <data name="MudDataGrid_ToggleGroupExpansion" xml:space="preserve">
+    <value>Toggle Group Expansion</value>
+  </data>
+  <data name="MudDataGrid_RemoveFilter" xml:space="preserve">
+    <value>Remove Filter</value>
+  </data>
+  <data name="MudDataGridPager_FirstPage" xml:space="preserve">
+    <value>First Page</value>
+  </data>
+  <data name="MudDataGridPager_PreviousPage" xml:space="preserve">
+    <value>Previous Page</value>
+  </data>
+  <data name="MudDataGridPager_NextPage" xml:space="preserve">
+    <value>Next Page</value>
+  </data>
+  <data name="MudDataGridPager_LastPage" xml:space="preserve">
+    <value>LastPage</value>
+  </data>
 </root>

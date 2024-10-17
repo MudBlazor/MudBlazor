@@ -156,13 +156,13 @@
                                         <MudStack Row="true">
                                             @if (Groupable)
                                             {
-                                                <MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_CollapseAllGroups]</MudButton>
-                                                <MudButton OnClick="@ExpandAllGroups" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_ExpandAllGroups]</MudButton>
+                                                <MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary" aria-label="@Localizer[LanguageResource.MudDataGrid_CollapseAllGroups]">@Localizer[LanguageResource.MudDataGrid_CollapseAllGroups]</MudButton>
+                                                <MudButton OnClick="@ExpandAllGroups" Color="@Color.Primary" aria-label="@Localizer[LanguageResource.MudDataGrid_ExpandAllGroups]">@Localizer[LanguageResource.MudDataGrid_ExpandAllGroups]</MudButton>
                                             }
                                             <MudSpacer />
 
-                                            <MudButton OnClick="@HideAllColumnsAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_HideAll]</MudButton>
-                                            <MudButton OnClick="@ShowAllColumnsAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_ShowAll]</MudButton>
+                                            <MudButton OnClick="@HideAllColumnsAsync" Color="@Color.Primary" aria-label="@Localizer[LanguageResource.MudDataGrid_HideAllColumns]">@Localizer[LanguageResource.MudDataGrid_HideAll]</MudButton>
+                                            <MudButton OnClick="@ShowAllColumnsAsync" Color="@Color.Primary" aria-label="@Localizer[LanguageResource.MudDataGrid_ShowAllColumns]">@Localizer[LanguageResource.MudDataGrid_ShowAll]</MudButton>
                                         </MudStack>
                                     </MudPopover>
                                 }
@@ -179,12 +179,12 @@
                                                     @Filter(f, null)
                                                 }
                                             </MudStack>
-                                            <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_AddFilter]</MudButton>
+                                            <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary" aria-label="@Localizer[LanguageResource.MudDataGrid_AddFilter]">@Localizer[LanguageResource.MudDataGrid_AddFilter]</MudButton>
                                             @if (HasServerData)
                                             {
-                                                <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFiltersAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_Apply]</MudButton>
+                                                <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFiltersAsync" Color="@Color.Primary" aria-label="@Localizer[LanguageResource.MudDataGrid_ApplyFilters]">@Localizer[LanguageResource.MudDataGrid_Apply]</MudButton>
                                             }
-                                            <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Remove" OnClick="@ClearFiltersAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_Clear]</MudButton>
+                                            <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Remove" OnClick="@ClearFiltersAsync" Color="@Color.Primary" aria-label="@Localizer[LanguageResource.MudDataGrid_ClearFilters]">@Localizer[LanguageResource.MudDataGrid_Clear]</MudButton>
                                         }
                                         else
                                         {
@@ -215,7 +215,7 @@
                                         <td class="mud-table-cell @groupClass" colspan="1000" style="background-color:var(--mud-palette-background-gray);@groupStyle">
                                             <MudIconButton Class="mud-table-row-expander"
                                            Icon="@(g.Expanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)"
-                                           OnClick="@(() => ToggleGroupExpansion(g))" />
+                                           OnClick="@(() => ToggleGroupExpansion(g))" aria-label="@Localizer[LanguageResource.MudDataGrid_CollapseAllGroups]" />
 
                                             @if (GroupedColumn.GroupTemplate == null)
                                             {
@@ -402,8 +402,8 @@
                 </MudForm>
             </DialogContent>
             <DialogActions>
-                <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="@CancelEditingItemAsync" Class="px-10">@Localizer[LanguageResource.MudDataGrid_Cancel]</MudButton>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CommitItemChangesAsync" Class="px-10">@Localizer[LanguageResource.MudDataGrid_Save]</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="@CancelEditingItemAsync" Class="px-10" aria-label="@Localizer[LanguageResource.MudDataGrid_CancelEditingItem]">@Localizer[LanguageResource.MudDataGrid_Cancel]</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CommitItemChangesAsync" Class="px-10" aria-label="@Localizer[LanguageResource.MudDataGrid_CommitItemChanges]">@Localizer[LanguageResource.MudDataGrid_Save]</MudButton>
             </DialogActions>
         </MudDialog>
     </CascadingValue>
@@ -520,7 +520,7 @@
             {
                 <MudGrid Spacing="0">
                     <MudItem xs="1" Class="d-flex">
-                        <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilterAsync" Size="@Size.Small" Style="align-self: flex-end"></MudIconButton>
+                        <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilterAsync" Size="@Size.Small" Style="align-self: flex-end" aria-label="@Localizer[LanguageResource.MudDataGrid_RemoveFilter]"></MudIconButton>
                     </MudItem>
                     <MudItem xs="4">
                         <MudSelect T="Column<T>" Value="@filterDefinition.Column" ValueChanged="@filter.FieldChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Column]" Dense="true" Margin="@Margin.Dense"
