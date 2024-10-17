@@ -215,7 +215,7 @@
                                         <td class="mud-table-cell @groupClass" colspan="1000" style="background-color:var(--mud-palette-background-gray);@groupStyle">
                                             <MudIconButton Class="mud-table-row-expander"
                                            Icon="@(g.Expanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)"
-                                           OnClick="@(() => ToggleGroupExpansion(g))" />
+                                           OnClick="@(() => ToggleGroupExpansion(g))" aria-label="@Localizer[LanguageResource.MudDataGrid_ToggleGroupExpansion]" />
 
                                             @if (GroupedColumn.GroupTemplate == null)
                                             {
@@ -520,7 +520,7 @@
             {
                 <MudGrid Spacing="0">
                     <MudItem xs="1" Class="d-flex">
-                        <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilterAsync" Size="@Size.Small" Style="align-self: flex-end"></MudIconButton>
+                        <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilterAsync" Size="@Size.Small" Style="align-self: flex-end" aria-label="@Localizer[LanguageResource.MudDataGrid_RemoveFilter]"></MudIconButton>
                     </MudItem>
                     <MudItem xs="4">
                         <MudSelect T="Column<T>" Value="@filterDefinition.Column" ValueChanged="@filter.FieldChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Column]" Dense="true" Margin="@Margin.Dense"
