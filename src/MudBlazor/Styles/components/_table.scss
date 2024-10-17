@@ -110,7 +110,11 @@
   vertical-align: inherit;
 
   & .mud-checkbox {
-    margin: -12px;
+    margin: -4px;
+
+    > .mud-icon-button {
+      padding: 4px;
+    }
   }
 }
 

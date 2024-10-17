@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
@@ -272,17 +270,14 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        protected override void Dispose(bool disposing)
+        /// <inheritdoc />
+        protected override async ValueTask DisposeAsyncCore()
         {
-            base.Dispose(disposing);
+            await base.DisposeAsyncCore();
 
-            if (disposing)
+            if (IsJSRuntimeAvailable)
             {
-                if (IsJSRuntimeAvailable)
-                {
-                    // TODO: Replace with IAsyncDisposable
-                    KeyInterceptorService.UnsubscribeAsync(_elementId).CatchAndLog();
-                }
+                await KeyInterceptorService.UnsubscribeAsync(_elementId);
             }
         }
     }

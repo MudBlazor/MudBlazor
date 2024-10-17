@@ -21,12 +21,12 @@ namespace MudBlazor
     /// <seealso cref="DialogParameters{T}"/>
     /// <seealso cref="DialogReference"/>
     /// <seealso cref="DialogService"/>
-    public partial class MudDialogInstance : MudComponentBase, IDisposable
+    public partial class MudDialogInstance : MudComponentBase, IAsyncDisposable
     {
         private DialogOptions? _options = new();
         private readonly string _elementId = Identifier.Create("dialog");
         private MudDialog? _dialog;
-        private bool _disposedValue;
+        private bool _disposed;
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -376,29 +376,24 @@ namespace MudBlazor
             Parent?.DismissAll();
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected virtual async ValueTask DisposeAsyncCore()
         {
-            if (_disposedValue)
-                return;
-
-            if (disposing)
+            if (_disposed)
             {
-                if (IsJSRuntimeAvailable)
-                {
-                    // TODO: Replace with IAsyncDisposable
-                    KeyInterceptorService.UnsubscribeAsync(_elementId).CatchAndLog();
-                }
+                return;
             }
 
-            _disposedValue = true;
+            _disposed = true;
+            if (IsJSRuntimeAvailable)
+            {
+                await KeyInterceptorService.UnsubscribeAsync(_elementId);
+            }
         }
 
-        /// <summary>
-        /// Releases resources used by this dialog.
-        /// </summary>
-        public void Dispose()
+        /// <inheritdoc />
+        public async ValueTask DisposeAsync()
         {
-            Dispose(disposing: true);
+            await DisposeAsyncCore();
             GC.SuppressFinalize(this);
         }
     }

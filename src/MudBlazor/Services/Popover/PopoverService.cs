@@ -200,15 +200,16 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     }
 
     /// <inheritdoc />
-    public ValueTask DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
-        return DisposeAsyncCore();
+        await DisposeAsyncCore();
+        GC.SuppressFinalize(this);
     }
 
     /// <summary>
     /// Disposes the current <see cref="PopoverService"/> instance.
     /// </summary>
-    private async ValueTask DisposeAsyncCore()
+    protected virtual async ValueTask DisposeAsyncCore()
     {
         if (!_disposed)
         {
