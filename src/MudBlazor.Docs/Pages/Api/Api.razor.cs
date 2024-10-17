@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Docs.Components;
 using MudBlazor.Docs.Models;
 
 namespace MudBlazor.Docs.Pages.Api;
@@ -34,6 +35,8 @@ public partial class Api
     /// The type being displayed.
     /// </summary>
     public DocumentedType? DocumentedType { get; set; }
+
+    public DocsPage? Page { get; set; }
 
     protected override void OnParametersSet()
     {

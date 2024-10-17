@@ -14,17 +14,17 @@ public sealed class DocumentedParameter
     /// <summary>
     /// The name of this parameter.
     /// </summary>
-    public string Name { get; set; } = "";
+    public string Name { get; init; } = "";
 
     /// <summary>
     /// The name of the type of this member.
     /// </summary>
-    public string TypeName { get; set; } = "";
+    public string TypeName { get; init; } = "";
 
     /// <summary>
     /// The user-facing name of this member's type.
     /// </summary>
-    public string TypeFriendlyName { get; set; } = "";
+    public string TypeFriendlyName { get; init; } = "";
 
     /// <summary>
     /// The type of this member.
@@ -34,5 +34,5 @@ public sealed class DocumentedParameter
     /// <summary>
     /// The XML documentation for this parameter.
     /// </summary>
-    public string Summary { get; set; } = "";
+    public string Summary { get; init; } = "";
 }

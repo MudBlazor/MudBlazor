@@ -15,7 +15,7 @@ public class DocumentedEvent : DocumentedMember
     /// <remarks>
     /// When <c>true</c>, the <see cref="ParameterAttribute"/> is applied to this property.
     /// </remarks>
-    public bool IsParameter { get; set; }
+    public bool IsParameter { get; init; }
 
     /// <summary>
     /// The property which triggers this event.

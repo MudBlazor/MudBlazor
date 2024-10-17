@@ -2,7 +2,7 @@
 @using MudBlazor.Docs.Components
 @namespace MudBlazor.Docs.Pages.Api
 
-<DocsPage>
+<DocsPage @ref="Page">
     @if (DocumentedType != null)
     {
         <ApiBreadcrumbs Type="@DocumentedType" />
@@ -118,7 +118,7 @@
                         </MudGrid>
                     </SectionContent>
                 </DocsPageSection>
-            }
+            }          
         </DocsPageContent>
     }
     else

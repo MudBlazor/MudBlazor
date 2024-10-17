@@ -19,7 +19,7 @@ public class DocumentedMethod : DocumentedMember
     /// <summary>
     /// The XML documentation for what this method returns.
     /// </summary>
-    public string Returns { get; set; } = "";
+    public string Returns { get; init; } = "";
 
     /// <summary>
     /// Whether parameters for this method are displayed.

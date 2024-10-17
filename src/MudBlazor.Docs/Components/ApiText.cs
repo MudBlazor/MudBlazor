@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.AspNetCore.Components;
@@ -53,10 +54,23 @@ public partial class ApiText : ComponentBase
                                     var linkRef = link.Substring(2);
                                     if (linkType == "T") // Type
                                     {
-                                        // Add a link to the type
-                                        builder.OpenComponent<ApiTypeLink>(sequence++);
-                                        builder.AddComponentParameter(sequence++, "TypeName", linkRef);
-                                        builder.CloseComponent();
+                                        // Is this an external type?
+                                        if (linkRef != null && (linkRef.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase) || linkRef.StartsWith("System", StringComparison.OrdinalIgnoreCase)))
+                                        {
+                                            // Get the class name and member name
+                                            var parts = linkRef.Split(".");
+                                            var className = parts[parts.Length - 1].Replace("`1", "<T>").Replace("`2", "<T, U>");
+                                            // Calculate the Microsoft Docs link
+                                            var msLink = linkRef.Replace("`1", "-1").Replace("`2", "-2").ToLowerInvariant();
+                                            builder.AddMudLink(0, $"https://learn.microsoft.com/dotnet/api/{msLink}", className, "docs-link docs-code docs-code-secondary", "_external");
+                                        }
+                                        else
+                                        {
+                                            // Add a link to the type
+                                            builder.OpenComponent<ApiTypeLink>(sequence++);
+                                            builder.AddComponentParameter(sequence++, "TypeName", linkRef);
+                                            builder.CloseComponent();
+                                        }
                                     }
                                     else // Property, Method, Field, or Event
                                     {
@@ -71,7 +85,13 @@ public partial class ApiText : ComponentBase
                                         }
                                         else if (linkRef != null && (linkRef.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase) || linkRef.StartsWith("System", StringComparison.OrdinalIgnoreCase)))
                                         {
-                                            builder.AddMudLink(0, $"https://learn.microsoft.com/dotnet/api/{linkRef}", linkRef, "docs-link docs-code docs-code-primary", "_external");
+                                            // Get the class name and member name
+                                            var parts = linkRef.Split(".");
+                                            var className = parts[parts.Length - 2].Replace("`1", "<T>").Replace("`2", "<T, U>");
+                                            var memberName = parts[parts.Length - 1];
+                                            // Calculate the Microsoft Docs link
+                                            var msLink = linkRef.Replace("`1", "-1").Replace("`2", "-2").ToLowerInvariant();
+                                            builder.AddMudLink(0, $"https://learn.microsoft.com/dotnet/api/{msLink}", className + "." + memberName, "docs-link docs-code docs-code-secondary", "_external");
                                         }
                                         else
                                         {
@@ -80,7 +100,16 @@ public partial class ApiText : ComponentBase
                                     }
                                     break;
                                 case "href":
-                                    builder.AddMudLink(sequence++, link, link, "docs-link docs-code docs-code-primary", "_external");
+                                    if (reader.IsEmptyElement)
+                                    {
+                                        builder.AddMudLink(sequence++, link, link, "docs-link docs-code docs-code-secondary", "_external");
+                                    }
+                                    else
+                                    {
+                                        // Move to the href text
+                                        reader.Read();
+                                        builder.AddMudLink(sequence++, link, reader.Value, "docs-link docs-code docs-code-secondary", "_external");
+                                    }
                                     break;
                             }
                             break;
