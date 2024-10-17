@@ -209,22 +209,4 @@ public partial class ApiMemberTable
         // Force a new load (otherwise MudChips won't properly update)
         Browser?.NavigateTo(url, false);
     }
-
-    /// <summary>
-    /// Toggles the display of a method's parameters.
-    /// </summary>
-    /// <param name="method"></param>
-    public string GetToggleIcon(DocumentedMethod method)
-    {
-        return method.IsExpanded ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore;
-    }
-    /// <summary>
-    /// Toggles the display of a method's parameters.
-    /// </summary>
-    /// <param name="method"></param>
-    public void OnToggleExpand(DocumentedMethod method)
-    {
-        method.IsExpanded = !method.IsExpanded;
-        StateHasChanged();
-    }
 }

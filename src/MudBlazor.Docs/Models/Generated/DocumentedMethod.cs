@@ -20,9 +20,4 @@ public class DocumentedMethod : DocumentedMember
     /// The XML documentation for what this method returns.
     /// </summary>
     public string Returns { get; init; } = "";
-
-    /// <summary>
-    /// Whether parameters for this method are displayed.
-    /// </summary>
-    public bool IsExpanded { get; set; }
 }

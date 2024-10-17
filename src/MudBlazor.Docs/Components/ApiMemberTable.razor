@@ -1,5 +1,5 @@
 ﻿<MudTable T="DocumentedMember" @ref="Table" ServerData="@GetData"
-          Elevation="0" Class="ma-0 mud-width-full" Hover="true" Dense="true"
+          Elevation="0" Class="mud-width-full" Hover="true" Dense="true"
           AllowUnsorted="false" GroupBy="@CurrentGroups">
     <ColGroup>
         <col />
@@ -49,33 +49,52 @@
     </ToolBarContent>
     <RowTemplate>
         <MudTd id="@context.Name" DataLabel="Name">
-            @if (context.DeclaringType != null && context.DeclaringType.Name != Type.Name)
+            @if (Mode == ApiMemberTableMode.Methods)
+            {
+                <CodeInline Class="pr-0">@($"{context.Name}(")</CodeInline>
+                var parameters = ((DocumentedMethod)context).Parameters;
+                @for (int index = 0; index < parameters.Count; index++)
+                {
+                    var parameter = parameters[index];
+                    @if (index > 0)
+                    {
+                        <CodeInline Class="px-0">, </CodeInline>
+                    }
+                    <MudTooltip Arrow="true">
+                        <ChildContent>
+                            <CodeInline Class="px-0">@parameter.Name</CodeInline>
+                        </ChildContent>
+                        <TooltipContent>
+                            <MudSimpleTable Elevation="0" Hover="true" Dense="true" >
+                                <MudTr>
+                                    <MudTh>Parameter Name</MudTh>
+                                    <MudTh>Type</MudTh>
+                                    <MudTh>Summary</MudTh>
+                                </MudTr>
+                                <MudTr>
+                                    <MudTd><CodeInline>@parameter.Name</CodeInline></MudTd>
+                                    <MudTd><ApiTypeLink Type="@parameter.Type" TypeName="@parameter.TypeName" TypeFriendlyName="@parameter.TypeFriendlyName" /></MudTd>
+                                    <MudTd><ApiText Text="@parameter.Summary" /></MudTd>
+                                </MudTr>
+                            </MudSimpleTable>
+                        </TooltipContent>
+                    </MudTooltip>
+                }
+                <CodeInline Class="pl-0">@(")")</CodeInline>
+            }
+            else if (context.DeclaringType != null && context.DeclaringType.Name != Type.Name)
             {
                 <MudTooltip Text="@("From " + context.DeclaringType.NameFriendly)" Placement="Placement.Top">
-                    @if (Mode == ApiMemberTableMode.Methods)
-                    {
-                        <CodeInline>@($"{context.Name}()")</CodeInline>
-                    }
-                    else
-                    {
-                        <CodeInline>@context.Name</CodeInline>
-                    }
+                    <CodeInline>@context.Name</CodeInline>
                 </MudTooltip>
             }
             else
             {
-                @if (Mode == ApiMemberTableMode.Methods)
-                {
-                    <CodeInline>@($"{context.Name}()")</CodeInline>
-                }
-                else
-                {
-                    <CodeInline>@context.Name</CodeInline>
-                }
+                <CodeInline>@context.Name</CodeInline>
             }
             @if (Mode == ApiMemberTableMode.Methods && ((DocumentedMethod)context).Parameters.Count > 0)
             {
-                <MudIconButton Size="Size.Small" Icon="@GetToggleIcon((DocumentedMethod)context)" OnClick="@(() => OnToggleExpand((DocumentedMethod)context))" />
+
             }
             @if (Mode == ApiMemberTableMode.Properties)
             {
@@ -104,7 +123,7 @@
         @if (Mode == ApiMemberTableMode.Methods && !string.IsNullOrEmpty(((DocumentedMethod)context).Returns))
         {
             <MudTd DataLabel="Returns">
-                <ApiText Text="@(((DocumentedMethod)context).Returns + "<br />" + context.Summary + " " + context.Remarks)" />
+                <ApiText Text="@(context.Summary + " " + context.Remarks + "  Returns: " + ((DocumentedMethod)context).Returns)" />
             </MudTd>
         }
         else
@@ -114,49 +133,6 @@
             </MudTd>
         }
     </RowTemplate>
-    <ChildRowContent>
-        @if (Mode == ApiMemberTableMode.Methods && ((DocumentedMethod)context).IsExpanded)
-        {            
-            <MudTr>
-                <MudTh>Parameter Name</MudTh>
-                <MudTh>Type</MudTh>
-                <MudTh>Summary</MudTh>
-            </MudTr>
-
-            var parameters = ((DocumentedMethod)context).Parameters;
-            @foreach (var parameter in parameters)
-            {
-                <MudTr>
-                    <MudTd><CodeInline>@parameter.Name</CodeInline></MudTd>
-                    <MudTd><ApiTypeLink Type="@parameter.Type" TypeName="@parameter.TypeName" TypeFriendlyName="@parameter.TypeFriendlyName" /></MudTd>
-                    <MudTd><ApiText Text="@parameter.Summary" /></MudTd>
-                </MudTr>
-            }
-
-            @* if (parameters.Count > 0)
-        {
-        <MudTr>
-        <td colspan="4">
-        <MudTable T="DocumentedParameter" Items="@parameters"
-        Elevation="0" Class="ma-0 mud-width-full" Hover="true" Dense="true">
-        <ColGroup>
-        <col width="60px" />
-        <col />
-        <col />
-        <col />
-        </ColGroup>
-        <RowTemplate Context="parameter">
-        <MudTd></MudTd>
-        <MudTd>@parameter.Name</MudTd>
-        <MudTd><ApiTypeLink Type="@parameter.Type" TypeName="@parameter.TypeName" TypeFriendlyName="@parameter.TypeFriendlyName" /></MudTd>
-        <MudTd><ApiText Text="@parameter.Summary" /></MudTd>
-        </RowTemplate>
-        </MudTable>
-        </td>
-        </MudTr>
-        } *@
-        }
-    </ChildRowContent>
     <NoRecordsContent>
         <MudAlert Severity="Severity.Info">No members match the current filters.</MudAlert>
     </NoRecordsContent>
