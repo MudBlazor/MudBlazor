@@ -354,7 +354,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
             if (method.Value.DeclaringDocumentedType != null)
             {
                 WriteLineIndented($"Methods[\"{method.Key}\"].DeclaringType = Types[\"{method.Value.DeclaringDocumentedType.Key}\"];");
-            }           
+            }
         }
 
         WriteLine();
