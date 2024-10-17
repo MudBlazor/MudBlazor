@@ -102,7 +102,7 @@ else if (Column != null && !Column.HiddenState.Value)
 
                 @if (showColumnOptions)
                 {
-                        <MudMenu Icon="@Icons.Material.Filled.MoreVert" Size="Size.Small" AnchorOrigin="Origin.BottomCenter" Dense="true" AriaLabel="@Localizer[LanguageResource.MudDataGrid_ShowColumnOptions]">
+                    <MudMenu Icon="@Icons.Material.Filled.MoreVert" Size="Size.Small" AnchorOrigin="Origin.BottomCenter" Dense="true" AriaLabel="@Localizer[LanguageResource.MudDataGrid_ShowColumnOptions]">
                         <MudMenuItem Disabled="@(_initialDirection == SortDirection.None)" OnClick="@RemoveSortAsync">@Localizer[LanguageResource.MudDataGrid_Unsort]</MudMenuItem>
                         @if (filterable && DataGrid.FilterMode != DataGridFilterMode.ColumnFilterRow)
                         {
@@ -146,8 +146,8 @@ else if (Column != null && !Column.HiddenState.Value)
                             @DataGrid.Filter(Column.FilterContext.FilterDefinition, Column)
                         </MudItem>
                         <MudItem xs="12" Class="d-flex justify-end">
-                    <MudButton Class="clear-filter-button" OnClick="@ClearFilterAsync" aria-label="@Localizer[LanguageResource.MudDataGrid_ClearFilter]">@Localizer[LanguageResource.MudDataGrid_Clear]</MudButton>
-                    <MudButton Class="apply-filter-button" Color="@Color.Primary" OnClick="@ApplyFilterAsync" aria-label="@Localizer[LanguageResource.MudDataGrid_ApplyFilter]">@Localizer[LanguageResource.MudDataGrid_Filter]</MudButton>
+                            <MudButton Class="clear-filter-button" OnClick="@ClearFilterAsync" aria-label="@Localizer[LanguageResource.MudDataGrid_ClearFilter]">@Localizer[LanguageResource.MudDataGrid_Clear]</MudButton>
+                            <MudButton Class="apply-filter-button" Color="@Color.Primary" OnClick="@ApplyFilterAsync" aria-label="@Localizer[LanguageResource.MudDataGrid_ApplyFilter]">@Localizer[LanguageResource.MudDataGrid_Filter]</MudButton>
                         </MudItem>
                     </MudGrid>
                 }
