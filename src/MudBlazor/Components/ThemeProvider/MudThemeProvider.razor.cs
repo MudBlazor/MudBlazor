@@ -441,15 +441,6 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Typography}-body2-text-transform: {_theme.Typography.Body2.TextTransform};");
 
         theme.AppendLine(
-            $"--{Typography}-input-family: '{string.Join("','", _theme.Typography.Input.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())}';");
-        theme.AppendLine($"--{Typography}-input-size: {_theme.Typography.Input.FontSize};");
-        theme.AppendLine($"--{Typography}-input-weight: {_theme.Typography.Input.FontWeight};");
-        theme.AppendLine(
-            $"--{Typography}-input-lineheight: {_theme.Typography.Input.LineHeight};");
-        theme.AppendLine($"--{Typography}-input-letterspacing: {_theme.Typography.Input.LetterSpacing};");
-        theme.AppendLine($"--{Typography}-input-text-transform: {_theme.Typography.Input.TextTransform};");
-
-        theme.AppendLine(
             $"--{Typography}-button-family: '{string.Join("','", _theme.Typography.Button.FontFamily ?? _theme.Typography.Default.FontFamily ?? Array.Empty<string>())}';");
         theme.AppendLine($"--{Typography}-button-size: {_theme.Typography.Button.FontSize};");
         theme.AppendLine($"--{Typography}-button-weight: {_theme.Typography.Button.FontWeight};");

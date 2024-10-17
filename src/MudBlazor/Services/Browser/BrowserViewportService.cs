@@ -17,7 +17,7 @@ namespace MudBlazor;
 /// <summary>
 /// Represents a service that serves to listen to browser window size changes and breakpoints.
 /// </summary>
-internal class BrowserViewportService : IBrowserViewportService
+internal sealed class BrowserViewportService : IBrowserViewportService
 {
     private bool _disposed;
     private readonly CancellationToken _cancellationToken;
@@ -245,12 +245,7 @@ internal class BrowserViewportService : IBrowserViewportService
     }
 
     /// <inheritdoc />
-    public ValueTask DisposeAsync()
-    {
-        return DisposeAsyncCore();
-    }
-
-    private async ValueTask DisposeAsyncCore()
+    public async ValueTask DisposeAsync()
     {
         if (!_disposed)
         {
@@ -269,7 +264,6 @@ internal class BrowserViewportService : IBrowserViewportService
             _cancellationTokenSource.Dispose();
         }
     }
-
 
     // ReSharper disable once UnusedMember.Global used in tests
     internal BrowserViewportSubscription? GetInternalSubscription(IBrowserViewportObserver observer) => GetInternalSubscription(observer.Id);

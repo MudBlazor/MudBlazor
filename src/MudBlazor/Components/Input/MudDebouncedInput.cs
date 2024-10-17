@@ -138,9 +138,10 @@ namespace MudBlazor
                 OnTimerTickGuiThread().CatchAndLog();
         }
 
-        protected override void Dispose(bool disposing)
+        /// <inheritdoc />
+        protected override async ValueTask DisposeAsyncCore()
         {
-            base.Dispose(disposing);
+            await base.DisposeAsyncCore();
             ClearTimer(suppressTick: true);
         }
     }

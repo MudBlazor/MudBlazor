@@ -209,6 +209,158 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task CoerceValueAndNotCoerceTextAndNotImmediate_ValueSetOnBlur()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<MudAutocomplete<string>>(parameters =>
+            {
+                parameters.Add(a => a.CoerceValue, true);
+                parameters.Add(a => a.CoerceText, false);
+                parameters.Add(a => a.Immediate, false);
+                parameters.Add(a => a.DebounceInterval, 0);
+            });
+            var ccc = comp.FindComponent<MudInput<string>>();
+
+            // Assert : Initial
+
+            comp.Instance.Text.Should().BeNull();
+            comp.Instance.Value.Should().BeNull();
+
+            // Act
+
+            comp.Find("input").Input("ABC");
+
+            // Assert : Immediate false, so value is not set on text changed
+
+            comp.Instance.Text.Should().Be("ABC");
+            comp.Instance.Value.Should().BeNull();
+
+            // Act
+
+            comp.Find("input").Blur();
+
+            // Assert : CoercedValue disabled, so value is set on focus lost
+
+            comp.Instance.Text.Should().Be("ABC");
+            comp.Instance.Value.Should().Be("ABC");
+        }
+
+        [Test]
+        public async Task NotCoerceValueAndNotCoerceTextAndNotImmediate_ValueSetOnBlur()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<MudAutocomplete<string>>(parameters =>
+            {
+                parameters.Add(a => a.CoerceValue, false);
+                parameters.Add(a => a.CoerceText, false);
+                parameters.Add(a => a.Immediate, false);
+                parameters.Add(a => a.DebounceInterval, 0);
+            });
+            var ccc = comp.FindComponent<MudInput<string>>();
+
+            // Assert : Initial
+
+            comp.Instance.Text.Should().BeNull();
+            comp.Instance.Value.Should().BeNull();
+
+            // Act
+
+            comp.Find("input").Input("ABC");
+
+            // Assert : Immediate false, so value is not set on text changed
+
+            comp.Instance.Text.Should().Be("ABC");
+            comp.Instance.Value.Should().BeNull();
+
+            // Act
+
+            comp.Find("input").Blur();
+
+            // Assert : CoercedValue disabled, so value is not set on focus lost
+
+            comp.Instance.Text.Should().Be("ABC");
+            comp.Instance.Value.Should().BeNull();
+        }
+
+        [Test]
+        public async Task CoerceValueAndNotCoerceTextAndNotImmediate_ValueSetOnEnter()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<MudAutocomplete<string>>(parameters =>
+            {
+                parameters.Add(a => a.CoerceValue, true);
+                parameters.Add(a => a.CoerceText, false);
+                parameters.Add(a => a.Immediate, false);
+                parameters.Add(a => a.DebounceInterval, 0);
+            });
+            var ccc = comp.FindComponent<MudInput<string>>();
+
+            // Assert : Initial
+
+            comp.Instance.Text.Should().BeNull();
+            comp.Instance.Value.Should().BeNull();
+
+            // Act
+
+            comp.Find("input").Input("ABC");
+
+            // Assert : Immediate false, so value is not set
+
+            comp.Instance.Text.Should().Be("ABC");
+            comp.Instance.Value.Should().BeNull();
+
+            // Act
+
+            comp.Find("input").KeyUp("Enter");
+
+            // Assert : CoercedValue enabled, so value is set on key enter pressed
+
+            comp.Instance.Text.Should().Be("ABC");
+            comp.Instance.Value.Should().Be("ABC");
+        }
+
+        [Test]
+        public async Task NotCoerceValueAndNotCoerceTextAndNotImmediate_ValueNotSetOnEnter()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<MudAutocomplete<string>>(parameters =>
+            {
+                parameters.Add(a => a.CoerceValue, false);
+                parameters.Add(a => a.CoerceText, false);
+                parameters.Add(a => a.Immediate, false);
+                parameters.Add(a => a.DebounceInterval, 0);
+            });
+            var ccc = comp.FindComponent<MudInput<string>>();
+
+            // Assert : Initial
+
+            comp.Instance.Text.Should().BeNull();
+            comp.Instance.Value.Should().BeNull();
+
+            // Act
+
+            comp.Find("input").Input("ABC");
+
+            // Assert : Immediate false, so value is not set
+
+            comp.Instance.Text.Should().Be("ABC");
+            comp.Instance.Value.Should().BeNull();
+
+            // Act
+
+            comp.Find("input").KeyUp("Enter");
+
+            // Assert : CoercedValue disabled, so value is not set on key enter pressed
+
+            comp.Instance.Text.Should().Be("ABC");
+            comp.Instance.Value.Should().BeNull();
+        }
+
+        [Test]
         public async Task AutocompleteCoercionOffTest()
         {
             var comp = Context.RenderComponent<AutocompleteTest1>();
@@ -816,11 +968,12 @@ namespace MudBlazor.UnitTests.Components
                 await comp.InvokeAsync(() => autocompletecomp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
                 comp.WaitForAssertion(() => autocomplete.Open.Should().BeTrue());
                 await comp.InvokeAsync(() => autocomplete.OnEnterKeyAsync());
-                autocompletecomp.Find("input").Input("abc");
+                await autocompletecomp.Find("input").InputAsync(new ChangeEventArgs() { Value = "abc" });
                 await comp.InvokeAsync(async () => await autocomplete.SelectAsync());
                 await comp.InvokeAsync(async () => await autocomplete.SelectRangeAsync(0, 1));
-                autocompletecomp.Find("input").Input("");
-                await comp.InvokeAsync(() => autocomplete.ToggleMenuAsync());
+                comp.WaitForAssertion(() => autocomplete.Open.Should().BeTrue());
+
+                await autocompletecomp.Find("input").InputAsync(new ChangeEventArgs() { Value = "" });
                 comp.WaitForAssertion(() => autocomplete.Open.Should().BeTrue());
 
                 await comp.InvokeAsync(() => autocomplete.OnEnterKeyAsync());

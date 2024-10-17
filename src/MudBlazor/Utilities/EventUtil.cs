@@ -74,8 +74,8 @@ public static class EventUtil
 
     private abstract class ReceiverBase(ComponentBase component) : IHandleEvent
     {
-        [UnsafeAccessor(UnsafeAccessorKind.Method, Name = "DispatchExceptionAsync")]
-        private static extern Task DispatchExceptionAsync(ComponentBase component, Exception exception);
+        [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_renderHandle")]
+        private static extern ref RenderHandle RenderHandle(ComponentBase component);
 
         public async Task HandleEventAsync(EventCallbackWorkItem item, object? arg)
         {
@@ -85,7 +85,7 @@ public static class EventUtil
             }
             catch (Exception ex)
             {
-                await DispatchExceptionAsync(component, ex);
+                await RenderHandle(component).DispatchExceptionAsync(ex);
             }
         }
     }
