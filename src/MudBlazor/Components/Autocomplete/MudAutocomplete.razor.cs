@@ -490,6 +490,7 @@ namespace MudBlazor
         {
             Adornment = Adornment.End;
             IconSize = Size.Medium;
+            Immediate = true;
         }
 
         /// <summary>
@@ -711,14 +712,14 @@ namespace MudBlazor
                 Open = true;
             }
 
-            if (_items?.Length == 0)
+            if (Immediate && _items?.Length == 0)
             {
                 await CoerceValueToTextAsync();
                 StateHasChanged();
                 return;
             }
 
-            if (!CoerceText && CoerceValue)
+            if (Immediate && !CoerceText)
             {
                 await CoerceValueToTextAsync();
             }
@@ -878,14 +879,19 @@ namespace MudBlazor
 
         internal async Task OnEnterKeyAsync()
         {
-            if (!Open)
+            if (!Open || _items == null || _items.Length == 0)
+            {
+                // When Immediate is enabled, then the CoerceValue is set by TextChanged
+                // So only coerce the value on enter when Immediate is disabled
+                if (!Immediate)
+                {
+                    await CoerceValueToTextAsync();
+                }
                 return;
+            }
 
             try
             {
-                if (_items == null || _items.Length == 0)
-                    return;
-
                 if (_selectedListItemIndex >= 0 && _selectedListItemIndex < _items.Length)
                     await SelectOptionAsync(_items[_selectedListItemIndex]);
             }
@@ -931,8 +937,14 @@ namespace MudBlazor
         {
             _isFocused = false;
 
-            return OnBlur.InvokeAsync(args);
+            // When Immediate is enabled, then the CoerceValue is set by TextChanged
+            // So only coerce the value on blur when Immediate is disabled
+            if (!Immediate)
+            {
+                return CoerceValueToTextAsync();
+            }
 
+            return OnBlur.InvokeAsync(args);
             // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value,
             // resulting in a premature validation. thus, don't call base
             //base.OnBlurred(args);
@@ -975,15 +987,19 @@ namespace MudBlazor
             return SetValueAsync(value, updateText: false);
         }
 
-        protected override void Dispose(bool disposing)
+        /// <inheritdoc />
+        protected override async ValueTask DisposeAsyncCore()
         {
-            _debounceTimer?.Dispose();
+            if (_debounceTimer is not null)
+            {
+                await _debounceTimer.DisposeAsync();
+            }
 
-            if (_cancellationTokenSrc != null)
+            if (_cancellationTokenSrc is not null)
             {
                 try
                 {
-                    _cancellationTokenSrc.Cancel();
+                    await _cancellationTokenSrc.CancelAsync();
                 }
                 catch { /*ignored*/ }
                 try
@@ -993,7 +1009,7 @@ namespace MudBlazor
                 catch { /*ignored*/ }
             }
 
-            base.Dispose(disposing);
+            await base.DisposeAsyncCore();
         }
 
         /// <summary>

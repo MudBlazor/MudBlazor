@@ -12,7 +12,7 @@ namespace MudBlazor
         /// Gets or sets the typography settings for the default typo.
         /// </summary>
         /// <remarks>
-        /// Defaults to the values from the <see cref="MudBlazor.DefaultTypography"/> constructor.
+        /// Defaults to the values from the <see cref="DefaultTypography"/> constructor.
         /// </remarks>
         public BaseTypography Default { get; set; } = new DefaultTypography();
 
@@ -20,113 +20,105 @@ namespace MudBlazor
         /// Gets or sets the typography settings for <see cref="Typo.h1"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to the values from the <see cref="MudBlazor.H1"/> constructor.
+        /// Defaults to the values from the <see cref="H1Typography"/> constructor.
         /// </remarks>
-        public BaseTypography H1 { get; set; } = new H1();
+        public BaseTypography H1 { get; set; } = new H1Typography();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.h2"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to the values from the <see cref="MudBlazor.H2"/> constructor.
+        /// Defaults to the values from the <see cref="H2Typography"/> constructor.
         /// </remarks>
-        public BaseTypography H2 { get; set; } = new H2();
+        public BaseTypography H2 { get; set; } = new H2Typography();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.h3"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to the values from the <see cref="MudBlazor.H3"/> constructor.
+        /// Defaults to the values from the <see cref="H3Typography"/> constructor.
         /// </remarks>
-        public BaseTypography H3 { get; set; } = new H3();
+        public BaseTypography H3 { get; set; } = new H3Typography();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.h4"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to the values from the <see cref="MudBlazor.H4"/> constructor.
+        /// Defaults to the values from the <see cref="H4Typography"/> constructor.
         /// </remarks>
-        public BaseTypography H4 { get; set; } = new H4();
+        public BaseTypography H4 { get; set; } = new H4Typography();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.h5"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to the values from the <see cref="MudBlazor.H5"/> constructor.
+        /// Defaults to the values from the <see cref="H5Typography"/> constructor.
         /// </remarks>
-        public BaseTypography H5 { get; set; } = new H5();
+        public BaseTypography H5 { get; set; } = new H5Typography();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.h6"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to the values from the <see cref="MudBlazor.H6"/> constructor.
+        /// Defaults to the values from the <see cref="H6Typography"/> constructor.
         /// </remarks>
-        public BaseTypography H6 { get; set; } = new H6();
+        public BaseTypography H6 { get; set; } = new H6Typography();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.subtitle1"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to the values from the <see cref="MudBlazor.Subtitle1"/> constructor.
+        /// Defaults to the values from the <see cref="Subtitle1Typography"/> constructor.
         /// </remarks>
-        public BaseTypography Subtitle1 { get; set; } = new Subtitle1();
+        public BaseTypography Subtitle1 { get; set; } = new Subtitle1Typography();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.subtitle2"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to the values from the <see cref="MudBlazor.Subtitle2"/> constructor.
+        /// Defaults to the values from the <see cref="Subtitle2Typography"/> constructor.
         /// </remarks>
-        public BaseTypography Subtitle2 { get; set; } = new Subtitle2();
+        public BaseTypography Subtitle2 { get; set; } = new Subtitle2Typography();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.body1"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to the values from the <see cref="MudBlazor.Body1"/> constructor.
+        /// Defaults to the values from the <see cref="Body1Typography"/> constructor.
         /// </remarks>
-        public BaseTypography Body1 { get; set; } = new Body1();
+        public BaseTypography Body1 { get; set; } = new Body1Typography();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.body2"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to the values from the <see cref="MudBlazor.Body2"/> constructor.
+        /// Defaults to the values from the <see cref="Body2Typography"/> constructor.
         /// </remarks>
-        public BaseTypography Body2 { get; set; } = new Body2();
-
-        /// <summary>
-        /// Gets or sets the typography settings for <see cref="Typo.input"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to the values from the <see cref="MudBlazor.Input"/> constructor.
-        /// </remarks>
-        public BaseTypography Input { get; set; } = new Input();
+        public BaseTypography Body2 { get; set; } = new Body2Typography();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.button"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to the values from the <see cref="MudBlazor.Button"/> constructor.
+        /// Defaults to the values from the <see cref="ButtonTypography"/> constructor.
         /// </remarks>
-        public BaseTypography Button { get; set; } = new Button();
+        public BaseTypography Button { get; set; } = new ButtonTypography();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.caption"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to the values from the <see cref="MudBlazor.Caption"/> constructor.
+        /// Defaults to the values from the <see cref="CaptionTypography"/> constructor.
         /// </remarks>
-        public BaseTypography Caption { get; set; } = new Caption();
+        public BaseTypography Caption { get; set; } = new CaptionTypography();
 
         /// <summary>
         /// Gets or sets the typography settings for <see cref="Typo.overline"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to the values from the <see cref="MudBlazor.Overline"/> constructor.
+        /// Defaults to the values from the <see cref="OverlineTypography"/> constructor.
         /// </remarks>
-        public BaseTypography Overline { get; set; } = new Overline();
+        public BaseTypography Overline { get; set; } = new OverlineTypography();
     }
 
     /// <summary>
@@ -150,12 +142,12 @@ namespace MudBlazor
     /// <summary>
     /// Represents the H1 typography settings.
     /// </summary>
-    public class H1 : BaseTypography
+    public class H1Typography : BaseTypography
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="H1"/> class with default values.
+        /// Initializes a new instance of the <see cref="H1Typography"/> class with default values.
         /// </summary>
-        public H1()
+        public H1Typography()
         {
             FontSize = "6rem";
             FontWeight = "300";
@@ -167,12 +159,12 @@ namespace MudBlazor
     /// <summary>
     /// Represents the H2 typography settings.
     /// </summary>
-    public class H2 : BaseTypography
+    public class H2Typography : BaseTypography
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="H2"/> class with default values.
+        /// Initializes a new instance of the <see cref="H2Typography"/> class with default values.
         /// </summary>
-        public H2()
+        public H2Typography()
         {
             FontSize = "3.75rem";
             FontWeight = "300";
@@ -184,12 +176,12 @@ namespace MudBlazor
     /// <summary>
     /// Represents the H3 typography settings.
     /// </summary>
-    public class H3 : BaseTypography
+    public class H3Typography : BaseTypography
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="H3"/> class with default values.
+        /// Initializes a new instance of the <see cref="H3Typography"/> class with default values.
         /// </summary>
-        public H3()
+        public H3Typography()
         {
             FontSize = "3rem";
             FontWeight = "400";
@@ -201,12 +193,12 @@ namespace MudBlazor
     /// <summary>
     /// Represents the H4 typography settings.
     /// </summary>
-    public class H4 : BaseTypography
+    public class H4Typography : BaseTypography
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="H4"/> class with default values.
+        /// Initializes a new instance of the <see cref="H4Typography"/> class with default values.
         /// </summary>
-        public H4()
+        public H4Typography()
         {
             FontSize = "2.125rem";
             FontWeight = "400";
@@ -218,12 +210,12 @@ namespace MudBlazor
     /// <summary>
     /// Represents the H5 typography settings.
     /// </summary>
-    public class H5 : BaseTypography
+    public class H5Typography : BaseTypography
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="H5"/> class with default values.
+        /// Initializes a new instance of the <see cref="H5Typography"/> class with default values.
         /// </summary>
-        public H5()
+        public H5Typography()
         {
             FontSize = "1.5rem";
             FontWeight = "400";
@@ -235,12 +227,12 @@ namespace MudBlazor
     /// <summary>
     /// Represents the H6 typography settings.
     /// </summary>
-    public class H6 : BaseTypography
+    public class H6Typography : BaseTypography
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="H6"/> class with default values.
+        /// Initializes a new instance of the <see cref="H6Typography"/> class with default values.
         /// </summary>
-        public H6()
+        public H6Typography()
         {
             FontSize = "1.25rem";
             FontWeight = "500";
@@ -252,12 +244,12 @@ namespace MudBlazor
     /// <summary>
     /// Represents the Subtitle1 typography settings.
     /// </summary>
-    public class Subtitle1 : BaseTypography
+    public class Subtitle1Typography : BaseTypography
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Subtitle1"/> class with default values.
+        /// Initializes a new instance of the <see cref="Subtitle1Typography"/> class with default values.
         /// </summary>
-        public Subtitle1()
+        public Subtitle1Typography()
         {
             FontSize = "1rem";
             FontWeight = "400";
@@ -269,12 +261,12 @@ namespace MudBlazor
     /// <summary>
     /// Represents the Subtitle2 typography settings.
     /// </summary>
-    public class Subtitle2 : BaseTypography
+    public class Subtitle2Typography : BaseTypography
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Subtitle2"/> class with default values.
+        /// Initializes a new instance of the <see cref="Subtitle2Typography"/> class with default values.
         /// </summary>
-        public Subtitle2()
+        public Subtitle2Typography()
         {
             FontSize = ".875rem";
             FontWeight = "500";
@@ -286,12 +278,12 @@ namespace MudBlazor
     /// <summary>
     /// Represents the Body1 typography settings.
     /// </summary>
-    public class Body1 : BaseTypography
+    public class Body1Typography : BaseTypography
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Body1"/> class with default values.
+        /// Initializes a new instance of the <see cref="Body1Typography"/> class with default values.
         /// </summary>
-        public Body1()
+        public Body1Typography()
         {
             FontSize = "1rem";
             FontWeight = "400";
@@ -303,12 +295,12 @@ namespace MudBlazor
     /// <summary>
     /// Represents the Body2 typography settings.
     /// </summary>
-    public class Body2 : BaseTypography
+    public class Body2Typography : BaseTypography
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Body2"/> class with default values.
+        /// Initializes a new instance of the <see cref="Body2Typography"/> class with default values.
         /// </summary>
-        public Body2()
+        public Body2Typography()
         {
             FontSize = ".875rem";
             FontWeight = "400";
@@ -318,31 +310,14 @@ namespace MudBlazor
     }
 
     /// <summary>
-    /// Represents the Input typography settings.
-    /// </summary>
-    public class Input : BaseTypography
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Input"/> class with default values.
-        /// </summary>
-        public Input()
-        {
-            FontSize = "1rem";
-            FontWeight = "400";
-            LineHeight = "1.1876";
-            LetterSpacing = ".00938em";
-        }
-    }
-
-    /// <summary>
     /// Represents the Button typography settings.
     /// </summary>
-    public class Button : BaseTypography
+    public class ButtonTypography : BaseTypography
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Button"/> class with default values.
+        /// Initializes a new instance of the <see cref="ButtonTypography"/> class with default values.
         /// </summary>
-        public Button()
+        public ButtonTypography()
         {
             FontSize = ".875rem";
             FontWeight = "500";
@@ -355,12 +330,12 @@ namespace MudBlazor
     /// <summary>
     /// Represents the Caption typography settings.
     /// </summary>
-    public class Caption : BaseTypography
+    public class CaptionTypography : BaseTypography
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Caption"/> class with default values.
+        /// Initializes a new instance of the <see cref="CaptionTypography"/> class with default values.
         /// </summary>
-        public Caption()
+        public CaptionTypography()
         {
             FontSize = ".75rem";
             FontWeight = "400";
@@ -372,12 +347,12 @@ namespace MudBlazor
     /// <summary>
     /// Represents the Overline typography settings.
     /// </summary>
-    public class Overline : BaseTypography
+    public class OverlineTypography : BaseTypography
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Overline"/> class with default values.
+        /// Initializes a new instance of the <see cref="OverlineTypography"/> class with default values.
         /// </summary>
-        public Overline()
+        public OverlineTypography()
         {
             FontSize = ".75rem";
             FontWeight = "400";
@@ -390,20 +365,19 @@ namespace MudBlazor
     /// Represents the base typography settings.
     /// </summary>
     [JsonDerivedType(typeof(DefaultTypography), nameof(DefaultTypography))]
-    [JsonDerivedType(typeof(H1), nameof(H1))]
-    [JsonDerivedType(typeof(H2), nameof(H2))]
-    [JsonDerivedType(typeof(H3), nameof(H3))]
-    [JsonDerivedType(typeof(H4), nameof(H4))]
-    [JsonDerivedType(typeof(H5), nameof(H5))]
-    [JsonDerivedType(typeof(H6), nameof(H6))]
-    [JsonDerivedType(typeof(Subtitle1), nameof(Subtitle1))]
-    [JsonDerivedType(typeof(Subtitle2), nameof(Subtitle2))]
-    [JsonDerivedType(typeof(Body1), nameof(Body1))]
-    [JsonDerivedType(typeof(Body2), nameof(Body2))]
-    [JsonDerivedType(typeof(Input), nameof(Input))]
-    [JsonDerivedType(typeof(Button), nameof(Button))]
-    [JsonDerivedType(typeof(Caption), nameof(Caption))]
-    [JsonDerivedType(typeof(Overline), nameof(Overline))]
+    [JsonDerivedType(typeof(H1Typography), nameof(H1Typography))]
+    [JsonDerivedType(typeof(H2Typography), nameof(H2Typography))]
+    [JsonDerivedType(typeof(H3Typography), nameof(H3Typography))]
+    [JsonDerivedType(typeof(H4Typography), nameof(H4Typography))]
+    [JsonDerivedType(typeof(H5Typography), nameof(H5Typography))]
+    [JsonDerivedType(typeof(H6Typography), nameof(H6Typography))]
+    [JsonDerivedType(typeof(Subtitle1Typography), nameof(Subtitle1Typography))]
+    [JsonDerivedType(typeof(Subtitle2Typography), nameof(Subtitle2Typography))]
+    [JsonDerivedType(typeof(Body1Typography), nameof(Body1Typography))]
+    [JsonDerivedType(typeof(Body2Typography), nameof(Body2Typography))]
+    [JsonDerivedType(typeof(ButtonTypography), nameof(ButtonTypography))]
+    [JsonDerivedType(typeof(CaptionTypography), nameof(CaptionTypography))]
+    [JsonDerivedType(typeof(OverlineTypography), nameof(OverlineTypography))]
     public abstract class BaseTypography
     {
         /// <summary>

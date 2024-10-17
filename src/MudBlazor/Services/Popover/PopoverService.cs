@@ -20,6 +20,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     private bool _disposed;
     private bool _isInitializing;
     private readonly PopoverJsInterop _popoverJsInterop;
+    private readonly CancellationToken _cancellationToken;
     private readonly Dictionary<Guid, MudPopoverHolder> _holders;
     private readonly CancellationTokenSource _cancellationTokenSource;
     private readonly BatchPeriodicQueue<MudPopoverHolder> _batchExecutor;
@@ -61,6 +62,8 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         PopoverOptions = options?.Value ?? new PopoverOptions();
         _holders = new Dictionary<Guid, MudPopoverHolder>();
         _cancellationTokenSource = new CancellationTokenSource();
+        // Cache the token to avoid passing the CancellationTokenSource itself because it will throw once you access it after it's disposed
+        _cancellationToken = _cancellationTokenSource.Token;
         _popoverJsInterop = new PopoverJsInterop(jsInterop);
         _batchExecutor = new BatchPeriodicQueue<MudPopoverHolder>(this, PopoverOptions.QueueDelay);
         _observerManager = new ObserverManager<Guid, IPopoverObserver>(logger);
@@ -115,7 +118,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
             .SetUserAttributes(popover.UserAttributes);
 
         _holders.TryAdd(holder.Id, holder);
-        await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotificationAsync(new PopoverHolderContainer(PopoverHolderOperation.Create, new[] { holder }), _cancellationTokenSource.Token));
+        await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotificationAsync(new PopoverHolderContainer(PopoverHolderOperation.Create, new[] { holder }), _cancellationToken));
     }
 
     /// <inheritdoc />
@@ -155,7 +158,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
             .SetTag(popover.Tag)
             .SetUserAttributes(popover.UserAttributes);
 
-        await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotificationAsync(new PopoverHolderContainer(PopoverHolderOperation.Update, new[] { holder }), _cancellationTokenSource.Token));
+        await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotificationAsync(new PopoverHolderContainer(PopoverHolderOperation.Update, new[] { holder }), _cancellationToken));
 
         return true;
     }
@@ -181,7 +184,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     /// <inheritdoc />
     public async ValueTask<int> GetProviderCountAsync()
     {
-        var (success, value) = await _popoverJsInterop.CountProviders(_cancellationTokenSource.Token);
+        var (success, value) = await _popoverJsInterop.CountProviders(_cancellationToken);
 
         return success ? value : 0;
     }
@@ -197,15 +200,16 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     }
 
     /// <inheritdoc />
-    public ValueTask DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
-        return DisposeAsyncCore();
+        await DisposeAsyncCore();
+        GC.SuppressFinalize(this);
     }
 
     /// <summary>
     /// Disposes the current <see cref="PopoverService"/> instance.
     /// </summary>
-    private async ValueTask DisposeAsyncCore()
+    protected virtual async ValueTask DisposeAsyncCore()
     {
         if (!_disposed)
         {
@@ -232,7 +236,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
 
         holdersListCopy.ForEach(holder => holder.IsDetached = true);
 
-        return _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotificationAsync(new PopoverHolderContainer(PopoverHolderOperation.Remove, holdersListCopy), _cancellationTokenSource.Token));
+        return _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotificationAsync(new PopoverHolderContainer(PopoverHolderOperation.Remove, holdersListCopy), _cancellationToken));
     }
 
     private async Task<bool> DestroyPopoverByIdAsync(Guid id, bool queueForDisconnect = true)
@@ -252,7 +256,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         // Perhaps we could consider adding a state indicating that the object is queued for detaching instead.
         holder.IsDetached = true;
 
-        await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotificationAsync(new PopoverHolderContainer(PopoverHolderOperation.Remove, new[] { holder }), _cancellationTokenSource.Token));
+        await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotificationAsync(new PopoverHolderContainer(PopoverHolderOperation.Remove, new[] { holder }), _cancellationToken));
 
         return true;
     }
@@ -266,7 +270,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
 
         foreach (var holder in holders)
         {
-            if (_cancellationTokenSource.Token.IsCancellationRequested)
+            if (_cancellationToken.IsCancellationRequested)
             {
                 return;
             }
@@ -276,7 +280,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
                 holder.IsDetached = true;
                 if (holder.IsConnected)
                 {
-                    await _popoverJsInterop.Disconnect(holder.Id, _cancellationTokenSource.Token);
+                    await _popoverJsInterop.Disconnect(holder.Id, _cancellationToken);
                 }
             }
             finally
@@ -293,7 +297,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
             return;
         }
 
-        holder.IsConnected = await _popoverJsInterop.Connect(holder.Id, _cancellationTokenSource.Token);
+        holder.IsConnected = await _popoverJsInterop.Connect(holder.Id, _cancellationToken);
     }
 
     private async Task InitializeServiceIfNeededAsync()
@@ -323,9 +327,9 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
                 return;
             }
 
-            await _popoverJsInterop.Initialize(PopoverOptions.ContainerClass, PopoverOptions.FlipMargin, _cancellationTokenSource.Token);
+            await _popoverJsInterop.Initialize(PopoverOptions.ContainerClass, PopoverOptions.FlipMargin, _cancellationToken);
             // Starts in background
-            await _batchExecutor.StartAsync(_cancellationTokenSource.Token);
+            await _batchExecutor.StartAsync(_cancellationToken);
             IsInitialized = true;
         }
         finally

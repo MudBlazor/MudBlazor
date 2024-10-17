@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
@@ -8,7 +6,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudRadio<T> : MudBooleanInput<T>, IDisposable
+    public partial class MudRadio<T> : MudBooleanInput<T>, IAsyncDisposable
     {
         private IMudRadioGroup? _parent;
         private string _elementId = Identifier.Create("radio");
@@ -179,16 +177,6 @@ namespace MudBlazor
             }
         }
 
-        public void Dispose()
-        {
-            MudRadioGroup?.UnregisterRadio(this);
-            if (IsJSRuntimeAvailable)
-            {
-                // TODO: Replace with IAsyncDisposable
-                KeyInterceptorService.UnsubscribeAsync(_elementId).CatchAndLog();
-            }
-        }
-
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -207,6 +195,22 @@ namespace MudBlazor
             }
 
             await base.OnAfterRenderAsync(firstRender);
+        }
+
+        protected virtual async ValueTask DisposeAsyncCore()
+        {
+            MudRadioGroup?.UnregisterRadio(this);
+            if (IsJSRuntimeAvailable)
+            {
+                await KeyInterceptorService.UnsubscribeAsync(_elementId);
+            }
+        }
+
+        /// <inheritdoc />
+        public async ValueTask DisposeAsync()
+        {
+            await DisposeAsyncCore();
+            GC.SuppressFinalize(this);
         }
     }
 }

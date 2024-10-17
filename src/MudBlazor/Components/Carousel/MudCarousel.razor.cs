@@ -337,27 +337,22 @@ namespace MudBlazor
             }
         }
 
-        /// <summary>
-        /// Releases resources used by this component.
-        /// </summary>
+        /// <inheritdoc />
         public async ValueTask DisposeAsync()
         {
-            await DisposeAsync(true);
+            await DisposeAsyncCore();
             GC.SuppressFinalize(this);
         }
 
-        protected virtual async ValueTask DisposeAsync(bool disposing)
+        protected virtual async ValueTask DisposeAsyncCore()
         {
-            if (disposing)
-            {
-                await StopTimerAsync();
+            await StopTimerAsync();
 
-                var timer = _timer;
-                if (timer != null)
-                {
-                    _timer = null;
-                    await timer.DisposeAsync();
-                }
+            var timer = _timer;
+            if (timer != null)
+            {
+                _timer = null;
+                await timer.DisposeAsync();
             }
         }
     }
