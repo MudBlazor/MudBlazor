@@ -103,6 +103,11 @@ namespace MudBlazor
             }
         }
 
+        private async Task FocusInput()
+        {
+            await FocusAsync();
+        }
+
         /// <inheritdoc />
         public override ValueTask BlurAsync()
         {

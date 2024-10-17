@@ -5,7 +5,7 @@
 @inherits MudBaseInput<T>
 @inject InternalMudLocalizer Localizer
 
-<div class="@Classname" style="@Style">
+<div class="@Classname" style="@Style" @onclick="@FocusInput">
     @if (Adornment == Adornment.Start)
     {
         <MudInputAdornment Class="@AdornmentClassname"
@@ -15,7 +15,7 @@
                 Text="@AdornmentText"
                 Edge="@Edge.Start"
                 AdornmentClick="@OnAdornmentClick"
-                AriaLabel="@AdornmentAriaLabel"
+                AriaLabel="@AdornmentAriaLabel"                
         />
     }
 
