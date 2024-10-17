@@ -21,6 +21,7 @@ namespace MudBlazor
             .AddClass($"mud-button-{Variant.ToDescriptionString()}", AsButton)
             .AddClass($"mud-button-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}", AsButton)
             .AddClass($"mud-button-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}", AsButton)
+            .AddClass($"mud-width-full", FullWidth)
             .AddClass($"mud-ripple", Ripple)
             .AddClass($"mud-ripple-icon", Ripple && !AsButton)
             .AddClass($"mud-icon-button-size-{Size.ToDescriptionString()}", when: () => Size != Size.Medium)
@@ -80,6 +81,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
         public Variant Variant { get; set; } = Variant.Text;
+
+        /// <summary>
+        /// Expands the button to 100% of the container width.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public bool FullWidth { get; set; }
 
         /// <summary>
         /// The custom content within this button.
