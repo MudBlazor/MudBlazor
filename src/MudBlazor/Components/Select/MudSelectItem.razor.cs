@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -7,7 +8,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents an option of a select or multi-select. To be used inside MudSelect.
     /// </summary>
-    public partial class MudSelectItem<T> : MudBaseSelectItem, IDisposable
+    public partial class MudSelectItem<T> : MudComponentBase, IDisposable
     {
         private IMudSelect? _parent;
         private IMudShadowSelect? _shadowParent;
@@ -17,6 +18,9 @@ namespace MudBlazor
             .Build();
 
         internal string ItemId { get; } = Identifier.Create();
+
+        [Inject]
+        private NavigationManager UriHelper { get; set; } = null!;
 
         /// <summary>
         /// The parent select component
@@ -84,17 +88,59 @@ namespace MudBlazor
         public T? Value { get; set; }
 
         /// <summary>
+        /// Prevents the user from interacting with this item.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.General.Behavior)]
+        public bool Disabled { get; set; }
+
+        /// <summary>
+        /// Shows a ripple effect when the user clicks the button.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.General.Appearance)]
+        public bool Ripple { get; set; } = true;
+
+        /// <summary>
+        /// The URL to navigate to when this item is clicked.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.General.ClickAction)]
+        public string? Href { get; set; }
+
+        /// <summary>
+        /// Performs a full page load during navigation.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. When <c>true</c>, client-side routing is bypassed and the browser is forced to load the new page from the server.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.General.ClickAction)]
+        public bool ForceLoad { get; set; }
+
+        /// <summary>
+        /// The content within this item.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.General.Behavior)]
+        public RenderFragment? ChildContent { get; set; }
+
+        /// <summary>
+        /// Occurs when the item has been clicked.
+        /// </summary>
+        /// <remarks>
+        /// This event only occurs when the <see cref="Href"/> property is not set.
+        /// </remarks>
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+        /// <summary>
         /// Mirrors the MultiSelection status of the parent select
         /// </summary>
-        protected bool MultiSelection
-        {
-            get
-            {
-                if (MudSelect == null)
-                    return false;
-                return MudSelect.MultiSelection;
-            }
-        }
+        protected bool MultiSelection => MudSelect is { MultiSelection: true };
 
         /// <summary>
         /// Selected state of the option. Only works if the parent is a mulit-select
@@ -122,6 +168,20 @@ namespace MudBlazor
                 if (converter == null)
                     return $"{Value}";
                 return converter.Set(Value);
+            }
+        }
+
+        protected async Task OnClickHandler(MouseEventArgs ev)
+        {
+            if (Disabled)
+                return;
+            if (Href is not null)
+            {
+                UriHelper.NavigateTo(Href, ForceLoad);
+            }
+            else
+            {
+                await OnClick.InvokeAsync(ev);
             }
         }
 
