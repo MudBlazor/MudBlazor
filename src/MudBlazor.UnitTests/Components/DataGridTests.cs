@@ -3382,14 +3382,24 @@ namespace MudBlazor.UnitTests.Components
 
             IRefreshableElementCollection<IElement> ClearButtons() => dataGrid.FindAll(".align-self-center");
             ClearButtons().Should().HaveCount(5);
-            for (var index = 0; index < ClearButtons().Count; index++)
-            {
-                var clearButton = ClearButtons()[index];
-                clearButton.Click();
-            }
+            ClearAllFiltersOneByOne();
 
             var inputsAfter = dataGrid.FindAll("input").OfType<IHtmlInputElement>().Select(e => e.Value).ToList();
             inputsAfter.Should().HaveCount(6).And.AllBe("", because: "clicking the clear buttons should reset all filters");
+
+            var action = ClearAllFiltersOneByOne;
+
+            // We had regressions here before https://github.com/MudBlazor/MudBlazor/issues/10034
+            action.Should().NotThrow("We click clear again to make sure that no exception appear when there are no filters left.");
+
+            void ClearAllFiltersOneByOne()
+            {
+                for (var index = 0; index < ClearButtons().Count; index++)
+                {
+                    var clearButton = ClearButtons()[index];
+                    clearButton.Click();
+                }
+            }
         }
 
         [Test]
