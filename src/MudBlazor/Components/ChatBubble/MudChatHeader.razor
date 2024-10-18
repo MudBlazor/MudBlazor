@@ -1,0 +1,10 @@
+@namespace MudBlazor
+@inherits MudComponentBase
+
+<div @attributes="UserAttributes" class="@Classname" style="@Style">
+  @Name
+  @if (Time is not null)
+  {
+    <time>@Time</time>
+  }
+</div>

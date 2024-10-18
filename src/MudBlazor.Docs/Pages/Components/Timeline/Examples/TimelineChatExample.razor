@@ -1,0 +1,38 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTimeline TimelineAlign="TimelineAlign.End">
+    <MudTimelineItem Color="Color.Dark" Elevation="25">
+        @* <ItemOpposite> *@
+        @*     <MudText Color="Color.Dark" Typo="Typo.h6">Aug 2020</MudText> *@
+        @* </ItemOpposite> *@
+        <ItemContent>
+            <MudChat Position="ChatBubblePosition.Start">
+                <MudChatHeader Name="Obi-Wan Kenobi" Time="12:45" />
+                <MudChatAvatar>
+                    <MudAvatar>
+                        <MudImage Src="images/jonny.jpg"/>
+                    </MudAvatar>
+                </MudChatAvatar>
+                <MudChatBubble>You were the Chosen One!</MudChatBubble>
+                <MudChatFooter Text="Delivered" />
+            </MudChat>
+        </ItemContent>
+    </MudTimelineItem>
+    <MudTimelineItem Color="Color.Primary" Elevation="25">
+        @* <ItemOpposite> *@
+        @*     <MudText Color="Color.Primary" Typo="Typo.h6">Oct 2020</MudText> *@
+        @* </ItemOpposite> *@
+        <ItemContent>
+            <MudChat Position="ChatBubblePosition.End">
+                <MudChatHeader Name="Anakin" Time="12:46" />
+                <MudChatAvatar>
+                    <MudAvatar>
+                        <MudImage Src="images/toiletvisit.jpg"/>
+                    </MudAvatar>
+                </MudChatAvatar>
+                <MudChatBubble>I hate you!</MudChatBubble>
+                <MudChatFooter Text="Seen at 12:46" />
+            </MudChat>
+        </ItemContent>
+    </MudTimelineItem>
+</MudTimeline>
