@@ -390,4 +390,31 @@
   <data name="MudStepper_Complete" xml:space="preserve">
     <value>Complete</value>
   </data>
+  <data name="MudDataGrid_ClearFilter" xml:space="preserve">
+    <value>Clear Filter</value>
+  </data>
+  <data name="MudDataGrid_OpenFilters" xml:space="preserve">
+    <value>Open Filters</value>
+  </data>
+  <data name="MudDataGrid_ToggleGroupExpansion" xml:space="preserve">
+    <value>Toggle Group Expansion</value>
+  </data>
+  <data name="MudDataGrid_RemoveFilter" xml:space="preserve">
+    <value>Remove Filter</value>
+  </data>
+  <data name="MudDataGridPager_FirstPage" xml:space="preserve">
+    <value>First Page</value>
+  </data>
+  <data name="MudDataGridPager_PreviousPage" xml:space="preserve">
+    <value>Previous Page</value>
+  </data>
+  <data name="MudDataGridPager_NextPage" xml:space="preserve">
+    <value>Next Page</value>
+  </data>
+  <data name="MudDataGridPager_LastPage" xml:space="preserve">
+    <value>Last Page</value>
+  </data>
+  <data name="MudDataGrid_ShowColumnOptions" xml:space="preserve">
+    <value>Show Column Options</value>
+  </data>
 </root>
