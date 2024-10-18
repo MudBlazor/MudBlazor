@@ -121,6 +121,12 @@ public static class RenderTreeExtensions
         builder.CloseRegion();
     }
 
+    /// <summary>
+    /// Adds a code block.
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <param name="sequence"></param>
+    /// <param name="code"></param>
     public static void AddCode(this RenderTreeBuilder builder, int sequence, string code)
     {
         builder.OpenRegion(sequence);

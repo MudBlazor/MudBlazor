@@ -96,7 +96,7 @@ public partial class ApiText : ComponentBase
                                         {
                                             builder.AddMudTooltip(sequence++, Placement.Top, linkRef.Replace("MudBlazor.", ""), (childSequence, childBuilder) =>
                                             {
-                                                builder.AddMudIcon(sequence++, linkRef, Color.Primary, Size.Medium);
+                                                childBuilder.AddMudIcon(childSequence++, linkRef, Color.Primary, Size.Medium);
                                             });
                                         }
                                         else if (linkRef != null && (linkRef.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase) || linkRef.StartsWith("System", StringComparison.OrdinalIgnoreCase)))
