@@ -1,0 +1,26 @@
+﻿@using MudBlazor.Internal
+@namespace MudBlazor
+@inherits MudPicker<DateTime?>
+
+@Render
+
+@code {
+    protected override RenderFragment PickerContent =>
+    @<CascadingValue Value="@this" IsFixed="true">
+        <MudPickerToolbar Class="mud-picker-datepicker-toolbar" ShowToolbar="ShowToolbar" Orientation="@Orientation" PickerVariant="@PickerVariant" Color="@Color">
+            <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-year" OnClick="OnYearClick">@GetFormattedYearString()</MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-date" OnClick="OnFormattedDateClick">@GetTitleDateString()</MudButton>
+        </MudPickerToolbar>
+        <MudPickerContent>
+            <div class="mud-picker-datetime-layout">
+                <MudDatePicker @ref="_datePickerRef" PickerVariant="PickerVariant.Static" Date="@_datePicked" DateChanged="DateSelected" Disabled="@Disabled"
+                               FirstDayOfWeek="@FirstDayOfWeek" FixDay="@FixDay" FixMonth="@FixMonth" FixYear="@FixYear" ShowToolbar="false" Culture="@Culture"
+                               OpenTo="@DateOpenTo" ShowWeekNumbers="@ShowWeekNumbers" StartMonth="@StartMonth" TitleDateFormat="@TitleDateTimeFormat"
+                               NextIcon="@DateNextIcon" PreviousIcon="@DatePreviousIcon" IsDateDisabledFunc="@IsDateTimeDisabledFunc" AdditionalDateClassesFunc="AdditionalDateClassesFunc"
+                               PickerMonth="@_pickerMonth" PickerMonthChanged="@OnPickerMonthChanged" />
+                <MudTimePicker @ref="_timePickerRef" PickerVariant="PickerVariant.Static" Time="_timePicked" TimeChanged="TimeSelected" Disabled="@Disabled" Culture="@Culture"
+                               ShowToolbar="false" OpenTo="@TimeOpenTo" MinuteSelectionStep="@MinuteSelectionStep" TimeEditMode="@TimeEditMode" />
+            </div>
+        </MudPickerContent>
+    </CascadingValue>;
+}
