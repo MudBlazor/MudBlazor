@@ -33,6 +33,31 @@ namespace MudBlazor.UnitTests.Components
     public class DataGridTests : BunitTest
     {
         [Test]
+        [SetCulture("en-US")]
+        [SetUICulture("en-US")]
+        public void DataGridPropertyNullCheck()
+        {
+            var comp = Context.RenderComponent<DataGridPropertyColumnNullCheckTest>();
+            var cells = comp.FindAll("td").ToArray();
+
+            // First Row
+            cells[0].TextContent.Should().Be("1/1/0001 12:00:00 AM");
+            cells[1].TextContent.Should().BeEmpty();
+            cells[2].TextContent.Should().Be("1/1/0001 12:00:00 AM");
+            cells[3].TextContent.Should().BeEmpty();
+            cells[4].TextContent.Should().BeEmpty();
+            cells[5].TextContent.Should().BeEmpty();
+
+            // Second Row
+            cells[6].TextContent.Should().Be("1/1/0001 12:00:00 AM");
+            cells[7].TextContent.Should().Be("1/1/0001 12:00:00 AM +00:00");
+            cells[8].TextContent.Should().Be("1/1/0001 12:00:00 AM");
+            cells[9].TextContent.Should().Be("1/1/0001 12:00:00 AM");
+            cells[10].TextContent.Should().Be("some text");
+            cells[11].TextContent.Should().BeEmpty();
+        }
+
+        [Test]
         public async Task DataGridSortableTest()
         {
             var comp = Context.RenderComponent<DataGridSortableTest>();
@@ -3357,14 +3382,24 @@ namespace MudBlazor.UnitTests.Components
 
             IRefreshableElementCollection<IElement> ClearButtons() => dataGrid.FindAll(".align-self-center");
             ClearButtons().Should().HaveCount(5);
-            for (var index = 0; index < ClearButtons().Count; index++)
-            {
-                var clearButton = ClearButtons()[index];
-                clearButton.Click();
-            }
+            ClearAllFiltersOneByOne();
 
             var inputsAfter = dataGrid.FindAll("input").OfType<IHtmlInputElement>().Select(e => e.Value).ToList();
             inputsAfter.Should().HaveCount(6).And.AllBe("", because: "clicking the clear buttons should reset all filters");
+
+            var action = ClearAllFiltersOneByOne;
+
+            // We had regressions here before https://github.com/MudBlazor/MudBlazor/issues/10034
+            action.Should().NotThrow("We click clear again to make sure that no exception appear when there are no filters left.");
+
+            void ClearAllFiltersOneByOne()
+            {
+                for (var index = 0; index < ClearButtons().Count; index++)
+                {
+                    var clearButton = ClearButtons()[index];
+                    clearButton.Click();
+                }
+            }
         }
 
         [Test]
