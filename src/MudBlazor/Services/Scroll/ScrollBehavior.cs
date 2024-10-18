@@ -7,14 +7,19 @@ using System.ComponentModel;
 namespace MudBlazor;
 
 /// <summary>
-/// Smooth: scrolls in a smooth fashion;
-/// Auto: is immediate
+/// Specifies the scroll behavior for scrolling operations.
 /// </summary>
 public enum ScrollBehavior
 {
+    /// <summary>
+    /// Scrolls in a smooth fashion.
+    /// </summary>
     [Description("smooth")]
     Smooth,
 
+    /// <summary>
+    /// Scrolls immediately.
+    /// </summary>
     [Description("auto")]
     Auto
 }

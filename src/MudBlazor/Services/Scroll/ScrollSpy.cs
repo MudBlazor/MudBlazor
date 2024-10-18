@@ -7,12 +7,26 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
-    public class ScrollSpy : IScrollSpy
+#nullable enable
+    /// <summary>
+    /// Manages scroll spying behavior for specified elements.
+    /// </summary>
+    internal sealed class ScrollSpy : IScrollSpy
     {
-        public string CenteredSection { get; private set; }
+        private bool _disposed;
         private readonly IJSRuntime _js;
         private readonly DotNetObjectReference<ScrollSpy> _dotNetRef;
 
+        /// <inheritdoc />
+        public string? CenteredSection { get; private set; }
+
+        /// <inheritdoc />
+        public event EventHandler<ScrollSectionCenteredEventArgs>? ScrollSectionSectionCentered;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ScrollSpy"/> class with the specified JavaScript runtime.
+        /// </summary>
+        /// <param name="js">The JavaScript runtime.</param>
         [DynamicDependency(nameof(SectionChangeOccured))]
         public ScrollSpy(IJSRuntime js)
         {
@@ -20,9 +34,31 @@ namespace MudBlazor
             _dotNetRef = DotNetObjectReference.Create(this);
         }
 
+        /// <inheritdoc />
         public async Task StartSpying(string containerSelector, string sectionClassSelector) =>
             await _js.InvokeVoidAsync("mudScrollSpy.spying", _dotNetRef, containerSelector, sectionClassSelector);
 
+        /// <inheritdoc />
+        public async Task ScrollToSection(string id)
+        {
+            CenteredSection = id;
+            await _js.InvokeVoidAsyncWithErrorHandling("mudScrollSpy.scrollToSection", id.Trim('#'));
+        }
+
+        /// <inheritdoc />
+        public async Task SetSectionAsActive(string id)
+        {
+            CenteredSection = id;
+            await _js.InvokeVoidAsyncWithErrorHandling("mudScrollSpy.activateSection", id.Trim('#'));
+        }
+
+        /// <inheritdoc />
+        public async Task ScrollToSection(Uri uri) => await ScrollToSection(uri.Fragment);
+
+        /// <summary>
+        /// Invoked by JavaScript when a section change occurs.
+        /// </summary>
+        /// <param name="id">The ID of the centered scroll section.</param>
         [JSInvokable]
         public void SectionChangeOccured(string id)
         {
@@ -30,32 +66,15 @@ namespace MudBlazor
             ScrollSectionSectionCentered?.Invoke(this, new ScrollSectionCenteredEventArgs(id));
         }
 
-        public event EventHandler<ScrollSectionCenteredEventArgs> ScrollSectionSectionCentered;
-
-        public async Task ScrollToSection(string id)
-        {
-            CenteredSection = id;
-            await _js.InvokeVoidAsyncWithErrorHandling("mudScrollSpy.scrollToSection", id.Trim('#'));
-        }
-
-        public async Task SetSectionAsActive(string id)
-        {
-            CenteredSection = id;
-            await _js.InvokeVoidAsyncWithErrorHandling("mudScrollSpy.activateSection", id.Trim('#'));
-        }
-
-        public async Task ScrollToSection(Uri uri) => await ScrollToSection(uri.Fragment);
-
+        /// <inheritdoc />
         public async ValueTask DisposeAsync()
         {
-            try
+            if (!_disposed)
             {
+                _disposed = true;
+
                 await _js.InvokeVoidAsyncWithErrorHandling("mudScrollSpy.unspy");
-                _dotNetRef?.Dispose();
-            }
-            catch (Exception)
-            {
-                // ignored
+                _dotNetRef.Dispose();
             }
         }
     }

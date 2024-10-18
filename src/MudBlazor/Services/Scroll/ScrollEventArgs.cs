@@ -33,6 +33,5 @@ namespace MudBlazor
         /// Node name of the scrolled element
         /// </summary>
         public string NodeName { get; set; }
-
     }
 }
