@@ -1061,7 +1061,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public Func<GroupDefinition<T>, string> GroupStyleFunc { get; set; }
-      
+
         /// <summary>
         /// Variant to use for all inputs, for example the filters, etc.
         /// </summary>
