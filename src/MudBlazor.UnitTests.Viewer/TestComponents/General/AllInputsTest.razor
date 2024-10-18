@@ -186,11 +186,35 @@
     <MudButton Variant="Variant.Filled">Text</MudButton>
 </MudStack>
 
+<MudStack Row AlignItems="AlignItems.Center">
+    <MudTextField T="string" />
+    <MudDatePicker />
+    <MudNumericField T="int" Margin="Margin.Dense" Variant="Variant.Filled" />
+    <MudSelect T="string"></MudSelect>
+    <MudColorPicker />
+    <MudCheckBox T="bool" />
+    <MudRadio Value="@("1")" Placement="Placement.Left" />
+    <MudSwitch T="bool" />
+    <MudButton Variant="Variant.Filled">Text</MudButton>
+</MudStack>
+
+<MudStack Row AlignItems="AlignItems.Center">
+    <MudTextField T="string" />
+    <MudDatePicker />
+    <MudNumericField T="int" Margin="Margin.Dense" Variant="Variant.Outlined" />
+    <MudSelect T="string"></MudSelect>
+    <MudColorPicker />
+    <MudCheckBox T="bool" />
+    <MudRadio Value="@("1")" Placement="Placement.Left" />
+    <MudSwitch T="bool" />
+    <MudButton Variant="Variant.Filled">Text</MudButton>
+</MudStack>
+
 @code {
     [Parameter]
     public Margin Margin { get; set; } = Margin.Dense;
     [Parameter]
     public AlignItems Align { get; set; } = AlignItems.End;
 
-    public static string __description__ = "Test used to validate any inputs leyout in a single place.";
+    public static string __description__ = "Test used to validate any inputs layout in a single place.";
 }
