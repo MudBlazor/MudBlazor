@@ -2,8 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
@@ -399,5 +397,42 @@ public class ParameterStateTests
 
         // Assert
         result.Should().BeFalse();
+    }
+
+    [Test]
+    public void MetadataToString_ShouldReturnParameterName()
+    {
+        // Arrange
+        var parameterName = "TestParameter1";
+        var parameterState1 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(parameterName))
+            .WithGetParameterValueFunc(() => 5)
+            .Attach();
+
+        var toString = parameterState1.Metadata.ToString();
+
+        // Assert
+        toString.Should().Be(parameterName);
+    }
+
+    [Test]
+    public void ImplicitOperator()
+    {
+        // Arrange
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata("TestParameter1"))
+            .WithGetParameterValueFunc(() => 5)
+            .Attach();
+
+        // Act
+        parameterState.OnInitialized();
+        var value1 = parameterState.Value;
+        int value2 = parameterState;
+
+        // Assert
+        value1.Should().Be(5);
+        value2.Should().Be(5);
     }
 }

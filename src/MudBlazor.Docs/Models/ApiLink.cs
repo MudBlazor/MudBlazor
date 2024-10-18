@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using MudBlazor.Charts;
-
+﻿using MudBlazor.Charts;
 namespace MudBlazor.Docs.Models
 {
 #nullable enable
@@ -10,7 +6,7 @@ namespace MudBlazor.Docs.Models
     {
         public static string GetApiLinkFor(Type type)
         {
-            return $"api/{GetComponentName(type)}";
+            return $"api/{type.Name}";
         }
 
         public static string GetComponentLinkFor(Type type)
@@ -27,16 +23,14 @@ namespace MudBlazor.Docs.Models
         /// </summary>
         public static Type? GetTypeFromComponentLink(string component)
         {
-            if (component.Contains('#'))
-            {
-                component = component[..component.IndexOf('#')];
-            }
-
             if (string.IsNullOrEmpty(component))
             {
                 return null;
             }
-
+            if (component.Contains('#'))
+            {
+                component = component[..component.IndexOf('#')];
+            }
             if (InverseSpecialCase.TryGetValue(component, out var type))
             {
                 return type;
@@ -90,8 +84,9 @@ namespace MudBlazor.Docs.Models
                 [typeof(StackedBar)] = "stackedbarchart",
                 [typeof(Donut)] = "donutchart",
                 [typeof(Line)] = "linechart",
+                [typeof(TimeSeries)] = "timeserieschart",
                 [typeof(Pie)] = "piechart",
-                [typeof(MudChip)] = "chips",
+                [typeof(MudChip<T>)] = "chips",
                 [typeof(ChartOptions)] = "options"
             };
 

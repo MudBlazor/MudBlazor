@@ -17,11 +17,14 @@ else
 }
 
 @code {
-
+#nullable enable
     private Boolean _disposed;
 
-    [CascadingParameter] private MudTabs Parent { get; set; }
+    [CascadingParameter] private MudTabs? Parent { get; set; }
 
+    /// <summary>
+    /// Reference to the underlying panel element.
+    /// </summary>
     public ElementReference PanelRef;
 
 
@@ -31,14 +34,24 @@ else
     /// </summary>
     [Parameter] 
     [Category(CategoryTypes.Tabs.Behavior)]
-    public string Text { get; set; }
+    public string? Text { get; set; }
 
     /// <summary>
     /// Icon placed before the text if set.
     /// </summary>
     [Parameter] 
     [Category(CategoryTypes.Tabs.Behavior)]
-    public string Icon { get; set; }
+    public string? Icon { get; set; }
+
+    /// <summary>
+    /// The color of the <see cref="Icon" />.
+    /// </summary>
+    /// <remarks>
+    /// When set, overrides the <see cref="MudTabs.IconColor" /> property.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Tabs.Behavior)]
+    public Color IconColor { get; set; }
 
     /// <summary>
     /// If true, the tabpanel will be disabled.
@@ -59,7 +72,7 @@ else
     /// </summary>
     [Parameter] 
     [Category(CategoryTypes.Tabs.Behavior)]
-    public object BadgeData { get; set; }
+    public object? BadgeData { get; set; }
 
     /// <summary>
     /// Optional information to show the badge as a dot.
@@ -80,7 +93,7 @@ else
     /// </summary>
     [Parameter] 
     [Category(CategoryTypes.Tabs.Behavior)]
-    public object ID { get; set; }
+    public object? ID { get; set; }
 
     /// <summary>
     /// Raised when tab is clicked
@@ -92,14 +105,14 @@ else
     /// </summary>
     [Parameter] 
     [Category(CategoryTypes.Tabs.Behavior)]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
     /// Tab content of component.
     /// </summary>
     [Parameter] 
     [Category(CategoryTypes.Tabs.Behavior)]
-    public RenderFragment TabContent { get; set; }
+    public RenderFragment? TabContent { get; set; }
 
     /// <summary>
     /// Tab content wrapper of component. It is used to wrap the content of a tab heading in a user supplied div or component. 
@@ -108,24 +121,26 @@ else
     /// </summary>
     [Parameter] 
     [Category(CategoryTypes.Tabs.Behavior)]
-    public RenderFragment<RenderFragment> TabWrapperContent { get; set; }
+    public RenderFragment<RenderFragment>? TabWrapperContent { get; set; }
 
     /// <summary>
     /// TabPanel Tooltip. It will be ignored if TabContent is provided.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Tabs.Behavior)]
-    public string ToolTip { get; set; }
+    public string? ToolTip { get; set; }
 
+    /// <inheritdoc/>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
-        if(firstRender == true && Parent != null)
+        if(firstRender && Parent is not null)
         {
             await Parent.SetPanelRef(PanelRef);
         }
     }
 
+    /// <inheritdoc/>
     protected override void OnInitialized()
     {
         // NOTE: we must not throw here because we need the component to be able to live for the API docs to be able to infer default values
@@ -136,9 +151,10 @@ else
         Parent?.AddPanel(this);
     }
 
+    /// <inheritdoc/>
     public async ValueTask DisposeAsync()
     {
-        if(_disposed == true) { return;  }
+        if(_disposed) { return;  }
 
         _disposed = true;
         if (Parent is not null)

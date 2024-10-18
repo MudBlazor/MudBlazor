@@ -2,90 +2,78 @@
 
 .mud-toggle-group {
   display: grid;
+  overflow: hidden;
+  box-sizing: border-box;
+  border-width: 0;
+
+  & > .mud-toggle-item {
+    box-shadow: none;
+    border-width: inherit;
+    border-style: none;
+    border-color: inherit;
+    border-radius: 0;
+  }
 }
 
 .mud-toggle-group-horizontal {
   &:not(.mud-toggle-group-rtl) {
-    > .mud-toggle-item:not(:last-child), > :not(:last-child) .mud-toggle-item {
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-    }
-
     > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-      margin-left: -1px;
-
       &.mud-toggle-item-delimiter {
-        border-left-width: 1px;
+        border-left-style: solid !important;
       }
 
-      &.mud-toggle-delimiter-alternative {
-        border-left-color: var(--mud-palette-background-grey) !important;
-      }
+      margin-left: -1px;
     }
   }
 
   &.mud-toggle-group-rtl {
     > .mud-toggle-item:not(:last-child), > :not(:last-child) .mud-toggle-item {
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-      margin-left: -1px;
-
       &.mud-toggle-item-delimiter {
-        border-left-width: 1px;
+        border-left-style: solid !important;
       }
-    }
 
-    > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
+      margin-left: -1px;
     }
   }
 }
 
 .mud-toggle-group-vertical {
-  > .mud-toggle-item:not(:last-child), > :not(:last-child) .mud-toggle-item {
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-  }
-
   > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-
     &.mud-toggle-item-delimiter {
-      border-top-width: 1px;
+      border-top-style: solid !important;
     }
 
-    &.mud-toggle-delimiter-alternative {
-      border-top-color: var(--mud-palette-background-grey) !important;
-    }
+    margin-top: -1px;
   }
 }
 
 .mud-toggle-item {
-  cursor: pointer;
-  user-select: none;
-  border-radius: var(--mud-default-borderradius);
+  padding: 6px;
+  min-width: auto;
+  border-style: none !important;
 
-  @each $color in $mud-palette-colors {
-    &.mud-toggle-item-#{$color} {
-      color: var(--mud-palette-#{$color});
-
-      @media(hover: hover) and (pointer: fine) {
-        &:hover:not(.mud-toggle-item-selected) {
-          background-color: var(--mud-palette-#{$color}-hover);
-        }
-      }
-
-      &:focus-visible:not(.mud-toggle-item-selected), &:active:not(.mud-toggle-item-selected) {
-        background-color: var(--mud-palette-#{$color}-hover);
-      }
-    }
+  & > .mud-button-label {
+    min-height: 20px;
   }
+}
 
-  &.mud-toggle-item-selected-border {
-    border-radius: unset;
-  }
+.mud-toggle-item-size-small {
+  padding: 4px;
+}
+
+.mud-toggle-item-size-large {
+  padding: 8px;
+}
+
+.mud-toggle-item-fixed > .mud-button-label:has(>.mud-toggle-item-check-icon) {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+}
+
+.mud-toggle-item-check-icon {
+  justify-self: end;
+}
+
+.mud-toggle-item-content {
+  display: contents;
 }

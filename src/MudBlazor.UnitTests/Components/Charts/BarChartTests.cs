@@ -1,16 +1,11 @@
 ﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
-
-using System.Collections.Generic;
-using MudBlazor.UnitTests.Components;
-using System.Linq;
+using Bunit;
 using FluentAssertions;
 using MudBlazor.Charts;
+using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
-using Bunit;
-using MudBlazor.UnitTests.Utilities;
-using System;
 
 namespace MudBlazor.UnitTests.Charts
 {
@@ -51,7 +46,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void BarChartExampleData()
         {
-            List<ChartSeries> chartSeries = new List<ChartSeries>()
+            var chartSeries = new List<ChartSeries>()
             {
                 new () { Name = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
                 new () { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, -4, 16, 31 } },
@@ -112,7 +107,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void BarChartExampleSingleXAxis()
         {
-            List<ChartSeries> chartSeries = new List<ChartSeries>()
+            var chartSeries = new List<ChartSeries>()
             {
                 new () { Name = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
                 new () { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, -4, 16, 31 } },
@@ -166,7 +161,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void BarChartColoring()
         {
-            List<ChartSeries> chartSeries = new List<ChartSeries>()
+            var chartSeries = new List<ChartSeries>()
             {
                 new ChartSeries() { Name = "Deep Sea Blue", Data = new double[] { 40, 20, 25, 27, 46 } },
                 new ChartSeries() { Name = "Venetian Red", Data = new double[] { 19, 24, 35, 13, 28 } },

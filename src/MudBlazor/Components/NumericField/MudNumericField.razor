@@ -2,23 +2,23 @@
 @typeparam T
 @inherits MudDebouncedInput<T>
 
-@using System.Globalization;
-
 <CascadingValue Name="SubscribeToParentForm" Value="@SubscribeToParentForm" IsFixed="true">
     <MudInputControl id="@_elementId"
                      Label="@Label"
                      Variant="@Variant"
+                     HelperId="@GetHelperId()"
                      HelperText="@HelperText"
                      HelperTextOnFocus="@HelperTextOnFocus"
                      FullWidth="@FullWidth"
                      Class="@Classname"
                      Error="@HasErrors"
+                     ErrorId="@ErrorId"
                      ErrorText="@GetErrorText()"
                      Disabled="@GetDisabledState()"
                      Margin="@Margin"
                      Required="@Required"
                      CounterText="@GetCounterText()"
-                     ForId="@FieldId">
+                     ForId="@InputElementId">
         <InputContent>
             <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
                 <MudInput T="string"
@@ -27,20 +27,26 @@
                           InputType="@InputType.Text"
                           Style="@Style"
                           Variant="@Variant"
+                          Typo="@Typo"
+                          Label="@Label"
                           TextUpdateSuppression="@TextUpdateSuppression"
                           Value="@Text"
                           ValueChanged="@OnInputValueChanged"
                           Placeholder="@Placeholder"
                           Disabled="@GetDisabledState()"
-                          DisableUnderLine="@DisableUnderLine"
+                          Underline="@Underline"
                           ReadOnly="@GetReadOnlyState()"
                           Adornment="@Adornment"
                           AdornmentText="@AdornmentText"
                           AdornmentIcon="@AdornmentIcon"
                           AdornmentColor="@AdornmentColor"
+                          AdornmentAriaLabel="@AdornmentAriaLabel"
                           IconSize="@IconSize"
                           Error="@Error"
-                          Immediate="@(Immediate)"
+                          ErrorId="@ErrorId"
+                          HelperId="@GetHelperId()"
+                          HelperText="@HelperText"
+                          Immediate="@Immediate"
                           Margin="@Margin"
                           MaxLength="@MaxLength"
                           HideSpinButtons="@HideSpinButtons"
@@ -51,13 +57,16 @@
                           Pattern="@((Pattern ?? "[0-9]").TrimEnd('*')+"*")"
                           OnAdornmentClick="@OnAdornmentClick"
                           OnBlur="@OnBlurredAsync"
-                          OnKeyDown="@HandleKeydown"
-                          OnKeyUp="@HandleKeyUp"
+                          OnKeyDown="@HandleKeyDownAsync"
+                          OnKeyUp="@HandleKeyUpAsync"
                           OnIncrement="@Increment"
                           OnDecrement="@Decrement"
-                          OnMouseWheel="@OnMouseWheel"
+                          OnMouseWheel="@OnMouseWheelAsync"
                           Clearable="@Clearable"
-                          ShrinkLabel="@ShrinkLabel" />
+                          ClearIcon="@ClearIcon"
+                          ShrinkLabel="@ShrinkLabel"
+                          InputId="@InputElementId"
+                          Required="@Required" />
             </CascadingValue>
         </InputContent>
     </MudInputControl>

@@ -6,7 +6,7 @@
 <MudText Typo="Typo.h6">Selected portion of the chart: @Index</MudText>
 
 <div>
-    <MudRadioGroup T="Position" @bind-SelectedValue="LegendPosition">
+    <MudRadioGroup T="Position" @bind-Value="LegendPosition">
         <MudRadio Value="@(Position.Bottom)" Color="Color.Primary">Bottom</MudRadio>
         <MudRadio Value="@(Position.Top)" Color="Color.Primary">Top</MudRadio>
         <MudRadio Value="@(Position.Left)" Color="Color.Primary">Left</MudRadio>

@@ -24,7 +24,7 @@
 
 <div class="d-flex flex-wrap mt-4">
     <MudSwitch @bind-Value="_sortNameByLength" Color="Color.Primary">Sort Name Column By Length</MudSwitch>
-    <MudRadioGroup T=SortMode @bind-SelectedValue="@_sortMode">
+    <MudRadioGroup T=SortMode @bind-Value="@_sortMode">
         <MudRadio Dense=true Value=@SortMode.Multiple Color="Color.Primary">Multiple</MudRadio>
         <MudRadio Dense=true Value=@SortMode.Single Color="Color.Tertiary">Single</MudRadio>
         <MudRadio Dense=true Value=@SortMode.None>None</MudRadio>

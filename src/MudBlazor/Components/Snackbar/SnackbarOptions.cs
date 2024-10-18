@@ -1,19 +1,14 @@
 ﻿//Copyright(c) Alessandro Ghidini.All rights reserved.
 //Changes and improvements Copyright (c) The MudBlazor Team.
 
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using MudBlazor.Components.Snackbar;
-using MudBlazor.Extensions;
-
 namespace MudBlazor
 {
+#nullable enable
     public class SnackbarOptions : CommonSnackbarOptions
     {
-        public Func<Snackbar, Task> Onclick { get; set; }
+        public Func<Snackbar, Task>? Onclick { get; set; }
 
-        public string Action { get; set; }
+        public string? Action { get; set; }
 
         public Variant? ActionVariant { get; set; }
 
@@ -21,14 +16,16 @@ namespace MudBlazor
 
         public Severity Severity { get; }
 
-        public string SnackbarTypeClass { get; set; }
+        public string? SnackbarTypeClass { get; set; }
 
         public bool CloseAfterNavigation { get; set; }
 
         public bool HideIcon { get; set; }
 
         public string Icon { get; set; }
+
         public Color IconColor { get; set; } = Color.Inherit;
+
         public Size IconSize { get; set; } = Size.Medium;
 
         public SnackbarDuplicatesBehavior DuplicatesBehavior { get; set; } = SnackbarDuplicatesBehavior.GlobalDefault;
@@ -62,13 +59,6 @@ namespace MudBlazor
         {
             Severity = severity;
 
-            SnackbarTypeClass = $"mud-alert-{SnackbarVariant.ToDescriptionString()}-{severity.ToDescriptionString()}";
-
-            if (SnackbarVariant != Variant.Filled)
-            {
-                SnackbarTypeClass += BackgroundBlurred ? " mud-snackbar-blurred" : " mud-snackbar-surface";
-            }
-
             if (string.IsNullOrEmpty(Icon))
             {
                 Icon = Severity switch
@@ -78,7 +68,7 @@ namespace MudBlazor
                     Severity.Success => SuccessIcon,
                     Severity.Warning => WarningIcon,
                     Severity.Error => ErrorIcon,
-                    _ => throw new ArgumentOutOfRangeException(nameof(Severity)),
+                    _ => throw new ArgumentOutOfRangeException(nameof(severity)),
                 };
             }
         }

@@ -145,21 +145,21 @@ namespace MudBlazor.UnitTests.Components
             var panel = comp.FindComponent<MudExpansionPanel>();
             panel.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.Disabled, true));
 
-            comp.WaitForAssertion(() => comp.Instance.Panel1IsExpanded.Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Panel2IsExpanded.Should().BeTrue());
-            comp.WaitForAssertion(() => comp.Instance.Panel3IsExpanded.Should().BeFalse());
+            comp.WaitForAssertion(() => comp.Instance.Panel1Expanded.Should().BeFalse());
+            comp.WaitForAssertion(() => comp.Instance.Panel2Expanded.Should().BeTrue());
+            comp.WaitForAssertion(() => comp.Instance.Panel3Expanded.Should().BeFalse());
             await comp.InvokeAsync(panel.Instance.ToggleExpansionAsync);
-            comp.WaitForAssertion(() => comp.Instance.Panel1IsExpanded.Should().BeFalse()); // ToggleExpansionAsync checks for Disabled, so nothing happens
-            comp.WaitForAssertion(() => comp.Instance.Panel2IsExpanded.Should().BeTrue());
-            comp.WaitForAssertion(() => comp.Instance.Panel3IsExpanded.Should().BeFalse());
+            comp.WaitForAssertion(() => comp.Instance.Panel1Expanded.Should().BeFalse()); // ToggleExpansionAsync checks for Disabled, so nothing happens
+            comp.WaitForAssertion(() => comp.Instance.Panel2Expanded.Should().BeTrue());
+            comp.WaitForAssertion(() => comp.Instance.Panel3Expanded.Should().BeFalse());
             await comp.InvokeAsync(panel.Instance.ExpandAsync);
-            comp.WaitForAssertion(() => comp.Instance.Panel1IsExpanded.Should().BeTrue()); // ExpandAsync ignores Disabled
-            comp.WaitForAssertion(() => comp.Instance.Panel2IsExpanded.Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Panel3IsExpanded.Should().BeFalse());
+            comp.WaitForAssertion(() => comp.Instance.Panel1Expanded.Should().BeTrue()); // ExpandAsync ignores Disabled
+            comp.WaitForAssertion(() => comp.Instance.Panel2Expanded.Should().BeFalse());
+            comp.WaitForAssertion(() => comp.Instance.Panel3Expanded.Should().BeFalse());
             await comp.InvokeAsync(panel.Instance.CollapseAsync);
-            comp.WaitForAssertion(() => comp.Instance.Panel1IsExpanded.Should().BeFalse()); // ExpandAsync ignores Disabled
-            comp.WaitForAssertion(() => comp.Instance.Panel2IsExpanded.Should().BeFalse());
-            comp.WaitForAssertion(() => comp.Instance.Panel3IsExpanded.Should().BeFalse());
+            comp.WaitForAssertion(() => comp.Instance.Panel1Expanded.Should().BeFalse()); // ExpandAsync ignores Disabled
+            comp.WaitForAssertion(() => comp.Instance.Panel2Expanded.Should().BeFalse());
+            comp.WaitForAssertion(() => comp.Instance.Panel3Expanded.Should().BeFalse());
         }
 
         /// <summary>
@@ -175,15 +175,15 @@ namespace MudBlazor.UnitTests.Components
             await panels.Instance.AddPanelAsync(panel1);
             await panels.Instance.AddPanelAsync(panel2);
             await panels.Instance.AddPanelAsync(panel3);
-            // We check _isExpandedState because we do not modify IsExpanded directly, therefore the parameter doesn't change.
-            // For parameter to change you need to bind panels IsExpansion it via razor syntax, so that parent would update it.
-            panel1._isExpandedState.Value.Should().BeFalse();
-            panel2._isExpandedState.Value.Should().BeFalse();
-            panel3._isExpandedState.Value.Should().BeFalse();
+            // We check _expandedState because we do not modify Expanded directly, therefore the parameter doesn't change.
+            // For parameter to change you need to bind panels Expansion it via razor syntax, so that parent would update it.
+            panel1._expandedState.Value.Should().BeFalse();
+            panel2._expandedState.Value.Should().BeFalse();
+            panel3._expandedState.Value.Should().BeFalse();
             await panels.Instance.ExpandAllAsync();
-            panel1._isExpandedState.Value.Should().BeTrue();
-            panel2._isExpandedState.Value.Should().BeTrue();
-            panel3._isExpandedState.Value.Should().BeTrue();
+            panel1._expandedState.Value.Should().BeTrue();
+            panel2._expandedState.Value.Should().BeTrue();
+            panel3._expandedState.Value.Should().BeTrue();
         }
 
         /// <summary>
@@ -202,15 +202,15 @@ namespace MudBlazor.UnitTests.Components
             await panel1.ExpandAsync();
             await panel2.ExpandAsync();
             await panel3.ExpandAsync();
-            // We check _isExpandedState because we do not modify IsExpanded directly, therefore the parameter doesn't change.
-            // For parameter to change you need to bind panels IsExpansion it via razor syntax, so that parent would update it.
-            panel1._isExpandedState.Value.Should().BeTrue();
-            panel2._isExpandedState.Value.Should().BeTrue();
-            panel3._isExpandedState.Value.Should().BeTrue();
+            // We check _expandedState because we do not modify Expanded directly, therefore the parameter doesn't change.
+            // For parameter to change you need to bind panels Expansion it via razor syntax, so that parent would update it.
+            panel1._expandedState.Value.Should().BeTrue();
+            panel2._expandedState.Value.Should().BeTrue();
+            panel3._expandedState.Value.Should().BeTrue();
             await panels.Instance.CollapseAllAsync();
-            panel1._isExpandedState.Value.Should().BeFalse();
-            panel2._isExpandedState.Value.Should().BeFalse();
-            panel3._isExpandedState.Value.Should().BeFalse();
+            panel1._expandedState.Value.Should().BeFalse();
+            panel2._expandedState.Value.Should().BeFalse();
+            panel3._expandedState.Value.Should().BeFalse();
         }
 
         /// <summary>
@@ -229,15 +229,15 @@ namespace MudBlazor.UnitTests.Components
             await panel1.ExpandAsync();
             await panel2.ExpandAsync();
             await panel3.ExpandAsync();
-            // We check _isExpandedState because we do not modify IsExpanded directly, therefore the parameter doesn't change.
-            // For parameter to change you need to bind panels IsExpansion it via razor syntax, so that parent would update it.
-            panel1._isExpandedState.Value.Should().BeTrue();
-            panel2._isExpandedState.Value.Should().BeTrue();
-            panel3._isExpandedState.Value.Should().BeTrue();
+            // We check _expandedState because we do not modify Expanded directly, therefore the parameter doesn't change.
+            // For parameter to change you need to bind panels Expansion it via razor syntax, so that parent would update it.
+            panel1._expandedState.Value.Should().BeTrue();
+            panel2._expandedState.Value.Should().BeTrue();
+            panel3._expandedState.Value.Should().BeTrue();
             await panels.Instance.CollapseAllExceptAsync(panel2);
-            panel1._isExpandedState.Value.Should().BeFalse();
-            panel2._isExpandedState.Value.Should().BeTrue();
-            panel3._isExpandedState.Value.Should().BeFalse();
+            panel1._expandedState.Value.Should().BeFalse();
+            panel2._expandedState.Value.Should().BeTrue();
+            panel3._expandedState.Value.Should().BeFalse();
         }
 
         /// <summary>

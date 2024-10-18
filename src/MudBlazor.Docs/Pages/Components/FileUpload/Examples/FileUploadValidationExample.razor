@@ -6,27 +6,40 @@
 <MudCard>
     <MudForm Model="@model" @ref="@form" Validation="@(ValidationRules.ValidateValue)" ValidationDelay="0">
         <MudCardContent>
-            <MudTextField @bind-Value="model.Name"
-                          For="@(() => model.Name)"
-                          Immediate="true"
-                          Label="Name" />
-            <MudFileUpload T="IBrowserFile" For="@(() => model.File)" @bind-Files="model.File" OnFilesChanged="UploadFiles" SuppressOnChangeWhenInvalid="SuppressOnChangeWhenInvalid">
-                <ButtonTemplate>
-                    <MudButton HtmlTag="label"
-                               Variant="Variant.Filled"
-                               Color="Color.Primary"
-                               StartIcon="@Icons.Material.Filled.CloudUpload"
-                               for="@context.Id">
-                        Upload Files
-                    </MudButton>
-                    <MudButton OnClick="@context.Actions.ClearAsync"
-                               Variant="Variant.Filled"
-                               Color="Color.Primary"
-                               StartIcon="@Icons.Material.Filled.Clear">
-                        Clear Files
-                    </MudButton>
-                </ButtonTemplate>
-            </MudFileUpload>
+            <MudStack>
+                <MudTextField @bind-Value="model.Name"
+                              For="@(() => model.Name)"
+                              Immediate="true"
+                              Label="Name" />
+
+                <MudGrid Justify="@Justify.FlexEnd"
+                         Spacing="1">
+                    <MudItem>
+                        <MudFileUpload @ref="@_fileUpload"
+                                       T="IBrowserFile"
+                                       For="@(() => model.File)"
+                                       @bind-Files="model.File"
+                                       OnFilesChanged="UploadFiles"
+                                       SuppressOnChangeWhenInvalid="SuppressOnChangeWhenInvalid">
+                            <ActivatorContent>
+                                <MudButton Variant="Variant.Filled"
+                                           Color="Color.Primary"
+                                           StartIcon="@Icons.Material.Filled.CloudUpload">
+                                    Upload Files
+                                </MudButton>
+                            </ActivatorContent>
+                        </MudFileUpload>
+                    </MudItem>
+                    <MudItem>
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Clear"
+                                   OnClick="@ClearAsync">
+                            Clear Files
+                        </MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudStack>
         </MudCardContent>
         <MudCardActions>
             <MudSwitch Color="Color.Primary" @bind-Value="SuppressOnChangeWhenInvalid">Suppress OnChange When Invalid</MudSwitch>
@@ -41,6 +54,7 @@
     private FileModel model = new();
     private FileModelFluentValidator ValidationRules = new();
     private bool SuppressOnChangeWhenInvalid;
+    private MudFileUpload<IBrowserFile> _fileUpload;
 
     private void UploadFiles(InputFileChangeEventArgs e)
     {
@@ -60,6 +74,9 @@
             Snackbar.Add("Submitted!");
         }
     }
+
+    private Task ClearAsync()
+        => _fileUpload?.ClearAsync() ?? Task.CompletedTask;
 
     public class FileModel
     {

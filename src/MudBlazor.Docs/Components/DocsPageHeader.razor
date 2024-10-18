@@ -26,15 +26,16 @@
 {
     <div class="docs-page-header my-16">
         @SpecialHeaderContent
-        <DocsRenderBenchmark/>
+        <DocsRenderBenchmark />
     </div>
 }
 else
 {
-    <div class="docs-page-header mt-6 mb-12">
-        <MudText Typo="@Typo.h3">@Title</MudText>
-        <MudText>@GetSubTitle() @Description</MudText>
-        <DocsRenderBenchmark/>
+    <div class="docs-page-header">
+        <MudText Typo="@Typo.h4">@Title</MudText>
+        <MudText Typo="@Typo.subtitle1">@GetSubTitle()</MudText>
+        <MudText Typo="@Typo.body1">@Description</MudText>
+        <DocsRenderBenchmark />
     </div>
 }
 
@@ -45,7 +46,7 @@ else
         <div class="docs-page-apilinks">
             <ul class="my-2">
                 <li>
-                    <MudLink Href="@_apiLink">
+                    <MudLink Href="@($"api/{_componentType.Name}")">
                         <CodeInline>@($"<{_componentTypeName}>")</CodeInline>
                     </MudLink>
                 </li>
@@ -54,7 +55,7 @@ else
                     @foreach (var childType in _component.ChildTypes)
                     {
                         <li>
-                            <MudLink Href="@($"api/{childType.Name.Replace("`1", "").ToLowerInvariant().Replace("mud","")}")" Class="ms-1">
+                            <MudLink Href="@($"api/{childType.Name}")" Class="ms-1">
                                 - <CodeInline>@($"<{childType.Name.Replace("`1", "")}>")</CodeInline>
                             </MudLink>
                         </li>
@@ -112,7 +113,7 @@ else
         _componentTypeName = _componentType?.Name.Replace("`1", "");
         _apiLink = $"api/{_componentName}";
         _componentPage = (_component?.Type == null) ? _parentComponent?.Name : _component?.Name;
-    }   
+    }
 
     private string GetComponentLink()
     {

@@ -1,7 +1,8 @@
 ﻿@page "/components/appbar"
+@page "/components/MudAppBar"
 
 <DocsPage>
-    <DocsPageHeader Title="App Bar" SubTitle="App bar is used to display actions, branding, navigation and screen titles.">
+    <DocsPageHeader Title="App Bar" SubTitle="An app bar is used to display actions, branding, navigation and screen titles.">
         <Description>
             Keeping the app bar persistent while browsing different pages will ease navigation and access to actions for your users.
         </Description>
@@ -9,33 +10,26 @@
     <DocsPageContent>
 
         <DocsPageSection>
-            <SectionHeader Title="Regular App Bar">
+            <SectionHeader Title="Basic App Bar">
                 <Description>
                     <MudText Class="py-6">App bars have two types: regular and contextual action bar. Below is an example of a regular app bar.</MudText>
                     <MudText>A contextual action bar is something that will provide actions for a selected item on the page.</MudText>
                     <MudText>A top bar can transform into a contextual action bar and be dismissed at any time.</MudText>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="AppBarSimpleExample">
+            <SectionContent DarkenBackground="true" Code="@nameof(AppBarSimpleExample)">
                 <AppBarSimpleExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Elevation">
-                <Description>You can change the App Bar elevation, with values from 0-25</Description>
+            <SectionHeader Title="Usage">
+                <Description>
+                    <MudText>You can customize the Elevation of an AppBar, as well as set the Dense property to save space.</MudText>
+                </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="AppBarElevationExample">
-                <AppBarElevationExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Dense">
-                <Description></Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="AppBarDenseExample">
-                <AppBarDenseExample />
+            <SectionContent DarkenBackground="true" Code="@nameof(AppBarUsageExample)" ShowCode="false">
+                <AppBarUsageExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -43,7 +37,7 @@
             <SectionHeader Title="Bottom App Bar">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="AppBarBottomExample" ShowCode="false">
+            <SectionContent DarkenBackground="true" Code="@nameof(AppBarBottomExample)" ShowCode="false">
                 <iframe src="/iframe/docs/examples/appbar/bottom" class="docs-iframe rounded mud-elevation-25" style="height: 450px; ">
                     <AppBarBottomExample />
                 </iframe>

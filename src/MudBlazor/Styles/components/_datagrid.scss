@@ -53,14 +53,14 @@
     &.sticky-left {
       left: 0px;
       position: sticky;
-      background-color: var(--mud-palette-background-grey);
+      background-color: var(--mud-palette-background-gray);
       z-index: 1;
     }
 
     &.sticky-right {
       right: 0px;
       position: sticky;
-      background-color: var(--mud-palette-background-grey);
+      background-color: var(--mud-palette-background-gray);
       z-index: 1;
     }
 
@@ -139,6 +139,10 @@
       width: 8px;
       cursor: col-resize;
       user-select: none;
+      .mud-application-layout-rtl & {
+        right: auto;
+        left: 0;
+      }
     }
 
     @media(hover: hover) and (pointer: fine) {

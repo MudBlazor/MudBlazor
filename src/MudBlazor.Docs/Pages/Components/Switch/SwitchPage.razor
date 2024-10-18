@@ -1,4 +1,6 @@
 ﻿@page "/components/switch"
+@page "/components/MudSwitch"
+@page "/components/MudSwitch`1"
 
 <DocsPage>
     <DocsPageHeader Title="Switch" SubTitle="Similar to a checkbox but visually different, the switch lets the user switch between two values with the tap of a button." />
@@ -26,7 +28,7 @@
             <SectionHeader Title="Switch with label">
                 <Description>
                     Text can be added using the <CodeInline>Label</CodeInline> property and its
-                    position can be specified using the <CodeInline>LabelPosition</CodeInline> property
+                    position can be specified using the <CodeInline>LabelPlacement</CodeInline> property
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(SwitchWithLabelExample)">
@@ -51,6 +53,15 @@
             </SectionHeader>
             <SectionContent Code="@nameof(SwitchConversionExample)" ShowCode="false">
                 <SwitchConversionExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Content Placement">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SwitchContentPlacementExample)" ShowCode="false">
+                <SwitchContentPlacementExample />
             </SectionContent>
         </DocsPageSection>
 

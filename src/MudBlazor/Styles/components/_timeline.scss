@@ -356,7 +356,7 @@
     }
 
     &.mud-timeline-dot-default {
-      background-color: var(--mud-palette-grey-light);
+      background-color: var(--mud-palette-gray-light);
     }
 
     @each $color in $mud-palette-colors {

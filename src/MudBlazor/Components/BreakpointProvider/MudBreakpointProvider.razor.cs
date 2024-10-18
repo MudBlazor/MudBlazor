@@ -5,21 +5,35 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Services;
 
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// Represents a cascading parameter which exposes the window's current breakpoint (xs, sm, md, lg, xl).
+    /// </summary>
     public partial class MudBreakpointProvider : IBrowserViewportObserver, IAsyncDisposable
     {
+        /// <summary>
+        /// The current breakpoint.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Breakpoint.Always"/>.
+        /// </remarks>
         public Breakpoint Breakpoint { get; private set; } = Breakpoint.Always;
 
+        /// <summary>
+        /// Occurs when <see cref="Breakpoint"/> has changed.
+        /// </summary>
         [Parameter]
         public EventCallback<Breakpoint> OnBreakpointChanged { get; set; }
 
         [Inject]
         protected IBrowserViewportService BrowserViewportService { get; set; } = null!;
 
+        /// <summary>
+        /// The content within this component.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.BreakpointProvider.Behavior)]
         public RenderFragment? ChildContent { get; set; }

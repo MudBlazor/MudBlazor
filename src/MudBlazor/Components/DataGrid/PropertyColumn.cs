@@ -11,8 +11,11 @@ using MudBlazor.Utilities.Expressions;
 namespace MudBlazor
 {
 #nullable enable
-    /// <typeparam name="T">The type of data represented by each row in the data grid.</typeparam>
-    /// <typeparam name="TProperty">The type of the value being displayed in the column's cells.</typeparam>
+    /// <summary>
+    /// Represents a column in a <see cref="MudDataGrid{T}"/> associated with an object's property.
+    /// </summary>
+    /// <typeparam name="T">The type of object represented by each row in the data grid.</typeparam>
+    /// <typeparam name="TProperty">The type of the property whose values are displayed in the column's cells.</typeparam>
     public partial class PropertyColumn<T, TProperty> : Column<T>
     {
         private readonly Guid _id = Guid.NewGuid();
@@ -23,13 +26,23 @@ namespace MudBlazor
         private Expression<Func<T, TProperty>>? _lastAssignedProperty;
         private Expression<Func<T, TProperty>>? _compiledPropertyFuncFor;
 
+        /// <summary>
+        /// The property whose values are displayed in the column.
+        /// </summary>
         [Parameter]
         [EditorRequired]
         public Expression<Func<T, TProperty>> Property { get; set; } = Expression.Lambda<Func<T, TProperty>>(Expression.Default(typeof(TProperty)), Expression.Parameter(typeof(T)));
 
+        /// <summary>
+        /// The format applied to property values.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         public string? Format { get; set; }
 
+        /// <inheritdoc />
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
@@ -37,7 +50,8 @@ namespace MudBlazor
             if (_lastAssignedProperty != Property)
             {
                 _lastAssignedProperty = Property;
-                var compiledPropertyExpression = Property.Compile();
+                var safePropertyExpression = ExpressionNull.AddNullChecks(Property);
+                var compiledPropertyExpression = safePropertyExpression.Compile();
                 _cellContentFunc = item => compiledPropertyExpression(item);
             }
 
@@ -60,6 +74,9 @@ namespace MudBlazor
         protected internal override LambdaExpression? PropertyExpression
             => Property;
 
+        /// <summary>
+        /// The name of the property.
+        /// </summary>
         public override string? PropertyName
             => _propertyName;
 

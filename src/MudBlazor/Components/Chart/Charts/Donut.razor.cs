@@ -1,22 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Globalization;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Charts.SVG.Models;
 
+#nullable enable
 namespace MudBlazor.Charts
 {
-    partial class Donut : MudChartBase
+    /// <summary>
+    /// Represents a chart which displays values as ring shape.
+    /// </summary>
+    partial class Donut : MudCategoryChartBase
     {
-        [CascadingParameter] public MudChart MudChartParent { get; set; }
+        /// <summary>
+        /// The chart, if any, containing this component.
+        /// </summary>
+        [CascadingParameter]
+        public MudChart? MudChartParent { get; set; }
 
-        private List<SvgCircle> _circles = new();
-        private List<SvgLegend> _legends = new();
+        private List<SvgCircle> _circles = [];
+        private List<SvgLegend> _legends = [];
 
-        protected string ParentWidth => MudChartParent?.Width;
-        protected string ParentHeight => MudChartParent?.Height;
+        protected string? ParentWidth => MudChartParent?.Width;
+        protected string? ParentHeight => MudChartParent?.Height;
 
+        /// <inheritdoc />
         protected override void OnParametersSet()
         {
+            base.OnParametersSet();
+
             _circles.Clear();
             _legends.Clear();
             const double counterClockwiseOffset = 25;
@@ -27,7 +36,7 @@ namespace MudBlazor.Charts
             {
                 var percent = data * 100;
                 var reversePercent = 100 - percent;
-                double offset = 100 - totalPercent + counterClockwiseOffset;
+                var offset = 100 - totalPercent + counterClockwiseOffset;
                 totalPercent += percent;
 
                 var circle = new SvgCircle()
@@ -53,6 +62,5 @@ namespace MudBlazor.Charts
                 counter += 1;
             }
         }
-
     }
 }

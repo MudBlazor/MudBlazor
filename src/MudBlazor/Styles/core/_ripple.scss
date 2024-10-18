@@ -13,7 +13,7 @@
     top: var(--mud-ripple-offset-y);
     left: var(--mud-ripple-offset-x);
     pointer-events: none;
-    background-image: radial-gradient(circle, #000 10%, transparent 10.01%);
+    background-image: radial-gradient(circle, var(--mud-ripple-color) 10%, transparent 10.01%);
     background-repeat: no-repeat;
     background-position: 50%;
     transform: scale(20,20);
@@ -23,8 +23,15 @@
 
   &:active:after {
     transform: scale(0,0);
-    opacity: 0.1;
+    opacity: var(--mud-ripple-opacity);
     transition: 0s;
+  }
+
+  // disable ripple if a child element has an active ripple
+  &:has(.mud-ripple:active) {
+    &:after {
+      opacity: 0;
+    }
   }
 }
 

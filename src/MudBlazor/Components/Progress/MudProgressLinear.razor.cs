@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -9,12 +8,12 @@ namespace MudBlazor
 #nullable enable
     public partial class MudProgressLinear : MudComponentBase
     {
-        private IParameterState<double> _minState;
-        private IParameterState<double> _maxState;
-        private IParameterState<double> _valueState;
-        private IParameterState<double> _bufferValueState;
+        private readonly ParameterState<double> _minState;
+        private readonly ParameterState<double> _maxState;
+        private readonly ParameterState<double> _valueState;
+        private readonly ParameterState<double> _bufferValueState;
 
-        protected string DivClassname =>
+        protected string Classname =>
             new CssBuilder("mud-progress-linear")
                 .AddClass("mud-progress-linear-rounded", Rounded)
                 .AddClass($"mud-progress-linear-striped", Striped)
@@ -99,7 +98,7 @@ namespace MudBlazor
         public double Max { get; set; } = 100.0;
 
         /// <summary>
-        /// The maximum allowed value of the linear progress. Should not be equal to min.
+        /// The current value of the linear progress. Should be between min and max.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
@@ -109,22 +108,22 @@ namespace MudBlazor
         [Category(CategoryTypes.ProgressLinear.Behavior)]
         public double BufferValue { get; set; }
 
-        [Obsolete("Use Min instead.", true)]
-        [ExcludeFromCodeCoverage]
-        [Parameter]
-        public double Minimum { get => Min; set => Min = value; }
-
-        [Obsolete("Use Max instead.", true)]
-        [ExcludeFromCodeCoverage]
-        [Parameter]
-        public double Maximum { get => Max; set => Max = value; }
-
         public MudProgressLinear()
         {
-            _valueState = RegisterParameter(nameof(Value), () => Value, OnParameterChangedShared, DoubleEpsilonEqualityComparer.Default);
-            _minState = RegisterParameter(nameof(Min), () => Min, OnParameterChangedShared);
-            _maxState = RegisterParameter(nameof(Max), () => Max, OnParameterChangedShared);
-            _bufferValueState = RegisterParameter(nameof(BufferValue), () => BufferValue, OnParameterChangedShared);
+            using var registerScope = CreateRegisterScope();
+            _valueState = registerScope.RegisterParameter<double>(nameof(Value))
+                .WithParameter(() => Value)
+                .WithChangeHandler(OnParameterChangedShared)
+                .WithComparer(DoubleEpsilonEqualityComparer.Default);
+            _minState = registerScope.RegisterParameter<double>(nameof(Min))
+                .WithParameter(() => Min)
+                .WithChangeHandler(OnParameterChangedShared);
+            _maxState = registerScope.RegisterParameter<double>(nameof(Max))
+                .WithParameter(() => Max)
+                .WithChangeHandler(OnParameterChangedShared);
+            _bufferValueState = registerScope.RegisterParameter<double>(nameof(BufferValue))
+                .WithParameter(() => BufferValue)
+                .WithChangeHandler(OnParameterChangedShared);
         }
 
         private void OnParameterChangedShared() => UpdatePercentages();

@@ -116,6 +116,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Tests if the page buttons are hidden
+        /// </summary>
+        [Test]
+        public void HidePageButtonTest()
+        {
+            var comp = Context.RenderComponent<PaginationHidePageButtonsTest>();
+
+            comp.FindAll(".mud-pagination-item button").Count.Should().Be(2);
+        }
+
+        /// <summary>
         /// Tests the clicking on page buttons
         /// </summary>
         /// <param name="clickIndexPage">The index of the clicked page button.</param>
@@ -283,7 +294,7 @@ namespace MudBlazor.UnitTests.Components
 
             //Expected values
             var items = comp.FindAll(".mud-pagination-item");
-            items.Count.Should().Be(middleCount + 2 * boundaryCount + 2);
+            items.Count.Should().Be(middleCount + (2 * boundaryCount) + 2);
             for (var j = 0; j < items.Count; j++)
             {
                 items[j].TextContent.Should().Be(expectedValues[j]);

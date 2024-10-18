@@ -1,10 +1,10 @@
 ﻿@page "/mud/announcements/{Id}"
 
 <DocsPage DisplayFooter="true">
-    <MudContainer Class="announcment-container" MaxWidth="MaxWidth.Medium">
+    <MudContainer Class="announcement-container" MaxWidth="MaxWidth.Medium">
         @if (_message == null)
         {
-            <MudProgressCircular Color="Color.Default" Indeterminate="true"/>
+            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
         }
         else
         {
@@ -12,11 +12,13 @@
                 <SpecialHeaderContent>
                     <MudText Typo="Typo.h2" Class="docs-title">@_message.Title&nbsp;</MudText>
                     <MudText Typo="Typo.subtitle1" Class="docs-title-description">@_message.Except</MudText>
-                    <MudToolBar DisableGutters="true">
+                    <MudToolBar Gutters="false">
                         @foreach (var author in _message.Authors)
                         {
                             <div class="d-flex justify-start align-center mx-1">
-                                <MudAvatar Image="@author.AvatarUlr"/>
+                                <MudAvatar Style="background: transparent">
+                                    <MudImage Src="@author.AvatarUrl" Alt="Avatar" />
+                                </MudAvatar>
                                 <MudText Typo="Typo.subtitle2" Class="mx-2">@author.DisplayName</MudText>
                             </div>
                         }
@@ -25,7 +27,7 @@
                 </SpecialHeaderContent>
             </DocsPageHeader>
             <DocsPageContent>
-                <DynamicComponent Type="@_message.ContentComponent"/>
+                <DynamicComponent Type="@_message.ContentComponent" />
             </DocsPageContent>
         }
     </MudContainer>

@@ -7,7 +7,7 @@
     </Columns>
 </MudDataGrid>
 
-<MudSwitch @bind-Checked="@_hideAge">Hide Age Column (Hidden Parameter)</MudSwitch>
+<MudSwitch @bind-Value="@_hideAge">Hide Age Column (Hidden Parameter)</MudSwitch>
 <MudButton OnClick="@ToggleColumn">@(_isColumnRemoved ? "Add" : "Remove")</MudButton>
 
 @code {

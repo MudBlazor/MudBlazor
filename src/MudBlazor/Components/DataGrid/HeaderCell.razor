@@ -1,12 +1,13 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
+@using MudBlazor.Resources
 @typeparam T
 
 @inject InternalMudLocalizer Localizer
 
 @if (IsOnlyHeader)
 {
-    <th scope="col" class="mud-table cell @_classname" style="" @attributes="@UserAttributes">
+    <th scope="col" class="mud-table-cell @_classname" style="" @attributes="@UserAttributes">
         @ChildContent
     </th>
 }
@@ -15,7 +16,7 @@ else if (Column != null && !Column.HiddenState.Value)
     <th @ref=@_headerElement scope="col" class="@_classname" style="@_style" colspan="@Column.HeaderColSpan" @attributes="@UserAttributes">
         @if (DataGrid.DragDropColumnReordering)
         {
-            <MudDropZone CanDrop="@((item) => (Column.DragAndDropEnabled ?? true))" ItemIsDisabled="@((item) => !item.DragAndDropEnabled ?? false)" T="Column<T>" Identifier="@(Column.PropertyName ?? $"mud-header-cell-{_id}")">
+            <MudDropZone CanDrop="@((item) => (Column.DragAndDropEnabled ?? true))" ItemDisabled="@((item) => !item.DragAndDropEnabled ?? false)" T="Column<T>" Identifier="@(Column.PropertyName ?? _id)">
 
             </MudDropZone>
         }
@@ -25,7 +26,7 @@ else if (Column != null && !Column.HiddenState.Value)
         }
         @if (resizable)
         {
-            <div @onmousedown=OnResizerMouseDown @onmouseover=OnResizerMouseOver @onmouseleave=OnResizerMouseLeave
+            <div @onpointerdown=OnResizerPointerDown @onpointerover=OnResizerPointerOver @onpointerleave=OnResizerPointerLeave
                  class="@_resizerClass" style="@_resizerStyle" />
         }
     </th>
@@ -102,24 +103,24 @@ else if (Column != null && !Column.HiddenState.Value)
                 @if (showColumnOptions)
                 {
                     <MudMenu Icon="@Icons.Material.Filled.MoreVert" Size="Size.Small" AnchorOrigin="Origin.BottomCenter" Dense="true">
-                        <MudMenuItem Disabled="@(_initialDirection == SortDirection.None)" OnClick="@RemoveSortAsync">@Localizer["MudDataGrid.Unsort"]</MudMenuItem>
+                        <MudMenuItem Disabled="@(_initialDirection == SortDirection.None)" OnClick="@RemoveSortAsync">@Localizer[LanguageResource.MudDataGrid_Unsort]</MudMenuItem>
                         @if (filterable && DataGrid.FilterMode != DataGridFilterMode.ColumnFilterRow)
                         {
-                            <MudMenuItem OnClick="@AddFilter">@Localizer["MudDataGrid.Filter"]</MudMenuItem>
+                            <MudMenuItem OnClick="@AddFilter">@Localizer[LanguageResource.MudDataGrid_Filter]</MudMenuItem>
                         }
                         @if (hideable)
                         {
-                            <MudMenuItem OnClick="@HideColumnAsync">@Localizer["MudDataGrid.Hide"]</MudMenuItem>
+                            <MudMenuItem OnClick="@HideColumnAsync">@Localizer[LanguageResource.MudDataGrid_Hide]</MudMenuItem>
                         }
                         @if (groupable)
                         {
-                            if (Column?.grouping ?? false)
+                            if (Column?.GroupingState.Value ?? false)
                             {
-                                <MudMenuItem OnClick="@UngroupColumn">@Localizer["MudDataGrid.Ungroup"]</MudMenuItem>
+                                <MudMenuItem OnClick="@UngroupColumnAsync">@Localizer[LanguageResource.MudDataGrid_Ungroup]</MudMenuItem>
                             }
                             else
                             {
-                                <MudMenuItem OnClick="@GroupColumn">@Localizer["MudDataGrid.Group"]</MudMenuItem>
+                                <MudMenuItem OnClick="@GroupColumnAsync">@Localizer[LanguageResource.MudDataGrid_Group]</MudMenuItem>
                             }
                         }
                     </MudMenu>
@@ -132,7 +133,7 @@ else if (Column != null && !Column.HiddenState.Value)
         </span>
         @if (filterable && DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
         {
-            <MudOverlay Visible="@_filtersMenuVisible" OnClick="@(() => _filtersMenuVisible = false)" />
+        <MudOverlay @bind-Visible="@_filtersMenuVisible" AutoClose />
             <MudPopover Open="@_filtersMenuVisible" AnchorOrigin="@Origin.BottomRight" TransformOrigin="@Origin.TopRight" Class="pa-4 column-filter-popup">
                 @if (Column.FilterTemplate != null)
                 {
@@ -145,8 +146,8 @@ else if (Column != null && !Column.HiddenState.Value)
                             @DataGrid.Filter(Column.FilterContext.FilterDefinition, Column)
                         </MudItem>
                         <MudItem xs="12" Class="d-flex justify-end">
-                            <MudButton Class="clear-filter-button" OnClick="@ClearFilterAsync">@Localizer["MudDataGrid.Clear"]</MudButton>
-                            <MudButton Class="apply-filter-button" Color="@Color.Primary" OnClick="@ApplyFilterAsync">@Localizer["MudDataGrid.Filter"]</MudButton>
+                            <MudButton Class="clear-filter-button" OnClick="@ClearFilterAsync">@Localizer[LanguageResource.MudDataGrid_Clear]</MudButton>
+                            <MudButton Class="apply-filter-button" Color="@Color.Primary" OnClick="@ApplyFilterAsync">@Localizer[LanguageResource.MudDataGrid_Filter]</MudButton>
                         </MudItem>
                     </MudGrid>
                 }

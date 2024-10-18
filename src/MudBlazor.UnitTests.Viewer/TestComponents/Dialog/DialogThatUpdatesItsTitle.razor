@@ -1,10 +1,10 @@
 ﻿@using MudBlazor.Interfaces
 <MudDialog>
     <TitleContent>
-     Title: @textTest
+     Title: @_textTest
     </TitleContent>
     <DialogContent>
-      Body: @textTest
+      Body: @_textTest
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
@@ -14,13 +14,18 @@
 
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-    string textTest;
-    void Submit(){
-        textTest = "Test123";
+    private string _textTest;
+
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    private void Submit()
+    {
+        _textTest = "Test123";
         ((IMudStateHasChanged)MudDialog).StateHasChanged();
     }
-    void Cancel(){
-        
+
+    private void Cancel()
+    {
     }
 }

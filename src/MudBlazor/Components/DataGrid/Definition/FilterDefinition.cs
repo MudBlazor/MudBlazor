@@ -3,50 +3,60 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Linq.Expressions;
 
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// Represents the logic of a filter applied to <see cref="MudGrid"/> data.
+    /// </summary>
+    /// <typeparam name="T">The type of object being filtered.</typeparam>
     public class FilterDefinition<T> : IFilterDefinition<T>
     {
         private int _cachedExpressionHashCode;
         private Func<T, bool>? _cachedFilterFunction;
 
-        //Backward compatibility, in v7 should be removed
-        internal MudDataGrid<T>? DataGrid { get; set; }
-
+        /// <inheritdoc />
         public Guid Id { get; set; } = Guid.NewGuid();
 
+        /// <inheritdoc />
         public Column<T>? Column { get; set; }
 
+        /// <inheritdoc />
         public string? Title { get; set; }
 
+        /// <inheritdoc />
         public string? Operator { get; set; }
 
+        /// <inheritdoc />
         public object? Value { get; set; }
 
+        /// <summary>
+        /// The function which performs the filter.
+        /// </summary>
         public Func<T, bool>? FilterFunction { get; set; }
 
+        /// <summary>
+        /// The type of column being filtered.
+        /// </summary>
         public FieldType FieldType => FieldType.Identify(Column?.PropertyType);
 
-        //Backward compatibility, in v7 should be removed
-        public Func<T, bool> GenerateFilterFunction()
-        {
-            IFilterDefinition<T> filterDefinition = this;
-            return filterDefinition.GenerateFilterFunction(new FilterOptions
-            {
-                FilterCaseSensitivity = DataGrid?.FilterCaseSensitivity ?? DataGridFilterCaseSensitivity.Default
-            });
-        }
-
-        Func<T, bool> IFilterDefinition<T>.GenerateFilterFunction(FilterOptions? filterOptions)
+        /// <summary>
+        /// Generates a function which performs the filter.
+        /// </summary>
+        /// <param name="filterOptions">Any options for generation, such as case sensitivity.</param>
+        /// <returns>A function which performs the filter.</returns>
+        public Func<T, bool> GenerateFilterFunction(FilterOptions? filterOptions = null)
         {
             if (FilterFunction is not null)
+            {
                 return FilterFunction;
+            }
 
             if (Column is null)
+            {
                 return x => true;
+            }
 
             // We need a PropertyExpression to filter. This allows us to pass in an arbitrary PropertyExpression.
             // Although, it would be better in that case to simple use the FilterFunction so that we do not 
@@ -68,37 +78,16 @@ namespace MudBlazor
             return function;
         }
 
-        //Backward compatibility, in v7 should be removed and only public visible method should be GenerateFilterFunction
-        [Obsolete($"Will be removed in v7. Use {nameof(FilterExpressionGenerator.GenerateExpression)} instead.")]
-        public Expression<Func<T, bool>> GenerateFilterExpression()
-        {
-            //There should be no dependency of DataGrid, because it makes testing hard and it's not worth to have such a heavy dependency just to extract case sensitivity
-            var filterOptions = new FilterOptions
-            {
-                FilterCaseSensitivity = DataGrid?.FilterCaseSensitivity ?? DataGridFilterCaseSensitivity.Default,
-            };
-            var expression = FilterExpressionGenerator.GenerateExpression(this, filterOptions);
-
-            return expression;
-        }
-
-        //Backward compatibility, in v7 should be removed
-        public FilterDefinition<T> Clone()
+        public IFilterDefinition<T> Clone()
         {
             return new FilterDefinition<T>
             {
                 Column = Column,
-                DataGrid = DataGrid,
                 FilterFunction = FilterFunction,
                 Operator = Operator,
                 Title = Title,
                 Value = Value,
             };
-        }
-
-        IFilterDefinition<T> IFilterDefinition<T>.Clone()
-        {
-            return Clone();
         }
     }
 }

@@ -9,23 +9,31 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// A component for collecting and validating user input. Every input derived from MudFormComponent 
+    /// within it is monitored and validated.
+    /// </summary>
     public partial class MudForm : MudComponentBase, IDisposable, IForm
     {
         protected string Classname =>
             new CssBuilder("mud-form")
+            .AddClass($"gap-{Spacing}", Spacing >= 0)
             .AddClass(Class)
-       .Build();
+            .Build();
 
         /// <summary>
-        /// Child content of component.
+        /// The content within this form..
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Form.ValidatedData)]
         public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// Validation status. True if the form is valid and without errors. This parameter is two-way bindable.
+        /// Whether all inputs and child forms passed validation.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  When this value changes, <see cref="IsValidChanged"/> occurs.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Form.ValidationResult)]
         public bool IsValid
@@ -47,7 +55,7 @@ namespace MudBlazor
             if (IsValid == value)
                 return;
             IsValid = value;
-            IsValidChanged.InvokeAsync(IsValid).AndForget();
+            IsValidChanged.InvokeAsync(IsValid).CatchAndLog();
         }
 
         // Note: w/o any children the form is automatically valid.
@@ -55,100 +63,148 @@ namespace MudBlazor
         // a required field is added or the user touches a field that fails validation.
 
         /// <summary>
-        /// True if any field of the field was touched. This parameter is readonly.
+        /// Whether any input's value has changed.
         /// </summary>
+        /// <remarks>
+        /// When <c>true</c>, an input has changed in this form or any child forms.  Becomes <c>false</c> when input values have been reset.  When this value changes, <see cref="IsTouchedChanged"/> occurs.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Form.Behavior)]
         public bool IsTouched { get => _touched; set {/* readonly parameter! */ } }
 
         private bool _touched = false;
 
+        /// <summary>
+        /// Prevents the user from interacting with this form.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Form.Behavior)]
         public bool Disabled { get; set; }
-        [CascadingParameter(Name = "ParentDisabled")] private bool ParentDisabled { get; set; }
+
+        [CascadingParameter(Name = "ParentDisabled")]
+        private bool ParentDisabled { get; set; }
+
         protected bool GetDisabledState() => Disabled || ParentDisabled;
 
+        /// <summary>
+        /// Prevents the user from changing any inputs.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Form.Behavior)]
         public bool ReadOnly { get; set; }
-        [CascadingParameter(Name = "ParentReadOnly")] private bool ParentReadOnly { get; set; }
+
+        [CascadingParameter(Name = "ParentReadOnly")]
+        private bool ParentReadOnly { get; set; }
+
         protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
         /// <summary>
-        /// Validation debounce delay in milliseconds. This can help improve rendering performance of forms with real-time validation of inputs
-        /// i.e. when textfields have Immediate="true".
+        /// The delay, in milliseconds, before performing validation.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>300</c> (300 milliseconds).  This delay can improve rendering performance for larger forms with inputs which set <see cref="MudBaseInput{T}.Immediate"/> to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Form.Behavior)]
         public int ValidationDelay { get; set; } = 300;
 
         /// <summary>
-        /// When true, the form will not re-render its child contents on validation updates (i.e. when IsValid changes).
-        /// This is an optimization which can be necessary especially for larger forms on older devices.
+        /// Prevents child components from rendering when <see cref="IsValid"/> changes.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, rendering performance may improve for larger forms and older devices.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Form.Behavior)]
         public bool SuppressRenderingOnValidation { get; set; } = false;
 
         /// <summary>
-        /// When true, will not cause a page refresh on Enter if any input has focus.
+        /// Prevents this form from being submitted when <c>Enter</c> is pressed.
         /// </summary>
         /// <remarks>
-        /// https://www.w3.org/TR/2018/SPSD-html5-20180327/forms.html#implicit-submission
-        /// Usually this is not wanted, as it can cause a page refresh in the middle of editing a form. 
-        /// When the form is in a dialog this will cause the dialog to close. So by default we suppress it.
+        /// Defaults to <c>true</c>.  When <c>false</c>, the form will submit when <c>Enter</c> is pressed, and any parent dialog will close.  See: 
+        /// <see href="https://www.w3.org/TR/2018/SPSD-html5-20180327/forms.html#implicit-submission">Implicit Form Submission</see>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Form.Behavior)]
         public bool SuppressImplicitSubmission { get; set; } = true;
 
         /// <summary>
-        /// Raised when IsValid changes.
+        /// The amount of spacing between input components, in increments of <c>4px</c>.
         /// </summary>
-        [Parameter] public EventCallback<bool> IsValidChanged { get; set; }
+        /// <remarks>
+        /// Defaults to <c>0</c>.  A spacing of <c>1</c> means <c>4px</c>, <c>2</c> means <c>8px</c>, and so on.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Form.Behavior)]
+        public int Spacing { set; get; }
 
         /// <summary>
-        /// Raised when IsTouched changes.
+        /// Occurs when <see cref="IsValid"/> has changed.
         /// </summary>
-        [Parameter] public EventCallback<bool> IsTouchedChanged { get; set; }
+        [Parameter]
+        public EventCallback<bool> IsValidChanged { get; set; }
 
         /// <summary>
-        /// Raised when a contained IFormComponent changes its value
+        /// Occurs when <see cref="IsTouched"/> has changed.
         /// </summary>
-        [Parameter] public EventCallback<FormFieldChangedEventArgs> FieldChanged { get; set; }
+        [Parameter]
+        public EventCallback<bool> IsTouchedChanged { get; set; }
+
+        /// <summary>
+        /// Occurs when an <see cref="IFormComponent"/> within this form has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<FormFieldChangedEventArgs> FieldChanged { get; set; }
 
         // keeps track of validation. if the input was validated at least once the value will be true
         protected HashSet<IFormComponent> _formControls = new();
         protected HashSet<string> _errors = new();
 
         /// <summary>
-        /// A default validation func or a validation attribute to use for form controls that don't have one.
-        /// Supported types are:
-        /// <para>Func&lt;T, bool&gt; ... will output the standard error message "Invalid" if false</para>
-        /// <para>Func&lt;T, string&gt; ... outputs the result as error message, no error if null </para>
-        /// <para>Func&lt;T, IEnumerable&lt; string &gt;&gt; ... outputs all the returned error messages, no error if empty</para>
-        /// <para>Func&lt;object, string, IEnumerable&lt; string &gt;&gt; input Form.Model, Full Path of Member ... outputs all the returned error messages, no error if empty</para>
-        /// <para>Func&lt;T, Task&lt; bool &gt;&gt; ... will output the standard error message "Invalid" if false</para>
-        /// <para>Func&lt;T, Task&lt; string &gt;&gt; ... outputs the result as error message, no error if null</para>
-        /// <para>Func&lt;T, Task&lt;IEnumerable&lt; string &gt;&gt;&gt; ... outputs all the returned error messages, no error if empty</para>
-        /// <para>Func&lt;object, string, Task&lt;IEnumerable&lt; string &gt;&gt;&gt; input Form.Model, Full Path of Member ... outputs all the returned error messages, no error if empty</para>
-        /// <para>System.ComponentModel.DataAnnotations.ValidationAttribute instances</para>
+        /// The default function or attribute used to validate form components which cannot validate themselves.
         /// </summary>
+        /// <remarks>
+        /// Supported values are:
+        /// <para>
+        /// 1. A <c>Func&lt;T,bool&gt;</c> or <c>Func&lt;T,Task&lt;bool&gt;&gt;</c> function.  Returns <c>true</c> if valid.  When <c>false</c>, a standard <c>"Invalid"</c> message is shown.
+        /// </para>
+        /// <para>
+        /// 2. A <c>Func&lt;T,string&gt;</c> or <c>Func&lt;T,Task&lt;string&gt;&gt;</c> function.  Returns <c>null</c> if valid, or a string explaining the error.
+        /// </para>
+        /// <para>
+        /// 3. A <c>Func&lt;T,IEnumerable&lt;string&gt;&gt;</c> or <c>Func&lt;T,Task&lt;IEnumerable&lt;string&gt;&gt;&gt;</c> function.  Returns an empty list if valid, or a list of validation errors.
+        /// </para>
+        /// <para>
+        /// 3. A <c>Func&lt;object,string,IEnumerable&lt;string&gt;&gt;</c> or <c>Func&lt;object,string,Task&lt;IEnumerable&lt;string&gt;&gt;&gt;</c> function.  Given the form model and path to the member, returns an empty list if valid, or a list of validation errors.
+        /// </para>
+        /// <para>
+        /// 4. A <see cref="System.ComponentModel.DataAnnotations.ValidationAttribute"/> object.
+        /// </para>
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public object Validation { get; set; }
 
         /// <summary>
-        /// If a field already has a validation, override it with <see cref="Validation"/>.
+        /// Overrides input validation with the function or attribute in <see cref="Validation"/>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public bool? OverrideFieldValidation { get; set; }
 
         /// <summary>
-        /// Validation error messages.
+        /// The validation errors for inputs within this form.
         /// </summary>
+        /// <remarks>
+        /// When this property changes, <see cref="ErrorsChanged"/> occurs.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Form.ValidationResult)]
         public string[] Errors
@@ -157,24 +213,31 @@ namespace MudBlazor
             set { /* readonly */ }
         }
 
-        [Parameter] public EventCallback<string[]> ErrorsChanged { get; set; }
+        /// <summary>
+        /// Occurs when <see cref="Errors"/> has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<string[]> ErrorsChanged { get; set; }
 
         /// <summary>
-        /// Specifies the top-level model object for the form. Used with Fluent Validation
+        /// The model populated by this form.
         /// </summary>
+        /// <remarks>
+        /// Properties of this model are typically linked to form input components via their <see cref="MudFormComponent{T, U}.For"/>.
+        /// </remarks>
 #nullable enable
         [Parameter]
         [Category(CategoryTypes.Form.ValidatedData)]
         public object? Model { get; set; }
 #nullable disable
 
-        private HashSet<MudForm> ChildForms { get; set; } = new HashSet<MudForm>();
+        protected HashSet<MudForm> ChildForms { get; } = new HashSet<MudForm>();
 
         [CascadingParameter] private MudForm ParentMudForm { get; set; }
 
         void IForm.FieldChanged(IFormComponent formControl, object newValue)
         {
-            FieldChanged.InvokeAsync(new FormFieldChangedEventArgs { Field = formControl, NewValue = newValue }).AndForget();
+            FieldChanged.InvokeAsync(new FormFieldChangedEventArgs { Field = formControl, NewValue = newValue }).CatchAndLog();
         }
 
         void IForm.Add(IFormComponent formControl)
@@ -260,8 +323,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Force a validation of all form controls, even if they haven't been touched by the user yet.
+        /// Forces a validation of all form controls (including in child forms).
         /// </summary>
+        /// <remarks>
+        /// Validation will occur even if form controls haven't changed yet.
+        /// </remarks>
         public async Task Validate()
         {
             await Task.WhenAll(_formControls.Select(x => x.Validate()));
@@ -275,27 +341,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Reset all form controls and reset their validation state.
+        /// Resets all form controls and resets their validation state.
         /// </summary>
-        [Obsolete($"Use {nameof(ResetAsync)} instead. This will ve removed in v7")]
-        public void Reset()
-        {
-            foreach (var control in _formControls.ToArray())
-            {
-                control.Reset();
-            }
-
-            foreach (var form in ChildForms)
-            {
-                form.Reset();
-            }
-
-            EvaluateForm(debounce: false);
-        }
-
-        /// <summary>
-        /// Reset all form controls and reset their validation state.
-        /// </summary>
+        /// <remarks>
+        /// Any existing value in any form input component will be cleared.
+        /// </remarks>
         public async Task ResetAsync()
         {
             foreach (var control in _formControls.ToArray())
@@ -312,8 +362,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Reset the validation state but keep the values.
+        /// Resets the validation state of all form controls.
         /// </summary>
+        /// <remarks>
+        /// The values in each form input component will not be changed.
+        /// </remarks>
         public void ResetValidation()
         {
             foreach (var control in _formControls.ToArray())
@@ -330,11 +383,14 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Reset the isTouched property
+        /// Marks all form input components as unchanged.
         /// </summary>
+        /// <remarks>
+        /// When called, <see cref="IsTouched"/> becomes <c>false</c>.
+        /// </remarks>
         public void ResetTouched()
         {
-            this._touched = false;
+            _touched = false;
         }
 
         protected override Task OnAfterRenderAsync(bool firstRender)
@@ -373,6 +429,9 @@ namespace MudBlazor
             base.OnInitialized();
         }
 
+        /// <summary>
+        /// Releases resources used by this form.
+        /// </summary>
         public void Dispose()
         {
             _timer?.Dispose();

@@ -6,20 +6,20 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 namespace MudBlazor.Docs.Compiler
 {
-    public class DocStrings
+    [Obsolete("This generator has been replaced by the ApiDocumentationBuilder class.")]
+    public partial class DocStrings
     {
         private static string[] hiddenMethods = { "ToString", "GetType", "GetHashCode", "Equals", "SetParametersAsync", "ReferenceEquals" };
 
         public bool Execute()
         {
-            var paths = new Paths();
             var success = true;
             try
             {
                 var currentCode = string.Empty;
-                if (File.Exists(paths.DocStringsFilePath))
+                if (File.Exists(Paths.DocStringsFilePath))
                 {
-                    currentCode = File.ReadAllText(paths.DocStringsFilePath);
+                    currentCode = File.ReadAllText(Paths.DocStringsFilePath);
                 }
 
                 var cb = new CodeBuilder();
@@ -27,6 +27,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("namespace MudBlazor.Docs.Models");
                 cb.AddLine("{");
                 cb.IndentLevel++;
+                cb.AddLine("[System.CodeDom.Compiler.GeneratedCodeAttribute(\"MudBlazor.Docs.Compiler\", \"0.0.0.0\")]");
                 cb.AddLine("public static partial class DocStrings");
                 cb.AddLine("{");
                 cb.IndentLevel++;
@@ -38,7 +39,7 @@ namespace MudBlazor.Docs.Compiler
                     {
                         var doc = property.GetDocumentation() ?? "";
                         doc = convertSeeTags(doc);
-                        doc = Regex.Replace(doc, @"</?.+?>", "");  // remove all other XML tags
+                        doc = XmlTagRegularExpression().Replace(doc, "");  // remove all other XML tags
                         cb.AddLine($"public const string {GetSaveTypename(type)}_{property.Name} = @\"{EscapeDescription(doc).Trim()}\";\n");
                     }
 
@@ -71,19 +72,19 @@ namespace MudBlazor.Docs.Compiler
 
                 if (currentCode != cb.ToString())
                 {
-                    File.WriteAllText(paths.DocStringsFilePath, cb.ToString());
+                    File.WriteAllText(Paths.DocStringsFilePath, cb.ToString());
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error generating {paths.DocStringsFilePath} : {e.Message}");
+                Console.WriteLine($"Error generating {Paths.DocStringsFilePath} : {e.Message}");
                 success = false;
             }
 
             return success;
         }
 
-        private static string GetSaveTypename(Type t) => Regex.Replace(t.ConvertToCSharpSource(), @"[\.,<>]", "_").TrimEnd('_');
+        private static string GetSaveTypename(Type t) => SaveTypenameRegularExpression().Replace(t.ConvertToCSharpSource(), "_").TrimEnd('_');
 
         /* Methods can be overloaded so the method name doesn't identify it uniquely. Instead of method name we need the method signature.
          * Currently the return type of a method is also used, but probably it can be removed.
@@ -91,7 +92,7 @@ namespace MudBlazor.Docs.Compiler
          * Alternatively we could use the format similar to this used in XML documentation - it will be even better because I think it is
          * less likely to be changed in the future. See XmlDocumentation.cs for a method computing identifiers.
          */
-        private static string GetSaveMethodIdentifier(MethodInfo method) => Regex.Replace(method.ToString(), "[^A-Za-z0-9_]", "_");
+        private static string GetSaveMethodIdentifier(MethodInfo method) => AlphanumericUnderscoreRegularExpression().Replace(method.ToString(), "_");
 
         private static Type GetBaseDefinitionClass(MethodInfo m) => m.GetBaseDefinition().DeclaringType;
 
@@ -100,10 +101,10 @@ namespace MudBlazor.Docs.Compiler
          */
         private static string convertSeeTags(string doc)
         {
-            return Regex.Replace(doc, "<see cref=\"[TFPME]:(MudBlazor\\.)?([^>]+)\" */>", match =>
+            return SeeCrefRegularExpression().Replace(doc, match =>
             {
-                string result = match.Groups[2].Value;     // get the name of Type or type member (Field, Property, Method, or Event)
-                result = Regex.Replace(result, "`1", "");  // remove `1 from generic type name
+                var result = match.Groups[2].Value;     // get the name of Type or type member (Field, Property, Method, or Event)
+                result = BacktickRegularExpression().Replace(result, "");  // remove `1 from generic type name
                 return result;
             });
         }
@@ -112,5 +113,20 @@ namespace MudBlazor.Docs.Compiler
         {
             return doc.Replace("\"", "\"\"");
         }
+
+        [GeneratedRegex(@"</?.+?>")]
+        private static partial Regex XmlTagRegularExpression();
+
+        [GeneratedRegex(@"[\.,<>]")]
+        private static partial Regex SaveTypenameRegularExpression();
+
+        [GeneratedRegex("[^A-Za-z0-9_]")]
+        private static partial Regex AlphanumericUnderscoreRegularExpression();
+
+        [GeneratedRegex("<see cref=\"[TFPME]:(MudBlazor\\.)?([^>]+)\" */>")]
+        private static partial Regex SeeCrefRegularExpression();
+
+        [GeneratedRegex("`1")]
+        private static partial Regex BacktickRegularExpression();
     }
 }

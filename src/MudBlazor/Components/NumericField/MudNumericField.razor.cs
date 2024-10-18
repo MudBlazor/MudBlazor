@@ -17,10 +17,9 @@ namespace MudBlazor
 {
     public partial class MudNumericField<T> : MudDebouncedInput<T>
     {
-        private IKeyInterceptor _keyInterceptor;
         private Comparer _comparer = new(CultureInfo.InvariantCulture);
 
-        public MudNumericField() : base()
+        public MudNumericField()
         {
             Validation = new Func<T, Task<bool>>(ValidateInput);
             #region parameters default depending on T
@@ -107,15 +106,16 @@ namespace MudBlazor
         }
 
         protected string Classname =>
-            new CssBuilder("mud-input-input-control mud-input-number-control " +
-                           (HideSpinButtons ? "mud-input-nospin" : "mud-input-showspin"))
+            new CssBuilder("mud-input-input-control mud-input-number-control")
+                .AddClass(HideSpinButtons ? "mud-input-nospin" : "mud-input-showspin")
                 .AddClass(Class)
                 .Build();
 
 
-        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
-        private string _elementId = "numericField_" + Guid.NewGuid().ToString().Substring(0, 8);
+        private string _elementId = Identifier.Create("numericField");
 
         private MudInput<string> _elementReference;
 
@@ -174,6 +174,13 @@ namespace MudBlazor
         public bool Clearable { get; set; } = false;
 
         /// <summary>
+        /// Custom clear icon when <see cref="Clearable"/> is enabled.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
+
+        /// <summary>
         /// Decrements or increments depending on factor
         /// </summary>
         /// <param name="factor">Multiplication factor (1 or -1) will be applied to the step</param>
@@ -193,7 +200,7 @@ namespace MudBlazor
                 }
 
                 await SetValueAsync(ConstrainBoundaries(nextValue).value);
-                _elementReference.SetText(Text).AndForget();
+                await _elementReference.SetText(Text);
             }
             catch (OverflowException)
             {
@@ -205,12 +212,12 @@ namespace MudBlazor
         private T GetNextValue(double factor)
         {
             if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
-                return (T)(object)Convert.ToDecimal(FromDecimal(Value) + FromDecimal(Step) * (decimal)factor);
+                return (T)(object)Convert.ToDecimal(FromDecimal(Value) + (FromDecimal(Step) * (decimal)factor));
             if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
-                return (T)(object)Convert.ToInt64(FromInt64(Value) + FromInt64(Step) * factor);
+                return (T)(object)Convert.ToInt64(FromInt64(Value) + (FromInt64(Step) * factor));
             if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
-                return (T)(object)Convert.ToUInt64(FromUInt64(Value) + FromUInt64(Step) * factor);
-            return Num.To<T>(Num.From(Value) + Num.From(Step) * factor);
+                return (T)(object)Convert.ToUInt64(FromUInt64(Value) + (FromUInt64(Step) * factor));
+            return Num.To<T>(Num.From(Value) + (Num.From(Step) * factor));
         }
 
         /// <summary>
@@ -219,7 +226,7 @@ namespace MudBlazor
         public Task Increment() => Change(factor: 1);
 
         /// <summary>
-        /// Substracts a Step from the Value
+        /// Subtracts a Step from the Value
         /// </summary>
         public Task Decrement() => Change(factor: -1);
 
@@ -252,26 +259,30 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                _keyInterceptor = _keyInterceptorFactory.Create();
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
-                {
-                    //EnableLogging = true,
-                    TargetClass = "mud-input-slot",
-                    Keys = {
-                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead increment
-                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead decrement
-                        new KeyOptions { Key="Dead", PreventDown = "key+any" }, // prevent dead keys like ^ ` ´ etc
-                        new KeyOptions { Key="/^(?!"+(Pattern ?? "[0-9]").TrimEnd('*')+").$/", PreventDown = "key+none|key+shift|key+alt" }, // prevent input of all other characters except allowed, like [0-9.,-+]
-                    },
-                });
+                var options = new KeyInterceptorOptions(
+                    "mud-input-slot",
+                    [
+                        // prevent scrolling page, instead increment
+                        new("ArrowUp", preventDown: "key+none"),
+                        // prevent scrolling page, instead decrement
+                        new("ArrowDown", preventDown: "key+none"),
+                        // prevent dead keys like ^ ` ´ etc
+                        new("Dead", preventDown: "key+any"),
+                        // prevent input of all other characters except allowed, like [0-9.,-+]
+                        new($"/^(?!{(Pattern ?? "[0-9]").TrimEnd('*')}).$/", preventDown: "key+none|key+shift|key+alt")
+                    ]);
+
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
             }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        protected async Task HandleKeydown(KeyboardEventArgs obj)
+        protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
+
             switch (obj.Key)
             {
                 case "ArrowUp":
@@ -281,18 +292,19 @@ namespace MudBlazor
                     await Decrement();
                     break;
             }
-            OnKeyDown.InvokeAsync(obj).AndForget();
+
+            await OnKeyDown.InvokeAsync(obj);
         }
 
-        protected Task HandleKeyUp(KeyboardEventArgs obj)
+        protected Task HandleKeyUpAsync(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return Task.CompletedTask;
-            OnKeyUp.InvokeAsync(obj).AndForget();
-            return Task.CompletedTask;
+
+            return OnKeyUp.InvokeAsync(obj);
         }
 
-        protected async Task OnMouseWheel(WheelEventArgs obj)
+        protected async Task OnMouseWheelAsync(WheelEventArgs obj)
         {
             if (!obj.ShiftKey || GetDisabledState() || GetReadOnlyState())
                 return;
@@ -393,11 +405,12 @@ namespace MudBlazor
         public override InputMode InputMode { get; set; } = InputMode.numeric;
 
         /// <summary>
+        /// <para>
         /// The pattern attribute, when specified, is a regular expression which the input's value must match in order for the value to pass constraint validation. It must be a valid JavaScript regular expression
         /// Defaults to [0-9,.\-]
         /// To get a numerical keyboard on safari, use the pattern. The default pattern should achieve numerical keyboard.
-        ///
-        /// Note: this pattern is also used to prevent all input except numbers and allowed characters. So for instance to allow only numbers, no signs and no commas you might change it to to [0-9.]
+        /// </para>
+        /// <para>Note: this pattern is also used to prevent all input except numbers and allowed characters. So for instance to allow only numbers, no signs and no commas you might change it to [0-9.]</para>
         /// </summary>
         [Parameter]
         public override string Pattern { get; set; } = @"[0-9,.\-]";
@@ -428,13 +441,14 @@ namespace MudBlazor
         private ulong FromUInt64(T v)
             => Convert.ToUInt64((ulong?)(object)v);
 
-        protected override void Dispose(bool disposing)
+        /// <inheritdoc />
+        protected override async ValueTask DisposeAsyncCore()
         {
-            base.Dispose(disposing);
+            await base.DisposeAsyncCore();
 
-            if (disposing == true)
+            if (IsJSRuntimeAvailable)
             {
-                _keyInterceptor?.Dispose();
+                await KeyInterceptorService.UnsubscribeAsync(_elementId);
             }
         }
     }

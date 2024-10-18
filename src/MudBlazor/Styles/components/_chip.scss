@@ -1,8 +1,11 @@
 @import '../abstracts/variables';
 
+.mud-chip-container {
+  display: contents;
+}
+
 .mud-chip {
   border: none;
-  cursor: default;
   display: inline-flex;
   max-width: 100%;
   outline: 0;
@@ -98,6 +101,7 @@
 
   &.mud-clickable {
     cursor: pointer;
+    user-select: none;
   }
 
   .mud-chip-icon {
@@ -124,9 +128,13 @@
     }
 
     @media(hover: hover) and (pointer: fine) {
-      &:hover {
+      &:hover:not(.mud-disabled) {
         opacity: .70;
       }
+    }
+
+    &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
+      opacity: .70;
     }
   }
 
@@ -135,37 +143,42 @@
     display: inline-flex;
     height: 100%;
     max-width: 100%;
-    user-select: none;
   }
 }
 
 .mud-chip-filled {
   color: var(--mud-palette-text-primary);
-  background-color: var(--mud-palette-chip-default);
+  background-color: var(--mud-palette-action-disabled-background);
+  --mud-ripple-opacity: var(--mud-ripple-opacity-secondary);
 
-  @media(hover: hover) and (pointer: fine) {
-    &:hover:not(.mud-disabled) {
-      background-color: var(--mud-palette-chip-default-hover);
+  &.mud-clickable {
+    @media(hover: hover) and (pointer: fine) {
+      &:hover:not(.mud-disabled) {
+        background-color: var(--mud-palette-action-disabled);
+      }
     }
-  }
 
-  &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
-    background-color: var(--mud-palette-chip-default-hover);
+    &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
+      background-color: var(--mud-palette-action-disabled);
+    }
   }
 
   @each $color in $mud-palette-colors {
     &.mud-chip-color-#{$color} {
       color: var(--mud-palette-#{$color}-text);
+      --mud-ripple-color: var(--mud-palette-#{$color}-text) !important;
       background-color: var(--mud-palette-#{$color});
 
-      @media(hover: hover) and (pointer: fine) {
-        &:hover:not(.mud-disabled) {
+      &.mud-clickable {
+        @media(hover: hover) and (pointer: fine) {
+          &:hover:not(.mud-disabled) {
+            background-color: var(--mud-palette-#{$color}-darken);
+          }
+        }
+
+        &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
           background-color: var(--mud-palette-#{$color}-darken);
         }
-      }
-
-      &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
-        background-color: var(--mud-palette-#{$color}-darken);
       }
     }
   }
@@ -175,29 +188,34 @@
   color: var(--mud-palette-text-primary);
   border: 1px solid var(--mud-palette-lines-inputs);
 
-  @media(hover: hover) and (pointer: fine) {
-    &:hover:not(.mud-disabled) {
+  &.mud-clickable {
+    @media(hover: hover) and (pointer: fine) {
+      &:hover:not(.mud-disabled) {
+        background-color: var(--mud-palette-action-default-hover);
+      }
+    }
+
+    &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
       background-color: var(--mud-palette-action-default-hover);
     }
-  }
-
-  &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
-    background-color: var(--mud-palette-action-default-hover);
   }
 
   @each $color in $mud-palette-colors {
     &.mud-chip-color-#{$color} {
       color: var(--mud-palette-#{$color});
+      --mud-ripple-color: var(--mud-palette-#{$color}) !important;
       border: 1px solid var(--mud-palette-#{$color});
 
-      @media(hover: hover) and (pointer: fine) {
-        &:hover:not(.mud-disabled) {
+      &.mud-clickable {
+        @media(hover: hover) and (pointer: fine) {
+          &:hover:not(.mud-disabled) {
+            background-color: var(--mud-palette-#{$color}-hover);
+          }
+        }
+
+        &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
           background-color: var(--mud-palette-#{$color}-hover);
         }
-      }
-
-      &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
-        background-color: var(--mud-palette-#{$color}-hover);
       }
 
       &.mud-chip-selected {
@@ -219,31 +237,36 @@
 
 .mud-chip-text {
   color: var(--mud-palette-text-primary);
-  background-color: var(--mud-palette-chip-default);
+  background-color: var(--mud-palette-action-default-hover);
 
-  @media(hover: hover) and (pointer: fine) {
-    &:hover:not(.mud-disabled) {
-      background-color: var(--mud-palette-chip-default-hover);
+  &.mud-clickable {
+    @media(hover: hover) and (pointer: fine) {
+      &:hover:not(.mud-disabled) {
+        background-color: var(--mud-palette-action-disabled-background);
+      }
     }
-  }
 
-  &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
-    background-color: var(--mud-palette-chip-default-hover);
+    &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
+      background-color: var(--mud-palette-action-disabled-background);
+    }
   }
 
   @each $color in $mud-palette-colors {
     &.mud-chip-color-#{$color} {
       color: var(--mud-palette-#{$color});
+      --mud-ripple-color: var(--mud-palette-#{$color}) !important;
       background-color: var(--mud-palette-#{$color}-hover);
 
-      @media(hover: hover) and (pointer: fine) {
-        &:hover:not(.mud-disabled) {
+      &.mud-clickable {
+        @media(hover: hover) and (pointer: fine) {
+          &:hover:not(.mud-disabled) {
+            background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
+          }
+        }
+
+        &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
           background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
         }
-      }
-
-      &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
-        background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
       }
     }
   }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.State;
 
@@ -6,12 +7,18 @@ namespace MudBlazor.State;
 /// <summary>
 /// Represents information about a parameter.
 /// </summary>
+[DebuggerDisplay("ParameterName = {ParameterName}")]
 internal class ParameterMetadata
 {
     /// <summary>
     /// Gets the associated parameter name of the component's <see cref="ParameterAttribute"/>.
     /// </summary>
     public string ParameterName { get; }
+
+    /// <summary>
+    /// Gets the associated comparer parameter name of the component's <see cref="ParameterAttribute"/>.
+    /// </summary>
+    public string? ComparerParameterName { get; }
 
     /// <summary>
     /// Gets the unique name of the handler.
@@ -38,8 +45,23 @@ internal class ParameterMetadata
     /// Initializes a new instance of the <see cref="ParameterMetadata"/> class with the specified handler name.
     /// </summary>
     /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
+    /// <param name="handlerName">The handler's name.</param>
+    /// <param name="comparerParameterName">The name of the comparer parameter.</param>
+    public ParameterMetadata(string parameterName, string? handlerName, string? comparerParameterName)
+        : this(parameterName, handlerName)
+    {
+        ComparerParameterName = comparerParameterName;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParameterMetadata"/> class with the specified handler name.
+    /// </summary>
+    /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
     public ParameterMetadata(string parameterName)
         : this(parameterName, null)
     {
     }
+
+    /// <inheritdoc />
+    public override string ToString() => ParameterName;
 }

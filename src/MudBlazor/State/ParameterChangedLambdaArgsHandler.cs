@@ -1,7 +1,4 @@
-﻿using System.Threading.Tasks;
-using System;
-
-namespace MudBlazor.State;
+﻿namespace MudBlazor.State;
 
 #nullable enable
 /// <summary>

@@ -1,4 +1,17 @@
 ﻿@page "/components/table"
+@page "/components/MudTable"
+@page "/components/MudTable`1"
+@page "/components/MudTableBase"
+@page "/components/MudTableGroupRow"
+@page "/components/MudTableGroupRow`1"
+@page "/components/MudTablePager"
+@page "/components/MudTableSortLabel"
+@page "/components/MudTableSortLabel`1"
+@page "/components/MudTd"
+@page "/components/MudTFootRow"
+@page "/components/MudTh"
+@page "/components/MudTHeadRow"
+@page "/components/MudTr"
 
 <DocsPage>
     <DocsPageHeader Title="Table" SubTitle="A sortable, filterable table with multiselection and pagination" />
@@ -32,8 +45,8 @@
         <DocsPageSection>
             <SectionHeader Title="Hover Events">
                 <Description>
-                    <CodeInline>OnRowMouseEnter</CodeInline> is triggered when the row starts being hovered (onmouseenter event).
-                    <CodeInline>OnRowMouseLeave</CodeInline> is triggered when the row stops being hovered (onmouseleave event).
+                    <CodeInline>OnRowMouseEnter</CodeInline> is triggered when the row starts being hovered (onpointerenter event).
+                    <CodeInline>OnRowMouseLeave</CodeInline> is triggered when the row stops being hovered (onpointerleave event).
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(TableRowHoverEventsExample)" ShowCode="false" Block="true" FullWidth="true">
@@ -98,7 +111,8 @@
             <SectionHeader Title="Multi-Selection">
                 <Description>
                     To enable multiselection of rows using checkboxes, set <CodeInline>MultiSelection="true"</CodeInline>.<br />
-                    To disable toggling the checkbox state on row-click, set <CodeInline>SelectOnRowClick="false"</CodeInline>.
+                    To disable toggling the checkbox state on row-click, set <CodeInline>SelectOnRowClick="false"</CodeInline>.<br />
+                    To prevent editing the current selection, set <CodeInline>SelectionChangeable="false"</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(TableMultiSelectExample)" ShowCode="false" Block="true" FullWidth="true">
@@ -160,6 +174,21 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Server Side Data With Cancellation">
+                <Description>
+                    Use the <CodeInline>CancellationToken</CodeInline> to detect when a request for data has been superceded by a new request.  By forwarding the token to methods which support it,
+                    such as common <CodeInline>HttpClient</CodeInline> or <CodeInline>DbContent</CodeInline> methods, the table can perform well even with frequent updates.
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                        Note: When using <CodeInline>ServerData</CodeInline>, you don't need <CodeInline>Items</CodeInline> or <CodeInline>Filter</CodeInline>.
+                    </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(TableServerSideCancellationTokenExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TableServerSideCancellationTokenExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Record Type Support">
                 <Description>
                     By default, mutable <CodeInline>record</CodeInline> types do not work with multi-selection or editing. This is due to the way record equality works. To support multi-selection or editing of records in a <CodeInline>MudTable</CodeInline>,
@@ -179,7 +208,7 @@
                     If you need to customize the behavior, as well as rendering multiple header or footer rows, you can set the <CodeInline>CustomHeader</CodeInline> and <CodeInline>CustomFooter</CodeInline> attributes to true.<br />
                     Then setting a list of <CodeInline>&lt;MudTHeadRow></CodeInline> or <CodeInline>&lt;MudTFootRow></CodeInline> with their respective cells will render exactly what's required inside the table header and footer.
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
-                        Note: Unless you specify the attribute <CodeInline>IsCheckable</CodeInline> for a specific row, MudTable won't render a checkbox in case of a multi-selection table.
+                        Note: Unless you specify the attribute <CodeInline>@nameof(MudTr.Checkable)</CodeInline> for a specific row, MudTable won't render a checkbox in case of a multi-selection table.
                         Attributes <CodeInline>IgnoreCheckbox</CodeInline> and <CodeInline>IgnoreEditable</CodeInline> won't render an empty cell either, requiring you to do it manually (for example for a colspan on the entire row).
                     </MudAlert>
                 </Description>

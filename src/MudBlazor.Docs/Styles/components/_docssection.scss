@@ -3,8 +3,8 @@
 
   .docs-section-header {
     .mud-typography-h5 {
-      margin-top: 60px;
-      margin-bottom: 20px;
+      margin-top: 40px;
+      margin-bottom: 12px;
     }
 
     .mud-typography-h6 {
@@ -69,11 +69,11 @@
       }
 
       &.darken {
-        background-color: var(--mud-palette-grey-light);
+        background-color: var(--mud-palette-gray-light);
 
         .file-button {
           &.active {
-            background-color: var(--mud-palette-background-grey);
+            background-color: var(--mud-palette-background-gray);
           }
         }
       }
@@ -86,7 +86,7 @@
     }
 
     &.darken {
-      background: linear-gradient(0deg, var(--mud-palette-grey-lighter) 0%, var(--mud-palette-background-grey) 50%);
+      background: linear-gradient(0deg, var(--mud-palette-gray-lighter) 0%, var(--mud-palette-background-gray) 50%);
     }
 
     &.outlined {
@@ -116,30 +116,29 @@
     position: relative;
     overflow: hidden;
     border-radius: 8px;
-    background-color: var(--mud-palette-background-grey);
+    background-color: var(--mud-palette-background-gray);
     transition: border-radius 250ms cubic-bezier(.4, 0, .2, 1);
 
     .copy-code-button {
       position: absolute;
       bottom: 8px;
       right: 8px;
-      color: rgba(5, 0, 51, 0.0);
-      transition: color 250ms cubic-bezier(.4, 0, .2, 1) 0ms;
+      background-color: transparent;
     }
-
+    /*Show only on hover if on desktop*/
+    /*TODO: Show if code is focused*/
     @media(hover: hover) and (pointer: fine) {
+      .copy-code-button {
+        color: rgba(5, 0, 51, 0.0);
+        transition: color 250ms cubic-bezier(.4, 0, .2, 1) 0ms;
+        background-color: unset;
+      }
+
       &:hover {
         .copy-code-button {
           color: var(--mud-palette-text-secondary) !important;
           background-color: transparent;
         }
-      }
-    }
-
-    &:active {
-      .copy-code-button {
-        color: var(--mud-palette-text-secondary) !important;
-        background-color: transparent;
       }
     }
 

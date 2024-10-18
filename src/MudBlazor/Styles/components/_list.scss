@@ -35,6 +35,10 @@
     .mud-list-item-icon {
       color: var(--mud-palette-action-disabled) !important;
     }
+
+    .mud-list-item-secondary-text {
+      color: var(--mud-palette-action-disabled) !important;
+    }
   }
 }
 
@@ -131,4 +135,9 @@
     padding-inline-start: 32px;
     padding-inline-end: unset;
   }
+}
+
+.mud-list-item-secondary-text {
+  font-weight: 500;
+  color: var(--mud-palette-text-secondary);
 }

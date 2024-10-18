@@ -1,9 +1,19 @@
-﻿
-namespace MudBlazor.Charts.SVG.Models
+﻿#nullable enable
+namespace MudBlazor
 {
-    public class SvgPath
+    /// <summary>
+    /// Represents an arbitrary SVG path.
+    /// </summary>
+    internal class SvgPath
     {
+        /// <summary>
+        /// The position of this path within a list.
+        /// </summary>
         public int Index { get; set; }
-        public string Data { get; set; }
+
+        /// <summary>
+        /// The SVG path to draw.
+        /// </summary>
+        public string? Data { get; set; }
     }
 }

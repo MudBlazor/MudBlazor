@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using MudBlazor.Charts;
+﻿using MudBlazor.Charts;
 using MudBlazor.Docs.Models;
+
 
 namespace MudBlazor.Docs.Services
 {
@@ -30,8 +28,8 @@ namespace MudBlazor.Docs.Services
             .AddItem("Grid", typeof(MudGrid), typeof(MudItem))
             .AddItem("Hidden", typeof(MudHidden))
             .AddItem("Breakpoint Provider", typeof(MudBreakpointProvider))
-            .AddItem("Chips", typeof(MudChip))
-            .AddItem("Chip Set", typeof(MudChipSet))
+            .AddItem("Chips", typeof(MudChip<T>))
+            .AddItem("Chip Set", typeof(MudChipSet<T>))
             .AddItem("Badge", typeof(MudBadge))
             .AddItem("App Bar", typeof(MudAppBar))
             .AddItem("Drawer", typeof(MudDrawer), typeof(MudDrawerHeader), typeof(MudDrawerContainer))
@@ -51,7 +49,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Expansion Panels", typeof(MudExpansionPanels), typeof(MudExpansionPanel))
             .AddItem("Image", typeof(MudImage))
             .AddItem("Icons", typeof(MudIcon))
-            .AddItem("List", typeof(MudList), typeof(MudListItem), typeof(MudListSubheader))
+            .AddItem("List", typeof(MudList<T>), typeof(MudListItem<T>), typeof(MudListSubheader))
             .AddItem("Paper", typeof(MudPaper))
             .AddItem("Rating", typeof(MudRating), typeof(MudRatingItem))
             .AddItem("Skeleton", typeof(MudSkeleton))
@@ -76,6 +74,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Stack", typeof(MudStack))
             .AddItem("Spacer", typeof(MudSpacer))
             .AddItem("Collapse", typeof(MudCollapse))
+            .AddItem("Stepper", typeof(MudStepper), typeof(MudStep))
 
             //GROUPS
 
@@ -120,6 +119,7 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Pie Chart", typeof(Pie))
                 .AddItem("Bar Chart", typeof(Bar))
                 .AddItem("Stacked Bar Chart", typeof(StackedBar))
+                .AddItem("Time Series Chart", typeof(TimeSeries))
             )
             // this must be last!
             .GetComponentsSortedByName();
@@ -136,7 +136,8 @@ namespace MudBlazor.Docs.Services
                 new DocsLink {Title = "Icon Reference", Href = "features/icons"}, // <-- note: title changed from "Icons" to "Icon Reference" to avoid confusion in Search box with the MudIcon page which is also called "Icons"
                 new DocsLink {Title = "Masking", Href = "features/masking"},
                 new DocsLink {Title = "RTL Languages", Href = "features/rtl-languages"},
-                new DocsLink {Title = "Localization", Href = "features/localization"}
+                new DocsLink {Title = "Localization", Href = "features/localization"},
+                new DocsLink {Title = "Analyzers", Href = "features/analyzers"}
             }.OrderBy(x => x.Title);
 
         /// <summary>

@@ -4,42 +4,83 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
-
 namespace MudBlazor
 {
+#nullable enable
+
+    /// <summary>
+    /// A clickable column which toggles the sort column and direction for a <see cref="MudTable{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of item displayed in the table.</typeparam>
     public partial class MudTableSortLabel<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudComponentBase
     {
+        private SortDirection _direction = SortDirection.None;
+
         protected string Classname => new CssBuilder("mud-button-root mud-table-sort-label")
-            .AddClass(Class).Build();
+            .AddClass(Class)
+            .Build();
 
-        [CascadingParameter] public TableContext TableContext { get; set; }
+        /// <summary>
+        /// The current state of the <see cref="MudTable{T}"/> containing this sort label.
+        /// </summary>
+        [CascadingParameter]
+        public TableContext? TableContext { get; set; }
 
-        public MudTableBase Table => TableContext?.Table;
-        public TableContext<T> Context => TableContext as TableContext<T>;
+        /// <summary>
+        /// The <see cref="MudTable{T}"/> containing this sort label.
+        /// </summary>
+        public MudTableBase? Table => TableContext?.Table;
 
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        /// <summary>
+        /// The current state of the <see cref="MudTable{T}"/> containing this sort label.
+        /// </summary>
+        public TableContext<T>? Context => TableContext as TableContext<T>;
 
+        /// <summary>
+        /// The content within this sort label.
+        /// </summary>
+        [Parameter]
+        public RenderFragment? ChildContent { get; set; }
+
+        /// <summary>
+        /// The sort direction when the <see cref="MudTable{T}"/> is first displayed.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="SortDirection.None"/>.  When using multiple sort labels, the table will sort by the first sort label with a value other than <see cref="SortDirection.None"/>.
+        /// </remarks>
         [Parameter]
         public SortDirection InitialDirection { get; set; } = SortDirection.None;
 
         /// <summary>
-        /// Enable the sorting. Set to true by default.
+        /// Allows sorting by this column.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         public bool Enabled { get; set; } = true;
 
         /// <summary>
-        /// The Icon used to display sortdirection.
+        /// The icon for the sort button.
         /// </summary>
-        [Parameter] public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ArrowUpward"/>.
+        /// </remarks>
+        [Parameter]
+        public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
 
         /// <summary>
-        /// If true the icon will be placed before the label text.
+        /// Displays the icon before the label text.
         /// </summary>
-        [Parameter] public bool AppendIcon { get; set; }
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool AppendIcon { get; set; }
 
-        private SortDirection _direction = SortDirection.None;
-
+        /// <summary>
+        /// The current sort direction of this column.
+        /// </summary>
         [Parameter]
         public SortDirection SortDirection
         {
@@ -47,7 +88,10 @@ namespace MudBlazor
             set
             {
                 if (_direction == value)
+                {
                     return;
+                }
+
                 _direction = value;
 
                 SortDirectionChanged.InvokeAsync(_direction);
@@ -57,43 +101,64 @@ namespace MudBlazor
         private Task UpdateSortDirectionAsync(SortDirection sortDirection)
         {
             SortDirection = sortDirection;
-            return Context?.SetSortFunc(this);
+            return Context?.SetSortFunc(this) ?? Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Occurs when <see cref="SortDirection"/> has changed.
+        /// </summary>
         [Parameter]
         public EventCallback<SortDirection> SortDirectionChanged { get; set; }
 
+        /// <summary>
+        /// The custom function for sorting rows for this sort label.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When using <see cref="MudTable{T}.ServerData"/>, this function is not necessary.
+        /// </remarks>
         [Parameter]
-        public Func<T, object> SortBy { get; set; } = null;
+        public Func<T, object>? SortBy { get; set; } = null;
 
-        [Parameter] public string SortLabel { get; set; }
+        /// <summary>
+        /// The text for this sort label.
+        /// </summary>
+        [Parameter]
+        public string? SortLabel { get; set; }
 
+        /// <summary>
+        /// Toggles the sort direction.
+        /// </summary>
+        /// <remarks>
+        /// When <see cref="MudTableBase.AllowUnsorted"/> is <c>true</c>, the sort direction will cycle from <see cref="SortDirection.None"/> to <see cref="SortDirection.Ascending"/> to <see cref="SortDirection.Descending"/>.  Otherwise, the sort direction will toggle between <see cref="SortDirection.Ascending"/> and <see cref="SortDirection.Descending"/>.
+        /// </remarks>
         public Task ToggleSortDirection()
         {
             if (!Enabled)
-                return Task.CompletedTask;
-
-            switch (SortDirection)
             {
-                case SortDirection.None:
-                    return UpdateSortDirectionAsync(SortDirection.Ascending);
-
-                case SortDirection.Ascending:
-                    return UpdateSortDirectionAsync(SortDirection.Descending);
-
-                case SortDirection.Descending:
-                    return UpdateSortDirectionAsync(Table.AllowUnsorted ? SortDirection.None : SortDirection.Ascending);
+                return Task.CompletedTask;
             }
 
-            throw new NotImplementedException();
+            return SortDirection switch
+            {
+                SortDirection.None => UpdateSortDirectionAsync(SortDirection.Ascending),
+                SortDirection.Ascending => UpdateSortDirectionAsync(SortDirection.Descending),
+                SortDirection.Descending => UpdateSortDirectionAsync(Table?.AllowUnsorted ?? false
+                    ? SortDirection.None
+                    : SortDirection.Ascending),
+                _ => throw new NotImplementedException()
+            };
         }
 
         protected override void OnInitialized()
         {
+            base.OnInitialized();
             Context?.SortLabels.Add(this);
             Context?.InitializeSorting();
         }
 
+        /// <summary>
+        /// Releases resources used by this sort label.
+        /// </summary>
         public void Dispose()
         {
             Context?.SortLabels.Remove(this);
@@ -112,16 +177,15 @@ namespace MudBlazor
         {
             if (_direction == SortDirection.Descending)
             {
-                return $"mud-table-sort-label-icon mud-direction-desc";
+                return "mud-table-sort-label-icon mud-direction-desc";
             }
-            else if (_direction == SortDirection.Ascending)
+
+            if (_direction == SortDirection.Ascending)
             {
-                return $"mud-table-sort-label-icon mud-direction-asc";
+                return "mud-table-sort-label-icon mud-direction-asc";
             }
-            else
-            {
-                return $"mud-table-sort-label-icon";
-            }
+
+            return "mud-table-sort-label-icon";
         }
     }
 }

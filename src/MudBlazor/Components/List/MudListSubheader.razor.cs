@@ -1,28 +1,48 @@
 ﻿using Microsoft.AspNetCore.Components;
-
 using MudBlazor.Utilities;
 
-namespace MudBlazor
+namespace MudBlazor;
+
+#nullable enable
+
+/// <summary>
+/// A header displayed as part of a <see cref="MudList{T}"/>.
+/// </summary>
+/// <remarks>
+/// Typically used to describe a list.
+/// </remarks>
+/// <seealso cref="MudList{T}"/>
+/// <seealso cref="MudListItem{T}"/>
+public partial class MudListSubheader : MudComponentBase
 {
-    public partial class MudListSubheader : MudComponentBase
-    {
-        protected string Classname =>
+    protected string Classname =>
         new CssBuilder("mud-list-subheader")
-           .AddClass("mud-list-subheader-gutters", !DisableGutters)
-           .AddClass("mud-list-subheader-inset", Inset)
-          .AddClass(Class)
-        .Build();
+            .AddClass("mud-list-subheader-gutters", Gutters)
+            .AddClass("mud-list-subheader-inset", Inset)
+            .AddClass(Class)
+            .Build();
 
-        [Parameter]
-        [Category(CategoryTypes.List.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+    /// <summary>
+    /// The content within this header.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.List.Behavior)]
+    public RenderFragment? ChildContent { get; set; }
 
-        [Parameter]
-        [Category(CategoryTypes.List.Appearance)]
-        public bool DisableGutters { get; set; }
+    /// <summary>
+    /// Applies left and right padding to all list items.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>true</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
+    public bool Gutters { get; set; } = true;
 
-        [Parameter]
-        [Category(CategoryTypes.List.Appearance)]
-        public bool Inset { get; set; }
-    }
+    /// <summary>
+    /// Applies an indent to this header.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
+    public bool Inset { get; set; }
 }

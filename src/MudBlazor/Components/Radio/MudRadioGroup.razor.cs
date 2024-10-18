@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -74,30 +73,17 @@ namespace MudBlazor
         public T? Value
         {
             get => _value;
-            set => SetSelectedOptionAsync(value, true).AndForget();
+            set => SetSelectedOptionAsync(value, true, updateValue: false).CatchAndLog();
         }
 
         [Parameter]
         public EventCallback<T> ValueChanged { get; set; }
 
-        [Parameter]
-        [Category(CategoryTypes.Radio.Data)]
-        [Obsolete("Use Value instead.")]
-        public T? SelectedOption
-        {
-            get => _value;
-            set => SetSelectedOptionAsync(value, true).AndForget();
-        }
-
-        [Obsolete("Use ValueChanged instead.")]
-        [Parameter]
-        public EventCallback<T> SelectedOptionChanged { get; set; }
-
         internal bool GetDisabledState() => Disabled || ParentDisabled; //internal because the MudRadio reads this value directly
 
         internal bool GetReadOnlyState() => ReadOnly || ParentReadOnly; //internal because the MudRadio reads this value directly
 
-        protected async Task SetSelectedOptionAsync(T? option, bool updateRadio)
+        protected async Task SetSelectedOptionAsync(T? option, bool updateRadio, bool updateValue = true)
         {
             if (!OptionEquals(_value, option))
             {
@@ -109,10 +95,8 @@ namespace MudBlazor
                     await SetSelectedRadioAsync(radio, false);
                 }
 
-                await ValueChanged.InvokeAsync(_value);
-#pragma warning disable CS0618
-                await SelectedOptionChanged.InvokeAsync(_value);
-#pragma warning restore CS0618
+                if (updateValue)
+                    await ValueChanged.InvokeAsync(_value);
 
                 await BeginValidateAsync();
                 FieldChanged(_value);
@@ -174,19 +158,6 @@ namespace MudBlazor
             {
                 _selectedRadio = null;
             }
-        }
-
-        [Obsolete($"Use {nameof(ResetValueAsync)} instead. This will be removed in v7")]
-        [ExcludeFromCodeCoverage]
-        protected override void ResetValue()
-        {
-            if (_selectedRadio is not null)
-            {
-                _selectedRadio.SetChecked(false);
-                _selectedRadio = null;
-            }
-
-            base.ResetValue();
         }
 
         protected override Task ResetValueAsync()

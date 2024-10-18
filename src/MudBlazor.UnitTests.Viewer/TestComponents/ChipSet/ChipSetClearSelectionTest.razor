@@ -1,37 +1,35 @@
 @namespace MudBlazor.UnitTests.TestComponents
 
-<MudChipSet @bind-SelectedChips="selected" MultiSelection="true">
-    <MudChip Text="Milk"></MudChip>
-    <MudChip Text="Eggs"></MudChip>
-    <MudChip Text="Soap"></MudChip>
-    <MudChip Text="Corn flakes"></MudChip>
-    <MudChip Text="Salad"></MudChip>
-    <MudChip Text="Apples"></MudChip>
-    <MudChip Text="Red wine"></MudChip>
+<MudChipSet @bind-SelectedValues="_selected" SelectionMode="SelectionMode.MultiSelection">
+    <MudChip Value="@("Milk")"/>
+    <MudChip Value="@("Eggs")"/>
+    <MudChip Value="@("Soap")"/>
+    <MudChip Value="@("Corn flakes")"/>
+    <MudChip Value="@("Salad")"/>
+    <MudChip Value="@("Apples")"/>
+    <MudChip Value="@("Red wine")"/>
 </MudChipSet>
 
 
-@if (selected != null && selected.Length>0)
-{
-    <MudText>@string.Join(", ", selected.Select(chip=>chip.Text).OrderBy(x => x))</MudText>
+@if (_selected != null && _selected.Count > 0) {
+    <MudText>@string.Join(", ", _selected.OrderBy(x => x))</MudText>
 }
-else
-{
+else {
     <MudText>Nothing selected.</MudText>
 }
 <MudButton OnClick="SetNull">Set Null</MudButton>
 <MudButton OnClick="SetEmpty">Set Empty</MudButton>
 @code
 {
-    MudChip[] selected;
+    private IReadOnlyCollection<string> _selected;
 
-    void SetNull()
+    private void SetNull()
     {
-        selected = null;
+        _selected = null;
     }
-    
-    void SetEmpty()
+
+    private void SetEmpty()
     {
-        selected = new MudChip[]{};
+        _selected = Array.Empty<string>();
     }
 }

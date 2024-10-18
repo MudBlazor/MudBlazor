@@ -6,18 +6,17 @@
             Class="@Classname" 
             Style="@Style"
             @attributes="UserAttributes" 
-            @onclick="OnClickHandler"
+            @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)"
             type="@ButtonType.ToDescriptionString()" 
             href="@Href" 
             target="@Target"
             rel="@GetRel()"
             disabled="@GetDisabledState()"
-            title="@Title"
-            ClickPropagation="@ClickPropagation">
+            ClickPropagation="@GetClickPropagation()">
     @if (!string.IsNullOrEmpty(Icon))
     {
         <span class="mud-icon-button-label">
-            <MudIcon Icon="@Icon" Size="@Size" />
+            <MudIcon Disabled="@Disabled" Icon="@Icon" Size="@Size" />
         </span>
     }
     else

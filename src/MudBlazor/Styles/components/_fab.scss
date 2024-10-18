@@ -15,6 +15,7 @@
   transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   border-radius: 50%;
   color: var(--mud-palette-text-primary);
+  --mud-ripple-color: var(--mud-palette-text-primary);
   background-color: var(--mud-palette-action-default-hover);
 
   @media(hover: hover) and (pointer: fine) {
@@ -85,6 +86,8 @@
 @each $color in $mud-palette-colors {
   .mud-fab-#{$color} {
     color: var(--mud-palette-#{$color}-text);
+    --mud-ripple-color: var(--mud-palette-#{$color}-text) !important;
+    --mud-ripple-opacity: var(--mud-ripple-opacity-secondary) !important;
     background-color: var(--mud-palette-#{$color});
 
     @media(hover: hover) and (pointer: fine) {

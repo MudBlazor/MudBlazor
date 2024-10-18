@@ -3,12 +3,9 @@
   color: var(--mud-palette-text-primary);
   cursor: text;
   display: inline-flex;
-  font-size: 1rem;
   box-sizing: border-box;
   align-items: center;
-  font-weight: 400;
-  line-height: 1.1876em;
-  letter-spacing: 0.00938em;
+  color-scheme: var(--mud-native-html-color-scheme);
 
   &.mud-input-full-width {
     width: 100%;
@@ -204,7 +201,7 @@
     color: currentColor;
     width: 100%;
     border: 0;
-    height: 1.1876em;
+    height: 1lh;
     margin: 0;
     display: block;
     padding: 6px 0 7px;
@@ -212,7 +209,6 @@
     background: none;
     position: relative;
     box-sizing: content-box;
-    letter-spacing: inherit;
     -webkit-tap-highlight-color: transparent;
 
     @include inputplaceholder {

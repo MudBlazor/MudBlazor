@@ -1,8 +1,8 @@
-﻿using System.Net.Http;
-using System.Threading.Tasks;
-using Bunit;
+﻿using Bunit;
+using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Docs.Pages.Api;
 using MudBlazor.Docs.Services;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
@@ -33,16 +33,13 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddTransient<IEventListener, MockEventListener>();
             ctx.Services.AddSingleton<IDocsNavigationService, DocsNavigationService>();
             ctx.Services.AddSingleton<IMenuService, MenuService>();
-#pragma warning disable CS0618
-            //TODO: Remove in v7.
-            ctx.Services.AddSingleton<IMudPopoverService, MockPopoverService>();
-#pragma warning restore CS0618
-            ctx.Services.AddSingleton<IPopoverService, MockPopoverServiceV2>();
-            ctx.Services.AddTransient<IKeyInterceptorFactory, MockKeyInterceptorServiceFactory>();
+            ctx.Services.AddSingleton<IPopoverService, MockPopoverService>();
+            ctx.Services.AddSingleton<IKeyInterceptorService, MockKeyInterceptorService>();
             ctx.Services.AddTransient<IJsEventFactory, MockJsEventFactory>();
-            ctx.Services.AddSingleton<IRenderQueueService, RenderQueueService>();
+            ctx.Services.AddScoped<IRenderQueueService, RenderQueueService>();
             ctx.Services.AddTransient<InternalMudLocalizer>();
             ctx.Services.AddTransient<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
+            ctx.Services.AddTransient<ILocalizationEnumInterceptor, DefaultLocalizationEnumInterceptor>();
             ctx.Services.AddScoped(sp => new HttpClient());
         }
 
@@ -54,6 +51,20 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager("https://localhost:2112/", "https://localhost:2112/components/alert"));
             var comp = ctx.RenderComponent<Docs.Pages.Components.Alert.AlertPage>();
             await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();
+        }
+
+        /// <summary>
+        /// An example of a generated API test.
+        /// </summary>
+        [Test]
+        public async Task MudAlert_API_Test_Example()
+        {
+            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager("https://localhost:2112/", "https://localhost:2112/components/MudAlert"));
+            var comp = ctx.RenderComponent<Api>(ComponentParameter.CreateParameter("TypeName", "MudAlert"));
+            await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();
+            comp.Markup.Should().NotContain("Sorry, the type").And.NotContain("could not be found");
+            var exampleLink = comp.FindComponents<MudLink>().FirstOrDefault(link => link.Instance.Href.StartsWith("/component"));
+            exampleLink.Should().NotBeNull();
         }
 
         [TearDown]

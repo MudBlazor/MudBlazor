@@ -1,14 +1,20 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// A component for collecting start and end values which define a range.
+    /// </summary>
+    /// <typeparam name="T">The type of object managed by this input.</typeparam>
     public partial class MudRangeInput<T> : MudBaseInput<Range<T>>
     {
         private string _textStart, _textEnd;
 
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
         public MudRangeInput()
         {
             Value = new Range<T>();
@@ -19,9 +25,13 @@ namespace MudBlazor
             () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(PlaceholderStart) || !string.IsNullOrWhiteSpace(PlaceholderEnd));
 
         /// <summary>
-        /// Type of the input element. It should be a valid HTML5 input type.
+        /// The type of input collected by this component.
         /// </summary>
-        [Parameter] public InputType InputType { get; set; } = InputType.Text;
+        /// <remarks>
+        /// Defaults to <see cref="InputType.Text"/>.  Represents a valid HTML5 input type.
+        /// </remarks>
+        [Parameter]
+        public InputType InputType { get; set; } = InputType.Text;
 
         internal override InputType GetInputType() => InputType;
 
@@ -30,14 +40,16 @@ namespace MudBlazor
         protected string AdornmentClassname => MudInputCssHelper.GetAdornmentClassname(this);
 
         /// <summary>
-        /// The short hint displayed in the start input before the user enters a value.
+        /// The hint displayed before the user enters a starting value.
         /// </summary>
-        [Parameter] public string PlaceholderStart { get; set; }
+        [Parameter]
+        public string PlaceholderStart { get; set; }
 
         /// <summary>
-        /// The short hint displayed in the end input before the user enters a value.
+        /// The hint displayed before the user enters an ending value.
         /// </summary>
-        [Parameter] public string PlaceholderEnd { get; set; }
+        [Parameter]
+        public string PlaceholderEnd { get; set; }
 
         protected bool IsClearable() => Clearable && Value != null;
 
@@ -49,69 +61,82 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Button click event for clear button. Called after text and value has been cleared.
+        /// Occurs when the Clear button is clicked.
         /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
+        /// <remarks>
+        /// When clicked, the <see cref="MudBaseInput{T}.Text"/> and <see cref="MudBaseInput{T}.Value"/> properties are reset.
+        /// </remarks>
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         /// <summary>
-        /// Show clear button.
+        /// Shows a button at the end of the input to clear the value.
         /// </summary>
-        [Parameter] public bool Clearable { get; set; }
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool Clearable { get; set; }
 
         protected string InputTypeString => InputType.ToDescriptionString();
 
         /// <summary>
-        /// ChildContent of the MudInput will only be displayed if InputType.Hidden and if its not null.
+        /// The content within this input component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        /// <remarks>
+        /// Will only display if <see cref="InputType"/> is <see cref="InputType.Hidden"/>.
+        /// </remarks>
+        [Parameter]
+        public RenderFragment ChildContent { get; set; }
 
         private ElementReference _elementReferenceStart, _elementReferenceEnd;
 
         /// <summary>
-        /// Custom separator icon, leave null for default.
+        /// The icon shown in between start and end values.
         /// </summary>
-        [Parameter] public string SeparatorIcon { get; set; } = Icons.Material.Filled.ArrowRightAlt;
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ArrowRightAlt"/>.
+        /// </remarks>
+        [Parameter]
+        public string SeparatorIcon { get; set; } = Icons.Material.Filled.ArrowRightAlt;
 
         /// <summary>
-        /// Focuses the start input of MudRangeInput
+        /// Moves the cursor to the starting input component.
         /// </summary>
-        /// <returns></returns>
         public ValueTask FocusStartAsync() => _elementReferenceStart.FocusAsync();
 
         /// <summary>
-        /// Selects the start text of MudRangeInput
+        /// Selects the text in the starting input.
         /// </summary>
-        /// <returns></returns>
         public ValueTask SelectStartAsync() => _elementReferenceStart.MudSelectAsync();
 
         /// <summary>
-        /// Selects the specified range of the start text
+        /// Selects the text in the start value.
         /// </summary>
-        /// <param name="pos1">Start position of the selection</param>
-        /// <param name="pos2">End position of the selection</param>
-        /// <returns></returns>
+        /// <param name="pos1">The index of the first character to select.</param>
+        /// <param name="pos2">The index of the last character to select.</param>
         public ValueTask SelectRangeStartAsync(int pos1, int pos2) => _elementReferenceStart.MudSelectRangeAsync(pos1, pos2);
 
         /// <summary>
-        /// Focuses the end input of MudRangeInput
+        /// Moves the cursor to the ending input component.
         /// </summary>
-        /// <returns></returns>
         public ValueTask FocusEndAsync() => _elementReferenceEnd.FocusAsync();
 
         /// <summary>
-        /// Selects the end text of MudRangeInput
+        /// Selects the text in the ending input.
         /// </summary>
-        /// <returns></returns>
         public ValueTask SelectEndAsync() => _elementReferenceEnd.MudSelectAsync();
 
         /// <summary>
-        /// Selects the specified range of the end text
+        /// Selects the text in the end value.
         /// </summary>
-        /// <param name="pos1">Start position of the selection</param>
-        /// <param name="pos2">End position of the selection</param>
-        /// <returns></returns>
+        /// <param name="pos1">The index of the first character to select.</param>
+        /// <param name="pos2">The index of the last character to select.</param>
         public ValueTask SelectRangeEndAsync(int pos1, int pos2) => _elementReferenceEnd.MudSelectRangeAsync(pos1, pos2);
 
+        /// <summary>
+        /// The text of the start of the range.
+        /// </summary>
         public string TextStart
         {
             get => _textStart;
@@ -120,10 +145,13 @@ namespace MudBlazor
                 if (_textStart == value)
                     return;
                 _textStart = value;
-                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).AndForget();
+                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).CatchAndLog();
             }
         }
 
+        /// <summary>
+        /// The text of the end of the range.
+        /// </summary>
         public string TextEnd
         {
             get => _textEnd;
@@ -132,7 +160,7 @@ namespace MudBlazor
                 if (_textEnd == value)
                     return;
                 _textEnd = value;
-                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).AndForget();
+                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).CatchAndLog();
             }
         }
 

@@ -36,11 +36,13 @@
             }
             else if(SelectedTestComponent == "MudAvatar")
             {
-                <MudAvatar Image="images/mony.jpg" Size="Size.Large" Class="ma-2" />
+                <MudAvatar Size="Size.Large" Class="ma-2">
+                    <MudImage Src="images/mony.jpg" />
+                </MudAvatar>
             }
             else if(SelectedTestComponent == "MudChip")
             {
-                <MudChip Label="true" Color="Color.Warning" Style="color:black;">Radioactive Areas</MudChip>
+                <MudChip T="string" Label="true" Color="Color.Warning" Style="color:black;">Radioactive Areas</MudChip>
             }
         </MudBadge>
     </MudItem>

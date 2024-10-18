@@ -6,8 +6,6 @@
 // License: MIT
 // See https://github.com/Blazored
 
-#nullable enable
-
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -15,32 +13,116 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 
+#nullable enable
 namespace MudBlazor
 {
+    /// <summary>
+    /// A manager for <see cref="MudDialog"/> instances.
+    /// </summary>
+    /// <remarks>
+    /// Add this component to your layout page if your application needs to display dialogs.
+    /// </remarks>
+    /// <seealso cref="MudDialog"/>
+    /// <seealso cref="MudDialogInstance"/>
+    /// <seealso cref="DialogOptions"/>
+    /// <seealso cref="DialogParameters{T}"/>
+    /// <seealso cref="DialogReference"/>
+    /// <seealso cref="DialogService"/>
     public partial class MudDialogProvider : IDisposable
     {
-        [Inject] private IDialogService DialogService { get; set; } = null!;
-        [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+        [Inject]
+        private IDialogService DialogService { get; set; } = null!;
 
-        [Parameter][Category(CategoryTypes.Dialog.Behavior)] public bool? NoHeader { get; set; }
-        [Parameter][Category(CategoryTypes.Dialog.Behavior)] public bool? CloseButton { get; set; }
-        [Parameter][Category(CategoryTypes.Dialog.Behavior)] public bool? DisableBackdropClick { get; set; }
-        [Parameter][Category(CategoryTypes.Dialog.Behavior)] public bool? CloseOnEscapeKey { get; set; }
-        [Parameter][Category(CategoryTypes.Dialog.Appearance)] public bool? FullWidth { get; set; }
-        [Parameter][Category(CategoryTypes.Dialog.Appearance)] public DialogPosition? Position { get; set; }
-        [Parameter][Category(CategoryTypes.Dialog.Appearance)] public MaxWidth? MaxWidth { get; set; }
-        [Parameter][Category(CategoryTypes.Dialog.Appearance)] public string? BackgroundClass { get; set; }
+        [Inject]
+        private NavigationManager NavigationManager { get; set; } = null!;
 
-        private readonly Collection<IDialogReference> _dialogs = new();
+        /// <summary>
+        /// Hides headers for all dialogs by default.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public bool? NoHeader { get; set; }
+
+        /// <summary>
+        /// Shows a close button in the top-right corner for all dialogs by default.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public bool? CloseButton { get; set; }
+
+        /// <summary>
+        /// Allows dialogs to be closed by clicking outside of them by default.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public bool? BackdropClick { get; set; }
+
+        /// <summary>
+        /// Allows dialogs to be closed by pressing the Escape key by default.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public bool? CloseOnEscapeKey { get; set; }
+
+        /// <summary>
+        /// Sets the width of dialogs to the width of the screen by default.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Appearance)]
+        public bool? FullWidth { get; set; }
+
+        /// <summary>
+        /// The location of dialogs by default.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Appearance)]
+        public DialogPosition? Position { get; set; }
+
+        /// <summary>
+        /// The maximum allowed with of the dialog.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Appearance)]
+        public MaxWidth? MaxWidth { get; set; }
+
+        /// <summary>
+        /// The custom CSS classes to apply to dialogs by default.
+        /// </summary>
+        /// <remarks>
+        /// Multiple classes must be separated by spaces.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Appearance)]
+        public string? BackgroundClass { get; set; }
+
+        private readonly List<IDialogReference> _dialogs = new();
         private readonly DialogOptions _globalDialogOptions = new();
 
         protected override void OnInitialized()
         {
-            DialogService.OnDialogInstanceAdded += AddInstance;
+            DialogService.DialogInstanceAddedAsync += AddInstanceAsync;
             DialogService.OnDialogCloseRequested += DismissInstance;
             NavigationManager.LocationChanged += LocationChanged;
 
-            _globalDialogOptions.DisableBackdropClick = DisableBackdropClick;
+            _globalDialogOptions.BackdropClick = BackdropClick;
             _globalDialogOptions.CloseOnEscapeKey = CloseOnEscapeKey;
             _globalDialogOptions.CloseButton = CloseButton;
             _globalDialogOptions.NoHeader = NoHeader;
@@ -70,19 +152,23 @@ namespace MudBlazor
                 DismissInstance(reference, result);
         }
 
-        private void AddInstance(IDialogReference dialog)
+        private Task AddInstanceAsync(IDialogReference dialog)
         {
             _dialogs.Add(dialog);
-            StateHasChanged();
+
+            return InvokeAsync(StateHasChanged);
         }
 
+        /// <summary>
+        /// Hides all currently visible dialogs.
+        /// </summary>
         public void DismissAll()
         {
             _dialogs.ToList().ForEach(r => DismissInstance(r, DialogResult.Cancel()));
             StateHasChanged();
         }
 
-        private void DismissInstance(IDialogReference dialog, DialogResult result)
+        private void DismissInstance(IDialogReference dialog, DialogResult? result)
         {
             if (!dialog.Dismiss(result)) return;
 
@@ -92,7 +178,7 @@ namespace MudBlazor
 
         private IDialogReference? GetDialogReference(Guid id)
         {
-            return _dialogs.SingleOrDefault(x => x.Id == id);
+            return _dialogs.FirstOrDefault(x => x.Id == id);
         }
 
         private void LocationChanged(object? sender, LocationChangedEventArgs args)
@@ -100,16 +186,20 @@ namespace MudBlazor
             DismissAll();
         }
 
-        public void Dispose()
+        protected virtual void Dispose(bool disposing)
         {
-            if (NavigationManager != null)
-                NavigationManager.LocationChanged -= LocationChanged;
-
-            if (DialogService != null)
+            if (disposing)
             {
-                DialogService.OnDialogInstanceAdded -= AddInstance;
+                NavigationManager.LocationChanged -= LocationChanged;
+                DialogService.DialogInstanceAddedAsync -= AddInstanceAsync;
                 DialogService.OnDialogCloseRequested -= DismissInstance;
             }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

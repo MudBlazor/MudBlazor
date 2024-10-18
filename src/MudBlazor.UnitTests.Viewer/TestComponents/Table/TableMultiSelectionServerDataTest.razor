@@ -1,0 +1,23 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTable T="ComplexObject" ServerData="ServerData" MultiSelection @bind-SelectedItems="_selectedItems" Comparer="Comparer" Dense>
+    <HeaderContent>
+        <MudTh>Id</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>DateTime</MudTh>
+        <MudTh>X</MudTh>
+        <MudTh>Y</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Id</MudTd>
+        <MudTd>@context.Name</MudTd>
+        <MudTd>@context.DateTime</MudTd>
+        <MudTd>@context.NestedObject.X</MudTd>
+        <MudTd>@context.NestedObject.Y</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager HideRowsPerPage />
+    </PagerContent>
+</MudTable>
+
+<MudText>SelectedItems { @string.Join(", ", _selectedItems.Select(x => x.Id)) }</MudText>

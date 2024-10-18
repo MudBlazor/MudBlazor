@@ -1,4 +1,7 @@
 @page "/customization/default-theme"
+@page "/components/MudTheme"
+@page "/components/MudThemeProvider"
+
 @using System.Reflection
 @using System.Text.RegularExpressions
 
@@ -223,7 +226,7 @@
             {
                 Name = value.Name,
                 Type = value.PropertyType.ConvertToCSharpSource(),
-                Default = value.GetValue(mudTheme.Palette, null),
+                Default = value.GetValue(mudTheme.PaletteLight, null),
                 Dark = value.GetValue(mudTheme.PaletteDark, null),
                 CSSVariable = $"--mud-palette-{GetCssVar(value.Name)}"
             };
@@ -329,6 +332,10 @@
         else if (value.Contains("TextTransform"))
         {
             return value.Replace("TextTransform", "-Text-Transform").ToLowerInvariant();
+        }
+        else if (value.Contains("BorderRadius"))
+        {
+            return value.Replace("BorderRadius", "-BorderRadius").ToLowerInvariant();
         }
         else
         {

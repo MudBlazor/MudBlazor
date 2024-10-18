@@ -13,13 +13,18 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// A location which can participate in a drag-and-drop operation.
+    /// </summary>
+    /// <typeparam name="T">The kind of item to drag.</typeparam>
     public partial class MudDropZone<T> : MudComponentBase, IDisposable where T : notnull
     {
         private bool _containerIsInitialized = false;
         private bool _canDrop = false;
         private bool _dragInProgress = false;
         private bool _disposedValue = false;
-        private Guid _id = Guid.NewGuid();
+        private string _id = MudBlazor.Identifier.Create();
 
         private Dictionary<T, int> _indices = new();
 
@@ -29,104 +34,148 @@ namespace MudBlazor
         protected MudDropContainer<T>? Container { get; set; }
 
         /// <summary>
-        /// Child content of component
+        /// The custom content within this drop zone.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.DropZone.Appearance)]
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// The unique identifier of this drop zone. It is used within transaction to 
+        /// The unique identifier for this drop zone.
         /// </summary>
+        /// <remarks>
+        /// Drag-and-drop zones each have a unique identifier to differentiate them during drag-and-drop operations.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.DropZone.Appearance)]
         public string Identifier { get; set; } = string.Empty;
 
         /// <summary>
-        /// The render fragment (template) that should be used to render the items within a drop zone. Overrides value provided by drop container
+        /// The template used to render items within this drop zone.
         /// </summary>
+        /// <remarks>
+        /// When set, overrides the <see cref="MudDropContainer{T}.ItemRenderer"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.DropZone.Items)]
         public RenderFragment<T>? ItemRenderer { get; set; }
 
         /// <summary>
-        /// The method is used to determinate if an item can be dropped within a drop zone. Overrides value provided by drop container
+        /// The function which determines whether an item can be dropped within this drop zone.
         /// </summary>
+        /// <remarks>
+        /// When set, overrides the <see cref="MudDropContainer{T}.ItemsSelector"/> function.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.DropZone.Items)]
         public Func<T, bool>? ItemsSelector { get; set; }
 
         /// <summary>
-        /// The method is used to determinate if an item can be dropped within a drop zone. Overrides value provided by drop container
+        /// The function which determines whether an item can be dropped within a drop zone.
         /// </summary>
+        /// <remarks>
+        /// When a drop zone is allowed, the <see cref="CanDropClass"/> is applied, otherwise <see cref="NoDropClass"/> is applied.  When set, overrides <see cref="MudDropContainer{T}.CanDrop"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.DropZone.DropRules)]
         public Func<T, bool>? CanDrop { get; set; }
 
         /// <summary>
-        /// The CSS class(es), that is applied to drop zones that are a valid target for drag and drop transaction. Overrides value provided by drop container
+        /// The CSS classes applied to valid drop zones.
         /// </summary>
+        /// <remarks>
+        /// This class is applied when <see cref="CanDrop"/> returns <c>true</c> for an item.  Multiple classes must be separated by spaces.  When set, overrides <see cref="MudDropContainer{T}.CanDropClass"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.DropZone.DropRules)]
         public string? CanDropClass { get; set; }
 
         /// <summary>
-        /// The CSS class(es), that is applied to drop zones that are NOT valid target for drag and drop transaction. Overrides value provided by drop container
+        /// The CSS classes applied to invalid drop zones.
         /// </summary>
+        /// <remarks>
+        /// This class is applied when <see cref="CanDrop"/> returns <c>false</c> for an item.  Multiple classes must be separated by spaces.  When set, overrides <see cref="MudDropContainer{T}.NoDropClass"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.DropZone.DropRules)]
         public string? NoDropClass { get; set; }
 
         /// <summary>
-        /// If true, drop classes CanDropClass <see cref="CanDropClass"/>  or NoDropClass <see cref="NoDropClass"/> or applied as soon, as a transaction has started. Overrides value provided by drop container
+        /// Applies either <see cref="CanDropClass"/> or <see cref="NoDropClass"/> to drop zones during a drag-and-drop transaction.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  The <see cref="CanDrop"/> function determines which classes are applied.  When set, overrides <see cref="MudDropContainer{T}.ApplyDropClassesOnDragStarted"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.DropZone.DropRules)]
         public bool? ApplyDropClassesOnDragStarted { get; set; }
 
         /// <summary>
-        /// The method is used to determinate if an item should be disabled for dragging. Defaults to allow all items. Overrides value provided by drop container
+        /// The function which determines whether an item cannot be dragged.
         /// </summary>
+        /// <remarks>
+        /// If no value is given, all items can be dragged by default.  When an item is disabled, the <see cref="DisabledClass"/> is applied.  When set, overrides <see cref="MudDropContainer{T}.ItemDisabled"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.DropZone.Disabled)]
-        public Func<T, bool>? ItemIsDisabled { get; set; }
+        public Func<T, bool>? ItemDisabled { get; set; }
 
         /// <summary>
-        /// If a drop item is disabled (determinate by <see cref="ItemIsDisabled"/>). This class is applied to the element. Overrides value provided by drop container
+        /// The CSS classes applied to disabled drop items.
         /// </summary>
+        /// <remarks>
+        /// This class is applied when <see cref="ItemDisabled"/> returns <c>true</c> for an item.  Multiple classes must be separated by spaces.  When set, overrides <see cref="MudDropContainer{T}.DisabledClass"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.DropZone.Disabled)]
         public string? DisabledClass { get; set; }
 
         /// <summary>
-        /// An additional class that is applied to the drop zone where a drag operation started
+        /// The CSS classes applied to drop zones during a drag-and-drop operation.
         /// </summary>
+        /// <remarks>
+        /// Multiple classes must be separated by spaces.  When set, overrides <see cref="MudDropContainer{T}.DraggingClass"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.DropZone.DraggingClass)]
         public string? DraggingClass { get; set; }
 
         /// <summary>
-        /// An additional class that is applied to an drop item, when it is dragged
+        /// The CSS classes applied to items during a drag-and-drop operation.
         /// </summary>
+        /// <remarks>
+        /// Multiple classes must be separated by spaces.  When set, overrides <see cref="MudDropContainer{T}.ItemDraggingClass"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.DropZone.DraggingClass)]
         public string? ItemDraggingClass { get; set; }
 
         /// <summary>
-        /// The method is used to determinate item class to be rendered in a drop zone.
+        /// The function which determines the CSS classes for each item.
         /// </summary>
+        /// <remarks>
+        /// When set, overrides <see cref="MudDropContainer{T}.ItemsClassSelector"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.DropZone.Items)]
         public Func<T, string>? ItemsClassSelector { get; set; }
 
-
+        /// <summary>
+        /// Allows items to be reordered within a zone.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.DropZone.Behavior)]
         public bool AllowReorder { get; set; }
 
         /// <summary>
-        /// If true, will only act as a droppable zone and not render any items.
+        /// Allows this zone to only receive dropped items.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.DropZone.Behavior)]
         public bool OnlyZone { get; set; }
@@ -135,12 +184,14 @@ namespace MudBlazor
 
         private int GetItemIndex(T item)
         {
-            if (!_indices.ContainsKey(item))
+            if (_indices.TryGetValue(item, out var index))
             {
-                _indices.Add(item, _indices.Count);
+                return index;
             }
 
-            return _indices[item];
+            var newIndex = _indices.Count;
+            _indices.Add(item, newIndex);
+            return newIndex;
         }
 
         private T[] GetItems()
@@ -178,7 +229,7 @@ namespace MudBlazor
         private bool GetItemDisabledStatus(T item)
         {
             var result = false;
-            var predicate = ItemIsDisabled ?? Container?.ItemIsDisabled;
+            var predicate = ItemDisabled ?? Container?.ItemDisabled;
             if (predicate is not null)
             {
                 result = predicate(item);
@@ -197,22 +248,24 @@ namespace MudBlazor
             {
                 return Container.ItemsClassSelector(item, Identifier);
             }
-            else return string.Empty;
+            else
+            {
+                return string.Empty;
+            }
         }
-
 
         protected string Classname =>
             new CssBuilder("mud-drop-zone")
                 //.AddClass("mud-drop-zone-drag-block", Container?.TransactionInProgress() == true && Container.GetTransactionOrignZoneIdentiifer() != Identifier)
-                .AddClass(CanDropClass ?? Container?.CanDropClass, Container is not null && Container.TransactionInProgress() && Container.GetTransactionOrignZoneIdentiifer() != Identifier && _canDrop && (_dragCounter > 0 || GetApplyDropClassesOnDragStarted()))
-                .AddClass(NoDropClass ?? Container?.NoDropClass, Container is not null && Container.TransactionInProgress() && Container.GetTransactionOrignZoneIdentiifer() != Identifier && !_canDrop && (_dragCounter > 0 || GetApplyDropClassesOnDragStarted()))
+                .AddClass(CanDropClass ?? Container?.CanDropClass, Container is not null && Container.TransactionInProgress() && Container.GetTransactionOriginZoneIdentifier() != Identifier && _canDrop && (_dragCounter > 0 || GetApplyDropClassesOnDragStarted()))
+                .AddClass(NoDropClass ?? Container?.NoDropClass, Container is not null && Container.TransactionInProgress() && Container.GetTransactionOriginZoneIdentifier() != Identifier && !_canDrop && (_dragCounter > 0 || GetApplyDropClassesOnDragStarted()))
                 .AddClass(GetDraggingClass(), _dragInProgress)
                 .AddClass(Class)
                 .Build();
 
         protected string PlaceholderClassname =>
             new CssBuilder("border-2 mud-border-primary border-dashed mud-chip-text mud-chip-color-primary pa-4 mud-dropitem-placeholder")
-                .AddClass("d-none", !AllowReorder || (Container?.TransactionInProgress() == false || Container?.GetTransactionCurrentZoneIdentiifer() != Identifier))
+                .AddClass("d-none", !AllowReorder || Container?.TransactionInProgress() == false || Container?.GetTransactionCurrentZoneIdentifier() != Identifier)
                 .Build();
 
         #endregion
@@ -247,7 +300,7 @@ namespace MudBlazor
             return (item, result);
         }
 
-        private bool IsOrigin(int index) => Container is not null && Container.IsOrign(index, Identifier);
+        private bool IsOrigin(int index) => Container is not null && Container.IsOrigin(index, Identifier);
 
         #endregion
 
@@ -462,6 +515,9 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Releases resources used by this drop zone.
+        /// </summary>
         public void Dispose()
         {
             Dispose(disposing: true);
