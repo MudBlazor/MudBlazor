@@ -25,7 +25,7 @@ internal sealed class ScrollListenerFactory : IScrollListenerFactory
     }
 
     /// <inheritdoc />
-    public IScrollListener Create(string selector)
+    public IScrollListener Create(string? selector)
     {
         var jsRuntime = _provider.GetRequiredService<IJSRuntime>();
 

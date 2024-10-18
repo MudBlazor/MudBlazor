@@ -18,7 +18,7 @@ public interface IScrollManager
     /// <param name="top">The vertical scroll position.</param>
     /// <param name="scrollBehavior">The scroll behavior (e.g., smooth or auto).</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    ValueTask ScrollToAsync(string id, int left, int top, ScrollBehavior scrollBehavior);
+    ValueTask ScrollToAsync(string? id, int left, int top, ScrollBehavior scrollBehavior);
 
     /// <summary>
     /// Scrolls the element matching the specified selector into view.
@@ -26,7 +26,7 @@ public interface IScrollManager
     /// <param name="selector">The CSS selector of the element to scroll into view.</param>
     /// <param name="behavior">The scroll behavior (e.g., smooth or auto).</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    ValueTask ScrollIntoViewAsync(string selector, ScrollBehavior behavior);
+    ValueTask ScrollIntoViewAsync(string? selector, ScrollBehavior behavior);
 
     /// <summary>
     /// Scrolls to the top of the element with the given ID.
@@ -34,7 +34,7 @@ public interface IScrollManager
     /// <param name="id">The ID of the element to scroll.</param>
     /// <param name="scrollBehavior">The scroll behavior (e.g., smooth or auto). Defaults to auto.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    ValueTask ScrollToTopAsync(string id, ScrollBehavior scrollBehavior = ScrollBehavior.Auto);
+    ValueTask ScrollToTopAsync(string? id, ScrollBehavior scrollBehavior = ScrollBehavior.Auto);
 
     /// <summary>
     /// Scrolls to the year element with the given ID.

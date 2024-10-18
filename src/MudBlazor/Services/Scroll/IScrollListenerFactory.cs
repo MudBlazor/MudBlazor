@@ -15,5 +15,5 @@ public interface IScrollListenerFactory
     /// </summary>
     /// <param name="selector">The CSS selector for the element to listen for scroll events.</param>
     /// <returns>A new instance of <see cref="IScrollListener"/>.</returns>
-    IScrollListener Create(string selector);
+    IScrollListener Create(string? selector);
 }

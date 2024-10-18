@@ -32,7 +32,7 @@ namespace MudBlazor
         /// </summary>
         /// <param name="selector">The CSS selector for the element to listen for scroll events.</param>
         /// <param name="js">The JavaScript runtime.</param>
-        public ScrollListener(string selector, IJSRuntime js)
+        public ScrollListener(string? selector, IJSRuntime js)
         {
             _js = js;
             Selector = selector;

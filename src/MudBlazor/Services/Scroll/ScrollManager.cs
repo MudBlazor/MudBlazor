@@ -24,15 +24,15 @@ internal sealed class ScrollManager : IScrollManager
     }
 
     /// <inheritdoc />
-    public ValueTask ScrollToAsync(string id, int left, int top, ScrollBehavior behavior) =>
+    public ValueTask ScrollToAsync(string? id, int left, int top, ScrollBehavior behavior) =>
         _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollTo", id, left, top, behavior.ToDescriptionString());
 
     /// <inheritdoc />
-    public ValueTask ScrollIntoViewAsync(string selector, ScrollBehavior behavior) =>
+    public ValueTask ScrollIntoViewAsync(string? selector, ScrollBehavior behavior) =>
         _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollIntoView", selector, behavior.ToDescriptionString());
 
     /// <inheritdoc />
-    public ValueTask ScrollToTopAsync(string id, ScrollBehavior scrollBehavior = ScrollBehavior.Auto) =>
+    public ValueTask ScrollToTopAsync(string? id, ScrollBehavior scrollBehavior = ScrollBehavior.Auto) =>
         ScrollToAsync(id, 0, 0, scrollBehavior);
 
     /// <inheritdoc />
