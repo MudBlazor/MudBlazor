@@ -85,11 +85,10 @@
 
     @if (_showClearable && !GetDisabledState())
     {
-        <MudIconButton Class="mud-input-clear-button"
-                       Color="@Color.Default"
-                       Icon="@ClearIcon"
-                       OnClick="@HandleClearButtonAsync"
-                       aria-label="@Localizer[LanguageResource.MudInput_Clear]" />
+        <MudInputAdornment Class="mud-input-clear-button"
+                           Icon="@ClearIcon"
+                           AdornmentClick="@HandleClearButtonAsync"
+                           AriaLabel="@Localizer[LanguageResource.MudInput_Clear]" />
     }
 
     @if (Adornment == Adornment.End)
