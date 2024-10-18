@@ -54,6 +54,7 @@ internal static class MudInputCssHelper
     public static string GetAdornmentClassname<T>(MudBaseInput<T> baseInput) =>
         new CssBuilder("mud-input-adornment")
             .AddClass($"mud-input-adornment-{baseInput.Adornment.ToDescriptionString()}", baseInput.Adornment != Adornment.None)
+            .AddClass($"mud-input-adornment--no-interaction", baseInput.OnAdornmentClick.HasDelegate)
             .AddClass($"mud-text", !string.IsNullOrEmpty(baseInput.AdornmentText))
             .AddClass($"mud-input-root-filled-shrink", baseInput.Variant == Variant.Filled)
             .AddClass(baseInput.Class)

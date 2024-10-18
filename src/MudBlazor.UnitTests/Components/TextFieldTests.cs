@@ -1567,7 +1567,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Lines, lines)
                 .Add(p => p.Mask, mask));
 
-            comp.Find(".mud-input-adornment-icon").Attributes.GetNamedItem("aria-label")!.Value.Should().Be(ariaLabel);
+            comp.Find(".mud-input-adornment-icon-button").Attributes.GetNamedItem("aria-label")!.Value.Should().Be(ariaLabel);
         }
 
 #nullable enable
