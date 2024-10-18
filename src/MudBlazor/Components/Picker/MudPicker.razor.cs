@@ -314,16 +314,6 @@ namespace MudBlazor
         public Orientation Orientation { get; set; } = Orientation.Portrait;
 
         /// <summary>
-        /// The size of the icon in the input field.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Size.Medium"/>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Appearance)]
-        public Size IconSize { get; set; } = Size.Medium;
-
-        /// <summary>
         /// The color of the toolbar, selected, and active values.
         /// </summary>
         /// <remarks>

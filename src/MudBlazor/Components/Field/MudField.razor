@@ -8,14 +8,14 @@
         <div class="@Classname">
             @if (Adornment == Adornment.Start)
             {
-                <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentClick" Color="@AdornmentColor" />
+                <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Text="@AdornmentText" AdornmentClick="@OnAdornmentClick" Color="@AdornmentColor" />
             }
             <div class="@InnerClassname">
                 @ChildContent
             </div>
             @if (Adornment == Adornment.End)
             {
-                <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick"  Color="@AdornmentColor" />
+                <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Text="@AdornmentText" AdornmentClick="@OnAdornmentClick"  Color="@AdornmentColor" />
             }
             @if (Variant == Variant.Outlined)
             {

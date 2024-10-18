@@ -11,9 +11,7 @@
         <MudInputAdornment Class="@AdornmentClassname"
                 Icon="@AdornmentIcon"
                 Color="@AdornmentColor"
-                Size="@IconSize"
                 Text="@AdornmentText"
-                Edge="@Edge.Start"
                 AdornmentClick="@OnAdornmentClick"
                 AriaLabel="@AdornmentAriaLabel"
         />
@@ -108,7 +106,7 @@
 
     @if (GetClearable() && !GetDisabledState())
     {
-        <MudIconButton Class="@ClearButtonClassname"
+        <MudIconButton Class="mud-input-clear-button"
                     Color="@Color.Default"
                     Icon="@ClearIcon"
                     Size="@Size.Small"
@@ -123,9 +121,7 @@
         <MudInputAdornment Class="@AdornmentClassname"
                 Icon="@AdornmentIcon"
                 Color="@AdornmentColor"
-                Size="@IconSize"
                 Text="@AdornmentText"
-                Edge="@Edge.End"
                 AdornmentClick="@OnAdornmentClick"
                 AriaLabel="@AdornmentAriaLabel"
         />
