@@ -1,6 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 @typeparam T
+@using MudBlazor.Resources
 @inject InternalMudLocalizer Localizer
 
 <MudToolBar @attributes="UserAttributes" Class="@Classname" Style="@Style">
@@ -35,10 +36,10 @@
     @if (ShowNavigation)
     {
         <div class="mud-table-pagination-actions">
-            <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.FirstPage" Disabled="@BackButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.First))" />
-            <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.NavigateBefore" Disabled="@BackButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.Previous))" />
-            <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.NavigateNext" Disabled="@ForwardButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.Next))" />
-            <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.LastPage" Disabled="@ForwardButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.Last))" />
+            <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.FirstPage" Disabled="@BackButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.First))" aria-label="@Localizer[LanguageResource.MudDataGridPager_FirstPage]" />
+            <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.NavigateBefore" Disabled="@BackButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.Previous))" aria-label="@Localizer[LanguageResource.MudDataGridPager_PreviousPage]" />
+            <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.NavigateNext" Disabled="@ForwardButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.Next))" aria-label="@Localizer[LanguageResource.MudDataGridPager_NextPage]" />
+            <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.LastPage" Disabled="@ForwardButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.Last))" aria-label="@Localizer[LanguageResource.MudDataGridPager_LastPage]" />
         </div>
     }
 
