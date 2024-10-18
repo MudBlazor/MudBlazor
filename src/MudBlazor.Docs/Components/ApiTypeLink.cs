@@ -18,17 +18,44 @@ namespace MudBlazor.Docs.Components;
 /// </summary>
 public class ApiTypeLink : ComponentBase
 {
+    private DocumentedType? _type;
+    private string? _typeName;
+
     /// <summary>
     /// The type to link.
     /// </summary>
     [Parameter]
-    public DocumentedType? Type { get; set; }
+    public DocumentedType? Type
+    {
+        get => _type;
+        set
+        {
+            if (_type != value)
+            {
+                _type = value;
+                _typeName = _type?.Name;
+                StateHasChanged();
+            }
+        }
+    }
 
     /// <summary>
     /// The name of the type to link.
     /// </summary>
     [Parameter]
-    public string? TypeName { get; set; }
+    public string? TypeName
+    {
+        get => _typeName;
+        set
+        {
+            if (_typeName != value)
+            {
+                _typeName = value;
+                _type = ApiDocumentation.GetType(_typeName);
+                StateHasChanged();
+            }
+        }
+    }
 
     /// <summary>
     /// The name of the type to display.
@@ -41,16 +68,6 @@ public class ApiTypeLink : ComponentBase
     /// </summary>
     [Parameter]
     public bool ShowTooltip { get; set; } = true;
-
-    protected override void OnParametersSet()
-    {
-        if (Type == null || (TypeName != null && Type.Name.Equals(TypeName, StringComparison.OrdinalIgnoreCase)))
-        {
-            Type = ApiDocumentation.GetType(TypeName);
-        }
-    }
-
-    protected override bool ShouldRender() => !string.IsNullOrEmpty(TypeName) || Type != null;
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {

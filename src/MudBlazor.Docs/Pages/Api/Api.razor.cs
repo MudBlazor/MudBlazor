@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Docs.Components;
 using MudBlazor.Docs.Models;
 
 namespace MudBlazor.Docs.Pages.Api;
@@ -28,19 +29,25 @@ public partial class Api
     /// <summary>
     /// Shows the inheritance hierarchy.
     /// </summary>
-    public static bool ShowInheritance => false;
+    public static bool ShowInheritance => true;
 
     /// <summary>
     /// The type being displayed.
     /// </summary>
     public DocumentedType? DocumentedType { get; set; }
 
+    public DocsPage? Page { get; set; }
+
     protected override void OnParametersSet()
     {
         if (DocumentedType == null || DocumentedType.Name != TypeName)
         {
             DocumentedType = ApiDocumentation.GetType(TypeName);
-            if (DocumentedType.IsComponent)
+            if (DocumentedType == null)
+            {
+                Title = TypeName + " Not Found";
+            }
+            else if (DocumentedType.IsComponent)
             {
                 Title = DocumentedType.NameFriendly + " Component";
             }

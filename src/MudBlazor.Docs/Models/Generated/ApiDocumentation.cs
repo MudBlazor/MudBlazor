@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -31,7 +32,7 @@ public static partial class ApiDocumentation
     /// <summary>
     /// The generated documentation for properties.
     /// </summary>
-    public static Dictionary<string, DocumentedProperty> Properties { get; private set; } = [];
+    public static Dictionary<string, DocumentedProperty> Properties { get; private set; }
 
     /// <summary>
     /// The generated documentation for methods.
