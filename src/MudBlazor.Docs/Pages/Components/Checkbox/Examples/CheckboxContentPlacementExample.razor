@@ -1,0 +1,24 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" md="1">
+        <MudRadioGroup @bind-Value="Placement">
+            <MudStack AlignItems="AlignItems.Start" Justify="Justify.FlexStart">
+                <MudRadio Color="Color.Primary" Value="@(Placement.Top)">Top</MudRadio>
+                <MudRadio Color="Color.Primary" Value="@(Placement.Bottom)">Bottom</MudRadio>
+                <MudRadio Color="Color.Primary" Value="@(Placement.Start)">Start</MudRadio>
+                <MudRadio Color="Color.Primary" Value="@(Placement.End)">End</MudRadio>
+                <MudRadio Color="Color.Primary" Value="@(Placement.Left)">Left</MudRadio>
+                <MudRadio Color="Color.Primary" Value="@(Placement.Right)">Right</MudRadio>
+            </MudStack>
+        </MudRadioGroup>
+    </MudItem>
+    <MudItem xs="12" md="9" Class="d-flex justify-center align-center my-auto">
+        <MudCheckBox T="string" Label="Test" LabelPlacement="@Placement" Color="Color.Secondary" />
+    </MudItem>
+    <MudItem xs="12" md="2" Style="width:100%"></MudItem>
+</MudGrid>
+
+@code {
+    public Placement Placement { get; set; } = Placement.Right;
+}
