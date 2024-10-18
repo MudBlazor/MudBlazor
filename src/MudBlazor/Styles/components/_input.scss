@@ -498,7 +498,7 @@
   visibility: visible;
 }
 
-.mud-input-adornment--no-interaction > button {
+.mud-input-adornment--non-interactable > .mud-input-adornment-icon-button {
   background-color: rgba(0, 0, 0, 0);
   cursor: default;
   pointer-events: none;
