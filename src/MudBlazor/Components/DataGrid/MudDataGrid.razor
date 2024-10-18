@@ -122,7 +122,7 @@
                                                         <MudSpacer />
 
                                                         <div>
-                                                            <MudIconButton Ripple="false" Icon="@context.SortIcon" Class="@context.HeaderCell.sortIconClass" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Sort] Disabled="!context.sortable" OnClick="@(e => context?.HeaderCell.SortChangedAsync(e))"></MudIconButton>
+                                                            <MudIconButton Ripple="false" Icon="@context.SortIcon" Class="@context.HeaderCell.sortIconClass" Variant="FilterVariant" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Sort] Disabled="!context.sortable" OnClick="@(e => context?.HeaderCell.SortChangedAsync(e))"></MudIconButton>
                                                             @if (context.DataGrid.SortMode == SortMode.Multiple)
                                                             {
                                                                 if (context.SortIndex < 0)
