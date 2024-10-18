@@ -15,6 +15,10 @@ namespace MudBlazor
     {
         public MudBooleanInput() : base(new BoolConverter<T?>()) { }
 
+        protected virtual string? Classname { get; set; }
+        protected virtual string? LabelClassname { get; set; }
+        protected virtual string? IconClassname { get; set; }
+
         /// <summary>
         /// Prevents the user from interacting with this input.
         /// </summary>
@@ -69,6 +73,48 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool StopClickPropagation { get; set; } = true;
+
+        [CascadingParameter(Name = "RightToLeft")]
+        public bool RightToLeft { get; set; }
+
+        /// <summary>
+        /// The location of the label relative to the input icon.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Placement LabelPlacement { get; set; } = Placement.End;
+
+        /// <summary>
+        /// The text/label will be displayed next to the switch if set.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string? Label { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool Ripple { get; set; } = true;
+
+        /// <summary>
+        /// The Size of the component.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Size Size { get; set; } = Size.Medium;
+
+        /// <summary>
+        /// The color of the component. It supports the theme colors.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Color Color { get; set; } = Color.Default;
+
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// Occurs when the <see cref="Value"/> has changed.
@@ -125,6 +171,16 @@ namespace MudBlazor
         protected override bool HasValue(T? value)
         {
             return BoolValue == true;
+        }
+
+        protected Placement ConvertPlacement(Placement placement)
+        {
+            return placement switch
+            {
+                Placement.Left => Placement.Start,
+                Placement.Right => Placement.End,
+                _ => placement
+            };
         }
     }
 }

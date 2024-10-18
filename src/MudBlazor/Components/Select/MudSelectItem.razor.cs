@@ -7,7 +7,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents an option of a select or multi-select. To be used inside MudSelect.
     /// </summary>
-    public partial class MudSelectItem<T> : MudBaseSelectItem, IDisposable
+    public partial class MudSelectItem<T> : MudComponentBase, IDisposable
     {
         private IMudSelect? _parent;
         private IMudShadowSelect? _shadowParent;
@@ -84,17 +84,23 @@ namespace MudBlazor
         public T? Value { get; set; }
 
         /// <summary>
+        /// Prevents the user from interacting with this item.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.General.Behavior)]
+        public bool Disabled { get; set; }
+
+        /// <summary>
+        /// The content within this item.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.General.Behavior)]
+        public RenderFragment? ChildContent { get; set; }
+
+        /// <summary>
         /// Mirrors the MultiSelection status of the parent select
         /// </summary>
-        protected bool MultiSelection
-        {
-            get
-            {
-                if (MudSelect == null)
-                    return false;
-                return MudSelect.MultiSelection;
-            }
-        }
+        protected bool MultiSelection => MudSelect is { MultiSelection: true };
 
         /// <summary>
         /// Selected state of the option. Only works if the parent is a mulit-select
@@ -125,13 +131,16 @@ namespace MudBlazor
             }
         }
 
-        private void OnClicked()
+        private Task OnClickHandleAsync()
         {
             if (MultiSelection)
+            {
                 Selected = !Selected;
+            }
 
             MudSelect?.SelectOption(Value);
-            InvokeAsync(StateHasChanged);
+
+            return InvokeAsync(StateHasChanged);
         }
 
         public void Dispose()
