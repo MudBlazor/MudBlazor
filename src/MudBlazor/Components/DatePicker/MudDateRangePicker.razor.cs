@@ -63,6 +63,13 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<DateRange> DateRangeChanged { get; set; }
 
+
+        /// <summary>
+        /// Occurs when startdate is clicked is clicked.
+        /// </summary>
+        [Parameter]
+        public EventCallback<DateTime> StartDateClicked { get; set; }
+
         /// <summary>
         /// The currently selected date range.
         /// </summary>
@@ -295,6 +302,7 @@ namespace MudBlazor
             {
                 _secondDate = null;
                 _firstDate = dateTime;
+                await StartDateClicked.InvokeAsync(dateTime);
                 return;
             }
 
