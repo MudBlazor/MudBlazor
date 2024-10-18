@@ -2,8 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Diagnostics;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using MudBlazor.Docs.Extensions;
@@ -69,6 +67,12 @@ public class ApiTypeLink : ComponentBase
     [Parameter]
     public bool ShowTooltip { get; set; } = true;
 
+    /// <summary>
+    /// The size of the text.
+    /// </summary>
+    [Parameter]
+    public Typo Typo { get; set; } = Typo.caption;
+
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         // Is there a linkable type?
@@ -102,7 +106,14 @@ public class ApiTypeLink : ComponentBase
                     // Is this a linkable type?
                     if (!TypeName.Contains("[["))
                     {
-                        builder.AddMudLink(0, $"https://learn.microsoft.com/dotnet/api/{TypeName}", TypeFriendlyName, "docs-link docs-code docs-code-primary", "_external");
+                        builder.AddMudTooltip(0, Placement.Top, $"External Link: https://learn.microsoft.com/dotnet/api/{TypeName}", (tooltipSequence, tooltipBuilder) =>
+                        {
+                            tooltipBuilder.AddMudLink(tooltipSequence, $"https://learn.microsoft.com/dotnet/api/{TypeName}", TypeFriendlyName, Typo, "docs-link docs-code docs-code-primary", "_external", (linkSequence, linkBuilder) =>
+                            {
+                                linkBuilder.AddMudIcon(linkSequence++, "MudBlazor.Icons.Material.Filled.Link", Color.Default, Size.Small);
+                                linkBuilder.AddContent(linkSequence++, TypeFriendlyName);
+                            });
+                        });
                     }
                     else
                     {

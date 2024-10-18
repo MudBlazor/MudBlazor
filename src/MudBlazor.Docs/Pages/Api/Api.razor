@@ -2,7 +2,7 @@
 @using MudBlazor.Docs.Components
 @namespace MudBlazor.Docs.Pages.Api
 
-<DocsPage @ref="Page">
+<DocsPage>
     @if (DocumentedType != null)
     {
         <ApiBreadcrumbs Type="@DocumentedType" />
@@ -12,13 +12,14 @@
 
             @if (DocumentedType.Summary != null)
             {
-                <ApiText Text="@DocumentedType.Summary" />
+                <ApiText Typo="Typo.subtitle1" Text="@DocumentedType.Summary" />
             }
 
             @if (DocumentedType.IsComponent)
             {
                 <MudAlert Severity="Severity.Info" Class="mt-6">
-                    For examples and details on the usage of this component, visit the example page: <MudLink Href="@DocumentedType.ComponentUrl" Typo="Typo.inherit">@DocumentedType.NameFriendly</MudLink>
+                    For examples and details on the usage of this component, visit the example page: <br />
+                    <MudLink Href="@DocumentedType.ComponentUrl" Typo="Typo.inherit">@(ComponentName ?? DocumentedType.NameFriendly)</MudLink>
                 </MudAlert>
             }
 

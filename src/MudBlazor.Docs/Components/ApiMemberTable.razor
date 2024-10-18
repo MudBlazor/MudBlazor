@@ -3,11 +3,7 @@
           AllowUnsorted="false" GroupBy="@CurrentGroups">
     <ColGroup>
         <col />
-        <col />
-        @if (Mode == ApiMemberTableMode.Methods)
-        {
-            <col />
-        }
+        <col />      
         <col />
     </ColGroup>
     <GroupHeaderTemplate>
@@ -25,10 +21,6 @@
         }
     </GroupHeaderTemplate>
     <HeaderContent>
-        @if ((Mode == ApiMemberTableMode.Properties || Mode == ApiMemberTableMode.Events) && (ShowParameters || ShowBindable))
-        {
-            <MudTh></MudTh>
-        }
         <MudTh><MudTableSortLabel T="DocumentedMember" SortLabel="Name" InitialDirection="SortDirection.Ascending">Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel T="DocumentedMember" SortLabel="Type">Type</MudTableSortLabel></MudTh>
         <MudTh>Description</MudTh>
@@ -47,7 +39,7 @@
             </MudItem>
         </MudGrid>
     </ToolBarContent>
-    <RowTemplate>
+    <RowTemplate>        
         <MudTd id="@context.Name" DataLabel="Name">
             @if (Mode == ApiMemberTableMode.Methods)
             {
@@ -91,11 +83,7 @@
             else
             {
                 <CodeInline>@context.Name</CodeInline>
-            }
-            @if (Mode == ApiMemberTableMode.Methods && ((DocumentedMethod)context).Parameters.Count > 0)
-            {
-
-            }
+            }          
             @if (Mode == ApiMemberTableMode.Properties)
             {
                 var property = context as DocumentedProperty;
