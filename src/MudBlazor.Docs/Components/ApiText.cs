@@ -2,17 +2,12 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Models;
-using MudBlazor.State;
 
 namespace MudBlazor.Docs.Components;
 
@@ -29,6 +24,12 @@ public partial class ApiText : ComponentBase
     [Parameter]
     [EditorRequired]
     public string Text { get; set; } = "";
+
+    /// <summary>
+    /// The size of the text.
+    /// </summary>
+    [Parameter]
+    public Typo Typo { get; set; } = Typo.caption;
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
@@ -58,25 +59,62 @@ public partial class ApiText : ComponentBase
                                     var linkRef = link.Substring(2);
                                     if (linkType == "T") // Type
                                     {
-                                        // Add a link to the type
-                                        builder.OpenComponent<ApiTypeLink>(sequence++);
-                                        builder.AddComponentParameter(sequence++, "TypeName", linkRef);
-                                        builder.CloseComponent();
+                                        // Is this an external type?
+                                        if (linkRef != null && (linkRef.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase) || linkRef.StartsWith("System", StringComparison.OrdinalIgnoreCase)))
+                                        {
+                                            // Get the class name and member name
+                                            var parts = linkRef.Split(".");
+                                            var className = parts[parts.Length - 1].Replace("`1", "<T>").Replace("`2", "<T, U>");
+                                            // Calculate the Microsoft Docs link
+                                            var msLink = linkRef.Replace("`1", "-1").Replace("`2", "-2").ToLowerInvariant();
+                                            builder.AddMudTooltip(sequence++, Placement.Top, $"External Link: {msLink}", (tooltipSequence, tooltipBuilder) =>
+                                            {
+                                                tooltipBuilder.AddMudLink(tooltipSequence++, $"https://learn.microsoft.com/dotnet/api/{msLink}", className, Typo, "docs-link docs-code docs-code-primary", "_external", (linkSequence, linkBuilder) =>
+                                                {
+                                                    linkBuilder.AddMudIcon(linkSequence++, "MudBlazor.Icons.Material.Filled.Link", Color.Default, Size.Small);
+                                                    linkBuilder.AddContent(linkSequence++, className);
+                                                });
+                                            });
+                                        }
+                                        else
+                                        {
+                                            // Add a link to the type
+                                            builder.OpenComponent<ApiTypeLink>(sequence++);
+                                            builder.AddComponentParameter(sequence++, "TypeName", linkRef);
+                                            builder.AddComponentParameter(sequence++, "Typo", Typo);
+                                            builder.CloseComponent();
+                                        }
                                     }
                                     else // Property, Method, Field, or Event
                                     {
                                         var member = ApiDocumentation.GetMember(linkRef);
                                         if (member != null)
                                         {
-                                            builder.AddDocumentedMemberLink(sequence++, member);
+                                            builder.AddDocumentedMemberLink(sequence++, member, Typo);
                                         }
                                         else if (linkRef.StartsWith("MudBlazor.Icons"))
                                         {
-                                            builder.AddMudIcon(sequence++, linkRef, Color.Primary, Size.Medium);
+                                            builder.AddMudTooltip(sequence++, Placement.Top, linkRef.Replace("MudBlazor.", ""), (childSequence, childBuilder) =>
+                                            {
+                                                childBuilder.AddMudIcon(childSequence++, linkRef, Color.Primary, Size.Medium);
+                                            });
                                         }
                                         else if (linkRef != null && (linkRef.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase) || linkRef.StartsWith("System", StringComparison.OrdinalIgnoreCase)))
                                         {
-                                            builder.AddMudLink(0, $"https://learn.microsoft.com/dotnet/api/{linkRef}", linkRef, "docs-link docs-code docs-code-primary", "_external");
+                                            // Get the class name and member name
+                                            var parts = linkRef.Split(".");
+                                            var className = parts[parts.Length - 2].Replace("`1", "<T>").Replace("`2", "<T, U>");
+                                            var memberName = parts[parts.Length - 1];
+                                            // Calculate the Microsoft Docs link
+                                            var msLink = linkRef.Replace("`1", "-1").Replace("`2", "-2").ToLowerInvariant();
+                                            builder.AddMudTooltip(sequence++, Placement.Top, $"External Link: https://learn.microsoft.com/dotnet/api/{msLink}", (tooltipSequence, tooltipBuilder) =>
+                                            {
+                                                tooltipBuilder.AddMudLink(tooltipSequence++, $"https://learn.microsoft.com/dotnet/api/{msLink}", className + "." + memberName, Typo, "docs-link docs-code docs-code-primary", "_external", (linkSequence, linkBuilder) =>
+                                                {
+                                                    linkBuilder.AddMudIcon(linkSequence++, "MudBlazor.Icons.Material.Filled.Link", Color.Default, Size.Small);
+                                                    linkBuilder.AddContent(linkSequence++, className + "." + memberName);
+                                                });
+                                            });
                                         }
                                         else
                                         {
@@ -85,16 +123,48 @@ public partial class ApiText : ComponentBase
                                     }
                                     break;
                                 case "href":
-                                    builder.AddMudLink(sequence++, link, link, "docs-link docs-code docs-code-primary", "_external");
+                                    if (reader.IsEmptyElement)
+                                    {
+                                        builder.AddMudTooltip(sequence++, Placement.Top, $"External Link: {link}", (tooltipSequence, tooltipBuilder) =>
+                                        {
+                                            tooltipBuilder.AddMudLink(tooltipSequence++, link, link, Typo, "docs-link docs-code docs-code-primary", "_external", (linkSequence, linkBuilder) =>
+                                            {
+                                                linkBuilder.AddMudIcon(linkSequence++, "MudBlazor.Icons.Material.Filled.Link", Color.Default, Size.Small);
+                                                linkBuilder.AddContent(linkSequence++, link);
+                                            });
+                                        });
+                                    }
+                                    else
+                                    {
+                                        // Move to the link content
+                                        reader.Read();
+                                        var text = string.IsNullOrEmpty(reader.Value) ? link : reader.Value;
+                                        builder.AddMudTooltip(sequence++, Placement.Top, $"External Link: {link}", (tooltipSequence, tooltipBuilder) =>
+                                        {
+                                            tooltipBuilder.AddMudLink(tooltipSequence++, link, text, Typo, "docs-link docs-code docs-code-primary", "_external", (linkSequence, linkBuilder) =>
+                                            {
+                                                linkBuilder.AddMudIcon(linkSequence++, "MudBlazor.Icons.Material.Filled.Link", Color.Default, Size.Small);
+                                                linkBuilder.AddContent(linkSequence++, text);
+                                            });
+                                        });
+                                    }
                                     break;
                             }
                             break;
                         case "c": // Constant
                             builder.OpenElement(sequence++, "code");
                             builder.AddAttribute(sequence++, "class", "docs-code docs-code-primary");
+                            if (reader.IsEmptyElement)
+                            {
+                                builder.CloseElement();
+                            }
                             break;
                         case "para": // Paragraph
                             builder.OpenElement(sequence++, "p");
+                            if (reader.IsEmptyElement)
+                            {
+                                builder.CloseElement();
+                            }
                             break;
                     }
 
@@ -114,11 +184,9 @@ public partial class ApiText : ComponentBase
                     break;
                 case XmlNodeType.Text:
                     // <MudText Typo="Typo.caption">{value}</MudText>
-                    builder.AddMudText(sequence++, Typo.caption, reader.Value);
+                    builder.AddMudText(sequence++, Typo, reader.Value);
                     break;
             }
         }
     }
-
-    protected override bool ShouldRender() => !string.IsNullOrEmpty(Text);
 }
