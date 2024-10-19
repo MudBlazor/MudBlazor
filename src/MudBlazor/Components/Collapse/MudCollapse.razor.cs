@@ -10,13 +10,13 @@ namespace MudBlazor
     /// </summary>
     public partial class MudCollapse : MudComponentBase
     {
-        internal enum CollapseState
+        private enum CollapseState
         {
             Entering, Entered, Exiting, Exited
         }
 
         private readonly ParameterState<bool> _expandedState;
-        internal CollapseState _state = CollapseState.Exited;
+        private CollapseState _state = CollapseState.Exited;
 
         protected string Classname => new CssBuilder("mud-collapse-container")
             .AddClass($"mud-collapse-entering", _state == CollapseState.Entering)
