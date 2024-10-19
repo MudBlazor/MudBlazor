@@ -410,10 +410,10 @@ namespace MudBlazor.UnitTests.Components
             .Add(x => x.Clearable, true)
             .Add(x => x.ReadOnly, false));
 
-            comp.FindAll(".mud-input-clear-button").Count.Should().Be(1);
+            comp.FindAll(".mud-input-clear button").Count.Should().Be(1);
 
             comp.SetParametersAndRender(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
-            comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
+            comp.FindAll(".mud-input-clear button").Count.Should().Be(0);
         }
 
         /// <summary>
@@ -516,21 +516,21 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<AutocompleteTestClearable>();
 
             // No button when initialized empty
-            comp.WaitForAssertion(() => comp.FindAll(".mud-input-clear-button").Should().BeEmpty());
+            comp.WaitForAssertion(() => comp.FindAll(".mud-input-clear button").Should().BeEmpty());
 
             // Button shows after entering text
             comp.Find("input").Input("text");
-            comp.WaitForAssertion(() => comp.Find(".mud-input-clear-button").Should().NotBeNull());
+            comp.WaitForAssertion(() => comp.Find(".mud-input-clear button").Should().NotBeNull());
             // Text cleared and button removed after clicking clear button
-            comp.Find(".mud-input-clear-button").Click();
-            comp.WaitForAssertion(() => comp.FindAll(".mud-input-clear-button").Should().BeEmpty());
+            comp.Find(".mud-input-clear button").Click();
+            comp.WaitForAssertion(() => comp.FindAll(".mud-input-clear button").Should().BeEmpty());
 
             // Button shows again after entering text
             comp.Find("input").Input("text");
-            comp.WaitForAssertion(() => comp.Find(".mud-input-clear-button").Should().NotBeNull());
+            comp.WaitForAssertion(() => comp.Find(".mud-input-clear button").Should().NotBeNull());
             // Button removed after clearing text
             comp.Find("input").Input(string.Empty);
-            comp.WaitForAssertion(() => comp.FindAll(".mud-input-clear-button").Should().BeEmpty());
+            comp.WaitForAssertion(() => comp.FindAll(".mud-input-clear button").Should().BeEmpty());
         }
 
         [Test]

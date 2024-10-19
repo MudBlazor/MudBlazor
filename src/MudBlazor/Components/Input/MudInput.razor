@@ -106,7 +106,7 @@
 
     @if (GetClearable() && !GetDisabledState())
     {
-        <MudInputAdornment Class="mud-input-clear-button"
+        <MudInputAdornment Class="mud-input-clear"
                            Icon="@ClearIcon"
                            AdornmentClick="@ClearButtonClickHandlerAsync"
                            AriaLabel="@Localizer[LanguageResource.MudInput_Clear]" />
@@ -115,12 +115,11 @@
     @if (Adornment == Adornment.End)
     {
         <MudInputAdornment Class="@AdornmentClassname"
-                Icon="@AdornmentIcon"
-                Color="@AdornmentColor"
-                Text="@AdornmentText"
-                AdornmentClick="@OnAdornmentClick"
-                AriaLabel="@AdornmentAriaLabel"
-        />
+                           Icon="@AdornmentIcon"
+                           Color="@AdornmentColor"
+                           Text="@AdornmentText"
+                           AdornmentClick="@OnAdornmentClick"
+                           AriaLabel="@AdornmentAriaLabel" />
     }
 
     @if (Variant == Variant.Outlined)
