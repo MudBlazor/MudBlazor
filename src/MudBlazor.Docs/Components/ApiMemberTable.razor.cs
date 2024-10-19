@@ -104,41 +104,41 @@ public partial class ApiMemberTable
             // Order by the column
             members = state.SortLabel switch
             {
-                "Description" => state.SortDirection == SortDirection.Ascending ? members.OrderBy(property => property.Summary) : members.OrderByDescending(property => property.Summary),
-                "Name" => state.SortDirection == SortDirection.Ascending ? members.OrderBy(property => property.Name) : members.OrderByDescending(property => property.Name),
-                "Return Type" => state.SortDirection == SortDirection.Ascending ? members.OrderBy(property => property.TypeFriendlyName) : members.OrderByDescending(property => property.TypeFriendlyName),
-                "Type" => state.SortDirection == SortDirection.Ascending ? members.OrderBy(property => property.TypeFriendlyName) : members.OrderByDescending(property => property.TypeFriendlyName),
-                _ => state.SortDirection == SortDirection.Ascending ? members.OrderBy(property => property.Name) : members.OrderByDescending(property => property.Name),
+                "Description" => state.SortDirection == SortDirection.Ascending ? members.OrderBy(member => member.Summary) : members.OrderByDescending(member => member.Summary),
+                "Name" => state.SortDirection == SortDirection.Ascending ? members.OrderBy(member => member.Name) : members.OrderByDescending(member => member.Name),
+                "Return Type" => state.SortDirection == SortDirection.Ascending ? members.OrderBy(member => member.TypeFriendlyName) : members.OrderByDescending(member => member.TypeFriendlyName),
+                "Type" => state.SortDirection == SortDirection.Ascending ? members.OrderBy(member => member.TypeFriendlyName) : members.OrderByDescending(member => member.TypeFriendlyName),
+                _ => state.SortDirection == SortDirection.Ascending ? members.OrderBy(member => member.Name) : members.OrderByDescending(member => member.Name),
             };
         }
         else if (Grouping == ApiMemberGrouping.Categories)
         {
             // Sort by category
-            var orderedMembers = members.OrderBy(property => property.Order).ThenBy(property => property.Category);
+            var orderedMembers = members.OrderBy(member => member.Order).ThenBy(member => member.Category);
 
             // ... then by sort column
             members = state.SortLabel switch
             {
-                "Description" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(property => property.Summary) : orderedMembers.ThenByDescending(property => property.Summary),
-                "Name" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(property => property.Name) : orderedMembers.ThenByDescending(property => property.Name),
-                "Return Type" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(property => property.TypeFriendlyName) : orderedMembers.ThenByDescending(property => property.TypeFriendlyName),
-                "Type" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(property => property.TypeFriendlyName) : orderedMembers.ThenByDescending(property => property.TypeFriendlyName),
-                _ => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(property => property.Name) : orderedMembers.ThenByDescending(property => property.Name),
+                "Description" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(member => member.Summary) : orderedMembers.ThenByDescending(member => member.Summary),
+                "Name" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(member => member.Name) : orderedMembers.ThenByDescending(member => member.Name),
+                "Return Type" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(member => member.TypeFriendlyName) : orderedMembers.ThenByDescending(member => member.TypeFriendlyName),
+                "Type" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(member => member.TypeFriendlyName) : orderedMembers.ThenByDescending(member => member.TypeFriendlyName),
+                _ => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(member => member.Name) : orderedMembers.ThenByDescending(member => member.Name),
             };
         }
         else if (Grouping == ApiMemberGrouping.Inheritance)
         {
             // Sort by declaring type
-            var orderedMembers = members.OrderBy(property => property.DeclaringType!.NameFriendly);
+            var orderedMembers = members.OrderBy(member => GetInheritanceLevel(member.DeclaringType)).ThenBy(member => member.DeclaringType!.NameFriendly);
 
             // ... then by sort column
             members = state.SortLabel switch
             {
-                "Description" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(property => property.Summary) : orderedMembers.ThenByDescending(property => property.Summary),
-                "Name" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(property => property.Name) : orderedMembers.ThenByDescending(property => property.Name),
-                "Return Type" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(property => property.TypeFriendlyName) : orderedMembers.ThenByDescending(property => property.TypeFriendlyName),
-                "Type" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(property => property.TypeFriendlyName) : orderedMembers.ThenByDescending(property => property.TypeFriendlyName),
-                _ => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(property => property.Name) : orderedMembers.ThenByDescending(property => property.Name),
+                "Description" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(member => member.Summary) : orderedMembers.ThenByDescending(member => member.Summary),
+                "Name" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(member => member.Name) : orderedMembers.ThenByDescending(member => member.Name),
+                "Return Type" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(member => member.TypeFriendlyName) : orderedMembers.ThenByDescending(member => member.TypeFriendlyName),
+                "Type" => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(member => member.TypeFriendlyName) : orderedMembers.ThenByDescending(member => member.TypeFriendlyName),
+                _ => state.SortDirection == SortDirection.Ascending ? orderedMembers.ThenBy(member => member.Name) : orderedMembers.ThenByDescending(member => member.Name),
             };
         }
 
@@ -181,6 +181,38 @@ public partial class ApiMemberTable
         => Grouping == grouping ? Variant.Filled : Variant.Outlined;
 
     /// <summary>
+    /// Gets the depth of the specified type relative to this type.
+    /// </summary>
+    /// <param name="otherType">The type to compare.</param>
+    /// <returns>The depth of the specified class relative to this class.</returns>
+    public int GetInheritanceLevel(DocumentedType? otherType)
+    {
+        // Is no type specified?  If so, we can't do anything
+        if (otherType == null) return 0;
+
+        // Is the other type the same as this?
+        if (otherType == this.Type) return 0;
+
+        // Walk down to the base class
+        var baseType = this.Type?.BaseType;
+        var level = 1;
+
+        // Are we at the specified type?
+        while (baseType != otherType)
+        {
+            // No, go one level deeper
+            level++;
+            baseType = baseType!.BaseType;
+            // Prevent infinite loops just in case
+            if (baseType == null)
+            {
+                break;
+            }
+        }
+        return level;
+    }
+
+    /// <summary>
     /// The current groups.
     /// </summary>
     public TableGroupDefinition<DocumentedMember>? CurrentGroups
@@ -190,7 +222,7 @@ public partial class ApiMemberTable
             return Grouping switch
             {
                 ApiMemberGrouping.Categories => new() { Selector = (property) => property.Category ?? "" },
-                ApiMemberGrouping.Inheritance => new() { Selector = (property) => property.DeclaringType?.NameFriendly ?? "" },
+                ApiMemberGrouping.Inheritance => new() { Selector = (property) => (property.DeclaringType is not null && property.DeclaringType == this.Type) ? property.DeclaringType?.NameFriendly ?? "" : $"Inherited from {property.DeclaringType?.NameFriendly}" },
                 _ => null
             };
         }
