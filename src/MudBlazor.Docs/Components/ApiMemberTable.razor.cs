@@ -222,7 +222,7 @@ public partial class ApiMemberTable
             return Grouping switch
             {
                 ApiMemberGrouping.Categories => new() { Selector = (property) => property.Category ?? "" },
-                ApiMemberGrouping.Inheritance => new() { Selector = (property) => (property.DeclaringType is not null && property.DeclaringType == this.Type) ? property.DeclaringType?.NameFriendly ?? "" : $"Inherited from {property.DeclaringType?.NameFriendly}" },
+                ApiMemberGrouping.Inheritance => new() { Selector = (property) => (property.DeclaringType is not null && property.DeclaringType == this.Type) ? "" : $"Inherited from {property.DeclaringType?.NameFriendly}" },
                 _ => null
             };
         }
