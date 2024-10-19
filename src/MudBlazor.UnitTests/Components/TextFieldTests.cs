@@ -416,14 +416,14 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TextFieldClearableTest>();
             var textField = comp.FindComponent<MudTextField<string>>();
             // No button when initialized
-            comp.FindAll("button").Should().BeEmpty();
+            comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
 
             // Button shows after entering text
             comp.Find("input").Change("text");
             textField.Instance.Value.Should().Be("text");
-            comp.Find("button").Should().NotBeNull();
+            comp.Find(".mud-input-clear-button").Should().NotBeNull();
             // Text cleared and button removed after clicking clear button
-            comp.Find("button").Click();
+            comp.Find(".mud-input-clear-button").Click();
             textField.Instance.Value.Should().BeNullOrEmpty();
             comp.FindAll("button").Should().BeEmpty();
             // Clear button click handler should have been invoked
@@ -432,10 +432,10 @@ namespace MudBlazor.UnitTests.Components
             // Button shows again after entering text
             comp.Find("input").Change("text");
             textField.Instance.Value.Should().Be("text");
-            comp.Find("button").Should().NotBeNull();
+            comp.Find(".mud-input-clear-button").Should().NotBeNull();
             // Button removed after clearing text by typing
             comp.Find("input").Change(string.Empty);
-            comp.FindAll("button").Should().BeEmpty();
+            comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
         }
 
         [Test]
@@ -447,7 +447,7 @@ namespace MudBlazor.UnitTests.Components
             );
 
             // Button should have tabindex -1
-            comp.Find("button").GetAttribute("tabindex").Should().Be("-1");
+            comp.Find(".mud-input-clear-button").GetAttribute("tabindex").Should().Be("-1");
         }
 
         #region ValidationAttribute support
@@ -1070,7 +1070,7 @@ namespace MudBlazor.UnitTests.Components
             // ensure text is updated on initialize
             textField.Text.Should().Be(comp.Instance.Date.Date.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
             // trigger the format change
-            comp.Find("button").Click();
+            comp.Find("#format-change-button").Click();
             // imitate "typing in progress" by extending the debounce interval until component re-renders
             var elapsedTime = 0;
             var currentText = comp.Instance.Date.Date.ToString(comp.Instance.Format, CultureInfo.InvariantCulture);
