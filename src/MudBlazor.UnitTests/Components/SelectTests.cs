@@ -660,7 +660,7 @@ namespace MudBlazor.UnitTests.Components
             var input = comp.Find("div.mud-input-control");
 
             // No button when initialized
-            comp.FindAll("button").Should().BeEmpty();
+            comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
 
             input.Click();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
@@ -669,11 +669,11 @@ namespace MudBlazor.UnitTests.Components
             items[1].Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("2"));
-            comp.Find("button").Should().NotBeNull();
+            comp.Find(".mud-input-clear-button").Should().NotBeNull();
             // Selection cleared and button removed after clicking clear button
-            comp.Find("button").Click();
+            comp.Find(".mud-input-clear-button").Click();
             comp.WaitForAssertion(() => select.Instance.Value.Should().BeNullOrEmpty());
-            comp.FindAll("button").Should().BeEmpty();
+            comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
             // Clear button click handler should have been invoked
             comp.Instance.ClearButtonClicked.Should().BeTrue();
         }
@@ -1073,7 +1073,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MultiSelectWithCustomComparerTest>();
             // print the generated html
             // Click select button
-            comp.Find("button").Click();
+            comp.Find("#set-selection-button").Click();
             // Check input text
             comp.Find("input").GetAttribute("value").Should().Be("Selected Cafe Latte, Selected Espresso");
             // Click to render the menu
