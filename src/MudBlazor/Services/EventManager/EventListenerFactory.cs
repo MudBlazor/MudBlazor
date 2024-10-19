@@ -7,15 +7,28 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor;
 
-public class EventListenerFactory : IEventListenerFactory
+#nullable enable
+/// <summary>
+/// Factory for creating instances of <see cref="IEventListener"/>.
+/// </summary>
+internal sealed class EventListenerFactory : IEventListenerFactory
 {
     private readonly IServiceProvider _provider;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EventListenerFactory"/> class.
+    /// </summary>
+    /// <param name="provider">The service provider used to resolve dependencies.</param>
     public EventListenerFactory(IServiceProvider provider)
     {
         _provider = provider;
     }
 
-    public IEventListener Create() =>
-        new EventListener(_provider.GetRequiredService<IJSRuntime>());
+    /// <inheritdoc />
+    public IEventListener Create()
+    {
+        var jsRuntime = _provider.GetRequiredService<IJSRuntime>();
+
+        return new EventListener(jsRuntime);
+    }
 }
