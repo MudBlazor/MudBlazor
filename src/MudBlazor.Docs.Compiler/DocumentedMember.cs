@@ -45,7 +45,7 @@ public abstract class DocumentedMember
     /// <summary>
     /// The order of this member relative to other members.
     /// </summary>
-    public int? Order { get; set; }
+    public int Order { get; set; } = int.MaxValue;
 
     /// <summary>
     /// The unique key for this member in dictionaries.

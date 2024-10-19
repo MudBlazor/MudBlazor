@@ -42,7 +42,7 @@ public abstract class DocumentedMember
     /// <summary>
     /// The order of this member relative to other members.
     /// </summary>
-    public int? Order { get; init; }
+    public int Order { get; init; } = int.MaxValue;
 
     /// <summary>
     /// The detailed description for this member, and any related information.

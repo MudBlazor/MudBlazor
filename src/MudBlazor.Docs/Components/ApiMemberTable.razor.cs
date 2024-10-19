@@ -114,7 +114,7 @@ public partial class ApiMemberTable
         else if (Grouping == ApiMemberGrouping.Categories)
         {
             // Sort by category
-            var orderedMembers = members.OrderBy(property => property.Category);
+            var orderedMembers = members.OrderBy(property => property.Order).ThenBy(property => property.Category);
 
             // ... then by sort column
             members = state.SortLabel switch
