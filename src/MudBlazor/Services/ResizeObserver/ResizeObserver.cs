@@ -59,16 +59,16 @@ namespace MudBlazor.Services
                 _cachedValueIds.Add(id, item);
             }
 
-            var result = await _jsRuntime.InvokeAsyncWithErrorHandling(Array.Empty<BoundingClientRect>(),
-                "mudResizeObserver.connect", _id, _dotNetRef, filteredElements, elementIds, _options);
+            var result = (await _jsRuntime.InvokeAsyncWithErrorHandling<BoundingClientRect[]?>(Array.Empty<BoundingClientRect>(),
+                "mudResizeObserver.connect", _id, _dotNetRef, filteredElements, elementIds, _options)).value ?? Array.Empty<BoundingClientRect>();
             var counter = 0;
-            foreach (var item in result.value)
+            foreach (var item in result)
             {
                 _cachedValues.Add(filteredElements.ElementAt(counter), item);
                 counter++;
             }
 
-            return result.value;
+            return result;
         }
 
         /// <inheritdoc />
