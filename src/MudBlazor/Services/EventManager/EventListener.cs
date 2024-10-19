@@ -51,23 +51,23 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        public async Task<Guid> Subscribe<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(string eventName, string elementId, string projectionName, int throotleInterval, Func<object, Task> callback)
+        public async Task<Guid> Subscribe<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(string eventName, string elementId, string projectionName, int throttleInterval, Func<object, Task> callback)
         {
             var (type, properties) = GetTypeInformation<T>();
             var key = RegisterCallBack(type, callback);
 
-            await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudThrottledEventManager.subscribe", eventName, elementId, projectionName, throotleInterval, key, properties, _dotNetRef);
+            await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudThrottledEventManager.subscribe", eventName, elementId, projectionName, throttleInterval, key, properties, _dotNetRef);
 
             return key;
         }
 
         /// <inheritdoc />
-        public async Task<Guid> SubscribeGlobal<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(string eventName, int throotleInterval, Func<object, Task> callback)
+        public async Task<Guid> SubscribeGlobal<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(string eventName, int throttleInterval, Func<object, Task> callback)
         {
             var typeInformation = GetTypeInformation<T>();
             var key = RegisterCallBack(typeInformation.Type, callback);
 
-            await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudThrottledEventManager.subscribeGlobal", eventName, throotleInterval, key, typeInformation.Properties, _dotNetRef);
+            await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudThrottledEventManager.subscribeGlobal", eventName, throttleInterval, key, typeInformation.Properties, _dotNetRef);
 
             return key;
         }
