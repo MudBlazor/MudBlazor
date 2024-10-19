@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor.Internal
+@using MudBlazor.Extensions
 
 <div class="@Classname">
     @if (!string.IsNullOrWhiteSpace(Text))
@@ -16,7 +17,7 @@
             <MudIconButton Class="mud-input-adornment-icon-button"
                            Icon="@Icon"
                            OnClick="@AdornmentClick"
-                           Edge="@Edge"
+                           Edge="@(Placement.ToEdge())"
                            Size="@Size"
                            Color="@Color"
                            aria-label="@AriaLabel"
