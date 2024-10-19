@@ -183,7 +183,7 @@ public partial class ApiMemberTable
     /// <summary>
     /// The current groups.
     /// </summary>
-    public TableGroupDefinition<DocumentedMember> CurrentGroups
+    public TableGroupDefinition<DocumentedMember>? CurrentGroups
     {
         get
         {
@@ -191,7 +191,7 @@ public partial class ApiMemberTable
             {
                 ApiMemberGrouping.Categories => new() { Selector = (property) => property.Category ?? "" },
                 ApiMemberGrouping.Inheritance => new() { Selector = (property) => property.DeclaringType?.NameFriendly ?? "" },
-                _ => new() { Selector = (property) => property.Category ?? "" }
+                _ => null
             };
         }
     }

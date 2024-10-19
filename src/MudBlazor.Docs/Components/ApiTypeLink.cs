@@ -106,12 +106,12 @@ public class ApiTypeLink : ComponentBase
                     // Is this a linkable type?
                     if (!TypeName.Contains("[["))
                     {
-                        builder.AddMudTooltip(0, Placement.Top, $"External Link: https://learn.microsoft.com/dotnet/api/{TypeName}", (tooltipSequence, tooltipBuilder) =>
+                        builder.AddMudLink(0, $"https://learn.microsoft.com/dotnet/api/{TypeName}", TypeFriendlyName, Typo, "docs-link docs-code docs-code-primary", "_external", (linkSequence, linkBuilder) =>
                         {
-                            tooltipBuilder.AddMudLink(tooltipSequence, $"https://learn.microsoft.com/dotnet/api/{TypeName}", TypeFriendlyName, Typo, "docs-link docs-code docs-code-primary", "_external", (linkSequence, linkBuilder) =>
+                            linkBuilder.AddContent(linkSequence++, TypeFriendlyName);
+                            linkBuilder.AddMudTooltip(linkSequence++, Placement.Top, $"External Link", (tooltipSequence, tooltipBuilder) =>
                             {
-                                linkBuilder.AddMudIcon(linkSequence++, "MudBlazor.Icons.Material.Filled.Link", Color.Default, Size.Small);
-                                linkBuilder.AddContent(linkSequence++, TypeFriendlyName);
+                                tooltipBuilder.AddMudIcon(tooltipSequence++, "MudBlazor.Icons.Material.Filled.Link", Color.Default, Size.Small);
                             });
                         });
                     }

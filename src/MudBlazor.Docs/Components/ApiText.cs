@@ -67,12 +67,12 @@ public partial class ApiText : ComponentBase
                                             var className = parts[parts.Length - 1].Replace("`1", "<T>").Replace("`2", "<T, U>");
                                             // Calculate the Microsoft Docs link
                                             var msLink = linkRef.Replace("`1", "-1").Replace("`2", "-2").ToLowerInvariant();
-                                            builder.AddMudTooltip(sequence++, Placement.Top, $"External Link: {msLink}", (tooltipSequence, tooltipBuilder) =>
+                                            builder.AddMudLink(sequence++, $"https://learn.microsoft.com/dotnet/api/{msLink}", className, Typo, "docs-link docs-code docs-code-primary", "_external", (linkSequence, linkBuilder) =>
                                             {
-                                                tooltipBuilder.AddMudLink(tooltipSequence++, $"https://learn.microsoft.com/dotnet/api/{msLink}", className, Typo, "docs-link docs-code docs-code-primary", "_external", (linkSequence, linkBuilder) =>
+                                                linkBuilder.AddContent(linkSequence++, className);
+                                                linkBuilder.AddMudTooltip(linkSequence++, Placement.Top, $"External Link", (tooltipSequence, tooltipBuilder) =>
                                                 {
-                                                    linkBuilder.AddMudIcon(linkSequence++, "MudBlazor.Icons.Material.Filled.Link", Color.Default, Size.Small);
-                                                    linkBuilder.AddContent(linkSequence++, className);
+                                                    tooltipBuilder.AddMudIcon(tooltipSequence++, "MudBlazor.Icons.Material.Filled.Link", Color.Default, Size.Small);
                                                 });
                                             });
                                         }
@@ -107,12 +107,12 @@ public partial class ApiText : ComponentBase
                                             var memberName = parts[parts.Length - 1];
                                             // Calculate the Microsoft Docs link
                                             var msLink = linkRef.Replace("`1", "-1").Replace("`2", "-2").ToLowerInvariant();
-                                            builder.AddMudTooltip(sequence++, Placement.Top, $"External Link: https://learn.microsoft.com/dotnet/api/{msLink}", (tooltipSequence, tooltipBuilder) =>
+                                            builder.AddMudLink(sequence++, $"https://learn.microsoft.com/dotnet/api/{msLink}", className + "." + memberName, Typo, "docs-link docs-code docs-code-primary", "_external", (linkSequence, linkBuilder) =>
                                             {
-                                                tooltipBuilder.AddMudLink(tooltipSequence++, $"https://learn.microsoft.com/dotnet/api/{msLink}", className + "." + memberName, Typo, "docs-link docs-code docs-code-primary", "_external", (linkSequence, linkBuilder) =>
+                                                linkBuilder.AddContent(linkSequence++, className + "." + memberName);
+                                                linkBuilder.AddMudTooltip(linkSequence++, Placement.Top, $"External Link", (tooltipSequence, tooltipBuilder) =>
                                                 {
-                                                    linkBuilder.AddMudIcon(linkSequence++, "MudBlazor.Icons.Material.Filled.Link", Color.Default, Size.Small);
-                                                    linkBuilder.AddContent(linkSequence++, className + "." + memberName);
+                                                    tooltipBuilder.AddMudIcon(tooltipSequence++, "MudBlazor.Icons.Material.Filled.Link", Color.Default, Size.Small);
                                                 });
                                             });
                                         }
@@ -125,12 +125,12 @@ public partial class ApiText : ComponentBase
                                 case "href":
                                     if (reader.IsEmptyElement)
                                     {
-                                        builder.AddMudTooltip(sequence++, Placement.Top, $"External Link: {link}", (tooltipSequence, tooltipBuilder) =>
+                                        builder.AddMudLink(sequence++, link, link, Typo, "docs-link docs-code docs-code-primary", "_external", (linkSequence, linkBuilder) =>
                                         {
-                                            tooltipBuilder.AddMudLink(tooltipSequence++, link, link, Typo, "docs-link docs-code docs-code-primary", "_external", (linkSequence, linkBuilder) =>
+                                            linkBuilder.AddContent(linkSequence++, link);
+                                            linkBuilder.AddMudTooltip(linkSequence++, Placement.Top, $"External Link", (tooltipSequence, tooltipBuilder) =>
                                             {
-                                                linkBuilder.AddMudIcon(linkSequence++, "MudBlazor.Icons.Material.Filled.Link", Color.Default, Size.Small);
-                                                linkBuilder.AddContent(linkSequence++, link);
+                                                tooltipBuilder.AddMudIcon(tooltipSequence++, "MudBlazor.Icons.Material.Filled.Link", Color.Default, Size.Small);
                                             });
                                         });
                                     }
@@ -139,12 +139,13 @@ public partial class ApiText : ComponentBase
                                         // Move to the link content
                                         reader.Read();
                                         var text = string.IsNullOrEmpty(reader.Value) ? link : reader.Value;
-                                        builder.AddMudTooltip(sequence++, Placement.Top, $"External Link: {link}", (tooltipSequence, tooltipBuilder) =>
+
+                                        builder.AddMudLink(sequence++, link, text, Typo, "docs-link docs-code docs-code-primary", "_external", (linkSequence, linkBuilder) =>
                                         {
-                                            tooltipBuilder.AddMudLink(tooltipSequence++, link, text, Typo, "docs-link docs-code docs-code-primary", "_external", (linkSequence, linkBuilder) =>
+                                            linkBuilder.AddContent(linkSequence++, text);
+                                            linkBuilder.AddMudTooltip(linkSequence++, Placement.Top, $"External Link", (tooltipSequence, tooltipBuilder) =>
                                             {
-                                                linkBuilder.AddMudIcon(linkSequence++, "MudBlazor.Icons.Material.Filled.Link", Color.Default, Size.Small);
-                                                linkBuilder.AddContent(linkSequence++, text);
+                                                tooltipBuilder.AddMudIcon(tooltipSequence++, "MudBlazor.Icons.Material.Filled.Link", Color.Default, Size.Small);
                                             });
                                         });
                                     }

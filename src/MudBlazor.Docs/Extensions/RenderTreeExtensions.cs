@@ -47,10 +47,12 @@ public static class RenderTreeExtensions
     /// <param name="childContentBuilder"></param>
     public static void AddMudTooltip(this RenderTreeBuilder builder, int sequence, Placement placement = Placement.Top, string text = "", Action<int, RenderTreeBuilder> childContentBuilder = null)
     {
+        var truncatedText = text.Length > 60 ? text.Substring(0, 60) + "..." : text;
+
         // <MudTooltip Placement="Placement.Top" Text="{summary}">
         builder.OpenRegion(sequence);
         builder.OpenComponent<MudTooltip>(0);
-        builder.AddComponentParameter(1, "Text", text);
+        builder.AddComponentParameter(1, "Text", truncatedText);
         builder.AddComponentParameter(2, "Placement", placement);
         builder.AddComponentParameter(3, "ChildContent", (RenderFragment)(contentBuilder =>
         {
@@ -150,10 +152,10 @@ public static class RenderTreeExtensions
         if (!string.IsNullOrEmpty(type.Summary) && showTooltip)
         {
             // <MudTooltip Placement="Placement.Top" Text="{summary}">
-            builder.AddMudTooltip(sequence, Placement.Top, type.SummaryPlain, ((childSequence, childContentBuilder) =>
+            builder.AddMudTooltip(sequence, Placement.Top, type.SummaryPlain, (childSequence, childContentBuilder) =>
             {
                 childContentBuilder.AddMudLink(childSequence++, type.ApiUrl, type.NameFriendly, typo, "docs-link docs-code docs-code-primary");
-            }));
+            });
         }
         else
         {
