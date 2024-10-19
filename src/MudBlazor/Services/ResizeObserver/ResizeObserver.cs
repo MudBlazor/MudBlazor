@@ -146,13 +146,19 @@ namespace MudBlazor.Services
         /// <remarks>
         /// This is needed because runtime provided implementation is not efficient for struct.
         /// </remarks>
-        private class ElementReferenceComparer : IEqualityComparer<ElementReference>
+        internal class ElementReferenceComparer : IEqualityComparer<ElementReference>
         {
             /// <inheritdoc />
             public bool Equals(ElementReference x, ElementReference y) => x.Id == y.Id;
 
             /// <inheritdoc />
-            public int GetHashCode(ElementReference obj) => obj.Id.GetHashCode();
+            public int GetHashCode(ElementReference obj)
+            {
+                // Do not modify this null workaround, as the Id can be null when ElementReference as default(ElementReference).
+                // Although the nullable annotation suggests otherwise, we use this unconventional object pattern instead of an if-else statement 
+                // to suppress the nullable annotation.
+                return obj is { Id: null } ? 0 : obj.Id.GetHashCode();
+            }
 
             /// <summary>
             /// Gets the default instance of the comparer.
