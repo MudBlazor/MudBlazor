@@ -60,7 +60,7 @@ namespace MudBlazor.UnitTests.Components
             // open simple test dialog
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
             // close by click on cancel button
-            comp.Find(".mud-dialog-title .mud-button-close").Click();
+            comp.FindAll("button")[0].Click();
             result = await dialogReference.Result;
             result.Canceled.Should().BeTrue();
             // open simple test dialog
