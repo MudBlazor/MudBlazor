@@ -11,6 +11,7 @@
 
 .mud-collapse-entered {
   overflow: initial;
+  grid-template-rows: min-content 1fr;
 }
 
 .mud-collapse-hidden {

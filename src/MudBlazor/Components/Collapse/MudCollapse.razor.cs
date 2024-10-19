@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -84,10 +82,7 @@ namespace MudBlazor
             await ExpandedChanged.InvokeAsync(_expandedState.Value);
         }
 
-        /// <summary>
-        /// Completes an ongoing animation.
-        /// </summary>
-        public Task AnimationEndAsync()
+        private Task AnimationEndAsync()
         {
             if (_state == CollapseState.Entering)
             {
@@ -99,6 +94,7 @@ namespace MudBlazor
                 _state = CollapseState.Exited;
                 StateHasChanged();
             }
+
             return OnAnimationEnd.InvokeAsync(_expandedState.Value);
         }
     }
