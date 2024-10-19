@@ -4,13 +4,14 @@
               DebounceInterval="@DebounceInterval"
               Required="@true"
               RequiredError="Enter a star" />
- 
- <MudButton Variant="@Variant.Filled" 
-            Color="@Color.Primary"
-            OnClick="@LaunchDelayedRerender">
-     Launch delayed re-render
- </MudButton>
- 
+
+<MudButton id="re-render-button"
+           Variant="@Variant.Filled"
+           Color="@Color.Primary"
+           OnClick="@LaunchDelayedRerender">
+    Launch delayed re-render
+</MudButton>
+
 <MudText>
     RenderCount: @_renderCount
 </MudText>
@@ -18,7 +19,7 @@
 <MudText>
     Value: @Value
 </MudText>
- 
+
 @code {
     public static string __description__ = "Test user input retention on component refresh before debounce.";
 
@@ -29,7 +30,7 @@
     public int RerenderDelay = 2000;
 
     private int _renderCount;
-    
+
     protected override void OnAfterRender(bool firstRender)
     {
         _renderCount++;
@@ -40,4 +41,4 @@
         await Task.Delay(RerenderDelay);
         StateHasChanged();
     }
- }
+}

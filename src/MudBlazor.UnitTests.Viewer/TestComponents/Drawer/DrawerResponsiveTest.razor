@@ -2,7 +2,7 @@
 
 <MudLayout>
     <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+        <MudIconButton id="toggle-drawer-button" Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
     </MudAppBar>
     <MudDrawer @ref="@Drawer" @bind-Open="@_open" Elevation="1" Breakpoint="@Breakpoint" ClipMode="@ClipMode">
     </MudDrawer>
