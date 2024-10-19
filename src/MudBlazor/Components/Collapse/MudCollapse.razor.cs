@@ -75,11 +75,11 @@ namespace MudBlazor
                 .WithChangeHandler(OnExpandedParameterChangedAsync);
         }
 
-        private async Task OnExpandedParameterChangedAsync()
+        private Task OnExpandedParameterChangedAsync(ParameterChangedEventArgs<bool> args)
         {
-            _state = _expandedState.Value ? CollapseState.Entering : CollapseState.Exiting;
+            _state = args.Value ? CollapseState.Entering : CollapseState.Exiting;
 
-            await ExpandedChanged.InvokeAsync(_expandedState.Value);
+            return Task.CompletedTask;
         }
 
         private Task AnimationEndAsync()

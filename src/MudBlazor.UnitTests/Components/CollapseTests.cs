@@ -2,8 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -15,26 +17,28 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Collapse_TwoWayBinding_Test1()
         {
-            // This is to check the behaviour that ExpandedChanged fires when Expanded is changed outside.
-            // Perhaps this behaviour is not correct as mentioned here https://github.com/MudBlazor/MudBlazor/pull/8041#discussion_r1504480792
-            // Native and MS components don't do that, but to keep the old behaviour for now otherwise this would be a breaking change.
-            var currentValue = false;
-            var comp = Context
-                .RenderComponent<MudCollapse>(parameters => parameters
-                    .Bind(component => component.Expanded, currentValue, newValue => currentValue = newValue));
+            var comp = Context.RenderComponent<CollapseBindingTest>();
+            IElement Button() => comp.Find("#outside_btn");
 
-            SetExpanded(true);
-            currentValue.Should().BeTrue();
-            SetExpanded(false);
-            currentValue.Should().BeFalse();
+            IRenderedComponent<MudSwitch<bool>> MudSwitch() => comp.FindComponent<MudSwitch<bool>>();
+            // Initial state is expanded
+            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("true");
 
-            return;
+            // Collapse via button
+            Button().Click();
+            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("false");
 
-            void SetExpanded(bool expanded)
-            {
-                var expandedParameter = Parameter(nameof(MudCollapse.Expanded), expanded);
-                comp.SetParametersAndRender(expandedParameter);
-            }
+            // Expand via button
+            Button().Click();
+            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("true");
+
+            // Collapse via switch
+            MudSwitch().Find("input").Change(false);
+            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("false");
+
+            // Expand via switch
+            MudSwitch().Find("input").Change(true);
+            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("true");
         }
     }
 }
