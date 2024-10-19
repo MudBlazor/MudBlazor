@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Utilities;
@@ -14,10 +12,14 @@ namespace MudBlazor
     public partial class MudInput<T> : MudBaseInput<T>
     {
         protected string Classname =>
-           new CssBuilder(
-               MudInputCssHelper.GetClassname(this,
-                   () => HasNativeHtmlPlaceholder() || !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder) || ShrinkLabel))
-            .AddClass("mud-input-auto-grow", when: () => AutoGrow)
+            new CssBuilder(
+                MudInputCssHelper.GetClassname(this,
+                    () => HasNativeHtmlPlaceholder() ||
+                          !string.IsNullOrEmpty(Text) ||
+                          Adornment == Adornment.Start ||
+                          !string.IsNullOrWhiteSpace(Placeholder) ||
+                          ShrinkLabel))
+            .AddClass("mud-input-auto-grow", () => AutoGrow)
             .Build();
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
@@ -25,12 +27,12 @@ namespace MudBlazor
         protected string AdornmentClassname => MudInputCssHelper.GetAdornmentClassname(this);
 
         protected string ClearButtonClassname =>
-                    new CssBuilder("mud-input-clear-button")
-                    .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
-                    .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons)
-                    .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
-                    .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons)
-                    .Build();
+            new CssBuilder("mud-input-clear-button")
+            .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
+            .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons)
+            .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
+            .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons)
+            .Build();
 
         /// <summary>
         /// The type of input collected by this component.
@@ -224,7 +226,7 @@ namespace MudBlazor
         /// </summary>
         private bool GetClearable() => Clearable && ((Value is string stringValue && !string.IsNullOrWhiteSpace(stringValue)) || (Value is not string && Value is not null));
 
-        protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
+        protected virtual async Task HandleClearButtonAsync(MouseEventArgs e)
         {
             await SetTextAsync(string.Empty, updateValue: true);
             await ElementReference.FocusAsync();

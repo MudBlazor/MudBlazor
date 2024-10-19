@@ -14,7 +14,7 @@ namespace MudBlazor
     /// A text input which conforms user input to a specific format while typing. 
     /// <remarks>
     /// Note that MudMask is recommended to be used in WASM projects only because it has known problems
-    /// in BSS, especiall with high network latency.
+    /// in BSS, especially with high network latency.
     /// </remarks>
     /// </summary>
     public partial class MudMask : MudBaseInput<string>
@@ -29,11 +29,9 @@ namespace MudBlazor
                 .AddClass($"mud-input-{Variant.ToDescriptionString()}")
                 .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
                 .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
-                .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
-                .AddClass("mud-input-underline", when: () => Underline && Variant != Variant.Outlined)
-                .AddClass("mud-shrink",
-                    when: () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start ||
-                                !string.IsNullOrWhiteSpace(Placeholder))
+                .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", () => Margin != Margin.None)
+                .AddClass("mud-input-underline", () => Underline && Variant != Variant.Outlined)
+                .AddClass("mud-shrink", () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder))
                 .AddClass("mud-disabled", GetDisabledState())
                 .AddClass("mud-input-error", HasErrors)
                 .AddClass("mud-ltr", GetInputType() == InputType.Email || GetInputType() == InputType.Telephone)
@@ -46,12 +44,12 @@ namespace MudBlazor
                 .AddClass("mud-input-root")
                 .AddClass($"mud-input-root-{Variant.ToDescriptionString()}")
                 .AddClass($"mud-input-root-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
-                .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
+                .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", () => Margin != Margin.None)
                 .AddClass(Class)
                 .Build();
 
         protected string AdornmentClassname =>
-            new CssBuilder("mud-input-adornment")
+            new CssBuilder()
                 .AddClass($"mud-input-adornment-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
                 .AddClass($"mud-text", !string.IsNullOrEmpty(AdornmentText))
                 .AddClass($"mud-input-root-filled-shrink", Variant == Variant.Filled)
@@ -59,12 +57,12 @@ namespace MudBlazor
                 .Build();
 
         protected string ClearButtonClassname =>
-            new CssBuilder()
-                // .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
-                .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End)
-                // .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
-                .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End)
-                .Build();
+            new CssBuilder("mud-input-clear-button")
+            // .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
+            .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End)
+            // .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
+            .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End)
+            .Build();
 
 
         private ElementReference _elementReference;

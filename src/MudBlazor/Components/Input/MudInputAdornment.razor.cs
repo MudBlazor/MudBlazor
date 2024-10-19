@@ -4,6 +4,7 @@
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Utilities;
 
 namespace MudBlazor.Internal;
 
@@ -12,6 +13,11 @@ namespace MudBlazor.Internal;
 /// </summary>
 public partial class MudInputAdornment
 {
+    protected string Classname =>
+        new CssBuilder("mud-input-adornment")
+            .AddClass(Class)
+            .Build();
+
     /// <summary>
     /// The CSS classes for this adornment.
     /// </summary>
