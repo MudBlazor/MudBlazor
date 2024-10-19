@@ -1,17 +1,17 @@
 .mud-collapse-container {
   overflow: hidden;
   display: grid;
-  grid-template-rows: min-content 0fr;
+  grid-template-rows: minmax(0, 0fr);
   transition: grid-template-rows 300ms ease-in-out;
 }
 
 .mud-collapse-entering {
-  grid-template-rows: min-content 1fr;
+  grid-template-rows: minmax(0, 1fr);
 }
 
 .mud-collapse-entered {
   overflow: initial;
-  grid-template-rows: min-content 1fr;
+  grid-template-rows: minmax(0, 1fr);
 }
 
 .mud-collapse-hidden {
