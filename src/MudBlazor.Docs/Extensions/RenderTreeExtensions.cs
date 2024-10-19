@@ -28,7 +28,8 @@ public static class RenderTreeExtensions
             builder.OpenRegion(sequence);
             builder.OpenComponent<MudText>(0);
             builder.AddComponentParameter(1, "Typo", typo);
-            builder.AddComponentParameter(2, "ChildContent", (RenderFragment)(textContentBuilder =>
+            builder.AddComponentParameter(2, "HtmlTag", "span");
+            builder.AddComponentParameter(3, "ChildContent", (RenderFragment)(textContentBuilder =>
             {
                 textContentBuilder.AddContent(3, text);
             }));
