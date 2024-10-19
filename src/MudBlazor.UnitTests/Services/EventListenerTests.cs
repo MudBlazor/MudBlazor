@@ -2,9 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -26,10 +23,11 @@ namespace MudBlazor.UnitTests.Services
         {
             _runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
             _service = new EventListener(_runtimeMock.Object);
-            _expectedProperties = new[] {
+            _expectedProperties =
+            [
                 "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
                 "movementX", "movementY", "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
-            };
+            ];
         }
 
         private bool ContainsEqual(IEnumerable<string> firstColl, IEnumerable<string> secondColl)
@@ -199,7 +197,7 @@ namespace MudBlazor.UnitTests.Services
             _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.unsubscribe", It.Is<object[]>(z =>
                 z.Length == 1 &&
                 (Guid)z[0] == result
-            ))).Throws(new InvalidOperationException("something went wrong! :("));
+            ))).Throws(new TaskCanceledException("something went wrong! :("));
 
             result.Should().NotBe(Guid.Empty);
 
@@ -232,7 +230,6 @@ namespace MudBlazor.UnitTests.Services
                         z[6] is DotNetObjectReference<EventListener>
                     ))).ReturnsAsync(Mock.Of<IJSVoidResult>);
 
-
                 var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, projectionName, throttleInterval, callback);
 
                 var flow = _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.unsubscribe", It.Is<object[]>(z =>
@@ -242,7 +239,7 @@ namespace MudBlazor.UnitTests.Services
 
                 if (i % 2 == 0)
                 {
-                    flow.Throws(new InvalidOperationException("something went wrong! :("));
+                    flow.Throws(new TaskCanceledException("something went wrong! :("));
                 }
                 else
                 {
