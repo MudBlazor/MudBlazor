@@ -154,7 +154,7 @@ namespace MudBlazor.Services
             /// <inheritdoc />
             public int GetHashCode(ElementReference obj)
             {
-                // Do not modify this null workaround, as the Id can be null when ElementReference as default(ElementReference).
+                // Do not modify this null workaround, as the Id can be null when ElementReference is initialized as default(ElementReference).
                 // Although the nullable annotation suggests otherwise, we use this unconventional object pattern instead of an if-else statement 
                 // to suppress the nullable annotation.
                 return obj is { Id: null } ? 0 : obj.Id.GetHashCode();
