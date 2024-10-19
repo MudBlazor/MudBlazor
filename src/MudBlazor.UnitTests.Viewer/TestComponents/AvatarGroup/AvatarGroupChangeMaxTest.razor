@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudButton OnClick="ChangeMax" Variant="Variant.Filled" Class="mb-4">ChangeMax</MudButton><MudText>Max: @max</MudText>
+<MudButton id="change-max-button" OnClick="ChangeMax" Variant="Variant.Filled" Class="mb-4">ChangeMax</MudButton><MudText>Max: @max</MudText>
 <MudAvatarGroup Max="@max" MaxColor="Color.Primary">
     <MudAvatar Color="Color.Primary">AA</MudAvatar>
     <MudAvatar Color="Color.Secondary">BB</MudAvatar>
@@ -17,10 +17,11 @@
 
     void ChangeMax()
     {
-        if(max == 7)
+        if (max == 7)
         {
             max = 0;
-        }else
+        }
+        else
         {
             max++;
         }
