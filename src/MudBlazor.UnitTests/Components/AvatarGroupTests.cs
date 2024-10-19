@@ -146,7 +146,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<AvatarGroupRemoveTest>();
 
-            comp.FindAll("button")[0].Click();
+            comp.Find("#empty-button").Click();
 
             comp.FindComponent<MudAvatarGroup>().Instance._avatars.Count.Should().Be(0);
         }
