@@ -72,7 +72,7 @@ using (var scope = app.Services.CreateScope())
     await crawlerIdentifier.Initialize();
 
     // Warm up the documentation
-    ApiDocumentation.GetMember("MudAlert");
+    ApiDocumentation.GetType("MudAlert");
 }
 
 app.Run();

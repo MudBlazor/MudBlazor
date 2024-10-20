@@ -34,6 +34,6 @@ if (notificationService is InMemoryNotificationService inMemoryService)
     inMemoryService.Preload();
 }
 // Warm up the documentation
-ApiDocumentation.GetMember("MudAlert");
+ApiDocumentation.GetType("MudAlert");
 
 await build.RunAsync();

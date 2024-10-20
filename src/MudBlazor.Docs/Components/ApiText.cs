@@ -26,6 +26,12 @@ public partial class ApiText : ComponentBase
     public string Text { get; set; } = "";
 
     /// <summary>
+    /// The color of the text.
+    /// </summary>
+    [Parameter]
+    public Color Color { get; set; } = Color.Default;
+
+    /// <summary>
     /// The size of the text.
     /// </summary>
     [Parameter]
@@ -36,10 +42,21 @@ public partial class ApiText : ComponentBase
         var sequence = 0;
 
         // Convert XML documentation text, links, and HTML to MudBlazor equivalents
-        var xml = XElement.Parse("<xml>" + Text + "</xml>");
+        XElement xml;
+        try
+        {
+            xml = XElement.Parse("<xml>" + Text + "</xml>");
+        }
+        catch
+        {
+            // The XML is malformed somehow.  Warn and exit
+            builder.AddMudText(0, Typo, Color.Warning, "XML documentation error.");
+            return;
+        }
         using var reader = xml.CreateReader();
         while (reader.Read())
         {
+            var isEmptyElement = reader.IsEmptyElement;
             switch (reader.NodeType)
             {
                 case XmlNodeType.Element:
@@ -123,7 +140,11 @@ public partial class ApiText : ComponentBase
                                     }
                                     break;
                                 case "href":
-                                    if (reader.IsEmptyElement)
+                                    if (string.IsNullOrWhiteSpace(link))
+                                    {
+                                        continue;
+                                    }
+                                    if (isEmptyElement)
                                     {
                                         builder.AddMudLink(sequence++, link, link, Typo, "docs-link docs-code docs-code-primary", "_external", (linkSequence, linkBuilder) =>
                                         {
@@ -155,14 +176,14 @@ public partial class ApiText : ComponentBase
                         case "c": // Constant
                             builder.OpenElement(sequence++, "code");
                             builder.AddAttribute(sequence++, "class", "docs-code docs-code-primary");
-                            if (reader.IsEmptyElement)
+                            if (isEmptyElement)
                             {
                                 builder.CloseElement();
                             }
                             break;
                         case "para": // Paragraph
                             builder.OpenElement(sequence++, "p");
-                            if (reader.IsEmptyElement)
+                            if (isEmptyElement)
                             {
                                 builder.CloseElement();
                             }
@@ -185,7 +206,7 @@ public partial class ApiText : ComponentBase
                     break;
                 case XmlNodeType.Text:
                     // <MudText Typo="Typo.caption">{value}</MudText>
-                    builder.AddMudText(sequence++, Typo, reader.Value);
+                    builder.AddMudText(sequence++, Typo, Color, reader.Value);
                     break;
             }
         }

@@ -56,7 +56,7 @@ public partial class Api
         if (DocumentedType == null || DocumentedType.Name != TypeName)
         {
             DocumentedType = ApiDocumentation.GetType(TypeName);
-            ComponentName = MenuService!.GetComponentName(TypeName!) ?? DocumentedType.NameFriendly;
+            ComponentName = MenuService!.GetComponentName(TypeName!) ?? DocumentedType?.NameFriendly;
             if (DocumentedType == null)
             {
                 Title = TypeName + " Not Found";

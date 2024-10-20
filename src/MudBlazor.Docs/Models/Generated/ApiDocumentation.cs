@@ -41,10 +41,20 @@ public static partial class ApiDocumentation
     /// <returns></returns>
     public static DocumentedMember GetMember(string name)
     {
+        // Is this an external member?
+        if (!name.StartsWith("MudBlazor", StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+        // Is this an icon?  (We don't document those, but we show them as icons)
+        if (name.StartsWith("MudBlazor.Icons", StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
         DocumentedMember result = GetProperty(name);
         result ??= GetField(name);
-        result ??= GetMethod(name);
         result ??= GetEvent(name);
+        result ??= GetMethod(name);
         return result;
     }
 
@@ -59,27 +69,38 @@ public static partial class ApiDocumentation
         {
             return null;
         }
+
+        // Is this an external member?
+        if (name.StartsWith("System", StringComparison.OrdinalIgnoreCase) || name.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
         // First, try an exact match
         if (Types.TryGetValue(name, out var match))
         {
             return match;
         }
+
         // Next, try with the MudBlazor namespace
         if (Types.TryGetValue("MudBlazor." + name, out match))
         {
             return match;
         }
+
         // Look for legacy links like "api/bar"
         if (LegacyToModernTypeNames.TryGetValue(name.ToLowerInvariant(), out var newTypeName) && Types.TryGetValue(newTypeName, out match))
         {
             return match;
         }
+
         // Try to match just on the name
         var looseMatch = Types.FirstOrDefault(type => type.Value.Name.Equals(name, StringComparison.OrdinalIgnoreCase) || type.Value.NameFriendly.Equals(name, StringComparison.OrdinalIgnoreCase)).Value;
         if (looseMatch != null)
         {
             return looseMatch;
         }
+
         // Nothing found        
         return null;
     }

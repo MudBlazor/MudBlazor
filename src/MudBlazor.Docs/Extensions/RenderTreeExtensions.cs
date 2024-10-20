@@ -21,17 +21,24 @@ public static class RenderTreeExtensions
     /// <param name="sequence"></param>
     /// <param name="typo"></param>
     /// <param name="text"></param>
-    public static void AddMudText(this RenderTreeBuilder builder, int sequence, Typo typo = Typo.body1, string text = null)
+    public static void AddMudText(this RenderTreeBuilder builder, int sequence, Typo typo = Typo.body1, Color color = Color.Inherit, string text = null)
     {
         if (!string.IsNullOrEmpty(text))
         {
             builder.OpenRegion(sequence);
             builder.OpenComponent<MudText>(0);
-            builder.AddComponentParameter(1, "Typo", typo);
-            builder.AddComponentParameter(2, "HtmlTag", "span");
-            builder.AddComponentParameter(3, "ChildContent", (RenderFragment)(textContentBuilder =>
+            if (typo != Typo.body1) // Only render Typo if not the MudText default
             {
-                textContentBuilder.AddContent(3, text);
+                builder.AddComponentParameter(1, "Typo", typo);
+            }
+            if (color != Color.Inherit) // Only render Color if not the MudText default
+            {
+                builder.AddComponentParameter(2, "Color", color);
+            }
+            builder.AddComponentParameter(3, "HtmlTag", "span");
+            builder.AddComponentParameter(4, "ChildContent", (RenderFragment)(textContentBuilder =>
+            {
+                textContentBuilder.AddContent(0, text);
             }));
             builder.CloseComponent();
             builder.CloseRegion();
@@ -48,7 +55,8 @@ public static class RenderTreeExtensions
     /// <param name="childContentBuilder"></param>
     public static void AddMudTooltip(this RenderTreeBuilder builder, int sequence, Placement placement = Placement.Top, string text = "", Action<int, RenderTreeBuilder> childContentBuilder = null)
     {
-        var truncatedText = text.Length > 60 ? text.Substring(0, 60) + "..." : text;
+        // Limit the tooltip to 60 characters
+        var truncatedText = text.Length > 60 ? string.Concat(text.AsSpan(0, 60), "...") : text;
 
         // <MudTooltip Placement="Placement.Top" Text="{summary}">
         builder.OpenRegion(sequence);
