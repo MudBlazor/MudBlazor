@@ -186,6 +186,16 @@ public partial class MudStepper : MudComponentBase
     public bool CenterLabels { get; set; }
 
     /// <summary>
+    /// Displays a ripple effect when the step is clicked.
+    /// </summary>
+    /// <remarks>
+    /// Affects only non-linear steppers. Defaults to <c>false</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
+    public bool Ripple { get; set; } = true;
+
+    /// <summary>
     /// If there is too many steps, the navigation becomes scrollable.
     /// </summary>
     [Parameter]
@@ -450,11 +460,8 @@ public partial class MudStepper : MudComponentBase
         await UpdateStepAsync(_steps[0], new MouseEventArgs(), StepAction.Activate);
     }
 
-    private async Task OnStepClickAsync(MudStep step, MouseEventArgs e)
+    private Task OnStepClickAsync(MudStep step, MouseEventArgs e)
     {
-        if (NonLinear)
-        {
-            await UpdateStepAsync(step, e, StepAction.Activate);
-        }
+        return UpdateStepAsync(step, e, StepAction.Activate);
     }
 }

@@ -2,11 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Models;
 using MudBlazor.Interop;
@@ -15,7 +11,7 @@ using MudBlazor.Services;
 namespace MudBlazor.Docs.Pages.Features.Icons
 {
 #nullable enable
-    public partial class IconsPage
+    public partial class IconsPage : ComponentBase, IAsyncDisposable
     {
         private int _cardsPerRow;
         private bool _iconDrawerOpen;
@@ -23,9 +19,10 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         private List<MudIcons> _displayedIcons = new();
         private const double IconCardWidth = 136.88; // single icon card width including margins
         private const float IconCardHeight = 144; // single icon card height including margins
+        private IResizeObserver? _resizeObserver;
 
         [Inject]
-        protected IResizeObserver ResizeObserver { get; set; } = null!;
+        protected IResizeObserverFactory ResizeObserverFactory { get; set; } = null!;
 
         [Inject]
         protected IJsApiService JsApiService { get; set; } = null!;
@@ -102,9 +99,10 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         {
             if (firstRender)
             {
-                await ResizeObserver.Observe(_killZone);
+                _resizeObserver ??= ResizeObserverFactory.Create();
+                await _resizeObserver.Observe(_killZone);
 
-                ResizeObserver.OnResized += OnResized;
+                _resizeObserver.OnResized += OnResized;
 
                 SetCardsPerRow();
                 StateHasChanged();
@@ -113,13 +111,30 @@ namespace MudBlazor.Docs.Pages.Features.Icons
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        public async ValueTask DisposeAsync()
+        {
+            if (_resizeObserver is not null)
+            {
+                _resizeObserver.OnResized -= OnResized;
+                await _resizeObserver.DisposeAsync();
+            }
+        }
+
         private async void OnResized(IDictionary<ElementReference, BoundingClientRect> changes)
         {
             SetCardsPerRow();
             await InvokeAsync(StateHasChanged);
         }
 
-        private void SetCardsPerRow() => _cardsPerRow = Convert.ToInt32(ResizeObserver.GetWidth(_killZone) / IconCardWidth);
+        private void SetCardsPerRow()
+        {
+            if (_resizeObserver is null)
+            {
+                return;
+            }
+
+            _cardsPerRow = Convert.ToInt32(_resizeObserver.GetWidth(_killZone) / IconCardWidth);
+        }
 
         private async Task<List<MudIcons>> LoadMaterialIcons(string type)
         {

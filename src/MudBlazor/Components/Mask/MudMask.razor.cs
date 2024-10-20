@@ -463,6 +463,13 @@ namespace MudBlazor
             if (IsJSRuntimeAvailable)
             {
                 await KeyInterceptorService.UnsubscribeAsync(_elementId);
+                if (_jsEvent is not null)
+                {
+                    _jsEvent.CaretPositionChanged -= OnCaretPositionChanged;
+                    _jsEvent.Paste -= OnPaste;
+                    _jsEvent.Select -= OnSelect;
+                    await _jsEvent.DisposeAsync();
+                }
             }
         }
 

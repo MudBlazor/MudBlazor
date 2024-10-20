@@ -2050,19 +2050,13 @@ namespace MudBlazor
 
         #region Resize feature
 
-        [Inject] private IEventListener EventListener { get; set; }
+        [Inject] private IEventListenerFactory EventListenerFactory { get; set; }
         internal bool IsResizing { get; set; }
 
         private ElementReference _gridElement;
         private DataGridColumnResizeService<T> _resizeService;
 
-        internal DataGridColumnResizeService<T> ResizeService
-        {
-            get
-            {
-                return _resizeService ??= new DataGridColumnResizeService<T>(this, EventListener);
-            }
-        }
+        internal DataGridColumnResizeService<T> ResizeService => _resizeService ??= new DataGridColumnResizeService<T>(this, EventListenerFactory);
 
         internal async Task<bool> StartResizeColumn(HeaderCell<T> headerCell, double clientX)
             => await ResizeService.StartResizeColumn(headerCell, clientX, RenderedColumns, ColumnResizeMode, RightToLeft);
@@ -2088,6 +2082,8 @@ namespace MudBlazor
         protected virtual void Dispose(bool disposing)
         {
             _serverDataCancellationTokenSource?.Dispose();
+            // TODO: Use IAsyncDisposable for MudDataGrid
+            _resizeService?.DisposeAsync().CatchAndLog();
         }
     }
 }

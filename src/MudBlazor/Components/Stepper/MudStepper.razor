@@ -12,14 +12,14 @@
             string stepClassname = new CssBuilder()
                 .AddClass("mud-step")
                 .AddClass("active", isActive)
-                .AddClass("mud-ripple", NonLinear && !step.DisabledState.Value)
-                .AddClass("mud-step-disabled", step.DisabledState.Value)
+                .AddClass("mud-ripple", Ripple)
+                .AddClass("mud-clickable", NonLinear && !step.DisabledState.Value)
                 .AddClass("mud-step-error", step.HasErrorState.Value)
                 .AddClass("mud-step-completed", step.CompletedState.Value)
                 .Build();
 
-            <button class="@stepClassname" role="tab" aria-controls="@step.Title" aria-selected="@(isActive.ToString().ToLower())"
-                    @onclick="@(async e => await OnStepClickAsync(step, e))">
+            <button class="@stepClassname" role="tab" type="button" aria-controls="@step.Title" aria-selected="@(isActive.ToString().ToLower())"
+                    @onclick="@(async e => await OnStepClickAsync(step, e))" disabled="@step.DisabledState.Value">
                 @RenderStepLabel(step, isActive)
             </button>
 

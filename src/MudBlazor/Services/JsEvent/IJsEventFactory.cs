@@ -12,6 +12,9 @@ public interface IJsEventFactory
     /// <summary>
     /// Creates a new instance of <see cref="IJsEvent"/>.
     /// </summary>
+    /// <remarks>
+    /// If you are creating this <see cref="IJsEvent"/> instance yourself using this factory, then you need to manually call <see cref="JsEvent.DisposeAsync"/>; otherwise, you will get a memory leak.
+    /// </remarks>
     /// <returns>A new instance of <see cref="IJsEvent"/>.</returns>
     IJsEvent Create();
 }
