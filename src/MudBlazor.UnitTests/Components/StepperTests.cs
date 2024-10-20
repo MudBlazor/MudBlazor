@@ -653,5 +653,59 @@ namespace MudBlazor.UnitTests.Components
             stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(0);
 
         }
+
+        [TestCase(true, true)]
+        [TestCase(false, false)]
+        public void HasRippleClass(bool ripple, bool hasClass)
+        {
+            var stepper = Context.RenderComponent<MudStepper>(self =>
+            {
+                self.Add(x => x.Ripple, ripple);
+
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "A");
+                    step.AddChildContent(text => text.AddMarkupContent(0, "step 1"));
+                });
+            });
+
+            var stepButton = stepper.Find(".mud-step");
+
+            if (hasClass)
+            {
+                stepButton.ClassList.Should().Contain("mud-ripple");
+            }
+            else
+            {
+                stepButton.ClassList.Should().NotContain("mud-ripple");
+            }
+        }
+
+        [TestCase(true, true)]
+        [TestCase(false, false)]
+        public void HasClickableClassIfNonLinear(bool nonLinear, bool hasClass)
+        {
+            var stepper = Context.RenderComponent<MudStepper>(self =>
+            {
+                self.Add(x => x.NonLinear, nonLinear);
+
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "A");
+                    step.AddChildContent(text => text.AddMarkupContent(0, "step 1"));
+                });
+            });
+
+            var stepButton = stepper.Find(".mud-step");
+
+            if (hasClass)
+            {
+                stepButton.ClassList.Should().Contain("mud-clickable");
+            }
+            else
+            {
+                stepButton.ClassList.Should().NotContain("mud-clickable");
+            }
+        }
     }
 }

@@ -12,8 +12,8 @@
             string stepClassname = new CssBuilder()
                 .AddClass("mud-step")
                 .AddClass("active", isActive)
-                .AddClass("mud-clickable", NonLinear && !step.DisabledState.Value)
                 .AddClass("mud-ripple", Ripple)
+                .AddClass("mud-clickable", NonLinear && !step.DisabledState.Value)
                 .AddClass("mud-step-error", step.HasErrorState.Value)
                 .AddClass("mud-step-completed", step.CompletedState.Value)
                 .Build();
