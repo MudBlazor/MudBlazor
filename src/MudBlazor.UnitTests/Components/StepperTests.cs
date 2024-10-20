@@ -1,4 +1,5 @@
-﻿using Bunit;
+﻿using AngleSharp.Dom;
+using Bunit;
 using FluentAssertions;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Stepper;
@@ -274,9 +275,9 @@ namespace MudBlazor.UnitTests.Components
             // stepper.WaitForAssertion(() => stepper.RenderCount.Should().Be(2));
 
             // disable step 1
-            stepper.FindAll(".mud-step")[0].ClassList.Should().NotContain("mud-step-disabled");
+            stepper.FindAll(".mud-step")[0].IsDisabled().Should().Be(false);
             await stepper.InvokeAsync(async () => await stepper.Instance.Steps[0].SetDisabledAsync(true));
-            stepper.FindAll(".mud-step")[0].ClassList.Should().Contain("mud-step-disabled");
+            stepper.FindAll(".mud-step")[0].IsDisabled().Should().Be(true);
             // fail step 2
             stepper.FindAll(".mud-step")[1].ClassList.Should().NotContain("mud-step-error");
             stepper.FindAll(".mud-step-label-icon")[1].ClassList.Should().NotContain("mud-error");
@@ -471,9 +472,9 @@ namespace MudBlazor.UnitTests.Components
             });
 
             // disable step 1
-            stepper.FindAll(".mud-step")[0].ClassList.Should().NotContain("mud-step-disabled");
+            stepper.FindAll(".mud-step")[0].IsDisabled().Should().Be(false);
             stepper.FindComponents<MudStep>()[0].SetParametersAndRender(Parameter(nameof(MudStep.Disabled), true));
-            stepper.FindAll(".mud-step")[0].ClassList.Should().Contain("mud-step-disabled");
+            stepper.FindAll(".mud-step")[0].IsDisabled().Should().Be(true);
             // fail step 2
             stepper.FindAll(".mud-step")[1].ClassList.Should().NotContain("mud-step-error");
             stepper.FindAll(".mud-step-label-icon")[1].ClassList.Should().NotContain("mud-error");
