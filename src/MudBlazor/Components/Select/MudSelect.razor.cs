@@ -145,14 +145,14 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The outer div's classnames, seperated by space.
+        /// The outer div's classnames, separated by space.
         /// </summary>
         [Category(CategoryTypes.FormComponent.Appearance)]
         [Parameter]
         public string? OuterClass { get; set; }
 
         /// <summary>
-        /// Input's classnames, seperated by space.
+        /// Input's classnames, separated by space.
         /// </summary>
         [Category(CategoryTypes.FormComponent.Appearance)]
         [Parameter]
