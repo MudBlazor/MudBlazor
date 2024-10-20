@@ -44,6 +44,11 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
+        protected string InputClassname =>
+            new CssBuilder("mud-select-input")
+                .AddClass(InputClass)
+                .Build();
+
         protected string AutocompleteClassname =>
             new CssBuilder("mud-select")
             .AddClass("mud-autocomplete")
@@ -61,6 +66,13 @@ namespace MudBlazor
             .AddClass("mud-selected-item mud-primary-text mud-primary-hover", isSelected)
             .AddClass(ListItemClass)
             .Build();
+
+        /// <summary>
+        /// Input's classnames, separated by space.
+        /// </summary>
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        [Parameter]
+        public string InputClass { get; set; }
 
         /// <summary>
         /// The CSS classes applied to the popover.
