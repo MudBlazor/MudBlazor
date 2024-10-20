@@ -14,6 +14,9 @@ public interface IScrollListenerFactory
     /// Creates a new instance of <see cref="IScrollListener"/> for the specified selector.
     /// </summary>
     /// <param name="selector">The CSS selector for the element to listen for scroll events.</param>
+    /// <remarks>
+    /// If you are creating this <see cref="IScrollListener"/> instance yourself using this factory, then you need to manually call <see cref="ScrollListener.Dispose"/>; otherwise, you will get a memory leak.
+    /// </remarks>
     /// <returns>A new instance of <see cref="IScrollListener"/>.</returns>
     IScrollListener Create(string? selector);
 }

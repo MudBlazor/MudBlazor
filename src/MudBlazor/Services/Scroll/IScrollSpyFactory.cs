@@ -13,6 +13,9 @@ public interface IScrollSpyFactory
     /// <summary>
     /// Creates a new instance of <see cref="IScrollSpy"/>.
     /// </summary>
+    /// <remarks>
+    /// If you are creating this <see cref="IScrollSpy"/> instance yourself using this factory, then you need to manually call <see cref="ScrollSpy.DisposeAsync"/>; otherwise, you will get a memory leak.
+    /// </remarks>
     /// <returns>A new instance of <see cref="IScrollSpy"/>.</returns>
     IScrollSpy Create();
 }
