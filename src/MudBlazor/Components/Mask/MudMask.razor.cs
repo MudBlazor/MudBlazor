@@ -19,10 +19,11 @@ namespace MudBlazor
     /// </summary>
     public partial class MudMask : MudBaseInput<string>
     {
-        public MudMask()
-        {
-            TextUpdateSuppression = false;
-        }
+        private ElementReference _elementReference;
+        private ElementReference _elementReference1;
+        private IJsEvent _jsEvent;
+        private string _elementId = Identifier.Create("mask");
+        private IMask _mask = new PatternMask("** **-** **");
 
         protected string Classname =>
             new CssBuilder("mud-input")
@@ -37,7 +38,7 @@ namespace MudBlazor
                 .AddClass("mud-ltr", GetInputType() == InputType.Email || GetInputType() == InputType.Telephone)
                 .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
                 .AddClass(Class)
-                .Build();
+            .Build();
 
         protected string InputClassname =>
             new CssBuilder("mud-input-slot")
@@ -46,7 +47,7 @@ namespace MudBlazor
                 .AddClass($"mud-input-root-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
                 .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", () => Margin != Margin.None)
                 .AddClass(Class)
-                .Build();
+            .Build();
 
         protected string AdornmentClassname =>
             new CssBuilder()
@@ -54,30 +55,21 @@ namespace MudBlazor
                 .AddClass($"mud-text", !string.IsNullOrEmpty(AdornmentText))
                 .AddClass($"mud-input-root-filled-shrink", Variant == Variant.Filled)
                 .AddClass(Class)
-                .Build();
+            .Build();
 
         protected string ClearButtonClassname =>
             new CssBuilder("mud-input-clear-button")
-            // .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
-            .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End)
-            // .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
-            .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End)
+                // .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
+                .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End)
+                // .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
+                .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End)
             .Build();
-
-
-        private ElementReference _elementReference;
-        private ElementReference _elementReference1;
-        private IJsEvent _jsEvent;
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         [Inject] private IJsEventFactory _jsEventFactory { get; set; }
         [Inject] private IJsApiService _jsApiService { get; set; }
-
-        private string _elementId = Identifier.Create("mask");
-
-        private IMask _mask = new PatternMask("** **-** **");
 
         /// <summary>
         /// The content within this input.
@@ -126,6 +118,7 @@ namespace MudBlazor
         private void UpdateClearable(object value)
         {
             var showClearable = Clearable && !string.IsNullOrWhiteSpace(Text);
+
             if (_showClearable != showClearable)
                 _showClearable = showClearable;
         }
@@ -144,10 +137,16 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Appearance)]
         public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 
+        public MudMask()
+        {
+            TextUpdateSuppression = false;
+        }
+
         protected override async Task OnInitializedAsync()
         {
             if (Text != Mask.Text)
                 await SetTextAsync(Mask.Text, updateValue: false);
+
             await base.OnInitializedAsync();
         }
 
@@ -214,6 +213,7 @@ namespace MudBlazor
                             await UpdateAsync();
                             return;
                         }
+
                         Mask.Backspace();
                         await UpdateAsync();
                         return;
@@ -350,6 +350,7 @@ namespace MudBlazor
             {
                 (_, text, _) = BaseMask.SplitSelection(text, Mask.Selection.Value);
             }
+
             _jsApiService.CopyToClipboardAsync(text);
         }
 
@@ -357,6 +358,7 @@ namespace MudBlazor
         {
             if (text == null || GetReadOnlyState())
                 return;
+
             Mask.Insert(text);
             await UpdateAsync();
         }

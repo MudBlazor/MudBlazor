@@ -11,6 +11,11 @@ namespace MudBlazor
     /// <typeparam name="T">The type of object managed by this input.</typeparam>
     public partial class MudInput<T> : MudBaseInput<T>
     {
+        private ElementReference _elementReference1;
+        private string _oldText = null;
+        private string _internalText;
+        private bool _shouldInitAutoGrow;
+
         protected string Classname =>
             new CssBuilder(
                 MudInputCssHelper.GetClassname(this,
@@ -28,10 +33,10 @@ namespace MudBlazor
 
         protected string ClearButtonClassname =>
             new CssBuilder("mud-input-clear-button")
-            .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
-            .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons)
-            .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
-            .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons)
+                .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
+                .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons)
+                .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
+                .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons)
             .Build();
 
         /// <summary>
@@ -72,7 +77,6 @@ namespace MudBlazor
         {
             return Task.CompletedTask;
         }
-
         /// <summary>
         /// The content within this input component.
         /// </summary>
@@ -86,8 +90,6 @@ namespace MudBlazor
         /// The reference to the HTML element for this component.
         /// </summary>
         public ElementReference ElementReference { get; private set; }
-
-        private ElementReference _elementReference1;
 
         /// <inheritdoc />
         public override async ValueTask FocusAsync()
@@ -224,7 +226,20 @@ namespace MudBlazor
         /// <summary>
         /// If true, Clearable is true and there is a non null value (non-string for string values)
         /// </summary>
-        private bool GetClearable() => Clearable && ((Value is string stringValue && !string.IsNullOrWhiteSpace(stringValue)) || (Value is not string && Value is not null));
+        private bool GetClearable()
+        {
+            if (!Clearable)
+            {
+                return false;
+            }
+
+            if (Value is string stringValue)
+            {
+                return !string.IsNullOrWhiteSpace(stringValue);
+            }
+
+            return Value is not string and not null;
+        }
 
         protected virtual async Task HandleClearButtonAsync(MouseEventArgs e)
         {
@@ -232,10 +247,6 @@ namespace MudBlazor
             await ElementReference.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
         }
-
-        private string _oldText = null;
-        private string _internalText;
-        private bool _shouldInitAutoGrow;
 
         /// <inheritdoc />
         public override async Task SetParametersAsync(ParameterView parameters)
@@ -321,8 +332,13 @@ namespace MudBlazor
         // Certain HTML5 inputs (dates and color) have a native placeholder
         private bool HasNativeHtmlPlaceholder()
         {
-            return GetInputType() is InputType.Color or InputType.Date or InputType.DateTimeLocal or InputType.Month
-                or InputType.Time or InputType.Week;
+            return GetInputType()
+                is InputType.Color
+                or InputType.Date
+                or InputType.DateTimeLocal
+                or InputType.Month
+                or InputType.Time
+                or InputType.Week;
         }
 
         /// <inheritdoc />
