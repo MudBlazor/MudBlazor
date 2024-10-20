@@ -157,6 +157,7 @@ namespace MudBlazor.Services
                 // Do not modify this null workaround, as the Id can be null when ElementReference is initialized as default(ElementReference).
                 // Although the nullable annotation suggests otherwise, we use this unconventional object pattern instead of an if-else statement 
                 // to suppress the nullable annotation.
+                // https://github.com/dotnet/aspnetcore/issues/58523
                 return obj is { Id: null } ? 0 : obj.Id.GetHashCode();
             }
 
