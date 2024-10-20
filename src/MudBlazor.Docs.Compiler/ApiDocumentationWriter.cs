@@ -180,7 +180,8 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <param name="order">The category order (derived from <see cref="CategoryAttribute"/>).</param>
     public void WriteOrder(int? order)
     {
-        if (order.HasValue)
+        // Wirte if the order is present, but not int.MaxValue  (which is the default)
+        if (order.HasValue && order.Value != int.MaxValue)
         {
             Write($"Order = {order}, ");
         }
@@ -423,6 +424,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         WriteCategory(documentedEvent.Category);
         WriteOrder(documentedEvent.Order);
         WriteIsParameter(documentedEvent.IsParameter);
+        WriteIsProtected(documentedEvent.IsProtected);
         WriteSummary(documentedEvent.Summary);
         WriteRemarks(documentedEvent.Remarks);
         Write("}");
@@ -464,6 +466,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         Write($"TypeName = \"{field.Type.FullName}\", ");
         Write($"TypeFriendlyName = \"{field.Type.GetFriendlyName()}\", ");
         WriteCategory(field.Category);
+        WriteIsProtected(field.IsProtected);
         WriteOrder(field.Order);
         WriteSummary(field.Summary);
         WriteRemarks(field.Remarks);
@@ -507,6 +510,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         Write($"TypeFriendlyName = \"{property.Type.GetFriendlyName()}\", ");
         WriteCategory(property.Category);
         WriteIsParameter(property.IsParameter);
+        WriteIsProtected(property.IsProtected);
         WriteOrder(property.Order);
         WriteRemarks(property.Remarks);
         WriteSummary(property.Summary);
@@ -726,6 +730,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         Write($"Name = \"{method.Name}\", ");
         WriteReturnType(method);
         WriteCategory(method.Category);
+        WriteIsProtected(method.IsProtected);
         WriteOrder(method.Order);
         WriteSummary(method.Summary);
         WriteRemarks(method.Remarks);
@@ -782,6 +787,18 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         if (isParameter)
         {
             Write($"IsParameter = true, ");
+        }
+    }
+
+    /// <summary>
+    /// Writes whether a property is protected.
+    /// </summary>
+    /// <param name="isProtected"></param>
+    public void WriteIsProtected(bool isProtected)
+    {
+        if (isProtected)
+        {
+            Write($"IsProtected = true, ");
         }
     }
 

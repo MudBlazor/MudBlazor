@@ -55,16 +55,38 @@ public partial class ApiMemberTable
     public ApiMemberGrouping Grouping { get; set; } = ApiMemberGrouping.Categories;
 
     /// <summary>
+    /// Shows a bindable icon for properties or events which support <c>@bind-</c>.
+    /// </summary>
+    [Parameter]
+    public bool ShowBindable { get; set; } = true;
+
+    /// <summary>
     /// Shows an icon for properties marked with <c>[Parameter]</c>.
     /// </summary>
     [Parameter]
     public bool ShowParameters { get; set; } = false;
 
     /// <summary>
-    /// Shows a bindable icon for properties or events which support <c>@bind-</c>.
+    /// Shows members marked as protected.
     /// </summary>
     [Parameter]
-    public bool ShowBindable { get; set; } = true;
+    public bool ShowProtected { get; set; } = false;
+
+    /// <summary>
+    /// Checks if there are protected members of a certain type.
+    /// </summary>
+    /// <returns>When <c>true</c>, there are protected members for the current <see cref="Mode"/>.</returns>
+    public bool HasProtected()
+    {
+        return Mode switch
+        {
+            ApiMemberTableMode.Properties => Type!.Properties.Any(property => property.Value.IsProtected),
+            ApiMemberTableMode.Methods => Type!.Methods.Any(property => property.Value.IsProtected),
+            ApiMemberTableMode.Events => Type!.Events.Any(property => property.Value.IsProtected),
+            ApiMemberTableMode.Fields => Type!.Fields.Any(property => property.Value.IsProtected),
+            _ => false,
+        };
+    }
 
     /// <summary>
     /// Requests data for the table.
@@ -98,10 +120,16 @@ public partial class ApiMemberTable
             );
         }
 
+        // Are we excluding protected members?
+        if (!ShowProtected)
+        {
+            members = members.Where(member => !member.IsProtected);
+        }
+
         // What's the grouping?
         if (Grouping == ApiMemberGrouping.None)
         {
-            // Order by the column
+            // No group.  Just order members by the sort label
             members = state.SortLabel switch
             {
                 "Description" => state.SortDirection == SortDirection.Ascending ? members.OrderBy(member => member.Summary) : members.OrderByDescending(member => member.Summary),
@@ -113,7 +141,7 @@ public partial class ApiMemberTable
         }
         else if (Grouping == ApiMemberGrouping.Categories)
         {
-            // Sort by category
+            // Sort by category order, then by category name
             var orderedMembers = members.OrderBy(member => member.Order).ThenBy(member => member.Category);
 
             // ... then by sort column
@@ -160,6 +188,16 @@ public partial class ApiMemberTable
     public Task OnKeywordChangedAsync(string keyword)
     {
         Keyword = keyword;
+        return Table!.ReloadServerData();
+    }
+
+    /// <summary>
+    /// Occurs when <see cref="ShowProtected"/> has changed.
+    /// </summary>
+    /// <param name="showProtected">When <c>true</c>, protected members are displayed.</param>
+    public Task OnShowProtectedChangedAsync(bool showProtected)
+    {
+        ShowProtected = showProtected;
         return Table!.ReloadServerData();
     }
 

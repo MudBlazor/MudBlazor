@@ -3,7 +3,7 @@
           AllowUnsorted="false" GroupBy="@CurrentGroups">
     <ColGroup>
         <col />
-        <col />      
+        <col />
         <col />
     </ColGroup>
     <GroupHeaderTemplate>
@@ -29,17 +29,31 @@
         <MudGrid Class="pa-0">
             <MudItem xs="6">
                 <MudButtonGroup OverrideStyles="false">
-                    <MudButton Color="Color.Primary" Variant="@GetGroupingVariant(ApiMemberGrouping.None)" OnClick="@(() => OnGroupingChangedAsync(ApiMemberGrouping.None))">None</MudButton>
-                    <MudButton Color="Color.Primary" Variant="@GetGroupingVariant(ApiMemberGrouping.Categories)" OnClick="@(() => OnGroupingChangedAsync(ApiMemberGrouping.Categories))">Category</MudButton>
-                    <MudButton Color="Color.Primary" Variant="@GetGroupingVariant(ApiMemberGrouping.Inheritance)" OnClick="@(() => OnGroupingChangedAsync(ApiMemberGrouping.Inheritance))">Inheritance</MudButton>
+                    <MudButton Size="Size.Small" Color="Color.Primary" Variant="@GetGroupingVariant(ApiMemberGrouping.None)" OnClick="@(() => OnGroupingChangedAsync(ApiMemberGrouping.None))">None</MudButton>
+                    <MudButton Size="Size.Small" Color="Color.Primary" Variant="@GetGroupingVariant(ApiMemberGrouping.Categories)" OnClick="@(() => OnGroupingChangedAsync(ApiMemberGrouping.Categories))">Category</MudButton>
+                    <MudButton Size="Size.Small" Color="Color.Primary" Variant="@GetGroupingVariant(ApiMemberGrouping.Inheritance)" OnClick="@(() => OnGroupingChangedAsync(ApiMemberGrouping.Inheritance))">Inheritance</MudButton>
                 </MudButtonGroup>
             </MudItem>
-            <MudItem xs="6">
-                <MudTextField T="string" Value="@Keyword" ValueChanged="OnKeywordChangedAsync" DebounceInterval="300" Label="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
-            </MudItem>
+            @if (HasProtected())
+            {
+                @* There are protected members.  Show a "Show Protected" switch *@
+                <MudItem xs="3">
+                    <MudTextField T="string" Value="@Keyword" ValueChanged="OnKeywordChangedAsync" DebounceInterval="300" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
+                </MudItem>
+                <MudItem xs="3">
+                    <MudSwitch T="bool" Size="Size.Small" Value="@ShowProtected" ValueChanged="OnShowProtectedChangedAsync">Show Protected</MudSwitch>
+                </MudItem>
+            }
+            else
+            {
+                @* There are no protected members to hide *@
+                <MudItem xs="6">
+                    <MudTextField T="string" Value="@Keyword" ValueChanged="OnKeywordChangedAsync" DebounceInterval="300" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
+                </MudItem>
+            }
         </MudGrid>
     </ToolBarContent>
-    <RowTemplate>        
+    <RowTemplate>
         <MudTd id="@context.Name" DataLabel="Name">
             @if (Mode == ApiMemberTableMode.Methods)
             {
@@ -57,7 +71,7 @@
                             <CodeInline Class="px-0">@parameter.Name</CodeInline>
                         </ChildContent>
                         <TooltipContent>
-                            <MudSimpleTable Elevation="0" Hover="true" Dense="true" >
+                            <MudSimpleTable Elevation="0" Hover="true" Dense="true">
                                 <MudTr>
                                     <MudTh>Parameter Name</MudTh>
                                     <MudTh>Type</MudTh>
@@ -83,7 +97,7 @@
             else
             {
                 <CodeInline>@context.Name</CodeInline>
-            }          
+            }
             @if (Mode == ApiMemberTableMode.Properties)
             {
                 var property = context as DocumentedProperty;
@@ -103,6 +117,12 @@
                         <MudIcon Class="pt-2" Size="Size.Small" Icon="@Icons.Material.Filled.CompareArrows" />
                     </MudTooltip>
                 }
+            }
+            @if (context.IsProtected)
+            {
+                <MudTooltip Text="@($"This member is protected.")">
+                    <MudIcon Class="pt-2" Color="Color.Primary" Size="Size.Small" Icon="@Icons.Material.Filled.Lock" />
+                </MudTooltip>
             }
         </MudTd>
         <MudTd DataLabel="Type">
