@@ -189,7 +189,7 @@ public partial class MudStepper : MudComponentBase
     /// Displays a ripple effect when the step is clicked.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>false</c>.
+    /// Affects only non-linear steppers. Defaults to <c>false</c>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
