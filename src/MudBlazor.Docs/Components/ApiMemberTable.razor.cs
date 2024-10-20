@@ -141,7 +141,7 @@ public partial class ApiMemberTable
         }
         else if (Grouping == ApiMemberGrouping.Categories)
         {
-            // Sort by category order, then by category name
+            // Sort by member Order (via CategoryAttribute), then by Category name
             var orderedMembers = members.OrderBy(member => member.Order).ThenBy(member => member.Category);
 
             // ... then by sort column
@@ -156,7 +156,7 @@ public partial class ApiMemberTable
         }
         else if (Grouping == ApiMemberGrouping.Inheritance)
         {
-            // Sort by declaring type
+            // Sort by the "inheritance level" (how close the type is to this class), then by Name
             var orderedMembers = members.OrderBy(member => GetInheritanceLevel(member.DeclaringType)).ThenBy(member => member.DeclaringType!.NameFriendly);
 
             // ... then by sort column

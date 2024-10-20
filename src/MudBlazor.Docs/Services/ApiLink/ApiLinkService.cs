@@ -121,6 +121,7 @@ namespace MudBlazor.Docs.Services
         private void RegisterAliases()
         {
             // Add search texts here which users might search and direct them to the correct component or page.
+            RegisterPage("Accordion", subtitle: "Go to Expansion Panels", componentType: typeof(MudExpansionPanels));
             RegisterPage("Backdrop", subtitle: "Go to Overlay", componentType: typeof(MudOverlay));
             RegisterPage("Box", subtitle: "Go to Paper", componentType: typeof(MudPaper));
             RegisterPage("Combo Box", subtitle: "Go to Select", componentType: typeof(MudSelect<T>));
