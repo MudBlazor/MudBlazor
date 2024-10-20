@@ -2,10 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State.Comparer;
 
@@ -93,10 +90,7 @@ public class RegisterParameterBuilder<T> : IParameterBuilderAttach
     /// <returns>The current instance of the builder.</returns>
     public RegisterParameterBuilder<T> WithChangeHandler(Func<ParameterChangedEventArgs<T>, Task> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
-        _parameterChangedHandler = new ParameterChangedLambdaArgsTaskHandler<T>(parameterChangedHandler);
-        _handlerName = handlerName;
-
-        return this;
+        return WithChangeHandler(new ParameterChangedLambdaArgsTaskHandler<T>(parameterChangedHandler), handlerName);
     }
 
     /// <summary>
@@ -107,10 +101,7 @@ public class RegisterParameterBuilder<T> : IParameterBuilderAttach
     /// <returns>The current instance of the builder.</returns>
     public RegisterParameterBuilder<T> WithChangeHandler(Func<Task> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
-        _parameterChangedHandler = new ParameterChangedLambdaTaskHandler<T>(parameterChangedHandler);
-        _handlerName = handlerName;
-
-        return this;
+        return WithChangeHandler(new ParameterChangedLambdaTaskHandler<T>(parameterChangedHandler), handlerName);
     }
 
     /// <summary>
@@ -121,10 +112,7 @@ public class RegisterParameterBuilder<T> : IParameterBuilderAttach
     /// <returns>The current instance of the builder.</returns>
     public RegisterParameterBuilder<T> WithChangeHandler(Action parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
-        _parameterChangedHandler = new ParameterChangedLambdaHandler<T>(parameterChangedHandler);
-        _handlerName = handlerName;
-
-        return this;
+        return WithChangeHandler(new ParameterChangedLambdaHandler<T>(parameterChangedHandler), handlerName);
     }
 
     /// <summary>
@@ -135,10 +123,7 @@ public class RegisterParameterBuilder<T> : IParameterBuilderAttach
     /// <returns>The current instance of the builder.</returns>
     public RegisterParameterBuilder<T> WithChangeHandler(Action<ParameterChangedEventArgs<T>> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
-        _parameterChangedHandler = new ParameterChangedLambdaArgsHandler<T>(parameterChangedHandler);
-        _handlerName = handlerName;
-
-        return this;
+        return WithChangeHandler(new ParameterChangedLambdaArgsHandler<T>(parameterChangedHandler), handlerName);
     }
 
     /// <summary>

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Components.Chart.Models;
-#nullable enable
 
+#nullable enable
 namespace MudBlazor
 {
     public abstract class MudTimeSeriesChartBase : MudChartBase

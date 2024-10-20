@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
 <MudDrawer @ref="@Drawer" @bind-Open="@_open" Variant="@Variant" Overlay="@Overlay" OverlayAutoClose="@OverlayAutoClose" ClipMode="@ClipMode"></MudDrawer>
-<button @onclick="@HandleButtonClick" />
+<button id="toggle-drawer-button" @onclick="@HandleButtonClick">toggle open</button>
 
 @code {
     private bool _open = false;

@@ -223,38 +223,8 @@ namespace MudBlazor
         /// <summary>
         /// Gets the unique ID of the zone where the drag-and-drop started.
         /// </summary>
-        /// <remarks>
-        /// Use the <see cref="GetTransactionOriginZoneIdentifier()"/> method with the corrected spelling instead.
-        /// </remarks>
-        /// <returns>The unique ID of the zone.</returns>
-        [Obsolete("Use the GetTransactionOriginZoneIdentifier method instead.  This will be removed in a future release.")]
-        public string GetTransactionOrignZoneIdentiifer() => GetTransactionOriginZoneIdentifier();
-
-        /// <summary>
-        /// Gets the unique ID of the zone where the drag-and-drop started.
-        /// </summary>
-        /// <remarks>
-        /// Use the <see cref="GetTransactionOriginZoneIdentifier()"/> method with the corrected spelling instead.
-        /// </remarks>
-        /// <returns>The unique ID of the zone.</returns>
-        [Obsolete("Use the GetTransactionOriginZoneIdentifier method instead.  This will be removed in a future release.")]
-        public string GetTransactionOrignZoneIdentifier() => GetTransactionOriginZoneIdentifier();
-
-        /// <summary>
-        /// Gets the unique ID of the zone where the drag-and-drop started.
-        /// </summary>
         /// <returns>The unique ID of the zone.</returns>
         public string GetTransactionOriginZoneIdentifier() => _transaction?.SourceZoneIdentifier ?? string.Empty;
-
-        /// <summary>
-        /// Gets the unique ID of the zone where the item is currently hovering.
-        /// </summary>
-        /// <remarks>
-        /// Use the <see cref="GetTransactionCurrentZoneIdentifier()"/> method with the corrected spelling instead.
-        /// </remarks>
-        /// <returns>The unique ID of the zone.</returns>
-        [Obsolete("Use the GetTransactionCurrentZoneIdentifier method instead.  This will be removed in a future release.")]
-        public string GetTransactionCurrentZoneIdentiifer() => GetTransactionCurrentZoneIdentifier();
 
         /// <summary>
         /// Gets the unique ID of the zone where the item is currently hovering.
@@ -300,18 +270,6 @@ namespace MudBlazor
 
             return capturedTransaction.Index != capturedTransaction.SourceIndex;
         }
-
-        /// <summary>
-        /// Gets whether the specified zone is where the drag-and-drop transaction started.
-        /// </summary>
-        /// <param name="index">The index of the zone to find.</param>
-        /// <param name="identifier">The unique ID of the zone to fine.</param>
-        /// <remarks>
-        /// Use the <see cref="IsOrigin(int, string)"/> method instead.
-        /// </remarks>
-        /// <returns>When <c>true</c>, the zone is where the drag-and-drop transaction started.</returns>
-        [Obsolete("Use the IsOrigin method instead.  This will be removed in a future release.")]
-        public bool IsOrign(int index, string identifier) => IsOrigin(index, identifier);
 
         /// <summary>
         /// Gets whether the specified zone is where the drag-and-drop transaction started.

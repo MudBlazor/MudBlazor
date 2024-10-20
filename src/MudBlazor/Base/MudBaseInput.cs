@@ -228,7 +228,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Typo Typo { get; set; } = Typo.input;
+        public Typo Typo { get; set; } = Typo.subtitle1;
 
         /// <summary>
         /// The text displayed in the input if no <see cref="Value"/> is specified.

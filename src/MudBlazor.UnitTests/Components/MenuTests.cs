@@ -428,5 +428,96 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("button").GetAttribute("aria-label").Should().Be(expectedAriaLabel);
         }
+
+        [Test]
+        public async Task MultiNest_MenuPointerLeave_MenuPointerEnter_Closing()
+        {
+            var comp = Context.RenderComponent<MenuTestNestWithMouseOver>();
+            // open all sub menus
+            var mudMenus = comp.FindComponents<MudMenu>();
+            var menu = mudMenus[0].WaitForElement(".mud-menu");
+            comp.WaitForAssertion(() => mudMenus.Count.Should().Be(1));
+            await menu.TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            comp.WaitForAssertion(() => mudMenus[0].Instance.Open.Should().BeTrue());
+            mudMenus = comp.FindComponents<MudMenu>();
+            comp.WaitForAssertion(() => mudMenus.Count.Should().Be(2));
+            menu = mudMenus[0].WaitForElement(".mud-menu");
+            await menu.TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            comp.WaitForAssertion(() => mudMenus[0].Instance.Open.Should().BeTrue());
+            mudMenus = comp.FindComponents<MudMenu>();
+            comp.WaitForAssertion(() => mudMenus.Count.Should().Be(3));
+            menu = mudMenus[1].WaitForElement(".mud-menu");
+            await menu.TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            comp.WaitForAssertion(() => mudMenus[1].Instance.Open.Should().BeTrue());
+
+            // try to keep mouse enter
+            var cancellationTokenSource = new CancellationTokenSource();
+            var token = cancellationTokenSource.Token;
+            _ = Task.Run(async () =>
+            {
+                var menuItem = mudMenus[2].Find(".mud-menu");
+                while (!token.IsCancellationRequested)
+                {
+                    await menuItem.TriggerEventAsync("onpointermove", new PointerEventArgs());
+                    await Task.Delay(35, token);
+                }
+            }, token);
+            await Task.Delay(10, CancellationToken.None);
+            // click menu item
+            // all opened menu should be close
+            _ = mudMenus[1].InvokeAsync(() => mudMenus[1].Instance.CloseMenuAsync());
+            _ = cancellationTokenSource.CancelAsync();
+            await Task.Delay(200, CancellationToken.None);
+            mudMenus = comp.FindComponents<MudMenu>();
+            comp.WaitForAssertion(() => mudMenus.Count.Should().Be(1));
+            comp.WaitForAssertion(() => mudMenus[0].Instance.Open.Should().BeFalse());
+        }
+
+        [Test]
+        public async Task MultiNest_MenuPointerLeave_MenuPointerEnter_CheckOpenClose()
+        {
+            var comp = Context.RenderComponent<MenuTestNestWithMouseOver>();
+            // open all sub menus
+            var mudMenus = comp.FindComponents<MudMenu>();
+            var menu = mudMenus[0].WaitForElement(".mud-menu");
+            comp.WaitForAssertion(() => mudMenus.Count.Should().Be(1));
+            await menu.TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            comp.WaitForAssertion(() => mudMenus[0].Instance.Open.Should().BeTrue());
+            mudMenus = comp.FindComponents<MudMenu>();
+            comp.WaitForAssertion(() => mudMenus.Count.Should().Be(2));
+            menu = mudMenus[0].WaitForElement(".mud-menu");
+            await menu.TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            comp.WaitForAssertion(() => mudMenus[0].Instance.Open.Should().BeTrue());
+            mudMenus = comp.FindComponents<MudMenu>();
+            comp.WaitForAssertion(() => mudMenus.Count.Should().Be(3));
+            menu = mudMenus[1].WaitForElement(".mud-menu");
+            await menu.TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            comp.WaitForAssertion(() => mudMenus[1].Instance.Open.Should().BeTrue());
+
+            mudMenus = comp.FindComponents<MudMenu>();
+
+            // keep the first menu open
+            var cancellationTokenSource = new CancellationTokenSource();
+            var token = cancellationTokenSource.Token;
+            _ = Task.Run(async () =>
+            {
+                var menuItem = mudMenus[2].Find(".mud-menu");
+                while (!token.IsCancellationRequested)
+                {
+                    await menuItem.TriggerEventAsync("onpointermove", new PointerEventArgs());
+                    await Task.Delay(10, token);
+                }
+            }, token);
+            // leave last sub menu , and then parent menu open will be false
+            // but the first menu should still be open
+            menu = mudMenus[1].WaitForElement(".mud-menu");
+            await menu.TriggerEventAsync("onpointerleave", new PointerEventArgs());
+            await Task.Delay(100, CancellationToken.None);
+            mudMenus = comp.FindComponents<MudMenu>();
+            comp.WaitForAssertion(() => mudMenus.Count.Should().Be(2));
+            comp.WaitForAssertion(() => mudMenus[0].Instance.Open.Should().BeFalse());
+            comp.WaitForAssertion(() => mudMenus[1].Instance.Open.Should().BeTrue());
+            await cancellationTokenSource.CancelAsync();
+        }
     }
 }

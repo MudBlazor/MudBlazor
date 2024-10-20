@@ -1,8 +1,4 @@
-﻿
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +13,6 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class DropZoneTests : BunitTest
     {
-
         [Test]
         public void DropContainer_Defaults()
         {
@@ -1175,9 +1170,9 @@ namespace MudBlazor.UnitTests.Components
             var firstItemInSecondDropZone = secondDropZone.Children[3];
             await firstItemInSecondDropZone.DragEnterAsync(new DragEventArgs());
 
-            var message = comp.FindAll(".mud-typography")
-                .Select(c => c.TextContent)
-                .Where(t => t.Contains("Draging Started")).FirstOrDefault();
+            var message = comp
+                .FindAll(".mud-typography")
+                .Select(c => c.TextContent).FirstOrDefault(t => t.Contains("Draging Started"));
             message.Should().Be("Draging Started for [Item 2]");
         }
 
@@ -1272,11 +1267,8 @@ namespace MudBlazor.UnitTests.Components
             firstDropItem.TextContent.Should().Be("First Item");
             await firstDropItem.DragStartAsync(new DragEventArgs());
 
-            var containerComponent = comp.FindComponent<MudDropContainer<TestComponents.DropzoneBasicTest.SimpleDropItem>>();
+            var containerComponent = comp.FindComponent<MudDropContainer<DropzoneBasicTest.SimpleDropItem>>();
             containerComponent.Instance.IsOrigin(0, "Column 1").Should().Be(true);
-#pragma warning disable CS0618 // Type or member is obsolete
-            containerComponent.Instance.IsOrign(0, "Column 1").Should().Be(true);
-#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         [Test]
@@ -1295,12 +1287,8 @@ namespace MudBlazor.UnitTests.Components
             firstDropItem.TextContent.Should().Be("First Item");
             await firstDropItem.DragStartAsync(new DragEventArgs());
 
-            var containerComponent = comp.FindComponent<MudDropContainer<TestComponents.DropzoneBasicTest.SimpleDropItem>>();
+            var containerComponent = comp.FindComponent<MudDropContainer<DropzoneBasicTest.SimpleDropItem>>();
             containerComponent.Instance.GetTransactionOriginZoneIdentifier().Should().Be("Column 1");
-#pragma warning disable CS0618 // Type or member is obsolete
-            containerComponent.Instance.GetTransactionOrignZoneIdentifier().Should().Be("Column 1");
-            containerComponent.Instance.GetTransactionOrignZoneIdentiifer().Should().Be("Column 1");
-#pragma warning restore CS0618 // Type or member is obsolete
         }
     }
 }

@@ -16,6 +16,7 @@ namespace MudBlazor
         private string? _popoverStyle;
         private bool _isTemporary;
         private bool _isPointerOver;
+        private bool _isClosing;
 
         protected string Classname =>
             new CssBuilder("mud-menu")
@@ -273,17 +274,25 @@ namespace MudBlazor
         /// </remarks>
         public bool Open { get; private set; }
 
+        [CascadingParameter]
+        private MudMenu? ParentMenu { get; set; }
+
         /// <summary>
         /// Closes this menu.
         /// </summary>
-        public Task CloseMenuAsync()
+        public async Task CloseMenuAsync()
         {
             Open = false;
-            _isPointerOver = false;
+
+            // Disable pointer move event
+            // Avoid the issue where the menu can't close when the pointer moves, even though a menu item was clicked
+            _isClosing = true;
+            await PointerLeaveAsync();
+            _isClosing = false;
             _popoverStyle = null;
             StateHasChanged();
 
-            return OpenChanged.InvokeAsync(Open);
+            await OpenChanged.InvokeAsync(Open);
         }
 
         /// <summary>
@@ -382,7 +391,18 @@ namespace MudBlazor
                 return;
             }
 
+            if (ParentMenu != null)
+                ParentMenu._isPointerOver = true;
+
             await OpenMenuAsync(args, true);
+        }
+
+        private void PointerMove(PointerEventArgs args)
+        {
+            if (!_isClosing)
+            {
+                _isPointerOver = true;
+            }
         }
 
         private async Task PointerLeaveAsync()
@@ -393,7 +413,12 @@ namespace MudBlazor
                 return;
             }
 
-            _isPointerOver = false;
+            var menu = this;
+            do
+            {
+                menu._isPointerOver = false;
+                menu = menu.ParentMenu;
+            } while (menu != null);
 
             if (_isTemporary && ActivationEvent == MouseEvent.MouseOver)
             {
@@ -401,9 +426,11 @@ namespace MudBlazor
                 await Task.Delay(100);
 
                 // Close the menu if, since the delay, the pointer hasn't re-entered the menu or the overlay was made persistent (because the activator was clicked).
-                if (!_isPointerOver && _isTemporary)
+                menu = this;
+                while (menu is { ActivationEvent: MouseEvent.MouseOver, _isPointerOver: false, _isTemporary: true })
                 {
-                    await CloseMenuAsync();
+                    await menu.CloseMenuAsync();
+                    menu = menu.ParentMenu;
                 }
             }
         }

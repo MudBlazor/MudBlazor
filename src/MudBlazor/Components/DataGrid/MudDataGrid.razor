@@ -168,7 +168,7 @@
                                 }
                                 @if (_filtersMenuVisible && FilterMode == DataGridFilterMode.Simple)
                                 {
-                                    <MudOverlay ZIndex="12" @bind-Visible="@_filtersMenuVisible" AutoClose></MudOverlay>
+                                    <MudOverlay ZIndex="12" @bind-Visible="@_filtersMenuVisible" AutoClose OnClosed="@CloseFilters"></MudOverlay>
                                     <MudPopover Open="@_filtersMenuVisible" Paper="true" Class="filters-panel pa-2" OverflowBehavior="OverflowBehavior.FlipAlways" AnchorOrigin="Origin.TopLeft"
                                                 TransformOrigin="Origin.TopLeft" Elevation="4" Style="width:700px;max-width:700px;z-index:13;" MaxHeight="400">
                                         @if (FilterTemplate == null)
@@ -215,7 +215,7 @@
                                         <td class="mud-table-cell @groupClass" colspan="1000" style="background-color:var(--mud-palette-background-gray);@groupStyle">
                                             <MudIconButton Class="mud-table-row-expander"
                                            Icon="@(g.Expanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)"
-                                           OnClick="@(() => ToggleGroupExpansion(g))" />
+                                           OnClick="@(() => ToggleGroupExpansion(g))" aria-label="@Localizer[LanguageResource.MudDataGrid_ToggleGroupExpansion]" />
 
                                             @if (GroupedColumn.GroupTemplate == null)
                                             {
@@ -520,7 +520,7 @@
             {
                 <MudGrid Spacing="0">
                     <MudItem xs="1" Class="d-flex">
-                        <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilterAsync" Size="@Size.Small" Style="align-self: flex-end"></MudIconButton>
+                        <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilterAsync" Size="@Size.Small" Style="align-self: flex-end" aria-label="@Localizer[LanguageResource.MudDataGrid_RemoveFilter]"></MudIconButton>
                     </MudItem>
                     <MudItem xs="4">
                         <MudSelect T="Column<T>" Value="@filterDefinition.Column" ValueChanged="@filter.FieldChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Column]" Dense="true" Margin="@Margin.Dense"
@@ -558,7 +558,7 @@
                                 <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
                                 @foreach (var item in EnumExtensions.GetSafeEnumValues(fieldType.InnerType))
                                 {
-                                    <MudSelectItem T="Enum" Value="@((Enum)item)">@item</MudSelectItem>
+                                    <MudSelectItem T="Enum" Value="@item">@Localizer[item]</MudSelectItem>
                                 }
                             </MudSelect>
                         }
@@ -621,7 +621,7 @@
                                 <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
                                 @foreach (var item in EnumExtensions.GetSafeEnumValues(fieldType.InnerType))
                                 {
-                                    <MudSelectItem T="Enum" Value="@((Enum)item)">@item</MudSelectItem>
+                                    <MudSelectItem T="Enum" Value="@item">@Localizer[item]</MudSelectItem>
                                 }
                             </MudSelect>
                         }

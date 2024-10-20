@@ -10,8 +10,8 @@
             <MudText>MudFab</MudText>
         </MudIconButton>
     </ChildContent>
-    <ErrorContent>
-        <MudAlert Severity="Severity.Error">Oh my! We caught an error and handled it!</MudAlert>
+    <ErrorContent Context="exception">
+        <MudAlert Severity="Severity.Error">@exception.Message</MudAlert>
     </ErrorContent>
 </ErrorBoundary>
 

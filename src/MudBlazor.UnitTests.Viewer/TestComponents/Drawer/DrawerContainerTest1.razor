@@ -6,7 +6,8 @@
         <MudDrawer Open="true" Variant="DrawerVariant.Responsive" ClipMode="DrawerClipMode.Always" Anchor="Anchor.Right"></MudDrawer>
     }
 </MudDrawerContainer>
-<button @onclick="@HandleButtonClick" />
+
+<button id="hide-drawer-button" @onclick="@HandleButtonClick">hide</button>
 
 @code {
     public MudDrawerContainer DrawerContainer;

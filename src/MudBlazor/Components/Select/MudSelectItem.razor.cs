@@ -1,28 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
     /// Represents an option of a select or multi-select. To be used inside MudSelect.
     /// </summary>
-    public partial class MudSelectItem<T> : MudBaseSelectItem, IDisposable
+    public partial class MudSelectItem<T> : MudComponentBase, IDisposable
     {
+        private IMudSelect? _parent;
+        private IMudShadowSelect? _shadowParent;
+
         private string GetCssClasses() => new CssBuilder()
             .AddClass(Class)
             .Build();
 
-        private IMudSelect _parent;
         internal string ItemId { get; } = Identifier.Create();
 
         /// <summary>
         /// The parent select component
         /// </summary>
         [CascadingParameter]
-        internal IMudSelect IMudSelect
+        internal IMudSelect? IMudSelect
         {
             get => _parent;
             set
@@ -46,17 +46,14 @@ namespace MudBlazor
             }
         }
 
-        private IMudShadowSelect _shadowParent;
-        private bool _selected;
-
         [CascadingParameter]
-        internal IMudShadowSelect IMudShadowSelect
+        internal IMudShadowSelect? IMudShadowSelect
         {
             get => _shadowParent;
             set
             {
                 _shadowParent = value;
-                ((MudSelect<T>)_shadowParent)?.RegisterShadowItem(this);
+                ((MudSelect<T>?)_shadowParent)?.RegisterShadowItem(this);
             }
         }
 
@@ -67,15 +64,15 @@ namespace MudBlazor
         [CascadingParameter(Name = "HideContent")]
         internal bool HideContent { get; set; }
 
-        internal MudSelect<T> MudSelect => (MudSelect<T>)IMudSelect;
+        internal MudSelect<T>? MudSelect => (MudSelect<T>?)IMudSelect;
 
-        private void OnUpdateSelectionStateFromOutside(IEnumerable<T> selection)
+        private void OnUpdateSelectionStateFromOutside(IEnumerable<T?>? selection)
         {
             if (selection == null)
                 return;
-            var old_selected = Selected;
+            var oldSelected = Selected;
             Selected = selection.Contains(Value);
-            if (old_selected != Selected)
+            if (oldSelected != Selected)
                 InvokeAsync(StateHasChanged);
         }
 
@@ -84,37 +81,36 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public T Value { get; set; }
+        public T? Value { get; set; }
+
+        /// <summary>
+        /// Prevents the user from interacting with this item.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.General.Behavior)]
+        public bool Disabled { get; set; }
+
+        /// <summary>
+        /// The content within this item.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.General.Behavior)]
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// Mirrors the MultiSelection status of the parent select
         /// </summary>
-        protected bool MultiSelection
-        {
-            get
-            {
-                if (MudSelect == null)
-                    return false;
-                return MudSelect.MultiSelection;
-            }
-        }
+        protected bool MultiSelection => MudSelect is { MultiSelection: true };
 
         /// <summary>
         /// Selected state of the option. Only works if the parent is a mulit-select
         /// </summary>
-        internal bool Selected
-        {
-            get => _selected;
-            set
-            {
-                _selected = value;
-            }
-        }
+        internal bool Selected { get; set; }
 
         /// <summary>
         /// The checkbox icon reflects the multi-select option's state
         /// </summary>
-        protected string CheckBoxIcon
+        protected string? CheckBoxIcon
         {
             get
             {
@@ -124,7 +120,7 @@ namespace MudBlazor
             }
         }
 
-        protected string DisplayString
+        protected string? DisplayString
         {
             get
             {
@@ -135,13 +131,16 @@ namespace MudBlazor
             }
         }
 
-        private void OnClicked()
+        private Task OnClickHandleAsync()
         {
             if (MultiSelection)
+            {
                 Selected = !Selected;
+            }
 
             MudSelect?.SelectOption(Value);
-            InvokeAsync(StateHasChanged);
+
+            return InvokeAsync(StateHasChanged);
         }
 
         public void Dispose()
@@ -149,9 +148,12 @@ namespace MudBlazor
             try
             {
                 MudSelect?.Remove(this);
-                ((MudSelect<T>)_shadowParent)?.UnregisterShadowItem(this);
+                ((MudSelect<T>?)_shadowParent)?.UnregisterShadowItem(this);
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
     }
 }

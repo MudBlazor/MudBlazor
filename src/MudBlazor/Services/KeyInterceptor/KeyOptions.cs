@@ -37,8 +37,6 @@ namespace MudBlazor.Services;
 /// </summary>
 public class KeyOptions
 {
-    //TODO: Make immutable in v8.
-
     /// <summary>
     /// <para>JavaScript keyboard event.key</para>
     /// <para>
@@ -47,37 +45,37 @@ public class KeyOptions
     ///      regex must be enclosed in two forward slashes!
     /// </para>
     /// </summary>
-    public string? Key { get; set; }
+    public string? Key { get; init; }
 
     /// <summary>
     /// Subscribe down key and invoke event KeyDown on C# side
     /// </summary>
-    public bool SubscribeDown { get; set; }
+    public bool SubscribeDown { get; init; }
 
     /// <summary>
     /// Subscribe up key and invoke event KeyUp on C# side
     /// </summary>
-    public bool SubscribeUp { get; set; }
+    public bool SubscribeUp { get; init; }
 
     /// <summary>
     /// Configuration for preventDefault() on key down events.
     /// </summary>
-    public string PreventDown { get; set; } = "none";
+    public string PreventDown { get; init; } = "none";
 
     /// <summary>
     /// Configuration for preventDefault() on key up events.
     /// </summary>
-    public string PreventUp { get; set; } = "none";
+    public string PreventUp { get; init; } = "none";
 
     /// <summary>
     /// Configuration for stopPropagation() on key down events.
     /// </summary>
-    public string StopDown { get; set; } = "none";
+    public string StopDown { get; init; } = "none";
 
     /// <summary>
     /// Configuration for stopPropagation() on key up events.
     /// </summary>
-    public string StopUp { get; set; } = "none";
+    public string StopUp { get; init; } = "none";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="KeyOptions"/> class.

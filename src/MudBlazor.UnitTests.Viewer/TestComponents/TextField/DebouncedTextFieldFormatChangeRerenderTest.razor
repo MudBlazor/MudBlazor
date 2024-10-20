@@ -7,7 +7,8 @@
               RequiredError="Enter a star"
               Culture="System.Globalization.CultureInfo.InvariantCulture" />
 
-<MudButton Variant="@Variant.Filled" 
+<MudButton id="format-change-button"
+           Variant="@Variant.Filled"
            Color="@Color.Primary"
            OnClick="@LaunchDelayedFormatChange">
     Launch delayed format change
@@ -26,7 +27,7 @@
 
     public int DebounceInterval = 500;
     public int RerenderDelay = 2000;
-    public DateTime Date = new (2023, 07, 12);
+    public DateTime Date = new(2023, 07, 12);
     public string Format = "yyyy/MM/dd";
 
     private int _renderCount;
