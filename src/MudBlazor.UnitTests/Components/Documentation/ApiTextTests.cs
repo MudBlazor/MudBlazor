@@ -185,4 +185,69 @@ public sealed class ApiTextTests : BunitTest
         // There should be a text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">.</span>");
     }
+
+    /// <summary>
+    /// Ensures that <see cref=""/> links to existing events render properly.
+    /// </summary>
+    [Test]
+    public void ApiText_RenderSeeCref_ExistingEvent()
+    {
+        var comp = Context.RenderComponent<ApiText>(Parameter("Text", "Gets set when the <see cref=\"E:MudBlazor.MudAlert.OnClick\" /> event occurs."));
+        // There should be a text span
+        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">Gets set when the </span>");
+        // There should be a link to /api/Adornment
+        comp.Markup.Should().Contain("<a href=\"/api/MudAlert#OnClick\"");
+        // There should be a text span
+        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\"> event occurs.</span>");
+    }
+
+    /// <summary>
+    /// Ensures that <see cref=""/> links to non-existant events render properly.
+    /// </summary>
+    [Test]
+    public void ApiText_RenderSeeCref_NonExistantEvent()
+    {
+        var comp = Context.RenderComponent<ApiText>(Parameter("Text", "Gets set when the <see cref=\"E:MudBlazor.MudAlert.OnSmokeAlarmInYourHouse\" /> event occurs."));
+        // There should be a text span
+        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">Gets set when the </span>");
+        // There should be a text span
+        comp.Markup.Should().Contain("<code class=\"docs-code docs-code-primary\">MudBlazor.MudAlert.OnSmokeAlarmInYourHouse</code>");
+        // There should be a text span
+        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\"> event occurs.</span>");
+    }
+
+
+    /// <summary>
+    /// Ensures that external types render properly.
+    /// </summary>
+    [Test]
+    public void ApiText_RenderSeeCref_External_MicrosoftType()
+    {
+        var comp = Context.RenderComponent<ApiText>(Parameter("Text", "The button can contain a <see cref=\"T:Microsoft.AspNetCore.Components.RenderFragment\" />."));
+        // There should be a text span
+        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">The button can contain a </span>");
+        // There should be a link to Microsoft docs
+        comp.Markup.Should().Contain("<a href=\"https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.renderfragment\" target=\"_external\" blazor:onclick=\"1\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-caption docs-link docs-code docs-code-primary\">RenderFragment");
+        // There should be a Link icon
+        comp.Markup.Should().Contain("<svg class=\"mud-icon-root mud-icon-default mud-svg-icon mud-icon-size-small\" style=\"position:relative;top:7px;\" focusable=\"false\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" role=\"img\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z\"/></svg>");
+        // There should be a text span
+        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">.</span>");
+    }
+
+    /// <summary>
+    /// Ensures that external types render properly.
+    /// </summary>
+    [Test]
+    public void ApiText_RenderSeeCref_External_SystemType()
+    {
+        var comp = Context.RenderComponent<ApiText>(Parameter("Text", "The popover unique ID is a <see cref=\"T:System.Guid\" />."));
+        // There should be a text span
+        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">The popover unique ID is a </span>");
+        // There should be a link to Microsoft docs
+        comp.Markup.Should().Contain("<a href=\"https://learn.microsoft.com/dotnet/api/system.guid\" target=\"_external\" blazor:onclick=\"1\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-caption docs-link docs-code docs-code-primary\">Guid");
+        // There should be a Link icon
+        comp.Markup.Should().Contain("<svg class=\"mud-icon-root mud-icon-default mud-svg-icon mud-icon-size-small\" style=\"position:relative;top:7px;\" focusable=\"false\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" role=\"img\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z\"/></svg>");
+        // There should be a text span
+        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">.</span>");
+    }
 }

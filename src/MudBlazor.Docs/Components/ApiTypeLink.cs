@@ -87,20 +87,49 @@ public class ApiTypeLink : ComponentBase
             switch (TypeName)
             {
                 case "System.Boolean":
+                    builder.AddCode(0, "bool");
+                    break;
                 case "System.Boolean[]":
+                    builder.AddCode(0, "bool[]");
+                    break;
                 case "System.Int32":
+                    builder.AddCode(0, "int");
+                    break;
                 case "System.Int32[]":
+                    builder.AddCode(0, "int[]");
+                    break;
                 case "System.Int64":
+                    builder.AddCode(0, "long");
+                    break;
                 case "System.Int64[]":
+                    builder.AddCode(0, "long[]");
+                    break;
                 case "System.String":
+                    builder.AddCode(0, "string");
+                    break;
                 case "System.String[]":
+                    builder.AddCode(0, "string[]");
+                    break;
                 case "System.Double":
+                    builder.AddCode(0, "double");
+                    break;
                 case "System.Double[]":
+                    builder.AddCode(0, "double[]");
+                    break;
                 case "System.Single":
+                    builder.AddCode(0, "float");
+                    break;
                 case "System.Single[]":
+                    builder.AddCode(0, "float[]");
+                    break;
                 case "System.Object":
+                    builder.AddCode(0, "object");
+                    break;
+                case "System.Object[]":
+                    builder.AddCode(0, "object[]");
+                    break;
                 case "System.Void":
-                    builder.AddCode(0, TypeFriendlyName);
+                    builder.AddCode(0, "void");
                     break;
                 default:
                     // Is this a linkable type?
@@ -117,6 +146,7 @@ public class ApiTypeLink : ComponentBase
                     }
                     else
                     {
+                        // Fall back to the friendly name
                         builder.AddCode(0, TypeFriendlyName);
                     }
                     break;
