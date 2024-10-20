@@ -171,9 +171,6 @@ namespace MudBlazor
             await columnToEnlarge.HeaderCell.UpdateColumnWidth(enlargedWidth, gridHeight, finish);
         }
 
-        public async ValueTask DisposeAsync()
-        {
-            await _eventListener.DisposeAsync();
-        }
+        public ValueTask DisposeAsync() => _eventListener.DisposeAsync();
     }
 }
