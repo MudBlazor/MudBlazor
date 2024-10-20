@@ -8,8 +8,10 @@ public class ResizeObserverOptions
 {
     /// <summary>
     /// Timespan in milliseconds after the browser detects the last change and notifies the interop service.
-    /// Setting this value too low can cause poor application performance.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>200</c>.  Setting this value too low can cause poor application performance.
+    /// </remarks>
     public int ReportRate { get; set; } = 200;
 
     /// <summary>
