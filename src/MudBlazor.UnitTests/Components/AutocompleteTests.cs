@@ -1778,5 +1778,20 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.Should().Be(null);
             comp.WaitForAssertion(() => comp.Instance.SearchCount.Should().Be(1));
         }
+
+        [Test]
+        public void Should_Render_Classes_Correctly()
+        {
+            // Arrange
+            var inputClass = "custom-input-class";
+
+            // Act
+            var comp = Context.RenderComponent<MudAutocomplete<string>>(parameters => parameters
+                .Add(p => p.InputClass, inputClass)
+            );
+
+            // Assert
+            comp.Find(".mud-select-input").ClassList.Should().Contain(inputClass);
+        }
     }
 }
