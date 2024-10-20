@@ -16,7 +16,7 @@ namespace MudBlazor.UnitTests.Components.Documentation;
 public sealed class ApiTextTests : BunitTest
 {
     /// <summary>
-    /// Ensures that regular text renders properly.
+    /// Ensures that malformed text is handled gracefully.
     /// </summary>
     [Test]
     public void ApiText_HandleMalformedXmlDocs()
@@ -51,12 +51,12 @@ public sealed class ApiTextTests : BunitTest
     [Test]
     public void ApiText_RenderEmptyText()
     {
-        var comp = Context.RenderComponent<ApiText>(Parameter("Text", null));
+        var comp = Context.RenderComponent<ApiText>(Parameter("Text", ""));
         comp.Markup.Should().Be("");
     }
 
     /// <summary>
-    /// Ensures that valid <see href=""/> links to existing properties render properly.
+    /// Ensures that self closing <see href="" /> links render properly.
     /// </summary>
     [Test]
     public void ApiText_RenderSeeHref_SelfClosing()
@@ -64,14 +64,14 @@ public sealed class ApiTextTests : BunitTest
         var comp = Context.RenderComponent<ApiText>(Parameter("Text", "For the best Blazor components, go to <see href=\"https://www.mudblazor.com\" /> right now."));
         // There should be a text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">For the best Blazor components, go to </span>");
-        // Then a link to https://www.mudblazor.com
+        // Then a link to https://www.mudblazor.com with the same text
         comp.Markup.Should().Contain("<a href=\"https://www.mudblazor.com\" target=\"_external\" blazor:onclick=\"1\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-caption docs-link docs-code docs-code-primary\">https://www.mudblazor.com");
         // Ending with another text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\"> right now.</span>");
     }
 
     /// <summary>
-    /// Ensures that valid <see href=""/> links to existing properties render properly.
+    /// Ensures that <see href=""/> links with interior text render properly.
     /// </summary>
     [Test]
     public void ApiText_RenderSeeHref_WithText()
@@ -86,7 +86,7 @@ public sealed class ApiTextTests : BunitTest
     }
 
     /// <summary>
-    /// Ensures that valid <see href=""/> links to empty URL's are skipped.
+    /// Ensures that empty <see href=""/> links are skipped.
     /// </summary>
     [Test]
     public void ApiText_RenderSeeHref_EmptyUrl()
@@ -97,7 +97,7 @@ public sealed class ApiTextTests : BunitTest
     }
 
     /// <summary>
-    /// Ensures that valid <see cref=""/> links to existing properties render properly.
+    /// Ensures that <see cref=""/> links to existing properties render properly.
     /// </summary>
     [Test]
     public void ApiText_RenderSeeCref_ExistingProperty()
@@ -105,7 +105,7 @@ public sealed class ApiTextTests : BunitTest
         var comp = Context.RenderComponent<ApiText>(Parameter("Text", "Occurs when <see cref=\"P:MudBlazor.MudComponentBase.Class\" /> has changed."));
         // There should be a text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">Occurs when </span>");
-        // Then a link to /api/MudAlert#Icon
+        // Then a link to /api/MudComponentBase#Class
         comp.Markup.Should().Contain("<a href=\"/api/MudComponentBase#Class\" blazor:onclick=\"6\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-caption docs-link docs-code docs-code-primary\">Class</a>");
         // Ending with another text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\"> has changed.</span>");
@@ -127,7 +127,7 @@ public sealed class ApiTextTests : BunitTest
     }
 
     /// <summary>
-    /// Ensures that <see cref=""/> links render properly.
+    /// Ensures that <see cref=""/> links to existing methods render properly.
     /// </summary>
     [Test]
     public void ApiText_RenderSeeCref_ExistingMethod()
@@ -142,7 +142,7 @@ public sealed class ApiTextTests : BunitTest
     }
 
     /// <summary>
-    /// Ensures that invalid <see cref=""/> links render properly.
+    /// Ensures that invalid <see cref=""/> links to non-existant methods render properly.
     /// </summary>
     [Test]
     public void ApiText_RenderSeeCref_NonExistantMethod()
@@ -150,7 +150,7 @@ public sealed class ApiTextTests : BunitTest
         var comp = Context.RenderComponent<ApiText>(Parameter("Text", "When set, calls <see cref=\"M:MudBlazor.NotExistingType.NotExistingMethod\" /> to do stuff."));
         // There should be a text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">When set, calls </span>");
-        // There's no valid link, just a span for the non-existant property
+        // There's no valid link, just a span for the non-existant method
         comp.Markup.Should().Contain("<code class=\"docs-code docs-code-primary\">MudBlazor.NotExistingType.NotExistingMethod</code>");
         // Ending with another text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\"> to do stuff.</span>");
@@ -195,7 +195,7 @@ public sealed class ApiTextTests : BunitTest
         var comp = Context.RenderComponent<ApiText>(Parameter("Text", "Gets set when the <see cref=\"E:MudBlazor.MudAlert.OnClick\" /> event occurs."));
         // There should be a text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">Gets set when the </span>");
-        // There should be a link to /api/Adornment
+        // There should be a link to /api/MudAlert#OnClick
         comp.Markup.Should().Contain("<a href=\"/api/MudAlert#OnClick\"");
         // There should be a text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\"> event occurs.</span>");
@@ -216,9 +216,8 @@ public sealed class ApiTextTests : BunitTest
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\"> event occurs.</span>");
     }
 
-
     /// <summary>
-    /// Ensures that external types render properly.
+    /// Ensures that links to external types render properly.
     /// </summary>
     [Test]
     public void ApiText_RenderSeeCref_External_MicrosoftType()
@@ -235,7 +234,7 @@ public sealed class ApiTextTests : BunitTest
     }
 
     /// <summary>
-    /// Ensures that external types render properly.
+    /// Ensures that links to external types render properly.
     /// </summary>
     [Test]
     public void ApiText_RenderSeeCref_External_SystemType()
