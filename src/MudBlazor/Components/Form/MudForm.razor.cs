@@ -242,7 +242,7 @@ namespace MudBlazor
 
         void IForm.Add(IFormComponent formControl)
         {
-            if (formControl.Required)
+            if (!IsFormComponentValid(formControl))
                 SetIsValid(false);
             _formControls.Add(formControl);
             SetDefaultControlValidation(formControl);
@@ -393,11 +393,33 @@ namespace MudBlazor
             _touched = false;
         }
 
+        private static bool IsFormComponentValid(IFormComponent formComponent)
+        {
+            if (!formComponent.Required)
+            {
+                // We assume a valid state if the component value is not required.
+                // This is not 100% correct because there might be a custom validation function,
+                // but we cannot afford an (async) validation call here.
+                return true;
+            }
+
+            if (formComponent.Validation is not null)
+            {
+                // Custom validation in place that would require an async call.
+                // This is not 100% correct because we don't know what the validation function would return,
+                // but we cannot afford an (async) validation call here.
+                // We have to assume it's invalid for backward compatibility.
+                return false;
+            }
+
+            return formComponent.HasValue();
+        }
+
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
-                var valid = _formControls.All(x => x.Required == false);
+                var valid = _formControls.All(IsFormComponentValid);
                 if (valid != IsValid)
                 {
                     // the user probably bound a variable to IsValid and it conflicts with our state.
