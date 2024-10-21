@@ -892,5 +892,19 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("textarea").HasAttribute("required").Should().BeTrue();
             comp.Find("textarea").GetAttribute("aria-required").Should().Be("true");
         }
+
+        [Test]
+        public void ReadOnlyShouldNotHaveClearButton()
+        {
+            var comp = Context.RenderComponent<MudMask>(p => p
+            .Add(x => x.Text, "some value")
+            .Add(x => x.Clearable, true)
+            .Add(x => x.ReadOnly, false));
+
+            comp.FindAll(".mud-input-clear-button").Count.Should().Be(1);
+
+            comp.SetParametersAndRender(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
+            comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
+        }
     }
 }

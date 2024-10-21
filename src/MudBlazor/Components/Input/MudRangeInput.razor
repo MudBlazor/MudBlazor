@@ -59,7 +59,7 @@
            required="@Required"
            aria-required="@Required.ToString().ToLowerInvariant()" />
 
-    @if (IsClearable() && !GetDisabledState())
+    @if (IsClearable() && !GetReadOnlyState() && !GetDisabledState())
     {
         <MudIconButton Class="@(Adornment is Adornment.Start ? "me-0" : "me-n4")" Style="z-index: 2"
                        Color="@Color.Default"
