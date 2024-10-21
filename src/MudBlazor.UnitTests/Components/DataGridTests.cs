@@ -4620,5 +4620,30 @@ namespace MudBlazor.UnitTests.Components
             var query = source.OrderBy([]);
             query.Should().BeSameAs(source);
         }
+
+        [Test]
+        public void DataGridValidatorFormBinding()
+        {
+            var comp = Context.RenderComponent<DataGridValidatorTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridValidatorTest.Item>>().Instance;
+            dataGrid.Validator.Should().BeSameAs(form);
+
+            var textField = comp.FindComponent<MudTextField<string>>();
+            form.IsTouched.Should().BeFalse();
+            form.IsValid.Should().BeFalse();
+
+            // input valid value into text field
+            textField.Find("input").Input("not empty");
+
+            form.IsTouched.Should().BeTrue();
+            form.IsValid.Should().BeTrue();
+
+            // input invalid value into text field
+            textField.Find("input").Input("");
+
+            form.IsTouched.Should().BeTrue();
+            form.IsValid.Should().BeFalse();
+        }
     }
 }
