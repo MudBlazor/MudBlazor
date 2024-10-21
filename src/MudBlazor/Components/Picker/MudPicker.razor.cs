@@ -406,21 +406,21 @@ namespace MudBlazor
         /// The location the popover opens, relative to its container.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Origin.TopLeft"/>.
+        /// Defaults to <see cref="Origin.BottomCenter"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public Origin AnchorOrigin { get; set; } = Origin.TopLeft;
+        public Origin AnchorOrigin { get; set; } = Origin.BottomCenter;
 
         /// <summary>
         /// The direction the popover opens, relative to its container.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Origin.TopLeft"/>.
+        /// Defaults to <see cref="Origin.TopCenter"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public Origin TransformOrigin { get; set; } = Origin.TopLeft;
+        public Origin TransformOrigin { get; set; } = Origin.TopCenter;
 
         /// <summary>
         /// The behavior of the popover when it overflows its container.

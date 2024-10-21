@@ -196,21 +196,21 @@ namespace MudBlazor
         /// The point where the menu will open from.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Origin.TopLeft"/>.
+        /// Defaults to <see cref="Origin.BottomCenter"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.PopupAppearance)]
-        public Origin AnchorOrigin { get; set; } = Origin.TopLeft;
+        public Origin AnchorOrigin { get; set; } = Origin.BottomCenter;
 
         /// <summary>
         /// Sets the direction the menu will open from the anchor.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Origin.TopLeft"/>.
+        /// Defaults to <see cref="Origin.TopCenter"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.PopupAppearance)]
-        public Origin TransformOrigin { get; set; } = Origin.TopLeft;
+        public Origin TransformOrigin { get; set; } = Origin.TopCenter;
 
         /// <summary>
         /// Prevents the page from scrolling while this menu is open.
