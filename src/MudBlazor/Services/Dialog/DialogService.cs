@@ -122,12 +122,11 @@ namespace MudBlazor
             });
             var dialogInstance = new RenderFragment(builder =>
             {
-                builder.OpenComponent<MudDialogInstance>(0);
-                builder.SetKey(dialogReference.Id);
-                builder.AddAttribute(1, nameof(MudDialogInstance.Options), options);
-                builder.AddAttribute(2, nameof(MudDialogInstance.Title), title);
-                builder.AddAttribute(3, nameof(MudDialogInstance.Content), dialogContent);
-                builder.AddAttribute(4, nameof(MudDialogInstance.Id), dialogReference.Id);
+                builder.OpenComponent<MudDialogInstanceParent>(0);
+                builder.AddComponentParameter(1, nameof(MudDialogInstanceParent.Id), dialogReference.Id);
+                builder.AddComponentParameter(2, nameof(MudDialogInstanceParent.Content), dialogContent);
+                builder.AddComponentParameter(3, nameof(MudDialogInstanceParent.Options), options);
+                builder.AddComponentParameter(4, nameof(MudDialogInstanceParent.Title), title);
                 builder.CloseComponent();
             });
             dialogReference.InjectRenderFragment(dialogInstance);
