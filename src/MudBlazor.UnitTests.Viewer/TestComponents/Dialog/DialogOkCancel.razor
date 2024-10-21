@@ -13,7 +13,7 @@
 
 @code {
     [CascadingParameter]
-    public MudDialogInstance MudDialog { get; set; }
+    public IMudDialogInstance MudDialog { get; set; }
 
     private void Submit() => MudDialog.Close(DialogResult.Ok(true));
     private void CloseDefault() => MudDialog.Close();

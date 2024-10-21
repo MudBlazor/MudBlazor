@@ -6,8 +6,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.CompilerServices;
-using Microsoft.AspNetCore.Components.Web;
 
 #nullable enable
 namespace MudBlazor
@@ -19,7 +17,7 @@ namespace MudBlazor
     /// This service requires a <see cref="MudDialogProvider"/> in your layout page.
     /// </remarks>
     /// <seealso cref="MudDialog"/>
-    /// <seealso cref="MudDialogInstance"/>
+    /// <seealso cref="MudDialogContainer"/>
     /// <seealso cref="MudDialogProvider"/>
     /// <seealso cref="DialogOptions"/>
     /// <seealso cref="DialogParameters{T}"/>
@@ -122,11 +120,12 @@ namespace MudBlazor
             });
             var dialogInstance = new RenderFragment(builder =>
             {
-                builder.OpenComponent<MudDialogInstanceParent>(0);
-                builder.AddComponentParameter(1, nameof(MudDialogInstanceParent.Id), dialogReference.Id);
-                builder.AddComponentParameter(2, nameof(MudDialogInstanceParent.Content), dialogContent);
-                builder.AddComponentParameter(3, nameof(MudDialogInstanceParent.Options), options);
-                builder.AddComponentParameter(4, nameof(MudDialogInstanceParent.Title), title);
+                builder.OpenComponent<MudDialogContainer>(0);
+                builder.SetKey(dialogReference.Id);
+                builder.AddComponentParameter(1, nameof(MudDialogContainer.Options), options);
+                builder.AddComponentParameter(2, nameof(MudDialogContainer.Title), title);
+                builder.AddComponentParameter(3, nameof(MudDialogContainer.Content), dialogContent);
+                builder.AddComponentParameter(4, nameof(MudDialogContainer.Id), dialogReference.Id);
                 builder.CloseComponent();
             });
             dialogReference.InjectRenderFragment(dialogInstance);
@@ -305,11 +304,12 @@ namespace MudBlazor
             });
             var dialogInstance = new RenderFragment(builder =>
             {
-                builder.OpenComponent<MudDialogInstanceParent>(0);
-                builder.AddComponentParameter(1, nameof(MudDialogInstanceParent.Id), dialogReference.Id);
-                builder.AddComponentParameter(2, nameof(MudDialogInstanceParent.Content), dialogContent);
-                builder.AddComponentParameter(3, nameof(MudDialogInstanceParent.Options), options);
-                builder.AddComponentParameter(4, nameof(MudDialogInstanceParent.Title), title);
+                builder.OpenComponent<MudDialogContainer>(0);
+                builder.SetKey(dialogReference.Id);
+                builder.AddComponentParameter(1, nameof(MudDialogContainer.Options), options);
+                builder.AddComponentParameter(2, nameof(MudDialogContainer.Title), title);
+                builder.AddComponentParameter(3, nameof(MudDialogContainer.Content), dialogContent);
+                builder.AddComponentParameter(4, nameof(MudDialogContainer.Id), dialogReference.Id);
                 builder.CloseComponent();
             });
             dialogReference.InjectRenderFragment(dialogInstance);

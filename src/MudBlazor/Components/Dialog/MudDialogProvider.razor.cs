@@ -19,11 +19,11 @@ namespace MudBlazor
     /// Add this component to your layout page if your application needs to display dialogs.
     /// </remarks>
     /// <seealso cref="MudDialog"/>
-    /// <seealso cref="MudDialogInstance"/>
+    /// <seealso cref="MudDialogContainer"/>
     /// <seealso cref="DialogOptions"/>
     /// <seealso cref="DialogParameters{T}"/>
     /// <seealso cref="DialogReference"/>
-    /// <seealso cref="DialogService"/>
+    /// <seealso cref="MudBlazor.DialogService"/>
     public partial class MudDialogProvider : IDisposable
     {
         private DialogOptions _globalDialogOptions = new();

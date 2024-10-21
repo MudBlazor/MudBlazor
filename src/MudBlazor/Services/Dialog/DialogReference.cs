@@ -4,10 +4,8 @@
 // See https://github.com/Blazored
 // License: MIT
 
-using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 #nullable enable
@@ -17,7 +15,7 @@ namespace MudBlazor
     /// An instance of a <see cref="MudDialog"/>.
     /// </summary>
     /// <seealso cref="MudDialog"/>
-    /// <seealso cref="MudDialogInstance"/>
+    /// <seealso cref="MudDialogContainer"/>
     /// <seealso cref="MudDialogProvider"/>
     /// <seealso cref="DialogOptions"/>
     /// <seealso cref="DialogParameters{T}"/>

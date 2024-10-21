@@ -445,22 +445,24 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
-            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            var service = (DialogService)Context.Services.GetService<IDialogService>();
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
             //dialog with clickable backdrop
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>(string.Empty, new DialogOptions() { CloseOnEscapeKey = true }));
             dialogReference.Should().NotBe(null);
-            var dialog1 = (DialogOkCancel)dialogReference.Dialog;
+            var dialog1 = (DialogOkCancel)dialogReference.Dialog!;
+            var dialogInstance1 = dialog1.MudDialog.GetDialogContainer();
             comp.Markup.Trim().Should().NotBeEmpty();
-            await comp.InvokeAsync(() => dialog1.MudDialog.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            await comp.InvokeAsync(() => dialogInstance1.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             comp.Markup.Trim().Should().BeEmpty();
             //dialog with disabled backdrop click
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>(string.Empty, new DialogOptions() { CloseOnEscapeKey = false }));
             dialogReference.Should().NotBe(null);
-            var dialog2 = (DialogOkCancel)dialogReference.Dialog;
+            var dialog2 = (DialogOkCancel)dialogReference.Dialog!;
+            var dialogInstance2 = dialog2.MudDialog.GetDialogContainer();
             comp.Markup.Trim().Should().NotBeEmpty();
-            await comp.InvokeAsync(() => dialog2.MudDialog.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            await comp.InvokeAsync(() => dialogInstance1.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             comp.Markup.Trim().Should().NotBeEmpty();
         }
 
@@ -470,19 +472,20 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
-            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            var service = (DialogService)Context.Services.GetService<IDialogService>();
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
             //dialog with clickable backdrop
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>(string.Empty, new DialogOptions() { CloseOnEscapeKey = true }));
             dialogReference.Should().NotBe(null);
             var dialog1 = ((DialogOkCancel)dialogReference.Dialog)!;
+            var dialogInstance1 = dialog1.MudDialog.GetDialogContainer();
             dialog1.LastKeyDown.Should().Be(null);
             dialog1.LastKeyUp.Should().Be(null);
             comp.Markup.Trim().Should().NotBeEmpty();
-            await comp.InvokeAsync(() => dialog1.MudDialog.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            await comp.InvokeAsync(() => dialogInstance1.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             dialog1.LastKeyDown.Key.Should().Be("Enter");
-            await comp.InvokeAsync(() => dialog1.MudDialog.HandleKeyUpAsync(new KeyboardEventArgs() { Key = "Backspace", Type = "keyup", }));
+            await comp.InvokeAsync(() => dialogInstance1.HandleKeyUpAsync(new KeyboardEventArgs() { Key = "Backspace", Type = "keyup", }));
             dialog1.LastKeyUp.Key.Should().Be("Backspace");
             comp.Markup.Trim().Should().NotBeEmpty();
         }
@@ -824,25 +827,27 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
-            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            var service = (DialogService)Context.Services.GetService<IDialogService>();
             service.Should().NotBe(null);
             var dialogReferenceLazy = new Lazy<Task<IDialogReference>>(() => service?.ShowAsync<DialogOkCancel>(string.Empty, new DialogOptions() { CloseOnEscapeKey = true }));
             //dialog with clickable backdrop
             await comp.InvokeAsync(() => dialogReferenceLazy.Value);
             dialogReferenceLazy.Value.Should().NotBe(null);
             var dialogReference = await dialogReferenceLazy.Value;
-            var dialog1 = (DialogOkCancel)dialogReference.Dialog;
+            var dialog1 = (DialogOkCancel)dialogReference.Dialog!;
+            var dialogInstance1 = dialog1.MudDialog.GetDialogContainer();
             comp.Markup.Trim().Should().NotBeEmpty();
-            await comp.InvokeAsync(() => dialog1.MudDialog.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            await comp.InvokeAsync(() => dialogInstance1.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             comp.Markup.Trim().Should().BeEmpty();
             //dialog with disabled backdrop click
             dialogReferenceLazy = new Lazy<Task<IDialogReference>>(() => service?.ShowAsync<DialogOkCancel>(string.Empty, new DialogOptions() { CloseOnEscapeKey = false }));
             await comp.InvokeAsync(() => dialogReferenceLazy.Value);
             dialogReference = await dialogReferenceLazy.Value;
             dialogReference.Should().NotBe(null);
-            var dialog2 = (DialogOkCancel)dialogReference.Dialog;
+            var dialog2 = (DialogOkCancel)dialogReference.Dialog!;
+            var dialogInstance2 = dialog2.MudDialog.GetDialogContainer();
             comp.Markup.Trim().Should().NotBeEmpty();
-            await comp.InvokeAsync(() => dialog2.MudDialog.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            await comp.InvokeAsync(() => dialogInstance2.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             comp.Markup.Trim().Should().NotBeEmpty();
         }
 
@@ -945,7 +950,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act 
             await provider.InvokeAsync(() => service.Show<DialogOkCancel>("Custom title"));
-            var dialogInstance = provider.FindComponent<MudDialogInstance>();
+            var dialogInstance = provider.FindComponent<MudDialogContainer>();
 
             // Assert
             dialogInstance.Markup.Should().Contain("Custom title");
@@ -969,7 +974,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act 
             await provider.InvokeAsync(() => service.Show<DialogOkCancel>("Custom title", new DialogOptions { CloseButton = true }));
-            var dialogInstance = provider.FindComponent<MudDialogInstance>();
+            var dialogInstance = provider.FindComponent<MudDialogContainer>();
 
             // Assert
             dialogInstance.Instance.Options.CloseButton.Should().BeTrue();
@@ -1000,7 +1005,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act 
             await provider.InvokeAsync(() => service.Show(typeof(DialogOkCancel), "Custom title"));
-            var dialogInstance = provider.FindComponent<MudDialogInstance>();
+            var dialogInstance = provider.FindComponent<MudDialogContainer>();
 
             // Assert
             dialogInstance.Markup.Should().Contain("Custom title");
@@ -1024,7 +1029,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act 
             await provider.InvokeAsync(() => service.Show(typeof(DialogOkCancel), "Custom title", new DialogOptions { CloseButton = true }));
-            var dialogInstance = provider.FindComponent<MudDialogInstance>();
+            var dialogInstance = provider.FindComponent<MudDialogContainer>();
 
             // Assert
             dialogInstance.Instance.Options.CloseButton.Should().BeTrue();
@@ -1042,7 +1047,7 @@ namespace MudBlazor.UnitTests.Components
             await provider.InvokeAsync(() =>
                 service.Show(typeof(DialogWithActionsClass), "Custom title", new DialogParameters<DialogWithActionsClass> { { x => x.ActionsClass, "custom-class" } }));
 
-            var dialogInstance = provider.FindComponent<MudDialogInstance>();
+            var dialogInstance = provider.FindComponent<MudDialogContainer>();
 
             // Assert
             dialogInstance.FindAll(".custom-class").Should().HaveCount(1);
@@ -1057,7 +1062,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act 
             await provider.InvokeAsync(() => service.ShowAsync<DialogOkCancel>("Custom title"));
-            var dialogInstance = provider.FindComponent<MudDialogInstance>();
+            var dialogInstance = provider.FindComponent<MudDialogContainer>();
 
             // Assert
             dialogInstance.Markup.Should().Contain("Custom title");
@@ -1080,7 +1085,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act 
             await provider.InvokeAsync(() => service.ShowAsync<DialogOkCancel>("Custom title", new DialogOptions { CloseButton = true }));
-            var dialogInstance = provider.FindComponent<MudDialogInstance>();
+            var dialogInstance = provider.FindComponent<MudDialogContainer>();
 
             // Assert
             dialogInstance.Instance.Options.CloseButton.Should().BeTrue();
@@ -1139,7 +1144,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act 
             await provider.InvokeAsync(() => service.ShowAsync(typeof(DialogOkCancel)));
-            var dialogInstance = provider.FindComponent<MudDialogInstance>();
+            var dialogInstance = provider.FindComponent<MudDialogContainer>();
 
             // Assert
             dialogInstance.Instance.Options.Position.Should().BeNull();
@@ -1161,7 +1166,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act 
             await provider.InvokeAsync(() => service.ShowAsync(typeof(DialogOkCancel), "Custom title"));
-            var dialogInstance = provider.FindComponent<MudDialogInstance>();
+            var dialogInstance = provider.FindComponent<MudDialogContainer>();
 
             // Assert
             dialogInstance.Markup.Should().Contain("Custom title");
@@ -1184,7 +1189,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act 
             await provider.InvokeAsync(() => service.ShowAsync(typeof(DialogOkCancel), "Custom title", new DialogOptions { CloseButton = true }));
-            var dialogInstance = provider.FindComponent<MudDialogInstance>();
+            var dialogInstance = provider.FindComponent<MudDialogContainer>();
 
             // Assert
             dialogInstance.Instance.Options.CloseButton.Should().BeTrue();
@@ -1201,7 +1206,7 @@ namespace MudBlazor.UnitTests.Components
             await provider.InvokeAsync(() =>
                 service.ShowAsync(typeof(DialogWithActionsClass), "Custom title", new DialogParameters<DialogWithActionsClass> { { x => x.ActionsClass, "custom-class" } }));
 
-            var dialogInstance = provider.FindComponent<MudDialogInstance>();
+            var dialogInstance = provider.FindComponent<MudDialogContainer>();
 
             // Assert
             dialogInstance.FindAll(".custom-class").Should().HaveCount(1);

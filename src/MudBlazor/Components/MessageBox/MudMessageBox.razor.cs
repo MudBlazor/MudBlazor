@@ -33,7 +33,7 @@ namespace MudBlazor
         private IDialogService DialogService { get; set; } = null!;
 
         [CascadingParameter]
-        internal MudDialogInstance? DialogInstance { get; set; }
+        internal IMudDialogInstance? DialogInstance { get; set; }
 
         /// <summary>
         /// The title of this message box.
