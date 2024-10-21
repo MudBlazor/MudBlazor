@@ -90,7 +90,9 @@
 .mud-list-item-icon {
   color: var(--mud-palette-action-default);
   display: inline-flex;
-  min-width: 56px;
+  justify-content: center;
+  min-width: 36px;
+  margin-right: 10px;
   flex-shrink: 0;
 }
 
