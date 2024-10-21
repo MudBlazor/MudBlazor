@@ -4645,5 +4645,24 @@ namespace MudBlazor.UnitTests.Components
             items[2].TextContent.Should().Be("Paid training");
             items[3].TextContent.Should().Be("Untranslated");
         }
+
+        [Test]
+        public void DataGridValidatorFormBinding()
+        {
+            var comp = Context.RenderComponent<DataGridValidatorTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridValidatorTest.Item>>().Instance;
+            dataGrid.Validator.Should().BeSameAs(form);
+
+            var textField = comp.FindComponent<MudTextField<string>>();
+            form.IsTouched.Should().BeFalse();
+            form.IsValid.Should().BeFalse();
+
+            // input into text field
+            textField.Find("input").Change("not empty");
+
+            form.IsTouched.Should().BeTrue();
+            form.IsValid.Should().BeTrue();
+        }
     }
 }
