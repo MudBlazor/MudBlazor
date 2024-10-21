@@ -181,19 +181,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void ReadOnlyShouldNotHaveClearButton()
+        {
+            var comp = Context.RenderComponent<MudDatePicker>(p => p
+            .Add(x => x.Text, "some value")
+            .Add(x => x.Clearable, true)
+            .Add(x => x.ReadOnly, false));
+
+            comp.FindAll(".mud-input-clear-button").Count.Should().Be(1);
+
+            comp.SetParametersAndRender(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
+            comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
+        }
+
+        [Test]
         public void DatePicker_Should_Clear()
         {
             var comp = Context.RenderComponent<MudDatePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
-            picker.Text.Should().Be(null);
+            picker.ReadOnly.Should().Be(false);
             picker.Date.Should().Be(null);
+            picker.Text.Should().Be(null);
             comp.SetParam(p => p.Clearable, true);
             comp.SetParam(p => p.Date, new DateTime(2020, 10, 26));
             picker.Date.Should().Be(new DateTime(2020, 10, 26));
             picker.Text.Should().Be(new DateTime(2020, 10, 26).ToShortDateString());
 
-            comp.Find("button").Click(); //clear the input
+            comp.Find(".mud-input-clear-button").Click(); //clear the input
 
             picker.Text.Should().Be(""); //ensure the text and date are reset. Note this is an empty string rather than null due to how the reset works internally
             picker.Date.Should().Be(null);
