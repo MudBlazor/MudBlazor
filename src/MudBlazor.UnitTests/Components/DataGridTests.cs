@@ -4658,11 +4658,17 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().BeFalse();
             form.IsValid.Should().BeFalse();
 
-            // input into text field
-            textField.Find("input").Change("not empty");
+            // input valid value into text field
+            textField.Find("input").Input("not empty");
 
             form.IsTouched.Should().BeTrue();
             form.IsValid.Should().BeTrue();
+
+            // input invalid value into text field
+            textField.Find("input").Input("");
+
+            form.IsTouched.Should().BeTrue();
+            form.IsValid.Should().BeFalse();
         }
     }
 }
