@@ -1,0 +1,54 @@
+@page "/components/chat"
+@page "/components/MudChat"
+
+<DocsPage>
+  <DocsPageHeader Title="Chat" SubTitle="It's used to show one line of conversation and its data" />
+  <DocsPageContent>
+
+    <DocsPageSection>
+      <SectionHeader Title="Basic">
+        <Description>Chat bubbles can be used to show one line of conversation and its data.</Description>
+      </SectionHeader>
+      <SectionContent Code="@nameof(ChatBasicExample)" Block="true" FullWidth="true">
+        <ChatBasicExample />
+      </SectionContent>
+    </DocsPageSection>
+
+    <DocsPageSection>
+      <SectionHeader Title="With Avatar">
+        <Description>Chat bubbles can also have an avatar.</Description>
+      </SectionHeader>
+      <SectionContent Code="@nameof(ChatAvatarExample)" Block="true" FullWidth="true" ShowCode="false">
+        <ChatAvatarExample />
+      </SectionContent>
+    </DocsPageSection>
+
+    <DocsPageSection>
+      <SectionHeader Title="With Avatar, Header and Footer">
+        <Description>Chat bubbles can also have an avatar, header and footer.</Description>
+      </SectionHeader>
+      <SectionContent Code="@nameof(ChatFullExample)" Block="true" FullWidth="true" ShowCode="false">
+        <ChatFullExample />
+      </SectionContent>
+    </DocsPageSection>
+
+    <DocsPageSection>
+      <SectionHeader Title="With Header and Footer">
+        <Description>Chat bubbles can also only have a header and footer.</Description>
+      </SectionHeader>
+      <SectionContent Code="@nameof(ChatHeaderFooterExample)" Block="true" FullWidth="true" ShowCode="false">
+        <ChatHeaderFooterExample />
+      </SectionContent>
+    </DocsPageSection>
+
+    <DocsPageSection>
+      <SectionHeader Title="Colored Chat Bubbles">
+        <Description>Chat bubbles can be colored with the <CodeInline>Color</CodeInline> property.</Description>
+      </SectionHeader>
+      <SectionContent Code="@nameof(ChatColorExample)" Block="true" FullWidth="true" ShowCode="false">
+        <ChatColorExample />
+      </SectionContent>
+    </DocsPageSection>
+    
+  </DocsPageContent>
+</DocsPage>
