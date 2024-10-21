@@ -4,6 +4,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 #nullable enable
@@ -23,10 +24,20 @@ namespace MudBlazor
     /// <seealso cref="DialogService"/>
     public partial class MudDialogInstance : MudComponentBase, IAsyncDisposable
     {
-        private DialogOptions? _options = new();
-        private readonly string _elementId = Identifier.Create("dialog");
-        private MudDialog? _dialog;
         private bool _disposed;
+        private MudDialog? _dialog;
+        private readonly ParameterState<DialogOptions> _dialogOptionsState;
+        private readonly ParameterState<string?> _titleState;
+        private readonly string _elementId = Identifier.Create("dialog");
+
+        public MudDialogInstance()
+        {
+            var registerScope = CreateRegisterScope();
+            _dialogOptionsState = registerScope.RegisterParameter<DialogOptions>(nameof(Options))
+                .WithParameter(() => Options);
+            _titleState = registerScope.RegisterParameter<string?>(nameof(Title))
+                .WithParameter(() => Title);
+        }
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -47,17 +58,8 @@ namespace MudBlazor
         /// Defaults to the options in the <see cref="MudDialog"/> or options passed during <see cref="DialogService.ShowAsync(Type)"/> methods.
         /// </remarks>
         [Parameter]
-        [Category(CategoryTypes.Dialog.Misc)]  // Behavior and Appearance
-        public DialogOptions Options
-        {
-            get
-            {
-                if (_options == null)
-                    _options = new DialogOptions();
-                return _options;
-            }
-            set => _options = value;
-        }
+        [Category(CategoryTypes.Dialog.Misc)] // Behavior and Appearance
+        public DialogOptions Options { get; set; } = DialogOptions.Default;
 
         /// <summary>
         /// The text displayed at the top of this dialog if <see cref="TitleContent" /> is not set.
@@ -102,11 +104,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Dialog.Appearance)]
         public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
-
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -161,10 +158,10 @@ namespace MudBlazor
         /// <remarks>
         /// Use this method to change options while a dialog is open, such as toggling fullscreen mode.
         /// </remarks>
-        public void SetOptions(DialogOptions options)
+        public async Task SetOptionsAsync(DialogOptions options)
         {
-            Options = options;
-            StateHasChanged();
+            await _dialogOptionsState.SetValueAsync(options);
+            await InvokeAsync(StateHasChanged);
         }
 
         /// <summary>
@@ -174,10 +171,10 @@ namespace MudBlazor
         /// <remarks>
         /// Use this method to change the title while a dialog is open, such as when the title reflects a value within this dialog.  Has no effect when <see cref="TitleContent"/> is set.
         /// </remarks>
-        public void SetTitle(string? title)
+        public async Task SetTitleAsync(string? title)
         {
-            Title = title;
-            StateHasChanged();
+            await _titleState.SetValueAsync(title);
+            await InvokeAsync(StateHasChanged);
         }
 
         /// <summary>
@@ -216,13 +213,15 @@ namespace MudBlazor
             Close(DialogResult.Cancel());
         }
 
+        private DialogOptions GetDialogOptionsOrDefault => _dialogOptionsState.Value ?? DialogOptions.Default;
+
         private string GetPosition()
         {
             DialogPosition position;
 
-            if (Options.Position.HasValue)
+            if (GetDialogOptionsOrDefault.Position.HasValue)
             {
-                position = Options.Position.Value;
+                position = GetDialogOptionsOrDefault.Position.Value;
             }
             else if (GlobalDialogOptions.Position.HasValue)
             {
@@ -239,9 +238,9 @@ namespace MudBlazor
         {
             MaxWidth maxWidth;
 
-            if (Options.MaxWidth.HasValue)
+            if (GetDialogOptionsOrDefault.MaxWidth.HasValue)
             {
-                maxWidth = Options.MaxWidth.Value;
+                maxWidth = GetDialogOptionsOrDefault.MaxWidth.Value;
             }
             else if (GlobalDialogOptions.MaxWidth.HasValue)
             {
@@ -256,8 +255,8 @@ namespace MudBlazor
 
         private bool GetFullWidth()
         {
-            if (Options.FullWidth.HasValue)
-                return Options.FullWidth.Value;
+            if (GetDialogOptionsOrDefault.FullWidth.HasValue)
+                return GetDialogOptionsOrDefault.FullWidth.Value;
 
             if (GlobalDialogOptions.FullWidth.HasValue)
                 return GlobalDialogOptions.FullWidth.Value;
@@ -267,8 +266,8 @@ namespace MudBlazor
 
         private bool GetFullScreen()
         {
-            if (Options.FullScreen.HasValue)
-                return Options.FullScreen.Value;
+            if (GetDialogOptionsOrDefault.FullScreen.HasValue)
+                return GetDialogOptionsOrDefault.FullScreen.Value;
 
             if (GlobalDialogOptions.FullScreen.HasValue)
                 return GlobalDialogOptions.FullScreen.Value;
@@ -290,12 +289,12 @@ namespace MudBlazor
                 .AddClass(_dialog?.Class)
             .Build();
 
-        protected string BackgroundClassname => new CssBuilder("mud-overlay-dialog").AddClass(Options.BackgroundClass).Build();
+        protected string BackgroundClassname => new CssBuilder("mud-overlay-dialog").AddClass(GetDialogOptionsOrDefault.BackgroundClass).Build();
 
         private bool GetHideHeader()
         {
-            if (Options.NoHeader.HasValue)
-                return Options.NoHeader.Value;
+            if (GetDialogOptionsOrDefault.NoHeader.HasValue)
+                return GetDialogOptionsOrDefault.NoHeader.Value;
 
             if (GlobalDialogOptions.NoHeader.HasValue)
                 return GlobalDialogOptions.NoHeader.Value;
@@ -305,8 +304,8 @@ namespace MudBlazor
 
         private bool GetCloseButton()
         {
-            if (Options.CloseButton.HasValue)
-                return Options.CloseButton.Value;
+            if (GetDialogOptionsOrDefault.CloseButton.HasValue)
+                return GetDialogOptionsOrDefault.CloseButton.Value;
 
             if (GlobalDialogOptions.CloseButton.HasValue)
                 return GlobalDialogOptions.CloseButton.Value;
@@ -316,8 +315,8 @@ namespace MudBlazor
 
         private bool GetBackdropClick()
         {
-            if (Options.BackdropClick.HasValue)
-                return Options.BackdropClick.Value;
+            if (GetDialogOptionsOrDefault.BackdropClick.HasValue)
+                return GetDialogOptionsOrDefault.BackdropClick.Value;
 
             if (GlobalDialogOptions.BackdropClick.HasValue)
                 return GlobalDialogOptions.BackdropClick.Value;
@@ -327,8 +326,8 @@ namespace MudBlazor
 
         private bool GetCloseOnEscapeKey()
         {
-            if (Options.CloseOnEscapeKey.HasValue)
-                return Options.CloseOnEscapeKey.Value;
+            if (GetDialogOptionsOrDefault.CloseOnEscapeKey.HasValue)
+                return GetDialogOptionsOrDefault.CloseOnEscapeKey.Value;
 
             if (GlobalDialogOptions.CloseOnEscapeKey.HasValue)
                 return GlobalDialogOptions.CloseOnEscapeKey.Value;

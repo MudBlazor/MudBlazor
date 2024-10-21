@@ -13,9 +13,9 @@
         @if (!GetHideHeader())
         {
             <div class="@TitleClassname">
-                @if (TitleContent == null)
+                @if (TitleContent is null)
                 {
-                    <MudText Typo="Typo.h6">@Title</MudText>
+                    <MudText Typo="Typo.h6">@_titleState.Value</MudText>
                 }
                 else
                 {
