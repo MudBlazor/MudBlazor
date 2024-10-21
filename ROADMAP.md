@@ -19,11 +19,9 @@ For users who aren't ready to upgrade, we will continue to support v6.x and v7.x
 
 ## Looking Ahead
 
-You can expect v8 to be production-ready by the end of the year.
-Regular preview releases will allow the community to provide feedback and stay updated on our progress.
+You can expect v8 to be production-ready by the end of the year and regular preview releases will allow the community to provide feedback and stay updated on our progress.
 
-The MudBlazor team is made up of volunteers who contribute to the project in their personal time.
-While we are passionate about improving the library, we can't make firm promises about release timelines or specific features.
+We are passionate about improving the library but can't make firm promises about release timelines or specific features as the MudBlazor team is made up of volunteers who contribute to the project in their personal time.
 Our goal is to keep MudBlazor stable, performant, and evolving with thoughtful enhancements, but the pace of development depends on the availability of contributors.
 We appreciate your support as we continue to work on keeping MudBlazor the premiere UI library for Blazor.
 
