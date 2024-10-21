@@ -1,8 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudForm @ref="_form"
-         IsTouchedChanged="this.StateHasChanged"
-         IsValidChanged="this.StateHasChanged">
+<MudForm @ref="_form" ValidationDelay="0">
     <MudDataGrid T="Item"
                  Items="_items"
                  Validator="@(_bindValidatorToForm ? _form : _defaultValidator)">
