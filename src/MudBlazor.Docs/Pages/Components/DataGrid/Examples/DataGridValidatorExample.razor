@@ -1,0 +1,66 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudForm @ref="_form" ValidationDelay="0">
+    <MudDataGrid T="Item"
+                 Items="_items"
+                 Validator="@(_bindValidatorToForm ? _form : _defaultValidator)">
+        <Columns>
+            <TemplateColumn Title="Name">
+                <CellTemplate>
+                    <MudTextField @bind-Value="context.Item.Name"
+                                  Immediate="true"
+                                  Validation="(string name) => ValidateName(name)" />
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+</MudForm>
+
+<MudStack Row>
+    <MudSwitch Color="Color.Primary" @bind-Value="_bindValidatorToForm">Bind MudDataGrid.Validator to MudForm?</MudSwitch>
+    <MudSwitch ReadOnly="true" Value="_form?.IsTouched">MudForm.IsTouched</MudSwitch>
+    <MudSwitch ReadOnly="true" Value="_form?.IsValid">MudForm.IsValid</MudSwitch>
+</MudStack>
+
+@code
+{
+    private readonly Interfaces.IForm _defaultValidator = new DataGridRowValidator();
+    private MudForm _form;
+    private bool _bindValidatorToForm = true;
+
+    private Item[] _items =
+    [
+        new() { Name = "valid" },
+        new() { Name = "invalid" }
+    ];
+
+    private static string ValidateName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return "Name is required";
+        }
+
+        if (name == "invalid")
+        {
+            return "Name must not be 'invalid'";
+        }
+
+        return null;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnParametersSetAsync();
+        if (firstRender)
+        {
+            await _form.Validate();
+            _form.ResetTouched();
+        }
+    }
+
+    public class Item
+    {
+        public string Name { get; set; }
+    }
+}
