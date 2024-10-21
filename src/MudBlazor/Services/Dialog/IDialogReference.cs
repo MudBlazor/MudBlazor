@@ -4,9 +4,7 @@
 // See https://github.com/Blazored
 // License: MIT
 
-using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 #nullable enable

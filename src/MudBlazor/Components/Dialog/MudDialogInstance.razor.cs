@@ -34,9 +34,11 @@ namespace MudBlazor
         {
             var registerScope = CreateRegisterScope();
             _dialogOptionsState = registerScope.RegisterParameter<DialogOptions>(nameof(Options))
-                .WithParameter(() => Options);
+                .WithParameter(() => Options)
+                .WithEventCallback(() => OptionsChanged);
             _titleState = registerScope.RegisterParameter<string?>(nameof(Title))
-                .WithParameter(() => Title);
+                .WithParameter(() => Title)
+                .WithEventCallback(() => TitleChanged);
         }
 
         [Inject]
@@ -62,11 +64,25 @@ namespace MudBlazor
         public DialogOptions Options { get; set; } = DialogOptions.Default;
 
         /// <summary>
+        /// Sets the callback that is invoked when the dialog options change.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Misc)]
+        public EventCallback<DialogOptions> OptionsChanged { get; set; }
+
+        /// <summary>
         /// The text displayed at the top of this dialog if <see cref="TitleContent" /> is not set.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
         public string? Title { get; set; }
+
+        /// <summary>
+        /// Sets the callback that is invoked when the dialog title changes.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public EventCallback<string?> TitleChanged { get; set; }
 
         /// <summary>
         /// The custom content at the top of this dialog.
@@ -136,7 +152,7 @@ namespace MudBlazor
                 await _dialog.OnKeyDown.InvokeAsync(args);
                 // Note: we need to force a render here because the user will expect this blazor standard functionality.
                 // Since the event originates from KeyInterceptor it will not cause a render automatically.
-                StateHasChanged();
+                await InvokeAsync(StateHasChanged);
             }
         }
 
@@ -147,7 +163,7 @@ namespace MudBlazor
                 await _dialog.OnKeyUp.InvokeAsync(args);
                 // note: we need to force a render here because the user will expect this blazor standard functionality
                 // Since the event originates from KeyInterceptor it will not cause a render automatically.
-                StateHasChanged();
+                await InvokeAsync(StateHasChanged);
             }
         }
 
