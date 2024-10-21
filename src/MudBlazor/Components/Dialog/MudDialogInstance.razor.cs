@@ -152,7 +152,7 @@ namespace MudBlazor
                 await _dialog.OnKeyDown.InvokeAsync(args);
                 // Note: we need to force a render here because the user will expect this blazor standard functionality.
                 // Since the event originates from KeyInterceptor it will not cause a render automatically.
-                await InvokeAsync(StateHasChanged);
+                StateHasChanged();
             }
         }
 
@@ -163,7 +163,7 @@ namespace MudBlazor
                 await _dialog.OnKeyUp.InvokeAsync(args);
                 // note: we need to force a render here because the user will expect this blazor standard functionality
                 // Since the event originates from KeyInterceptor it will not cause a render automatically.
-                await InvokeAsync(StateHasChanged);
+                StateHasChanged();
             }
         }
 
