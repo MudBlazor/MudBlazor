@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using MudBlazor.Docs.Extensions;
+using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services.Notifications;
 using MudBlazor.Docs.Wasm;
 
@@ -32,5 +33,7 @@ if (notificationService is InMemoryNotificationService inMemoryService)
 {
     inMemoryService.Preload();
 }
+// Warm up the documentation
+ApiDocumentation.GetType("MudAlert");
 
 await build.RunAsync();

@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Pages.Api;
+using MudBlazor.Docs.Pages.Components;
 using MudBlazor.Docs.Services;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
@@ -49,7 +50,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task AlertPage_Test()
         {
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager("https://localhost:2112/", "https://localhost:2112/components/alert"));
-            var comp = ctx.RenderComponent<Docs.Pages.Components.Alert.AlertPage>();
+            var comp = ctx.RenderComponent<MudBlazor.Docs.Pages.Components.Alert.AlertPage>();
             await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();
         }
 

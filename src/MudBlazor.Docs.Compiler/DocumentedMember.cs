@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Diagnostics;
 
 namespace MudBlazor.Docs.Compiler;
@@ -29,9 +28,9 @@ public abstract class DocumentedMember
     public Type? DeclaringType { get; set; }
 
     /// <summary>
-    /// The name of the type which defines this member.
+    /// The type which defines this member.
     /// </summary>
-    public string? DeclaringTypeFullName { get; set; }
+    public DocumentedType? DeclaringDocumentedType { get; set; }
 
     /// <summary>
     /// Whether this member is only visible to inheritors.
@@ -46,17 +45,12 @@ public abstract class DocumentedMember
     /// <summary>
     /// The order of this member relative to other members.
     /// </summary>
-    public int? Order { get; set; }
+    public int Order { get; set; } = int.MaxValue;
 
     /// <summary>
     /// The unique key for this member in dictionaries.
     /// </summary>
     public string? Key { get; set; }
-
-    /// <summary>
-    /// The unique key for this member in XML documentation.
-    /// </summary>
-    public string? XmlKey { get; set; }
 
     /// <summary>
     /// The detailed description for this member, and any related information.
