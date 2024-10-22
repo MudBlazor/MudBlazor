@@ -65,6 +65,22 @@
     &:disabled {
       cursor: default;
     }
+
+    &:not(.mud-input-underline).mud-input-text {
+      border-radius: var(--mud-default-borderradius);
+      border-color: transparent;
+      border-width: 2px;
+      border-style: solid;
+      transition: border-width,border-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+
+      &:focus-within {
+        border-color: var(--mud-palette-primary);
+      }
+
+      &:hover {
+        background-color: var(--mud-palette-action-default-hover);
+      }
+    }
   }
 
   .mud-disabled {
