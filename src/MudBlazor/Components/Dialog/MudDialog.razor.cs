@@ -1,6 +1,6 @@
 ﻿// License: MIT
 // Copyright (c) 2019 Blazored - See https://github.com/Blazored
-// Copyright (c) 2020 Jonny Larsson and Meinrad Recheis
+// Copyright (c) 2020 MudBlazor Contributors
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
