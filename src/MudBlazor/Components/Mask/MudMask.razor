@@ -85,7 +85,7 @@
     }
 
 
-    @if (_showClearable && !GetReadOnlyState() && !GetDisabledState())
+    @if (GetClearable())
     {
         <MudIconButton Class="@ClearButtonClassname"
                        Color="@Color.Default"
