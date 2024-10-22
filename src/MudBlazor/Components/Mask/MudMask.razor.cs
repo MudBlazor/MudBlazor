@@ -14,72 +14,62 @@ namespace MudBlazor
     /// A text input which conforms user input to a specific format while typing. 
     /// <remarks>
     /// Note that MudMask is recommended to be used in WASM projects only because it has known problems
-    /// in BSS, especiall with high network latency.
+    /// in BSS, especially with high network latency.
     /// </remarks>
     /// </summary>
     public partial class MudMask : MudBaseInput<string>
     {
-        public MudMask()
-        {
-            TextUpdateSuppression = false;
-        }
+        private ElementReference _elementReference;
+        private ElementReference _elementReference1;
+        private IJsEvent _jsEvent;
+        private string _elementId = Identifier.Create("mask");
+        private IMask _mask = new PatternMask("** **-** **");
 
         protected string Classname =>
             new CssBuilder("mud-input")
                 .AddClass($"mud-input-{Variant.ToDescriptionString()}")
                 .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
                 .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
-                .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
-                .AddClass("mud-input-underline", when: () => Underline && Variant != Variant.Outlined)
-                .AddClass("mud-shrink",
-                    when: () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start ||
-                                !string.IsNullOrWhiteSpace(Placeholder))
+                .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", () => Margin != Margin.None)
+                .AddClass("mud-input-underline", () => Underline && Variant != Variant.Outlined)
+                .AddClass("mud-shrink", () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder))
                 .AddClass("mud-disabled", GetDisabledState())
                 .AddClass("mud-input-error", HasErrors)
                 .AddClass("mud-ltr", GetInputType() == InputType.Email || GetInputType() == InputType.Telephone)
                 .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
                 .AddClass(Class)
-                .Build();
+            .Build();
 
         protected string InputClassname =>
             new CssBuilder("mud-input-slot")
                 .AddClass("mud-input-root")
                 .AddClass($"mud-input-root-{Variant.ToDescriptionString()}")
                 .AddClass($"mud-input-root-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
-                .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
+                .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", () => Margin != Margin.None)
                 .AddClass(Class)
-                .Build();
+            .Build();
 
         protected string AdornmentClassname =>
-            new CssBuilder("mud-input-adornment")
+            new CssBuilder()
                 .AddClass($"mud-input-adornment-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
                 .AddClass($"mud-text", !string.IsNullOrEmpty(AdornmentText))
                 .AddClass($"mud-input-root-filled-shrink", Variant == Variant.Filled)
                 .AddClass(Class)
-                .Build();
+            .Build();
 
         protected string ClearButtonClassname =>
-            new CssBuilder()
+            new CssBuilder("mud-input-clear-button")
                 // .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
                 .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End)
                 // .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
                 .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End)
-                .Build();
-
-
-        private ElementReference _elementReference;
-        private ElementReference _elementReference1;
-        private IJsEvent _jsEvent;
+            .Build();
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         [Inject] private IJsEventFactory _jsEventFactory { get; set; }
         [Inject] private IJsApiService _jsApiService { get; set; }
-
-        private string _elementId = Identifier.Create("mask");
-
-        private IMask _mask = new PatternMask("** **-** **");
 
         /// <summary>
         /// The content within this input.
@@ -128,6 +118,7 @@ namespace MudBlazor
         private void UpdateClearable(object value)
         {
             var showClearable = Clearable && !string.IsNullOrWhiteSpace(Text);
+
             if (_showClearable != showClearable)
                 _showClearable = showClearable;
         }
@@ -146,10 +137,16 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Appearance)]
         public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 
+        public MudMask()
+        {
+            TextUpdateSuppression = false;
+        }
+
         protected override async Task OnInitializedAsync()
         {
             if (Text != Mask.Text)
                 await SetTextAsync(Mask.Text, updateValue: false);
+
             await base.OnInitializedAsync();
         }
 
@@ -216,6 +213,7 @@ namespace MudBlazor
                             await UpdateAsync();
                             return;
                         }
+
                         Mask.Backspace();
                         await UpdateAsync();
                         return;
@@ -352,6 +350,7 @@ namespace MudBlazor
             {
                 (_, text, _) = BaseMask.SplitSelection(text, Mask.Selection.Value);
             }
+
             _jsApiService.CopyToClipboardAsync(text);
         }
 
@@ -359,6 +358,7 @@ namespace MudBlazor
         {
             if (text == null || GetReadOnlyState())
                 return;
+
             Mask.Insert(text);
             await UpdateAsync();
         }

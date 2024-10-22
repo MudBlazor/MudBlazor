@@ -1169,6 +1169,10 @@ namespace MudBlazor
         /// <summary>
         /// The validator which validates values in each row.
         /// </summary>
+        /// <remarks>
+        /// Use to bind validation and touched handling to outer form.
+        /// </remarks>
+        [Parameter]
         public Interfaces.IForm Validator { get; set; } = new DataGridRowValidator();
 
         internal Column<T> GroupedColumn

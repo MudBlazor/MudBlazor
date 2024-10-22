@@ -26,5 +26,18 @@ namespace MudBlazor.UnitTests.Extensions
             Align.Inherit.ToDescriptionString().Should().Be("inherit");
             Breakpoint.Sm.ToDescriptionString().Should().Be("sm");
         }
+
+        [TestCase(Adornment.Start, Edge.Start)]
+        [TestCase(Adornment.End, Edge.End)]
+        [TestCase(Adornment.None, Edge.False)]
+        [TestCase((Adornment)999, Edge.False)] // Invalid adornment value
+        public void Adornment_ToEdge_Should_ReturnExpectedValue(Adornment adornment, Edge expectedEdge)
+        {
+            // Act
+            var result = adornment.ToEdge();
+
+            // Assert
+            result.Should().Be(expectedEdge);
+        }
     }
 }
