@@ -22,7 +22,7 @@
     </HeaderContent>
     <ToolBarContent>
         <MudGrid Class="pa-0">
-            <MudItem xs="6">
+            <MudItem xs="12" md="6" Class="py-0">
                 <MudButtonGroup OverrideStyles="false">
                     <MudButton Size="Size.Small" Color="Color.Primary" Variant="@GetGroupingVariant(ApiMemberGrouping.None)" OnClick="@(() => OnGroupingChangedAsync(ApiMemberGrouping.None))">None</MudButton>
                     <MudButton Size="Size.Small" Color="Color.Primary" Variant="@GetGroupingVariant(ApiMemberGrouping.Categories)" OnClick="@(() => OnGroupingChangedAsync(ApiMemberGrouping.Categories))">Category</MudButton>
@@ -32,17 +32,17 @@
             @if (HasProtected())
             {
                 @* There are protected members.  Show a "Show Protected" switch *@
-                <MudItem xs="3">
+                <MudItem xs="6" md="3" Class="py-0">
                     <MudTextField T="string" Value="@Keyword" ValueChanged="OnKeywordChangedAsync" DebounceInterval="300" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
                 </MudItem>
-                <MudItem xs="3">
+                <MudItem xs="6" md="3" Class="py-0">
                     <MudSwitch T="bool" Size="Size.Small" Value="@ShowProtected" ValueChanged="OnShowProtectedChangedAsync">Show Protected</MudSwitch>
                 </MudItem>
             }
             else
             {
                 @* There are no protected members to hide *@
-                <MudItem xs="6">
+                <MudItem xs="12" md="6" Class="py-0">
                     <MudTextField T="string" Value="@Keyword" ValueChanged="OnKeywordChangedAsync" DebounceInterval="300" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
                 </MudItem>
             }
