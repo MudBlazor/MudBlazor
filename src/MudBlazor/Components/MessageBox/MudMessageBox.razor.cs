@@ -1,4 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿// Copyright (c) 2020 MudBlazor
+// License: MIT
+
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
@@ -33,7 +36,7 @@ namespace MudBlazor
         private IDialogService DialogService { get; set; } = null!;
 
         [CascadingParameter]
-        internal MudDialogInstance? DialogInstance { get; set; }
+        internal IMudDialogInstance? DialogInstance { get; set; }
 
         /// <summary>
         /// The title of this message box.
