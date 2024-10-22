@@ -9,7 +9,7 @@ namespace MudBlazor.Docs.Models;
 /// <summary>
 /// Represents documentation for a method.
 /// </summary>
-public class DocumentedMethod : DocumentedMember
+public sealed class DocumentedMethod : DocumentedMember
 {
     /// <summary>
     /// The parameters for this method.

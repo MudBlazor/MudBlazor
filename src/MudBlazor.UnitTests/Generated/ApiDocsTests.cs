@@ -3,7 +3,6 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Pages.Api;
-using MudBlazor.Docs.Pages.Components;
 using MudBlazor.Docs.Services;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;

@@ -16,7 +16,7 @@ namespace MudBlazor.Docs.Components;
 /// <summary>
 /// Represents the summary or remarks of an object, with linking.
 /// </summary>
-public partial class ApiText : ComponentBase
+public sealed partial class ApiText : ComponentBase
 {
     /// <summary>
     /// The XML documentation text to parse.
@@ -40,7 +40,11 @@ public partial class ApiText : ComponentBase
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         var sequence = 0;
-
+        // Anything to do?
+        if (string.IsNullOrWhiteSpace(Text))
+        {
+            return;
+        }
         // Convert XML documentation text, links, and HTML to MudBlazor equivalents
         XElement xml;
         try
@@ -53,6 +57,8 @@ public partial class ApiText : ComponentBase
             builder.AddMudText(0, Typo, Color.Warning, "XML documentation error.");
             return;
         }
+        // Start with a <span> to wrap properly on mobile
+        builder.OpenElement(sequence++, "span");
         using var reader = xml.CreateReader();
         while (reader.Read())
         {
@@ -210,5 +216,6 @@ public partial class ApiText : ComponentBase
                     break;
             }
         }
+        builder.CloseElement(); // </span>
     }
 }

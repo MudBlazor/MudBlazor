@@ -12,7 +12,7 @@ namespace MudBlazor.Docs.Models;
 /// Represents documentation for a type.
 /// </summary>
 [DebuggerDisplay("{Name}: Summary={Summary}")]
-public class DocumentedType
+public sealed class DocumentedType
 {
     /// <summary>
     /// The Reflection name of this type.

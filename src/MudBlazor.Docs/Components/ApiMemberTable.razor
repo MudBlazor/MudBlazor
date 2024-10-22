@@ -1,11 +1,6 @@
 ﻿<MudTable T="DocumentedMember" @ref="Table" ServerData="@GetData"
           Elevation="0" Class="mud-width-full" Hover="true" Dense="true"
-          AllowUnsorted="false" GroupBy="@CurrentGroups">
-    <ColGroup>
-        <col />
-        <col />
-        <col />
-    </ColGroup>
+          AllowUnsorted="false" GroupBy="@CurrentGroups">   
     <GroupHeaderTemplate>
         @if (Grouping == ApiMemberGrouping.Inheritance)
         {
@@ -130,7 +125,7 @@
         </MudTd>
         @if (Mode == ApiMemberTableMode.Methods && !string.IsNullOrEmpty(((DocumentedMethod)context).Returns))
         {
-            <MudTd DataLabel="Returns">
+            <MudTd DataLabel="Returns">      
                 <ApiText Text="@(context.Summary + " " + context.Remarks + "  Returns: " + ((DocumentedMethod)context).Returns)" />
             </MudTd>
         }

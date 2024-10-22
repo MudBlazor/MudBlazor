@@ -7,7 +7,7 @@ namespace MudBlazor.Docs.Models;
 /// <summary>
 /// Represents a documented event.
 /// </summary>
-public class DocumentedEvent : DocumentedMember
+public sealed class DocumentedEvent : DocumentedMember
 {
     /// <summary>
     /// Whether this property is a parameter.

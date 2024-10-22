@@ -32,7 +32,7 @@ public sealed class ApiTextTests : BunitTest
     public void ApiText_RenderJustText()
     {
         var comp = Context.RenderComponent<ApiText>(Parameter("Text", "Gets or sets the icon for this widget."));
-        comp.Markup.Should().Be("<span class=\"mud-typography mud-typography-caption\">Gets or sets the icon for this widget.</span>");
+        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">Gets or sets the icon for this widget.</span>");
     }
 
     /// <summary>

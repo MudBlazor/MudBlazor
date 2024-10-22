@@ -13,7 +13,7 @@ namespace MudBlazor.Docs.Components;
 /// <summary>
 /// Represents an inheritance tree for a documented type.
 /// </summary>
-public partial class ApiTypeHierarchy
+public sealed partial class ApiTypeHierarchy
 {
     private DocumentedType? _type;
 

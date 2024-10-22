@@ -14,7 +14,7 @@ namespace MudBlazor.Docs.Components;
 /// <summary>
 /// A link to an API type, property, method, event, or field.
 /// </summary>
-public class ApiTypeLink : ComponentBase
+public sealed class ApiTypeLink : ComponentBase
 {
     private DocumentedType? _type;
     private string? _typeName;
