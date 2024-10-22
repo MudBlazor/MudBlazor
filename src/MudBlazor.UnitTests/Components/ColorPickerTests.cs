@@ -1149,7 +1149,7 @@ namespace MudBlazor.UnitTests.Components
                 "mud-popover-fixed",
                 "mud-popover-open",
                 "mud-popover-top-left",
-                "mud-popover-anchor-top-left",
+                "mud-popover-anchor-bottom-left",
                 "mud-popover-overflow-flip-onopen",
             ]);
         }
