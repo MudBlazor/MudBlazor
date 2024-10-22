@@ -30,6 +30,15 @@ public abstract class DocumentedMember
     public DocumentedType? DeclaringType { get; set; }
 
     /// <summary>
+    /// The name of the type which defines this member.
+    /// </summary>
+    /// <remarks>
+    /// When <see cref="DeclaringType"/> is not set, the name of the declaring type.  This should only be set for 
+    /// external types such as <see cref="Microsoft.AspNetCore.Components.ComponentBase"/>.
+    /// </remarks>
+    public string? DeclaringTypeName { get; set; }
+
+    /// <summary>
     /// Whether this member is only visible to inheritors.
     /// </summary>
     public bool IsProtected { get; init; }

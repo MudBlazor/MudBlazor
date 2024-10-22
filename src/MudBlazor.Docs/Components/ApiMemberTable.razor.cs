@@ -157,7 +157,7 @@ public partial class ApiMemberTable
         else if (Grouping == ApiMemberGrouping.Inheritance)
         {
             // Sort by the "inheritance level" (how close the type is to this class), then by Name
-            var orderedMembers = members.OrderBy(member => GetInheritanceLevel(member.DeclaringType)).ThenBy(member => member.DeclaringType!.NameFriendly);
+            var orderedMembers = members.OrderBy(member => GetInheritanceLevel(member.DeclaringType)).ThenBy(member => GetDeclaringTypeName(member));
 
             // ... then by sort column
             members = state.SortLabel switch
@@ -251,6 +251,21 @@ public partial class ApiMemberTable
     }
 
     /// <summary>
+    /// Gets the name of this member's declaring type.
+    /// </summary>
+    /// <param name="member">The member to examine.</param>
+    /// <returns>The name of the type this member is declared in.</returns>
+    /// <remarks>
+    /// In some cases, a member may be declared in an external type, such as part of .NET core itself.
+    /// In these cases, we won't have a <see cref="DocumentedType"/> set, but we can still calculate the 
+    /// type from the type's name.
+    /// </remarks>
+    public string GetDeclaringTypeName(DocumentedMember member)
+    {
+        return member.DeclaringType == null ? member.DeclaringTypeName! : member.DeclaringType.NameFriendly;
+    }
+
+    /// <summary>
     /// The current groups.
     /// </summary>
     public TableGroupDefinition<DocumentedMember>? CurrentGroups
@@ -260,7 +275,7 @@ public partial class ApiMemberTable
             return Grouping switch
             {
                 ApiMemberGrouping.Categories => new() { Selector = (property) => property.Category ?? "" },
-                ApiMemberGrouping.Inheritance => new() { Selector = (property) => (property.DeclaringType is not null && property.DeclaringType == this.Type) ? "" : $"Inherited from {property.DeclaringType?.NameFriendly}" },
+                ApiMemberGrouping.Inheritance => new() { Selector = (property) => (property.DeclaringType is not null && property.DeclaringType == this.Type) ? "" : $"Inherited from {GetDeclaringTypeName(property)}" },
                 _ => null
             };
         }

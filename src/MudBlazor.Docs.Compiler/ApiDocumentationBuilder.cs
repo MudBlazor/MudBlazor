@@ -119,21 +119,13 @@ public partial class ApiDocumentationBuilder()
         "OnParametersSetAsync",
         "StateHasChanged",
         "ShouldRender",
+        "DispatchExceptionAsync",
+        "SetParametersAsync",
+        "CreateRegisterScope",
         // Dispose methods
         "Dispose",
         "DisposeAsync",
         "Finalize",
-        // Internal MudBlazor methods
-        "FieldId",
-        "Logger",
-        "IsJSRuntimeAvailable",
-        "SetParametersAsync",
-        "DispatchExceptionAsync",
-        "CreateRegisterScope",
-        "DetectIllegalRazorParametersV7",
-        "MudBlazor.Interfaces.IMudStateHasChanged.StateHasChanged",
-        "ParameterContainer",
-        "InputIdState",
     ];
 
     /// <summary>
@@ -200,6 +192,8 @@ public partial class ApiDocumentationBuilder()
                 .Where(type =>
                     // Include public types
                     type.IsPublic
+                    // ... which aren't internal
+
                     // ... which aren't excluded
                     && !IsExcluded(type)
                     // ... which aren't interfaces
@@ -278,8 +272,11 @@ public partial class ApiDocumentationBuilder()
         var properties = type.GetProperties().ToList();
         // Add protected methods
         properties.AddRange(type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic));
-        // Remove private and backing fields
-        properties.RemoveAll(property => property.GetMethod.IsPrivate || IsExcluded(property));
+        // Remove properties we don't want on the site
+        properties.RemoveAll(property =>
+            property.GetMethod.IsPrivate        // Remove private properties
+            || property.GetMethod.IsAssembly    // Remove internal properties
+            || IsExcluded(property));           // Remove properties from the manually maintained list
         // Remove duplicates
         properties = properties.DistinctBy(property => property.Name).ToList();
         // Go through each property
@@ -357,8 +354,14 @@ public partial class ApiDocumentationBuilder()
         var fields = type.GetFields().ToList();
         // Add protected methods
         fields.AddRange(type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic));
-        // Remove private and backing fields
-        fields.RemoveAll(field => field.Name.Contains("k__BackingField") || field.Name == "value__" || field.Name.StartsWith('_') || field.IsPrivate || IsExcluded(field));
+        // Remove fields we don't want documented
+        fields.RemoveAll(field =>
+            field.Name.Contains("k__BackingField")    // Remove backing fields
+            || field.Name == "value__"
+            || field.Name.StartsWith('_')
+            || field.IsPrivate                        // Remove private fields            
+            || field.IsAssembly                       // Remove internal fields            
+            || IsExcluded(field));                    // Remove fields the team doesn't want shown
         // Remove duplicates
         fields = fields.DistinctBy(property => property.Name).ToList();
         // Go through each property
@@ -403,6 +406,10 @@ public partial class ApiDocumentationBuilder()
         var events = type.GetEvents().ToList();
         // Add protected methods
         events.AddRange(type.GetEvents(BindingFlags.Instance | BindingFlags.NonPublic));
+        // Remove unwanted events
+        events.RemoveAll(eventItem =>
+            eventItem.AddMethod.IsPrivate           // Remove private events
+            || eventItem.AddMethod.IsAssembly);     // Remove internal events
         // Remove duplicates
         events = events.DistinctBy(property => property.Name).ToList();
         // Go through each property
@@ -590,15 +597,16 @@ public partial class ApiDocumentationBuilder()
         var methods = type.GetMethods().ToList();
         // Add protected methods
         methods.AddRange(type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic));
-        // Remove internal methods
+        // Remove methods we don't want on the site
         methods.RemoveAll(method => method.IsPrivate // Remove private methods
+            || method.IsAssembly                     // Remove internal methods
             || IsExcluded(method)                    // Remove some internal methods
             || method.Name.StartsWith("add_")        // Remove event subscribers
             || method.Name.StartsWith("remove_")     // Remove event unsubscribers 
             || method.Name.StartsWith("get_")        // Remove property getters
             || method.Name.StartsWith("set_")        // Remove property setters
             || method.Name.StartsWith("Microsoft")   // Remove object methods
-            || method.Name.StartsWith("System"));
+            || method.Name.StartsWith("System"));    // Remove built-in methods
         // Remove duplicates
         methods = methods.DistinctBy(method => method.Name).ToList();
         // Look for methods and add related types
@@ -703,25 +711,25 @@ public partial class ApiDocumentationBuilder()
     public void CalculateDocumentationCoverage()
     {
         // Calculate how many items have good documentation
-        var summarizedTypes = Types.Count(type => !string.IsNullOrEmpty(type.Value.Summary));
-        var summarizedProperties = Properties.Count(property => !string.IsNullOrEmpty(property.Value.Summary));
-        var summarizedMethods = Methods.Count(method => !string.IsNullOrEmpty(method.Value.Summary));
-        var summarizedFields = Fields.Count(field => !string.IsNullOrEmpty(field.Value.Summary));
-        var summarizedEvents = Events.Count(eventItem => !string.IsNullOrEmpty(eventItem.Value.Summary));
+        var wellDocumentedTypes = Types.Count(type => !string.IsNullOrEmpty(type.Value.Summary));
+        var wellDocumentedProperties = Properties.Count(property => !string.IsNullOrEmpty(property.Value.Summary));
+        var wellDocumentedMethods = Methods.Count(method => !string.IsNullOrEmpty(method.Value.Summary));
+        var wellDocumentedFields = Fields.Count(field => !string.IsNullOrEmpty(field.Value.Summary));
+        var wellDocumentedEvents = Events.Count(eventItem => !string.IsNullOrEmpty(eventItem.Value.Summary));
         // Calculate the coverage metrics for documentation
-        var typeCoverage = summarizedTypes / (double)Types.Count;
-        var propertyCoverage = summarizedProperties / (double)Properties.Count;
-        var methodCoverage = summarizedMethods / (double)Methods.Count;
-        var fieldCoverage = summarizedFields / (double)Fields.Count;
-        var eventCoverage = summarizedEvents / (double)Events.Count;
+        var typeCoverage = wellDocumentedTypes / (double)Types.Count;
+        var propertyCoverage = wellDocumentedProperties / (double)Properties.Count;
+        var methodCoverage = wellDocumentedMethods / (double)Methods.Count;
+        var fieldCoverage = wellDocumentedFields / (double)Fields.Count;
+        var eventCoverage = wellDocumentedEvents / (double)Events.Count;
 
         Console.WriteLine("XML Documentation Coverage for MudBlazor:");
         Console.WriteLine();
-        Console.WriteLine($"Types:      {summarizedTypes} of {Types.Count} ({typeCoverage:P0}) public types");
-        Console.WriteLine($"Properties: {summarizedProperties} of {Properties.Count} ({propertyCoverage:P0}) properties");
-        Console.WriteLine($"Methods:    {summarizedMethods} of {Methods.Count} ({methodCoverage:P0}) methods");
-        Console.WriteLine($"Fields:     {summarizedFields} of {Fields.Count} ({fieldCoverage:P0}) fields/enums");
-        Console.WriteLine($"Events:     {summarizedEvents} of {Events.Count} ({eventCoverage:P0}) events/EventCallback");
+        Console.WriteLine($"Types:      {wellDocumentedTypes} of {Types.Count} ({typeCoverage:P0}) types");
+        Console.WriteLine($"Properties: {wellDocumentedProperties} of {Properties.Count} ({propertyCoverage:P0}) properties");
+        Console.WriteLine($"Methods:    {wellDocumentedMethods} of {Methods.Count} ({methodCoverage:P0}) methods");
+        Console.WriteLine($"Fields:     {wellDocumentedFields} of {Fields.Count} ({fieldCoverage:P0}) fields");
+        Console.WriteLine($"Events:     {wellDocumentedEvents} of {Events.Count} ({eventCoverage:P0}) events/EventCallback");
         Console.WriteLine();
     }
 
