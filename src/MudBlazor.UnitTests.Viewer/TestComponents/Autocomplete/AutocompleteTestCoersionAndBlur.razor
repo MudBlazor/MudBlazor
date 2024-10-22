@@ -2,7 +2,7 @@
 @using System.Threading
 <MudPopoverProvider></MudPopoverProvider>
 
-<MudAutocomplete id="autocompleteLabelTest" T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" DebounceInterval="10" PopoverClass="autocomplete-popover-class" />
+<MudAutocomplete id="autocompleteLabelTest" T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" DebounceInterval="0" PopoverClass="autocomplete-popover-class" />
 <MudTextField id="textFieldBlurTest" T="string" Label="US States" @bind-Value="value1" />
 
 @code {
