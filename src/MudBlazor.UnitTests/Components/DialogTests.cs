@@ -1277,6 +1277,12 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("div.mud-dialog-title").GetAttribute("class").Should().Be(expectedClassname);
         }
+
+        [Test]
+        public async Task DialogWithNestedDialogOption()
+        {
+
+        }
     }
 
     internal class CustomDialogService : DialogService
