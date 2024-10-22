@@ -976,7 +976,7 @@ namespace MudBlazor
             if (!CoerceText)
                 return Task.CompletedTask;
 
-            if (string.IsNullOrEmpty(Text) && ResetValueOnEmptyText)
+            if (ResetValueOnEmptyText && string.IsNullOrEmpty(Text))
                 return Task.CompletedTask;
 
             _debounceTimer?.Dispose();
