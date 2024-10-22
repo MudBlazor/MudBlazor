@@ -789,9 +789,8 @@ namespace MudBlazor
                     {
                         if (SelectValueOnTab)
                             await OnEnterKeyAsync();
-                        else
-                            Open = false;
                     }
+                    await CloseMenuAsync();
                     break;
                 case "ArrowDown":
                     if (Open)
@@ -956,6 +955,8 @@ namespace MudBlazor
                 return CoerceValueToTextAsync();
             }
 
+            //CoerceTextToValueAsync();
+
             return OnBlur.InvokeAsync(args);
             // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value,
             // resulting in a premature validation. thus, don't call base
@@ -975,6 +976,9 @@ namespace MudBlazor
         private Task CoerceTextToValueAsync()
         {
             if (!CoerceText)
+                return Task.CompletedTask;
+
+            if (string.IsNullOrEmpty(Text) && ResetValueOnEmptyText)
                 return Task.CompletedTask;
 
             _debounceTimer?.Dispose();
