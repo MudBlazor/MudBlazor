@@ -31,7 +31,6 @@ We appreciate your support as we continue to work on keeping MudBlazor the premi
 
 ## Get Involved
 
-MudBlazor relies on the support from our incredible community.
-Whether you specialize in C#, Blazor, JavaScript, CSS, documentation, testing, or design, we'd love your help in making MudBlazor better.
+MudBlazor thrives thanks to the contributions of our amazing community. Whether you specialize in C#, Blazor, JavaScript, CSS, documentation, testing, or design, your help is always welcome in improving this project.
 
-Join our [Discord](https://discord.gg/mudblazor) to connect with other contributors, share ideas, and make an impact on the future of the project!
+If you’re interested in contributing, please check out our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines to get started. You can also open an issue, start a discussion, or tag a member of the team in relevant GitHub issues to collaborate with us.
