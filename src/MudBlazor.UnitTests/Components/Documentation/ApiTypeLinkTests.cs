@@ -184,7 +184,8 @@ public sealed class ApiTypeLinkTests : BunitTest
     {
         var comp = Context.RenderComponent<ApiTypeLink>(Parameter("TypeName", "MudBlazor.Adornment"));
         // There should be a link to Adornment
-        comp.Markup.Should().Contain("<a href=\"/api/Adornment\" blazor:onclick=\"1\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-body1 docs-link docs-code docs-code-primary\">Adornment</a>");
+        comp.Markup.Should().Contain("<a href=\"/api/Adornment\"");
+        comp.Markup.Should().Contain("class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-body1 docs-link docs-code docs-code-primary\">Adornment</a>");
     }
 
     /// <summary>

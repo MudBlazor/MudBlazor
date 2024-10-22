@@ -166,7 +166,7 @@ public sealed class ApiTextTests : BunitTest
         // There should be a text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">Shows when set to </span>");
         // There should be a link to /api/Adornment
-        comp.Markup.Should().Contain("<a href=\"/api/Adornment\"");
+        comp.Markup.Should().Contain("<a href=\"/api/Adornment#End");
         // There should be a text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">.</span>");
     }
