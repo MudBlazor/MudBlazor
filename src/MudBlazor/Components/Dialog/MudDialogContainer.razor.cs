@@ -264,27 +264,9 @@ namespace MudBlazor
             return $"mud-dialog-width-{maxWidth.ToDescriptionString()}";
         }
 
-        private bool GetFullWidth()
-        {
-            if (GetDialogOptionsOrDefault.FullWidth.HasValue)
-                return GetDialogOptionsOrDefault.FullWidth.Value;
+        private bool GetFullWidth() => GetDialogOptionsOrDefault.FullWidth ?? GlobalDialogOptions.FullWidth ?? false;
 
-            if (GlobalDialogOptions.FullWidth.HasValue)
-                return GlobalDialogOptions.FullWidth.Value;
-
-            return false;
-        }
-
-        private bool GetFullScreen()
-        {
-            if (GetDialogOptionsOrDefault.FullScreen.HasValue)
-                return GetDialogOptionsOrDefault.FullScreen.Value;
-
-            if (GlobalDialogOptions.FullScreen.HasValue)
-                return GlobalDialogOptions.FullScreen.Value;
-
-            return false;
-        }
+        private bool GetFullScreen() => GetDialogOptionsOrDefault.FullScreen ?? GlobalDialogOptions.FullScreen ?? false;
 
         private DialogOptions GetDialogOptionsOrDefault => _dialogOptionsState.Value ?? DialogOptions.Default;
 

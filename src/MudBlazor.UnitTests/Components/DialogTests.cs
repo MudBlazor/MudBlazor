@@ -48,7 +48,7 @@ namespace MudBlazor.UnitTests.Components
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
             // open simple test dialog
-            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
+            await comp.InvokeAsync(() => dialogReference = service.Show<DialogOkCancel>());
             dialogReference.Should().NotBe(null);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
             comp.Find("p.mud-typography").TrimmedText().Should().Be("Wabalabadubdub!");
@@ -58,21 +58,21 @@ namespace MudBlazor.UnitTests.Components
             var result = await dialogReference.Result;
             result.Canceled.Should().BeTrue();
             // open simple test dialog
-            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
+            await comp.InvokeAsync(() => dialogReference = service.Show<DialogOkCancel>());
             // close by click on cancel button
             comp.FindAll("button")[0].Click();
             result = await dialogReference.Result;
             result.Canceled.Should().BeTrue();
             // open simple test dialog
-            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
+            await comp.InvokeAsync(() => dialogReference = service.Show<DialogOkCancel>());
             // close by click on ok button
             comp.FindAll("button")[1].Click();
             result = await dialogReference.Result;
             result.Canceled.Should().BeFalse();
 
             //create 2 instances and dismiss all
-            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
-            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
+            await comp.InvokeAsync(() => dialogReference = service.Show<DialogOkCancel>());
+            await comp.InvokeAsync(() => dialogReference = service.Show<DialogOkCancel>());
             var cont = comp.FindAll("div.mud-dialog-container");
             cont.Count.Should().Be(2);
             await comp.InvokeAsync(() => comp.Instance.DismissAll());
@@ -80,7 +80,7 @@ namespace MudBlazor.UnitTests.Components
             cont.Count.Should().Be(0);
 
             // Close by using default close method
-            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
+            await comp.InvokeAsync(() => dialogReference = service.Show<DialogOkCancel>());
             comp.FindAll("button")[2].Click();
             result = await dialogReference.Result;
             result.Data.Should().BeNull();
