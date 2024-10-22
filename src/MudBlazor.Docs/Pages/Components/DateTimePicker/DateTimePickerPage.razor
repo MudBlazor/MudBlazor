@@ -1,0 +1,158 @@
+﻿@page "/components/datetimepicker"
+
+<DocsPage>
+    <DocsPageHeader Title="DateTime Picker">
+        <Description>Provides the user with a simple way to select a date.</Description>
+    </DocsPageHeader>
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage">
+                <Description>
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: Always use the two-way binding <CodeInline>@@bind-DateTime</CodeInline> to bind to a field of type <CodeInline>DateTime?</CodeInline></MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="DateTimePickerBasicUsageExample" ShowCode="false">
+                <DateTimePickerBasicExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            @* TODO: Pending all mask development *@
+            <SectionHeader Title="Input Masking">
+                <Description>
+                    By setting the <CodeInline>Mask</CodeInline> parameter, an editable DateTimePicker can be used with any suitable
+                    <MudLink Href="/features/masking">input mask</MudLink>, preferrably a <CodeInline>DateMask</CodeInline> which
+                    has built-in date awareness. But other masks like <CodeInline>PatternMask</CodeInline> will work as well, even
+                    if they allow to input invalid dates. Make sure the <CodeInline>DateFormat</CodeInline> fits the mask!
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="DateTimePickerMaskExample" ShowCode="false">
+                <DateTimePickerMaskExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Text Parsing">
+                <Description>
+                    By setting the <CodeInline>ImmediateText</CodeInline> parameter to true, an editable DateTimePicker's <CodeInline>Date</CodeInline> can be
+                    set manually by parsing the user's text as they type.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="DateTimePickerTextParseExample" ShowCode="false" FullWidth="false">
+                <DateTimePickerTextParseExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Read Only">
+                <Description>If <CodeInline>ReadOnly</CodeInline> is set to true, the DateTimePicker can be used but the value will remain unchanged regardless of the actions performed or the values entered.</Description>
+            </SectionHeader>
+            <SectionContent Code="DateTimePickerReadOnlyExample" ShowCode="false" FullWidth="false">
+                <DateTimePickerReadOnlyExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Disable or customize days">
+                <Description>
+                    By setting the <CodeInline>IsDateDisabledFunc</CodeInline> parameter, it's possibile to disable specific days and
+                    by setting the <CodeInline>AdditionalDateClassesFunc</CodeInline> parameter it's possible to apply a custom class to specific days.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="DateTimePickerDisableCustomizeDaysExample" ShowCode="false" FullWidth="false">
+                <DateTimePickerDisableCustomizeDaysExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Action Buttons">
+                <Description>You can add buttons by using the <CodeInline>PickerActions</CodeInline> render fragment. If <CodeInline>AutoClose</CodeInline> is set to true and PickerActions are defined, selecting a day will close the MudDatePicker.</Description>
+            </SectionHeader>
+            <SectionContent Code="DateTimePickerActionButtonsExample" ShowCode="false">
+                <DateTimePickerActionButtonsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Internationalization">
+                <Description>When you set the <CodeInline>Culture</CodeInline> parameter, the DateTimePicker will use culture-specific month names, weekday names and even different calendars.</Description>
+            </SectionHeader>
+            <SectionContent Code="DateTimePickerInternationalizationExample" ShowCode="false">
+                <DateTimePickerInternationalizationExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Dialog Mode">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="DateTimePickerDialogExample">
+                <DateTimePickerDialogExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Static Mode">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DateTimePickerStaticExample">
+                <DateTimePickerStaticExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Different views">
+                <Description>By default, it opens to Date, but can be set to Year or Month.</Description>
+            </SectionHeader>
+            <SectionContent Code="DateTimePickerViewsExample">
+                <DateTimePickerViewsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Colors">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Class="demo-datetime-margin" Code="DateTimePickerColorExample">
+                <DateTimePickerColorExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Elevation">
+                <Description>You can change the elevation with the <CodeInline>Elevation</CodeInline> parameter. The default value is 0 for static and 8 for inline.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DateTimePickerElevationExample">
+                <DateTimePickerElevationExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Go To Date">
+                <Description>
+                    <CodeInline>GoToDate</CodeInline> method helps to control the component programmatically. With <CodeInline>GoToDate</CodeInline>, users can navigate between dates with or without submitting. Works with all picker variants.
+                    <br />
+                    This example shows the possible usage of <CodeInline>GoToDate</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="DateTimePickerGoToDateExample" DarkenBackground="true" ShowCode="false">
+                <DateTimePickerGoToDateExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Fixed Values Usage">
+                <Description>
+                    You can set fix values for day, month or year via <CodeInline>FixDay</CodeInline>, <CodeInline>FixMonth</CodeInline> and <CodeInline>FixYear</CodeInline>, default value is null for all of them.
+                    This in combination with the <CodeInline>OpenTo</CodeInline> parameter allows for Year-Month Pickers, where the user only selects those two values or Month-Day Pickers where the year is already given.
+                    This changes the behaviour of the picker so only views that can be set are displayed.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="DateTimePickerFixedValuesExample" ShowCode="false">
+                <DateTimePickerFixedValuesExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

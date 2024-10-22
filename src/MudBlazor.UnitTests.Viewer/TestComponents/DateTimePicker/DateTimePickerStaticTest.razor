@@ -1,0 +1,16 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudDateTimePicker id="picker" @ref="_picker" Label="With action buttons" PickerVariant="PickerVariant.Static" @bind-DateTime="dateTime">
+    <PickerActions>
+        <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.ClearAsync())">Clear</MudButton>
+        <MudButton OnClick="@(() => _picker.CloseAsync(false))">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="@(() => _picker.CloseAsync())">Ok</MudButton>
+    </PickerActions>
+</MudDateTimePicker>
+
+@code {
+    MudDateTimePicker _picker;
+    DateTime? dateTime = DateTime.Today;
+}

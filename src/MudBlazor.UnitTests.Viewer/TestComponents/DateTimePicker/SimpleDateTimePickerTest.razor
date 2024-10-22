@@ -1,0 +1,67 @@
+﻿﻿@using System.Globalization;
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPopoverProvider></MudPopoverProvider>
+
+@if (IsDateTimeDisabledFunc != null)
+{
+    <MudDateTimePicker @ref="_picker"
+                       @bind-DateTime="@DateTime"
+                       ReadOnly="@Readonly"
+                       PickerMonth="@PickerMonth"
+                       IsDateTimeDisabledFunc="@IsDateTimeDisabledFunc"
+                       DateOpenTo="@DateOpenTo"
+                       FixDay="@FixDay"
+                       FixMonth="@FixMonth"
+                       FixYear="@FixYear"
+                       StartMonth="StartMonth"
+                       MinDateTime="@MinDate"
+                       MaxDateTime="@MaxDate"
+                       FirstDayOfWeek="@FirstDayOfWeek"
+                       ShowWeekNumbers="@ShowWeekNumbers"
+                       AutoClose="@AutoClose"
+                       AdditionalDateClassesFunc="@AdditionalDateClassesFunc" />
+}
+else
+{
+    <MudDateTimePicker @ref="_picker"
+                       @bind-DateTime="@DateTime"
+                       ReadOnly="@Readonly"
+                       PickerMonth="@PickerMonth"
+                       DateOpenTo="@DateOpenTo"
+                       FixDay="@FixDay"
+                       FixMonth="@FixMonth"
+                       FixYear="@FixYear"
+                       MinDateTime="@MinDate"
+                       MaxDateTime="@MaxDate"
+                       FirstDayOfWeek="@FirstDayOfWeek"
+                       ShowWeekNumbers="@ShowWeekNumbers"
+                       AutoClose="@AutoClose"
+                       AdditionalDateClassesFunc="@AdditionalDateClassesFunc" />
+}
+
+@code {
+    private MudDateTimePicker _picker;
+
+    public DateTime? DateTime { get; set; }
+
+    [Parameter] public bool ShowWeekNumbers { get; set; } = true;
+    [Parameter] public DayOfWeek FirstDayOfWeek { get; set; } = DayOfWeek.Sunday;
+    [Parameter] public DateTime? PickerMonth { get; set; }
+    [Parameter] public bool Readonly { get; set; } = false;
+    [Parameter] public Func<DateTime, bool> IsDateTimeDisabledFunc { get; set; }
+    [Parameter] public OpenTo DateOpenTo { get; set; } = OpenTo.Date;
+    [Parameter] public int? FixDay { get; set; }
+    [Parameter] public int? FixMonth { get; set; }
+    [Parameter] public int? FixYear { get; set; }
+    [Parameter] public DateTime? MinDate { get; set; }
+    [Parameter] public DateTime? MaxDate { get; set; }
+    [Parameter] public Func<DateTime, string> AdditionalDateClassesFunc { get; set; }
+    [Parameter] public bool AutoClose { get; set; } = false;
+    [Parameter] public DateTime? StartMonth { get; set; }
+    [Parameter] public string TitleDateTimeFormat { get; set; }
+
+    public async Task Open() => await InvokeAsync(() => _picker.OpenAsync());
+    public async Task Close() => await InvokeAsync(() => _picker.CloseAsync());
+    public new void StateHasChanged() => base.StateHasChanged();
+}
