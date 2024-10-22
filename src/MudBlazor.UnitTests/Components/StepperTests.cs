@@ -423,7 +423,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task CompletedContent_ShouldShowUpIfAllStepsAreComplete()
+        public async Task CompletedContent_ShouldShowUpIfAllStepsAreComplete_Horizontal()
         {
             var stepper = Context.RenderComponent<MudStepper>(self =>
             {
@@ -441,11 +441,40 @@ namespace MudBlazor.UnitTests.Components
             });
             // check the stepper content
             stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("step 1");
+            stepper.FindAll(".mud-stepper-complete").FirstOrDefault()?.TextContent.Trimmed().Should().BeNullOrEmpty();
             await stepper.InvokeAsync(async () => await stepper.Instance.NextStepAsync()); // next
             stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("step 2");
+            stepper.FindAll(".mud-stepper-complete").FirstOrDefault()?.TextContent.Trimmed().Should().BeNullOrEmpty();
             await stepper.InvokeAsync(async () => await stepper.Instance.NextStepAsync()); // next
             // completed content
-            stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("voilà");
+            stepper.Find(".mud-stepper-complete").TextContent.Trimmed().Should().Contain("voilà");
+        }
+
+        [Test]
+        public async Task CompletedContent_ShouldShowUpIfAllStepsAreComplete_Vertical()
+        {
+            var stepper = Context.RenderComponent<MudStepper>(self =>
+            {
+                self.Add(x => x.Vertical, true);
+                self.Add(x => x.CompletedContent, markupFactory => markupFactory.AddMarkupContent(0, "voilà"));
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "A");
+                    step.AddChildContent(text => text.AddMarkupContent(0, "step 1"));
+                });
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "B");
+                    step.AddChildContent(text => text.AddMarkupContent(0, "step 2"));
+                });
+            });
+            // check the stepper content
+            stepper.FindAll(".mud-stepper-complete").FirstOrDefault()?.TextContent.Trimmed().Should().BeNullOrEmpty();
+            await stepper.InvokeAsync(async () => await stepper.Instance.NextStepAsync()); // next
+            stepper.FindAll(".mud-stepper-complete").FirstOrDefault()?.TextContent.Trimmed().Should().BeNullOrEmpty();
+            await stepper.InvokeAsync(async () => await stepper.Instance.NextStepAsync()); // next
+            // completed content
+            stepper.Find(".mud-stepper-complete").TextContent.Trimmed().Should().Contain("voilà");
         }
 
         [Test]
