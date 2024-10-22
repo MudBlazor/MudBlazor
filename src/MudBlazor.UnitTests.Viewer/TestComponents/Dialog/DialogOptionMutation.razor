@@ -7,7 +7,7 @@
         Dialog Title
     </TitleContent>
     <DialogContent>
-        <MudButton @onclick="DoSomething" Variant="Variant.Filled" Color="Color.Primary">
+        <MudButton id="show_messagebox_btn" @onclick="DoSomething" Variant="Variant.Filled" Color="Color.Primary">
             Do Something
         </MudButton>
     </DialogContent>
@@ -28,14 +28,8 @@
 
     private void Submit() => MudDialog.Close(DialogResult.Ok(true));
 
-    private void Cancel() => MudDialog.Cancel();
-
     private async Task DoSomething()
     {
-        bool? proceed = await DialogService.ShowMessageBox("Warning", "Are you sure you wish to do something?", yesText: "Do it", cancelText: "Cancel");
-        if (proceed != true)
-        {
-            return;
-        }
+        await DialogService.ShowMessageBox("Warning", "Are you sure you wish to do something?", yesText: "Do it", cancelText: "Cancel");
     }
 }

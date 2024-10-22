@@ -1279,9 +1279,33 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DialogWithNestedDialogOption()
+        public async Task DialogWithNestedDialogOptionShouldNotReset()
         {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetRequiredService<IDialogService>();
 
+            var dialogReferenceLazy = new Lazy<Task<IDialogReference>>(() => service.ShowAsync<DialogOptionMutation>("Simple Dialog"));
+            await comp.InvokeAsync(async () => await dialogReferenceLazy.Value);
+            var dialogReference = await dialogReferenceLazy.Value;
+            dialogReference.Should().NotBe(null);
+
+            var closeButton = () => comp.Find("button.mud-button-close");
+            // Close button should be visible
+            closeButton().Should().NotBeNull();
+            var button = comp.Find("#show_messagebox_btn");
+            // Open nested message box
+            button.Click();
+
+            var messageBox = () => comp.Find("div.mud-message-box");
+
+            // close message box by clicking on yes button.
+            messageBox().Should().NotBeNull();
+            comp.FindAll(".mud-dialog-actions button")[1].Click();
+            messageBox.Should().Throw<ElementNotFoundException>();
+
+            // Close button should still be visible
+            closeButton().Should().NotBeNull();
         }
     }
 

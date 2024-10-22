@@ -13,7 +13,7 @@ public interface IMudDialogInstance
     Guid Id { get; }
 
     /// <summary>
-    /// The unique HTML element ID of this dialog.
+    /// The unique HTML element ID of the dialog container (mud-dialog-container).
     /// </summary>
     string ElementId { get; }
 
