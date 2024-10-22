@@ -407,7 +407,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<AutocompleteTestCoersionAndBlur>();
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompletecomp.Instance;
-            autocompletecomp.SetParam(x => x.DebounceInterval, 0);
             autocompletecomp.SetParam(x => x.CoerceText, true);
             autocompletecomp.SetParam(x => x.ResetValueOnEmptyText, true);
 
