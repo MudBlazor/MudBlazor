@@ -1,6 +1,7 @@
 .mud-icon-button {
   flex: 0 0 auto;
-  padding: 12px;
+  height: 42px;
+  width: 42px;
   overflow: visible;
   font-size: 1.5rem;
   text-align: center;
@@ -72,23 +73,29 @@
   margin-inline-start: unset;
 }
 
-.mud-icon-button-size-small {
-  padding: 3px;
+.mud-icon-button-size-medium {
+  height: 36px;
+  width: 36px;
   font-size: 1.125rem;
-
-  &.mud-icon-button-edge-start {
-    margin-left: -3px;
-    margin-inline-start: -3px;
-    margin-inline-end: unset;
-  }
-
-  &.mud-icon-button-edge-end {
-    margin-right: -3px;
-    margin-inline-end: -3px;
-    margin-inline-start: unset;
-  }
 }
 
+.mud-icon-button-size-small {
+  height: 30px;
+  width: 30px;
+  font-size: 1.125rem;
+
+  //&.mud-icon-button-edge-start {
+  //  margin-left: -3px;
+  //  margin-inline-start: -3px;
+  //  margin-inline-end: unset;
+  //}
+
+  //&.mud-icon-button-edge-end {
+  //  margin-right: -3px;
+  //  margin-inline-end: -3px;
+  //  margin-inline-start: unset;
+  //}
+}
 
 .mud-icon-button-size-large.mud-button > .mud-icon-button-label > .mud-icon-size-large {
   font-size: 2rem;
