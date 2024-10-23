@@ -120,7 +120,10 @@ namespace MudBlazor
             var showClearable = Clearable && !string.IsNullOrWhiteSpace(Text);
 
             if (_showClearable != showClearable)
+            {
                 _showClearable = showClearable;
+                StateHasChanged();
+            }
         }
 
         /// <summary>
@@ -146,7 +149,6 @@ namespace MudBlazor
         {
             if (Text != Mask.Text)
                 await SetTextAsync(Mask.Text, updateValue: false);
-
             await base.OnInitializedAsync();
         }
 
@@ -307,6 +309,13 @@ namespace MudBlazor
             : (Counter == 0
                 ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}")
                 : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
+
+        private bool ShowClearButton()
+        {
+            if (SubscribeToParentForm)
+                return _showClearable && !GetReadOnlyState() && !GetDisabledState();
+            return _showClearable && !GetDisabledState();
+        }
 
         /// <summary>
         /// Clears the text and value for this input.

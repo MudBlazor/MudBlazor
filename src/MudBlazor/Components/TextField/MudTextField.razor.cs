@@ -217,6 +217,13 @@ namespace MudBlazor
 
         internal override InputType GetInputType() => InputType;
 
+        private bool ShowClearButton()
+        {
+            if (SubscribeToParentForm)
+                return Clearable && !GetReadOnlyState() && !GetDisabledState();
+            return Clearable && !GetDisabledState();
+        }
+
         private Task OnMaskedValueChanged(string s) => SetTextAsync(s);
 
         private string GetCounterText() => Counter switch

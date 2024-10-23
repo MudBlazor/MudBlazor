@@ -61,7 +61,7 @@
 
     @if (IsClearable() && !GetDisabledState())
     {
-        <MudIconButton Class="@(Adornment is Adornment.Start ? "me-0" : "me-n4")" Style="z-index: 2"
+        <MudIconButton Class="@ClearButtonClassname" Style="z-index: 2"
                        Color="@Color.Default"
                        Icon="@Icons.Material.Filled.Clear"
                        Size="@Size.Small"
