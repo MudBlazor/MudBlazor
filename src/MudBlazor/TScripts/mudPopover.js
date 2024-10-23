@@ -255,18 +255,26 @@ window.mudpopoverHelper = {
                     offsetY = newPosition.offsetY;
                     popoverContentNode.setAttribute('data-mudpopover-flip', 'flipped');
                 }
-                else {
+                else {                    
                     // did not flip, ensure the left and top are inside bounds
+                    // appbaroffset is another section
                     if (left + offsetX < 0) {
                         left = Math.max(0, left + offsetX);
                         // set offsetX to 0 to avoid double offset
                         offsetX = 0;
                     }
+
+                    // will be covered by appbar
                     if (top + offsetY < appBarOffset) {
-                        top = Math.max(appBarOffset, top + offsetY);
+                        //console.log(`top: ${top} | offsetY: ${offsetY} | total: ${top + offsetY} | appBarOffset: ${appBarOffset}`);
+                    }
+
+                    if (top + offsetY < 0) {
+                        top = Math.max(0, top + offsetY);
                         // set offsetY to 0 to avoid double offset
                         offsetY = 0;
                     }
+
                     popoverContentNode.removeAttribute('data-mudpopover-flip');
                 }
 
@@ -289,7 +297,7 @@ window.mudpopoverHelper = {
 
             popoverContentNode.style['left'] = (left + offsetX) + 'px';
             popoverContentNode.style['top'] = (top + offsetY) + 'px';
-
+            
             if (window.getComputedStyle(popoverNode).getPropertyValue('z-index') != 'auto') {
                 popoverContentNode.style['z-index'] = window.getComputedStyle(popoverNode).getPropertyValue('z-index');
                 popoverContentNode.skipZIndex = true;
@@ -341,7 +349,6 @@ class MudPopover {
                 else if (mutation.attributeName == 'data-ticks') {
                     const tickAttribute = target.getAttribute('data-ticks');
 
-                    const parent = target.parentElement;
                     const tickValues = [];
                     let max = -1;
                     if (parent) {
@@ -380,7 +387,7 @@ class MudPopover {
                         if (childNode.skipZIndex == true) {
                             continue;
                         }
-
+                        
                         childNode.style['z-index'] = 'calc(var(--mud-zindex-popover) + ' + (sortedTickValues.indexOf(tickValue) + 3).toString() + ')';
                     }
                 }
