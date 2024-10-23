@@ -120,7 +120,10 @@ namespace MudBlazor
             var showClearable = Clearable && !string.IsNullOrWhiteSpace(Text);
 
             if (_showClearable != showClearable)
+            {
                 _showClearable = showClearable;
+                StateHasChanged();
+            }
         }
 
         /// <summary>
