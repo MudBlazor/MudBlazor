@@ -1063,10 +1063,12 @@ namespace MudBlazor
         public Func<GroupDefinition<T>, string> GroupStyleFunc { get; set; }
 
         /// <summary>
-        /// Shows the settings icon in the grid header.
+        /// Variant to use for all inputs, for example the filters, etc.
         /// </summary>
+        [Parameter] public Variant FilterVariant { get; set; } = Variant.Text;
+
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, an icon will be displayed to control column visibility, collapse all columns, or expand all columns.
+        /// Defaults to <c>false</c>. When <c>true</c>, an icon will be displayed to control column visibility, collapse all columns, or expand all columns.
         /// </remarks>
         [Parameter]
         public bool ShowMenuIcon { get; set; } = false;

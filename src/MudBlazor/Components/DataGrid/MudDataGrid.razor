@@ -83,7 +83,7 @@
                                         <MudStack Row="true" Justify="Justify.FlexEnd">
                                             <div style="min-width:250px">
                                                 <MudTextField DebounceInterval="500" @bind-Value="@_columnsPanelSearch" OnDebounceIntervalElapsed="@(() => _columnsPanelDropContainer?.Refresh())"
-                                                                Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" Margin="Margin.Dense" FullWidth="true" />
+                                                                Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" Margin="Margin.Dense" Variant="FilterVariant" FullWidth="true" />
                                             </div>
                                         </MudStack>
 
@@ -101,28 +101,28 @@
                                                             <MudStack Spacing="0">
                                                                 @if (RenderedColumns.IndexOf(context) != 0)
                                                                 {
-                                                                    <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.ArrowDropUp" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_MoveUp] Disabled="@(RenderedColumns.IndexOf(context) == 0)" OnClick="@(e => ColumnUp(context))"></MudIconButton>
+                                                                    <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.ArrowDropUp" Size="@Size.Small" Variant="FilterVariant" title=@Localizer[LanguageResource.MudDataGrid_MoveUp] Disabled="@(RenderedColumns.IndexOf(context) == 0)" OnClick="@(e => ColumnUp(context))"></MudIconButton>
                                                                 }
                                                                 @if (RenderedColumns.IndexOf(context) != RenderedColumns.Count - 1)
                                                                 {
-                                                                    <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.ArrowDropDown" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_MoveDown] Disabled="@(RenderedColumns.IndexOf(context) == RenderedColumns.Count - 1)" OnClick="@(e => ColumnDown(context))"></MudIconButton>
+                                                                    <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.ArrowDropDown" Size="@Size.Small" Variant="FilterVariant" title=@Localizer[LanguageResource.MudDataGrid_MoveDown] Disabled="@(RenderedColumns.IndexOf(context) == RenderedColumns.Count - 1)" OnClick="@(e => ColumnDown(context))"></MudIconButton>
                                                                 }
                                                             </MudStack>
                                                         }
 
                                                         @if (context?.GroupingState.Value ?? false)
                                                         {
-                                                            <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.AccountTree" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Ungroup] Disabled="!context.groupable" OnClick="@(e => context?.HeaderCell.UngroupColumnAsync())"></MudIconButton>
+                                                            <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.AccountTree" Size="@Size.Small" Variant="FilterVariant" title=@Localizer[LanguageResource.MudDataGrid_Ungroup] Disabled="!context.groupable" OnClick="@(e => context?.HeaderCell.UngroupColumnAsync())"></MudIconButton>
                                                         }
                                                         else
                                                         {
-                                                            <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.TableRows" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Group] Disabled="!context.groupable" OnClick="@(e => context?.HeaderCell.GroupColumnAsync())"></MudIconButton>
+                                                            <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.TableRows" Size="@Size.Small" Variant="FilterVariant" title=@Localizer[LanguageResource.MudDataGrid_Group] Disabled="!context.groupable" OnClick="@(e => context?.HeaderCell.GroupColumnAsync())"></MudIconButton>
                                                         }
                                                         <MudSwitch T="bool" Ripple="false" Class="flex-grow-1" Color="Color.Primary" Disabled="@(!context.hideable)" Value="@context.HiddenState.Value" ValueChanged="@context.ToggleAsync" Converter="_oppositeBoolConverter" Label="@context.Title" />
                                                         <MudSpacer />
 
                                                         <div>
-                                                            <MudIconButton Ripple="false" Icon="@context.SortIcon" Class="@context.HeaderCell.sortIconClass" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Sort] Disabled="!context.sortable" OnClick="@(e => context?.HeaderCell.SortChangedAsync(e))"></MudIconButton>
+                                                            <MudIconButton Ripple="false" Icon="@context.SortIcon" Class="@context.HeaderCell.sortIconClass" Variant="FilterVariant" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Sort] Disabled="!context.sortable" OnClick="@(e => context?.HeaderCell.SortChangedAsync(e))"></MudIconButton>
                                                             @if (context.DataGrid.SortMode == SortMode.Multiple)
                                                             {
                                                                 if (context.SortIndex < 0)
@@ -138,16 +138,16 @@
 
                                                         @if (context.HeaderCell.hasFilter)
                                                         {
-                                                            <MudIconButton Ripple="false" Class="filter-button filtered" Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Filter] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.OpenFilters())"></MudIconButton>
+                                                            <MudIconButton Ripple="false" Class="filter-button filtered" Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" Variant="FilterVariant" title=@Localizer[LanguageResource.MudDataGrid_Filter] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.OpenFilters())"></MudIconButton>
                                                         }
                                                         else
                                                         {
-                                                            <MudIconButton Ripple="false" Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Filter] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.AddFilter())"></MudIconButton>
+                                                            <MudIconButton Ripple="false" Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" Variant="FilterVariant" title=@Localizer[LanguageResource.MudDataGrid_Filter] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.AddFilter())"></MudIconButton>
                                                         }
 
                                                         @if (ColumnsPanelReordering)
                                                         {
-                                                            <MudIconButton Ripple="false" Icon="@context.DataGrid.DragIndicatorIcon" Size="@Size.Small" Class="drag-icon-options"></MudIconButton>
+                                                            <MudIconButton Ripple="false" Icon="@context.DataGrid.DragIndicatorIcon" Size="@Size.Small" Variant="FilterVariant" Class="drag-icon-options"></MudIconButton>
                                                         }
                                                     </MudStack>
                                                 }
@@ -156,13 +156,13 @@
                                         <MudStack Row="true">
                                             @if (Groupable)
                                             {
-                                                <MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_CollapseAllGroups]</MudButton>
-                                                <MudButton OnClick="@ExpandAllGroups" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_ExpandAllGroups]</MudButton>
+                                                <MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary" Variant="FilterVariant">@Localizer[LanguageResource.MudDataGrid_CollapseAllGroups]</MudButton>
+                                                <MudButton OnClick="@ExpandAllGroups" Color="@Color.Primary" Variant="FilterVariant">@Localizer[LanguageResource.MudDataGrid_ExpandAllGroups]</MudButton>
                                             }
                                             <MudSpacer />
 
-                                            <MudButton OnClick="@HideAllColumnsAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_HideAll]</MudButton>
-                                            <MudButton OnClick="@ShowAllColumnsAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_ShowAll]</MudButton>
+                                            <MudButton OnClick="@HideAllColumnsAsync" Color="@Color.Primary" Variant="FilterVariant">@Localizer[LanguageResource.MudDataGrid_HideAll]</MudButton>
+                                            <MudButton OnClick="@ShowAllColumnsAsync" Color="@Color.Primary" Variant="FilterVariant">@Localizer[LanguageResource.MudDataGrid_ShowAll]</MudButton>
                                         </MudStack>
                                     </MudPopover>
                                 }
@@ -179,12 +179,12 @@
                                                     @Filter(f, null)
                                                 }
                                             </MudStack>
-                                            <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_AddFilter]</MudButton>
+                                            <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary" Variant="FilterVariant">@Localizer[LanguageResource.MudDataGrid_AddFilter]</MudButton>
                                             @if (HasServerData)
                                             {
-                                                <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFiltersAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_Apply]</MudButton>
+                                                <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFiltersAsync" Color="@Color.Primary" Variant="FilterVariant">@Localizer[LanguageResource.MudDataGrid_Apply]</MudButton>
                                             }
-                                            <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Remove" OnClick="@ClearFiltersAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_Clear]</MudButton>
+                                            <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Remove" OnClick="@ClearFiltersAsync" Color="@Color.Primary" Variant="FilterVariant">@Localizer[LanguageResource.MudDataGrid_Clear]</MudButton>
                                         }
                                         else
                                         {
@@ -215,6 +215,7 @@
                                         <td class="mud-table-cell @groupClass" colspan="1000" style="background-color:var(--mud-palette-background-gray);@groupStyle">
                                             <MudIconButton Class="mud-table-row-expander"
                                            Icon="@(g.Expanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)"
+                                           Variant="FilterVariant"
                                            OnClick="@(() => ToggleGroupExpansion(g))" aria-label="@Localizer[LanguageResource.MudDataGrid_ToggleGroupExpansion]" />
 
                                             @if (GroupedColumn.GroupTemplate == null)
@@ -390,20 +391,20 @@
                             if (propertyType == typeof(string))
                             {
                                 <MudTextField T="string" Label="@column.Title" Value="@cell._valueString" ValueChanged="@cell.StringValueChangedAsync" Margin="@Margin.Dense"
-                                  Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" />
+                                  Required=column.Required Variant="FilterVariant" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" />
                             }
                             else if (TypeIdentifier.IsNumber(propertyType))
                             {
                                 <MudNumericField T="double?" Label="@column.Title" Value="@cell._valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
-                                     Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" />
+                                     Required=column.Required Variant="FilterVariant" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" />
                             }
                         }
                     }
                 </MudForm>
             </DialogContent>
             <DialogActions>
-                <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="@CancelEditingItemAsync" Class="px-10">@Localizer[LanguageResource.MudDataGrid_Cancel]</MudButton>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CommitItemChangesAsync" Class="px-10">@Localizer[LanguageResource.MudDataGrid_Save]</MudButton>
+                <MudButton Variant="FilterVariant" Color="Color.Default" OnClick="@CancelEditingItemAsync" Class="px-10">@Localizer[LanguageResource.MudDataGrid_Cancel]</MudButton>
+                <MudButton Variant="FilterVariant" Color="Color.Primary" OnClick="@CommitItemChangesAsync" Class="px-10">@Localizer[LanguageResource.MudDataGrid_Save]</MudButton>
             </DialogActions>
         </MudDialog>
     </CascadingValue>
@@ -413,7 +414,7 @@
 
     internal RenderFragment ToolbarMenu(MudDataGrid<T> dataGrid) =>
         @<text>
-            <MudMenu Icon="@Icons.Material.Outlined.Settings" Size="Size.Small" AnchorOrigin="Origin.BottomCenter" Dense="true">
+            <MudMenu Icon="@Icons.Material.Outlined.Settings" Size="Size.Small" AnchorOrigin="Origin.BottomCenter" Variant="FilterVariant" Dense="true">
             <MudMenuItem OnClick="@dataGrid.ShowColumnsPanel">@Localizer[LanguageResource.MudDataGrid_Columns]</MudMenuItem>
                 @if (dataGrid.Groupable)
                 {
@@ -520,10 +521,10 @@
             {
                 <MudGrid Spacing="0">
                     <MudItem xs="1" Class="d-flex">
-                        <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilterAsync" Size="@Size.Small" Style="align-self: flex-end" aria-label="@Localizer[LanguageResource.MudDataGrid_RemoveFilter]"></MudIconButton>
+                        <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilterAsync" Size="@Size.Small" Variant="FilterVariant" Style="align-self: flex-end" aria-label="@Localizer[LanguageResource.MudDataGrid_RemoveFilter]"></MudIconButton>
                     </MudItem>
                     <MudItem xs="4">
-                        <MudSelect T="Column<T>" Value="@filterDefinition.Column" ValueChanged="@filter.FieldChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Column]" Dense="true" Margin="@Margin.Dense"
+                        <MudSelect T="Column<T>" Value="@filterDefinition.Column" ValueChanged="@filter.FieldChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Column]" Dense="true" Margin="@Margin.Dense" Variant="FilterVariant"
                                    Class="filter-field">
                             @foreach (var renderColumn in RenderedColumns.Where(x => x.Filterable != false) ?? Enumerable.Empty<Column<T>>())
                             {
@@ -532,7 +533,7 @@
                         </MudSelect>
                     </MudItem>
                     <MudItem xs="3">
-                        <MudSelect @bind-Value="filterDefinition.Operator" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Operator]" Dense="true" Margin="@Margin.Dense"
+                        <MudSelect @bind-Value="filterDefinition.Operator" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Operator]" Dense="true" Margin="@Margin.Dense" Variant="FilterVariant"
                                    Class="filter-operator">
                             @foreach (var fieldOperator in FilterOperator.GetOperatorByDataType(fieldType))
                             {
@@ -543,17 +544,17 @@
                     <MudItem xs="4">
                         @if (fieldType.IsString && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                         {
-                            <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
+                            <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Variant="FilterVariant"
                                           Immediate="true" Class="filter-input" />
                         }
                         else if (fieldType.IsNumber && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                         {
-                            <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
+                            <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Variant="FilterVariant"
                                              Immediate="true" Class="filter-input" Culture="@filter.FilterColumn?.Culture"/>
                         }
                         else if (fieldType.IsEnum)
                         {
-                            <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Dense="true" Margin="@Margin.Dense"
+                            <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Dense="true" Margin="@Margin.Dense" Variant="FilterVariant"
                                        Class="filter-input">
                                 <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
                                 @foreach (var item in EnumExtensions.GetSafeEnumValues(fieldType.InnerType))
@@ -564,7 +565,7 @@
                         }
                         else if (fieldType.IsBoolean)
                         {
-                            <MudSelect T="bool?" Value="@filter._valueBool" ValueChanged="@filter.BoolValueChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Dense="true" Margin="@Margin.Dense"
+                            <MudSelect T="bool?" Value="@filter._valueBool" ValueChanged="@filter.BoolValueChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Dense="true" Margin="@Margin.Dense" Variant="FilterVariant"
                                        Class="filter-input">
                                 <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
                                 <MudSelectItem T="bool?" Value="@(true)">@Localizer[LanguageResource.MudDataGrid_True]</MudSelectItem>
@@ -575,16 +576,16 @@
                         {
                             <MudGrid Spacing="0">
                                 <MudItem xs="7">
-                                    <MudDatePicker Date="@filter._valueDate" DateChanged="@filter.DateValueChanged" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
+                                    <MudDatePicker Date="@filter._valueDate" DateChanged="@filter.DateValueChanged" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Variant="FilterVariant" Class="filter-input-date"/>
                                 </MudItem>
                                 <MudItem xs="5">
-                                    <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-time" />
+                                    <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Variant="FilterVariant" Class="filter-input-time" />
                                 </MudItem>
                             </MudGrid>
                         }
                         else if (fieldType.IsGuid)
                         {
-                            <MudTextField T="Guid?" Value="@filter._valueGuid" ValueChanged="@filter.GuidValueChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
+                            <MudTextField T="Guid?" Value="@filter._valueGuid" ValueChanged="@filter.GuidValueChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Variant="FilterVariant"
                                           Immediate="true" Class="filter-input"/>
                         }
                     </MudItem>
@@ -595,7 +596,7 @@
             {
                 <MudGrid Spacing="0">
                     <MudItem xs="12">
-                        <MudSelect @bind-Value="filterDefinition.Operator" FullWidth="true" Dense="true" Margin="@Margin.Dense"
+                        <MudSelect @bind-Value="filterDefinition.Operator" FullWidth="true" Dense="true" Margin="@Margin.Dense" Variant="FilterVariant"
                                    Class="filter-operator">
                             @foreach (var o in FilterOperator.GetOperatorByDataType(fieldType))
                             {
@@ -606,17 +607,17 @@
                     <MudItem xs="12">
                         @if (fieldType.IsString && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                         {
-                            <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
+                            <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Variant="FilterVariant"
                                           Immediate="true" Class="filter-input"/>
                         }
                         else if (fieldType.IsNumber && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                         {
-                            <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
+                            <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Variant="FilterVariant"
                                              Immediate="true" Class="filter-input" Culture="@filter.FilterColumn?.Culture"/>
                         }
                         else if (fieldType.IsEnum)
                         {
-                            <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Dense="true" Margin="@Margin.Dense"
+                            <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Dense="true" Margin="@Margin.Dense" Variant="FilterVariant"
                                        Class="filter-input">
                                 <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
                                 @foreach (var item in EnumExtensions.GetSafeEnumValues(fieldType.InnerType))
@@ -627,7 +628,7 @@
                         }
                         else if (fieldType.IsBoolean)
                         {
-                            <MudSelect T="bool?" Value="@filter._valueBool" ValueChanged="@filter.BoolValueChanged" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Dense="true" Margin="@Margin.Dense"
+                            <MudSelect T="bool?" Value="@filter._valueBool" ValueChanged="@filter.BoolValueChanged" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Dense="true" Margin="@Margin.Dense" Variant="FilterVariant"
                                        Class="filter-input">
                                 <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
                                 <MudSelectItem T="bool?" Value="@(true)">@Localizer[LanguageResource.MudDataGrid_True]</MudSelectItem>
@@ -638,16 +639,16 @@
                         {
                             <MudGrid Spacing="0">
                                 <MudItem xs="7">
-                                    <MudDatePicker Date="@filter._valueDate" DateChanged="@filter.DateValueChanged" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
+                                    <MudDatePicker Date="@filter._valueDate" DateChanged="@filter.DateValueChanged" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Variant="FilterVariant" Class="filter-input-date"/>
                                 </MudItem>
                                 <MudItem xs="5">
-                                    <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-time"/>
+                                    <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Variant="FilterVariant" Class="filter-input-time"/>
                                 </MudItem>
                             </MudGrid>
                         }
                         else if (fieldType.IsGuid)
                         {
-                            <MudTextField T="Guid?" Value="@filter._valueGuid" ValueChanged="@filter.GuidValueChanged" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
+                            <MudTextField T="Guid?" Value="@filter._valueGuid" ValueChanged="@filter.GuidValueChanged" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Variant="FilterVariant"
                                           Immediate="true" Class="filter-input"/>
                         }
                     </MudItem>

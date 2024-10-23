@@ -1006,7 +1006,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div input")[0].Change("Galadriel");
             comp.FindAll("div input")[1].Change(1);
 
-            comp.Find(".mud-dialog-actions .mud-button-filled-primary").Click();
+            comp.Find(".mud-dialog-actions .mud-button-text-primary").Click();
 
             //verify values after saving dialog
             dataGrid.FindAll("td")[0].Html().Trim().Should().Be("John");
@@ -1059,7 +1059,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div input")[1].Change("Steve");
             comp.FindAll("div input")[2].Change("3");
 
-            comp.Find(".mud-dialog-actions .mud-button-filled-primary").Click();
+            comp.Find(".mud-dialog-actions .mud-button-text-primary").Click();
 
             dataGrid.FindAll("td")[0].Html().Trim().Should().Be("James");
             dataGrid.FindAll("td")[1].Html().Trim().Should().Be("Robert");
