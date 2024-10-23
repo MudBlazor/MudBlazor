@@ -62,7 +62,7 @@
                               KeyDownPreventDefault="KeyDownPreventDefault"
                               KeyUpPreventDefault="KeyUpPreventDefault"
                               HideSpinButtons="true"
-                              Clearable="@(Clearable && !GetReadOnlyState())"
+                              Clearable="@GetClearable()"
                               ClearIcon="@ClearIcon"
                               OnClearButtonClick="@OnClearButtonClick"
                               Pattern="@Pattern"
