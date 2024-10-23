@@ -789,9 +789,8 @@ namespace MudBlazor
                     {
                         if (SelectValueOnTab)
                             await OnEnterKeyAsync();
-                        else
-                            Open = false;
                     }
+                    await CloseMenuAsync();
                     break;
                 case "ArrowDown":
                     if (Open)
@@ -975,6 +974,9 @@ namespace MudBlazor
         private Task CoerceTextToValueAsync()
         {
             if (!CoerceText)
+                return Task.CompletedTask;
+
+            if (ResetValueOnEmptyText && string.IsNullOrEmpty(Text))
                 return Task.CompletedTask;
 
             _debounceTimer?.Dispose();
