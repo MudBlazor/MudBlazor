@@ -217,12 +217,7 @@ namespace MudBlazor
 
         internal override InputType GetInputType() => InputType;
 
-        private bool ShowClearButton()
-        {
-            if (SubscribeToParentForm)
-                return Clearable && !GetReadOnlyState() && !GetDisabledState();
-            return Clearable && !GetDisabledState();
-        }
+        protected override bool GetClearable() => Clearable;
 
         private Task OnMaskedValueChanged(string s) => SetTextAsync(s);
 
