@@ -310,7 +310,7 @@ namespace MudBlazor
                 ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}")
                 : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
 
-        private bool GetClearable()
+        private bool ShowClearButton()
         {
             if (SubscribeToParentForm)
                 return _showClearable && !GetReadOnlyState() && !GetDisabledState();
