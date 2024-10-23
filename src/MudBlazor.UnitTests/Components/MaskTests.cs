@@ -894,17 +894,35 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ReadOnlyShouldNotHaveClearButton()
+        public async Task ClearableReadOnlyMask_Should_NotHaveClearButton()
         {
-            var comp = Context.RenderComponent<MudMask>(p => p
-            .Add(x => x.Text, "some value")
-            .Add(x => x.Clearable, true)
-            .Add(x => x.ReadOnly, false));
+            var comp = Context.RenderComponent<MudMask>();
+            var maskField = comp.Instance;
+            maskField.Clearable.Should().Be(false);
+            maskField.ReadOnly.Should().Be(false);
+            comp.SetParam(nameof(MudMask.Mask), new PatternMask("*00 000") { Placeholder = '_', CleanDelimiters = true });
+            
+            // mask is not clearable, no clear button should show up
+            comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
 
+            comp.SetParam(nameof(MudMask.Clearable), true);
+            maskField.Clearable.Should().Be(true);
+
+            // mask is now clearable but contains no text so, no clear button should show up
+            comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
+
+            await comp.InvokeAsync(async () => await maskField.FocusAsync());
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("1__ ___"));
+
+            // mask is clearable and contains text so the clear button should show up
             comp.FindAll(".mud-input-clear-button").Count.Should().Be(1);
 
-            comp.SetParametersAndRender(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
+            comp.SetParam(nameof(MudMask.ReadOnly), true);
+
+            // mask is clearable and contains text but is readonly so the clear button should not show up
             comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
+
         }
     }
 }
