@@ -310,31 +310,11 @@ namespace MudBlazor
                 ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}")
                 : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
 
-        protected override bool GetClearable() => _showClearable;
-
-        /// <summary>
-        /// Determine whether to show the clear button when Clearable==true.
-        /// Of course the clear button won't show up if the text field is empty
-        /// </summary>
-        protected override bool ShowClearButton()
+        private bool ShowClearButton()
         {
-            if (GetDisabledState())
-            {
-                return false;
-            }
-
-            if (!GetClearable())
-            {
-                return false;
-            }
-
-            // If this is a standalone input it will not be clearable when read-only
-            if (SubscribeToParentForm && GetReadOnlyState())
-            {
-                return false;
-            }
-
-            return true;
+            if (SubscribeToParentForm)
+                return _showClearable && !GetReadOnlyState() && !GetDisabledState();
+            return _showClearable && !GetDisabledState();
         }
 
         /// <summary>

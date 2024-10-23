@@ -223,7 +223,35 @@ namespace MudBlazor
 
         private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
 
-        protected override bool GetClearable() => Clearable;
+        /// <summary>
+        /// Determine whether to show the clear button when Clearable==true.
+        /// Of course the clear button won't show up if the text field is empty
+        /// </summary>
+        private bool ShowClearButton()
+        {
+            if (GetDisabledState())
+            {
+                return false;
+            }
+
+            if (!Clearable)
+            {
+                return false;
+            }
+
+            // If this is a standalone input it will not be clearable when read-only
+            if (SubscribeToParentForm && GetReadOnlyState())
+            {
+                return false;
+            }
+
+            if (Value is string stringValue)
+            {
+                return !string.IsNullOrWhiteSpace(stringValue);
+            }
+
+            return Value is not string and not null;
+        }
 
         protected virtual async Task HandleClearButtonAsync(MouseEventArgs e)
         {

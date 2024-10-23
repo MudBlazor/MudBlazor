@@ -432,38 +432,6 @@ namespace MudBlazor
 
         protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
-        protected virtual bool GetClearable() => false;
-
-        /// <summary>
-        /// Determine whether to show the clear button when Clearable==true.
-        /// Of course the clear button won't show up if the text field is empty
-        /// </summary>
-        protected virtual bool ShowClearButton()
-        {
-            if (GetDisabledState())
-            {
-                return false;
-            }
-
-            if (!GetClearable())
-            {
-                return false;
-            }
-
-            // If this is a standalone input it will not be clearable when read-only
-            if (SubscribeToParentForm && GetReadOnlyState())
-            {
-                return false;
-            }
-
-            if (Value is string stringValue)
-            {
-                return !string.IsNullOrWhiteSpace(stringValue);
-            }
-
-            return Value is not string and not null;
-        }
-
         protected virtual async Task SetTextAsync(string? text, bool updateValue = true)
         {
             if (Text != text)
