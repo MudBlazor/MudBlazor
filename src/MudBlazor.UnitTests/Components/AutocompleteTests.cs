@@ -838,6 +838,42 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Text.Should().Be("");
         }
 
+        /// <summary>
+        /// When calling ResetAsync() without debounce,
+        /// so menu should be closed, Text empty and Value null.
+        /// </summary>
+        [Test]
+        public async Task ResetAsync_WithoutDebounce_SoTextEmptyAndValueNull()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<AutocompleteStates>(parameters =>
+            {
+                parameters.Add(a => a.DebounceInterval, 0);
+            });
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+
+            // Assert : initial state, menu closed and text/value null
+
+            comp.Markup.Should().NotContain("mud-popover-open");
+            autocomplete.Open.Should().BeFalse();
+            autocomplete.Value.Should().BeNull();
+            autocomplete.Text.Should().BeNull();
+            comp.Instance.SearchFuncCallCount.Should().Be(0);
+
+            // Act : Call ResetAsync()
+
+            await comp.InvokeAsync(autocomplete.ResetAsync);
+
+            // Assert : menu closed, text empty and value null
+
+            comp.Markup.Should().NotContain("mud-popover-open");
+            autocomplete.Value.Should().BeNull();
+            autocomplete.Text.Should().BeEmpty();
+            comp.Instance.SearchFuncCallCount.Should().Be(0);
+        }
+
         [Test]
         public async Task Autocomplete_Should_Not_Select_Disabled_Item()
         {

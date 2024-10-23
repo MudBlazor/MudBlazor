@@ -750,11 +750,11 @@ namespace MudBlazor
                 _isCleared = true;
                 Open = false;
 
-                await SetTextAsync(null, updateValue: false);
-                await CoerceValueToTextAsync();
+                await SetTextAsync("", updateValue: false);
+                await SetValueAsync(default(T), updateText: false);
 
                 if (_elementReference != null)
-                    await _elementReference.SetText("");
+                    await _elementReference.ResetAsync();
 
                 _debounceTimer?.Dispose();
                 StateHasChanged();
