@@ -121,6 +121,9 @@ window.mudpopoverHelper = {
 
     flipMargin: 0,
 
+    basePopoverZIndex: parseInt(getComputedStyle(document.documentElement)
+        .getPropertyValue('--mud-zindex-popover')) || 1200,
+
     getPositionForFlippedPopver: function (inputArray, selector, boundingRect, selfRect) {
         const classList = [];
         for (var i = 0; i < inputArray.length; i++) {
@@ -297,7 +300,9 @@ window.mudpopoverHelper = {
 
             popoverContentNode.style['left'] = (left + offsetX) + 'px';
             popoverContentNode.style['top'] = (top + offsetY) + 'px';
-            
+
+            this.updatePopoverZIndex(popoverContentNode);
+
             if (window.getComputedStyle(popoverNode).getPropertyValue('z-index') != 'auto') {
                 popoverContentNode.style['z-index'] = window.getComputedStyle(popoverNode).getPropertyValue('z-index');
                 popoverContentNode.skipZIndex = true;
@@ -322,7 +327,25 @@ window.mudpopoverHelper = {
 
     countProviders: function () {
         return document.querySelectorAll(".mud-popover-provider").length;
-    }
+    },
+
+    updatePopoverZIndex: function (popoverNode) {
+        let parentPopover = popoverNode.closest('.mud-popover');
+        let newZIndex = window.mudpopoverHelper.basePopoverZIndex;
+        console.log('start resize');
+        if (parentPopover) {
+            const computedStyle = window.getComputedStyle(parentPopover);
+            const parentZIndexValue = computedStyle.getPropertyValue('z-index');
+            if (parentZIndexValue !== 'auto') {
+                // set new z-index
+                newZIndex = parseInt(parentZIndexValue) + 1;
+                console.log(`not auto: ${newZIndex}`);
+            }
+            // has a parent with no z-index set it to base z-index
+            popoverNode.style['z-index'] = newZIndex;
+            console.log(`Final: ${newZIndex}`);
+        }
+    },
 }
 
 class MudPopover {
@@ -351,7 +374,7 @@ class MudPopover {
 
                     const tickValues = [];
                     let max = -1;
-                    if (parent) {
+                    if (parent && parent.children) {
                         for (let i = 0; i < parent.children.length; i++) {
                             const childNode = parent.children[i];
                             const tickValue = parseInt(childNode.getAttribute('data-ticks'));
@@ -387,8 +410,8 @@ class MudPopover {
                         if (childNode.skipZIndex == true) {
                             continue;
                         }
-                        
-                        childNode.style['z-index'] = 'calc(var(--mud-zindex-popover) + ' + (sortedTickValues.indexOf(tickValue) + 3).toString() + ')';
+                        const newIndex = window.mudpopoverHelper.basePopoverZIndex + sortedTickValues.indexOf(tickValue) + 3;
+                        childNode.style['z-index'] = newIndex;
                     }
                 }
             }
