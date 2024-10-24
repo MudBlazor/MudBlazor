@@ -35,6 +35,7 @@ namespace MudBlazor
         /// Allows for setting a custom current date
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Picker.Appearance)]
         public DateTime? CurrentDate { get; set; } = DateTime.Today;
 
         private DateTime _lastSetTime = DateTime.MinValue;
