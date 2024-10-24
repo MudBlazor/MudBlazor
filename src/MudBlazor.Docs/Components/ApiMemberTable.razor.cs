@@ -157,7 +157,7 @@ public partial class ApiMemberTable
         else if (Grouping == ApiMemberGrouping.Inheritance)
         {
             // Sort by the "inheritance level" (how close the type is to this class), then by Name
-            var orderedMembers = members.OrderBy(member => GetInheritanceLevel(member.DeclaringType)).ThenBy(member => GetDeclaringTypeName(member));
+            var orderedMembers = members.OrderBy(member => GetInheritanceLevel(member.DeclaringType ?? GetDeclaringType(member))).ThenBy(member => GetDeclaringTypeName(member));
 
             // ... then by sort column
             members = state.SortLabel switch
@@ -251,6 +251,20 @@ public partial class ApiMemberTable
     }
 
     /// <summary>
+    /// Gets the type which declares this member.
+    /// </summary>
+    /// <param name="member">The member to examine.</param>
+    /// <returns></returns>
+    public DocumentedType GetDeclaringType(DocumentedMember member)
+    {
+        if (member.DeclaringType != null)
+        {
+            return member.DeclaringType;
+        }
+        return ApiDocumentation.GetType(member.DeclaringTypeName);
+    }
+
+    /// <summary>
     /// Gets the name of this member's declaring type.
     /// </summary>
     /// <param name="member">The member to examine.</param>
@@ -262,7 +276,8 @@ public partial class ApiMemberTable
     /// </remarks>
     public string GetDeclaringTypeName(DocumentedMember member)
     {
-        return member.DeclaringType == null ? member.DeclaringTypeName! : member.DeclaringType.NameFriendly;
+        var declaringType = GetDeclaringType(member);
+        return declaringType == null ? member.DeclaringTypeName! : declaringType.NameFriendly;
     }
 
     /// <summary>
