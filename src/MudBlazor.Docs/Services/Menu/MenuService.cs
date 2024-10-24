@@ -45,6 +45,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Avatar", typeof(MudAvatar), typeof(MudAvatarGroup))
             .AddItem("Alert", typeof(MudAlert))
             .AddItem("Card", typeof(MudCard), typeof(MudCardActions), typeof(MudCardContent), typeof(MudCardHeader), typeof(MudCardMedia))
+            .AddItem("Chat", typeof(MudChat), typeof(MudChatHeader), typeof(MudChatAvatar), typeof(MudChatBubble), typeof(MudChatFooter))
             .AddItem("Divider", typeof(MudDivider))
             .AddItem("Expansion Panels", typeof(MudExpansionPanels), typeof(MudExpansionPanel))
             .AddItem("Image", typeof(MudImage))
