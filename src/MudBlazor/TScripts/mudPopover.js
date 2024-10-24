@@ -141,7 +141,8 @@ window.mudpopoverHelper = {
     },
 
     placePopover: function (popoverNode, classSelector) {
-
+        // parentNode is the calling element, mudmenu/tooltip/etc not the parent popover if it's a child popover
+        // this happens at page load unless it's popover inside a popover, then it happens when you activate the parent
         if (popoverNode && popoverNode.parentNode) {
             const id = popoverNode.id.substr(8);
             const popoverContentNode = document.getElementById('popovercontent-' + id);
@@ -174,7 +175,7 @@ window.mudpopoverHelper = {
             let top = postion.top;
             let offsetX = postion.offsetX;
             let offsetY = postion.offsetY;
-
+            // flipping logic
             if (classList.contains('mud-popover-overflow-flip-onopen') || classList.contains('mud-popover-overflow-flip-always')) {
 
                 const appBarElements = document.getElementsByClassName("mud-appbar mud-appbar-fixed-top");
@@ -300,8 +301,9 @@ window.mudpopoverHelper = {
 
             popoverContentNode.style['left'] = (left + offsetX) + 'px';
             popoverContentNode.style['top'] = (top + offsetY) + 'px';
-
-            this.updatePopoverZIndex(popoverContentNode);
+            // update z-index by sending the calling popover to update z-index,
+            // and the parentnode of the calling popover (not content parent)
+            this.updatePopoverZIndex(popoverContentNode, popoverNode.parentNode);
 
             if (window.getComputedStyle(popoverNode).getPropertyValue('z-index') != 'auto') {
                 popoverContentNode.style['z-index'] = window.getComputedStyle(popoverNode).getPropertyValue('z-index');
@@ -329,21 +331,22 @@ window.mudpopoverHelper = {
         return document.querySelectorAll(".mud-popover-provider").length;
     },
 
-    updatePopoverZIndex: function (popoverNode) {
-        let parentPopover = popoverNode.closest('.mud-popover');
-        let newZIndex = window.mudpopoverHelper.basePopoverZIndex;
-        console.log('start resize');
+    updatePopoverZIndex: function (popoverContentNode, parentNode) {
+        // find the first parent mud-popover if it exists
+        let parentPopover = parentNode.closest('.mud-popover');                
         if (parentPopover) {
+            // get --mud-zindex-popover from root
+            let newZIndex = window.mudpopoverHelper.basePopoverZIndex;
+            // get parent popover z-index
             const computedStyle = window.getComputedStyle(parentPopover);
-            const parentZIndexValue = computedStyle.getPropertyValue('z-index');
+            const parentZIndexValue = computedStyle.getPropertyValue('z-index');            
             if (parentZIndexValue !== 'auto') {
-                // set new z-index
+                // parentpopovers will never be auto zindex due to css rules
+                // children are set "auto" z-index in css and therefore need updated
+                // set new z-index 1 above parent
                 newZIndex = parseInt(parentZIndexValue) + 1;
-                console.log(`not auto: ${newZIndex}`);
             }
-            // has a parent with no z-index set it to base z-index
-            popoverNode.style['z-index'] = newZIndex;
-            console.log(`Final: ${newZIndex}`);
+            popoverContentNode.style['z-index'] = newZIndex;
         }
     },
 }
@@ -370,6 +373,10 @@ class MudPopover {
                     window.mudpopoverHelper.placePopoverByNode(target);
                 }
                 else if (mutation.attributeName == 'data-ticks') {
+                    // I can't think of any good reason to use data-ticks property but I don't want to remove it until 
+                    // I'm sure it's not used by anything. When/If this is deleted remove the handler updating data-ticks from 
+                    // the mudpopover component
+                    return;
                     const tickAttribute = target.getAttribute('data-ticks');
 
                     const tickValues = [];
