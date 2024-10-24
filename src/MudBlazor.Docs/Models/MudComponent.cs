@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MudBlazor.Docs.Models
 {
+    [DebuggerDisplay("{ComponentName}: {Name}")]
     public class MudComponent
     {
         public string Name { get; set; }

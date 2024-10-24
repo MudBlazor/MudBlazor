@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="ColorCode.HTML" Version="2.0.15" />
+    <PackageReference Include="LoxSmoke.DocXml" Version="3.7.1" />
   </ItemGroup>
 
   <ItemGroup>

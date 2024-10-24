@@ -197,14 +197,22 @@ namespace MudBlazor.Docs.Compiler
         /// </summary>
         public void WritePublicTypeTests(CodeBuilder cb)
         {
-            var mudBlazorComponents = typeof(_Imports).Assembly.GetTypes().Where(type => type.IsPublic);
+            var mudBlazorAssembly = typeof(_Imports).Assembly;
+            var mudBlazorComponents = mudBlazorAssembly.GetTypes()
+                .Where(type =>
+                    // Include public types
+                    type.IsPublic
+                    // ... which aren't excluded
+                    && !ApiDocumentationBuilder.IsExcluded(type)
+                    // ... which aren't interfaces
+                    && !type.IsInterface
+                    // ... which aren't source generators
+                    && !type.Name.Contains("SourceGenerator")
+                    // ... which aren't extension classes
+                    && !type.Name.Contains("Extensions"))
+                .ToList();
             foreach (var type in mudBlazorComponents)
             {
-                if (ApiDocumentationBuilder.IsExcluded(type))
-                {
-                    continue;
-                }
-
                 // Skip MudBlazor.Color and MudBlazor.Input types
                 if (type.Name == "Color" || type.Name == "Input")
                 {
