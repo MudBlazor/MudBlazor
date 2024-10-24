@@ -1,0 +1,12 @@
+﻿@import '../../abstracts/variables';
+@import '_height.scss';
+@import '_width.scss';
+
+@include height("");
+@include width("");
+@each $name, $value in $breakpoints-css-utilities-only {
+  @media (min-width:$value) {
+      @include height($name+'-');
+      @include width($name+'-');
+  }
+}
