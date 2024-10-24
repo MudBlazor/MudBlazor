@@ -13,7 +13,7 @@
 
 @code {
     [CascadingParameter]
-    private MudDialogInstance MudDialog { get; set; }
+    private IMudDialogInstance MudDialog { get; set; }
 
     [Parameter]
     public string TestValue { get; set; }
@@ -31,7 +31,7 @@
 
     private void OnTest()
     {
-        ((IMudStateHasChanged)MudDialog).StateHasChanged();
+        MudDialog.StateHasChanged();
         StateHasChanged();
     }
 }

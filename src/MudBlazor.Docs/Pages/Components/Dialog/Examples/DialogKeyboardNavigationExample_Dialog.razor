@@ -21,7 +21,7 @@
     private IDialogService DialogService { get; set; } // for MessageBox
 
     [CascadingParameter]
-    private MudDialogInstance MudDialog { get; set; }
+    private IMudDialogInstance MudDialog { get; set; }
 
     private string _returnValue;
 

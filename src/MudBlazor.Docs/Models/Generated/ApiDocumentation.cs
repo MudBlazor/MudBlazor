@@ -257,7 +257,7 @@ public static partial class ApiDocumentation
         { "datepicker", "MudBlazor.MudDatePicker" },
         { "daterangepicker", "MudBlazor.MudDateRangePicker" },
         { "dialog", "MudBlazor.MudDialog" },
-        { "dialoginstance", "MudBlazor.MudDialogInstance" },
+        { "dialoginstance", "MudBlazor.MudDialogContainer" },
         { "dialogprovider", "MudBlazor.MudDialogProvider" },
         { "divider", "MudBlazor.MudDivider" },
         { "donut", "MudBlazor.Charts.Donut" },
