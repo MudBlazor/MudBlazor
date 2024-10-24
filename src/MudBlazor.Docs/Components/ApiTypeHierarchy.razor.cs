@@ -2,10 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Models;
 
@@ -16,42 +13,27 @@ namespace MudBlazor.Docs.Components;
 /// <summary>
 /// Represents an inheritance tree for a documented type.
 /// </summary>
-public partial class ApiTypeHierarchy
+public sealed partial class ApiTypeHierarchy
 {
-
-    /// <summary>
-    /// The name of the type to display.
-    /// </summary>
-    [Parameter]
-    [EditorRequired]
-    public string? TypeName { get; set; }
+    private DocumentedType? _type;
 
     /// <summary>
     /// The type to display members for.
     /// </summary>
-    public DocumentedType? Type { get; set; }
-
-    /// <summary>
-    /// The root of the type hierarchy.
-    /// </summary>
-    public IReadOnlyCollection<TreeItemData<DocumentedType>>? Root { get; set; }
-
-    /// <summary>
-    /// The selected type.
-    /// </summary>
-    public DocumentedType? SelectedType { get; set; }
-
-    protected override void OnParametersSet()
+    [Parameter]
+    [EditorRequired]
+    public DocumentedType? Type
     {
-        if (Type == null || Type.Name != TypeName)
+        get => _type;
+        set
         {
-            Type = ApiDocumentation.GetType(TypeName);
+            _type = value;
             SelectedType = Type;
 
             // Start with the current type
             var primaryItem = new TreeItemData<DocumentedType>
             {
-                Text = Type.Name,
+                Text = Type!.NameFriendly,
                 Selected = true,
                 Expanded = false,
                 Value = Type,
@@ -59,7 +41,7 @@ public partial class ApiTypeHierarchy
             };
             var root = new List<TreeItemData<DocumentedType>>() { primaryItem };
             // Walk up the hierarchy to build the tree
-            var parent = Type.BaseType;
+            var parent = Type!.BaseType;
             while (parent != null)
             {
                 root[0] = new TreeItemData<DocumentedType>()
@@ -97,9 +79,23 @@ public partial class ApiTypeHierarchy
             }
             // Set the items
             Root = new ReadOnlyCollection<TreeItemData<DocumentedType>>(root);
+            StateHasChanged();
         }
     }
 
+    /// <summary>
+    /// The root of the type hierarchy.
+    /// </summary>
+    public IReadOnlyCollection<TreeItemData<DocumentedType>>? Root { get; set; }
+
+    /// <summary>
+    /// The selected type.
+    /// </summary>
+    public DocumentedType? SelectedType { get; set; }
+
+    /// <summary>
+    /// The navigator for changing to other pages.
+    /// </summary>
     [Inject]
     private NavigationManager? Browser { get; set; }
 
@@ -109,7 +105,7 @@ public partial class ApiTypeHierarchy
     /// <param name="item"></param>
     public void OnTypeClicked(TreeItemData<DocumentedType> item)
     {
-        if (item.Value != null && !string.IsNullOrEmpty(item.Value.ApiUrl))
+        if (item.Value != null && !string.IsNullOrEmpty(item.Value.ApiUrl) && item.Value.Name != "Root")
         {
             Browser?.NavigateTo(item.Value.ApiUrl);
         }
