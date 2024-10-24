@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -29,6 +30,13 @@ namespace MudBlazor
             get => _value;
             set => SetDateAsync(value, true).CatchAndLog();
         }
+
+        /// <summary>
+        /// Allows for setting a custom current date
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Picker.Appearance)]
+        public DateTime? CurrentDate { get; set; } = DateTime.Today;
 
         private DateTime _lastSetTime = DateTime.MinValue;
         private const int DebounceTimeoutMs = 100;
@@ -99,7 +107,7 @@ namespace MudBlazor
                 return b.AddClass("mud-hidden").Build();
             if ((Date?.Date == day && _selectedDate == null) || _selectedDate?.Date == day)
                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
-            if (day == DateTime.Today)
+            if (day == CurrentDate)
                 return b.AddClass("mud-current mud-button-outlined").AddClass($"mud-button-outlined-{Color.ToDescriptionString()} mud-{Color.ToDescriptionString()}-text").Build();
             return b.Build();
         }
