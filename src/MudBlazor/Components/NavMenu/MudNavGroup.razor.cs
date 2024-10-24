@@ -1,11 +1,16 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// A level of navigation links as part of a <see cref="MudNavGroup"/>.
+    /// </summary>
+    /// <seealso cref="MudNavLink"/>
+    /// <seealso cref="MudNavMenu"/>
     public partial class MudNavGroup : MudComponentBase
     {
         private readonly ParameterState<bool> _expandedState;
@@ -62,71 +67,106 @@ namespace MudBlazor
         [CascadingParameter]
         private NavigationContext? ParentNavigationContext { get; set; }
 
+        /// <summary>
+        /// The text shown for this group.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
         public string? Title { get; set; }
 
         /// <summary>
-        /// Icon to use if set.
+        /// The icon displayed next to the <see cref="Title"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
         public string? Icon { get; set; }
 
         /// <summary>
-        /// The color of the icon. It supports the theme colors, default value uses the themes drawer icon color.
+        /// The color of the icon when <see cref="Icon"/> is set.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
         public Color IconColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// If true, the button will be disabled.
+        /// Prevents the user from interacting with this group.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
+        /// Shows a ripple effect when the user clicks this group.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
         public bool Ripple { get; set; } = true;
 
         /// <summary>
-        /// If true, expands the nav group, otherwise collapse it.
-        /// Two-way bindable
+        /// Displays the items within this group.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When this value changes, <see cref="ExpandedChanged"/> occurs.  Can be bound via <c>@bind-Expanded</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
         public bool Expanded { get; set; }
 
         /// <summary>
-        /// If true, hides expand-icon at the end of the NavGroup.
+        /// Hides the expand/collapse icon.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
         public bool HideExpandIcon { get; set; }
 
         /// <summary>
-        /// Explicitly sets the height for the Collapse element to override the css default.
+        /// The maximum height, in pixels, of this group.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When set, it will override the CSS default.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
         public int? MaxHeight { get; set; }
 
         /// <summary>
-        /// If set, overrides the default expand icon.
+        /// The icon for expanding and collapsing this group.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ArrowDropDown"/>.  Only shows when <see cref="HideExpandIcon"/> is <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
         public string ExpandIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
+        /// <summary>
+        /// The content within this group.
+        /// </summary>
+        /// <remarks>
+        /// Typically contains <see cref="MudNavGroup"/> and <see cref="MudNavLink"/> components.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
+        /// <summary>
+        /// Occurs when <see cref="Expanded"/> has changed.
+        /// </summary>
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
 

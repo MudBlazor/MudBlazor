@@ -167,7 +167,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// </summary>
     /// <param name="code"></param>
     /// <returns></returns>
-    public static string Escape(string code) => code?.Replace("\"", "\\\"");
+    public static string Escape(string code) => code?.Replace("\"", "\"\"");
 
     /// <summary>
     /// Writes the category for the member.
@@ -201,7 +201,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     {
         if (!string.IsNullOrEmpty(summary))
         {
-            Write($"Summary = \"{Escape(summary)}\", ");
+            Write($"Summary = @\"{Escape(summary)}\", ");
         }
     }
 
@@ -213,7 +213,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     {
         if (!string.IsNullOrEmpty(remarks))
         {
-            WriteLineIndented($"Summary = \"{Escape(remarks)}\", ");
+            WriteLineIndented($"Summary = @\"{Escape(remarks)}\", ");
         }
     }
 
@@ -225,7 +225,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     {
         if (!string.IsNullOrEmpty(remarks))
         {
-            WriteLine($"Remarks = \"{Escape(remarks)}\", ");
+            WriteLine($"Remarks = @\"{Escape(remarks)}\", ");
         }
     }
 
@@ -237,7 +237,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     {
         if (!string.IsNullOrEmpty(remarks))
         {
-            WriteLineIndented($"Remarks = \"{Escape(remarks)}\", ");
+            WriteLineIndented($"Remarks = @\"{Escape(remarks)}\", ");
         }
     }
 
