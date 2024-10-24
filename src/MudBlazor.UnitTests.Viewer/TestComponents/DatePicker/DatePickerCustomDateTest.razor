@@ -1,0 +1,11 @@
+﻿<MudPopoverProvider></MudPopoverProvider>
+<h1>With Custom Date</h1>
+<MudDatePicker CurrentDate=@customDate/>
+<h1>Without Custom Date</h1>
+<MudDatePicker/>
+
+@code {
+    public static string __description__ = "Changing the set date in the date picker to make it possible to outline a custom date. \n Currently set to a week ago";
+
+    DateTime customDate = DateTime.Today.AddDays(-7);
+}
