@@ -25,6 +25,10 @@
   }
 }
 
+.mud-popover .mud-popover {
+  z-index: auto; // javascript will handle nested z-indexes
+}
+
 .mud-appbar {
   .mud-popover-cascading-value {
     z-index: calc(var(--mud-zindex-appbar) + 2);
@@ -49,6 +53,13 @@
   .mud-popover-cascading-value {
     z-index: calc(var(--mud-zindex-dialog) + 3);
   }
+}
+
+.mud-select {
+    .mud-popover-cascading-value {
+    z-index: calc(var(--mud-zindex-select) + 5);
+  }
+
 }
 
 .mud-popover {
