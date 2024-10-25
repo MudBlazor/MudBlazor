@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudToggleItem<T> : MudComponentBase
+    public partial class MudToggleItem<T> : MudComponentBase, IDisposable
     {
         protected string Classname => new CssBuilder("mud-toggle-item")
             .AddClass(Parent?.SelectedClass, Selected && !string.IsNullOrEmpty(Parent?.SelectedClass))
@@ -100,6 +100,11 @@ namespace MudBlazor
         {
             base.OnInitialized();
             Parent?.Register(this);
+        }
+
+        public void Dispose()
+        {
+            Parent?.Unregister(this);
         }
 
         public void SetSelected(bool selected)
