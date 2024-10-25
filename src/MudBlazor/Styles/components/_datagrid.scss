@@ -50,18 +50,19 @@
       padding-inline-end: 24px;
     }
 
-    &.sticky-left {
-      left: 0px;
+    &.sticky-left,
+    &.sticky-right {
       position: sticky;
       background-color: var(--mud-palette-background-gray);
       z-index: 1;
     }
 
+    &.sticky-left {
+      left: 0px;
+    }
+
     &.sticky-right {
       right: 0px;
-      position: sticky;
-      background-color: var(--mud-palette-background-gray);
-      z-index: 1;
     }
 
     .mud-input-text {
@@ -139,6 +140,7 @@
       width: 8px;
       cursor: col-resize;
       user-select: none;
+
       .mud-application-layout-rtl & {
         right: auto;
         left: 0;
