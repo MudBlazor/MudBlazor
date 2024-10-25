@@ -180,6 +180,13 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
+        /// Determines whether the <see cref="TreeItemData{T}"/> is displayed during filtering or not. True is visible and false is invisible.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Behavior)]
+        public Func<TreeItemData<T>, bool>? FilterFunc { get; set; }
+
+        /// <summary>
         /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
         /// </summary>
         [Parameter]
@@ -280,6 +287,63 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        /// <summary>
+        /// Invokes the the <see cref="FilterFunc"/> to be applied to every item.
+        /// </summary>
+        public void Filter()
+        {
+            if (Items is null)
+            {
+                return;
+            }
+
+            if (FilterFunc is null)
+            {
+                ResetFilter(Items);
+            }
+
+            FilterInternal(Items);
+        }
+
+        /// <summary>
+        /// The internal filter logic that traverses the tree recursively and applies the <see cref="FilterFunc"/> to every item to set the <see cref="MudTreeViewItem{T}.Visible"/> property
+        /// </summary>
+        /// <param name="items">The hierarchical tree structure to traverse</param>
+        private void FilterInternal(IEnumerable<TreeItemData<T>> items)
+        {
+            foreach (TreeItemData<T> item in items)
+            {
+                if (item.HasChildren)
+                {
+                    /* Recursively traverse the tree. Since HasChildren performs the null check on the children we can use the null-forgiving operator here.
+                     * Same goes for the FilterFunc which is checked for null in the public Filter function that invokes this function.
+                     */
+                    FilterInternal(item.Children!);
+                    item.Expanded = item.Visible = FilterFunc!(item) || item.Children!.Any(c => c.Visible);
+                }
+                else
+                {
+                    item.Expanded = item.Visible = FilterFunc!(item);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Resets the filter, so that all <see cref="MudTreeViewItem{T}.Visible"/> are set to true and the entire tree is visible.
+        /// </summary>
+        /// <param name="items">The items to reset</param>
+        private void ResetFilter(IEnumerable<TreeItemData<T>> items)
+        {
+            foreach (TreeItemData<T> item in items)
+            {
+                if (item.HasChildren)
+                {
+                    ResetFilter(item.Children!);
+                }
+
+                item.Visible = true;
+            }
+        }
 
         /// <summary>
         /// Expands all items and their children recursively.
