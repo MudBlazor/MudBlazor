@@ -1,10 +1,6 @@
-﻿@namespace MudBlazor.Docs.Examples
+﻿@namespace MudBlazor.UnitTests.TestComponents
 
-@inject IDialogService DialogService
-
-<MudButton @onclick="OpenDialogDataGridAsync" Variant="Variant.Filled" Color="Color.Primary">
-    Open Dialog with DataGrid
-</MudButton>
+<MudPopoverProvider></MudPopoverProvider>
 
 <MudButton OnClick="@(() => isVisible = !isVisible)" Variant="Variant.Filled" Color="Color.Primary">
     Tooltip Test
@@ -35,16 +31,7 @@
 </MudOverlay>
 
 @code {
-    private bool isVisible = false;
-    private Task OpenDialogDataGridAsync()
-    {
-        var options = new DialogOptions
-            {
-                CloseOnEscapeKey = true,
-                FullWidth = true,
-                MaxWidth = MaxWidth.Large
-            };
+    public static string __description__ = "Popover Tooltip inside Overlay";
 
-        return DialogService.ShowAsync<DataGridFilteringExample>("DataGrid Dialog", options);
-    }
+    private bool isVisible = false;
 }
