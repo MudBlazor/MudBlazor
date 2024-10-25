@@ -1,4 +1,4 @@
-﻿<MudTreeView @ref="_treeView" Items="@Items" FilterFunc="MatchesName">
+﻿<MudTreeView @ref="_treeView" Items="@Items" FilterFunc="@_filterFunc">
     <ItemTemplate>
         <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value"
                          Icon="@context.Icon" Text="@context.Text" Visible="@context.Visible" />
@@ -6,12 +6,21 @@
 </MudTreeView>
 
 @code {
+
+    [Parameter]
+    public bool IsFilterFuncNull { get; set; }
+
+    [Parameter]
+    public bool IsItemsNull { get; set; }
+
     [Parameter]
     public string SearchPhrase { get; set; }
 
+    private Func<TreeItemData<string>, bool> _filterFunc;
+
     private MudTreeView<string> _treeView;
 
-    public List<TreeItemData> Items { get; set; } = new();
+    public List<TreeItemData> Items { get; set; }
 
     public class TreeItemData : TreeItemData<string>
     {
@@ -23,14 +32,20 @@
 
     protected override void OnAfterRender(bool firstRender)
     {
-        Items.Add(new TreeItemData("Trash"));
-        Items.Add(new TreeItemData("Categories")
+        _filterFunc = IsFilterFuncNull ? null : MatchesName;
+
+        if (!IsItemsNull)
         {
-            Children = new()
+            Items = new();
+            Items.Add(new TreeItemData("Trash"));
+            Items.Add(new TreeItemData("Categories")
             {
-                new TreeItemData("Social"),
-            }
-        });
+                Children = new()
+                {
+                    new TreeItemData("Social"),
+                }
+            });
+        }
 
         _treeView.Filter();
     }

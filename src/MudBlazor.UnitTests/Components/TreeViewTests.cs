@@ -335,6 +335,39 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void TreeViewFilterFunc_ItemsAreNull()
+        {
+            var comp = Context.RenderComponent<TreeViewFilterFuncTest>(element =>
+            {
+                element.Add(x => x.SearchPhrase, "Social");
+                element.Add(x => x.IsItemsNull, true);
+            });
+
+            // Assert that the items are null
+            comp.Instance.Items.Should().BeNull();
+        }
+
+        [Test]
+        public void TreeViewFilterFunc_FilterFuncIsNull()
+        {
+            var comp = Context.RenderComponent<TreeViewFilterFuncTest>(element =>
+            {
+                element.Add(x => x.SearchPhrase, "Social");
+                element.Add(x => x.IsFilterFuncNull, true);
+            });
+
+            // Assert that the element "Trash" is visible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Trash") && e.Visible);
+
+            // Assert that the element "Categories" is visible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Categories") && e.Visible);
+
+            // Assert that the element "Social" is visible
+            var categoriesNode = comp.Instance.Items.ElementAt(1);
+            categoriesNode.Children.Should().Contain(e => e.Text.Equals("Social") && e.Visible);
+        }
+
+        [Test]
         public void InitialValueOfTreeViewItemSelected_Should_InfluenceSelectedValue_MultiSelection()
         {
             var comp = Context.RenderComponent<TreeViewItemSelectedBindingTest>(self => self
