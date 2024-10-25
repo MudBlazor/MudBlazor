@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
@@ -32,11 +29,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Allows for setting a custom current date
+        /// The currently outlined date. Defaults to the current date. 
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Picker.Appearance)]
-        public DateTime? CurrentDate { get; set; } = DateTime.Today;
+        public DateTime OutlinedDate { get; set; } = DateTime.Today;
 
         private DateTime _lastSetTime = DateTime.MinValue;
         private const int DebounceTimeoutMs = 100;
@@ -107,7 +104,7 @@ namespace MudBlazor
                 return b.AddClass("mud-hidden").Build();
             if ((Date?.Date == day && _selectedDate == null) || _selectedDate?.Date == day)
                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
-            if (day == CurrentDate)
+            if (day == OutlinedDate)
                 return b.AddClass("mud-current mud-button-outlined").AddClass($"mud-button-outlined-{Color.ToDescriptionString()} mud-{Color.ToDescriptionString()}-text").Build();
             return b.Build();
         }
@@ -220,13 +217,13 @@ namespace MudBlazor
 
         protected override DateTime GetCalendarStartOfMonth()
         {
-            var date = StartMonth ?? Date ?? DateTime.Today;
+            var date = StartMonth ?? Date ?? OutlinedDate;
             return date.StartOfMonth(Culture);
         }
 
         protected override int GetCalendarYear(DateTime yearDate)
         {
-            var date = Date ?? DateTime.Today;
+            var date = Date ?? OutlinedDate;
             var diff = Culture.Calendar.GetYear(date) - Culture.Calendar.GetYear(yearDate);
             var calenderYear = Culture.Calendar.GetYear(date);
             return calenderYear - diff;

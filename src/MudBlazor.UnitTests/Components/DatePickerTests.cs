@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
@@ -1354,6 +1350,24 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("input").HasAttribute("required").Should().BeTrue();
             comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Test to check if the outlined dates class shows up correctly
+        /// 
+        [Test]
+        public async Task OutlinedDate_Should_BeOutlined()
+        {
+            var comp = Context.RenderComponent<DatePickerCustomDateTest>();
+            var datePicker = comp.Instance;
+
+            var customDate = comp.FindComponent<MudDatePicker>();
+
+            await datePicker.Open();
+
+            comp.Find(".mud-button-outlined").InnerHtml.Should().Contain("4");
+            comp.Find(".mud-button-month").InnerHtml.Should().Contain("April");
+            comp.Find(".mud-button-year").InnerHtml.Should().Contain("2003");
         }
     }
 }
