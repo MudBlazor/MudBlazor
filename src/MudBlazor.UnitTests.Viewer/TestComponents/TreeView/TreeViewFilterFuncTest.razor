@@ -1,0 +1,42 @@
+﻿
+<MudTreeView Items="@Items" @ref="_treeView" FilterFunc="MatchesName">
+    <ItemTemplate>
+        <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value"
+                         Icon="@context.Icon" Text="@context.Text" Visible="@context.Visible" />
+    </ItemTemplate>
+</MudTreeView>
+
+@code {
+    [Parameter]
+    public string SearchPhrase { get; set; }
+
+    public IEnumerable<TreeItemData<string>> Items { get; set; }
+
+    private MudTreeView<string> _treeView;
+
+    public class TreeItemPresenter : TreeItemData<string>
+    {
+        public TreeItemPresenter(string text, string icon) : base(text)
+        {
+            Text = text;
+            Icon = icon;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        Items.Add(new TreeItemPresenter("Trash", Icons.Material.Filled.Delete));
+        Items.Add(new TreeItemPresenter("Categories", Icons.Material.Filled.Label)
+            {
+                Expanded = true,
+                Children =
+                [
+                    new TreeItemPresenter("Social", Icons.Material.Filled.Group),
+                ]
+            });
+
+        _treeView.Filter();
+    }
+
+    private bool MatchesName(TreeItemData<string> item) => item.Text.Contains(SearchPhrase, StringComparison.OrdinalIgnoreCase);
+}
