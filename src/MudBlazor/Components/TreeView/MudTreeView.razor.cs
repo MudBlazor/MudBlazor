@@ -300,6 +300,7 @@ namespace MudBlazor
             if (FilterFunc is null)
             {
                 ResetFilter(Items);
+                return;
             }
 
             FilterInternal(Items);
