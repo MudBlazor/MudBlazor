@@ -1,5 +1,4 @@
-﻿
-<MudTreeView Items="@Items" @ref="_treeView" FilterFunc="MatchesName">
+﻿<MudTreeView @ref="_treeView" Items="@Items" FilterFunc="MatchesName">
     <ItemTemplate>
         <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value"
                          Icon="@context.Icon" Text="@context.Text" Visible="@context.Visible" />
@@ -10,30 +9,28 @@
     [Parameter]
     public string SearchPhrase { get; set; }
 
-    public IEnumerable<TreeItemData<string>> Items { get; set; }
-
     private MudTreeView<string> _treeView;
 
-    public class TreeItemPresenter : TreeItemData<string>
+    public List<TreeItemData> Items { get; set; } = new();
+
+    public class TreeItemData : TreeItemData<string>
     {
-        public TreeItemPresenter(string text, string icon) : base(text)
+        public TreeItemData(string title) : base(title)
         {
-            Text = text;
-            Icon = icon;
+            Text = title;
         }
     }
 
-    protected override void OnInitialized()
+    protected override void OnAfterRender(bool firstRender)
     {
-        Items.Add(new TreeItemPresenter("Trash", Icons.Material.Filled.Delete));
-        Items.Add(new TreeItemPresenter("Categories", Icons.Material.Filled.Label)
+        Items.Add(new TreeItemData("Trash"));
+        Items.Add(new TreeItemData("Categories")
+        {
+            Children = new()
             {
-                Expanded = true,
-                Children =
-                [
-                    new TreeItemPresenter("Social", Icons.Material.Filled.Group),
-                ]
-            });
+                new TreeItemData("Social"),
+            }
+        });
 
         _treeView.Filter();
     }
