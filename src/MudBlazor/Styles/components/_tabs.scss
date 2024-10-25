@@ -128,7 +128,7 @@
 }
 
 .mud-tab {
-  width: 100%;
+  width: fit-content;
   display: inline-flex;
   padding: 6px 12px;
   min-height: 48px;
@@ -204,9 +204,21 @@
 }
 
 .mud-tab-badge {
-  margin-left: 8px;
-  margin-inline-start: 8px;
-  margin-inline-end: unset;
+  &.mud-badge-root {
+    position: static; // Override absolute positioning from _badge.scss
+    margin-left: 8px; 
+
+    .mud-badge-wrapper {
+      position: static; // Override absolute positioning
+      width: auto; // Allow natural width
+      pointer-events: auto;
+    }
+
+    .mud-badge {
+      position: static; // Override absolute positioning
+      display: inline-flex;
+    }
+  }
 }
 
 @each $color in $mud-palette-colors {
