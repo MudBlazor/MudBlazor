@@ -1,4 +1,4 @@
-﻿<MudTreeView @ref="_treeView" Items="@Items" FilterFunc="@_filterFunc">
+﻿<MudTreeView @ref="_treeView" Items="@Items" FilterFunc="@FilterFunc">
     <ItemTemplate>
         <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value"
                          Icon="@context.Icon" Text="@context.Text" Visible="@context.Visible" />
@@ -6,21 +6,19 @@
 </MudTreeView>
 
 @code {
-
-    [Parameter]
-    public bool IsFilterFuncNull { get; set; }
-
-    [Parameter]
-    public bool IsItemsNull { get; set; }
-
     [Parameter]
     public string SearchPhrase { get; set; }
 
-    private Func<TreeItemData<string>, bool> _filterFunc;
+    [Parameter]
+    public Func<TreeItemData<string>, bool> FilterFunc { get; set; }
+
+    [Parameter]
+    public bool AreItemsPopulated { get; set; } = true;
+
+    public List<TreeItemData<string>> Items;
 
     private MudTreeView<string> _treeView;
 
-    public List<TreeItemData> Items { get; set; }
 
     public class TreeItemData : TreeItemData<string>
     {
@@ -30,25 +28,25 @@
         }
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override void OnInitialized()
     {
-        _filterFunc = IsFilterFuncNull ? null : MatchesName;
-
-        if (!IsItemsNull)
+        if (AreItemsPopulated)
         {
-            Items = new();
-            Items.Add(new TreeItemData("Trash"));
-            Items.Add(new TreeItemData("Categories")
-            {
-                Children = new()
+            Items = 
+            [
+                new TreeItemData("Trash"),
+                new TreeItemData("Categories")
                 {
-                    new TreeItemData("Social"),
+                    Expanded = true,
+                    Children = [
+                        new TreeItemData("Social")
+                    ]
                 }
-            });
+            ];
         }
-
-        _treeView.Filter();
     }
+
+    protected override void OnAfterRender(bool firstRender) => _treeView.Filter();
 
     private bool MatchesName(TreeItemData<string> item) => item.Text.Contains(SearchPhrase, StringComparison.OrdinalIgnoreCase);
 }

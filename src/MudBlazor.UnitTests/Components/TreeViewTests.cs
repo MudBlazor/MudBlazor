@@ -278,9 +278,14 @@ namespace MudBlazor.UnitTests.Components
         public void TreeViewFilterFunc_FindTopElement()
         {
             // Arrange and act
+            var searchPhrase = "Trash";
             var comp = Context.RenderComponent<TreeViewFilterFuncTest>(element =>
             {
-                element.Add(x => x.SearchPhrase, "Trash");
+                element.Add(x => x.SearchPhrase, searchPhrase);
+                element.Add(x => x.FilterFunc, (e) =>
+                {
+                    return e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase);
+                });
             });
 
             // Assert that the element "Trash" is visible
@@ -298,9 +303,14 @@ namespace MudBlazor.UnitTests.Components
         public void TreeViewFilterFunc_FindExpandableAndChildrenElements()
         {
             // Arrange and act
+            var searchPhrase = "Categories";
             var comp = Context.RenderComponent<TreeViewFilterFuncTest>(element =>
             {
-                element.Add(x => x.SearchPhrase, "Categories");
+                element.Add(x => x.SearchPhrase, searchPhrase);
+                element.Add(x => x.FilterFunc, (e) =>
+                {
+                    return e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase);
+                });
             });
 
             // Assert that the element "Trash" is invisible
@@ -318,9 +328,14 @@ namespace MudBlazor.UnitTests.Components
         public void TreeViewFilterFunc_FindChildElement()
         {
             // Arrange and act
+            var searchPhrase = "Social";
             var comp = Context.RenderComponent<TreeViewFilterFuncTest>(element =>
             {
-                element.Add(x => x.SearchPhrase, "Social");
+                element.Add(x => x.SearchPhrase, searchPhrase);
+                element.Add(x => x.FilterFunc, (e) =>
+                {
+                    return e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase);
+                });
             });
 
             // Assert that the element "Trash" is invisible
@@ -337,10 +352,16 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TreeViewFilterFunc_ItemsAreNull()
         {
+            // Arrange and act
+            var searchPhrase = "Social";
             var comp = Context.RenderComponent<TreeViewFilterFuncTest>(element =>
             {
                 element.Add(x => x.SearchPhrase, "Social");
-                element.Add(x => x.IsItemsNull, true);
+                element.Add(x => x.AreItemsPopulated, false);
+                element.Add(x => x.FilterFunc, (e) =>
+                {
+                    return e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase);
+                });
             });
 
             // Assert that the items are null
@@ -353,7 +374,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TreeViewFilterFuncTest>(element =>
             {
                 element.Add(x => x.SearchPhrase, "Social");
-                element.Add(x => x.IsFilterFuncNull, true);
             });
 
             // Assert that the element "Trash" is visible
