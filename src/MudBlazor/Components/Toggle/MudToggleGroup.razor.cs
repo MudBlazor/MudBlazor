@@ -229,6 +229,14 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        protected internal void Unregister(MudToggleItem<T> item)
+        {
+            if (_items.Remove(item))
+            {
+                StateHasChanged();
+            }
+        }
+
         protected override void OnInitialized()
         {
             base.OnInitialized();
