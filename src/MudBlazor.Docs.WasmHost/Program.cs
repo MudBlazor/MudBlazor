@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MudBlazor.Docs.Extensions;
+using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
 using MudBlazor.Docs.Services.Notifications;
 using MudBlazor.Docs.WasmHost.Prerender;
@@ -69,6 +70,9 @@ using (var scope = app.Services.CreateScope())
 
     var crawlerIdentifier = scope.ServiceProvider.GetRequiredService<ICrawlerIdentifier>();
     await crawlerIdentifier.Initialize();
+
+    // Warm up the documentation
+    ApiDocumentation.GetType("MudAlert");
 }
 
 app.Run();

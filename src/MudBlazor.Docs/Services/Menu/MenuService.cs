@@ -240,6 +240,30 @@ namespace MudBlazor.Docs.Services
                 : _parents.GetValueOrDefault(type);
         }
 
+        /// <inheritdoc />
+        public string? GetComponentName(string typeName)
+        {
+            var cleanName = typeName.Replace("`1", "<T>").Replace("`2", "<T, U>");
+            foreach (var component in _docsComponents)
+            {
+                if (component.ComponentName != null && component.ComponentName.Equals(cleanName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return component.Name;
+                }
+                if (component.GroupComponents != null)
+                {
+                    foreach (var groupComponent in component.GroupComponents)
+                    {
+                        if (groupComponent.ComponentName.Equals(cleanName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return groupComponent.Name;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
         /// <summary>
         /// This autogenerates the Menu for the API
         /// </summary>
