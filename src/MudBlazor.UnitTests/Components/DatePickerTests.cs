@@ -1358,7 +1358,7 @@ namespace MudBlazor.UnitTests.Components
         /// Test to check if the outlined dates class shows up correctly
         /// </summary>
         [Test]
-        public void DatePicker_CustomeTimerProviderTest()
+        public void DatePicker_CustomTimerProviderTest()
         {
             var timeProvider = new FakeTimeProvider();
             Context.Services.AddSingleton<TimeProvider>(timeProvider);
