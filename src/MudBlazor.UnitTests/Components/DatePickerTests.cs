@@ -5,6 +5,8 @@ using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Time.Testing;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using NUnit.Framework;
@@ -1354,17 +1356,19 @@ namespace MudBlazor.UnitTests.Components
 
         /// <summary>
         /// Test to check if the outlined dates class shows up correctly
-        /// 
+        /// </summary>
         [Test]
-        public async Task OutlinedDate_Should_BeOutlined()
+        public void OutlinedDate_Should_BeOutlined()
         {
+            var timeProvider = new FakeTimeProvider();
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            timeProvider.SetUtcNow(new DateTime(2003, 4, 4, 0, 0, 0, DateTimeKind.Utc));
             var comp = Context.RenderComponent<DatePickerCustomDateTest>();
-            var datePicker = comp.Instance;
 
-            var customDate = comp.FindComponent<MudDatePicker>();
+            // click to open menu
+            comp.Find("input").Click();
 
-            await datePicker.Open();
-
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
             comp.Find(".mud-button-outlined").InnerHtml.Should().Contain("4");
             comp.Find(".mud-button-month").InnerHtml.Should().Contain("April");
             comp.Find(".mud-button-year").InnerHtml.Should().Contain("2003");

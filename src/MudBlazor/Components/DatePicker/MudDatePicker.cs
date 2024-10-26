@@ -12,6 +12,9 @@ namespace MudBlazor
     {
         private DateTime? _selectedDate;
 
+        [Inject]
+        protected TimeProvider TimeProvider { get; set; }
+
         /// <summary>
         /// Occurs when the <see cref="Date"/> has changed.
         /// </summary>
@@ -27,13 +30,6 @@ namespace MudBlazor
             get => _value;
             set => SetDateAsync(value, true).CatchAndLog();
         }
-
-        /// <summary>
-        /// The currently outlined date. Defaults to the current date. 
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Picker.Appearance)]
-        public DateTime OutlinedDate { get; set; } = DateTime.Today;
 
         private DateTime _lastSetTime = DateTime.MinValue;
         private const int DebounceTimeoutMs = 100;
@@ -97,14 +93,14 @@ namespace MudBlazor
         }
 
         protected override string GetDayClasses(int month, DateTime day)
-        {
+        { ;
             var b = new CssBuilder("mud-day");
             b.AddClass(AdditionalDateClassesFunc?.Invoke(day) ?? string.Empty);
             if (day < GetMonthStart(month) || day > GetMonthEnd(month))
                 return b.AddClass("mud-hidden").Build();
             if ((Date?.Date == day && _selectedDate == null) || _selectedDate?.Date == day)
                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
-            if (day == OutlinedDate)
+            if (day == TimeProvider.GetLocalNow().Date)
                 return b.AddClass("mud-current mud-button-outlined").AddClass($"mud-button-outlined-{Color.ToDescriptionString()} mud-{Color.ToDescriptionString()}-text").Build();
             return b.Build();
         }
@@ -217,13 +213,13 @@ namespace MudBlazor
 
         protected override DateTime GetCalendarStartOfMonth()
         {
-            var date = StartMonth ?? Date ?? OutlinedDate;
+            var date = StartMonth ?? Date ?? TimeProvider.GetLocalNow().Date;
             return date.StartOfMonth(Culture);
         }
 
         protected override int GetCalendarYear(DateTime yearDate)
         {
-            var date = Date ?? OutlinedDate;
+            var date = Date ?? TimeProvider.GetLocalNow().Date;
             var diff = Culture.Calendar.GetYear(date) - Culture.Calendar.GetYear(yearDate);
             var calenderYear = Culture.Calendar.GetYear(date);
             return calenderYear - diff;
