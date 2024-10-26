@@ -93,7 +93,7 @@ namespace MudBlazor
         }
 
         protected override string GetDayClasses(int month, DateTime day)
-        { ;
+        {
             var b = new CssBuilder("mud-day");
             b.AddClass(AdditionalDateClassesFunc?.Invoke(day) ?? string.Empty);
             if (day < GetMonthStart(month) || day > GetMonthEnd(month))
