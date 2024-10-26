@@ -338,10 +338,11 @@ namespace MudBlazor
         private bool _minHasValue = false;
 
         /// <summary>
-        /// Reverses the mouse wheel events.
+        /// Reverses the mouse wheel direction.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, moving the mouse wheel up will decrease the value, and down will increase the value.
+        /// Defaults to <c>false</c>.  
+        /// When <c>true</c>, moving the mouse wheel up will decrease the value, and down will increase the value.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
@@ -396,10 +397,11 @@ namespace MudBlazor
         private T _step;
 
         /// <summary>
-        /// The amount added or subtraced when clicking the spin buttons.
+        /// The amount added or subtracted when changing values.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>1</c>.
+        /// Defaults to <c>1</c>.  
+        /// This affects changing values via spin buttons or the keyboard.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
