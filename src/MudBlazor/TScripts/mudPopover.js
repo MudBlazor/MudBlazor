@@ -273,7 +273,7 @@ window.mudpopoverHelper = {
                     }
 
                     // will be covered by appbar so adjust zindex with appbar as parent
-                    if (top + offsetY < 0 &&
+                    if (top + offsetY < appBarOffset &&
                         appBarElements.length > 0) {
                         this.updatePopoverZIndex(popoverContentNode, appBarElements[0]);
                         //console.log(`top: ${top} | offsetY: ${offsetY} | total: ${top + offsetY} | appBarOffset: ${appBarOffset}`);
