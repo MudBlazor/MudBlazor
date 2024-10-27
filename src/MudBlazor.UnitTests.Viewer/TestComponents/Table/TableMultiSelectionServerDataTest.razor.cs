@@ -9,7 +9,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MudBlazor.UnitTests.TestComponents
+namespace MudBlazor.UnitTests.TestComponents.Table
 {
 #pragma warning disable CS1998 // async without await
 

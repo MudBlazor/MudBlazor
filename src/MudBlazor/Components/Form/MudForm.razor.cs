@@ -17,12 +17,12 @@ namespace MudBlazor
     {
         protected string Classname =>
             new CssBuilder("mud-form")
-            .AddClass($"gap-{Spacing}", Spacing >= 0)
-            .AddClass(Class)
-            .Build();
+                .AddClass($"gap-{Spacing}", Spacing >= 0)
+                .AddClass(Class)
+                .Build();
 
         /// <summary>
-        /// The content within this form..
+        /// The content within this form.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Form.ValidatedData)]

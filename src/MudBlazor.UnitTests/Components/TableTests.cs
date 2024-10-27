@@ -7,6 +7,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Table;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components

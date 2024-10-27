@@ -1,5 +1,5 @@
 ﻿@using System.Threading
-@namespace MudBlazor.UnitTests.TestComponents
+
 
 <MudTable T="int" ServerDataWithCancel="@(new Func<TableState, CancellationToken, Task<TableData<int>>>(ServerReload))">
     <HeaderContent>

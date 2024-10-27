@@ -289,8 +289,9 @@
 
     protected string MiniDrawerClassNames =>
         new CssBuilder("mini-drawer py-8 flex-grow-0 flex-shrink-0")
-          .AddClass("absolute", IsMobile)
-        .Build();
+            .AddClass("absolute", IsMobile)
+            .Build();
+
     protected string ContentClassNames =>
         new CssBuilder("flex-grow-1 flex-shrink-1")
             .AddClass("pa-5", !IsMobile)
