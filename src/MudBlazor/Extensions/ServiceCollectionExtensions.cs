@@ -398,7 +398,7 @@ namespace MudBlazor.Services
 
         private static IServiceCollection AddCommonServices(this IServiceCollection service)
         {
-            service.TryAddSingleton<TimeProvider>(TimeProvider.System);
+            service.TryAddSingleton(TimeProvider.System);
 
             return service;
         }
