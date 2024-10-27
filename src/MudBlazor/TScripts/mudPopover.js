@@ -342,9 +342,11 @@ window.mudpopoverHelper = {
 
     updatePopoverZIndex: function (popoverContentNode, parentNode) {
         // find the first parent mud-popover if it exists
-        let parentPopover = parentNode.closest('.mud-popover');                
+        let parentPopover = parentNode.closest('.mud-popover'); 
+        let parentOfPopover = popoverContentNode.parentNode;
         // get --mud-zindex-popover from root
         let newZIndex = window.mudpopoverHelper.basePopoverZIndex + 1;
+        const origZIndex = popoverContentNode.style['z-index'];
         const contentZIndex = popoverContentNode.style['z-index'];
         // normal nested position update
         if (parentPopover) {
@@ -358,6 +360,15 @@ window.mudpopoverHelper = {
                 newZIndex = parseInt(parentZIndexValue) + 1;
             }
             popoverContentNode.style['z-index'] = newZIndex;
+        }
+        // nested popover inside any other child element
+        else if (parentOfPopover) {
+            const computedStyle = window.getComputedStyle(parentOfPopover);
+            const tooltipZIndexValue = computedStyle.getPropertyValue('z-index');
+            if (tooltipZIndexValue !== 'auto') {
+                newZIndex = parseInt(tooltipZIndexValue) + 1;
+            }
+            popoverContentNode.style['z-index'] = Math.max(newZIndex, window.mudpopoverHelper.baseTooltipZIndex + 1, origZIndex ?? 1);
         }
         // tooltip container update 
         // (it's not technically a nested popover but when nested inside popover components it doesn't set zindex properly)
@@ -408,10 +419,8 @@ class MudPopover {
                     window.mudpopoverHelper.placePopoverByNode(target);
                 }
                 else if (mutation.attributeName == 'data-ticks') {
-                    // I can't think of any good reason to use data-ticks property but I don't want to remove it until 
-                    // I'm sure it's not used by anything. When/If this is deleted remove the handler updating data-ticks from 
-                    // the mudpopover component
-                    return;
+                    // data-ticks are important for Direction and Location, it doesn't reposition
+                    // if they aren't there                    
                     const tickAttribute = target.getAttribute('data-ticks');
 
                     const tickValues = [];
@@ -441,7 +450,8 @@ class MudPopover {
                     }
 
                     const sortedTickValues = tickValues.sort((x, y) => x - y);
-
+                    // z-index calculation not used here
+                    continue;
                     for (let i = 0; i < parent.children.length; i++) {
                         const childNode = parent.children[i];
                         const tickValue = parseInt(childNode.getAttribute('data-ticks'));
