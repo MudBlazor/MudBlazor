@@ -1,20 +1,46 @@
-﻿
-
-<MudTreeView ExpandOnClick="true" ServerData="LoadServerData" Items="TreeItems" Width="350px">
+﻿<MudTreeView ExpandOnClick="true" ServerData="LoadServerData" Items="_treeItems" Width="350px">
     <ItemTemplate>
         <MudTreeViewItem Text="@context.Text" Value="@context.Value" Icon="@context.Icon" CanExpand="@context.Expandable"
-                EndText="@((context as TreeItemData).Number?.ToString())" EndTextTypo="@Typo.caption" />
+                EndText="@(((TreeItemData)context).Number?.ToString())" EndTextTypo="@Typo.caption" />
     </ItemTemplate>
 </MudTreeView>
 
 @code{
-    private List<TreeItemData> TreeItems { get; set; } = new();
 
-    public class TreeItemData : TreeItemData<string>
+    private readonly List<TreeItemData> _treeItems = [];
+
+    protected override void OnInitialized()
+    {
+        _treeItems.Add(new TreeItemData("All Mail", Icons.Material.Filled.Email));
+        _treeItems.Add(new TreeItemData("Trash", Icons.Material.Filled.Delete));
+        _treeItems.Add(new TreeItemData("Categories", Icons.Material.Filled.Label)
+        {
+            Children =
+            [
+                new TreeItemData("Social", Icons.Material.Filled.Group, 90),
+                new TreeItemData("Updates", Icons.Material.Filled.Info, 2294),
+                new TreeItemData("Forums", Icons.Material.Filled.QuestionAnswer, 3566),
+                new TreeItemData("Promotions", Icons.Material.Filled.LocalOffer, 733)
+            ]
+        });
+        _treeItems.Add(new TreeItemData("History", Icons.Material.Filled.Label, null, false));
+
+        base.OnInitialized();
+    }
+
+    public Task<IReadOnlyCollection<TreeItemData<string>>?> LoadServerData(string parentValue)
+    {
+        var children = _treeItems.FirstOrDefault(x => x.Value == parentValue)?.Children;
+
+        return Task.FromResult<IReadOnlyCollection<TreeItemData<string>>?>(children);
+
+    }
+
+    public sealed class TreeItemData : TreeItemData<string>
     {
         public int? Number { get; set; }
 
-        public List<TreeItemData> TreeItems { get; set; }
+        public List<TreeItemData> TreeItems { get; set; } = [];
 
         public TreeItemData(string title, string icon, int? number = null, bool canExpand = true) : base(title)
         {
@@ -23,28 +49,5 @@
             Number = number;
             Expandable = canExpand;
         }
-    }
-
-    protected override void OnInitialized()
-    {
-        TreeItems.Add(new TreeItemData("All Mail", Icons.Material.Filled.Email));
-        TreeItems.Add(new TreeItemData("Trash", Icons.Material.Filled.Delete));
-        TreeItems.Add(new TreeItemData("Categories", Icons.Material.Filled.Label)
-        {
-            Children = new()
-            {
-                new TreeItemData("Social", Icons.Material.Filled.Group, 90),
-                new TreeItemData("Updates", Icons.Material.Filled.Info, 2294),
-                new TreeItemData("Forums", Icons.Material.Filled.QuestionAnswer, 3566),
-                new TreeItemData("Promotions", Icons.Material.Filled.LocalOffer, 733)
-            }
-        });
-        TreeItems.Add(new TreeItemData("History", Icons.Material.Filled.Label, null, false));
-    }
-
-    public Task<IReadOnlyCollection<TreeItemData<string>>?> LoadServerData(string parentValue)
-    {
-        var children = TreeItems.FirstOrDefault(x => x.Value == parentValue)?.Children;
-        return Task.FromResult((IReadOnlyCollection<TreeItemData<string>>)children);
     }
 }

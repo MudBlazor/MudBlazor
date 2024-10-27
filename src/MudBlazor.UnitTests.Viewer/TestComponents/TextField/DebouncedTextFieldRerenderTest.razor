@@ -24,19 +24,22 @@
     public static string __description__ = "Test user input retention on component refresh before debounce.";
 
     [Parameter]
-    public string Value { get; set; }
+    public string? Value { get; set; }
 
-    public int DebounceInterval = 500;
-    public int RerenderDelay = 2000;
+    public int DebounceInterval => 500;
+
+    public int RerenderDelay => 2000;
 
     private int _renderCount;
 
     protected override void OnAfterRender(bool firstRender)
     {
         _renderCount++;
+
+        base.OnAfterRender(firstRender);
     }
 
-    async Task LaunchDelayedRerender()
+    private async Task LaunchDelayedRerender()
     {
         await Task.Delay(RerenderDelay);
         StateHasChanged();

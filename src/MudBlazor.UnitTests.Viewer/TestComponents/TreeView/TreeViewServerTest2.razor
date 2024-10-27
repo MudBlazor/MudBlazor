@@ -11,13 +11,10 @@
 </MudPaper>
 
 @code {
-    private readonly List<TreeItemData<string>> _initialTreeItems = new();
-    private readonly List<TreeItemData<string>> _serverTreeItems = new();
+    private readonly List<TreeItemData<string>> _initialTreeItems = [];
+    private readonly List<TreeItemData<string>> _serverTreeItems = [];
 
-    private static Task OnClickAsync(MudTreeViewItem<string?> viewItem)
-    {
-        return viewItem.ReloadAsync();
-    }
+    private static Task OnClickAsync(MudTreeViewItem<string?> viewItem) => viewItem.ReloadAsync();
 
     protected override void OnInitialized()
     {
@@ -48,11 +45,14 @@
                 new TreeItemData<string> { Value = "Social", Icon = Icons.Material.Filled.LocalOffer, Expandable = false }
             ]
         });
+
+        base.OnInitialized();
     }
 
     public Task<IReadOnlyCollection<TreeItemData<string>>?>? LoadServerData(string parentValue)
     {
-        foreach (var item in _serverTreeItems) {
+        foreach (var item in _serverTreeItems)
+        {
             if (item.Value == parentValue)
             {
                 return Task.FromResult<IReadOnlyCollection<TreeItemData<string>>?>(item.Children);
@@ -69,6 +69,7 @@
                 return Task.FromResult<IReadOnlyCollection<TreeItemData<string>>?>(descendantItem.Children);
             }
         }
+
         return null;
     }
 

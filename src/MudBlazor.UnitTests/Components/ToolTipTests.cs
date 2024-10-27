@@ -41,7 +41,7 @@ namespace MudBlazor.UnitTests.Components
 
             // content should always be visible
             var button = comp.Find("#sample-button");
-            button.TextContent.Should().Be("My Buttion");
+            button.TextContent.Should().Be("My Button");
 
             button.ParentElement.ClassList.Should().Contain("mud-tooltip-root");
 
@@ -93,7 +93,7 @@ namespace MudBlazor.UnitTests.Components
 
             // content should always be visible
             var button = comp.Find("#sample-button");
-            button.TextContent.Should().Be("My Buttion");
+            button.TextContent.Should().Be("My Button");
 
             button.ParentElement.ClassList.Should().Contain("mud-tooltip-root");
 
@@ -110,7 +110,7 @@ namespace MudBlazor.UnitTests.Components
 
             // content should always be visible
             var button = comp.Find("#sample-button");
-            button.TextContent.Should().Be("My Buttion");
+            button.TextContent.Should().Be("My Button");
 
             button.ParentElement.ClassList.Should().Contain("mud-tooltip-root");
 
