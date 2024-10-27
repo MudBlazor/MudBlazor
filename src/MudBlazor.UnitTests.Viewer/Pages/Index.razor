@@ -45,10 +45,8 @@
                             <MudNavGroup Expanded="@mudGroupExpanded[index]" Title="@dir">
                                 @foreach (var type in typesInDir)
                                 {
-                                    <MudTooltip RootClass="d-flex flex-auto" Text="@getDescription(type)">
                                         <MudNavLink Class="@(selectedType == type ? "mode-links active" : "")"
                                             OnClick="@(() => selectedType = type)" @key="type.Name">@type.Name</MudNavLink>
-                                    </MudTooltip>
                                 }
                             </MudNavGroup>
                         }
