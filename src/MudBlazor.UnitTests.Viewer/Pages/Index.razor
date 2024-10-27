@@ -23,11 +23,14 @@
                     <MudText Typo="Typo.h6">Test Components</MudText>
             </MudDrawerHeader>
             <MudStack Row>
-                <MudIconButton Class="ml-1 mr-0" Icon="@Icons.Material.Filled.Remove" Size="Size.Small" OnClick="@(() => ToggleExpanded(false))" />
                 <MudTextField T="string" @bind-Value="@currentSearchText" Immediate="true" FullWidth="true"
-                              Placeholder="Search by category" Variant="Variant.Outlined" Class="mx-0 my-2"
+                              Placeholder="Search by category" Variant="Variant.Outlined" Class="mx-2 my-2"
                               Typo="Typo.caption" Margin="Margin.Dense" Clearable DebounceInterval="300" />
-                <MudIconButton Class="mr-1 ml-0" Icon="@Icons.Material.Filled.Add" Size="Size.Small" OnClick="@(() => ToggleExpanded(true))" />
+                <MudTooltip RootClass="d-flex flex-auto" Text="@(expandedState ? "Collapse Categories" : "Expand Categories")">
+                    <MudIconButton Class="mr-1 ml-n2" Icon="@(expandedState ? collapseAllIcon : expandAllIcon)" 
+                        Size="Size.Small" OnClick="@(() => ToggleExpanded())" />
+                </MudTooltip>
+                
             </MudStack>
             <MudItem xs="12">
                 <MudNavMenu>
@@ -116,16 +119,21 @@
     private Dictionary<Type, string> _typeDirectories;
     MudAutocomplete<Type> autocomplete;
 
+    bool expandedState = true;
+    string expandAllIcon = @"<svg xmlns=""http://www.w3.org/2000/svg"" viewBox=""0 0 24 24""><title>expand-all-outline</title><path d=""M4,2A2,2 0 0,0 2,4V14H4V4H14V2H4M8,6A2,2 0 0,0 6,8V18H8V8H18V6H8M20,12V20H12V12H20M20,10H12A2,2 0 0,0 10,12V20A2,2 0 0,0 12,22H20A2,2 0 0,0 22,20V12A2,2 0 0,0 20,10M19,17H17V19H15V17H13V15H15V13H17V15H19V17Z"" /></svg>";
+    string collapseAllIcon = @"<svg xmlns=""http://www.w3.org/2000/svg"" viewBox=""0 0 24 24""><title>collapse-all-outline</title><path d=""M4,2A2,2 0 0,0 2,4V14H4V4H14V2H4M8,6A2,2 0 0,0 6,8V18H8V8H18V6H8M20,12V20H12V12H20M20,10H12A2,2 0 0,0 10,12V20A2,2 0 0,0 12,22H20A2,2 0 0,0 22,20V12A2,2 0 0,0 20,10M19,17H13V15H19V17Z"" /></svg>";
+    
     void DocsDrawerToggle()
     {
         drawerOpen = !drawerOpen;
     }
 
-    void ToggleExpanded(bool expand)
+    void ToggleExpanded()
     {
+        expandedState = !expandedState;
         for (int i = 0; i < mudGroupExpanded.Length; i++)
         {
-            mudGroupExpanded[i] = expand;
+            mudGroupExpanded[i] = expandedState;
         }
     }
 
@@ -135,7 +143,7 @@
         availableComponentTypes = getTestComponentTypes().ToArray();
         availableDirectories = getTestFolders().ToArray();
         mudGroupExpanded = new bool[availableDirectories.Length];
-        ToggleExpanded(true);
+        ToggleExpanded();
         _typeDirectories = availableComponentTypes.ToDictionary(
             type => type,
             type => type.Namespace?.Split('.').LastOrDefault() ?? ""
