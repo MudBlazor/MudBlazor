@@ -481,7 +481,7 @@ namespace MudBlazor
                 .AddClass($"mud-elevation-{Elevation}", ApplyEffectsToContainer && Elevation != 0)
                 .AddClass($"mud-tabs-reverse", Position == Position.Bottom)
                 .AddClass($"mud-tabs-vertical", IsVerticalTabs())
-                .AddClass($"mud-tabs-vertical-reverse",Position == Position.Right && !RightToLeft || (Position == Position.Left) && RightToLeft || Position == Position.End)
+                .AddClass($"mud-tabs-vertical-reverse", Position == Position.Right && !RightToLeft || (Position == Position.Left) && RightToLeft || Position == Position.End)
                 .AddClass(InternalClassName)
                 .AddClass(Class)
                 .Build();
@@ -521,7 +521,7 @@ namespace MudBlazor
                 .AddClass($"mud-tab-slider-horizontal", Position is Position.Top or Position.Bottom)
                 .AddClass($"mud-tab-slider-vertical", IsVerticalTabs())
                 .AddClass($"mud-tab-slider-horizontal-reverse", Position == Position.Bottom)
-                .AddClass($"mud-tab-slider-vertical-reverse", Position == Position.Right || Position == Position.Start && RightToLeft ||Position == Position.End && !RightToLeft)
+                .AddClass($"mud-tab-slider-vertical-reverse", Position == Position.Right || Position == Position.Start && RightToLeft || Position == Position.End && !RightToLeft)
                 .Build();
 
         protected string MaxHeightStyles =>
@@ -533,7 +533,7 @@ namespace MudBlazor
             ? new StyleBuilder()
                 .AddStyle("width", _sliderSize.ToPx(), Position is Position.Top or Position.Bottom)
                 .AddStyle("right", _sliderPosition.ToPx(), Position is Position.Top or Position.Bottom)
-                .AddStyle("transition", SliderAnimation ? "right .3s cubic-bezier(.64,.09,.08,1);" : "none",Position is Position.Top or Position.Bottom)
+                .AddStyle("transition", SliderAnimation ? "right .3s cubic-bezier(.64,.09,.08,1);" : "none", Position is Position.Top or Position.Bottom)
                 .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", IsVerticalTabs())
                 .AddStyle("height", _sliderSize.ToPx(), IsVerticalTabs())
                 .AddStyle("top", _sliderPosition.ToPx(), IsVerticalTabs())
