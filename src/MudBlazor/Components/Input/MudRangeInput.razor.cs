@@ -41,7 +41,7 @@ namespace MudBlazor
 
         protected string ClearButtonClassname =>
             new CssBuilder("mud-input-clear-button")
-                .AddClass(Adornment is Adornment.Start ? "me-0" : "me-n4")
+            .AddClass(Adornment is Adornment.Start ? "me-0" : "me-n4")
             .Build();
 
         /// <summary>
