@@ -344,11 +344,11 @@ window.mudpopoverHelper = {
 
     updatePopoverZIndex: function (popoverContentNode, parentNode) {
         // find the first parent mud-popover if it exists
-        let parentPopover = parentNode.closest('.mud-popover'); 
-        let parentOfPopover = popoverContentNode.parentNode;
+        const parentPopover = parentNode.closest('.mud-popover'); 
+        const parentOfPopover = popoverContentNode.parentNode;
         // get --mud-zindex-popover from root
         let newZIndex = window.mudpopoverHelper.basePopoverZIndex + 1;
-        let origZIndex = parseInt(popoverContentNode.style['z-index']) || 1;
+        const origZIndex = parseInt(popoverContentNode.style['z-index']) || 1;
         const contentZIndex = popoverContentNode.style['z-index'];
         // normal nested position update
         if (parentPopover) {
