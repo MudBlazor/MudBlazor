@@ -3,6 +3,7 @@ using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Overlay;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components;

@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Tabs;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components

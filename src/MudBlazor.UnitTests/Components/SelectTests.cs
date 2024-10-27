@@ -12,7 +12,8 @@ using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Select;
 using NUnit.Framework;
-using static MudBlazor.UnitTests.TestComponents.SelectWithEnumTest;
+using static MudBlazor.UnitTests.TestComponents.Select.SelectWithEnumTest;
+
 
 namespace MudBlazor.UnitTests.Components
 {

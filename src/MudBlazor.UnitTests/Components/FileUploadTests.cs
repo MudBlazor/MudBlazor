@@ -18,6 +18,7 @@ using Microsoft.Extensions.Logging;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.FileUpload;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components

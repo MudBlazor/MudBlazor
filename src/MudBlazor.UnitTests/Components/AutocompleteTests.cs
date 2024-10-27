@@ -17,10 +17,10 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.Dummy;
-using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Autocomplete;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
-using static MudBlazor.UnitTests.TestComponents.AutocompleteSetParametersInitialization;
+using static MudBlazor.UnitTests.TestComponents.Autocomplete.AutocompleteSetParametersInitialization;
 
 namespace MudBlazor.UnitTests.Components
 {
