@@ -451,9 +451,9 @@ namespace MudBlazor.UnitTests.Components
         public async Task AutocompleteReadOnlyShouldNotHaveClearButton()
         {
             var comp = Context.RenderComponent<MudAutocomplete<string>>(p => p
-            .Add(x => x.Text, "some value")
-            .Add(x => x.Clearable, true)
-            .Add(x => x.ReadOnly, false));
+                .Add(x => x.Text, "some value")
+                .Add(x => x.Clearable, true)
+                .Add(x => x.ReadOnly, false));
 
             comp.FindAll(".mud-input-clear-button").Count.Should().Be(1);
 

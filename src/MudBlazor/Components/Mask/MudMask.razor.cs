@@ -27,43 +27,43 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-input")
-            .AddClass($"mud-input-{Variant.ToDescriptionString()}")
-            .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
-            .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
-            .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", () => Margin != Margin.None)
-            .AddClass("mud-input-underline", () => Underline && Variant != Variant.Outlined)
-            .AddClass("mud-shrink", () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder))
-            .AddClass("mud-disabled", GetDisabledState())
-            .AddClass("mud-input-error", HasErrors)
-            .AddClass("mud-ltr", GetInputType() == InputType.Email || GetInputType() == InputType.Telephone)
-            .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
-            .AddClass(Class)
-            .Build();
+                .AddClass($"mud-input-{Variant.ToDescriptionString()}")
+                .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
+                .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
+                .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", () => Margin != Margin.None)
+                .AddClass("mud-input-underline", () => Underline && Variant != Variant.Outlined)
+                .AddClass("mud-shrink", () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder))
+                .AddClass("mud-disabled", GetDisabledState())
+                .AddClass("mud-input-error", HasErrors)
+                .AddClass("mud-ltr", GetInputType() == InputType.Email || GetInputType() == InputType.Telephone)
+                .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
+                .AddClass(Class)
+                .Build();
 
         protected string InputClassname =>
             new CssBuilder("mud-input-slot")
-            .AddClass("mud-input-root")
-            .AddClass($"mud-input-root-{Variant.ToDescriptionString()}")
-            .AddClass($"mud-input-root-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
-            .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", () => Margin != Margin.None)
-            .AddClass(Class)
-            .Build();
+                .AddClass("mud-input-root")
+                .AddClass($"mud-input-root-{Variant.ToDescriptionString()}")
+                .AddClass($"mud-input-root-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
+                .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", () => Margin != Margin.None)
+                .AddClass(Class)
+                .Build();
 
         protected string AdornmentClassname =>
             new CssBuilder()
-            .AddClass($"mud-input-adornment-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
-            .AddClass($"mud-text", !string.IsNullOrEmpty(AdornmentText))
-            .AddClass($"mud-input-root-filled-shrink", Variant == Variant.Filled)
-            .AddClass(Class)
-            .Build();
+                .AddClass($"mud-input-adornment-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
+                .AddClass($"mud-text", !string.IsNullOrEmpty(AdornmentText))
+                .AddClass($"mud-input-root-filled-shrink", Variant == Variant.Filled)
+                .AddClass(Class)
+                .Build();
 
         protected string ClearButtonClassname =>
             new CssBuilder("mud-input-clear-button")
-            // .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
-            .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End)
-            // .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
-            .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End)
-            .Build();
+                // .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
+                .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End)
+                // .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
+                .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End)
+                .Build();
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
