@@ -1,4 +1,4 @@
-@namespace MudBlazor.UnitTests.TestComponents
+
 
 <MudDataGrid MultiSelection="true" @bind-SelectedItems="_selectedItems"
     ServerData="@(new Func<GridState<Item>, Task<GridData<Item>>>(ServerReload))">

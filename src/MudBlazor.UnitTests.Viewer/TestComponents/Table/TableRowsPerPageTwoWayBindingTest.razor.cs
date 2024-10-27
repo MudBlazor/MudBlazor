@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
-namespace MudBlazor.UnitTests.TestComponents
+namespace MudBlazor.UnitTests.TestComponents.Table
 {
     public partial class TableRowsPerPageTwoWayBindingTest : ComponentBase
     {
