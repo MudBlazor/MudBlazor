@@ -265,20 +265,22 @@ window.mudpopoverHelper = {
                 else {
                     // did not flip, ensure the left and top are inside bounds
                     // appbaroffset is another section
-                    if (left + offsetX < 0) {
+                    if (left + offsetX < 0 && // it's starting left of the screen
+                        Math.abs(left + offsetX) < selfRect.width) { // it's not starting so far left the entire box would be hidden
                         left = Math.max(0, left + offsetX);
                         // set offsetX to 0 to avoid double offset
                         offsetX = 0;
                     }
 
-                    // will be covered by appbar
-                    if (top + offsetY < appBarOffset &&
+                    // will be covered by appbar so adjust zindex with appbar as parent
+                    if (top + offsetY < 0 &&
                         appBarElements.length > 0) {
                         this.updatePopoverZIndex(popoverContentNode, appBarElements[0]);
                         //console.log(`top: ${top} | offsetY: ${offsetY} | total: ${top + offsetY} | appBarOffset: ${appBarOffset}`);
                     }
 
-                    if (top + offsetY < 0) {
+                        if (top + offsetY < 0 && // it's starting above the screen
+                            Math.abs(top + offsetY) < selfRect.height) { // it's not starting so far above the entire box would be hidden
                         top = Math.max(0, top + offsetY);
                         // set offsetY to 0 to avoid double offset
                         offsetY = 0;
@@ -346,7 +348,7 @@ window.mudpopoverHelper = {
         let parentOfPopover = popoverContentNode.parentNode;
         // get --mud-zindex-popover from root
         let newZIndex = window.mudpopoverHelper.basePopoverZIndex + 1;
-        const origZIndex = popoverContentNode.style['z-index'];
+        let origZIndex = parseInt(popoverContentNode.style['z-index']) || 1;
         const contentZIndex = popoverContentNode.style['z-index'];
         // normal nested position update
         if (parentPopover) {
@@ -368,7 +370,7 @@ window.mudpopoverHelper = {
             if (tooltipZIndexValue !== 'auto') {
                 newZIndex = parseInt(tooltipZIndexValue) + 1;
             }
-            popoverContentNode.style['z-index'] = Math.max(newZIndex, window.mudpopoverHelper.baseTooltipZIndex + 1, origZIndex ?? 1);
+            popoverContentNode.style['z-index'] = Math.max(newZIndex, window.mudpopoverHelper.baseTooltipZIndex + 1, origZIndex);
         }
         // tooltip container update 
         // (it's not technically a nested popover but when nested inside popover components it doesn't set zindex properly)
