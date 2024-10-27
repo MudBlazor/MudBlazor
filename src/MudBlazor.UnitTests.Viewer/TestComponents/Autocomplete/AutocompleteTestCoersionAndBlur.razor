@@ -1,16 +1,14 @@
-﻿
-@using System.Threading
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
-<MudAutocomplete id="autocompleteLabelTest" T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" DebounceInterval="0" PopoverClass="autocomplete-popover-class" />
-<MudTextField id="textFieldBlurTest" T="string" Label="US States" @bind-Value="value1" />
+<MudAutocomplete id="autocompleteLabelTest" T="string" Label="US States" @bind-Value="_value1" SearchFunc="@Search1" DebounceInterval="0" PopoverClass="autocomplete-popover-class" />
+<MudTextField id="textFieldBlurTest" T="string" Label="US States" @bind-Value="_value1" />
 
 @code {
     public static string __description__ = "Initial value should be shown and popup should not open.";
 
-    private string value1 = "Alabama";
+    private string _value1 = "Alabama";
 
-    private string[] states =
+    private readonly string[] states =
     {
         "Alabama", "Alaska", "American Samoa", "Arizona",
         "Arkansas", "California", "Colorado", "Connecticut",

@@ -1,8 +1,6 @@
-﻿
-@using System.Threading
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
-<MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search" MaxItems="10">
+<MudAutocomplete T="string" Label="US States" @bind-Value="_value1" SearchFunc="@Search" MaxItems="10">
     <BeforeItemsTemplate>
         <MudText>StartList_Content</MudText>
     </BeforeItemsTemplate>
@@ -14,9 +12,9 @@
 @code {
     public static string __description__ = "The BeforeItemsTemplate and AfterItemsTemplate should be rendered with items present.";
 
-    private string value1;
+    private string? _value1;
 
-    private string[] states =
+    private readonly string[] _states =
     {
         "Alabama", "Alaska", "American Samoa", "Arizona",
         "Arkansas", "California", "Colorado", "Connecticut",
@@ -36,8 +34,7 @@
 
     private Task<IEnumerable<string>> Search(string value, CancellationToken token)
     {
-        var result = string.IsNullOrEmpty(value) ? states : states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        var result = string.IsNullOrEmpty(value) ? _states : _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
         return Task.FromResult(result);
     }
-
 }

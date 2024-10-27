@@ -1,6 +1,4 @@
-﻿
-
-<MudChipSet T="string" @bind-SelectedValues="_selectedValues" SelectionMode="SelectionMode.MultiSelection" CheckMark>
+﻿<MudChipSet T="string" @bind-SelectedValues="_selectedValues" SelectionMode="SelectionMode.MultiSelection" CheckMark>
     @if (_extraItem)
     {
         <MudChip Value="@("Extra Chip")" Default="true" />
@@ -19,7 +17,8 @@ else {
 
 @code
 { 
-    bool _extraItem = false;
+    private bool _extraItem;
+    private IReadOnlyCollection<string>? _selectedValues;
+
     public void Enable() => _extraItem = !_extraItem;
-    IReadOnlyCollection<string> _selectedValues;
 }

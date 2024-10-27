@@ -1,5 +1,3 @@
-
-
 <MudChipSet @bind-SelectedValues="_selected" SelectionMode="SelectionMode.MultiSelection">
     <MudChip Value="@("Milk")"/>
     <MudChip Value="@("Eggs")"/>
@@ -10,8 +8,7 @@
     <MudChip Value="@("Red wine")"/>
 </MudChipSet>
 
-
-@if (_selected != null && _selected.Count > 0) {
+@if (_selected is { Count: > 0 }) {
     <MudText>@string.Join(", ", _selected.OrderBy(x => x))</MudText>
 }
 else {
@@ -21,15 +18,9 @@ else {
 <MudButton OnClick="SetEmpty">Set Empty</MudButton>
 @code
 {
-    private IReadOnlyCollection<string> _selected;
+    private IReadOnlyCollection<string>? _selected;
 
-    private void SetNull()
-    {
-        _selected = null;
-    }
+    private void SetNull() => _selected = null;
 
-    private void SetEmpty()
-    {
-        _selected = Array.Empty<string>();
-    }
+    private void SetEmpty() => _selected = Array.Empty<string>();
 }

@@ -1,11 +1,9 @@
-﻿
-
-<MudDateRangePicker PickerVariant="PickerVariant.Static" @bind-DateRange="DateRange" />
+﻿<MudDateRangePicker PickerVariant="PickerVariant.Static" @bind-DateRange="DateRange" />
 
 @code {
     public static string __description__ = "DateTime range without a timestamp";
 
-    public DateRange DateRange { get; set; }
+    public DateRange? DateRange { get; set; }
 
     protected override Task OnInitializedAsync()
     {

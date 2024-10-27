@@ -1,6 +1,4 @@
-﻿
-
-@inject IDialogService DialogService
+﻿@inject IDialogService DialogService
 
 <MudDialog>
     <TitleContent>
@@ -17,19 +15,19 @@
 </MudDialog>
 
 @code {
+
     [CascadingParameter]
-    private IMudDialogInstance MudDialog { get; set; }
+    private IMudDialogInstance MudDialog { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
         var newOptions = MudDialog.Options with { CloseOnEscapeKey = true, CloseButton = true };
         await MudDialog.SetOptionsAsync(newOptions);
+
+        await base.OnInitializedAsync();
     }
 
     private void Submit() => MudDialog.Close(DialogResult.Ok(true));
 
-    private async Task DoSomething()
-    {
-        await DialogService.ShowMessageBox("Warning", "Are you sure you wish to do something?", yesText: "Do it", cancelText: "Cancel");
-    }
+    private Task DoSomething() => DialogService.ShowMessageBox("Warning", "Are you sure you wish to do something?", yesText: "Do it", cancelText: "Cancel");
 }

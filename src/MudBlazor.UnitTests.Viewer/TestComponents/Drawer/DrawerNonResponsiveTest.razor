@@ -1,6 +1,4 @@
-﻿
-
-<MudLayout>
+﻿<MudLayout>
     <MudAppBar Elevation="1">
         <MudIconButton id="toggle-drawer-button" Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
     </MudAppBar>
@@ -14,8 +12,8 @@
 
 @code{
     private bool _open;
-    
-    public MudDrawer Drawer { get; set; }
+
+    public MudDrawer Drawer { get; set; } = null!;
     
     [Parameter]
     public bool InitialOpenState { get; set; }
@@ -26,8 +24,5 @@
         base.OnInitialized();
     }
 
-    public void ToggleDrawer()
-    {
-        _open = !_open;
-    }
+    public void ToggleDrawer() => _open = !_open;
 }

@@ -7,7 +7,7 @@
     <MudSelectItem Value="@("3")">3</MudSelectItem>
 </MudSelect>
 
-<MudSelect T=TestClass Label="Object Binding" MultiSelection="true" Required="true" @bind-SelectedValues="SelectedRoles" Clearable="true">
+<MudSelect T="TestClass" Label="Object Binding" MultiSelection="true" Required="true" @bind-SelectedValues="SelectedRoles" Clearable="true">
     @foreach(var role in Roles)
     {
         <MudSelectItem T="TestClass" Value=@role/>
@@ -18,7 +18,7 @@
 
 	public static string __description__ = "Multi-Select Required Should Recognize Values";
 
-    string value=null;
+    string value = null;
 
     public class TestClass
     {
@@ -31,7 +31,6 @@
     public List<TestClass> Roles {get; set; } = new();
     public IEnumerable<TestClass> SelectedRoles = new List<TestClass>();
 
-    Func<TestClass, string> converter = p => p?.NameTranslated;
     
 	protected override void OnInitialized()
     {

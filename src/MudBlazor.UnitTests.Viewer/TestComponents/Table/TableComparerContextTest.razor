@@ -18,7 +18,7 @@
 
     public class ElementComparer : IEqualityComparer<Element>
     {
-        public bool Equals(Element a, Element b) => a?.Id == b?.Id;
+        public bool Equals(Element? a, Element? b) => a?.Id == b?.Id;
         public int GetHashCode(Element x) => HashCode.Combine(x?.Id);
     }
 

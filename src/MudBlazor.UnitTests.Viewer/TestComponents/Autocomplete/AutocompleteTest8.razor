@@ -1,12 +1,10 @@
-﻿
-@using System.Threading
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
-@if (mustBeShown)
+@if (MustBeShown)
 {
     <AutoCompleteContainer @bind-HasBeenDisposed="@HasBeenDisposed"></AutoCompleteContainer>
 }
 @code {
-    public bool mustBeShown = true;
+    public bool MustBeShown = true;
     public bool HasBeenDisposed;
 }

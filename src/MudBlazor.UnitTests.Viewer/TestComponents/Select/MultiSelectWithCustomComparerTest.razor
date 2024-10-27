@@ -46,7 +46,7 @@
 
     class CoffeeComparer : IEqualityComparer<Coffee>
     {
-        public bool Equals(Coffee a, Coffee b) => a.Key == b.Key;
+        public bool Equals(Coffee? a, Coffee? b) => a.Key == b.Key;
         public int GetHashCode(Coffee x) => HashCode.Combine(x.Key);
     }
 }

@@ -1,15 +1,13 @@
-﻿
-@using System.Threading
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
-<MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" DebounceInterval="10" Clearable="true" />
+<MudAutocomplete T="string" Label="US States" @bind-Value="_value1" SearchFunc="@Search1" DebounceInterval="10" Clearable="true" />
 
 @code {
     public static string __description__ = "Initially hidden clear button should show when text is entered or item selected.";
 
-    private string value1 = string.Empty;
+    private string _value1 = string.Empty;
 
-    private string[] states =
+    private readonly string[] _states =
     {
         "Alabama", "Alaska", "American Samoa", "Arizona",
         "Arkansas", "California", "Colorado", "Connecticut",
@@ -34,7 +32,7 @@
 
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
-            return states;
-        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+            return _states;
+        return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 }

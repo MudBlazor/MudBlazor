@@ -2,12 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.TestComponents.Table
 {
@@ -52,7 +47,7 @@ namespace MudBlazor.UnitTests.TestComponents.Table
 
         class ElementComparer : IEqualityComparer<ComplexObject>
         {
-            public bool Equals(ComplexObject a, ComplexObject b) => a?.Id == b?.Id;
+            public bool Equals(ComplexObject? a, ComplexObject? b) => a?.Id == b?.Id;
             public int GetHashCode(ComplexObject x) => HashCode.Combine(x?.Id);
         }
 

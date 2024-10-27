@@ -1,8 +1,6 @@
-﻿
-@using System.Threading
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider></MudPopoverProvider>
 
-<MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" MaxItems="10">
+<MudAutocomplete T="string" Label="US States" @bind-Value="_value1" SearchFunc="@Search1" MaxItems="10">
     <NoItemsTemplate>
         <MudText>No items found, try another search</MudText>
     </NoItemsTemplate>
@@ -11,9 +9,9 @@
 @code {
     public static string __description__ = "There are no items after filtering, so the no items template should render";
 
-    private string value1;
+    private string? _value1;
 
-    private string[] states =
+    private readonly string[] states =
     {
         "Alabama", "Alaska", "American Samoa", "Arizona",
         "Arkansas", "California", "Colorado", "Connecticut",

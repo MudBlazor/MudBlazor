@@ -1,6 +1,4 @@
-﻿
-
-<MudFileUpload T="IBrowserFile" OnFilesChanged="UploadFiles" >
+﻿<MudFileUpload T="IBrowserFile" OnFilesChanged="UploadFiles" >
     <ActivatorContent>
         <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
@@ -11,8 +9,8 @@
 </MudFileUpload>
 
 @code{
+    public IBrowserFile? File { get; private set; }
 
-    public IBrowserFile File { get; private set; }
     private void UploadFiles(InputFileChangeEventArgs args)
     {
         File = args.File;

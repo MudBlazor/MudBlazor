@@ -1,15 +1,17 @@
-﻿
-@using System.Threading
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
- <MudAutocomplete id="autocompleteLabelTest" T="string" Label="US States" @bind-Value="value1"
-    SearchFunc="@Search1" DebounceInterval="10" PopoverClass="autocomplete-popover-class" />
+<MudAutocomplete id="autocompleteLabelTest" T="string" Label="US States" @bind-Value="_value1"
+                 SearchFunc="@Search1" DebounceInterval="10" PopoverClass="autocomplete-popover-class" />
 @code {
-    [Parameter] public bool HasBeenDisposed  { get; set; }
-    [Parameter] public EventCallback<bool> HasBeenDisposedChanged { get; set; }
-    private string value1 = "Alabama";
+    private string _value1 = "Alabama";
 
-    private List<string> states = new List<string>
+    [Parameter]
+    public bool HasBeenDisposed { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> HasBeenDisposedChanged { get; set; }
+
+    private readonly List<string> _states = new List<string>
     {
         "Alabama", "Alaska", "American Samoa", "Arizona",
         "Arkansas", "California", "Colorado", "Connecticut",
@@ -39,7 +41,8 @@
         }
 
         if (string.IsNullOrEmpty(value))
-            return states;
-        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+            return _states;
+
+        return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 }

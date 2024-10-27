@@ -1,6 +1,4 @@
-﻿
-
-<MudPopoverProvider />
+﻿<MudPopoverProvider />
 <MudDataGrid T="Model" ShowMenuIcon="true" Items="@_items" Groupable="true">
     <Columns>
         <PropertyColumn Property="x => x.Name" Title="Name" Grouping="true" HeaderClass="name" />
@@ -16,23 +14,17 @@
     public bool IsGenderGrouped { get; set; }
     public bool IsAgeGrouped { get; set; }
 
-    public List<Model> _items = new List<Model>()
-    {
-        new Model("John", 45, "Male"), 
-        new Model("Johanna", 23, "Female"), 
-        new Model("Steve", 32, "Male"),
-        new Model("Alice", 32, "Female")
-    };
+    private readonly List<Model> _items =
+    [
+        new("John", 45, "Male"),
+        new("Johanna", 23, "Female"),
+        new("Steve", 32, "Male"),
+        new("Alice", 32, "Female")
+    ];
 
     public record Model(string Name, int Age, string Gender);
 
-    void GroupByGender(MouseEventArgs args)
-    {
-        IsGenderGrouped = true;
-    }
+    private void GroupByGender(MouseEventArgs args) => IsGenderGrouped = true;
 
-    void GroupByAge(MouseEventArgs args)
-    {
-        IsAgeGrouped = true;
-    }
+    private void GroupByAge(MouseEventArgs args) => IsAgeGrouped = true;
 }

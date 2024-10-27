@@ -1,6 +1,5 @@
 ﻿@using System.IO
 
-
 <MudFileUpload T="IBrowserFile"
                @ref="@_fileUpload"
                @bind-Files="File"
@@ -45,7 +44,6 @@
 </MudToolBar>
 
 @code {
-#nullable enable
     [Parameter]
     public IBrowserFile? File { get; set; }
 

@@ -1,15 +1,13 @@
-﻿
-@using System.Threading
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
-<MudAutocomplete ReadOnly="true" T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" DebounceInterval="10" />
+<MudAutocomplete ReadOnly="true" T="string" Label="US States" @bind-Value="_value1" SearchFunc="@Search1" DebounceInterval="10" />
 
 @code {
     public static string __description__ = "Initial value should be shown and popup should not open.";
 
-    private string value1 = "Alabama";
+    private string _value1 = "Alabama";
 
-    private string[] states =
+    private readonly string[] _states =
     {
         "Alabama", "Alaska", "American Samoa", "Arizona",
         "Arkansas", "California", "Colorado", "Connecticut",
@@ -34,7 +32,7 @@
 
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
-            return states;
-        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+            return _states;
+        return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 }

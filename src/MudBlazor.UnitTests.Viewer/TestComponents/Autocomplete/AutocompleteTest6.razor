@@ -1,8 +1,6 @@
-﻿
-@using System.Threading
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider></MudPopoverProvider>
 
-<MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" MaxItems="10">
+<MudAutocomplete T="string" Label="US States" @bind-Value="_value1" SearchFunc="@Search1" MaxItems="10">
     <MoreItemsTemplate>
         <MudText>Not all items are shown</MudText>
     </MoreItemsTemplate>
@@ -11,9 +9,9 @@
 @code {
     public static string __description__ = "There are more than 10 items, so the more items template should render";
 
-    private string value1;
+    private string? _value1;
 
-    private string[] states =
+    private readonly string[] _states =
     {
         "Alabama", "Alaska", "American Samoa", "Arizona",
         "Arkansas", "California", "Colorado", "Connecticut",
@@ -38,7 +36,7 @@
 
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
-            return states;
-        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+            return _states;
+        return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 }

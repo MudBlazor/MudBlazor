@@ -42,7 +42,7 @@
         TreeItems.Add(new TreeItemData("History", Icons.Material.Filled.Label, null, false));
     }
 
-    public Task<IReadOnlyCollection<TreeItemData<string>>> LoadServerData(string parentValue)
+    public Task<IReadOnlyCollection<TreeItemData<string>>?> LoadServerData(string parentValue)
     {
         var children = TreeItems.FirstOrDefault(x => x.Value == parentValue)?.Children;
         return Task.FromResult((IReadOnlyCollection<TreeItemData<string>>)children);

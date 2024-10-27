@@ -38,7 +38,7 @@
         new() { FirstName = "Pansy", LastName = "West", Email = "Pansy82@mud.com" },
     };
 
-    public string ValidateEmail(string email)
+    public string? ValidateEmail(string email)
     {
         if (string.IsNullOrEmpty(email))
             return null;

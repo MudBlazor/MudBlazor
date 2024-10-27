@@ -76,7 +76,7 @@ namespace MudBlazor.UnitTests.TestComponents.Table
                 Items = list;
             }
 
-            public event PropertyChangedEventHandler PropertyChanged;
+            public event PropertyChangedEventHandler? PropertyChanged;
 
             private void OnPropertyChanged([CallerMemberName] string propertyName = null)
             {

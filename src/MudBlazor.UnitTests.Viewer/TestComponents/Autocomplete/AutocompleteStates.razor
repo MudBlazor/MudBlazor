@@ -1,10 +1,7 @@
-﻿
-@using System.Threading
-
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
 <MudAutocomplete id="autocompleteLabelTest" T="string" Label="US States"
-                 @bind-Value="value1" SearchFunc="@SearchStates" DebounceInterval="DebounceInterval" />
+                 @bind-Value="_value1" SearchFunc="@SearchStates" DebounceInterval="DebounceInterval" />
 
 @code {
     public static string __description__ = "Autocomplete to input a US state";
@@ -14,9 +11,9 @@
 
     public int SearchFuncCallCount { get; private set; }
 
-    private string value1;
+    private string? _value1;
 
-    private string[] states =
+    private readonly string[] _states =
     {
         "Alabama", "Alaska", "American Samoa", "Arizona",
         "Arkansas", "California", "Colorado", "Connecticut",
@@ -43,7 +40,7 @@
 
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
-            return states;
-        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+            return _states;
+        return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 }

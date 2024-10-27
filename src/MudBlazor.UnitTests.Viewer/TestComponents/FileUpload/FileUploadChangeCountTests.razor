@@ -1,6 +1,4 @@
-﻿
-
-<MudFileUpload T="IBrowserFile"
+﻿<MudFileUpload T="IBrowserFile"
                FilesChanged="@FilesChanged"
                OnFilesChanged="@OnFilesChanged" >
     <ActivatorContent>
@@ -24,7 +22,7 @@
     public int FilesChangedCount { get; private set; }
     public int OnFilesChangedCount { get; private set; }
 
-    private void FilesChanged(IBrowserFile _)
+    private void FilesChanged(IBrowserFile? _)
         => FilesChangedCount++;
 
     private void OnFilesChanged(InputFileChangeEventArgs _)

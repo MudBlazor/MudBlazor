@@ -44,7 +44,7 @@
         editContext.OnFieldChanged += HandleFieldChanged;
     }
 
-    private void HandleFieldChanged(object sender, FieldChangedEventArgs e)
+    private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
     {
         switch (e.FieldIdentifier.FieldName)
         {

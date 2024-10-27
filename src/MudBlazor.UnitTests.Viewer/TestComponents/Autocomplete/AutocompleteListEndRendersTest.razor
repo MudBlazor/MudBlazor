@@ -1,8 +1,6 @@
-﻿
-@using System.Threading
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
-<MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" MaxItems="10">
+<MudAutocomplete T="string" Label="US States" @bind-Value="_value1" SearchFunc="@Search1" MaxItems="10">
     <AfterItemsTemplate>
         <MudText>EndList_Content</MudText>
     </AfterItemsTemplate>
@@ -11,9 +9,9 @@
 @code {
     public static string __description__ = "There are no items after filtering, so the no items template should render";
 
-    private string value1;
+    private string? _value1;
 
-    private string[] states =
+    private readonly string[] _states =
     {
         "Alabama", "Alaska", "American Samoa", "Arizona",
         "Arkansas", "California", "Colorado", "Connecticut",
@@ -36,6 +34,6 @@
         // In real life use an asynchronous function for fetching data from an api.
         await Task.Delay(5, token);
 
-        return states.Where(x => x.Contains("some string", StringComparison.InvariantCultureIgnoreCase));
+        return _states.Where(x => x.Contains("some string", StringComparison.InvariantCultureIgnoreCase));
     }
 }

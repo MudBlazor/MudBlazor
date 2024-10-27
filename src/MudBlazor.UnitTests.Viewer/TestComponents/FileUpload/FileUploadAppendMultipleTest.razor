@@ -1,5 +1,3 @@
-
-
 <MudFileUpload @ref="@_fileUpload"
                T="IReadOnlyList<IBrowserFile>"
                AppendMultipleFiles="AppendMultipleFiles"
@@ -18,9 +16,9 @@
 
 @code
 {
-#nullable enable
     [Parameter]
     public bool AppendMultipleFiles { get; set; } = true;
+
     public IReadOnlyList<IBrowserFile>? Files { get; set; } = [];
 
     private MudFileUpload<IReadOnlyList<IBrowserFile>>? _fileUpload;
@@ -35,6 +33,5 @@
         }
     }
 
-    private Task ClearAsync()
-        => _fileUpload?.ClearAsync() ?? Task.CompletedTask;
+    private Task ClearAsync() => _fileUpload?.ClearAsync() ?? Task.CompletedTask;
 }
