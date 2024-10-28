@@ -832,30 +832,29 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Text.Should().Be("");
         }
 
-        private static object[] _resetAsyncParameters = {
-            new object[] { false, false, false, false },
-            new object[] { false,false, false, true },
-            new object[] { false,false, true, false },
-            new object[] { false,false, true, true },
-            new object[] { false,true, false, false },
-            new object[] { false,true, false, true },
-            new object[] { false,true, true, false },
-            new object[] { false,true, true, true },
-            new object[] { true, false, false, false },
-            new object[] { true,false, false, true },
-            new object[] { true,false, true, false },
-            new object[] { true,false, true, true },
-            new object[] { true,true, false, false },
-            new object[] { true,true, false, true },
-            new object[] { true,true, true, false },
-            new object[] { true,true, true, true }
-        };
+        /// <summary>
+        /// Generate parameters for the test of `ResetAsync`.
+        /// </summary>
+        /// <remarks>
+        /// `ResetAsync` has the same behavior, regardless of the component's parameters.
+        /// So this method generates all parameter combinations.
+        /// </remarks>
+        private static IEnumerable<bool[]> ResetAsyncParameters()
+        {
+            const int NbParameters = 4;
+            var max = (int)Math.Pow(2, NbParameters);
+            for (var i = 0; i < max; i++)
+            {
+                var bits = new System.Collections.BitArray(new int[] { i });
+                yield return bits.Cast<bool>().Take(NbParameters).ToArray();
+            }
+        }
 
         /// <summary>
         /// When calling ResetAsync() without debounce,
         /// so menu should be closed, Text empty and Value null.
         /// </summary>
-        [TestCaseSource(nameof(_resetAsyncParameters))]
+        [TestCaseSource(nameof(ResetAsyncParameters))]
         public async Task ResetAsync_WithoutDebounce_SoTextEmptyAndValueNull(bool resetValueOnEmptyText, bool coerceText, bool coerceValue, bool immediate)
         {
             // Arrange
@@ -891,7 +890,7 @@ namespace MudBlazor.UnitTests.Components
         /// When calling ResetAsync() with value and without debounce,
         /// so menu should be closed, Text empty and Value null.
         /// </summary>
-        [TestCaseSource(nameof(_resetAsyncParameters))]
+        [TestCaseSource(nameof(ResetAsyncParameters))]
         public async Task ResetAsync_WithValueAndWithoutDebounce_SoTextEmptyAndValueNull(bool resetValueOnEmptyText, bool coerceText, bool coerceValue, bool immediate)
         {
             // Arrange
