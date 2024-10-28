@@ -21,7 +21,7 @@ namespace MudBlazor.UnitTests.Utilities
             var originalMudColor = new MudColor("#f6f9fb");
 
             var mudColorType = typeof(MudColor);
-            var context = new MudColorSerializerContext();
+            var context = MudColorSerializerContext.Default;
 
             var jsonString = System.Text.Json.JsonSerializer.Serialize(originalMudColor, mudColorType, context);
             var deserializeMudColor = System.Text.Json.JsonSerializer.Deserialize(jsonString, mudColorType, context);

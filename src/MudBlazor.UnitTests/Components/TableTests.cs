@@ -1971,7 +1971,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // without grouping, to ensure that anything was broken:
             var comp = Context.RenderComponent<TableGroupingTest>();
-            var table = comp.Instance.tableInstance;
+            var table = comp.Instance.TableInstance;
             table.Context.HeaderRows.Count.Should().Be(1);
             table.Context.GroupRows.Count.Should().Be(0);
             table.Context.Rows.Count.Should().Be(9);
@@ -1989,7 +1989,7 @@ namespace MudBlazor.UnitTests.Components
 
             //group by Racing Category:
             comp = Context.RenderComponent<TableGroupingTest>();
-            table = comp.Instance.tableInstance;
+            table = comp.Instance.TableInstance;
             table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category, null) { GroupName = "Category" };
             comp.Render();
             table.Context.GroupRows.Count.Should().Be(4);
@@ -2016,7 +2016,7 @@ namespace MudBlazor.UnitTests.Components
 
             //group by Racing Category and Brand:
             comp = Context.RenderComponent<TableGroupingTest>();
-            table = comp.Instance.tableInstance;
+            table = comp.Instance.TableInstance;
             table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>()
             {
                 GroupName = "Category",
@@ -2114,7 +2114,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // without grouping, to ensure that anything was broken:
             var comp = Context.RenderComponent<TableGroupingTest2>();
-            var table = comp.Instance.tableInstance;
+            var table = comp.Instance.TableInstance;
             table.Context.HeaderRows.Count.Should().Be(1);
 
             // Page 01:
@@ -2160,7 +2160,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // group by Racing Category and collapse groups as default:
             var comp = Context.RenderComponent<TableGroupingTest>();
-            var table = comp.Instance.tableInstance;
+            var table = comp.Instance.TableInstance;
             table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category, null)
             {
                 GroupName = "Category",
@@ -2177,7 +2177,7 @@ namespace MudBlazor.UnitTests.Components
         public void ExpandAndCollapsAllGroupsTest()
         {
             var comp = Context.RenderComponent<TableGroupingTest>();
-            var table = comp.Instance.tableInstance;
+            var table = comp.Instance.TableInstance;
             table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category, null) { GroupName = "Category", IsInitiallyExpanded = false, Expandable = true };
             comp.Render();
 

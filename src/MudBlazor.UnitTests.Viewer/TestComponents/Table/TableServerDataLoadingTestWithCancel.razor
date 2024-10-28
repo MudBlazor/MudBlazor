@@ -1,7 +1,4 @@
-﻿@using System.Threading
-
-
-<MudTable T="int" ServerDataWithCancel="@(new Func<TableState, CancellationToken, Task<TableData<int>>>(ServerReload))">
+﻿<MudTable T="int" ServerData="@(new Func<TableState, CancellationToken, Task<TableData<int>>>(ServerReload))">
     <HeaderContent>
         <MudTh><MudTableSortLabel SortLabel="No." T="int">Nr</MudTableSortLabel></MudTh>
     </HeaderContent>
@@ -22,9 +19,9 @@
         await Task.Delay(2000, token);
 
         // Make some test data to return
-        IEnumerable<int> data = new List<int>() { 1, 2, 3 };
+        var data = new List<int> { 1, 2, 3 };
 
         // Return the data
-        return new TableData<int>() { TotalItems = data.Count(), Items = data.ToArray() };
+        return new TableData<int> { TotalItems = data.Count, Items = data.ToArray() };
     }
 }
