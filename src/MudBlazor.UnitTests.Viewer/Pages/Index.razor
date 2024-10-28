@@ -4,65 +4,88 @@
 <MudLayout>
     <MudRTLProvider RightToLeft="_rightToLeft">
         <MudAppBar Elevation="0">
-            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="DocsDrawerToggle" />
-            <MudText Typo="Typo.h6">@_selectedType?.Name</MudText>
+            <MudTooltip Delay="500" Text="Toggle drawer">
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" Edge="Edge.Start" OnClick="DocsDrawerToggle" aria-label="Toggle drawer" />
+            </MudTooltip>
             <MudSpacer />
-            <MudAutocomplete @ref="_autocomplete" T="Type" Placeholder="Search" SearchFunc="Search" Variant="Variant.Outlined" ValueChanged="OnSearchResult" Class="docs-search-bar" AdornmentIcon="@Icons.Material.Filled.Search">
+            <MudAutocomplete @ref="_autocomplete" T="Type" Placeholder="Search all tests" SearchFunc="Search" Variant="Variant.Outlined" ValueChanged="OnSearchResult" Class="docs-search-bar" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentAriaLabel="Search">
                 <ItemTemplate Context="result">
                     <MudText>@result.Name</MudText> <MudText Typo="Typo.body2">@GetDescription(result)</MudText>
                 </ItemTemplate>
             </MudAutocomplete>
             <MudSpacer />
-            <MudTooltip Delay="1000" Text="@(_rightToLeft ? "Left-to-right" : "Right-to-left")">
-                <MudIconButton Icon="@(_rightToLeft ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="() => _rightToLeft = !_rightToLeft" Color="Color.Inherit" aria-label="@(_rightToLeft ? "Left-to-right" : "Right-to-left")" />
+            <MudTooltip Delay="500" Text="@(_rightToLeft ? "Left-to-right" : "Right-to-left")">
+                <MudIconButton Icon="@(_rightToLeft ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="() => _rightToLeft = !_rightToLeft" aria-label="@(_rightToLeft ? "Left-to-right" : "Right-to-left")" />
             </MudTooltip>
         </MudAppBar>
-        <MudDrawer Open="@_drawerOpen" Overlay="false" Variant="DrawerVariant.Responsive" ClipMode="DrawerClipMode.Always" Breakpoint="Breakpoint.Sm">
-            <MudDrawerHeader>
+
+        <MudDrawer Open="@_drawerOpen" Overlay="false" Variant="DrawerVariant.Responsive" ClipMode="DrawerClipMode.Always" Breakpoint="Breakpoint.Sm" Style="overflow-y: scroll">
+            <MudDrawerHeader Class="flex-column gap-2" Style="min-height: auto !important">
+                <div class="flex-column align-start justify-center">
                     <MudText Typo="Typo.h6">Test Components</MudText>
-            </MudDrawerHeader>
-            <MudStack Row>
-                <MudTextField T="string" @bind-Value="@_currentSearchText" Immediate="true" FullWidth="true"
-                              Placeholder="Search by category" Variant="Variant.Outlined" Class="mx-2 my-2"
-                              Typo="Typo.caption" Margin="Margin.Dense" Clearable DebounceInterval="300" />
-                <MudTooltip RootClass="d-flex flex-auto" Text="@(_expandedState ? "Collapse Categories" : "Expand Categories")">
-                    <MudIconButton Class="mr-1 ml-n2" Icon="@(_expandedState ? CollapseAllIcon : ExpandAllIcon)" 
-                        Size="Size.Small" OnClick="@(() => ToggleExpanded())" />
-                </MudTooltip>
-                
-            </MudStack>
-            <MudItem xs="12">
-                <MudNavMenu>
-                    @for (int index = 0; index < _availableDirectories.Length; index++)
-                    {
-                        var dir = _availableDirectories[index];
-                        var typesInDir = _availableComponentTypes.Where(x => _typeDirectories?[x] == dir);
 
-                        if (dir is not null && (!ShouldFilter || dir.Contains(_currentSearchText, StringComparison.OrdinalIgnoreCase)))
+                    <MudText Typo="Typo.subtitle2" title="@_selectedType?.Name" style="overflow: hidden; text-overflow: ellipsis;">
+                        @if (_selectedType == null)
                         {
-                            <MudNavGroup Expanded="@_mudGroupExpanded[index]" Title="@dir">
-                                @foreach (var type in typesInDir)
-                                {
-                                        <MudNavLink Class="@(_selectedType == type ? "mode-links active" : "")"
-                                            OnClick="@(() => _selectedType = type)" @key="type.Name">@type.Name</MudNavLink>
-                                }
-                            </MudNavGroup>
+                            @("None selected")
                         }
-                    }
-                </MudNavMenu>
-            </MudItem>
-        </MudDrawer>
-        <MudMainContent Class="mt-4">
+                        else
+                        {
+                            @_selectedType?.Name
+                        }
+                    </MudText>
+                </div>
 
-            <MudText Style="padding-left: 24px; margin-left: 24px;">
-                @GetDescription(_selectedType)
-            </MudText>
-            <MudPaper Elevation="5" Style="padding: 24px; margin: 24px;">
+                <div class="d-flex flex-row align-center gap-2">
+                    <MudTextField T="string" @bind-Value="@_currentSearchText" Immediate="true" FullWidth="true"
+                                  Typo="Typo.subtitle1" Placeholder="Search by component" Clearable DebounceInterval="200" />
+
+                    <MudTooltip Delay="500" Text="@(_expandedState ? "Collapse all" : "Expand all")">
+                        <MudIconButton Icon="@(_expandedState ? CollapseAllIcon : ExpandAllIcon)" Size="Size.Small"
+                                       OnClick="@(() => ToggleExpanded())" />
+                    </MudTooltip>
+                </div>
+            </MudDrawerHeader>
+
+            <MudNavMenu>
+                @for (int index = 0; index < _availableDirectories.Length; index++)
+                {
+                    var dir = _availableDirectories[index];
+                    var typesInDir = _availableComponentTypes.Where(x => _typeDirectories?[x] == dir);
+
+                    if (dir is not null && (!ShouldFilter || dir.Contains(_currentSearchText, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        <MudNavGroup Expanded="@_mudGroupExpanded[index]" Title="@dir">
+                            @foreach (var type in typesInDir)
+                            {
+                                <MudNavLink Class="@(_selectedType == type ? "mode-links active" : "")"
+                                            OnClick="@(() => _selectedType = type)" @key="type.Name">@type.Name</MudNavLink>
+                            }
+                        </MudNavGroup>
+                    }
+                }
+            </MudNavMenu>
+        </MudDrawer>
+
+        <MudMainContent Class="mt-4">
+            <div class="d-flex flex-row align-center justify-center">
+                <MudIcon Icon="@Icons.Material.Filled.Description" />
+                <MudText>
+                    @if (_selectedType == null)
+                    {
+                        @("No test selected")
+                    }
+                    else
+                    {
+                        @GetDescription(_selectedType)
+                    }
+                </MudText>
+            </div>
+
+            <MudPaper Class="pa-4 ma-4" Elevation="5">
                 @if (_selectedType == null)
                 {
-                    <MudAlert Dense="true" Severity="Severity.Info">
-                        <span>Select a component</span>
-                    </MudAlert>
+                    <MudText>Select a test using the search or nav menu</MudText>
                 }
                 else
                 {
@@ -72,11 +95,14 @@
                     </CascadingValue>
                 }
             </MudPaper>
-
         </MudMainContent>
     </MudRTLProvider>
 </MudLayout>
 <style>
+    :root {
+        --mud-drawer-width-left: 400px;
+    }
+
     .docs-search-bar .mud-input {
         height: 42px;
     }
@@ -100,6 +126,18 @@
     .mode-links.active {
         color: var(--mud-palette-primary);
         background-color: var(--mud-palette-primary-hover)
+    }
+
+    .mud-nav-link {
+        padding: 4px;
+    }
+
+    .mud-collapse-container {
+        transition-duration: 100ms;
+    }
+
+    .mud-appbar .mud-icon-button {
+        color: var(--mud-palette-appbar-text) !important;
     }
 </style>
 
