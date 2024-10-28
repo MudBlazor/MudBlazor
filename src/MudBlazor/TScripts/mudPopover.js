@@ -178,6 +178,23 @@ window.mudpopoverHelper = {
             let top = postion.top;
             let offsetX = postion.offsetX;
             let offsetY = postion.offsetY;
+            // get the top/left/ from popoverContentNode if the popover has been hardcoded for position
+            if (popoverContentNode.classList.contains('mud-popover-position-override')) {
+                left = parseInt(popoverContentNode.style['left']) || left;
+                top = parseInt(popoverContentNode.style['top']) || top;
+                // no offset when hardcoded 
+                offsetX = 0;
+                offsetY = 0;
+                // bounding rect for flipping
+                boundingRect = {
+                    left: left,
+                    top: top,
+                    right: left + selfRect.width,
+                    bottom: top + selfRect.height,
+                    width: selfRect.width,
+                    height: selfRect.height
+                };
+            }
             // flipping logic
             if (classList.contains('mud-popover-overflow-flip-onopen') || classList.contains('mud-popover-overflow-flip-always')) {
 
@@ -306,8 +323,15 @@ window.mudpopoverHelper = {
                 offsetY += window.scrollY
             }
 
+            if (popoverContentNode.classList.contains('mud-popover-position-override')) {
+                // no offset if popover position is hardcoded
+                offsetX = 0;
+                offsetY = 0;
+            }
+
             popoverContentNode.style['left'] = (left + offsetX) + 'px';
             popoverContentNode.style['top'] = (top + offsetY) + 'px';
+
             // update z-index by sending the calling popover to update z-index,
             // and the parentnode of the calling popover (not content parent)
             //console.log(popoverContentNode, popoverNode.parentNode);

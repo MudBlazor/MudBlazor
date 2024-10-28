@@ -1,0 +1,93 @@
+﻿<MudMenu ActivationEvent="@MouseEvent.RightClick" PositionAtCursor="true">
+    <ActivatorContent>
+        <MudTable Hover="true" MultiSelection="true" GroupBy="@_groupDefinition"
+                  Items="_items" Breakpoint="Breakpoint.Sm" HorizontalScrollbar="true"
+                  FixedHeader="true">
+            <GroupHeaderTemplate>
+                <MudTh Class="mud-table-cell-custom-group" colspan="5">@($"{context.GroupName}: {context.Key ?? "Unmatched"}")</MudTh>
+            </GroupHeaderTemplate>
+            <HeaderContent>
+                <MudTh>Column1</MudTh>
+                <MudTh>Column2</MudTh>
+                <MudTh>Column3</MudTh>
+                <MudTh>Column4</MudTh>
+                <MudTh>Column5</MudTh>
+                <MudTh>Column6</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Column1">@context.Column1</MudTd>
+                <MudTd DataLabel="Column2">@context.Column2</MudTd>
+                <MudTd DataLabel="Column3">@context.Column3</MudTd>
+                <MudTd DataLabel="Column4">@context.Column4</MudTd>
+                <MudTd DataLabel="Column5">@context.Column5</MudTd>
+                <MudTd DataLabel="Column6">@context.Column6</MudTd>
+            </RowTemplate>
+        </MudTable>
+    </ActivatorContent>
+    <ChildContent>
+        <MudMenuItem>Profile</MudMenuItem>
+        <MudMenuItem>Theme</MudMenuItem>
+        <MudMenuItem>Usage</MudMenuItem>
+        <MudMenuItem>Sign Out</MudMenuItem>
+    </ChildContent>
+</MudMenu>
+
+@code {
+    public class TestItem
+    {
+        public string Column1 { get; set; }
+        public string Column2 { get; set; }
+        public string Column3 { get; set; }
+        public string Column4 { get; set; }
+        public string Column5 { get; set; }
+        public string Column6 { get; set; }
+    }
+
+
+    private List<TestItem> _items;
+    private TableGroupDefinition<TestItem> _groupDefinition = new TableGroupDefinition<TestItem>()
+        {
+            GroupName = "Column1",
+            Indentation = false,
+            Expandable = false,
+            Selector = (e) => e.Column1,
+            InnerGroup = new TableGroupDefinition<TestItem>()
+            {
+                GroupName = "Column1",
+                Expandable = false,
+                Selector = (e) => e.Column2
+            }
+
+        };
+
+    protected override void OnInitialized()
+    {
+        _items = new List<TestItem>();
+        for (int i = 0; i < 10; i++)
+        {
+            _items.Add(new TestItem
+                {
+                    Column1 = $"Value_{i}",
+                    Column2 = $"Value_{i}",
+                    Column3 = $"Value_{i}",
+                    Column4 = $"Value_{i}",
+                    Column5 = $"Value_{i}",
+                    Column6 = $"Value_{i}",
+                });
+            _items.Add(new TestItem
+                {
+                    Column1 = $"Value_{i}",
+                    Column2 = $"Value_{i}",
+                    Column3 = $"Value_{i}",
+                    Column4 = $"Value_{i}",
+                    Column5 = $"Value_{i}",
+                    Column6 = $"Value_{i}",
+                });
+        }
+    }
+}
+
+
+@code {
+    public static string __description__ = "Test of a MudTable with Right Click Context Menu using Activator and Position At Cursor";
+}
