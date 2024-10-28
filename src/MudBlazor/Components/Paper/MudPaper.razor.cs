@@ -84,7 +84,7 @@ public partial class MudPaper : MudComponentBase
     public string? Width { get; set; }
 
     /// <summary>
-    /// The maximum allowed height of this component.
+    /// The maximum height of this component.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.  Can be a pixel height (<c>150px</c>), percentage (<c>30%</c>), or other CSS height value.

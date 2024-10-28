@@ -139,7 +139,7 @@ namespace MudBlazor
         public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        /// The color of the selected page.
+        /// The color of the selected page button.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Primary" />.
