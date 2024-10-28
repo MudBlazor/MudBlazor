@@ -284,9 +284,10 @@ namespace MudBlazor
                 _isFirstRender = false;
                 await UpdateItemsAsync();
             }
+
             await base.OnAfterRenderAsync(firstRender);
         }
-        
+
         /// <summary>
         /// Invokes the <see cref="FilterFunc"/> to be applied to every item.
         /// </summary>
