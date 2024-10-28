@@ -3,7 +3,7 @@
 <MudDialog OnKeyDown="OnKeyDownAsync">
     <DialogContent>
         <MudText>Select your favourite coffee. Hit Enter to accept or Escape to cancel.</MudText>
-        <MudSelect T="string" Label="Favorite Coffee" AnchorOrigin="Origin.BottomCenter" @bind-Value="_returnValue">
+        <MudSelect T="string" Label="Favorite Coffee" @bind-Value="_returnValue">
             <MudSelectItem Value="@("Cappuccino")" />
             <MudSelectItem Value="@("Cafe Latte")" />
             <MudSelectItem Value="@("Espresso")" />
