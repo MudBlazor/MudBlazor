@@ -15,12 +15,12 @@
     [Parameter]
     public bool AreItemsPopulated { get; set; } = true;
 
-    public IReadOnlyCollection<TreeItemData<string>> Items;
+    public List<TreeItemData<string>> Items { get; set; }
 
     private MudTreeView<string> _treeView;
 
 
-    public class TreeItemData : TreeItemData<string>
+    public sealed class TreeItemData : TreeItemData<string>
     {
         public TreeItemData(string title) : base(title)
         {
@@ -47,6 +47,4 @@
     }
 
     protected override void OnAfterRender(bool firstRender) => _treeView.Filter();
-
-    private bool MatchesName(TreeItemData<string> item) => item.Text != null && item.Text.Contains(SearchPhrase, StringComparison.OrdinalIgnoreCase);
 }
