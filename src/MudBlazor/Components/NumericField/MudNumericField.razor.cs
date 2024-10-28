@@ -2,17 +2,16 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
+#nullable enable
 namespace MudBlazor
 {
     public partial class MudNumericField<T> : MudDebouncedInput<T>
@@ -117,33 +116,37 @@ namespace MudBlazor
 
         private string _elementId = Identifier.Create("numericField");
 
-        private MudInput<string> _elementReference;
+        private MudInput<string>? _elementReference;
 
         [ExcludeFromCodeCoverage]
         public override ValueTask FocusAsync()
         {
+            Debug.Assert(_elementReference is not null);
             return _elementReference.FocusAsync();
         }
 
         [ExcludeFromCodeCoverage]
         public override ValueTask BlurAsync()
         {
+            Debug.Assert(_elementReference is not null);
             return _elementReference.BlurAsync();
         }
 
         [ExcludeFromCodeCoverage]
         public override ValueTask SelectAsync()
         {
+            Debug.Assert(_elementReference is not null);
             return _elementReference.SelectAsync();
         }
 
         [ExcludeFromCodeCoverage]
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
+            Debug.Assert(_elementReference is not null);
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
 
-        protected override Task SetValueAsync(T value, bool updateText = true, bool force = false)
+        protected override Task SetValueAsync(T? value, bool updateText = true, bool force = false)
         {
             bool valueChanged;
             (value, valueChanged) = ConstrainBoundaries(value);
@@ -157,7 +160,7 @@ namespace MudBlazor
             await UpdateTextPropertyAsync(false); //Required to update the string formatting after a blur before the debouce period has elapsed
         }
 
-        protected async Task<bool> ValidateInput(T value)
+        protected async Task<bool> ValidateInput(T? value)
         {
             bool valueChanged;
             (value, valueChanged) = ConstrainBoundaries(value);
@@ -200,6 +203,7 @@ namespace MudBlazor
                 }
 
                 await SetValueAsync(ConstrainBoundaries(nextValue).value);
+                Debug.Assert(_elementReference is not null);
                 await _elementReference.SetText(Text);
             }
             catch (OverflowException)
@@ -235,7 +239,7 @@ namespace MudBlazor
         /// </summary>
         /// <param name="value">Value to check.</param>
         /// <returns>Returns a valid value and if it has been changed.</returns>
-        protected (T value, bool changed) ConstrainBoundaries(T value)
+        protected (T? value, bool changed) ConstrainBoundaries(T? value)
         {
             if (value == null)
                 return (default(T), false);
@@ -333,16 +337,16 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool InvertMouseWheel { get; set; } = false;
 
-        private T _minDefault;
+        private T? _minDefault;
 
-        private T _min;
+        private T? _min;
 
         /// <summary>
         /// The minimum value for the input.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
-        public T Min
+        public T? Min
         {
             get => _minHasValue ? _min : _minDefault;
             set
@@ -353,15 +357,15 @@ namespace MudBlazor
         }
 
         private bool _maxHasValue = false;
-        private T _maxDefault;
-        private T _max;
+        private T? _maxDefault;
+        private T? _max;
 
         /// <summary>
         /// The maximum value for the input.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
-        public T Max
+        public T? Max
         {
             get => _maxHasValue ? _max : _maxDefault;
             set
@@ -372,15 +376,15 @@ namespace MudBlazor
         }
 
         private bool _stepHasValue = false;
-        private T _stepDefault;
-        private T _step;
+        private T? _stepDefault;
+        private T? _step;
 
         /// <summary>
         /// The increment added/subtracted by the spin buttons.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public T Step
+        public T? Step
         {
             get => _stepHasValue ? _step : _stepDefault;
             set
@@ -413,7 +417,7 @@ namespace MudBlazor
         /// <para>Note: this pattern is also used to prevent all input except numbers and allowed characters. So for instance to allow only numbers, no signs and no commas you might change it to [0-9.]</para>
         /// </summary>
         [Parameter]
-        public override string Pattern { get; set; } = @"[0-9,.\-]";
+        public override string? Pattern { get; set; } = @"[0-9,.\-]";
 
         private string GetCounterText() => Counter == null ? string.Empty : (Counter == 0 ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
 
@@ -426,7 +430,7 @@ namespace MudBlazor
         //https://stackoverflow.com/questions/1546113/double-to-string-conversion-without-scientific-notation
         private const string TagFormat = "0.###################################################################################################################################################################################################################################################################################################################################################";
 
-        private string FormatParam(T value)
+        private string? FormatParam(T value)
         {
             if (value is IFormattable f)
                 return f.ToString(TagFormat, CultureInfo.InvariantCulture.NumberFormat);
@@ -434,12 +438,12 @@ namespace MudBlazor
                 return null;
         }
 
-        private decimal FromDecimal(T v)
-            => Convert.ToDecimal((decimal?)(object)v);
-        private long FromInt64(T v)
-            => Convert.ToInt64((long?)(object)v);
-        private ulong FromUInt64(T v)
-            => Convert.ToUInt64((ulong?)(object)v);
+        private static decimal FromDecimal(T? v)
+            => Convert.ToDecimal((decimal?)(object?)v);
+        private static long FromInt64(T? v)
+            => Convert.ToInt64((long?)(object?)v);
+        private static ulong FromUInt64(T? v)
+            => Convert.ToUInt64((ulong?)(object?)v);
 
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()
