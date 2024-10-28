@@ -48,5 +48,5 @@
 
     protected override void OnAfterRender(bool firstRender) => _treeView.Filter();
 
-    private bool MatchesName(TreeItemData<string> item) => item.Text.Contains(SearchPhrase, StringComparison.OrdinalIgnoreCase);
+    private bool MatchesName(TreeItemData<string> item) => item.Text != null && item.Text.Contains(SearchPhrase, StringComparison.OrdinalIgnoreCase);
 }
