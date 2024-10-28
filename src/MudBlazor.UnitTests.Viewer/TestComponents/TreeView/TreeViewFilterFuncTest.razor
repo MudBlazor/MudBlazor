@@ -15,7 +15,7 @@
     [Parameter]
     public bool AreItemsPopulated { get; set; } = true;
 
-    public List<TreeItemData<string>> Items;
+    public IReadOnlyCollection<TreeItemData<string>> Items;
 
     private MudTreeView<string> _treeView;
 
