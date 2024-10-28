@@ -105,6 +105,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void ToggleGroup_ToggleRemove_Test()
+        {
+            var comp = Context.RenderComponent<ToggleGroupRemoveTest>();
+            var toggle = comp.FindComponent<MudToggleGroup<string>>();
+            var toggleGroup = toggle.Instance;
+            IElement Button() => comp.Find("#remove_btn");
+
+            toggleGroup.GetItems().Count().Should().Be(8);
+            Button().Click();
+            toggleGroup.GetItems().Count().Should().Be(7);
+        }
+
+        [Test]
         [TestCase(Size.Small)]
         [TestCase(Size.Medium)]
         [TestCase(Size.Large)]

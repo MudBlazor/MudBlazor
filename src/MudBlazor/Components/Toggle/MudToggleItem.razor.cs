@@ -85,15 +85,13 @@ namespace MudBlazor
             {
                 return SelectedIcon;
             }
-            else
-            {
-                if (UnselectedIcon is null && Parent?.FixedContent == true)
-                {
-                    return Icons.Custom.Uncategorized.Empty;
-                }
 
-                return UnselectedIcon;
+            if (UnselectedIcon is null && Parent?.FixedContent == true)
+            {
+                return Icons.Custom.Uncategorized.Empty;
             }
+
+            return UnselectedIcon;
         }
 
         protected override void OnInitialized()
@@ -102,9 +100,18 @@ namespace MudBlazor
             Parent?.Register(this);
         }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Parent?.Unregister(this);
+            }
+        }
+
         public void Dispose()
         {
-            Parent?.Unregister(this);
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         public void SetSelected(bool selected)
