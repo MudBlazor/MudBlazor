@@ -33,7 +33,7 @@
              RequiredError="@RequiredError" 
              Error="@Error" 
              ErrorText="@ErrorText"
-             Clearable="@(GetReadOnlyState() ? false : Clearable)"
+             Clearable="@(Clearable && !GetReadOnlyState())"
              OnClearButtonClick="@(async () => await ClearAsync())"
              @onclick="OnClickAsync" />;
 

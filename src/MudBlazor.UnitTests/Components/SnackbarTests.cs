@@ -9,6 +9,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Snackbar;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components

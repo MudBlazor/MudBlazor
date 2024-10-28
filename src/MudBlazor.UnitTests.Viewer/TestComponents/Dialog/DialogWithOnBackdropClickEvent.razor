@@ -1,20 +1,18 @@
-﻿@using MudBlazor.Interfaces
-<MudDialog OnBackdropClick="@OnBackdropClick">
+﻿<MudDialog OnBackdropClick="@OnBackdropClick">
     <TitleContent>
         Title: @_textTest
     </TitleContent>
 </MudDialog>
 
-
 @code {
-    private string _textTest;
+    private string? _textTest;
 
     [CascadingParameter]
-    private MudDialogInstance MudDialog { get; set; }
+    private IMudDialogInstance MudDialog { get; set; } = null!;
 
     private void OnBackdropClick()
     {
         _textTest = "Backdrop clicked";
-        ((IMudStateHasChanged)MudDialog).StateHasChanged();
+        MudDialog.StateHasChanged();
     }
 }

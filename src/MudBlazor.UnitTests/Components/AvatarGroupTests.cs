@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using Bunit;
 using FluentAssertions;
-using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.AvatarGroup;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components

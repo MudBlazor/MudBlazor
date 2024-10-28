@@ -4,23 +4,17 @@
 #pragma warning disable CS1998 // async without await
 #pragma warning disable BL0005 // Set parameter outside component
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.Dummy;
-using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Autocomplete;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
-using static MudBlazor.UnitTests.TestComponents.AutocompleteSetParametersInitialization;
+using static MudBlazor.UnitTests.TestComponents.Autocomplete.AutocompleteSetParametersInitialization;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -108,7 +102,7 @@ namespace MudBlazor.UnitTests.Components
             var autocompleteComp = autocompleteContainerComp.FindComponent<MudAutocomplete<string>>();
             autocompleteComp.SetParam(a => a.Text, "Alabama");
             await Task.Delay(500);
-            comp.Instance.mustBeShown = false;
+            comp.Instance.MustBeShown = false;
             await Task.Delay(500);
             comp.Render();
             await Task.Delay(500);
@@ -240,7 +234,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("input").Blur();
 
-            // Assert : CoercedValue disabled, so value is set on focus lost
+            // Assert : CoercedValue enabled, so value is set on focus lost
 
             comp.Instance.Text.Should().Be("ABC");
             comp.Instance.Value.Should().Be("ABC");
@@ -363,10 +357,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task AutocompleteCoercionOffTest()
         {
-            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var comp = Context.RenderComponent<AutocompleteTestCoersionAndBlur>();
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompletecomp.Instance;
-            autocompletecomp.SetParam(x => x.DebounceInterval, 0);
             autocompletecomp.SetParam(x => x.CoerceText, false);
             // check initial state
             autocomplete.Value.Should().Be("Alabama");
@@ -379,6 +372,52 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Austria");
         }
+
+        [Test]
+        public async Task AutocompleteTextCoercionOnTabKeyTest()
+        {
+            var comp = Context.RenderComponent<AutocompleteTestCoersionAndBlur>();
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+            autocompletecomp.SetParam(x => x.CoerceText, true);
+
+            // check initial state
+            autocomplete.Value.Should().Be("Alabama");
+            autocomplete.Text.Should().Be("Alabama");
+
+            // set a value the search won't find
+            autocompletecomp.SetParam(a => a.Text, "Austria");
+            autocomplete.Text.Should().Be("Austria");
+
+            // now trigger the coercion by call MudInput.BlurAsync
+            autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
+            autocomplete.Value.Should().Be("Alabama");
+            autocomplete.Text.Should().Be("Alabama");
+        }
+
+        [Test]
+        public async Task AutocompleteTextCoercionAndResetIfEmptyTextTest()
+        {
+            var comp = Context.RenderComponent<AutocompleteTestCoersionAndBlur>();
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+            autocompletecomp.SetParam(x => x.CoerceText, true);
+            autocompletecomp.SetParam(x => x.ResetValueOnEmptyText, true);
+
+            // check initial state
+            autocomplete.Value.Should().Be("Alabama");
+            autocomplete.Text.Should().Be("Alabama");
+
+            // set a value the search won't find
+            autocompletecomp.SetParam(a => a.Text, "");
+            autocomplete.Text.Should().Be(null);
+
+            // now trigger the coercion by call MudInput.BlurAsync
+            autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
+            autocomplete.Value.Should().Be(null);
+            autocomplete.Text.Should().Be(expected: null);
+        }
+
 
         [Test]
         public async Task Autocomplete_Should_TolerateNullFromSearchFunc()
@@ -406,9 +445,9 @@ namespace MudBlazor.UnitTests.Components
         public async Task AutocompleteReadOnlyShouldNotHaveClearButton()
         {
             var comp = Context.RenderComponent<MudAutocomplete<string>>(p => p
-            .Add(x => x.Text, "some value")
-            .Add(x => x.Clearable, true)
-            .Add(x => x.ReadOnly, false));
+                .Add(x => x.Text, "some value")
+                .Add(x => x.Clearable, true)
+                .Add(x => x.ReadOnly, false));
 
             comp.FindAll(".mud-input-clear-button").Count.Should().Be(1);
 
@@ -791,6 +830,42 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             autocomplete.Value.Should().Be(null);
             autocomplete.Text.Should().Be("");
+        }
+
+        /// <summary>
+        /// When calling ResetAsync() without debounce,
+        /// so menu should be closed, Text empty and Value null.
+        /// </summary>
+        [Test]
+        public async Task ResetAsync_WithoutDebounce_SoTextEmptyAndValueNull()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<AutocompleteStates>(parameters =>
+            {
+                parameters.Add(a => a.DebounceInterval, 0);
+            });
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+
+            // Assert : initial state, menu closed and text/value null
+
+            comp.Markup.Should().NotContain("mud-popover-open");
+            autocomplete.Open.Should().BeFalse();
+            autocomplete.Value.Should().BeNull();
+            autocomplete.Text.Should().BeNull();
+            comp.Instance.SearchFuncCallCount.Should().Be(0);
+
+            // Act : Call ResetAsync()
+
+            await comp.InvokeAsync(autocomplete.ResetAsync);
+
+            // Assert : menu closed, text empty and value null
+
+            comp.Markup.Should().NotContain("mud-popover-open");
+            autocomplete.Value.Should().BeNull();
+            autocomplete.Text.Should().BeEmpty();
+            comp.Instance.SearchFuncCallCount.Should().Be(0);
         }
 
         [Test]

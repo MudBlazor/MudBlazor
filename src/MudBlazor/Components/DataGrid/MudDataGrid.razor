@@ -77,7 +77,8 @@
                                 {
                                     <MudOverlay ZIndex="10" @bind-Visible="_columnsPanelVisible" AutoClose></MudOverlay>
 
-                                    <MudPopover Open="@_columnsPanelVisible" Paper="true" Class="mud-data-grid-columns-panel px-2" OverflowBehavior="OverflowBehavior.FlipAlways" AnchorOrigin="Origin.TopLeft"
+                                    <MudPopover Open="@_columnsPanelVisible" Paper="true" Class="mud-data-grid-columns-panel px-2" OverflowBehavior="OverflowBehavior.FlipAlways"
+                                                AnchorOrigin="Origin.TopLeft"
                                                 TransformOrigin="Origin.TopLeft" Elevation="4"
                                                 Style="max-width:700px;z-index:11;" MaxHeight="400">
                                         <MudStack Row="true" Justify="Justify.FlexEnd">
@@ -413,7 +414,7 @@
 
     internal RenderFragment ToolbarMenu(MudDataGrid<T> dataGrid) =>
         @<text>
-            <MudMenu Icon="@Icons.Material.Outlined.Settings" Size="Size.Small" AnchorOrigin="Origin.BottomCenter" Dense="true">
+            <MudMenu Icon="@Icons.Material.Outlined.Settings" Size="Size.Small" Dense="true">
             <MudMenuItem OnClick="@dataGrid.ShowColumnsPanel">@Localizer[LanguageResource.MudDataGrid_Columns]</MudMenuItem>
                 @if (dataGrid.Groupable)
                 {

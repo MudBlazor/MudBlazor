@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudChipSet @bind-SelectedValues="_selected" MultiSelection="@MultiSelection" CheckMark="_checkMark">
+﻿<MudChipSet @bind-SelectedValues="_selected" SelectionMode="@GetSelectionMod()" CheckMark="_checkMark">
     <MudChip Value="@("Milk")" />
     <MudChip Value="@("Eggs")" />
     <MudChip Value="@("Soap")" />
@@ -23,6 +21,10 @@ else {
     [Parameter]
     public bool MultiSelection { get; set; }
 
-    private bool _checkMark = false;
+    private bool _checkMark;
     private IReadOnlyCollection<string> _selected = ["Milk", "Cornflakes"];
+
+    private SelectionMode GetSelectionMod() => MultiSelection
+        ? SelectionMode.MultiSelection
+        : SelectionMode.SingleSelection;
 }

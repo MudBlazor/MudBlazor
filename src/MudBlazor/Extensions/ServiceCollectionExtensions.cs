@@ -310,6 +310,7 @@ namespace MudBlazor.Services
         public static IServiceCollection AddMudServices(this IServiceCollection services)
         {
             return services
+                .AddCommonServices()
                 .AddMudBlazorDialog()
                 .AddMudBlazorSnackbar()
                 .AddMudBlazorResizeListener()
@@ -340,6 +341,7 @@ namespace MudBlazor.Services
             configuration(options);
 
             return services
+                .AddCommonServices()
                 .AddMudBlazorDialog()
                 .AddMudBlazorSnackbar(snackBarConfiguration =>
                 {
@@ -392,6 +394,13 @@ namespace MudBlazor.Services
                 .AddMudBlazorScrollSpy()
                 .AddMudEventManager()
                 .AddMudLocalization();
+        }
+
+        private static IServiceCollection AddCommonServices(this IServiceCollection service)
+        {
+            service.TryAddSingleton(TimeProvider.System);
+
+            return service;
         }
     }
 }

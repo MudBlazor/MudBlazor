@@ -9,6 +9,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Link;
+using MudBlazor.UnitTests.TestComponents.NavLink;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 

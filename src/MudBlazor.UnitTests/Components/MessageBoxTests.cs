@@ -148,6 +148,7 @@ namespace MudBlazor.UnitTests.Components
             dialogReference.Should().NotBeNull();
             // this component has an instance of MudDialog as a cascading parameter allowing us to access HandleKeyDown
             var dialog = (MudMessageBox)dialogReference.Dialog!;
+            var dialogInstance = dialog.DialogInstance.GetDialogContainer();
             // just the same as the above test method 
             comp.Find("div.mud-message-box").Should().NotBe(null);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
@@ -166,7 +167,7 @@ namespace MudBlazor.UnitTests.Components
             buttons[2].TrimmedText().Should().Be("Great");    // Third button (Yes)
             buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
 
-            await comp.InvokeAsync(() => dialog.DialogInstance?.HandleKeyDownAsync(new KeyboardEventArgs { Key = "Escape" }));
+            await comp.InvokeAsync(() => dialogInstance.HandleKeyDownAsync(new KeyboardEventArgs { Key = "Escape" }));
 
             comp.FindAll("button").Count.Should().Be(3);
 
@@ -221,6 +222,7 @@ namespace MudBlazor.UnitTests.Components
             dialogReference.Should().NotBeNull();
             // this component has an instance of MudDialog as a cascading parameter allowing us to access HandleKeyDown
             var dialog = (MudMessageBox)dialogReference.Dialog!;
+            var dialogInstance = dialog.DialogInstance.GetDialogContainer();
             // just the same as the above test method 
             comp.Find("div.mud-message-box").Should().NotBe(null);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
@@ -239,7 +241,7 @@ namespace MudBlazor.UnitTests.Components
             buttons[2].TrimmedText().Should().Be("Great");    // Third button (Yes)
             buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
 
-            await comp.InvokeAsync(() => dialog.DialogInstance?.HandleKeyDownAsync(new KeyboardEventArgs { Key = "Escape" }));
+            await comp.InvokeAsync(() => dialogInstance.HandleKeyDownAsync(new KeyboardEventArgs { Key = "Escape" }));
 
             comp.FindAll("button").Should().BeEmpty();
 
@@ -288,7 +290,8 @@ namespace MudBlazor.UnitTests.Components
             });
             dialogReference.Should().NotBeNull();
             // this component has an instance of MudDialog as a cascading parameter allowing us to access HandleKeyDown
-            var dialog = (MudMessageBox)dialogReference.Dialog;
+            var dialog = (MudMessageBox)dialogReference.Dialog!;
+            var dialogInstance = dialog.DialogInstance.GetDialogContainer();
             // just the same as the above test method 
             comp.Find("div.mud-message-box").Should().NotBe(null);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
@@ -307,7 +310,7 @@ namespace MudBlazor.UnitTests.Components
             buttons[2].TrimmedText().Should().Be("Great");    // Third button (Yes)
             buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
 
-            await comp.InvokeAsync(() => dialog.DialogInstance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape" }));
+            await comp.InvokeAsync(() => dialogInstance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape" }));
 
             comp.FindAll("button").Should().BeEmpty();
 

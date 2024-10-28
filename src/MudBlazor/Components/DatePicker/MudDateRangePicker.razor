@@ -34,7 +34,7 @@
                                   PlaceholderStart="@PlaceholderStart"
                                   PlaceholderEnd="@PlaceholderEnd"
                                   SeparatorIcon="@SeparatorIcon"
-                                  Clearable="Clearable"
+                                  Clearable="@(Clearable && !GetReadOnlyState())"
                                   Underline="@Underline" />
                </InputContent>
            </MudInputControl>;

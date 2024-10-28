@@ -1,7 +1,8 @@
 ﻿// Copyright (c) 2019 - Blazored
 // Copyright (c) 2023 - Adaptations by Simon Schulze
+// Copyright (c) 2024 - Adaptations by MudBlazor
 
-using System;
+
 using System.Linq.Expressions;
 
 namespace MudBlazor;
@@ -10,7 +11,7 @@ namespace MudBlazor;
 /// <summary>
 /// The parameters passed into a <see cref="MudDialog"/> instance.
 /// </summary>
-/// <seealso cref="MudDialogInstance"/>
+/// <seealso cref="MudDialogContainer"/>
 /// <seealso cref="MudDialogProvider"/>
 /// <seealso cref="MudDialog"/>
 /// <seealso cref="DialogOptions"/>

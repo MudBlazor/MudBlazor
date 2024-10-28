@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudToggleGroup @bind-Value="_value" T="string" Color="Color.Primary">
+﻿<MudToggleGroup @bind-Value="_value" T="string" Color="Color.Primary">
     <MudToggleItem T="string" Value="@("Item One")" Text="Item One" />
     <MudToggleItem T="string" Value="@("Item Two")" Text="Item Two" />
     <MudToggleItem T="string" Value="@("Item Three")" Text="Item Three" />
@@ -26,6 +24,6 @@
 
     private void SetMultiValue()
     {
-        _values = new List<string>() { "Item Two", "Item Three" };
+        _values = new List<string> { "Item Two", "Item Three" };
     }
 }

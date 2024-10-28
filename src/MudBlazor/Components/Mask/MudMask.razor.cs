@@ -38,7 +38,7 @@ namespace MudBlazor
                 .AddClass("mud-ltr", GetInputType() == InputType.Email || GetInputType() == InputType.Telephone)
                 .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
                 .AddClass(Class)
-            .Build();
+                .Build();
 
         protected string InputClassname =>
             new CssBuilder("mud-input-slot")
@@ -47,7 +47,7 @@ namespace MudBlazor
                 .AddClass($"mud-input-root-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
                 .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", () => Margin != Margin.None)
                 .AddClass(Class)
-            .Build();
+                .Build();
 
         protected string AdornmentClassname =>
             new CssBuilder()
@@ -55,7 +55,7 @@ namespace MudBlazor
                 .AddClass($"mud-text", !string.IsNullOrEmpty(AdornmentText))
                 .AddClass($"mud-input-root-filled-shrink", Variant == Variant.Filled)
                 .AddClass(Class)
-            .Build();
+                .Build();
 
         protected string ClearButtonClassname =>
             new CssBuilder("mud-input-clear-button")
@@ -63,7 +63,7 @@ namespace MudBlazor
                 .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End)
                 // .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
                 .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End)
-            .Build();
+                .Build();
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -120,7 +120,10 @@ namespace MudBlazor
             var showClearable = Clearable && !string.IsNullOrWhiteSpace(Text);
 
             if (_showClearable != showClearable)
+            {
                 _showClearable = showClearable;
+                StateHasChanged();
+            }
         }
 
         /// <summary>
@@ -146,7 +149,6 @@ namespace MudBlazor
         {
             if (Text != Mask.Text)
                 await SetTextAsync(Mask.Text, updateValue: false);
-
             await base.OnInitializedAsync();
         }
 
@@ -307,6 +309,13 @@ namespace MudBlazor
             : (Counter == 0
                 ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}")
                 : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
+
+        private bool ShowClearButton()
+        {
+            if (SubscribeToParentForm)
+                return _showClearable && !GetReadOnlyState() && !GetDisabledState();
+            return _showClearable && !GetDisabledState();
+        }
 
         /// <summary>
         /// Clears the text and value for this input.

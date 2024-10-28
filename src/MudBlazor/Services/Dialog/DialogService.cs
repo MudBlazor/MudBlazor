@@ -1,8 +1,7 @@
 ﻿// Copyright (c) 2019 Blazored (https://github.com/Blazored)
-// Copyright (c) 2020 Jonny Larsson (https://github.com/MudBlazor/MudBlazor)
-// Copyright (c) 2021 improvements by Meinrad Recheis
 // See https://github.com/Blazored
 // License: MIT
+// Copyright (c) 2020 Adapted by MudBlazor
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
@@ -17,44 +16,13 @@ namespace MudBlazor
     /// This service requires a <see cref="MudDialogProvider"/> in your layout page.
     /// </remarks>
     /// <seealso cref="MudDialog"/>
-    /// <seealso cref="MudDialogInstance"/>
+    /// <seealso cref="MudDialogContainer"/>
     /// <seealso cref="MudDialogProvider"/>
     /// <seealso cref="DialogOptions"/>
     /// <seealso cref="DialogParameters{T}"/>
     /// <seealso cref="DialogReference"/>
     public class DialogService : IDialogService
     {
-        /// <summary>
-        /// This internal wrapper components prevents overwriting parameters of once
-        /// instantiated dialog instances
-        /// </summary>
-        private class DialogHelperComponent : IComponent
-        {
-            private const string ChildContent = nameof(ChildContent);
-            private RenderFragment? _renderFragment;
-            private RenderHandle _renderHandle;
-            void IComponent.Attach(RenderHandle renderHandle) => _renderHandle = renderHandle;
-
-            Task IComponent.SetParametersAsync(ParameterView parameters)
-            {
-                if (_renderFragment is null && parameters.TryGetValue<RenderFragment>(ChildContent, out var renderFragment))
-                {
-                    _renderFragment = renderFragment;
-                    _renderHandle.Render(_renderFragment);
-                }
-
-                return Task.CompletedTask;
-            }
-
-            public static RenderFragment Wrap(RenderFragment renderFragment)
-                => builder =>
-                {
-                    builder.OpenComponent<DialogHelperComponent>(1);
-                    builder.AddAttribute(2, ChildContent, renderFragment);
-                    builder.CloseComponent();
-                };
-        }
-
         /// <inheritdoc />
         public event Func<IDialogReference, Task>? DialogInstanceAddedAsync;
 
@@ -137,7 +105,7 @@ namespace MudBlazor
 
             var dialogReference = CreateReference();
 
-            var dialogContent = DialogHelperComponent.Wrap(builder =>
+            var dialogContent = new RenderFragment(builder =>
             {
                 var i = 0;
                 builder.OpenComponent(i++, contentComponent);
@@ -151,12 +119,12 @@ namespace MudBlazor
             });
             var dialogInstance = new RenderFragment(builder =>
             {
-                builder.OpenComponent<MudDialogInstance>(0);
+                builder.OpenComponent<MudDialogContainer>(0);
                 builder.SetKey(dialogReference.Id);
-                builder.AddAttribute(1, nameof(MudDialogInstance.Options), options);
-                builder.AddAttribute(2, nameof(MudDialogInstance.Title), title);
-                builder.AddAttribute(3, nameof(MudDialogInstance.Content), dialogContent);
-                builder.AddAttribute(4, nameof(MudDialogInstance.Id), dialogReference.Id);
+                builder.AddComponentParameter(1, nameof(MudDialogContainer.Options), options);
+                builder.AddComponentParameter(2, nameof(MudDialogContainer.Title), title);
+                builder.AddComponentParameter(3, nameof(MudDialogContainer.Content), dialogContent);
+                builder.AddComponentParameter(4, nameof(MudDialogContainer.Id), dialogReference.Id);
                 builder.CloseComponent();
             });
             dialogReference.InjectRenderFragment(dialogInstance);
@@ -268,7 +236,7 @@ namespace MudBlazor
         /// <inheritdoc />
         public async Task<bool?> ShowMessageBox(MessageBoxOptions messageBoxOptions, DialogOptions? options = null)
         {
-            var parameters = new DialogParameters()
+            var parameters = new DialogParameters
             {
                 [nameof(MessageBoxOptions.Title)] = messageBoxOptions.Title,
                 [nameof(MessageBoxOptions.Message)] = messageBoxOptions.Message,
@@ -321,7 +289,7 @@ namespace MudBlazor
 
             var dialogReference = CreateReference();
 
-            var dialogContent = DialogHelperComponent.Wrap(builder =>
+            var dialogContent = new RenderFragment(builder =>
             {
                 var i = 0;
                 builder.OpenComponent(i++, contentComponent);
@@ -335,12 +303,12 @@ namespace MudBlazor
             });
             var dialogInstance = new RenderFragment(builder =>
             {
-                builder.OpenComponent<MudDialogInstance>(0);
+                builder.OpenComponent<MudDialogContainer>(0);
                 builder.SetKey(dialogReference.Id);
-                builder.AddAttribute(1, nameof(MudDialogInstance.Options), options);
-                builder.AddAttribute(2, nameof(MudDialogInstance.Title), title);
-                builder.AddAttribute(3, nameof(MudDialogInstance.Content), dialogContent);
-                builder.AddAttribute(4, nameof(MudDialogInstance.Id), dialogReference.Id);
+                builder.AddComponentParameter(1, nameof(MudDialogContainer.Options), options);
+                builder.AddComponentParameter(2, nameof(MudDialogContainer.Title), title);
+                builder.AddComponentParameter(3, nameof(MudDialogContainer.Content), dialogContent);
+                builder.AddComponentParameter(4, nameof(MudDialogContainer.Id), dialogReference.Id);
                 builder.CloseComponent();
             });
             dialogReference.InjectRenderFragment(dialogInstance);

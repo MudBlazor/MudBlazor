@@ -9,7 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Examples;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
-using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Tabs;
+using MudBlazor.UnitTests.TestComponents.Tabs.KeepTabsAlive;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
