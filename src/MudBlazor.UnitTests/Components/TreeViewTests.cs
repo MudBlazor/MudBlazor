@@ -348,7 +348,7 @@ namespace MudBlazor.UnitTests.Components
                     {
                         return Task.FromResult(false);
                     }
-                    
+
                     return Task.FromResult(e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase));
                 });
             });
