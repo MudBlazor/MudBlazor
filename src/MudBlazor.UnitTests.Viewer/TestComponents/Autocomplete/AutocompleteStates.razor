@@ -3,16 +3,30 @@
 <MudPopoverProvider />
 
 <MudAutocomplete id="autocompleteLabelTest" T="string" Label="US States"
-                 @bind-Value="Value" SearchFunc="@SearchStates" DebounceInterval="DebounceInterval" />
+                 @bind-Value="Value" ResetValueOnEmptyText="ResetValueOnEmptyText"
+                 SearchFunc="@SearchStates" DebounceInterval="DebounceInterval" 
+                 CoerceText="CoerceText" CoerceValue="CoerceValue" Immediate="Immediate"/>
 
 @code {
     public static string __description__ = "Autocomplete to input a US state";
 
     [Parameter]
     public string Value { get; set; }
-    
+
+    [Parameter]
+    public bool ResetValueOnEmptyText { get; set; }
+
     [Parameter]
     public int DebounceInterval { get; set; }
+
+    [Parameter]
+    public bool CoerceText { get; set; }
+
+    [Parameter]
+    public bool CoerceValue { get; set; }
+
+    [Parameter]
+    public bool Immediate { get; set; }
 
     public int SearchFuncCallCount { get; private set; }
 

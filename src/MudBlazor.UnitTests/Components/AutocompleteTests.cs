@@ -832,12 +832,33 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Text.Should().Be("");
         }
 
+        
+
+        private static object[] _resetAsyncParameters = {
+            new object[] { false, false, false, false },
+            new object[] { false,false, false, true },
+            new object[] { false,false, true, false },
+            new object[] { false,false, true, true },
+            new object[] { false,true, false, false },
+            new object[] { false,true, false, true },
+            new object[] { false,true, true, false },
+            new object[] { false,true, true, true },
+            new object[] { true, false, false, false },
+            new object[] { true,false, false, true },
+            new object[] { true,false, true, false },
+            new object[] { true,false, true, true },
+            new object[] { true,true, false, false },
+            new object[] { true,true, false, true },
+            new object[] { true,true, true, false },
+            new object[] { true,true, true, true }
+        };
+
         /// <summary>
         /// When calling ResetAsync() without debounce,
         /// so menu should be closed, Text empty and Value null.
         /// </summary>
-        [Test]
-        public async Task ResetAsync_WithoutDebounce_SoTextEmptyAndValueNull()
+        [TestCaseSource(nameof(_resetAsyncParameters))]
+        public async Task ResetAsync_WithoutDebounce_SoTextEmptyAndValueNull(bool resetValueOnEmptyText, bool coerceText, bool coerceValue, bool immediate)
         {
             // Arrange
 
@@ -872,15 +893,19 @@ namespace MudBlazor.UnitTests.Components
         /// When calling ResetAsync() with value and without debounce,
         /// so menu should be closed, Text empty and Value null.
         /// </summary>
-        [Test]
-        public async Task ResetAsync_WithValueAndWithoutDebounce_SoTextEmptyAndValueNull()
+        [TestCaseSource(nameof(_resetAsyncParameters))]
+        public async Task ResetAsync_WithValueAndWithoutDebounce_SoTextEmptyAndValueNull(bool resetValueOnEmptyText, bool coerceText, bool coerceValue, bool immediate)
         {
             // Arrange
 
             var comp = Context.RenderComponent<AutocompleteStates>(parameters =>
             {
                 parameters.Add(a => a.Value, "Idaho");
+                parameters.Add(a => a.ResetValueOnEmptyText, resetValueOnEmptyText);
                 parameters.Add(a => a.DebounceInterval, 0);
+                parameters.Add(a => a.CoerceText, coerceText);
+                parameters.Add(a => a.CoerceValue, coerceValue);
+                parameters.Add(a => a.Immediate, immediate);
             });
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompletecomp.Instance;
