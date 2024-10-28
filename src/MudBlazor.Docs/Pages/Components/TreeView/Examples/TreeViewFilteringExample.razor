@@ -46,14 +46,19 @@
         _treeItemData.Add(new TreeItemPresenter("History", Icons.Material.Filled.Label));
     }
 
-    private void OnTextChanged(string searchPhrase) 
+    private async void OnTextChanged(string searchPhrase) 
     {
         _searchPhrase = searchPhrase;
-        _treeView.Filter();
+        await _treeView.FilterAsync();
     }
 
-    private bool MatchesName(TreeItemData<string> item)
+    private Task<bool> MatchesName(TreeItemData<string> item)
     {
-        return item.Text.Contains(_searchPhrase, StringComparison.OrdinalIgnoreCase);
+        if (string.IsNullOrEmpty(item.Text))
+        {
+            return Task.FromResult(false);
+        }
+
+        return Task.FromResult(item.Text.Contains(_searchPhrase, StringComparison.OrdinalIgnoreCase));
     }
 }

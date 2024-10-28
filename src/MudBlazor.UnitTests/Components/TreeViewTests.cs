@@ -284,7 +284,12 @@ namespace MudBlazor.UnitTests.Components
                 element.Add(x => x.SearchPhrase, searchPhrase);
                 element.Add(x => x.FilterFunc, (e) =>
                 {
-                    return e.Text != null && e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase);
+                    if (string.IsNullOrEmpty(e.Text))
+                    {
+                        return Task.FromResult(false);
+                    }
+
+                    return Task.FromResult(e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase));
                 });
             });
 
@@ -309,7 +314,12 @@ namespace MudBlazor.UnitTests.Components
                 element.Add(x => x.SearchPhrase, searchPhrase);
                 element.Add(x => x.FilterFunc, (e) =>
                 {
-                    return e.Text != null && e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase);
+                    if (string.IsNullOrEmpty(e.Text))
+                    {
+                        return Task.FromResult(false);
+                    }
+
+                    return Task.FromResult(e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase));
                 });
             });
 
@@ -334,7 +344,12 @@ namespace MudBlazor.UnitTests.Components
                 element.Add(x => x.SearchPhrase, searchPhrase);
                 element.Add(x => x.FilterFunc, (e) =>
                 {
-                    return e.Text != null && e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase);
+                    if (string.IsNullOrEmpty(e.Text))
+                    {
+                        return Task.FromResult(false);
+                    }
+                    
+                    return Task.FromResult(e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase));
                 });
             });
 
@@ -360,7 +375,12 @@ namespace MudBlazor.UnitTests.Components
                 element.Add(x => x.AreItemsPopulated, false);
                 element.Add(x => x.FilterFunc, (e) =>
                 {
-                    return e.Text != null && e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase);
+                    if (string.IsNullOrEmpty(e.Text))
+                    {
+                        return Task.FromResult(false);
+                    }
+
+                    return Task.FromResult(e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase));
                 });
             });
 
