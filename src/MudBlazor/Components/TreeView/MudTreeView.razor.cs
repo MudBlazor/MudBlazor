@@ -288,7 +288,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Invokes the the <see cref="FilterFunc"/> to be applied to every item.
+        /// Invokes the <see cref="FilterFunc"/> to be applied to every item.
         /// </summary>
         public void Filter()
         {
