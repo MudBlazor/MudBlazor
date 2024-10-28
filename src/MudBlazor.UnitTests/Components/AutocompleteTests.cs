@@ -832,8 +832,6 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Text.Should().Be("");
         }
 
-        
-
         private static object[] _resetAsyncParameters = {
             new object[] { false, false, false, false },
             new object[] { false,false, false, true },
