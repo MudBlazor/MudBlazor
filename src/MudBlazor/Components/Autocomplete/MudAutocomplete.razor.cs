@@ -108,21 +108,21 @@ namespace MudBlazor
         /// The location where the popover will open from.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Origin.BottomCenter" />.
+        /// Defaults to <see cref="Origin.BottomLeft" />.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public Origin AnchorOrigin { get; set; } = Origin.BottomCenter;
+        public Origin AnchorOrigin { get; set; } = Origin.BottomLeft;
 
         /// <summary>
         /// The transform origin point for the popover.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Origin.TopCenter"/>.
+        /// Defaults to <see cref="Origin.TopLeft"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public Origin TransformOrigin { get; set; } = Origin.TopCenter;
+        public Origin TransformOrigin { get; set; } = Origin.TopLeft;
 
         /// <summary>
         /// Uses compact padding.
