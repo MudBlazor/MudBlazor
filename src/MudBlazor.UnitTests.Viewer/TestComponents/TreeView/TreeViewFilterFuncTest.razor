@@ -1,4 +1,4 @@
-﻿<MudTreeView @ref="_treeView" Items="@Items" FilterFunc="@FilterFunc">
+﻿<MudTreeView T="string" @ref="_treeView" Items="@Items" FilterFunc="@FilterFunc">
     <ItemTemplate>
         <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value"
                          Icon="@context.Icon" Text="@context.Text" Visible="@context.Visible" />
@@ -15,11 +15,10 @@
     [Parameter]
     public bool AreItemsPopulated { get; set; } = true;
 
-    public List<TreeItemData<string>> Items { get; set; }
+    public List<TreeItemData> Items { get; set; }
 
     private MudTreeView<string> _treeView;
-
-
+    
     public sealed class TreeItemData : TreeItemData<string>
     {
         public TreeItemData(string title) : base(title)
