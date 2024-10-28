@@ -2,7 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
     <RootNamespace>MudBlazor.UnitTests</RootNamespace>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <NoWarn>CS8625;CS8618;CS8602;CS8621;CS8600;CS8604;CS8603;CS8601</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'MudBlazor.UnitTests.Viewer' " />

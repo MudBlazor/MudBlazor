@@ -23,7 +23,7 @@
     {
         public static IList<ValidationContext> ValidationContextOnCall { get; private set; } = new List<ValidationContext>();
 
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
             ValidationContextOnCall.Add(validationContext);
             var propertyTestedInfo = validationContext.ObjectType.GetProperty(""); //error will show up here. The validationContext is null after the control loses focus

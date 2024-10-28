@@ -428,7 +428,7 @@ namespace MudBlazor.UnitTests.Components
         public void Chip_TwoWayBinding_ShouldUpdateSelection()
         {
             var comp = Context.RenderComponent<ChipSetChipBindingTest>();
-            comp.Find("div.selection").TrimmedText().Should().Be("Add ingredients to your coctail.");
+            comp.Find("div.selection").TrimmedText().Should().Be("Add ingredients to your cocktail.");
             // initial state
             comp.FindAll("div.mud-chip")[0].ClassList.Should().NotContain("mud-chip-selected");
             comp.FindAll("div.mud-chip")[2].ClassList.Should().NotContain("mud-chip-selected");

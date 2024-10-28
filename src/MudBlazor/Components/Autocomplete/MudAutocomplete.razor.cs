@@ -41,8 +41,8 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-select")
-            .AddClass(Class)
-            .Build();
+                .AddClass(Class)
+                .Build();
 
         protected string InputClassname =>
             new CssBuilder("mud-select-input")
@@ -51,21 +51,21 @@ namespace MudBlazor
 
         protected string AutocompleteClassname =>
             new CssBuilder("mud-select")
-            .AddClass("mud-autocomplete")
-            .AddClass("mud-width-full", FullWidth)
-            .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && IsLoading)
-            .Build();
+                .AddClass("mud-autocomplete")
+                .AddClass("mud-width-full", FullWidth)
+                .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && IsLoading)
+                .Build();
 
         protected string CircularProgressClassname =>
             new CssBuilder("progress-indicator-circular")
-            .AddClass("progress-indicator-circular--with-adornment", Adornment == Adornment.End)
-            .Build();
+                .AddClass("progress-indicator-circular--with-adornment", Adornment == Adornment.End)
+                .Build();
 
         protected string GetListItemClassname(bool isSelected) =>
             new CssBuilder()
-            .AddClass("mud-selected-item mud-primary-text mud-primary-hover", isSelected)
-            .AddClass(ListItemClass)
-            .Build();
+                .AddClass("mud-selected-item mud-primary-text mud-primary-hover", isSelected)
+                .AddClass(ListItemClass)
+                .Build();
 
         /// <summary>
         /// Input's classnames, separated by space.

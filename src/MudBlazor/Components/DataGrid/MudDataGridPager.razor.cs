@@ -119,8 +119,8 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-table-pagination-toolbar")
-            .AddClass(Class)
-            .Build();
+                .AddClass(Class)
+                .Build();
 
         private async Task SetRowsPerPageAsync(int size)
         {

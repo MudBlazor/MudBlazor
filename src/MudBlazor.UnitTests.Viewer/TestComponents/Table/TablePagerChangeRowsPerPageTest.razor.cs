@@ -4,7 +4,7 @@
 
 using Microsoft.AspNetCore.Components;
 
-namespace MudBlazor.UnitTests.TestComponents
+namespace MudBlazor.UnitTests.TestComponents.Table
 {
     public partial class TablePagerChangeRowsPerPageTest : ComponentBase
     {

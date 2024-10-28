@@ -12,7 +12,8 @@ using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Select;
 using NUnit.Framework;
-using static MudBlazor.UnitTests.TestComponents.SelectWithEnumTest;
+using static MudBlazor.UnitTests.TestComponents.Select.SelectWithEnumTest;
+
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -1371,6 +1372,20 @@ namespace MudBlazor.UnitTests.Components
             errorAction.Should().NotThrow();
 
             comp.Find(inputSelector).GetAttribute("aria-describedby").Should().Be(secondExpectedAriaDescribedBy);
+        }
+
+        [Test]
+        public void ReadOnlyShouldNotHaveClearButton()
+        {
+            var comp = Context.RenderComponent<MudSelect<string>>(p => p
+                .Add(x => x.Text, "some value")
+                .Add(x => x.Clearable, true)
+                .Add(x => x.ReadOnly, false));
+
+            comp.FindAll(".mud-input-clear-button").Count.Should().Be(1);
+
+            comp.SetParametersAndRender(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
+            comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
         }
 #nullable disable
     }

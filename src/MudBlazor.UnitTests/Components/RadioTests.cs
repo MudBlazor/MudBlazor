@@ -6,6 +6,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.RadioGroup;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components

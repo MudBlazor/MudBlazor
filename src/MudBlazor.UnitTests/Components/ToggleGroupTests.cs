@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.ToggleGroup;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -101,6 +102,19 @@ namespace MudBlazor.UnitTests.Components
             toggle.Instance.Value.Should().Be("Item One");
             ToggleItem().Click();
             toggle.Instance.Value.Should().BeNull();
+        }
+
+        [Test]
+        public void ToggleGroup_ToggleRemove_Test()
+        {
+            var comp = Context.RenderComponent<ToggleGroupRemoveTest>();
+            var toggle = comp.FindComponent<MudToggleGroup<string>>();
+            var toggleGroup = toggle.Instance;
+            IElement Button() => comp.Find("#remove_btn");
+
+            toggleGroup.GetItems().Count().Should().Be(8);
+            Button().Click();
+            toggleGroup.GetItems().Count().Should().Be(7);
         }
 
         [Test]

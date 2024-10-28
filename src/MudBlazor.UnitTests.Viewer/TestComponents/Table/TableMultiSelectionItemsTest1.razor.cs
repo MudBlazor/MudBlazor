@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Components;
 
-namespace MudBlazor.UnitTests.TestComponents
+namespace MudBlazor.UnitTests.TestComponents.Table
 {
     public partial class TableMultiSelectionItemsTest1
     {
@@ -40,7 +40,7 @@ namespace MudBlazor.UnitTests.TestComponents
 
         class ElementComparer : IEqualityComparer<ComplexObject>
         {
-            public bool Equals(ComplexObject a, ComplexObject b) => a?.Id == b?.Id;
+            public bool Equals(ComplexObject? a, ComplexObject? b) => a?.Id == b?.Id;
             public int GetHashCode(ComplexObject x) => HashCode.Combine(x?.Id);
         }
 

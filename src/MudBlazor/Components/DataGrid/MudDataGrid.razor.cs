@@ -39,32 +39,33 @@ namespace MudBlazor
         private MudDropContainer<Column<T>> _dropContainer;
         private MudDropContainer<Column<T>> _columnsPanelDropContainer;
         private CancellationTokenSource _serverDataCancellationTokenSource;
+
         protected string _classname =>
             new CssBuilder("mud-table")
-               .AddClass("mud-data-grid")
-               .AddClass("mud-xs-table", Breakpoint == Breakpoint.Xs)
-               .AddClass("mud-sm-table", Breakpoint == Breakpoint.Sm)
-               .AddClass("mud-md-table", Breakpoint == Breakpoint.Md)
-               .AddClass("mud-lg-table", Breakpoint == Breakpoint.Lg || Breakpoint == Breakpoint.Always)
-               .AddClass("mud-xl-table", Breakpoint == Breakpoint.Xl || Breakpoint == Breakpoint.Always)
-               .AddClass("mud-table-dense", Dense)
-               .AddClass("mud-table-hover", Hover)
-               .AddClass("mud-table-bordered", Bordered)
-               .AddClass("mud-table-striped", Striped)
-               .AddClass("mud-table-outlined", Outlined)
-               .AddClass("mud-table-square", Square)
-               .AddClass("mud-table-sticky-header", FixedHeader)
-               .AddClass("mud-table-sticky-footer", FixedFooter)
-               .AddClass($"mud-elevation-{Elevation}", !Outlined)
-              .AddClass(Class)
-            .Build();
+                .AddClass("mud-data-grid")
+                .AddClass("mud-xs-table", Breakpoint == Breakpoint.Xs)
+                .AddClass("mud-sm-table", Breakpoint == Breakpoint.Sm)
+                .AddClass("mud-md-table", Breakpoint == Breakpoint.Md)
+                .AddClass("mud-lg-table", Breakpoint == Breakpoint.Lg || Breakpoint == Breakpoint.Always)
+                .AddClass("mud-xl-table", Breakpoint == Breakpoint.Xl || Breakpoint == Breakpoint.Always)
+                .AddClass("mud-table-dense", Dense)
+                .AddClass("mud-table-hover", Hover)
+                .AddClass("mud-table-bordered", Bordered)
+                .AddClass("mud-table-striped", Striped)
+                .AddClass("mud-table-outlined", Outlined)
+                .AddClass("mud-table-square", Square)
+                .AddClass("mud-table-sticky-header", FixedHeader)
+                .AddClass("mud-table-sticky-footer", FixedFooter)
+                .AddClass($"mud-elevation-{Elevation}", !Outlined)
+                .AddClass(Class)
+                .Build();
 
         protected string _style =>
             new StyleBuilder()
                 .AddStyle("overflow-x", "auto", when: HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container)
                 .AddStyle("position", "relative", when: hasStickyColumns)
                 .AddStyle(Style)
-            .Build();
+                .Build();
 
         protected string _tableStyle =>
             new StyleBuilder()
@@ -72,22 +73,27 @@ namespace MudBlazor
                 .AddStyle("width", "max-content", when: HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container)
                 .AddStyle("overflow", "clip", when: (HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container) && hasStickyColumns)
                 .AddStyle("display", "block", when: HorizontalScrollbar)
-            .Build();
+                .Build();
+
         protected string _tableClass =>
             new CssBuilder("mud-table-container")
                 .AddClass("cursor-col-resize", when: IsResizing)
-            .Build();
+                .Build();
 
-        protected string _headClassname => new CssBuilder("mud-table-head")
-            .AddClass(HeaderClass).Build();
+        protected string _headClassname =>
+            new CssBuilder("mud-table-head")
+                .AddClass(HeaderClass)
+                .Build();
 
-        protected string _footClassname => new CssBuilder("mud-table-foot")
-            .AddClass(FooterClass).Build();
+        protected string _footClassname =>
+            new CssBuilder("mud-table-foot")
+                .AddClass(FooterClass).Build();
+
         protected string _headerFooterStyle =>
             new StyleBuilder()
                 .AddStyle("position", "sticky", when: hasStickyColumns)
                 .AddStyle("left", "0px", when: hasStickyColumns)
-            .Build();
+                .Build();
 
         protected override void OnParametersSet()
         {

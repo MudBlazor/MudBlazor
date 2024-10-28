@@ -4,23 +4,17 @@
 #pragma warning disable CS1998 // async without await
 #pragma warning disable BL0005 // Set parameter outside component
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.Dummy;
-using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Autocomplete;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
-using static MudBlazor.UnitTests.TestComponents.AutocompleteSetParametersInitialization;
+using static MudBlazor.UnitTests.TestComponents.Autocomplete.AutocompleteSetParametersInitialization;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -108,7 +102,7 @@ namespace MudBlazor.UnitTests.Components
             var autocompleteComp = autocompleteContainerComp.FindComponent<MudAutocomplete<string>>();
             autocompleteComp.SetParam(a => a.Text, "Alabama");
             await Task.Delay(500);
-            comp.Instance.mustBeShown = false;
+            comp.Instance.MustBeShown = false;
             await Task.Delay(500);
             comp.Render();
             await Task.Delay(500);
@@ -451,9 +445,9 @@ namespace MudBlazor.UnitTests.Components
         public async Task AutocompleteReadOnlyShouldNotHaveClearButton()
         {
             var comp = Context.RenderComponent<MudAutocomplete<string>>(p => p
-            .Add(x => x.Text, "some value")
-            .Add(x => x.Clearable, true)
-            .Add(x => x.ReadOnly, false));
+                .Add(x => x.Text, "some value")
+                .Add(x => x.Clearable, true)
+                .Add(x => x.ReadOnly, false));
 
             comp.FindAll(".mud-input-clear-button").Count.Should().Be(1);
 

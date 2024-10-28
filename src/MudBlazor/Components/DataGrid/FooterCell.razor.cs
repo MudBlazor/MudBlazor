@@ -45,14 +45,15 @@ namespace MudBlazor
                 .AddClass(Column?.FooterClass)
                 .AddClass(Column?.footerClassname)
                 .AddClass(Class)
-            .Build();
+                .Build();
+
         private string _style =>
             new StyleBuilder()
                 .AddStyle(Column?.FooterStyleFunc?.Invoke(items ?? Enumerable.Empty<T>()))
                 .AddStyle(Column?.FooterStyle)
                 .AddStyle(Style)
                 .AddStyle("font-weight", "600")
-            .Build();
+                .Build();
 
         internal IEnumerable<T> items
         {

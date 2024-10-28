@@ -1,5 +1,4 @@
 ﻿@using System.IO
-@namespace MudBlazor.UnitTests.TestComponents
 
 <MudFileUpload T="IBrowserFile"
                @ref="@_fileUpload"
@@ -45,7 +44,6 @@
 </MudToolBar>
 
 @code {
-#nullable enable
     [Parameter]
     public IBrowserFile? File { get; set; }
 

@@ -120,8 +120,13 @@ public partial class Appbar
     [Parameter]
     public bool DisplaySearchBar { get; set; } = true;
 
-    private async void OnSearchResult(ApiLinkServiceEntry entry)
+    private async void OnSearchResult(ApiLinkServiceEntry? entry)
     {
+        if (entry is null)
+        {
+            return;
+        }
+
         NavigationManager.NavigateTo(entry.Link);
         await Task.Delay(1000);
         await _searchAutocomplete.ClearAsync();
