@@ -92,9 +92,9 @@ public partial class HierarchyColumn<T> : MudComponentBase
     private HashSet<CellContext<T>> InitiallyExpandedItems { get; set; } = [];
 
     /// <inheritdoc/>
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        base.OnAfterRender(firstRender);
+        await base.OnAfterRenderAsync(firstRender);
 
         if (firstRender)
         {
@@ -102,7 +102,7 @@ public partial class HierarchyColumn<T> : MudComponentBase
 
             foreach (var context in InitiallyExpandedItems)
             {
-                context.Actions.ToggleHierarchyVisibilityForItemAsync.Invoke();
+                await context.Actions.ToggleHierarchyVisibilityForItemAsync.Invoke();
             }
         }
     }
