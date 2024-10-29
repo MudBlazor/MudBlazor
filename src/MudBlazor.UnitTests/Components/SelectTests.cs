@@ -71,7 +71,7 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Value.Should().BeNullOrEmpty();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             // click and check if it has toggled the menu
-            input.Click();
+            input.PointerDown();
             menu.ClassList.Should().Contain("mud-popover-open");
             // now click an item and see the value change
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
@@ -82,7 +82,7 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Value.Should().Be("2");
             // now we cheat and click the list without opening the menu ;)
 
-            input.Click();
+            input.PointerDown();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             items = comp.FindAll("div.mud-list-item").ToArray();
 
@@ -116,7 +116,7 @@ namespace MudBlazor.UnitTests.Components
                 comp.WaitForAssertion(() =>
                     comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
                 // click and check if it has toggled the menu
-                input.Click();
+                input.PointerDown();
                 menu.ClassList.Should().Contain("mud-popover-open");
                 // now click an item and see the value change
                 comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
@@ -175,7 +175,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("input").Attributes["value"]?.Value.Should().Be("First");
             comp.RenderCount.Should().Be(1);
-            input.Click();
+            input.PointerDown();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
@@ -195,7 +195,7 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Value.Should().Be(17);
             select.Instance.Text.Should().Be("17");
             comp.Find("input").Attributes["value"]?.Value.Should().Be("17");
-            input.Click();
+            input.PointerDown();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
@@ -221,7 +221,7 @@ namespace MudBlazor.UnitTests.Components
             // BUT: we have a select with Strict="true" so the Text will not be shown because it is not in the list of selectable values
             comp.FindComponent<MudInput<string>>().Instance.Value.Should().Be(null);
             comp.FindComponent<MudInput<string>>().Instance.InputType.Should().Be(InputType.Hidden);
-            input.Click();
+            input.PointerDown();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
@@ -247,7 +247,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-input-slot").Attributes["style"].Value.Should().Contain("display:none");
             comp.RenderCount.Should().Be(1);
 
-            input.Click();
+            input.PointerDown();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
@@ -270,7 +270,7 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Value.Should().BeNullOrEmpty();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             // click and check if it has toggled the menu
-            input.Click();
+            input.PointerDown();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             menu.ClassList.Should().Contain("mud-popover-open");
             // now click an item and see the value change
@@ -283,7 +283,7 @@ namespace MudBlazor.UnitTests.Components
             text.Should().Be("2");
 
             //open the menu again
-            input.Click();
+            input.PointerDown();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             items = comp.FindAll("div.mud-list-item").ToArray();
 
@@ -324,7 +324,7 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Value.Should().BeNullOrEmpty();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             // click and check if it has toggled the menu
-            input.Click();
+            input.PointerDown();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             menu.ClassList.Should().Contain("mud-popover-open");
             // now click an item and see the value change
@@ -340,7 +340,7 @@ namespace MudBlazor.UnitTests.Components
             textChangedCount.Should().Be(0);
             string.Join(",", selectedValues).Should().Be("2");
 
-            input.Click();
+            input.PointerDown();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             items = comp.FindAll("div.mud-list-item").ToArray();
 
@@ -381,7 +381,7 @@ namespace MudBlazor.UnitTests.Components
               });
 
             var selectElement = comp.Find("div.mud-input-control");
-            selectElement.Click();
+            selectElement.PointerDown();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             var items = comp.FindAll("div.mud-list-item").ToArray();
             // click list item
@@ -426,7 +426,7 @@ namespace MudBlazor.UnitTests.Components
             var select = comp.FindComponent<MudSelect<string>>();
 
             var selectElement = comp.Find("div.mud-input-control");
-            selectElement.Click();
+            selectElement.PointerDown();
 
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item-disabled").Count.Should().Be(1));
             comp.FindAll("div.mud-list-item-disabled")[0].Click();
@@ -455,7 +455,7 @@ namespace MudBlazor.UnitTests.Components
                 comp.WaitForAssertion(() =>
                     comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
                 // click and check if it has toggled the menu
-                input.Click();
+                input.PointerDown();
                 comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
                 comp.WaitForAssertion(() => menu.ClassList.Should().Contain("mud-popover-open"));
                 // now click an item and see the value change
@@ -492,7 +492,7 @@ namespace MudBlazor.UnitTests.Components
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
             // Open the menu
-            input.Click();
+            input.PointerDown();
             menu.ClassList.Should().Contain("mud-popover-open");
             // now click the first checkbox
             comp.FindAll("div.mud-list-item")[0].Click();
@@ -510,7 +510,7 @@ namespace MudBlazor.UnitTests.Components
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
             // Open the menu
-            input.Click();
+            input.PointerDown();
             menu.ClassList.Should().Contain("mud-popover-open");
 
             // get the first (select all item) and check if it is selected
@@ -545,7 +545,7 @@ namespace MudBlazor.UnitTests.Components
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
             // Open the menu
-            input.Click();
+            input.PointerDown();
             menu.ClassList.Should().Contain("mud-popover-open");
             // Check that the icon corresponds to an unchecked checkbox
             var mudListItem = comp.FindComponent<MudListItem<string>>();
@@ -560,7 +560,7 @@ namespace MudBlazor.UnitTests.Components
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
             // Open the menu
-            input.Click();
+            input.PointerDown();
             menu.ClassList.Should().Contain("mud-popover-open");
             // now click the first checkbox to select all
             var items = comp.FindAll("div.mud-list-item").ToArray();
@@ -594,7 +594,7 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Value.Should().BeNullOrEmpty();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             // click and check if it has toggled the menu
-            input.Click();
+            input.PointerDown();
             menu.ClassList.Should().Contain("mud-popover-open");
             // now click an item and see the value change
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
@@ -606,7 +606,7 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Text.Should().Be("2");
             validatedValue.Should().Be("2");
 
-            input.Click();
+            input.PointerDown();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             comp.FindAll("div.mud-list-item")[0].Click();
 
@@ -663,7 +663,7 @@ namespace MudBlazor.UnitTests.Components
             // No button when initialized
             comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
 
-            input.Click();
+            input.PointerDown();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             // Button shows after selecting item
             var items = comp.FindAll("div.mud-list-item").ToArray();
@@ -692,7 +692,7 @@ namespace MudBlazor.UnitTests.Components
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
 
-            input.Click();
+            input.PointerDown();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             select.Instance.Value.Should().Be("Apple");
 
@@ -706,7 +706,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ChangeCount.Should().Be(1);
 
             // now click an item and see the value change
-            input.Click();
+            input.PointerDown();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
@@ -780,7 +780,7 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Value.Should().BeNullOrEmpty();
             comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
             // open the select
-            comp.Find("div.mud-input-control").Click();
+            comp.Find("div.mud-input-control").PointerDown();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             // no option should be hilited
             comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(0));
@@ -789,7 +789,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("2"));
             // open again and check hilited option
-            comp.Find("div.mud-input-control").Click();
+            comp.Find("div.mud-input-control").PointerDown();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             // Nr 2 should be hilited
             comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
@@ -814,7 +814,7 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Value.Should().Be("2");
             comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
             // open the select
-            comp.Find("div.mud-input-control").Click();
+            comp.Find("div.mud-input-control").PointerDown();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             // Nr 2 should be hilited
             comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
@@ -824,12 +824,12 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("1"));
             // open again and check hilited option
-            comp.Find("div.mud-input-control").Click();
+            comp.Find("div.mud-input-control").PointerDown();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             // Nr 1 should be hilited
             comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
             comp.FindAll("div.mud-list-item")[0].ToMarkup().Should().Contain("mud-selected-item");
-            comp.Find("div.mud-input-control").Click();
+            comp.Find("div.mud-input-control").PointerDown();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
         }
 
@@ -839,17 +839,17 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ReloadSelectItemsTest>();
             var select = comp.FindComponent<MudSelect<string>>();
             // normal, without reloading
-            comp.Find("div.mud-input-control").Click();
+            comp.Find("div.mud-input-control").PointerDown();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             comp.FindAll("div.mud-list-item")[0].Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("American Samoa"));
-            comp.Find("div.mud-input-control").Click();
+            comp.Find("div.mud-input-control").PointerDown();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             comp.FindAll("div.mud-list-item")[1].Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("Arizona"));
-            comp.Find("div.mud-input-control").Click();
+            comp.Find("div.mud-input-control").PointerDown();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             comp.FindAll("div.mud-list-item")[2].Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
@@ -857,17 +857,17 @@ namespace MudBlazor.UnitTests.Components
             // reloading!
             comp.Find(".reload").Click();
             // check again, different values expected now
-            comp.Find("div.mud-input-control").Click();
+            comp.Find("div.mud-input-control").PointerDown();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             comp.FindAll("div.mud-list-item")[0].Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("Alabama"));
-            comp.Find("div.mud-input-control").Click();
+            comp.Find("div.mud-input-control").PointerDown();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             comp.FindAll("div.mud-list-item")[1].Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("Alaska"));
-            comp.Find("div.mud-input-control").Click();
+            comp.Find("div.mud-input-control").PointerDown();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             comp.FindAll("div.mud-list-item")[2].Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
@@ -1040,7 +1040,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MultiSelectTest6>();
             var select = comp.FindComponent<MudSelect<string>>();
             var mudSelectElement = comp.Find(".mud-select");
-            comp.Find("div.mud-input-control").Click();
+            comp.Find("div.mud-input-control").PointerDown();
             select.Instance._open.Should().BeTrue();
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[0].Click();
@@ -1078,7 +1078,7 @@ namespace MudBlazor.UnitTests.Components
             // Check input text
             comp.Find("input").GetAttribute("value").Should().Be("Selected Cafe Latte, Selected Espresso");
             // Click to render the menu
-            comp.Find("div.mud-input-control").Click();
+            comp.Find("div.mud-input-control").PointerDown();
             // Check check marks
             const string @unchecked =
                 "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z";
@@ -1098,7 +1098,7 @@ namespace MudBlazor.UnitTests.Components
             var sut = comp.FindComponent<MudSelect<string>>();
 
             var input = comp.Find("div.mud-input-control");
-            input.Click();
+            input.PointerDown();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
 
             sut.Instance.Items.Should().HaveCountGreaterOrEqualTo(4);
@@ -1152,14 +1152,14 @@ namespace MudBlazor.UnitTests.Components
 
             //2a. Now check when SelectedItems is greater than one - Validation Should Pass
             var inputs = comp.FindAll("div.mud-input-control");
-            inputs[0].Click();//The 2nd one is the
+            inputs[0].PointerDown();//The 2nd one is the
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
             await comp.InvokeAsync(() => select.Validate());
             select.ValidationErrors.Count.Should().Be(0);
 
             //2b.
-            inputs[1].Click();//selectWithT
+            inputs[1].PointerDown();//selectWithT
             //wait for render and it will find 5 items from the component
             comp.WaitForState(() => comp.FindAll("div.mud-list-item").Count == 5);
             items = comp.FindAll("div.mud-list-item").ToArray();
