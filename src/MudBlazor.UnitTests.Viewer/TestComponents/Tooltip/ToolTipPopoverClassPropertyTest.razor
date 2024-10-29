@@ -1,10 +1,8 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
 <MudTooltip Color="@Color" Arrow="@Arrow">
 	<ChildContent>
-		<MudButton>My Buttion</MudButton>
+		<MudButton>My Button</MudButton>
 	</ChildContent>
 	<TooltipContent>
 		<div id="my-tooltip-content">
@@ -14,8 +12,9 @@
 </MudTooltip>
 
 @code {
-	[Parameter] public Color Color { get; set; } = Color.Default;
-	[Parameter] public bool Arrow { get; set; } = false;
+	[Parameter]
+    public Color Color { get; set; } = Color.Default;
 
-
+	[Parameter]
+    public bool Arrow { get; set; }
 }

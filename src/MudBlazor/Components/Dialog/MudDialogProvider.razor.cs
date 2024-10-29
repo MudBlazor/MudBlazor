@@ -1,15 +1,8 @@
-﻿// Copyright (c) 2020 Jonny Larsson
-// License: MIT
-// See https://github.com/MudBlazor/MudBlazor
-// Modified version of Blazored Modal
-// Copyright (c) 2019 Blazored
+﻿// Copyright (c) 2019 Blazored
 // License: MIT
 // See https://github.com/Blazored
+// Copyright (c) 2020 - Adapted by MudBlazor Contributors
 
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 
@@ -23,13 +16,16 @@ namespace MudBlazor
     /// Add this component to your layout page if your application needs to display dialogs.
     /// </remarks>
     /// <seealso cref="MudDialog"/>
-    /// <seealso cref="MudDialogInstance"/>
+    /// <seealso cref="MudDialogContainer"/>
     /// <seealso cref="DialogOptions"/>
     /// <seealso cref="DialogParameters{T}"/>
     /// <seealso cref="DialogReference"/>
-    /// <seealso cref="DialogService"/>
+    /// <seealso cref="MudBlazor.DialogService"/>
     public partial class MudDialogProvider : IDisposable
     {
+        private DialogOptions _globalDialogOptions = new();
+        private readonly List<IDialogReference> _dialogs = [];
+
         [Inject]
         private IDialogService DialogService { get; set; } = null!;
 
@@ -113,23 +109,25 @@ namespace MudBlazor
         [Category(CategoryTypes.Dialog.Appearance)]
         public string? BackgroundClass { get; set; }
 
-        private readonly List<IDialogReference> _dialogs = new();
-        private readonly DialogOptions _globalDialogOptions = new();
-
         protected override void OnInitialized()
         {
             DialogService.DialogInstanceAddedAsync += AddInstanceAsync;
             DialogService.OnDialogCloseRequested += DismissInstance;
             NavigationManager.LocationChanged += LocationChanged;
 
-            _globalDialogOptions.BackdropClick = BackdropClick;
-            _globalDialogOptions.CloseOnEscapeKey = CloseOnEscapeKey;
-            _globalDialogOptions.CloseButton = CloseButton;
-            _globalDialogOptions.NoHeader = NoHeader;
-            _globalDialogOptions.Position = Position;
-            _globalDialogOptions.FullWidth = FullWidth;
-            _globalDialogOptions.MaxWidth = MaxWidth;
-            _globalDialogOptions.BackgroundClass = BackgroundClass;
+            var newOptions = _globalDialogOptions with
+            {
+                BackdropClick = BackdropClick,
+                CloseOnEscapeKey = CloseOnEscapeKey,
+                CloseButton = CloseButton,
+                NoHeader = NoHeader,
+                Position = Position,
+                FullWidth = FullWidth,
+                MaxWidth = MaxWidth,
+                BackgroundClass = BackgroundClass
+            };
+
+            _globalDialogOptions = newOptions;
         }
 
         protected override Task OnAfterRenderAsync(bool firstRender)

@@ -7,7 +7,7 @@ namespace MudBlazor.Services;
 /// <summary>
 /// Provides functionality to subscribe to JavaScript events of any HTML element by its ID.
 /// </summary>
-public interface IJsEvent : IDisposable
+public interface IJsEvent : IAsyncDisposable
 {
     /// <summary>
     /// Occurs when the caret position changes in an input element, either on click or keyup.

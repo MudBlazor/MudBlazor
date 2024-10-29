@@ -1,4 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
+﻿
 <MudPopoverProvider></MudPopoverProvider>
 
 <MudGrid>
@@ -15,7 +15,7 @@
         </MudSelect>
     </MudItem>
     <MudItem xs="12">
-        <MudButton OnClick="SetSelection">Set Selection</MudButton>
+        <MudButton id="set-selection-button" OnClick="SetSelection">Set Selection</MudButton>
     </MudItem>
 </MudGrid>
 
@@ -46,7 +46,7 @@
 
     class CoffeeComparer : IEqualityComparer<Coffee>
     {
-        public bool Equals(Coffee a, Coffee b) => a.Key == b.Key;
+        public bool Equals(Coffee? a, Coffee? b) => a.Key == b.Key;
         public int GetHashCode(Coffee x) => HashCode.Combine(x.Key);
     }
 }

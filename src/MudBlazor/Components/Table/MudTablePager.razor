@@ -43,10 +43,10 @@
     @if (!HidePagination)
     {
         <div class="mud-table-pagination-actions">
-            <MudIconButton Class="mud-flip-x-rtl" Icon="@FirstIcon" Disabled="@BackButtonsDisabled" @onclick="@(() => Table?.NavigateTo(Page.First))" aria-label="@Localizer[LanguageResource.MudTablePager_FirstPage]" />
-            <MudIconButton Class="mud-flip-x-rtl" Icon="@BeforeIcon" Disabled="@BackButtonsDisabled" @onclick="@(() => Table?.NavigateTo(Page.Previous))" aria-label="@Localizer[LanguageResource.MudTablePager_PreviousPage]" />
-            <MudIconButton Class="mud-flip-x-rtl" Icon="@NextIcon" Disabled="@ForwardButtonsDisabled" @onclick="@(() => Table?.NavigateTo(Page.Next))" aria-label="@Localizer[LanguageResource.MudTablePager_NextPage]" />
-            <MudIconButton Class="mud-flip-x-rtl" Icon="@LastIcon" Disabled="@ForwardButtonsDisabled" @onclick="@(() => Table?.NavigateTo(Page.Last))" aria-label="@Localizer[LanguageResource.MudTablePager_LastPage]" />
+            <MudIconButton Class="mud-flip-x-rtl mud-table-pagination-first-button" Icon="@FirstIcon" Disabled="@BackButtonsDisabled" @onclick="@(() => Table?.NavigateTo(Page.First))" aria-label="@Localizer[LanguageResource.MudTablePager_FirstPage]" />
+            <MudIconButton Class="mud-flip-x-rtl mud-table-pagination-before-button" Icon="@BeforeIcon" Disabled="@BackButtonsDisabled" @onclick="@(() => Table?.NavigateTo(Page.Previous))" aria-label="@Localizer[LanguageResource.MudTablePager_PreviousPage]" />
+            <MudIconButton Class="mud-flip-x-rtl mud-table-pagination-next-button" Icon="@NextIcon" Disabled="@ForwardButtonsDisabled" @onclick="@(() => Table?.NavigateTo(Page.Next))" aria-label="@Localizer[LanguageResource.MudTablePager_NextPage]" />
+            <MudIconButton Class="mud-flip-x-rtl mud-table-pagination-last-button" Icon="@LastIcon" Disabled="@ForwardButtonsDisabled" @onclick="@(() => Table?.NavigateTo(Page.Last))" aria-label="@Localizer[LanguageResource.MudTablePager_LastPage]" />
         </div>
     }
     @if (HorizontalAlignment == HorizontalAlignment.Start ||

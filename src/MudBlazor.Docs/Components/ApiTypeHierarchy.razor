@@ -5,20 +5,20 @@
                 @if (context.Value.Name == "Root")
                 {
                     <MudIcon Icon="@Icons.Material.Filled.Home" Color="Color.Primary" Class="mr-2" />
-                    <MudText>@context.Text</MudText>
+                    <MudText Typo="Typo.body2">@context.Text</MudText>
                 }
                 else
                 {
                     <MudTreeViewItemToggleButton @bind-Expanded="@context.Expanded" Visible="@(context.Children.Count > 0)" />
 
-                    @if (context.Value.Name == Type.NameFriendly)
+                    @if (context.Value.NameFriendly == Type.NameFriendly)
                     {
                         <MudIcon Icon="@Icons.Custom.Brands.MudBlazor" Color="Color.Primary" Class="mr-2" />
-                        <MudText>@context.Text</MudText>
+                        <MudText Typo="Typo.body2">@context.Text</MudText>
                     }
                     else if (!string.IsNullOrEmpty(context.Value.ApiUrl))
                     {
-                        <MudLink Href="@context.Value.ApiUrl">@context.Text</MudLink>
+                        <MudLink Typo="Typo.body2" Href="@context.Value.ApiUrl">@context.Text</MudLink>
                     }
                 }
             </Content>

@@ -20,6 +20,7 @@ namespace MudBlazor.UnitTests.Components
         {
             ctx = new Bunit.TestContext();
             ctx.JSInterop.Mode = JSRuntimeMode.Loose;
+            ctx.Services.AddSingleton(TimeProvider.System);
             ctx.Services.AddSingleton<IDialogService>(new DialogService());
             ctx.Services.AddSingleton<ISnackbar, SnackbarService>();
             ctx.Services.AddSingleton<IBrowserViewportService>(new MockBrowserViewportService());
@@ -49,7 +50,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task AlertPage_Test()
         {
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager("https://localhost:2112/", "https://localhost:2112/components/alert"));
-            var comp = ctx.RenderComponent<Docs.Pages.Components.Alert.AlertPage>();
+            var comp = ctx.RenderComponent<MudBlazor.Docs.Pages.Components.Alert.AlertPage>();
             await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();
         }
 

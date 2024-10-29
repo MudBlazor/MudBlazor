@@ -4,6 +4,7 @@
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Utilities;
 
 namespace MudBlazor.Internal;
 
@@ -12,6 +13,11 @@ namespace MudBlazor.Internal;
 /// </summary>
 public partial class MudInputAdornment
 {
+    protected string Classname =>
+        new CssBuilder("mud-input-adornment")
+            .AddClass(Class)
+            .Build();
+
     /// <summary>
     /// The CSS classes for this adornment.
     /// </summary>
@@ -34,13 +40,13 @@ public partial class MudInputAdornment
     public string Icon { get; set; }
 
     /// <summary>
-    /// The amount of negative margin applied to the icon.
+    /// Specifies the position of the adornment within the field.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="Edge.False"/>.  Other values are <see cref="Edge.Start"/> and <see cref="Edge.End"/>.
+    /// Defaults to <see cref="Adornment.None"/>.
     /// </remarks>
     [Parameter]
-    public Edge Edge { get; set; }
+    public Adornment Placement { get; set; }
 
     /// <summary>
     /// The size of the icon.

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Dialog;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components.Dialog;

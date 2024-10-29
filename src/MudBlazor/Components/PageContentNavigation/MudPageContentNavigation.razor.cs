@@ -77,7 +77,7 @@ namespace MudBlazor
         private void ScrollSpy_ScrollSectionSectionCentered(object? sender, ScrollSectionCenteredEventArgs e) =>
              SelectActiveSection(e.Id);
 
-        private void SelectActiveSection(string id)
+        private void SelectActiveSection(string? id)
         {
             if (string.IsNullOrEmpty(id))
             {

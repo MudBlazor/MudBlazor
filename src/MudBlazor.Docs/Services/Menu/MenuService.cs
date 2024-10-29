@@ -40,7 +40,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Nav Menu", typeof(MudNavMenu), typeof(MudNavLink), typeof(MudNavGroup))
             .AddItem("Tabs", typeof(MudTabs), typeof(MudTabPanel), typeof(MudDynamicTabs))
             .AddItem("Progress", typeof(MudProgressCircular), typeof(MudProgressLinear))
-            .AddItem("Dialog", typeof(MudDialog), typeof(MudDialogInstance), typeof(MudDialogProvider))
+            .AddItem("Dialog", typeof(MudDialog), typeof(MudDialogContainer), typeof(MudDialogProvider))
             .AddItem("Snackbar", typeof(MudSnackbarProvider))
             .AddItem("Avatar", typeof(MudAvatar), typeof(MudAvatarGroup))
             .AddItem("Alert", typeof(MudAlert))
@@ -238,6 +238,30 @@ namespace MudBlazor.Docs.Services
             return _componentLookup.TryGetValue(type, out var component)
                 ? component
                 : _parents.GetValueOrDefault(type);
+        }
+
+        /// <inheritdoc />
+        public string? GetComponentName(string typeName)
+        {
+            var cleanName = typeName.Replace("`1", "<T>").Replace("`2", "<T, U>");
+            foreach (var component in _docsComponents)
+            {
+                if (component.ComponentName != null && component.ComponentName.Equals(cleanName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return component.Name;
+                }
+                if (component.GroupComponents != null)
+                {
+                    foreach (var groupComponent in component.GroupComponents)
+                    {
+                        if (groupComponent.ComponentName.Equals(cleanName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return groupComponent.Name;
+                        }
+                    }
+                }
+            }
+            return null;
         }
 
         /// <summary>

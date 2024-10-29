@@ -22,6 +22,9 @@
 </MudStack>
 
 @code {
+    private readonly List<string> _chips = [];
+    private IReadOnlyCollection<string> _selectedValues = [];
+
     [Parameter]
     public bool AreChipsClosable { get; set; }
 
@@ -34,9 +37,5 @@
     [Parameter]
     public EventCallback<MudChip<string>> OnClose { get; set; }
 
-    private readonly List<string> _chips = [];
-    private IReadOnlyCollection<string> _selectedValues = [];
-
-    private void AddChip()
-        => _chips.Add($"Chip {_chips.Count + 1}");
+    private void AddChip() => _chips.Add($"Chip {_chips.Count + 1}");
 }

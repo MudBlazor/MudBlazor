@@ -22,62 +22,46 @@ public abstract class DocumentedMember
     /// <remarks>
     /// This value comes from the <see cref="CategoryAttribute"/> applied to the member.
     /// </remarks>
-    public string Category { get; set; } = "General";
+    public string Category { get; init; } = "General";
 
     /// <summary>
     /// The type which defines this member.
     /// </summary>
-    public string? DeclaringTypeName { get; set; }
+    public DocumentedType? DeclaringType { get; set; }
 
     /// <summary>
-    /// The declaring type for this member.
+    /// The name of the type which defines this member.
     /// </summary>
-    public DocumentedType? DeclaringType
-    {
-        get
-        {
-            if (string.IsNullOrEmpty(DeclaringTypeName))
-            {
-                return null;
-            }
-            var key = DeclaringTypeName;
-            var genericsStart = DeclaringTypeName.IndexOf('[');
-            if (genericsStart != -1)
-            {
-                key = DeclaringTypeName.Substring(0, genericsStart);
-            }
-            if (ApiDocumentation.Types.TryGetValue(key, out var type))
-            {
-                return type;
-            }
-            return null;
-        }
-    }
+    /// <remarks>
+    /// When <see cref="DeclaringType"/> is not set, the name of the declaring type.  This should only be set for 
+    /// external types such as <see cref="Microsoft.AspNetCore.Components.ComponentBase"/>.
+    /// </remarks>
+    public string? DeclaringTypeName { get; set; }
 
     /// <summary>
     /// Whether this member is only visible to inheritors.
     /// </summary>
-    public bool IsProtected { get; set; }
+    public bool IsProtected { get; init; }
 
     /// <summary>
     /// The name of this member.
     /// </summary>
-    public string Name { get; set; } = "";
+    public string Name { get; init; } = "";
 
     /// <summary>
     /// The order of this member relative to other members.
     /// </summary>
-    public int? Order { get; set; }
+    public int Order { get; init; } = int.MaxValue;
 
     /// <summary>
     /// The detailed description for this member, and any related information.
     /// </summary>
-    public string? Remarks { get; set; }
+    public string? Remarks { get; init; }
 
     /// <summary>
     /// The brief summary of this member.
     /// </summary>
-    public string? Summary { get; set; }
+    public string? Summary { get; init; }
 
     /// <summary>
     /// The brief summary of this member as plain text.
@@ -87,7 +71,7 @@ public abstract class DocumentedMember
     /// <summary>
     /// The name of the type of this member.
     /// </summary>
-    public string TypeName { get; set; } = "";
+    public string TypeName { get; init; } = "";
 
     /// <summary>
     /// The type of this member.
@@ -97,7 +81,7 @@ public abstract class DocumentedMember
     /// <summary>
     /// The user-facing name of this member's type.
     /// </summary>
-    public string? TypeFriendlyName { get; set; }
+    public string? TypeFriendlyName { get; init; }
 
     /// <summary>
     /// Extracts a plaintext version of XML documentation text.

@@ -17,7 +17,7 @@ using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
-using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.DataGrid;
 using MudBlazor.Utilities.Clone;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
@@ -602,7 +602,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task DataGridMultiSelectionTest_Should_Not_Render_Footer_If_ShowInFooter_Is_False()
         {
             var comp = Context.RenderComponent<DataGridMultiSelectionTest>(
-                Parameter(nameof(MudBlazor.UnitTests.TestComponents.DataGridMultiSelectionTest.ShowInFooter), false));
+                Parameter(nameof(MudBlazor.UnitTests.TestComponents.DataGrid.DataGridMultiSelectionTest.ShowInFooter), false));
             comp.FindAll("td.footer-cell").Should().BeEmpty();
         }
 
@@ -1272,7 +1272,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task DataGridServerSideSortableTest()
         {
             // Disable simulated load on server side:
-            TestComponents.DataGridServerSideSortableTest.DisableServerTimeoutForTests = true;
+            TestComponents.DataGrid.DataGridServerSideSortableTest.DisableServerTimeoutForTests = true;
 
             var comp = Context.RenderComponent<DataGridServerSideSortableTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerSideSortableTest.Item>>();
@@ -4609,7 +4609,7 @@ namespace MudBlazor.UnitTests.Components
             var ageSort = new SortDefinition<DataGridFiltersTest.Model>("Age", Descending: false, 1, default!);
 
             var query = Array.Empty<DataGridFiltersTest.Model>().AsQueryable().OrderBy([nameSort, ageSort]);
-            query.ToString().Should().Be("MudBlazor.UnitTests.TestComponents.DataGridFiltersTest+Model[].OrderByDescending(x => x.Name).ThenBy(x => x.Age)");
+            query.ToString().Should().Be("MudBlazor.UnitTests.TestComponents.DataGrid.DataGridFiltersTest+Model[].OrderByDescending(x => x.Name).ThenBy(x => x.Age)");
         }
 
         [Test]
@@ -4619,7 +4619,7 @@ namespace MudBlazor.UnitTests.Components
             var ageSort = new SortDefinition<DataGridFiltersTest.Model>("Age", Descending: true, 1, default!);
 
             var query = Array.Empty<DataGridFiltersTest.Model>().AsQueryable().OrderBy([nameSort, ageSort]);
-            query.ToString().Should().Be("MudBlazor.UnitTests.TestComponents.DataGridFiltersTest+Model[].OrderBy(x => x.Name).ThenByDescending(x => x.Age)");
+            query.ToString().Should().Be("MudBlazor.UnitTests.TestComponents.DataGrid.DataGridFiltersTest+Model[].OrderBy(x => x.Name).ThenByDescending(x => x.Age)");
         }
 
         [Test]
@@ -4651,6 +4651,31 @@ namespace MudBlazor.UnitTests.Components
             items[1].TextContent.Should().Be("Free education");
             items[2].TextContent.Should().Be("Paid training");
             items[3].TextContent.Should().Be("Untranslated");
+        }
+
+        [Test]
+        public void DataGridValidatorFormBinding()
+        {
+            var comp = Context.RenderComponent<DataGridValidatorTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridValidatorTest.Item>>().Instance;
+            dataGrid.Validator.Should().BeSameAs(form);
+
+            var textField = comp.FindComponent<MudTextField<string>>();
+            form.IsTouched.Should().BeFalse();
+            form.IsValid.Should().BeFalse();
+
+            // input valid value into text field
+            textField.Find("input").Input("not empty");
+
+            form.IsTouched.Should().BeTrue();
+            form.IsValid.Should().BeTrue();
+
+            // input invalid value into text field
+            textField.Find("input").Input("");
+
+            form.IsTouched.Should().BeTrue();
+            form.IsValid.Should().BeFalse();
         }
     }
 }

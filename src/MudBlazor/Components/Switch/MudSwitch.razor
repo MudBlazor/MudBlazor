@@ -21,13 +21,13 @@
             </span>
             @if (!string.IsNullOrEmpty(Label))
             {
-                <MudText Class="@SwitchLabelClassname" Color="HasErrors ? Color.Error : Color.Inherit">
+                <MudText Class="@LabelClassname" Color="HasErrors ? Color.Error : Color.Inherit">
                     @Label
                 </MudText>
             }
             @if (ChildContent != null)
             {
-                <MudText Class="@SwitchLabelClassname" Color="HasErrors ? Color.Error : Color.Inherit">
+                <MudText Class="@LabelClassname" Color="HasErrors ? Color.Error : Color.Inherit">
                     @ChildContent
                 </MudText>
             }

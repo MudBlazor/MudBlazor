@@ -346,5 +346,18 @@
                 <DataGridColumnsPanelExample />
             </SectionContent>
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Validator">
+                <Description>
+                    When a <CodeInline>&lt;MudDataGrid></CodeInline> is used as part of a <CodeInline>MudForm</CodeInline> you might want to
+                    bind the <CodeInline>Validator</CodeInline> property to the outer <CodeInline>MudForm</CodeInline> so that validation
+                    and <CodeInline>IsTouched</CodeInline> states are reflected in/propagated to the outer <CodeInline>MudForm</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridValidatorExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridValidatorExample />
+            </SectionContent>
+        </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

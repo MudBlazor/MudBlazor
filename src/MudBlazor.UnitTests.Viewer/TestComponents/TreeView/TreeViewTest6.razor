@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudTreeView T="string" @bind-SelectedValue="SelectedValue" @ref="Tree">
+﻿<MudTreeView T="string" @bind-SelectedValue="SelectedValue">
     <MudTreeViewItem Value='"content"'>
         <MudTreeViewItem Value='"logo.png"' />
         <MudTreeViewItem Value='"MudBlazor.svg"' />
@@ -18,6 +16,6 @@
 </MudTreeView>
 
 @code {
-    [Parameter] public string SelectedValue { get; set; }
-    public MudTreeView<string> Tree { get; set; }
+    [Parameter]
+    public string? SelectedValue { get; set; }
 }

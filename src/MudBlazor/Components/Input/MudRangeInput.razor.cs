@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -38,6 +38,11 @@ namespace MudBlazor
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
 
         protected string AdornmentClassname => MudInputCssHelper.GetAdornmentClassname(this);
+
+        protected string ClearButtonClassname =>
+            new CssBuilder("mud-input-clear-button")
+                .AddClass(Adornment is Adornment.Start ? "me-0" : "me-n4")
+                .Build();
 
         /// <summary>
         /// The hint displayed before the user enters a starting value.

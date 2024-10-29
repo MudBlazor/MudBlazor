@@ -1,4 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
+﻿
 
 <div style="max-width: 400px;">
     <EditForm EditContext="@editContext">
@@ -44,7 +44,7 @@
         editContext.OnFieldChanged += HandleFieldChanged;
     }
 
-    private void HandleFieldChanged(object sender, FieldChangedEventArgs e)
+    private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
     {
         switch (e.FieldIdentifier.FieldName)
         {

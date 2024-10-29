@@ -3,7 +3,6 @@ using MudBlazor.State;
 
 namespace MudBlazor.UnitTests;
 
-#nullable enable
 public partial class SharedStateHandlerTestComp : MudComponentBase
 {
     public SharedStateHandlerTestComp()

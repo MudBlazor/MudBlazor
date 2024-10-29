@@ -6,6 +6,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Tooltip;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -39,8 +40,8 @@ namespace MudBlazor.UnitTests.Components
             var tooltipComp = comp.FindComponent<MudTooltip>().Instance;
 
             // content should always be visible
-            var button = comp.Find("button");
-            button.TextContent.Should().Be("My Buttion");
+            var button = comp.Find("#sample-button");
+            button.TextContent.Should().Be("My Button");
 
             button.ParentElement.ClassList.Should().Contain("mud-tooltip-root");
 
@@ -91,8 +92,8 @@ namespace MudBlazor.UnitTests.Components
                 ));
 
             // content should always be visible
-            var button = comp.Find("button");
-            button.TextContent.Should().Be("My Buttion");
+            var button = comp.Find("#sample-button");
+            button.TextContent.Should().Be("My Button");
 
             button.ParentElement.ClassList.Should().Contain("mud-tooltip-root");
 
@@ -108,8 +109,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TooltipWithRenderFragmentContentTest>();
 
             // content should always be visible
-            var button = comp.Find("button");
-            button.TextContent.Should().Be("My Buttion");
+            var button = comp.Find("#sample-button");
+            button.TextContent.Should().Be("My Button");
 
             button.ParentElement.ClassList.Should().Contain("mud-tooltip-root");
 

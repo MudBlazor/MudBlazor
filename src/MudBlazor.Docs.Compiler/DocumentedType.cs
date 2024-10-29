@@ -2,8 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace MudBlazor.Docs.Compiler;
@@ -23,11 +21,6 @@ public class DocumentedType
     /// The unique key for this type.
     /// </summary>
     public string Key { get; set; }
-
-    /// <summary>
-    /// The key for this type for XML documentation.
-    /// </summary>
-    public string XmlKey { get; set; }
 
     /// <summary>
     /// The XML documentation summary for this type.

@@ -646,13 +646,13 @@ namespace MudBlazor.UnitTests.Components
             var treeView = comp.FindComponent<MudTreeView<string>>();
 
             await comp.InvokeAsync(() => comp.Instance.ClickFirst());
-            comp.WaitForAssertion(() => comp.Instance.selectedValue.Should().Be("content"));
+            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be("content"));
 
             await comp.InvokeAsync(() => comp.Instance.ClickSecond());
-            comp.WaitForAssertion(() => comp.Instance.selectedValue.Should().Be("src"));
+            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be("src"));
 
             await comp.InvokeAsync(() => comp.Instance.ClickSecond());
-            comp.WaitForAssertion(() => comp.Instance.selectedValue.Should().Be(null));
+            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(null));
         }
 
 
