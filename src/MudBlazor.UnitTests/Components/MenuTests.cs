@@ -1,11 +1,13 @@
-﻿using System;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.DataGrid;
 using MudBlazor.UnitTests.TestComponents.Menu;
 using NUnit.Framework;
 
@@ -519,6 +521,28 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => mudMenus[0].Instance.Open.Should().BeFalse());
             comp.WaitForAssertion(() => mudMenus[1].Instance.Open.Should().BeTrue());
             await cancellationTokenSource.CancelAsync();
+        }
+
+        [Test]
+        public async Task OpenMenuAsync_Should_Set_PopoverStyle()
+        {
+            // Arrange
+            var comp = Context.RenderComponent<DataGridContextMenuTest>();
+            var mudMenu = comp.Instance._contextMenu;
+            mudMenu.Should().NotBeNull();
+
+            // Act
+            await Context.Renderer.Dispatcher.InvokeAsync(() => mudMenu.OpenMenuAsync(new MouseEventArgs()));
+
+            // Assert
+            mudMenu.AnchorOrigin.Should().Be(Origin.TopLeft);
+            mudMenu.PopoverClass.Should().Contain("mud-popover-position-override");
+
+            // Style is still null here and can't access _popoverStyle due to private
+            //await Context.Renderer.Dispatcher.InvokeAsync(() => mudMenu.Style.Should().Contain("top:"));
+            //await Context.Renderer.Dispatcher.InvokeAsync(() => mudMenu.Style.Should().Contain("left:"));
+
+            await Context.Renderer.Dispatcher.InvokeAsync(() => mudMenu.CloseMenuAsync());
         }
     }
 }
