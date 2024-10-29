@@ -185,7 +185,6 @@ namespace MudBlazor.UnitTests.Components
         public void LabelShouldShrinkWhenShrinkLabelIsSet()
         {
             var comp = Context.RenderComponent<TextFieldShrinkLabelTest>();
-            
             var noMask = comp.FindComponents<MudTextField<string>>()[0];
             var masked = comp.FindComponents<MudTextField<string>>()[1];
 
