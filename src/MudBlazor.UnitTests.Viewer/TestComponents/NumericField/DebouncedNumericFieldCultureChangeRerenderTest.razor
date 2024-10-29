@@ -39,7 +39,7 @@
         _renderCount++;
     }
 
-    async Task LaunchDelayedCultureChange()
+    private async Task LaunchDelayedCultureChange()
     {
         await Task.Delay(RerenderDelay);
         Culture = new CultureInfo("de-DE");

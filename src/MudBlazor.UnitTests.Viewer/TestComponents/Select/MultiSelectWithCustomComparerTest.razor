@@ -1,5 +1,4 @@
-﻿
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
 <MudGrid>
     <MudItem xs="12">
@@ -7,7 +6,7 @@
                    MultiSelection="true"
                    SelectedValues="Selected" SelectedValuesChanged="SelectedChanged"
                    Comparer="Comparer"
-                   ToStringFunc="@(x => x.Name)">
+                   ToStringFunc="@(x => x?.Name)">
             <MudSelectItem Value="@(new Coffee("cap","Cappuccino"))" />
             <MudSelectItem Value="@(new Coffee("lat","Cafe Latte"))" />
             <MudSelectItem Value="@(new Coffee("esp","Espresso"))" />
@@ -20,33 +19,36 @@
 </MudGrid>
 
 @code {
-    static CoffeeComparer Comparer { get; } = new();
+    private static CoffeeComparer Comparer { get; } = new();
 
-    HashSet<Coffee> Selected { get; } = new(Comparer);
+    private HashSet<Coffee?> Selected { get; } = new(Comparer);
 
-    void SelectedChanged(IEnumerable<Coffee> newSelected)
+    private void SelectedChanged(IEnumerable<Coffee?>? newSelected)
     {
         Selected.Clear();
-        Selected.UnionWith(newSelected);
+        if (newSelected is not null)
+        {
+            Selected.UnionWith(newSelected);
+        }
     }
 
-    void SetSelection()
+    private void SetSelection()
     {
         Selected.Clear();
-        Selected.Add(new("lat", "Selected Cafe Latte"));
-        Selected.Add(new("esp", "Selected Espresso"));
+        Selected.Add(new Coffee("lat", "Selected Cafe Latte"));
+        Selected.Add(new Coffee("esp", "Selected Espresso"));
     }
 
-    class Coffee
+    private class Coffee(string key, string name)
     {
-        public string Key { get; set; }
-        public string Name { get; set; }
-        public Coffee(string key, string name) { Key = key; Name = name; }
+        public string Key { get; } = key;
+        public string Name { get; } = name;
     }
 
-    class CoffeeComparer : IEqualityComparer<Coffee>
+    private class CoffeeComparer : IEqualityComparer<Coffee?>
     {
-        public bool Equals(Coffee? a, Coffee? b) => a.Key == b.Key;
-        public int GetHashCode(Coffee x) => HashCode.Combine(x.Key);
+        public bool Equals(Coffee? a, Coffee? b) => a?.Key == b?.Key;
+
+        public int GetHashCode(Coffee? x) => HashCode.Combine(x?.Key);
     }
 }
