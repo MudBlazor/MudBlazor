@@ -8,7 +8,7 @@
     <CellTemplate>
         @if (!_finishedInitialExpanded && InitiallyExpandedFunc.Invoke(context.Item))
         {
-            context.OpenHierarchies.Add(context.Item);
+            InitiallyExpandedItems.Add(context);
         }
         <MudIconButton 
             Class="ma-n3 pa-1"

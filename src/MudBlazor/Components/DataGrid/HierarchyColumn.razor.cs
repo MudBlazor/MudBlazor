@@ -89,13 +89,21 @@ public partial class HierarchyColumn<T> : MudComponentBase
     [Parameter]
     public Func<T, bool> InitiallyExpandedFunc { get; set; } = _ => false;
 
+    private HashSet<CellContext<T>> InitiallyExpandedItems { get; set; } = [];
+
     /// <inheritdoc/>
     protected override void OnAfterRender(bool firstRender)
     {
         base.OnAfterRender(firstRender);
+
         if (firstRender)
         {
             _finishedInitialExpanded = true;
+
+            foreach (var context in InitiallyExpandedItems)
+            {
+                context.Actions.ToggleHierarchyVisibilityForItemAsync.Invoke();
+            }
         }
     }
 }
