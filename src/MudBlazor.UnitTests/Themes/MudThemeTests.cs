@@ -24,7 +24,7 @@ public class MudThemeTests
         };
 
         var mudThemeType = typeof(MudTheme);
-        var context = new MudThemeSerializerContext();
+        var context = MudThemeSerializerContext.Default;
 
         var jsonString = System.Text.Json.JsonSerializer.Serialize(originalMudTheme, mudThemeType, context);
         var deserializeMudTheme = (MudTheme)System.Text.Json.JsonSerializer.Deserialize(jsonString, mudThemeType, context)!;

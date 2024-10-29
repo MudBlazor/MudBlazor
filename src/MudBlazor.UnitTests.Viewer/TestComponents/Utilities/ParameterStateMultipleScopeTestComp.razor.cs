@@ -7,7 +7,6 @@ using MudBlazor.State;
 
 namespace MudBlazor.UnitTests;
 
-#nullable enable
 public partial class ParameterStateMultipleScopeTestComp : MudComponentBase
 {
     public ParameterStateMultipleScopeTestComp()

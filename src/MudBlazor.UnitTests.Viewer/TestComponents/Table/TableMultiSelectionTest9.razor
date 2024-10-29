@@ -1,13 +1,11 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudText>SelectedItems { @string.Join(", ", selectedItems) }</MudText>
+﻿<MudText>SelectedItems { @string.Join(", ", _selectedItems) }</MudText>
 <MudTable Items="Items"
           T="TableGroupingTest.RacingCar"
           MultiSelection="true"
           SelectOnRowClick="true"
           SelectionChangeable="false"
-          @bind-SelectedItems="selectedItems"
-          GroupBy="@groups"
+          @bind-SelectedItems="_selectedItems"
+          GroupBy="@_groups"
           GroupHeaderStyle="background-color:var(--mud-palette-background-gray)"
           RowClass="row-click-test"
           OnRowClick="(args) => ++_count">
@@ -28,22 +26,26 @@
 
 @code {
     public static string __description__ = "The checkboxes should all be disabled on load, even the header, group headers and footer checkboxes.";
-    public IEnumerable<TableGroupingTest.RacingCar> Items { get; private set; } = [
-        new("F488", "Ferrari", "GTE"),
-        new("919 Hybrid", "Porsche", "LMP1"),
-        new("911 RSR", "Porsche", "GTE"),
-        new("911 RS", "Porsche", "GT3")
-    ];
-    private TableGroupDefinition<TableGroupingTest.RacingCar> groups = new()
+
+    private int _count;
+    private HashSet<TableGroupingTest.RacingCar> _selectedItems = [];
+    private readonly TableGroupDefinition<TableGroupingTest.RacingCar> _groups = new()
     {
         GroupName = "Category",
         Selector = rc => rc.Category,
-        InnerGroup = new()
+        InnerGroup = new TableGroupDefinition<TableGroupingTest.RacingCar>
         {
             GroupName = "Brand",
             Selector = rc => rc.Brand
         }
     };
-    private HashSet<TableGroupingTest.RacingCar> selectedItems = [];
-    private int _count = 0;
+
+    public IEnumerable<TableGroupingTest.RacingCar> Items { get; } =
+    [
+        new("F488", "Ferrari", "GTE"),
+        new("919 Hybrid", "Porsche", "LMP1"),
+        new("911 RSR", "Porsche", "GTE"),
+        new("911 RS", "Porsche", "GT3")
+    ];
+
 }

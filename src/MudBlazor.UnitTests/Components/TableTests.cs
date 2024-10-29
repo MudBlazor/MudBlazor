@@ -1,16 +1,13 @@
 ﻿#pragma warning disable CS1998 // async without await
 #pragma warning disable BL0005 // Set parameter outside component
 
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Table;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -370,43 +367,43 @@ namespace MudBlazor.UnitTests.Components
             // after initial load
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
-            comp.FindAll("button")[0].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
-            IRefreshableElementCollection<IElement> PagingButtons() => comp.FindAll("button");
+            comp.Find(".mud-table-pagination-first-button").IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-before-button").IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-next-button").IsDisabled().Should().Be(false);
+            comp.Find(".mud-table-pagination-last-button").IsDisabled().Should().Be(false);
+            IRefreshableElementCollection<IElement> PagingButtons() => comp.FindAll(".mud-table-pagination-actions button");
             // click next page
             PagingButtons()[2].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("11-20 of 59");
-            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
+            comp.Find(".mud-table-pagination-first-button").IsDisabled().Should().Be(false);
+            comp.Find(".mud-table-pagination-before-button").IsDisabled().Should().Be(false);
+            comp.Find(".mud-table-pagination-next-button").IsDisabled().Should().Be(false);
+            comp.Find(".mud-table-pagination-last-button").IsDisabled().Should().Be(false);
             // last page
             PagingButtons()[3].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(9);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("51-59 of 59");
-            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[2].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-first-button").IsDisabled().Should().Be(false);
+            comp.Find(".mud-table-pagination-before-button").IsDisabled().Should().Be(false);
+            comp.Find(".mud-table-pagination-next-button").IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-last-button").IsDisabled().Should().Be(true);
             // previous page
             PagingButtons()[1].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("41-50 of 59");
-            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
+            comp.Find(".mud-table-pagination-first-button").IsDisabled().Should().Be(false);
+            comp.Find(".mud-table-pagination-before-button").IsDisabled().Should().Be(false);
+            comp.Find(".mud-table-pagination-next-button").IsDisabled().Should().Be(false);
+            comp.Find(".mud-table-pagination-last-button").IsDisabled().Should().Be(false);
             // first page
             PagingButtons()[0].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
-            comp.FindAll("button")[0].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
+            comp.Find(".mud-table-pagination-first-button").IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-before-button").IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-next-button").IsDisabled().Should().Be(false);
+            comp.Find(".mud-table-pagination-last-button").IsDisabled().Should().Be(false);
         }
 
         /// <summary>
@@ -458,28 +455,28 @@ namespace MudBlazor.UnitTests.Components
             pager.Value.Should().Be(20);
             comp.FindAll("tr.mud-table-row").Count.Should().Be(20);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-20 of 59");
-            comp.FindAll("button")[0].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
+            comp.Find(".mud-table-pagination-first-button").IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-before-button").IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-next-button").IsDisabled().Should().Be(false);
+            comp.Find(".mud-table-pagination-last-button").IsDisabled().Should().Be(false);
             // change page size
             await table.InvokeAsync(() => table.Instance.SetRowsPerPage(60));
             pager.Value.Should().Be(60);
             comp.FindAll("tr.mud-table-row").Count.Should().Be(59);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-59 of 59");
-            comp.FindAll("button")[0].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[2].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-first-button").IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-before-button").IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-next-button").IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-last-button").IsDisabled().Should().Be(true);
             // change page size
             await table.InvokeAsync(() => table.Instance.SetRowsPerPage(10));
             pager.Value.Should().Be(10);
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
-            comp.FindAll("button")[0].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
+            comp.Find(".mud-table-pagination-first-button").IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-before-button").IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-next-button").IsDisabled().Should().Be(false);
+            comp.Find(".mud-table-pagination-last-button").IsDisabled().Should().Be(false);
         }
 
         /// <summary>
@@ -499,10 +496,10 @@ namespace MudBlazor.UnitTests.Components
             pager.Value.Should().Be(int.MaxValue);
             comp.FindAll("tr.mud-table-row").Count.Should().Be(59);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-59 of 59");
-            comp.FindAll("button")[0].IsDisabled().Should().Be(true); //buttons are disabled
-            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[2].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-first-button").IsDisabled().Should().Be(true); //buttons are disabled
+            comp.Find(".mud-table-pagination-before-button").IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-next-button").IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-last-button").IsDisabled().Should().Be(true);
             pager.Value.Should().Be(int.MaxValue);
         }
 
@@ -523,28 +520,28 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[1].TextContent.Trim().Should().Be("2");
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("3");
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 99");
-            comp.FindAll("button")[0].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
+            comp.Find(".mud-table-pagination-first-button").IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-before-button").IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-next-button").IsDisabled().Should().Be(false);
+            comp.Find(".mud-table-pagination-last-button").IsDisabled().Should().Be(false);
             // last page
             comp.FindAll("div.mud-table-pagination-actions button")[3].Click(); // last >
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("28");
             comp.FindAll("td")[1].TextContent.Trim().Should().Be("29");
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("30");
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("91-99 of 99");
-            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[2].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-first-button").IsDisabled().Should().Be(false);
+            comp.Find(".mud-table-pagination-before-button").IsDisabled().Should().Be(false);
+            comp.Find(".mud-table-pagination-next-button").IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-last-button").IsDisabled().Should().Be(true);
             // change page size
             await table.InvokeAsync(() => table.Instance.SetRowsPerPage(100));
             pager.Value.Should().Be(100);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-99 of 99");
-            comp.FindAll("button")[0].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[2].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-first-button").IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-before-button").IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-next-button").IsDisabled().Should().Be(true);
+            comp.Find(".mud-table-pagination-last-button").IsDisabled().Should().Be(true);
         }
 
         /// <summary>
@@ -576,7 +573,7 @@ namespace MudBlazor.UnitTests.Components
             // after initial load
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
-            IRefreshableElementCollection<IElement> PagingButtons() => comp.FindAll("button");
+            IRefreshableElementCollection<IElement> PagingButtons() => comp.FindAll(".mud-table-pagination-actions button");
             // goto page 3
             PagingButtons()[2].Click();
             PagingButtons()[2].Click();
@@ -1974,7 +1971,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // without grouping, to ensure that anything was broken:
             var comp = Context.RenderComponent<TableGroupingTest>();
-            var table = comp.Instance.tableInstance;
+            var table = comp.Instance.TableInstance;
             table.Context.HeaderRows.Count.Should().Be(1);
             table.Context.GroupRows.Count.Should().Be(0);
             table.Context.Rows.Count.Should().Be(9);
@@ -1992,7 +1989,7 @@ namespace MudBlazor.UnitTests.Components
 
             //group by Racing Category:
             comp = Context.RenderComponent<TableGroupingTest>();
-            table = comp.Instance.tableInstance;
+            table = comp.Instance.TableInstance;
             table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category, null) { GroupName = "Category" };
             comp.Render();
             table.Context.GroupRows.Count.Should().Be(4);
@@ -2019,7 +2016,7 @@ namespace MudBlazor.UnitTests.Components
 
             //group by Racing Category and Brand:
             comp = Context.RenderComponent<TableGroupingTest>();
-            table = comp.Instance.tableInstance;
+            table = comp.Instance.TableInstance;
             table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>()
             {
                 GroupName = "Category",
@@ -2117,7 +2114,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // without grouping, to ensure that anything was broken:
             var comp = Context.RenderComponent<TableGroupingTest2>();
-            var table = comp.Instance.tableInstance;
+            var table = comp.Instance.TableInstance;
             table.Context.HeaderRows.Count.Should().Be(1);
 
             // Page 01:
@@ -2163,7 +2160,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // group by Racing Category and collapse groups as default:
             var comp = Context.RenderComponent<TableGroupingTest>();
-            var table = comp.Instance.tableInstance;
+            var table = comp.Instance.TableInstance;
             table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category, null)
             {
                 GroupName = "Category",
@@ -2180,7 +2177,7 @@ namespace MudBlazor.UnitTests.Components
         public void ExpandAndCollapsAllGroupsTest()
         {
             var comp = Context.RenderComponent<TableGroupingTest>();
-            var table = comp.Instance.tableInstance;
+            var table = comp.Instance.TableInstance;
             table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category, null) { GroupName = "Category", IsInitiallyExpanded = false, Expandable = true };
             comp.Render();
 

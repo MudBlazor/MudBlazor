@@ -10,7 +10,7 @@ namespace MudBlazor.Services
     /// <summary>
     /// Subscribes to JavaScript events of any HTML element by its ID.
     /// </summary>
-    internal class JsEvent : IJsEvent
+    internal sealed class JsEvent : IJsEvent
     {
         private bool _disposed;
         private string _elementId;
@@ -241,27 +241,15 @@ namespace MudBlazor.Services
             }
         }
 
-        /// <summary>
-        /// Releases the unmanaged resources used by the <see cref="JsEvent"/> and optionally releases the managed resources.
-        /// </summary>
-        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposing || _disposed)
-            {
-                return;
-            }
-
-            _disposed = true;
-            Disconnect().CatchAndLog();
-            _dotNetRef.Dispose();
-        }
-
         /// <inheritdoc />
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            if (!_disposed)
+            {
+                _disposed = true;
+                await Disconnect();
+                _dotNetRef.Dispose();
+            }
         }
     }
 }

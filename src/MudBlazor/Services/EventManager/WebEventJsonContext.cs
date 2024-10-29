@@ -9,6 +9,10 @@ using ErrorEventArgs = Microsoft.AspNetCore.Components.Web.ErrorEventArgs;
 
 namespace MudBlazor;
 
+#nullable enable
+/// <summary>
+/// JSON serialization context for web event arguments.
+/// </summary>
 [JsonSerializable(typeof(EventArgs))]
 [JsonSerializable(typeof(ChangeEventArgs))]
 [JsonSerializable(typeof(ClipboardEventArgs))]

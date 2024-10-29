@@ -13,9 +13,9 @@
         @if (!GetHideHeader())
         {
             <div class="@TitleClassname">
-                @if (TitleContent == null)
+                @if (TitleContent is null)
                 {
-                    <MudText Typo="Typo.h6">@Title</MudText>
+                    <MudText Typo="Typo.h6">@_titleState.Value</MudText>
                 }
                 else
                 {
@@ -23,11 +23,11 @@
                 }
                 @if (GetCloseButton())
                 {
-                    <MudIconButton aria-label="@Localizer[LanguageResource.MudDialog_Close]" Icon="@CloseIcon" @onclick="Cancel" class="mud-button-close" />
+                    <MudIconButton aria-label="@Localizer[LanguageResource.MudDialog_Close]" Icon="@CloseIcon" @onclick="((IMudDialogInstance)this).Cancel" Class="mud-button-close" />
                 }
             </div>
          }
-        <CascadingValue Value="this" IsFixed="true">
+        <CascadingValue Value="(IMudDialogInstanceInternal)this" IsFixed="true">
             @Content
         </CascadingValue>
     </div>

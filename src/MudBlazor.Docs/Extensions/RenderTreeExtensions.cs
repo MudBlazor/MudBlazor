@@ -21,16 +21,24 @@ public static class RenderTreeExtensions
     /// <param name="sequence"></param>
     /// <param name="typo"></param>
     /// <param name="text"></param>
-    public static void AddMudText(this RenderTreeBuilder builder, int sequence, Typo typo = Typo.body1, string text = null)
+    public static void AddMudText(this RenderTreeBuilder builder, int sequence, Typo typo = Typo.body1, Color color = Color.Inherit, string text = null)
     {
         if (!string.IsNullOrEmpty(text))
         {
             builder.OpenRegion(sequence);
             builder.OpenComponent<MudText>(0);
-            builder.AddComponentParameter(1, "Typo", typo);
-            builder.AddComponentParameter(2, "ChildContent", (RenderFragment)(textContentBuilder =>
+            if (typo != Typo.body1) // Only render Typo if not the MudText default
             {
-                textContentBuilder.AddContent(3, text);
+                builder.AddComponentParameter(1, "Typo", typo);
+            }
+            if (color != Color.Inherit) // Only render Color if not the MudText default
+            {
+                builder.AddComponentParameter(2, "Color", color);
+            }
+            builder.AddComponentParameter(3, "HtmlTag", "span");
+            builder.AddComponentParameter(4, "ChildContent", (RenderFragment)(textContentBuilder =>
+            {
+                textContentBuilder.AddContent(0, text);
             }));
             builder.CloseComponent();
             builder.CloseRegion();
@@ -47,10 +55,13 @@ public static class RenderTreeExtensions
     /// <param name="childContentBuilder"></param>
     public static void AddMudTooltip(this RenderTreeBuilder builder, int sequence, Placement placement = Placement.Top, string text = "", Action<int, RenderTreeBuilder> childContentBuilder = null)
     {
+        // Limit the tooltip to 60 characters
+        var truncatedText = text.Length > 60 ? string.Concat(text.AsSpan(0, 60), "...") : text;
+
         // <MudTooltip Placement="Placement.Top" Text="{summary}">
         builder.OpenRegion(sequence);
         builder.OpenComponent<MudTooltip>(0);
-        builder.AddComponentParameter(1, "Text", text);
+        builder.AddComponentParameter(1, "Text", truncatedText);
         builder.AddComponentParameter(2, "Placement", placement);
         builder.AddComponentParameter(3, "ChildContent", (RenderFragment)(contentBuilder =>
         {
@@ -74,16 +85,12 @@ public static class RenderTreeExtensions
         var parts = iconTypeName.Split('.');
         var icon = parts[parts.Length - 1];
         var svg = typeof(Icons).GetNestedType(parts[2])?.GetNestedType(parts[3])?.GetField(icon)?.GetValue(null);
-        // And pass into a <MudIcon>
-        AddMudTooltip(builder, sequence, Placement.Top, iconTypeName, (childSequence, childContentBuilder) =>
-        {
-            childContentBuilder.OpenComponent<MudIcon>(childSequence++);
-            childContentBuilder.AddComponentParameter(childSequence++, "Color", color);
-            childContentBuilder.AddComponentParameter(childSequence++, "Size", size);
-            childContentBuilder.AddComponentParameter(childSequence++, "Icon", svg);
-            childContentBuilder.AddComponentParameter(childSequence++, "Style", "position:relative;top:7px;"); // Vertically center the icon
-            childContentBuilder.CloseComponent();
-        });
+        builder.OpenComponent<MudIcon>(sequence++);
+        builder.AddComponentParameter(sequence++, "Color", color);
+        builder.AddComponentParameter(sequence++, "Size", size);
+        builder.AddComponentParameter(sequence++, "Icon", svg);
+        builder.AddComponentParameter(sequence++, "Style", "position:relative;top:7px;"); // Vertically center the icon
+        builder.CloseComponent();
     }
 
     /// <summary>
@@ -96,7 +103,7 @@ public static class RenderTreeExtensions
     /// <param name="cssClass"></param>
     /// <param name="target"></param>
     /// <param name="color"></param>
-    public static void AddMudLink(this RenderTreeBuilder builder, int sequence, string href, string text = null, string cssClass = null, string target = null)
+    public static void AddMudLink(this RenderTreeBuilder builder, int sequence, string href, string text = null, Typo typo = Typo.body1, string cssClass = null, string target = null, Action<int, RenderTreeBuilder> childContentBuilder = null)
     {
         builder.OpenRegion(sequence);
         builder.OpenComponent<MudLink>(0);
@@ -109,14 +116,28 @@ public static class RenderTreeExtensions
         {
             builder.AddComponentParameter(3, "Target", target);
         }
-        builder.AddComponentParameter(4, "ChildContent", (RenderFragment)(linkContentBuilder =>
+        builder.AddComponentParameter(4, "Typo", typo);
+        builder.AddComponentParameter(3, "ChildContent", (RenderFragment)(contentBuilder =>
         {
-            linkContentBuilder.AddContent(5, text);
+            if (childContentBuilder == null)
+            {
+                contentBuilder.AddContent(6, text);
+            }
+            else
+            {
+                childContentBuilder(sequence, contentBuilder);
+            }
         }));
         builder.CloseComponent();
         builder.CloseRegion();
     }
 
+    /// <summary>
+    /// Adds a code block.
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <param name="sequence"></param>
+    /// <param name="code"></param>
     public static void AddCode(this RenderTreeBuilder builder, int sequence, string code)
     {
         builder.OpenRegion(sequence);
@@ -134,25 +155,25 @@ public static class RenderTreeExtensions
     /// <param name="sequence">The ordinal of this item relative to the other components.</param>
     /// <param name="type">The type to link.</param>
     /// <param name="showTooltip">When <c>true</c>, a tooltip will display with the type's summary.</param>
-    public static void AddDocumentedTypeLink(this RenderTreeBuilder builder, int sequence, DocumentedType type, bool showTooltip = true)
+    public static void AddDocumentedTypeLink(this RenderTreeBuilder builder, int sequence, DocumentedType type, Typo typo = Typo.body1, bool showTooltip = true)
     {
         // Is a summary available?
         if (!string.IsNullOrEmpty(type.Summary) && showTooltip)
         {
             // <MudTooltip Placement="Placement.Top" Text="{summary}">
-            builder.AddMudTooltip(sequence, Placement.Top, type.SummaryPlain, ((childSequence, childContentBuilder) =>
+            builder.AddMudTooltip(sequence, Placement.Top, type.SummaryPlain, (childSequence, childContentBuilder) =>
             {
-                childContentBuilder.AddMudLink(childSequence++, type.ApiUrl, type.NameFriendly, "docs-link docs-code docs-code-primary");
-            }));
+                childContentBuilder.AddMudLink(childSequence++, type.ApiUrl, type.NameFriendly, typo, "docs-link docs-code docs-code-primary");
+            });
         }
         else
         {
             // <MudLink Href="{api_link}" Class="docs-link">
-            builder.AddMudLink(sequence, type.ApiUrl, type.NameFriendly, "docs-link docs-code docs-code-primary");
+            builder.AddMudLink(sequence, type.ApiUrl, type.NameFriendly, typo, "docs-link docs-code docs-code-primary");
         }
     }
 
-    public static void AddDocumentedMemberLink(this RenderTreeBuilder builder, int sequence, DocumentedMember member)
+    public static void AddDocumentedMemberLink(this RenderTreeBuilder builder, int sequence, DocumentedMember member, Typo typo = Typo.body1)
     {
         // Is a summary available?
         if (!string.IsNullOrEmpty(member.Summary))
@@ -160,13 +181,13 @@ public static class RenderTreeExtensions
             // <MudTooltip Placement="Placement.Top" Text="{summary}">
             builder.AddMudTooltip(sequence, Placement.Top, member.SummaryPlain, (childSequence, childContentBuilder) =>
             {
-                childContentBuilder.AddMudLink(childSequence++, member.DeclaringType?.ApiUrl + "#" + member.Name, member.Name, "docs-link docs-code docs-code-primary");
+                childContentBuilder.AddMudLink(childSequence++, member.DeclaringType?.ApiUrl + "#" + member.Name, member.Name, typo, "docs-link docs-code docs-code-primary");
             });
         }
         else
         {
             // <MudLink Href="{api_link}" Class="docs-link">
-            builder.AddMudLink(sequence, member.DeclaringType?.ApiUrl, member.Name, "docs-link docs-code docs-code-primary");
+            builder.AddMudLink(sequence, member.DeclaringType?.ApiUrl, member.Name, typo, "docs-link docs-code docs-code-primary");
         }
     }
 }

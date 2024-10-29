@@ -10,7 +10,7 @@ namespace MudBlazor.Services;
 /// <summary>
 /// Provides a factory for creating instances of <see cref="IJsEvent"/>.
 /// </summary>
-internal class JsEventFactory : IJsEventFactory
+internal sealed class JsEventFactory : IJsEventFactory
 {
     private readonly IServiceProvider _provider;
 
@@ -26,6 +26,8 @@ internal class JsEventFactory : IJsEventFactory
     /// <inheritdoc />
     public IJsEvent Create()
     {
-        return new JsEvent(_provider.GetRequiredService<IJSRuntime>());
+        var jsRuntime = _provider.GetRequiredService<IJSRuntime>();
+
+        return new JsEvent(jsRuntime);
     }
 }

@@ -72,7 +72,7 @@ namespace MudBlazor
                 .AddClass(Column?.HeaderClassFunc?.Invoke(DataGrid?.CurrentPageItems ?? Enumerable.Empty<T>()))
                 .AddClass(Column?.headerClassname)
                 .AddClass(Class)
-            .Build();
+                .Build();
 
         private string _style =>
             new StyleBuilder()
@@ -80,31 +80,31 @@ namespace MudBlazor
                 .AddStyle(Column?.HeaderStyle)
                 .AddStyle("width", Width?.ToPx(), when: Width.HasValue)
                 .AddStyle(Style)
-            .Build();
+                .Build();
 
         private string _resizerStyle =>
             new StyleBuilder()
                 .AddStyle("height", _resizerHeight?.ToPx() ?? "100%")
                 .AddStyle(Style)
-            .Build();
+                .Build();
 
         private string _resizerClass =>
             new CssBuilder()
                 .AddClass("mud-resizing", when: _isResizing)
                 .AddClass("mud-resizer")
-            .Build();
+                .Build();
 
         private string _sortHeaderClass =>
             new CssBuilder()
                 .AddClass("sortable-column-header")
                 .AddClass("cursor-pointer", when: !_isResizing)
-            .Build();
+                .Build();
 
         private string _optionsClass =>
             new CssBuilder()
                 .AddClass("column-options")
                 .AddClass("cursor-pointer", when: !_isResizing)
-            .Build();
+                .Build();
 
         private ElementReference _headerElement;
 

@@ -1,4 +1,5 @@
 @namespace MudBlazor
+@using MudBlazor.Resources
 @using MudBlazor.Utilities
 @inherits MudComponentBase
 
@@ -12,18 +13,18 @@
             string stepClassname = new CssBuilder()
                 .AddClass("mud-step")
                 .AddClass("active", isActive)
-                .AddClass("mud-ripple", NonLinear && !step.DisabledState.Value)
-                .AddClass("mud-step-disabled", step.DisabledState.Value)
+                .AddClass("mud-ripple", Ripple)
+                .AddClass("mud-clickable", NonLinear && !step.DisabledState.Value)
                 .AddClass("mud-step-error", step.HasErrorState.Value)
                 .AddClass("mud-step-completed", step.CompletedState.Value)
                 .Build();
 
-            <button class="@stepClassname" role="tab" aria-controls="@step.Title" aria-selected="@(isActive.ToString().ToLower())"
-                    @onclick="@(async e => await OnStepClickAsync(step, e))">
+            <button class="@stepClassname" role="tab" type="button" aria-controls="@step.Title" aria-selected="@(isActive.ToString().ToLower())"
+                    @onclick="@(async e => await OnStepClickAsync(step, e))" disabled="@step.DisabledState.Value">
                 @RenderStepLabel(step, isActive)
             </button>
 
-            @if (Vertical)
+            @if (Vertical && !(IsCompleted && CompletedContent is not null)) 
             {
                 @StepContent(step)
             }
@@ -44,18 +45,14 @@
         }
     </div>
 
-    @if (!Vertical && ActiveStep is not null)
+    @if (IsCompleted && CompletedContent is not null)
     {
-        @if (IsCompleted && CompletedContent is not null)
-        {
-            <div class="@StepClassname" style="@StepStyle">
-                @CompletedContent
-            </div>
-        }
-        else
-        {
-            @StepContent(ActiveStep)
-        }
+        <div class="@StepClassname mud-stepper-complete" style="@StepStyle">
+            @CompletedContent
+        </div>
+    }
+    else if (!Vertical && ActiveStep is not null) {
+        @StepContent(ActiveStep)
     }
 
     <CascadingValue Value="this" IsFixed="true">
@@ -69,7 +66,7 @@
             {
                 @* Reset Button *@
                 <MudButton StartIcon="@ResetButtonIcon" Class="mud-stepper-button-reset" Disabled="@(!CanReset)" OnClick="@(async () => await ResetAsync())">
-                    @Localizer["MudStepper_Reset"]
+                    @Localizer[LanguageResource.MudStepper_Reset]
                 </MudButton>
             }
 
@@ -77,7 +74,7 @@
             {
                 @* Previous Button *@
                 <MudButton StartIcon="@PreviousButtonIcon" Class="mud-stepper-button-previous" OnClick="PreviousStepAsync" Disabled="@(!PreviousStepEnabled)">
-                    @Localizer["MudStepper_Previous"]
+                    @Localizer[LanguageResource.MudStepper_Previous]
                 </MudButton>
             }
 
@@ -89,21 +86,21 @@
                 {
                     @* Skip Button *@
                     <MudButton StartIcon="@SkipButtonIcon" Class="mud-stepper-button-skip" OnClick="SkipCurrentStepAsync">
-                        @Localizer["MudStepper_Skip"]
+                        @Localizer[LanguageResource.MudStepper_Skip]
                     </MudButton>
                 }
                 @if (ShowCompleteInsteadOfNext)
                 {
                     @* Complete Button *@
                     <MudButton StartIcon="@CompleteButtonIcon" Class="mud-stepper-button-complete" OnClick="NextStepAsync" Color="Color.Primary">
-                        @Localizer["MudStepper_Complete"]
+                        @Localizer[LanguageResource.MudStepper_Complete]
                     </MudButton>
                 }
                 else 
                 {
                     @* Next Button *@
                     <MudButton StartIcon="@NextButtonIcon" Class="mud-stepper-button-next" OnClick="NextStepAsync" Color="Color.Primary" Disabled="@(!CanGoToNextStep)">
-                        @Localizer["MudStepper_Next"]
+                        @Localizer[LanguageResource.MudStepper_Next]
                     </MudButton>
                 }
             }

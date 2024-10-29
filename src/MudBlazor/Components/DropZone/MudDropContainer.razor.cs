@@ -24,9 +24,9 @@ namespace MudBlazor
         private Dictionary<string, MudDropZone<T>> _mudDropZones = new();
 
         protected string Classname =>
-        new CssBuilder("mud-drop-container")
-            .AddClass(Class)
-            .Build();
+            new CssBuilder("mud-drop-container")
+                .AddClass(Class)
+                .Build();
 
         /// <summary>
         /// The content within this container.

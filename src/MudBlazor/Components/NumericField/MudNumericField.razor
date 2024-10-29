@@ -62,7 +62,7 @@
                           OnIncrement="@Increment"
                           OnDecrement="@Decrement"
                           OnMouseWheel="@OnMouseWheelAsync"
-                          Clearable="@Clearable"
+                          Clearable="@(Clearable && !GetReadOnlyState())"
                           ClearIcon="@ClearIcon"
                           ShrinkLabel="@ShrinkLabel"
                           InputId="@InputElementId"

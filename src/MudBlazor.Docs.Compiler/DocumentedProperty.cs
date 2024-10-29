@@ -20,4 +20,12 @@ public sealed class DocumentedProperty : DocumentedMember
     /// When <c>true</c>, the <see cref="ParameterAttribute"/> is applied to this property.
     /// </remarks>
     public bool IsParameter { get; set; }
+
+    /// <summary>
+    /// The <see cref="EventHandler"/> called when this property changes.
+    /// </summary>
+    /// <remarks>
+    /// When set, this property can be bound via <c>@bind-[Property]</c> in Razor.
+    /// </remarks>
+    public DocumentedEvent? ChangeEvent { get; set; }
 }

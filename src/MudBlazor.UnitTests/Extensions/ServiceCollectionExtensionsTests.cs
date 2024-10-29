@@ -410,6 +410,7 @@ public class ServiceCollectionExtensionsTests
         // Act
         services.AddMudServices();
         var serviceProvider = services.BuildServiceProvider();
+        var timeProvider = serviceProvider.GetService<TimeProvider>();
         var dialogService = serviceProvider.GetService<IDialogService>();
         var snackBarService = serviceProvider.GetService<ISnackbar>();
         var browserViewportService = serviceProvider.GetService<IBrowserViewportService>();
@@ -432,6 +433,7 @@ public class ServiceCollectionExtensionsTests
         var localizationEnumInterceptor = serviceProvider.GetService<ILocalizationEnumInterceptor>();
 
         // Assert
+        timeProvider.Should().NotBeNull();
         dialogService.Should().NotBeNull();
         snackBarService.Should().NotBeNull();
         browserViewportService.Should().NotBeNull();
@@ -506,6 +508,7 @@ public class ServiceCollectionExtensionsTests
             expectedOptions = options;
         });
         var serviceProvider = services.BuildServiceProvider();
+        var timeProvider = serviceProvider.GetService<TimeProvider>();
         var dialogService = serviceProvider.GetService<IDialogService>();
         var snackBarService = serviceProvider.GetService<ISnackbar>();
         var browserViewportService = serviceProvider.GetService<IBrowserViewportService>();
@@ -536,6 +539,7 @@ public class ServiceCollectionExtensionsTests
         var actualPopoverOptions = popoverOptions.Value;
 
         // Assert
+        timeProvider.Should().NotBeNull();
         dialogService.Should().NotBeNull();
         snackBarService.Should().NotBeNull();
         browserViewportService.Should().NotBeNull();

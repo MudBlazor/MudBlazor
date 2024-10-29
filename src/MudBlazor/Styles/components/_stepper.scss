@@ -8,19 +8,27 @@
       padding: 24px;
       position: relative;
       cursor: default;
+      pointer-events: none;
+      user-select: text;
 
-      &.mud-ripple {
-        transition: background-color 250ms cubic-bezier(.4,0,.2,1) 0ms,box-shadow 250ms cubic-bezier(.4,0,.2,1) 0ms,border 250ms cubic-bezier(.4,0,.2,1) 0ms;
+      &.mud-clickable {
         cursor: pointer;
+        pointer-events: auto;
         user-select: none;
+        transition: background-color 250ms cubic-bezier(.4,0,.2,1) 0ms,box-shadow 250ms cubic-bezier(.4,0,.2,1) 0ms,border 250ms cubic-bezier(.4,0,.2,1) 0ms;
 
-        &:hover {
+        @media(hover: hover) and (pointer: fine) {
+          &:hover {
+            background-color: var(--mud-palette-action-default-hover);
+          }
+        }
+
+        &:focus-visible, &:active {
           background-color: var(--mud-palette-action-default-hover);
         }
       }
 
-      &.mud-step-disabled {
-
+      &:disabled {
         .mud-step-label-icon {
           background-color: var(--mud-palette-lines-default) !important;
           color: var(--mud-palette-text-disabled) !important;
@@ -61,6 +69,7 @@
         .mud-step-label-content {
           width: 100%;
           color: var(--mud-palette-text-secondary);
+          --mud-ripple-color: var(--mud-palette-text-secondary);
           text-align: start;
         }
 
@@ -72,6 +81,7 @@
       &.active {
         .mud-step-label-content {
           color: var(--mud-palette-text-primary);
+          --mud-ripple-color: var(--mud-palette-text-primary);
         }
       }
     }

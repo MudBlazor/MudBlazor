@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Time.Testing;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using NUnit.Framework;
@@ -181,19 +179,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void ReadOnlyShouldNotHaveClearButton()
+        {
+            var comp = Context.RenderComponent<MudDatePicker>(p => p
+                .Add(x => x.Text, "some value")
+                .Add(x => x.Clearable, true)
+                .Add(x => x.ReadOnly, false));
+
+            comp.FindAll(".mud-input-clear-button").Count.Should().Be(1);
+
+            comp.SetParametersAndRender(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
+            comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
+        }
+
+        [Test]
         public void DatePicker_Should_Clear()
         {
             var comp = Context.RenderComponent<MudDatePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
-            picker.Text.Should().Be(null);
+            picker.ReadOnly.Should().Be(false);
             picker.Date.Should().Be(null);
+            picker.Text.Should().Be(null);
             comp.SetParam(p => p.Clearable, true);
             comp.SetParam(p => p.Date, new DateTime(2020, 10, 26));
             picker.Date.Should().Be(new DateTime(2020, 10, 26));
             picker.Text.Should().Be(new DateTime(2020, 10, 26).ToShortDateString());
 
-            comp.Find("button").Click(); //clear the input
+            comp.Find(".mud-input-clear-button").Click(); //clear the input
 
             picker.Text.Should().Be(""); //ensure the text and date are reset. Note this is an empty string rather than null due to how the reset works internally
             picker.Date.Should().Be(null);
@@ -1354,6 +1367,26 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("input").HasAttribute("required").Should().BeTrue();
             comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Test to check if the outlined dates class shows up correctly
+        /// </summary>
+        [Test]
+        public void DatePicker_CustomTimerProviderTest()
+        {
+            var timeProvider = new FakeTimeProvider();
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            timeProvider.SetUtcNow(new DateTime(2003, 4, 4, 0, 0, 0, DateTimeKind.Utc));
+            var comp = Context.RenderComponent<DatePickerCustomDateTest>();
+
+            // click to open menu
+            comp.Find("input").Click();
+
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
+            comp.Find(".mud-button-outlined").InnerHtml.Should().Contain("4");
+            comp.Find(".mud-button-month").InnerHtml.Should().Contain("April");
+            comp.Find(".mud-button-year").InnerHtml.Should().Contain("2003");
         }
     }
 }

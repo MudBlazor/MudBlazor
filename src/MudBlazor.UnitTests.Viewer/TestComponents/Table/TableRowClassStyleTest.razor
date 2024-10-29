@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudTable T="int" Items="items" RowStyleFunc="@((item, index) => item > 1 ? "color: blue" : "color: red")" RowClassFunc="@((item, index) => index % 2 == 0 ? "even" : "odd")">
+﻿<MudTable T="int" Items="_items" RowStyleFunc="@((item, index) => item > 1 ? "color: blue" : "color: red")" RowClassFunc="@((item, index) => index % 2 == 0 ? "even" : "odd")">
     <HeaderContent>
         <MudTh>#</MudTh>
     </HeaderContent>
@@ -12,6 +10,5 @@
 @code {
     public static string __description__ = "The row style and row class should be placed on the row correctly.";
 
-    int[] items = new int[]{0,1,2,3};
-
+    private readonly int[] _items = [0, 1, 2, 3];
 }

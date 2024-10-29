@@ -27,22 +27,22 @@ public partial class MudStepper : MudComponentBase
 
     protected string Classname =>
         new CssBuilder("mud-stepper")
-        .AddClass("mud-stepper__horizontal", Vertical == false)
-        .AddClass("mud-stepper__vertical", Vertical)
-        .AddClass("mud-stepper__center-labels", CenterLabels && !Vertical)
-        .AddClass(Class)
-        .Build();
+            .AddClass("mud-stepper__horizontal", Vertical == false)
+            .AddClass("mud-stepper__vertical", Vertical)
+            .AddClass("mud-stepper__center-labels", CenterLabels && !Vertical)
+            .AddClass(Class)
+            .Build();
 
     internal string StepClassname =>
         new CssBuilder("mud-stepper-content")
-        .AddClass(StepClass)
-        .Build();
+            .AddClass(StepClass)
+            .Build();
 
     protected string NavClassname =>
         new CssBuilder("mud-stepper-nav")
-        .AddClass("mud-stepper-nav-scrollable", ScrollableNavigation)
-        .AddClass(NavClass)
-        .Build();
+            .AddClass("mud-stepper-nav-scrollable", ScrollableNavigation)
+            .AddClass(NavClass)
+            .Build();
 
     /// <summary>
     /// The steps that have been defined in razor.
@@ -184,6 +184,16 @@ public partial class MudStepper : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
     public bool CenterLabels { get; set; }
+
+    /// <summary>
+    /// Displays a ripple effect when the step is clicked.
+    /// </summary>
+    /// <remarks>
+    /// Affects only non-linear steppers. Defaults to <c>false</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
+    public bool Ripple { get; set; } = true;
 
     /// <summary>
     /// If there is too many steps, the navigation becomes scrollable.
@@ -450,11 +460,8 @@ public partial class MudStepper : MudComponentBase
         await UpdateStepAsync(_steps[0], new MouseEventArgs(), StepAction.Activate);
     }
 
-    private async Task OnStepClickAsync(MudStep step, MouseEventArgs e)
+    private Task OnStepClickAsync(MudStep step, MouseEventArgs e)
     {
-        if (NonLinear)
-        {
-            await UpdateStepAsync(step, e, StepAction.Activate);
-        }
+        return UpdateStepAsync(step, e, StepAction.Activate);
     }
 }

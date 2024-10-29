@@ -30,12 +30,12 @@ namespace MudBlazor.UnitTests.UserAttributes
                     .Instance));
 
             RegisterCustomFactoryFor<MudDialog>((builder, testContext) => builder
-                .AddCascadingValue(testContext.RenderComponent<MudDialogInstance>().Instance));
+                .AddCascadingValue(testContext.RenderComponent<MudDialogContainer>().Instance));
 
             RegisterCustomFactoryFor<MudElement>(builder => builder.Add(x => x.HtmlTag, "div"));
 
             RegisterCustomFactoryFor<MudMessageBox>((builder, testContext) => builder
-                .AddCascadingValue(testContext.RenderComponent<MudDialogInstance>().Instance));
+                .AddCascadingValue(testContext.RenderComponent<MudDialogContainer>().Instance));
 
             RegisterCustomFactoryFor<MudOverlay>(builder => builder.Add(x => x.Visible, true));
 
