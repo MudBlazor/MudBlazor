@@ -14,7 +14,7 @@ namespace MudBlazor;
 public partial class HierarchyColumn<T> : MudComponentBase
 {
     private bool _finishedInitialExpanded;
-    private readonly HashSet<CellContext<T>> InitiallyExpandedItems { get; set; } = [];
+    private readonly HashSet<CellContext<T>> _initiallyExpandedItems = [];
 
     /// <summary>
     /// The icon to display for the close button.
@@ -99,7 +99,7 @@ public partial class HierarchyColumn<T> : MudComponentBase
         {
             _finishedInitialExpanded = true;
 
-            foreach (var context in InitiallyExpandedItems)
+            foreach (var context in _initiallyExpandedItems)
             {
                 await context.Actions.ToggleHierarchyVisibilityForItemAsync.Invoke();
             }
