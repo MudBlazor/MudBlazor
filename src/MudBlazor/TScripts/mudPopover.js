@@ -153,25 +153,25 @@ window.mudpopoverHelper = {
             if (!popoverContentNode) {
                 return;
             }
+            const classList = popoverContentNode.classList;
 
-            if (popoverContentNode.classList.contains('mud-popover-open') == false) {
+            if (classList.contains('mud-popover-open') == false) {
                 return;
             }
 
             if (classSelector) {
-                if (popoverContentNode.classList.contains(classSelector) == false) {
+                if (classList.contains(classSelector) == false) {
                     return;
                 }
             }
             let boundingRect = popoverNode.parentNode.getBoundingClientRect();
 
-            if (popoverContentNode.classList.contains('mud-popover-relative-width')) {
+            if (classList.contains('mud-popover-relative-width')) {
                 popoverContentNode.style['max-width'] = (boundingRect.width) + 'px';
             }
 
-            const selfRect = popoverContentNode.getBoundingClientRect();
-            const classList = popoverContentNode.classList;
-            const classListArray = Array.from(popoverContentNode.classList);
+            const selfRect = popoverContentNode.getBoundingClientRect();            
+            const classListArray = Array.from(classList);
 
             const postion = window.mudpopoverHelper.calculatePopoverPosition(classListArray, boundingRect, selfRect);
             let left = postion.left;
@@ -179,7 +179,7 @@ window.mudpopoverHelper = {
             let offsetX = postion.offsetX;
             let offsetY = postion.offsetY;
             // get the top/left/ from popoverContentNode if the popover has been hardcoded for position
-            if (popoverContentNode.classList.contains('mud-popover-position-override')) {
+            if (classList.contains('mud-popover-position-override')) {
                 left = parseInt(popoverContentNode.style['left']) || left;
                 top = parseInt(popoverContentNode.style['top']) || top;
                 // no offset when hardcoded 
@@ -313,7 +313,7 @@ window.mudpopoverHelper = {
                 }
             }
 
-            if (popoverContentNode.classList.contains('mud-popover-fixed')) {
+            if (classList.contains('mud-popover-fixed')) {
             }
             else if (window.getComputedStyle(popoverNode).position == 'fixed') {
                 popoverContentNode.style['position'] = 'fixed';
@@ -323,7 +323,7 @@ window.mudpopoverHelper = {
                 offsetY += window.scrollY
             }
 
-            if (popoverContentNode.classList.contains('mud-popover-position-override')) {
+            if (classList.contains('mud-popover-position-override')) {
                 // no offset if popover position is hardcoded
                 offsetX = 0;
                 offsetY = 0;
