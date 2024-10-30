@@ -10,7 +10,6 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-
     /// <summary>
     /// A list of choices displayed after clicking an element.
     /// </summary>
@@ -376,19 +375,14 @@ namespace MudBlazor
                 }
             }
 
-            if (Open)
-            {
-                return CloseMenuAsync();
-            }
-            else
-            {
-                return OpenMenuAsync(args);
-            }
+            return Open
+                ? CloseMenuAsync()
+                : OpenMenuAsync(args);
         }
 
         private async Task PointerEnterAsync(PointerEventArgs args)
         {
-            // The Enter event will be interfere with the Click event on devices that can't hover.
+            // The Enter event will be interfered with the Click event on devices that can't hover.
             if (args.PointerType is "touch" or "pen")
             {
                 return;
@@ -428,7 +422,7 @@ namespace MudBlazor
             {
                 menu._isPointerOver = false;
                 menu = menu.ParentMenu;
-            } while (menu != null);
+            } while (menu is not null);
 
             if (_isTemporary && ActivationEvent == MouseEvent.MouseOver)
             {
