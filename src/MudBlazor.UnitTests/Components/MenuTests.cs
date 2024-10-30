@@ -527,8 +527,9 @@ namespace MudBlazor.UnitTests.Components
         public async Task OpenMenuAsync_Should_Set_FixedPosition()
         {
             // Arrange
-            var comp = Context.RenderComponent<DataGridContextMenuTest>();
-            var mudMenuContext = comp.Instance.ContextMenu;
+            var comp = Context.RenderComponent<MenuPositionAtCursorTest>();
+            var menuComponent = comp.FindComponent<MudMenu>();
+            var mudMenuContext = menuComponent.Instance;
             mudMenuContext.Should().NotBeNull();
 
             // Act
