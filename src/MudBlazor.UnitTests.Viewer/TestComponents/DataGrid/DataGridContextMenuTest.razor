@@ -1,8 +1,8 @@
 ﻿@inject ISnackbar Snackbar
 
 <MudDataGrid T="ClientInfo" Items="_clients" Filterable="true"
-             RowContextMenuClick="@(_rightClick ? OpenMenuContent : null)"
-             RowClick="@(!_rightClick ? OpenMenuContent : null)">
+             RowContextMenuClick="@((_rightClick ? OpenMenuContent : null)!)"
+             RowClick="@((!_rightClick ? OpenMenuContent : null)!)">
     <Columns>
         <PropertyColumn Property="x => x.Username" Title="Username" />
         <PropertyColumn Property="x => x.HwId" Title="HWID" />
@@ -21,10 +21,10 @@
 </MudDataGrid>
 <MudMenu PositionAtCursor="true" @ref="ContextMenu" id="_contextMenu">
     <MudMenuItem Icon="@Icons.Material.Filled.Block">
-        Ban @_contextRow.Username
+        Ban @_contextRow?.Username
     </MudMenuItem>
     <MudMenuItem Icon="@Icons.Material.Filled.Info" OnClick="@ShowHiddenInfo">
-        View Details for @_contextRow.HwId
+        View Details for @_contextRow?.HwId
     </MudMenuItem>
 </MudMenu>
 
