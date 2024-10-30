@@ -7,7 +7,6 @@ using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.UnitTests.TestComponents.DataGrid;
 using MudBlazor.UnitTests.TestComponents.Menu;
 using NUnit.Framework;
 
