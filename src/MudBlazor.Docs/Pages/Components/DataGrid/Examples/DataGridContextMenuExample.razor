@@ -3,8 +3,8 @@
 @inject ISnackbar Snackbar
 
 <MudDataGrid @ref="_dataGrid" T="ClientInfo" Items="Clients" Filterable="true"
-             RowContextMenuClick="@(_rightClick ? OpenMenuContent : null)"
-             RowClick="@(!_rightClick ? OpenMenuContent : null)">
+             RowContextMenuClick="@((_rightClick ? OpenMenuContent : null)!)"
+             RowClick="@((!_rightClick ? OpenMenuContent : null)!)">
     <Columns>
         <PropertyColumn Property="x => x.Username" Title="Username" />
         <PropertyColumn Property="x => x.HwId" Title="HWID" />
