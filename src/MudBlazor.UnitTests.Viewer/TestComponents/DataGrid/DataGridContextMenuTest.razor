@@ -1,4 +1,5 @@
 ﻿@inject ISnackbar Snackbar
+<MudPopoverProvider />
 
 <MudDataGrid T="ClientInfo" Items="_clients" Filterable="true"
              RowContextMenuClick="@((_rightClick ? OpenMenuContent : null)!)"

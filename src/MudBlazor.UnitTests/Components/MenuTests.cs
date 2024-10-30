@@ -536,10 +536,11 @@ namespace MudBlazor.UnitTests.Components
 
             // find mud-menu element
             var mudMenu = comp.Find($"#{mudMenuContext.FieldId}");
+            var popover = comp.Find("div.mud-popover");
 
             // Assert
             mudMenuContext.AnchorOrigin.Should().Be(Origin.TopLeft);
-            mudMenuContext.PopoverClassname.Should().Contain("mud-popover-position-override");
+            popover.ClassList.Should().Contain("mud-popover-position-override");
 
             // Style is still null here and can't access _popoverStyle due to private
             //mudMenu.Style.Should().Contain("top:"));
