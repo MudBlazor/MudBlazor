@@ -16,6 +16,7 @@ namespace MudBlazor
     public class CellContext<T>
     {
         private readonly HashSet<T> _selection;
+        private readonly IEqualityComparer<T> _selectionComparer;
 
         internal HashSet<T> OpenHierarchies { get; }
 
@@ -36,7 +37,7 @@ namespace MudBlazor
         {
             get
             {
-                return _selection.Contains(Item);
+                return _selection.Contains(Item, _selectionComparer);
             }
         }
 
@@ -59,6 +60,7 @@ namespace MudBlazor
         public CellContext(MudDataGrid<T> dataGrid, T item)
         {
             _selection = dataGrid.Selection;
+            _selectionComparer = dataGrid.SelectionComparer ?? EqualityComparer<T>.Default;
             OpenHierarchies = dataGrid._openHierarchies;
             Item = item;
             Actions = new CellActions
