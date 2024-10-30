@@ -1,9 +1,11 @@
-﻿
-@* MODE SELECTORS *@
+﻿@* MODE SELECTORS *@
 
 <MudStack Row AlignItems="AlignItems.End">
     <MudSelect T="Margin" Label="Margin size" @bind-Value="Margin" Variant="Variant.Outlined" Margin="Margin.Dense">
-        @foreach (Margin margin in Enum.GetValues(typeof(Margin))) { <MudSelectItem Value="@margin">@margin</MudSelectItem> }
+        @foreach (Margin margin in Enum.GetValues(typeof(Margin)))
+        {
+            <MudSelectItem Value="@margin">@margin</MudSelectItem>
+        }
     </MudSelect>
     <MudSelect T="AlignItems" Label="Align" @bind-Value="Align" Variant="Variant.Outlined" Margin="Margin.Dense">
         @foreach (AlignItems align in Enum.GetValues(typeof(AlignItems)))

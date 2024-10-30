@@ -1,5 +1,4 @@
-﻿
-@typeparam T
+﻿@typeparam T
 
 <MudStack>
     <MudTextField @bind-Value="_filterValue" Placeholder="Search" />
@@ -10,16 +9,16 @@
 </MudStack>
 
 @code {
+    private string _filterValue;
+
     [Parameter]
     public FilterContext<T> FilterContext { get; set; }
-
-    private string _filterValue;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
 
-        FilterContext.FilterDefinition.Operator = FilterOperator.String.Contains;
+        FilterContext.FilterDefinition!.Operator = FilterOperator.String.Contains;
 
         if (FilterContext.FilterDefinition.Value is string stringValue)
         {
@@ -29,14 +28,14 @@
 
     private async Task ApplyAsync()
     {
-        FilterContext.FilterDefinition.Value = _filterValue;
+        FilterContext.FilterDefinition!.Value = _filterValue;
 
         await FilterContext.Actions.ApplyFilterAsync(FilterContext.FilterDefinition);
     }
 
     private async Task ResetAsync()
     {
-        FilterContext.FilterDefinition.Value = null;
+        FilterContext.FilterDefinition!.Value = null;
 
         await FilterContext.Actions.ClearFilterAsync(FilterContext.FilterDefinition);
     }

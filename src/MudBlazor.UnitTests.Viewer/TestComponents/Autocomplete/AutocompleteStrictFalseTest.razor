@@ -13,7 +13,7 @@
     public State? StateDetails { get; set; }
     public State? StateDetails2 { get; set; }
 
-    public async Task<IEnumerable<State>> SearchStateAsync(string value, CancellationToken token)
+    public async Task<IEnumerable<State?>> SearchStateAsync(string value, CancellationToken token)
     {
         await Task.Delay(5, token);
         if (string.IsNullOrEmpty(value))
@@ -21,7 +21,7 @@
         return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)).Select(x => new State(x));
     }
 
-    public async Task<IEnumerable<State>> SearchStateToStringAsync(string value, CancellationToken token)
+    public async Task<IEnumerable<State?>> SearchStateToStringAsync(string value, CancellationToken token)
     {
         await Task.Delay(5, token);
         if (string.IsNullOrEmpty(value))
