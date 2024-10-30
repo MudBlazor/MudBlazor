@@ -348,7 +348,6 @@ namespace MudBlazor
         /// </summary>
         private void SetPopoverStyle(MouseEventArgs args)
         {
-            // .AddStyle method adds final
             _popoverStyle = $"top: {args.PageY.ToPx()}; left: {args.PageX.ToPx()}";
         }
 
