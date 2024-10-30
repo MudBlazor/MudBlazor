@@ -50,7 +50,7 @@
 
     @* The portal has to include the cascading values inside, because it's not able to teletransport the cascade *@
     <MudPopover Open="@Open"
-                Class="@PopoverClass"
+                Class="@($"{PopoverClass} {UseStaticPlacement}")"
                 MaxHeight="@MaxHeight"
                 AnchorOrigin="@AnchorOrigin"
                 TransformOrigin="@TransformOrigin"

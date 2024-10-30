@@ -18,6 +18,7 @@ namespace MudBlazor
     public partial class MudMenu : MudComponentBase, IActivatable
     {
         private string? _popoverStyle;
+        private bool _isPositionKnown;
         private bool _isTemporary;
         private bool _isPointerOver;
         private bool _isClosing;
@@ -282,6 +283,10 @@ namespace MudBlazor
         private MudMenu? ParentMenu { get; set; }
 
         /// <summary>
+        /// Returns a static position class if the position is known. (as set in SetPopoverStyle)
+        /// </summary>
+        private string UseStaticPlacement => _isPositionKnown ? "mud-popover-position-override" : string.Empty;
+        /// <summary>
         /// Closes this menu.
         /// </summary>
         public async Task CloseMenuAsync()
@@ -344,9 +349,9 @@ namespace MudBlazor
         private void SetPopoverStyle(MouseEventArgs args)
         {
             AnchorOrigin = Origin.TopLeft;
-            var staticPositionCSS = "mud-popover-position-override";
-            // if we apply this class we hard coded left/top, js will skip reassignments
-            PopoverClass = $"{PopoverClass ?? string.Empty} {staticPositionCSS}";
+            // setting this to true will set a static class "mud-popover-position-override" on the popover
+            // js will not reposition a popover with that class outside of Flip / Overflow Behavior
+            _isPositionKnown = true;
             _popoverStyle = $"top: {args?.PageY.ToPx()}; left: {args?.PageX.ToPx()};";
         }
 

@@ -163,7 +163,7 @@ window.mudpopoverHelper = {
                     return;
                 }
             }
-            const boundingRect = popoverNode.parentNode.getBoundingClientRect();
+            let boundingRect = popoverNode.parentNode.getBoundingClientRect();
 
             if (popoverContentNode.classList.contains('mud-popover-relative-width')) {
                 popoverContentNode.style['max-width'] = (boundingRect.width) + 'px';

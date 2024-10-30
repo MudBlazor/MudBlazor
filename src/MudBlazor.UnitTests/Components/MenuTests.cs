@@ -524,25 +524,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task OpenMenuAsync_Should_Set_PopoverStyle()
+        public async Task OpenMenuAsync_Should_Set_FixedPosition()
         {
             // Arrange
             var comp = Context.RenderComponent<DataGridContextMenuTest>();
-            var mudMenu = comp.Instance._contextMenu;
-            mudMenu.Should().NotBeNull();
-
+            var mudMenuContext = comp.Instance.ContextMenu;
+            mudMenuContext.Should().NotBeNull();
+            
             // Act
-            await Context.Renderer.Dispatcher.InvokeAsync(() => mudMenu.OpenMenuAsync(new MouseEventArgs()));
+            await Context.Renderer.Dispatcher.InvokeAsync(() => mudMenuContext.OpenMenuAsync(new MouseEventArgs()));
 
+            // find mud-menu element
+            var mudMenu = comp.Find("#" + mudMenuContext.FieldId);
+            
             // Assert
-            mudMenu.AnchorOrigin.Should().Be(Origin.TopLeft);
-            mudMenu.PopoverClass.Should().Contain("mud-popover-position-override");
+            mudMenuContext.AnchorOrigin.Should().Be(Origin.TopLeft);
+            mudMenu.ClassList.Should().Contain("mud-popover-position-override");
 
             // Style is still null here and can't access _popoverStyle due to private
-            //await Context.Renderer.Dispatcher.InvokeAsync(() => mudMenu.Style.Should().Contain("top:"));
-            //await Context.Renderer.Dispatcher.InvokeAsync(() => mudMenu.Style.Should().Contain("left:"));
+            //mudMenu.Style.Should().Contain("top:"));
+            //mudMenu.Style.Should().Contain("left:"));
 
-            await Context.Renderer.Dispatcher.InvokeAsync(() => mudMenu.CloseMenuAsync());
+            await Context.Renderer.Dispatcher.InvokeAsync(() => mudMenuContext.CloseMenuAsync());
         }
     }
 }

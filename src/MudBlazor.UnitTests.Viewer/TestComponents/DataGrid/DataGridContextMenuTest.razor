@@ -1,5 +1,4 @@
 ﻿@inject ISnackbar Snackbar
-
 <MudDataGrid @ref="_dataGrid" T="ClientInfo" Items="Clients" Filterable="true"
              RowContextMenuClick="@(_rightClick ? OpenMenuContent : null)"
              RowClick="@(!_rightClick ? OpenMenuContent : null)">
@@ -16,10 +15,10 @@
         <MudStack Row AlignItems="AlignItems.Center" Class="ml-2">
             <MudText><strong>Activator:&nbsp;&nbsp;</strong> Left Click</MudText>
             <MudSwitch Class="ml-n3" @bind-Value="_rightClick" Label="Right Click" />
-        </MudStack>        
+        </MudStack>  
     </PagerContent>
 </MudDataGrid>
-<MudMenu PositionAtCursor="true" @ref="_contextMenu" id="_contextMenu">
+<MudMenu PositionAtCursor="true" @ref="ContextMenu" id="_contextMenu">
     <MudMenuItem Icon="@Icons.Material.Filled.Block">
         Ban @_contextRow.Username
     </MudMenuItem>
@@ -30,7 +29,7 @@
 
 @code {
     private bool _rightClick = true;
-    public MudMenu _contextMenu;
+    public MudMenu ContextMenu;
     private MudDataGrid<ClientInfo> _dataGrid;
     private ClientInfo _contextRow;
 
@@ -43,7 +42,7 @@
     private async Task OpenMenuContent(DataGridRowClickEventArgs<ClientInfo> args)
     {
         _contextRow = args.Item;
-        await _contextMenu.OpenMenuAsync(args.MouseEventArgs);
+        await ContextMenu.OpenMenuAsync(args.MouseEventArgs);
     }
 
     private void ShowHiddenInfo()
