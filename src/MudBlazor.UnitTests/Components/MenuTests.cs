@@ -541,8 +541,7 @@ namespace MudBlazor.UnitTests.Components
             mudMenuContext.AnchorOrigin.Should().Be(Origin.TopLeft);
             popover.ClassList.Should().Contain("mud-popover-position-override");
 
-            //mudMenu.Style.Should().Contain("top:"));
-            //mudMenu.Style.Should().Contain("left:"));
+            popover.OuterHtml.Contains("top: 0px; left: 0px;").Should().BeTrue();
 
             await Context.Renderer.Dispatcher.InvokeAsync(mudMenuContext.CloseMenuAsync);
         }
