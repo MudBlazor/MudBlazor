@@ -1084,7 +1084,7 @@ namespace MudBlazor
         /// Defaults to <c>null</c>. When set, this comparer will be used to determine if a row is selected.
         /// </remarks>
         [Parameter]
-        public IEqualityComparer<T> SelectionComparer { get; set; }
+        public IEqualityComparer<T> Comparer { get; set; }
 
         #endregion
 
@@ -1474,9 +1474,9 @@ namespace MudBlazor
             else
             {
                 Selection.Remove(item);
-                if (SelectionComparer != null)
+                if (Comparer != null)
                 {
-                    if (SelectionComparer.Equals(item, SelectedItem))
+                    if (Comparer.Equals(item, SelectedItem))
                     {
                         SelectedItem = default;
                     }
@@ -1502,7 +1502,7 @@ namespace MudBlazor
                     : FilteredItems;
 
             if (value)
-                Selection = new HashSet<T>(items, SelectionComparer);
+                Selection = new HashSet<T>(items, Comparer);
             else
                 Selection.Clear();
 

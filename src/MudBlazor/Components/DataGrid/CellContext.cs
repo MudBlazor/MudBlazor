@@ -60,7 +60,7 @@ namespace MudBlazor
         public CellContext(MudDataGrid<T> dataGrid, T item)
         {
             _selection = dataGrid.Selection;
-            _selectionComparer = dataGrid.SelectionComparer ?? EqualityComparer<T>.Default;
+            _selectionComparer = dataGrid.Comparer ?? EqualityComparer<T>.Default;
             OpenHierarchies = dataGrid._openHierarchies;
             Item = item;
             Actions = new CellActions
