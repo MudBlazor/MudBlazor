@@ -1,6 +1,6 @@
 ﻿@using System.ComponentModel.DataAnnotations
 
-<MudPopoverProvider></MudPopoverProvider>
+<MudPopoverProvider />
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
@@ -13,22 +13,23 @@
 @code {
     public static string __description__ = "Test use of data attributes accessible using `For` bound expression.";
 
-    private class TestModel
-    {
-        [StringLength(3, ErrorMessage = "Should not be longer than 3")]
-        public string? Value { get; set; }
-    }
-
-    private readonly TestModel _model = new TestModel();
+    private readonly TestModel _model = new();
 
     // What does this awkward var name means ? => https://en.wikipedia.org/wiki/Metasyntactic_variable
     private readonly string[] _metasyntacticVariable = ["Foo", "Bar", "Qux", "Quux"];
 
-    private Task<IEnumerable<string>> Search(string value, CancellationToken token)
+    private Task<IEnumerable<string?>> Search(string value, CancellationToken token)
     {
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
-            return Task.FromResult<IEnumerable<string>>(_metasyntacticVariable);
-        return Task.FromResult(_metasyntacticVariable.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
+            return Task.FromResult<IEnumerable<string?>>(_metasyntacticVariable);
+
+        return Task.FromResult<IEnumerable<string?>>(_metasyntacticVariable.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
+    }
+
+    private class TestModel
+    {
+        [StringLength(3, ErrorMessage = "Should not be longer than 3")]
+        public string? Value { get; set; }
     }
 }

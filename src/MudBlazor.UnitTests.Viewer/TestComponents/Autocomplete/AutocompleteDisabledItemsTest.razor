@@ -34,9 +34,10 @@
         "Washington", "West Virginia", "Wisconsin", "Wyoming",
     };
 
-    private Task<IEnumerable<string>> Search(string value, CancellationToken token)
+    private Task<IEnumerable<string?>> Search(string value, CancellationToken token)
     {
         var result = string.IsNullOrEmpty(value) ? _states : _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
-        return Task.FromResult(result);
+
+        return Task.FromResult<IEnumerable<string?>>(result);
     }
 }

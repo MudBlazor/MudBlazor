@@ -2792,6 +2792,13 @@ namespace MudBlazor.UnitTests.Components
             item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Anders");
 
             dataGrid.Instance._openHierarchies.Should().Contain(item);
+
+            comp.Markup.Should().Contain("uid = Ira|27|Success|");
+            comp.Markup.Should().Contain("uid = Anders|24|Error|");
+
+            comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
+            comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
+            comp.Markup.Should().NotContain("uid = John|32|Warning|");
         }
 
         [Test]

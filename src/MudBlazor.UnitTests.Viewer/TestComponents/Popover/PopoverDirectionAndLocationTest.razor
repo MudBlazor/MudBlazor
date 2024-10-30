@@ -1,9 +1,9 @@
-﻿<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
 <MudGrid>
     <MudItem xs="3">
         <MudText Typo="Typo.h6">Anchor Origin</MudText>
-        <MudRadioGroup T="Origin" @bind-Value="AnchorOrigin" Class="d-flex flex-column">
+        <MudRadioGroup T="Origin" @bind-Value="_anchorOrigin" Class="d-flex flex-column">
             <MudRadio Color="Color.Primary" Dense="true" Value="Origin.TopLeft">Top-Left</MudRadio>
             <MudRadio Color="Color.Primary" Dense="true" Value="Origin.TopCenter">Top-Center</MudRadio>
             <MudRadio Color="Color.Primary" Dense="true" Value="Origin.TopRight">Top-Right</MudRadio>
@@ -16,9 +16,9 @@
         </MudRadioGroup>
     </MudItem>
     <MudItem xs="6" Class="d-flex justify-center align-center">
-        <MudBadge Origin="@AnchorOrigin" Color="Color.Primary" Dot="true" Overlap="true" Elevation="4" BadgeClass="ma-2">
+        <MudBadge Origin="@_anchorOrigin" Color="Color.Primary" Dot="true" Overlap="true" Elevation="4" BadgeClass="ma-2">
             <MudPaper Elevation="0" Outlined="true" Class="pa-12">
-                <MudPopover OverflowBehavior="OverflowBehavior.FlipNever" Open="true" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="pa-4">
+                <MudPopover OverflowBehavior="OverflowBehavior.FlipNever" Open="true" AnchorOrigin="@_anchorOrigin" TransformOrigin="@_transformOrigin" Class="pa-4">
                     <MudText Typo="Typo.body2" Class="px-4 py-1">The content of the popover</MudText>
                     <div class="@GetLocation()" style="top:0; left:0;">
                         <MudIcon Icon="@GetIcon()" Color="Color.Secondary" Class="" />
@@ -29,7 +29,7 @@
     </MudItem>
     <MudItem xs="3">
         <MudText Typo="Typo.h6">Transform Origin</MudText>
-        <MudRadioGroup T="Origin" @bind-Value="TransformOrigin" Class="d-flex flex-column">
+        <MudRadioGroup T="Origin" @bind-Value="_transformOrigin" Class="d-flex flex-column">
             <MudRadio Color="Color.Secondary" Dense="true" Value="Origin.TopLeft">Top-Left</MudRadio>
             <MudRadio Color="Color.Secondary" Dense="true" Value="Origin.TopCenter">Top-Center</MudRadio>
             <MudRadio Color="Color.Secondary" Dense="true" Value="Origin.TopRight">Top-Right</MudRadio>
@@ -46,76 +46,47 @@
 @code {
     public static string __description__ = "Popover Direction and Location Test";
 
-    public Origin TransformOrigin { get; set; } = Origin.TopLeft;
-    public Origin AnchorOrigin { get; set; } = Origin.BottomLeft;
+    private Origin _transformOrigin = Origin.TopLeft;
+    private Origin _anchorOrigin = Origin.BottomLeft;
 
     public string GetIcon()
     {
-        string icon = "";
-
-        switch (TransformOrigin)
+        var icon = _transformOrigin switch
         {
-            case Origin.TopLeft:
-                icon = Icons.Material.Filled.SouthEast;
-                break;
-            case Origin.TopCenter:
-                icon = Icons.Material.Filled.South;
-                break;
-            case Origin.TopRight:
-                icon = Icons.Material.Filled.SouthWest;
-                break;
-            case Origin.CenterLeft:
-                icon = Icons.Material.Filled.East;
-                break;
-            case Origin.CenterCenter:
-                icon = Icons.Material.Filled.ZoomOutMap;
-                break;
-            case Origin.CenterRight:
-                icon = Icons.Material.Filled.West;
-                break;
-            case Origin.BottomLeft:
-                icon = Icons.Material.Filled.NorthEast;
-                break;
-            case Origin.BottomCenter:
-                icon = Icons.Material.Filled.North;
-                break;
-            case Origin.BottomRight:
-                icon = Icons.Material.Filled.NorthWest;
-                break;
-        }
+            Origin.TopLeft => Icons.Material.Filled.SouthEast,
+            Origin.TopCenter => Icons.Material.Filled.South,
+            Origin.TopRight => Icons.Material.Filled.SouthWest,
+            Origin.CenterLeft => Icons.Material.Filled.East,
+            Origin.CenterCenter => Icons.Material.Filled.ZoomOutMap,
+            Origin.CenterRight => Icons.Material.Filled.West,
+            Origin.BottomLeft => Icons.Material.Filled.NorthEast,
+            Origin.BottomCenter => Icons.Material.Filled.North,
+            Origin.BottomRight => Icons.Material.Filled.NorthWest,
+            _ => ""
+        };
         return icon;
     }
 
     public string GetLocation()
     {
-        string align = "";
-        string justify = "";
-        string[] pos = TransformOrigin.ToDescriptionString().Split("-");
+        var align = string.Empty;
+        var justify = string.Empty;
+        var pos = _transformOrigin.ToDescriptionString().Split("-");
 
-        if (pos[0] == "center")
+        align = pos[0] switch
         {
-            align = "align-center";
-        }
-        else if (pos[0] == "top")
+            "center" => "align-center",
+            "top" => "align-start",
+            "bottom" => "align-end",
+            _ => align
+        };
+        justify = pos[1] switch
         {
-            align = "align-start";
-        }
-        else if (pos[0] == "bottom")
-        {
-            align = "align-end";
-        }
-        if (pos[1] == "left")
-        {
-            justify = "justify-start";
-        }
-        else if (pos[1] == "right")
-        {
-            justify = "justify-end";
-        }
-        else if (pos[1] == "center")
-        {
-            justify = "justify-center";
-        }
+            "left" => "justify-start",
+            "right" => "justify-end",
+            "center" => "justify-center",
+            _ => justify
+        };
 
         return $"absolute mud-height-full mud-width-full d-flex {align} {justify}";
     }

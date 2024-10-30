@@ -1,4 +1,4 @@
-﻿.mud-breadcrumbs {
+.mud-breadcrumbs {
   display: flex;
   flex-wrap: wrap;
   flex: 0 1 auto;
@@ -9,6 +9,7 @@
 }
 
 .mud-breadcrumb-separator {
+  display: inline-flex;
   padding: 0 12px;
 }
 
