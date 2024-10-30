@@ -349,8 +349,8 @@ namespace MudBlazor
         /// </summary>
         private void SetPopoverStyle(MouseEventArgs args)
         {
-            AnchorOrigin = Origin.TopLeft;
-            _popoverStyle = $"top: {args.PageY.ToPx()}; left: {args.PageX.ToPx()};";
+            // AnchorOrigin = Origin.TopLeft; // Have this set in the markup but when mouse coordinates used it has to be TopLeft
+            _popoverStyle = $"top: {args.PageY.ToPx()}; left: {args.PageX.ToPx()}"; // .AddStyle method adds final ;
         }
 
         /// <summary>

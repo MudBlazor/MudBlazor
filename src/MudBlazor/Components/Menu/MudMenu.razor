@@ -8,7 +8,7 @@
      @onpointermove="@PointerMove"
      @onpointerenter="@PointerEnterAsync"
      @onpointerleave="@PointerLeaveAsync"
-     @oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? ToggleMenuAsync : null)"
+     @oncontextmenu="@((ActivationEvent == MouseEvent.RightClick ? ToggleMenuAsync : null)!)"
      @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick)">
 
     @if (ActivatorContent != null)
@@ -52,7 +52,7 @@
     <MudPopover Open="@Open"
                 Class="@PopoverClassname"
                 MaxHeight="@MaxHeight"
-                AnchorOrigin="@AnchorOrigin"
+                AnchorOrigin="@(PositionAtCursor ? Origin.TopLeft : AnchorOrigin)"
                 TransformOrigin="@TransformOrigin"
                 RelativeWidth="@FullWidth"
                 Style="@_popoverStyle"
