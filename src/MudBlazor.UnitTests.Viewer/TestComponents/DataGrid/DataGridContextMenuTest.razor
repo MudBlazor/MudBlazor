@@ -1,5 +1,6 @@
 ﻿@inject ISnackbar Snackbar
-<MudDataGrid @ref="_dataGrid" T="ClientInfo" Items="Clients" Filterable="true"
+
+<MudDataGrid T="ClientInfo" Items="_clients" Filterable="true"
              RowContextMenuClick="@(_rightClick ? OpenMenuContent : null)"
              RowClick="@(!_rightClick ? OpenMenuContent : null)">
     <Columns>
@@ -28,16 +29,17 @@
 </MudMenu>
 
 @code {
-    private bool _rightClick = true;
-    public MudMenu ContextMenu;
-    private MudDataGrid<ClientInfo> _dataGrid;
-    private ClientInfo _contextRow;
+    public static string __description__ = "Test of a Datagrid with Right Click Context Menu Test";
 
-    public List<ClientInfo> Clients = new List<ClientInfo>()
-    {
-        new ClientInfo{Username = "user123", HwId = "000-000-000-000", HiddenInformation = "Not good Grid info for user123"},
-        new ClientInfo{Username = "joedoe", HwId = "111-000-111-000", HiddenInformation = "Not good Grid info for joedoe"},
-    };
+    private bool _rightClick = true;
+    private ClientInfo? _contextRow;
+    private readonly List<ClientInfo> _clients =
+    [
+        new() { Username = "user123", HwId = "000-000-000-000", HiddenInformation = "Not good Grid info for user123" },
+        new() { Username = "joedoe", HwId = "111-000-111-000", HiddenInformation = "Not good Grid info for joedoe" }
+    ];
+
+    public MudMenu ContextMenu { get; private set; } = null!;
 
     private async Task OpenMenuContent(DataGridRowClickEventArgs<ClientInfo> args)
     {
@@ -47,7 +49,7 @@
 
     private void ShowHiddenInfo()
     {
-        if (_contextRow != null)
+        if (_contextRow is not null)
         {
             Snackbar.Add($"Hidden information for {_contextRow.HwId}: {_contextRow.HiddenInformation}", Severity.Info);
         }
@@ -56,12 +58,9 @@
     public class ClientInfo
     {
         public string Username { get; set; } = string.Empty;
+
         public string HwId { get; set; } = string.Empty;
+
         public string HiddenInformation { get; set; } = string.Empty;
     }
-}
-
-
-@code {
-    public static string __description__ = "Test of a Datagrid with Right Click Context Menu Test";
 }

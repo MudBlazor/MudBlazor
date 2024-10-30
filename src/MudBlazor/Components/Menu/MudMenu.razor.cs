@@ -28,6 +28,12 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
+        protected internal string PopoverClassname =>
+            new CssBuilder()
+                .AddClass(PopoverClass)
+                .AddClass("mud-popover-position-override", _isPositionKnown)
+                .Build();
+
         protected string ActivatorClassname =>
             new CssBuilder("mud-menu-activator")
                 .AddClass("mud-disabled", Disabled)
@@ -282,10 +288,6 @@ namespace MudBlazor
         [CascadingParameter]
         private MudMenu? ParentMenu { get; set; }
 
-        /// <summary>
-        /// Returns a static position class if the position is known. (as set in SetPopoverStyle)
-        /// </summary>
-        private string UseStaticPlacement => _isPositionKnown ? "mud-popover-position-override" : string.Empty;
         /// <summary>
         /// Closes this menu.
         /// </summary>

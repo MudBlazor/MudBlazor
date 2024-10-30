@@ -33,32 +33,23 @@
 </MudMenu>
 
 @code {
-    public class TestItem
-    {
-        public string Column1 { get; set; }
-        public string Column2 { get; set; }
-        public string Column3 { get; set; }
-        public string Column4 { get; set; }
-        public string Column5 { get; set; }
-        public string Column6 { get; set; }
-    }
-
+    public static string __description__ = "Test of a MudTable with Right Click Context Menu using Activator and Position At Cursor";
 
     private List<TestItem> _items;
-    private TableGroupDefinition<TestItem> _groupDefinition = new TableGroupDefinition<TestItem>()
+
+    private readonly TableGroupDefinition<TestItem> _groupDefinition = new()
+    {
+        GroupName = "Column1",
+        Indentation = false,
+        Expandable = false,
+        Selector = e => e.Column1,
+        InnerGroup = new TableGroupDefinition<TestItem>
         {
             GroupName = "Column1",
-            Indentation = false,
             Expandable = false,
-            Selector = (e) => e.Column1,
-            InnerGroup = new TableGroupDefinition<TestItem>()
-            {
-                GroupName = "Column1",
-                Expandable = false,
-                Selector = (e) => e.Column2
-            }
-
-        };
+            Selector = e => e.Column2
+        }
+    };
 
     protected override void OnInitialized()
     {
@@ -66,28 +57,38 @@
         for (int i = 0; i < 10; i++)
         {
             _items.Add(new TestItem
-                {
-                    Column1 = $"Value_{i}",
-                    Column2 = $"Value_{i}",
-                    Column3 = $"Value_{i}",
-                    Column4 = $"Value_{i}",
-                    Column5 = $"Value_{i}",
-                    Column6 = $"Value_{i}",
-                });
+            {
+                Column1 = $"Value_{i}",
+                Column2 = $"Value_{i}",
+                Column3 = $"Value_{i}",
+                Column4 = $"Value_{i}",
+                Column5 = $"Value_{i}",
+                Column6 = $"Value_{i}",
+            });
             _items.Add(new TestItem
-                {
-                    Column1 = $"Value_{i}",
-                    Column2 = $"Value_{i}",
-                    Column3 = $"Value_{i}",
-                    Column4 = $"Value_{i}",
-                    Column5 = $"Value_{i}",
-                    Column6 = $"Value_{i}",
-                });
+            {
+                Column1 = $"Value_{i}",
+                Column2 = $"Value_{i}",
+                Column3 = $"Value_{i}",
+                Column4 = $"Value_{i}",
+                Column5 = $"Value_{i}",
+                Column6 = $"Value_{i}",
+            });
         }
     }
-}
 
+    public class TestItem
+    {
+        public string Column1 { get; set; }
 
-@code {
-    public static string __description__ = "Test of a MudTable with Right Click Context Menu using Activator and Position At Cursor";
+        public string Column2 { get; set; }
+
+        public string Column3 { get; set; }
+
+        public string Column4 { get; set; }
+
+        public string Column5 { get; set; }
+
+        public string Column6 { get; set; }
+    }
 }
