@@ -1,21 +1,19 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
 <MudButton OnClick="OpenEditorClickAsync" Variant="Variant.Filled" Color="Color.Primary">Click me to edit Person</MudButton>
 
-<MudOverlay @bind-Visible="@IsFormVisible" DarkBackground="true" ZIndex="1200" AutoClose="false">
+<MudOverlay @bind-Visible="@_isFormVisible" DarkBackground="true" ZIndex="1200" AutoClose="false">
     <MudCard>
         <MudCardHeader Class="justify-center">
             <MudText Typo="Typo.h6">This is a popup editor form</MudText>
         </MudCardHeader>
         <MudCardContent>
-            <MudForm @ref="PersonForm" Model="@SelectedPerson">
-                <MudTextField @bind-Value="SelectedPerson.Name" Label="Person name" Clearable="true" Variant="Variant.Outlined" Margin="Margin.Dense" HelperTextOnFocus="true" HelperText="The name" Required="true" RequiredError="Name cannot be empty" />
-                <MudSelect T="string" MultiSelection="false" @bind-Value="SelectedPerson.PersonType" Label="Person type" Required RequiredError="Person type cannot be empty" HelperTextOnFocus="true" HelperText="the person type" Margin="Margin.Dense" AdornmentColor=" Color.Secondary" Variant="Variant.Outlined">
-                    @foreach (var Tipo in PersonTypes)
+            <MudForm @ref="_personForm" Model="@_selectedPerson">
+                <MudTextField @bind-Value="_selectedPerson.Name" Label="Person name" Clearable="true" Variant="Variant.Outlined" Margin="Margin.Dense" HelperTextOnFocus="true" HelperText="The name" Required="true" RequiredError="Name cannot be empty" />
+                <MudSelect T="string" MultiSelection="false" @bind-Value="_selectedPerson.PersonType" Label="Person type" Required RequiredError="Person type cannot be empty" HelperTextOnFocus="true" HelperText="the person type" Margin="Margin.Dense" AdornmentColor=" Color.Secondary" Variant="Variant.Outlined">
+                    @foreach (var personType in _personTypes)
                     {
-                        <MudSelectItem Value="@Tipo">@Tipo</MudSelectItem>
+                        <MudSelectItem Value="@personType">@personType</MudSelectItem>
                     }
                 </MudSelect>
             </MudForm>
@@ -29,28 +27,25 @@
 @code {
     public static string __description__ = "Popover Overlay with Child Select";
 
-    bool IsFormVisible = false;
-    List<string> PersonTypes = new List<string> { "Teacher", "Student", "Major", "Soldier", "President", "Other" };
-    MudForm PersonForm = new();
-    Person SelectedPerson = new Person { Name = "Jerry" };
+    private bool _isFormVisible;
+    private MudForm _personForm = new();
+    private readonly Person _selectedPerson = new() { Name = "Jerry" };
+    private readonly List<string> _personTypes = ["Teacher", "Student", "Major", "Soldier", "President", "Other"];
 
-
-    async Task OpenEditorClickAsync()
+    private async Task OpenEditorClickAsync()
     {
         await Task.Delay(100);
-        IsFormVisible = true;
+        _isFormVisible = true;
     }
 
-    async Task SaveStuffClickAsync()
+    private async Task SaveStuffClickAsync()
     {
-        await PersonForm.Validate();
-        if (PersonForm.IsValid)
+        await _personForm.Validate();
+        if (_personForm.IsValid)
         {
-            IsFormVisible = false;
+            _isFormVisible = false;
         }
-
     }
-
 
     public class Person
     {
