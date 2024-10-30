@@ -18,13 +18,12 @@
     </MudText>
 </MudStack>
 
-@code{
+@code {
     public int FilesChangedCount { get; private set; }
+
     public int OnFilesChangedCount { get; private set; }
 
-    private void FilesChanged(IBrowserFile? _)
-        => FilesChangedCount++;
+    private void FilesChanged(IBrowserFile? _) => FilesChangedCount++;
 
-    private void OnFilesChanged(InputFileChangeEventArgs _)
-        => OnFilesChangedCount++;
+    private void OnFilesChanged(InputFileChangeEventArgs _) => OnFilesChangedCount++;
 }

@@ -265,20 +265,22 @@ window.mudpopoverHelper = {
                 else {
                     // did not flip, ensure the left and top are inside bounds
                     // appbaroffset is another section
-                    if (left + offsetX < 0) {
+                    if (left + offsetX < 0 && // it's starting left of the screen
+                        Math.abs(left + offsetX) < selfRect.width) { // it's not starting so far left the entire box would be hidden
                         left = Math.max(0, left + offsetX);
                         // set offsetX to 0 to avoid double offset
                         offsetX = 0;
                     }
 
-                    // will be covered by appbar
+                    // will be covered by appbar so adjust zindex with appbar as parent
                     if (top + offsetY < appBarOffset &&
                         appBarElements.length > 0) {
                         this.updatePopoverZIndex(popoverContentNode, appBarElements[0]);
                         //console.log(`top: ${top} | offsetY: ${offsetY} | total: ${top + offsetY} | appBarOffset: ${appBarOffset}`);
                     }
 
-                    if (top + offsetY < 0) {
+                        if (top + offsetY < 0 && // it's starting above the screen
+                            Math.abs(top + offsetY) < selfRect.height) { // it's not starting so far above the entire box would be hidden
                         top = Math.max(0, top + offsetY);
                         // set offsetY to 0 to avoid double offset
                         offsetY = 0;
@@ -342,9 +344,11 @@ window.mudpopoverHelper = {
 
     updatePopoverZIndex: function (popoverContentNode, parentNode) {
         // find the first parent mud-popover if it exists
-        let parentPopover = parentNode.closest('.mud-popover');                
+        const parentPopover = parentNode.closest('.mud-popover'); 
+        const parentOfPopover = popoverContentNode.parentNode;
         // get --mud-zindex-popover from root
         let newZIndex = window.mudpopoverHelper.basePopoverZIndex + 1;
+        const origZIndex = parseInt(popoverContentNode.style['z-index']) || 1;
         const contentZIndex = popoverContentNode.style['z-index'];
         // normal nested position update
         if (parentPopover) {
@@ -358,6 +362,15 @@ window.mudpopoverHelper = {
                 newZIndex = parseInt(parentZIndexValue) + 1;
             }
             popoverContentNode.style['z-index'] = newZIndex;
+        }
+        // nested popover inside any other child element
+        else if (parentOfPopover) {
+            const computedStyle = window.getComputedStyle(parentOfPopover);
+            const tooltipZIndexValue = computedStyle.getPropertyValue('z-index');
+            if (tooltipZIndexValue !== 'auto') {
+                newZIndex = parseInt(tooltipZIndexValue) + 1;
+            }
+            popoverContentNode.style['z-index'] = Math.max(newZIndex, window.mudpopoverHelper.baseTooltipZIndex + 1, origZIndex);
         }
         // tooltip container update 
         // (it's not technically a nested popover but when nested inside popover components it doesn't set zindex properly)
@@ -408,10 +421,8 @@ class MudPopover {
                     window.mudpopoverHelper.placePopoverByNode(target);
                 }
                 else if (mutation.attributeName == 'data-ticks') {
-                    // I can't think of any good reason to use data-ticks property but I don't want to remove it until 
-                    // I'm sure it's not used by anything. When/If this is deleted remove the handler updating data-ticks from 
-                    // the mudpopover component
-                    return;
+                    // data-ticks are important for Direction and Location, it doesn't reposition
+                    // if they aren't there                    
                     const tickAttribute = target.getAttribute('data-ticks');
 
                     const tickValues = [];
@@ -441,7 +452,8 @@ class MudPopover {
                     }
 
                     const sortedTickValues = tickValues.sort((x, y) => x - y);
-
+                    // z-index calculation not used here
+                    continue;
                     for (let i = 0; i < parent.children.length; i++) {
                         const childNode = parent.children[i];
                         const tickValue = parseInt(childNode.getAttribute('data-ticks'));

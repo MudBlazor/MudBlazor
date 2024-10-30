@@ -102,7 +102,7 @@ else if (Column != null && !Column.HiddenState.Value)
 
                 @if (showColumnOptions)
                 {
-                    <MudMenu Icon="@Icons.Material.Filled.MoreVert" Size="Size.Small" AnchorOrigin="Origin.BottomCenter" Dense="true" AriaLabel="@Localizer[LanguageResource.MudDataGrid_ShowColumnOptions]">
+                    <MudMenu Icon="@Icons.Material.Filled.MoreVert" Size="Size.Small" Dense="true" AriaLabel="@Localizer[LanguageResource.MudDataGrid_ShowColumnOptions]">
                         <MudMenuItem Disabled="@(_initialDirection == SortDirection.None)" OnClick="@RemoveSortAsync">@Localizer[LanguageResource.MudDataGrid_Unsort]</MudMenuItem>
                         @if (filterable && DataGrid.FilterMode != DataGridFilterMode.ColumnFilterRow)
                         {

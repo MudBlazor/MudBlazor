@@ -1,10 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -15,7 +14,12 @@ namespace MudBlazor
     /// <seealso cref="MudPickerToolbar" />
     public partial class MudPicker<T> : MudFormComponent<T, string>
     {
+        private string? _text;
+        private bool _pickerSquare;
+        private int _pickerElevation;
+        private ElementReference _pickerInlineRef;
         private bool _keyInterceptorObserving = false;
+        private string _elementId = Identifier.Create("picker");
 
         /// <summary>
         /// Creates a new instance.
@@ -25,9 +29,7 @@ namespace MudBlazor
         protected MudPicker(Converter<T, string> converter) : base(converter) { }
 
         [Inject]
-        private IKeyInterceptorService KeyInterceptorService { get; set; }
-
-        private string _elementId = Identifier.Create("picker");
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         protected string PickerClassname =>
             new CssBuilder("mud-picker")
@@ -78,6 +80,12 @@ namespace MudBlazor
                 .AddClass(ActionsClass)
                 .Build();
 
+        [CascadingParameter(Name = "ParentDisabled")]
+        private bool ParentDisabled { get; set; }
+
+        [CascadingParameter(Name = "ParentReadOnly")]
+        private bool ParentReadOnly { get; set; }
+
         /// <summary>
         /// The color of the <see cref="AdornmentIcon"/>.
         /// </summary>
@@ -106,7 +114,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public string AdornmentAriaLabel { get; set; }
+        public string? AdornmentAriaLabel { get; set; }
 
         /// <summary>
         /// The text displayed in the input if no value is specified.
@@ -116,7 +124,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string Placeholder { get; set; }
+        public string? Placeholder { get; set; }
 
         /// <summary>
         /// Occurs when this picker has opened.
@@ -170,7 +178,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string HelperText { get; set; }
+        public string? HelperText { get; set; }
 
         /// <summary>
         /// Displays the <see cref="HelperText"/> only when this input has focus.
@@ -190,7 +198,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string Label { get; set; }
+        public string? Label { get; set; }
 
         /// <summary>
         /// Displays the Clear icon button.
@@ -213,10 +221,6 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Disabled { get; set; }
 
-        [CascadingParameter(Name = "ParentDisabled")]
-        private bool ParentDisabled { get; set; }
-        protected bool GetDisabledState() => Disabled || ParentDisabled;
-
         /// <summary>
         /// Shows an underline under the input text.
         /// </summary>
@@ -237,10 +241,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool ReadOnly { get; set; }
-
-        [CascadingParameter(Name = "ParentReadOnly")]
-        private bool ParentReadOnly { get; set; }
-        protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
         /// <summary>
         /// Allows the value to be edited.
@@ -270,7 +270,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
-        public string ToolbarClass { get; set; }
+        public string? ToolbarClass { get; set; }
 
         /// <summary>
         /// The display variant for this picker.
@@ -361,13 +361,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
-        public string Text
+        public string? Text
         {
             get => _text;
             set => SetTextAsync(value, true).CatchAndLog();
         }
-
-        private string _text;
 
         /// <summary>
         /// The CSS classes applied to the action buttons container.
@@ -375,14 +373,14 @@ namespace MudBlazor
         /// <remarks>Multiple classes must be separated by a space.</remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
-        public string ActionsClass { get; set; }
+        public string? ActionsClass { get; set; }
 
         /// <summary>
         /// The custom action buttons to display.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public RenderFragment<MudPicker<T>> PickerActions { get; set; }
+        public RenderFragment<MudPicker<T>>? PickerActions { get; set; }
 
         /// <summary>
         /// Applies vertical spacing.
@@ -396,7 +394,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public IMask Mask
+        public IMask? Mask
         {
             get => _mask;
             set => _mask = value;
@@ -432,9 +430,13 @@ namespace MudBlazor
         [Category(CategoryTypes.Popover.Appearance)]
         public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
 
-        protected IMask _mask = null;
+        protected IMask? _mask = null;
 
-        protected async Task SetTextAsync(string value, bool callback)
+        protected bool GetDisabledState() => Disabled || ParentDisabled;
+
+        protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
+
+        protected async Task SetTextAsync(string? value, bool callback)
         {
             if (_text != value)
             {
@@ -448,10 +450,7 @@ namespace MudBlazor
         /// <summary>
         /// Occurs when the string value has changed.
         /// </summary>
-        protected virtual Task StringValueChangedAsync(string value)
-        {
-            return Task.CompletedTask;
-        }
+        protected virtual Task StringValueChangedAsync(string? value) => Task.CompletedTask;
 
         protected bool Open { get; set; }
 
@@ -464,10 +463,8 @@ namespace MudBlazor
             {
                 return CloseAsync();
             }
-            else
-            {
-                return OpenAsync();
-            }
+
+            return OpenAsync();
         }
 
         /// <summary>
@@ -523,7 +520,7 @@ namespace MudBlazor
             await base.ResetValueAsync();
         }
 
-        protected internal MudTextField<string> _inputReference;
+        protected internal MudTextField<string>? _inputReference;
 
         /// <summary>
         /// Focuses the input.
@@ -547,10 +544,6 @@ namespace MudBlazor
         /// <param name="pos2">The index of the last character to select.</param>
         public virtual ValueTask SelectRangeAsync(int pos1, int pos2) =>
             _inputReference?.SelectRangeAsync(pos1, pos2) ?? ValueTask.CompletedTask;
-
-        private bool _pickerSquare;
-        private int _pickerElevation;
-        private ElementReference _pickerInlineRef;
 
         protected override void OnInitialized()
         {

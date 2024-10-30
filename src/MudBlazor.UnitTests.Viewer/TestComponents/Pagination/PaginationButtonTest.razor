@@ -8,13 +8,15 @@
     private int _selected = 6;
     private int _buttonClicked = -1;
 
-    private void ControlButtonClicked(Page page) {
-        _buttonClicked = page switch {
+    private void ControlButtonClicked(Page page)
+    {
+        _buttonClicked = page switch
+        {
             Page.First => 0,
             Page.Previous => 1,
             Page.Next => 2,
             Page.Last => 3,
             _ => -1
-            };
+        };
     }
 }

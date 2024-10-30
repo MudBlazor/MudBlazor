@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
@@ -7,6 +11,12 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// A navigation link as part of a <see cref="MudNavMenu"/>.
+    /// </summary>
+    /// <seealso cref="MudNavGroup"/>
+    /// <seealso cref="MudNavMenu"/>
     public partial class MudNavLink : MudComponentBase
     {
         protected string Classname =>
@@ -47,43 +57,65 @@ namespace MudBlazor
         private NavigationContext? NavigationContext { get; set; }
 
         /// <summary>
-        /// Icon to use if set.
+        /// The icon displayed for this link.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
         public string? Icon { get; set; }
 
         /// <summary>
-        /// The color of the icon. It supports the theme colors, default value uses the themes drawer icon color.
+        /// The color of the icon when <see cref="Icon"/> is set.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
         public Color IconColor { get; set; } = Color.Default;
 
+        /// <summary>
+        /// Controls when this link is highlighted.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="NavLinkMatch.Prefix"/>.  This link is compared against the current URL to determine whether it is highlighted.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
         public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
 
+        /// <summary>
+        /// The browser frame to open this link when <see cref="Href"/> is specified.
+        /// </summary>
+        /// <remarks>
+        /// Possible values include <c>_blank</c>, <c>_self</c>, <c>_parent</c>, <c>_top</c>, or a <i>frame name</i>. <br/>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.ClickAction)]
         public string? Target { get; set; }
 
         /// <summary>
-        /// User class names when active, separated by space.
+        /// The CSS applied when this link is active.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>active</c>.  Multiple classes must be separated by spaces.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ComponentBase.Common)]
         public string ActiveClass { get; set; } = "active";
 
         /// <summary>
-        /// Prevents the user from interacting with this item.
+        /// Prevents the user from interacting with this link.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.Behavior)]
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// Shows a ripple effect when the user clicks the button.
+        /// Shows a ripple effect when the user clicks this link.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -93,7 +125,7 @@ namespace MudBlazor
         public bool Ripple { get; set; } = true;
 
         /// <summary>
-        /// The URL to navigate to when this item is clicked.
+        /// The URL to navigate to when this link is clicked.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.ClickAction)]
@@ -110,17 +142,17 @@ namespace MudBlazor
         public bool ForceLoad { get; set; }
 
         /// <summary>
-        /// The content within this item.
+        /// The content within this link.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Occurs when the item has been clicked.
+        /// Occurs when this link has been clicked.
         /// </summary>
         /// <remarks>
-        /// This event only occurs when the <see cref="Href"/> property is not set.
+        /// This event only occurs when the <see cref="Href"/> property has not been set.
         /// </remarks>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
