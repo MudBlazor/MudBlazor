@@ -530,13 +530,13 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridContextMenuTest>();
             var mudMenuContext = comp.Instance.ContextMenu;
             mudMenuContext.Should().NotBeNull();
-            
+
             // Act
             await Context.Renderer.Dispatcher.InvokeAsync(() => mudMenuContext.OpenMenuAsync(new MouseEventArgs()));
 
             // find mud-menu element
             var mudMenu = comp.Find($"#{mudMenuContext.FieldId}");
-            
+
             // Assert
             mudMenuContext.AnchorOrigin.Should().Be(Origin.TopLeft);
             mudMenuContext.PopoverClassname.Should().Contain("mud-popover-position-override");
