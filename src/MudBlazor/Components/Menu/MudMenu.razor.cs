@@ -18,7 +18,6 @@ namespace MudBlazor
     public partial class MudMenu : MudComponentBase, IActivatable
     {
         private string? _popoverStyle;
-        private bool _isPositionKnown;
         private bool _isTemporary;
         private bool _isPointerOver;
         private bool _isClosing;
@@ -31,7 +30,7 @@ namespace MudBlazor
         protected string PopoverClassname =>
             new CssBuilder()
                 .AddClass(PopoverClass)
-                .AddClass("mud-popover-position-override", _isPositionKnown)
+                .AddClass("mud-popover-position-override", PositionAtCursor)
                 .Build();
 
         protected string ActivatorClassname =>
@@ -351,9 +350,6 @@ namespace MudBlazor
         private void SetPopoverStyle(MouseEventArgs args)
         {
             AnchorOrigin = Origin.TopLeft;
-            // setting this to true will set a static class "mud-popover-position-override" on the popover
-            // js will not reposition a popover with that class outside of Flip / Overflow Behavior
-            _isPositionKnown = true;
             _popoverStyle = $"top: {args.PageY.ToPx()}; left: {args.PageX.ToPx()};";
         }
 

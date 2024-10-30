@@ -534,15 +534,13 @@ namespace MudBlazor.UnitTests.Components
             // Act
             await Context.Renderer.Dispatcher.InvokeAsync(() => mudMenuContext.OpenMenuAsync(new MouseEventArgs()));
 
-            // find mud-menu element
-            var mudMenu = comp.Find($"#{mudMenuContext.FieldId}");
+            // find popover element
             var popover = comp.Find("div.mud-popover");
 
             // Assert
             mudMenuContext.AnchorOrigin.Should().Be(Origin.TopLeft);
             popover.ClassList.Should().Contain("mud-popover-position-override");
 
-            // Style is still null here and can't access _popoverStyle due to private
             //mudMenu.Style.Should().Contain("top:"));
             //mudMenu.Style.Should().Contain("left:"));
 
