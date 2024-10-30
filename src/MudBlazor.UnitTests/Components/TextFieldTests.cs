@@ -179,7 +179,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Setting ShrinkLabel should apply shink class.
+        /// Setting ShrinkLabel should apply mud-shrink class.
         /// </summary>
         [Test]
         public void LabelShouldShrinkWhenShrinkLabelIsSet()
