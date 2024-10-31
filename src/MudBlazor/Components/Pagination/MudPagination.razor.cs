@@ -10,7 +10,6 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-
     /// <summary>
     /// A list of clickable page numbers along with navigation buttons.
     /// </summary>
@@ -20,7 +19,6 @@ namespace MudBlazor
         private ParameterState<int> _selectedState;
         private ParameterState<int> _middleCountState;
         private ParameterState<int> _boundaryCountState;
-        private bool _selectedFirstSet;
 
         private string Classname =>
             new CssBuilder("mud-pagination")
@@ -46,7 +44,8 @@ namespace MudBlazor
             using var register = CreateRegisterScope();
             _selectedState = register.RegisterParameter<int>(nameof(Selected))
                 .WithParameter(() => Selected)
-                .WithEventCallback(() => SelectedChanged);
+                .WithEventCallback(() => SelectedChanged)
+                .WithChangeHandler(args => SetSelectedAsync(args.Value));
             _countState = register.RegisterParameter<int>(nameof(Count))
                 .WithParameter(() => Count)
                 .WithChangeHandler(args => SetCountAsync(args.Value));
@@ -338,8 +337,8 @@ namespace MudBlazor
             var newPageIndex = page switch
             {
                 Page.First => 1,
-                Page.Last => Math.Max(1, Count),
-                Page.Next => Math.Min(_selectedState.Value + 1, Count),
+                Page.Last => Math.Max(1, _countState.Value),
+                Page.Next => Math.Min(_selectedState.Value + 1, _countState.Value),
                 Page.Previous => Math.Max(1, _selectedState.Value - 1),
                 _ => _selectedState.Value
             };
@@ -376,7 +375,7 @@ namespace MudBlazor
         {
             var newCount = Math.Max(1, count);
             await _countState.SetValueAsync(newCount);
-            await SetSelectedAsync(Math.Min(Selected, newCount));
+            await SetSelectedAsync(Math.Min(_selectedState.Value, newCount));
         }
 
         private async Task SetSelectedAsync(int pageIndex)
@@ -386,17 +385,7 @@ namespace MudBlazor
                 return;
             }
 
-            int newPageIndex;
-            //this is required because _selected will stay 1 when Count is not yet set
-            if (!_selectedFirstSet)
-            {
-                newPageIndex = pageIndex;
-                _selectedFirstSet = true;
-            }
-            else
-            {
-                newPageIndex = Math.Max(1, Math.Min(pageIndex, Count));
-            }
+            var newPageIndex = Math.Max(1, Math.Min(pageIndex, _countState.Value));
 
             await _selectedState.SetValueAsync(newPageIndex);
         }
