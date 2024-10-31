@@ -14,12 +14,12 @@
 <CascadingValue IsFixed="true" Value="this">@Columns</CascadingValue>
 
 <CascadingValue IsFixed="true" Value="this">
-    <div @attributes="UserAttributes" class="@_classname" style="@_style">
+    <div @attributes="UserAttributes" class="@Classname" style="@Stylename">
         @if (Items != null || HasServerData)
         {
             @if (ToolBarContent != null)
             {
-                <MudToolBar Class="mud-table-toolbar" Style="@_headerFooterStyle">
+                <MudToolBar Class="mud-table-toolbar" Style="@HeaderFooterStyle">
                     @ToolBarContent
                     @if (ShowMenuIcon)
                     {
@@ -32,13 +32,13 @@
                 @if (ShowMenuIcon)
                 {
                     @*Add the default toolbar.*@
-                    <MudToolBar Class="mud-table-toolbar" Style="@_headerFooterStyle">
+                    <MudToolBar Class="mud-table-toolbar" Style="@HeaderFooterStyle">
                         <MudSpacer />
                         @ToolbarMenu(this)
                     </MudToolBar>
                 }
             }
-            <div @ref=_gridElement class="@_tableClass" style="@_tableStyle">
+            <div @ref=_gridElement class="@TableClass" style="@TableStyle">
                 <MudDropContainer @ref="_dropContainer" T="Column<T>" Items="@RenderedColumns" ItemsSelector="(item, dropzone) => RenderedColumnsItemsSelector(item, dropzone)" ItemDropped="ItemUpdatedAsync" CanDropClass="@DropAllowedClass" NoDropClass="@DropNotAllowedClass" ApplyDropClassesOnDragStarted="@ApplyDropClassesOnDragStarted">
                     <ChildContent>
                 <table class="mud-table-root">
@@ -48,7 +48,7 @@
                             @ColGroup
                         </colgroup>
                     }
-                    <thead class="@_headClassname">
+                    <thead class="@HeadClassname">
                         <CascadingValue Name="IsOnlyHeader" IsFixed="true" Value="true">
                             @Header
                         </CascadingValue>
@@ -266,7 +266,7 @@
                                                         }
                                                     </CascadingValue>
                                                 </tr>
-                                                @if (ChildRowContent != null && (_openHierarchies.Contains(item) || !hasHierarchyColumn))
+                                                @if (ChildRowContent != null && (_openHierarchies.Contains(item) || !HasHierarchyColumn))
                                                 {
                                                     <tr class="mud-table-row">
                                                         <td class="mud-table-cell" colspan="1000">
@@ -321,7 +321,7 @@
                                                 }
                                             </CascadingValue>
                                         </tr>
-                                        @if (ChildRowContent != null && (_openHierarchies.Contains(item) || !hasHierarchyColumn))
+                                        @if (ChildRowContent != null && (_openHierarchies.Contains(item) || !HasHierarchyColumn))
                                         {
                                             <tr class="mud-table-row">
                                                 <td class="mud-table-cell" colspan="1000">
@@ -352,7 +352,7 @@
                             </tr>
                         }
                     </tbody>
-                    <tfoot class="@_footClassname">
+                    <tfoot class="@FootClassname">
                         <tr class="mud-table-row">
                             @FooterCells(resolvedPageItems)
                         </tr>
@@ -366,14 +366,14 @@
             </div>
             @if (PagerContent != null)
             {
-                <div class="mud-table-pagination" style="@_headerFooterStyle">
+                <div class="mud-table-pagination" style="@HeaderFooterStyle">
                     @PagerContent
                 </div>
             }
         }
     </div>
     <CascadingValue Value="true" IsFixed Name="IsNested">
-        <MudDialog Options="EditDialogOptions" @bind-Visible="isEditFormOpen">
+        <MudDialog Options="EditDialogOptions" @bind-Visible="_isEditFormOpen">
             <DialogContent>
                 <MudForm @ref="_editForm" FieldChanged="FormFieldChanged">
                     @foreach (var column in RenderedColumns)
@@ -436,7 +436,7 @@
                 {
                     if (!column.HiddenState.Value)
                     {
-                        if (column.AggregateDefinition is not null || column.FooterTemplate is not null || hasFooter)
+                        if (column.AggregateDefinition is not null || column.FooterTemplate is not null || HasFooter)
                         {
                             <FooterCell T="T" Column="@column" CurrentItems="@currentItems"></FooterCell>
                         }
@@ -451,7 +451,7 @@
             @{
                 var cell = new Cell<T>(this, column, item);
             }
-            <td data-label="@column.Title" class="@cell.computedClass" style="@cell.computedStyle">
+            <td data-label="@column.Title" class="@cell.ComputedClass" style="@cell.ComputedStyle">
                 @if (column.Editable && !ReadOnly && EditMode == DataGridEditMode.Cell)
                 {
                     if (column.EditTemplate is not null)

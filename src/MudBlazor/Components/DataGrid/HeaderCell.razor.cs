@@ -70,7 +70,7 @@ namespace MudBlazor
         private string _classname =>
             new CssBuilder(Column?.HeaderClass)
                 .AddClass(Column?.HeaderClassFunc?.Invoke(DataGrid?.CurrentPageItems ?? Enumerable.Empty<T>()))
-                .AddClass(Column?.headerClassname)
+                .AddClass(Column?.HeaderClassname)
                 .AddClass(Class)
                 .Build();
 

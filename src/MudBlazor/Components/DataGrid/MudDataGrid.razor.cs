@@ -20,27 +20,29 @@ namespace MudBlazor
     [CascadingTypeParameter(nameof(T))]
     public partial class MudDataGrid<T> : MudComponentBase, IDisposable
     {
-        private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
-        private int _currentPage = 0;
+        private T _selectedItem;
+        private MudForm _editForm;
         internal int? _rowsPerPage;
+        private int _currentPage = 0;
+        private IEnumerable<T> _items;
+        private MudVirtualize<T> _mudVirtualize;
         private bool _isFirstRendered = false;
         private bool _filtersMenuVisible = false;
         private bool _columnsPanelVisible = false;
+        internal HashSet<T> _openHierarchies = [];
         private string _columnsPanelSearch = string.Empty;
-        private IEnumerable<T> _items;
-        private T _selectedItem;
-        private MudForm _editForm;
-        private MudVirtualize<T> _mudVirtualize;
-        internal Dictionary<object, bool> _groupExpansionsDict = new Dictionary<object, bool>();
-        private List<GroupDefinition<T>> _currentPageGroups = new List<GroupDefinition<T>>();
-        private List<GroupDefinition<T>> _allGroups = new List<GroupDefinition<T>>();
-        internal HashSet<T> _openHierarchies = new HashSet<T>();
-        private PropertyInfo[] _properties = typeof(T).GetProperties();
         private MudDropContainer<Column<T>> _dropContainer;
         private MudDropContainer<Column<T>> _columnsPanelDropContainer;
+        private PropertyInfo[] _properties = typeof(T).GetProperties();
         private CancellationTokenSource _serverDataCancellationTokenSource;
+        private IEnumerable<T> _currentRenderFilteredItemsCache = null;
+        internal Dictionary<object, bool> _groupExpansionsDict = new();
+        private List<GroupDefinition<T>> _currentPageGroups = [];
+        private List<GroupDefinition<T>> _allGroups = [];
+        private GridData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
+        private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
 
-        protected string _classname =>
+        protected string Classname =>
             new CssBuilder("mud-table")
                 .AddClass("mud-data-grid")
                 .AddClass("mud-xs-table", Breakpoint == Breakpoint.Xs)
@@ -60,39 +62,39 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
-        protected string _style =>
+        protected string Stylename =>
             new StyleBuilder()
                 .AddStyle("overflow-x", "auto", when: HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container)
-                .AddStyle("position", "relative", when: hasStickyColumns)
+                .AddStyle("position", "relative", when: HasStickyColumns)
                 .AddStyle(Style)
                 .Build();
 
-        protected string _tableStyle =>
+        protected string TableStyle =>
             new StyleBuilder()
                 .AddStyle("height", Height, !string.IsNullOrWhiteSpace(Height))
                 .AddStyle("width", "max-content", when: HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container)
-                .AddStyle("overflow", "clip", when: (HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container) && hasStickyColumns)
+                .AddStyle("overflow", "clip", when: (HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container) && HasStickyColumns)
                 .AddStyle("display", "block", when: HorizontalScrollbar)
                 .Build();
 
-        protected string _tableClass =>
+        protected string TableClass =>
             new CssBuilder("mud-table-container")
                 .AddClass("cursor-col-resize", when: IsResizing)
                 .Build();
 
-        protected string _headClassname =>
+        protected string HeadClassname =>
             new CssBuilder("mud-table-head")
                 .AddClass(HeaderClass)
                 .Build();
 
-        protected string _footClassname =>
+        protected string FootClassname =>
             new CssBuilder("mud-table-foot")
                 .AddClass(FooterClass).Build();
 
-        protected string _headerFooterStyle =>
+        protected string HeaderFooterStyle =>
             new StyleBuilder()
-                .AddStyle("position", "sticky", when: hasStickyColumns)
-                .AddStyle("left", "0px", when: hasStickyColumns)
+                .AddStyle("position", "sticky", when: HasStickyColumns)
+                .AddStyle("left", "0px", when: HasStickyColumns)
                 .Build();
 
         protected override void OnParametersSet()
@@ -144,19 +146,15 @@ namespace MudBlazor
             {
                 return SortDirection.None;
             }
-            else
-            {
-                var ok = SortDefinitions.TryGetValue(columnName, out var sortDefinition);
 
-                if (ok)
-                {
-                    return sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending;
-                }
-                else
-                {
-                    return SortDirection.None;
-                }
+            var ok = SortDefinitions.TryGetValue(columnName, out var sortDefinition);
+
+            if (ok)
+            {
+                return sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending;
             }
+
+            return SortDirection.None;
         }
 
         protected int numPages
@@ -164,7 +162,7 @@ namespace MudBlazor
             get
             {
                 if (HasServerData)
-                    return (int)Math.Ceiling(_server_data.TotalItems / (double)RowsPerPage);
+                    return (int)Math.Ceiling(_serverData.TotalItems / (double)RowsPerPage);
 
                 return (int)Math.Ceiling(FilteredItems.Count() / (double)RowsPerPage);
             }
@@ -190,7 +188,7 @@ namespace MudBlazor
                 var dragAndDropSourceIndex = RenderedColumns.IndexOf(dragAndDropSource);
                 var dragAndDropDestinationIndex = RenderedColumns.IndexOf(dragAndDropDestination);
 
-                Swap<Column<T>>(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex);
+                Swap(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex);
 
                 // swap source / destination
                 var dest = dragAndDropDestination.HeaderCell.Width;
@@ -212,10 +210,10 @@ namespace MudBlazor
         internal T _editingItem;
 
         //internal int editingItemHash;
-        internal T editingSourceItem;
+        internal T _editingSourceItem;
 
         internal T _previousEditingItem;
-        internal bool isEditFormOpen;
+        internal bool _isEditFormOpen;
 
         // converters
         private Converter<bool, bool?> _oppositeBoolConverter = new Converter<bool, bool?>
@@ -318,7 +316,7 @@ namespace MudBlazor
         private bool RightToLeft { get; set; }
 
         /// <summary>
-        /// Allows columns to be be reordered via drag-and-drop.
+        /// Allows columns to be reordered via drag-and-drop.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  Can be overridden for individual columns via <see cref="Column{T}.DragAndDropEnabled"/>.
@@ -587,7 +585,7 @@ namespace MudBlazor
         public RenderFragment RowLoadingContent { get; set; }
 
         /// <summary>
-        /// The number of additional items rendered outside of the visible region when <see cref="Virtualize"/> is <c>true</c>.
+        /// The number of additional items rendered outside the visible region when <see cref="Virtualize"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>3</c>.  This value can reduce the amount of rendering during scrolling, but higher values can affect performance.
@@ -1118,10 +1116,8 @@ namespace MudBlazor
         /// <summary>
         /// The items returned by the <see cref="ServerData"/> function.
         /// </summary>
-        public IEnumerable<T> ServerItems => _server_data.Items;
+        public IEnumerable<T> ServerItems => _serverData.Items;
 
-        private GridData<T> _server_data = new GridData<T>() { TotalItems = 0, Items = Array.Empty<T>() };
-        private IEnumerable<T> _currentRenderFilteredItemsCache = null;
 
         /// <summary>
         /// Defines the ItemsProviderDelegate property, which is necessary for implementing the ServerData methodology with Virtualization.
@@ -1144,7 +1140,7 @@ namespace MudBlazor
             {
                 if (_currentRenderFilteredItemsCache != null) return _currentRenderFilteredItemsCache;
                 var items = HasServerData
-                    ? _server_data.Items
+                    ? _serverData.Items
                     : Items;
 
                 // Quick filtering
@@ -1193,7 +1189,7 @@ namespace MudBlazor
 
         #region Computed Properties
 
-        private bool hasFooter
+        private bool HasFooter
         {
             get
             {
@@ -1201,7 +1197,7 @@ namespace MudBlazor
             }
         }
 
-        private bool hasStickyColumns
+        private bool HasStickyColumns
         {
             get
             {
@@ -1209,7 +1205,7 @@ namespace MudBlazor
             }
         }
 
-        private bool hasHierarchyColumn
+        private bool HasHierarchyColumn
         {
             get
             {
@@ -1260,7 +1256,7 @@ namespace MudBlazor
 
             if (HasServerData)
             {
-                return _server_data.Items;
+                return _serverData.Items;
             }
 
             return FilteredItems.Skip(page * pageSize).Take(pageSize);
@@ -1297,7 +1293,7 @@ namespace MudBlazor
                     // Cancel any prior request
                     CancelServerDataToken();
 
-                    _server_data = await VirtualizeServerData(state, _serverDataCancellationTokenSource.Token);
+                    _serverData = await VirtualizeServerData(state, _serverDataCancellationTokenSource.Token);
                     _currentRenderFilteredItemsCache = null;
 
                     Loading = false;
@@ -1318,10 +1314,10 @@ namespace MudBlazor
                     FilterDefinitions = FilterDefinitions.ToList()
                 };
 
-                _server_data = await ServerData(state);
+                _serverData = await ServerData(state);
                 _currentRenderFilteredItemsCache = null;
 
-                if (CurrentPage * RowsPerPage > _server_data.TotalItems)
+                if (CurrentPage * RowsPerPage > _serverData.TotalItems)
                     CurrentPage = 0;
 
                 Loading = false;
@@ -1520,7 +1516,7 @@ namespace MudBlazor
         internal void ClearEditingItem()
         {
             _editingItem = default;
-            editingSourceItem = default;
+            _editingSourceItem = default;
         }
 
         /// <summary>
@@ -1550,17 +1546,17 @@ namespace MudBlazor
                 return;
             }
 
-            if (editingSourceItem != null)
+            if (_editingSourceItem != null)
             {
                 foreach (var property in _properties)
                 {
                     if (property.CanWrite)
-                        property.SetValue(editingSourceItem, property.GetValue(_editingItem));
+                        property.SetValue(_editingSourceItem, property.GetValue(_editingItem));
                 }
 
-                await CommittedItemChanges.InvokeAsync(editingSourceItem);
+                await CommittedItemChanges.InvokeAsync(_editingSourceItem);
                 ClearEditingItem();
-                isEditFormOpen = false;
+                _isEditFormOpen = false;
             }
         }
 
@@ -1588,7 +1584,7 @@ namespace MudBlazor
         public int GetFilteredItemsCount()
         {
             if (HasServerData)
-                return _server_data.TotalItems;
+                return _serverData.TotalItems;
             return FilteredItems.Count();
         }
 
@@ -1598,24 +1594,14 @@ namespace MudBlazor
         /// <param name="page">The page to navigate to.</param>
         public void NavigateTo(Page page)
         {
-            switch (page)
+            CurrentPage = page switch
             {
-                case Page.First:
-                    CurrentPage = 0;
-                    break;
-
-                case Page.Last:
-                    CurrentPage = Math.Max(0, numPages - 1);
-                    break;
-
-                case Page.Next:
-                    CurrentPage = Math.Min(numPages - 1, CurrentPage + 1);
-                    break;
-
-                case Page.Previous:
-                    CurrentPage = Math.Max(0, CurrentPage - 1);
-                    break;
-            }
+                Page.First => 0,
+                Page.Last => Math.Max(0, numPages - 1),
+                Page.Next => Math.Min(numPages - 1, CurrentPage + 1),
+                Page.Previous => Math.Max(0, CurrentPage - 1),
+                _ => CurrentPage
+            };
 
             GroupItems();
         }
@@ -1757,14 +1743,14 @@ namespace MudBlazor
                     FilterDefinitions = FilterDefinitions.ToList()
                 };
 
-                _server_data = await VirtualizeServerData(
+                _serverData = await VirtualizeServerData(
                     stateFunc(request.StartIndex, request.Count),
                     request.CancellationToken
                 );
 
-                if (request.StartIndex > 0 && _server_data.TotalItems < request.StartIndex + request.Count)
+                if (request.StartIndex > 0 && _serverData.TotalItems < request.StartIndex + request.Count)
                 {
-                    _server_data = await VirtualizeServerData(
+                    _serverData = await VirtualizeServerData(
                         stateFunc(0, request.Count),
                         request.CancellationToken
                     );
@@ -1773,8 +1759,8 @@ namespace MudBlazor
                 _currentRenderFilteredItemsCache = null;
 
                 return new ItemsProviderResult<T>(
-                    _server_data.Items,
-                    _server_data.TotalItems);
+                    _serverData.Items,
+                    _serverData.TotalItems);
             };
         }
 
@@ -1813,13 +1799,13 @@ namespace MudBlazor
         {
             if (ReadOnly) return;
 
-            editingSourceItem = item;
+            _editingSourceItem = item;
             EditingCanceledEvent?.Invoke();
             _previousEditingItem = _editingItem;
             _editingItem = CloneStrategy.CloneObject(item);
             StartedEditingItemEvent?.Invoke();
             await StartedEditingItem.InvokeAsync(_editingItem);
-            isEditFormOpen = true;
+            _isEditFormOpen = true;
         }
 
         /// <summary>
@@ -1830,7 +1816,7 @@ namespace MudBlazor
             EditingCanceledEvent?.Invoke();
             await CanceledEditingItem.InvokeAsync(_editingItem);
             ClearEditingItem();
-            isEditFormOpen = false;
+            _isEditFormOpen = false;
         }
 
         /// <summary>

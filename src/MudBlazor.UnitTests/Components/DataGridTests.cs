@@ -1120,7 +1120,7 @@ namespace MudBlazor.UnitTests.Components
 
             // open form dialog
             dataGrid.Find("tbody tr button").Click();
-            dataGrid.Instance.isEditFormOpen.Should().BeTrue();
+            dataGrid.Instance._isEditFormOpen.Should().BeTrue();
 
             var field = comp.FindComponents<MudTextField<string>>()[2];
 
@@ -1139,7 +1139,7 @@ namespace MudBlazor.UnitTests.Components
 
             // dialog should still be open and the items data should not have been updated
             using AssertionScope scope = new();
-            dataGrid.Instance.isEditFormOpen.Should().BeTrue();
+            dataGrid.Instance._isEditFormOpen.Should().BeTrue();
             comp.Instance.Items[0].Email.Should().Be("Augusta_Homenick26@mud.com");
         }
 

@@ -43,7 +43,7 @@ namespace MudBlazor
             new CssBuilder("footer-cell")
                 .AddClass(Column?.FooterClassFunc?.Invoke(items ?? Enumerable.Empty<T>()))
                 .AddClass(Column?.FooterClass)
-                .AddClass(Column?.footerClassname)
+                .AddClass(Column?.FooterClassname)
                 .AddClass(Class)
                 .Build();
 

@@ -38,7 +38,7 @@ namespace MudBlazor
 
         private string _classname =>
             new CssBuilder(Column?.HeaderClass)
-                .AddClass(Column?.headerClassname)
+                .AddClass(Column?.HeaderClassname)
                 .AddClass(Class)
                 .AddClass("filter-header-cell")
                 .Build();

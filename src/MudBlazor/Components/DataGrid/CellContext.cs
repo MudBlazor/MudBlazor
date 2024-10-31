@@ -2,10 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
 namespace MudBlazor
 {
 #nullable enable
@@ -32,24 +28,12 @@ namespace MudBlazor
         /// <summary>
         /// Indicates if the cell is currently selected.
         /// </summary>
-        public bool Selected
-        {
-            get
-            {
-                return _selection.Contains(Item);
-            }
-        }
+        public bool Selected => _selection.Contains(Item);
 
         /// <summary>
         /// Indicates if the cell is currently in an open hierarchy.
         /// </summary>
-        public bool Open
-        {
-            get
-            {
-                return OpenHierarchies.Contains(Item);
-            }
-        }
+        public bool Open => OpenHierarchies.Contains(Item);
 
         /// <summary>
         /// Creates a new instance.
@@ -78,22 +62,22 @@ namespace MudBlazor
             /// <summary>
             /// The function which selects the cell.
             /// </summary>
-            public Func<bool, Task> SetSelectedItemAsync { get; init; } = null!;
+            public required Func<bool, Task> SetSelectedItemAsync { get; init; }
 
             /// <summary>
             /// The function which begins editing.
             /// </summary>
-            public Func<Task> StartEditingItemAsync { get; init; } = null!;
+            public required Func<Task> StartEditingItemAsync { get; init; }
 
             /// <summary>
             /// The function which ends editing.
             /// </summary>
-            public Func<Task> CancelEditingItemAsync { get; init; } = null!;
+            public required Func<Task> CancelEditingItemAsync { get; init; }
 
             /// <summary>
             /// The function which toggles hierarchy visibility.
             /// </summary>
-            public Func<Task> ToggleHierarchyVisibilityForItemAsync { get; init; } = null!;
+            public required Func<Task> ToggleHierarchyVisibilityForItemAsync { get; init; }
         }
     }
 }
