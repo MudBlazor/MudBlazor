@@ -32,7 +32,7 @@ namespace MudBlazor
                 .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
                 .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", () => Margin != Margin.None)
                 .AddClass("mud-input-underline", () => Underline && Variant != Variant.Outlined)
-                .AddClass("mud-shrink", () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder))
+                .AddClass("mud-shrink", () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder) || ShrinkLabel)
                 .AddClass("mud-disabled", GetDisabledState())
                 .AddClass("mud-input-error", HasErrors)
                 .AddClass("mud-ltr", GetInputType() == InputType.Email || GetInputType() == InputType.Telephone)
