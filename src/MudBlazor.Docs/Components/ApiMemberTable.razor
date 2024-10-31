@@ -1,5 +1,6 @@
 ﻿<MudTable T="DocumentedMember" @ref="Table" ServerData="@GetData"
-          Elevation="0" Class="mud-width-full" Hover="true" Dense="true"
+          Breakpoint="@Breakpoint.Sm"
+          Elevation="0" Class="mud-width-full " Hover="true" Dense="true"
           AllowUnsorted="false" GroupBy="@CurrentGroups">   
     <GroupHeaderTemplate>
         @if (Grouping == ApiMemberGrouping.Inheritance)
@@ -36,7 +37,7 @@
                     <MudTextField T="string" Value="@Keyword" ValueChanged="OnKeywordChangedAsync" DebounceInterval="300" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
                 </MudItem>
                 <MudItem xs="6" md="3" Class="py-0">
-                    <MudSwitch T="bool" Size="Size.Small" Value="@ShowProtected" ValueChanged="OnShowProtectedChangedAsync">Show Protected</MudSwitch>
+                    <MudSwitch T="bool" Size="Size.Small" Color="Color.Primary" Value="@ShowProtected" ValueChanged="OnShowProtectedChangedAsync">Show Protected</MudSwitch>
                 </MudItem>
             }
             else
@@ -49,7 +50,7 @@
         </MudGrid>
     </ToolBarContent>
     <RowTemplate>
-        <MudTd id="@context.Name" DataLabel="Name">
+        <MudTd id="@context.Name" DataLabel="Name" Class="docs-content-api-cell">
             @if (Mode == ApiMemberTableMode.Methods)
             {
                 <CodeInline Class="pr-0">@($"{context.Name}(")</CodeInline>
@@ -120,18 +121,18 @@
                 </MudTooltip>
             }
         </MudTd>
-        <MudTd DataLabel="Type">
+        <MudTd DataLabel="Type" Class="docs-content-api-cell">
             <ApiTypeLink Type="@context.Type" TypeName="@context.TypeName" TypeFriendlyName="@context.TypeFriendlyName" />
         </MudTd>
         @if (Mode == ApiMemberTableMode.Methods && !string.IsNullOrEmpty(((DocumentedMethod)context).Returns))
         {
-            <MudTd DataLabel="Returns">      
+            <MudTd DataLabel="Returns" Class="docs-content-api-cell">
                 <ApiText Text="@(context.Summary + " " + context.Remarks + "  Returns: " + ((DocumentedMethod)context).Returns)" />
             </MudTd>
         }
         else
         {
-            <MudTd DataLabel="Description">
+            <MudTd DataLabel="Description" Class="docs-content-api-cell docs-content-api-description">
                 <ApiText Text="@(context.Summary + " " + context.Remarks)" />
             </MudTd>
         }
