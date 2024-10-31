@@ -4,7 +4,9 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.State;
 using MudBlazor.Utilities;
+using static MudBlazor.Colors;
 
 namespace MudBlazor
 {
@@ -15,8 +17,8 @@ namespace MudBlazor
     /// </summary>
     public partial class MudPagination : MudComponentBase
     {
-        private int _count = 1;
-        private int _selected = 1;
+        private ParameterState<int> _countState;
+        private ParameterState<int> _selectedState;
         private int _middleCount = 3;
         private int _boundaryCount = 2;
         private bool _selectedFirstSet;
@@ -40,6 +42,17 @@ namespace MudBlazor
                 .AddClass("mud-pagination-item-selected")
                 .Build();
 
+        public MudPagination()
+        {
+            using var register = CreateRegisterScope();
+            _selectedState = register.RegisterParameter<int>(nameof(Selected))
+                .WithParameter(() => Selected)
+                .WithEventCallback(() => SelectedChanged);
+            _countState = register.RegisterParameter<int>(nameof(Count))
+                .WithParameter(() => Count)
+                .WithChangeHandler(args => SetCountAsync(args.Value));
+        }
+
         /// <summary>
         /// Displays text right-to-left.
         /// </summary>
@@ -54,15 +67,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Pagination.Behavior)]
-        public int Count
-        {
-            get => _count;
-            set
-            {
-                _count = Math.Max(1, value);
-                Selected = Math.Min(Selected, _count);
-            }
-        }
+        public int Count { get; set; } = 1;
 
         /// <summary>
         /// The number of pages shown before and after the ellipsis.
@@ -107,26 +112,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Pagination.Behavior)]
-        public int Selected
-        {
-            get => _selected;
-            set
-            {
-                if (_selected == value)
-                    return;
-
-                //this is required because _selected will stay 1 when Count is not yet set
-                if (!_selectedFirstSet)
-                {
-                    _selected = value;
-                    _selectedFirstSet = true;
-                }
-                else
-                    _selected = Math.Max(1, Math.Min(value, Count));
-
-                SelectedChanged.InvokeAsync(_selected);
-            }
-        }
+        public int Selected { get; set; } = 1;
 
         /// <summary>
         /// The display variant to use.
@@ -290,7 +276,7 @@ namespace MudBlazor
         /*generates an array representing the pagination numbers, e.g. for Count==11, MiddleCount==3, BoundaryCount==1,
          Selected==6 the output will be the int array [1, 2, -1, 5, 6, 7, -1, 10, 11]
          -1 is displayed as "..." in the ui*/
-        private IEnumerable<int> GeneratePagination()
+        private int[] GeneratePagination()
         {
             //return array {1, ..., Count} if Count is small 
             if (Count <= 4 || Count <= (2 * BoundaryCount) + MiddleCount + 2)
@@ -313,12 +299,12 @@ namespace MudBlazor
 
             //calculate start value for middle items
             int startValue;
-            if (Selected <= BoundaryCount + (MiddleCount / 2) + 1)
+            if (_selectedState.Value <= BoundaryCount + (MiddleCount / 2) + 1)
                 startValue = BoundaryCount + 2;
-            else if (Selected >= Count - BoundaryCount - (MiddleCount / 2))
+            else if (_selectedState.Value >= Count - BoundaryCount - (MiddleCount / 2))
                 startValue = Count - BoundaryCount - MiddleCount;
             else
-                startValue = Selected - (MiddleCount / 2);
+                startValue = _selectedState.Value - (MiddleCount / 2);
 
             //set middle items, e.g. if MiddleCount == 3 and Selected == 5 and Count == 11 => [..., 4, 5, 6, ...] 
             for (var i = 0; i < MiddleCount; i++)
@@ -327,10 +313,10 @@ namespace MudBlazor
             }
 
             //set start delimiter "..." when selected page is far enough to the end, dots are represented as -1
-            pages[BoundaryCount] = (BoundaryCount + (MiddleCount / 2) + 1 < Selected) ? -1 : BoundaryCount + 1;
+            pages[BoundaryCount] = (BoundaryCount + (MiddleCount / 2) + 1 < _selectedState.Value) ? -1 : BoundaryCount + 1;
 
             //set end delimiter "..." when selected page is far enough to the start, dots are represented as -1
-            pages[length - BoundaryCount - 1] = (Count - BoundaryCount - (MiddleCount / 2) > Selected) ? -1 : Count - BoundaryCount;
+            pages[length - BoundaryCount - 1] = (Count - BoundaryCount - (MiddleCount / 2) > _selectedState.Value) ? -1 : Count - BoundaryCount;
 
             //remove ellipsis if difference is small enough, e.g convert [..., 5 , -1 , 7, ...] to [..., 5, 6, 7, ...]
             for (var i = 0; i < length - 2; i++)
@@ -343,10 +329,11 @@ namespace MudBlazor
         }
 
         //triggered when the user clicks on a control button, e.g. the navigate-to-next-page-button
-        private void OnClickControlButton(Page page)
+        private Task OnClickControlButtonAsync(Page page)
         {
             ControlButtonClicked.InvokeAsync(page);
-            NavigateTo(page);
+
+            return NavigateToAsync(page);
         }
 
         //Last line cannot be tested because Page enum has 4 items
@@ -355,25 +342,58 @@ namespace MudBlazor
         /// </summary>
         /// <param name="page">The page to navigate to.</param>
         [ExcludeFromCodeCoverage]
-        public void NavigateTo(Page page)
+        public Task NavigateToAsync(Page page)
         {
-            Selected = page switch
+            var newPageIndex = page switch
             {
                 Page.First => 1,
                 Page.Last => Math.Max(1, Count),
-                Page.Next => Math.Min(Selected + 1, Count),
-                Page.Previous => Math.Max(1, Selected - 1),
-                _ => Selected
+                Page.Next => Math.Min(_selectedState.Value + 1, Count),
+                Page.Previous => Math.Max(1, _selectedState.Value - 1),
+                _ => _selectedState.Value
             };
+
+            return SetSelectedAsync(newPageIndex);
         }
 
         /// <summary>
         /// Changes the currently selected page.
         /// </summary>
         /// <param name="pageIndex">The index of the page to select, where the first page is <c>0</c>.</param>
-        public void NavigateTo(int pageIndex)
+        public Task NavigateToAsync(int pageIndex)
         {
-            Selected = pageIndex + 1;
+            var newPageIndex = pageIndex + 1;
+
+            return SetSelectedAsync(newPageIndex);
+        }
+
+        private async Task SetCountAsync(int count)
+        {
+            var newCount = Math.Max(1, count);
+            await _countState.SetValueAsync(newCount);
+            await SetSelectedAsync(Math.Min(Selected, newCount));
+        }
+
+        private async Task SetSelectedAsync(int pageIndex)
+        {
+            if (_selectedState.Value == pageIndex)
+            {
+                return;
+            }
+
+            int newPageIndex;
+            //this is required because _selected will stay 1 when Count is not yet set
+            if (!_selectedFirstSet)
+            {
+                newPageIndex = pageIndex;
+                _selectedFirstSet = true;
+            }
+            else
+            {
+                newPageIndex = Math.Max(1, Math.Min(pageIndex, Count));
+            }
+
+            await _selectedState.SetValueAsync(newPageIndex);
         }
     }
 }
