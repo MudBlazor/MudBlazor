@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.Utilities;
-using static MudBlazor.Colors;
 
 namespace MudBlazor
 {
@@ -19,8 +18,8 @@ namespace MudBlazor
     {
         private ParameterState<int> _countState;
         private ParameterState<int> _selectedState;
-        private int _middleCount = 3;
-        private int _boundaryCount = 2;
+        private ParameterState<int> _middleCountState;
+        private ParameterState<int> _boundaryCountState;
         private bool _selectedFirstSet;
 
         private string Classname =>
@@ -51,6 +50,12 @@ namespace MudBlazor
             _countState = register.RegisterParameter<int>(nameof(Count))
                 .WithParameter(() => Count)
                 .WithChangeHandler(args => SetCountAsync(args.Value));
+            _middleCountState = register.RegisterParameter<int>(nameof(MiddleCount))
+                .WithParameter(() => MiddleCount)
+                .WithChangeHandler(args => SetMiddleCount(args.Value));
+            _boundaryCountState = register.RegisterParameter<int>(nameof(BoundaryCount))
+                .WithParameter(() => BoundaryCount)
+                .WithChangeHandler(args => SetBoundaryCount(args.Value));
         }
 
         /// <summary>
@@ -74,38 +79,24 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>1</c>. <br />
-        /// A value of <c>1</c> would show one page number at the edge: <c>&lt; 1 ... 4 5 6 ... 9 &gt;</c> <br />
-        /// A value of <c>2</c> would show two page numbers at the edge: <c>&lt; 1 2 ... 4 5 6 ... 8 9 &gt;</c> 
+        /// A value of <c>1</c> would show one-page number at the edge: <c>&lt; 1 ... 4 5 6 ... 9 &gt;</c> <br />
+        /// A value of <c>2</c> would show two-page numbers at the edge: <c>&lt; 1 2 ... 4 5 6 ... 8 9 &gt;</c> 
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
-        public int BoundaryCount
-        {
-            get => _boundaryCount;
-            set
-            {
-                _boundaryCount = Math.Max(1, value);
-            }
-        }
+        public int BoundaryCount { get; set; } = 2;
 
         /// <summary>
         /// The number of pages shown between the ellipsis.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>1</c>. <br />
-        /// A value of <c>1</c> would show one page number in the middle: <c>&lt; 1 ... 5 ... 9 &gt;</c> <br />
-        /// A value of <c>3</c> would show three page numbers in the middle: <c>&lt; 1 ... 4 5 6 ... 9 &gt;</c>
+        /// A value of <c>1</c> would show one-page number in the middle: <c>&lt; 1 ... 5 ... 9 &gt;</c> <br />
+        /// A value of <c>3</c> would show three-page numbers in the middle: <c>&lt; 1 ... 4 5 6 ... 9 &gt;</c>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
-        public int MiddleCount
-        {
-            get => _middleCount;
-            set
-            {
-                _middleCount = Math.Max(1, value);
-            }
-        }
+        public int MiddleCount { get; set; } = 3;
 
         /// <summary>
         /// The selected page number.
@@ -279,44 +270,44 @@ namespace MudBlazor
         private int[] GeneratePagination()
         {
             //return array {1, ..., Count} if Count is small 
-            if (Count <= 4 || Count <= (2 * BoundaryCount) + MiddleCount + 2)
-                return Enumerable.Range(1, Count).ToArray();
+            if (_countState.Value <= 4 || _countState.Value <= (2 * _boundaryCountState.Value) + _middleCountState.Value + 2)
+                return Enumerable.Range(1, _countState.Value).ToArray();
 
-            var length = (2 * BoundaryCount) + MiddleCount + 2;
+            var length = (2 * _boundaryCountState.Value) + _middleCountState.Value + 2;
             var pages = new int[length];
 
             //set start boundary items, e.g. if BoundaryCount == 3 => [1, 2, 3, ...]
-            for (var i = 0; i < BoundaryCount; i++)
+            for (var i = 0; i < _boundaryCountState.Value; i++)
             {
                 pages[i] = i + 1;
             }
 
             //set end boundary items, e.g. if BoundaryCount == 3 and Count == 11 => [..., 9, 10, 11]
-            for (var i = 0; i < BoundaryCount; i++)
+            for (var i = 0; i < _boundaryCountState.Value; i++)
             {
-                pages[length - i - 1] = Count - i;
+                pages[length - i - 1] = _countState.Value - i;
             }
 
             //calculate start value for middle items
             int startValue;
-            if (_selectedState.Value <= BoundaryCount + (MiddleCount / 2) + 1)
-                startValue = BoundaryCount + 2;
-            else if (_selectedState.Value >= Count - BoundaryCount - (MiddleCount / 2))
-                startValue = Count - BoundaryCount - MiddleCount;
+            if (_selectedState.Value <= _boundaryCountState.Value + (_middleCountState.Value / 2) + 1)
+                startValue = _boundaryCountState.Value + 2;
+            else if (_selectedState.Value >= _countState.Value - _boundaryCountState.Value - (_middleCountState.Value / 2))
+                startValue = _countState.Value - _boundaryCountState.Value - _middleCountState.Value;
             else
-                startValue = _selectedState.Value - (MiddleCount / 2);
+                startValue = _selectedState.Value - (_middleCountState.Value / 2);
 
             //set middle items, e.g. if MiddleCount == 3 and Selected == 5 and Count == 11 => [..., 4, 5, 6, ...] 
-            for (var i = 0; i < MiddleCount; i++)
+            for (var i = 0; i < _middleCountState.Value; i++)
             {
-                pages[BoundaryCount + 1 + i] = startValue + i;
+                pages[_boundaryCountState.Value + 1 + i] = startValue + i;
             }
 
             //set start delimiter "..." when selected page is far enough to the end, dots are represented as -1
-            pages[BoundaryCount] = (BoundaryCount + (MiddleCount / 2) + 1 < _selectedState.Value) ? -1 : BoundaryCount + 1;
+            pages[_boundaryCountState.Value] = (_boundaryCountState.Value + (_middleCountState.Value / 2) + 1 < _selectedState.Value) ? -1 : _boundaryCountState.Value + 1;
 
             //set end delimiter "..." when selected page is far enough to the start, dots are represented as -1
-            pages[length - BoundaryCount - 1] = (Count - BoundaryCount - (MiddleCount / 2) > _selectedState.Value) ? -1 : Count - BoundaryCount;
+            pages[length - _boundaryCountState.Value - 1] = (_countState.Value - _boundaryCountState.Value - (_middleCountState.Value / 2) > _selectedState.Value) ? -1 : _countState.Value - _boundaryCountState.Value;
 
             //remove ellipsis if difference is small enough, e.g convert [..., 5 , -1 , 7, ...] to [..., 5, 6, 7, ...]
             for (var i = 0; i < length - 2; i++)
@@ -365,6 +356,20 @@ namespace MudBlazor
             var newPageIndex = pageIndex + 1;
 
             return SetSelectedAsync(newPageIndex);
+        }
+
+        private Task SetMiddleCount(int count)
+        {
+            var newCount = Math.Max(1, count);
+
+            return _middleCountState.SetValueAsync(newCount);
+        }
+
+        private Task SetBoundaryCount(int count)
+        {
+            var newCount = Math.Max(1, count);
+
+            return _boundaryCountState.SetValueAsync(newCount);
         }
 
         private async Task SetCountAsync(int count)
