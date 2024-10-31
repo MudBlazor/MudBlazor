@@ -1,6 +1,4 @@
-﻿
-
-<MudDataGrid T="Model" Items="@_items" ShowMenuIcon="true" ColumnResizeMode="ResizeMode.Container" HorizontalScrollbar="true" Bordered="true">
+﻿<MudDataGrid T="Model" Items="@_items" ShowMenuIcon="true" ColumnResizeMode="ResizeMode.Container" HorizontalScrollbar="true" Bordered="true">
     <Columns>
         <PropertyColumn Property="x => x.Column1" StickyLeft="true" />
         <PropertyColumn Property="x => x.Column2" />
@@ -28,12 +26,12 @@
         <PropertyColumn Property="x => x.Column24" StickyRight="true" />
     </Columns>
     <PagerContent>
-        <MudDataGridPager T="Model" PageSizeOptions=@(new int[] {5, 10, 20}) />
+        <MudDataGridPager T="Model" PageSizeOptions="@(new int[] {5, 10, 20})" />
     </PagerContent>
 </MudDataGrid>
 
 @code {
-    private IEnumerable<Model> _items = new List<Model>()
+    private readonly IEnumerable<Model> _items = new List<Model>
     {
         new Model("Column1", "Column2", "Column3", "Column4", "Column5", "Column6", "Column7", "Column8", "Column9", "Column10", "Column11", "Column12",
             "Column13", "Column14", "Column15", "Column16", "Column17", "Column18", "Column19", "Column20", "Column21", "Column22", "Column23", "Column24"), 

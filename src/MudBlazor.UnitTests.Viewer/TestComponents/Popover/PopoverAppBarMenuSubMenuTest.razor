@@ -72,7 +72,7 @@
             </MudMenu>
         </MudMenuItem>
     </MudMenu>
-    <MudPopover Open="@_appBarPopoverisOpen" Fixed="true" Class="px-4 pt-4">
+    <MudPopover Open="@_appBarPopoverOpen" Fixed="true" Class="px-4 pt-4">
         <div class="d-flex flex-column">
             <MudTooltip Text="Tooltiptext: Text must be long or we won't even see it behind the popover.
             I mean, looooooong.">
@@ -89,7 +89,7 @@
 @code {
     public static string __description__ = "Appbar with Menu and SubMenu and a Tooltip Test";
 
-    private bool _appBarPopoverisOpen;
+    private bool _appBarPopoverOpen;
 
-    private void ToggleAppBarPopoverOpen() => _appBarPopoverisOpen = !_appBarPopoverisOpen;
+    private void ToggleAppBarPopoverOpen() => _appBarPopoverOpen = !_appBarPopoverOpen;
 }

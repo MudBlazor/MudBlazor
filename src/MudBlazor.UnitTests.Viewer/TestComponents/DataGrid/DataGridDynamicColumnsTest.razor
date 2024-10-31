@@ -42,5 +42,5 @@
 
     public record Model(string Name, int? Age, Severity? Status);
 
-    public record ColumnInfo(Expression<Func<Model, object>> Property, string Title);
+    public record ColumnInfo(Expression<Func<Model, object?>> Property, string Title);
 }
