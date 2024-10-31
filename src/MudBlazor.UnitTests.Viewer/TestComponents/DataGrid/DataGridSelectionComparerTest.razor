@@ -1,6 +1,6 @@
 ﻿
 
-<MudDataGrid @ref="_dataGrid" T="Person" Items="@_people" @bind-SelectedItems="_selectedItems" Comparer="_comparer" 
+<MudDataGrid @ref="_dataGrid" T="Person" Items="@_people" @bind-SelectedItems="_selectedItems" Comparer="Comparer" 
              MultiSelection Filterable Bordered RowClick="RowClicked">
     <Columns>
         <SelectColumn ShowInFooter="false" />
@@ -35,19 +35,20 @@
 
     private readonly RoleComparer _roleComparer = new();
     private readonly IdComparer _idComparer = new();
-    private IEqualityComparer<Person> _comparer;
     private HashSet<Person> _selectedItems = new();
     private string SelectedRole;
 
+    public IEqualityComparer<Person> Comparer { get; set; }
+
     private void RowClicked(DataGridRowClickEventArgs<Person> args)
     {
-        _comparer = _idComparer;
+        Comparer = _idComparer;
     }
 
     private async Task SelectedValueChanged(string? selection)
     {
         SelectedRole = selection;
-        _comparer = _roleComparer;
+        Comparer = _roleComparer;
 
         _selectedItems.Clear();
 
@@ -74,15 +75,14 @@
         public string Role { get; set; }
     }
 
-    private class IdComparer : IEqualityComparer<Person>
-
+    public class IdComparer : IEqualityComparer<Person>
     {
         public bool Equals(Person? a, Person? b) => a?.Id == b?.Id;
 
         public int GetHashCode(Person x) => HashCode.Combine(x.Id);
     }
 
-    private class RoleComparer : IEqualityComparer<Person>
+    public class RoleComparer : IEqualityComparer<Person>
     {
         public bool Equals(Person? a, Person? b) => a?.Role == b?.Role;
 
