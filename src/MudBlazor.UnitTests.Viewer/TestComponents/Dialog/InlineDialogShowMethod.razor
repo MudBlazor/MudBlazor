@@ -1,5 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-@inject IDialogService DialogService
+﻿@inject IDialogService DialogService
 
 <MudButton OnClick="OpenDialogAsync" Class="open-dialog-button">
     Options Dialog
@@ -15,7 +14,7 @@
 </MudDialog>
 
 @code {
-    private MudDialog _dialog;
+    private MudDialog _dialog = null!;
 
     private async Task OpenDialogAsync()
     {
@@ -27,7 +26,7 @@
 
             if (result is not null)
             {
-                await DialogService.ShowMessageBox("result", result.Data as string);
+                await DialogService.ShowMessageBox("result", (string?)result.Data ?? string.Empty);
             }
             else
             {

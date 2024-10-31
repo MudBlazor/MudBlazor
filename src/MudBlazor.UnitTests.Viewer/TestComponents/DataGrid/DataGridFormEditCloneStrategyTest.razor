@@ -1,5 +1,5 @@
 ﻿@using MudBlazor.Utilities.Clone
-@namespace MudBlazor.UnitTests.TestComponents
+
 
 <MudDialogProvider />
 
@@ -53,9 +53,9 @@
 
     public abstract class Element : ICloneable
     {
-        public int Id { get; set; }
+        public required int Id { get; set; }
 
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         public abstract object Clone();
     }
@@ -96,13 +96,13 @@
 
     public class Movement : ICloneable
     {
-        public Element From { get; set; }
+        public required Element From { get; set; }
 
-        public Element To { get; set; }
+        public required Element To { get; set; }
 
-        public int Quantity { get; set; }
+        public required int Quantity { get; set; }
 
-        public string Message { get; set; }
+        public required string Message { get; set; }
 
         public object Clone()
         {

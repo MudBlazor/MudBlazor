@@ -1,6 +1,4 @@
-@namespace MudBlazor.UnitTests.TestComponents
-
-<MudDataGrid @ref="dataGrid" T="Fruit" ServerData="ServerDataFunc" Filterable="true" Hideable="true" Groupable="true"
+<MudDataGrid @ref="_dataGrid" T="Fruit" ServerData="ServerDataFunc" Filterable="true" Hideable="true" Groupable="true"
     GroupExpanded="true">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Fruits</MudText>
@@ -24,43 +22,41 @@
 </div>
 
 @code {
-    MudDataGrid<Fruit> dataGrid;
-    public record Fruit(string Name, int Count, string Category);
+    private MudDataGrid<Fruit> _dataGrid = null!;
 
-    List<Fruit> Fruits { get; set; } = new()
-    {
+    private readonly List<Fruit> _fruits =
+    [
         new("Apple", 2, "Pome"),
         new("Pear", 4, "Pome"),
         new("Orange", 4, "Citrus")
-    };
+    ];
 
     private async Task<GridData<Fruit>> ServerDataFunc(GridState<Fruit> gridState)
     {
         await Task.Delay(100);
         return new GridData<Fruit>
         {
-            Items = Fruits,
-            TotalItems = Fruits.Count()
+            Items = _fruits,
+            TotalItems = _fruits.Count
         };
     }
 
-    Func<Fruit, object> _groupBy = x => 
-    {
-        return x.Category;
-    };
+    private readonly Func<Fruit, object> _groupBy = x => x.Category;
 
     public void AddFruit()
     {
-        Fruits.Add(new Fruit("Banana", 5, "Musa"));
+        _fruits.Add(new Fruit("Banana", 5, "Musa"));
     }
 
     public void ExpandAllGroups()
     {
-        dataGrid?.ExpandAllGroups();
+        _dataGrid.ExpandAllGroups();
     }
 
     public void CollapseAllGroups()
     {
-        dataGrid?.CollapseAllGroups();
+        _dataGrid.CollapseAllGroups();
     }
+
+    public record Fruit(string Name, int Count, string Category);
 }

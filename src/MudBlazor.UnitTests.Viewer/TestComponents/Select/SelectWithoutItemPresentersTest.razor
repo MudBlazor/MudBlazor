@@ -1,7 +1,6 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
-<MudSelect IsPreRendered @bind-Value="value">
+<MudSelect @bind-Value="_value">
     <MudSelectItem T="int" Value="1"/>
     <MudSelectItem T="int" Value="2"/>
     <MudSelectItem T="int" Value="3"/>
@@ -10,5 +9,5 @@
 @code {
     public static string __description__ = "The items have no render fragments, so instead of RF the select must display the converted string value";
 
-    int value=1;
+    private int _value = 1;
 }

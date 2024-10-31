@@ -79,12 +79,12 @@ namespace MudBlazor.UnitTests.Components
             var height = "350px";
 
             var comp = Context.RenderComponent<MudChart>(parameters => parameters
-              .Add(p => p.ChartType, ChartType.Line)
-              .Add(p => p.ChartSeries, series)
-              .Add(p => p.XAxisLabels, xAxis)
-              .Add(p => p.ChartOptions, options)
-              .Add(p => p.Width, width)
-              .Add(p => p.Height, height)
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.XAxisLabels, xAxis)
+                .Add(p => p.ChartOptions, options)
+                .Add(p => p.Width, width)
+                .Add(p => p.Height, height)
             );
 
             // check the first Y Axis value without any format
@@ -95,12 +95,12 @@ namespace MudBlazor.UnitTests.Components
             // now, we will apply currency format
             options.YAxisFormat = "c2";
             comp.SetParametersAndRender(parameters => parameters
-              .Add(p => p.ChartType, ChartType.Line)
-              .Add(p => p.ChartSeries, series)
-              .Add(p => p.XAxisLabels, xAxis)
-              .Add(p => p.ChartOptions, options)
-              .Add(p => p.Width, width)
-              .Add(p => p.Height, height)
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.XAxisLabels, xAxis)
+                .Add(p => p.ChartOptions, options)
+                .Add(p => p.Width, width)
+                .Add(p => p.Height, height)
             );
             yaxis = comp.FindAll("g.mud-charts-yaxis");
             yaxis.Should().NotBeNull();
@@ -109,12 +109,12 @@ namespace MudBlazor.UnitTests.Components
             //number format
             options.YAxisFormat = "n6";
             comp.SetParametersAndRender(parameters => parameters
-              .Add(p => p.ChartType, ChartType.Line)
-              .Add(p => p.ChartSeries, series)
-              .Add(p => p.XAxisLabels, xAxis)
-              .Add(p => p.ChartOptions, options)
-              .Add(p => p.Width, width)
-              .Add(p => p.Height, height)
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.XAxisLabels, xAxis)
+                .Add(p => p.ChartOptions, options)
+                .Add(p => p.Width, width)
+                .Add(p => p.Height, height)
             );
             yaxis = comp.FindAll("g.mud-charts-yaxis");
             yaxis.Should().NotBeNull();

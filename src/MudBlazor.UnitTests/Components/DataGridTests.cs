@@ -17,7 +17,7 @@ using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
-using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.DataGrid;
 using MudBlazor.Utilities.Clone;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
@@ -602,7 +602,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task DataGridMultiSelectionTest_Should_Not_Render_Footer_If_ShowInFooter_Is_False()
         {
             var comp = Context.RenderComponent<DataGridMultiSelectionTest>(
-                Parameter(nameof(MudBlazor.UnitTests.TestComponents.DataGridMultiSelectionTest.ShowInFooter), false));
+                Parameter(nameof(MudBlazor.UnitTests.TestComponents.DataGrid.DataGridMultiSelectionTest.ShowInFooter), false));
             comp.FindAll("td.footer-cell").Should().BeEmpty();
         }
 
@@ -1120,7 +1120,7 @@ namespace MudBlazor.UnitTests.Components
 
             // open form dialog
             dataGrid.Find("tbody tr button").Click();
-            dataGrid.Instance.isEditFormOpen.Should().BeTrue();
+            dataGrid.Instance._isEditFormOpen.Should().BeTrue();
 
             var field = comp.FindComponents<MudTextField<string>>()[2];
 
@@ -1139,7 +1139,7 @@ namespace MudBlazor.UnitTests.Components
 
             // dialog should still be open and the items data should not have been updated
             using AssertionScope scope = new();
-            dataGrid.Instance.isEditFormOpen.Should().BeTrue();
+            dataGrid.Instance._isEditFormOpen.Should().BeTrue();
             comp.Instance.Items[0].Email.Should().Be("Augusta_Homenick26@mud.com");
         }
 
@@ -1272,7 +1272,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task DataGridServerSideSortableTest()
         {
             // Disable simulated load on server side:
-            TestComponents.DataGridServerSideSortableTest.DisableServerTimeoutForTests = true;
+            TestComponents.DataGrid.DataGridServerSideSortableTest.DisableServerTimeoutForTests = true;
 
             var comp = Context.RenderComponent<DataGridServerSideSortableTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerSideSortableTest.Item>>();
@@ -2792,6 +2792,13 @@ namespace MudBlazor.UnitTests.Components
             item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Anders");
 
             dataGrid.Instance._openHierarchies.Should().Contain(item);
+
+            comp.Markup.Should().Contain("uid = Ira|27|Success|");
+            comp.Markup.Should().Contain("uid = Anders|24|Error|");
+
+            comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
+            comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
+            comp.Markup.Should().NotContain("uid = John|32|Warning|");
         }
 
         [Test]
@@ -4602,7 +4609,7 @@ namespace MudBlazor.UnitTests.Components
             var ageSort = new SortDefinition<DataGridFiltersTest.Model>("Age", Descending: false, 1, default!);
 
             var query = Array.Empty<DataGridFiltersTest.Model>().AsQueryable().OrderBy([nameSort, ageSort]);
-            query.ToString().Should().Be("MudBlazor.UnitTests.TestComponents.DataGridFiltersTest+Model[].OrderByDescending(x => x.Name).ThenBy(x => x.Age)");
+            query.ToString().Should().Be("MudBlazor.UnitTests.TestComponents.DataGrid.DataGridFiltersTest+Model[].OrderByDescending(x => x.Name).ThenBy(x => x.Age)");
         }
 
         [Test]
@@ -4612,7 +4619,7 @@ namespace MudBlazor.UnitTests.Components
             var ageSort = new SortDefinition<DataGridFiltersTest.Model>("Age", Descending: true, 1, default!);
 
             var query = Array.Empty<DataGridFiltersTest.Model>().AsQueryable().OrderBy([nameSort, ageSort]);
-            query.ToString().Should().Be("MudBlazor.UnitTests.TestComponents.DataGridFiltersTest+Model[].OrderBy(x => x.Name).ThenByDescending(x => x.Age)");
+            query.ToString().Should().Be("MudBlazor.UnitTests.TestComponents.DataGrid.DataGridFiltersTest+Model[].OrderBy(x => x.Name).ThenByDescending(x => x.Age)");
         }
 
         [Test]

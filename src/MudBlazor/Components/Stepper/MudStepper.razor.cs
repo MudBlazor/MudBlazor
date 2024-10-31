@@ -27,22 +27,22 @@ public partial class MudStepper : MudComponentBase
 
     protected string Classname =>
         new CssBuilder("mud-stepper")
-        .AddClass("mud-stepper__horizontal", Vertical == false)
-        .AddClass("mud-stepper__vertical", Vertical)
-        .AddClass("mud-stepper__center-labels", CenterLabels && !Vertical)
-        .AddClass(Class)
-        .Build();
+            .AddClass("mud-stepper__horizontal", Vertical == false)
+            .AddClass("mud-stepper__vertical", Vertical)
+            .AddClass("mud-stepper__center-labels", CenterLabels && !Vertical)
+            .AddClass(Class)
+            .Build();
 
     internal string StepClassname =>
         new CssBuilder("mud-stepper-content")
-        .AddClass(StepClass)
-        .Build();
+            .AddClass(StepClass)
+            .Build();
 
     protected string NavClassname =>
         new CssBuilder("mud-stepper-nav")
-        .AddClass("mud-stepper-nav-scrollable", ScrollableNavigation)
-        .AddClass(NavClass)
-        .Build();
+            .AddClass("mud-stepper-nav-scrollable", ScrollableNavigation)
+            .AddClass(NavClass)
+            .Build();
 
     /// <summary>
     /// The steps that have been defined in razor.

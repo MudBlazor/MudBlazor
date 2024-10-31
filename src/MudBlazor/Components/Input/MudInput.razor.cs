@@ -18,14 +18,14 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder(
-                MudInputCssHelper.GetClassname(this,
-                    () => HasNativeHtmlPlaceholder() ||
-                          !string.IsNullOrEmpty(Text) ||
-                          Adornment == Adornment.Start ||
-                          !string.IsNullOrWhiteSpace(Placeholder) ||
-                          ShrinkLabel))
-            .AddClass("mud-input-auto-grow", () => AutoGrow)
-            .Build();
+                    MudInputCssHelper.GetClassname(this,
+                        () => HasNativeHtmlPlaceholder() ||
+                              !string.IsNullOrEmpty(Text) ||
+                              Adornment == Adornment.Start ||
+                              !string.IsNullOrWhiteSpace(Placeholder) ||
+                              ShrinkLabel))
+                .AddClass("mud-input-auto-grow", () => AutoGrow)
+                .Build();
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
 
@@ -37,7 +37,7 @@ namespace MudBlazor
                 .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons)
                 .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
                 .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons)
-            .Build();
+                .Build();
 
         /// <summary>
         /// The type of input collected by this component.
@@ -224,11 +224,23 @@ namespace MudBlazor
         private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
 
         /// <summary>
-        /// If true, Clearable is true and there is a non null value (non-string for string values)
+        /// Determine whether to show the clear button when Clearable==true.
+        /// Of course the clear button won't show up if the text field is empty
         /// </summary>
-        private bool GetClearable()
+        private bool ShowClearButton()
         {
+            if (GetDisabledState())
+            {
+                return false;
+            }
+
             if (!Clearable)
+            {
+                return false;
+            }
+
+            // If this is a standalone input it will not be clearable when read-only
+            if (SubscribeToParentForm && GetReadOnlyState())
             {
                 return false;
             }

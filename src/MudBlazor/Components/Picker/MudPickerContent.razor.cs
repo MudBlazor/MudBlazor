@@ -8,6 +8,7 @@ namespace MudBlazor;
 /// </summary>
 /// <seealso cref="MudPicker{T}" />
 /// <seealso cref="MudPickerToolbar" />
+#nullable enable
 public partial class MudPickerContent : MudComponentBase
 {
     protected string Classname =>
@@ -20,5 +21,5 @@ public partial class MudPickerContent : MudComponentBase
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Picker.Behavior)]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 }

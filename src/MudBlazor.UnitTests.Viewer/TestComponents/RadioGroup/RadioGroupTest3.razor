@@ -1,18 +1,15 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudRadioGroup @bind-Value="@option">
+﻿<MudRadioGroup @bind-Value="@_option">
     <MudRadio Value="@("1")" />
     <MudRadio Value="@("2")" />
 </MudRadioGroup>
 
-<MudRadioGroup @bind-Value="@option">
+<MudRadioGroup @bind-Value="@_option">
     <MudRadio Value="@("1")" />
     <MudRadio Value="@("2")" />
 </MudRadioGroup>
-
 
 @code {
     public static string __description__ = "The two Radio groups should be synced via the SelectedOption parameter.";
 
-    string option = "2";
+    private string _option = "2";
 }

@@ -1,5 +1,4 @@
 ﻿@using System.IO
-@namespace MudBlazor.UnitTests.TestComponents
 
 <MudFileUpload T="IBrowserFile"
                @ref="@_fileUpload"
@@ -34,18 +33,17 @@
 </MudFileUpload>
 <MudToolBar Gutters="@false"
             Class="relative d-flex justify-end gap-4">
-    <MudButton Id="open-file-picker-button"
+    <MudButton id="open-file-picker-button"
                OnClick="@OpenFilePickerAsync">
         Open file picker
     </MudButton>
-    <MudButton Id="clear-button"
+    <MudButton id="clear-button"
                OnClick="@ClearAsync">
         Clear
     </MudButton>
 </MudToolBar>
 
 @code {
-#nullable enable
     [Parameter]
     public IBrowserFile? File { get; set; }
 

@@ -2,16 +2,17 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// A list of clickable page numbers along with navigation buttons.
+    /// </summary>
     public partial class MudPagination : MudComponentBase
     {
         private int _count = 1;
@@ -39,11 +40,17 @@ namespace MudBlazor
                 .AddClass("mud-pagination-item-selected")
                 .Build();
 
+        /// <summary>
+        /// Displays text right-to-left.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  Controlled via the <see cref="MudRTLProvider"/>.
+        /// </remarks>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
         /// <summary>
-        /// The number of pages.
+        /// The total number of pages.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Pagination.Behavior)]
@@ -58,8 +65,13 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The number of items at the start and end of the pagination.
+        /// The number of pages shown before and after the ellipsis.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>1</c>. <br />
+        /// A value of <c>1</c> would show one page number at the edge: <c>&lt; 1 ... 4 5 6 ... 9 &gt;</c> <br />
+        /// A value of <c>2</c> would show two page numbers at the edge: <c>&lt; 1 2 ... 4 5 6 ... 8 9 &gt;</c> 
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
         public int BoundaryCount
@@ -72,8 +84,13 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The number of items in the middle of the pagination.
+        /// The number of pages shown between the ellipsis.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>1</c>. <br />
+        /// A value of <c>1</c> would show one page number in the middle: <c>&lt; 1 ... 5 ... 9 &gt;</c> <br />
+        /// A value of <c>3</c> would show three page numbers in the middle: <c>&lt; 1 ... 4 5 6 ... 9 &gt;</c>
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
         public int MiddleCount
@@ -112,119 +129,160 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The variant to use.
+        /// The display variant to use.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Variant.Text"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
         public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        /// The color of the component. It supports the theme colors.
+        /// The color of the selected page button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Primary" />.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
         public Color Color { get; set; } = Color.Primary;
 
         /// <summary>
-        /// If true, the pagination buttons are displayed rectangular.
+        /// Shows rectangular-shaped page buttons.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
         public bool Rectangular { get; set; }
 
         /// <summary>
-        /// The size of the component..
+        /// The size of the page buttons.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Size.Medium"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
         public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
-        /// Determines whether the component has a drop-shadow. Default is true
+        /// Shows a drop shadow under each page button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
         public bool DropShadow { get; set; } = true;
 
         /// <summary>
-        /// If true, the pagination will be disabled.
+        /// Prevents the user from clicking page buttons.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Behavior)]
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// If true, the navigate-to-first-page button is shown.
+        /// Shows the button which selects the first page.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Behavior)]
         public bool ShowFirstButton { get; set; }
 
         /// <summary>
-        /// If true, the navigate-to-last-page button is shown.
+        /// Shows the button which selects the last page.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Behavior)]
         public bool ShowLastButton { get; set; }
 
         /// <summary>
-        /// If true, the navigate-to-previous-page button is shown.
+        /// Shows the button which selects the previous page.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Behavior)]
         public bool ShowPreviousButton { get; set; } = true;
 
         /// <summary>
-        /// If true, the navigate-to-next-page button is shown.
+        /// Shows the button which selects the next page.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Behavior)]
         public bool ShowNextButton { get; set; } = true;
 
         /// <summary>
-        /// If true, the page buttons are shown.
+        /// Shows numeric buttons for pages.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Pagination.Behavior)]
         public bool ShowPageButtons { get; set; } = true;
 
-
         /// <summary>
-        /// Invokes the callback when a control button is clicked.
+        /// Occurs when the First, Previous, Next, or Last button is clicked.
         /// </summary>
         [Parameter]
         public EventCallback<Page> ControlButtonClicked { get; set; }
 
         /// <summary>
-        /// Invokes the callback when selected page changes.
+        /// Occurs when <see cref="Selected"/> has changed.
         /// </summary>
         [Parameter]
         public EventCallback<int> SelectedChanged { get; set; }
 
         /// <summary>
-        /// Custom first icon.
+        /// The icon for the First button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.FirstPage"/>.  Only shows if <see cref="ShowFirstButton"/> is <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
         public string FirstIcon { get; set; } = Icons.Material.Filled.FirstPage;
 
         /// <summary>
-        /// Custom before icon.
+        /// The icon for the Before button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.NavigateBefore"/>.  Only shows if <see cref="ShowPreviousButton"/> is <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
         public string BeforeIcon { get; set; } = Icons.Material.Filled.NavigateBefore;
 
         /// <summary>
-        /// Custom next icon.
+        /// The icon for the Next button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.NavigateNext"/>.  Only shows if <see cref="ShowNextButton"/> is <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
         public string NextIcon { get; set; } = Icons.Material.Filled.NavigateNext;
 
         /// <summary>
-        /// Custom last icon.
+        /// The icon for the Last button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.LastPage"/>.  Only shows if <see cref="ShowLastButton"/> is <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
         public string LastIcon { get; set; } = Icons.Material.Filled.LastPage;
@@ -293,9 +351,9 @@ namespace MudBlazor
 
         //Last line cannot be tested because Page enum has 4 items
         /// <summary>
-        /// Navigates to the specified page.
+        /// Changes the currently selected page.
         /// </summary>
-        /// <param name="page">The target page. page=Page.Next navigates to the next page.</param>
+        /// <param name="page">The page to navigate to.</param>
         [ExcludeFromCodeCoverage]
         public void NavigateTo(Page page)
         {
@@ -310,9 +368,9 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Navigates to the specified page.
+        /// Changes the currently selected page.
         /// </summary>
-        /// <param name="pageIndex"></param>The target page. pageIndex=2 navigates to the 3. page.
+        /// <param name="pageIndex">The index of the page to select, where the first page is <c>0</c>.</param>
         public void NavigateTo(int pageIndex)
         {
             Selected = pageIndex + 1;

@@ -8,6 +8,7 @@ using Microsoft.JSInterop;
 using Moq;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Drawer;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -288,6 +289,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Drawer.Open.Should().BeFalse();
         }
 
+
         [Test]
         public async Task ResponsiveClosed_ResizeMultiple_CheckStates()
         {
@@ -566,6 +568,50 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("#hide-drawer-button").Click();
 
             comp.FindAll("div.mud-drawer-open-responsive-md-right").Count.Should().Be(0);
+        }
+
+
+        [Test, Combinatorial]
+        public void NonResponsiveKeepInitialOpen_AllBreakpoints(
+            [Values(
+                Breakpoint.None,
+                Breakpoint.Xs,
+                Breakpoint.Sm,
+                Breakpoint.SmAndDown,
+                Breakpoint.SmAndUp,
+                Breakpoint.Md,
+                Breakpoint.MdAndDown,
+                Breakpoint.MdAndUp,
+                Breakpoint.Lg,
+                Breakpoint.LgAndDown,
+                Breakpoint.LgAndUp,
+                Breakpoint.Xl,
+                Breakpoint.XlAndDown,
+                Breakpoint.XlAndUp,
+                Breakpoint.Always
+            )] Breakpoint breakpoint,
+            [Values(
+                true,
+                false
+            )] bool initialState)
+        {
+            _ = AddBrowserViewportService(BreakpointBrowserAssociatedSize(breakpoint));
+            var comp = Context.RenderComponent<DrawerNonResponsiveTest>(Parameter(nameof(DrawerNonResponsiveTest.InitialOpenState), initialState));
+
+            var expectedDrawerCount = initialState ? 1 : 0;
+
+            comp.FindAll("aside.mud-drawer--open.mud-drawer-temporary").Count.Should().Be(expectedDrawerCount);
+            comp.FindAll("aside+.mud-drawer-overlay").Count.Should().Be(expectedDrawerCount);
+            comp.Instance.Drawer.Open.Should().Be(initialState);
+
+            // Make sure that we can toggle the drawer without issues
+            comp.Find("#toggle-drawer-button").Click();
+
+            var expectedToggledDrawerCount = initialState ? 0 : 1;
+
+            comp.FindAll("aside.mud-drawer--open.mud-drawer-temporary").Count.Should().Be(expectedToggledDrawerCount);
+            comp.FindAll("aside+.mud-drawer-overlay").Count.Should().Be(expectedToggledDrawerCount);
+            comp.Instance.Drawer.Open.Should().Be(!initialState);
         }
     }
 }

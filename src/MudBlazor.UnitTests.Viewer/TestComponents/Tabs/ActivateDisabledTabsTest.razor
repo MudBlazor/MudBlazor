@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudTabs Elevation="1" @ref="_tabElement" PanelClass="test-active-panel" TabPanelClass="test-panel-selector" Position="Position.Top">
+﻿<MudTabs Elevation="1" @ref="_tabElement" PanelClass="test-active-panel" TabPanelClass="test-panel-selector" Position="Position.Top">
     @for (int i = 0; i < Tabs.Count; i++)
     {
         int tempIndex = i;
@@ -9,37 +7,20 @@
             <MudText>@Tabs[tempIndex].Content</MudText>
         </MudTabPanel>
     }
-
 </MudTabs>
 
 @code
 {
-    public class TabBindingHelper
-    {
-        public string Name { get; set; }
-        public bool Disabled { get; set; }
-        public DummyPlaceHolder Tag { get; set; }
-        public MudTabPanel Panel { get; set; }
-        public int Index { get; set; }
-        public String Content { get; set; }
-    }
-
-    public class DummyPlaceHolder
-    {
-        public Guid Id { get; set; }
-    }
-
-    [Parameter] public Int32 InitialStartIndex { get; set; } = 0;
-
-    private MudTabs _tabElement;
-
     public static string __description__ = "activating tabs should work";
+    private MudTabs _tabElement = null!;
 
-    public List<TabBindingHelper> Tabs { get; private set; }
+    [Parameter]
+    public int InitialStartIndex { get; set; } = 0;
+
+    public List<TabBindingHelper> Tabs { get; } = [];
 
     public ActivateDisabledTabsTest()
     {
-        Tabs = new();
         for (int i = 0; i < 5; i++)
         {
             Tabs.Add(new TabBindingHelper { Name = (i + 1).ToString(), Disabled = true, Tag = new DummyPlaceHolder { Id = Guid.NewGuid() }, Index = i, Content = $"Tab Content {i + 1}" });
@@ -130,5 +111,25 @@
         {
             _tabElement.ActivatePanel(id);
         });
+    }
+
+    public class TabBindingHelper
+    {
+        public required string Name { get; set; }
+
+        public required bool Disabled { get; set; }
+
+        public required DummyPlaceHolder Tag { get; set; }
+
+        public MudTabPanel Panel { get; set; } = null!;
+
+        public required int Index { get; set; }
+
+        public required string Content { get; set; }
+    }
+
+    public class DummyPlaceHolder
+    {
+        public Guid Id { get; set; }
     }
 }

@@ -1,22 +1,34 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-@using System.Threading
-
-<MudPopoverProvider></MudPopoverProvider>
+<MudPopoverProvider />
 
 <MudAutocomplete id="autocompleteLabelTest" T="string" Label="US States"
-                 @bind-Value="value1" SearchFunc="@SearchStates" DebounceInterval="DebounceInterval" />
+                 @bind-Value="Value" ResetValueOnEmptyText="ResetValueOnEmptyText"
+                 SearchFunc="@SearchStates" DebounceInterval="DebounceInterval" 
+                 CoerceText="CoerceText" CoerceValue="CoerceValue" Immediate="Immediate"/>
 
 @code {
     public static string __description__ = "Autocomplete to input a US state";
 
     [Parameter]
+    public string? Value { get; set; }
+
+    [Parameter]
+    public bool ResetValueOnEmptyText { get; set; }
+
+    [Parameter]
     public int DebounceInterval { get; set; }
+
+    [Parameter]
+    public bool CoerceText { get; set; }
+
+    [Parameter]
+    public bool CoerceValue { get; set; }
+
+    [Parameter]
+    public bool Immediate { get; set; }
 
     public int SearchFuncCallCount { get; private set; }
 
-    private string value1;
-
-    private string[] states =
+    private readonly string[] _states =
     {
         "Alabama", "Alaska", "American Samoa", "Arizona",
         "Arkansas", "California", "Colorado", "Connecticut",
@@ -43,7 +55,7 @@
 
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
-            return states;
-        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+            return _states;
+        return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 }

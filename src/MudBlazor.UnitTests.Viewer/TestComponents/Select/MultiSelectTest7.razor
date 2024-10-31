@@ -1,16 +1,14 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
 <MudSelect Label="Select Item"
            MultiSelection="true"
            T="string"
            Delimiter="^"
            SelectAll="true"
-           @bind-SelectedValues="@SelectedItems">
-
-    @foreach (var item in AllItems)
+           @bind-SelectedValues="@_selectedItems">
+    @foreach (var item in _allItems)
     {
-        if(item == AllItems.Last())
+        if (item == _allItems.Last())
         {
             <MudSelectItem T="string" Value="@item" Disabled="true">@item</MudSelectItem>
         }
@@ -19,17 +17,20 @@
             <MudSelectItem T="string" Value="@item">@item</MudSelectItem>
         }
     }
-    </MudSelect>
+</MudSelect>
 
-    @code {
+@code {
     public static string __description__ = "Test for the Select All option with one disabled SelectItem";
-    private List<string> AllItems = new();
-    private IEnumerable<string> SelectedItems = new HashSet<string>();
+    private readonly List<string> _allItems = [];
+    private IEnumerable<string> _selectedItems = new HashSet<string>();
+
     protected override void OnInitialized()
     {
-        AllItems.Add("FirstA");
-        AllItems.Add("SecondA");
-        AllItems.Add("ThirdA");
-        AllItems.Add("FourthA");
+        _allItems.Add("FirstA");
+        _allItems.Add("SecondA");
+        _allItems.Add("ThirdA");
+        _allItems.Add("FourthA");
+
+        base.OnInitialized();
     }
 }

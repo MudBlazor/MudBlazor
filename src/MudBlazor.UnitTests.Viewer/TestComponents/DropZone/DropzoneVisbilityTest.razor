@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudDropContainer T="SimpleDropItem"
+﻿<MudDropContainer T="SimpleDropItem"
 				  Items="_items" ItemsSelector="@((item,dropzone) => item.ZoneIdentifier == dropzone)"
 				  Class="d-flex"
 				  DraggingClass="my-special-dragging-class" ItemDraggingClass="my-special-item-dragging-class"
@@ -20,30 +18,30 @@
 </MudDropContainer>
 
 @code {
-	public class SimpleDropItem
-	{
-		public string Name { get; set; }
-		public string ZoneIdentifier { get; set; }
+    private readonly IEnumerable<SimpleDropItem> _items =
+    [
+        new("First Item", "Column 1"),
+        new("Second Item", "Column 2"),
+        new("Third Item", "Column 2")
+    ];
 
-		public SimpleDropItem(string name, string zoneIdentifier)
-		{
-			Name = name;
-			ZoneIdentifier = zoneIdentifier;
-		}
-	}
+	[Parameter]
+    public bool HideItemsInFirstDropZone { get; set; } = true;
 
-	[Parameter] public Boolean HideItemsInFirstDropZone { get; set; } = true;
+	private static void ItemUpdated(MudItemDropInfo<SimpleDropItem> dropItem)
+    {
+        if (dropItem.Item is null)
+        {
+            return;
+        }
 
-	private void ItemUpdated(MudItemDropInfo<SimpleDropItem> dropItem)
-	{
-		dropItem.Item.ZoneIdentifier = dropItem.DropzoneIdentifier;
-	}
+        dropItem.Item.ZoneIdentifier = dropItem.DropzoneIdentifier;
+    }
 
-	private IEnumerable<SimpleDropItem> _items = new[]
-		{
-		new SimpleDropItem("First Item", "Column 1"),
-		new SimpleDropItem("Second Item", "Column 2"),
-		new SimpleDropItem("Third Item", "Column 2"),
-	};
+    public class SimpleDropItem(string name, string zoneIdentifier)
+    {
+        public string Name { get; set; } = name;
 
+        public string ZoneIdentifier { get; set; } = zoneIdentifier;
+    }
 }

@@ -179,6 +179,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Setting ShrinkLabel should apply mud-shrink class.
+        /// </summary>
+        [Test]
+        public void LabelShouldShrinkWhenShrinkLabelIsSet()
+        {
+            var comp = Context.RenderComponent<TextFieldShrinkLabelTest>();
+            var noMask = comp.FindComponents<MudTextField<string>>()[0];
+            var masked = comp.FindComponents<MudTextField<string>>()[1];
+
+            noMask.Markup.Should().Contain("mud-shrink");
+            masked.Markup.Should().Contain("mud-shrink");
+        }
+
+        /// <summary>
         /// A glue class to make it easy to define validation rules for single values using FluentValidation
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -1645,6 +1659,20 @@ namespace MudBlazor.UnitTests.Components
             errorAction.Should().NotThrow();
 
             comp.Find(inputSelector).GetAttribute("aria-describedby").Should().Be(secondExpectedAriaDescribedBy);
+        }
+
+        [Test]
+        public void ReadOnlyShouldNotHaveClearButton()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(p => p
+                .Add(x => x.Text, "some value")
+                .Add(x => x.Clearable, true)
+                .Add(x => x.ReadOnly, false));
+
+            comp.FindAll(".mud-input-clear-button").Count.Should().Be(1);
+
+            comp.SetParametersAndRender(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
+            comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
         }
 #nullable disable
     }

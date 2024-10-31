@@ -1,6 +1,6 @@
-@if (_posts != null)
+@if (_posts is not null)
 {
-    <MudSelect Label="Roles" T="string" SelectedValues="SelectedValues" MultiSelection="true">
+    <MudSelect Label="Roles" T="string" SelectedValues="_selectedValues" MultiSelection="true">
         @foreach (var role in _posts)
         {
             <MudSelectItem T="string" Value="@role">@role</MudSelectItem>
@@ -8,21 +8,18 @@
     </MudSelect>
 }
 
-
-@code
-{
-    private IEnumerable<string> SelectedValues { get; set; } = new HashSet<string>()
+@code {
+    private readonly IEnumerable<string> _selectedValues = new HashSet<string>
     { 
         "Programista", "test"
     };
 
-    private HashSet<string> _posts;
+    private HashSet<string>? _posts;
 
     protected override void OnInitialized()
     {
-        _posts = new HashSet<string>
-        {
-            "Programista", "Programista 2", "test", "Technik", "Tester", "Tester tester"
-        };
+        _posts = ["Programista", "Programista 2", "test", "Technik", "Tester", "Tester tester"];
+
+        base.OnInitialized();
     }
 }
