@@ -29,7 +29,7 @@ namespace MudBlazor
         /// <summary>
         /// Indicates if the cell is currently selected.
         /// </summary>
-        public bool Selected => _selection.Contains(Item);
+        public bool Selected => _selection.Contains(Item, _selectionComparer);
 
         /// <summary>
         /// Indicates if the cell is currently in an open hierarchy.
