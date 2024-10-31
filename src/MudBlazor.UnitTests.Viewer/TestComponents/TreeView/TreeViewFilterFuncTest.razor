@@ -7,17 +7,17 @@
 
 @code {
     [Parameter]
-    public string SearchPhrase { get; set; }
+    public string? SearchPhrase { get; set; }
 
     [Parameter]
-    public Func<TreeItemData<string>, Task<bool>> FilterFunc { get; set; }
+    public Func<TreeItemData<string>, Task<bool>>? FilterFunc { get; set; }
 
     [Parameter]
     public bool AreItemsPopulated { get; set; } = true;
 
-    public List<TreeItemData> Items { get; set; }
+    public List<TreeItemData>? Items { get; set; }
 
-    private MudTreeView<string> _treeView;
+    private MudTreeView<string> _treeView = null!;
     
     public sealed class TreeItemData : TreeItemData<string>
     {

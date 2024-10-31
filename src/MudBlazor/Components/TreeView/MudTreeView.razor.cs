@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -322,8 +318,8 @@ namespace MudBlazor
                     /* Recursively traverse the tree. Since HasChildren performs the null check on the children we can use the null-forgiving operator here.
                      * Same goes for the FilterFunc which is checked for null in the public Filter function that invokes this function.
                      */
-                    await TraverseFilterAsync(item.Children!);
-                    item.Expanded = item.Visible = await FilterFunc!(item) || item.Children!.Any(c => c.Visible);
+                    await TraverseFilterAsync(item.Children);
+                    item.Expanded = item.Visible = await FilterFunc!(item) || item.Children.Any(c => c.Visible);
                 }
                 else
                 {
@@ -336,13 +332,13 @@ namespace MudBlazor
         /// Resets the filter, so that all <see cref="MudTreeViewItem{T}.Visible"/> are set to true and the entire tree is visible.
         /// </summary>
         /// <param name="items">The items to reset</param>
-        private void ResetFilter(IEnumerable<TreeItemData<T>> items)
+        private static void ResetFilter(IEnumerable<TreeItemData<T>> items)
         {
             foreach (var item in items)
             {
                 if (item.HasChildren)
                 {
-                    ResetFilter(item.Children!);
+                    ResetFilter(item.Children);
                 }
 
                 item.Visible = true;
