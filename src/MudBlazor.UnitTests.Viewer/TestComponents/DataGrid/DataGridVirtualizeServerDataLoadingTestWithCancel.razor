@@ -1,6 +1,3 @@
-@using System.Threading
-
-
 <MudDataGrid T="int" VirtualizeServerData="@ServerDataFunc" Virtualize>
     <Columns>
         <PropertyColumn Property="x=>x" Title="Number"/>
@@ -13,7 +10,7 @@
     /// <summary>
     /// Reloads the data from the server, with support for cancellation.
     /// </summary>
-    private async Task<GridData<int>> ServerDataFunc(GridStateVirtualize<int> state, CancellationToken token)
+    private static async Task<GridData<int>> ServerDataFunc(GridStateVirtualize<int> state, CancellationToken token)
     {
         // Simulate "loading data" for two seconds
         await Task.Delay(2000, token);

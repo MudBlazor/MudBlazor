@@ -13,7 +13,7 @@
 @code{ 
     private bool _open;
 
-    public MudDrawer Drawer { get; set; } = null!;
+    public MudDrawer Drawer { get; private set; } = null!;
 
     [Parameter]
     public Breakpoint Breakpoint { get; set; } = Breakpoint.Md;

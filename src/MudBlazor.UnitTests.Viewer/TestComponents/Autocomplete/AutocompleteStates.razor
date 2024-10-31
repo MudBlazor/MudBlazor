@@ -1,5 +1,3 @@
-@using System.Threading
-
 <MudPopoverProvider />
 
 <MudAutocomplete id="autocompleteLabelTest" T="string" Label="US States"
@@ -11,7 +9,7 @@
     public static string __description__ = "Autocomplete to input a US state";
 
     [Parameter]
-    public string Value { get; set; }
+    public string? Value { get; set; }
 
     [Parameter]
     public bool ResetValueOnEmptyText { get; set; }

@@ -9,7 +9,6 @@
 </MudPaper>
 <MudSwitch T="bool" Label="Expanded" @bind-Value="_expanded" Color="Color.Primary" />
 @code {
-
     private bool _expanded = true;
 
     private void OnExpandCollapseClick() => _expanded = !_expanded;

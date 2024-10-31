@@ -15,7 +15,7 @@
 
     public class TestAttribute : ValidationAttribute
     {
-        public static IList<ValidationContext> ValidationContextOnCall { get; private set; } = new List<ValidationContext>();
+        public static IList<ValidationContext> ValidationContextOnCall { get; } = new List<ValidationContext>();
 
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {

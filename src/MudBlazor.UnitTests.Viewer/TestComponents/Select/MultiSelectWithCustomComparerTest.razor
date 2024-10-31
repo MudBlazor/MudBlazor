@@ -4,7 +4,7 @@
     <MudItem xs="12">
         <MudSelect T="Coffee" Label="Coffee"
                    MultiSelection="true"
-                   SelectedValues="Selected" SelectedValuesChanged="SelectedChanged"
+                   SelectedValues="_selected" SelectedValuesChanged="SelectedChanged"
                    Comparer="Comparer"
                    ToStringFunc="@(x => x?.Name)">
             <MudSelectItem Value="@(new Coffee("cap","Cappuccino"))" />
@@ -21,22 +21,22 @@
 @code {
     private static CoffeeComparer Comparer { get; } = new();
 
-    private HashSet<Coffee?> Selected { get; } = new(Comparer);
+    private readonly HashSet<Coffee?> _selected = new(Comparer);
 
     private void SelectedChanged(IEnumerable<Coffee?>? newSelected)
     {
-        Selected.Clear();
+        _selected.Clear();
         if (newSelected is not null)
         {
-            Selected.UnionWith(newSelected);
+            _selected.UnionWith(newSelected);
         }
     }
 
     private void SetSelection()
     {
-        Selected.Clear();
-        Selected.Add(new Coffee("lat", "Selected Cafe Latte"));
-        Selected.Add(new Coffee("esp", "Selected Espresso"));
+        _selected.Clear();
+        _selected.Add(new Coffee("lat", "Selected Cafe Latte"));
+        _selected.Add(new Coffee("esp", "Selected Espresso"));
     }
 
     private class Coffee(string key, string name)

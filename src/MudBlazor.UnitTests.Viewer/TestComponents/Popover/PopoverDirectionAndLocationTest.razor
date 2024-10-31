@@ -49,7 +49,7 @@
     private Origin _transformOrigin = Origin.TopLeft;
     private Origin _anchorOrigin = Origin.BottomLeft;
 
-    public string GetIcon()
+    private string GetIcon()
     {
         var icon = _transformOrigin switch
         {
@@ -67,7 +67,7 @@
         return icon;
     }
 
-    public string GetLocation()
+    private string GetLocation()
     {
         var align = string.Empty;
         var justify = string.Empty;

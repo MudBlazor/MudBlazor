@@ -5,9 +5,10 @@
     <Nullable>enable</Nullable>
     <RootNamespace>MudBlazor.UnitTests</RootNamespace>
   </PropertyGroup>
-  
+
+  <!-- Razor sourcegenerator doesn't work well with this kind of nullable (null for generic) https://github.com/dotnet/razor/issues/8720 -->
   <PropertyGroup>
-    <NoWarn>CS8625;CS8618;CS8600;CS8603;CS8601;CS8669</NoWarn>
+    <NoWarn>CS8669</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'MudBlazor.UnitTests.Viewer' " />
