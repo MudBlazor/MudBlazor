@@ -426,11 +426,6 @@ namespace MudBlazor
 
         #endregion
 
-        /// <summary>
-        /// Occurs when this column's state has changed.
-        /// </summary>
-        public Action ColumnStateHasChanged { get; set; }
-
         internal string HeaderClassname =>
             new CssBuilder("mud-table-cell")
                 .AddClass("mud-table-cell-hide", HideSmall)
