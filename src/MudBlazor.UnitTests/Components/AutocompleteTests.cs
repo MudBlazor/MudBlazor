@@ -1868,5 +1868,59 @@ namespace MudBlazor.UnitTests.Components
             // Assert
             comp.Find(".mud-select-input").ClassList.Should().Contain(inputClass);
         }
+
+        [Test]
+        public async Task Should_Select_Correct_Item_With_ArrowKeys_And_Not_Wrap_Around()
+        {
+            var selectedItemIndexPropertyInfo = typeof(MudAutocomplete<string>).GetField("_selectedListItemIndex", BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new ArgumentException("Cannot find field named '_selectedListItemIndex' on type 'MudAutocomplete<T>'");
+
+            var component = Context.RenderComponent<AutocompleteTest1>();
+            var autocompleteComponent = component.FindComponent<MudAutocomplete<string>>();
+            var autocompleteInstance = autocompleteComponent.Instance;
+
+            // Focus to open the popup
+            autocompleteComponent.Find(TagNames.Input).Focus();
+
+            // Ensure popup is open
+            component.WaitForAssertion(() => autocompleteInstance.Open.Should().BeTrue("Input has been focused and should open the popup"));
+
+            // Get the initial matching states (items in the dropdown)
+            var matchingStates = component.FindComponents<MudListItem<string>>().ToArray();
+            var maxIndex = matchingStates.Length - 1;
+
+            // Define keyboard event args for ArrowDown and ArrowUp
+            var arrowDownKeyboardEventArgs = new KeyboardEventArgs { Key = Key.Down.Value, Type = "keydown" };
+            var arrowUpKeyboardEventArgs = new KeyboardEventArgs { Key = Key.Up.Value, Type = "keydown" };
+
+            // Scroll down until reaching the last item
+            for (var i = 0; i <= maxIndex; i++)
+            {
+                await autocompleteComponent.Find("input").KeyDownAsync(arrowDownKeyboardEventArgs);
+            }
+
+            // Check that the last item is selected
+            var lastIndex = (int)selectedItemIndexPropertyInfo.GetValue(autocompleteInstance);
+            component.WaitForAssertion(() => lastIndex.Should().Be(maxIndex, "ArrowDown should reach the last item"));
+
+            // Press ArrowDown again to confirm it does not wrap around
+            await autocompleteComponent.Find("input").KeyDownAsync(arrowDownKeyboardEventArgs);
+            var noWrapIndex = (int)selectedItemIndexPropertyInfo.GetValue(autocompleteInstance);
+            component.WaitForAssertion(() => noWrapIndex.Should().Be(maxIndex, "ArrowDown should not wrap around past the last item"));
+
+            // Scroll up until reaching the first item
+            for (var i = maxIndex; i >= 0; i--)
+            {
+                await autocompleteComponent.Find("input").KeyDownAsync(arrowUpKeyboardEventArgs);
+            }
+
+            // Check that the first item is selected
+            var firstIndex = (int)selectedItemIndexPropertyInfo.GetValue(autocompleteInstance);
+            component.WaitForAssertion(() => firstIndex.Should().Be(0, "ArrowUp should reach the first item"));
+
+            // Press ArrowUp again to confirm it does not wrap around
+            await autocompleteComponent.Find("input").KeyDownAsync(arrowUpKeyboardEventArgs);
+            var noWrapToLastIndex = (int)selectedItemIndexPropertyInfo.GetValue(autocompleteInstance);
+            component.WaitForAssertion(() => noWrapToLastIndex.Should().Be(0, "ArrowUp should not wrap around past the first item"));
+        }
     }
 }
