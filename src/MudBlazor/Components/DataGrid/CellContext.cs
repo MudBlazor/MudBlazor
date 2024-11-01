@@ -12,7 +12,6 @@ namespace MudBlazor
     public class CellContext<T>
     {
         private readonly HashSet<T> _selection;
-        private readonly IEqualityComparer<T> _selectionComparer;
 
         internal HashSet<T> OpenHierarchies { get; }
 
@@ -29,7 +28,7 @@ namespace MudBlazor
         /// <summary>
         /// Indicates if the cell is currently selected.
         /// </summary>
-        public bool Selected => _selection.Contains(Item, _selectionComparer);
+        public bool Selected => _selection.Contains(Item);
 
         /// <summary>
         /// Indicates if the cell is currently in an open hierarchy.
@@ -44,7 +43,6 @@ namespace MudBlazor
         public CellContext(MudDataGrid<T> dataGrid, T item)
         {
             _selection = dataGrid.Selection;
-            _selectionComparer = dataGrid.Comparer ?? EqualityComparer<T>.Default;
             OpenHierarchies = dataGrid._openHierarchies;
             Item = item;
             Actions = new CellActions

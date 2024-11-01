@@ -548,7 +548,7 @@ namespace MudBlazor.UnitTests.Components
             // click the first row
             dataGrid.FindAll("td")[1].Click();
             dataGrid.Instance.SelectedItems.Count.Should().Be(1);
-            dataGrid.Instance.Comparer.Should().BeOfType<DataGridSelectionComparerTest.IdComparer>();
+            dataGrid.Instance.Selection.Comparer.Should().BeOfType<DataGridSelectionComparerTest.IdComparer>();
 
             //select a chip
             var chipSet = comp.FindComponent<MudChipSet<string>>();
@@ -556,7 +556,7 @@ namespace MudBlazor.UnitTests.Components
             chipSet.FindAll(".mud-chip")[2].Click();
             dataGrid.Instance.SelectedItems.Count.Should().Be(1); //only 1 item is set
             dataGrid.FindAll("input[type=checkbox]").Where(checkbox => checkbox.IsChecked()).ToArray().Length.Should().Be(2); //two items are checked
-            dataGrid.Instance.Comparer.Should().BeOfType<DataGridSelectionComparerTest.RoleComparer>();
+            dataGrid.Instance.Selection.Comparer.Should().BeOfType<DataGridSelectionComparerTest.RoleComparer>();
         }
 
         [Test]

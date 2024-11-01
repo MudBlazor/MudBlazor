@@ -18,16 +18,16 @@
 @code {
     public static string __description__ = "Should use custom comparer as opposed to object equality";
 
-    private MudDataGrid<Person>? _dataGrid;
+    private MudDataGrid<Person> _dataGrid = null!;
     private readonly List<Person> _people = [
         new Person() { Id = Guid.NewGuid(), Name = "Tony Stark", Role = "CEO" },
-        new Person() { Id = Guid.NewGuid(), Name = "Bruce Banner", Role = "Lead Scientist" },
-        new Person() { Id = Guid.NewGuid(), Name = "Hank Pym", Role = "Scientist" },
-        new Person() { Id = Guid.NewGuid(), Name = "Jane Foster", Role = "Scientist" },
-        new Person() { Id = Guid.NewGuid(), Name = "Natasha Romanoff", Role = "Security Specialist" },
-        new Person() { Id = Guid.NewGuid(), Name = "Steve Rogers", Role = "Security Specialist" },
-        new Person() { Id = Guid.NewGuid(), Name = "Clint Barton", Role = "Security Specialist" },
-        new Person() { Id = Guid.NewGuid(), Name = "Peter Parker", Role = "Intern" },
+    new Person() { Id = Guid.NewGuid(), Name = "Bruce Banner", Role = "Lead Scientist" },
+    new Person() { Id = Guid.NewGuid(), Name = "Hank Pym", Role = "Scientist" },
+    new Person() { Id = Guid.NewGuid(), Name = "Jane Foster", Role = "Scientist" },
+    new Person() { Id = Guid.NewGuid(), Name = "Natasha Romanoff", Role = "Security Specialist" },
+    new Person() { Id = Guid.NewGuid(), Name = "Steve Rogers", Role = "Security Specialist" },
+    new Person() { Id = Guid.NewGuid(), Name = "Clint Barton", Role = "Security Specialist" },
+    new Person() { Id = Guid.NewGuid(), Name = "Peter Parker", Role = "Intern" },
     ];
 
     private readonly RoleComparer _roleComparer = new();
@@ -39,18 +39,18 @@
 
     private void RowClicked(DataGridRowClickEventArgs<Person> args)
     {
-        Comparer = _idComparer;
+        _dataGrid.Selection = new HashSet<Person>(_dataGrid.Selection, _idComparer);
     }
 
     private async Task SelectedValueChanged(string selection)
     {
         SelectedRole = selection;
-        Comparer = _roleComparer;
 
         _selectedItems.Clear();
+        
+        _dataGrid.Selection = new HashSet<Person>(_roleComparer);
 
-        await _dataGrid!.ClearFiltersAsync();
-        await _dataGrid!.SetSelectedItemAsync(true, new Person() { Role = selection });
+        await _dataGrid.SetSelectedItemAsync(true, new Person() { Role = selection });
     }
 
     public class Person
