@@ -1,26 +1,26 @@
-﻿<MudForm @ref="form" ValidationDelay="0">
-    <MudDatePicker Label="Date" Required @bind-Date="@date" Editable></MudDatePicker>
-    <MudTextField Label="Name" T="string" Required Immediate @bind-Value="@name" />
-    <MudNumericField Label="Age" T="int?" Required Immediate @bind-Value="@age"></MudNumericField>
+﻿<MudForm @ref="_form" ValidationDelay="0">
+    <MudDatePicker Label="Date" Required @bind-Date="@_date" Editable></MudDatePicker>
+    <MudTextField Label="Name" T="string" Required Immediate @bind-Value="@_name" />
+    <MudNumericField Label="Age" T="int?" Required Immediate @bind-Value="@_age"></MudNumericField>
 </MudForm>
 <br><br>
-<span>Date: @date</span>
-<span>Name: @name</span>
-<span>Age: @age</span>
+<span>Date: @_date</span>
+<span>Name: @_name</span>
+<span>Age: @_age</span>
 <br><br>
 <MudButton Class="reset" OnClick="@ResetFormAsync">Reset</MudButton>
 
-@code
-{
+@code {
     public static string __description__ = "Calling Form.Reset() should clear the text field.";
-    private MudForm form;
-    private string name;
-    private int? age;
-    private DateTime? date;
+
+    private int? _age;
+    private string? _name;
+    private DateTime? _date;
+    private MudForm _form = null!;
 
     private async Task ResetFormAsync()
     {
-        await form.ResetAsync();
+        await _form.ResetAsync();
         StateHasChanged();
     }
 }
