@@ -795,8 +795,7 @@ namespace MudBlazor
                 case "ArrowDown":
                     if (Open)
                     {
-                        var increment = _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) + 1) - _selectedListItemIndex;
-                        await SelectNextItemAsync(increment < 0 ? 1 : increment);
+                        await SelectItemAsync(_selectedListItemIndex + 1);
                     }
                     else
                     {
@@ -814,8 +813,7 @@ namespace MudBlazor
                     }
                     else
                     {
-                        var decrement = _selectedListItemIndex - _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) - 1);
-                        await SelectNextItemAsync(-(decrement < 0 ? 1 : decrement));
+                        await SelectItemAsync(_selectedListItemIndex - 1);
                     }
                     break;
             }
@@ -852,29 +850,26 @@ namespace MudBlazor
             await base.InvokeKeyUpAsync(args);
         }
 
-        private ValueTask SelectNextItemAsync(int increment)
+        /// <summary>
+        /// Scrolls the list of items to the item at the specified index, clamping it within valid bounds.
+        /// </summary>
+        public ValueTask SelectItemAsync(int index)
         {
-            if (increment == 0 || _items == null || _items.Length == 0 || !_enabledItemIndices.Any())
+            if (_items == null || _items.Length == 0 || !_enabledItemIndices.Any())
                 return ValueTask.CompletedTask;
 
-            // if we are at the end, or the beginning we just do an rollover
-            _selectedListItemIndex = Math.Clamp(value: ((10 * _items.Length) + _selectedListItemIndex + increment) % _items.Length, min: 0, max: _items.Length - 1);
-            return ScrollToListItemAsync(_selectedListItemIndex);
-        }
+            // Clamp the index within the valid range of enabled items
+            var clampedIndex = Math.Max(0, Math.Min(index, _enabledItemIndices.Count - 1));
+            _selectedListItemIndex = clampedIndex;
 
-        /// <summary>
-        /// Scrolls the list of items to the item at the specified index.
-        /// </summary>
-        /// <param name="index">The index of the item to scroll to.</param>
-        public ValueTask ScrollToListItemAsync(int index)
-        {
-            var id = GetListItemId(index);
+            var id = GetListItemId(clampedIndex);
 
-            //id of the scrolled element
             return ScrollManager.ScrollToListItemAsync(id);
         }
 
-        //This restores the scroll position after closing the menu and element being 0
+        /// <summary>
+        /// This restores the scroll position after closing the menu and element being 0
+        /// </summary>
         private ValueTask RestoreScrollPositionAsync()
         {
             if (_selectedListItemIndex != 0)
