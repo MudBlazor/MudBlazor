@@ -269,7 +269,15 @@ namespace MudBlazor
         {
             //return array {1, ..., Count} if Count is small 
             if (_countState.Value <= 4 || _countState.Value <= (2 * _boundaryCountState.Value) + _middleCountState.Value + 2)
-                return Enumerable.Range(1, _countState.Value).ToArray();
+            {
+                var result = new int[_countState.Value];
+                for (var i = 0; i < _countState.Value; i++)
+                {
+                    result[i] = i + 1;
+                }
+
+                return result;
+            }
 
             var length = (2 * _boundaryCountState.Value) + _middleCountState.Value + 2;
             var pages = new int[length];
@@ -289,11 +297,17 @@ namespace MudBlazor
             //calculate start value for middle items
             int startValue;
             if (_selectedState.Value <= _boundaryCountState.Value + (_middleCountState.Value / 2) + 1)
+            {
                 startValue = _boundaryCountState.Value + 2;
+            }
             else if (_selectedState.Value >= _countState.Value - _boundaryCountState.Value - (_middleCountState.Value / 2))
+            {
                 startValue = _countState.Value - _boundaryCountState.Value - _middleCountState.Value;
+            }
             else
+            {
                 startValue = _selectedState.Value - (_middleCountState.Value / 2);
+            }
 
             //set middle items, e.g. if MiddleCount == 3 and Selected == 5 and Count == 11 => [..., 4, 5, 6, ...] 
             for (var i = 0; i < _middleCountState.Value; i++)
@@ -311,7 +325,9 @@ namespace MudBlazor
             for (var i = 0; i < length - 2; i++)
             {
                 if (pages[i] + 2 == pages[i + 2])
+                {
                     pages[i + 1] = pages[i] + 1;
+                }
             }
 
             return pages;
