@@ -851,18 +851,17 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Scrolls the list of items to the item at the specified index, clamping it within valid bounds.
+        /// Selects the item in the list at the specified index and scrolls to it.
         /// </summary>
+        /// <param name="index">The index of the item to scroll to. If it's out of range then nothing will happen.</param>
         public ValueTask SelectItemAsync(int index)
         {
-            if (_items == null || _items.Length == 0 || !_enabledItemIndices.Any())
+            if (_items == null || _items.Length == 0 || !_enabledItemIndices.Any() || index < 0 || index > _enabledItemIndices.Count - 1)
                 return ValueTask.CompletedTask;
 
-            // Clamp the index within the valid range of enabled items
-            var clampedIndex = Math.Max(0, Math.Min(index, _enabledItemIndices.Count - 1));
-            _selectedListItemIndex = clampedIndex;
+            _selectedListItemIndex = index;
 
-            var id = GetListItemId(clampedIndex);
+            var id = GetListItemId(index);
 
             return ScrollManager.ScrollToListItemAsync(id);
         }
