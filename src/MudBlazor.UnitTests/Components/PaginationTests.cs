@@ -178,6 +178,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Page.Previous, 5)]
         [TestCase(Page.Next, 7)]
         [TestCase(Page.Last, 11)]
+        [TestCase((Page)50, 6)]
         [Test]
         public async Task PaginationNavigateToPageTest(Page page, int expectedSelectedPage)
         {

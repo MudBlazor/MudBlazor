@@ -61,7 +61,7 @@ namespace MudBlazor
         /// Displays text right-to-left.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  Controlled via the <see cref="MudRTLProvider"/>.
+        /// Defaults to <c>false</c>. Controlled via the <see cref="MudRTLProvider"/>.
         /// </remarks>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
@@ -326,12 +326,10 @@ namespace MudBlazor
             return NavigateToAsync(page);
         }
 
-        //Last line cannot be tested because Page enum has 4 items
         /// <summary>
         /// Changes the currently selected page.
         /// </summary>
         /// <param name="page">The page to navigate to.</param>
-        [ExcludeFromCodeCoverage]
         public Task NavigateToAsync(Page page)
         {
             var newPageIndex = page switch
