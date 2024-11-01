@@ -18,7 +18,7 @@
 @code {
     public static string __description__ = "Should use custom comparer as opposed to object equality";
 
-    private MudDataGrid<Person> _dataGrid;
+    private MudDataGrid<Person>? _dataGrid;
     private readonly List<Person> _people = [
         new Person() { Id = Guid.NewGuid(), Name = "Tony Stark", Role = "CEO" },
         new Person() { Id = Guid.NewGuid(), Name = "Bruce Banner", Role = "Lead Scientist" },
@@ -33,31 +33,31 @@
     private readonly RoleComparer _roleComparer = new();
     private readonly IdComparer _idComparer = new();
     private HashSet<Person> _selectedItems = new();
-    private string SelectedRole;
+    private string SelectedRole = string.Empty;
 
-    public IEqualityComparer<Person> Comparer { get; set; }
+    public IEqualityComparer<Person>? Comparer { get; set; }
 
     private void RowClicked(DataGridRowClickEventArgs<Person> args)
     {
         Comparer = _idComparer;
     }
 
-    private async Task SelectedValueChanged(string? selection)
+    private async Task SelectedValueChanged(string selection)
     {
         SelectedRole = selection;
         Comparer = _roleComparer;
 
         _selectedItems.Clear();
 
-        await _dataGrid.ClearFiltersAsync();
-        await _dataGrid.SetSelectedItemAsync(true, new Person() { Role = selection });
+        await _dataGrid!.ClearFiltersAsync();
+        await _dataGrid!.SetSelectedItemAsync(true, new Person() { Role = selection });
     }
 
     public class Person
     {
         public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string Role { get; set; }
+        public string? Name { get; set; }
+        public string? Role { get; set; }
     }
 
     public class IdComparer : IEqualityComparer<Person>
