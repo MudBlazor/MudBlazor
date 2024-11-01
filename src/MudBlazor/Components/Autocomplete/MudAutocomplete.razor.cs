@@ -795,7 +795,7 @@ namespace MudBlazor
                 case "ArrowDown":
                     if (Open)
                     {
-                        await SelectItemAsync(_selectedListItemIndex + 1);
+                        await SelectAdjacentItemAsync(+1);
                     }
                     else
                     {
@@ -813,7 +813,7 @@ namespace MudBlazor
                     }
                     else
                     {
-                        await SelectItemAsync(_selectedListItemIndex - 1);
+                        await SelectAdjacentItemAsync(-1);
                     }
                     break;
             }
@@ -848,6 +848,31 @@ namespace MudBlazor
             }
 
             await base.InvokeKeyUpAsync(args);
+        }
+
+        /// <summary>
+        /// Selects the next or previous enabled item in the list and scrolls to it.
+        /// </summary>
+        /// <param name="direction">The direction to move, positive for down, negative for up.</param>
+        private ValueTask SelectAdjacentItemAsync(int direction)
+        {
+            if (_items == null || _items.Length == 0 || !_enabledItemIndices.Any())
+                return ValueTask.CompletedTask;
+
+            // Get the current index among enabled items
+            var currentEnabledIndex = _enabledItemIndices.IndexOf(_selectedListItemIndex);
+
+            // Determine the new index based on the direction
+            var newEnabledIndex = currentEnabledIndex + direction;
+
+            // Ensure new index is within bounds
+            if (newEnabledIndex >= 0 && newEnabledIndex < _enabledItemIndices.Count)
+            {
+                _selectedListItemIndex = _enabledItemIndices[newEnabledIndex];
+                return SelectItemAsync(_selectedListItemIndex);
+            }
+
+            return ValueTask.CompletedTask;
         }
 
         /// <summary>
