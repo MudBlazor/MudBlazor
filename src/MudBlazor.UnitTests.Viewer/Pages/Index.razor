@@ -4,7 +4,7 @@
 <MudLayout>
     <MudRTLProvider RightToLeft="_rightToLeft">
         <MudAppBar Elevation="0">
-            <MudTooltip Delay="500" Text="Toggle drawer">
+            <MudTooltip Text="Toggle drawer">
                 <MudIconButton Icon="@Icons.Material.Filled.Menu" Edge="Edge.Start" OnClick="DocsDrawerToggle" aria-label="Toggle drawer" />
             </MudTooltip>
             <MudSpacer />
@@ -14,7 +14,7 @@
                 </ItemTemplate>
             </MudAutocomplete>
             <MudSpacer />
-            <MudTooltip Delay="500" Text="@(_rightToLeft ? "Left-to-right" : "Right-to-left")">
+            <MudTooltip Text="@(_rightToLeft ? "Left-to-right" : "Right-to-left")">
                 <MudIconButton Icon="@(_rightToLeft ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="() => _rightToLeft = !_rightToLeft" aria-label="@(_rightToLeft ? "Left-to-right" : "Right-to-left")" />
             </MudTooltip>
         </MudAppBar>
@@ -40,7 +40,7 @@
                     <MudTextField T="string" @bind-Value="@_currentSearchText" Immediate="true" FullWidth="true"
                                   Typo="Typo.subtitle1" Placeholder="Search by component" Clearable DebounceInterval="200" />
 
-                    <MudTooltip Delay="500" Text="@(_expandedState ? "Collapse all" : "Expand all")">
+                    <MudTooltip Text="@(_expandedState ? "Collapse all" : "Expand all")">
                         <MudIconButton Icon="@(_expandedState ? CollapseAllIcon : ExpandAllIcon)" Size="Size.Small"
                                        OnClick="@(() => ToggleExpanded())" />
                     </MudTooltip>
@@ -99,10 +99,6 @@
     </MudRTLProvider>
 </MudLayout>
 <style>
-    :root {
-        --mud-drawer-width-left: 400px;
-    }
-
     .docs-search-bar .mud-input {
         height: 42px;
     }
