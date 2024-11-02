@@ -1,5 +1,5 @@
 ﻿<div class="d-flex align-center flex-grow-1 d-md-none">
-    <MudTooltip Delay="1000" Text="Drawer">
+    <MudTooltip Text="Drawer">
         <MudIconButton OnClick="DrawerToggleCallback" Icon="@Icons.Material.Rounded.Notes" Color="Color.Inherit" Edge="Edge.Start" aria-label="Open drawer" />
     </MudTooltip>
     <MudSpacer />
@@ -8,7 +8,7 @@
         <MudText Color="Color.Primary" Typo="Typo.h5" Class="docs-brand-text">MudBlazor</MudText>
     </NavLink>
     <MudSpacer />
-    <MudTooltip Delay="1000" Text="Search">
+    <MudTooltip Text="Search">
         <MudIconButton Icon="@Icons.Material.Rounded.Search" Color="Color.Inherit" Edge="Edge.End" OnClick="@(() => OpenSearchDialog())" aria-label="Open search dialog" />
     </MudTooltip>
 </div>
@@ -78,12 +78,12 @@
     }
     else
     {
-        <MudTooltip Delay="1000" Text="Search">
+        <MudTooltip Text="Search">
             <MudIconButton Icon="@Icons.Material.Rounded.Search" Color="Color.Inherit" OnClick="@(() => OpenSearchDialog())" aria-label="Open search dialog" />
         </MudTooltip>
     }
     <AppbarButtons />
-    <MudTooltip Delay="1000" Text="GitHub">
+    <MudTooltip Text="GitHub">
         <MudIconButton Href="https://github.com/MudBlazor/MudBlazor/" Target="_blank" Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Edge="Edge.End" aria-label="Open GitHub repository" />
     </MudTooltip>
 </div>
