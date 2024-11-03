@@ -1,8 +1,6 @@
 ﻿//Copyright(c) Alessandro Ghidini.All rights reserved.
 //Changes and improvements Copyright (c) The MudBlazor Team.
 
-using Microsoft.CodeAnalysis;
-using System.Diagnostics;
 using MudBlazor.Components.Snackbar;
 
 #nullable enable
