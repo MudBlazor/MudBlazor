@@ -30,35 +30,33 @@ namespace MudBlazor
 
         internal void Init() => TransitionTo(SnackbarState.Showing);
 
-        internal Task Clicked(bool fromCloseIcon)
+        internal void Clicked(bool fromCloseIcon)
         {
             // You should only be able to interact with the snackbar once.
             if (State.UserHasInteracted)
             {
-                return Task.CompletedTask;
+                return;
             }
 
             if (fromCloseIcon)
             {
                 // Invoke user-defined task when close button is clicked
-                State.Options.OnCloseButtonClick?.Invoke(this);
+                State.Options.CloseButtonClickFunc?.Invoke(this);
             }
             else
             {
                 // Do not start the hiding transition if no click action
                 if (State.Options.OnClick is null)
                 {
-                    return Task.CompletedTask;
+                    return;
                 }
 
                 // Click action is executed only if it's not from the close icon
-                State.Options.OnClick.Invoke(this);
+                State.Options.OnClick?.Invoke(this);
             }
 
             State.UserHasInteracted = true;
             TransitionTo(SnackbarState.Hiding, cancellable: false);
-
-            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -121,7 +119,7 @@ namespace MudBlazor
 
         public void PauseTransitions(bool pause)
         {
-            // Some transitions, like from the close button, can't be canceled or it would restart the transition when the user leaves the snackbar.
+            // Some transitions, like from the close button, can't be cancelled or it would restart the transition when the user leaves the snackbar.
             if (!_transitionCancellable)
             {
                 _paused = false;

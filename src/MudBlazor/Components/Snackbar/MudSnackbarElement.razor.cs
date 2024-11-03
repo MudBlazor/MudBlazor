@@ -36,8 +36,8 @@ namespace MudBlazor
         private Size IconSize => Snackbar?.State.Options.IconSize ?? Size.Medium;
 
         // behavior
-        private Task ActionClickedAsync() => Snackbar?.Clicked(false);
-        private Task CloseIconClickedAsync() => Snackbar?.Clicked(true);
+        private void ActionClicked() => Snackbar?.Clicked(false);
+        private void CloseIconClicked() => Snackbar?.Clicked(true);
 
         private SnackbarMessage Message => Snackbar?.SnackbarMessage;
 

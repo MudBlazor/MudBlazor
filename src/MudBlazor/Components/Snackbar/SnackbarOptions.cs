@@ -16,7 +16,7 @@ namespace MudBlazor
         /// <summary>
         /// The asynchronous delegate that is invoked when the close button of the Snackbar is clicked.
         /// </summary>
-        public Func<Snackbar, Task> OnCloseButtonClick { get; set; }
+        public Func<Snackbar, Task> CloseButtonClickFunc { get; set; }
 
         /// <summary>
         /// The Label for the action button displayed on the <see cref="Snackbar"/>.

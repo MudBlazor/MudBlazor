@@ -3,7 +3,6 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
@@ -457,7 +456,7 @@ namespace MudBlazor.UnitTests.Components
             await _provider.InvokeAsync(() =>
                 _service.Add("ah, ah, ah, ah, stayin' alive", Severity.Normal, c =>
                 {
-                    c.OnCloseButtonClick = Count;
+                    c.CloseButtonClickFunc = Count;
                     c.RequireInteraction = true;
                 })
             );
