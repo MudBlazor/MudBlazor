@@ -538,6 +538,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridCustomComparerTest()
+        {
+            var comp = Context.RenderComponent<DataGridSelectionComparerTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionComparerTest.Person>>();
+
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+
+            // click the first row
+            dataGrid.FindAll("td")[1].Click();
+            dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+            dataGrid.Instance.Selection.Comparer.Should().BeOfType<DataGridSelectionComparerTest.IdComparer>();
+
+            //select a chip
+            var chipSet = comp.FindComponent<MudChipSet<string>>();
+
+            chipSet.FindAll(".mud-chip")[2].Click();
+            dataGrid.Instance.SelectedItems.Count.Should().Be(1); //only 1 item is set
+            dataGrid.FindAll("input[type=checkbox]").Where(checkbox => checkbox.IsChecked()).ToArray().Length.Should().Be(2); //two items are checked
+            dataGrid.Instance.Selection.Comparer.Should().BeOfType<DataGridSelectionComparerTest.RoleComparer>();
+        }
+
+        [Test]
         public async Task DataGridSingleSelectionTest()
         {
             var comp = Context.RenderComponent<DataGridSingleSelectionTest>();

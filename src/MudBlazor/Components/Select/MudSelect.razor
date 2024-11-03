@@ -18,7 +18,7 @@
                          ErrorText="@GetErrorText()"
                          Disabled="@GetDisabledState()"
                          Required="@Required"
-                         ForId="@(InputElementId ?? string.Empty)"
+                         ForId="@InputElementId"
                          @onclick="@ToggleMenu">
             <InputContent>
                 <MudInput @ref="_elementReference"

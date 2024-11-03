@@ -10,7 +10,9 @@
 
 @code {
     public static string __description__ = "Autocomplete should show the dropdown when an item is selected and the string matches ToString or ToStringFunc.";
+    
     public State? StateDetails { get; set; }
+
     public State? StateDetails2 { get; set; }
 
     public async Task<IEnumerable<State?>> SearchStateAsync(string value, CancellationToken token)

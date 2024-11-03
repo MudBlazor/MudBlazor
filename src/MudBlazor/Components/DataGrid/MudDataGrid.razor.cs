@@ -961,7 +961,7 @@ namespace MudBlazor
                 {
                     if (Selection.Count == 0)
                         return;
-                    Selection = new HashSet<T>();
+                    Selection = new HashSet<T>(Comparer);
                 }
                 else
                     Selection = value;
@@ -1075,6 +1075,15 @@ namespace MudBlazor
         [Parameter]
         public bool ShowMenuIcon { get; set; } = false;
 
+        /// <summary>
+        /// The comparer used to determine row selection.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. When set, this comparer will be used to determine if a row is selected.
+        /// </remarks>
+        [Parameter]
+        public IEqualityComparer<T> Comparer { get; set; } = EqualityComparer<T>.Default;
+
         #endregion
 
         #region Properties
@@ -1106,7 +1115,7 @@ namespace MudBlazor
         /// <summary>
         /// The currently selected items.
         /// </summary>
-        public HashSet<T> Selection { get; set; } = new HashSet<T>();
+        public HashSet<T> Selection { get; set; }
 
         /// <summary>
         /// Indicates if a <see cref="MudDataGridPager{T}"/> is present.
@@ -1219,6 +1228,12 @@ namespace MudBlazor
         internal bool HasServerData => ServerData != null || VirtualizeServerData != null;
 
         #endregion
+
+        protected override void OnInitialized()
+        {
+            Selection = new HashSet<T>(Comparer);
+            base.OnInitialized();
+        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -1461,9 +1476,19 @@ namespace MudBlazor
             else
             {
                 Selection.Remove(item);
-                if (item.Equals(SelectedItem))
+                if (Comparer != null)
                 {
-                    SelectedItem = default;
+                    if (Comparer.Equals(item, SelectedItem))
+                    {
+                        SelectedItem = default;
+                    }
+                }
+                else
+                {
+                    if (item.Equals(SelectedItem))
+                    {
+                        SelectedItem = default;
+                    }
                 }
             }
 
@@ -1479,7 +1504,7 @@ namespace MudBlazor
                     : FilteredItems;
 
             if (value)
-                Selection = new HashSet<T>(items);
+                Selection = new HashSet<T>(items, Comparer);
             else
                 Selection.Clear();
 

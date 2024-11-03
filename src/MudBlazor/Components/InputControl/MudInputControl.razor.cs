@@ -159,6 +159,6 @@ namespace MudBlazor
         /// The ID of the input component related to the label specified in <see cref="Label"/>.
         /// </summary>
         [Parameter]
-        public string ForId { get; set; } = string.Empty;
+        public string? ForId { get; set; } = string.Empty;
     }
 }

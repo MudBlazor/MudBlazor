@@ -3,7 +3,6 @@
 
 <MudPopoverProvider />
 
-
 <MudAutocomplete T="ExternalList" SearchFunc="@Search2" @bind-Value="SelectedValue" ToStringFunc="@ToStringFunc" />
 
 @code {
@@ -45,6 +44,7 @@
     public class ExternalList(string id, string name)
     {
         public string Id { get; } = id;
+
         public string Name { get; } = name;
     }
 }
