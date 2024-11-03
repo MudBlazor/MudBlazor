@@ -168,6 +168,36 @@
   }
 }
 
+.docs-content-api-table {
+  width: 100%;
+}
+
+.docs-content-api-table-toolbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  width: 100%;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.docs-content-api-table-toolbar-configuration-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.docs-content-api-grouping {
+  .mud-toggle-item {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}
+
 @media(min-width: 600px) {
   .docs-content-api-cell:before {
     width: 30% !important;
