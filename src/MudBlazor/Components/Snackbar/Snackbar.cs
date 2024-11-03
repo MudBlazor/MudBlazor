@@ -1,6 +1,8 @@
 ﻿//Copyright(c) Alessandro Ghidini.All rights reserved.
 //Changes and improvements Copyright (c) The MudBlazor Team.
 
+using Microsoft.CodeAnalysis;
+using System.Diagnostics;
 using MudBlazor.Components.Snackbar;
 
 #nullable enable
@@ -39,8 +41,10 @@ namespace MudBlazor
 
             if (fromCloseIcon)
             {
-                // Invoke user-defined task when close button is clicked
-                State.Options.CloseButtonClickFunc?.Invoke(this);
+                // Invoke user-defined task when close button is clicked.
+                // The returned Task is deliberately ignored. This approach allows the method
+                // to proceed without awaiting the completion of the task, maintaining UI responsiveness.
+                _ = State.Options.CloseButtonClickFunc?.Invoke(this);
             }
             else
             {
@@ -50,8 +54,9 @@ namespace MudBlazor
                     return;
                 }
 
-                // Click action is executed only if it's not from the close icon
-                State.Options.OnClick?.Invoke(this);
+                // Click action is executed only if it's not from the close icon.
+                // Same as above, we are deliberately not awaiting.
+                _ = State.Options.OnClick?.Invoke(this);
             }
 
             State.UserHasInteracted = true;
